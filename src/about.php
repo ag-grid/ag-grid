@@ -3,9 +3,9 @@
 <head lang="en">
     <meta charset="UTF-8">
 
-    <title>ag-Grid About</title>
-    <meta name="description" content="ag-Grid comes either as free or as Enterprise with support. This page explains the different support models for the free and Enterprise versions of ag-Grid.">
-    <meta name="keywords" content="ag-Grid Javascript Grid About"/>
+    <title>About Us</title>
+    <meta name="description" content="This is the story of ag-Grid and explains our mission, where we came from and who we are.">
+    <meta name="keywords" content="About ag-Grid"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -31,45 +31,49 @@
     <div class="row">
 
         <div class="col-md-12" style="padding-top: 40px;">
+            <h2>
+                Our Mission:
+            </h2>
+            <p>
 
-            <h3>
-                Company
-            </h3>
-            <p>
-                ag-Grid is a Private Limited Company registered in the United Kingdom. The company is based
-                out of the Techhub @ Campus incubation center in London.
+                At ag-Grid, our mission is simple:
+
+                </p>
+                <blockquote>
+                <h3>Build the best data grid in the world.
+                </h3>
+                </blockquote>
             </p>
+
             <p>
-            <style>
-                td {
-                    padding: 10px;;
-                }
-            </style>
-                <table>
-                <tr>
-                    <td valign="top"><b>Address</b></td>
-                    <td>
-                        Techhub @ Campus,<br/>
-                        4-5 Bonhill Street,<br/>
-                        London,<br/>
-                        England,<br/>
-                        EC2A 4BX
-                    </td>
-                </tr>
-                <tr>
-                    <td valign="top"><b>Company Number</b></td>
-                    <td>
-                        07318192
-                    </td>
-                </tr>
-                <tr>
-                    <td valign="top"><b>VAT Number</b></td>
-                    <td>
-                        GB 998360167
-                    </td>
-                </tr>
-                </table>
-                <br/>
+                Born from frustration with existing solutions, ag-Grid has evolved from aside project to the leading JavaScript data grid. We are a company built by developers for developers and true to our roots, we offer ag-Grid Free, an open source project that delivers world class grid performance. ag-Grid Enterprise is our commercially licensed offering which has enjoyed widespread adoption and permits us to keep delivering on our mission.
+            </p>
+
+            <p>    
+                Our story is proof that necessity is the mother of invention. During his time working in financial institutions in London, Niall Crosby - founder and CEO - struggled to find any data grid component that could deliver the performance required in tandem with a complete feature list. This struggle ultimately led Niall to pulling out the keyboard over Christmas holidays and starting ag-Grid as a side project. This side project was then released as open source and quickly developed a following. 
+            </p>
+
+            <p>
+                Niall found himself in the position of having to devote considerable time and effort to maintaining ag-Grid, even fielding feature requests from users. It became apparent that this thing had legs and the idea of ag-Grid Enterprise took seed in Niall’s head. Fast forward to March, 2016 and the first commercial version was launched.
+            </p>
+
+            <p>
+                 ag-Grid today is a self funded, boot strapped company with over 450 customers in 45 countries. Our product has resonated in the market - as our users face those same challenges that Niall did - and this has been central to our rapid growth. And we’re not stopping here, we are furiously working on the next great features to continue our mission.
+            </p>
+
+            <h2>
+                Our Principles:
+            </h2>
+            <p>
+                We believe that a data grid should be agnostic to the framework that developers choose - this allows flexibility and future proofs your development. This is also where the ag in ag-Grid comes from.
+            </p>
+
+            <p>    
+                Our experience is building Enterprise applications, we know that the data grid is the core of an Enterprise application and needs to deliver performance and a rich feature set. 
+            </p>
+
+            <p>
+                We give away for free what others charge for - ag-Grid Free  provides all of the features of our competion, we only charge when we go above and beyond with features that other grids don’t provide.
             </p>
         </div> <!-- end col -->
 
@@ -79,15 +83,9 @@
 
         <div class="col-md-12" style="padding-top: 40px;">
 
-            <h3 id="team">
-                Team
-            </h3>
-            <p>
-                The team is passionate about great products and great software. They are experienced
-                delivering quality software and continue to do so with the ag-Grid project taking
-                lessons learnt over the past 20 years in software
-                development and applying those principles to JavaScript.
-            </p>
+            <h2 id="team">
+                Who We Are:
+            </h2>
 
         </div> <!-- end col -->
 
@@ -99,16 +97,9 @@
                 <img src='images/niall.png'/>
             </div>
             <h3>Niall Crosby</h3>
-            <h4>Founder, CEO, CTO</h4>
+            <h4>Niall Crosby, CEO & CTO</h4>
             <p>
-                One day Niall said 'to hell with all the other data grids' and two weeks later ag-Grid v1 was born.
-                He has 18 years leading greenfield software projects in Telecommunications, Government, Insurance
-                and most recently Investment Banking. Oracle and Java used to be his bread and butter but is now
-                focusing on front end JavaScript, bringing his skill and knowledge from previous domains to the
-                emerging JavaScript platform.
-            </p>
-            <p>
-                In ag-Grid Niall builds the projects strategy and is responsible for all the core ag-Grid development.
+                Niall provides the technical vision for ag-Grid, juggling this with the usual CEO duties. 15 years of experience building Enterprise applications has given Niall unique insight into the challenges while equipping him with the technical skills to deliver the correct solutions. Niall focuses primarily on developing and maintaining the core of ag-Grid and is very much at the heartbeat of the company.
             </p>
         </div>
 
@@ -119,14 +110,7 @@
             <h3>Sean Landsman</h3>
             <h4>Lead Developer - Frameworks</h4>
             <p>
-                Sean is an experienced full stack technical lead with an extensive background in enterprise solutions. Over
-                19 years in the industry has taught him the value of quality code and good team collaboration. The bulk
-                of his background is on the server side, but like Niall is increasingly switching focus to include front end
-                technologies.
-            </p>
-            <p>
-                In ag-Grid Sean is responsible for all the framework connectivity into ag-Grid, he is our framework
-                expert. He also focuses on the users experience, working with customers on training and consultancy.
+                Sean was the first person that Niall asked to join the team. Sean ensures that we can keep the agnostic in ag-Grid... he is responsible for integrating with all of our supported frameworks. Many of customers will be familiar with Sean as he is very active in our user forums supporting the needs of our customers. He has also recently given a number of talks at conferences where his calm manner belies his years of experience.
             </p>
         </div>
 
@@ -137,20 +121,26 @@
             <h3>Alberto Gutierrez</h3>
             <h4>Lead Developer - Data Internals</h4>
             <p>
-                Alberto has 15 years of experience in end to end big enterprise scale projects.
-                From worldwide e-commerce applications to tv platforms, airport management
-                systems, financial applications, payments integration and many others.
-                There is no single stage of the software development
-                that he doesn't enjoy, but considers himself above anything else a coder. He is
-                happy when coding.
-            </p>
-            <p>
-                In ag-Grid Alberto helps realise the dream of a data grid that will solve big data enterprise problems.
+                Alberto joined the team in early 2017 and further broadens the Enterprise applications experience including e-commerce applications, TV platforms, airport management systems, financial applications, payments integration. He has joined Niall in enhancing and expanding the core features of the grid as well as contributing technical and industry knowledge.
             </p>
         </div>
 
     </div>
+
+
+
     <div class="row" style="margin-top: 50px;">
+
+        <div class="col-md-4">
+        <div>
+            <img src='images/will_upd.png'/>
+        </div>
+        <h3>Will Halling</h3>
+        <h4>UI Developer</h4>
+        <p>
+           Will is a recent addition the team, joining to work with Sean in supporting our rapidly growing customer base. Will has over 10 years in various front-end technologies including those supported by ag-Grid. Will is at the frontline of our Enterprise Support forum and also contributes to our user documentation and knowledge sharing.
+        </p>
+        </div>
 
         <div class="col-md-4">
             <div>
@@ -159,87 +149,60 @@
             <h3>John Masterson</h3>
             <h4>Customer Experience Manager</h4>
             <p>
-                With a background in Business Development, Product Management and Operations, John joins the ag-Grid team to look after the rapidly expanding customer base. In all his roles whether with large multinationals or SMEs, John has focussed on the application of technology to solve business problems.
-
-                John is always available to deal with customer queries as well as building ag-Grid's infrastructure for growth.
+                John was the first business focused hire at ag-Grid and joined in late 2016 to manage and grow the customer base. He has an operations and product management background and has always focused on the end user of technology. John is always available to deal with customer queries as well as building ag-Grid's infrastructure for growth.
             </p>
         </div>
 
         <div class="col-md-4">
             <div>
-                <img src='images/will_upd.png'/>
+                <img src='images/john.png'/>
             </div>
-            <h3>Will Halling</h3>
-            <h4>UI Developer</h4>
+            <h3>Armaan Anand</h3>
+            <h4>Customer Experience Specialist</h4>
             <p>
-                Will has over ten years experience working with Front End technologies. Will has worked on various
-                high-profile projects in the Banking, Travel, Government and Advertisement sectors. He understands
-                the importance of developing industry-leading responsive user interfaces.
+                Armaan is our latest hire and has joined the Customer Experience team. With a background in sales and marketing, Armaan is now the welcoming face of ag-Grid for new enquiries while also providing support to the many operations functions in the business.
             </p>
-        </div>
-
-    </div> <!-- end row -->
-</div>
-
-
-
-
-<!--<div class="PageContent">
-    <p class="PageContent-intro">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-    <h3 id="team" class="head text-center">Meet The Team</h3>
-    <div class="row">
-        <div class="col-md-4 col-sm-4">
-            <div class="teamWrapper teamWrapper-1 text-center">
-                <div class="teamWrapper-img">
-                    <img src="images/team_TEST.jpg" class="circle img-responsive">
-                    <span class="teamWrapper-mulitplyEffect teamWrapper-mulitplyEffect-1 circle"></span>
-                </div>
-                <div class="teamWrapper-desc">
-                    <h3>Niall</h3>
-                    <h5> <strong> Software Engineer &amp; ag-Grid founder</strong></h5>
-                    <p>
-                        Pellentesque elementum dapibus convallis.
-                        Vivamus eget finibus massa.
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-4">
-            <div class="teamWrapper teamWrapper-2 text-center">
-                <div class="teamWrapper-img">
-                    <img src="images/team_TEST2.jpg" class="circle img-responsive">
-                    <span class="teamWrapper-mulitplyEffect teamWrapper-mulitplyEffect-2 circle"></span>
-                </div>
-                <div class="teamWrapper-desc">
-                    <h3>Sean</h3>
-                    <h5><strong> Software Engineer </strong></h5>
-                    <p>
-                        Pellentesque elementum dapibus convallis.
-                        Vivamus eget finibus massa.
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-4">
-            <div class="teamWrapper teamWrapper-3 text-center">
-                <div class="teamWrapper-img">
-                    <img src="images/team_TEST3.jpg" class="circle img-responsive">
-                    <span class="teamWrapper-mulitplyEffect teamWrapper-mulitplyEffect-3 circle"></span>
-                </div>
-                <div class="teamWrapper-desc">
-                    <h3>Will</h3>
-                    <h5><strong>Frontend Developer </strong></h5>
-                    <p>
-                        Pellentesque elementum dapibus convallis.
-                        Vivamus eget finibus massa.
-                    </p>
-                </div>
-            </div>
         </div>
     </div>
 
-</div>-->
+    <div class="row" style="margin-top: 50px;">
+         <div class="col-md-6">
+            <h2>
+                Contact Us:
+            </h2>
+            <p>
+                Our Address:
 
+            <address>
+            <strong>ag-Grid Ltd.</strong><br>
+            The Treehouse, 2-10 Balham Station Road<br>
+            London, SW12 7SG
+            United Kingdom<br>
+
+            <p> 
+
+            <p>Email Enquiries:</p>
+            <abbr title="email">info@ag-grid.com
+            </address>
+
+            </p>
+        </div>
+
+        <div class="col-md-6">
+            <h2>
+                Careers:
+            </h2>
+            <p>
+                We are currently expanding and looking for Javascript Developers with Enterprise Applications experience. 
+            </p>
+            <p>
+                Please send your CV to <abbr title="email">info@ag-grid.com
+            </p>
+        </div>
+    </div> <!-- end row -->
+</div>
+
+</div>
 
 <?php include("includes/footer.php"); ?>
 
