@@ -8,3 +8,6 @@ node_modules/
 ag-grid-docs.iml
 *.map
 .idea
+
+src/dist/ag-grid
+src/dist/ag-grid-enterprise

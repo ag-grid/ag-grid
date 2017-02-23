@@ -1,5 +1,5 @@
 <?php
-$key = "Column Definitions";
+$key = "columnDefs";
 $pageTitle = "Column Definitions";
 $pageDescription = "ag-Grid Column Definitions";
 $pageKeyboards = "ag-Grid Column Definitions";
