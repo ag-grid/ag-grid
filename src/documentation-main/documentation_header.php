@@ -53,7 +53,15 @@ function menuItem($key, $rootFolder, $localKey, $name, $url) {
     if ($key == $localKey) {
         print('<span class="sidebarLinkSelected">'.$name.'</span>');
     } else {
-        print('<a class="sidebarLink" href="'.$rootFolder.$url.'/">'.$name.'</a>');
+        print('<a class="sidebarLink" href="'.$rootFolder.$url.'">'.$name.'</a>');
+    }
+}
+
+function menuItemEnterprise($key, $rootFolder, $localKey, $name, $url) {
+    if ($key == $localKey) {
+        print('<span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> '.$name.'</span>');
+    } else {
+        print('<a class="sidebarLink" href="'.$rootFolder.$url.'"><img src="../images/enterprise.png"/> '.$name.'</a>');
     }
 }
 
@@ -173,48 +181,13 @@ function menuItem($key, $rootFolder, $localKey, $name, $url) {
             </div>
 
             <div class="docsMenu-content">
-                <?php if ($key == "Interfacing Overview") { ?>
-                    <span class="sidebarLinkSelected">Overview</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-interfacing-overview/">Overview</a>
-                <?php } ?>
-
-                <?php if ($key == "Properties") { ?>
-                    <span class="sidebarLinkSelected">Properties</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-properties/">Properties</a>
-                <?php } ?>
-
-                <?php if ($key == "Column Definitions") { ?>
-                    <span class="sidebarLinkSelected">Columns</span>
-                <?php } else { ?>
-                    <a class="sidebarLink"
-                       href="<?php print($rootFolder) ?>javascript-grid-column-definitions/">Columns</a>
-                <?php } ?>
-
-                <?php if ($key == "Events") { ?>
-                    <span class="sidebarLinkSelected">Events</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-events/">Events</a>
-                <?php } ?>
-
-                <?php if ($key == "Callbacks") { ?>
-                    <span class="sidebarLinkSelected">Callbacks</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-callbacks/">Callbacks</a>
-                <?php } ?>
-
-                <?php if ($key == "Grid API") { ?>
-                    <span class="sidebarLinkSelected">Grid API</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-api/">Grid API</a>
-                <?php } ?>
-
-                <?php if ($key == "Column API") { ?>
-                    <span class="sidebarLinkSelected">Column API</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-column-api/">Column API</a>
-                <?php } ?>
+                <?php menuItem($key, $rootFolder, 'Interfacing Overview"', 'Overview', 'javascript-grid-interfacing-overview'); ?>
+                <?php menuItem($key, $rootFolder, 'Properties"', 'Properties', 'javascript-grid-properties'); ?>
+                <?php menuItem($key, $rootFolder, 'Column Definitions"', 'Columns', 'javascript-grid-column-definitions'); ?>
+                <?php menuItem($key, $rootFolder, 'Events', 'Events', 'javascript-grid-events'); ?>
+                <?php menuItem($key, $rootFolder, 'Callbacks', 'Callbacks', 'javascript-grid-callbacks'); ?>
+                <?php menuItem($key, $rootFolder, 'Grid API', 'Grid API', 'javascript-grid-callbacks'); ?>
+                <?php menuItem($key, $rootFolder, 'Column API', 'Column API', 'javascript-grid-column-api'); ?>
             </div>
 
             <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "feature") { ?> active<?php } ?>"
@@ -224,269 +197,54 @@ function menuItem($key, $rootFolder, $localKey, $name, $url) {
             </div>
 
             <div class="docsMenu-content">
-
                 <?php menuItem($key, $rootFolder, 'Features', 'Overview', 'ag-grid-features'); ?>
                 <?php menuItem($key, $rootFolder, 'Width & Height', 'Width & Height', 'javascript-grid-width-and-height'); ?>
                 <?php menuItem($key, $rootFolder, 'Sorting', 'Sorting', 'javascript-grid-sorting'); ?>
                 <?php menuItem($key, $rootFolder, 'Filtering', 'Filtering', 'javascript-grid-filtering'); ?>
+                <?php menuItem($key, $rootFolder, 'Selection', 'Selection', 'javascript-grid-selection'); ?>
+                <?php menuItem($key, $rootFolder, 'Resizing', 'Resizing', 'javascript-grid-resizing'); ?>
+                <?php menuItem($key, $rootFolder, 'Pinning', 'Pinning', 'javascript-grid-pinning'); ?>
+                <?php menuItem($key, $rootFolder, 'Grouping Columns', 'Grouping Columns', 'javascript-grid-grouping-headers'); ?>
+                <?php menuItem($key, $rootFolder, 'Tree Data', 'Tree Data', 'javascript-grid-tree'); ?>
+                <?php menuItem($key, $rootFolder, 'Row Height', 'Row Height', 'javascript-grid-row-height'); ?>
+                <?php menuItem($key, $rootFolder, 'Floating Rows', 'Floating Rows', 'javascript-grid-floating'); ?>
+                <?php menuItem($key, $rootFolder, 'Value Getters', 'Value Getters', 'javascript-grid-value-getters'); ?>
+                <?php menuItem($key, $rootFolder, 'Cell Expressions', 'Cell Expressions', 'javascript-grid-cell-expressions'); ?>
+                <?php menuItem($key, $rootFolder, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling'); ?>
+                <?php menuItem($key, $rootFolder, 'Context', 'Context', 'javascript-grid-context'); ?>
+                <?php menuItem($key, $rootFolder, 'InsertRemove', 'Insert & Remove', 'javascript-grid-insert-remove'); ?>
+                <?php menuItem($key, $rootFolder, 'Refresh', 'Refresh', 'javascript-grid-refresh'); ?>
+                <?php menuItem($key, $rootFolder, 'Animation', 'Animation', 'javascript-grid-animation'); ?>
+                <?php menuItem($key, $rootFolder, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation'); ?>
+                <?php menuItem($key, $rootFolder, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation'); ?>
+                <?php menuItem($key, $rootFolder, 'Full Width', 'Full Width Rows & Master Detail', 'javascript-grid-master-detail'); ?>
+                <?php menuItem($key, $rootFolder, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave'); ?>
+                <?php menuItem($key, $rootFolder, 'Touch', 'Touch', 'javascript-grid-touch'); ?>
+                <?php menuItem($key, $rootFolder, 'Row Model', 'Row Model', 'javascript-grid-model'); ?>
+                <?php menuItem($key, $rootFolder, 'Data Export', 'CSV Export', 'javascript-grid-export'); ?>
+                <?php menuItem($key, $rootFolder, 'RTL', 'RTL', 'javascript-grid-rtl'); ?>
+                <?php menuItem($key, $rootFolder, 'Icons', 'Icons', 'javascript-grid-icons'); ?>
+                <?php menuItem($key, $rootFolder, 'Overlays', 'Overlays', 'javascript-grid-overlays'); ?>
+                <?php menuItem($key, $rootFolder, 'For Print', 'For Print', 'javascript-grid-for-print'); ?>
 
-                <?php if ($key == "Selection") { ?>
-                    <span class="sidebarLinkSelected">Selection</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-selection/">Selection</a>
-                <?php } ?>
-
-                <?php if ($key == "Resizing") { ?>
-                    <span class="sidebarLinkSelected">Resizing</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-resizing/">Resizing</a>
-                <?php } ?>
-
-                <?php if ($key == "Pinning") { ?>
-                    <span class="sidebarLinkSelected">Pinning</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-pinning/">Pinning</a>
-                <?php } ?>
-
-                <?php if ($key == "Grouping Columns") { ?>
-                    <span class="sidebarLinkSelected">Grouping Columns</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-grouping-headers/">Grouping
-                        Columns</a>
-                <?php } ?>
-
-                <?php if ($key == "Tree Data") { ?>
-                    <span class="sidebarLinkSelected">Tree Data</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-tree/">Tree Data</a>
-                <?php } ?>
-
-                <?php if ($key == "Row Height") { ?>
-                    <span class="sidebarLinkSelected">Row Height</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-row-height/">Row Height</a>
-                <?php } ?>
-
-                <?php if ($key == "Floating") { ?>
-                    <span class="sidebarLinkSelected">Floating Rows</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-floating/">Floating Rows</a>
-                <?php } ?>
-
-                <?php if ($key == "Value Getters") { ?>
-                    <span class="sidebarLinkSelected">Value Getters</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-value-getters/">Value
-                        Getters</a>
-                <?php } ?>
-
-                <?php if ($key == "Cell Expressions") { ?>
-                    <span class="sidebarLinkSelected">Cell Expressions</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-expressions/">Cell
-                        Expressions</a>
-                <?php } ?>
-
-                <?php if ($key == "Cell Styling") { ?>
-                    <span class="sidebarLinkSelected">Cell Styling</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-styling/">Cell
-                        Styling</a>
-                <?php } ?>
-
-                <?php if ($key == "Context") { ?>
-                    <span class="sidebarLinkSelected">Context</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-context/">Context</a>
-                <?php } ?>
-
-                <?php if ($key == "InsertRemove") { ?>
-                    <span class="sidebarLinkSelected">Insert & Remove</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-insert-remove/">Insert &
-                        Remove</a>
-                <?php } ?>
-
-                <?php if ($key == "Refresh") { ?>
-                    <span class="sidebarLinkSelected">Refresh</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-refresh/">Refresh</a>
-                <?php } ?>
-
-                <?php if ($key == "Animation") { ?>
-                    <span class="sidebarLinkSelected">Animation</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-animation/">Animation</a>
-                <?php } ?>
-
-                <?php if ($key == "Keyboard Navigation") { ?>
-                    <span class="sidebarLinkSelected">Keyboard Navigation</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-keyboard-navigation/">Keyboard
-                        Navigation</a>
-                <?php } ?>
-
-                <?php if ($key == "Internationalisation") { ?>
-                    <span class="sidebarLinkSelected">Internationalisation</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-internationalisation/">Internationalisation</a>
-                <?php } ?>
-
-                <?php if ($key == "Full Width") { ?>
-                    <span class="sidebarLinkSelected">Full Width Rows<br/>&nbsp;& Master Detail</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-master-detail/">Full Width
-                        Rows<br/>&nbsp;& Master Detail</a>
-                <?php } ?>
-
-                <?php if ($key == "Master / Slave") { ?>
-                    <span class="sidebarLinkSelected">Master / Slave</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-master-slave/">Master /
-                        Slave</a>
-                <?php } ?>
-
-                <?php if ($key == "Touch") { ?>
-                    <span class="sidebarLinkSelected">Touch</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-touch/">Touch</a>
-                <?php } ?>
-
-                <?php if ($key == "Row Model") { ?>
-                    <span class="sidebarLinkSelected">Row Model</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-model/">Row Model</a>
-                <?php } ?>
-
-                <?php if ($key == "Data Export") { ?>
-                    <span class="sidebarLinkSelected">CSV Export</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-export/">CSV Export</a>
-                <?php } ?>
-
-                <?php if ($key == "RTL") { ?>
-                    <span class="sidebarLinkSelected">RTL</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-rtl/">RTL</a>
-                <?php } ?>
-
-                <?php if ($key == "Icons") { ?>
-                    <span class="sidebarLinkSelected">Icons</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-icons/">Icons</a>
-                <?php } ?>
-
-                <?php if ($key == "Overlays") { ?>
-                    <span class="sidebarLinkSelected">Overlays</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-overlays/">Overlays</a>
-                <?php } ?>
-
-                <?php if ($key == "For Print") { ?>
-                    <span class="sidebarLinkSelected">For Print</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-for-print/">For Print</a>
-                <?php } ?>
 
                 <? /* BEGIN ENTERPRISE FEATURES */ ?>
 
-                <?php if ($key == "Excel Export") { ?>
-                    <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Excel Export</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-excel/"><img
-                                src="../images/enterprise.png"/> Excel Export</a>
-                <?php } ?>
-
-                <?php if ($key == "Viewport") { ?>
-                    <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Viewport</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-viewport/"><img
-                                src="../images/enterprise.png"/> Viewport</a>
-                <?php } ?>
-
-                <?php if ($key == "Data Functions") { ?>
-                    <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Data Functions</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-data-functions/"><img
-                                src="../images/enterprise.png"/> Data Functions</a>
-                <?php } ?>
-
-                <?php if ($key == "Grouping") { ?>
-                    <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Grouping Rows</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-grouping/"><img
-                                src="../images/enterprise.png"/> Grouping Rows</a>
-                <?php } ?>
-
-                <?php if ($key == "Aggregation") { ?>
-                    <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Aggregation</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-aggregation/"><img
-                                src="../images/enterprise.png"/> Aggregation</a>
-                <?php } ?>
-
-                <?php if ($key == "Pivoting") { ?>
-                    <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Pivoting</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-pivoting/"><img
-                                src="../images/enterprise.png"/> Pivoting</a>
-                <?php } ?>
-
-                <?php if ($key == "Tool Panel") { ?>
-                    <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Tool Panel</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-tool-panel/"><img
-                                src="../images/enterprise.png"/> Tool Panel</a>
-                <?php } ?>
-
-                <?php if ($key == "Clipboard") { ?>
-                    <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Clipboard</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-clipboard/"><img
-                                src="../images/enterprise.png"/> Clipboard</a>
-                <?php } ?>
-
-                <?php if ($key == "Column Menu") { ?>
-                    <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Column Menu</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-column-menu/"><img
-                                src="../images/enterprise.png"/> Column Menu</a>
-                <?php } ?>
-
-                <?php if ($key == "Context Menu") { ?>
-                    <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Context Menu</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-context-menu/"><img
-                                src="../images/enterprise.png"/> Context Menu</a>
-                <?php } ?>
-
-                <?php if ($key == "Range Selection") { ?>
-                    <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Range Selection</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-range-selection/"><img
-                                src="../images/enterprise.png"/> Range Selection</a>
-                <?php } ?>
-
-                <?php if ($key == "Status Bar") { ?>
-                    <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Status Bar</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-status-bar/"><img
-                                src="../images/enterprise.png"/> Status Bar</a>
-                <?php } ?>
-
-                <?php if ($key == "Set Filtering") { ?>
-                    <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> Set Filtering</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-set-filtering/"><img
-                                src="../images/enterprise.png"/> Set Filtering</a>
-                <?php } ?>
-
-                <?php if ($key == "License Key") { ?>
-                    <span class="sidebarLinkSelected"><img src="../images/enterprise.png"/> License Key</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-set-license/"><img
-                                src="../images/enterprise.png"/> License Key</a>
-                <?php } ?>
+                <?php menuItemEnterprise($key, $rootFolder, 'Excel Export', 'Excel Export', 'javascript-grid-excel'); ?>
+                <?php menuItemEnterprise($key, $rootFolder, 'Viewport', 'Viewport', 'javascript-grid-viewport'); ?>
+                <?php menuItemEnterprise($key, $rootFolder, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions'); ?>
+                <?php menuItemEnterprise($key, $rootFolder, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping'); ?>
+                <?php menuItemEnterprise($key, $rootFolder, 'Aggregation', 'Aggregation', 'javascript-grid-aggregation'); ?>
+                <?php menuItemEnterprise($key, $rootFolder, 'Pivoting', 'Pivoting', 'javascript-grid-pivoting'); ?>
+                <?php menuItemEnterprise($key, $rootFolder, 'Tool Panel', 'Tool Panel', 'javascript-grid-tool-panel'); ?>
+                <?php menuItemEnterprise($key, $rootFolder, 'Clipboard', 'Clipboard', 'javascript-grid-clipboard'); ?>
+                <?php menuItemEnterprise($key, $rootFolder, 'Column Menu', 'Column Menu', 'javascript-grid-column-menu'); ?>
+                <?php menuItemEnterprise($key, $rootFolder, 'Context Menu', 'Context Menu', 'javascript-grid-context-menu'); ?>
+                <?php menuItemEnterprise($key, $rootFolder, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection'); ?>
+                <?php menuItemEnterprise($key, $rootFolder, 'Status Bar', 'Status Bar', 'javascript-grid-status-bar'); ?>
+                <?php menuItemEnterprise($key, $rootFolder, 'Set Filtering', 'Set Filtering', 'javascript-grid-set-filtering'); ?>
+                <?php menuItemEnterprise($key, $rootFolder, 'License Key', 'License Key', 'javascript-grid-set-license'); ?>
+ 
             </div>
 
             <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "themes") { ?> active<?php } ?>"
@@ -496,44 +254,13 @@ function menuItem($key, $rootFolder, $localKey, $name, $url) {
             </div>
 
             <div class="docsMenu-content">
-                <?php if ($key == "Styling") { ?>
-                    <span class="sidebarLinkSelected">Overview</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-styling/">Overview</a>
-                <?php } ?>
-
-                <?php if ($key == "Fresh Theme") { ?>
-                    <span class="sidebarLinkSelected">Fresh Theme</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/fresh-theme.php">Fresh
-                        Theme</a>
-                <?php } ?>
-                <?php if ($key == "Blue Theme") { ?>
-                    <span class="sidebarLinkSelected">Blue Theme</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/blue-theme.php">Blue
-                        Theme</a>
-                <?php } ?>
-                <?php if ($key == "Dark Theme") { ?>
-                    <span class="sidebarLinkSelected">Dark Theme</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/dark-theme.php">Dark
-                        Theme</a>
-                <?php } ?>
-                <?php if ($key == "Material Theme") { ?>
-                    <span class="sidebarLinkSelected">Material Theme</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/material-theme.php">Material
-                        Theme</a>
-                <?php } ?>
-                <?php if ($key == "Bootstrap Theme") { ?>
-                    <span class="sidebarLinkSelected">Bootstrap Theme</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-themes/bootstrap-theme.php">Bootstrap
-                        Theme</a>
-                <?php } ?>
+                <?php menuItem($key, $rootFolder, 'Styling', 'Overview', 'javascript-grid-styling'); ?>
+                <?php menuItem($key, $rootFolder, 'Fresh Theme', 'Fresh Theme', 'javascript-grid-themes/fresh-theme.php'); ?>
+                <?php menuItem($key, $rootFolder, 'Blue Theme', 'Blue Theme', 'javascript-grid-themes/blue-theme.php'); ?>
+                <?php menuItem($key, $rootFolder, 'Dark Theme', 'Dark Theme', 'javascript-grid-themes/dark-theme.php'); ?>
+                <?php menuItem($key, $rootFolder, 'Material Theme', 'Material Theme', 'javascript-grid-themes/material-theme.php'); ?>
+                <?php menuItem($key, $rootFolder, 'Bootstrap Theme', 'Bootstrap Theme', 'javascript-grid-themes/bootstrap-theme.php'); ?>
             </div>
-
 
             <div class="docsMenu-header<?php if ($pageGroup == "components") { ?> active<?php } ?>"
                  onclick="javascript: this.classList.toggle('active');">
@@ -542,41 +269,11 @@ function menuItem($key, $rootFolder, $localKey, $name, $url) {
             </div>
 
             <div class="docsMenu-content">
-
-                <?php if ($key == "Components") { ?>
-                    <span class="sidebarLinkSelected">Overview</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-components/">Overview</a>
-                <?php } ?>
-
-                <?php if ($key == "Cell Rendering") { ?>
-                    <span class="sidebarLinkSelected">Cell Renderer</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-rendering/">Cell
-                        Renderer</a>
-                <?php } ?>
-
-                <?php if ($key == "Cell Editor") { ?>
-                    <span class="sidebarLinkSelected">Cell Editor</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-cell-editor/">Cell
-                        Editor</a>
-                <?php } ?>
-
-                <?php if ($key == "Filter Component") { ?>
-                    <span class="sidebarLinkSelected">Filter Components</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-filter-component/">Filter
-                        Components</a>
-                <?php } ?>
-
-                <?php if ($key == "Header Rendering") { ?>
-                    <span class="sidebarLinkSelected">Header Components</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-header-rendering/">Header
-                        Components</a>
-                <?php } ?>
-
+                <?php menuItem($key, $rootFolder, 'Components', 'Overview', 'ag-grid-components'); ?>
+                <?php menuItem($key, $rootFolder, 'Cell Rendering', 'Cell Rendering', 'javascript-grid-cell-rendering'); ?>
+                <?php menuItem($key, $rootFolder, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor'); ?>
+                <?php menuItem($key, $rootFolder, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component'); ?>
+                <?php menuItem($key, $rootFolder, 'Header Rendering', 'Header Components', 'javascript-grid-header-rendering'); ?>
             </div>
 
             <div class="docsMenu-header<?php if ($pageGroup == "row_models") { ?> active<?php } ?>"
@@ -586,30 +283,10 @@ function menuItem($key, $rootFolder, $localKey, $name, $url) {
             </div>
 
             <div class="docsMenu-content">
-                <?php if ($key == "Row Models") { ?>
-                    <span class="sidebarLinkSelected">Overview</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-row-models/">Overview</a>
-                <?php } ?>
-
-                <?php if ($key == "Datasource") { ?>
-                    <span class="sidebarLinkSelected">Datasource</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-datasource/">Datasource</a>
-                <?php } ?>
-
-                <?php if ($key == "Pagination") { ?>
-                    <span class="sidebarLinkSelected">Pagination</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-pagination/">Pagination</a>
-                <?php } ?>
-
-                <?php if ($key == "Virtual Paging / Infinite Scrolling") { ?>
-                    <span class="sidebarLinkSelected">Virtual Paging<br/>&nbsp;& Infinite Scrolling</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-virtual-paging/">Virtual
-                        Paging<br/>&nbsp;& Infinite Scrolling</a>
-                <?php } ?>
+                <?php menuItem($key, $rootFolder, 'Row Models', 'Overview', 'javascript-grid-row-models'); ?>
+                <?php menuItem($key, $rootFolder, 'Datasource', 'Datasource', 'javascript-grid-datasource'); ?>
+                <?php menuItem($key, $rootFolder, 'Pagination', 'Pagination', 'javascript-grid-pagination'); ?>
+                <?php menuItem($key, $rootFolder, 'Virtual Paging / Infinite Scrolling', 'Virtual Paging & Infinite Scrolling', 'javascript-grid-virtual-paging'); ?>
             </div>
 
             <div class="docsMenu-header<?php if ($pageGroup == "examples") { ?> active<?php } ?>"
@@ -619,24 +296,9 @@ function menuItem($key, $rootFolder, $localKey, $name, $url) {
             </div>
 
             <div class="docsMenu-examples">
-                <?php if ($key == "Styled Report") { ?>
-                    <span class="sidebarLinkSelected">Styled Report</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>example-account-report/">Styled Report</a>
-                <?php } ?>
-
-                <?php if ($key == "File Browser") { ?>
-                    <span class="sidebarLinkSelected">File Browser</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>example-file-browser/">File Browser</a>
-                <?php } ?>
-
-                <?php if ($key == "Expressions and Context") { ?>
-                    <span class="sidebarLinkSelected">Expressions and Context</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>example-expressions-and-context/">Expressions
-                        and Context</a>
-                <?php } ?>
+                <?php menuItem($key, $rootFolder, 'Styled Report', 'Styled Report', 'example-account-report'); ?>
+                <?php menuItem($key, $rootFolder, 'File Browser', 'File Browser', 'example-file-browser'); ?>
+                <?php menuItem($key, $rootFolder, 'Expressions and Context', 'Expressions and Context', 'example-expressions-and-context'); ?>
             </div>
 
             <?php if ($version == 'latest') { ?>
@@ -647,23 +309,9 @@ function menuItem($key, $rootFolder, $localKey, $name, $url) {
                 </div>
 
                 <div class="docsMenu-content">
-                    <?php if ($key == "Change Log") { ?>
-                        <span class="sidebarLinkSelected">Change Log</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>change-log/changeLogIndex.php">Change
-                            Log</a>
-                    <?php } ?>
-                    <?php if ($key == "Roadmap") { ?>
-                        <span class="sidebarLinkSelected">Feature Roadmap</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-roadmap/">Feature
-                            Roadmap</a>
-                    <?php } ?>
-                    <?php if ($key == "Intermediate Tutorial") { ?>
-                        <span class="sidebarLinkSelected">Tutorials</span>
-                    <?php } else { ?>
-                        <a class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-tutorials/">Tutorials</a>
-                    <?php } ?>
+                    <?php menuItem($key, $rootFolder, 'Change Log', 'Change Log', 'change-log/changeLogIndex.php'); ?>
+                    <?php menuItem($key, $rootFolder, 'Roadmap', 'Roadmap', 'change-log/changeLogIndex.php'); ?>
+                    <?php menuItem($key, $rootFolder, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials'); ?>
                     <a class="sidebarLink" href="/archive/">Archive Docs</a>
                 </div>
             <?php } ?>
