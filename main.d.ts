@@ -102,19 +102,19 @@ export * from './dist/lib/rendering/renderedRow';
 export * from './dist/lib/rendering/rowRenderer';
 export * from './dist/lib/rendering/valueFormatterService';
 
-export * from './dist/lib/rowControllers/inMemory/filterStage';
-export * from './dist/lib/rowControllers/inMemory/flattenStage';
-export * from './dist/lib/rowControllers/inMemory/inMemoryRowModel';
-export * from './dist/lib/rowControllers/inMemory/inMemoryNodeManager';
-export * from './dist/lib/rowControllers/inMemory/sortStage';
+export * from './dist/lib/rowModels/inMemory/filterStage';
+export * from './dist/lib/rowModels/inMemory/flattenStage';
+export * from './dist/lib/rowModels/inMemory/inMemoryRowModel';
+export * from './dist/lib/rowModels/inMemory/inMemoryNodeManager';
+export * from './dist/lib/rowModels/inMemory/sortStage';
 
-export * from './dist/lib/rowControllers/infinateScrolling/virtualPageRowModel';
-export * from './dist/lib/rowControllers/infinateScrolling/virtualPageCache';
-export * from './dist/lib/rowControllers/infinateScrolling/virtualPage';
+export * from './dist/lib/rowModels/infinateScrolling/virtualPageRowModel';
+export * from './dist/lib/rowModels/infinateScrolling/virtualPageCache';
+export * from './dist/lib/rowModels/infinateScrolling/virtualPage';
 
-export * from './dist/lib/rowControllers/floatingRowModel';
-export * from './dist/lib/rowControllers/paginationController';
-export * from './dist/lib/rowControllers/iDatasource';
+export * from './dist/lib/rowModels/floatingRowModel';
+export * from './dist/lib/rowModels/paginationController';
+export * from './dist/lib/rowModels/iDatasource';
 
 export * from './dist/lib/styling/stylingService';
 
