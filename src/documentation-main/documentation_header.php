@@ -49,11 +49,11 @@ if (strcmp($version, 'latest') == 0) {
     $rootFolder = '/archive/' . $version . '/';
 }
 
-function menuItem($key, $rootFolder, $localKey, $name) {
+function menuItem($key, $rootFolder, $localKey, $name, $url) {
     if ($key == $localKey) {
         print('<span class="sidebarLinkSelected">'.$name.'</span>');
     } else {
-        print('<a class="sidebarLink" href="'.$rootFolder.'ag-grid-features/">'.$name.'</a>');
+        print('<a class="sidebarLink" href="'.$rootFolder.$url.'/">'.$name.'</a>');
     }
 }
 
@@ -165,12 +165,6 @@ function menuItem($key, $rootFolder, $localKey, $name) {
 
                 </div>
 
-                <?php if ($key == "Width & Height") { ?>
-                    <span class="sidebarLinkSelected">Width & Height</span>
-                <?php } else { ?>
-                    <a class="sidebarLink" href="<?php print($rootFolder) ?>javascript-grid-width-and-height/">Width &
-                        Height</a>
-                <?php } ?>
             </div>
             <div class="docsMenu-header<?php if ($pageGroup == "interfacing") { ?> active<?php } ?>"
                  onclick="javascript: this.classList.toggle('active');">
@@ -231,9 +225,10 @@ function menuItem($key, $rootFolder, $localKey, $name) {
 
             <div class="docsMenu-content">
 
-                <?php menuItem($key, $rootFolder, 'Features', 'Overview'); ?>
-                <?php menuItem($key, $rootFolder, 'Sorting', 'Sorting'); ?>
-                <?php menuItem($key, $rootFolder, 'Filtering', 'Filtering'); ?>
+                <?php menuItem($key, $rootFolder, 'Features', 'Overview', 'ag-grid-features'); ?>
+                <?php menuItem($key, $rootFolder, 'Width & Height', 'Width & Height', 'javascript-grid-width-and-height'); ?>
+                <?php menuItem($key, $rootFolder, 'Sorting', 'Sorting', 'javascript-grid-sorting'); ?>
+                <?php menuItem($key, $rootFolder, 'Filtering', 'Filtering', 'javascript-grid-filtering'); ?>
 
                 <?php if ($key == "Selection") { ?>
                     <span class="sidebarLinkSelected">Selection</span>
