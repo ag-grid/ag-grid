@@ -144,13 +144,13 @@ if (strcmp($version , 'latest') == 0) {
                     <?php if ($key == "Angular SystemJS") { ?>
                         <span ng-if="isFramework('angular')" class="sidebarLinkSelected" style="padding-left: 15px">SystemJS</span>
                     <?php } else { ?>
-                        <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-angular-systemjs/" style="padding-left: 15px">SystemJS</a>
+                        <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php /*print($rootFolder) */?>ag-grid-angular-systemjs/" style="padding-left: 15px">SystemJS</a>
                     <?php } ?>
 
                     <?php if ($key == "Angular Webpack") { ?>
                         <span ng-if="isFramework('angular')" class="sidebarLinkSelected" style="padding-left: 15px">Webpack</span>
                     <?php } else { ?>
-                        <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php print($rootFolder) ?>ag-grid-angular-webpack/" style="padding-left: 15px">Webpack</a>
+                        <a ng-if="isFramework('angular')" class="sidebarLink" href="<?php /*print($rootFolder) */?>ag-grid-angular-webpack/" style="padding-left: 15px">Webpack</a>
                     <?php } ?>
 
                     <?php if ($key == "Angular CLI") { ?>

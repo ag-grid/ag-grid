@@ -344,7 +344,8 @@ var defaultCols = [
                 headerTooltip: "Example tooltip for Language",
                 filterParams: {
                     selectAllOnMiniFilter: true,
-                    newRowsAction: 'keep'
+                    newRowsAction: 'keep',
+                    clearButton: true
                 },
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
@@ -371,7 +372,8 @@ var defaultCols = [
                     cellRenderer: CountryCellRenderer,
                     cellHeight: 20,
                     newRowsAction: 'keep',
-                    selectAllOnMiniFilter: true
+                    selectAllOnMiniFilter: true,
+                    clearButton: true
                 },
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
@@ -392,7 +394,8 @@ var defaultCols = [
                 },
                 filterParams: {
                     selectAllOnMiniFilter: true,
-                    newRowsAction: 'keep'
+                    newRowsAction: 'keep',
+                    clearButton: true
                 },
                 enableRowGroup: true,
                 enablePivot: true,
@@ -416,7 +419,8 @@ var defaultCols = [
                 filterParams: {
                     cellRenderer: booleanFilterCellRenderer,
                     selectAllOnMiniFilter: true,
-                    newRowsAction: 'keep'
+                    newRowsAction: 'keep',
+                    clearButton: true
                 }
             }
         ]
@@ -489,6 +493,9 @@ months.forEach(function (month) {
         },
         newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer,
         filterCellRenderer: currencyRenderer,
+        filterParams:{
+            clearButton: true
+        },
         cellStyle: {"text-align": "right"}
     })
 });
