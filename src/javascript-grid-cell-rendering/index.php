@@ -3,6 +3,7 @@ $key = "Cell Rendering";
 $pageTitle = "ag-Grid Cell Rendering";
 $pageDescription = "You can customise every cell in ag-Grid. This is done by providing cell renderers. This page describe creating cell renderers.";
 $pageKeyboards = "ag-Grid Cell Renderers";
+$pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
@@ -404,6 +405,22 @@ colDef.cellRenderer = function(params) {
 };
 </pre>
 </p>
+
+<div ng-if="isFramework('angular')">
+    <?php include './angular.php';?>
+</div>
+
+<div ng-if="isFramework('aurelia')">
+    <?php include './aurelia.php';?>
+</div>
+
+<div ng-if="isFramework('react')">
+    <?php include './react.php';?>
+</div>
+
+<div ng-if="isFramework('vue')">
+    <?php include './vue.php';?>
+</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
 

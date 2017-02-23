@@ -3,7 +3,7 @@ $key = "Blue Theme";
 $pageTitle = "ag-Grid Blue Theme Data Grid";
 $pageDescription = "ag-Grid Blue Theme Data Grid";
 $pageKeyboards = "ag-Grid Blue Theme Data Grid";
-$pageGroup = "feature";
+$pageGroup = "themes";
 include '../documentation-main/documentation_header.php';
 ?>
 

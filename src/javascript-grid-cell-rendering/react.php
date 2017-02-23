@@ -1,11 +1,3 @@
-<?php
-$key = "Cell Rendering React";
-$pageTitle = "ag-Grid Cell Rendering React";
-$pageDescription = "You can customise every cell in ag-Grid. This is done by providing cell renderers. This page describe creating cell renderers.";
-$pageKeyboards = "ag-Grid Cell Renderers React";
-include '../documentation-main/documentation_header.php';
-?>
-
 <!-- React from here on -->
 <h2 id="reactCellRendering">
     <img src="../images/react_large.png" style="width: 60px;"/>
@@ -124,5 +116,3 @@ class NameCellRenderer extends React.Component {
     a new one if it tries to refresh the cell. If you do implement it, then it's up to your React
     components <i>refresh()</i> method to update the state of your component.
 </p>
-
-<?php include '../documentation-main/documentation_footer.php';?>

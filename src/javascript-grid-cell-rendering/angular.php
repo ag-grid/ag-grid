@@ -1,11 +1,3 @@
-<?php
-$key = "Cell Rendering Angular";
-$pageTitle = "ag-Grid Cell Rendering Angular";
-$pageDescription = "You can customise every cell in ag-Grid. This is done by providing cell renderers. This page describe creating cell renderers.";
-$pageKeyboards = "ag-Grid Cell Renderers Angular";
-include '../documentation-main/documentation_header.php';
-?>
-
 <!-- Angular from here -->
 <h2 id="ng2CellRendering">
     <img src="../images/angular2_large.png" style="width: 60px;"/>
@@ -126,6 +118,3 @@ the grid will know the framework to use is Angular.
 
 <note>The full <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers
     and so on, as well as examples on using Angular Components with both CellEditors and Filters</note>
-
-<?php include '../documentation-main/documentation_footer.php';?>
-

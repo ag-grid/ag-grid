@@ -1,13 +1,5 @@
-<?php
-$key = "Header Rendering React";
-$pageTitle = "ag-Grid Header Rendering React";
-$pageDescription = "";
-$pageKeyboards = "ag-Grid Header Rendering React";
-include '../documentation-main/documentation_header.php';
-?>
-
 <h2 id="react-header-rendering">
-    <img src="../images/react_large.png.png" style="width: 60px;"/>
+    <img src="../images/react_large.png" style="width: 60px;"/>
     React Header Rendering
 </h2>
 
@@ -48,5 +40,3 @@ include '../documentation-main/documentation_header.php';
     The interface <i>IHeaderReactComp</i> is empty. The params object (IHeaderGroupCompParams) is passed as a
     constructor to your React component.
 </p>
-
-<?php include '../documentation-main/documentation_footer.php';?>

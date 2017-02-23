@@ -3,6 +3,7 @@ $key = "Header Rendering";
 $pageTitle = "ag-Grid Header Rendering";
 $pageDescription = "ag-Grid Header Rendering";
 $pageKeyboards = "ag-Grid Header Rendering";
+$pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
@@ -580,6 +581,22 @@ columnGroup.removeEventListener('expandedChanged', listener);</pre>
 
         <show-example example="example1"></show-example>
 
+    </div>
+
+    <div ng-if="isFramework('angular')">
+        <?php include './angular.php';?>
+    </div>
+
+    <div ng-if="isFramework('aurelia')">
+        <?php include './aurelia.php';?>
+    </div>
+
+    <div ng-if="isFramework('react')">
+        <?php include './react.php';?>
+    </div>
+
+    <div ng-if="isFramework('vue')">
+        <?php include './vue.php';?>
     </div>
 
 </div>

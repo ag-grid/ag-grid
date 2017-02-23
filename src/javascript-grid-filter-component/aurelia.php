@@ -1,11 +1,3 @@
-<?php
-$key = "Filtering Aurelia";
-$pageTitle = "ag-Grid Filtering Aurelia";
-$pageDescription = "ag-Grid Filtering Aurelia";
-$pageKeyboards = "ag-Grid Filtering Aurelia";
-include '../documentation-main/documentation_header.php';
-?>
-
 <p>
     <!-- start of aurelia -->
     <h2 id="aureliaFiltering">
@@ -121,6 +113,3 @@ getPartialMatchFilter() {
     <show-example example="../aurelia-example/#/filter/true"
                   jsfile="../aurelia-example/components/filter-example/filter-example.ts"
                   html="../aurelia-example/components/filter-example/filter-example.html"></show-example>
-</div>
-
-<?php include '../documentation-main/documentation_footer.php';?>

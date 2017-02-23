@@ -1,14 +1,4 @@
-<?php
-$key = "Filtering React";
-$pageTitle = "ag-Grid Filtering React";
-$pageDescription = "ag-Grid Filtering React";
-$pageKeyboards = "ag-Grid Filtering React";
-include '../documentation-main/documentation_header.php';
-?>
-
-<div>
-
-    <h2 id="reactFiltering">
+   <h2 id="reactFiltering">
         <img src="../images/react.png" style="width: 60px"/>
         React Filtering
     </h2>
@@ -147,7 +137,3 @@ laterOnInYourApplicationSomewhere() {
     reactFilterInstance.myMethod();
 }</pre>
     </p>
-
-</div>
-
-<?php include '../documentation-main/documentation_footer.php';?>

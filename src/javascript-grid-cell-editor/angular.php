@@ -1,13 +1,3 @@
-<?php
-$key = "Cell Editing Angular";
-$pageTitle = "ag-Grid Cell Editing Angular";
-$pageDescription = "You can integrate your own editors into ag-Grid that will bind into the grids navigation.";
-$pageKeyboards = "ag-Grid Cell Editors Angular";
-include '../documentation-main/documentation_header.php';
-?>
-
-<div>
-
     <h2 id="ng2CellEditing">
         <img src="../images/angular2_large.png" style="width: 60px;"/>
         Angular Cell Editing
@@ -165,7 +155,3 @@ colDef = {
     <show-example example="../ng2-example/index.html?fromDocs=true&example=editor-component"
                   jsfile="../ng2-example/app/editor-component.component.ts"
                   html="../ng2-example/app/editor-component.component.html"></show-example>
-
-</div>
-
-<?php include '../documentation-main/documentation_footer.php';?>

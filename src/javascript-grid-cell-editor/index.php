@@ -3,7 +3,7 @@ $key = "Cell Editor";
 $pageTitle = "ag-Grid Cell Editor Component";
 $pageDescription = "You can integrate your own editors into ag-Grid that will bind into the grids navigation.";
 $pageKeyboards = "ag-Grid Cell Editor Component";
-$pageGroup = "feature";
+$pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
@@ -204,5 +204,21 @@ colDef.cellEditorParams = {
 </p>
 
 <show-example example="exampleEditorComponent"></show-example>
+
+<div ng-if="isFramework('angular')">
+    <?php include './angular.php';?>
+</div>
+
+<div ng-if="isFramework('aurelia')">
+    <?php include './aurelia.php';?>
+</div>
+
+<div ng-if="isFramework('react')">
+    <?php include './react.php';?>
+</div>
+
+<div ng-if="isFramework('vue')">
+    <?php include './vue.php';?>
+</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

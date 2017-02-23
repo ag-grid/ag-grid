@@ -3,7 +3,7 @@ $key = "Dark Theme";
 $pageTitle = "ag-Grid Dark Theme";
 $pageDescription = "ag-Grid Dark Theme";
 $pageKeyboards = "ag-Grid Dark Theme";
-$pageGroup = "feature";
+$pageGroup = "themes";
 include '../documentation-main/documentation_header.php';
 ?>
 

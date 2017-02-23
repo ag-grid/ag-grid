@@ -1,11 +1,3 @@
-<?php
-$key = "Filtering Angular";
-$pageTitle = "ag-Grid Filtering Angular";
-$pageDescription = "ag-Grid Filtering Angular";
-$pageKeyboards = "ag-Grid Filtering Angular";
-include '../documentation-main/documentation_header.php';
-?>
-
 <p>
 
     <!-- start of angular -->
@@ -188,5 +180,3 @@ laterOnInYourApplicationSomewhere() {
     <show-example example="../ng2-example/index.html?fromDocs=true&example=filter-component"
                   jsfile="../ng2-example/app/filter-component.component.ts"
                   html="../ng2-example/app/filter-component.component.html"></show-example>
-
-<?php include '../documentation-main/documentation_footer.php';?>

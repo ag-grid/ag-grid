@@ -1,11 +1,3 @@
-<?php
-$key = "Filtering VueJS";
-$pageTitle = "ag-Grid Filtering";
-$pageDescription = "ag-Grid Filtering";
-$pageKeyboards = "ag-Grid Filtering";
-include '../documentation-main/documentation_header.php';
-?>
-
 <div>
     <!-- start of vue -->
     <h2 id="vueFiltering">
@@ -193,5 +185,3 @@ laterOnInYourApplicationSomewhere() {
                   exampleHeight="525px"></show-example>
 
 </div>
-
-<?php include '../documentation-main/documentation_footer.php';?>

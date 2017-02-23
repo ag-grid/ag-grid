@@ -59,15 +59,16 @@
 .sidebarLink:hover {
     text-decoration: none;
     color: #333;
+    transition: all .3s ease-in-out;
 }
 
 .sidebarLinkSelected {
     padding: 2px 4px 2px 10px;
-    /*border-bottom: 1px solid #e8e8e8;*/
     display: block;
-    background-color: #eee;
+    font-weight: bold;
     color: #333;
     font-size: 14px;
+    border-radius: 3px;
 }
 
 .codeComment {
@@ -76,6 +77,7 @@
 
 h4 {
     margin: 0;
+    font-size: 16px;
 }
 
 /* collapsable sidebar items */
@@ -87,6 +89,7 @@ h4 {
     border-radius: 3px;
     padding: 10px 30px 10px 10px;
     margin-top: 10px;
+    transition: all .3s ease-in-out;
 }
 .docsMenu-header .fa {
     position: absolute;
@@ -96,6 +99,9 @@ h4 {
     transition: all .3s ease-in-out;
     color: #999;
 }
+.docsMenu-header.active, .docsMenu-header:hover {
+    background: #eee;
+}
 .docsMenu-header.active .fa {
     transform: rotate(90deg)
 }
@@ -103,6 +109,7 @@ h4 {
     max-height: 0;
     overflow: hidden;
     transition: all .5s ease-in-out;
+    margin: 5px 0 10px;
 }
 .docsMenu-header.active + div{
     max-height: 500px;
@@ -161,6 +168,7 @@ h4 {
 
 #frameworkContext {
   width: 100%;
+    margin: 5px 0 10px;
 }
 
 .header-row .documentation-h2 {
@@ -221,4 +229,8 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 .cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
     margin-top: 5px !important;
     padding: 5px 27px 6px 27px; !important;
+}
+
+.framworkIcon-small {
+    width: 16px;
 }

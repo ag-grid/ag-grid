@@ -1,13 +1,3 @@
-<?php
-$key = "Cell Editing VueJS";
-$pageTitle = "ag-Grid Cell Editing VueJS";
-$pageDescription = "You can integrate your own editors into ag-Grid that will bind into the grids navigation.";
-$pageKeyboards = "ag-Grid Cell Editors VueJS";
-include '../documentation-main/documentation_header.php';
-?>
-
-<div>
-
     <!-- start of vue -->
     <h2 id="vueCellEditing">
         <img src="../images/vue_large.png" style="width: 60px;"/>
@@ -184,7 +174,3 @@ export default {
     <show-example url="../vue-examples/#/editor"
                   jsfile="../vue-examples/src/editor-component-example/EditorComponentExample.vue"
                   exampleHeight="525px"></show-example>
-
-</div>
-
-<?php include '../documentation-main/documentation_footer.php';?>
