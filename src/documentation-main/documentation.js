@@ -47,6 +47,13 @@
             return $scope.frameworkContext;
         }
 
+        $scope.divIsReady = function (divId) {
+            console.log(document.getElementById(divId));
+            if(document.getElementById(divId)) {
+                return true;
+            }
+            return false;
+        }
         $scope.docsControllerReady = true;
     }]);
 
@@ -200,7 +207,7 @@
                         s.text = code;
                     }
                     document.head.appendChild(s);
-                    elem.remove();
+                    // elem.remove();
                 }
             }
         };

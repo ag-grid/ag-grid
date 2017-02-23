@@ -92,7 +92,7 @@ include '../documentation-main/documentation_header.php';
                     <i class="fa fa-arrow-right" aria-hidden="true"></i>
                 </div>
 
-                <div ng-if="reactOpen || frameworkContext==='react'"
+                <div
                      ng-class="{'collapsableDocs-content': isFramework('all')}">
                     <?php include './react.php'; ?>
                 </div>
@@ -110,6 +110,8 @@ include '../documentation-main/documentation_header.php';
                     <i class="fa fa-arrow-right" aria-hidden="true"></i>
                 </div>
 
+                <!-- we don't lazy load this one as the nature of the react file means
+                     it'll execute the react demo script regardless-->
                 <div ng-if="aureliaOpen || frameworkContext==='aurelia'"
                      ng-class="{'collapsableDocs-content': isFramework('all')}">
                     <?php include './aurelia.php'; ?>
