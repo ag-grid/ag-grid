@@ -1,7 +1,7 @@
 <div>
 
     <h1 ng-if="!isFramework('all')" id="implementing-the-web-components-datagrid"><img style="vertical-align: middle" src="/images/webcomponents.png"
-                                                                                        height="25px"/> Getting Started</h1>
+                                                                                        height="25px"/> Overview</h1>
 
     <p>
         <a href="http://webcomponents.org/">Web Components</a> are reusable user interface widgets that are created

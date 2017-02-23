@@ -1,7 +1,7 @@
 <div>
 
     <h1 ng-if="!isFramework('all')"><img style="vertical-align: middle" src="/images/react_small.png"
-                                                                                  height="25px"/> Getting Started</h1>
+                                                                                  height="25px"/> Overview</h1>
 
     <p>
         If you are building a React application then you have the choice between A) using the plain JavaScript version

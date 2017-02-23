@@ -1,5 +1,5 @@
 <h1 ng-if="!isFramework('all')" id="implementing-the-angularjs-datagrid"><img style="vertical-align: middle" src="/images/angularjs.png"
-                                                  height="25px"/> Getting Started</h1>
+                                                  height="25px"/> Overview</h1>
 
 <p>
     When using AngularJS 1.x, you have the choice of using the bundled version of ag-Grid

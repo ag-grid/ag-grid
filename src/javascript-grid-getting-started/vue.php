@@ -1,6 +1,6 @@
 <div>
 
-    <h1 ng-if="!isFramework('all')" id="implementing-the-vuejs-datagrid"><img style="vertical-align: middle" src="/images/vue_small.png" height="25px"/> Getting Started</h1>
+    <h1 ng-if="!isFramework('all')" id="implementing-the-vuejs-datagrid"><img style="vertical-align: middle" src="/images/vue_small.png" height="25px"/> Overview</h1>
 
     <p>
         If you are building an VueJS application then you have the choice between A) using the plain JavaScript version

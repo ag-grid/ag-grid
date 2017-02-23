@@ -14,11 +14,11 @@ include '../documentation-main/documentation_header.php';
                  ng-click="toggleDiv('jsOpen')"
                  class="collapsableDocs-header"
                  onclick="javascript: this.classList.toggle('active');">
-                <h4><img style="vertical-align: middle" src="/images/javascript.png" height="20px"/> Getting Started - JavaScript</h4>
+                <h4><img style="vertical-align: middle" src="/images/javascript.png" height="20px"/> Overview -  JavaScript</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
 
-            <div ng-if="jsOpen" ng-class="{'collapsableDocs-content': isFramework('all')}">
+            <div ng-if="jsOpen || frameworkContext==='javascript'" ng-class="{'collapsableDocs-content': isFramework('all')}">
                 <?php include './javascript.php'; ?>
             </div>
         </div>
@@ -30,11 +30,11 @@ include '../documentation-main/documentation_header.php';
                  ng-click="toggleDiv('angularJsOpen')"
                  class="collapsableDocs-header"
                  onclick="javascript: this.classList.toggle('active');">
-                <h4><img style="vertical-align: middle" src="/images/angularjs.png" height="20px"/> Getting Started - AngularJS 1.x</h4>
+                <h4><img style="vertical-align: middle" src="/images/angularjs.png" height="20px"/> Overview -  AngularJS 1.x</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
 
-            <div ng-if="angularJsOpen" ng-class="{'collapsableDocs-content': isFramework('all')}">
+            <div ng-if="angularJsOpen || frameworkContext==='angularjs'" ng-class="{'collapsableDocs-content': isFramework('all')}">
                 <?php include './angularjs.php'; ?>
             </div>
         </div>
@@ -46,11 +46,11 @@ include '../documentation-main/documentation_header.php';
                  ng-click="toggleDiv('vueOpen')"
                  class="collapsableDocs-header"
                  onclick="javascript: this.classList.toggle('active');">
-                <h4><img style="vertical-align: middle" src="/images/vue_small.png" height="20px"/> Getting Started - VueJS</h4>
+                <h4><img style="vertical-align: middle" src="/images/vue_small.png" height="20px"/> Overview -  VueJS</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
 
-            <div ng-if="vueOpen" ng-class="{'collapsableDocs-content': isFramework('all')}">
+            <div ng-if="vueOpen || frameworkContext==='vue'" ng-class="{'collapsableDocs-content': isFramework('all')}">
                 <?php include './vue.php'; ?>
             </div>
         </div>
@@ -62,11 +62,11 @@ include '../documentation-main/documentation_header.php';
                  ng-click="toggleDiv('reactOpen')"
                  class="collapsableDocs-header"
                  onclick="javascript: this.classList.toggle('active');">
-                <h4><img style="vertical-align: middle" src="/images/react_small.png" height="20px"/> Getting Started - ReactJS</h4>
+                <h4><img style="vertical-align: middle" src="/images/react_small.png" height="20px"/> Overview -  ReactJS</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
 
-            <div ng-if="reactOpen" ng-class="{'collapsableDocs-content': isFramework('all')}">
+            <div ng-if="reactOpen || frameworkContext==='react'" ng-class="{'collapsableDocs-content': isFramework('all')}">
                 <?php include './react.php'; ?>
             </div>
         </div>
@@ -78,11 +78,11 @@ include '../documentation-main/documentation_header.php';
                  ng-click="toggleDiv('aureliaOpen')"
                  class="collapsableDocs-header"
                  onclick="javascript: this.classList.toggle('active');">
-                <h4><img style="vertical-align: middle" src="/images/aurelia_small.png" height="20px"/> Getting Started - Aurelia</h4>
+                <h4><img style="vertical-align: middle" src="/images/aurelia_small.png" height="20px"/> Overview -  Aurelia</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
 
-            <div ng-if="aureliaOpen" ng-class="{'collapsableDocs-content': isFramework('all')}">
+            <div ng-if="aureliaOpen || frameworkContext==='aurelia'" ng-class="{'collapsableDocs-content': isFramework('all')}">
                 <?php include './aurelia.php'; ?>
             </div>
         </div>
@@ -95,11 +95,11 @@ include '../documentation-main/documentation_header.php';
                  class="collapsableDocs-header"
                  onclick="javascript: this.classList.toggle('active');">
                 <h4><img style="vertical-align: middle" src="/images/webcomponents.png"
-                         height="20px"/> Getting Started - Web Components</h4>
+                         height="20px"/> Overview -  Web Components</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
 
-            <div ng-if="webcomponentsOpen"  ng-class="{'collapsableDocs-content': isFramework('all')}">
+            <div ng-if="webcomponentsOpen || frameworkContext==='webcomponents'"  ng-class="{'collapsableDocs-content': isFramework('all')}">
                 <?php include './webcomponents.php'; ?>
             </div>
         </div>

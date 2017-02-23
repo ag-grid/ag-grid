@@ -133,7 +133,7 @@ h4 {
     cursor: pointer;
     display: block;
     position: relative;
-    padding: 5px;
+    padding: 4px;
 }
 .collapsableDocs-header .fa {
     position: absolute;

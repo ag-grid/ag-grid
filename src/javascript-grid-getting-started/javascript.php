@@ -1,4 +1,4 @@
-<h2 ng-if="!isFramework('all')"><img style="vertical-align: middle" src="/images/javascript.png" height="25px"/> Getting Started</h2>
+<h2 ng-if="!isFramework('all')"><img style="vertical-align: middle" src="/images/javascript.png" height="25px"/> Overview</h2>
 
 <h3>Download ag-Grid</h3>
 
