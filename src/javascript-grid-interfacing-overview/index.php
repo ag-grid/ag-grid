@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The interface to ag-Grid is modelled around standard DOM elements. This gives ag-Grid a consistent
         feel to already existing DOM elements (nice for everyone). It also has the added benefit
-        of fitting nicely into Web Components, React and Angular.
+        of fitting nicely into Web Components and your framework.
     </p>
     <p>
         Each interaction with the grid can be broken down into the following categories:
@@ -514,8 +514,7 @@ myGrid.showToolPanel = true;
 
     <p>
         And that's it Doc, now you know how to interface with the grid. Go now and find out about all
-        the great attributes, properties, callbacks and events you can use. Interact
-        well. Be safe. Don't do drugs.
+        the great attributes, properties, callbacks and events you can use.
     </p>
 
 </div>

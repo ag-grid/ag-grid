@@ -11,8 +11,7 @@ include '../documentation-main/documentation_header.php';
         <h2 id="properties">Properties</h2>
 
         <p>
-            Below are listed all the properties of the grid. Remember you can add these properties
-            as follows:
+            Below are listed all the properties of the grid you can add.
         <p>
 
             <div ng-if="isFramework(['javascript','angularjs'])">

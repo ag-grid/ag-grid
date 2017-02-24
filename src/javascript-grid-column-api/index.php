@@ -49,17 +49,25 @@ include '../documentation-main/documentation_header.php';
             can be accessed.
         </p>
 
-        <h4 ng-if="isFramework('javascript')">
-            <img  src="/images/javascript.png" height="20"/>
-            Javascript
-        </h4>
-        <h4 ng-if="isFramework('angularjs')">
-            <img  src="/images/angularjs.png" height="20px"/>
-            AngularJS 1.x
-        </h4>
-        <p>
-            Use columnApi placed inside gridOptions by the grid during initialisation.
-        </p>
+        <div ng-if="isFramework('javascript')">
+            <h4>
+                <img  src="/images/javascript.png" height="20"/>
+                Javascript
+            </h4>
+            <p>
+                Use columnApi placed inside gridOptions by the grid during initialisation.
+            </p>
+        </div>
+
+        <div ng-if="isFramework('angularjs')">
+            <h4>
+                <img src="/images/angularjs.png" height="20px"/>
+                AngularJS 1.x
+            </h4>
+            <p>
+                Use columnApi placed inside gridOptions by the grid during initialisation.
+            </p>
+        </div>
 
         <div ng-if="isFramework('react')">
             <h4>
