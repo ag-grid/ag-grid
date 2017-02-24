@@ -14,6 +14,13 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 8.0.x</h2>
 
+    <h3>ag-Grid 8.1.1, ag-Grid-Enterprise 8.1.1</h3>
+
+    <li>Bugfix: Fixed bug where the export to Excel will not export numerical cells</li>
+
+
+    <h3>ag-Grid 8.1.0, ag-Grid-Enterprise 8.1.0</h3>
+
     <b>Enhancements:</b>
     <ul>
         <li>Enhancement: <a href="../best-vuejs-data-grid/">VueJS</a> Framework Support! Big welcome to the VueJS community.</li>
