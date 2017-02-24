@@ -13,8 +13,7 @@ include '../documentation-main/documentation_header.php';
 
 
     <p>
-        Below are listed all the events of the grid. Remember you can listen to events in
-        the following ways:
+        Below are listed all the events of the grid you can listen to.
     <p>
 
         <div ng-if="isFramework(['javascript','angularjs'])">
