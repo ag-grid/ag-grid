@@ -2,7 +2,12 @@
 
     <h1 ng-if="!isFramework('all')" id="implementing-the-aurelia-datagrid"><img style="vertical-align: middle" src="/images/aurelia_small.png" height="25px"/> Overview</h1>
 
-    <p>
+    <?php
+    $framework = 'aurelia';
+    include 'ag-grid-dependency-framework.php'
+    ?>
+
+    <p style="margin-top: 5px">
         If you are building an Aurelia application then you have the choice between A) using the plain JavaScript version
         of ag-Grid or B) using the ag-Grid Aurelia Component from the <a href="https://github.com/ceolter/ag-grid-aurelia">
             ag-grid-aurelia</a> project. If you use the ag-Grid Aurelia Component, then the grid's properties, events and API
@@ -55,23 +60,7 @@
     </ul>
     </p>
 
-    <h3 id="dependencies">Dependencies</h3>
-
-    <p>
-        In your package.json file, specify dependency on ag-grid AND ag-grid-aurelia.
-        The ag-grid package contains the core ag-grid engine and the ag-grid-aurelia
-        contains the Aurelia component.
-    <pre>"dependencies": {
-    ...
-    "ag-grid": "8.0.x",
-    "ag-grid-aurelia": "8.0.x"
-}</pre>
-    The major and minor versions should match. Every time a new major or minor
-    version of ag-Grid is released, the component will also be released. However
-    for patch versions, the component will not be released.
-    </p>
-
-    <p>You will then be able to access ag-Grid classes and components inside your application:</p>
+    <p>Once you have the ag-Grid dependencies installed, you will then be able to access ag-Grid classes and components inside your application:</p>
 
     <pre>import {GridOptions, GridApi, ColumnApi} from "ag-grid";</pre>
 
@@ -322,6 +311,15 @@ private getCountryFilterParams():any {
         the ag-grid-aurelia component, consider using plain ag-Grid Components (as explained on the pages for
         rendering etc) inside ag-Grid instead of creating Aurelia counterparts.
     </p>
+
+    <?php
+    $framework_enterprise = 'import {GridOptions} from "ag-grid";
+import "ag-grid-enterprise/main";
+
+...other dependencies';
+
+    include 'ag-grid-enterprise-framework.php'
+    ?>
 
     <h2 id="next-steps">Next Steps...</h2>
 

@@ -82,7 +82,6 @@
         </div>
     </div>
 </template>
-<!--:debug="true"-->
 
 <script>
     import Vue from "vue";
@@ -112,7 +111,7 @@
             createRowData() {
                 const rowData = [];
 
-                for (let i = 0; i < 2500; i++) {
+                for (let i = 0; i < 200; i++) {
                     const countryData = RefData.COUNTRIES[i % RefData.COUNTRIES.length];
                     rowData.push({
                         name: RefData.FIRST_NAMES[i % RefData.FIRST_NAMES.length] + ' ' + RefData.LAST_NAMES[i % RefData.LAST_NAMES.length],

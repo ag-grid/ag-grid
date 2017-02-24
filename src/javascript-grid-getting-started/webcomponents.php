@@ -3,6 +3,8 @@
     <h1 ng-if="!isFramework('all')" id="implementing-the-web-components-datagrid"><img style="vertical-align: middle" src="/images/webcomponents.png"
                                                                                         height="25px"/> Overview</h1>
 
+    <?php include 'ag-grid-dependency.php' ?>
+
     <p>
         <a href="http://webcomponents.org/">Web Components</a> are reusable user interface widgets that are created
         using open Web technology. They are part of the browser and so they do not depend on external libraries
@@ -108,6 +110,12 @@ myGrid.setGridOptions(gridOptions);</code></pre>
 
     <show-example example="webComponentDataGrid-wc"></show-example>
 
+    <?php include 'ag-grid-bundletypes.php' ?>
+
+    <?php include 'ag-grid-commonjs.php' ?>
+
+    <?php include 'ag-grid-enterprise-dependency.php' ?>
+
     <h2 id="destroy">Destroy</h2>
 
     <p>
@@ -121,5 +129,6 @@ myGrid.setGridOptions(gridOptions);</code></pre>
         Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>
         to learn about accessing all the features of the grid.
     </p>
+
 
 </div>

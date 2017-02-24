@@ -45,7 +45,7 @@ export class RichGrid {
     private createRowData() {
         var rowData: any[] = [];
 
-        for (var i = 0; i < 10000; i++) {
+        for (var i = 0; i < 200; i++) {
             var countryData = RefData.countries[i % RefData.countries.length];
             rowData.push({
                 name: RefData.firstNames[i % RefData.firstNames.length] + ' ' + RefData.lastNames[i % RefData.lastNames.length],
