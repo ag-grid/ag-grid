@@ -332,12 +332,14 @@ this.params.context.componentParent
     <h2 id="ag-grid-angular-examples">ag-Grid Angular Examples</h2>
     <h3 id="example-rich-grid-without-components">Example: Rich Grid without Components</h3>
     <p>
-        The example below shows a rich configuration of ag-Grid, with no Angular Components.
+        The example below shows a rich configuration of ag-Grid.
     </p>
-    <show-example example="../ng2-example/index.html?fromDocs=true&example=rich-grid"
-                  jsfile="../ng2-example/app/rich-grid.component.ts"
-                  html="../ng2-example/app/rich-grid.component.html"
-                  exampleHeight="525px"></show-example>
+    <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=rich-grid"
+                          extraPagesRoot="../ng2-example/app/"
+                          extraPages="rich-grid.component.ts,rich-grid.component.html,header-group-component.component.ts,header-group-component.component.html,header-group-component.component.css,header-component.component.ts,header-component.component.html,header-component.component.css,date-component.component.ts,date-component.component.html,date-component.component.css,app.module.ts,skillFilter.ts,proficiencyFilter.ts,proficiency-renderer.css"
+                          plunker="https://embed.plnkr.co/EINfsm/"
+                          exampleHeight="525px">
+    </show-complex-example>
 
     <h2 id="ng2markup">Creating Grids with Markup</h2>
 
@@ -410,11 +412,12 @@ private getCountryFilterParams():any {
     <p>
         The example below shows the same rich grid as the example above, but with configuration done via Markup.
     </p>
-    <show-example
-            example="../ng2-example/index.html?fromDocs=true&example=rich-grid-declarative"
-            jsfile="../ng2-example/app/rich-grid-declarative.component.ts"
-            html="../ng2-example/app/rich-grid-declarative.component.html"
-            exampleHeight="525px"></show-example>
+        <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=rich-grid-declarative"
+                              extraPagesRoot="../ng2-example/app/"
+                              extraPages="rich-grid-declarative.component.ts,rich-grid-declarative.component.html,header-group-component.component.ts,header-group-component.component.html,header-group-component.component.css,header-component.component.ts,header-component.component.html,header-component.component.css,date-component.component.ts,date-component.component.html,date-component.component.css,app.module.ts,skillFilter.ts,proficiencyFilter.ts,proficiency-renderer.css"
+                              plunker="https://embed.plnkr.co/8p83Qw/"
+                              exampleHeight="525px">
+        </show-complex-example>
 
     <h2 id="cell-rendering-cell-editing-using-angular">Cell Rendering & Cell Editing using Angular</h2>
 

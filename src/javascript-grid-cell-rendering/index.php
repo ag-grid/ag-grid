@@ -379,7 +379,7 @@ colDef.cellRendererParams = {
     <li>'Days Sunshine' and 'Rainfall (10mm)' use simple functions to display icons.</li>
 </ul>
 
-<show-example example="example2"></show-example>
+<!--<show-example example="example2"></show-example>-->
 
 <h3 id="cell-renderers-and-row-groups">Cell Renderers and Row Groups</h3>
 

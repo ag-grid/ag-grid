@@ -9,14 +9,14 @@ import {IDateAngularComp} from "ag-grid-angular/main";
     templateUrl: 'date-component.component.html',
     styleUrls: ['date-component.component.css'],
 })
-export class DateComponent implements IDateAngularComp{
-    private date:Date;
-    private params:IDateParams;
-    public dd:string = '';
-    public mm:string = '';
-    public yyyy:string = '';
+export class DateComponent implements IDateAngularComp {
+    private date: Date;
+    private params: IDateParams;
+    public dd: string = '';
+    public mm: string = '';
+    public yyyy: string = '';
 
-    agInit(params:IDateParams):void {
+    agInit(params: IDateParams): void {
         this.params = params;
     }
 
@@ -24,7 +24,7 @@ export class DateComponent implements IDateAngularComp{
         console.log(`Destroying DateComponent`);
     }
 
-    onResetDate (){
+    onResetDate() {
         this.dd = '';
         this.mm = '';
         this.yyyy = '';
@@ -32,7 +32,7 @@ export class DateComponent implements IDateAngularComp{
         this.params.onDateChanged();
     }
 
-    onDateChanged (on:string, newValue:string){
+    onDateChanged(on: string, newValue: string) {
         this.date = this.parseDate(
             on === 'dd' ? newValue : this.dd,
             on === 'mm' ? newValue : this.mm,
@@ -47,8 +47,8 @@ export class DateComponent implements IDateAngularComp{
 
     setDate(date: Date): void {
         this.dd = date.getDate() + '';
-        this.mm = (date.getMonth() + 1)  + '';
-        this.yyyy = date.getFullYear()  + '';
+        this.mm = (date.getMonth() + 1) + '';
+        this.yyyy = date.getFullYear() + '';
         this.date = date;
         this.params.onDateChanged();
     }
@@ -57,7 +57,7 @@ export class DateComponent implements IDateAngularComp{
     //          INTERNAL LOGIC
     //*********************************************************************************
 
-    parseDate (dd, mm, yyyy){
+    parseDate(dd, mm, yyyy) {
         //If any of the three input date fields are empty, stop and return null
         if (dd.trim() === '' || mm.trim() === '' || yyyy.trim() === '') {
             return null;
@@ -70,7 +70,7 @@ export class DateComponent implements IDateAngularComp{
         let date = new Date(year, month - 1, day);
 
         //If the date is not valid
-        if (isNaN(date.getTime())){
+        if (isNaN(date.getTime())) {
             return null;
         }
 
@@ -82,7 +82,7 @@ export class DateComponent implements IDateAngularComp{
         //If the javascript date parts don't match the provided fields, we assume that the input is non
         //sensical... ie: Day=-1 or month=14, if this is the case, we return null
         //This also protects us from non sensical dates like dd=31, mm=2 of any year
-        if (date.getDate() != day || date.getMonth() + 1 != month || date.getFullYear() != year){
+        if (date.getDate() != day || date.getMonth() + 1 != month || date.getFullYear() != year) {
             return null;
         }
 

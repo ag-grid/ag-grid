@@ -7,6 +7,9 @@ import {AgGridModule} from "ag-grid-angular/main";
 import {AppComponent} from "./app.component";
 // rich grid
 import {RichGridComponent} from "./rich-grid.component";
+import {DateComponent} from "./date-component.component";
+import {HeaderComponent} from "./header-component.component";
+import {HeaderGroupComponent} from "./header-group-component.component";
 // declarative
 import {RichGridDeclarativeComponent} from "./rich-grid-declarative.component";
 // from component
@@ -42,9 +45,6 @@ import {PartialMatchFilterComponent} from "./partial-match-filter.component";
 // master detail
 import {MasterComponent} from "./masterdetail-master.component";
 import {DetailPanelComponent} from "./detail-panel.component";
-import {DateComponent} from "./date-component.component";
-import {HeaderComponent} from "./header-component.component";
-import {HeaderGroupComponent} from "./header-group-component.component";
 
 @NgModule({
     imports: [
@@ -77,6 +77,9 @@ import {HeaderGroupComponent} from "./header-group-component.component";
     declarations: [
         AppComponent,
         RichGridComponent,
+        DateComponent,
+        HeaderComponent,
+        HeaderGroupComponent,
         RichGridDeclarativeComponent,
         FromComponentComponent,
         SquareComponent,
@@ -98,10 +101,7 @@ import {HeaderGroupComponent} from "./header-group-component.component";
         FilterComponentComponent,
         PartialMatchFilterComponent,
         MasterComponent,
-        DetailPanelComponent,
-        DateComponent,
-        HeaderComponent,
-        HeaderGroupComponent
+        DetailPanelComponent
     ],
     bootstrap: [AppComponent]
 })

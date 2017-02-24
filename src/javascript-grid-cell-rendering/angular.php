@@ -88,9 +88,11 @@ the grid will know the framework to use is Angular.
 <p>
     Using Angular Components in the Cell Renderers
 </p>
-<show-example example="../ng2-example/index.html?fromDocs=true&example=from-component"
-              jsfile="../ng2-example/app/from-component.component.ts"
-              html="../ng2-example/app/from-component.component.html"></show-example>
+<show-complex-example example="../ng2-example/index.html?fromDocs=true&example=from-component"
+                         extraPagesRoot="../ng2-example/app/"
+                         extraPages="from-component.component.ts,from-component.component.html,square.component.ts,cube.component.ts,params.component.ts,currency.component.ts,child-message.component.ts,app.module.ts"
+                         plunker="https://embed.plnkr.co/J04rdB/">
+</show-complex-example>
 
 <h3 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods / Lifecycle</h3>
 
@@ -112,9 +114,11 @@ the grid will know the framework to use is Angular.
 <p>
     Using more complex Angular Components in the Cell Renderers
 </p>
-<show-example example="../ng2-example/index.html?fromDocs=true&example=from-rich-component"
-              jsfile="../ng2-example/app/from-rich.component.ts"
-              html="../ng2-example/app/from-rich.component.html"></show-example>
+<show-complex-example example="../ng2-example/index.html?fromDocs=true&example=from-rich-component"
+                      extraPagesRoot="../ng2-example/app/"
+                      extraPages="from-rich.component.ts,from-rich.component.html,ratio.module.ts,ratio.parent.component.ts,ratio.component.ts,clickable.module.ts,clickable.parent.component.ts,clickable.component.ts,app.module.ts"
+                      plunker="https://embed.plnkr.co/qmgvkW/">
+</show-complex-example>
 
 <note>The full <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers
     and so on, as well as examples on using Angular Components with both CellEditors and Filters</note>

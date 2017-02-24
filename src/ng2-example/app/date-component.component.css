@@ -1,0 +1,24 @@
+.filter {
+    margin:2px
+}
+
+.dd {
+    width:30px
+}
+
+.mm {
+    width:30px
+}
+
+.yyyy {
+    width:60px
+}
+
+.reset {
+    padding: 2px;
+    background-color: red;
+    border-radius: 3px;
+    font-size: 10px;
+    margin-right: 5px;
+    color: white
+}
