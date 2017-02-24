@@ -102,11 +102,5 @@
      * END Cookie consent
      * */
 
-    /*
-     * Google Custom Search Engine
-     * */
-
-
-
 
 })();
