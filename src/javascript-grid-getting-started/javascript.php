@@ -62,7 +62,7 @@
 <p><code>example1.js</code> would be where your application code would live in this example.</p>
 
 
-<h3>Creating the Grid</h3>
+<h3 id="javascript-simple-grid">Creating the Grid</h3>
 
 <p>Now that we have a <code>div</code> for the Grid, we need to specify the following at a minimum:</p>
 <ul>
@@ -105,7 +105,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <p>With that in place we have a quick and simple Grid up and running:</p>
 
-<show-example exampleheight="130px" example="example-js"></show-example>
+<show-complex-example example="example-js.html"
+                      extraPagesRoot="./"
+                      extraPages="example-js.html,example-js.js"
+                      plunker="https://embed.plnkr.co/369YrrgCVrnPjD528OtT/"
+                      exampleheight="130px">
+</show-complex-example>
+
 
 <h4>ag-Grid Bundle Types</h4>
 <p>
