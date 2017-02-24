@@ -1,18 +1,22 @@
 <div>
 
-    <h1 ng-if="!isFramework('all')"><img style="vertical-align: middle" src="/images/react_small.png"
-                                                                                  height="25px"/> Overview</h1>
+    <h2 ng-if="!isFramework('all')"><img style="vertical-align: middle" src="/images/react_small.png"
+                                                                                  height="25px"/> Overview</h2>
+
+    <?php
+    $framework = 'react';
+    include 'ag-grid-dependency-framework.php'
+    ?>
+
+    <p style="margin-top: 5px">
+        Using ReactJS with ag-Grid introduces a dependency on React. For this reason:
+    <ul>
+        <li>You need to include the additional project ag-grid-react, which has the React dependency.</li>
+        <li>You cannot use the bundled version of ag-Grid. You must use the CommonJS distribution.</li>
+    </ul>
 
     <p>
-        If you are building a React application then you have the choice between A) using the plain JavaScript version
-        of ag-Grid or B) using the ag-Grid React Component from the <a href="https://github.com/ceolter/ag-grid-react">
-            ag-grid-react</a> project. If you use the ag-Grid React Component, then the grid's properties, events and
-        API
-        will all tie in with the React ecosystem. This will make your React coding easier.
-    </p>
-
-    <p>
-        You will also have the option (but not forced) of using React Components internally in the grid for rendering,
+        You have the option (but not forced) of using React Components internally in the grid for rendering,
         editing and filtering. The example has to applications as follows:
     <ul>
         <li>Standard - the standard is shown below and demonstrates using React Components for renderers, editors
@@ -135,7 +139,7 @@
                 max-width: 100%;
             }
         </style>
-    <div id="myAppContainer">asdfasdfds</div>
+    <div id="myAppContainer"></div>
 
     <h2 id="ag-Grid-react-features">ag-Grid React Features</h2>
 
@@ -143,32 +147,6 @@
         Every feature of ag-Grid is available when using the ag-Grid React Component. The React Component wraps the
         functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and
         React ag-Grid when it comes to features.
-    </p>
-
-    <h2 id="dependencies">Dependencies</h2>
-    <p>
-        Using ReactJS with ag-Grid introduces a dependency on React. For this reason:
-    <ul>
-        <li>You need to include the additional project ag-grid-react, which has the React dependency.</li>
-        <li>You cannot use the bundled version of ag-Grid. You must use the CommonJS distribution.</li>
-    </ul>
-    </p>
-    <p>
-        In your package.json file, specify dependency on ag-grid AND ag-grid-react.
-        The ag-grid package contains the core ag-grid engine and the ag-grid-react
-        contains the React component and
-        some utils for React rendering.
-    <pre><code>"dependencies": {
-    <span class="codeComment">// ag-Grid and ag-Grid React projects</span>
-    "ag-grid": "8.0.x",
-    "ag-grid-react": "8.0.x",
-
-    <span class="codeComment">// include this if using ag-Grid Enterprise</span>
-    "ag-grid-enterprise": "8.0.x"
-}</code></pre>
-    The major and minor versions should match. Every time a new major or minor
-    version of ag-Grid is released, the component will also be released. However
-    for patch versions, the component will not be released.
     </p>
 
     <h2 id="configuring-aggridreact-component">Configuring AgGridReact Component</h2>
@@ -274,6 +252,16 @@ somePointLater() {
         of the grid. So you can also look up the backing object via React and access the
         <i>api</i> and <i>columnApi</i> that way.
     </p>
+
+
+    <?php
+    $framework_enterprise = 'import React from "react";
+import {AgGridReact} from "ag-grid-react";
+import "ag-grid-enterprise";
+...other dependencies';
+
+    include 'ag-grid-enterprise-framework.php'
+    ?>
 
     <h2 id="next-steps">Next Steps</h2>
 

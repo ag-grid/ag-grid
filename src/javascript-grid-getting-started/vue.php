@@ -1,13 +1,27 @@
 <div>
 
-    <h1 ng-if="!isFramework('all')" id="implementing-the-vuejs-datagrid"><img style="vertical-align: middle" src="/images/vue_small.png" height="25px"/> Overview</h1>
+    <h2 ng-if="!isFramework('all')" id="implementing-the-vuejs-datagrid"><img style="vertical-align: middle" src="/images/vue_small.png" height="25px"/> Overview</h2>
 
-    <p>
+    <?php
+    $framework = 'vue';
+    include 'ag-grid-dependency-framework.php'
+    ?>
+
+    <p style="margin-top: 5px">
         If you are building an VueJS application then you have the choice between A) using the plain JavaScript version
         of ag-Grid or B) using the ag-Grid VueJS Component from the <a href="https://github.com/ceolter/ag-grid-vue">
             ag-grid-vue</a> project. If you use the ag-Grid VueJS Component, then the grid's properties, events and API
         will all tie in with the VueJS ecosystem. This will make your VueJS coding easier.
     </p>
+
+    <h3>Referenceing Styles</h3>
+    <p>You'll need to import the ag-Grid CSS in your application, as well as a theme you wish to use:</p>
+<pre>
+import "../node_modules/ag-grid/dist/styles/ag-grid.css";
+import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
+</pre>
+    <p>In this case we're using the Fresh Theme - please refer to the <a href="../javascript-grid-themes">Themes</a>
+        documentation for more information.</p>
 
     <note>Please use the github project <a href="https://github.com/ceolter/ag-grid-vuejs">ag-grid-vue</a>
         for feedback or issue reporting around ag-Grid's support for VueJS.</note>
@@ -64,26 +78,7 @@
     </ul>
     </p>
 
-    <h3 id="dependencies">Dependencies</h3>
-
-    <p>
-        In your package.json file, specify dependency on ag-grid AND ag-grid-vue.
-        The ag-grid package contains the core ag-grid engine and the ag-grid-vue
-        contains the VueJS component.
-    <pre>"dependencies": {
-    ...
-    "ag-grid": "8.0.x",
-    "ag-grid-vue": "8.0.x"
-
-    <span class="codeComment">// only needed if you're using enterprise features</span>
-    "ag-grid-enterprise": "8.0.x",
-}</pre>
-    The major and minor versions should match. Every time a new major or minor
-    version of ag-Grid is released, the component will also be released. However
-    for patch versions, the component will not be released.
-    </p>
-
-    <p>You will then be able to access ag-Grid inside your application:</p>
+    <p>Once you have the ag-Grid dependencies installed, you will then be able to access ag-Grid inside your application:</p>
 
     <pre>import {AgGridVue} from 'ag-grid-vue';</pre>
 
@@ -384,6 +379,19 @@ this.params.context.componentParent
     <h3 id="building-bundling">Building & Bundling</h3>
     <p>There are many ways to build and/or bundle an VueJS Application. We provide fully working examples using a simplified
         Webpack build as part of the <a href="https://github.com/ceolter/ag-grid-vue-example">ag-grid-vue-example</a> on GitHub.</p>
+
+    <?php
+    $framework_enterprise = 'import Vue from "vue";
+import "../node_modules/ag-grid/dist/styles/ag-grid.css";
+import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
+
+// need if you use ag-grid enterprise features
+import "ag-grid-enterprise/main";
+
+...other dependencies';
+
+    include 'ag-grid-enterprise-framework.php'
+    ?>
 
     <h2 id="ag-grid-vuejs-examples">ag-Grid VueJS Examples</h2>
     <h3 id="example-rich-grid-without-components">Example: Rich Grid without Components</h3>

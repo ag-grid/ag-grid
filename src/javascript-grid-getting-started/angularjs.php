@@ -1,62 +1,14 @@
-<h1 ng-if="!isFramework('all')" id="implementing-the-angularjs-datagrid"><img style="vertical-align: middle" src="/images/angularjs.png"
-                                                  height="25px"/> Overview</h1>
+<h2 ng-if="!isFramework('all')" id="implementing-the-angularjs-datagrid"><img style="vertical-align: middle" src="/images/angularjs.png"
+                                                  height="25px"/> Overview</h2>
 
-<p>
-    When using AngularJS 1.x, you have the choice of using the bundled version of ag-Grid
-    or the CommonJS version.
-</p>
+<?php include 'ag-grid-dependency.php' ?>
+
 <p>
     When the ag-Grid script loads, it does not register with AngularJS 1.x. This is because
     AngularJS 1.x is an optional part of ag-Grid and you need to tell ag-Grid you
     want to use it.
 </p>
 
-<h3 id="pull-in-the-ag-grid-dependencies">Pull in the ag-Grid Dependencies</h3>
-<p>You'll need to ensure you refer to the ag-grid library correctly - this can be done in a number of ways, but
-    but you'll need to ensure you refer to either the ag-grid or the ag-grid-enterprise
-    dependency, depending on which feature set you're using (i.e. if you're using any Enterprise features you'll need
-    ag-grid-enterprise)</p>
-<p>As an example we'll use NPM to manage our dependencies, and then refer to the dependencies in our HTML file:</p>
-<h5 id="using-ag-grid">Using ag-Grid</h5>
-<pre><span class="codeComment">// package.json</span>
-"dependencies": {
-    "ag-grid": "8.0.x",
-}
-
-<span class="codeComment">// index.html</span>
-&lt;html>
-&lt;head>
-    &lt;script src="node_modules/ag-grid/dist/ag-grid.js">&lt;/script>
-    &lt;script src="&lt;your script>.js">&lt;/script>
-&lt;/head>
-</pre>
-<h5 id="using-ag-grid-enterprise">Using ag-Grid-Enterprise</h5>
-<pre><span class="codeComment">// package.json</span>
-"dependencies": {
-    "ag-grid-enterprise": "8.0.x",
-}
-
-<span class="codeComment">// index.html</span>
-&lt;html>
-&lt;head>
-    &lt;script src="node_modules/ag-grid-enterprise/dist/ag-grid-enterprise.js">&lt;/script>
-    &lt;script src="&lt;your script>.js">&lt;/script>
-&lt;/head>
-</pre>
-<p>In either of the above examples we're using the full JS dependency which includes styles & themes - you can
-    optionally chose to use the version without styles included (<code>.noStyle.js</code>).
-    If you do this, you'll need to refer to the styles & themes separately, as below:</p>
-<pre>
-<span class="codeComment">// index.html</span>
-&lt;html>
-&lt;head>
-    &lt;script src="node_modules/ag-grid/dist/ag-grid.js">&lt;/script>
-    &lt;script src="node_modules/ag-grid/dist/styles/ag-grid.css">&lt;/script>
-    &lt;script src="node_modules/ag-grid/dist/styles/theme-fresh.css">&lt;/script>
-    &lt;script src="&lt;your script>.js">&lt;/script>
-&lt;/head>
-</pre>
-</p>
 <h3 id="creating-the-angularjs-module">Creating the AngularJS 1.x Module</h3>
 Include ag-Grid as a dependency of your module like this:
 <p/>
@@ -114,6 +66,12 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
 </p>
 
 <show-example example="basic-ajs"></show-example>
+
+<?php include 'ag-grid-bundletypes.php' ?>
+
+<?php include 'ag-grid-commonjs.php' ?>
+
+<?php include 'ag-grid-enterprise-dependency.php' ?>
 
 <h2 id="angular-compiling">Angular Compiling</h2>
 
