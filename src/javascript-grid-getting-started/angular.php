@@ -166,7 +166,8 @@ import {RedComponentComponent} from "./red-component/red-component.component";
     bootstrap: [AppComponent]
 })
 export class AppModule {
-}    </pre>
+}
+</pre>
 
 
 <p>And finally, we need to update angular-cli.json to include the ag-Grid styles we want to include:</p>
@@ -191,4 +192,3 @@ export class AppModule {
 
 <p>Please take a look at the <a href="../ag-grid-next-steps">Next Steps</a> section next for more detailed information on
 using Angular with ag-Grid.</p>
-</div>
