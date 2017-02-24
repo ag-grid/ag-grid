@@ -183,12 +183,12 @@ function enterpriseItem($key, $rootFolder, $indent, $localKey, $name, $url) {
             </div>
 
             <div class="docsMenu-content">
-                <?php normalItem($key, $rootFolder, 0, 'Interfacing Overview"', 'Overview', 'javascript-grid-interfacing-overview/'); ?>
-                <?php normalItem($key, $rootFolder, 0, 'Properties"', 'Properties', 'javascript-grid-properties/'); ?>
-                <?php normalItem($key, $rootFolder, 0, 'columnDefs"', 'Columns', 'javascript-grid-column-definitions/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Interfacing Overview', 'Overview', 'javascript-grid-interfacing-overview/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Properties', 'Properties', 'javascript-grid-properties/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'columnDefs', 'Columns', 'javascript-grid-column-definitions/'); ?>
                 <?php normalItem($key, $rootFolder, 0, 'Events', 'Events', 'javascript-grid-events/'); ?>
                 <?php normalItem($key, $rootFolder, 0, 'Callbacks', 'Callbacks', 'javascript-grid-callbacks/'); ?>
-                <?php normalItem($key, $rootFolder, 0, 'Grid API', 'Grid API', 'javascript-grid-callbacks/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Grid API', 'Grid API', 'javascript-grid-api/'); ?>
                 <?php normalItem($key, $rootFolder, 0, 'Column API', 'Column API', 'javascript-grid-column-api/'); ?>
             </div>
 
@@ -211,7 +211,7 @@ function enterpriseItem($key, $rootFolder, $indent, $localKey, $name, $url) {
                 <?php normalItem($key, $rootFolder, 0, 'Grouping Columns', 'Grouping Columns', 'javascript-grid-grouping-headers/'); ?>
                 <?php normalItem($key, $rootFolder, 0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/'); ?>
                 <?php normalItem($key, $rootFolder, 0, 'Row Height', 'Row Height', 'javascript-grid-row-height/'); ?>
-                <?php normalItem($key, $rootFolder, 0, 'Floating Rows', 'Floating Rows', 'javascript-grid-floating/'); ?>
+                <?php normalItem($key, $rootFolder, 0, 'Floating', 'Floating Rows', 'javascript-grid-floating/'); ?>
                 <?php normalItem($key, $rootFolder, 0, 'Value Getters', 'Value Getters', 'javascript-grid-value-getters/'); ?>
                 <?php normalItem($key, $rootFolder, 0, 'Cell Expressions', 'Cell Expressions', 'javascript-grid-cell-expressions/'); ?>
                 <?php normalItem($key, $rootFolder, 0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/'); ?>
@@ -310,7 +310,7 @@ function enterpriseItem($key, $rootFolder, $indent, $localKey, $name, $url) {
 
                 <div class="docsMenu-content">
                     <?php normalItem($key, $rootFolder, 0, 'Change Log', 'Change Log', 'change-log/changeLogIndex.php'); ?>
-                    <?php normalItem($key, $rootFolder, 0, 'Roadmap', 'Roadmap', 'change-log/changeLogIndex.php'); ?>
+                    <?php normalItem($key, $rootFolder, 0, 'Roadmap', 'Roadmap', 'javascript-grid-roadmap'); ?>
                     <?php normalItem($key, $rootFolder, 0, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials/'); ?>
                     <a class="sidebarLink" href="/archive/">Archive Docs</a>
                 </div>
@@ -320,4 +320,6 @@ function enterpriseItem($key, $rootFolder, $indent, $localKey, $name, $url) {
 
         <div class="col-sm-10 blog-main">
 
-            <gcse:searchresults></gcse:searchresults>
+            <div id="googleSearchResults" style="display: none;">
+                <gcse:searchresults></gcse:searchresults>
+            </div>
