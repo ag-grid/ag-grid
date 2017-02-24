@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-enterprise",
-  "version": "8.1.0",
+  "version": "8.1.1",
   "description": "ag-Grid Enterprise Features",
   "main": "main.js",
   "scripts": {
