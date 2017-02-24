@@ -1,5 +1,5 @@
-<h1 ng-if="!isFramework('all')" id="implementing-the-angularjs-datagrid"><img style="vertical-align: middle" src="/images/angularjs.png"
-                                                  height="25px"/> Overview</h1>
+<h2 ng-if="!isFramework('all')" id="implementing-the-angularjs-datagrid"><img style="vertical-align: middle" src="/images/angularjs.png"
+                                                  height="25px"/> Overview</h2>
 
 <?php include 'ag-grid-dependency.php' ?>
 

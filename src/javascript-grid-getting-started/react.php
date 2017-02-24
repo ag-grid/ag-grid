@@ -1,7 +1,7 @@
 <div>
 
-    <h1 ng-if="!isFramework('all')"><img style="vertical-align: middle" src="/images/react_small.png"
-                                                                                  height="25px"/> Overview</h1>
+    <h2 ng-if="!isFramework('all')"><img style="vertical-align: middle" src="/images/react_small.png"
+                                                                                  height="25px"/> Overview</h2>
 
     <?php
     $framework = 'react';

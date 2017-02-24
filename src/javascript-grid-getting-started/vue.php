@@ -1,6 +1,6 @@
 <div>
 
-    <h1 ng-if="!isFramework('all')" id="implementing-the-vuejs-datagrid"><img style="vertical-align: middle" src="/images/vue_small.png" height="25px"/> Overview</h1>
+    <h2 ng-if="!isFramework('all')" id="implementing-the-vuejs-datagrid"><img style="vertical-align: middle" src="/images/vue_small.png" height="25px"/> Overview</h2>
 
     <?php
     $framework = 'vue';
