@@ -75,11 +75,6 @@
     color: darkgreen;
 }
 
-h4 {
-    margin: 0;
-    font-size: 16px;
-}
-
 /* collapsable sidebar items */
 .docsMenu-header{
     cursor: pointer;
@@ -91,6 +86,13 @@ h4 {
     margin-top: 10px;
     transition: all .3s ease-in-out;
 }
+
+.docsMenu-header h4 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
 .docsMenu-header .fa {
     position: absolute;
     top: 14px;

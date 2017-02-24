@@ -7,11 +7,11 @@ import {IHeaderGroupAngularComp} from "ag-grid-angular/main";
     templateUrl: 'header-group-component.component.html',
     styleUrls: ['header-group-component.component.css']
 })
-export class HeaderGroupComponent implements IHeaderGroupAngularComp{
-    public params:IHeaderGroupParams;
-    public expanded:boolean;
+export class HeaderGroupComponent implements IHeaderGroupAngularComp {
+    public params: IHeaderGroupParams;
+    public expanded: boolean;
 
-    agInit(params:IHeaderGroupParams):void {
+    agInit(params: IHeaderGroupParams): void {
         this.params = params;
         this.params.columnGroup.getOriginalColumnGroup().addEventListener('expandedChanged', this.onExpandChanged.bind(this));
     }
@@ -21,11 +21,11 @@ export class HeaderGroupComponent implements IHeaderGroupAngularComp{
     }
 
 
-    expandOrCollapse (){
+    expandOrCollapse() {
         this.params.setExpanded(!this.expanded);
     };
 
-    onExpandChanged (){
-        this.expanded =this.params.columnGroup.getOriginalColumnGroup().isExpanded()
+    onExpandChanged() {
+        this.expanded = this.params.columnGroup.getOriginalColumnGroup().isExpanded()
     }
 }

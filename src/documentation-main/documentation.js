@@ -104,10 +104,10 @@
 
         $scope.showHtmlTab = $scope.sourceLang !== "Vue";
 
-        if ($attrs.extraPages) {
-            $scope.extraPages = $attrs.extraPages.split(',');
+        if ($attrs.extrapages) {
+            $scope.extrapages = $attrs.extrapages.split(',');
             $scope.extraPageContent = {};
-            $scope.extraPages.forEach(function (page) {
+            $scope.extrapages.forEach(function (page) {
                 $http.get("./" + page).then(function (response) {
                     $scope.extraPageContent[page] = response.data;
                 }).catch(function (response) {
@@ -140,6 +140,60 @@
         };
         $scope.setActive = function (item) {
             $scope.selectedTab = item;
+        };
+    }
+
+    /*
+    * Multi-page (more than just js & html really) Examples with plunker support
+    */
+    module.directive("showComplexExample", function () {
+        return {
+            scope: true,
+            controller: ShowComplexScriptExampleController,
+            templateUrl: "/showComplexExample.html"
+        }
+    });
+
+    function ShowComplexScriptExampleController($scope, $http, $attrs, $sce) {
+        $scope.source = $attrs["example"];
+        $scope.selectedTab = 'example';
+        $scope.plunker = null;
+
+        if($attrs.plunker && $attrs.plunker.indexOf("https://embed.plnkr.co") === 0) {
+            $scope.plunker = $sce.trustAsResourceUrl($attrs.plunker);
+        }
+
+        if ($attrs.extrapages) {
+            $scope.extraPages = $attrs.extrapages.split(',');
+            $scope.extraPageContent = {};
+            $scope.extraPages.forEach(function (page) {
+                $http.get($attrs.extrapagesroot + page).then(function (response) {
+                    $scope.extraPageContent[page] = response.data;
+                }).catch(function (response) {
+                    $scope.extraPageContent[page] = response.data;
+                });
+            });
+            $scope.extraPage = $scope.extraPages[0];
+        }
+
+        if ($attrs.exampleheight) {
+            $scope.iframeStyle = {height: $attrs.exampleheight};
+        } else {
+            $scope.iframeStyle = {height: '500px'}
+        }
+
+        $scope.isActive = function (item) {
+            return $scope.selectedTab == item;
+        };
+        $scope.setActive = function (item) {
+            $scope.selectedTab = item;
+        };
+
+        $scope.isActivePage = function (item) {
+            return $scope.extraPage == item;
+        };
+        $scope.setActivePage = function (item) {
+            $scope.extraPage = item;
         };
     }
 

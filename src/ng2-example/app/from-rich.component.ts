@@ -1,12 +1,7 @@
-import {Component} from '@angular/core';
-
-import {GridOptions} from 'ag-grid/main';
-
-import {RatioComponent} from "./ratio.component";
-import {ClickableComponent} from "./clickable.component";
+import {Component} from "@angular/core";
+import {GridOptions} from "ag-grid/main";
 import {RatioParentComponent} from "./ratio.parent.component";
 import {ClickableParentComponent} from "./clickable.parent.component";
-import {DateComponent} from "./date-component.component";
 
 @Component({
     moduleId: module.id,
@@ -14,7 +9,7 @@ import {DateComponent} from "./date-component.component";
     templateUrl: 'from-rich.component.html'
 })
 export class FromRichComponent {
-    public gridOptions:GridOptions;
+    public gridOptions: GridOptions;
 
     constructor() {
         this.gridOptions = <GridOptions>{};
