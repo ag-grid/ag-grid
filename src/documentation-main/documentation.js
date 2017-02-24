@@ -1,7 +1,18 @@
 (function () {
 
     var module = angular.module("documentation", ['ngCookies']);
-    module.controller('DocumentationController', ['$scope', '$cookies', function ($scope, $cookies) {
+    module.controller('DocumentationController', ['$scope', '$cookies', '$location', function ($scope, $cookies, $location) {
+
+        var model = {};
+
+        $scope.model = model;
+
+        model.onFrameworkChanged = function() {
+            window.location.href = '?framework='+model.framework;
+        };
+
+        model.framework = document.querySelector('#frameworkAttr').innerHTML;
+
         $scope.frameworkContext = getFrameworkFromCookieAndDefaultIfNotDefined();
 
         $scope.onFrameworkContextChanged = function () {
@@ -35,7 +46,7 @@
                     path: "/",
                     expires: expires
                 });
-        };
+        }
 
         function getFrameworkFromCookieAndDefaultIfNotDefined() {
             var frameworkContext = $cookies.get('frameworkContext');

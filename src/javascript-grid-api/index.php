@@ -16,65 +16,63 @@ include '../documentation-main/documentation_header.php';
         can be accessed.
     </p>
 
-<div ng-if="isFramework(['javascript','angularjs'])">
-    <h4>
-        <img src="/images/javascript.png" height="20"/>
-        <img ng-if="isFramework('angularjs')" src="/images/angularjs.png" height="20px"/>
-        Javascript <span ng-if="isFramework('angularjs')">and AngularJS 1.x</span>
-    </h4>
-    <p>
-        Use api placed inside gridOptions by the grid during initialisation.
-    </p>
+    <? if (isFrameworkAngularJS() || isFrameworkJavaScript()) { ?>
+        <h4>
+            <img src="/images/javascript.png" height="20"/>
+            <img ng-if="isFramework('angularjs')" src="/images/angularjs.png" height="20px"/>
+            Javascript <span ng-if="isFramework('angularjs')">and AngularJS 1.x</span>
+        </h4>
+        <p>
+            Use api placed inside gridOptions by the grid during initialisation.
+        </p>
+    <? } ?>
 
-</div>
+    <? if (isFrameworkReact()) { ?>
+        <h4>
+            <img src="/images/react.png" height="20px"/>
+            React
+        </h4>
+        <p>
+            The API is provided to you in the onGridReady callback of the React component.
+            Or if you are providing gridOptions object, you can use the API attached
+            to this after the grid has initialised.
+        </p>
+    <? } ?>
 
-<div ng-if="isFramework('react')">
-    <h4>
-        <img src="/images/react.png" height="20px"/>
-        React
-    </h4>
-    <p>
-        The API is provided to you in the onGridReady callback of the React component.
-        Or if you are providing gridOptions object, you can use the API attached
-        to this after the grid has initialised.
-    </p>
+    <? if (isFrameworkAngular()) { ?>
+        <h4>
+            <img src="/images/angular2.png" height="20px"/>
+            Angular
+        </h4>
+        <p>
+            Use api placed inside gridOptions by the grid during initialisation. You can also
+            use api directly on the Angular grid component.
+        </p>
+    <? } ?>
 
-</div>
+    <? if (isFrameworkVue()) { ?>
+        <h4>
+            <img src="/images/vue_large.png" height="20px"/>
+            VueJS
+        </h4>
+        <p>
+            Use api placed inside gridOptions by the grid during initialisation. You can also
+            use api directly on the VueJS grid component.
+        </p>
+    <? } ?>
 
-<div ng-if="isFramework('angular')">
-    <h4>
-        <img src="/images/angular2.png" height="20px"/>
-        Angular
-    </h4>
-    <p>
-        Use api placed inside gridOptions by the grid during initialisation. You can also
-        use api directly on the Angular grid component.
-    </p>
-</div>
+    <? if (isFrameworkWebComponents()) { ?>
+        <h4>
+            <img src="/images/webComponents.png" height="20px"/>
+            Web Components
+        </h4>
+        <p>
+            Use api placed inside gridOptions by the grid during initialisation. You can also
+            use api directly on the DOM element.
+        </p>
+    <? } ?>
 
-<div ng-if="isFramework('vue')">
-    <h4>
-        <img src="/images/vue_large.png" height="20px"/>
-        VueJS
-    </h4>
-    <p>
-        Use api placed inside gridOptions by the grid during initialisation. You can also
-        use api directly on the VueJS grid component.
-    </p>
-</div>
-
-<div ng-if="isFramework('webcomponents')">
-    <h4>
-        <img src="/images/webComponents.png" height="20px"/>
-        Web Components
-    </h4>
-    <p>
-        Use api placed inside gridOptions by the grid during initialisation. You can also
-        use api directly on the DOM element.
-    </p>
-</div>
-
-<div ng-if="isFramework('aurelia')">
+    <? if (isFrameworkAurelia()) { ?>
     <h4>
         <img src="/images/aurelia.png" height="20px"/>
         Aurelia Components
@@ -83,8 +81,7 @@ include '../documentation-main/documentation_header.php';
         Use api placed inside gridOptions by the grid during initialisation. You can also
         use api directly on the DOM element.
     </p>
-
-</div>
+    <? } ?>
 
     <table id="list-of-api-functions" class="table">
         <!------------------->

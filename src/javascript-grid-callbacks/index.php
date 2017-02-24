@@ -7,8 +7,6 @@ $pageGroup = "interfacing";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
     <h2 id="callbacks">Callbacks</h2>
 
     <p>
@@ -16,72 +14,77 @@ include '../documentation-main/documentation_header.php';
         It is not intended to inform your application of anything.
     <p>
 
-<div ng-if="isFramework(['javascript','angularjs'])">
-    <h4 id="javascript-angularjs">
-        <img src="/images/javascript.png" height="20"/>
-        <img ng-if="isFramework('angularjs')" src="/images/angularjs.png" height="20px"/>
-        Javascript <span ng-if="isFramework('angularjs')">and AngularJS 1.x</span>
-    </h4>
-    <p>
-        Add callbacks to the gridOptions.
-    </p>
+    <? if (isFrameworkAngularJS()) { ?>
+        <h4 id="angularjs">
+            <img src="/images/javascript.png" height="20"/>
+            <img src="/images/angularjs.png" height="20px"/>
+            Javascript and AngularJS 1.x
+        </h4>
+        <p>
+            Add callbacks to the gridOptions.
+        </p>
+    <? } ?>
 
-</div>
+    <? if (isFrameworkJavaScript()) { ?>
+        <h4 id="javascript">
+            <img src="/images/javascript.png" height="20"/>
+            Javascript
+        </h4>
+        <p>
+            Add callbacks to the gridOptions.
+        </p>
+    <? } ?>
 
-<div ng-if="isFramework('react')">
-    <h4>
-        <img src="/images/react.png" height="20px"/>
-        React
-    </h4>
-    <p>
-        Add callbacks to the gridOptions or set as React JSX props.
-    </p>
+    <? if (isFrameworkReact()) { ?>
+        <h4>
+            <img src="/images/react.png" height="20px"/>
+            React
+        </h4>
+        <p>
+            Add callbacks to the gridOptions or set as React JSX props.
+        </p>
+    <? } ?>
 
-</div>
+    <? if (isFrameworkAngular()) { ?>
+        <h4>
+            <img src="/images/angular2.png" height="20px"/>
+            Angular
+        </h4>
+        <p>
+            Add callbacks to the gridOptions or set as Angular properties.
+        </p>
+    <? } ?>
 
-<div ng-if="isFramework('angular')">
-    <h4>
-        <img src="/images/angular2.png" height="20px"/>
-        Angular
-    </h4>
-    <p>
-        Add callbacks to the gridOptions or set as AngularJS 1.x properties.
-    </p>
+    <? if (isFrameworkVue()) { ?>
+        <h4>
+            <img src="/images/vue_large.png" height="20px"/>
+            VueJS
+        </h4>
+        <p>
+            Add callbacks to the gridOptions or set as VueJS properties.
+        </p>
+    <? } ?>
 
-</div>
+    <? if (isFrameworkWebComponents()) { ?>
+        <h4>
+            <img src="/images/webComponents.png" height="20px"/>
+            Web Components
+        </h4>
+        <p>
+            Add callbacks to the gridOptions or set as component properties.
+        </p>
+    <? } ?>
 
-<div ng-if="isFramework('vue')">
-    <h4>
-        <img src="/images/vue_large.png" height="20px"/>
-        VueJS
-    </h4>
-    <p>
-        Add callbacks to the gridOptions or set as VueJS properties.
-    </p>
+    <? if (isFrameworkAurelia()) { ?>
+        <h4>
+            <img src="/images/aurelia.png" height="20px"/>
+            Aurelia
+        </h4>
+        <p>
+            Add callbacks to the gridOptions or set as component properties.
+        </p>
+    <? } ?>
 
-</div>
-
-<div ng-if="isFramework('webcomponents')">
-    <h4>
-        <img src="/images/webComponents.png" height="20px"/>
-        Web Components
-    </h4>
-    <p>
-        Add callbacks to the gridOptions or set as component properties.
-    </p>
-
-</div>
-
-<div ng-if="isFramework('aurelia')">
-    <h4>
-        <img src="/images/aurelia.png" height="20px"/>
-        Aurelia Components
-    </h4>
-    <p>
-        Add callbacks to the gridOptions or set as component properties.
-    </p>
-
-</div>
     <h2 id="list-of-callbacks">List of Callbacks</h2>
 
     <table class="table">
