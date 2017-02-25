@@ -41,6 +41,7 @@ import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {Events} from "./events";
 import {VirtualPageRowModel} from "./rowModels/infinateScrolling/virtualPageRowModel";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
+import {ObservableInMemoryRowModel} from "./rowModels/inMemory/observableInMemoryRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
@@ -84,7 +85,8 @@ export class Grid {
     private static RowModelClasses: any = {
         virtual: VirtualPageRowModel,
         pagination: InMemoryRowModel,
-        normal: InMemoryRowModel
+        normal: InMemoryRowModel,
+        observable: ObservableInMemoryRowModel
     };
 
     public static setEnterpriseBeans(enterpriseBeans: any[], rowModelClasses: any): void {
