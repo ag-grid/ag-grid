@@ -10,8 +10,7 @@ include '../documentation-main/documentation_header.php';
     <h2 id="events">Events</h2>
 
     <p>
-        Below are listed all the events of the grid. Remember you can listen to events in
-        the following ways:
+        Below are listed all the events of the grid you can listen to.
     <p>
 
     <? if (isFrameworkJavaScript()) { ?>
