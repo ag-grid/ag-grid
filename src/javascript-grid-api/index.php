@@ -16,11 +16,20 @@ include '../documentation-main/documentation_header.php';
         can be accessed.
     </p>
 
-    <? if (isFrameworkAngularJS() || isFrameworkJavaScript()) { ?>
+    <? if (isFrameworkJavaScript()) { ?>
         <h4>
             <img src="/images/javascript.png" height="20"/>
-            <img ng-if="isFramework('angularjs')" src="/images/angularjs.png" height="20px"/>
-            Javascript <span ng-if="isFramework('angularjs')">and AngularJS 1.x</span>
+            Javascript
+        </h4>
+        <p>
+            Use api placed inside gridOptions by the grid during initialisation.
+        </p>
+    <? } ?>
+
+    <? if (isFrameworkAngular1()) { ?>
+        <h4>
+            <img src="/images/angularjs.png" height="20px"/>
+            AngularJS 1.x
         </h4>
         <p>
             Use api placed inside gridOptions by the grid during initialisation.
@@ -39,7 +48,7 @@ include '../documentation-main/documentation_header.php';
         </p>
     <? } ?>
 
-    <? if (isFrameworkAngular()) { ?>
+    <? if (isFrameworkAngular2()) { ?>
         <h4>
             <img src="/images/angular2.png" height="20px"/>
             Angular

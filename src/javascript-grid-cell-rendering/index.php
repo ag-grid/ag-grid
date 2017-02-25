@@ -406,21 +406,13 @@ colDef.cellRenderer = function(params) {
 </pre>
 </p>
 
-<div ng-if="isFramework('angular')">
-    <?php include './angular.php';?>
-</div>
+<? if (isFrameworkAngular2()) { include './angular.php'; } ?>
 
-<div ng-if="isFramework('aurelia')">
-    <?php include './aurelia.php';?>
-</div>
+<? if (isFrameworkAurelia()) { include './aurelia.php'; } ?>
 
-<div ng-if="isFramework('react')">
-    <?php include './react.php';?>
-</div>
+<? if (isFrameworkReact()) { include './react.php'; } ?>
 
-<div ng-if="isFramework('vue')">
-    <?php include './vue.php';?>
-</div>
+<? if (isFrameworkVue()) { include './vue.php'; } ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
 

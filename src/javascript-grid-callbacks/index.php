@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
         It is not intended to inform your application of anything.
     <p>
 
-    <? if (isFrameworkAngularJS()) { ?>
+    <? if (isFrameworkAngular1()) { ?>
         <h4 id="angularjs">
             <img src="/images/javascript.png" height="20"/>
             <img src="/images/angularjs.png" height="20px"/>
@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
         </p>
     <? } ?>
 
-    <? if (isFrameworkAngular()) { ?>
+    <? if (isFrameworkAngular2()) { ?>
         <h4>
             <img src="/images/angular2.png" height="20px"/>
             Angular

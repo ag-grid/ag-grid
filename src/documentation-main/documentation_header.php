@@ -81,27 +81,28 @@ function isFrameworkSelected($framework) {
         echo 'selected="selected"';
     }
 }
-
-function isFrameworkAngular() {
-    return $GLOBALS[framework] === 'angular';
+// calling it angular1 and angular2, as Angular and AngularJS are confusing,
+// in the web page (what user sees), we can stick with Angular and AngularJS
+function isFrameworkAngular2() {
+    return $GLOBALS[framework] === 'angular' || $GLOBALS[framework] === 'all';
 }
 function isFrameworkJavaScript() {
-    return $GLOBALS[framework] === 'javascript';
+    return $GLOBALS[framework] === 'javascript' || $GLOBALS[framework] === 'all';
 }
-function isFrameworkAngularJS() {
-    return $GLOBALS[framework] === 'angularjs';
+function isFrameworkAngular1() {
+    return $GLOBALS[framework] === 'angularjs' || $GLOBALS[framework] === 'all';
 }
 function isFrameworkReact() {
-    return $GLOBALS[framework] === 'react';
+    return $GLOBALS[framework] === 'react' || $GLOBALS[framework] === 'all';
 }
 function isFrameworkVue() {
-    return $GLOBALS[framework] === 'vue';
+    return $GLOBALS[framework] === 'vue' || $GLOBALS[framework] === 'all';
 }
 function isFrameworkAurelia() {
-    return $GLOBALS[framework] === 'aurelia';
+    return $GLOBALS[framework] === 'aurelia' || $GLOBALS[framework] === 'all';
 }
 function isFrameworkWebComponents() {
-    return $GLOBALS[framework] === 'webcomponents';
+    return $GLOBALS[framework] === 'webcomponents' || $GLOBALS[framework] === 'all';
 }
 
 ?>
@@ -183,7 +184,7 @@ function isFrameworkWebComponents() {
 
                 <?
                 normalItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
-                if (isFrameworkAngular()) {
+                if (isFrameworkAngular2()) {
                     normalItem(1, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/');
                     normalItem(1, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/');
                     normalItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');

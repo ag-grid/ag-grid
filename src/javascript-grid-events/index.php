@@ -7,101 +7,108 @@ $pageGroup = "interfacing";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
     <h2 id="events">Events</h2>
-
 
     <p>
         Below are listed all the events of the grid. Remember you can listen to events in
         the following ways:
     <p>
 
-        <div ng-if="isFramework(['javascript','angularjs'])">
-            <h4 id="javascript-and-angularjs">
-                <img src="/images/javascript.png" height="20"/>
-                <img ng-if="isFramework('angularjs')" src="/images/angularjs.png" height="20px"/>
-                Javascript <span ng-if="isFramework('angularjs')">and AngularJS 1.x</span>
-            </h4>
-    <p>
-        Add the relevant onXXX() method to the gridOptions or register a method
-        via api.addEventListener(eventName, handler).
-    </p>
+    <? if (isFrameworkJavaScript()) { ?>
+        <h4 id="javascript-and-angularjs">
+            <img src="/images/javascript.png" height="20"/>
+            Javascript
+        </h4>
+        <p>
+            Add the relevant onXXX() method to the gridOptions or register a method
+            via api.addEventListener(eventName, handler).
+        </p>
+    <? } ?>
 
-    <note ng-if="isFramework('angularjs')">For AngularJS 1.x - ag-Grid does not not fire events inside an Angular JS digest
-        cycle. This is done on purpose
-        for performance reasons, as there are many events fired, even if you don't listen to them. Firing the digest
-        cycle
-        for each one would kill performance. So you may want to $scope.$apply() after you handle the event.
-    </note>
-</div>
+    <? if (isFrameworkAngular1()) { ?>
+        <h4 id="javascript-and-angularjs">
+            <img src="/images/angularjs.png" height="20px"/>
+            AngularJS 1.x
+        </h4>
+        <p>
+            Add the relevant onXXX() method to the gridOptions or register a method
+            via api.addEventListener(eventName, handler).
+        </p>
 
-<div ng-if="isFramework('react')">
-<h4 id="react">
-    <img src="/images/react.png" height="20px"/>
-    React
-</h4>
-<p>
-    Add the relevant onXXX() method to the gridOptions or register a method
-    via api.addEventListener(eventName, handler). You can also register events
-    using React props in your JSX eg <i>eventName={this.myEventHandler.bind(this)}</i>.
-</p>
-</div>
+        <note ng-if="isFramework('angularjs')">For AngularJS 1.x - ag-Grid does not not fire events inside an Angular JS digest
+            cycle. This is done on purpose
+            for performance reasons, as there are many events fired, even if you don't listen to them. Firing the digest
+            cycle
+            for each one would kill performance. So you may want to $scope.$apply() after you handle the event.
+        </note>
+    <? } ?>
 
-<div ng-if="isFramework('angular')">
-<h4 id="angular">
-    <img src="/images/angular2.png" height="20px"/>
-    Angular
-</h4>
-<p>
-    Add the relevant onXXX() method to the gridOptions or register a method
-    via api.addEventListener(eventName, handler). You can also register events
-    using Angular event binding eg <i>(event-name)="myEventHandler"</i>.
-</p>
+    <? if (isFrameworkReact()) { ?>
+        <h4 id="react">
+            <img src="/images/react.png" height="20px"/>
+            React
+        </h4>
+        <p>
+            Add the relevant onXXX() method to the gridOptions or register a method
+            via api.addEventListener(eventName, handler). You can also register events
+            using React props in your JSX eg <i>eventName={this.myEventHandler.bind(this)}</i>.
+        </p>
+    <? } ?>
 
-</div>
-<div ng-if="isFramework('vue')">
-<h4 id="vuejs">
-    <img src="/images/vue_large.png" height="20px"/>
-    VueJS
-</h4>
-<p>
-    Add the relevant onXXX() method to the gridOptions or register a method
-    via api.addEventListener(eventName, handler). You can also register events
-    using VueJS event binding eg <i>:event-name="myEventHandler"</i>.
-</p>
+    <? if (isFrameworkAngular2()) { ?>
+        <h4 id="angular">
+            <img src="/images/angular2.png" height="20px"/>
+            Angular
+        </h4>
+        <p>
+            Add the relevant onXXX() method to the gridOptions or register a method
+            via api.addEventListener(eventName, handler). You can also register events
+            using Angular event binding eg <i>(event-name)="myEventHandler"</i>.
+        </p>
+    <? } ?>
 
-</div>
-<div ng-if="isFramework('webcomponents')">
-<h4 id="web-components">
-    <img src="/images/webComponents.png" height="20px"/>
-    Web Components
-</h4>
-<p>
-    Add the relevant onXXX() method to the gridOptions or register a method
-    via api.addEventListener(eventName, handler). You can also register events
-    by calling <i>domElement.addEventListener(eventName, handler)</i> or placing
-    an onXXX method directly onto the dom element - but remember the latter
-    uses lower case event name and handler name to be consistent with how other
-    DOM elements work.
-</p>
+    <? if (isFrameworkVue()) { ?>
+        <h4 id="vuejs">
+            <img src="/images/vue_large.png" height="20px"/>
+            VueJS
+        </h4>
+        <p>
+            Add the relevant onXXX() method to the gridOptions or register a method
+            via api.addEventListener(eventName, handler). You can also register events
+            using VueJS event binding eg <i>:event-name="myEventHandler"</i>.
+        </p>
+    <? } ?>
 
-</div>
+    <? if (isFrameworkWebComponents()) { ?>
+        <h4 id="web-components">
+            <img src="/images/webComponents.png" height="20px"/>
+            Web Components
+        </h4>
+        <p>
+            Add the relevant onXXX() method to the gridOptions or register a method
+            via api.addEventListener(eventName, handler). You can also register events
+            by calling <i>domElement.addEventListener(eventName, handler)</i> or placing
+            an onXXX method directly onto the dom element - but remember the latter
+            uses lower case event name and handler name to be consistent with how other
+            DOM elements work.
+        </p>
+    <? } ?>
 
-<div ng-if="isFramework('aurelia')">
-<h4 id="aurelia-components">
-    <img src="/images/aurelia.png" height="20px"/>
-    Aurelia Components
-</h4>
-<p>
-    Add the relevant onXXX() method to the gridOptions or register a method
-    via api.addEventListener(eventName, handler). You can also register events
-    by calling <i>domElement.addEventListener(eventName, handler)</i> or placing
-    an onXXX method directly onto the dom element - but remember the latter
-    uses lower case event name and handler name to be consistent with how other
-    DOM elements work.
-</p>
-</div>
+    <? if (isFrameworkAurelia()) { ?>
+        <h4 id="aurelia-components">
+            <img src="/images/aurelia.png" height="20px"/>
+            Aurelia Components
+        </h4>
+        <p>
+            Add the relevant onXXX() method to the gridOptions or register a method
+            via api.addEventListener(eventName, handler). You can also register events
+            by calling <i>domElement.addEventListener(eventName, handler)</i> or placing
+            an onXXX method directly onto the dom element - but remember the latter
+            uses lower case event name and handler name to be consistent with how other
+            DOM elements work.
+        </p>
+    <? } ?>
+
 
 <table id="ag-grid-events" class="table">
 
@@ -345,6 +352,5 @@ include '../documentation-main/documentation_header.php';
         <td>The client has set new data into the grid</td>
     </tr>
 </table>
-</div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

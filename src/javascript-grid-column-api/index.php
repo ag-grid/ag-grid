@@ -49,19 +49,25 @@ include '../documentation-main/documentation_header.php';
             can be accessed.
         </p>
 
-        <h4 ng-if="isFramework('javascript')">
-            <img  src="/images/javascript.png" height="20"/>
-            Javascript
-        </h4>
-        <h4 ng-if="isFramework('angularjs')">
-            <img  src="/images/angularjs.png" height="20px"/>
-            AngularJS 1.x
-        </h4>
+        <? if (isFrameworkJavaScript()) { ?>
+            <h4>
+                <img src="/images/javascript.png" height="20"/>
+                Javascript
+            </h4>
+        <? } ?>
+
+        <? if (isFrameworkAngular1()) { ?>
+            <h4>
+                <img  src="/images/angularjs.png" height="20px"/>
+                AngularJS 1.x
+            </h4>
+        <? } ?>
+
         <p>
             Use columnApi placed inside gridOptions by the grid during initialisation.
         </p>
 
-        <div ng-if="isFramework('react')">
+        <? if (isFrameworkJavaScript()) { ?>
             <h4>
                 <img src="/images/react.png" height="20px"/>
                 React
@@ -70,8 +76,8 @@ include '../documentation-main/documentation_header.php';
                 Use the column API passed to you via the onGridReady callback of the React component. You can also
                 use the columnApi placed inside gridOptions by the grid during initialisation.
             </p>
+        <? } ?>
 
-        </div>
         <div ng-if="isFramework('angular')">
             <h4>
                 <img src="/images/angular2.png" height="20px"/>
