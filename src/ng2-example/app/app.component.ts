@@ -11,15 +11,15 @@ export class AppComponent {
 
     currentExample: string = 'rich-grid';
     examples: any = [
-        {key: 'rich-grid', title: "Rich Grid with Pure JavaScript"},
+        {key: 'rich-grid', title: "Rich Grid Example"},
         {key: 'rich-grid-declarative', title: "Rich Grid with Declarative Markup"},
-        {key: 'from-component', title: "Using Dynamic Components"},
-        {key: 'from-rich-component', title: "Using Dynamic Components - Richer Example"},
-        {key: 'editor-component', title: "Using Cell Editor Components"},
-        {key: 'floating-row', title: "Using Floating Row Renderers"},
-        {key: 'full-width', title: "Using Full Width Renderers"},
-        {key: 'group-row', title: "Using Group Row Renderers"},
-        {key: 'filter', title: "With Filters Components"},
+        {key: 'from-component', title: "Dynamic Angular Component Example"},
+        {key: 'from-rich-component', title: "Dynamic Angular Components - Richer Example"},
+        {key: 'editor-component', title: "Cell Editor Component Example"},
+        {key: 'floating-row', title: "Floating Row Renderer Example"},
+        {key: 'full-width', title: "Full Width Renderer Example"},
+        {key: 'group-row', title: "Group Row Renderer Example"},
+        {key: 'filter', title: "Filters Component Example"},
         {key: 'master-detail', title: "Master Detail Example"},
     ];
 

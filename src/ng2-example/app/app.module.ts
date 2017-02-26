@@ -6,45 +6,46 @@ import {AgGridModule} from "ag-grid-angular/main";
 // application
 import {AppComponent} from "./app.component";
 // rich grid
-import {RichGridComponent} from "./rich-grid.component";
-import {DateComponent} from "./date-component.component";
-import {HeaderComponent} from "./header-component.component";
-import {HeaderGroupComponent} from "./header-group-component.component";
+import {RichGridComponent} from "./rich-grid-example/rich-grid.component";
 // declarative
-import {RichGridDeclarativeComponent} from "./rich-grid-declarative.component";
+import {RichGridDeclarativeComponent} from "./rich-grid-declarative-example/rich-grid-declarative.component";
+// rich grid and rich grid declarative
+import {DateComponent} from "./date-component/date.component";
+import {HeaderComponent} from "./header-component/header.component";
+import {HeaderGroupComponent} from "./header-group-component/header-group.component";
 // from component
-import {FromComponentComponent} from "./from-component.component";
-import {SquareComponent} from "./square.component";
-import {ParamsComponent} from "./params.component";
-import {CubeComponent} from "./cube.component";
-import {CurrencyComponent} from "./currency.component";
-import {ChildMessageComponent} from "./child-message.component";
+import {DynamicComponent} from "./dynamic-component-example/dynamic.component";
+import {SquareComponent} from "./dynamic-component-example/square.component";
+import {ParamsComponent} from "./dynamic-component-example/params.component";
+import {CubeComponent} from "./dynamic-component-example/cube.component";
+import {CurrencyComponent} from "./dynamic-component-example/currency.component";
+import {ChildMessageComponent} from "./dynamic-component-example/child-message.component";
 // from rich component
-import {FromRichComponent} from "./from-rich.component";
-import {ClickableModule} from "./clickable.module";
-import {RatioModule} from "./ratio.module";
-import {RatioParentComponent} from "./ratio.parent.component";
-import {ClickableParentComponent} from "./clickable.parent.component";
+import {RichComponent} from "./rich-dynamic-component-example/rich.component";
+import {ClickableModule} from "./rich-dynamic-component-example/clickable.module";
+import {RatioModule} from "./rich-dynamic-component-example/ratio.module";
+import {RatioParentComponent} from "./rich-dynamic-component-example/ratio.parent.component";
+import {ClickableParentComponent} from "./rich-dynamic-component-example/clickable.parent.component";
 // editor
-import {EditorComponent} from "./editor-component.component";
-import {NumericEditorComponent} from "./numeric-editor.component";
-import {MoodEditorComponent} from "./mood-editor.component";
-import {MoodRendererComponent} from "./mood-renderer.component";
+import {EditorComponent} from "./editor-component-example/editor.component";
+import {NumericEditorComponent} from "./editor-component-example/numeric-editor.component";
+import {MoodEditorComponent} from "./editor-component-example/mood-editor.component";
+import {MoodRendererComponent} from "./editor-component-example/mood-renderer.component";
 // floating row
-import {WithFloatingRowComponent} from "./floating-row-renderer.component";
-import {StyledComponent} from "./styled-renderer.component";
+import {FloatingRowComponent} from "./floating-row-example/floating-row-renderer.component";
+import {StyledComponent} from "./floating-row-example/styled-renderer.component";
 // full width
-import {WithFullWidthComponent} from "./full-width-renderer.component";
-import {NameAndAgeRendererComponent} from "./name-age-renderer.component";
+import {FullWidthComponent} from "./full-width-example/full-width-renderer.component";
+import {NameAndAgeRendererComponent} from "./full-width-example/name-age-renderer.component";
 // grouped inner
-import {MedalRendererComponent} from "./medal-renderer.component";
-import {WithGroupRowComponent} from "./group-row-renderer.component";
+import {MedalRendererComponent} from "./grouped-row-example/medal-renderer.component";
+import {GroupRowComponent} from "./grouped-row-example/group-row-renderer.component";
 // filter
-import {FilterComponentComponent} from "./filter-component.component";
-import {PartialMatchFilterComponent} from "./partial-match-filter.component";
+import {FilterComponentComponent} from "./filter-component-example/filter.component";
+import {PartialMatchFilterComponent} from "./filter-component-example/partial-match-filter.component";
 // master detail
-import {MasterComponent} from "./masterdetail-master.component";
-import {DetailPanelComponent} from "./detail-panel.component";
+import {MasterComponent} from "./master-detail-example/masterdetail-master.component";
+import {DetailPanelComponent} from "./master-detail-example/detail-panel.component";
 
 @NgModule({
     imports: [
@@ -81,22 +82,22 @@ import {DetailPanelComponent} from "./detail-panel.component";
         HeaderComponent,
         HeaderGroupComponent,
         RichGridDeclarativeComponent,
-        FromComponentComponent,
+        DynamicComponent,
         SquareComponent,
         CubeComponent,
         ParamsComponent,
         CurrencyComponent,
         ChildMessageComponent,
-        FromRichComponent,
+        RichComponent,
         EditorComponent,
         NumericEditorComponent,
         MoodEditorComponent,
         MoodRendererComponent,
-        WithFloatingRowComponent,
+        FloatingRowComponent,
         StyledComponent,
-        WithFullWidthComponent,
+        FullWidthComponent,
         NameAndAgeRendererComponent,
-        WithGroupRowComponent,
+        GroupRowComponent,
         MedalRendererComponent,
         FilterComponentComponent,
         PartialMatchFilterComponent,

@@ -7,8 +7,8 @@
 
         $scope.model = model;
 
-        model.onFrameworkChanged = function() {
-            window.location.href = '?framework='+model.framework;
+        model.onFrameworkChanged = function () {
+            window.location.href = '?framework=' + model.framework;
         };
 
         model.framework = document.querySelector('#frameworkAttr').innerHTML;
@@ -60,7 +60,7 @@
 
         $scope.divIsReady = function (divId) {
             console.log(document.getElementById(divId));
-            if(document.getElementById(divId)) {
+            if (document.getElementById(divId)) {
                 return true;
             }
             return false;
@@ -155,8 +155,8 @@
     }
 
     /*
-    * Multi-page (more than just js & html really) Examples with plunker support
-    */
+     * Multi-page (more than just js & html really) Examples with plunker support
+     */
     module.directive("showComplexExample", function () {
         return {
             scope: true,
@@ -168,24 +168,31 @@
     function ShowComplexScriptExampleController($scope, $http, $attrs, $sce) {
         $scope.source = $attrs["example"];
         $scope.selectedTab = 'example';
-        $scope.plunker = null;
 
-        if($attrs.plunker && $attrs.plunker.indexOf("https://embed.plnkr.co") === 0) {
+        $scope.plunker = null;
+        if ($attrs.plunker && $attrs.plunker.indexOf("https://embed.plnkr.co") === 0) {
             $scope.plunker = $sce.trustAsResourceUrl($attrs.plunker);
         }
 
-        if ($attrs.extrapages) {
-            $scope.extraPages = $attrs.extrapages.split(',');
+        $scope.extraPages = [];
+
+        var sources = eval($attrs.sources);
+        sources.forEach(function(source) {
+            var root = source.root;
+            var files = source.files.split(',');
+
+            $scope.extraPages = $scope.extraPages.concat(files);
+
             $scope.extraPageContent = {};
-            $scope.extraPages.forEach(function (page) {
-                $http.get($attrs.extrapagesroot + page).then(function (response) {
-                    $scope.extraPageContent[page] = response.data;
+            files.forEach(function (file) {
+                $http.get(root + file).then(function (response) {
+                    $scope.extraPageContent[file] = response.data;
                 }).catch(function (response) {
-                    $scope.extraPageContent[page] = response.data;
+                    $scope.extraPageContent[file] = response.data;
                 });
             });
             $scope.extraPage = $scope.extraPages[0];
-        }
+        });
 
         if ($attrs.exampleheight) {
             $scope.iframeStyle = {height: $attrs.exampleheight};

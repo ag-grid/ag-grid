@@ -56,8 +56,11 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>With that in place we have a quick and simple Grid up and running:</p>
 
 <show-complex-example example="example-js.html"
-                      extraPagesRoot="./"
-                      extraPages="example-js.html,example-js.js"
+                      sources="{
+                            [
+                                { root: './', files: 'example-js.html,example-js.js' }
+                            ]
+                          }"
                       plunker="https://embed.plnkr.co/369YrrgCVrnPjD528OtT/"
                       exampleheight="130px">
 </show-complex-example>

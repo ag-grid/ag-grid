@@ -32,33 +32,9 @@ cd ag-grid-test</pre>
 npm i ag-grid --save
 npm i ag-grid-angular --save</pre>
 
-<p>We are also going to assume an Angular version of 2.3.1 for this example - you can use a higher (or lower)
-    version here,
-    but you'll need to ensure that you choose the corresponding version of Angular CLI if you do so.</p>
-
-<p>The package dependencies should look something like this:</p>
-<pre>
-"dependencies": {
-    "@angular/common": "^2.3.1",
-    "@angular/compiler": "^2.3.1",
-    "@angular/core": "^2.3.1",
-    "@angular/forms": "^2.3.1",
-    "@angular/http": "^2.3.1",
-    "@angular/platform-browser": "^2.3.1",
-    "@angular/platform-browser-dynamic": "^2.3.1",
-    "ag-grid": "^8.1.0",
-    "ag-grid-angular": "^8.1.0",
-    "core-js": "^2.4.1",
-    "rxjs": "5.0.0-beta.12",
-    "ts-helpers": "^1.1.1",
-    "zone.js": "0.7.x"
-}</pre>
-
-<p>Note that we've removed <code>@angular/router</code> as we don't need it for our example.</p>
-
-<p>Let's clear the dependencies installed when we created the project and install our new ones:</p>
-<pre>rm -rf node_modules/*
-npm install</pre>
+<p>We are also going to assume an Angular CLI version 1.0.0-rc.x and Angular versions  of 2.4.x for this example -
+    you can use a higher (or lower) version here, but you'll need to ensure that you choose the corresponding version of
+    Angular CLI if you do so.</p>
 
 <p>Now let's create our main Application Component - this will be the component that creates the ag-Grid grid for
     us:</p>

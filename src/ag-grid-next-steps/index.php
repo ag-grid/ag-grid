@@ -9,7 +9,8 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="ag-grid-angular-features"><img style="vertical-align: middle" src="/images/angular2_small.png" height="25px"/> ag-Grid Angular Features</h2>
+    <h2 id="ag-grid-angular-features"><img style="vertical-align: middle" src="/images/angular2_small.png"
+                                           height="25px"/> ag-Grid Angular Features</h2>
 
     <note>Please use the github project <a href="https://github.com/ceolter/ag-grid-angular">ag-grid-angular</a>
         for feedback or issue reporting around ag-Grid's support for Angular.
@@ -335,11 +336,20 @@ this.params.context.componentParent
         The example below shows a rich configuration of ag-Grid.
     </p>
     <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=rich-grid"
-                          extraPagesRoot="../ng2-example/app/"
-                          extraPages="rich-grid.component.ts,rich-grid.component.html,header-group-component.component.ts,header-group-component.component.html,header-group-component.component.css,header-component.component.ts,header-component.component.html,header-component.component.css,date-component.component.ts,date-component.component.html,date-component.component.css,app.module.ts,skillFilter.ts,proficiencyFilter.ts,proficiency-renderer.css"
+                          sources="{
+                            [
+                                { root: '../ng2-example/app/rich-grid-example/', files: 'rich-grid.component.ts,rich-grid.component.html,proficiency-renderer.css,rich-grid.css' },
+                                { root: '../ng2-example/app/header-group-component/', files: 'header-group.component.ts,header-group.component.html,header-group.component.css' },
+                                { root: '../ng2-example/app/header-component/', files: 'header.component.ts,header.component.html,header.component.css' },
+                                { root: '../ng2-example/app/filters/', files: 'skillFilter.ts,proficiencyFilter.ts' },
+                                { root: '../ng2-example/app/date-component/', files: 'date.component.ts,date.component.html,date.component.css' },
+                                { root: '../ng2-example/app/', files: 'app.module.ts' }
+                            ]
+                          }"
                           plunker="https://embed.plnkr.co/EINfsm/"
                           exampleHeight="525px">
     </show-complex-example>
+    app.module.ts,-->
 
     <h2 id="ng2markup">Creating Grids with Markup</h2>
 
@@ -412,12 +422,20 @@ private getCountryFilterParams():any {
     <p>
         The example below shows the same rich grid as the example above, but with configuration done via Markup.
     </p>
-        <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=rich-grid-declarative"
-                              extraPagesRoot="../ng2-example/app/"
-                              extraPages="rich-grid-declarative.component.ts,rich-grid-declarative.component.html,header-group-component.component.ts,header-group-component.component.html,header-group-component.component.css,header-component.component.ts,header-component.component.html,header-component.component.css,date-component.component.ts,date-component.component.html,date-component.component.css,app.module.ts,skillFilter.ts,proficiencyFilter.ts,proficiency-renderer.css"
-                              plunker="https://embed.plnkr.co/8p83Qw/"
-                              exampleHeight="525px">
-        </show-complex-example>
+    <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=rich-grid-declarative"
+                          sources="{
+                            [
+                                { root: '../ng2-example/app/rich-grid-declarative-example/', files: 'rich-grid-declarative.component.ts,rich-grid-declarative.component.html,proficiency-renderer.css,rich-grid.css' },
+                                { root: '../ng2-example/app/header-group-component/', files: 'header-group.component.ts,header-group.component.html,header-group.component.css' },
+                                { root: '../ng2-example/app/header-component/', files: 'header.component.ts,header.component.html,header.component.css' },
+                                { root: '../ng2-example/app/filters/', files: 'skillFilter.ts,proficiencyFilter.ts' },
+                                { root: '../ng2-example/app/date-component/', files: 'date.component.ts,date.component.html,date.component.css' },
+                                { root: '../ng2-example/app/', files: 'app.module.ts' }
+                            ]
+                          }"
+                          plunker="https://embed.plnkr.co/1rHK9l/"
+                          exampleHeight="525px">
+    </show-complex-example>
 
     <h2 id="cell-rendering-cell-editing-using-angular">Cell Rendering & Cell Editing using Angular</h2>
 
@@ -443,11 +461,12 @@ private getCountryFilterParams():any {
 
     <p>
         Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>
-        to learn about accessing all the features of the grid, or take a look at more detailed documentation around specifics
-    like <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenderers</a>,
-    <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
-    <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular.
-</p>
+        to learn about accessing all the features of the grid, or take a look at more detailed documentation around
+        specifics
+        like <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenderers</a>,
+        <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
+        <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular.
+    </p>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
