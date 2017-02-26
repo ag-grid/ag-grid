@@ -34,72 +34,72 @@ include '../documentation-main/documentation_header.php';
         feature set:
     <ul>
         <li>A feature rich grid example, demonstrating many of ag-Grid's features using Angular as a wrapper
-            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/rich-grid.component.ts"
+            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/rich-grid-example/rich-grid.component.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/rich-grid.component.html"
+                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/rich-grid-example/rich-grid.component.html"
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>An example using markup to create a grid
-            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/rich-grid-declarative.component.ts"
+            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/rich-grid-declarative-example/rich-grid-declarative.component.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/rich-grid-declarative.component.html"
+                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/rich-grid-declarative-example/rich-grid-declarative.component.html"
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Simple Example, using CellRenderers created from Angular Components
-            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/from-component.component.ts"
+            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/dynamic-component-example/dynamic.component.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/from-component.component.html"
+                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/dynamic-component-example/dynamic.component.html"
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Richer Example, using CellRenderers created from Angular Components, with child components, and two-way
             binding (parent to child components events)
-            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/from-rich.component.ts"
+            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/rich-dynamic-component-example/rich.component.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/from-rich.component.html"
+                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/rich-dynamic-component-example/rich.component.html"
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Cell Editor example - one with a popup editor, and another with a numeric editor. Each demonstrates
             different editor related features
-            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/editor-component.component.ts"
+            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/editor-component-example/editor.component.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/editor-component.component.html"
+                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/editor-component-example/editor.component.html"
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Floating Row Renderer Example
-            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/floating-row-renderer.component.ts"
+            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/floating-row-example/floating-row-renderer.component.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/floating-row-renderer.component.html"
+                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/floating-row-example/floating-row-renderer.component.html"
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Full Width Renderer Example
-            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/full-width-renderer.component.ts"
+            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/full-width-example/full-width-renderer.component.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/full-width-renderer.component.html"
+                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/full-width-example/full-width-renderer.component.html"
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Group Row Inner Renderer Example
-            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/group-row-renderer.component.ts"
+            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/grouped-row-example/group-row-renderer.component.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/group-row-renderer.component.html"
+                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/grouped-row-example/group-row-renderer.component.html"
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Filter Example, with the filter written as a Angular Component
-            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/filter-component.component.ts"
+            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/filter-component-example/filter.component.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/filter-component.component.html"
+                    href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/filter-component-example/filter.component.html"
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Master/Detail Example, with both the Master and the Detail elements being Angular Components
             <ul>
                 <li>Master: <a
-                            href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/masterdetail-master.component.ts"
+                            href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/master-detail-example/masterdetail-master.component.ts"
                             target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                            href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/masterdetail-master.component.html"
+                            href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/master-detail-example/masterdetail-master.component.html"
                             target="_blank" class="fa fa-external-link"> html</a></li>
                 <li>Detail: <a
-                            href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/detail-panel.component.ts"
+                            href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/master-detail-example/detail-panel.component.ts"
                             target="_blank" class="fa fa-external-link"> TypeScript</a> <a
-                            href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/detail-panel.component.html"
+                            href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/master-detail-example/detail-panel.component.html"
                             target="_blank" class="fa fa-external-link"> html</a></li>
             </ul>
         </li>
