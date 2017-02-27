@@ -129,6 +129,8 @@
     border-radius: 5px;
     margin-top: 10px;
     margin-bottom: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .collapsableDocs-header{
@@ -182,6 +184,25 @@
     border: 1px solid lightgrey;
     border-radius: 5px;
     padding: 5px;
+}
+
+.column-items {
+    display: block;
+    width: 100%;
+}
+
+.column-links {
+    font-size: 20px;
+    text-decoration: none !important;
+}
+
+a.column-links:hover {
+    color: red;
+}
+
+.tooltip-inner {
+    max-width: 350px;
+    width: 350px;
 }
 
 /*
