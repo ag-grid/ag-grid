@@ -184,6 +184,25 @@
     padding: 5px;
 }
 
+.column-items {
+    display: block;
+    width: 100%;
+}
+
+.column-links {
+    font-size: 20px;
+    text-decoration: none !important;
+}
+
+a.column-links:hover {
+    color: red;
+}
+
+.tooltip-inner {
+    max-width: 350px;
+    width: 350px;
+}
+
 /*
 * === Google Custom search in docs ===
 */

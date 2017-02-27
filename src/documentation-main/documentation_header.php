@@ -53,57 +53,76 @@ if (strcmp($version, 'latest') == 0) {
 $framework = $_GET['framework'];
 
 // if framework url was not passed, or is invalid, set framework to all
-$allFrameworks = array('javascript','angular','angularjs','react','vue','aurelia','webcomponents');
+$allFrameworks = array('javascript', 'angular', 'angularjs', 'react', 'vue', 'aurelia', 'webcomponents');
 if (!in_array($framework, $allFrameworks)) {
     $framework = 'all';
 }
 
-function normalItem($indent, $localKey, $name, $url) {
+function normalItem($indent, $localKey, $name, $url)
+{
     menuItem($indent, $localKey, $name, $url, false);
 }
 
-function menuItem($indent, $localKey, $name, $url, $enterprise) {
+function menuItem($indent, $localKey, $name, $url, $enterprise)
+{
     $enterpriseIcon = $enterprise ? '<img class="enterprise-icon" src="../images/enterprise.png"/> ' : '';
-    $padding = ($indent==1) ? '&nbsp;&nbsp;' : '';
+    $padding = ($indent == 1) ? '&nbsp;&nbsp;' : '';
     if ($GLOBALS[key] == $localKey) {
-        print('<span class="sidebarLinkSelected">'.$padding.$enterpriseIcon.$name.'</span>');
+        print('<span class="sidebarLinkSelected">' . $padding . $enterpriseIcon . $name . '</span>');
     } else {
-        print('<a class="sidebarLink" href="'.$GLOBALS[rootFolder].$url.'?framework='.$GLOBALS[framework].'">'.$padding.$enterpriseIcon.$name.'</a>');
+        print('<a class="sidebarLink" href="' . $GLOBALS[rootFolder] . $url . '?framework=' . $GLOBALS[framework] . '">' . $padding . $enterpriseIcon . $name . '</a>');
     }
 }
 
-function enterpriseItem($indent, $localKey, $name, $url) {
+function enterpriseItem($indent, $localKey, $name, $url)
+{
     menuItem($indent, $localKey, $name, $url, true);
 }
 
-function isFrameworkSelected($framework) {
-    if ($framework===$GLOBALS[framework]) {
+function isFrameworkSelected($framework)
+{
+    if ($framework === $GLOBALS[framework]) {
         echo 'selected="selected"';
     }
 }
 
-function isFrameworkAll() {
+function isFrameworkAll()
+{
     return $GLOBALS[framework] === 'all';
 }
-function isFrameworkAngular() {
+
+function isFrameworkAngular()
+{
     return $GLOBALS[framework] === 'angular' || $GLOBALS[framework] === 'all';
 }
-function isFrameworkJavaScript() {
+
+function isFrameworkJavaScript()
+{
     return $GLOBALS[framework] === 'javascript' || $GLOBALS[framework] === 'all';
 }
-function isFrameworkAngularJS() {
+
+function isFrameworkAngularJS()
+{
     return $GLOBALS[framework] === 'angularjs' || $GLOBALS[framework] === 'all';
 }
-function isFrameworkReact() {
+
+function isFrameworkReact()
+{
     return $GLOBALS[framework] === 'react' || $GLOBALS[framework] === 'all';
 }
-function isFrameworkVue() {
+
+function isFrameworkVue()
+{
     return $GLOBALS[framework] === 'vue' || $GLOBALS[framework] === 'all';
 }
-function isFrameworkAurelia() {
+
+function isFrameworkAurelia()
+{
     return $GLOBALS[framework] === 'aurelia' || $GLOBALS[framework] === 'all';
 }
-function isFrameworkWebComponents() {
+
+function isFrameworkWebComponents()
+{
     return $GLOBALS[framework] === 'webcomponents' || $GLOBALS[framework] === 'all';
 }
 
@@ -130,7 +149,7 @@ function isFrameworkWebComponents() {
 <?php } ?>
 
 <!-- this is passed to the javascript, so it knows the framework -->
-<span id="frameworkAttr" style="display: none;"><?= $framework?></span>
+<span id="frameworkAttr" style="display: none;"><?= $framework ?></span>
 
 <div class="header-row">
 
@@ -329,7 +348,11 @@ function isFrameworkWebComponents() {
             </div>
 
             <div class="docsMenu-examples">
-                <?php
+                <?
+
+                if (isFrameworkAngular() || isFrameworkAll()) {
+                    normalItem(0, 'Angular Examples', 'Angular Examples', 'example-angular/');
+                }
                 normalItem(0, 'Styled Report', 'Styled Report', 'example-account-report/');
                 normalItem(0, 'File Browser', 'File Browser', 'example-file-browser/');
                 normalItem(0, 'Expressions and Context', 'Expressions and Context', 'example-expressions-and-context/');

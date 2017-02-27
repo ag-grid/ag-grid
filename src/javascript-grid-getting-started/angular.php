@@ -14,6 +14,8 @@
     <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working
     example of this.</p>
 
+<note>Full Working Examples can be found in the <a href="../example-angular">Angular Examples</a> section.</note>
+
 <h2 id="pre-requisites">Pre-requisites</h2>
 <p>
     This page assumes you already have Angular-CLI installed - if not please refer to the <a
