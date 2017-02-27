@@ -762,6 +762,10 @@ export class Utils {
         this.addOrRemoveCssClass(element, 'ag-hidden', !visible);
     }
 
+    static setHidden(element: HTMLElement, hidden: boolean) {
+        this.addOrRemoveCssClass(element, 'ag-visibility-hidden', hidden);
+    }
+
     static isBrowserIE(): boolean {
         if (this.isIE===undefined) {
             this.isIE = /*@cc_on!@*/false || !!(<any>document).documentMode; // At least IE6

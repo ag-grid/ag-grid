@@ -18,7 +18,6 @@ import {Bean, PostConstruct, Context, Autowired, Optional} from "./context/conte
 import {GridCore} from "./gridCore";
 import {IRowModel} from "./interfaces/iRowModel";
 import {SortController} from "./sortController";
-import {PaginationController} from "./rowModels/paginationController";
 import {FocusedCellController} from "./focusedCellController";
 import {IRangeController, RangeSelection, AddRangeSelectionParams} from "./interfaces/iRangeController";
 import {GridCell, GridCellDef} from "./entities/gridCell";
@@ -34,6 +33,7 @@ import {IAggFuncService} from "./interfaces/iAggFuncService";
 import {IFilter, IFilterComp} from "./interfaces/iFilter";
 import {CsvExportParams} from "./exportParams";
 import {IExcelCreator} from "./interfaces/iExcelCreator";
+import {PaginationService} from "./rowModels/pagination/paginationService";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -62,7 +62,7 @@ export class GridApi {
     @Autowired('context') private context: Context;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('paginationController') private paginationController: PaginationController;
+    @Autowired('paginationService') private paginationService: PaginationService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('clipboardService') private clipboardService: IClipboardService;
@@ -120,7 +120,7 @@ export class GridApi {
 
     public setDatasource(datasource:any) {
         if (this.gridOptionsWrapper.isRowModelPagination()) {
-            this.paginationController.setDatasource(datasource);
+            this.paginationService.setDatasource(datasource);
         } else if (this.gridOptionsWrapper.isRowModelVirtual()) {
             (<VirtualPageRowModel>this.rowModel).setDatasource(datasource);
         } else {

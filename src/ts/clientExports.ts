@@ -44,7 +44,6 @@ import {FilterStage} from "./rowModels/inMemory/filterStage";
 import {FlattenStage} from "./rowModels/inMemory/flattenStage";
 import {SortStage} from "./rowModels/inMemory/sortStage";
 import {FloatingRowModel} from "./rowModels/floatingRowModel";
-import {PaginationController} from "./rowModels/paginationController";
 import {Component} from "./widgets/component";
 import {CellNavigationService} from "./cellNavigationService";
 import {ColumnChangeEvent} from "./columnChangeEvent";
@@ -213,7 +212,6 @@ export function populateClientExports(exports: any): void {
 
     // rowControllers
     exports.FloatingRowModel = FloatingRowModel;
-    exports.PaginationController = PaginationController;
     exports.VirtualPageRowModel = VirtualPageRowModel;
     exports.VirtualPageCache = VirtualPageCache;
     exports.VirtualPage = VirtualPage;
