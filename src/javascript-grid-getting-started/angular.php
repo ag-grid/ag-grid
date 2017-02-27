@@ -1,4 +1,6 @@
-<h2 ng-if="!isFramework('all')"><img style="vertical-align: middle" src="/images/angular2_small.png" height="25px"/> Overview</h2>
+<?php if (!isFrameworkAll()) { ?>
+    <h2><img style="vertical-align: middle" src="/images/angular2_small.png" height="25px"/> Overview</h2>
+<?php } ?>
 
 <h3>Introduction</h3>
 

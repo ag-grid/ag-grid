@@ -1,6 +1,8 @@
 <div>
 
-    <h2 ng-if="!isFramework('all')" id="implementing-the-aurelia-datagrid"><img style="vertical-align: middle" src="/images/aurelia_small.png" height="25px"/> Overview</h2>
+    <?php if (!isFrameworkAll()) { ?>
+        <h2 id="implementing-the-aurelia-datagrid"><img style="vertical-align: middle" src="/images/aurelia_small.png" height="25px"/> Overview</h2>
+    <?php } ?>
 
     <?php
     $framework = 'aurelia';

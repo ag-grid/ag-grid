@@ -42,100 +42,87 @@ include '../documentation-main/documentation_header.php';
             </div>
         <?php } ?>
 
+        <?php if (isFrameworkAngularJS()) { ?>
+            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
 
-        <div ng-if="isFramework(['angularjs','all'])">
-            <div ng-class="{collapsableDocs: isFramework('all')}">
-                <div ng-if="isFramework('all')"
-                     ng-click="toggleDiv('angularJsOpen')"
-                     class="collapsableDocs-header"
-                     onclick="javascript: this.classList.toggle('active');">
-                    <h4><img style="vertical-align: middle" src="/images/angularjs.png" height="20px"/> Overview -
-                        AngularJS 1.x</h4>
-                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                </div>
+                <?php if (isFrameworkAll()) { ?>
+                    <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
+                        <h4><img style="vertical-align: middle" src="/images/angularjs.png" height="20px"/> Overview - AngularJS 1.x</h4>
+                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                    </div>
+                <?php } ?>
 
-                <div ng-if="angularJsOpen || frameworkContext==='angularjs'"
-                     ng-class="{'collapsableDocs-content': isFramework('all')}">
+                <div>
                     <?php include './angularjs.php'; ?>
                 </div>
             </div>
-        </div>
+        <?php } ?>
 
-        <div ng-if="isFramework(['vue','all'])">
-            <div ng-class="{collapsableDocs: isFramework('all')}">
-                <div ng-if="isFramework('all')"
-                     ng-click="toggleDiv('vueOpen')"
-                     class="collapsableDocs-header"
-                     onclick="javascript: this.classList.toggle('active');">
-                    <h4><img style="vertical-align: middle" src="/images/vue_small.png" height="20px"/> Overview - VueJS
-                    </h4>
-                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                </div>
+        <?php if (isFrameworkVue()) { ?>
+            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
 
-                <div ng-if="vueOpen || frameworkContext==='vue'"
-                     ng-class="{'collapsableDocs-content': isFramework('all')}">
+                <?php if (isFrameworkAll()) { ?>
+                    <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
+                        <h4><img style="vertical-align: middle" src="/images/vue_small.png" height="20px"/> Overview - VueJS</h4>
+                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                    </div>
+                <?php } ?>
+
+                <div>
                     <?php include './vue.php'; ?>
                 </div>
             </div>
-        </div>
+        <?php } ?>
 
-        <div ng-if="isFramework(['react','all'])">
-            <div ng-class="{collapsableDocs: isFramework('all')}">
-                <div ng-if="isFramework('all')"
-                     ng-click="toggleDiv('reactOpen')"
-                     class="collapsableDocs-header"
-                     onclick="javascript: this.classList.toggle('active');">
-                    <h4><img style="vertical-align: middle" src="/images/react_small.png" height="20px"/> Overview -
-                        ReactJS</h4>
-                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                </div>
+        <?php if (isFrameworkReact()) { ?>
+            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
 
-                <div
-                     ng-class="{'collapsableDocs-content': isFramework('all')}">
+                <?php if (isFrameworkAll()) { ?>
+                    <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
+                        <h4><img style="vertical-align: middle" src="/images/react_small.png" height="20px"/> Overview - ReactJS</h4>
+                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                    </div>
+                <?php } ?>
+
+                <div>
                     <?php include './react.php'; ?>
                 </div>
             </div>
-        </div>
+        <?php } ?>
 
-        <div ng-if="isFramework(['aurelia','all'])">
-            <div ng-class="{collapsableDocs: isFramework('all')}">
-                <div ng-if="isFramework('all')"
-                     ng-click="toggleDiv('aureliaOpen')"
-                     class="collapsableDocs-header"
-                     onclick="javascript: this.classList.toggle('active');">
-                    <h4><img style="vertical-align: middle" src="/images/aurelia_small.png" height="20px"/> Overview -
-                        Aurelia</h4>
-                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                </div>
+        <?php if (isFrameworkAurelia()) { ?>
+            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
 
-                <!-- we don't lazy load this one as the nature of the react file means
-                     it'll execute the react demo script regardless-->
-                <div ng-if="aureliaOpen || frameworkContext==='aurelia'"
-                     ng-class="{'collapsableDocs-content': isFramework('all')}">
+                <?php if (isFrameworkAll()) { ?>
+                    <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
+                        <h4><img style="vertical-align: middle" src="/images/aurelia_small.png" height="20px"/> Overview - Aurelia</h4>
+                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                    </div>
+                <?php } ?>
+
+                <div>
                     <?php include './aurelia.php'; ?>
                 </div>
             </div>
-        </div>
+        <?php } ?>
 
-        <div ng-if="isFramework(['webcomponents','all'])">
-            <div ng-class="{collapsableDocs: isFramework('all')}">
-                <div ng-if="isFramework('all')"
-                     ng-click="toggleDiv('webcomponentsOpen')"
-                     class="collapsableDocs-header"
-                     onclick="javascript: this.classList.toggle('active');">
-                    <h4><img style="vertical-align: middle" src="/images/webcomponents.png"
-                             height="20px"/> Overview - Web Components</h4>
-                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                </div>
+        <?php if (isFrameworkWebComponents()) { ?>
+            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
 
-                <div ng-if="webcomponentsOpen || frameworkContext==='webcomponents'"
-                     ng-class="{'collapsableDocs-content': isFramework('all')}">
+                <?php if (isFrameworkAll()) { ?>
+                    <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
+                        <h4><img style="vertical-align: middle" src="/images/webcomponents.png" height="20px"/> Overview - Web Components</h4>
+                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                    </div>
+                <?php } ?>
+
+                <div>
                     <?php include './webcomponents.php'; ?>
                 </div>
             </div>
-        </div>
+        <?php } ?>
 
-        <div ng-if="isFramework(['javascript','all'])">
+        <div>
             <div class="collapsableDocs">
                 <div class="collapsableDocs-header"
                      onclick="javascript: this.classList.toggle('active');">
@@ -284,43 +271,46 @@ include '../documentation-main/documentation_header.php';
             </div>
         </div>
 
-        <div ng-if="frameworkContext!=='angular'" class="collapsableDocs">
-            <div class="collapsableDocs-header"
-                 onclick="javascript: this.classList.toggle('active');">
-                <h4>Documentation Examples</h4>
-                <i class="fa fa-arrow-right" aria-hidden="true"></i>
-            </div>
+        <?php if (!isFrameworkAngular()) { ?>
 
-            <div class="collapsableDocs-content">
-                <p></p>
-                <p>
-                    Almost all the examples in the online documentation use the self contained bundle of ag-Grid and do
-                    not use
-                    any framework. This is to make the examples as easy to follow (focusing only on what the example
-                    is about) and easy to copy and run locally.
-                </p>
+            <div class="collapsableDocs">
+                <div class="collapsableDocs-header"
+                     onclick="javascript: this.classList.toggle('active');">
+                    <h4>Documentation Examples</h4>
+                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                </div>
 
-                <p>
-                    Also in the examples, ag-Grid is loaded with an additional parameter <i>"ignore=notused"</i>. If you
-                    are
-                    using
-                    the self contained bundle <b>you do not need to include this extra parameter</b>. It's purpose is as
-                    a dummy
-                    parameter, which the documentation
-                    changes every time there is a grid release, to trick the browser in getting the latest version
-                    rather than
-                    using
-                    a cached version.
-                    <br/>
-                </p>
-                <p>
-                    So eg, the example has this:<br/>
-                <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid/ag-grid.js?ignore=notused40"><br/></pre>
-                But all you need is this:<br/>
-                <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js"></pre>
-                </p>
+                <div class="collapsableDocs-content">
+                    <p></p>
+                    <p>
+                        Almost all the examples in the online documentation use the self contained bundle of ag-Grid and do
+                        not use
+                        any framework. This is to make the examples as easy to follow (focusing only on what the example
+                        is about) and easy to copy and run locally.
+                    </p>
+
+                    <p>
+                        Also in the examples, ag-Grid is loaded with an additional parameter <i>"ignore=notused"</i>. If you
+                        are
+                        using
+                        the self contained bundle <b>you do not need to include this extra parameter</b>. It's purpose is as
+                        a dummy
+                        parameter, which the documentation
+                        changes every time there is a grid release, to trick the browser in getting the latest version
+                        rather than
+                        using
+                        a cached version.
+                        <br/>
+                    </p>
+                    <p>
+                        So eg, the example has this:<br/>
+                    <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid/ag-grid.js?ignore=notused40"><br/></pre>
+                    But all you need is this:<br/>
+                    <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js"></pre>
+                    </p>
+                </div>
             </div>
-        </div>
+        <?php } ?>
         <h2>Browser Support/Compatibility</h2>
 
         <p>ag-Grid is compatible with IE 9+, Firefox, Chrome and Safari.</p>

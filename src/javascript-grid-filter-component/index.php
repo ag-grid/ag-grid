@@ -148,20 +148,20 @@ include '../documentation-main/documentation_header.php';
 
 <show-example example="exampleCustomFilter"></show-example>
 
-<div ng-if="isFramework('angular')">
+<?php if (isFrameworkAngular()) { ?>
     <?php include './angular.php';?>
-</div>
+<?php } ?>
 
-<div ng-if="isFramework('aurelia')">
+<?php if (isFrameworkAurelia()) { ?>
     <?php include './aurelia.php';?>
-</div>
+<?php } ?>
 
-<div ng-if="isFramework('react')">
+<?php if (isFrameworkReact()) { ?>
     <?php include './react.php';?>
-</div>
+<?php } ?>
 
-<div ng-if="isFramework('vue')">
+<?php if (isFrameworkVue()) { ?>
     <?php include './vue.php';?>
-</div>
+<?php } ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

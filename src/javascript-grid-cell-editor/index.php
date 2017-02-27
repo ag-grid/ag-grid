@@ -205,20 +205,20 @@ colDef.cellEditorParams = {
 
 <show-example example="exampleEditorComponent"></show-example>
 
-<div ng-if="isFramework('angular')">
+<?php if (isFrameworkAngular()) { ?>
     <?php include './angular.php';?>
-</div>
+<?php } ?>
 
-<div ng-if="isFramework('aurelia')">
+<?php if (isFrameworkAurelia()) { ?>
     <?php include './aurelia.php';?>
-</div>
+<?php } ?>
 
-<div ng-if="isFramework('react')">
+<?php if (isFrameworkReact()) { ?>
     <?php include './react.php';?>
-</div>
+<?php } ?>
 
-<div ng-if="isFramework('vue')">
-    <?php include './vue.php';?>
-</div>
+<?php if (isFrameworkVue()) { ?>
+    <?php include './vuejs.php';?>
+<?php } ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

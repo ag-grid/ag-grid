@@ -1,9 +1,11 @@
 <div>
 
-    <h2 ng-if="!isFramework('all')" id="implementing-the-vuejs-datagrid"><img style="vertical-align: middle" src="/images/vue_small.png" height="25px"/> Overview</h2>
+    <?php if (!isFrameworkAll()) { ?>
+        <h2 id="implementing-the-vuejs-datagrid"><img style="vertical-align: middle" src="/images/vue_small.png" height="25px"/> Overview</h2>
+    <?php } ?>
 
     <?php
-    $framework = 'vue';
+    //$framework = 'vue';
     include 'ag-grid-dependency-framework.php'
     ?>
 
