@@ -46,14 +46,19 @@ include '../documentation-main/documentation_header.php';
         </div>
 
         <div class="collapsableDocs-content">
-            <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=from-component"
+            <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=rich-grid"
                                   sources="{
                             [
-                                { root: '../ng2-example/app/dynamic-component-example/', files: 'dynamic.component.ts,dynamic.component.html,square.component.ts,cube.component.ts,params.component.ts,child-message.component.ts,currency.component.ts' },
+                                { root: '../ng2-example/app/rich-grid-example/', files: 'rich-grid.component.ts,rich-grid.component.html,proficiency-renderer.css,rich-grid.css' },
+                                { root: '../ng2-example/app/header-group-component/', files: 'header-group.component.ts,header-group.component.html,header-group.component.css' },
+                                { root: '../ng2-example/app/header-component/', files: 'header.component.ts,header.component.html,header.component.css' },
+                                { root: '../ng2-example/app/filters/', files: 'skillFilter.ts,proficiencyFilter.ts' },
+                                { root: '../ng2-example/app/date-component/', files: 'date.component.ts,date.component.html,date.component.css' },
                                 { root: '../ng2-example/app/', files: 'app.module.ts' }
                             ]
                           }"
-                                  plunker="https://embed.plnkr.co/J04rdB/">
+                                  plunker="https://embed.plnkr.co/EINfsm/"
+                                  exampleHeight="525px">
             </show-complex-example>
         </div>
     </div>
@@ -67,14 +72,19 @@ include '../documentation-main/documentation_header.php';
         </div>
 
         <div class="collapsableDocs-content">
-            <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=from-rich-component"
+            <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=rich-grid-declarative"
                                   sources="{
                             [
-                                { root: '../ng2-example/app/rich-dynamic-component-example/', files: 'rich.component.ts,rich.component.html,ratio.module.ts,ratio.parent.component.ts,ratio.component.ts,clickable.module.ts,clickable.parent.component.ts,clickable.component.ts' },
+                                { root: '../ng2-example/app/rich-grid-declarative-example/', files: 'rich-grid-declarative.component.ts,rich-grid-declarative.component.html,proficiency-renderer.css,rich-grid.css' },
+                                { root: '../ng2-example/app/header-group-component/', files: 'header-group.component.ts,header-group.component.html,header-group.component.css' },
+                                { root: '../ng2-example/app/header-component/', files: 'header.component.ts,header.component.html,header.component.css' },
+                                { root: '../ng2-example/app/filters/', files: 'skillFilter.ts,proficiencyFilter.ts' },
+                                { root: '../ng2-example/app/date-component/', files: 'date.component.ts,date.component.html,date.component.css' },
                                 { root: '../ng2-example/app/', files: 'app.module.ts' }
                             ]
                           }"
-                                  plunker="https://embed.plnkr.co/qmgvkW/">
+                                  plunker="https://embed.plnkr.co/1rHK9l/"
+                                  exampleHeight="525px">
             </show-complex-example>
         </div>
     </div>
@@ -88,14 +98,14 @@ include '../documentation-main/documentation_header.php';
         </div>
 
         <div class="collapsableDocs-content">
-            <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=from-rich-component"
+            <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=from-component"
                                   sources="{
                             [
-                                { root: '../ng2-example/app/rich-dynamic-component-example/', files: 'rich.component.ts,rich.component.html,ratio.module.ts,ratio.parent.component.ts,ratio.component.ts,clickable.module.ts,clickable.parent.component.ts,clickable.component.ts' },
+                                { root: '../ng2-example/app/dynamic-component-example/', files: 'dynamic.component.ts,dynamic.component.html,square.component.ts,cube.component.ts,params.component.ts,child-message.component.ts,currency.component.ts' },
                                 { root: '../ng2-example/app/', files: 'app.module.ts' }
                             ]
                           }"
-                                  plunker="https://embed.plnkr.co/qmgvkW/">
+                                  plunker="https://embed.plnkr.co/J04rdB/">
             </show-complex-example>
         </div>
     </div>
@@ -110,14 +120,14 @@ include '../documentation-main/documentation_header.php';
         </div>
 
         <div class="collapsableDocs-content">
-            <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=from-component"
+            <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=from-rich-component"
                                   sources="{
                             [
-                                { root: '../ng2-example/app/dynamic-component-example/', files: 'dynamic.component.ts,dynamic.component.html,square.component.ts,cube.component.ts,params.component.ts,child-message.component.ts,currency.component.ts' },
+                                { root: '../ng2-example/app/rich-dynamic-component-example/', files: 'rich.component.ts,rich.component.html,ratio.module.ts,ratio.parent.component.ts,ratio.component.ts,clickable.module.ts,clickable.parent.component.ts,clickable.component.ts' },
                                 { root: '../ng2-example/app/', files: 'app.module.ts' }
                             ]
                           }"
-                                  plunker="https://embed.plnkr.co/J04rdB/">
+                                  plunker="https://embed.plnkr.co/qmgvkW/">
             </show-complex-example>
         </div>
     </div>
