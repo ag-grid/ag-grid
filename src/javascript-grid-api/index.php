@@ -19,8 +19,8 @@ include '../documentation-main/documentation_header.php';
     <?php if (isFrameworkAngularJS() || isFrameworkJavaScript()) { ?>
         <h4>
             <img src="/images/javascript.png" height="20"/>
-            <img ng-if="isFramework('angularjs')" src="/images/angularjs.png" height="20px"/>
-            Javascript <span ng-if="isFramework('angularjs')">and AngularJS 1.x</span>
+            <img src="/images/angularjs.png" height="20px"/>
+            Javascript <span>and AngularJS 1.x</span>
         </h4>
         <p>
             Use api placed inside gridOptions by the grid during initialisation.

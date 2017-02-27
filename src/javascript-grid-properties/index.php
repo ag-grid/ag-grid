@@ -14,68 +14,93 @@ include '../documentation-main/documentation_header.php';
             Below are listed all the properties of the grid you can add.
         <p>
 
-            <div ng-if="isFramework(['javascript','angularjs'])">
+        <?php if (isFrameworkJavaScript()) { ?>
+            <div>
                 <h4>
                     <img src="/images/javascript.png" height="20"/>
-                    <img ng-if="isFramework('angularjs')" src="/images/angularjs.png" height="20px"/>
-                    Javascript <span ng-if="isFramework('angularjs')">and AngularJS 1.x</span>
+                    Javascript
                 </h4>
-        <p>
-            Add properties to the gridOptions object.
-        </p>
+                <p>
+                Add properties to the gridOptions object.
+                </p>
+            </div>
+        <?php } ?>
 
-    </div>
+        <?php if (isFrameworkAngularJS()) { ?>
+            <div>
+                <h4>
+                    <img src="/images/angularjs.png" height="20px"/>
+                    AngularJS 1.x</span>
+                </h4>
+                <p>
+                Add properties to the gridOptions object.
+                </p>
+            </div>
+        <?php } ?>
 
-    <div ng-if="isFramework('react')">
-        <h4>
-            <img src="/images/react.png" height="20px"/>
-            React
-        </h4>
-        <p>
-            Add properties to the gridOptions object, <b>or</b> you can also add as React props inside your JSX markup.
-        </p>
+        <?php if (isFrameworkReact()) { ?>
+            <div>
+                <h4>
+                    <img src="/images/react.png" height="20px"/>
+                    React
+                </h4>
+                <p>
+                    Add properties to the gridOptions object, <b>or</b> you can also add as React props inside your JSX markup.
+                </p>
+            </div>
+        <?php } ?>
 
-    </div>
+        <?php if (isFrameworkAngular()) { ?>
+            <div>
+                <h4 ng-if="isFramework('angular')">
+                    <img src="/images/angular2.png" height="20px"/>
+                    Angular
+                </h4>
+                <p>
+                    Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or VueJS bound
+                    properties.
+                </p>
+            </div>
+        <?php } ?>
 
-    <div ng-if="isFramework(['angular','vue'])">
-        <h4 ng-if="isFramework('angular')">
-            <img src="/images/angular2.png" height="20px"/>
-            Angular
-        </h4>
-        <h4 ng-if="isFramework('vue')">
-            <img src="/images/vue_large.png" height="20px"/>
-            VueJS
-        </h4>
-        <p>
-            Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or VueJS bound
-            properties.
-        </p>
+        <?php if (isFrameworkVue()) { ?>
+            <div>
+                <h4>
+                    <img src="/images/vue_large.png" height="20px"/>
+                    VueJS
+                </h4>
+                <p>
+                    Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or VueJS bound
+                    properties.
+                </p>
+            </div>
+        <?php } ?>
 
-    </div>
+        <?php if (isFrameworkWebComponents()) { ?>
+            <div>
+                <h4>
+                    <img src="/images/webComponents.png" height="20px"/>
+                    Web Components
+                </h4>
+                <p>
+                    Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or set directly onto the
+                    DOM element.
+                </p>
+            </div>
+        <?php } ?>
 
-    <div ng-if="isFramework('webcomponents')">
-        <h4>
-            <img src="/images/webComponents.png" height="20px"/>
-            Web Components
-        </h4>
-        <p>
-            Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or set directly onto the
-            DOM element.
-        </p>
-
-    </div>
-
-    <div ng-if="isFramework('aurelia')">
-        <h4>
-            <img src="/images/aurelia.png" height="20px"/>
-            Aurelia Components
-        </h4>
-        <p>
-            Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or set directly onto the
-            DOM element.
-        </p>
-
-    </div>
+        <?php if (isFrameworkAurelia()) { ?>
+            <div ng-if="isFramework('aurelia')">
+                <h4>
+                    <img src="/images/aurelia.png" height="20px"/>
+                    Aurelia Components
+                </h4>
+                <p>
+                    Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or set directly onto the
+                    DOM element.
+                </p>
+            </div>
+        <?php } ?>
 
     <table id="list-of-properties" class="table">
         <!-- Columns -->
