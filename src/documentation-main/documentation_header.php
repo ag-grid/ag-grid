@@ -83,25 +83,25 @@ function isFrameworkSelected($framework) {
 }
 
 function isFrameworkAngular() {
-    return $GLOBALS[framework] === 'angular';
+    return $GLOBALS[framework] === 'angular' || $GLOBALS[framework] === 'all';
 }
 function isFrameworkJavaScript() {
-    return $GLOBALS[framework] === 'javascript';
+    return $GLOBALS[framework] === 'javascript' || $GLOBALS[framework] === 'all';
 }
 function isFrameworkAngularJS() {
-    return $GLOBALS[framework] === 'angularjs';
+    return $GLOBALS[framework] === 'angularjs' || $GLOBALS[framework] === 'all';
 }
 function isFrameworkReact() {
-    return $GLOBALS[framework] === 'react';
+    return $GLOBALS[framework] === 'react' || $GLOBALS[framework] === 'all';
 }
 function isFrameworkVue() {
-    return $GLOBALS[framework] === 'vue';
+    return $GLOBALS[framework] === 'vue' || $GLOBALS[framework] === 'all';
 }
 function isFrameworkAurelia() {
-    return $GLOBALS[framework] === 'aurelia';
+    return $GLOBALS[framework] === 'aurelia' || $GLOBALS[framework] === 'all';
 }
 function isFrameworkWebComponents() {
-    return $GLOBALS[framework] === 'webcomponents';
+    return $GLOBALS[framework] === 'webcomponents' || $GLOBALS[framework] === 'all';
 }
 
 ?>
@@ -173,7 +173,7 @@ function isFrameworkWebComponents() {
                 <option value="webcomponents">Web Components</option>
             </select>
 
-            <div class="docsMenu-header<?php if ($pageGroup == "basics") { ?> active<?php } ?>"
+            <div class="docsMenu-header <?php if ($pageGroup == "basics") { ?> active<?php } ?>"
                  onclick="javascript: this.classList.toggle('active');">
                 <h4>Getting Started</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
@@ -181,8 +181,9 @@ function isFrameworkWebComponents() {
 
             <div class="docsMenu-content">
 
-                <?
+                <?php
                 normalItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
+
                 if (isFrameworkAngular()) {
                     normalItem(1, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/');
                     normalItem(1, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/');
@@ -193,14 +194,14 @@ function isFrameworkWebComponents() {
 
             </div>
 
-            <div class="docsMenu-header<? if ($pageGroup == "interfacing") { ?> active<? } ?>"
-                 onclick="javascript: this.classList.toggle('active');">
+            <div class="docsMenu-header <?php if ($pageGroup == "interfacing") { ?> active<?php } ?>"
+                 onclick="this.classList.toggle('active');">
                 <h4>Interfacing</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
 
             <div class="docsMenu-content">
-                <?
+                <?php
                 normalItem(0, 'Interfacing Overview', 'Overview', 'javascript-grid-interfacing-overview/');
                 normalItem(0, 'Properties', 'Properties', 'javascript-grid-properties/');
                 normalItem(0, 'columnDefs', 'Columns', 'javascript-grid-column-definitions/');
@@ -218,7 +219,7 @@ function isFrameworkWebComponents() {
             </div>
 
             <div class="docsMenu-content">
-                <?
+                <?php
                 normalItem(0, 'Features', 'Overview', 'javascript-grid-features/');
                 normalItem(0, 'Width & Height', 'Width & Height', 'javascript-grid-width-and-height/');
                 normalItem(0, 'Sorting', 'Sorting', 'javascript-grid-sorting/');
@@ -275,7 +276,7 @@ function isFrameworkWebComponents() {
 
             <div class="docsMenu-content">
 
-                <?
+                <?php
                 normalItem(0, 'Styling', 'Overview', 'javascript-grid-styling/');
                 normalItem(0, 'Fresh Theme', 'Fresh Theme', 'javascript-grid-themes/fresh-theme.php');
                 normalItem(0, 'Blue Theme', 'Blue Theme', 'javascript-grid-themes/blue-theme.php');
@@ -293,7 +294,7 @@ function isFrameworkWebComponents() {
             </div>
 
             <div class="docsMenu-content">
-                <?
+                <?php
                 normalItem(0, 'Components', 'Overview', 'javascript-grid-components/');
                 normalItem(0, 'Cell Rendering', 'Cell Rendering', 'javascript-grid-cell-rendering/');
                 normalItem(0, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/');
@@ -309,7 +310,7 @@ function isFrameworkWebComponents() {
             </div>
 
             <div class="docsMenu-content">
-                <?
+                <?php
                 normalItem(0, 'Row Models', 'Overview', 'javascript-grid-row-models/');
                 normalItem(0, 'Datasource', 'Datasource', 'javascript-grid-datasource/');
                 normalItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
@@ -325,7 +326,7 @@ function isFrameworkWebComponents() {
             </div>
 
             <div class="docsMenu-examples">
-                <?
+                <?php
                 normalItem(0, 'Styled Report', 'Styled Report', 'example-account-report/');
                 normalItem(0, 'File Browser', 'File Browser', 'example-file-browser/');
                 normalItem(0, 'Expressions and Context', 'Expressions and Context', 'example-expressions-and-context/');
@@ -340,7 +341,7 @@ function isFrameworkWebComponents() {
                 </div>
 
                 <div class="docsMenu-content">
-                    <?
+                    <?php
                     normalItem(0, 'Change Log', 'Change Log', 'change-log/changeLogIndex.php');
                     normalItem(0, 'Roadmap', 'Roadmap', 'javascript-grid-roadmap');
                     normalItem(0, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials/');

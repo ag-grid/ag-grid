@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
         can be accessed.
     </p>
 
-    <? if (isFrameworkAngularJS() || isFrameworkJavaScript()) { ?>
+    <?php if (isFrameworkAngularJS() || isFrameworkJavaScript()) { ?>
         <h4>
             <img src="/images/javascript.png" height="20"/>
             <img ng-if="isFramework('angularjs')" src="/images/angularjs.png" height="20px"/>
@@ -25,9 +25,9 @@ include '../documentation-main/documentation_header.php';
         <p>
             Use api placed inside gridOptions by the grid during initialisation.
         </p>
-    <? } ?>
+    <?php } ?>
 
-    <? if (isFrameworkReact()) { ?>
+    <?php if (isFrameworkReact()) { ?>
         <h4>
             <img src="/images/react.png" height="20px"/>
             React
@@ -37,9 +37,9 @@ include '../documentation-main/documentation_header.php';
             Or if you are providing gridOptions object, you can use the API attached
             to this after the grid has initialised.
         </p>
-    <? } ?>
+    <?php } ?>
 
-    <? if (isFrameworkAngular()) { ?>
+    <?php if (isFrameworkAngular()) { ?>
         <h4>
             <img src="/images/angular2.png" height="20px"/>
             Angular
@@ -48,9 +48,9 @@ include '../documentation-main/documentation_header.php';
             Use api placed inside gridOptions by the grid during initialisation. You can also
             use api directly on the Angular grid component.
         </p>
-    <? } ?>
+    <?php } ?>
 
-    <? if (isFrameworkVue()) { ?>
+    <?php if (isFrameworkVue()) { ?>
         <h4>
             <img src="/images/vue_large.png" height="20px"/>
             VueJS
@@ -59,9 +59,9 @@ include '../documentation-main/documentation_header.php';
             Use api placed inside gridOptions by the grid during initialisation. You can also
             use api directly on the VueJS grid component.
         </p>
-    <? } ?>
+    <?php } ?>
 
-    <? if (isFrameworkWebComponents()) { ?>
+    <?php if (isFrameworkWebComponents()) { ?>
         <h4>
             <img src="/images/webComponents.png" height="20px"/>
             Web Components
@@ -70,9 +70,9 @@ include '../documentation-main/documentation_header.php';
             Use api placed inside gridOptions by the grid during initialisation. You can also
             use api directly on the DOM element.
         </p>
-    <? } ?>
+    <?php } ?>
 
-    <? if (isFrameworkAurelia()) { ?>
+    <?php if (isFrameworkAurelia()) { ?>
     <h4>
         <img src="/images/aurelia.png" height="20px"/>
         Aurelia Components
@@ -81,7 +81,7 @@ include '../documentation-main/documentation_header.php';
         Use api placed inside gridOptions by the grid during initialisation. You can also
         use api directly on the DOM element.
     </p>
-    <? } ?>
+    <?php } ?>
 
     <table id="list-of-api-functions" class="table">
         <!------------------->

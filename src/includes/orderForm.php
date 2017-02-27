@@ -55,9 +55,9 @@
             <input maxlength="100" class="form-control" placeholder="Email" type="text" value="" name="WebToContact[email]" id="WebToContact_email"/>
         </div>
         <div class="form-group">
-            <? if ($startTrial) { ?>
+            <?php if ($startTrial) { ?>
                 <label for="WebToContact[message]">Your message to us below.</label>
-            <? } else { ?>
+            <?php } else { ?>
                 <label for="WebToContact[message]">Your message to us below. If ordering, please provide the following information:</label>
                 <ul>
                     <li>Company Address and VAT Number (EU only for VAT number).</li>
@@ -104,9 +104,9 @@
                     </li>
                     <?php } ?>
                 </ul>
-            <? } ?>
+            <?php } ?>
         </div>
-        <textarea rows="8" class="form-control" name="WebToContact[message]" id="WebToContact_message"><? if ($startTrial) { ?>
+        <textarea rows="8" class="form-control" name="WebToContact[message]" id="WebToContact_message"><?php if ($startTrial) { ?>
 Dear ag-Grid Team,
 
 I am interested in taking a two month trial of ag-Grid Enterprise.
@@ -114,14 +114,14 @@ I am interested in taking a two month trial of ag-Grid Enterprise.
 Please email me back with a license key that I can use for my trial.
 
 Thank you.
-<? } ?></textarea>
+<?php } ?></textarea>
 
         <div class="form-group" style="margin-top: 10px;">
-            <? if ($startTrial) { ?>
+            <?php if ($startTrial) { ?>
                 <input id="btn_submit" name="btn_submit" type="submit" class="btn btn-default" value="Request Trial"/>
-            <? } else { ?>
+            <?php } else { ?>
                 <input id="btn_submit" name="btn_submit" type="submit" class="btn btn-default" value="Send your info to ag-Grid"/>
-            <? } ?>
+            <?php } ?>
         </div>
     </form>
 </div>

@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
         It is not intended to inform your application of anything.
     <p>
 
-    <? if (isFrameworkAngularJS()) { ?>
+    <?php if (isFrameworkAngularJS()) { ?>
         <h4 id="angularjs">
             <img src="/images/javascript.png" height="20"/>
             <img src="/images/angularjs.png" height="20px"/>
@@ -23,9 +23,9 @@ include '../documentation-main/documentation_header.php';
         <p>
             Add callbacks to the gridOptions.
         </p>
-    <? } ?>
+    <?php } ?>
 
-    <? if (isFrameworkJavaScript()) { ?>
+    <?php if (isFrameworkJavaScript()) { ?>
         <h4 id="javascript">
             <img src="/images/javascript.png" height="20"/>
             Javascript
@@ -33,9 +33,9 @@ include '../documentation-main/documentation_header.php';
         <p>
             Add callbacks to the gridOptions.
         </p>
-    <? } ?>
+    <?php } ?>
 
-    <? if (isFrameworkReact()) { ?>
+    <?php if (isFrameworkReact()) { ?>
         <h4>
             <img src="/images/react.png" height="20px"/>
             React
@@ -43,9 +43,9 @@ include '../documentation-main/documentation_header.php';
         <p>
             Add callbacks to the gridOptions or set as React JSX props.
         </p>
-    <? } ?>
+    <?php } ?>
 
-    <? if (isFrameworkAngular()) { ?>
+    <?php if (isFrameworkAngular()) { ?>
         <h4>
             <img src="/images/angular2.png" height="20px"/>
             Angular
@@ -53,9 +53,9 @@ include '../documentation-main/documentation_header.php';
         <p>
             Add callbacks to the gridOptions or set as Angular properties.
         </p>
-    <? } ?>
+    <?php } ?>
 
-    <? if (isFrameworkVue()) { ?>
+    <?php if (isFrameworkVue()) { ?>
         <h4>
             <img src="/images/vue_large.png" height="20px"/>
             VueJS
@@ -63,9 +63,9 @@ include '../documentation-main/documentation_header.php';
         <p>
             Add callbacks to the gridOptions or set as VueJS properties.
         </p>
-    <? } ?>
+    <?php } ?>
 
-    <? if (isFrameworkWebComponents()) { ?>
+    <?php if (isFrameworkWebComponents()) { ?>
         <h4>
             <img src="/images/webComponents.png" height="20px"/>
             Web Components
@@ -73,9 +73,9 @@ include '../documentation-main/documentation_header.php';
         <p>
             Add callbacks to the gridOptions or set as component properties.
         </p>
-    <? } ?>
+    <?php } ?>
 
-    <? if (isFrameworkAurelia()) { ?>
+    <?php if (isFrameworkAurelia()) { ?>
         <h4>
             <img src="/images/aurelia.png" height="20px"/>
             Aurelia
@@ -83,7 +83,7 @@ include '../documentation-main/documentation_header.php';
         <p>
             Add callbacks to the gridOptions or set as component properties.
         </p>
-    <? } ?>
+    <?php } ?>
 
     <h2 id="list-of-callbacks">List of Callbacks</h2>
 
