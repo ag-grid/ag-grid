@@ -41,6 +41,10 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         super();
     }
 
+    modelFromFloatingFilter(from: string): string[] {
+        return [from];
+    }
+
     public initialiseFilterBodyUi(): void {
         this.virtualList = new VirtualList();
         this.context.wireBean(this.virtualList);
@@ -164,13 +168,6 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         }
     }
 
-    private filterChanged() {
-        this.filterParams.filterModifiedCallback();
-        if (!this.applyActive) {
-            this.filterParams.filterChangedCallback();
-        }
-    }
-
     private onMiniFilterChanged() {
         var miniFilterChanged = this.model.setMiniFilter(this.eMiniFilter.value);
         if (miniFilterChanged) {
@@ -187,7 +184,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
             this.model.selectNothing();
         }
         this.virtualList.refresh();
-        this.filterChanged();
+        this.onFilterChanged();
     }
 
     private onItemSelected(value: any, selected: boolean) {
@@ -199,7 +196,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
         this.updateSelectAll();
 
-        this.filterChanged();
+        this.onFilterChanged();
     }
 
     public setMiniFilter(newMiniFilter: any): void {
