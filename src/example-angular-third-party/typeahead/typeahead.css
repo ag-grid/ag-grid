@@ -1,0 +1,12 @@
+
+.typeahead-input,
+.typeahead-typeahead{
+  width: 200px;
+  padding: 4px;
+  border-radius: 5px;
+}
+
+.typeahead-suggestions {
+  top: 28px !important;
+  width: 208px !important;
+}

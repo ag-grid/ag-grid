@@ -361,6 +361,7 @@ function isFrameworkWebComponents()
                     normalItem(1, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
                     normalItem(1, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
                     normalItem(1, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
+                    normalItem(1, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
                 }
                 normalItem(0, 'Styled Report', 'Styled Report', 'example-account-report/');
                 normalItem(0, 'File Browser', 'File Browser', 'example-file-browser/');
