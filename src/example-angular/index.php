@@ -22,195 +22,52 @@ include '../documentation-main/documentation_header.php';
 
     <div class="row">
         <div class="col-sm-6">
-            <a href="#rich-grid" class="column-links column-items">Rich Grid</a>
-            <a href="#rich-grid-declarative" class="column-links column-items">Rich Grid with Markup</a>
-            <a href="#dynamic" class="column-links column-items">Dynamic Component</a>
-            <a href="#rich-dynamic" class="column-links column-items">Richer Dynamic Components</a>
-            <a href="#editor" class="column-links column-items">Editor Components</a>
+            <a href="../example-angular-rich-grid/" class="column-links column-items">Rich Grid</a>
+            <a href="../example-angular-rich-grid-markup/" class="column-links column-items">Rich Grid with Markup</a>
+            <a href="../example-angular-dynamic/" class="column-links column-items">Dynamic Component</a>
+            <a href="../example-angular-dynamic/" class="column-links column-items">Richer Dynamic Components</a>
+            <a href="../example-angular-editor/" class="column-links column-items">Editor Components</a>
         </div>
         <div class="col-sm-6">
-            <a href="#filter" class="column-links column-items">Filter Component</a>
-            <a href="#floating-row" class="column-links column-items">Floating Row Renderer</a>
-            <a href="#full-width" class="column-links column-items">Full Width Renderer</a>
-            <a href="#group-row" class="column-links column-items">Group Row Inner Renderer</a>
-            <a href="#master-detail" class="column-links column-items">Master/Detail Components</a>
+            <a href="../example-angular-filter/" class="column-links column-items">Filter Component</a>
+            <a href="../example-angular-floating-row/" class="column-links column-items">Floating Row Renderer</a>
+            <a href="../example-angular-full-width-rows/" class="column-links column-items">Full Width Renderer</a>
+            <a href="../example-angular-grouped-row/" class="column-links column-items">Group Row Inner Renderer</a>
+            <a href="../example-angular-master-detail/" class="column-links column-items">Master/Detail Components</a>
         </div>
     </div>
 
-    <div id="rich-grid" class="collapsableDocs">
-        <div class="collapsableDocs-header"
-             onclick="javascript: this.classList.toggle('active');">
-            <h4>Rich Grid Example</h4>
-            <p>A feature rich Grid example, demonstrating many of ag-Grid's features, including Date, Header and Header Group Components.</p>
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
-        </div>
+<!--            <h4>Rich Grid Example</h4>-->
+<!--            <p>A feature rich Grid example, demonstrating many of ag-Grid's features, including Date, Header and Header Group Components.</p>-->
 
-        <div class="collapsableDocs-content">
-            <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=rich-grid"
-                                  sources="{
-                            [
-                                { root: '../ng2-example/app/rich-grid-example/', files: 'rich-grid.component.ts,rich-grid.component.html,proficiency-renderer.css,rich-grid.css' },
-                                { root: '../ng2-example/app/header-group-component/', files: 'header-group.component.ts,header-group.component.html,header-group.component.css' },
-                                { root: '../ng2-example/app/header-component/', files: 'header.component.ts,header.component.html,header.component.css' },
-                                { root: '../ng2-example/app/filters/', files: 'skillFilter.ts,proficiencyFilter.ts' },
-                                { root: '../ng2-example/app/date-component/', files: 'date.component.ts,date.component.html,date.component.css' },
-                                { root: '../ng2-example/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                                  plunker="https://embed.plnkr.co/EINfsm/"
-                                  exampleHeight="525px">
-            </show-complex-example>
-        </div>
-    </div>
+<!--            <h4>Rich Grid with Markup</h4>-->
+<!--            <p>A feature rich Grid example (as above), this time using Markup.</p>-->
 
-    <div id="rich-grid-declarative" class="collapsableDocs">
-        <div class="collapsableDocs-header"
-             onclick="javascript: this.classList.toggle('active');">
-            <h4>Rich Grid with Markup</h4>
-            <p>A feature rich Grid example (as above), this time using Markup.</p>
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
-        </div>
+<!--            <h4>Dynamic Component</h4>-->
+<!--            <p>A simple Grid using Angular Components as Cell Renderers</p>-->
 
-        <div class="collapsableDocs-content">
-            <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=rich-grid-declarative"
-                                  sources="{
-                            [
-                                { root: '../ng2-example/app/rich-grid-declarative-example/', files: 'rich-grid-declarative.component.ts,rich-grid-declarative.component.html,proficiency-renderer.css,rich-grid.css' },
-                                { root: '../ng2-example/app/header-group-component/', files: 'header-group.component.ts,header-group.component.html,header-group.component.css' },
-                                { root: '../ng2-example/app/header-component/', files: 'header.component.ts,header.component.html,header.component.css' },
-                                { root: '../ng2-example/app/filters/', files: 'skillFilter.ts,proficiencyFilter.ts' },
-                                { root: '../ng2-example/app/date-component/', files: 'date.component.ts,date.component.html,date.component.css' },
-                                { root: '../ng2-example/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                                  plunker="https://embed.plnkr.co/1rHK9l/"
-                                  exampleHeight="525px">
-            </show-complex-example>
-        </div>
-    </div>
+<!--    <h2>Richer Dynamic Components</h2>-->
+<!--    <p>A Richer Example using Angular Components as Cell Renderers, Child Components, Two-Way Binding and-->
+<!--        Parent to Child Components Events.</p>-->
 
-    <div id="dynamic" class="collapsableDocs">
-        <div class="collapsableDocs-header"
-             onclick="javascript: this.classList.toggle('active');">
-            <h4>Dynamic Component</h4>
-            <p>A simple Grid using Angular Components as Cell Renderers</p>
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
-        </div>
+<!--            <h4>Editor Components</h4>-->
+<!--            <p>A Cell Editor example - one with a popup editor, and another with a numeric editor.</p>-->
+<!--            <p>Each component demonstrates different editor related features</p>-->
 
-        <div class="collapsableDocs-content">
-            <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=from-component"
-                                  sources="{
-                            [
-                                { root: '../ng2-example/app/dynamic-component-example/', files: 'dynamic.component.ts,dynamic.component.html,square.component.ts,cube.component.ts,params.component.ts,child-message.component.ts,currency.component.ts' },
-                                { root: '../ng2-example/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                                  plunker="https://embed.plnkr.co/J04rdB/">
-            </show-complex-example>
-        </div>
-    </div>
+<!--            <h4>Filter Component</h4>-->
+<!--            <p>A Filter Example, with the Filter written as a Angular Component.</p>-->
 
-    <div id="rich-dynamic" class="collapsableDocs">
-        <div class="collapsableDocs-header"
-             onclick="javascript: this.classList.toggle('active');">
-            <h4>Richer Dynamic Components</h4>
-            <p>A Richer Example using Angular Components as Cell Renderers, Child Components, Two-Way Binding and
-                Parent to Child Components Events.</p>
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
-        </div>
+<!--            <h4>Floating Row Renderer</h4>-->
+<!--            <p>A Floating Row Renderer Example</p>-->
 
-        <div class="collapsableDocs-content">
-            <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=from-rich-component"
-                                  sources="{
-                            [
-                                { root: '../ng2-example/app/rich-dynamic-component-example/', files: 'rich.component.ts,rich.component.html,ratio.module.ts,ratio.parent.component.ts,ratio.component.ts,clickable.module.ts,clickable.parent.component.ts,clickable.component.ts' },
-                                { root: '../ng2-example/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                                  plunker="https://embed.plnkr.co/qmgvkW/">
-            </show-complex-example>
-        </div>
-    </div>
+<!--            <h4>Full Width Renderer</h4>-->
+<!--            <p>A Full Width Renderer Example</p>-->
+<!---->
+<!--            <h4>Group Row Inner Renderer</h4>-->
+<!--            <p>A Group Row Inner Renderer Example</p>-->
 
-    <div id="editor" class="collapsableDocs">
-        <div class="collapsableDocs-header"
-             onclick="javascript: this.classList.toggle('active');">
-            <h4>Editor Components</h4>
-            <p>A Cell Editor example - one with a popup editor, and another with a numeric editor.</p>
-            <p>Each component demonstrates different editor related features</p>
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
-        </div>
-
-        <div class="collapsableDocs-content">
-            editor example
-        </div>
-    </div>
-
-    <div id="filter" class="collapsableDocs">
-        <div class="collapsableDocs-header"
-             onclick="javascript: this.classList.toggle('active');">
-            <h4>Filter Component</h4>
-            <p>A Filter Example, with the Filter written as a Angular Component.</p>
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
-        </div>
-
-        <div class="collapsableDocs-content">
-            filter example
-        </div>
-    </div>
-
-    <div id="floating-row" class="collapsableDocs">
-        <div class="collapsableDocs-header"
-             onclick="javascript: this.classList.toggle('active');">
-            <h4>Floating Row Renderer</h4>
-            <p>A Floating Row Renderer Example</p>
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
-        </div>
-
-        <div class="collapsableDocs-content">
-            floating row example
-        </div>
-    </div>
-
-    <div id="full-width" class="collapsableDocs">
-        <div class="collapsableDocs-header"
-             onclick="javascript: this.classList.toggle('active');">
-            <h4>Full Width Renderer</h4>
-            <p>A Full Width Renderer Example</p>
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
-        </div>
-
-        <div class="collapsableDocs-content">
-            full width example
-        </div>
-    </div>
-
-    <div id="group-row" class="collapsableDocs">
-        <div class="collapsableDocs-header"
-             onclick="javascript: this.classList.toggle('active');">
-            <h4>Group Row Inner Renderer</h4>
-            <p>A Group Row Inner Renderer Example</p>
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
-        </div>
-
-        <div class="collapsableDocs-content">
-            Group Row Inner Renderer example
-        </div>
-    </div>
-
-    <div id="master-detail" class="collapsableDocs">
-        <div class="collapsableDocs-header"
-             onclick="javascript: this.classList.toggle('active');">
-            <h4>Master/Detail Components</h4>
-            <p>A Master/Detail Example, with both the Master and the Detail elements being Angular Components.</p>
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
-        </div>
-
-        <div class="collapsableDocs-content">
-            Master/Detail Components example
-        </div>
-    </div>
-
+<!--            <h4>Master/Detail Components</h4>-->
+<!--            <p>A Master/Detail Example, with both the Master and the Detail elements being Angular Components.</p>-->
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
