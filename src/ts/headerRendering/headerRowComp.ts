@@ -1,4 +1,3 @@
-
 import {Component} from "../widgets/component";
 import {PostConstruct, Autowired, Context} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
@@ -13,18 +12,21 @@ import {Events} from "../events";
 import {Utils as _} from "../utils";
 import {HeaderWrapperComp} from "./header/headerWrapperComp";
 import {HeaderGroupWrapperComp} from "./headerGroup/headerGroupWrapperComp";
-import {SetLeftFeature} from "../rendering/features/setLeftFeature";
+import {FilterManager} from "../filter/filterManager";
+import {BaseFilter} from "../filter/baseFilter";
+import {ComponentProvider} from "../componentProvider";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
 }
 
 export class HeaderRowComp extends Component {
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('context') private context: Context;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('componentProvider') private componentProvider: ComponentProvider;
 
     private dept: number;
     private pinned: string;
@@ -115,7 +117,12 @@ export class HeaderRowComp extends Component {
 
         var currentChildIds = Object.keys(this.headerElements);
 
-        var itemsAtDepth = this.columnController.getVirtualHeaderGroupRow(this.pinned, this.dept);
+        var itemsAtDepth = this.columnController.getVirtualHeaderGroupRow(
+            this.pinned,
+            this.type == HeaderRowType.FLOATING_FILTER ?
+                this.dept -1 :
+                this.dept
+        );
 
         itemsAtDepth.forEach( (child: ColumnGroupChild) => {
             var idOfChild = child.getUniqueId();
@@ -181,43 +188,27 @@ export class HeaderRowComp extends Component {
                 result = new HeaderGroupWrapperComp(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER :
-                result = new FloatingFilterComp(<Column> columnGroupChild);
+                let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(<Column> columnGroupChild);
+
+                filterComponent.floatingFilterComponent = <any>this.componentProvider.newFloatingFilterComponent({
+                    currentParentModel:():any=>{
+                        return filterComponent.getNullableModel();
+                    },
+                    onFloatingFilterChanged:(change:any):void=>{
+                        filterComponent.setModel(change);
+                        (<BaseFilter<any, any, any>>filterComponent).onFloatingFilterChanged();
+                    },
+                    column:<Column> columnGroupChild
+                });
+                result = filterComponent.floatingFilterComponent;
                 break;
         }
+
 
         this.context.wireBean(result);
         return result;
     }
 
-}
-
-class FloatingFilterComp extends Component {
-
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('context') private context: Context;
-
-    private column: Column;
-
-    constructor(column: Column) {
-        super('<div class="ag-floating-filter">YEA!!!!!</div>');
-        this.column = column;
-    }
-
-    @PostConstruct
-    private postConstruct(): void {
-        this.setupWidth();
-        this.addFeature(this.context, new SetLeftFeature(this.column, this.getGui()));
-    }
-
-    private setupWidth(): void {
-        this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
-        this.onColumnWidthChanged();
-    }
-
-    private onColumnWidthChanged(): void {
-        this.getGui().style.width = this.column.getActualWidth() + 'px';
-    }
 }
 
 // remove this in v9, when we take out support for the old headers

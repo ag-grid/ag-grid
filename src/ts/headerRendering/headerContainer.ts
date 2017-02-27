@@ -124,7 +124,7 @@ export class HeaderContainer {
         }
 
         if (this.gridOptionsWrapper.isFloatingFilter()) {
-            var headerRowComp = new HeaderRowComp(rowCount-1, HeaderRowType.FLOATING_FILTER, this.pinned, this.eRoot, this.dropTarget);
+            var headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned, this.eRoot, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             this.eContainer.appendChild(headerRowComp.getGui());

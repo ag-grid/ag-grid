@@ -4,6 +4,7 @@ import {QuerySelector} from "../widgets/componentAnnotations";
 import {Autowired, Context} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {_} from "../utils";
+import {IFloatingFilterParams, FloatingFilterComp} from "./floatingFilter";
 
 
 export interface Comparator<T>{
@@ -33,6 +34,7 @@ const DEFAULT_TRANSLATIONS : {[name:string]:string}= {
  * T(ype) The type of this filter. ie in DateFilter T=Date
  * P(arams) The params that this filter can take
  * M(model getModel/setModel) The object that this filter serializes to
+ * F Floating filter params
  *
  * Contains common logic to ALL filters.. Translation, apply and clear button
  * get/setModel context wiring....
@@ -51,12 +53,17 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
     public static STARTS_WITH = 'startsWith';//4;
     public static ENDS_WITH = 'endsWith';//5;
 
+    private newRowsActionKeep: boolean;
+
 
     filterParams: P;
     clearActive: boolean;
     applyActive: boolean;
-    private newRowsActionKeep: boolean;
     filter:string = 'equals';
+    /**
+     * This is initialized lazily the first time the floating filter needs to be rendered
+     */
+    floatingFilterComponent:FloatingFilterComp<M, any>;
 
     @QuerySelector('#applyPanel')
     private eButtonsPanel: HTMLElement;
@@ -100,7 +107,9 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         this.instantiate(this.context);
         this.initialiseFilterBodyUi();
         this.refreshFilterBodyUi();
+
     }
+
 
     public onClearButton (){
         this.setModel(null);
@@ -108,7 +117,8 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
     }
 
 
-    public abstract isFilterActive(): boolean
+    public abstract isFilterActive(): boolean;
+    public abstract modelFromFloatingFilter(from:string): M;
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
     public abstract bodyTemplate(): string;
     public abstract resetState(): void;
@@ -116,6 +126,17 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
     public abstract parse(toParse:M): void;
     public abstract refreshFilterBodyUi(): void;
     public abstract initialiseFilterBodyUi(): void;
+
+
+    public floatingFilter(from:string): void{
+        if (from !== ''){
+            let model: M = this.modelFromFloatingFilter(from);
+            this.setModel(model);
+        } else {
+            this.resetState();
+        }
+        this.onFilterChanged();
+    }
 
 
     public onNewRowsLoaded() {
@@ -132,6 +153,10 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         }
     }
 
+    public getNullableModel(): M {
+        return this.serialize();
+    }
+
     public setModel(model: M): void {
         if (model) {
             this.parse (model);
@@ -141,12 +166,23 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         this.refreshFilterBodyUi();
     }
 
-    public onFilterChanged ():void{
+    private doOnFilterChanged ():void{
         this.filterParams.filterModifiedCallback();
         if (!this.applyActive) {
             this.filterParams.filterChangedCallback();
         }
         this.refreshFilterBodyUi();
+    }
+
+    public onFilterChanged ():void{
+        this.doOnFilterChanged();
+        if (this.floatingFilterComponent){
+            this.floatingFilterComponent.onParentModelChanged(this.getModel())
+        }
+    }
+
+    public onFloatingFilterChanged ():void{
+        this.doOnFilterChanged();
     }
 
     public generateFilterHeader():string{
@@ -171,6 +207,7 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         let translate = this.gridOptionsWrapper.getLocaleTextFunc();
         return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
     }
+
 }
 
 

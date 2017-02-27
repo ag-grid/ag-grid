@@ -11,8 +11,14 @@ export interface SerializedTextFilter {
 export class TextFilter extends ComparableBaseFilter <string, IFilterParams, SerializedTextFilter> {
     @QuerySelector('#filterText')
     private eFilterTextField: HTMLInputElement;
-
     private filterText: string;
+
+    modelFromFloatingFilter(from: string): SerializedTextFilter {
+        return {
+            type: this.filter,
+            filter: from
+        };
+    }
 
     public getApplicableFilterTypes ():string[]{
         return [BaseFilter.EQUALS, BaseFilter.NOT_EQUAL, BaseFilter.STARTS_WITH, BaseFilter.ENDS_WITH,

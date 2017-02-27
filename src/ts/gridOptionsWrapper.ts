@@ -227,7 +227,7 @@ export class GridOptionsWrapper {
     public isSuppressParentsInRowNodes() { return isTrue(this.gridOptions.suppressParentsInRowNodes); }
     public isEnableStatusBar() { return isTrue(this.gridOptions.enableStatusBar); }
     public isFunctionsReadOnly() { return isTrue(this.gridOptions.functionsReadOnly); }
-    public isFloatingFilter(): boolean { return false; }
+    public isFloatingFilter(): boolean { return this.gridOptions.floatingFilter; }
 
     public getDefaultColDef(): ColDef { return this.gridOptions.defaultColDef; }
     public getDefaultColGroupDef(): ColGroupDef { return this.gridOptions.defaultColGroupDef; }

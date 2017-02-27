@@ -1,11 +1,11 @@
 import {IFilterParams} from "../interfaces/iFilter";
 import {Component} from "../widgets/component";
-import {QuerySelector} from "../widgets/componentAnnotations";
-import {Autowired} from "../context/context";
-import {Utils} from "../utils";
 import {IDateParams, IDateComp} from "../rendering/dateComponent";
-import {ComponentProvider} from "../componentProvider";
+import {QuerySelector} from "../widgets/componentAnnotations";
+import {Utils} from "../utils";
 import {BaseFilter, Comparator, ScalarBaseFilter} from "./baseFilter";
+import {Autowired} from "../context/context";
+import {ComponentProvider} from "../componentProvider";
 
 export interface IDateFilterParams extends IFilterParams {
     comparator?: IDateComparatorFunc;
@@ -26,7 +26,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     private dateFromComponent:IDateComp;
 
     @Autowired('componentProvider')
-    private componentProvider: ComponentProvider;
+    private componentProvider:ComponentProvider;
 
     @QuerySelector('#filterDateFromPanel')
     private eDateFromPanel: HTMLElement;
@@ -35,11 +35,21 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     private eDateToPanel: HTMLElement;
 
     private dateFrom:Date;
+
     private dateTo:Date;
+
+    public modelFromFloatingFilter(from: string): SerializedDateFilter {
+        return {
+            dateFrom: from,
+            dateTo: this.getDateTo(),
+            type: this.filter
+        };
+    }
 
     public getApplicableFilterTypes ():string[]{
         return [BaseFilter.EQUALS, BaseFilter.GREATER_THAN, BaseFilter.LESS_THAN, BaseFilter.NOT_EQUAL, BaseFilter.IN_RANGE];
     }
+
 
     public bodyTemplate(): string {
         return `<div class="ag-filter-body">
@@ -79,7 +89,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     }
 
     public refreshFilterBodyUi(): void {
-        let visible = this.filter === DateFilter.IN_RANGE;
+        let visible = this.filter === BaseFilter.IN_RANGE;
         Utils.setVisible(this.eDateToPanel, visible);
     }
 

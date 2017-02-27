@@ -3,6 +3,7 @@ import {ColDef} from "../entities/colDef";
 import {IRowModel} from "./iRowModel";
 import {RowNode} from "../entities/rowNode";
 import {IComponent} from "./iComponent";
+import {IFloatingFilter} from "../filter/floatingFilter";
 
 export interface IFilter {
     /** This is used to show the filter icon in the header. If true, the filter icon will be shown. */
@@ -24,7 +25,6 @@ export interface IFilter {
     /** If using React or Angular 2, returns the underlying component instance, so you can call methods
      * on it if you want. */
     getFrameworkComponentInstance?(): any;
-
 }
 
 export interface IFilterComp extends IFilter, IComponent<IFilterParams> {

@@ -11,25 +11,33 @@ export interface SerializedNumberFilter {
 
 
 export class NumberFilter extends ScalarBaseFilter<number, IFilterParams, SerializedNumberFilter> {
-
     public static EQUALS = 'equals';// 1;
+
     public static NOT_EQUAL = 'notEqual';//2;
-    public static LESS_THAN = 'lessThan';//3;
     public static LESS_THAN_OR_EQUAL = 'lessThanOrEqual';//4;
     public static GREATER_THAN = 'greaterThan';//5;
     public static GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';//6;
     public static IN_RANGE = 'inRange';
-
     @QuerySelector('#filterNumberToPanel')
     private eNumberToPanel: HTMLElement;
 
-    private filterNumber: any;
-    private filterNumberTo: any;
-
+    filterNumber: any;
+    filterNumberTo: any;
 
     @QuerySelector('#filterToText')
     private eFilterToTextField: HTMLInputElement;
+
+
     private eFilterTextField: HTMLInputElement;
+    public static LESS_THAN = 'lessThan';//3;
+
+    modelFromFloatingFilter(from: string): SerializedNumberFilter {
+        return {
+            type: this.filter,
+            filter: Number(from),
+            filterTo: this.filterNumberTo
+        };
+    }
 
     public getApplicableFilterTypes ():string[]{
         return [BaseFilter.EQUALS, BaseFilter.NOT_EQUAL, BaseFilter.LESS_THAN, BaseFilter.LESS_THAN_OR_EQUAL,

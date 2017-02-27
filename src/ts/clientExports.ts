@@ -18,7 +18,7 @@ import {ColumnKeyCreator} from "./columnController/columnKeyCreator";
 import {ColumnUtils} from "./columnController/columnUtils";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
 import {GroupInstanceIdCreator} from "./columnController/groupInstanceIdCreator";
-import {Context, Autowired, PostConstruct, Optional, Bean, Qualifier, PreDestroy} from "./context/context";
+import {Context, Autowired, PostConstruct, PreConstruct, Optional, Bean, Qualifier, PreDestroy} from "./context/context";
 import {DragAndDropService, DragSourceType, HDirection, VDirection} from "./dragAndDrop/dragAndDropService";
 import {DragService} from "./dragAndDrop/dragService";
 import {FilterManager} from "./filter/filterManager";
@@ -100,6 +100,7 @@ import {BeanStub} from "./context/beanStub";
 import {GridSerializer, BaseGridSerializingSession, RowType} from "./gridSerializer";
 import {StylingService} from "./styling/stylingService";
 import {BaseFilter} from "./filter/baseFilter";
+import {DateFilter} from "./filter/dateFilter";
 
 export function populateClientExports(exports: any): void {
 
@@ -121,6 +122,7 @@ export function populateClientExports(exports: any): void {
     exports.Context = Context;
     exports.Autowired = Autowired;
     exports.PostConstruct = PostConstruct;
+    exports.PreConstruct = PreConstruct;
     exports.PreDestroy = PreDestroy;
     exports.Optional = Optional;
     exports.Bean = Bean;
@@ -145,6 +147,7 @@ export function populateClientExports(exports: any): void {
 
     // filter
     exports.BaseFilter = BaseFilter;
+    exports.DateFilter = DateFilter;
     exports.FilterManager = FilterManager;
     exports.NumberFilter = NumberFilter;
     exports.TextFilter = TextFilter;

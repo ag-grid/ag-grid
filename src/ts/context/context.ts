@@ -104,12 +104,14 @@ export class Context {
     }
 
     public wireBean(bean: any): void {
+        if (!bean) throw Error(`Can't wire to bean since it is null`);
         this.wireBeans([bean]);
     }
 
     private wireBeans(beans: any[]): void {
         this.autoWireBeans(beans);
         this.methodWireBeans(beans);
+        this.preConstruct(beans);
         this.postConstruct(beans);
     }
 
@@ -167,7 +169,10 @@ export class Context {
     }
 
     private methodWireBeans(beans: any[]): void {
-        beans.forEach( bean => this.methodWireBean(bean) );
+        beans.forEach(bean => {
+            if (!bean) throw Error(`Can't wire to bean since it is null`);
+            return this.methodWireBean(bean);
+        });
     }
 
     private autoWireBean(bean: any): void {
@@ -249,6 +254,16 @@ export class Context {
         } );
     }
 
+    private preConstruct(beans: any): void {
+        beans.forEach( (bean: any) => {
+            // try calling init methods
+            if (bean.__agBeanMetaData && bean.__agBeanMetaData.preConstructMethods) {
+                bean.__agBeanMetaData.preConstructMethods.forEach( (methodName: string) => bean[methodName]() );
+            }
+
+        } );
+    }
+
     public getBean(name: string): any {
         return this.lookupBeanInstance('getBean', name, true);
     }
@@ -279,6 +294,14 @@ function applyToConstructor(constructor: Function, argArray: any[]) {
     var args = [null].concat(argArray);
     var factoryFunction = constructor.bind.apply(constructor, args);
     return new factoryFunction();
+}
+
+export function PreConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
+    var props = getOrCreateProps(target);
+    if (!props.postConstructMethods) {
+        props.preConstructMethods = [];
+    }
+    props.preConstructMethods.push(methodName);
 }
 
 export function PostConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {

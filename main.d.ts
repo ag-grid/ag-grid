@@ -27,6 +27,7 @@ export * from './dist/lib/entities/originalColumnGroupChild';
 export * from './dist/lib/entities/rowNode';
 
 export * from './dist/lib/filter/baseFilter';
+export * from './dist/lib/filter/dateFilter';
 export * from './dist/lib/filter/filter';
 export * from './dist/lib/filter/filterManager';
 export * from './dist/lib/filter/numberFilter';

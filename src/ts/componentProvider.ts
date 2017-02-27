@@ -7,6 +7,12 @@ import {HeaderGroupComp, IHeaderGroupComp, IHeaderGroupParams} from "./headerRen
 import {HeaderComp, IHeaderComp, IHeaderParams} from "./headerRendering/header/headerComp";
 import {DefaultDateComponent} from "./filter/dateFilter";
 import {_} from "./utils";
+import {
+    FloatingFilterComp, IFloatingFilterParams, TextFloatingFilterComp,
+    SetFloatingFilterComp, NumberFloatingFilterComp, DateFloatingFilterComp, EmptyFloatingFilterComp
+} from "./filter/floatingFilter";
+import {Column} from "./entities/column";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
 
 
 export interface ComponentConfig {
@@ -30,6 +36,9 @@ export interface FrameworkComponentWrapper {
 export class ComponentProvider {
     @Autowired("gridOptions")
     private gridOptions: GridOptions;
+
+    @Autowired("gridOptionsWrapper")
+    private gridOptionsWrapper: GridOptionsWrapper;
 
     @Autowired("context")
     private context: Context;
@@ -57,13 +66,38 @@ export class ComponentProvider {
                 mandatoryMethodList: [],
                 optionalMethodList: [],
                 defaultComponent: HeaderGroupComp
+            },
+            textFloatingFilterComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: [],
+                defaultComponent: TextFloatingFilterComp
+            },
+            setFloatingFilterComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: [],
+                defaultComponent: SetFloatingFilterComp
+            },
+            numberFloatingFilterComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: [],
+                defaultComponent: NumberFloatingFilterComp
+            },
+            dateFloatingFilterComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: [],
+                defaultComponent: DateFloatingFilterComp
+            },
+            customFloatingFilter: {
+                mandatoryMethodList: [],
+                optionalMethodList: [],
+                defaultComponent: EmptyFloatingFilterComp
             }
         }
     }
 
     private newAgGridComponent<A extends IComponent<any> & B, B>
-    (holder:GridOptions | ColDef | ColGroupDef, componentName:string): A{
-        let thisComponentConfig: ComponentConfig= this.allComponentConfig[componentName];
+    (holder:GridOptions | ColDef | ColGroupDef, componentName:string, defaultComponentName:string): A{
+        let thisComponentConfig: ComponentConfig= this.allComponentConfig[defaultComponentName];
         if (!thisComponentConfig){
             throw Error("Invalid component specified, there are no components of type : " + componentName)
         }
@@ -95,8 +129,8 @@ export class ComponentProvider {
         return <A>this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList);
     }
 
-    public createAgGridComponent<A extends IComponent<any>> (holder:GridOptions | ColDef | ColGroupDef, componentName:string, agGridParams:any): A{
-        let component: A = <A>this.newAgGridComponent(holder, componentName);
+    public createAgGridComponent<A extends IComponent<any>> (holder:GridOptions | ColDef | ColGroupDef, componentName:string, defaultComponentName:string, agGridParams:any): A{
+        let component: A = <A>this.newAgGridComponent(holder, componentName, defaultComponentName);
         let customParams:any = holder ? (<any>holder)[componentName + "Params"] : null;
         let finalParams:any = {};
         _.mergeDeep(finalParams, agGridParams);
@@ -104,18 +138,35 @@ export class ComponentProvider {
 
         this.context.wireBean(component);
         component.init(finalParams);
+        if (!component){
+            throw Error (`Can't create ag-Grid component with name: ${componentName}`)
+        }
         return component;
     }
 
     public newDateComponent (params: IDateParams): IDateComp{
-        return <IDateComp>this.createAgGridComponent(this.gridOptions, "dateComponent", params);
+        return <IDateComp>this.createAgGridComponent(this.gridOptions, "dateComponent", "dateComponent", params);
     }
 
     public newHeaderComponent (params:IHeaderParams): IHeaderComp{
-        return <IHeaderComp>this.createAgGridComponent(params.column.getColDef(), "headerComponent", params);
+        return <IHeaderComp>this.createAgGridComponent(params.column.getColDef(), "headerComponent", "headerComponent", params);
     }
 
     public newHeaderGroupComponent (params:IHeaderGroupParams): IHeaderGroupComp{
-        return <IHeaderGroupComp>this.createAgGridComponent(params.columnGroup.getColGroupDef(), "headerGroupComponent", params);
+        return <IHeaderGroupComp>this.createAgGridComponent(params.columnGroup.getColGroupDef(), "headerGroupComponent", "headerGroupComponent", params);
+    }
+
+    public newFloatingFilterComponent<M> (params:IFloatingFilterParams<M>):FloatingFilterComp<M, any>{
+        let colDef = params.column.getColDef();
+        let floatingFilterToInstantiate: string;
+        if (typeof  colDef.filter === 'string') {
+            floatingFilterToInstantiate = colDef.filter + "FloatingFilterComponent";
+        } else if (!colDef.filter){
+            floatingFilterToInstantiate= this.gridOptionsWrapper.isEnterprise() ? 'setFloatingFilterComponent' : 'textFloatingFilterComponent';
+        } else {
+            floatingFilterToInstantiate= 'customFloatingFilter';
+        }
+
+        return <FloatingFilterComp<any, any>> this.createAgGridComponent(colDef, "floatingFilterComponent", floatingFilterToInstantiate, params);
     }
 }
