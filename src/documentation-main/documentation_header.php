@@ -354,7 +354,7 @@ function isFrameworkWebComponents()
                     normalItem(0, 'Angular Examples', 'Angular Examples', 'example-angular/');
                     normalItem(1, 'Angular Rich Grid', 'Rich Grid', 'example-angular-rich-grid/');
                     normalItem(1, 'Angular Markup', 'Rich Grid via Markup', 'example-angular-rich-grid-markup/');
-                    normalItem(1, 'Angular Dynamic', 'Cell Component', 'example-angular-dynamic/');
+                    normalItem(1, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
                     normalItem(1, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
                     normalItem(1, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
                     normalItem(1, 'Angular Floating Row', 'Floating Rows', 'example-angular-floating-row/');

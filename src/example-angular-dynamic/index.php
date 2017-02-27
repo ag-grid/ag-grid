@@ -10,7 +10,8 @@ include '../documentation-main/documentation_header.php';
 <div>
 
     <h2>Simple Dynamic Component</h2>
-    <p>A simple Grid using Angular Components as Cell Renderers</p>
+    <p>A simple Grid using Angular Components as Cell Renderers, with Child Components, Two-Way Binding and
+        Parent to Child Components Events.</p>
 
     <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=from-component"
                           sources="{
@@ -23,8 +24,7 @@ include '../documentation-main/documentation_header.php';
     </show-complex-example>
 
     <h2>Richer Dynamic Components</h2>
-    <p>A Richer Example using Angular Components as Cell Renderers, Child Components, Two-Way Binding and
-        Parent to Child Components Events.</p>
+    <p>A Richer Example using Angular Components as Cell Renderers, with Dynamic Components included via Modules.</p>
 
     <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=from-rich-component"
                           sources="{
