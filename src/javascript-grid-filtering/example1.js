@@ -32,7 +32,8 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true
+    enableFilter: true,
+    floatingFilter: true
 };
 
 function onFilterChanged(value) {
