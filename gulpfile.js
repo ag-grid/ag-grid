@@ -29,7 +29,7 @@ function watchTask() {
     // listen for changes with a custom port
     liveReload.listen();
     gulp.watch(['../ag-grid/src/**/*','../ag-grid-enterprise/src/**/*'], ['webpack']);
-    gulp.watch(['../ag-grid-docs/src/**/*'], ['liveReload']);
+    gulp.watch(['../ag-grid-docs/src/**/*','!../ag-grid-docs/src/dist/**/*'], ['liveReload']);
 }
 
 function tscGrid() {
