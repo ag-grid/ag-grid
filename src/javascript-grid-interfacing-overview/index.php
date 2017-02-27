@@ -37,6 +37,9 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <h2>
+
+        <?php if (isFrameworkJavaScript()) { ?> src="/images/javascript.png" height="50"/> <?php } ?>
+
         <img ng-if="isFramework('javascript')" src="/images/javascript.png" height="50"/>
         <img ng-if="isFramework('react')" src="/images/react.png" height="50px"/>
         <img ng-if="isFramework('angularjs')" src="/images/angularjs.png" height="50px"/>

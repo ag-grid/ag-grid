@@ -82,6 +82,9 @@ function isFrameworkSelected($framework) {
     }
 }
 
+function isFrameworkAll() {
+    return $GLOBALS[framework] === 'all';
+}
 function isFrameworkAngular() {
     return $GLOBALS[framework] === 'angular' || $GLOBALS[framework] === 'all';
 }

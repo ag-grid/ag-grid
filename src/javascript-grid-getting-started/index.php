@@ -9,41 +9,39 @@ include '../documentation-main/documentation_header.php';
 
 <div ng-controller="GettingStartedController" ng-show="showGettingStarted" class="ng-hide">
     <div>
-        <div ng-if="isFramework(['javascript','all'])">
-            <div ng-class="{collapsableDocs: isFramework('all')}">
-                <div ng-if="isFramework('all')"
-                     ng-click="toggleDiv('jsOpen')"
-                     class="collapsableDocs-header"
-                     onclick="javascript: this.classList.toggle('active');">
-                    <h4><img style="vertical-align: middle" src="/images/javascript.png" height="20px"/> Overview -
-                        JavaScript</h4>
+
+        <?php if (isFrameworkJavaScript()) { ?>
+            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
+
+                <?php if (isFrameworkAll()) { ?>
+                <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
+                    <h4><img style="vertical-align: middle" src="/images/javascript.png" height="20px"/> Overview - JavaScript</h4>
                     <i class="fa fa-arrow-right" aria-hidden="true"></i>
                 </div>
+                <?php } ?>
 
-                <div ng-if="jsOpen || frameworkContext==='javascript'"
-                     ng-class="{'collapsableDocs-content': isFramework('all')}">
+                <div>
                     <?php include './javascript.php'; ?>
                 </div>
             </div>
-        </div>
+        <?php } ?>
 
-        <div ng-if="isFramework(['angular','all'])">
-            <div ng-class="{collapsableDocs: isFramework('all')}">
-                <div ng-if="isFramework('all')"
-                     ng-click="toggleDiv('angularOpen')"
-                     class="collapsableDocs-header"
-                     onclick="javascript: this.classList.toggle('active');">
-                    <h4><img style="vertical-align: middle" src="/images/angular2_small.png" height="20px"/> Overview -
-                        Angular</h4>
-                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                </div>
+        <?php if (isFrameworkAngular()) { ?>
+            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
 
-                <div ng-if="angularOpen || frameworkContext==='angular'"
-                     ng-class="{'collapsableDocs-content': isFramework('all')}">
+                <?php if (isFrameworkAll()) { ?>
+                    <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
+                        <h4><img style="vertical-align: middle" src="/images/angular2_small.png" height="20px"/> Overview - Angular</h4>
+                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                    </div>
+                <?php } ?>
+
+                <div>
                     <?php include './angular.php'; ?>
                 </div>
             </div>
-        </div>
+        <?php } ?>
+
 
         <div ng-if="isFramework(['angularjs','all'])">
             <div ng-class="{collapsableDocs: isFramework('all')}">
