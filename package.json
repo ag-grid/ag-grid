@@ -31,17 +31,15 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "del": "^2.2.2",
-    "gulp": "^3.9.1",
-    "gulp-header": "^1.7.0",
-    "gulp-ngc": "^0.1.2",
-    "gulp-require-tasks": "^1.0.5",
-    "gulp-typescript": "3.1.4",
+    "del": "2.2.x",
+    "gulp": "3.9.x",
+    "gulp-header": "1.8.x",
+    "gulp-ngc": "0.1.x",
+    "gulp-typescript": "3.1.x",
     "merge2": "0.3.6",
-    "require-dir": "^0.3.1",
     "rimraf": "2.5.x",
-    "run-sequence": "^1.2.2",
-    "typescript": "2.0.3"
+    "run-sequence": "1.2.x",
+    "typescript": "2.1.x"
   },
   "peerDependencies": {
     "ag-grid": "8.1.x",

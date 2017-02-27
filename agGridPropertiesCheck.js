@@ -3,19 +3,21 @@ HTMLElement = typeof HTMLElement === 'undefined' ? function () {} : HTMLElement;
 HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? function () {} : HTMLSelectElement;
 HTMLInputElement = typeof HTMLInputElement === 'undefined' ? function () {} : HTMLInputElement;
 
+require('./node_modules/reflect-metadata');
+
 var {AgGridNg2} = require('./dist/agGridNg2');
 var {ComponentUtil} = require("ag-grid/main");
 
 var missingProperties = [];
 ComponentUtil.ALL_PROPERTIES.forEach((property) => {
-    if (!AgGridNg2.propDecorators.hasOwnProperty(property)) {
+    if (!Reflect.getOwnMetadata('propMetadata', AgGridNg2).hasOwnProperty(property)) {
         missingProperties.push(`Grid property ${property} does not exist on AgGridNg2`)
     }
 });
 
 var missingEvents = [];
 ComponentUtil.EVENTS.forEach((event) => {
-    if (!AgGridNg2.propDecorators.hasOwnProperty(event)) {
+    if (!Reflect.getOwnMetadata('propMetadata', AgGridNg2).hasOwnProperty(event)) {
         missingEvents.push(`Grid event ${event} does not exist on AgGridNg2`)
     }
 });
