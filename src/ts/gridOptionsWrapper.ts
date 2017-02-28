@@ -178,6 +178,7 @@ export class GridOptionsWrapper {
     public getPaginationOverflowSize(): number { return this.gridOptions.paginationOverflowSize; }
     public getPaginationPageSize(): number { return this.gridOptions.paginationPageSize; }
     public getPaginationInitialRowCount(): number { return this.gridOptions.paginationInitialRowCount; }
+    public isSuppressPaginationPanel() { return isTrue(this.gridOptions.suppressPaginationPanel); }
 
     public getRowData(): any[] { return this.gridOptions.rowData; }
     public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }

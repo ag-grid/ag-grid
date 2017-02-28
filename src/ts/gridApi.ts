@@ -691,6 +691,47 @@ export class GridApi {
         this.gridPanel.setBodyAndHeaderHeights();
     }
 
+
+    public paginationIsLastPageFound(): boolean {
+        return this.paginationService.isLastPageFound();
+    }
+
+    public paginationGetPageSize(): number {
+        return this.paginationService.getPageSize();
+    }
+
+    public paginationGetCurrentPage(): number {
+        return this.paginationService.getCurrentPage();
+    }
+
+    public paginationGetTotalPages(): number {
+        return this.paginationService.getTotalPages();
+    }
+
+    public paginationGetRowCount(): number {
+        return this.paginationService.getRowCount();
+    }
+
+    public paginationGoToNextPage(): void {
+        this.paginationService.goToNextPage();
+    }
+
+    public paginationGoToPreviousPage(): void {
+        this.paginationService.goToPreviousPage();
+    }
+
+    public paginationGoToFirstPage(): void {
+        this.paginationService.goToFirstPage();
+    }
+
+    public paginationGoToLastPage(): void {
+        this.paginationService.goToLastPage();
+    }
+
+    public paginationGoToPage(page: number): void {
+        this.paginationService.goToPage(page);
+    }
+
     /*
     Taking these out, as we want to reconsider how we register components
     

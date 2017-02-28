@@ -62,7 +62,7 @@ export class PaginationComp extends Component {
     private onPageLoaded(): void {
         this.enableOrDisableButtons();
         this.updateRowLabels();
-        if (this.paginationService.isMaxRowFound()) {
+        if (this.paginationService.isLastPageFound()) {
             this.setTotalLabels();
         }
     }
@@ -86,7 +86,7 @@ export class PaginationComp extends Component {
                 <span class="ag-paging-page-summary-panel">
                     <button class="ag-paging-button" ref="btFirst">${strFirst}</button>
                     <button class="ag-paging-button" ref="btPrevious">${strPrevious}</button>
-                    ${strPage} <span id="lbCurrent"></span> ${strOf} <span ref="lbTotal"></span>
+                    ${strPage} <span ref="lbCurrent"></span> ${strOf} <span ref="lbTotal"></span>
                     <button class="ag-paging-button" ref="btNext">${strNext}</button>
                     <button class="ag-paging-button" ref="btLast">${strLast}</button>
                 </span>
@@ -94,24 +94,24 @@ export class PaginationComp extends Component {
     }
 
     private onBtNext() {
-        this.paginationService.fetchNextPage();
+        this.paginationService.goToNextPage();
     }
 
     private onBtPrevious() {
-        this.paginationService.fetchPreviousPage();
+        this.paginationService.goToPreviousPage();
     }
 
     private onBtFirst() {
-        this.paginationService.fetchFirstPage();
+        this.paginationService.goToFirstPage();
     }
 
     private onBtLast() {
-        this.paginationService.fetchLastPage();
+        this.paginationService.goToLastPage();
     }
 
     private enableOrDisableButtons() {
         let currentPage = this.paginationService.getCurrentPage();
-        let maxRowFound = this.paginationService.isMaxRowFound();
+        let maxRowFound = this.paginationService.isLastPageFound();
         let totalPages = this.paginationService.getTotalPages();
 
         let disablePreviousAndFirst = currentPage === 0;
@@ -131,7 +131,7 @@ export class PaginationComp extends Component {
     private updateRowLabels() {
         let currentPage = this.paginationService.getCurrentPage();
         let pageSize = this.paginationService.getPageSize();
-        let maxRowFound = this.paginationService.isMaxRowFound();
+        let maxRowFound = this.paginationService.isLastPageFound();
         let rowCount = this.paginationService.getRowCount();
 
         var startRow: any;
@@ -153,13 +153,13 @@ export class PaginationComp extends Component {
     }
 
     private isZeroPagesToDisplay() {
-        let maxRowFound = this.paginationService.isMaxRowFound();
+        let maxRowFound = this.paginationService.isLastPageFound();
         let totalPages = this.paginationService.getTotalPages();
         return maxRowFound && totalPages === 0;
     }
 
     private setTotalLabels() {
-        let maxRowFound = this.paginationService.isMaxRowFound();
+        let maxRowFound = this.paginationService.isLastPageFound();
         let totalPages = this.paginationService.getTotalPages();
         let rowCount = this.paginationService.getRowCount();
 

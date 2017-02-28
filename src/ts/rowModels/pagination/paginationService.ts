@@ -31,12 +31,12 @@ export class PaginationService extends BeanStub {
     private datasource: IDatasource;
     private pageSize: number;
     private rowCount: number;
-    private foundMaxRow: boolean;
+    private lastPageFound: boolean;
     private totalPages: number;
     private currentPage: number;
 
-    public isMaxRowFound(): boolean {
-        return this.foundMaxRow;
+    public isLastPageFound(): boolean {
+        return this.lastPageFound;
     }
 
     public getPageSize(): number {
@@ -55,23 +55,35 @@ export class PaginationService extends BeanStub {
         return this.rowCount;
     }
 
-    public fetchNextPage() {
-        this.currentPage++;
-        this.loadPage();
+    public goToNextPage(): void {
+        this.goToPage(this.currentPage + 1);
     }
 
-    public fetchPreviousPage() {
-        this.currentPage--;
-        this.loadPage();
+    public goToPreviousPage(): void {
+        this.goToPage(this.currentPage - 1);
     }
 
-    public fetchFirstPage() {
-        this.currentPage = 0;
-        this.loadPage();
+    public goToFirstPage(): void {
+        this.goToPage(0);
     }
 
-    public fetchLastPage() {
-        this.currentPage = this.totalPages - 1;
+    public goToLastPage(): void {
+        if (this.lastPageFound) {
+            this.goToPage(this.totalPages - 1);
+        }
+    }
+
+    public goToPage(page: number): void {
+        if (page<0) {
+            // min page is zero
+            this.currentPage = 0;
+        } else if (this.lastPageFound && page > this.totalPages) {
+            // max page is totalPages-1 IF we konw the last page
+            this.currentPage = this.totalPages - 1;
+        } else {
+            // otherwise take page as is
+            this.currentPage = page;
+        }
         this.loadPage();
     }
 
@@ -147,11 +159,11 @@ export class PaginationService extends BeanStub {
         // see if we know the total number of pages, or if it's 'to be decided'
         if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
             this.rowCount = this.datasource.rowCount;
-            this.foundMaxRow = true;
+            this.lastPageFound = true;
             this.calculateTotalPages();
         } else {
             this.rowCount = 0;
-            this.foundMaxRow = false;
+            this.lastPageFound = false;
             this.totalPages = null;
         }
 
@@ -171,8 +183,8 @@ export class PaginationService extends BeanStub {
         var firstId = this.currentPage * this.pageSize;
         this.inMemoryRowModel.setRowData(rows, true, firstId);
         // see if we hit the last row
-        if (!this.foundMaxRow && lastRowIndex >= 0) {
-            this.foundMaxRow = true;
+        if (!this.lastPageFound && lastRowIndex >= 0) {
+            this.lastPageFound = true;
             this.rowCount = lastRowIndex;
             this.calculateTotalPages();
 

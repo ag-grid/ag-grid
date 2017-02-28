@@ -174,7 +174,9 @@ export class GridCore {
         }
 
         var statusBarEnabled = this.statusBar && this.gridOptionsWrapper.isEnableStatusBar();
-        var paginationPanelEnabled = this.gridOptionsWrapper.isRowModelPagination() && !this.gridOptionsWrapper.isForPrint();
+        var paginationPanelEnabled = this.gridOptionsWrapper.isRowModelPagination()
+            && !this.gridOptionsWrapper.isForPrint()
+            && !this.gridOptionsWrapper.isSuppressPaginationPanel();
 
         if (!statusBarEnabled && !paginationPanelEnabled) {
             return null;
@@ -184,6 +186,7 @@ export class GridCore {
         if (statusBarEnabled) {
             eSouthPanel.appendChild(this.statusBar.getGui());
         }
+
 
         if (paginationPanelEnabled) {
             let paginationComp = new PaginationComp();

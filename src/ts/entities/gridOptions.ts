@@ -95,6 +95,7 @@ export interface GridOptions {
     paginationOverflowSize?: number;
     paginationInitialRowCount?: number;
     paginationPageSize?: number;
+    suppressPaginationPanel?: boolean;
     editType?: string;
     suppressTouch?: boolean;
     embedFullWidthRows?: boolean;
@@ -269,6 +270,9 @@ export interface GridOptions {
     onDragStopped?(event?: any): void;
     onItemsAdded?(event?: any): void;
     onItemsRemoved?(event?: any): void;
+    onPaginationReset?(event?: any): void;
+    onPaginationPageLoaded?(event?: any): void;
+    onPaginationPageRequested?(event?: any): void;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
