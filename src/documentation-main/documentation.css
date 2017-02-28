@@ -257,3 +257,15 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 .framworkIcon-small {
     width: 16px;
 }
+
+.frameworkBox {
+    margin-bottom: 10px;
+}
+
+.frameworkBox select {
+    background-color: #EEE;
+}
+
+.frameworkHeading img {
+    margin-top: -3px;
+}
