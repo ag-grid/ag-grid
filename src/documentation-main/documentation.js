@@ -171,7 +171,75 @@
 
         $scope.plunker = null;
         if ($attrs.plunker && $attrs.plunker.indexOf("https://embed.plnkr.co") === 0) {
-            $scope.plunker = $sce.trustAsResourceUrl($attrs.plunker);
+            var plunkerUrl = $attrs.plunker;
+            plunkerUrl += (plunkerUrl.indexOf("?") === -1) ? "?" : "&";
+            plunkerUrl += "show=preview";
+
+            $scope.plunker = $sce.trustAsResourceUrl(plunkerUrl);
+        }
+
+        $scope.extraPages = [];
+
+        var sources = eval($attrs.sources);
+        sources.forEach(function(source) {
+            var root = source.root;
+            var files = source.files.split(',');
+
+            $scope.extraPages = $scope.extraPages.concat(files);
+
+            $scope.extraPageContent = {};
+            files.forEach(function (file) {
+                $http.get(root + file).then(function (response) {
+                    $scope.extraPageContent[file] = response.data;
+                }).catch(function (response) {
+                    $scope.extraPageContent[file] = response.data;
+                });
+            });
+            $scope.extraPage = $scope.extraPages[0];
+        });
+
+        if ($attrs.exampleheight) {
+            $scope.iframeStyle = {height: $attrs.exampleheight};
+        } else {
+            $scope.iframeStyle = {height: '500px'}
+        }
+
+        $scope.isActive = function (item) {
+            return $scope.selectedTab == item;
+        };
+        $scope.setActive = function (item) {
+            $scope.selectedTab = item;
+        };
+
+        $scope.isActivePage = function (item) {
+            return $scope.extraPage == item;
+        };
+        $scope.setActivePage = function (item) {
+            $scope.extraPage = item;
+        };
+    }
+
+    /*
+     * plunker only example
+     */
+    module.directive("showPlunkerExample", function () {
+        return {
+            scope: true,
+            controller: ShowPlunkerScriptExampleController,
+            templateUrl: "/showPlunkerExample.html"
+        }
+    });
+
+    function ShowPlunkerScriptExampleController($scope, $http, $attrs, $sce) {
+        $scope.selectedTab = 'editplunker';
+
+        $scope.plunker = null;
+        if ($attrs.plunker && $attrs.plunker.indexOf("https://embed.plnkr.co") === 0) {
+            var plunkerUrl = $attrs.plunker;
+            plunkerUrl += (plunkerUrl.indexOf("?") === -1) ? "?" : "&";
+            plunkerUrl += "show=preview";
+
+            $scope.plunker = $sce.trustAsResourceUrl(plunkerUrl);
         }
 
         $scope.extraPages = [];
