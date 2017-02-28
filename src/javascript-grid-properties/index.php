@@ -444,6 +444,15 @@ include '../documentation-main/documentation_header.php';
                 See <a href="../javascript-grid-datasource/">Datasource</a> for more information.
             </td>
         </tr>
+        <tr>
+            <th>suppressPaginationPanel</th>
+            <td>
+                Set to true if you want to use pagination but NOT want to display the grids
+                pagination panel. Use this if you want to provide your own GUI for pagination
+                outside of the grid.
+            </td>
+        </tr>
+
         <!------------------->
         <!-- Row Model: Infinite Scrolling -->
         <!------------------->
