@@ -23,19 +23,6 @@ include 'documentation_header.php';
             }
         </style>
 
-        <div class="backgroundGradient">
-            <div style="float: left;">
-                <img width="50px" src="../images/github100.png"/>
-            </div>
-            <div style="float: right;">
-                <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large"
-                        frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
-            </div>
-            <div style="text-align: center;">
-                <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">If you like ag-Grid, star us on Github
-                </div>
-            </div>
-        </div>
 
         <!--<div class="backgroundGradient">
             <img src="../images/github100.png" style="float: left; margin-left: 20px;"/>
@@ -47,7 +34,7 @@ include 'documentation_header.php';
         </div>
         -->
         <h2 id="introduction">
-            Introduction
+            ag-Grid Documentation
         </h2>
 
         <!--
@@ -59,52 +46,7 @@ include 'documentation_header.php';
         </div>
         -->
 
-        <p>
-            The documentation is broken down into the following sections:
-
-        <div class="list-group">
-          <a href="/javascript-grid-getting-started/" class="list-group-item">
-            <h4 class="list-group-item-heading">Getting Started</h4>
-            <p class="list-group-item-text">Learn how to set up ag-Grid with the framework that you have chosen.</p>
-          </a>
-          <a href="/javascript-grid-interfacing-overview/" class="list-group-item">
-            <h4 class="list-group-item-heading">Interfacing</h4>
-            <p class="list-group-item-text">A quick reference guide detailing all the configuration options for ag-Grid.</p>
-          </a>
-
-          <a href="/javascript-grid-features/" class="list-group-item">
-            <h4 class="list-group-item-heading">Features</h4>
-            <p class="list-group-item-text">A detailed look at all the core features including enterprise features.</p>
-          </a>
-
-          <a href="/javascript-grid-styling/" class="list-group-item">
-            <h4 class="list-group-item-heading">Themes</h4>
-            <p class="list-group-item-text">A detailed look at the themes and styles available.</p>
-          </a>
-
-          <a href="/javascript-grid-components/" class="list-group-item">
-            <h4>Components:</h4>
-            <p class="list-group-item-text">A detailed look at how to customise the grid with components.</p>
-          </a>
-
-          <a href="/javascript-grid-row-models/" class="list-group-item">
-            <h4>Row Models:</h4>
-            <p class="list-group-item-text">A detailed look at all the row models available.</p>
-          </a>
-
-          <span class="list-group-item">
-            <h4>Examples:</h4>
-            <p class="list-group-item-text">Some examples combining different features.</p>
-          </span>
-
-          <span class="list-group-item">
-            <h4>Tutorials:</h4>
-            <p class="list-group-item-text">Some video tutorials for those who prefer YouTube videos over reading.</p>
-          </span>
-
-        </div>
-
-        <p>
+<!--        <p>
             ag-Grid is an Enterprise Grade Javascript Data Grid.
             The purpose of ag-Grid is to provide a data grid that enterprise
             software can use for building applications such as
@@ -114,28 +56,16 @@ include 'documentation_header.php';
             comparison to what was in other languages frameworks. ag-Grid is
             the result of turning frustration into answers,
             providing a grid worthy of enterprise development.
-        </p>
+        </p>-->
 
         <p>
-            Here you will find documentation of every feature with at least
-            one example demonstrating that feature. The ag-Grid project doesn't consider a feature complete unless it is
-            documented and demonstrated.
-        </p>
-
-        <h2 id="where-to-start">
-            Where to start
-        </h2>
-
-        <p>
-            If you are introducing yourself to ag-Grid, then you should read the documentation under <span
-                    style="font-style: italic">The Basics</span> (top left),
+            If you are introducing yourself to ag-Grid, then you should read the documentation under
+            <span style="font-style: italic">The Basics</span> (top left),
             starting with <a href="../javascript-grid-installation/">Installation</a>.
         </p>
         <p>
             If you are interested in a particular framework then please select it from the dropdown on the top left - the
-            documentation
-            will only show information pertinent to your chosen framework.
-
+            documentation will only show information pertinent to your chosen framework.
         </p>
         <p>
             Once you have <span style="font-style: italic">The Basics</span> covered, we suggest you take a look at the
@@ -146,6 +76,110 @@ include 'documentation_header.php';
             After this you will then have the foundations of ag-Grid and can jump to whatever section of the documentation
             you need to the feature you are trying to implement.
         </p>
+
+        <!-- *****>>> Will - I am lazy here, please put this style where the styles should go for this page.
+        Also I was lazy by just putting the image inside a div - there is prob a better way. I left
+        as is as I wanted to demonstrate the layout with the icons, I'll leave with you to put it the
+        way it should be done. -->
+        <style>
+            .section-icon-container {
+                float: left;
+                height: 80px;
+                display: inline-block;
+                padding-right: 20px;
+            }
+            .float-parent {
+                display: inline-block;
+            }
+        </style>
+
+        <!-- Will - Todo - we need to get other icons for this section, because what's below I stole
+         from google. Would be good to get icons that are consistent with each other. Is there a free
+         icon set that we can use with icons like the below? -->
+
+        <div class="list-group">
+            <a href="/javascript-grid-getting-started/" class="list-group-item">
+                <div class="float-parent">
+                    <div class="section-icon-container">
+                        <img src="../images/gettingStarted.png" style="width: 50px;"/>
+                    </div>
+                    <h4 class="list-group-item-heading">Getting Started</h4>
+                    <p class="list-group-item-text">Learn how to set up ag-Grid with the framework that you have
+                        chosen.</p>
+                </div>
+            </a>
+            <a href="/javascript-grid-interfacing-overview/" class="list-group-item">
+                <div class="float-parent">
+                    <div class="section-icon-container">
+                        <img src="../images/interfacing.jpg" style="width: 50px;"/>
+                    </div>
+                    <h4 class="list-group-item-heading">Interfacing</h4>
+                    <p class="list-group-item-text">A quick reference guide detailing all the configuration options for
+                        ag-Grid.</p>
+                </div>
+            </a>
+
+            <a href="/javascript-grid-features/" class="list-group-item">
+                <div class="float-parent">
+                    <div class="section-icon-container">
+                        <img src="../images/features.png" style="width: 50px;"/>
+                    </div>
+                    <h4 class="list-group-item-heading">Features</h4>
+                    <p class="list-group-item-text">A detailed look at all the core features including enterprise
+                        features.</p>
+                </div>
+            </a>
+
+            <a href="/javascript-grid-row-models/" class="list-group-item">
+                <div class="float-parent">
+                    <div class="section-icon-container">
+                        <img src="../images/rowModel.png" style="width: 50px;"/>
+                    </div>
+                    <h4>Row Models:</h4>
+                    <p class="list-group-item-text">A detailed look at all the row models available.</p>
+                </div>
+            </a>
+
+            <a href="/javascript-grid-styling/" class="list-group-item">
+                <div class="float-parent">
+                    <div class="section-icon-container">
+                        <img src="../images/themes.png" style="width: 50px;"/>
+                    </div>
+                    <h4 class="list-group-item-heading">Themes</h4>
+                    <p class="list-group-item-text">A detailed look at the themes and styles available.</p>
+                </div>
+            </a>
+
+            <a href="/javascript-grid-components/" class="list-group-item">
+                <div class="float-parent">
+                    <div class="section-icon-container">
+                        <img src="../images/components.png" style="width: 50px;"/>
+                    </div>
+                    <h4>Components</h4>
+                    <p class="list-group-item-text">A detailed look at how to customise the grid with components.</p>
+                </div>
+            </a>
+
+            <span class="list-group-item">
+                <div class="float-parent">
+                    <div class="section-icon-container">
+                        <img src="../images/examples.jpg" style="width: 50px;"/>
+                    </div>
+                    <h4>Examples</h4>
+                    <p class="list-group-item-text">Some examples combining different features.</p>
+                </div>
+            </span>
+
+        </div>
+
+
+
+<!--        <p>
+            Here you will find documentation of every feature with at least
+            one example demonstrating that feature. The ag-Grid project doesn't consider a feature complete unless it is
+            documented and demonstrated.
+        </p>-->
+
 
         <h2 id="keeping-up-to-date">
             Keeping up to date
@@ -171,6 +205,20 @@ include 'documentation_header.php';
                         fjs.parentNode.insertBefore(js, fjs);
                     }
                 }(document, 'script', 'twitter-wjs');</script>
+        </div>
+
+        <div class="backgroundGradient">
+            <div style="float: left;">
+                <img width="50px" src="../images/github100.png"/>
+            </div>
+            <div style="float: right;">
+                <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large"
+                        frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">If you like ag-Grid, star us on Github
+                </div>
+            </div>
         </div>
 
         <div class="backgroundGradient" style="margin-top: 10px;">

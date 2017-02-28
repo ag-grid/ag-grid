@@ -222,7 +222,11 @@ function isFrameworkWebComponents()
             </div>
 
             <div class="docsMenu-header <?php if ($pageGroup == "basics") { ?> active<?php } ?>" data-id="getting_started">
-                <h4>Getting Started</h4>
+                <h4>
+                    <img src="../images/gettingStarted.png" style="width: 20px; float: left;"/>
+                    &nbsp;
+                    Getting Started
+                </h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
 
@@ -242,7 +246,11 @@ function isFrameworkWebComponents()
             </div>
 
             <div class="docsMenu-header <?php if ($pageGroup == "interfacing") { ?> active<?php } ?>" data-id="interfacing">
-                <h4>Interfacing</h4>
+                <h4>
+                    <img src="../images/interfacing.jpg" style="width: 20px; float: left;"/>
+                    &nbsp;
+                    Interfacing
+                </h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
 
@@ -259,7 +267,11 @@ function isFrameworkWebComponents()
             </div>
 
             <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "feature") { ?> active<?php } ?>" data-id="features">
-                <h4>Features</h4>
+                <h4>
+                    <img src="../images/features.png" style="width: 20px; float: left;"/>
+                    &nbsp;
+                    Features
+                </h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
 
@@ -314,7 +326,11 @@ function isFrameworkWebComponents()
             </div>
 
             <div class="docsMenu-header<?php if ($pageGroup == "row_models") { ?> active<?php } ?>" data-id="row_models">
-                <h4>Row Models</h4>
+                <h4>
+                    <img src="../images/rowModel.png" style="width: 20px; float: left;"/>
+                    &nbsp;
+                    Row Models
+                </h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
 
@@ -329,7 +345,11 @@ function isFrameworkWebComponents()
             </div>
             
             <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "themes") { ?> active<?php } ?>" data-id="themes">
-                <h4>Themes</h4>
+                <h4>
+                    <img src="../images/themes.png" style="width: 20px; float: left;"/>
+                    &nbsp;
+                    Themes
+                </h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
 
@@ -347,7 +367,11 @@ function isFrameworkWebComponents()
             </div>
 
             <div class="docsMenu-header<?php if ($pageGroup == "components") { ?> active<?php } ?>" data-id="components">
-                <h4>Components</h4>
+                <h4>
+                    <img src="../images/components.png" style="width: 20px; float: left;"/>
+                    &nbsp;
+                    Components
+                </h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
 
@@ -362,12 +386,16 @@ function isFrameworkWebComponents()
             </div>
 
             <div class="docsMenu-header<?php if ($pageGroup == "examples") { ?> active<?php } ?>" data-id="examples">
-                <h4>Examples</h4>
+                <h4>
+                    <img src="../images/examples.jpg" style="width: 20px; float: left;"/>
+                    &nbsp;
+                    Examples
+                </h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
 
             <div class="docsMenu-examples">
-                <?
+                <?php
 
                 if (isFrameworkAngular() || isFrameworkAll()) {
                     normalItem(0, 'Angular Examples', 'Angular Examples', 'example-angular/');
