@@ -234,6 +234,18 @@ export class ObservableInMemoryRowModel implements IObservableInMemoryRowModel {
         }
     }
 
+    public forEachNodeAfterFilter(callback: Function): void {
+        if (this.rootNode.childrenAfterFilter) {
+            this.rootNode.childrenAfterFilter.forEach( (rowNode, index) => callback(rowNode, index) );
+        }
+    }
+
+    public forEachNodeAfterFilterAndSort(callback: Function): void {
+        if (this.rootNode.childrenAfterSort) {
+            this.rootNode.childrenAfterSort.forEach( (rowNode, index) => callback(rowNode, index) );
+        }
+    }
+
     private doSort() {
         this.sortStage.execute({rowNode: this.rootNode});
     }
