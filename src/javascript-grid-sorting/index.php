@@ -57,7 +57,15 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         </ul>
     </p>
 
-    <show-example example="example1"></show-example>
+    <show-complex-example example="example1.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'example1.html,example1.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/kqE8KXcw9EfFq55JsAzR/"
+                          exampleheight="350px">
+    </show-complex-example>
 
     <h3 id="sorting-animation">Sorting Animation</h3>
 
@@ -96,7 +104,15 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
     </ul>
     </p>
 
-    <show-example example="exampleSortingOrder"></show-example>
+    <show-complex-example example="exampleSortingOrder.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleSortingOrder.html,exampleSortingOrder.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/GU2YmYDdiaqEdqzvnnvy/"
+                          exampleheight="350px">
+    </show-complex-example>
 
     <h3 id="sorting-api">Sorting API</h3>
 
@@ -126,7 +142,15 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         The example below shows the API in action.
     </p>
 
-    <show-example example="sortingApi"></show-example>
+    <show-complex-example example="sortingApi.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'sortingApi.html,sortingApi.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/pbVt8QMfb0z8d2Ihzokm/"
+                          exampleheight="350px">
+    </show-complex-example>
 
     <h3 id="sorting-groups">Sorting Groups</h3>
 

@@ -353,4 +353,96 @@
         };
     });
 
+    /*
+    *
+    Local storage/remember toggle state
+    */
+
+    var localStorageKey = "ag_grid_state";
+    var toggleClasses = document.getElementsByClassName("docsMenu-header");
+
+    var default_state = {
+        getting_started: false,
+        interfacing: false,
+        features: false,
+        themes: false,
+        components: false,
+        row_models: false,
+        examples: false,
+        misc: false
+    }
+
+    
+    /* check whether this is a page that needs to be active/open (e.g. if in group) */
+    function handleState(saved_state) {
+
+        var defaultClasses = document.getElementsByClassName("docsMenu-header");
+        var defaultClassesArray = [];
+        
+        for (var i = 0; i < defaultClasses.length; i++) {
+            var isToggleActive = defaultClasses[i].classList.contains('active');
+            var id = defaultClasses[i].dataset.id;
+            if (isToggleActive) {
+                defaultClassesArray.push(id);
+            }
+        }
+        return {
+            getting_started: defaultClassesArray.indexOf("getting_started") > -1 ? true : saved_state.getting_started,
+            interfacing: defaultClassesArray.indexOf("interfacing") > -1 ? true : saved_state.interfacing,
+            features: defaultClassesArray.indexOf("features") > -1 ? true : saved_state.features,
+            themes: defaultClassesArray.indexOf("themes") > -1 ? true : saved_state.themes,
+            components: defaultClassesArray.indexOf("components") > -1 ? true : saved_state.components,
+            row_models: defaultClassesArray.indexOf("row_models") > -1 ? true : saved_state.row_models,
+            examples: defaultClassesArray.indexOf("examples") > -1 ? true : saved_state.examples,
+            misc: defaultClassesArray.indexOf("misc") > -1 ? true : saved_state.misc
+        }        
+    }
+
+
+    var saved_state = localStorage.getItem(localStorageKey);
+
+    // if `saved_state` is true we parse it and use that value for `state`; otherwise use `default_state`
+    var state = saved_state ? handleState(JSON.parse(saved_state)) : default_state;
+
+    initDocsMenu();
+
+    function initDocsMenu() {
+        for(var key in state) {
+            var is_displayed = state[key];
+            toggleDocsMenu(key, is_displayed);
+        }
+    }
+
+    for (var i = 0; i < toggleClasses.length; i++) {
+        toggleClasses[i].addEventListener('click', handleToggle, false);
+    }
+    
+    function handleToggle() {
+        var id = this.dataset.id;
+        var clicked = true;
+        toggleDocsMenu(id, !state[id], clicked);
+    }
+
+
+    function toggleDocsMenu(id, is_displayed, clicked) {
+        var element = document.querySelectorAll("[data-id='"+id+"']");
+        if (is_displayed) {
+            state[id] = true;
+            element[0].classList.add("active");
+            element[0].classList.add("toggleCollapse");
+            if (clicked) {
+
+            }
+        } else {
+            state[id] = false;
+            element[0].classList.remove("active");
+            if (clicked) {
+                element[0].classList.remove("toggleCollapse");
+            }
+        }
+        
+        localStorage.setItem(localStorageKey, JSON.stringify(state));
+
+    }
+
 })();

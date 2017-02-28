@@ -120,7 +120,15 @@ columnDefinition = {
     </ul>
     </p>
 
-    <show-example example="example1"></show-example>
+    <show-complex-example example="example1.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'example1.html,example1.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/PZ1kJCiQOerXr36cbTZ4/"
+                          exampleheight="500px">
+    </show-complex-example>
 
 
     <h3 id="dateFilter">Date Filter</h3>
@@ -260,7 +268,15 @@ export interface IDateCompParams {
         See below an example of a custom JQuery date picker.
     </p>
 
-    <show-example example="exampleCustomDate"></show-example>
+    <show-complex-example example="example1.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'example1.html,example1.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/hIMxzFxvZk34NnpGpvOT/"
+                          exampleheight="500px">
+    </show-complex-example>
 
     <h3 id="apply-function">Apply Function</h3>
 
@@ -281,7 +297,15 @@ export interface IDateCompParams {
         <li>onAfterFilterChanged gets called after a new filter is applied.</li>
     </p>
 
-    <show-example example="exampleFilterApply"></show-example>
+    <show-complex-example example="exampleFilterApply.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleFilterApply.html,exampleFilterApply.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/eIdTwdmysRxmhyOZJFbP/"
+                          exampleheight="500px">
+    </show-complex-example>
 
     <h3 id="filtering-animation">Filtering Animation</h3>
 
@@ -321,7 +345,15 @@ export interface IDateCompParams {
         The example below shows the external filters in action.
     </p>
 
-    <show-example example="exampleFilterExternal"></show-example>
+    <show-complex-example example="exampleFilterExternal.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleFilterExternal.html,exampleFilterExternal.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/Tf6CEsZh0dgHGEHtCdIL/"
+                          exampleheight="500px">
+    </show-complex-example>
 
     <h3 id="quick-filter">Quick Filter</h3>
 
@@ -389,8 +421,15 @@ export interface IDateCompParams {
     (which would be fixed by adding an appropriate getQuickFilterText method like D does).
     </p>
 
-    <show-example example="exampleQuickFilter"></show-example>
-
+    <show-complex-example example="exampleQuickFilter.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleQuickFilter.html,exampleQuickFilter.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/nVhnmx2ftPBvzj5Ie9MJ/"
+                          exampleheight="500px">
+    </show-complex-example>
 
     <h3 id="accessing-filter-component-instances">Accessing Filter Component Instances</h3>
 
@@ -481,7 +520,15 @@ nameFilter.setModel(model);</pre>
         (Note: the example uses the <a href="../javascript-grid-set-filtering/">enterprise set filter</a>).
     </p>
 
-    <show-example example="exampleFilterApi"></show-example>
+    <show-complex-example example="exampleFilterApi.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleFilterApi.html,exampleFilterApi.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/5EyeTra5sahkg43TnL5L/"
+                          exampleheight="500px">
+    </show-complex-example>
 
     <h4 id="reset_filters">Reset Individual Filters</h4>
 
@@ -545,7 +592,15 @@ gridOptions.api.setFilterModel(null);
         (Note: the example uses the <a href="../javascript-grid-set-filtering/">enterprise set filter</a>).
     </p>
 
-    <show-example example="exampleFilterModel"></show-example>
+    <show-complex-example example="exampleFilterModel.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleFilterModel.html,exampleFilterModel.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/KDZENKpqCaPZWq8lNQU5/"
+                          exampleheight="500px">
+    </show-complex-example>
 
 </div>
 
