@@ -182,18 +182,49 @@ function isFrameworkWebComponents()
 
         <div class="col-sm-2">
 
-            <h4>Framework</h4>
-            <select id="framework" ng-change="model.onFrameworkChanged()"
-                    ng-model="model.framework">
-                <option value="all">All</option>
-                <option value="javascript">JavaScript</option>
-                <option value="angular">Angular</option>
-                <option value="angularjs">AngularJS 1.x</option>
-                <option value="react">ReactJS</option>
-                <option value="vue">VueJS</option>
-                <option value="aurelia">AureliaJS</option>
-                <option value="webcomponents">Web Components</option>
-            </select>
+            <div class="frameworkBox">
+                <h4 class="frameworkHeading">Framework
+
+                    <?php if (isFrameworkAll()) { ?>
+
+                    <?php } elseif (isFrameworkAngular()) { ?>
+                        <img src="/images/angular2_small.png" alt="Angular" />
+
+                    <?php } elseif (isFrameworkAngularJS()) { ?>
+                        <img src="/images/angularjs_small.png" alt="Angular 1" />
+
+                    <?php } elseif (isFrameworkAurelia()) { ?>
+                        <img src="/images/aurelia_small.png" alt="Aurelia" />
+
+                    <?php } elseif (isFrameworkReact()) { ?>
+                        <img src="/images/react_small.png" alt="React" />
+
+                    <?php } elseif (isFrameworkVue()) { ?>
+                        <img src="/images/vue_small.png" alt="Vue" />
+
+                    <?php } elseif (isFrameworkJavaScript()) { ?>
+                        <img src="/images/javascript_small.png" alt="JavaScript" />
+
+                    <?php } elseif (isFrameworkWebComponents()) { ?>
+                        <img src="/images/webComponents_small.png" alt="Web Components" />
+                    <?php } ?>
+
+                </h4>
+
+                <div class="form-group">
+                    <select id="framework" class="form-control" ng-change="model.onFrameworkChanged()"
+                            ng-model="model.framework">
+                        <option value="all">All</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="angular">Angular</option>
+                        <option value="angularjs">AngularJS 1.x</option>
+                        <option value="react">ReactJS</option>
+                        <option value="vue">VueJS</option>
+                        <option value="aurelia">AureliaJS</option>
+                        <option value="webcomponents">Web Components</option>
+                    </select>
+                </div>
+            </div>
 
             <div class="docsMenu-header <?php if ($pageGroup == "basics") { ?> active<?php } ?>"
                  onclick="javascript: this.classList.toggle('active');">
