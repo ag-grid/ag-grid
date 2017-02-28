@@ -358,7 +358,7 @@
     Local storage/remember toggle state
     */
 
-    var localStorageKey = "app_state";
+    var localStorageKey = "ag_grid_state";
     var toggleClasses = document.getElementsByClassName("docsMenu-header");
 
     var default_state = {
