@@ -348,7 +348,7 @@ function isFrameworkWebComponents()
             </div>
 
             <div class="docsMenu-examples">
-                <?
+                <?php
 
                 if (isFrameworkAngular() || isFrameworkAll()) {
                     normalItem(0, 'Angular Examples', 'Angular Examples', 'example-angular/');
