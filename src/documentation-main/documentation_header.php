@@ -313,6 +313,21 @@ function isFrameworkWebComponents()
                 ?>
             </div>
 
+            <div class="docsMenu-header<?php if ($pageGroup == "row_models") { ?> active<?php } ?>" data-id="row_models">
+                <h4>Row Models</h4>
+                <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </div>
+
+            <div class="docsMenu-content">
+                <?php
+                normalItem(0, 'Row Models', 'Overview', 'javascript-grid-row-models/');
+                normalItem(0, 'Datasource', 'Datasource', 'javascript-grid-datasource/');
+                normalItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
+                normalItem(0, 'Infinite Scrolling', 'Infinite Scrolling', 'javascript-grid-virtual-paging/');
+                enterpriseItem(0, 'Viewport', 'Viewport', 'javascript-grid-viewport/');
+                ?>
+            </div>
+            
             <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "themes") { ?> active<?php } ?>" data-id="themes">
                 <h4>Themes</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
@@ -343,21 +358,6 @@ function isFrameworkWebComponents()
                 normalItem(0, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/');
                 normalItem(0, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component/');
                 normalItem(0, 'Header Rendering', 'Header Components', 'javascript-grid-header-rendering/');
-                ?>
-            </div>
-
-            <div class="docsMenu-header<?php if ($pageGroup == "row_models") { ?> active<?php } ?>" data-id="row_models">
-                <h4>Row Models</h4>
-                <i class="fa fa-arrow-right" aria-hidden="true"></i>
-            </div>
-
-            <div class="docsMenu-content">
-                <?php
-                normalItem(0, 'Row Models', 'Overview', 'javascript-grid-row-models/');
-                normalItem(0, 'Datasource', 'Datasource', 'javascript-grid-datasource/');
-                normalItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
-                normalItem(0, 'Infinite Scrolling', 'Infinite Scrolling', 'javascript-grid-virtual-paging/');
-                enterpriseItem(0, 'Viewport', 'Viewport', 'javascript-grid-viewport/');
                 ?>
             </div>
 

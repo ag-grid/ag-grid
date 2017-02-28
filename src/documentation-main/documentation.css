@@ -110,7 +110,7 @@
 .docsMenu-header + div{
     max-height: 0;
     overflow: hidden;
-    //transition: all .5s ease-in-out;
+    transition: all .5s ease-in-out;
     margin: 5px 0 10px;
 }
 .docsMenu-header.active + div, .docsMenu-header.toggleActive + div{
