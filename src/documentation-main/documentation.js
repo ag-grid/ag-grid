@@ -1,62 +1,7 @@
 (function () {
 
-    var module = angular.module("documentation", ['ngCookies']);
-    module.controller('DocumentationController', ['$scope', '$cookies', '$location', function ($scope, $cookies, $location) {
-
-        var model = {};
-
-        $scope.model = model;
-
-        model.onFrameworkChanged = function () {
-            window.location.href = '?framework=' + model.framework;
-        };
-
-        model.framework = document.querySelector('#frameworkAttr').innerHTML;
-
-        $scope.frameworkContext = getFrameworkFromCookieAndDefaultIfNotDefined();
-
-        $scope.onFrameworkContextChanged = function () {
-            setCookie('frameworkContext', $scope.frameworkContext ? $scope.frameworkContext : 'all');
-        };
-
-        $scope.isFramework = function (framework) {
-            $scope.frameworkContext = getFrameworkFromCookieAndDefaultIfNotDefined();
-
-            if ($scope.frameworkContext === 'all') {
-                return true;
-            }
-
-            var frameworks = [].concat(framework);
-            for (var test of frameworks) {
-                if ($scope.frameworkContext === test) {
-                    return true;
-                }
-            }
-
-            return false;
-        };
-
-        function setCookie(name, value) {
-            $cookies.remove(name);
-            var n = new Date();
-            var expires = new Date(n.getFullYear() + 1, n.getMonth(), n.getDate());
-            $cookies.put(name,
-                value,
-                {
-                    path: "/",
-                    expires: expires
-                });
-        }
-
-        function getFrameworkFromCookieAndDefaultIfNotDefined() {
-            var frameworkContext = $cookies.get('frameworkContext');
-            if (!frameworkContext) {
-                frameworkContext = 'all';
-                setCookie('frameworkContext', frameworkContext);
-            }
-            $scope.frameworkContext = frameworkContext;
-            return $scope.frameworkContext;
-        }
+    var module = angular.module("documentation", []);
+    module.controller('DocumentationController', ['$scope', '$location', function ($scope, $location) {
 
         $scope.divIsReady = function (divId) {
             console.log(document.getElementById(divId));
