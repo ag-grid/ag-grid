@@ -35,6 +35,17 @@ include '../documentation-main/documentation_header.php';
                           exampleHeight="525px">
     </show-plunker-example>
 
+    <h4 id="ng2bootstrap">Cell Editor with ng2-bootstrap Components</h4>
+    <p>This example uses <code>ng2-bootstrap</code> as part of an Editor Components.</p>
+
+    <show-plunker-example sources="{
+                            [
+                                { root: './ng2-bootstrap/', files: 'bootstrap-editor.component.ts,bootstrap-editor.component.html,date-picker.component.ts,dropdown.component.ts,app.component.html,app.module.ts' },
+                            ]
+                          }"
+                          plunker="https://embed.plnkr.co/925YB2/"
+                          exampleHeight="525px">
+    </show-plunker-example>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
