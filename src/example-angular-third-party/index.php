@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-plunker-example sources="{
                             [
-                                { root: './typeahead/', files: 'typeahead.component.ts,typeahead.component.html,typeahead.css,typeahead-editor.component.ts,app.module.ts' },
+                                { root: '/example-angular-third-party/typeahead/', files: 'typeahead.component.ts,typeahead.component.html,typeahead.css,typeahead-editor.component.ts,app.module.ts' },
                             ]
                           }"
                           plunker="https://embed.plnkr.co/925YB2/"
@@ -42,7 +42,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-plunker-example sources="{
                             [
-                                { root: './ng2-bootstrap/', files: 'bootstrap-editor.component.ts,bootstrap-editor.component.html,date-picker.component.ts,dropdown.component.ts,app.component.html,app.module.ts' },
+                                { root: '/example-angular-third-party/ng2-bootstrap/', files: 'bootstrap-editor.component.ts,bootstrap-editor.component.html,date-picker.component.ts,dropdown.component.ts,app.component.html,app.module.ts' },
                             ]
                           }"
                           plunker="https://embed.plnkr.co/925YB2/"
