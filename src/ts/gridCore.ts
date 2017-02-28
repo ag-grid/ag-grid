@@ -1,7 +1,6 @@
 
 import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {PaginationController} from "./rowModels/paginationController";
 import {ColumnController} from "./columnController/columnController";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {FilterManager} from "./filter/filterManager";
@@ -13,19 +12,19 @@ import {PopupService} from "./widgets/popupService";
 import {Events} from "./events";
 import {Utils as _} from "./utils";
 import {BorderLayout} from "./layout/borderLayout";
-import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional} from "./context/context";
+import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional, Context} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
 import {FocusedCellController} from "./focusedCellController";
 import {Component} from "./widgets/component";
 import {ICompFactory} from "./interfaces/iCompFactory";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
+import {PaginationComp} from "./rowModels/pagination/paginationComp";
 
 @Bean('gridCore')
 export class GridCore {
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('paginationController') private paginationController: PaginationController;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
 
@@ -40,6 +39,7 @@ export class GridCore {
     @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('context') private context: Context;
 
     @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
@@ -186,7 +186,10 @@ export class GridCore {
         }
 
         if (paginationPanelEnabled) {
-            eSouthPanel.appendChild(this.paginationController.getGui());
+            let paginationComp = new PaginationComp();
+            this.context.wireBean(paginationComp);
+            eSouthPanel.appendChild(paginationComp.getGui());
+            this.destroyFunctions.push(paginationComp.destroy.bind(paginationComp));
         }
 
         return eSouthPanel;

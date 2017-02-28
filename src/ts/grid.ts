@@ -1,6 +1,5 @@
 import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {PaginationController} from "./rowModels/paginationController";
 import {FloatingRowModel} from "./rowModels/floatingRowModel";
 import {SelectionController} from "./selectionController";
 import {ColumnController, ColumnApi} from "./columnController/columnController";
@@ -55,6 +54,7 @@ import {StylingService} from "./styling/stylingService";
 import {ColumnHoverService} from "./rendering/columnHoverService";
 import {ColumnAnimationService} from "./rendering/columnAnimationService";
 import {ComponentProvider} from "./componentProvider";
+import {PaginationService} from "./rowModels/pagination/paginationService";
 
 export interface GridParams {
     // used by Web Components
@@ -147,12 +147,11 @@ export class Grid {
                 FilterManager, ColumnController, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory,
                 GridSerializer, TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
-                LoggerFactory, ColumnUtils, AutoWidthCalculator,
-                PaginationController, PopupService, GridCore, StandardMenuFactory,
+                LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
-                ColumnHoverService, ColumnAnimationService],
+                ColumnHoverService, ColumnAnimationService, PaginationService],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],

@@ -128,6 +128,10 @@ export class Events {
 
     /** All the events from here down are experimental, should not be documented or used by ag-Grid customers */
 
+    public static EVENT_PAGINATION_RESET = 'paginationReset';
+    public static EVENT_PAGINATION_PAGE_LOADED = 'paginationPageLoaded';
+    public static EVENT_PAGINATION_PAGE_REQUESTED = 'paginationPageRequested';
+
     // not documented, as it's experimental, don't want people with dependencies on this
     public static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
     public static EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
