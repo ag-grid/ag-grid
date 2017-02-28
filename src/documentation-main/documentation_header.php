@@ -208,7 +208,7 @@ function isFrameworkWebComponents()
                 </h4>
 
                 <div class="form-group">
-                    <select id="framework" class="form-control">
+                    <select id="framework" class="form-control" ng-change="model.onFrameworkChanged()" ng-model="model.framework">
                         <option value="all">All</option>
                         <option value="javascript">JavaScript</option>
                         <option value="angular">Angular</option>
@@ -367,7 +367,7 @@ function isFrameworkWebComponents()
             </div>
 
             <div class="docsMenu-examples">
-                <?php
+                <?
 
                 if (isFrameworkAngular() || isFrameworkAll()) {
                     normalItem(0, 'Angular Examples', 'Angular Examples', 'example-angular/');
