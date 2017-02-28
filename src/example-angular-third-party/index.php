@@ -35,6 +35,8 @@ include '../documentation-main/documentation_header.php';
                           exampleHeight="525px">
     </show-plunker-example>
 
+    <hr/>
+
     <h4 id="ng2bootstrap">Cell Editor with ng2-bootstrap Components</h4>
     <p>This example uses <code>ng2-bootstrap</code> as part of an Editor Components.</p>
 
