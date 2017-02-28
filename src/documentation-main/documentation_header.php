@@ -16,10 +16,6 @@
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular-cookies.min.js"></script>
-    <script src="../documentation-main/documentation.js"></script>
-
     <!-- Hotjar Tracking Code for https://www.ag-grid.com/ -->
     <script>
         (function (h, o, t, j, a, r) {
@@ -212,8 +208,7 @@ function isFrameworkWebComponents()
                 </h4>
 
                 <div class="form-group">
-                    <select id="framework" class="form-control" ng-change="model.onFrameworkChanged()"
-                            ng-model="model.framework">
+                    <select id="framework" class="form-control">
                         <option value="all">All</option>
                         <option value="javascript">JavaScript</option>
                         <option value="angular">Angular</option>
@@ -226,8 +221,7 @@ function isFrameworkWebComponents()
                 </div>
             </div>
 
-            <div class="docsMenu-header <?php if ($pageGroup == "basics") { ?> active<?php } ?>"
-                 onclick="javascript: this.classList.toggle('active');">
+            <div class="docsMenu-header <?php if ($pageGroup == "basics") { ?> active<?php } ?>" data-id="getting_started">
                 <h4>Getting Started</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
@@ -247,8 +241,7 @@ function isFrameworkWebComponents()
 
             </div>
 
-            <div class="docsMenu-header <?php if ($pageGroup == "interfacing") { ?> active<?php } ?>"
-                 onclick="this.classList.toggle('active');">
+            <div class="docsMenu-header <?php if ($pageGroup == "interfacing") { ?> active<?php } ?>" data-id="interfacing">
                 <h4>Interfacing</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
@@ -265,8 +258,7 @@ function isFrameworkWebComponents()
                 ?>
             </div>
 
-            <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "feature") { ?> active<?php } ?>"
-                 onclick="javascript: this.classList.toggle('active');">
+            <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "feature") { ?> active<?php } ?>" data-id="features">
                 <h4>Features</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
@@ -321,8 +313,7 @@ function isFrameworkWebComponents()
                 ?>
             </div>
 
-            <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "themes") { ?> active<?php } ?>"
-                 onclick="javascript: this.classList.toggle('active');">
+            <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "themes") { ?> active<?php } ?>" data-id="themes">
                 <h4>Themes</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
@@ -340,8 +331,7 @@ function isFrameworkWebComponents()
 
             </div>
 
-            <div class="docsMenu-header<?php if ($pageGroup == "components") { ?> active<?php } ?>"
-                 onclick="javascript: this.classList.toggle('active');">
+            <div class="docsMenu-header<?php if ($pageGroup == "components") { ?> active<?php } ?>" data-id="components">
                 <h4>Components</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
@@ -356,8 +346,7 @@ function isFrameworkWebComponents()
                 ?>
             </div>
 
-            <div class="docsMenu-header<?php if ($pageGroup == "row_models") { ?> active<?php } ?>"
-                 onclick="javascript: this.classList.toggle('active');">
+            <div class="docsMenu-header<?php if ($pageGroup == "row_models") { ?> active<?php } ?>" data-id="row_models">
                 <h4>Row Models</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
@@ -372,8 +361,7 @@ function isFrameworkWebComponents()
                 ?>
             </div>
 
-            <div class="docsMenu-header<?php if ($pageGroup == "examples") { ?> active<?php } ?>"
-                 onclick="javascript: this.classList.toggle('active');">
+            <div class="docsMenu-header<?php if ($pageGroup == "examples") { ?> active<?php } ?>" data-id="examples">
                 <h4>Examples</h4>
                 <i class="fa fa-arrow-right" aria-hidden="true"></i>
             </div>
@@ -401,8 +389,7 @@ function isFrameworkWebComponents()
             </div>
 
             <?php if ($version == 'latest') { ?>
-                <div class="docsMenu-header<?php if ($pageGroup == "misc") { ?> active<?php } ?>"
-                     onclick="javascript: this.classList.toggle('active');">
+                <div class="docsMenu-header<?php if ($pageGroup == "misc") { ?> active<?php } ?>" data-id="misc">
                     <h4>Misc</h4>
                     <i class="fa fa-arrow-right" aria-hidden="true"></i>
                 </div>
