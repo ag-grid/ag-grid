@@ -15,6 +15,8 @@ import {HeaderGroupWrapperComp} from "./headerGroup/headerGroupWrapperComp";
 import {FilterManager} from "../filter/filterManager";
 import {BaseFilter} from "../filter/baseFilter";
 import {ComponentProvider} from "../componentProvider";
+import {BaseFloatingFilterComp, IFloatingFilterComp} from "../filter/floatingFilter";
+import {IComponent} from "../interfaces/iComponent";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -31,7 +33,7 @@ export class HeaderRowComp extends Component {
     private dept: number;
     private pinned: string;
 
-    private headerElements: {[key: string]: Component} = {};
+    private headerElements: {[key: string]: IComponent<any>} = {};
 
     private eRoot: HTMLElement;
     private dropTarget: DropTarget;
@@ -47,7 +49,7 @@ export class HeaderRowComp extends Component {
         this.dropTarget = dropTarget;
     }
 
-    public forEachHeaderElement(callback: (comp: Component)=>void): void {
+    public forEachHeaderElement(callback: (comp: IComponent<any>)=>void): void {
         Object.keys(this.headerElements).forEach( key => {
             var headerElement = this.headerElements[key];
             callback(headerElement);
@@ -166,9 +168,8 @@ export class HeaderRowComp extends Component {
 
     }
 
-    private createHeaderElement(columnGroupChild:ColumnGroupChild): Component {
-
-        var result: Component;
+    private createHeaderElement(columnGroupChild:ColumnGroupChild): IComponent<any> {
+        var result: IComponent<any>;
 
         switch (this.type) {
             case HeaderRowType.COLUMN :
@@ -188,19 +189,24 @@ export class HeaderRowComp extends Component {
                 result = new HeaderGroupWrapperComp(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER :
-                let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(<Column> columnGroupChild);
-
-                filterComponent.floatingFilterComponent = <any>this.componentProvider.newFloatingFilterComponent({
+                let column = <Column> columnGroupChild;
+                let floatingFilter : IFloatingFilterComp<any, any> = <any>this.componentProvider.newFloatingFilterComponent({
                     currentParentModel:():any=>{
+                        let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
                         return filterComponent.getNullableModel();
                     },
                     onFloatingFilterChanged:(change:any):void=>{
+                        let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
                         filterComponent.setModel(change);
                         (<BaseFilter<any, any, any>>filterComponent).onFloatingFilterChanged();
                     },
-                    column:<Column> columnGroupChild
+                    column:column
                 });
-                result = filterComponent.floatingFilterComponent;
+                column.addEventListener(Column.EVENT_FILTER_CHANGED, ()=>{
+                    let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+                    floatingFilter.onParentModelChanged(filterComponent.getModel());
+                });
+                result = floatingFilter;
                 break;
         }
 

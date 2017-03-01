@@ -10,26 +10,31 @@ import {SerializedDateFilter} from "./dateFilter";
 import {SerializedNumberFilter} from "./numberFilter";
 import {IComponent} from "../interfaces/iComponent";
 import {RefSelector} from "../widgets/componentAnnotations";
+import {_} from "../utils";
+import {IMenuFactory} from "../interfaces/iMenuFactory";
 
 export interface IFloatingFilterParams<M> {
     column:Column;
     onFloatingFilterChanged:(change:M)=>void;
-    currentParentModel:()=>M;
+    currentParentModel:()=>M
 }
 
 export interface IFloatingFilter<M, P extends IFloatingFilterParams<M>>{
     onParentModelChanged(parentModel:M):void;
-
 }
 
 export interface IFloatingFilterComp<M, P extends IFloatingFilterParams<M>> extends IFloatingFilter<M, P>, IComponent<P> {}
 
 
 export abstract class BaseFloatingFilterComp<M, P extends IFloatingFilterParams<M>> extends Component implements IFloatingFilterComp<M, P> {
+    @RefSelector('eButtonShowMainFilter')
+    eButtonShowMainFilter: HTMLInputElement;
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('context') private context: Context;
     @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('menuFactory') private menuFactory: IMenuFactory;
 
     column: Column;
     onFloatingFilterChanged:(change:M)=>void;
@@ -37,16 +42,32 @@ export abstract class BaseFloatingFilterComp<M, P extends IFloatingFilterParams<
 
     init (params:P):void{
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
-        this.currentParentModel = params.currentParentModel
+        this.currentParentModel = params.currentParentModel;
         this.column = params.column;
-        this.setTemplate(`<div class="ag-header-cell">${this.bodyGui()}</div>`);
+
+        let body:HTMLElement = _.loadTemplate(`<div class="ag-floating-filter-body"></div>`);
+        this.enrichBody(body);
+
+        let base:HTMLElement = _.loadTemplate(`<div class="ag-header-cell"></div>`);
+        base.appendChild(body);
+        base.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button">
+                <button ref="eButtonShowMainFilter">...</button>            
+        </div>`));
+
+        this.setTemplateFromElement(base);
         this.setupWidth();
         this.addFeature(this.context, new SetLeftFeature(this.column, this.getGui()));
+
+        this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
     }
 
     abstract onParentModelChanged(parentModel:M):void;
-    abstract bodyGui ():string;
+    abstract enrichBody(from:HTMLElement):void;
 
+
+    private showParentFilter(){
+        this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter);
+    }
 
     private setupWidth(): void {
         this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
@@ -59,7 +80,23 @@ export abstract class BaseFloatingFilterComp<M, P extends IFloatingFilterParams<
 }
 
 
-export abstract class FloatingFilterComp<M, P extends IFloatingFilterParams<M>> extends BaseFloatingFilterComp <M, P> {
+export abstract class HtmlTemplateFloatingFilterComp<M, P extends IFloatingFilterParams<M>> extends BaseFloatingFilterComp <M, P> {
+    abstract bodyGui(): string
+
+    enrichBody(from:HTMLElement):void{
+        from.innerHTML = this.bodyGui();
+    }
+}
+
+export abstract class InnerHtmlElementFloatingFilterComp<M, P extends IFloatingFilterParams<M>> extends BaseFloatingFilterComp <M, P> {
+    abstract bodyGui(): HTMLElement
+
+    enrichBody (from:HTMLElement):void{
+        from.appendChild(this.bodyGui());
+    }
+}
+
+export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterParams<M>> extends HtmlTemplateFloatingFilterComp <M, P> {
     @RefSelector('eColumnFloatingFilter')
     eColumnFloatingFilter: HTMLInputElement;
 
@@ -78,7 +115,7 @@ export abstract class FloatingFilterComp<M, P extends IFloatingFilterParams<M>> 
     abstract asFloatingFilterText (parentModel:M):string;
 
     onParentModelChanged(parentModel:M):void{
-        this.eColumnFloatingFilter.value = parentModel ? this.asFloatingFilterText (parentModel) : '';
+        this.eColumnFloatingFilter.value = this.asFloatingFilterText (parentModel);
     }
 
     syncUpWithParentFilter ():void{
@@ -86,8 +123,9 @@ export abstract class FloatingFilterComp<M, P extends IFloatingFilterParams<M>> 
     }
 }
 
-export class TextFloatingFilterComp extends FloatingFilterComp<SerializedTextFilter, IFloatingFilterParams<SerializedTextFilter>>{
+export class TextFloatingFilterComp extends InputTextFloatingFilterComp<SerializedTextFilter, IFloatingFilterParams<SerializedTextFilter>>{
     asFloatingFilterText(parentModel: SerializedTextFilter): string {
+        if (!parentModel) return '';
         return parentModel.filter;
     }
 
@@ -100,18 +138,9 @@ export class TextFloatingFilterComp extends FloatingFilterComp<SerializedTextFil
     }
 }
 
-export class SetFloatingFilterComp extends FloatingFilterComp<string[], IFloatingFilterParams<string[]>>{
-    asFloatingFilterText(parentModel: string[]): string {
-        return parentModel.join(",");
-    }
-    asParentModel(): string[] {
-        if (this.eColumnFloatingFilter.value == '') return null;
-        return this.eColumnFloatingFilter.value.split(",")
-    }
-}
-
-export class DateFloatingFilterComp extends FloatingFilterComp<SerializedDateFilter, IFloatingFilterParams<SerializedDateFilter>>{
+export class DateFloatingFilterComp extends InputTextFloatingFilterComp<SerializedDateFilter, IFloatingFilterParams<SerializedDateFilter>>{
     asFloatingFilterText(parentModel: SerializedDateFilter): string {
+        if (!parentModel) return '';
         return parentModel.dateFrom;
     }
 
@@ -125,8 +154,9 @@ export class DateFloatingFilterComp extends FloatingFilterComp<SerializedDateFil
     }
 }
 
-export class NumberFloatingFilterComp extends FloatingFilterComp<SerializedNumberFilter, IFloatingFilterParams<SerializedNumberFilter>>{
+export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<SerializedNumberFilter, IFloatingFilterParams<SerializedNumberFilter>>{
     asFloatingFilterText(parentModel: SerializedNumberFilter): string {
+        if (!parentModel) return '';
         return parentModel.filter + '';
     }
 
@@ -140,12 +170,38 @@ export class NumberFloatingFilterComp extends FloatingFilterComp<SerializedNumbe
     }
 }
 
-export class EmptyFloatingFilterComp extends BaseFloatingFilterComp<any, any>{
-    onParentModelChanged(parentModel: any): void {
-
+export class SetFloatingFilterComp extends InputTextFloatingFilterComp<string[], IFloatingFilterParams<string[]>>{
+    init (params:IFloatingFilterParams<string[]>):void{
+        super.init(params);
+        this.eColumnFloatingFilter.readOnly = true;
     }
 
-    bodyGui(): string{
+    asFloatingFilterText(parentModel: string[]): string {
+        if (!parentModel) return '';
+
+        let arrayToDisplay = parentModel.length > 10? parentModel.slice(0, 10).concat(['...']) : parentModel;
+        return `(${parentModel.length}) ${arrayToDisplay.join(",")}`;
+    }
+
+    asParentModel(): string[] {
+        return this.eColumnFloatingFilter.value ?
+            this.eColumnFloatingFilter.value.split(","):
+            []
+    }
+}
+
+export class EmptyFloatingFilterComp extends InputTextFloatingFilterComp<any, any>{
+    init (params:IFloatingFilterParams<string[]>):void{
+        super.init(params);
+        this.eColumnFloatingFilter.style.visibility = 'hidden';
+        this.eButtonShowMainFilter.style.visibility = 'hidden';
+    }
+
+    asFloatingFilterText(parentModel: any): string {
         return '';
+    }
+
+    asParentModel(): any {
+        return null;
     }
 }

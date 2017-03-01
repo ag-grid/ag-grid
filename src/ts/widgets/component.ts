@@ -60,7 +60,12 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     public setTemplate(template: string): void {
-        this.eGui = _.loadTemplate(<string>template);
+        let eGui = _.loadTemplate(<string>template);
+        this.setTemplateFromElement(eGui);
+    }
+
+    public setTemplateFromElement(element: HTMLElement): void {
+        this.eGui = element;
         (<any>this.eGui).__agComponent = this;
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();

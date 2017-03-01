@@ -4,7 +4,7 @@ import {QuerySelector} from "../widgets/componentAnnotations";
 import {Autowired, Context} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {_} from "../utils";
-import {IFloatingFilterParams, FloatingFilterComp} from "./floatingFilter";
+import {IFloatingFilterParams, InputTextFloatingFilterComp} from "./floatingFilter";
 
 
 export interface Comparator<T>{
@@ -60,10 +60,6 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
     clearActive: boolean;
     applyActive: boolean;
     filter:string = 'equals';
-    /**
-     * This is initialized lazily the first time the floating filter needs to be rendered
-     */
-    floatingFilterComponent:FloatingFilterComp<M, any>;
 
     @QuerySelector('#applyPanel')
     private eButtonsPanel: HTMLElement;
@@ -176,9 +172,6 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
 
     public onFilterChanged ():void{
         this.doOnFilterChanged();
-        if (this.floatingFilterComponent){
-            this.floatingFilterComponent.onParentModelChanged(this.getModel())
-        }
     }
 
     public onFloatingFilterChanged ():void{

@@ -37,8 +37,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     public static EVENT_FIRST_RIGHT_PINNED_CHANGED = 'firstRightPinnedChanged';
     // + renderedColumn - for changing visibility icon
     public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
-    // + renderedHeaderCell - marks the header with filter icon
+    // + every time the filter changes, used in the floating filters
     public static EVENT_FILTER_CHANGED = 'filterChanged';
+    // + renderedHeaderCell - marks the header with filter icon
+    public static EVENT_FILTER_ACTIVE_CHANGED = 'filterActiveChanged';
     // + renderedHeaderCell - marks the header with sort icon
     public static EVENT_SORT_CHANGED = 'sortChanged';
 
@@ -326,8 +328,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
     public setFilterActive(active: boolean): void {
         if (this.filterActive !== active) {
             this.filterActive = active;
-            this.eventService.dispatchEvent(Column.EVENT_FILTER_CHANGED);
+            this.eventService.dispatchEvent(Column.EVENT_FILTER_ACTIVE_CHANGED);
         }
+        this.eventService.dispatchEvent(Column.EVENT_FILTER_CHANGED);
     }
 
     public setPinned(pinned: string|boolean): void {

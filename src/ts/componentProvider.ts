@@ -8,10 +8,14 @@ import {HeaderComp, IHeaderComp, IHeaderParams} from "./headerRendering/header/h
 import {DefaultDateComponent} from "./filter/dateFilter";
 import {_} from "./utils";
 import {
-    FloatingFilterComp, IFloatingFilterParams, TextFloatingFilterComp,
-    SetFloatingFilterComp, NumberFloatingFilterComp, DateFloatingFilterComp, EmptyFloatingFilterComp
+    InputTextFloatingFilterComp,
+    IFloatingFilterParams,
+    TextFloatingFilterComp,
+    NumberFloatingFilterComp,
+    DateFloatingFilterComp,
+    EmptyFloatingFilterComp,
+    SetFloatingFilterComp
 } from "./filter/floatingFilter";
-import {Column} from "./entities/column";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 
 
@@ -67,15 +71,15 @@ export class ComponentProvider {
                 optionalMethodList: [],
                 defaultComponent: HeaderGroupComp
             },
-            textFloatingFilterComponent: {
-                mandatoryMethodList: [],
-                optionalMethodList: [],
-                defaultComponent: TextFloatingFilterComp
-            },
             setFloatingFilterComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: [],
                 defaultComponent: SetFloatingFilterComp
+            },
+            textFloatingFilterComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: [],
+                defaultComponent: TextFloatingFilterComp
             },
             numberFloatingFilterComponent: {
                 mandatoryMethodList: [],
@@ -99,7 +103,7 @@ export class ComponentProvider {
     (holder:GridOptions | ColDef | ColGroupDef, componentName:string, defaultComponentName:string): A{
         let thisComponentConfig: ComponentConfig= this.allComponentConfig[defaultComponentName];
         if (!thisComponentConfig){
-            throw Error("Invalid component specified, there are no components of type : " + componentName)
+            throw Error(`Invalid component specified, there are no components of type : ${componentName} [${defaultComponentName}]`)
         }
 
         let DefaultComponent : {new(): A} = <{new(): A}>thisComponentConfig.defaultComponent;
@@ -156,7 +160,7 @@ export class ComponentProvider {
         return <IHeaderGroupComp>this.createAgGridComponent(params.columnGroup.getColGroupDef(), "headerGroupComponent", "headerGroupComponent", params);
     }
 
-    public newFloatingFilterComponent<M> (params:IFloatingFilterParams<M>):FloatingFilterComp<M, any>{
+    public newFloatingFilterComponent<M> (params:IFloatingFilterParams<M>):InputTextFloatingFilterComp<M, any>{
         let colDef = params.column.getColDef();
         let floatingFilterToInstantiate: string;
         if (typeof  colDef.filter === 'string') {
@@ -167,6 +171,6 @@ export class ComponentProvider {
             floatingFilterToInstantiate= 'customFloatingFilter';
         }
 
-        return <FloatingFilterComp<any, any>> this.createAgGridComponent(colDef, "floatingFilterComponent", floatingFilterToInstantiate, params);
+        return <InputTextFloatingFilterComp<any, any>> this.createAgGridComponent(colDef, "floatingFilterComponent", floatingFilterToInstantiate, params);
     }
 }

@@ -82,7 +82,7 @@ export class HeaderWrapperComp extends Component {
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
 
-        this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
 
         this.addFeature(this.context, new SetLeftFeature(this.column, this.getGui()));
