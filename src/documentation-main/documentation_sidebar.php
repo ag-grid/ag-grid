@@ -18,9 +18,9 @@
 </style>
 
 <div class="news-box">
-    <div class="news-header">xth March 2017</div>
+    <div class="news-header">1st March 2017</div>
     <div style="padding-top: 10px;">
-        <a href="../ag-grid-vuejs-integration/">
+        <a href="../vue-js-grid/">
             Using VueJS Components in ag-Grid
         </a>
     </div>
