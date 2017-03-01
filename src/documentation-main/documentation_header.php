@@ -179,34 +179,6 @@ function isFrameworkWebComponents()
         <div class="col-sm-2">
 
             <div class="frameworkBox">
-                <h4 class="frameworkHeading">Framework
-
-                    <?php if (isFrameworkAll()) { ?>
-
-                    <?php } elseif (isFrameworkAngular()) { ?>
-                        <img src="/images/angular2_small.png" alt="Angular" />
-
-                    <?php } elseif (isFrameworkAngularJS()) { ?>
-                        <img src="/images/angularjs_small.png" alt="Angular 1" />
-
-                    <?php } elseif (isFrameworkAurelia()) { ?>
-                        <img src="/images/aurelia_small.png" alt="Aurelia" />
-
-                    <?php } elseif (isFrameworkReact()) { ?>
-                        <img src="/images/react_small.png" alt="React" />
-
-                    <?php } elseif (isFrameworkVue()) { ?>
-                        <img src="/images/vue_small.png" alt="Vue" />
-
-                    <?php } elseif (isFrameworkJavaScript()) { ?>
-                        <img src="/images/javascript_small.png" alt="JavaScript" />
-
-                    <?php } elseif (isFrameworkWebComponents()) { ?>
-                        <img src="/images/webComponents_small.png" alt="Web Components" />
-                    <?php } ?>
-
-                </h4>
-
                 <div class="form-group">
                     <select id="framework" class="form-control" ng-change="model.onFrameworkChanged()" ng-model="model.framework">
                         <option value="all">All</option>
@@ -218,6 +190,82 @@ function isFrameworkWebComponents()
                         <option value="aurelia">AureliaJS</option>
                         <option value="webcomponents">Web Components</option>
                     </select>
+                </div>
+            </div>
+
+            <style>
+                .frameworkBox {
+                    margin-bottom: 20px;
+                }
+
+                .frameworkDropdown {
+                    background-color: #9c3636;
+                    background: linear-gradient(#9c3636, #812d2f);
+                    color: #FFF;
+                    width: 100%;
+                    position: relative;
+                    text-align: left;
+                }
+
+                .frameworkDropdown:active {
+                    background-image: inherit;
+                    background-color: #9c3636;
+                }
+                .frameworkDropdown:hover, .frameworkDropdown:active, .frameworkDropdown:focus {
+                    color: #FFF;
+                }
+                .frameworkHeading {
+                    text-transform: uppercase;
+                    font-size: 12px;
+                    padding: 8px;
+                    margin: 0px 0 -5px 0;
+                    border-radius: 3px;
+                    border: 1px solid #e8e8e8;
+                    background: #EEE;
+                    text-align: left;
+                    position: relative;
+                }
+                .frameworkHeading img {
+                    
+                }
+            </style>
+
+            
+            <div class="frameworkBox">
+                <h4 class="frameworkHeading<?php if (isFrameworkAll()) { ?> hidden<?php } ?>">
+                    <?php if (isFrameworkAngular()) { ?>
+                        <img src="/images/angular2_small.png" alt="Angular" />
+                        Angular
+                    <?php } elseif (isFrameworkAngularJS()) { ?>
+                        <img src="/images/angularjs_small.png" alt="Angular 1" />
+                        Angular JS
+                    <?php } elseif (isFrameworkAurelia()) { ?>
+                        <img src="/images/aurelia_small.png" alt="Aurelia" />
+                        Aurelia
+                    <?php } elseif (isFrameworkReact()) { ?>
+                        <img src="/images/svg/react.alt.svg" width="22" alt="React" />
+                        React
+                    <?php } elseif (isFrameworkVue()) { ?>
+                        <img src="/images/vue_small.png" alt="Vue" />
+                        Vue
+                    <?php } elseif (isFrameworkJavaScript()) { ?>
+                        <img src="/images/javascript_small.png" alt="JavaScript" />
+                        JavaScript
+                    <?php } elseif (isFrameworkWebComponents()) { ?>
+                        <img src="/images/webComponents_small.png" alt="Web Components" />
+                        Web Components 
+                    <?php } ?>
+                </h4>
+                <div class="dropdown">
+                  <button class="btn frameworkDropdown dropdown-toggle" type="button" data-toggle="dropdown">
+                     Select Framework
+                     <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a href="#" onclick="window.location.href = '?framework=all';">Show all docs</a></li>
+                    <li><a href="#" onclick="window.location.href = '?framework=javascript';">Show JavaScript docs</a></li>
+                    <li><a href="#">Angular</a></li>
+                  </ul>
                 </div>
             </div>
 
