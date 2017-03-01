@@ -31,7 +31,7 @@
     "gulp-uglify": "1.5.1",
     "gulp-rename": "1.2.2",
     "gulp-typescript": "2.10.0",
-    "typescript": "1.7.5",
+    "typescript": "2.2.0",
     "gulp-header": "1.7.0",
     "gulp-tsd": "0.0.4",
     "react-dom": "0.14.6",
