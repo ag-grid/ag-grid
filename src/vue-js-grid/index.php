@@ -753,7 +753,7 @@ onRowClicked(params) {
 
         <div style="margin-top: 20px;">
             <a href="https://twitter.com/share" class="twitter-share-button"
-               data-url="https://www.ag-grid.com/ag-grid-vuejs-integration/"
+               data-url="https://www.ag-grid.com/vue-js-grid/"
                data-text="Using VueJS Components in ag-Grid" data-via="seanlandsman"
                data-size="large">Tweet</a>
             <script>!function (d, s, id) {
@@ -772,7 +772,7 @@ onRowClicked(params) {
 
         <div>
             <a href="https://twitter.com/share" class="twitter-share-button"
-               data-url="https://www.ag-grid.com/ag-grid-vuejs-integration/"
+               data-url="https://www.ag-grid.com/vue-js-grid/"
                data-text="Using VueJS Components in ag-Grid" data-via="seanlandsman"
                data-size="large">Tweet</a>
             <script>!function (d, s, id) {

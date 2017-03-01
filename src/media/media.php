@@ -28,12 +28,12 @@ include('../includes/mediaHeader.php');
 
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="../ag-grid-vuejs-integration/">
+            <a href="../vue-js-grid/">
                 Using VueJS Components in ag-Grid
             </a>
         </div>
         <div style="float: right;  color: #767676;">
-            xth March 2017
+            1st March 2017
         </div>
     </div>
     <div style="color: #767676">
