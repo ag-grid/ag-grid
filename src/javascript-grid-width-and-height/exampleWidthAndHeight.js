@@ -16,6 +16,24 @@ var gridOptions = {
     rowData: null
 };
 
+function fillLarge() {
+    setWidthAndHeight('100%','100%');
+}
+
+function fillMedium() {
+    setWidthAndHeight('60%','60%');
+}
+
+function fillExact() {
+    setWidthAndHeight('400px','400px');
+}
+
+function setWidthAndHeight(width, height) {
+    var eGridDiv = document.querySelector('#myGrid');
+    eGridDiv.style.width = width;
+    eGridDiv.style.height = height;
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');

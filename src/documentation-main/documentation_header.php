@@ -54,25 +54,18 @@ if (!in_array($framework, $allFrameworks)) {
     $framework = 'all';
 }
 
-function normalItem($indent, $localKey, $name, $url)
-{
-    menuItem($indent, $localKey, $name, $url, false);
+function menuItem($indent, $localKey, $name, $url) {
+    menuItemWithIcon(null, $indent, $localKey, $name, $url);
 }
 
-function menuItem($indent, $localKey, $name, $url, $enterprise)
-{
-    $enterpriseIcon = $enterprise ? '<img class="enterprise-icon" src="../images/enterprise.png"/> ' : '';
+function menuItemWithIcon($icon, $indent, $localKey, $name, $url) {
+    $iconHtml = $icon!==null ? '<img class="enterprise-icon" src="../images/'.$icon.'"/> ' : '';
     $padding = ($indent == 1) ? '&nbsp;&nbsp;' : '';
     if ($GLOBALS[key] == $localKey) {
-        print('<span class="sidebarLinkSelected">' . $padding . $enterpriseIcon . $name . '</span>');
+        print('<span class="sidebarLinkSelected">' . $padding . $iconHtml . $name . '</span>');
     } else {
-        print('<a class="sidebarLink" href="' . $GLOBALS[rootFolder] . $url . '?framework=' . $GLOBALS[framework] . '">' . $padding . $enterpriseIcon . $name . '</a>');
+        print('<a class="sidebarLink" href="' . $GLOBALS[rootFolder] . $url . '?framework=' . $GLOBALS[framework] . '">' . $padding . $iconHtml . $name . '</a>');
     }
-}
-
-function enterpriseItem($indent, $localKey, $name, $url)
-{
-    menuItem($indent, $localKey, $name, $url, true);
 }
 
 function isFrameworkSelected($framework)
@@ -205,7 +198,7 @@ function isFrameworkWebComponents()
                             <img src="/images/webComponents_small.png" alt="Web Components" />
                             <span class="web-components">Web Components</span>
                         <?php } ?>
-                        
+
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li class="frameworkDropdownText">Documentation not relevant to your framework choice will be filtered out.</li>
@@ -234,13 +227,13 @@ function isFrameworkWebComponents()
             <div class="docsMenu-content">
 
                 <?php
-                normalItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
+                menuItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
 
                 if (isFrameworkAngular()) {
-                    normalItem(1, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/');
-                    normalItem(1, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/');
-                    normalItem(1, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/');
-                    normalItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');
+                    menuItem(1, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/');
+                    menuItem(1, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/');
+                    menuItem(1, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/');
+                    menuItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');
                 }
                 ?>
 
@@ -257,13 +250,13 @@ function isFrameworkWebComponents()
 
             <div class="docsMenu-content">
                 <?php
-                normalItem(0, 'Interfacing Overview', 'Overview', 'javascript-grid-interfacing-overview/');
-                normalItem(0, 'Properties', 'Properties', 'javascript-grid-properties/');
-                normalItem(0, 'columnDefs', 'Columns', 'javascript-grid-column-definitions/');
-                normalItem(0, 'Events', 'Events', 'javascript-grid-events/');
-                normalItem(0, 'Callbacks', 'Callbacks', 'javascript-grid-callbacks/');
-                normalItem(0, 'Grid API', 'Grid API', 'javascript-grid-api/');
-                normalItem(0, 'Column API', 'Column API', 'javascript-grid-column-api/');
+                menuItem(0, 'Interfacing Overview', 'Overview', 'javascript-grid-interfacing-overview/');
+                menuItem(0, 'Properties', 'Properties', 'javascript-grid-properties/');
+                menuItem(0, 'columnDefs', 'Columns', 'javascript-grid-column-definitions/');
+                menuItem(0, 'Events', 'Events', 'javascript-grid-events/');
+                menuItem(0, 'Callbacks', 'Callbacks', 'javascript-grid-callbacks/');
+                menuItem(0, 'Grid API', 'Grid API', 'javascript-grid-api/');
+                menuItem(0, 'Column API', 'Column API', 'javascript-grid-column-api/');
                 ?>
             </div>
 
@@ -278,59 +271,60 @@ function isFrameworkWebComponents()
 
             <div class="docsMenu-content">
                 <?php
-                normalItem(0, 'Features', 'Overview', 'javascript-grid-features/');
-                normalItem(0, 'Width & Height', 'Width & Height', 'javascript-grid-width-and-height/');
-                normalItem(0, 'Sorting', 'Sorting', 'javascript-grid-sorting/');
-                normalItem(0, 'Column Filter', 'Column Filter', 'javascript-grid-filtering/');
+                menuItem(0, 'Features', 'Overview', 'javascript-grid-features/');
+                menuItem(0, 'Width & Height', 'Grid Size', 'javascript-grid-width-and-height/');
+                menuItem(0, 'Sorting', 'Sorting', 'javascript-grid-sorting/');
+                menuItem(0, 'Column Filter', 'Column Filter', 'javascript-grid-filtering/');
 
-                normalItem(1, 'Text Filter', 'Text Filter', 'javascript-grid-filter-text/');
-                normalItem(1, 'Number Filter', 'Number Filter', 'javascript-grid-filter-number/');
-                normalItem(1, 'Date Filter', 'Date Filter', 'javascript-grid-filter-date/');
-                enterpriseItem(1, 'Set Filtering', 'Set Filter', 'javascript-grid-set-filtering/');
-                normalItem(1, 'Custom Filter', 'Custom Filter', 'javascript-grid-filter-custom/');
+                menuItem(1, 'Text Filter', 'Text Filter', 'javascript-grid-filter-text/');
+                menuItem(1, 'Number Filter', 'Number Filter', 'javascript-grid-filter-number/');
+                menuItem(1, 'Date Filter', 'Date Filter', 'javascript-grid-filter-date/');
+                menuItemWithIcon('enterprise.png', 1, 'Set Filtering', 'Set Filter', 'javascript-grid-set-filtering/');
+                menuItem(1, 'Custom Filter', 'Custom Filter', 'javascript-grid-filter-custom/');
 
-                normalItem(0, 'Quick Filter', 'Quick Filter', 'javascript-grid-filter-quick/');
-                normalItem(0, 'External Filter', 'External Filter', 'javascript-grid-filter-external/');
+                menuItem(0, 'Quick Filter', 'Quick Filter', 'javascript-grid-filter-quick/');
+                menuItem(0, 'External Filter', 'External Filter', 'javascript-grid-filter-external/');
 
-                normalItem(0, 'Selection', 'Selection', 'javascript-grid-selection/');
-                enterpriseItem(0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
-                normalItem(0, 'Resizing', 'Resizing', 'javascript-grid-resizing/');
-                normalItem(0, 'Pinning', 'Pinning', 'javascript-grid-pinning/');
-                normalItem(0, 'Grouping Columns', 'Grouping Columns', 'javascript-grid-grouping-headers/');
-                normalItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
-                normalItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
-                normalItem(0, 'Floating', 'Floating Rows', 'javascript-grid-floating/');
-                normalItem(0, 'Value Getters', 'Value Getters', 'javascript-grid-value-getters/');
-                normalItem(0, 'Cell Expressions', 'Cell Expressions', 'javascript-grid-cell-expressions/');
-                normalItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
-                normalItem(0, 'Context', 'Context', 'javascript-grid-context/');
-                normalItem(0, 'InsertRemove', 'Insert & Remove', 'javascript-grid-insert-remove/');
-                normalItem(0, 'Refresh', 'Refresh', 'javascript-grid-refresh/');
-                normalItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
-                normalItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
-                normalItem(0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/');
-                normalItem(0, 'Full Width', 'Full Width Rows & Master Detail', 'javascript-grid-master-detail/');
-                normalItem(0, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave/');
-                normalItem(0, 'Touch', 'Touch', 'javascript-grid-touch/');
-                normalItem(0, 'Row Model', 'Row Model', 'javascript-grid-model/');
-                normalItem(0, 'Data Export', 'CSV Export', 'javascript-grid-export/');
-                enterpriseItem(0, 'Excel Export', 'Excel Export', 'javascript-grid-excel/');
-                normalItem(0, 'RTL', 'RTL', 'javascript-grid-rtl/');
-                normalItem(0, 'Icons', 'Icons', 'javascript-grid-icons/');
-                normalItem(0, 'Overlays', 'Overlays', 'javascript-grid-overlays/');
-                normalItem(0, 'For Print', 'For Print', 'javascript-grid-for-print/');
+                menuItem(0, 'Selection', 'Selection', 'javascript-grid-selection/');
+                menuItemWithIcon('enterprise.png', 0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
+                menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
+                menuItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
+                menuItem(0, 'Grouping Columns', 'Grouping Columns', 'javascript-grid-grouping-headers/');
+                menuItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
+                menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
+                menuItem(0, 'Floating', 'Floating Rows', 'javascript-grid-floating/');
+                menuItem(0, 'Value Getters', 'Value Getters', 'javascript-grid-value-getters/');
+                menuItem(0, 'Cell Expressions', 'Cell Expressions', 'javascript-grid-cell-expressions/');
+                menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
+                menuItem(0, 'Context', 'Context', 'javascript-grid-context/');
+                menuItem(0, 'InsertRemove', 'Insert & Remove', 'javascript-grid-insert-remove/');
+                menuItem(0, 'Refresh', 'Data Refresh', 'javascript-grid-refresh/');
+                menuItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
+                menuItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
+                menuItem(0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/');
+                menuItem(0, 'Full Width Rows', 'Full Width Rows', 'javascript-grid-full-width-rows/');
+                menuItem(0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');
+                menuItem(0, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave/');
+                menuItem(0, 'Touch', 'Touch', 'javascript-grid-touch/');
+                menuItem(0, 'Row Model', 'Row Model', 'javascript-grid-model/');
+                menuItem(0, 'Data Export', 'CSV Export', 'javascript-grid-export/');
+                menuItemWithIcon('enterprise.png', 0, 'Excel Export', 'Excel Export', 'javascript-grid-excel/');
+                menuItem(0, 'RTL', 'RTL', 'javascript-grid-rtl/');
+                menuItem(0, 'Icons', 'Icons', 'javascript-grid-icons/');
+                menuItem(0, 'Overlays', 'Overlays', 'javascript-grid-overlays/');
+                menuItem(0, 'For Print', 'For Print', 'javascript-grid-for-print/');
 
-                enterpriseItem(0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
-                enterpriseItem(1, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping/');
-                enterpriseItem(1, 'Aggregation', 'Aggregation', 'javascript-grid-aggregation/');
-                enterpriseItem(1, 'Pivoting', 'Pivoting', 'javascript-grid-pivoting/');
+                menuItemWithIcon('enterprise.png', 0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
+                menuItemWithIcon('enterprise.png', 1, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping/');
+                menuItemWithIcon('enterprise.png', 1, 'Aggregation', 'Aggregation', 'javascript-grid-aggregation/');
+                menuItemWithIcon('enterprise.png', 1, 'Pivoting', 'Pivoting', 'javascript-grid-pivoting/');
 
-                enterpriseItem(0, 'Tool Panel', 'Tool Panel', 'javascript-grid-tool-panel/');
-                enterpriseItem(0, 'Clipboard', 'Clipboard', 'javascript-grid-clipboard/');
-                enterpriseItem(0, 'Column Menu', 'Column Menu', 'javascript-grid-column-menu/');
-                enterpriseItem(0, 'Context Menu', 'Context Menu', 'javascript-grid-context-menu/');
-                enterpriseItem(0, 'Status Bar', 'Status Bar', 'javascript-grid-status-bar/');
-                enterpriseItem(0, 'License Key', 'License Key', 'javascript-grid-set-license/');
+                menuItemWithIcon('enterprise.png', 0, 'Tool Panel', 'Tool Panel', 'javascript-grid-tool-panel/');
+                menuItemWithIcon('enterprise.png', 0, 'Clipboard', 'Clipboard', 'javascript-grid-clipboard/');
+                menuItemWithIcon('enterprise.png', 0, 'Column Menu', 'Column Menu', 'javascript-grid-column-menu/');
+                menuItemWithIcon('enterprise.png', 0, 'Context Menu', 'Context Menu', 'javascript-grid-context-menu/');
+                menuItemWithIcon('enterprise.png', 0, 'Status Bar', 'Status Bar', 'javascript-grid-status-bar/');
+                menuItemWithIcon('enterprise.png', 0, 'License Key', 'License Key', 'javascript-grid-set-license/');
 
                 ?>
             </div>
@@ -346,11 +340,11 @@ function isFrameworkWebComponents()
 
             <div class="docsMenu-content">
                 <?php
-                normalItem(0, 'Row Models', 'Overview', 'javascript-grid-row-models/');
-                normalItem(0, 'Datasource', 'Datasource', 'javascript-grid-datasource/');
-                normalItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
-                normalItem(0, 'Infinite Scrolling', 'Infinite Scrolling', 'javascript-grid-virtual-paging/');
-                enterpriseItem(0, 'Viewport', 'Viewport', 'javascript-grid-viewport/');
+                menuItem(0, 'Row Models', 'Overview', 'javascript-grid-row-models/');
+                menuItem(0, 'Datasource', 'Datasource', 'javascript-grid-datasource/');
+                menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
+                menuItem(0, 'Infinite Scrolling', 'Infinite Scrolling', 'javascript-grid-virtual-paging/');
+                menuItemWithIcon('enterprise.png', 0, 'Viewport', 'Viewport', 'javascript-grid-viewport/');
                 ?>
             </div>
             
@@ -366,12 +360,12 @@ function isFrameworkWebComponents()
             <div class="docsMenu-content">
 
                 <?php
-                normalItem(0, 'Styling', 'Overview', 'javascript-grid-styling/');
-                normalItem(0, 'Fresh Theme', 'Fresh Theme', 'javascript-grid-themes/fresh-theme.php');
-                normalItem(0, 'Blue Theme', 'Blue Theme', 'javascript-grid-themes/blue-theme.php');
-                normalItem(0, 'Dark Theme', 'Dark Theme', 'javascript-grid-themes/dark-theme.php');
-                normalItem(0, 'Material Theme', 'Material Theme', 'javascript-grid-themes/material-theme.php');
-                normalItem(0, 'Bootstrap Theme', 'Bootstrap Theme', 'javascript-grid-themes/bootstrap-theme.php');
+                menuItem(0, 'Styling', 'Overview', 'javascript-grid-styling/');
+                menuItem(0, 'Fresh Theme', 'Fresh Theme', 'javascript-grid-themes/fresh-theme.php');
+                menuItem(0, 'Blue Theme', 'Blue Theme', 'javascript-grid-themes/blue-theme.php');
+                menuItem(0, 'Dark Theme', 'Dark Theme', 'javascript-grid-themes/dark-theme.php');
+                menuItem(0, 'Material Theme', 'Material Theme', 'javascript-grid-themes/material-theme.php');
+                menuItem(0, 'Bootstrap Theme', 'Bootstrap Theme', 'javascript-grid-themes/bootstrap-theme.php');
                 ?>
 
             </div>
@@ -387,11 +381,11 @@ function isFrameworkWebComponents()
 
             <div class="docsMenu-content">
                 <?php
-                normalItem(0, 'Components', 'Overview', 'javascript-grid-components/');
-                normalItem(0, 'Cell Rendering', 'Cell Renderer', 'javascript-grid-cell-rendering/');
-                normalItem(0, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/');
-                normalItem(0, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component/');
-                normalItem(0, 'Header Rendering', 'Header Component', 'javascript-grid-header-rendering/');
+                menuItem(0, 'Components', 'Overview', 'javascript-grid-components/');
+                menuItem(0, 'Cell Rendering', 'Cell Renderer', 'javascript-grid-cell-rendering/');
+                menuItem(0, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/');
+                menuItem(0, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component/');
+                menuItem(0, 'Header Rendering', 'Header Component', 'javascript-grid-header-rendering/');
                 ?>
             </div>
 
@@ -408,21 +402,21 @@ function isFrameworkWebComponents()
                 <?php
 
                 if (isFrameworkAngular() || isFrameworkAll()) {
-                    normalItem(0, 'Angular Examples', 'Angular Examples', 'example-angular/');
-                    normalItem(1, 'Angular Rich Grid', 'Rich Grid', 'example-angular-rich-grid/');
-                    normalItem(1, 'Angular Markup', 'Rich Grid via Markup', 'example-angular-rich-grid-markup/');
-                    normalItem(1, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
-                    normalItem(1, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
-                    normalItem(1, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
-                    normalItem(1, 'Angular Floating Row', 'Floating Rows', 'example-angular-floating-row/');
-                    normalItem(1, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
-                    normalItem(1, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
-                    normalItem(1, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
-                    normalItem(1, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
+                    menuItemWithIcon('angular2_small.png', 0, 'Angular Examples', 'Angular Examples', 'example-angular/');
+                    menuItemWithIcon('angular2_small.png', 1, 'Angular Rich Grid', 'Rich Grid', 'example-angular-rich-grid/');
+                    menuItemWithIcon('angular2_small.png', 1, 'Angular Markup', 'Grid via Markup', 'example-angular-rich-grid-markup/');
+                    menuItemWithIcon('angular2_small.png', 1, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
+                    menuItemWithIcon('angular2_small.png', 1, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
+                    menuItemWithIcon('angular2_small.png', 1, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
+                    menuItemWithIcon('angular2_small.png', 1, 'Angular Floating Row', 'Floating Rows', 'example-angular-floating-row/');
+                    menuItemWithIcon('angular2_small.png', 1, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
+                    menuItemWithIcon('angular2_small.png', 1, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
+                    menuItemWithIcon('angular2_small.png', 1, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
+                    menuItemWithIcon('angular2_small.png', 1, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
                 }
-                normalItem(0, 'Styled Report', 'Styled Report', 'example-account-report/');
-                normalItem(0, 'File Browser', 'File Browser', 'example-file-browser/');
-                normalItem(0, 'Expressions and Context', 'Expressions and Context', 'example-expressions-and-context/');
+                menuItem(0, 'Styled Report', 'Styled Report', 'example-account-report/');
+                menuItem(0, 'File Browser', 'File Browser', 'example-file-browser/');
+                menuItem(0, 'Expressions and Context', 'Expressions and Context', 'example-expressions-and-context/');
                 ?>
             </div>
 
@@ -434,9 +428,9 @@ function isFrameworkWebComponents()
 
                 <div class="docsMenu-content">
                     <?php
-                    normalItem(0, 'Change Log', 'Change Log', 'change-log/changeLogIndex.php');
-                    normalItem(0, 'Roadmap', 'Roadmap', 'javascript-grid-roadmap');
-                    normalItem(0, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials/');
+                    menuItem(0, 'Change Log', 'Change Log', 'change-log/changeLogIndex.php');
+                    menuItem(0, 'Roadmap', 'Roadmap', 'javascript-grid-roadmap');
+                    menuItem(0, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials/');
                     ?>
                     <a class="sidebarLink" href="/archive/">Archive Docs</a>
                 </div>

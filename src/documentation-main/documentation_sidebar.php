@@ -17,6 +17,16 @@
     }
 </style>
 
+<div class="news-box">
+    <div class="news-header">xth March 2017</div>
+    <div style="padding-top: 10px;">
+        <a href="../ag-grid-vuejs-integration/">
+            <img src="../images/agGridDaily.png"/>
+            <br/>
+            Using VueJS Components in ag-Grid
+        </a>
+    </div>
+</div>
 
 <div class="news-box">
     <div class="news-header">20th February 2017</div>
