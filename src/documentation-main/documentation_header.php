@@ -378,10 +378,10 @@ function isFrameworkWebComponents()
             <div class="docsMenu-content">
                 <?php
                 normalItem(0, 'Components', 'Overview', 'javascript-grid-components/');
-                normalItem(0, 'Cell Rendering', 'Cell Rendering', 'javascript-grid-cell-rendering/');
+                normalItem(0, 'Cell Rendering', 'Cell Renderer', 'javascript-grid-cell-rendering/');
                 normalItem(0, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/');
                 normalItem(0, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component/');
-                normalItem(0, 'Header Rendering', 'Header Components', 'javascript-grid-header-rendering/');
+                normalItem(0, 'Header Rendering', 'Header Component', 'javascript-grid-header-rendering/');
                 ?>
             </div>
 

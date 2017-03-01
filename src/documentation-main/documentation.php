@@ -33,8 +33,9 @@ include 'documentation_header.php';
             </div>
         </div>
         -->
+
         <h2 id="introduction">
-            ag-Grid Documentation
+            Welcome to the ag-Grid Documentation Pages
         </h2>
 
         <!--
@@ -46,7 +47,8 @@ include 'documentation_header.php';
         </div>
         -->
 
-<!--        <p>
+<!--
+        <p>
             ag-Grid is an Enterprise Grade Javascript Data Grid.
             The purpose of ag-Grid is to provide a data grid that enterprise
             software can use for building applications such as
@@ -56,7 +58,7 @@ include 'documentation_header.php';
             comparison to what was in other languages frameworks. ag-Grid is
             the result of turning frustration into answers,
             providing a grid worthy of enterprise development.
-        </p>-->
+        </p>
 
         <p>
             If you are introducing yourself to ag-Grid, then you should read the documentation under
@@ -70,12 +72,12 @@ include 'documentation_header.php';
         <p>
             Once you have <span style="font-style: italic">The Basics</span> covered, we suggest you take a look at the
             <a href="../javascript-grid-interfacing-overview/">Interfacing Overview</a> next.
-
         </p>
         <p>
             After this you will then have the foundations of ag-Grid and can jump to whatever section of the documentation
             you need to the feature you are trying to implement.
         </p>
+-->
 
         <!-- *****>>> Will - I am lazy here, please put this style where the styles should go for this page.
         Also I was lazy by just putting the image inside a div - there is prob a better way. I left
@@ -104,8 +106,12 @@ include 'documentation_header.php';
                         <img src="../images/gettingStarted.png" style="width: 50px;"/>
                     </div>
                     <h4 class="list-group-item-heading">Getting Started</h4>
-                    <p class="list-group-item-text">Learn how to set up ag-Grid with the framework that you have
-                        chosen.</p>
+                    <p class="list-group-item-text">
+                        Learn how to get a simple
+                        application working using ag-Grid with the framework that you have chosen.
+                        Start here to get a simple grid working in your application, then follow on
+                        to further sections to understand how particular features work.
+                    </p>
                 </div>
             </a>
             <a href="/javascript-grid-interfacing-overview/" class="list-group-item">
@@ -114,8 +120,14 @@ include 'documentation_header.php';
                         <img src="../images/interfacing.jpg" style="width: 50px;"/>
                     </div>
                     <h4 class="list-group-item-heading">Interfacing</h4>
-                    <p class="list-group-item-text">A quick reference guide detailing all the configuration options for
-                        ag-Grid.</p>
+                    <p class="list-group-item-text">
+
+<!--                        Once you have <span style="font-style: italic">The Basics</span> covered, we suggest you take a look at the
+                        <a href="../javascript-grid-interfacing-overview/">Interfacing Overview</a> next.
+-->
+                        Lists all the configuration options (properties, events, api etc) for ag-Grid.
+                        Use this as a quick reference to look all available options.
+                    </p>
                 </div>
             </a>
 
@@ -125,8 +137,11 @@ include 'documentation_header.php';
                         <img src="../images/features.png" style="width: 50px;"/>
                     </div>
                     <h4 class="list-group-item-heading">Features</h4>
-                    <p class="list-group-item-text">A detailed look at all the core features including enterprise
-                        features.</p>
+                    <p class="list-group-item-text">
+                        A detailed look at all the features. Go here for detailed explanations and examples
+                        for all features. Items that are only available
+                        in ag-Grid Enterprise are marked with the "<img src="../images/enterprise.png"/>" symbol.
+                    </p>
                 </div>
             </a>
 
@@ -135,8 +150,12 @@ include 'documentation_header.php';
                     <div class="section-icon-container">
                         <img src="../images/rowModel.png" style="width: 50px;"/>
                     </div>
-                    <h4>Row Models:</h4>
-                    <p class="list-group-item-text">A detailed look at all the row models available.</p>
+                    <h4>Row Models</h4>
+                    <p class="list-group-item-text">
+                        The grid supports many ways to load the data eg <i>pagination</i> and <i>virtual
+                        scrolling</i>. Learn how to apply these techniques to manage large amounts of
+                        data.
+                    </p>
                 </div>
             </a>
 
@@ -146,7 +165,11 @@ include 'documentation_header.php';
                         <img src="../images/themes.png" style="width: 50px;"/>
                     </div>
                     <h4 class="list-group-item-heading">Themes</h4>
-                    <p class="list-group-item-text">A detailed look at the themes and styles available.</p>
+                    <p class="list-group-item-text">
+                        The grid comes with many built in themes and also the ability to design
+                        your own theme. Get the grid to fit the overall look and feel of your
+                        application.
+                    </p>
                 </div>
             </a>
 
@@ -156,7 +179,12 @@ include 'documentation_header.php';
                         <img src="../images/components.png" style="width: 50px;"/>
                     </div>
                     <h4>Components</h4>
-                    <p class="list-group-item-text">A detailed look at how to customise the grid with components.</p>
+                    <p class="list-group-item-text">
+                        Introduce your own behaviours into the grid by providing custom
+                        components such as Cell Renderers, Cell Editors, Filters and
+                        Header Components. These can be done using plain JavaScript
+                        or a framework of your choice eg Angular or React.
+                    </p>
                 </div>
             </a>
 
@@ -166,7 +194,9 @@ include 'documentation_header.php';
                         <img src="../images/examples.jpg" style="width: 50px;"/>
                     </div>
                     <h4>Examples</h4>
-                    <p class="list-group-item-text">Some examples combining different features.</p>
+                    <p class="list-group-item-text">
+                        End to end examples demonstrating many of the features of ag-Grid.
+                    </p>
                 </div>
             </span>
 
