@@ -280,7 +280,7 @@ function isFrameworkWebComponents()
             <div class="docsMenu-content">
                 <?php
                 normalItem(0, 'Features', 'Overview', 'javascript-grid-features/');
-                normalItem(0, 'Width & Height', 'Width & Height', 'javascript-grid-width-and-height/');
+                normalItem(0, 'Width & Height', 'Grid Size', 'javascript-grid-width-and-height/');
                 normalItem(0, 'Sorting', 'Sorting', 'javascript-grid-sorting/');
                 normalItem(0, 'Column Filter', 'Column Filter', 'javascript-grid-filtering/');
 
