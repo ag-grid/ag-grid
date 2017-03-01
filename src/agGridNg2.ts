@@ -281,6 +281,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public enableGroupEdit: any = undefined;
     @Input() public embedFullWidthRows: any = undefined;
     @Input() public suppressTabbing: any = undefined;
+    @Input() public suppressPaginationPanel: any = undefined;
 
     /**
      * Outputs
@@ -351,6 +352,9 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public cellMouseOver: EventEmitter<any>;
     @Output() public cellMouseOut: EventEmitter<any>;
     @Output() public columnHoverChanged: EventEmitter<any>;
+    @Output() public paginationReset: EventEmitter<any>;
+    @Output() public paginationPageLoaded: EventEmitter<any>;
+    @Output() public paginationPageRequested: EventEmitter<any>;
 
 }
 
