@@ -114,7 +114,6 @@ export * from './dist/lib/rowModels/infinateScrolling/virtualPageCache';
 export * from './dist/lib/rowModels/infinateScrolling/virtualPage';
 
 export * from './dist/lib/rowModels/floatingRowModel';
-export * from './dist/lib/rowModels/paginationController';
 export * from './dist/lib/rowModels/iDatasource';
 
 export * from './dist/lib/styling/stylingService';
