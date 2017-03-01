@@ -534,6 +534,54 @@ include '../documentation-main/documentation_header.php';
 
 
         <!------------------->
+        <!-- Pagination -->
+        <!------------------->
+        <tr>
+            <th colspan="2"><h2>Pagination</h2></th>
+        </tr>
+        <tr>
+            <th>paginationIsLastPageFound()</th>
+            <td>Returns true if last page of pagination is found, otherwise false.</td>
+        </tr>
+        <tr>
+            <th>paginationGetPageSize()</th>
+            <td>Returns the page size.</td>
+        </tr>
+        <tr>
+            <th>paginationGetCurrentPage()</th>
+            <td>Returns the currently displayed page.</td>
+        </tr>
+        <tr>
+            <th>paginationGetTotalPages()</th>
+            <td>Returns the total number of pages.</td>
+        </tr>
+        <tr>
+            <th>paginationGetRowCount()</th>
+            <td>Returns the number of rows in one page.</td>
+        </tr>
+        <tr>
+            <th>paginationGoToNextPage()</th>
+            <td>Get grid to load next page.</td>
+        </tr>
+        <tr>
+            <th>paginationGoToPreviousPage()</th>
+            <td>Get grid to load previous page.</td>
+        </tr>
+        <tr>
+            <th>paginationGoToFirstPage()</th>
+            <td>Get grid to load first page.</td>
+        </tr>
+        <tr>
+            <th>paginationGoToLastPage()</th>
+            <td>Get grid to load last page.</td>
+        </tr>
+        <tr>
+            <th>paginationGoToPage(index)</th>
+            <td>Get grid to load specific page. Pages are zero indexed, thus first page is index zero.</td>
+        </tr>
+
+
+        <!------------------->
         <!-- Miscellaneous -->
         <!------------------->
         <tr>

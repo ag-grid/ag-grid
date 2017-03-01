@@ -319,6 +319,31 @@ include '../documentation-main/documentation_header.php';
     </tr>
 
     <!------------------->
+    <!-- Pagination -->
+    <!------------------->
+    <tr>
+        <th colspan="2"><h2>Pagination</h2></th>
+    </tr>
+    <tr>
+        <th>paginationReset</th>
+        <td>
+            Pagination service is reset.
+        </td>
+    </tr>
+    <tr>
+        <th>paginationPageLoaded</th>
+        <td>
+            Pagination page load is finished.
+        </td>
+    </tr>
+    <tr>
+        <th>paginationPageRequested</th>
+        <td>
+            Pagination page load is requested.
+        </td>
+    </tr>
+
+    <!------------------->
     <!-- Miscellaneous -->
     <!------------------->
     <tr>
