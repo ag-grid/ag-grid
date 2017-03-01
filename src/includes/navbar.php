@@ -46,18 +46,7 @@
                     </li>
 
                     <li class="dropdown <?php if ($navKey == "about") { ?>active<?php }?>">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="/about.php">About <b class="caret hidden-xs"></b></a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="/about.php">About</a>
-                            </li>
-                            <li>
-                                <a href="/about.php#team">Team</a>
-                            </li>
-                            <li>
-                                <a href="/testimonials.php">Testimonials</a>
-                            </li>
-                        </ul>
+                        <a href="/about.php">About</a>
                     </li>
 
                     <li class="Header-cta <?php if ($navKey == "licenseAndPricing") { ?> active<?php }?>">

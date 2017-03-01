@@ -178,48 +178,86 @@ function isFrameworkWebComponents()
 
         <div class="col-sm-2">
 
-            <div class="frameworkBox">
-                <h4 class="frameworkHeading">Framework
+            <style>
+                .frameworkBox {
+                    margin-bottom: 20px;
+                }
+                .frameworkDropdownButton {
+                    width: 100%;
+                    position: relative;
+                    text-align: right;
+                }
 
+                .frameworkDropdownButton.active + ul {
+                    display: block;
+                    width: 300px;
+                }
+
+                .frameworkDropdownButton img {
+                    position: absolute;
+                    top: 7px;
+                    left: 9px;
+                }
+                .frameworkHeading {
+                    text-transform: uppercase;
+                    font-size: 12px;
+                    padding: 8px;
+                    margin: 0px 0 -5px 0;
+                    border-radius: 3px;
+                    border: 1px solid #e8e8e8;
+                    background: #EEE;
+                    text-align: left;
+                    position: relative;
+                }
+                .frameworkDropdownButton .web-components {
+                    font-size: 13px;
+                }
+                .frameworkDropdownText {
+                    padding: 3px 20px;
+                }
+            </style>
+
+          <div class="dropdown frameworkBox">
+            <h4 class="frameworkHeading">Framework</h4>
+            <button class="btn btn-default frameworkDropdownButton dropdown-toggle" type="button" onclick="this.classList.toggle('active');" data-toggle="dropdown">
                     <?php if (isFrameworkAll()) { ?>
-
+                        All
                     <?php } elseif (isFrameworkAngular()) { ?>
                         <img src="/images/angular2_small.png" alt="Angular" />
-
+                        Angular
                     <?php } elseif (isFrameworkAngularJS()) { ?>
                         <img src="/images/angularjs_small.png" alt="Angular 1" />
-
+                        Angular JS
                     <?php } elseif (isFrameworkAurelia()) { ?>
                         <img src="/images/aurelia_small.png" alt="Aurelia" />
-
+                        Aurelia
                     <?php } elseif (isFrameworkReact()) { ?>
-                        <img src="/images/react_small.png" alt="React" />
-
+                        <img src="/images/svg/react.alt.svg" width="22" alt="React" />
+                        React
                     <?php } elseif (isFrameworkVue()) { ?>
                         <img src="/images/vue_small.png" alt="Vue" />
-
+                        Vue
                     <?php } elseif (isFrameworkJavaScript()) { ?>
                         <img src="/images/javascript_small.png" alt="JavaScript" />
-
+                        JavaScript
                     <?php } elseif (isFrameworkWebComponents()) { ?>
                         <img src="/images/webComponents_small.png" alt="Web Components" />
+                        <span class="web-components">Web Components</span>
                     <?php } ?>
-
-                </h4>
-
-                <div class="form-group">
-                    <select id="framework" class="form-control" ng-change="model.onFrameworkChanged()" ng-model="model.framework">
-                        <option value="all">All</option>
-                        <option value="javascript">JavaScript</option>
-                        <option value="angular">Angular</option>
-                        <option value="angularjs">AngularJS 1.x</option>
-                        <option value="react">ReactJS</option>
-                        <option value="vue">VueJS</option>
-                        <option value="aurelia">AureliaJS</option>
-                        <option value="webcomponents">Web Components</option>
-                    </select>
-                </div>
-            </div>
+                    
+            <span class="caret"></span></button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li class="frameworkDropdownText">Parts of the documentation not relevant to your framework choice will be filtered out.</li>
+              <li class="divider"></li>
+              <li><a class="frameworkDropdown-link" data-id="all" href="#">All</a></li>
+              <li><a class="frameworkDropdown-link" data-id="angular" href="#"><img src="/images/angularjs_small.png" alt="Angular 1" /> Angular (Angular 2/Latest Version)</a></li>
+              <li><a class="frameworkDropdown-link" data-id="angularjs" href="#"><img src="/images/angularjs_small.png" alt="Angular 1" /> Angular JS (Angular 1)</a></li>
+              <li><a class="frameworkDropdown-link" data-id="aurelia" href="#"><img src="/images/aurelia_small.png" alt="Aurelia" /> Aurelia</a></li>
+              <li><a class="frameworkDropdown-link" data-id="react" href="#"><img src="/images/svg/react.alt.svg" width="22" alt="React" /> React</a></li>
+              <li><a class="frameworkDropdown-link" data-id="javascript" href="#"><img src="/images/javascript_small.png" alt="JavaScript" /> Javascript</a></li>
+              <li><a class="frameworkDropdown-link" data-id="webcomponents" href="#"><img src="/images/webComponents_small.png" alt="Web Components" /> Web Components</a></li>
+            </ul>
+          </div>
 
             <div class="docsMenu-header <?php if ($pageGroup == "basics") { ?> active<?php } ?>" data-id="getting_started">
                 <h4>

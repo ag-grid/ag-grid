@@ -299,6 +299,7 @@ include 'documentation_header.php';
                         </div>
                     </form>
                 </div>
+                <!-- 
                 <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script>
                 <script type='text/javascript'>(function ($) {
                         window.fnames = new Array();
@@ -311,6 +312,7 @@ include 'documentation_header.php';
                         ftypes[2] = 'text';
                     }(jQuery));
                     var $mcj = jQuery.noConflict(true);</script>
+                -->
                 <!--End mc_embed_signup-->
 
             </div>
