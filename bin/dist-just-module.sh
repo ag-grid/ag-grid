@@ -53,6 +53,14 @@ do
             ;;
     esac
 
+    if [ $? -eq 0 ]
+    then
+        echo "Successfully dist!"
+    else
+        echo "Could not dist $1/$module"
+        exit 1
+    fi
+
     cd ../../
 done
 
