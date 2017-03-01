@@ -318,6 +318,16 @@
     }
     */
 
+    document.body.addEventListener('click', handleBodyClick, true); 
+
+    function handleBodyClick() {
+        var frameworkElement = document.querySelectorAll('.frameworkBox');
+        var frameworkLink = document.querySelectorAll('.frameworkDropdownButton'); 
+        if (!frameworkElement[0].contains(event.target)) {
+            frameworkLink[0].classList.remove("active");
+        }
+    }
+
     for (var i = 0; i < toggleClasses.length; i++) {
         toggleClasses[i].addEventListener('click', handleToggle, false);
     }

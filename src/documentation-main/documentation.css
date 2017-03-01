@@ -245,18 +245,95 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
     padding: 5px 27px 6px 27px; !important;
 }
 
-.framworkIcon-small {
-    width: 16px;
-}
-
+/*
+* === Framework Dropdown ===
+*/
 .frameworkBox {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+}
+.frameworkDropdownButton {
+    width: 100%;
+    position: relative;
+    text-align: left;
+    padding-left: 35px;
 }
 
-.frameworkBox select {
-    background-color: #EEE;
+.frameworkDropdownButton.active + ul {
+    display: block;
+    width: 300px;
 }
 
-.frameworkHeading img {
-    margin-top: -3px;
+.frameworkDropdownButton img {
+    position: absolute;
+    top: 7px;
+    left: 9px;
+}
+
+.frameworkDropdownButton .caret {
+    margin-left: 0;
+    position: absolute;
+    right: 10px;
+    top: 14px;
+    font-size: 34px;
+}
+
+.frameworkDropdownButton .caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-top: 6px dashed;
+    border-top: 4px solid \9;
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+}
+
+.frameworkHeading {
+    font-size: 12px;
+    padding: 8px;
+    margin: 0px 0 -5px 0;
+    border-radius: 3px;
+    border: 0px solid #e8e8e8;
+    background: #EEE;
+    text-align: left;
+    position: relative;
+}
+
+.frameworkContainer {
+    background: #EEE;
+    padding: 5px;
+                        border-radius: 3px;      
+}
+
+.frameworkDropdownButton .web-components {
+    font-size: 13px;
+}
+
+.frameworkBox .dropdown-menu {
+}
+
+.frameworkBox .dropdown-menu li {
+    background-color: #fff;
+    padding: 2px 0px;
+}
+
+.frameworkBox .dropdown-menu li.frameworkDropdownText {
+    padding: 8px 20px 10px 20px;
+    margin: 0px;
+    margin-top: -5px;
+    background-color: #eee;
+}
+
+.frameworkBox .dropdown-menu .divider {
+    margin: 0;
+    padding: 0 0 8px;
+}
+
+.all-frameworks {
+    padding-left: 48px !important;
+}
+
+.frameworkDropdown-link img {
+    margin-right: 5px;
 }
