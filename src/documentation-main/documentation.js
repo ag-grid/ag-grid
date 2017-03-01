@@ -1,62 +1,7 @@
 (function () {
 
-    var module = angular.module("documentation", ['ngCookies']);
-    module.controller('DocumentationController', ['$scope', '$cookies', '$location', function ($scope, $cookies, $location) {
-
-        var model = {};
-
-        $scope.model = model;
-
-        model.onFrameworkChanged = function () {
-            window.location.href = '?framework=' + model.framework;
-        };
-
-        model.framework = document.querySelector('#frameworkAttr').innerHTML;
-
-        $scope.frameworkContext = getFrameworkFromCookieAndDefaultIfNotDefined();
-
-        $scope.onFrameworkContextChanged = function () {
-            setCookie('frameworkContext', $scope.frameworkContext ? $scope.frameworkContext : 'all');
-        };
-
-        $scope.isFramework = function (framework) {
-            $scope.frameworkContext = getFrameworkFromCookieAndDefaultIfNotDefined();
-
-            if ($scope.frameworkContext === 'all') {
-                return true;
-            }
-
-            var frameworks = [].concat(framework);
-            for (var test of frameworks) {
-                if ($scope.frameworkContext === test) {
-                    return true;
-                }
-            }
-
-            return false;
-        };
-
-        function setCookie(name, value) {
-            $cookies.remove(name);
-            var n = new Date();
-            var expires = new Date(n.getFullYear() + 1, n.getMonth(), n.getDate());
-            $cookies.put(name,
-                value,
-                {
-                    path: "/",
-                    expires: expires
-                });
-        }
-
-        function getFrameworkFromCookieAndDefaultIfNotDefined() {
-            var frameworkContext = $cookies.get('frameworkContext');
-            if (!frameworkContext) {
-                frameworkContext = 'all';
-                setCookie('frameworkContext', frameworkContext);
-            }
-            $scope.frameworkContext = frameworkContext;
-            return $scope.frameworkContext;
-        }
+    var module = angular.module("documentation", []);
+    module.controller('DocumentationController', ['$scope', '$location', function ($scope, $location) {
 
         $scope.divIsReady = function (divId) {
             console.log(document.getElementById(divId));
@@ -361,88 +306,47 @@
     var localStorageKey = "ag_grid_state";
     var toggleClasses = document.getElementsByClassName("docsMenu-header");
 
-    var default_state = {
-        getting_started: false,
-        interfacing: false,
-        features: false,
-        themes: false,
-        components: false,
-        row_models: false,
-        examples: false,
-        misc: false
-    }
 
-    
-    /* check whether this is a page that needs to be active/open (e.g. if in group) */
-    function handleState(saved_state) {
-
-        var defaultClasses = document.getElementsByClassName("docsMenu-header");
-        var defaultClassesArray = [];
-        
-        for (var i = 0; i < defaultClasses.length; i++) {
-            var isToggleActive = defaultClasses[i].classList.contains('active');
-            var id = defaultClasses[i].dataset.id;
-            if (isToggleActive) {
-                defaultClassesArray.push(id);
-            }
-        }
-        return {
-            getting_started: defaultClassesArray.indexOf("getting_started") > -1 ? true : saved_state.getting_started,
-            interfacing: defaultClassesArray.indexOf("interfacing") > -1 ? true : saved_state.interfacing,
-            features: defaultClassesArray.indexOf("features") > -1 ? true : saved_state.features,
-            themes: defaultClassesArray.indexOf("themes") > -1 ? true : saved_state.themes,
-            components: defaultClassesArray.indexOf("components") > -1 ? true : saved_state.components,
-            row_models: defaultClassesArray.indexOf("row_models") > -1 ? true : saved_state.row_models,
-            examples: defaultClassesArray.indexOf("examples") > -1 ? true : saved_state.examples,
-            misc: defaultClassesArray.indexOf("misc") > -1 ? true : saved_state.misc
-        }        
-    }
-
-
-    var saved_state = localStorage.getItem(localStorageKey);
-
-    // if `saved_state` is true we parse it and use that value for `state`; otherwise use `default_state`
-    var state = saved_state ? handleState(JSON.parse(saved_state)) : default_state;
-
+    /*
     initDocsMenu();
 
     function initDocsMenu() {
-        for(var key in state) {
-            var is_displayed = state[key];
-            toggleDocsMenu(key, is_displayed);
+        var state = JSON.parse(localStorage.getItem('ag_grid_state'));
+        if (state.framework) {
+            window.location.href = '?framework=' + state.framework;
         }
     }
+    */
 
     for (var i = 0; i < toggleClasses.length; i++) {
         toggleClasses[i].addEventListener('click', handleToggle, false);
     }
     
     function handleToggle() {
-        var id = this.dataset.id;
-        var clicked = true;
-        toggleDocsMenu(id, !state[id], clicked);
+        resetToggle();
+        this.classList.toggle("active");
     }
 
-
-    function toggleDocsMenu(id, is_displayed, clicked) {
-        var element = document.querySelectorAll("[data-id='"+id+"']");
-        if (is_displayed) {
-            state[id] = true;
-            element[0].classList.add("active");
-            element[0].classList.add("toggleCollapse");
-            if (clicked) {
-
-            }
-        } else {
-            state[id] = false;
-            element[0].classList.remove("active");
-            if (clicked) {
-                element[0].classList.remove("toggleCollapse");
-            }
+    function resetToggle() {
+        for (var i = 0; i < toggleClasses.length; i++) {
+            toggleClasses[i].classList.remove("active");
         }
-        
-        localStorage.setItem(localStorageKey, JSON.stringify(state));
-
     }
+
+    var FrameworkLinks = document.getElementsByClassName("frameworkDropdown-link");
+
+    for (var i = 0; i < FrameworkLinks.length; i++) {
+        FrameworkLinks[i].addEventListener('click', handleFrameworkChange, false);
+    }
+
+    function handleFrameworkChange() {
+        var framework = this.dataset.id;
+        window.location.href = '?framework=' + framework;
+        var storage = {
+            framework: framework
+        }
+        localStorage.setItem(localStorageKey, JSON.stringify(storage));
+    }
+
 
 })();
