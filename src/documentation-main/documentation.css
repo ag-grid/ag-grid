@@ -256,6 +256,7 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
     position: relative;
     text-align: left;
     padding-left: 35px;
+    margin: 0;
 }
 
 .frameworkDropdownButton.active + ul {
@@ -307,10 +308,7 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 }
 
 .frameworkDropdownButton .web-components {
-    font-size: 13px;
-}
-
-.frameworkBox .dropdown-menu {
+    font-size: 11px;
 }
 
 .frameworkBox .dropdown-menu li {
