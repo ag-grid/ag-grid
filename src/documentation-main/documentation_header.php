@@ -280,8 +280,14 @@ function isFrameworkWebComponents()
                 normalItem(0, 'Features', 'Overview', 'javascript-grid-features/');
                 normalItem(0, 'Width & Height', 'Width & Height', 'javascript-grid-width-and-height/');
                 normalItem(0, 'Sorting', 'Sorting', 'javascript-grid-sorting/');
-                normalItem(0, 'Filtering', 'Filtering', 'javascript-grid-filtering/');
-                enterpriseItem(0, 'Set Filtering', 'Set Filtering', 'javascript-grid-set-filtering/');
+                normalItem(0, 'Column Filter', 'Column Filter', 'javascript-grid-filtering/');
+
+                normalItem(1, 'Date Filter', 'Date Filter', 'javascript-grid-filter-date/');
+                normalItem(1, 'Text Filter', 'Text Filter', 'javascript-grid-filter-text/');
+                normalItem(1, 'Number Filter', 'Number Filter', 'javascript-grid-filter-number/');
+                enterpriseItem(1, 'Set Filtering', 'Set Filter', 'javascript-grid-set-filtering/');
+                normalItem(1, 'Custom Filter', 'Custom Filter', 'javascript-grid-filter-custom/');
+
                 normalItem(0, 'Selection', 'Selection', 'javascript-grid-selection/');
                 enterpriseItem(0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
                 normalItem(0, 'Resizing', 'Resizing', 'javascript-grid-resizing/');

@@ -1,5 +1,5 @@
 <?php
-$key = "Filtering";
+$key = "Column Filter";
 $pageTitle = "ag-Grid Filtering";
 $pageDescription = "ag-Grid Filtering";
 $pageKeyboards = "ag-Grid Filtering";
@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
 
-    <h2 id="filtering">Filtering</h2>
+    <h2 id="filtering">Column Filter</h2>
 
     <p>
         You have two options for filtering, one is use one of the default built-in filters (easy but restricted to
