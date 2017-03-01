@@ -333,13 +333,16 @@
     }
     
     function handleToggle() {
-        resetToggle();
+        var id = this.dataset.id;
+        resetToggle(id);
         this.classList.toggle("active");
     }
 
-    function resetToggle() {
+    function resetToggle(id) {
         for (var i = 0; i < toggleClasses.length; i++) {
-            toggleClasses[i].classList.remove("active");
+            if (toggleClasses[i].dataset.id !== id) {
+                toggleClasses[i].classList.remove("active");
+            }
         }
     }
 

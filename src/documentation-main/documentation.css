@@ -303,7 +303,7 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 .frameworkContainer {
     background: #EEE;
     padding: 5px;
-                        border-radius: 3px;      
+    border-radius: 3px;      
 }
 
 .frameworkDropdownButton .web-components {
@@ -336,4 +336,8 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 
 .frameworkDropdown-link img {
     margin-right: 5px;
+}
+
+.frameworkDropdownButton.frameworkAllButton {
+    padding-left: 12px;
 }
