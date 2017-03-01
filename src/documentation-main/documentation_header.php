@@ -217,7 +217,7 @@ function isFrameworkWebComponents()
 
             <div class="docsMenu-header <?php if ($pageGroup == "basics") { ?> active<?php } ?>" data-id="getting_started">
                 <h4>
-                    <img src="../images/gettingStarted.png" style="width: 20px; float: left;"/>
+                    <img src="../images/svg/docs/getting_started.svg" />
                     &nbsp;
                     Getting Started
                 </h4>
@@ -241,7 +241,7 @@ function isFrameworkWebComponents()
 
             <div class="docsMenu-header <?php if ($pageGroup == "interfacing") { ?> active<?php } ?>" data-id="interfacing">
                 <h4>
-                    <img src="../images/interfacing.jpg" style="width: 20px; float: left;"/>
+                    <img src="../images/svg/docs/interfacing.svg" />
                     &nbsp;
                     Interfacing
                 </h4>
@@ -262,7 +262,7 @@ function isFrameworkWebComponents()
 
             <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "feature") { ?> active<?php } ?>" data-id="features">
                 <h4>
-                    <img src="../images/features.png" style="width: 20px; float: left;"/>
+                    <img src="../images/svg/docs/features.svg" />
                     &nbsp;
                     Features
                 </h4>
@@ -331,7 +331,7 @@ function isFrameworkWebComponents()
 
             <div class="docsMenu-header<?php if ($pageGroup == "row_models") { ?> active<?php } ?>" data-id="row_models">
                 <h4>
-                    <img src="../images/rowModel.png" style="width: 20px; float: left;"/>
+                    <img src="../images/svg/docs/row_models.svg" />
                     &nbsp;
                     Row Models
                 </h4>
@@ -350,7 +350,7 @@ function isFrameworkWebComponents()
             
             <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "themes") { ?> active<?php } ?>" data-id="themes">
                 <h4>
-                    <img src="../images/themes.png" style="width: 20px; float: left;"/>
+                    <img src="../images/svg/docs/themes.svg" />
                     &nbsp;
                     Themes
                 </h4>
@@ -372,7 +372,7 @@ function isFrameworkWebComponents()
 
             <div class="docsMenu-header<?php if ($pageGroup == "components") { ?> active<?php } ?>" data-id="components">
                 <h4>
-                    <img src="../images/components.png" style="width: 20px; float: left;"/>
+                    <img src="../images/svg/docs/components.svg" />
                     &nbsp;
                     Components
                 </h4>
@@ -391,7 +391,7 @@ function isFrameworkWebComponents()
 
             <div class="docsMenu-header<?php if ($pageGroup == "examples") { ?> active<?php } ?>" data-id="examples">
                 <h4>
-                    <img src="../images/examples.jpg" style="width: 20px; float: left;"/>
+                    <img src="../images/svg/docs/examples.svg" />
                     &nbsp;
                     Examples
                 </h4>
