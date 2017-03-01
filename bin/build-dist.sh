@@ -2,21 +2,21 @@
 
 if [ "$#" -lt 3 ]
   then
-    echo "You must supply the version as first parameter and the allowed peer versions as second parameter and then at least one module to export"
+    echo "You must supply the version as first parameter and the allowed peer versions as second parameter and then at least one module to build/dist"
     exit 1
 fi
 
 
-echo "Releasing " $1
-mkdir $1
 cd $1
 
 ## for all the modules
 IFS=' ' read -ra ADDR <<< "${@:3}"
 for module in "${ADDR[@]}"
 do
+    cd $module
+
     echo =============================================================================================
-    echo "MODULE  $module"
+    echo "VERSIONING BUILDING AND DIST  $module"
     echo =============================================================================================
     case $module in
         ##Examples
