@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="resizing">Resizing</h2>
+    <h2 id="resizing">Column Resizing</h2>
 
     <p>
         All columns can be resized by dragging the top right portion of the column.

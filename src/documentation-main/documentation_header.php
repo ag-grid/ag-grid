@@ -295,8 +295,8 @@ function isFrameworkWebComponents()
 
                 normalItem(0, 'Selection', 'Selection', 'javascript-grid-selection/');
                 enterpriseItem(0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
-                normalItem(0, 'Resizing', 'Resizing', 'javascript-grid-resizing/');
-                normalItem(0, 'Pinning', 'Pinning', 'javascript-grid-pinning/');
+                normalItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
+                normalItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
                 normalItem(0, 'Grouping Columns', 'Grouping Columns', 'javascript-grid-grouping-headers/');
                 normalItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
                 normalItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
@@ -306,7 +306,7 @@ function isFrameworkWebComponents()
                 normalItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
                 normalItem(0, 'Context', 'Context', 'javascript-grid-context/');
                 normalItem(0, 'InsertRemove', 'Insert & Remove', 'javascript-grid-insert-remove/');
-                normalItem(0, 'Refresh', 'Refresh', 'javascript-grid-refresh/');
+                normalItem(0, 'Refresh', 'Data Refresh', 'javascript-grid-refresh/');
                 normalItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
                 normalItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
                 normalItem(0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/');
