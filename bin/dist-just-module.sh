@@ -18,7 +18,7 @@ do
             gulp release
             ;;
         "ag-grid-angular")
-            npm run clean-build
+            npm run clean-build-no-verify
             ;;
         "ag-grid-react")
             gulp
