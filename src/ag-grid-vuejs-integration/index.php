@@ -20,140 +20,730 @@ include('../includes/mediaHeader.php');
 <div class="row" ng-app="documentation">
     <div class="col-md-9">
 
-        <h2>VueJS</h2>
+        <h2>Introduction</h2>
 
         <p>VueJS is a fantastic framework that has experienced amazing growth since it was first released in early 2014.
             We here at ag-Grid are proud to be able to announce support for VueJS, offering native support of VueJS components
         within the grid itself.</p>
 
         <p>We'll walk through creating a simple VueJS application with ag-Grid at it's core, using VueJS components to add dynamic
-        functionality to the experience, making good use of what VueJS and ag-Grid offers us.</p>
+        functionality to the experience, making good use of what both VueJS and ag-Grid offers us.</p>
 
-        <p>The application we're going to develop is a </p>
+        <h2>Munros?</h2>
 
+        <p>Wikipedia tells us that the Munros are:</p>
 
-        <img src="../images/git_current_cmd_line.png" style="width: 100%;padding-bottom: 10px">
+        <blockquote>A Munro top is a summit that is not regarded as a separate mountain and which is over 3,000 feet.
+            In the 2012 revision of the tables, published by the Scottish Mountaineering Club, there are 282 Munros and
+            227 further subsidiary tops.</blockquote>
 
-        <p>At a glance I can seee who I'm logged in as (<code>seanlandsman</code>), which host I'm on (<code>MPB</code>),
-            the current directory (<code>ag-grid-dev</code>), what branch (<code>master</code>), the
-            number of modified files (<code>+1</code>) and the number of untracked files (<code>+1</code>).</p>
+        <p>As a keen mountain walker I've always wanted to do the Munros. I haven't managed to do any of them yet, but
+        being optimistic let's walk through the creation of an application that allows us to view information about Munros
+            and track our progress in actually climibing them!</p>
 
-        <p>If I happened to be in a non-Git controlled directory then the branch and file status information would not be shown.</p>
+        <note>The code for this blog can be found at <a href="https://github.com/seanlandsman/ag-grid-vue-munros">https://github.com/seanlandsman/ag-grid-vue-munros</a></note>
 
-        <h1>Adding Colour to Git - The Basics</h1>
+        <h2>Let's Get Started</h2>
 
-        <p>
-            You can add colour to Git output by modifying <code>~/.gitconfig</code>. The following will add colour to the main
-            Git commands:
-        </p>
+        <p>First, we need to create the boilerplate for our application - for this we'll use the <a href="https://github.com/vuejs/vue-cli" target="_blank">vue-cli</a> to spin
+        up a simple Webpack configuration:</p>
 
-        <pre>
-[color]
-    branch = auto
-    diff = auto
-    status = auto
-[color "branch"]
-    current = yellow reverse
-    local = yellow
-    remote = green
-[color "diff"]
-    meta = yellow bold
-    frag = magenta bold
-    old = red bold
-    new = green bold
-[color "status"]
-    added = yellow
-    changed = green
-    untracked = cyan
+        <pre>vue init webpack munro-app</pre>
+
+        <p>We don't need <code>vue-router</code> and for the purposes of this application we won't use ESLint or Karma/Mocha:</p>
+
+<pre>
+? Project name munro-app
+? Project description A Vue.js project
+? Author Sean Landsman <sean@thelandsmans.com>
+? Vue build standalone
+? Install vue-router? No
+? Use ESLint to lint your code? No
+? Setup unit tests with Karma + Mocha? No
+? Setup e2e tests with Nightwatch? No
 </pre>
 
-        <img src="../images/git_status.png" style="width: 100%;padding-bottom: 10px">
+        <p>Once done follow the instructions that follow:</p>
+<pre>cd munro-app
+npm install
+npm run dev</pre>
 
-        <p>This is great and already helps visually distinguish between the different pieces of information - a good start!</p>
+        <p>After this we'llend up with a simple folder structure and working skeleton application.</p>
 
-        <h1>Information...Without Asking</h1>
+        <p>Next let's install the ag-Grid dependencies we'll need:</p>
 
-        <p>The above helps, but relies us executing Git commands to get the current state of play. This is fine of course,
-            but if like me you'd like a gentle reminder of what's going on, and where you are, then we can improve on this.</p>
-
-        <h3>bash-git-prompt</h3>
-
-        <p><a href="https://github.com/magicmonty/bash-git-prompt" target="_blank"><code>bash-git-prompt</code></a> is a shell
-            script maintained by Martin Gondermann which adds information to the command line for us.</p>
-
-        <note>As with any any executable from the web there is a risk. I've read through the script and am happy with what it's
-            doing, but please ensure you're happy with it before trying this too!</note>
-
-        <p>You can install this either via Git clone, or via Homebrew. I work primarily on OSX and found the cloning method
-            easier, but both should work.</p>
-
-        <pre>cd ~
-git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt --depth=1</pre>
-
-        <p>This will create a directory within your home directory called <code>.bash-git-prompt</code>, which does the work of
-            executing Git status commands and returning the results in a format with icons and colours - all of which is
-            configurable.</p>
-
-        <p>Next we need to ensure the script is run when we're in the terminal. Add the following to ~/.bashrc:</p>
-
-        <pre>GIT_PROMPT_ONLY_IN_REPO=1
-source ~/.bash-git-prompt/gitprompt.sh</pre>
-
-        <p><code>GIT_PROMPT_ONLY_IN_REPO=1</code> will ensure that the Git output will only be done in Git managed directories.</p>
-
-        <p>As the terminal opens a login shell, your <code>.bashrc</code> may not get excuted in new windows. While experimenting
-            you may want to add this to your <code>.bash_profile</code> to ensure your changes are picked up each time you open a
-            new terminal window:</p>
-
-        <pre>[[ -s ~/.bashrc ]] && source ~/.bashrc</pre>
-
-        <p>The default configuration would give you an output something like this:</p>
-
-        <img src="../images/get_default_output.png" style="width: 100%;padding-bottom: 10px">
-
-        <p>This is a good start, but all of this is configurable. For my use case I'd prefer to keep the output a little
-            terser, partly as when I'm working exclusively on my laptop screen real estate becomes a premium.</p>
-
-        <p>I also (occasionally) work on remote hosts and it's a good reminder to know what and who I am when I'm there,
-            so I'd like to have this shown too.</p>
-
-        <p>Finally, although nice I don't really need to know the status of the last command excuted (the little green tick at the
-            start indicates this).</p>
-
-        <p>Themes are how <code>bash-git-prompt</code> allows for user configuration
-            of the output. There are a number of themes provide with <code>bash-git-prompt</code> and I'd encourage you to try them
-            to see what's possible, but in my case I decided to tweak the output to something bespoke.</p>
-
-        <pre>git_prompt_make_custom_theme Default</pre>
-
-        <p>The above will create a new theme file (<code>~/.git-prompt-colors.sh</code>) based on the Default theme.</p>
-
-        <p>I won't list the entire file contents here, but will highlight the parts I've changed:</p>
-
-        <pre>
-<span class="codeComment">// just the current directory name - not the full path</span>
-PathShort="\W";
-
-<span class="codeComment">// round brackets surround the Git output</span>
-<span class="codeComment">// I prefer them to square brackets - I couldn't tell you why ;-)</span>
-GIT_PROMPT_PREFIX="("                 # start of the git info string
-GIT_PROMPT_SUFFIX=")"                 # the end of the git info string
-
-<span class="codeComment">// change a couple of the colours to be inline with what I've configured in Git</span>
-GIT_PROMPT_CHANGED="${Green}✚ "        # the number of changed files
-GIT_PROMPT_UNTRACKED="${Red}…"       # the number of untracked files/dirs
-
-<span class="codeComment">// The pre-Git output - show username@host current-directory</span>
-<span class="codeComment">// This information will be displayed all the time, even if not in a Git controlled directory</span>
-GIT_PROMPT_START_USER="${USER}@${HOSTNAME} ${Yellow}${PathShort}${ResetColor}"
+<pre>
+npm install ag-grid --save
+npm install ag-grid-vue --save
 </pre>
 
-        <p>That's it! With these small changes in place I'm done - I have the output I wanted with very little configuration.</p>
+        <p>We'll also use <code>whatwg-fetch</code> to pull in our Munro.json data file:</p>
 
-        <p>I encourage you to give this a go, and experiment with the provided themes - you may find one of them already
-            does want you want. I'd also encourage you to read the docs in the <a
-                href="https://github.com/magicmonty/bash-git-prompt">bash-git-prompt</a> page - there's a lot of good information
-            there.</p>
+<pre>npm install whatwg-fetch --save</pre>
+
+        <p>One last piece of housekeeping - delete <code>src/components/Hello.vue</code>.</p>
+
+        <p>To start with let's just display some basic Munro information in a simple grid.</p>
+
+        <p>Let's create a Grid component that will retrieve the Munro information and render it.</p>
+        
+        <p>The <code>MunroGrid</code> component looks like this:</p>
+<pre>
+<span class="codeComment">// MunroGrid.vue</span>
+&lt;template&gt;
+    &lt;ag-grid-vue class="ag-fresh grid"
+                 :gridOptions="gridOptions"
+                 :rowData="rowData"
+                 :rowDataChanged="onRowDataChanged"&gt;
+
+    &lt;/ag-grid-vue&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+    import Vue from "vue";
+    import {AgGridVue} from "ag-grid-vue";
+    import 'whatwg-fetch'
+
+    export default {
+        name: 'munro-grid',
+        data () {
+            return {
+                gridOptions: null,
+                rowData: null
+            }
+        },
+        components: {
+            AgGridVue
+        },
+        methods: {
+            loadRowData() {
+                fetch('/static/munros.json')
+                    .then((response) =&gt; {
+                        return response.json()
+                    })
+                    .then((json) =&gt; {
+                        this.rowData = json;
+                    });
+            },
+            createColDefs() {
+                return [
+                    {headerName: "Hill Name", field: "hillname", width: 225, suppressSizeToFit: true},
+                    {headerName: "Grid Reference", field: "gr6"},
+                    {headerName: "Height (m)", field: "height"},
+                    {headerName: "Latitude", field: "latitude"},
+                    {headerName: "Longitude", field: "longitude"},
+                    {headerName: "Climbed?", field: "climbed"}
+                ];
+            },
+            onRowDataChanged() {
+                Vue.nextTick(() =&gt; {
+                        this.gridOptions.api.sizeColumnsToFit();
+                    }
+                );
+
+            }
+        },
+        created() {
+            this.gridOptions = {};
+            this.gridOptions.columnDefs = this.createColDefs();
+            this.loadRowData();
+        }
+    }
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+    .grid {
+        height: 255px;
+    }
+&lt;/style&gt;
+</pre>
+
+        <p>The main parts of this component are:</p>
+
+        <ul>
+            <li><code>import {AgGridVue} from "ag-grid-vue";</code>: Here we import the ag-Grid Vue component - this is the ag-Grid component that provides the main grid functionality.</li>
+            <li><code>createColDefs</code>: Defines our columns. This is a simple table, so we simple list the header names and fields to use in the grid.</li>
+            <li><code>loadRowData</code>: Retrieves the Munro data and set's it as the Grid's rowData.</li>
+            <li><code>onRowDataChanged</code>: Automatically resizes columns so they fill out the available space nicely.</li>
+        </ul>
+
+        <h1>TODO ! point loadData to the github repo once pushed</h1>
+        <h1>TODO ! talk about key parts of this, incl adding component to components!</h1>
+
+        <p>With our component ready, we now need to add it to our application. Update <code>src/App.vue</code> with the following:</p>
+        
+<pre>
+<span class="codeComment">// App.vue</span>
+&lt;template&gt;
+  &lt;div id="app"&gt;
+      &lt;munro-grid&gt;&lt;/munro-grid&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+    import MunroGrid from './components/MunroGrid';
+
+    export default {
+        name: 'app',
+        data() {
+            return {
+            }
+        },
+        components: {
+            MunroGrid
+        }
+    }
+&lt;/script&gt;
+</pre>
+
+        <p>Finally, we need to pull in the ag-Grid CSS. Update <code>src/main.js</code> to import the required files:</p>
+
+<pre>
+<span class="codeComment">// main.js</span>
+import Vue from "vue";
+import App from "./App";
+
+import "../node_modules/ag-grid/dist/styles/ag-grid.css";
+import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
+
+...other imports
+</pre>
+
+        <p>With all that in place we can spin up the application once again - this is what you should see:</p>
+
+        <img src="../images/vue_munro_1.png" style="width: 100%;padding-bottom: 10px">
+
+        <p>Ok, so far so good.  But wouldn't it be nice to get a view of a Munro when we clicked on it? I think so - let's
+        create a new component we'll call <code>MunroDetail</code> that will show some key information about a Munro, as well as display an image of it:</p>
+
+<pre>
+<span class="codeComment">// MunroDetail.vue</span>
+&lt;template&gt;
+    &lt;div class="detail" v-if="selectedMunro"&gt;
+        &lt;table class="table"&gt;
+            &lt;tr&gt;
+                &lt;td colspan="2"&gt;
+                    {{selectedMunro.hillname}}
+                &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td class="key"&gt;
+                    Elevation
+                &lt;/td&gt;
+                &lt;td&gt;
+                    {{selectedMunro.height}}
+                &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td class="key"&gt;
+                    &lt;div class="title"&gt;Latitude&lt;/div&gt;
+                &lt;/td&gt;
+                &lt;td&gt;
+                    {{selectedMunro.latitude}}
+                &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td class="key"&gt;
+                    Longitude
+                &lt;/td&gt;
+                &lt;td&gt;
+                    {{selectedMunro.longitude}}
+                &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td colspan="2"&gt;
+                    &lt;span v-if="!showImage" class="image-prompt" @click="showImage=true"&gt;Click Here For Image of {{selectedMunro.hillname}}&lt;/span&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+        &lt;div class="image-area"&gt;
+            &lt;img v-if="showImage" class="image" :src="selectedMunro.image"/&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+    export default {
+        name: 'munro-detail',
+        props: ['selectedMunro'],
+        data () {
+            return {
+                showImage: false
+            }
+        },
+        updated() {
+            this.showImage=false;
+        }
+    }
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+    .detail {
+        display: inline-block;
+        width: 100%;
+    }
+
+    .table {
+        border: 1px solid #999999;
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    .key {
+        color: blue;
+    }
+
+    .image-prompt {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .image {
+        width: 100%;
+    }
+&lt;/style&gt;
+</pre>
+
+        <p>Nothing too complicated here - we have a simple table that will present some key information about a Munro,
+            and will show an image when a prompt is clicked on (<code>@click="showImage=true"</code>).</p>
+
+        <p>Note we're making use of a cool VueJS feature called <code>scoped</code> CSS - this will ensure any CSS we list here
+        will only affect the component we're working on. Very nice indeed.</p>
+
+        <p>Now let's update <code>MunroGrid</code> so that when a row is clicked on we emit an event to let users know:</p>
+<pre>
+<span class="codeComment">// MunroGrid.vue</span>
+&lt;template&gt;
+    &lt;ag-grid-vue class="ag-fresh grid"
+                 :gridOptions="gridOptions"
+                 :rowData="rowData"
+                 :rowClicked="onRowClicked"
+                 :rowDataChanged="onRowDataChanged"&gt;
+
+    &lt;/ag-grid-vue&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+    import Vue from "vue";
+    import {AgGridVue} from "ag-grid-vue";
+    import 'whatwg-fetch'
+
+    export default {
+        name: 'munro-grid',
+        data () {
+            return {
+                gridOptions: null,
+                rowData: null
+            }
+        },
+        components: {
+            AgGridVue
+        },
+        methods: {
+            loadRowData() {
+                fetch('/static/munros.json')
+                    .then((response) =&gt; {
+                        return response.json()
+                    })
+                    .then((json) =&gt; {
+                        this.rowData = json;
+                    });
+            },
+            createColDefs() {
+                return [
+                    {headerName: "Hill Name", field: "hillname", width: 225, suppressSizeToFit: true},
+                    {headerName: "Grid Reference", field: "gr6"},
+                    {headerName: "Height (m)", field: "height"},
+                    {headerName: "Latitude", field: "latitude"},
+                    {headerName: "Longitude", field: "longitude"},
+                    {headerName: "Climbed?", field: "climbed"}
+                ];
+            },
+            onRowClicked(params) {
+                this.$emit("munroSelected", params.node.data)
+            },
+            onRowDataChanged() {
+                Vue.nextTick(() =&gt; {
+                        this.gridOptions.api.sizeColumnsToFit();
+                    }
+                );
+
+            }
+        },
+        created() {
+            this.gridOptions = {};
+            this.gridOptions.columnDefs = this.createColDefs();
+            this.loadRowData();
+        }
+    }
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+    .grid {
+        height: 255px;
+    }
+&lt;/style&gt;
+</pre>
+
+        <p>The only change we've made here to listen for <code>rowClicked</code> event from the Grid and then to emit these
+        events up:</p>
+<pre>
+onRowClicked(params) {
+    this.$emit("munroSelected", params.node.data)
+},
+</pre>
+
+        <p>Easy!</p>
+
+
+        <p>So now we have have a component to display the Munro and have updated our Grid component to broadcast Munro selection.
+            Let's add our <code>MunroDetail</code>to our main <code>App.vue</code>, as well as tie up a row being selected in <code>MunroGrid</code>
+            to displaying the information in <code>MunroDetail</code>:</p>
+<pre>
+<span class="codeComment">// App.vue</span>
+&lt;template&gt;
+    &lt;div id="app"&gt;
+        &lt;div id="contentwrapper"&gt;
+            &lt;div id="contentcolumn"&gt;
+                &lt;div class="innertube"&gt;
+                    &lt;munro-detail :selectedMunro="selectedMunro"&gt;&lt;/munro-detail&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div id="leftcolumn"&gt;
+            &lt;div class="innertube"&gt;
+                &lt;munro-grid @munroSelected="munroSelected"&gt;&lt;/munro-grid&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+    import MunroGrid from './components/MunroGrid';
+    import MunroDetail from './components/MunroDetail';
+
+    export default {
+        name: 'app',
+        data() {
+            return {
+                selectedMunro: null
+            }
+        },
+        components: {
+            MunroGrid,
+            MunroDetail
+        },
+        methods: {
+            munroSelected(munro) {
+                this.selectedMunro = munro;
+            }
+        }
+    }
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+    body {
+        margin: 0;
+        padding: 0;
+        line-height: 1.5em;
+    }
+
+    #contentwrapper {
+        float: left;
+        width: 100%;
+    }
+
+    #contentcolumn {
+        margin-left: 60%;
+        max-width: 40%;
+    }
+
+    #leftcolumn {
+        float: left;
+        width: 60%;
+        margin-left: -100%;
+    }
+
+    .innertube {
+        margin: 10px;
+        margin-top: 0;
+    }
+
+    @media (max-width: 600px) {
+        #contentwrapper {
+            float: none;
+        }
+
+        #leftcolumn {
+            float: none;
+            width: 100%;
+            margin-left: 0;
+        }
+
+        #contentcolumn {
+            margin-left: 0;
+        }
+    }
+&lt;/style&gt;
+</pre>
+
+        <p>Key parts of our updates are:</p>
+        <ul>
+            <li><code>&lt;munro-grid @munroSelected="munroSelected"&gt;&lt;/munro-grid&gt;</code>: Listen for the <code>munroSelected</code>
+                event from <code>MunroGrid</code> and store the selected Munro in a variable called <code>this.selectedMunro = munro;</code>.</li>
+            <li><code>&lt;munro-detail :selectedMunro="selectedMunro">&lt;/munro-detail&gt;</code>: Pass in a selected Munro (if any)
+                to the <code>MunroDetail</code> component for rendering.</li>
+        </ul>
+
+        <p>The rest of the new code is layout code to ensure that <code>MunroGrid</code> and <code>MunroDetail</code> display side-by-side
+        and that <code>MunroDetail</code> can "flex" as the window changes size.</p>
+
+        <p>If we spin the application up now we'll see this:</p>
+
+        <img src="../images/vue_munro_2.png" style="width: 100%;padding-bottom: 10px">
+
+        <p>When a row is clicked on we'll then see this: </p>
+
+        <img src="../images/vue_munro_3.png" style="width: 100%;padding-bottom: 10px">
+
+        <p>And finally, when the prompt is clicked on we'll see this:</p>
+
+        <img src="../images/vue_munro_4.png" style="width: 100%;padding-bottom: 10px">
+
+        <p>So far so good - we have two VueJs components talking to each other, and are able to see the detail we wanted to see!</p>
+
+        <p>But I think we can do more here. How about we write a new VueJS component that will allow us to filter
+        based on Munro height?</p>
+
+        <p>I'd like to have this as a horizontal slider with the grid filtering as we slide - let's see what we can come up with.</p>
+
+<pre>
+<span class="codeComment">// SliderComponent.vue</span>
+&lt;template&gt;
+    &lt;span class="slider"&gt;
+        &lt;input type="range" :min="min" :max="max" :step="step" :value="value" @input="onSliderChanging" @change="onSliderChanged" /&gt; {{ value }}
+    &lt;/span&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+    export default {
+        name: 'slider',
+        props: {
+            min: {
+                type: Number,
+                default: 0
+            },
+            max: {
+                type: Number,
+                default: 100
+            },
+            step: {
+                type: Number,
+                default: 1
+            },
+            initialValue: {
+                type: Number,
+                default: 0
+            },
+        },
+        data () {
+            return {
+                value: this.initialValue,
+                currentTimout: null
+            }
+        },
+        methods: {
+            // for updates while the user is still actively dragging
+            onSliderChanging($event) {
+                this.value = $event.target.value;
+            },
+            // for when the user has chosen a value
+            onSliderChanged($event) {
+                this.value = $event.target.value;
+                this.$emit("valueChanged", this.value)
+            }
+        }
+    }
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+    .slider {
+        border: 1px solid lightgrey;
+        padding-top: 4px;
+        padding-right: 4px;
+        z-index: 1;
+    }
+&lt;/style&gt;
+</pre>
+
+        <p>Here we have a simple slider control - it takes in a few properties to control its behaviour and initial state,
+            and fires an event when the user changes its value.</p>
+
+        <p>Now let's create a new Filter component for use in the Grid. This new Filter will make use of the <code>SliderComponent</code>
+        we've just created.</p>
+
+<pre>
+<span class="codeComment">// SliderFilter.vue</span>
+&lt;template&gt;
+    &lt;slider :min="min" :max="max" :step="step" :initialValue="initialValue" @valueChanged="filterValueChanged"&gt;&lt;/slider&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+    import Vue from "vue";
+    import Slider from './SliderComponent.vue';
+
+    export default Vue.extend({
+        name: 'slider-filter',
+        data() {
+            return {
+                value: 0,
+                valueGetter: null,
+                min: null,
+                max: null,
+                step: null,
+                initialValue: null
+            }
+        },
+        components: {
+            Slider
+        },
+        methods: {
+            isFilterActive() {
+                return true;
+            },
+
+            doesFilterPass(params){
+                return this.valueGetter(params.node) &lt;= this.value;
+            },
+
+            getModel() {
+                return {value: this.value};
+            },
+
+            setModel(model) {
+                this.value = model.value;
+            },
+
+            filterValueChanged(value) {
+                this.value = value;
+                this.params.filterChangedCallback();
+            }
+        },
+        created() {
+            this.valueGetter = this.params.valueGetter;
+
+            this.min = this.params.min;
+            this.max = this.params.max;
+            this.step = this.params.step;
+            this.initialValue = this.params.initialValue;
+        }
+    })
+&lt;/script&gt;
+</pre>
+
+        <p>This too is a simple component - we remember to enclose our logic with <code>Vue.extend</code> as this is
+        what allows the Grid to create components dynamically, and the rest is normal ag-Grid logic.</p>
+
+        <p>Note here that we're being passed in the <code>SliderComponent</code> initial values via the <code>params</code>
+        value - this is how ag-Grid passes in information to a Dynamic Vue component.</p>
+
+        <p>Note too that we're listening for events from <code>SliderComponent</code> in order to update the reflect the
+            filtered state in <code>filterValueChanged</code>.</p>
+
+        <p>And finally, let's add the new <code>SliderFilter</code> to <code>MunroGrid</code>:</p>
+        
+<pre>
+&lt;template&gt;
+    &lt;ag-grid-vue class="ag-fresh grid"
+                 :gridOptions="gridOptions"
+                 :rowData="rowData"
+                 :rowClicked="onRowClicked"
+                 :rowDataChanged="onRowDataChanged"&gt;
+    &lt;/ag-grid-vue&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+    import Vue from "vue";
+    import {AgGridVue} from "ag-grid-vue";
+    import 'whatwg-fetch'
+
+    import SliderFilter from './SilderFilter.vue';
+
+    export default {
+        name: 'munro-grid',
+        data () {
+            return {
+                gridOptions: null,
+                rowData: null
+            }
+        },
+        components: {
+            AgGridVue
+        },
+        methods: {
+            loadRowData() {
+                fetch('/static/munros.json')
+                    .then((response) =&gt; {
+                        return response.json()
+                    })
+                    .then((json) =&gt; {
+                        this.rowData = json;
+                    });
+            },
+            createColDefs() {
+                return [
+                    {headerName: "Hill Name", field: "hillname", width: 225, suppressSizeToFit: true},
+                    {headerName: "Grid Reference", field: "gr6"},
+                    {
+                        headerName: "Height (m)",
+                        field: "height",
+                        filterFramework: SliderFilter,
+                        filterParams: {
+                            min: 900,
+                            max: 1500,
+                            step: 100,
+                            initialValue: 1500
+                        }
+                    },
+                    {headerName: "Latitude", field: "latitude"},
+                    {headerName: "Longitude", field: "longitude"},
+                    {headerName: "Climbed?", field: "climbed"}
+                ];
+            },
+            onRowClicked(params) {
+                this.$emit("munroSelected", params.node.data)
+            },
+            onRowDataChanged() {
+                Vue.nextTick(() =&gt; {
+                        this.gridOptions.api.sizeColumnsToFit();
+                    }
+                );
+            }
+        },
+        created() {
+            this.gridOptions = {
+                enableFilter:true
+            };
+            this.gridOptions.columnDefs = this.createColDefs();
+            this.loadRowData();
+        }
+    }
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+    .grid {
+        height: 255px;
+    }
+&lt;/style&gt;
+</pre>
+
+        <img src="../images/vue_munro_5.png" style="width: 100%;padding-bottom: 10px">
+
+        <p>So it very little time we have an application that downloads and renders data in ag-Grid, renders chosen information
+        in another VueJS component, and finally allow us to dynamically filter our data with a very quick and easy slider control.</p>
+
+        <p>Brilliant! I've found VueJS to be a really fun framework to use - it was very quick to ramp up and write something like this,
+        so I encourage you to give it a go.</p>
 
         <div style="margin-top: 20px;">
             <a href="https://twitter.com/share" class="twitter-share-button"
@@ -224,9 +814,7 @@ GIT_PROMPT_START_USER="${USER}@${HOSTNAME} ${Yellow}${PathShort}${ResetColor}"
                         }
                     }(document, 'script', 'twitter-wjs');</script>
             </div>
-
         </div>
-
     </div>
 </div>
 

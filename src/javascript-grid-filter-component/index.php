@@ -161,7 +161,7 @@ include '../documentation-main/documentation_header.php';
 <?php } ?>
 
 <?php if (isFrameworkVue()) { ?>
-    <?php include './vue.php';?>
+    <?php include './vuejs.php';?>
 <?php } ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
