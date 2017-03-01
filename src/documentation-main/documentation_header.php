@@ -214,6 +214,8 @@ function isFrameworkWebComponents()
                 }
                 .frameworkDropdownText {
                     padding: 3px 20px;
+                    margin: 0px;
+                    background-color: #eee;
                 }
             </style>
 
@@ -221,7 +223,7 @@ function isFrameworkWebComponents()
             <h4 class="frameworkHeading">Framework</h4>
             <button class="btn btn-default frameworkDropdownButton dropdown-toggle" type="button" onclick="this.classList.toggle('active');" data-toggle="dropdown">
                     <?php if (isFrameworkAll()) { ?>
-                        All
+                        All Frameworks
                     <?php } elseif (isFrameworkAngular()) { ?>
                         <img src="/images/angular2_small.png" alt="Angular" />
                         Angular
@@ -247,9 +249,9 @@ function isFrameworkWebComponents()
                     
             <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li class="frameworkDropdownText">Parts of the documentation not relevant to your framework choice will be filtered out.</li>
+              <li class="frameworkDropdownText">Documentation not relevant to your framework choice will be filtered out.</li>
               <li class="divider"></li>
-              <li><a class="frameworkDropdown-link" data-id="all" href="#">All</a></li>
+              <li><a class="frameworkDropdown-link" data-id="all" href="#">All Frameworks (show everything)</a></li>
               <li><a class="frameworkDropdown-link" data-id="angular" href="#"><img src="/images/angularjs_small.png" alt="Angular 1" /> Angular (Angular 2/Latest Version)</a></li>
               <li><a class="frameworkDropdown-link" data-id="angularjs" href="#"><img src="/images/angularjs_small.png" alt="Angular 1" /> Angular JS (Angular 1)</a></li>
               <li><a class="frameworkDropdown-link" data-id="aurelia" href="#"><img src="/images/aurelia_small.png" alt="Aurelia" /> Aurelia</a></li>
