@@ -19,7 +19,8 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     enableFilter: true,
-    enableColResize: true
+    enableColResize: true,
+    floatingFilter:true
 };
 
 function countryCellRenderer(params) {

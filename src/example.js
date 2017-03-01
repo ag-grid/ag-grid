@@ -104,6 +104,7 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
+    floatingFilter:true,
 //debug: true,
 //     editType: 'fullRow',
 suppressEnterprise: true,
