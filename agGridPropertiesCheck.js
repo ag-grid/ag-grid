@@ -2,6 +2,7 @@
 HTMLElement = typeof HTMLElement === 'undefined' ? function () {} : HTMLElement;
 HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? function () {} : HTMLSelectElement;
 HTMLInputElement = typeof HTMLInputElement === 'undefined' ? function () {} : HTMLInputElement;
+HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? function () {} : HTMLButtonElement;
 
 require('./node_modules/reflect-metadata');
 
