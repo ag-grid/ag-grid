@@ -117,7 +117,7 @@ function isFrameworkWebComponents()
 
 ?>
 
-<body ng-app="documentation" ng-controller="DocumentationController">
+<body ng-app="documentation">
 
 <?php if ($version == 'latest') {
     $navKey = "documentation";
@@ -173,8 +173,7 @@ function isFrameworkWebComponents()
 
           <div class="dropdown frameworkBox">
             <div class="frameworkContainer">
-                <h4 class="frameworkHeading">Framework</h4>
-                <button class="btn btn-default frameworkDropdownButton dropdown-toggle" type="button" onclick="this.classList.toggle('active');" data-toggle="dropdown">
+                <h4 class="frameworkHeading">Framework</h4><button class="btn btn-default frameworkDropdownButton dropdown-toggle<?php if (isFrameworkAll()) { ?> frameworkAllButton<?php } ?>" type="button" onclick="this.classList.toggle('active');" data-toggle="dropdown">
                         <?php if (isFrameworkAll()) { ?>
                             All Frameworks
                         <?php } elseif (isFrameworkAngular()) { ?>

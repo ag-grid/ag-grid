@@ -47,7 +47,16 @@ include '../documentation-main/documentation_header.php';
         The example below shows single row selection.
     </p>
 
-    <show-example example="example1" example-height="450px"></show-example>
+    <show-complex-example example="example1.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'example1.html,example1.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/dViV1N0fjDQgfnHIrrUU/"
+                          exampleheight="500px">
+    </show-complex-example>
+
 
     <h3 id="multiRowSelectionExample">Example - Multiple Row Selection</h3>
 
@@ -55,7 +64,15 @@ include '../documentation-main/documentation_header.php';
         The example below shows multi-row selection.
     </p>
 
-    <show-example example="example2" example-height="450px"></show-example>
+    <show-complex-example example="example2.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'example2.html,example2.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/E3y02lRShlWSQ6egC45I/"
+                          exampleheight="500px">
+    </show-complex-example>
 
     <h3 id="checkboxSelection">Checkbox Selection</h3>
 
@@ -116,9 +133,17 @@ include '../documentation-main/documentation_header.php';
         Having a checkbox within a non-group row is best for grids that are not using grouping.
     </p>
 
-    <show-example example="exampleGroupSelection" example-height="450px"></show-example>
+    <show-complex-example example="exampleGroupSelection.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleGroupSelection.html,exampleGroupSelection.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/9OUCgqlIVU49aJldHUNk/"
+                          exampleheight="500px">
+    </show-complex-example>
 
-    <h4 id="groupsSelectionExample2">Groups & Checkbox Selection Example 2 - No Select Leaf Nodes</h4>
+    <h4 id="groupsSelectionExample2"><img src="../images/enterprise_50.png" title="Enterprise Feature" /> Groups & Checkbox Selection Example 2 - No Select Leaf Nodes</h4>
 
     <p>
         The example below is similar to the previous example except it does not put checkboxes
@@ -127,7 +152,15 @@ include '../documentation-main/documentation_header.php';
         <i>colDef.checkboxSelection</i> and <i>groupColumnDef.cellRendererParams.checkbox</i>.
     </p>
 
-    <show-example example="exampleSelectionCheckbox" example-height="450px"></show-example>
+    <show-complex-example example="exampleSelectionCheckbox.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleSelectionCheckbox.html,exampleSelectionCheckbox.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/k0UWMvglx6nZrhTNc9F5/"
+                          exampleheight="500px">
+    </show-complex-example>
 
     <h4 id="groupsSelectionExample3">Groups & Checkbox Selection Example 3 - Only Filtered</h4>
 
@@ -148,7 +181,15 @@ include '../documentation-main/documentation_header.php';
     </ol>
     </p>
 
-    <show-example example="exampleSelectionCheckboxFiltered"></show-example>
+    <show-complex-example example="exampleSelectionCheckboxFiltered.html"
+                      sources="{
+                            [
+                                { root: './', files: 'exampleSelectionCheckboxFiltered.html,exampleSelectionCheckboxFiltered.js' }
+                            ]
+                          }"
+                      plunker="https://embed.plnkr.co/rLXDBbpcPlyyZo2tE6wB/"
+                      exampleheight="500px">
+    </show-complex-example>
 
     <h3 id="headerCheckboxSelection">Header Checkbox Selection</h3>
 
@@ -209,7 +250,15 @@ colDef = {
         </ul>
     </p>
 
-    <show-example example="exampleHeaderCheckbox"></show-example>
+    <show-complex-example example="exampleHeaderCheckbox.html"
+                      sources="{
+                            [
+                                { root: './', files: 'exampleHeaderCheckbox.html,exampleHeaderCheckbox.js' }
+                            ]
+                          }"
+                      plunker="https://embed.plnkr.co/alUlKfzzIcil5Tvz9MW4/"
+                      exampleheight="500px">
+    </show-complex-example>
 
     <h4 id="headerSelectionExample2">Header Checkbox Example 2 - Filtered Only = false</h4>
 
@@ -222,7 +271,15 @@ colDef = {
     </ul>
     </p>
 
-    <show-example example="exampleHeaderCheckboxEntireSet"></show-example>
+    <show-complex-example example="exampleHeaderCheckboxEntireSet.html"
+                      sources="{
+                            [
+                                { root: './', files: 'exampleHeaderCheckboxEntireSet.html,exampleHeaderCheckboxEntireSet.js' }
+                            ]
+                          }"
+                      plunker="https://embed.plnkr.co/JOpjDMG4V1g1WHsIx9z3/"
+                      exampleheight="500px">
+    </show-complex-example>
 
     <h3 id="selectionEvents">Selection Events</h3>
 
@@ -238,7 +295,15 @@ colDef = {
         </ul>
     </p>
 
-    <show-example example="example3"></show-example>
+    <show-complex-example example="example3.html"
+                      sources="{
+                            [
+                                { root: './', files: 'example3.html,example3.js' }
+                            ]
+                          }"
+                      plunker="https://embed.plnkr.co/NhLGiGngez78gKswPa8G/"
+                      exampleheight="500px">
+    </show-complex-example>
 
     <h3 id="nodeSelectionApi">Node Selection API</h3>
 
@@ -299,7 +364,15 @@ api.forEachNodeAfterFilter( function(node) {
         data for selection purposes.
     </p>
 
-    <show-example example="example4"></show-example>
+    <show-complex-example example="example4.html"
+                      sources="{
+                            [
+                                { root: './', files: 'example4.html,example4.js' }
+                            ]
+                          }"
+                      plunker="https://embed.plnkr.co/YGStgt8zOpA49lkHHB0i/"
+                      exampleheight="500px">
+    </show-complex-example>
 
     <h3 id="selectionArrowKeys">Selection with Keyboard Arrow Keys</h3>
 
@@ -365,7 +438,15 @@ api.forEachNodeAfterFilter( function(node) {
    }
 }</code></pre>
 
-    <show-example example="example5" example-height="450px"></show-example>
+    <show-complex-example example="example5.html"
+                      sources="{
+                            [
+                                { root: './', files: 'example5.html,example5.js' }
+                            ]
+                          }"
+                      plunker="https://embed.plnkr.co/1lIwUneBaoImuzooydnW/"
+                      exampleheight="500px">
+    </show-complex-example>
 
 </div>
 

@@ -7,7 +7,7 @@ $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div ng-controller="GettingStartedController" ng-show="showGettingStarted" class="ng-hide">
+<div>
     <div>
 
         <?php if (isFrameworkJavaScript()) { ?>
