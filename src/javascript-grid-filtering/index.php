@@ -12,17 +12,24 @@ include '../documentation-main/documentation_header.php';
     <h2 id="filtering">Column Filter</h2>
 
     <p>
+        Data in ag-Grid can be filtered in the following ways:
+        <ol>
+            <li><b>Column Filter</b>: A column filter is associated with a column and filters data based
+            on the value of that column only. The column filter is accessed via the column's menu and
+            may also have a <i>floating filter</i> element if floating filters are turned on.</li>
+            <li><a href="../javascript-grid-filter-quick/"><b>Quick Filter</b></a>: The quick filter is a simple text filter that filters across all columns.</li>
+            <li><a href="../javascript-grid-filter-external/"><b>External Filter</b></a>: External filters is a way for your application to apply bespoke
+            filtering with no restriction to the columns.</li>
+        </ol>
+        Column filters are tied to a column. Quick filter and external filter
+        are not tied to a column. This section of the documentation talks about column filters only.
+        For quick filter and external filter, see the relevant sections of the documentation.
+    </p>
+
+    <p>
         You have two options for filtering, one is use one of the default built-in filters (easy but restricted to
         what's provided), or bake your own custom filters (no restrictions, build what you want, but takes more time).
     </p>
-
-    <note>
-        This page discusses filtering outside of the context of paging. To see how to implement server
-        side filtering, see the sections
-        <a href="/javascript-grid-pagination/">pagination</a>
-        and
-        <a href="/javascript-grid-virtual-paging/">virtual paging</a>
-    </note>
 
     <h3 id="enable-filtering">Enable Filtering</h3>
 
@@ -35,7 +42,19 @@ include '../documentation-main/documentation_header.php';
         When a filter is active on a column, the filter icon appears before the column name in the header.
     </p>
 
-    <h3 id="default-built-in-filters">Default Built-In Filters</h3>
+<pre>
+gridOptions = {
+    <span class="codeComment">// turn on filtering</span>
+    enableFilter: true,
+    ...
+    columnDefs = [
+        {headerName: "Athlete", field: "athlete", filter: 'text'}, <span class="codeComment">// text filter</span>
+        {headerName: "Age",     field: "age",     filter: 'number'}, <span class="codeComment">// number filter</span>
+        {headerName: "Sport",   field: "sport",   suppressFilter: true} <span class="codeComment">// NO filter</span>
+    ]
+}</pre>
+
+    <h3 id="default-built-in-filters">Filter Types</h3>
 
     <p>
         The following filter options can be set for a column definition:
@@ -48,63 +67,49 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>number</th>
-            <td>A number comparison filter. Functionality for matching on {equals, less than, greater than}.</td>
+            <td>A <a href="../javascript-grid-filter-number/">Number Filter</a> for number comparisons.</td>
         </tr>
         <tr>
             <th>text</th>
-            <td>A string comparison filter. Functionality for matching on {contains, starts with, ends with, equals}.</td>
+            <td>A <a href="../javascript-grid-filter-text/">Text Filter</a> for string comparisons.</td>
         </tr>
         <tr>
             <th>date</th>
-            <td>A date comparison filter. Functionality for matching on {equals, not equals, less than, greater than, in range}.</td>
+            <td>A <a href="../javascript-grid-filter-date/">Date Filter</a> for date comparisons.</td>
         </tr>
         <tr>
             <th>set</th>
-            <td>A set filter, influenced by how filters work in Microsoft Excel. This is an ag-Grid-Enterprise
-                feature and explained further <a href="../javascript-grid-set-filtering/">here</a></td>
+            <td>A <a href="../javascript-grid-set-filtering/">Set Filter</a>, influenced by how filters work in
+                Microsoft Excel. This is an ag-Grid-Enterprise
+                feature.</td>
+        </tr>
+        <tr>
+            <th>-custom-</th>
+            <td>A <a href="../javascript-grid-filter-component/">Filter Component</a> where you can provide
+            you own filter written in a framework of your choice.</td>
         </tr>
     </table>
 
     <p>
-        If no filter type is specified, the default 'text' filter is used (unless you are using ag-Grid-Enterprise,
-        in which case the 'set' filter is the default).
+        If no filter type is specified, the default is 'text' for ag-Grid (free versions) and 'set'
+        for ag-Grid Enterprise.
     </p>
 
     <h3 id="filter-parameters">Filter Parameters</h3>
 
     <p>
-        As well as specifying the filter type, you can also provide setup parameters for the filters by setting
-        <code>colDef.filterParams</code>. The available parameters are specific to the filter type. What follows
-        is an example of setting 'apply=true' and 'newRowsAction=keep' on a text filter:
+        Each filter can take additional filter params by setting <i>colDef.filterParams</i>.
+        What parameters each filter type takes is explained in the section on each filter.
+        As an example, he following sets parameters for the text filter.
     </p>
 
     <pre>
 columnDefinition = {
-    headerName: "Athlete",
-    field: "athlete",
+    headerName: 'Athlete',
+    field: 'athlete',
     filter: 'text',
     filterParams: {apply: true, newRowsAction: 'keep'}
 }</pre>
-
-    <h4 id="text-number-and-date-filter-parameters">Text, Number and Date Filter Parameters</h4>
-    <p>
-        The filter parameters for text, date and number filter have the following meaning:
-        <ul>
-            <li><b>newRowsAction:</b> What to do when new rows are loaded. The default is to reset the filter.
-                If you want to keep the filter status between row loads, then set this value to 'keep'.</li>
-            <li><b>apply:</b> Set to true to include an 'Apply' button with the filter and not filter
-                automatically as the selection changes.</li>
-        </ul>
-
-    </p>
-    <p>
-        The date filter has an additional property to specify how the filter date should be compared with the data
-        in your cell:
-        <ul>
-            <li><b>comparator:</b> A callback to specify how the current row's value compares to the filter.
-            This is explained below in the section <a href="./#dateFilterComparator">Date Filter Comparator</a>.</li>
-        </ul>
-    </p>
 
     <h3 id="built-in-filters-example">Built In Filters Example</h3>
 
@@ -143,11 +148,51 @@ columnDefinition = {
         server side filtering (thus preventing unnecessary calls to the server).
     </p>
 
+    <h3 id="events">Filter Events</h3>
+
     <p>
-        The example below also demonstrates the filter hook callbacks (see your browser dev console).
-        <li>onFilterModified gets called when the filter changes regardless of the apply button.</li>
-        <li>onBeforeFilterChanged gets called before a new filter is applied.</li>
-        <li>onAfterFilterChanged gets called after a new filter is applied.</li>
+        Filtering results in the following events getting emitted:
+        <table class="table">
+            <tr>
+                <th>filterChanged</th>
+                <td>
+                    Filter has changed, grid also listens for this and updates the model.
+                </td>
+            </tr>
+            <tr>
+                <th>beforeFilterChanged</th>
+                <td>
+                    Filter has changed, grid has not updated.
+                </td>
+            </tr>
+            <tr>
+                <th>afterFilterChanged</th>
+                <td>
+                    Filter has changed, grid has updated.
+                </td>
+            </tr>
+            <tr>
+                <th>filterModified</th>
+                <td>
+                    Gets called when filter has been modified but <i>filterChanged</i>
+                    not necessarily called. This is useful when
+                    using an apply button inside the filter, as this event fires
+                    when the filter is modified, and then <i>filterChanged</i>
+                    is fired when the apply button is pressed.
+                </td>
+            </tr>
+        </table>
+    </p>
+
+    <h3 id="filter-and-events-example">Example: Apply Button and Filter Events</h3>
+
+    <p>
+        The example below also demonstrates using the apply button and filter events as follows:
+        <ul>
+            <li>onFilterModified gets called when the filter changes regardless of the apply button.</li>
+            <li>onBeforeFilterChanged gets called before a new filter is applied.</li>
+            <li>onAfterFilterChanged gets called after a new filter is applied.</li>
+        </ul>
     </p>
 
     <show-complex-example example="exampleFilterApply.html"
@@ -282,6 +327,17 @@ gridOptions.api.setFilterModel(null);
                           exampleheight="500px">
     </show-complex-example>
 
+<h3>Server Side Filtering</h3>
+
+<p>
+    Some of the row models
+    (<a href="/javascript-grid-pagination/">pagination</a> and
+    <a href="/javascript-grid-virtual-paging/">infinite scrolling</a>)
+    have further information on how to implement server side filtering.
+    For details on this, see the the sections
+    <a href="/javascript-grid-pagination/">pagination</a> and
+    <a href="/javascript-grid-virtual-paging/">infinite scrolling</a>.
+</p>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

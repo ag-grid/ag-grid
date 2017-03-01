@@ -280,7 +280,7 @@ function isFrameworkWebComponents()
             <div class="docsMenu-content">
                 <?php
                 normalItem(0, 'Features', 'Overview', 'javascript-grid-features/');
-                normalItem(0, 'Width & Height', 'Width & Height', 'javascript-grid-width-and-height/');
+                normalItem(0, 'Width & Height', 'Grid Size', 'javascript-grid-width-and-height/');
                 normalItem(0, 'Sorting', 'Sorting', 'javascript-grid-sorting/');
                 normalItem(0, 'Column Filter', 'Column Filter', 'javascript-grid-filtering/');
 
@@ -310,7 +310,8 @@ function isFrameworkWebComponents()
                 normalItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
                 normalItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
                 normalItem(0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/');
-                normalItem(0, 'Full Width', 'Full Width Rows & Master Detail', 'javascript-grid-master-detail/');
+                normalItem(0, 'Full Width Rows', 'Full Width Rows', 'javascript-grid-full-width-rows/');
+                normalItem(0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');
                 normalItem(0, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave/');
                 normalItem(0, 'Touch', 'Touch', 'javascript-grid-touch/');
                 normalItem(0, 'Row Model', 'Row Model', 'javascript-grid-model/');
