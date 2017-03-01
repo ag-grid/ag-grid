@@ -43,6 +43,9 @@ include('../includes/mediaHeader.php');
 
         <note>The code for this blog can be found at <a href="https://github.com/seanlandsman/ag-grid-vue-munros">https://github.com/seanlandsman/ag-grid-vue-munros</a></note>
 
+        <note>Full information how to configure and VueJS components within ag-Grid can be found in the <a href="../javascript-grid-getting-started/?framework=vue">Getting Started</a>
+        guide.</note>
+
         <h2>Let's Get Started</h2>
 
         <p>First, we need to create the boilerplate for our application - for this we'll use the <a href="https://github.com/vuejs/vue-cli" target="_blank">vue-cli</a> to spin
@@ -82,6 +85,8 @@ npm install ag-grid-vue --save
 <pre>npm install whatwg-fetch --save</pre>
 
         <p>One last piece of housekeeping - delete <code>src/components/Hello.vue</code>.</p>
+
+        <h3>Show me the Munros!</h3>
 
         <p>To start with let's just display some basic Munro information in a simple grid.</p>
 
@@ -167,9 +172,6 @@ npm install ag-grid-vue --save
             <li><code>onRowDataChanged</code>: Automatically resizes columns so they fill out the available space nicely.</li>
         </ul>
 
-        <h1>TODO ! point loadData to the github repo once pushed</h1>
-        <h1>TODO ! talk about key parts of this, incl adding component to components!</h1>
-
         <p>With our component ready, we now need to add it to our application. Update <code>src/App.vue</code> with the following:</p>
         
 <pre>
@@ -212,6 +214,8 @@ import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
         <p>With all that in place we can spin up the application once again - this is what you should see:</p>
 
         <img src="../images/vue_munro_1.png" style="width: 100%;padding-bottom: 10px">
+
+        <h3>Show me a Munro!</h3>
 
         <p>Ok, so far so good.  But wouldn't it be nice to get a view of a Munro when we clicked on it? I think so - let's
         create a new component we'll call <code>MunroDetail</code> that will show some key information about a Munro, as well as display an image of it:</p>
@@ -511,6 +515,8 @@ onRowClicked(params) {
         <img src="../images/vue_munro_4.png" style="width: 100%;padding-bottom: 10px">
 
         <p>So far so good - we have two VueJs components talking to each other, and are able to see the detail we wanted to see!</p>
+
+        <h3>Too Much Information!</h3>
 
         <p>But I think we can do more here. How about we write a new VueJS component that will allow us to filter
         based on Munro height?</p>
