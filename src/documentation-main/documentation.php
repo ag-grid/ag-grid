@@ -34,10 +34,10 @@ include 'documentation_header.php';
         </div>
         -->
 
-        <h2 id="introduction">
+<!--        <h2 id="introduction">
             Welcome to the ag-Grid Documentation Pages
         </h2>
-
+-->
         <!--
         <div class="list-group">
           <a href="#" class="list-group-item active">
