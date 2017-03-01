@@ -103,7 +103,7 @@ include 'documentation_header.php';
             <a href="/javascript-grid-getting-started/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/gettingStarted.png" style="width: 50px;"/>
+                        <img src="../images/svg/docs/getting_started.svg" width="50" />
                     </div>
                     <h4 class="list-group-item-heading">Getting Started</h4>
                     <p class="list-group-item-text">
@@ -117,7 +117,7 @@ include 'documentation_header.php';
             <a href="/javascript-grid-interfacing-overview/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/interfacing.jpg" style="width: 50px;"/>
+                        <img src="../images/svg/docs/interfacing.svg" width="50" />
                     </div>
                     <h4 class="list-group-item-heading">Interfacing</h4>
                     <p class="list-group-item-text">
@@ -134,7 +134,7 @@ include 'documentation_header.php';
             <a href="/javascript-grid-features/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/features.png" style="width: 50px;"/>
+                        <img src="../images/svg/docs/features.svg" width="50" />
                     </div>
                     <h4 class="list-group-item-heading">Features</h4>
                     <p class="list-group-item-text">
@@ -148,7 +148,7 @@ include 'documentation_header.php';
             <a href="/javascript-grid-row-models/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/rowModel.png" style="width: 50px;"/>
+                        <img src="../images/svg/docs/row_models.svg" width="50" />
                     </div>
                     <h4>Row Models</h4>
                     <p class="list-group-item-text">
@@ -162,7 +162,7 @@ include 'documentation_header.php';
             <a href="/javascript-grid-styling/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/themes.png" style="width: 50px;"/>
+                        <img src="../images/svg/docs/themes.svg" width="50" />
                     </div>
                     <h4 class="list-group-item-heading">Themes</h4>
                     <p class="list-group-item-text">
@@ -176,7 +176,7 @@ include 'documentation_header.php';
             <a href="/javascript-grid-components/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/components.png" style="width: 50px;"/>
+                        <img src="../images/svg/docs/components.svg" width="50" />
                     </div>
                     <h4>Components</h4>
                     <p class="list-group-item-text">
@@ -191,7 +191,7 @@ include 'documentation_header.php';
             <span class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/examples.jpg" style="width: 50px;"/>
+                        <img src="../images/svg/docs/examples.svg" width="50" />
                     </div>
                     <h4>Examples</h4>
                     <p class="list-group-item-text">

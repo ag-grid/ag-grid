@@ -82,15 +82,26 @@
     position: relative;
     border: 1px solid #e8e8e8;
     border-radius: 3px;
-    padding: 10px 30px 10px 10px;
+    padding: 10px;
     margin-top: 10px;
     //transition: all .3s ease-in-out;
 }
 
+
+
 .docsMenu-header h4 {
     margin: 0;
-    font-size: 16px;
+    font-size: 14px;
     color: #333;
+    position: relative;
+    padding-left: 16px;
+}
+
+.docsMenu-header h4 img {
+    position: absolute;
+    top: -2px;
+    left: -5px;
+    width: 20px;
 }
 
 .docsMenu-header .fa {

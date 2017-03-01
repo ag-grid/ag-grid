@@ -21,8 +21,6 @@
     <div class="news-header">xth March 2017</div>
     <div style="padding-top: 10px;">
         <a href="../ag-grid-vuejs-integration/">
-            <img src="../images/agGridDaily.png"/>
-            <br/>
             Using VueJS Components in ag-Grid
         </a>
     </div>
@@ -62,8 +60,6 @@
     <div class="news-header">6th February 2017</div>
     <div style="padding-top: 10px;">
         <a href="../git-color/">
-            <img src="../images/agGridDaily.png"/>
-            <br/>
             Git on the Command Line - Improving the Experience
         </a>
     </div>
@@ -73,8 +69,6 @@
     <div class="news-header">23rd January 2017</div>
     <div style="padding-top: 10px;">
         <a href="../ag-grid-understanding-webpack/">
-            <img src="../images/agGridDaily.png"/>
-            <br/>
             Webpack Tutorial: Understanding How it Works
         </a>
     </div>
@@ -157,8 +151,6 @@
     <div class="news-header">8th December 2016</div>
     <div style="padding-top: 10px;">
         <a href="../ag-grid-angular-aot-dynamic-components/">
-            <img src="../images/agGridDaily.png"/>
-            <br/>
             Understanding AOT and Dynamic Components in Angular 2
         </a>
     </div>
@@ -225,8 +217,6 @@
     <div class="news-header">27th October 2016</div>
     <div style="padding-top: 10px;">
         <a href="../javascript-datagrid/">
-            <img src="../images/agGridDaily.png"/>
-            <br/>
             8 reasons to choose ag-Grid as your JavaScript Datagrid
         </a>
     </div>
