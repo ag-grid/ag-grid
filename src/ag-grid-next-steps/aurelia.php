@@ -1,4 +1,8 @@
 
+<?php if (!isFrameworkAll()) { ?>
+    <h2 id="nextsteps-aurelia-datagrid"><img style="vertical-align: middle" src="/images/aurelia_small.png" height="25px"/> Next Steps</h2>
+<?php } ?>
+
 <h2 id="ng2markup">Creating Grids with Markup</h2>
 
 <p>You can create Grids either programatically (with pure JavaScript/Typescript/Components), or declare them via declaratively with markup.</p>
