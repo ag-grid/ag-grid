@@ -362,7 +362,7 @@
         window.location.href = '?framework=' + framework;
         var storage = {
             framework: framework
-        }
+        };
         localStorage.setItem(localStorageKey, JSON.stringify(storage));
     }
 
