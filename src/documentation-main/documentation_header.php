@@ -63,7 +63,6 @@ if (!in_array($framework, $allFrameworks)) {
 }
 
 $oneHundredDaysFromNow = time() + 60*60*24*100;
-echo(' >>>>> saving cookie '.$framework);
 setcookie($cookieKey, $framework, $oneHundredDaysFromNow, '/');
 
 function menuItem($indent, $localKey, $name, $url) {
