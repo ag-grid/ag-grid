@@ -5,7 +5,7 @@
     <?php } ?>
 
     <?php
-    $framework = 'react';
+    $frameworkChild = 'react';
     include 'ag-grid-dependency-framework.php'
     ?>
 
