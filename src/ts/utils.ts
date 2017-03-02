@@ -19,11 +19,11 @@ export class Timer {
 
 /** HTML Escapes. */
 const HTML_ESCAPES :{[id:string]:string}= {
-    '&': '&amp',
-    '<': '&lt',
-    '>': '&gt',
-    '"': '&quot',
-    "'": '&#39'
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
 };
 
 const reUnescapedHtml = /[&<>"']/g;
