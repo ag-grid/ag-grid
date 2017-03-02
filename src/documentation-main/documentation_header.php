@@ -523,7 +523,6 @@ function isFrameworkWebComponents()
                 Follow on Twitter
 
                 <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="medium"></a>
-                <a href="https://twitter.com/seanlandsman" class="twitter-follow-button" data-show-count="false" data-size="medium"></a>
 
                 <script>!function (d, s, id) {
                         var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
