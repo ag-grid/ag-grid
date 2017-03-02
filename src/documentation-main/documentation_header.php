@@ -62,8 +62,8 @@ if (!in_array($framework, $allFrameworks)) {
     }
 }
 
-$oneHundredDaysFromNow = time() + 60*60*24*100;
-setcookie($cookieKey, $framework, $oneHundredDaysFromNow, '/');
+//$oneHundredDaysFromNow = time() + 60*60*24*100;
+//setcookie($cookieKey, $framework, $oneHundredDaysFromNow, '/');
 
 function menuItem($indent, $localKey, $name, $url) {
     menuItemWithIcon(null, $indent, $localKey, $name, $url);
