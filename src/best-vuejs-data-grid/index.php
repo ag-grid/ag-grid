@@ -1,11 +1,16 @@
 <?php
-$key = "Getting Started VueJS";
+header("HTTP/1.1 301 Moved Permanently");
+header("Location: https://www.ag-grid.com/javascript-grid-getting-started/?framework=vue");
+?>
+
+<?php
+/*$key = "Getting Started VueJS";
 $pageTitle = "VueJS Datagrid";
 $pageDescription = "Demonstrate the best VueJS datagrid. Shows and example of a datagrid for using with VueJS.";
 $pageKeyboards = "VueJS Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
-?>
+*/?><!--
 
 <div>
 
@@ -432,4 +437,4 @@ this.params.context.componentParent
 
 </div>
 
-<?php include '../documentation-main/documentation_footer.php'; ?>
+--><?php /*include '../documentation-main/documentation_footer.php'; */?>

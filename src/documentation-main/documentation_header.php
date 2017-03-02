@@ -50,9 +50,24 @@ $framework = $_GET['framework'];
 
 // if framework url was not passed, or is invalid, set framework to all
 $allFrameworks = array('javascript', 'angular', 'angularjs', 'react', 'vue', 'aurelia', 'webcomponents');
+$cookieKey = 'agGridFramework';
+echo('>> url = '.$framework);
+// check if fraemwork exsits
 if (!in_array($framework, $allFrameworks)) {
-    $framework = 'all';
+    // set from cookie
+    $framework = $_COOKIE[$cookieKey];
+    echo(' >> cookie = '.$framework);
+    // see if still missing, ie no cookie
+    if (!in_array($framework, $allFrameworks)) {
+        // default to all if not set AND no cookie
+        echo(' >> setting to all ');
+        $framework = 'all';
+    }
 }
+
+$oneHundredDaysFromNow = time() + 60*60*24*100;
+echo(' >>>>> saving cookie '.$framework);
+setcookie($cookieKey, $framework, $oneHundredDaysFromNow, '/');
 
 function menuItem($indent, $localKey, $name, $url) {
     menuItemWithIcon(null, $indent, $localKey, $name, $url);
@@ -279,7 +294,7 @@ function isFrameworkWebComponents()
                 menuItem(1, 'Text Filter', 'Text Filter', 'javascript-grid-filter-text/');
                 menuItem(1, 'Number Filter', 'Number Filter', 'javascript-grid-filter-number/');
                 menuItem(1, 'Date Filter', 'Date Filter', 'javascript-grid-filter-date/');
-                menuItemWithIcon('enterprise.png', 1, 'Set Filtering', 'Set Filter', 'javascript-grid-set-filtering/');
+                menuItemWithIcon('enterprise.png', 1, 'Set Filtering', 'Set Filter', 'javascript-grid-filter-set/');
                 menuItem(1, 'Custom Filter', 'Custom Filter', 'javascript-grid-filter-custom/');
 
                 menuItem(0, 'Quick Filter', 'Quick Filter', 'javascript-grid-filter-quick/');
@@ -505,6 +520,24 @@ function isFrameworkWebComponents()
                         </div>
                     </form>
                 </div>
+
+            </div>
+
+            <div style="border: 1px solid #e8e8e8; border-radius: 3px; padding: 10px; margin-top: 10px;">
+                Follow on Twitter
+
+                <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="medium"></a>
+                <a href="https://twitter.com/seanlandsman" class="twitter-follow-button" data-show-count="false" data-size="medium"></a>
+
+                <script>!function (d, s, id) {
+                        var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+                        if (!d.getElementById(id)) {
+                            js = d.createElement(s);
+                            js.id = id;
+                            js.src = p + '://platform.twitter.com/widgets.js';
+                            fjs.parentNode.insertBefore(js, fjs);
+                        }
+                    }(document, 'script', 'twitter-wjs');</script>
 
             </div>
 

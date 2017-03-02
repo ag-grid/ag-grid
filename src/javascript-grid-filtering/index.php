@@ -79,7 +79,7 @@ gridOptions = {
         </tr>
         <tr>
             <th>set</th>
-            <td>A <a href="../javascript-grid-set-filtering/">Set Filter</a>, influenced by how filters work in
+            <td>A <a href="../javascript-grid-filter-set/">Set Filter</a>, influenced by how filters work in
                 Microsoft Excel. This is an ag-Grid-Enterprise
                 feature.</td>
         </tr>
@@ -242,7 +242,7 @@ var nameFilterInstance = api.getFilterInstance('name');</pre>
     </p>
 
     <p>
-        (Note: the example uses the <a href="../javascript-grid-set-filtering/">enterprise set filter</a>).
+        (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
     <show-complex-example example="exampleFilterApi.html"
@@ -314,7 +314,7 @@ gridOptions.api.setFilterModel(null);
     </p>
 
     <p>
-        (Note: the example uses the <a href="../javascript-grid-set-filtering/">enterprise set filter</a>).
+        (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
     <show-complex-example example="exampleFilterModel.html"
