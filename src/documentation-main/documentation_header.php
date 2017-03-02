@@ -23,10 +23,12 @@ if (!in_array($framework, $allFrameworks)) {
     $framework = $_COOKIE[$cookieKey];
 
     // if no url parameter, add it
+    /*
     if (empty($_GET['framework'])) {
         header('Location: ?framework='.$framework.'');
         exit;
     }
+    */
     if (!in_array($framework, $allFrameworks)) {
         // default to all if not set AND no cookie
         $framework = 'all';
