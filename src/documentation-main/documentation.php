@@ -89,6 +89,7 @@ include 'documentation_header.php';
                 height: 80px;
                 display: inline-block;
                 padding-right: 20px;
+                padding-top: 10px;
             }
             .float-parent {
                 display: inline-block;
