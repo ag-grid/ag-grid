@@ -189,7 +189,13 @@ export class HeaderRowComp extends Component {
                 result = new HeaderGroupWrapperComp(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER :
+                /** We always get the freshest reference to the baseFilter because the filters get sometimes created
+                 * and destroyed beetwen calls
+                 *
+                 *let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+                 */
                 let column = <Column> columnGroupChild;
+                let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
                 let floatingFilter : IFloatingFilterComp<any, any> = <any>this.componentProvider.newFloatingFilterComponent({
                     currentParentModel:():any=>{
                         let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
@@ -207,6 +213,7 @@ export class HeaderRowComp extends Component {
                     floatingFilter.onParentModelChanged(filterComponent.getModel());
                 });
                 result = floatingFilter;
+                floatingFilter.onParentModelChanged(filterComponent.getModel());
                 break;
         }
 
