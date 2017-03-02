@@ -51,16 +51,13 @@ $framework = $_GET['framework'];
 // if framework url was not passed, or is invalid, set framework to all
 $allFrameworks = array('javascript', 'angular', 'angularjs', 'react', 'vue', 'aurelia', 'webcomponents');
 $cookieKey = 'agGridFramework';
-echo('>> url = '.$framework);
 // check if fraemwork exsits
 if (!in_array($framework, $allFrameworks)) {
     // set from cookie
     $framework = $_COOKIE[$cookieKey];
-    echo(' >> cookie = '.$framework);
     // see if still missing, ie no cookie
     if (!in_array($framework, $allFrameworks)) {
         // default to all if not set AND no cookie
-        echo(' >> setting to all ');
         $framework = 'all';
     }
 }
