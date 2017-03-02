@@ -47,45 +47,25 @@ function setDataIntoGrid(data) {
     gridOptions.api.setRowData(data);
 }
 
-var athleteFilterModel = null;
-
-function setAthleteFilterModel(){
+function selectJohnAndKenny(){
     var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
-    athleteFilterComponent.setModel (['John Joe Nevin', 'Kenny Egan']);
+    athleteFilterComponent.selectValue ('John Joe Nevin');
+    athleteFilterComponent.selectValue ('Kenny Egan');
     gridOptions.api.onFilterChanged();
 }
 
-function saveAthleteFilterModel(){
+function selectEverything(){
     var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
-    athleteFilterModel = athleteFilterComponent.getModel();
-}
-
-function restoreAthleteFilterModel(){
-    var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
-    athleteFilterComponent.setModel(athleteFilterModel);
+    athleteFilterComponent.selectEverything ();
     gridOptions.api.onFilterChanged();
 }
 
-function clearAthleteFilterModel(){
+function selectNothing(){
     var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
-    athleteFilterComponent.setModel(null);
+    athleteFilterComponent.selectNothing ();
     gridOptions.api.onFilterChanged();
 }
 
-var changeTo = '../alternativeData.json';
-
-function changeData(){
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', changeTo);
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            setDataIntoGrid(httpResult);
-        }
-    };
-    changeTo = changeTo === '../olympicWinners.json' ? '../alternativeData.json' : '../olympicWinners.json';
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

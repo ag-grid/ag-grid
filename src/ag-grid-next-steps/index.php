@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
 
                 <?php if (isFrameworkAll()) { ?>
                     <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/javascript.png" height="20px"/> Overview - JavaScript</h4>
+                        <h4><img style="vertical-align: middle" src="/images/javascript.png" height="20px"/> Next Steps - JavaScript</h4>
                         <i class="fa fa-arrow-right" aria-hidden="true"></i>
                     </div>
                 <?php } ?>
@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
 
                 <?php if (isFrameworkAll()) { ?>
                     <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/angular2_small.png" height="20px"/> Overview - Angular</h4>
+                        <h4><img style="vertical-align: middle" src="/images/angular2_small.png" height="20px"/> Next Steps - Angular</h4>
                         <i class="fa fa-arrow-right" aria-hidden="true"></i>
                     </div>
                 <?php } ?>
@@ -47,7 +47,7 @@ include '../documentation-main/documentation_header.php';
 
                 <?php if (isFrameworkAll()) { ?>
                     <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/angularjs.png" height="20px"/> Overview - AngularJS 1.x</h4>
+                        <h4><img style="vertical-align: middle" src="/images/angularjs.png" height="20px"/> Next Steps - AngularJS 1.x</h4>
                         <i class="fa fa-arrow-right" aria-hidden="true"></i>
                     </div>
                 <?php } ?>
@@ -63,7 +63,7 @@ include '../documentation-main/documentation_header.php';
 
                 <?php if (isFrameworkAll()) { ?>
                     <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/vue_small.png" height="20px"/> Overview - VueJS</h4>
+                        <h4><img style="vertical-align: middle" src="/images/vue_small.png" height="20px"/> Next Steps - VueJS</h4>
                         <i class="fa fa-arrow-right" aria-hidden="true"></i>
                     </div>
                 <?php } ?>
@@ -79,7 +79,7 @@ include '../documentation-main/documentation_header.php';
 
                 <?php if (isFrameworkAll()) { ?>
                     <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/react_small.png" height="20px"/> Overview - ReactJS</h4>
+                        <h4><img style="vertical-align: middle" src="/images/react_small.png" height="20px"/> Next Steps - ReactJS</h4>
                         <i class="fa fa-arrow-right" aria-hidden="true"></i>
                     </div>
                 <?php } ?>
@@ -95,7 +95,7 @@ include '../documentation-main/documentation_header.php';
 
                 <?php if (isFrameworkAll()) { ?>
                     <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/aurelia_small.png" height="20px"/> Overview - Aurelia</h4>
+                        <h4><img style="vertical-align: middle" src="/images/aurelia_small.png" height="20px"/> Next Steps - Aurelia</h4>
                         <i class="fa fa-arrow-right" aria-hidden="true"></i>
                     </div>
                 <?php } ?>
@@ -111,7 +111,7 @@ include '../documentation-main/documentation_header.php';
 
                 <?php if (isFrameworkAll()) { ?>
                     <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/webcomponents.png" height="20px"/> Overview - Web Components</h4>
+                        <h4><img style="vertical-align: middle" src="/images/webcomponents.png" height="20px"/> Next Steps - Web Components</h4>
                         <i class="fa fa-arrow-right" aria-hidden="true"></i>
                     </div>
                 <?php } ?>

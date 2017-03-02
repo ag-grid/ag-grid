@@ -1,3 +1,7 @@
+<?php if (!isFrameworkAll()) { ?>
+    <h2 id="implementing-the-web-components-datagrid"><img style="vertical-align: middle" src="/images/webcomponents.png" height="25px"/> Next Steps</h2>
+<?php } ?>
+
 <h2 id="complex-web-components-example">Complex Web Components Example</h2>
 
 <p>
