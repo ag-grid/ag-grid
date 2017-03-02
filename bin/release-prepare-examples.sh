@@ -64,6 +64,11 @@ do
     cd ..
 
     dist-just-module.sh $1 $subfolder
+    if [ $? -ne 0 ]
+    then
+        echo "Stopping release-prepare-examples.sh"
+        exit 1
+    fi
 
     cd "$current_dir"
 done

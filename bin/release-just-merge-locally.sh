@@ -22,6 +22,10 @@ do
     cd "$module"
     rm "$module-$1.tgz" -f
 
+    git add .
+    git commit -m "$1"
+    git push --set-upstream origin $1
+
     git checkout master
     git merge $1 --no-commit --no-ff
 

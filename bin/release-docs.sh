@@ -38,6 +38,11 @@ do
         "ag-grid-react-example")
             cp dist/bundle.js ../ag-grid-docs/src/javascript-grid-getting-started/bundle-react.js
     esac
+    if [ $? -ne 0 ]
+    then
+        echo "Error releasing docs for: $subfolder. Stopping release-docs.sh"
+        exit 1
+    fi
 
 
     cd "$current_dir"

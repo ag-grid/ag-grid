@@ -79,10 +79,6 @@ do
     fi
     cd "$1/$module"
 
-    git add .
-    git commit -m "$1"
-    git push --set-upstream origin $1
-
     ## After everything is committed generate the NPM local package
     npm pack
 

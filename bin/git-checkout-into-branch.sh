@@ -22,6 +22,7 @@ do
     git clone https://github.com/ceolter/$module.git
     cd $module
     git checkout -b $1
+    cd ..
 done
 
 cd ..
