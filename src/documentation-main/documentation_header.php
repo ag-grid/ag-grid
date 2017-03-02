@@ -436,6 +436,81 @@ function isFrameworkWebComponents()
                 </div>
             <?php } ?>
 
+            <div style="border: 1px solid #eee; margin-top: 30px; margin-bottom: 50px;">
+            </div>
+
+            <div style="border: 1px solid #e8e8e8; border-radius: 3px; padding: 10px;">
+                <table>
+                    <tr>
+                        <td>
+                            <img src="../images/github100.png" style="width: 50px"/>
+                        </td>
+                        <td>
+                            <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true"
+                                    frameborder="0" scrolling="0" width="120px" height="20px"
+                                    style="position: relative; top: 3px;" class="hide-when-medium">
+                            </iframe>
+                        </td>
+                    </tr>
+                </table>
+                <div style="padding-top: 6px;">
+                    <a href="https://github.com/ceolter/ag-grid">Github</a>
+                    stars make projects look great. Please help, donate a star.
+                </div>
+            </div>
+
+            <div style="border: 1px solid #e8e8e8; border-radius: 3px; padding: 10px; margin-top: 10px;">
+
+                <div style="float: left; margin-right: 12px; margin-top: 5px;">
+                    <img src="../images/email.png"/>
+                </div>
+                <div>
+                    Get informed on releases and other ag-Grid news only - never spam.
+                </div>
+
+                <div style="display: inline-block">
+
+                    <!-- Begin MailChimp Signup Form -->
+                    <link href="//cdn-images.mailchimp.com/embedcode/classic-081711.css" rel="stylesheet" type="text/css">
+                    <style type="text/css">
+                        #mc_embed_signup {
+                            clear: left;
+                            font: 14px Helvetica, Arial, sans-serif;
+                        }
+
+                        /* Add your own MailChimp form style overrides in your site stylesheet or in this style block.
+                           We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
+                    </style>
+
+                    <div id="mc_embed_signup">
+                        <form action="//angulargrid.us11.list-manage.com/subscribe/post?u=9b44b788c97fa5b498fbbc9b5&amp;id=8b9aa91988"
+                              method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
+                              target="_blank" novalidate
+                              style="padding: 0px">
+                            <div id="mc_embed_signup_scroll">
+                                <input style="width: 140px; margin-top: 4px;" placeholder="Email Address..." type="email" value="" name="EMAIL"
+                                       class="required email" id="mce-EMAIL">
+                                <input style="width: 140px; margin-top: 4px;" placeholder="First Name" type="text" value="" name="FNAME" class=""
+                                       id="mce-FNAME">
+                                <input style="width: 140px; margin-top: 4px;" placeholder="Last Name" type="text" value="" name="LNAME" class=""
+                                       id="mce-LNAME">
+                                <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"
+                                       style="padding-left: 10px; padding-right: 10px; margin: 0px; ; margin-top: 4px; height: 20px; line-height: 20px;">
+                                <div id="mce-responses" class="clear">
+                                    <div class="response" id="mce-error-response" style="display:none"></div>
+                                    <div class="response" id="mce-success-response" style="display:none"></div>
+                                </div>
+                                <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                                <div style="position: absolute; left: -5000px;"><input type="text"
+                                                                                       name="b_9b44b788c97fa5b498fbbc9b5_8b9aa91988"
+                                                                                       tabindex="-1" value=""></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
 
         <div class="col-sm-10 blog-main">
