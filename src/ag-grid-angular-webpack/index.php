@@ -4,6 +4,16 @@ $pageTitle = "Angular Datagrid using Webpack";
 $pageDescription = "Demonstrate the best Angular  datagrid using Webpack.";
 $pageKeyboards = "Angular  Grid Webpack";
 $pageGroup = "basics";
+
+$framework = $_GET['framework'];
+if(is_null($framework)) {
+?>
+<script>
+    window.location.href = '?framework=angular';
+</script>
+<?php
+}
+
 include '../documentation-main/documentation_header.php';
 ?>
 
