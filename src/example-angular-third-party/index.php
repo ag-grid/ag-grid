@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
                                 { root: '/example-angular-third-party/typeahead/', files: 'typeahead.component.ts,typeahead.component.html,typeahead.css,typeahead-editor.component.ts,app.module.ts' },
                             ]
                           }"
-                          plunker="https://embed.plnkr.co/925YB2/"
+                          plunker="https://embed.plnkr.co/xpgLo8/"
                           exampleHeight="525px">
     </show-plunker-example>
 
@@ -39,6 +39,11 @@ include '../documentation-main/documentation_header.php';
 
     <h4 id="ng2bootstrap">Cell Editor with ng2-bootstrap Components</h4>
     <p>This example uses <code>ng2-bootstrap</code> as part of an Editor Components.</p>
+    <ul>
+        <li>Date Picker</li>
+        <li>Dropdown</li>
+        <li>Radio Button - in this case demonstrating how you can do inline editing of cell values</li>
+    </ul>
 
     <show-plunker-example sources="{
                             [
