@@ -360,10 +360,12 @@
     function handleFrameworkChange() {
         var framework = this.dataset.id;
         window.location.href = '?framework=' + framework;
+        /*
         var storage = {
             framework: framework
         };
-        localStorage.setItem(localStorageKey, JSON.stringify(storage));
+        */
+        //localStorage.setItem(localStorageKey, JSON.stringify(storage));
     }
 
 

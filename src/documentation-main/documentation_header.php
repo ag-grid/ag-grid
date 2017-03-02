@@ -1,39 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title><?php echo $pageTitle; ?></title>
-    <meta name="description" content="<?php echo $pageDescription; ?>">
-    <meta name="keywords" content="<?php echo $pageKeyboards; ?>"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Bootstrap -->
-    <link inline rel="stylesheet" href="../dist/bootstrap/css/bootstrap.css">
-
-    <link inline rel="stylesheet" href="../style.css">
-    <link inline rel="stylesheet" href="../documentation-main/documentation.css">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-
-    <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
-
-    <!-- Hotjar Tracking Code for https://www.ag-grid.com/ -->
-    <script>
-        (function (h, o, t, j, a, r) {
-            h.hj = h.hj || function () {
-                    (h.hj.q = h.hj.q || []).push(arguments)
-                };
-            h._hjSettings = {hjid: 372643, hjsv: 5};
-            a = o.getElementsByTagName('head')[0];
-            r = o.createElement('script');
-            r.async = 1;
-            r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
-            a.appendChild(r);
-        })(window, document, '//static.hotjar.com/c/hotjar-', '.js?sv=');
-    </script>
-
-
-</head>
-
 <?php
 
 $version = 'latest';
@@ -47,23 +11,36 @@ if (strcmp($version, 'latest') == 0) {
 
 // framework is passed in as url parameter
 $framework = $_GET['framework'];
+$cookieKey = 'agGridFramework';
 
 // if framework url was not passed, or is invalid, set framework to all
 $allFrameworks = array('javascript', 'angular', 'angularjs', 'react', 'vue', 'aurelia', 'webcomponents');
-$cookieKey = 'agGridFramework';
-// check if fraemwork exsits
+
+// check if framework exsits
 if (!in_array($framework, $allFrameworks)) {
+
     // set from cookie
     $framework = $_COOKIE[$cookieKey];
-    // see if still missing, ie no cookie
+
+    // if no url parameter, add it
+    if (empty($_GET['framework'])) {
+        header('Location: ?framework='.$framework.'');
+        exit;
+    }
     if (!in_array($framework, $allFrameworks)) {
         // default to all if not set AND no cookie
         $framework = 'all';
     }
 }
 
-//$oneHundredDaysFromNow = time() + 60*60*24*100;
-//setcookie($cookieKey, $framework, $oneHundredDaysFromNow, '/');
+$oneHundredDaysFromNow = time() + 60*60*24*100;
+
+$domain = ($_SERVER['HTTP_HOST'] != 'localhost') ? $_SERVER['HTTP_HOST'] : false;
+
+// delete cookie first to avoid duplicates
+setcookie($cookieKey, '', time()-300);  
+
+setcookie($cookieKey, $framework, $oneHundredDaysFromNow, '/', $domain, false);
 
 function menuItem($indent, $localKey, $name, $url) {
     menuItemWithIcon(null, $indent, $localKey, $name, $url);
@@ -127,6 +104,42 @@ function isFrameworkWebComponents()
 }
 
 ?>
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title><?php echo $pageTitle; ?></title>
+    <meta name="description" content="<?php echo $pageDescription; ?>">
+    <meta name="keywords" content="<?php echo $pageKeyboards; ?>"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link inline rel="stylesheet" href="../dist/bootstrap/css/bootstrap.css">
+
+    <link inline rel="stylesheet" href="../style.css">
+    <link inline rel="stylesheet" href="../documentation-main/documentation.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
+
+    <!-- Hotjar Tracking Code for https://www.ag-grid.com/ -->
+    <script>
+        (function (h, o, t, j, a, r) {
+            h.hj = h.hj || function () {
+                    (h.hj.q = h.hj.q || []).push(arguments)
+                };
+            h._hjSettings = {hjid: 372643, hjsv: 5};
+            a = o.getElementsByTagName('head')[0];
+            r = o.createElement('script');
+            r.async = 1;
+            r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+            a.appendChild(r);
+        })(window, document, '//static.hotjar.com/c/hotjar-', '.js?sv=');
+    </script>
+
+
+</head>
 
 <body ng-app="documentation">
 
