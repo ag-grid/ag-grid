@@ -16,7 +16,7 @@ export class NumberFilter extends ScalarBaseFilter<number, IFilterParams, Serial
     public static NOT_EQUAL = 'notEqual';//2;
     public static LESS_THAN_OR_EQUAL = 'lessThanOrEqual';//4;
     public static GREATER_THAN = 'greaterThan';//5;
-    public static GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';//6;
+    public static GREATER_THAN_OR_EQUAL = 'greaterThan';//6;
     public static IN_RANGE = 'inRange';
     @QuerySelector('#filterNumberToPanel')
     private eNumberToPanel: HTMLElement;

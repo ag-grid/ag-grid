@@ -83,8 +83,8 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     }
 
     private onDateChanged(): void {
-        this.dateFrom = this.removeTimezone(this.dateFromComponent.getDate());
-        this.dateTo = this.removeTimezone(this.dateToComponent.getDate());
+        this.dateFrom = DateFilter.removeTimezone(this.dateFromComponent.getDate());
+        this.dateTo = DateFilter.removeTimezone(this.dateToComponent.getDate());
         this.onFilterChanged();
     }
 
@@ -160,7 +160,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         this.setFilterType(filterType);
     }
 
-    private removeTimezone (from:Date):Date{
+    public static removeTimezone (from:Date):Date{
         if (!from) return null;
         return new Date (from.getFullYear(), from.getMonth(), from.getDate());
     }

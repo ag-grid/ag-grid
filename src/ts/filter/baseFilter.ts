@@ -269,6 +269,8 @@ export abstract class ScalarBaseFilter<T, P extends IFilterParams, M> extends Co
 
         let rawFilterValues : T[] | T= this.filterValues();
         let from : T= Array.isArray(rawFilterValues) ? rawFilterValues[0]: rawFilterValues;
+        if (!from) return true;
+
         let compareResult = comparator(from, value);
 
         if (this.filter === BaseFilter.EQUALS){
