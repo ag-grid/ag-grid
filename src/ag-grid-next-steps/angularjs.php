@@ -1,3 +1,7 @@
+<?php if (!isFrameworkAll()) { ?>
+    <h2 id="nextsteps-the-angularjs-datagrid"><img style="vertical-align: middle" src="/images/angularjs.png" height="25px"/> Next Steps</h2>
+<?php } ?>
+
 
 <h2 id="advanced-angularjs-1-x-example">Advanced AngularJS 1.x Example</h2>
 

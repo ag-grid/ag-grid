@@ -5,7 +5,7 @@
     <?php } ?>
 
     <?php
-    $framework = 'aurelia';
+    $frameworkChild = 'aurelia';
     include 'ag-grid-dependency-framework.php'
     ?>
 

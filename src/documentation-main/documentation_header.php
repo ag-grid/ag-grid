@@ -14,23 +14,14 @@ $framework = $_GET['framework'];
 $cookieKey = 'agGridFramework';
 
 // if framework url was not passed, or is invalid, set framework to all
-$allFrameworks = array('javascript', 'angular', 'angularjs', 'react', 'vue', 'aurelia', 'webcomponents');
+$allFrameworks = array('javascript', 'angular', 'angularjs', 'react', 'vue', 'aurelia', 'webcomponents', 'all');
 
-// check if framework exsits
+// check if framework exists
 if (!in_array($framework, $allFrameworks)) {
-
     // set from cookie
-    $framework = $_COOKIE[$cookieKey];
-
-    // if no url parameter, add it
-    /*
-    if (empty($_GET['framework'])) {
-        header('Location: ?framework='.$framework.'');
-        exit;
-    }
-    */
-    if (!in_array($framework, $allFrameworks)) {
-        // default to all if not set AND no cookie
+    if ($_COOKIE[$cookieKey]){
+        $framework = $_COOKIE[$cookieKey];
+    } else {
         $framework = 'all';
     }
 }
@@ -260,8 +251,8 @@ function isFrameworkWebComponents()
                     menuItem(1, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/');
                     menuItem(1, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/');
                     menuItem(1, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/');
-                    menuItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');
                 }
+                menuItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');
                 ?>
 
             </div>

@@ -1,3 +1,6 @@
+<?php if (!isFrameworkAll()) { ?>
+    <h2><img style="vertical-align: middle" src="/images/react_small.png" height="25px"/> Next Steps</h2>
+<?php } ?>
 
 <?php
 $framework_enterprise = 'import React from "react";

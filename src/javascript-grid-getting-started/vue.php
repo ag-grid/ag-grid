@@ -5,7 +5,7 @@
     <?php } ?>
 
     <?php
-    //$framework = 'vue';
+    $frameworkChild = 'vue';
     include 'ag-grid-dependency-framework.php'
     ?>
 
