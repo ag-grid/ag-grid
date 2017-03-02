@@ -1,6 +1,9 @@
 (function () {
 
+    
     var module = angular.module("documentation", []);
+    
+    /*
     module.controller('DocumentationController', ['$scope', '$location', function ($scope, $location) {
 
         $scope.divIsReady = function (divId) {
@@ -12,7 +15,9 @@
         }
         $scope.docsControllerReady = true;
     }]);
+    */
 
+    /*
     module.controller('GettingStartedController', ['$scope', function ($scope) {
         $scope.jsOpen = false;
         $scope.angularJsOpen = false;
@@ -27,6 +32,7 @@
             $scope[attribute] = !$scope[attribute];
         }
     }]);
+    */
 
     /*
      * Show Example directive
@@ -299,9 +305,8 @@
     });
 
     /*
-    *
-    Local storage/remember toggle state
-    */
+     * Local storage/remember toggle state
+     */
 
     var localStorageKey = "ag_grid_state";
     var toggleClasses = document.getElementsByClassName("docsMenu-header");
@@ -333,13 +338,16 @@
     }
     
     function handleToggle() {
-        resetToggle();
+        var id = this.dataset.id;
+        resetToggle(id);
         this.classList.toggle("active");
     }
 
-    function resetToggle() {
+    function resetToggle(id) {
         for (var i = 0; i < toggleClasses.length; i++) {
-            toggleClasses[i].classList.remove("active");
+            if (toggleClasses[i].dataset.id !== id) {
+                toggleClasses[i].classList.remove("active");
+            }
         }
     }
 

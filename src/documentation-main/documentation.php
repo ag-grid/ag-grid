@@ -34,10 +34,10 @@ include 'documentation_header.php';
         </div>
         -->
 
-        <h2 id="introduction">
+<!--        <h2 id="introduction">
             Welcome to the ag-Grid Documentation Pages
         </h2>
-
+-->
         <!--
         <div class="list-group">
           <a href="#" class="list-group-item active">
@@ -103,7 +103,7 @@ include 'documentation_header.php';
             <a href="/javascript-grid-getting-started/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/gettingStarted.png" style="width: 50px;"/>
+                        <img src="../images/svg/docs/getting_started.svg" width="50" />
                     </div>
                     <h4 class="list-group-item-heading">Getting Started</h4>
                     <p class="list-group-item-text">
@@ -117,7 +117,7 @@ include 'documentation_header.php';
             <a href="/javascript-grid-interfacing-overview/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/interfacing.jpg" style="width: 50px;"/>
+                        <img src="../images/svg/docs/interfacing.svg" width="50" />
                     </div>
                     <h4 class="list-group-item-heading">Interfacing</h4>
                     <p class="list-group-item-text">
@@ -134,7 +134,7 @@ include 'documentation_header.php';
             <a href="/javascript-grid-features/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/features.png" style="width: 50px;"/>
+                        <img src="../images/svg/docs/features.svg" width="50" />
                     </div>
                     <h4 class="list-group-item-heading">Features</h4>
                     <p class="list-group-item-text">
@@ -148,7 +148,7 @@ include 'documentation_header.php';
             <a href="/javascript-grid-row-models/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/rowModel.png" style="width: 50px;"/>
+                        <img src="../images/svg/docs/row_models.svg" width="50" />
                     </div>
                     <h4>Row Models</h4>
                     <p class="list-group-item-text">
@@ -162,7 +162,7 @@ include 'documentation_header.php';
             <a href="/javascript-grid-styling/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/themes.png" style="width: 50px;"/>
+                        <img src="../images/svg/docs/themes.svg" width="50" />
                     </div>
                     <h4 class="list-group-item-heading">Themes</h4>
                     <p class="list-group-item-text">
@@ -176,7 +176,7 @@ include 'documentation_header.php';
             <a href="/javascript-grid-components/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/components.png" style="width: 50px;"/>
+                        <img src="../images/svg/docs/components.svg" width="50" />
                     </div>
                     <h4>Components</h4>
                     <p class="list-group-item-text">
@@ -191,7 +191,7 @@ include 'documentation_header.php';
             <span class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/examples.jpg" style="width: 50px;"/>
+                        <img src="../images/svg/docs/examples.svg" width="50" />
                     </div>
                     <h4>Examples</h4>
                     <p class="list-group-item-text">
@@ -237,86 +237,7 @@ include 'documentation_header.php';
                 }(document, 'script', 'twitter-wjs');</script>
         </div>
 
-        <div class="backgroundGradient">
-            <div style="float: left;">
-                <img width="50px" src="../images/github100.png"/>
-            </div>
-            <div style="float: right;">
-                <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true&size=large"
-                        frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
-            </div>
-            <div style="text-align: center;">
-                <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">If you like ag-Grid, star us on Github
-                </div>
-            </div>
-        </div>
 
-        <div class="backgroundGradient" style="margin-top: 10px;">
-            <div style="float: left; margin-right: 12px; margin-top: 5px;">
-                <img src="../images/email.png"/>
-            </div>
-
-            <div style="display: inline-block">
-
-                <div style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">For information and releases of ag-Grid
-                    only - never spam
-                </div>
-
-                <!-- Begin MailChimp Signup Form -->
-                <link href="//cdn-images.mailchimp.com/embedcode/classic-081711.css" rel="stylesheet" type="text/css">
-                <style type="text/css">
-                    #mc_embed_signup {
-                        clear: left;
-                        font: 14px Helvetica, Arial, sans-serif;
-                    }
-
-                    /* Add your own MailChimp form style overrides in your site stylesheet or in this style block.
-                       We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
-                </style>
-
-                <div id="mc_embed_signup">
-                    <form action="//angulargrid.us11.list-manage.com/subscribe/post?u=9b44b788c97fa5b498fbbc9b5&amp;id=8b9aa91988"
-                          method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
-                          target="_blank" novalidate
-                          style="padding: 0px">
-                        <div id="mc_embed_signup_scroll">
-                            <input style="width: 140px" placeholder="Email Address..." type="email" value="" name="EMAIL"
-                                   class="required email" id="mce-EMAIL">
-                            <input style="width: 140px" placeholder="First Name" type="text" value="" name="FNAME" class=""
-                                   id="mce-FNAME">
-                            <input style="width: 140px" placeholder="Last Name" type="text" value="" name="LNAME" class=""
-                                   id="mce-LNAME">
-                            <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"
-                                   style="padding-left: 10px; padding-right: 10px; margin: 0px; height: 20px; line-height: 20px;">
-                            <div id="mce-responses" class="clear">
-                                <div class="response" id="mce-error-response" style="display:none"></div>
-                                <div class="response" id="mce-success-response" style="display:none"></div>
-                            </div>
-                            <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-                            <div style="position: absolute; left: -5000px;"><input type="text"
-                                                                                   name="b_9b44b788c97fa5b498fbbc9b5_8b9aa91988"
-                                                                                   tabindex="-1" value=""></div>
-                        </div>
-                    </form>
-                </div>
-                <!-- 
-                <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script>
-                <script type='text/javascript'>(function ($) {
-                        window.fnames = new Array();
-                        window.ftypes = new Array();
-                        fnames[0] = 'EMAIL';
-                        ftypes[0] = 'email';
-                        fnames[1] = 'FNAME';
-                        ftypes[1] = 'text';
-                        fnames[2] = 'LNAME';
-                        ftypes[2] = 'text';
-                    }(jQuery));
-                    var $mcj = jQuery.noConflict(true);</script>
-                -->
-                <!--End mc_embed_signup-->
-
-            </div>
-        </div>
     </div>
 
 

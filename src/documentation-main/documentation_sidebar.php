@@ -17,6 +17,17 @@
     }
 </style>
 
+<div class="news-box">
+    <div class="news-header">
+        <img src="../images/vue_small.png"/>
+        1st March 2017
+    </div>
+    <div style="padding-top: 10px;">
+        <a href="../vue-js-grid/">
+            Using VueJS Components in ag-Grid
+        </a>
+    </div>
+</div>
 
 <div class="news-box">
     <div class="news-header">20th February 2017</div>
@@ -52,8 +63,6 @@
     <div class="news-header">6th February 2017</div>
     <div style="padding-top: 10px;">
         <a href="../git-color/">
-            <img src="../images/agGridDaily.png"/>
-            <br/>
             Git on the Command Line - Improving the Experience
         </a>
     </div>
@@ -63,8 +72,6 @@
     <div class="news-header">23rd January 2017</div>
     <div style="padding-top: 10px;">
         <a href="../ag-grid-understanding-webpack/">
-            <img src="../images/agGridDaily.png"/>
-            <br/>
             Webpack Tutorial: Understanding How it Works
         </a>
     </div>
@@ -147,8 +154,6 @@
     <div class="news-header">8th December 2016</div>
     <div style="padding-top: 10px;">
         <a href="../ag-grid-angular-aot-dynamic-components/">
-            <img src="../images/agGridDaily.png"/>
-            <br/>
             Understanding AOT and Dynamic Components in Angular 2
         </a>
     </div>
@@ -194,7 +199,7 @@
     <div class="news-header">9th November 2016</div>
     <div style="background-color: #122b40; padding: 6px; text-align: center;">
         <a href="http://angular-up.com/">
-            <img src="http://angular-up.com/img/sprites/angularup-light.png" style="width: 200px;"/>
+            <img src="http://angular-up.com/img/sprites/angularup-light.png" style="width: 100%;"/>
         </a>
     </div>
     <div style="padding-top: 10px;">
@@ -215,8 +220,6 @@
     <div class="news-header">27th October 2016</div>
     <div style="padding-top: 10px;">
         <a href="../javascript-datagrid/">
-            <img src="../images/agGridDaily.png"/>
-            <br/>
             8 reasons to choose ag-Grid as your JavaScript Datagrid
         </a>
     </div>
@@ -255,7 +258,7 @@
     <div class="news-header">5th October 2016</div>
     <div class="news-header"></div>
     <a href="../ag-grid-angular-connect-2016/" style="text-align: center;">
-        <img src="../images/angularConnect2016/agGridStand-small.png"/>
+        <img src="../images/angularConnect2016/agGridStand-small.png" style="width: 100%;"/>
     </a>
     <a href="../ag-grid-angular-connect-2016/" style="text-align: center; padding-top: 10px;">
         We're gonna need a bigger boat
@@ -285,7 +288,7 @@
     <div class="news-header">Angular Connect London 2016</div>
     <div style="text-align: center;">
         <a href="https://www.youtube.com/watch?v=jamr2jmEzh8/">
-            <img src="../images/angularConnect2016Talk.png"/>
+            <img src="../images/angularConnect2016Talk.png" style="width: 100%;"/>
         </a>
     </div>
     <div style="padding-top: 10px;">
