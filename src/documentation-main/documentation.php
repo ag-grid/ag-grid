@@ -202,42 +202,6 @@ include 'documentation_header.php';
 
         </div>
 
-
-
-<!--        <p>
-            Here you will find documentation of every feature with at least
-            one example demonstrating that feature. The ag-Grid project doesn't consider a feature complete unless it is
-            documented and demonstrated.
-        </p>-->
-
-
-        <h2 id="keeping-up-to-date">
-            Keeping up to date
-        </h2>
-
-        <p>
-            ag-Grid is a fast moving project. It has gone from zero to huge in a very short space of time. To keep
-            up to date, check back regularly to the website, follow Ceolter (core author) on Twitter and join the ag-Grid
-            mailing
-            list.
-        </p>
-
-        <h4 id="twitter">Twitter</h4>
-
-        <div>
-            <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>
-            <script>!function (d, s, id) {
-                    var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-                    if (!d.getElementById(id)) {
-                        js = d.createElement(s);
-                        js.id = id;
-                        js.src = p + '://platform.twitter.com/widgets.js';
-                        fjs.parentNode.insertBefore(js, fjs);
-                    }
-                }(document, 'script', 'twitter-wjs');</script>
-        </div>
-
-
     </div>
 
 
