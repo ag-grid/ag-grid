@@ -58,7 +58,7 @@ include('../includes/mediaHeader.php');
 <pre>
 ? Project name munro-app
 ? Project description A Vue.js project
-? Author Sean Landsman <sean@thelandsmans.com>
+? Author Sean Landsman &lt;your@email.com&gt;
 ? Vue build standalone
 ? Install vue-router? No
 ? Use ESLint to lint your code? No
@@ -71,7 +71,7 @@ include('../includes/mediaHeader.php');
 npm install
 npm run dev</pre>
 
-        <p>After this we'llend up with a simple folder structure and working skeleton application.</p>
+        <p>After this we'll end up with a simple folder structure and working skeleton application.</p>
 
         <p>Next let's install the ag-Grid dependencies we'll need:</p>
 

@@ -21,7 +21,7 @@ include('../includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
-        <a href="../git-color/">
+        <a href="../vue-js-grid/">
             <img src="../images/agGridDaily.png" style="width: 225px;"/>
         </a>
     </div>
@@ -43,6 +43,7 @@ include('../includes/mediaHeader.php');
         Tutorial on how to use ag-Grid using VueJS and dynamic VueJS Components.
     </div>
 </div>
+
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
         <a href="../review-of-angularjs-grids/">
