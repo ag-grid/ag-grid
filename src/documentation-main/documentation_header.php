@@ -403,16 +403,16 @@ function isFrameworkWebComponents()
 
                 if (isFrameworkAngular() || isFrameworkAll()) {
                     menuItemWithIcon('angular2_small.png', 0, 'Angular Examples', 'Angular Examples', 'example-angular/');
-                    menuItemWithIcon('angular2_small.png', 1, 'Angular Rich Grid', 'Rich Grid', 'example-angular-rich-grid/');
-                    menuItemWithIcon('angular2_small.png', 1, 'Angular Markup', 'Grid via Markup', 'example-angular-rich-grid-markup/');
-                    menuItemWithIcon('angular2_small.png', 1, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
-                    menuItemWithIcon('angular2_small.png', 1, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
-                    menuItemWithIcon('angular2_small.png', 1, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
-                    menuItemWithIcon('angular2_small.png', 1, 'Angular Floating Row', 'Floating Rows', 'example-angular-floating-row/');
-                    menuItemWithIcon('angular2_small.png', 1, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
-                    menuItemWithIcon('angular2_small.png', 1, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
-                    menuItemWithIcon('angular2_small.png', 1, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
-                    menuItemWithIcon('angular2_small.png', 1, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
+                    menuItem(1, 'Angular Rich Grid', 'Rich Grid', 'example-angular-rich-grid/');
+                    menuItem(1, 'Angular Markup', 'Grid via Markup', 'example-angular-rich-grid-markup/');
+                    menuItem(1, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
+                    menuItem(1, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
+                    menuItem(1, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
+                    menuItem(1, 'Angular Floating Row', 'Floating Rows', 'example-angular-floating-row/');
+                    menuItem(1, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
+                    menuItem(1, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
+                    menuItem(1, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
+                    menuItem(1, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
                 }
                 menuItem(0, 'Styled Report', 'Styled Report', 'example-account-report/');
                 menuItem(0, 'File Browser', 'File Browser', 'example-file-browser/');
