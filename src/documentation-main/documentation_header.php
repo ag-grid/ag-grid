@@ -473,7 +473,7 @@ function isFrameworkWebComponents()
                 </table>
                 <div style="padding-top: 6px;">
                     <a href="https://github.com/ceolter/ag-grid">Github</a>
-                    stars make projects look great. Please help, donate a star.
+                    stars make projects look great. Please help, donate a star, it's free.
                 </div>
             </div>
 
