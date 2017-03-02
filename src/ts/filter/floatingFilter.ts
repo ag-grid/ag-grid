@@ -165,7 +165,7 @@ export class DateFloatingFilterComp extends InnerHtmlElementFloatingFilterComp<S
         let date:string = _.serializeDateToYyyyMmDd(DateFilter.removeTimezone(rawDate), "-");
         let type:string = 'equals';
         let dateTo:string = null;
-        if (!parentModel){
+        if (parentModel){
             type= parentModel.type;
             dateTo = parentModel.dateTo;
         }
