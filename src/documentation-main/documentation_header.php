@@ -51,10 +51,11 @@ function menuItem($indent, $localKey, $name, $url) {
 function menuItemWithIcon($icon, $indent, $localKey, $name, $url) {
     $iconHtml = $icon!==null ? '<img class="enterprise-icon" src="../images/'.$icon.'"/> ' : '';
     $padding = ($indent == 1) ? '&nbsp;&nbsp;' : '';
+    $indentClass = 'sidebarLink-indent'.$indent;
     if ($GLOBALS[key] == $localKey) {
         print('<span class="sidebarLinkSelected">' . $padding . $iconHtml . $name . '</span>');
     } else {
-        print('<a class="sidebarLink" href="' . $GLOBALS[rootFolder] . $url . '?framework=' . $GLOBALS[framework] . '">' . $padding . $iconHtml . $name . '</a>');
+        print('<a class="sidebarLink '.$indentClass.'" href="' . $GLOBALS[rootFolder] . $url . '?framework=' . $GLOBALS[framework] . '">' . $padding . $iconHtml . $name . '</a>');
     }
 }
 
