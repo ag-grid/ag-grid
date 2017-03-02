@@ -8,7 +8,22 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-    <div>
+        <?php if (isFrameworkJavaScript()) { ?>
+            <h2>
+                <img style="vertical-align: middle" src="../images/javascript_small.png"/>
+                <img style="vertical-align: middle" src="../images/angularjs_small.png"/>
+                <img style="vertical-align: middle" src="../images/angular2_small.png"/>
+                <img style="vertical-align: middle" src="../images/react_small.png"/>
+                <img style="vertical-align: middle" src="../images/vue_small.png"/>
+                <img style="vertical-align: middle" src="../images/aurelia_small.png"/>
+                <img style="vertical-align: middle" src="../images/webComponents_small.png"/>
+                Viewing All Frameworks
+            </h2>
+            <div>
+                You are viewing all frameworks. It is probable you are only
+                interested in one framework. Consider selecting a framework from the side menu.
+            </div>
+        <?php } ?>
 
         <?php if (isFrameworkJavaScript()) { ?>
             <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
@@ -125,6 +140,5 @@ include '../documentation-main/documentation_header.php';
         <h2>Browser Support/Compatibility</h2>
 
         <p>ag-Grid is compatible with IE 9+, Firefox, Chrome and Safari.</p>
-    </div>
 </div>
 <?php include '../documentation-main/documentation_footer.php'; ?>
