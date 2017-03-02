@@ -154,6 +154,9 @@ export interface ModelUpdatedEvent {
      * it's the same data but sorted or filtered, in which case this is true, and rows
      * can animate around (eg rowNode id 24 is the same row node as last time). */
     keepRenderedRows: boolean;
+    /** If true, then this update was a result of setRowData() getting called. This
+     * gets the grid to scroll to the top again. */
+    newData: boolean;
 }
 
 export interface CellEvent {

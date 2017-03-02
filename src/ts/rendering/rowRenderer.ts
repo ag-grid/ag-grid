@@ -24,9 +24,10 @@ import {GridCell} from "../entities/gridCell";
 import {NavigateToNextCellParams, TabToNextCellParams} from "../entities/gridOptions";
 import {RowContainerComponent} from "./rowContainerComponent";
 import {ColDef} from "../entities/colDef";
+import {BeanStub} from "../context/beanStub";
 
 @Bean('rowRenderer')
-export class RowRenderer {
+export class RowRenderer extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -65,8 +66,6 @@ export class RowRenderer {
 
     private logger: Logger;
 
-    private destroyFunctions: Function[] = [];
-
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('RowRenderer');
     }
@@ -75,16 +74,8 @@ export class RowRenderer {
     public init(): void {
         this.rowContainers = this.gridPanel.getRowContainers();
 
-        let modelUpdatedListener = this.onModelUpdated.bind(this);
-        let floatingRowDataChangedListener = this.onFloatingRowDataChanged.bind(this);
-
-        this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, modelUpdatedListener);
-        this.eventService.addEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, floatingRowDataChangedListener);
-
-        this.destroyFunctions.push( () => {
-            this.eventService.removeEventListener(Events.EVENT_MODEL_UPDATED, modelUpdatedListener);
-            this.eventService.removeEventListener(Events.EVENT_FLOATING_ROW_DATA_CHANGED, floatingRowDataChangedListener);
-        });
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
 
         this.refreshView();
     }
@@ -159,10 +150,11 @@ export class RowRenderer {
     private onModelUpdated(refreshEvent: ModelUpdatedEvent): void {
         let params: RefreshViewParams = {
             keepRenderedRows: refreshEvent.keepRenderedRows,
-            animate: refreshEvent.animate
+            animate: refreshEvent.animate,
+            newData: refreshEvent.newData
+
         };
         this.refreshView(params);
-
     }
 
     // if the row nodes are not rendered, no index is returned
@@ -214,6 +206,10 @@ export class RowRenderer {
             this.rowContainers.fullWidth.setHeight(containerHeight);
             this.rowContainers.pinnedLeft.setHeight(containerHeight);
             this.rowContainers.pinnedRight.setHeight(containerHeight);
+        }
+
+        if (params.newData) {
+            this.gridPanel.scrollToTop();
         }
 
         this.refreshAllVirtualRows(params.keepRenderedRows, params.animate);
@@ -302,8 +298,8 @@ export class RowRenderer {
     }
 
     @PreDestroy
-    private destroy() {
-        this.destroyFunctions.forEach(func => func());
+    public destroy() {
+        super.destroy();
 
         var rowsToRemove = Object.keys(this.renderedRows);
         this.removeVirtualRows(rowsToRemove);
@@ -810,4 +806,6 @@ export interface RefreshViewParams {
     animate?:boolean;
     suppressKeepFocus?:boolean;
     onlyBody?:boolean;
+    // when new data, grid scrolls back to top
+    newData?:boolean;
 }

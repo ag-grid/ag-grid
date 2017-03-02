@@ -14,6 +14,27 @@ import {InMemoryNodeManager} from "./inMemoryNodeManager";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes};
 
+export interface RefreshModelParams {
+    // how much of the pipeline to execute
+    step: number;
+    // what state to reset the groups back to after the refresh
+    groupState?: any;
+    // if NOT new data, then this flag tells grid to check if rows already
+    // exist for the nodes (matching by node id) and reuses the row if it does.
+    keepRenderedRows?: boolean;
+    // if true, rows that are kept are animated to the new position
+    animate?: boolean;
+    // if true, then rows we are editing will be kept
+    keepEditingRows?: boolean;
+    // if doing delta updates, then we provide only the new data. this was experimental,
+    // was something niall was working on, so that if adding rows, we did delta changes
+    // rather than working out the whole grouping hierarchy again
+    newRowNodes?: RowNode[];
+    // true user called setRowData() (or a new page in pagination). the grid scrolls
+    // back to the top when this is true.
+    newData?: boolean;
+}
+
 @Bean('rowModel')
 export class InMemoryRowModel implements IInMemoryRowModel {
 
@@ -96,7 +117,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         }
     }
 
-    public refreshModel(params: {step: number, groupState?: any, keepRenderedRows?: boolean, animate?: boolean, keepEditingRows?: boolean, newRowNodes?: RowNode[]}): void {
+    public refreshModel(params: RefreshModelParams): void {
 
         // this goes through the pipeline of stages. what's in my head is similar
         // to the diagram on this page:
@@ -135,7 +156,10 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                 // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
         }
 
-        let event: ModelUpdatedEvent = {animate: params.animate, keepRenderedRows: params.keepRenderedRows};
+        let event: ModelUpdatedEvent = {
+            animate: params.animate,
+            keepRenderedRows: params.keepRenderedRows,
+            newData: params.newData};
         this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, event);
 
         if (this.$scope) {
@@ -410,7 +434,10 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED);
 
         if (refresh) {
-            this.refreshModel({step: Constants.STEP_EVERYTHING, groupState: groupState});
+            this.refreshModel({
+                step: Constants.STEP_EVERYTHING,
+                groupState: groupState,
+                newData: true});
         }
     }
 

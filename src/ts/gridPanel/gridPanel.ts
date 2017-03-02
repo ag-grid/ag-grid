@@ -568,6 +568,12 @@ export class GridPanel extends BeanStub {
         this.performScroll(verticalScroll);
     }
 
+    // gets called by rowRenderer when new data loaded, as it will want to scroll
+    // to the top
+    public scrollToTop(): void {
+        this.getPrimaryScrollViewport().scrollTop = 0;
+    }
+
     //Performs any scroll
     private performScroll(scroll: Scroll) {
         let verticalScroll: VerticalScroll;
