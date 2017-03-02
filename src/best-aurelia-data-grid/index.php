@@ -1,11 +1,16 @@
 <?php
-$key = "Getting Started Aurelia";
+header("HTTP/1.1 301 Moved Permanently");
+header("Location: https://www.ag-grid.com/javascript-grid-getting-started/?framework=aurelia");
+?>
+
+<?php
+/*$key = "Getting Started Aurelia";
 $pageTitle = "Aurelia Datagrid";
 $pageDescription = "Demonstrate the best Aurelia datagrid. Shows and example of a datagrid for using with Aurelia.";
 $pageKeyboards = "Aurelia Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
-?>
+*/?><!--
 
 <div>
 
@@ -341,4 +346,4 @@ private getCountryFilterParams():any {
 
 </div>
 
-<?php include '../documentation-main/documentation_footer.php'; ?>
+--><?php /*include '../documentation-main/documentation_footer.php'; */?>

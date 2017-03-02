@@ -1,11 +1,16 @@
 <?php
-$key = "Getting Started Javascript";
+header("HTTP/1.1 301 Moved Permanently");
+header("Location: https://www.ag-grid.com/javascript-grid-getting-started/?framework=all");
+?>
+
+<?php
+/*$key = "Getting Started Javascript";
 $pageTitle = "Javascript Datagrid";
 $pageDescription = "How to set up the Best Javascript Datagrid. Shows how to use ag-Grid to build a Javascript grid using only Javascript and without using any framework";
 $pageKeyboards = "Best Javascript Datagrid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
-?>
+*/?><!--
 
 <div>
 
@@ -110,4 +115,4 @@ new agGrid.Grid(eGridDiv, gridOptions); //create a new grid</pre>
 </div>
 
 
-<?php include '../documentation-main/documentation_footer.php';?>
+--><?php /*include '../documentation-main/documentation_footer.php';*/?>
