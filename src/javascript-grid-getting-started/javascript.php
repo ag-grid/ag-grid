@@ -66,11 +66,4 @@ document.addEventListener("DOMContentLoaded", function() {
                       exampleheight="130px">
 </show-complex-example>
 
-
-<?php include 'ag-grid-bundletypes.php' ?>
-
-<?php include 'ag-grid-commonjs.php' ?>
-
-<?php include 'ag-grid-enterprise-dependency.php' ?>
-
 </div>
