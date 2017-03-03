@@ -10,7 +10,8 @@ import {IComponent} from "../interfaces/iComponent";
 
 export interface IFloatingFilterWrapperParams<M, P extends IFloatingFilterParams<M>> {
     column:Column;
-    floatingFilterComp:IFloatingFilterComp<M, P>
+    floatingFilterComp:IFloatingFilterComp<M, P>;
+    suppressFilterButton: boolean;
 }
 
 export interface IFloatingFilterWrapper <M>{
@@ -60,19 +61,30 @@ export class FloatingFilterWrapperComp<M, PC extends IFloatingFilterParams<M>, P
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
 
     floatingFilterComp:IFloatingFilterComp<M, PC>;
+    suppressFilterButton:boolean;
 
 
     init (params:P):void{
         this.floatingFilterComp = params.floatingFilterComp;
+        this.suppressFilterButton = params.suppressFilterButton;
         super.init(params);
-        this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
+        if (!this.suppressFilterButton){
+            this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
+        }
     }
 
     enrichBody(body:HTMLElement):void{
-        body.querySelector('.ag-floating-filter-body').appendChild(this.floatingFilterComp.getGui());
-        body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button">
-                <button ref="eButtonShowMainFilter">...</button>            
-        </div>`));
+        let floatingFilterBody:HTMLElement = <HTMLElement>body.querySelector('.ag-floating-filter-body');
+        if (this.suppressFilterButton){
+            floatingFilterBody.appendChild(this.floatingFilterComp.getGui());
+            _.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
+            _.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body')
+        } else {
+            floatingFilterBody.appendChild(this.floatingFilterComp.getGui());
+            body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button">
+                    <button ref="eButtonShowMainFilter">...</button>            
+            </div>`));
+        }
 
     }
 

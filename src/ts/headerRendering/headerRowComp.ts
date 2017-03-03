@@ -209,12 +209,12 @@ export class HeaderRowComp extends Component {
                         let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
                         filterComponent.setModel(change);
                         (<BaseFilter<any, any, any>>filterComponent).onFloatingFilterChanged();
-                    },
+                    }
                 };
                 let floatingFilterWrapper : IFloatingFilterWrapperComp<any, any, any> = <any>this.componentProvider.newFloatingFilterWrapperComponent(
                     filterComponent,
                     column,
-                    floatingFilterParams
+                    <null>floatingFilterParams
                 );
                 result = floatingFilterWrapper;
 
