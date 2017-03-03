@@ -90,7 +90,7 @@ include '../documentation-main/documentation_header.php';
         <?php } ?>
 
         <?php if (isFrameworkAurelia()) { ?>
-            <div ng-if="isFramework('aurelia')">
+            <div>
                 <h4>
                     <img src="/images/aurelia.png" height="20px"/>
                     Aurelia Components
