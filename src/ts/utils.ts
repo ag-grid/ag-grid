@@ -147,13 +147,14 @@ export class Utils {
         element.scrollLeft = value;
     }
 
-    static iterateObject(object: any, callback: (key:string, value: any) => void) {
+    static iterateObject(object: any, callback: (key:string, value: any, stopIteration: ()=>void) => void) {
         if (this.missing(object)) { return; }
-        var keys = Object.keys(object);
+        var keys = Object.keys(object), stopIteration = false;
         for (var i = 0; i < keys.length; i++) {
+            if(stopIteration) break;
             var key = keys[i];
             var value = object[key];
-            callback(key, value);
+            callback(key, value, ()=>{stopIteration = true;});
         }
     }
 
