@@ -121,7 +121,16 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
 export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<SerializedNumberFilter, IFloatingFilterParams<SerializedNumberFilter>>{
     asFloatingFilterText(parentModel: SerializedNumberFilter): string {
         if (!parentModel) return '';
+
         let number:number = this.asNumber(parentModel.filter);
+        if (parentModel.type === 'inRange'){
+            this.eColumnFloatingFilter.readOnly = true;
+            let numberTo:number = this.asNumber(parentModel.filterTo);
+            return number + '-' + numberTo;
+        }else{
+            this.eColumnFloatingFilter.readOnly = false;
+        }
+
         return number ? number + '' : '';
     }
 
