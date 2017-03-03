@@ -126,7 +126,7 @@ include '../documentation-main/documentation_header.php';
 
                 <?php if (isFrameworkAll()) { ?>
                     <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/webcomponents.png" height="20px"/> Overview - Web Components</h4>
+                        <h4><img style="vertical-align: middle" src="../images/webComponents.png" height="20px"/> Overview - Web Components</h4>
                         <i class="fa fa-arrow-right" aria-hidden="true"></i>
                     </div>
                 <?php } ?>

@@ -28,22 +28,22 @@ var columnDefs = [
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
-            maxValue:'7',
+            maxValue:7,
             suppressFilterButton:true
         }},
     {headerName: "Silver", field: "silver", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
-            maxValue:'3',
+            maxValue:3,
             suppressFilterButton:true
         }},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
-            maxValue:'2',
+            maxValue:2,
             suppressFilterButton:true
         }},
     {headerName: "Total", field: "total", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
-            maxValue:'5',
+            maxValue:5,
             suppressFilterButton:true
         }}
 ];
@@ -61,20 +61,35 @@ function NumberFloatingFilter() {
 NumberFloatingFilter.prototype.init = function (params) {
     this.onFloatingFilterChanged = params.onFloatingFilterChanged;
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML = '<input style="width:95%" type="range" min="0" max="'  + params.maxValue + '"/>'
-    this.eSlider = this.eGui.querySelector('input');
-
+    this.eGui.innerHTML = '<div style="width:75%; margin-left:10px" class="slider"></div>'
+    this.eSlider = $(this.eGui.querySelector('div'));
+    this.currentValue = 0;
     var that = this;
-    this.eSlider.addEventListener("input", function(){that.onFloatingFilterChanged(that.buildModel())});
+    this.eSlider.slider({
+        min:0,
+        max:params.maxValue,
+        change: function(e, ui) {
+            if (!e.originalEvent) {
+               return;
+            }
+            that.currentValue = ui.value;
+            that.onFloatingFilterChanged(that.buildModel())
+        }
+    });
+
+
 };
 
 NumberFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
-    //When the filter is empty we will receive a null message her
+
+    // When the filter is empty we will receive a null message her
     if (!parentModel) {
         //If there is no filtering set to the minimun
-        this.eSlider.value = '0'
+        this.eSlider.slider( "option", "value", 0 );
     } else {
-        this.eSlider.value = parentModel.filter + ''
+        if (parentModel.filter !== this.currentValue){
+            this.eSlider.slider( "option", "value", parentModel.filter );
+        }
     }
 };
 
@@ -85,7 +100,7 @@ NumberFloatingFilter.prototype.getGui = function () {
 NumberFloatingFilter.prototype.buildModel = function () {
     return {
         type:'greaterThan',
-        filter:Number(this.eSlider.value)
+        filter:Number(this.currentValue)
     }
 };
 
