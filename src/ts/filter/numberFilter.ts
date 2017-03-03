@@ -91,8 +91,12 @@ export class NumberFilter extends ScalarBaseFilter<number, IFilterParams, Serial
 
     public filterValues ():number|number[] {
         return this.filter !== BaseFilter.IN_RANGE ?
-            this.filterNumber :
-            [this.filterNumber, this.filterNumberTo];
+            this.asNumber(this.filterNumber):
+            [this.asNumber(this.filterNumber), this.asNumber(this.filterNumberTo)];
+    }
+
+    private asNumber(value: any): number {
+        return _.isNumeric(value) ? value : null;
     }
 
 

@@ -120,16 +120,23 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
 export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<SerializedNumberFilter, IFloatingFilterParams<SerializedNumberFilter>>{
     asFloatingFilterText(parentModel: SerializedNumberFilter): string {
         if (!parentModel) return '';
-        return parentModel.filter + '';
+        return _.isNumeric(parentModel.filter)? String(parentModel.filter) : '';
     }
 
     asParentModel(): SerializedNumberFilter {
         let currentParentModel = this.currentParentModel();
+        let filterValue = this.currentFilterValue();
         return {
             type: !currentParentModel ? 'equals' : currentParentModel.type,
-            filter: this.eColumnFloatingFilter.value !== '' ? Number(this.eColumnFloatingFilter.value) : null,
+            filter: filterValue,
             filterTo: !currentParentModel ? null: currentParentModel.filterTo
         };
+    }
+
+    private currentFilterValue() {
+        let rawValue: string = this.eColumnFloatingFilter.value;
+        let invalidNumber = rawValue === '' || (!_.isNumeric(rawValue));
+        return invalidNumber ? null : Number(rawValue);
     }
 }
 
