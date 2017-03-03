@@ -167,11 +167,20 @@ export class PaginationService extends BeanStub {
             this.totalPages = null;
         }
 
-        this.currentPage = 0;
+        this.resetCurrentPage();
 
         this.eventService.dispatchEvent(Events.EVENT_PAGINATION_RESET);
 
         this.loadPage();
+    }
+
+    private resetCurrentPage(): void {
+        let userFirstPage = this.gridOptionsWrapper.getPaginationStartPage();
+        if (userFirstPage>0) {
+            this.currentPage = userFirstPage;
+        } else {
+            this.currentPage = 0;
+        }
     }
 
     private calculateTotalPages() {

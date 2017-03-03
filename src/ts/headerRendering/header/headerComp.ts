@@ -10,6 +10,7 @@ import {IComponent} from "../../interfaces/iComponent";
 import {SvgFactory} from "../../svgFactory";
 import {EventService} from "../../eventService";
 import {RefSelector} from "../../widgets/componentAnnotations";
+import {Events} from "../../events";
 
 export interface IHeaderParams {
     column: Column;
@@ -38,6 +39,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         '<div>' +
         '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
         '  <div ref="eLabel" class="ag-header-cell-label">' +
+        '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +
         '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
         '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
         '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
@@ -49,12 +51,14 @@ export class HeaderComp extends Component implements IHeaderComp {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
+    @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eFilter') private eFilter: HTMLElement;
     @RefSelector('eSortAsc') private eSortAsc: HTMLElement;
 
     @RefSelector('eSortDesc') private eSortDesc: HTMLElement;
     @RefSelector('eSortNone') private eSortNone: HTMLElement;
+    @RefSelector('eSortOrder') private eSortOrder: HTMLElement;
     @RefSelector('eMenu') private eMenu: HTMLElement;
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('eText') private eText: HTMLElement;
@@ -74,6 +78,8 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.setupSort();
         this.setupFilterIcon();
         this.setupText(params.displayName);
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.setMultiSortOrder.bind(this));
     }
 
     private setupText(displayName: string): void {
@@ -155,6 +161,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             _.removeFromParent(this.eSortAsc);
             _.removeFromParent(this.eSortDesc);
             _.removeFromParent(this.eSortNone);
+            _.removeFromParent(this.eSortOrder);
             return;
         }
 
@@ -186,6 +193,30 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (this.eSortNone) {
             var alwaysHideNoSort = !this.params.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
             _.addOrRemoveCssClass(this.eSortNone, 'ag-hidden', alwaysHideNoSort || !this.params.column.isSortNone());
+        }
+    }
+
+    // we listen here for global sort events, NOT column sort events, as we want to do this
+    // when sorting has been set on all column (if we listened just for our col (where we
+    // set the asc / desc icons) then it's possible other cols are yet to get their sorting state.
+    private setMultiSortOrder(): void {
+
+        if (!this.eSortOrder) {
+            return;
+        }
+
+        let col = this.params.column;
+        let allColumnsWithSorting = this.sortController.getColumnsWithSortingOrdered();
+        let indexThisCol = allColumnsWithSorting.indexOf(col);
+        let moreThanOneColSorting = allColumnsWithSorting.length > 1;
+        let showIndex = col.isSorting() && moreThanOneColSorting;
+
+        _.setVisible(this.eSortOrder, showIndex);
+
+        if (indexThisCol>=0) {
+            this.eSortOrder.innerHTML = (indexThisCol+1).toString();
+        } else {
+            this.eSortOrder.innerHTML = '';
         }
     }
 

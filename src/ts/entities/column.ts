@@ -285,6 +285,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild {
         return _.missing(this.sort);
     }
 
+    public isSorting(): boolean {
+        return _.exists(this.sort);
+    }
+
     public getSortedAt(): number {
         return this.sortedAt;
     }

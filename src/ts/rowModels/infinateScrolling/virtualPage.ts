@@ -143,6 +143,10 @@ export class VirtualPage implements IEventEmitter {
 
         this.state = VirtualPage.STATE_LOADING;
 
+        // PROBLEM . . . . when the user sets sort via colDef.sort, then this code
+        // is executing before the sort is set up, so server is not getting the sort
+        // model. need to change with regards order - so the server side request is
+        // AFTER thus it gets the right sort model.
         var params: IGetRowsParams = {
             startRow: this.startRow,
             endRow: this.endRow,
