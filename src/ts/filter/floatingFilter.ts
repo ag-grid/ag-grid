@@ -120,23 +120,33 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
 export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<SerializedNumberFilter, IFloatingFilterParams<SerializedNumberFilter>>{
     asFloatingFilterText(parentModel: SerializedNumberFilter): string {
         if (!parentModel) return '';
-        return _.isNumeric(parentModel.filter)? String(parentModel.filter) : '';
+        let number:number = this.asNumber(parentModel.filter);
+        return number ? number + '' : '';
     }
 
     asParentModel(): SerializedNumberFilter {
         let currentParentModel = this.currentParentModel();
-        let filterValue = this.currentFilterValue();
+        let filterValueNumber = this.asNumber(this.eColumnFloatingFilter.value);
+        let filterValueText:string = this.eColumnFloatingFilter.value;
+
+        let modelFilterValue: number = null;
+        if (!filterValueNumber && filterValueText === '') {
+            modelFilterValue = null;
+        } else if (!filterValueNumber){
+            modelFilterValue = currentParentModel.filter;
+        } else {
+            modelFilterValue = filterValueNumber;
+        }
         return {
             type: !currentParentModel ? 'equals' : currentParentModel.type,
-            filter: filterValue,
+            filter: modelFilterValue,
             filterTo: !currentParentModel ? null: currentParentModel.filterTo
         };
     }
 
-    private currentFilterValue() {
-        let rawValue: string = this.eColumnFloatingFilter.value;
-        let invalidNumber = rawValue === '' || (!_.isNumeric(rawValue));
-        return invalidNumber ? null : Number(rawValue);
+    private asNumber(value: any):number {
+        let invalidNumber = !value || (!_.isNumeric(Number(value)));
+        return invalidNumber ? null : Number(value);
     }
 }
 
