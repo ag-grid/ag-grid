@@ -25,6 +25,12 @@ export interface IFilter {
     /** If using React or Angular 2, returns the underlying component instance, so you can call methods
      * on it if you want. */
     getFrameworkComponentInstance?(): any;
+    /**
+     * Optional method used by ag-Grid when rendering floating filters and there isn't a floating filter
+     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
+     * filter.
+     */
+    getModelAsString?(model:any): string;
 }
 
 export interface IFilterComp extends IFilter, IComponent<IFilterParams> {

@@ -13,7 +13,7 @@ import {
     TextFloatingFilterComp,
     NumberFloatingFilterComp,
     DateFloatingFilterComp,
-    SetFloatingFilterComp, IFloatingFilterComp
+    SetFloatingFilterComp, IFloatingFilterComp, ReadModelAsStringFloatingFilterComp
 } from "./filter/floatingFilter";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {
@@ -21,6 +21,9 @@ import {
     FloatingFilterWrapperComp, EmptyFloatingFilterWrapperComp
 } from "./filter/floatingFilterWrapper";
 import {Column} from "./entities/column";
+import {IFilterComp} from "./interfaces/iFilter";
+import {FilterManager} from "./filter/filterManager";
+import {BaseFilter} from "./filter/baseFilter";
 
 
 export interface ComponentConfig {
@@ -47,6 +50,9 @@ export class ComponentProvider {
 
     @Autowired("gridOptionsWrapper")
     private gridOptionsWrapper: GridOptionsWrapper;
+
+    @Autowired('filterManager')
+    private filterManager: FilterManager;
 
     @Autowired("context")
     private context: Context;
@@ -94,6 +100,11 @@ export class ComponentProvider {
                 mandatoryMethodList: [],
                 optionalMethodList: [],
                 defaultComponent: DateFloatingFilterComp
+            },
+            readModelAsStringFloatingFilterComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: [],
+                defaultComponent: ReadModelAsStringFloatingFilterComp
             },
             floatingFilterWrapperComponent: {
                 mandatoryMethodList: [],
@@ -176,7 +187,7 @@ export class ComponentProvider {
         return <IFloatingFilterComp<any, any>> this.createAgGridComponent(colDef, "floatingFilterComponent", floatingFilterToInstantiate, params, false);
     }
 
-    public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M>> (column:Column, params:IFloatingFilterParams<M>):IFloatingFilterWrapperComp<M, any, any>{
+    public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M>> (parent:IFilterComp, column:Column, params:IFloatingFilterParams<M>):IFloatingFilterWrapperComp<M, any, any>{
         let colDef = column.getColDef();
         let floatingFilterType: string;
 
@@ -194,8 +205,17 @@ export class ComponentProvider {
             floatingFilterComp: floatingFilter
         };
 
-        if (!floatingFilter){
+        if (!floatingFilter && !parent.getModelAsString){
             return <IFloatingFilterWrapperComp<any, any, any>> this.createAgGridComponent(colDef, "floatingFilterWrapperComponent", "emptyFloatingFilterWrapperComponent", floatingFilterWrapperComponentParams);
+        }
+        if (!floatingFilter && parent.getModelAsString){
+            let rawModelFn = params.currentParentModel;
+            params.currentParentModel = ():M=>{
+                let parent:IFilterComp = <any>this.filterManager.getFilterComponent(column);
+                return <any>parent.getModelAsString(rawModelFn());
+            };
+            floatingFilterWrapperComponentParams.floatingFilterComp = this.newFloatingFilterComponent('readModelAsString', colDef, params);
+            return <IFloatingFilterWrapperComp<any, any, any>> this.createAgGridComponent(colDef, "floatingFilterWrapperComponent", "floatingFilterWrapperComponent", floatingFilterWrapperComponentParams);
         }
         return <IFloatingFilterWrapperComp<any, any, any>> this.createAgGridComponent(colDef, "floatingFilterWrapperComponent", "floatingFilterWrapperComponent", floatingFilterWrapperComponentParams);
     }

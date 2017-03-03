@@ -198,19 +198,23 @@ export class HeaderRowComp extends Component {
                  */
                 let column = <Column> columnGroupChild;
                 let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+                let floatingFilterParams = {
+                    currentParentModel:():any=>{
+                        let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+                        return (filterComponent.getNullableModel) ?
+                            filterComponent.getNullableModel():
+                            filterComponent.getModel();
+                    },
+                    onFloatingFilterChanged:(change:any):void=>{
+                        let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+                        filterComponent.setModel(change);
+                        (<BaseFilter<any, any, any>>filterComponent).onFloatingFilterChanged();
+                    },
+                };
                 let floatingFilterWrapper : IFloatingFilterWrapperComp<any, any, any> = <any>this.componentProvider.newFloatingFilterWrapperComponent(
+                    filterComponent,
                     column,
-                    {
-                        currentParentModel:():any=>{
-                            let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                            return filterComponent.getNullableModel();
-                        },
-                        onFloatingFilterChanged:(change:any):void=>{
-                            let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                            filterComponent.setModel(change);
-                            (<BaseFilter<any, any, any>>filterComponent).onFloatingFilterChanged();
-                        },
-                    }
+                    floatingFilterParams
                 );
                 result = floatingFilterWrapper;
 

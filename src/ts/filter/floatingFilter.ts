@@ -152,3 +152,22 @@ export class SetFloatingFilterComp extends InputTextFloatingFilterComp<string[],
             []
     }
 }
+
+export class ReadModelAsStringFloatingFilterComp extends InputTextFloatingFilterComp<string, IFloatingFilterParams<string>>{
+    init (params:IFloatingFilterParams<string>):void{
+        super.init(params);
+        this.eColumnFloatingFilter.readOnly = true;
+    }
+
+    onParentModelChanged(parentModel:any):void{
+        this.eColumnFloatingFilter.value = this.asFloatingFilterText (this.currentParentModel());
+    }
+
+    asFloatingFilterText(parentModel: string): string {
+        return parentModel;
+    }
+
+    asParentModel(): string {
+        return null;
+    }
+}
