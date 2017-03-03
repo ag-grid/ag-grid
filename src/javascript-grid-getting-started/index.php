@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-        <?php if (isFrameworkJavaScript()) { ?>
+        <?php if (isFrameworkAll()) { ?>
             <h2>
                 <img style="vertical-align: middle" src="../images/javascript_small.png"/>
                 <img style="vertical-align: middle" src="../images/angularjs_small.png"/>

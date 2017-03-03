@@ -439,6 +439,13 @@ include '../documentation-main/documentation_header.php';
                 and virtual pagination, defines the block size the datasource is asked for data.</td>
         </tr>
         <tr>
+            <th>paginationFirstPage</th>
+            <td>
+                The first page to use for pagination. So if you want to start on page 6, set this number
+                to 5 (pages are zero indexed).
+            </td>
+        </tr>
+        <tr>
             <th>datasource</th>
             <td>A datasource is used when using row models a) pagination and b) virtual paging. This section explains the datasource used in each fo these row models.
                 See <a href="../javascript-grid-datasource/">Datasource</a> for more information.
