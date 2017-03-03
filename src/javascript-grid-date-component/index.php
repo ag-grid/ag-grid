@@ -77,10 +77,7 @@ gridOptions: {
     // after rows are loaded, it can do it here.</span>
     onNewRowsLoaded?(): void;
 
-    <span class="codeComment">// Gets called when the grid is destroyed. If your custom filter needs to do
-    // any resource cleaning up, do it here. A filter is NOT destroyed when it is
-    // made 'not visible', as the gui is kept to be shown again if the user selects
-    // that filter again. The filter is destroyed when the grid is destroyed.</span>
+    <span class="codeComment">// Gets called when the component is destroyed.</span>
     destroy?(): void;
 }</pre>
 
