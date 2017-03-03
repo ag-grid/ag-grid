@@ -3,36 +3,6 @@
     
     var module = angular.module("documentation", []);
     
-    /*
-    module.controller('DocumentationController', ['$scope', '$location', function ($scope, $location) {
-
-        $scope.divIsReady = function (divId) {
-            console.log(document.getElementById(divId));
-            if (document.getElementById(divId)) {
-                return true;
-            }
-            return false;
-        }
-        $scope.docsControllerReady = true;
-    }]);
-    */
-
-    /*
-    module.controller('GettingStartedController', ['$scope', function ($scope) {
-        $scope.jsOpen = false;
-        $scope.angularJsOpen = false;
-        $scope.vueOpen = false;
-        $scope.reactOpen = false;
-        $scope.aureliaOpen = false;
-        $scope.webcomponentsOpen = false;
-
-        $scope.showGettingStarted = true;
-
-        $scope.toggleDiv = function (attribute) {
-            $scope[attribute] = !$scope[attribute];
-        }
-    }]);
-    */
 
     /*
      * Show Example directive
@@ -304,27 +274,18 @@
         };
     });
 
+
     /*
      * Local storage/remember toggle state
      */
 
-    var localStorageKey = "ag_grid_state";
+    var localStorageKey = "agGrid_expandAll";
     var toggleClasses = document.getElementsByClassName("docsMenu-header");
+    var expandAllState = JSON.parse(localStorage.getItem('agGrid_expandAll')); 
+    var expandAllLink = document.getElementsByClassName("expandAll");
 
-
-    /*
-    initDocsMenu();
-
-    function initDocsMenu() {
-        var state = JSON.parse(localStorage.getItem('ag_grid_state'));
-        if (state.framework) {
-            window.location.href = '?framework=' + state.framework;
-        }
-    }
-    */
-
+    /* close framework dropdown when clicking outside */
     document.body.addEventListener('click', handleBodyClick, true); 
-
     function handleBodyClick() {
         var frameworkElement = document.querySelectorAll('.frameworkBox');
         var frameworkLink = document.querySelectorAll('.frameworkDropdownButton'); 
@@ -338,14 +299,22 @@
     for (var i = 0; i < toggleClasses.length; i++) {
         toggleClasses[i].addEventListener('click', handleToggle, false);
     }
-    
+
+
     function handleToggle() {
         var id = this.dataset.id;
-        resetToggle(id);
+        
+        resetSingleToggle(id);
+        
         this.classList.toggle("active");
+        /* if user is using normal menu reset expand all */
+        if (!this.classList.contains("active")) {
+            expandAllLink[0].innerHTML = "Expand All <i class='fa fa-arrow-right' aria-hidden='true'></i>";
+            localStorage.setItem(localStorageKey, false);
+        }
     }
 
-    function resetToggle(id) {
+    function resetSingleToggle(id) {
         for (var i = 0; i < toggleClasses.length; i++) {
             if (toggleClasses[i].dataset.id !== id) {
                 toggleClasses[i].classList.remove("active");
@@ -353,6 +322,34 @@
         }
     }
 
+    /* expand all dropdowns */
+    if (expandAllLink[0]) {
+        expandAllLink[0].addEventListener('click', function(){
+            if (this.text.indexOf('Expand') > -1) {
+                expandAll();
+            } else {
+                closeAll();
+            }
+        }, true);         
+    }
+
+    function expandAll() {
+        for (var i = 0; i < toggleClasses.length; i++) {
+            toggleClasses[i].classList.add("active");
+            expandAllLink[0].innerHTML = "Close All <i class='fa fa-arrow-down' aria-hidden='true'></i>";
+            localStorage.setItem(localStorageKey, true);
+        }
+    }
+
+    function closeAll() {
+        for (var i = 0; i < toggleClasses.length; i++) {
+            toggleClasses[i].classList.remove("active");
+            expandAllLink[0].innerHTML = "Expand All <i class='fa fa-arrow-right' aria-hidden='true'></i>";
+            localStorage.setItem(localStorageKey, false);
+        }
+    }
+
+    /* framework dropdown menu */
     var FrameworkLinks = document.getElementsByClassName("frameworkDropdown-link");
 
     for (var i = 0; i < FrameworkLinks.length; i++) {
@@ -362,32 +359,15 @@
     function handleFrameworkChange() {
         var framework = this.dataset.id;
         window.location.href = '?framework=' + framework;
-        /*
-        var storage = {
-            framework: framework
-        };
-        */
-        //localStorage.setItem(localStorageKey, JSON.stringify(storage));
     }
 
-    /* expand all dropdowns */
-    var expandAllLink = document.getElementsByClassName("expandAll");
-    if (expandAllLink[0]) {
-        expandAllLink[0].addEventListener('click', function(){
-            if (this.text.indexOf('Expand') > -1) {
-                for (var i = 0; i < toggleClasses.length; i++) {
-                    toggleClasses[i].classList.add("active");
-                    this.innerHTML = "<i class='fa fa-expand' aria-hidden='true'></i> Close All";
-                }
-            } else {
-                for (var i = 0; i < toggleClasses.length; i++) {
-                    toggleClasses[i].classList.remove("active");
-                    this.innerHTML = "<i class='fa fa-expand' aria-hidden='true'></i> Expand All";
-                }
-            }
-        }, true);         
+    initDocsMenu();
+
+    function initDocsMenu() {
+        if (expandAllState) {
+            expandAll();
+        }
     }
-
-
+    
 
 })();

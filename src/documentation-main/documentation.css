@@ -1,3 +1,8 @@
+.documentationContainer {
+    margin-top: 20px;
+    position: relative;
+}
+
 .bigTitle {
     font-size: 20px;
     font-weight: bold;
@@ -110,10 +115,10 @@
 
 .docsMenu-header .fa {
     position: absolute;
-    top: 14px;
+    top: 12px;
     right: 10px;
     font-size: 13px;
-    //transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
     color: #999;
 }
 .docsMenu-header.active, .docsMenu-header.toggleActive, .docsMenu-header:hover {
@@ -178,9 +183,6 @@
     padding: 5px;
 }
 
-#documentationSearch {
-    margin-bottom: 10px;
-}
 
 #frameworkContext {
   width: 100%;
@@ -221,11 +223,17 @@ a.column-links:hover {
 * === Google Custom search in docs ===
 */
 
+#documentationSearch {
+    margin-bottom: 10px;
+}
+
 @media only screen and (min-width : 992px) {
     #documentationSearch {
         width: 250px;
         height: 25px;
-        padding: 11px 0 0 0px;
+        padding: 0px 0 0 0px;
+        position: absolute;
+        top: 10px;
     }
 }
 
@@ -236,6 +244,7 @@ a.column-links:hover {
 
 #documentationSearch .documentationSearch-spinner {
     display: none;
+    margin: 5px 0 0 0;
 }
 
 #documentationSearch .documentationSearch-spinner.active {
@@ -264,7 +273,7 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 * === Framework Dropdown ===
 */
 .frameworkBox {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 .frameworkDropdownButton {
     width: 100%;
@@ -331,6 +340,14 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
     padding: 2px 0px;
 }
 
+@media only screen and (max-width: 768px) {
+
+    .frameworkBox .dropdown-menu li {
+         padding: 2px 10px 2px 10px;
+    }
+
+}
+
 .frameworkBox .dropdown-menu li.frameworkDropdownText {
     padding: 8px 20px 10px 20px;
     margin: 0px;
@@ -392,3 +409,43 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 .documentationHeader {
     margin: 0 0 20px;
 }
+
+.expandAll {
+    transition: all 1s ease-in-out;
+}
+
+.expandAll .fa {
+    color: #999;
+}
+
+/* override bootstrap mobile styles */
+
+@media only screen and (max-width: 768px) {
+    
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+        display: none;
+        float: left;
+        min-width: 160px;
+        padding: 5px 0;
+        margin: 2px 0 0;
+        font-size: 14px;
+        text-align: left;
+        list-style: none;
+        background-color: #fff;
+        -webkit-background-clip: padding-box;
+        background-clip: padding-box;
+        border: 1px solid #ccc;
+        border: 1px solid rgba(0, 0, 0, .15);
+        border-radius: 4px;
+        -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+    }
+
+}
+
+
+
