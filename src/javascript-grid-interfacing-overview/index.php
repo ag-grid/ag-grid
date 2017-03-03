@@ -129,18 +129,6 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         </div>
     <?php } ?>
 
-    <?php if (isFrameworkAngularJS()) { ?>
-        <div>
-            <h2>
-                <img src="/images/angularjs.png" height="50px"/>
-                AngularJS 1.x</span>
-            </h2>
-            <p>
-                If you are using AngularJS 1.x then all of
-                your interaction with ag-Grid will be through the gridOptions.
-            </p>
-        </div>
-    <?php } ?>
 
     <?php if (isFrameworkReact()) { ?>
         <div>

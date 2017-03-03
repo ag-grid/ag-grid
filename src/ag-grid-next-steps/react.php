@@ -14,7 +14,7 @@ include '../javascript-grid-getting-started/ag-grid-enterprise-framework.php'
 <h2 id="next-steps">Next Steps</h2>
 
 <p>
-    The above is all you need to get started using ag-Grid in a React application. Now would
+    Now would
     be a good time to try it in a simple app and get some data displaying and practice with
     some of the grid settings before moving onto the advanced features of cellRendering
     and custom filtering.

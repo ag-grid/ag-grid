@@ -52,12 +52,12 @@ include '../documentation-main/documentation_header.php';
 
         <?php if (isFrameworkAngular()) { ?>
             <div>
-                <h4 ng-if="isFramework('angular')">
+                <h4>
                     <img src="/images/angular2.png" height="20px"/>
                     Angular
                 </h4>
                 <p>
-                    Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or VueJS bound
+                    Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or Angular bound
                     properties.
                 </p>
             </div>

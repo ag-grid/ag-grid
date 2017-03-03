@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=group-row"
                           sources="{
                             [
-                                { root: '../ng2-example/app/floating-row-example/', files: 'floating-row-renderer.component.ts,floating-row-renderer.component.html,styled-renderer.component.ts' },
+                                { root: '../ng2-example/app/grouped-row-example/', files: 'group-row-renderer.component.ts,group-row-renderer.component.html,medal-renderer.component.ts' },
                                 { root: '../ng2-example/app/', files: 'app.module.ts' }
                             ]
                           }"

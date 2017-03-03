@@ -24,8 +24,8 @@ include '../documentation-main/documentation_header.php';
         <div class="col-sm-6">
             <a href="../example-angular-rich-grid/" class="column-links column-items">Rich Grid</a>
             <a href="../example-angular-rich-grid-markup/" class="column-links column-items">Rich Grid with Markup</a>
-            <a href="../example-angular-dynamic/" class="column-links column-items">Dynamic Component</a>
-            <a href="../example-angular-dynamic/" class="column-links column-items">Richer Dynamic Components</a>
+            <a href="../example-angular-dynamic#dynamic" class="column-links column-items">Dynamic Component</a>
+            <a href="../example-angular-dynamic#rich-dynamic" class="column-links column-items">Richer Dynamic Components</a>
             <a href="../example-angular-editor/" class="column-links column-items">Editor Components</a>
         </div>
         <div class="col-sm-6">
