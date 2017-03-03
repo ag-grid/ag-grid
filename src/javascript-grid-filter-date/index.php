@@ -12,6 +12,12 @@ include '../documentation-main/documentation_header.php';
     Date filters allow users to filter data based on the dates contained in the column where this filter is defined. To
     create a new date filter in a column, all you need to do is:
 </p>
+
+<note>
+    <p>The date filter uses <a href="/javascript-grid-date-component/">your own date component</a> if you have one registered automatically. So both in the rich filter
+        and the floating filter it will be used to let the user pick dates. Isn't that nice :)</p>
+</note>
+
 <ol>
     <li><a href="../javascript-grid-filtering/#enable-filtering"> Enable filtering on that column</a></li>
     <li>Set the filter type to date</li>
@@ -179,85 +185,6 @@ dobFilterComponent.onFilterChanged()
     <li>Examples</li>
 </ul>
 </p>
-
-<h2 id="custom-date-component">Custom Date Component</h2>
-
-<p>
-    It is possible to specify your own component to be used as a date picker. By default the grid will us
-    the browser provided date picker for Chrome (as we think it's nice), but for all other browser it will
-    just provide a simple text field. It is assumed that you will have a chosen date picker for your application.
-    In this instance you can provide your chosen date picker to ag-Grid. This is done by providing a custom
-    Date Component via the grid property <i>dateComponent</i> as follows:
-</p>
-
-<pre>
-gridOptions: {
-    ...
-    <span class="codeComment">// Here is where we specify the component to be used as the date picket widget</span>
-    dateComponent: MyDateEditor
-}},
-</pre>
-
-<p>
-    The interface for dateComponent is similar to that of a cellRenderer and is as follows:
-</p>
-
-<pre>
-interface IDateComp {
-    <span class="codeComment">// Callback received to signal the creation of this cellEditorRenderer,
-    // placeholder to create the necessary logic to setup the component,
-    // like initialising the gui, or any other part of your component</span>
-    init?(params: IDateParams): void;
-
-    <span class="codeComment">// Return the DOM element of your editor, this is what the grid puts into the DOM</span>
-    getGui(): HTMLElement;
-
-    <span class="codeComment">// Gets called once by grid after editing is finished.
-    // If your editor needs to do any cleanup, do it here</span>
-    destroy?(): void;
-
-    <span class="codeComment">// Returns the current date represented by this editor</span>
-    getDate(): Date;
-
-    <span class="codeComment">// Sets the date represented by this component</span>
-    setDate(date:Date): void;
-
-    <span class="codeComment">// A hook to perform any necessary operation just after the
-    // gui for this component has been renderer in the screen</span>
-    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
-}
-</pre>
-
-<p>
-    The params object for the <i>DateComponent</i> has the following signature:
-</p>
-
-<pre>
-export interface IDateCompParams {
-    <span class="codeComment">// Method for component to tell ag-Grid that the date has changed</span>
-    onDateChanged:()=>void
-}
-</pre>
-
-<p>
-    The onDateChanged method is used to tell ag-Grid the date selection has changed.
-    You are responsible to hook this method inside your date component so that every time that the date changes
-    inside the component, this method is called, so that ag-Grid can proceed with the filtering.
-</p>
-
-<p>
-    See below an example of a custom JQuery date picker.
-</p>
-
-<show-complex-example example="exampleCustomDate.html"
-                      sources="{
-                                [
-                                    { root: './', files: 'exampleCustomDate.html,exampleCustomDate.js' }
-                                ]
-                              }"
-                      plunker="https://embed.plnkr.co/hIMxzFxvZk34NnpGpvOT/"
-                      exampleheight="500px">
-</show-complex-example>
 
 
 

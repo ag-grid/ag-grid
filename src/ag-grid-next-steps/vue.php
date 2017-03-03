@@ -1,3 +1,6 @@
+<?php if (!isFrameworkAll()) { ?>
+    <h2 id="implementing-the-vuejs-datagrid"><img style="vertical-align: middle" src="/images/vue_small.png" height="25px"/> Next Steps</h2>
+<?php } ?>
 
 <h2 id="parent_child">Child to Parent Communication</h2>
 

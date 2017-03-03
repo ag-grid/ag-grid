@@ -9,14 +9,14 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Set Filtering</h2>
+    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Set Filter</h2>
 
     <p>
         A set filter, influenced by how filters work in Microsoft Excel. Set filters can be provided with
         additional options through the filterParams attribute.
     </p>
 
-    <h3>Filter Parameters</h3>
+    <h2>Set Filter Parameters</h2>
 
     <p>
         An additional attribute on the column definition, filterParams, can be used to provide extra information to
@@ -137,7 +137,7 @@ columnDefinition = {
 
     <show-example example="exampleSetFilterComparator"></show-example>
 
-    <h3 id="newRowsSetFilter">New Rows Action and Values Example</h3>
+    <h2 id="newRowsSetFilter">New Rows Action and Values Example</h2>
 
     <p>
         Below demonstrates using New Rows Action and Values. The example is not meant to make business sense,
@@ -165,9 +165,34 @@ columnDefinition = {
 
     <show-example example="exampleSetFilterNewRows"></show-example>
 
-    <h3>Set Filter API</h3>
+
+    <h2 id="model">Set Filter Model</h2>
+
     <p>
-        The set filter API is as follows:
+        Get and set the state of the set filter by getting and setting the model on the filter instance.
+    </p>
+
+    <p>
+<pre><span class="codeComment">// get filter instance</span>
+var countryFilterComponent = gridOptions.api.getFilterInstance('country');
+
+<span class="codeComment">// get filter model</span>
+var model = countryFilterComponent.getModel();
+
+<span class="codeComment">// OR set filter model and update</span>
+countryFilterComponent.setModel(['Spain','Ireland','South Africa','Australia','England']);
+countryFilterComponent.onFilterChanged()
+</pre>
+</p>
+
+    <p>
+        The number filter model its an straight string array where each item in the array corresponds to an element
+        to be selected from the set:
+    </p>
+
+    <h2>Set Filter API</h2>
+    <p>
+        The set filter has on top of the getModel and setModel methods common to all the filters the following API:
     <ul>
         <li><b>setMiniFilter(newMiniFilter)</b>: Sets the filter at the top of the filter (the 'quick search' in the popup)</li>
         <li><b>getMiniFilter()</b>: Gets the mini filter text.</li>
@@ -181,7 +206,6 @@ columnDefinition = {
         <li><b>isNothingSelected()</b>: Returns true if nothing is selected</li>
         <li><b>getUniqueValueCount()</b>: Returns number of unique values. Useful for iterating with getUniqueValue(index)</li>
         <li><b>getUniqueValue(index)</b>: Returns the unique value at the given index</li>
-        <li><b>getModel() / setModel()</b>: Gets the filter as a model, good for saving and restoring.</li>
     </ul>
     </p>
 
@@ -198,14 +222,35 @@ columnDefinition = {
 
     <show-example example="exampleSetFilterApi"></show-example>
 
-<!--    <p>
-        To use the
+
+    <h2 id="floating">Floating Set Filter</h2>
+    <p>
+        If your grid has floatingFilter enabled, your columns with set filter will automatically show below the header a new
+        column that will show two elements:
+
+    <ul>
+        <li>Filter input box: It reflects any change made to the set filtering from anywhere within the application. This includes
+                    changes on the rich filter for this column made by the user directly or changes made to the filter through
+                    a call to setModel or the API to this filter component</li>
+            </ol>
+        </li>
+        <li>Filter button: This button is a shortcut to show the rich filter editor</li>
+    </ul>
     </p>
--->
 
-<!--    <h3>Another Example</h3>
+    <h2 id="commonFunctionality">Common Column Filtering Functionality And Examples</h2>
 
-    <show-example example="exampleSetFilter2"></show-example>-->
+    <p>The following can be found int the <a "../javascript-grid-filtering/">column filtering documentation page</a></p>
+    <p>
+    <ul>
+        <li>Common filtering params</li>
+        <li>Enabling/Disabling filtering in a column</li>
+        <li>Enabling/Disabling floating filter</li>
+        <li>Adding apply and clear button to a column filter</li>
+        <li>Filtering animation</li>
+        <li>Examples</li>
+    </ul>
+    </p>
 
 
 </div>

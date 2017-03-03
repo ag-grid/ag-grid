@@ -1,3 +1,8 @@
+<?php if (!isFrameworkAll()) { ?>
+    <h2><img style="vertical-align: middle" src="/images/angular2_small.png" height="25px"/> Next Steps</h2>
+<?php } ?>
+
+
 <div>
 
     <h2 id="ag-grid-angular-features"><img style="vertical-align: middle" src="/images/angular2_small.png"

@@ -251,8 +251,8 @@ function isFrameworkWebComponents()
                     menuItem(1, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/');
                     menuItem(1, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/');
                     menuItem(1, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/');
-                    menuItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');
                 }
+                menuItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');
                 ?>
 
             </div>
@@ -400,9 +400,11 @@ function isFrameworkWebComponents()
             <div class="docsMenu-content">
                 <?php
                 menuItem(0, 'Components', 'Overview', 'javascript-grid-components/');
+                menuItem(0, 'Date Component', 'Date Component', 'javascript-grid-date-component/');
                 menuItem(0, 'Cell Rendering', 'Cell Renderer', 'javascript-grid-cell-rendering/');
                 menuItem(0, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/');
                 menuItem(0, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component/');
+                menuItem(0, 'Floating Filter Component', 'Floating Filter Component', 'javascript-grid-floating-filter-component/');
                 menuItem(0, 'Header Rendering', 'Header Component', 'javascript-grid-header-rendering/');
                 ?>
             </div>
@@ -475,7 +477,7 @@ function isFrameworkWebComponents()
                 </table>
                 <div style="padding-top: 6px;">
                     <a href="https://github.com/ceolter/ag-grid">Github</a>
-                    stars make projects look great. Please help, donate a star.
+                    stars make projects look great. Please help, donate a star, it's free.
                 </div>
             </div>
 
