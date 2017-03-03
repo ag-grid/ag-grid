@@ -36,7 +36,7 @@
           <li><a class="frameworkDropdown-link" data-id="aurelia" href="#"><img src="/images/aurelia_small.png" alt="Aurelia" /> Aurelia</a></li>
           <li><a class="frameworkDropdown-link" data-id="react" href="#"><img src="/images/svg/react.alt.svg" width="22" alt="React" /> React</a></li>
           <li><a class="frameworkDropdown-link" data-id="vue" href="#"><img src="/images/vue_small.png" width="22" alt="Vue" /> Vue JS</a></li>
-          <li><a class="frameworkDropdown-link" data-id="webcomponents" href="#"><img src="/images/webComponents_small.png" alt="Web Components" /> Web Components</a></li>
+          <li><a class="frameworkDropdown-link" data-id="webcomponents" href="#"><img src="../images/webComponents_small.png" alt="Web Components" /> Web Components</a></li>
           <li><a class="frameworkDropdown-link all-frameworks" data-id="all" href="#">All Frameworks (show everything)</a></li>
         </ul>
     </div>

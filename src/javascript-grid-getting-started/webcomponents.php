@@ -1,7 +1,7 @@
 <div>
 
     <?php if (!isFrameworkAll()) { ?>
-        <h2 id="implementing-the-web-components-datagrid"><img style="vertical-align: middle" src="/images/webcomponents.png" height="25px"/> Overview</h2>
+        <h2 id="implementing-the-web-components-datagrid"><img style="vertical-align: middle" src="../images/webComponents.png" height="25px"/> Overview</h2>
     <?php } ?>
 
     <?php include 'ag-grid-dependency.php' ?>
