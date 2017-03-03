@@ -28,12 +28,12 @@ if (!in_array($framework, $allFrameworks)) {
 
 $oneHundredDaysFromNow = time() + 60*60*24*100;
 
-$domain = ($_SERVER['HTTP_HOST'] != 'localhost') ? $_SERVER['HTTP_HOST'] : false;
+//$domain = ($_SERVER['HTTP_HOST'] != 'localhost') ? $_SERVER['HTTP_HOST'] : false;
 
 // delete cookie first to avoid duplicates
 setcookie($cookieKey, '', time()-300);  
 
-setcookie($cookieKey, $framework, $oneHundredDaysFromNow, '/', $domain, false);
+setcookie($cookieKey, $framework, $oneHundredDaysFromNow, '/');
 
 function menuItem($indent, $localKey, $name, $url) {
     menuItemWithIcon(null, $indent, $localKey, $name, $url);
