@@ -328,8 +328,10 @@
     function handleBodyClick() {
         var frameworkElement = document.querySelectorAll('.frameworkBox');
         var frameworkLink = document.querySelectorAll('.frameworkDropdownButton'); 
-        if (!frameworkElement[0].contains(event.target)) {
-            frameworkLink[0].classList.remove("active");
+        if (frameworkElement[0]) {
+            if (!frameworkElement[0].contains(event.target)) {
+                frameworkLink[0].classList.remove("active");
+            }
         }
     }
 
@@ -367,6 +369,25 @@
         */
         //localStorage.setItem(localStorageKey, JSON.stringify(storage));
     }
+
+    /* expand all dropdowns */
+    var expandAllLink = document.getElementsByClassName("expandAll");
+    if (expandAllLink[0]) {
+        expandAllLink[0].addEventListener('click', function(){
+            if (this.text.indexOf('Expand') > -1) {
+                for (var i = 0; i < toggleClasses.length; i++) {
+                    toggleClasses[i].classList.add("active");
+                    this.innerHTML = "<i class='fa fa-expand' aria-hidden='true'></i> Close All";
+                }
+            } else {
+                for (var i = 0; i < toggleClasses.length; i++) {
+                    toggleClasses[i].classList.remove("active");
+                    this.innerHTML = "<i class='fa fa-expand' aria-hidden='true'></i> Expand All";
+                }
+            }
+        }, true);         
+    }
+
 
 
 })();
