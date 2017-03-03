@@ -63,7 +63,7 @@ include '../documentation-main/documentation_header.php';
 
     <?php if (isFrameworkWebComponents()) { ?>
         <h4>
-            <img src="/images/webComponents.png" height="20px"/>
+            <img src="../images/webComponents.png" height="20px"/>
             Web Components
         </h4>
         <p>

@@ -19,7 +19,6 @@
 
 <div class="news-box">
     <div class="news-header">
-        <img src="../images/svg/docs/newspaper.svg"/>
         <img src="../images/vue_small.png"/>
         1st March 2017
     </div>
@@ -40,7 +39,7 @@
 </div>
 
 <div class="news-box">
-    <img src="../images/svg/docs/newspaper.svg"/>
+    <img style="float: left" src="../images/svg/docs/newspaper.svg" width="20px"/>
     <div class="news-header">15th February 2017</div>
     <div style="padding-top: 10px;">
         <a href="../review-of-angularjs-grids/">
@@ -62,7 +61,7 @@
 </div>
 
 <div class="news-box">
-    <img src="../images/svg/docs/newspaper.svg"/>
+    <img style="float: left" src="../images/svg/docs/newspaper.svg" width="20px"/>
     <div class="news-header">6th February 2017</div>
     <div style="padding-top: 10px;">
         <a href="../git-color/">
@@ -72,7 +71,7 @@
 </div>
 
 <div class="news-box">
-    <img src="../images/svg/docs/newspaper.svg"/>
+    <img style="float: left" src="../images/svg/docs/newspaper.svg" width="20px"/>
     <div class="news-header">23rd January 2017</div>
     <div style="padding-top: 10px;">
         <a href="../ag-grid-understanding-webpack/">
@@ -155,7 +154,7 @@
 
 
 <div class="news-box">
-    <img src="../images/svg/docs/newspaper.svg"/>
+    <img style="float: left" src="../images/svg/docs/newspaper.svg" width="20px"/>
     <div class="news-header">8th December 2016</div>
     <div style="padding-top: 10px;">
         <a href="../ag-grid-angular-aot-dynamic-components/">
@@ -222,7 +221,7 @@
 </div>
 
 <div class="news-box">
-    <img src="../images/svg/docs/newspaper.svg"/>
+    <img style="float: left" src="../images/svg/docs/newspaper.svg" width="20px"/>
     <div class="news-header">27th October 2016</div>
     <div style="padding-top: 10px;">
         <a href="../javascript-datagrid/">
