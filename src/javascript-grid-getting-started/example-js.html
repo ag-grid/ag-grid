@@ -1,10 +1,64 @@
+<!DOCTYPE html>
 <html>
+
 <head>
-    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
-    <script src="../dist/ag-grid/ag-grid.js?ignore=notused40"></script>
-    <script src="example-js.js"></script>
+    <script src="https://www.ag-grid.com/dist/ag-grid-enterprise.js?ignore=notused20"></script>
+    <script language="javascript">
+        (function () {
+
+            document.addEventListener('DOMContentLoaded', function () {
+
+                var rowData = [
+                    { name: 'AA', role: 'A' },
+                    { name: 'AA', role: 'B' },
+                    { name: 'AA', role: 'C' },
+                    { name: 'BB', role: 'D' },
+                    { name: 'CC', role: 'E' },
+                    { name: 'DD', role: 'F' }
+                ]
+
+                var gridDiv = document.querySelector('#myGrid');
+
+                var datasource = {
+                    getRows: function(params) {
+                        console.log(JSON.stringify(params.sortModel));
+                    }
+                };
+
+                var gridOptions = null;
+
+                gridOptions = {
+                    columnDefs: [
+                        {
+                            headerName: 'Name',
+                            field: 'name',
+                            sort: "asc",
+                            sortedAt: 10
+                        },
+                        {
+                            headerName: 'Role',
+                            field: 'role',
+                            sort: "asc",
+                            sortedAt: 20
+                        }
+                    ],
+                    rowData: rowData,
+                    enableServerSideSorting: true,
+                    enableServerSideFilter: true,
+                    enableFilter: true,
+                    rowModelType: "virtual",
+                    datasource: datasource
+                };
+
+                var grid = new agGrid.Grid(gridDiv, gridOptions);
+            });
+
+        })();
+    </script>
 </head>
+
 <body>
-    <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+<div id="myGrid" style="height: 500px; width: 500px" class="ag-dark"></div>
 </body>
+
 </html>

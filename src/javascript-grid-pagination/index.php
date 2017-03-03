@@ -98,11 +98,25 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="examplePagingServerSide"></show-example>
 
+    <h3>
+        Start Page
+    </h3>
+
+    <p>
+        The start page for pagination is by default zero (the first page). If you want another
+        page, set the property <i>paginationPageSize</i>.
+    </p>
+
     <h3 id="configuring-a-bit-differently">Configuring A Bit Differently</h3>
 
     <p>
-        The examples above use old style JavaScript objects for the datasource. This example turns things around slightly
-        and creates a datasource Class. The example also just creates (makes up) data on the fly.
+        To demonstrate further, the example below shows:
+        <ul>
+            <li>A JavaScript Class is used for the datasource.</li>
+            <li>Data is made up on the fly (probably not what your application would do, but good for testing
+                as it easily generates a large amount of data).</li>
+            <li>The start page for the datasource is set to 6 by setting <i>paginationPageSize=5</i>.</li>
+        </ul>
     </p>
 
     <show-example example="examplePagingMadeUpData"></show-example>
