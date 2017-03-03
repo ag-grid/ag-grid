@@ -58,7 +58,7 @@
             </p>
 
             <p>
-                Today, ag-Grid is a self-funded, bootstrapped company with over 500 customers in 45 countries. Our product has resonated in the market - as our users face the same challenges Niall did - and this has been central to our rapid growth. And we’re not stopping here: we are furiously working on the next great features to continue our mission.
+                Today, ag-Grid is a self-funded, bootstrapped company with over 500 customers in 49 countries. Our product has resonated in the market - as our users face the same challenges Niall did - and this has been central to our rapid growth. And we’re not stopping here: we are furiously working on the next great features to continue our mission.
             </p>
 
             <h2>
@@ -176,7 +176,7 @@
             <address>
             <strong>ag-Grid Ltd.</strong><br>
             The Treehouse, 2-10 Balham Station Road<br>
-            London, SW12 7SG
+            London, SW12 9SG
             United Kingdom<br>
 
             <p> 
