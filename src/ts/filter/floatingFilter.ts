@@ -11,7 +11,8 @@ import {Component} from "../widgets/component";
 
 export interface IFloatingFilterParams<M> {
     onFloatingFilterChanged:(change:M)=>void;
-    currentParentModel:()=>M
+    currentParentModel:()=>M;
+    suppressFilterButton: boolean;
 }
 
 export interface IFloatingFilter<M, P extends IFloatingFilterParams<M>>{
