@@ -4,7 +4,7 @@ var columnDefs = [
     {headerName: "Age", field: "age", width: 90, filter: 'number'},
     {headerName: "Country", field: "country", width: 120},
     {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110, filter:'date', filterParams:{
+    {headerName: "Date", field: "date", width: 130, filter:'date', filterParams:{
         comparator:function (filterLocalDateAtMidnight, cellValue){
             var dateAsString = cellValue;
             var dateParts  = dateAsString.split("/");
@@ -22,12 +22,30 @@ var columnDefs = [
                 return 1;
             }
         }
+    }, floatingFilterComponentParams:{
+        suppressFilterButton:true
     }},
     {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter, floatingFilterComponentParams:{maxValue:'7'}},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter, floatingFilterComponentParams:{maxValue:'3'}},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter, floatingFilterComponentParams:{maxValue:'2'}},
-    {headerName: "Total", field: "total", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter, floatingFilterComponentParams:{maxValue:'5'}}
+    {headerName: "Gold", field: "gold", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
+        floatingFilterComponentParams:{
+            maxValue:'7',
+            suppressFilterButton:true
+        }},
+    {headerName: "Silver", field: "silver", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
+        floatingFilterComponentParams:{
+            maxValue:'3',
+            suppressFilterButton:true
+        }},
+    {headerName: "Bronze", field: "bronze", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
+        floatingFilterComponentParams:{
+            maxValue:'2',
+            suppressFilterButton:true
+        }},
+    {headerName: "Total", field: "total", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
+        floatingFilterComponentParams:{
+            maxValue:'5',
+            suppressFilterButton:true
+        }}
 ];
 
 var gridOptions = {
@@ -43,7 +61,7 @@ function NumberFloatingFilter() {
 NumberFloatingFilter.prototype.init = function (params) {
     this.onFloatingFilterChanged = params.onFloatingFilterChanged;
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML = '<input type="range" min="0" max="'  + params.maxValue + '"/>'
+    this.eGui.innerHTML = '<input style="width:95%" type="range" min="0" max="'  + params.maxValue + '"/>'
     this.eSlider = this.eGui.querySelector('input');
 
     var that = this;

@@ -232,7 +232,7 @@
     <div class="docsMenu-examples">
         <?php
 
-        menuItem(0, 'ag-Grid Examples', 'ag-Grid Examples', 'example-landing');
+        menuItem(0, 'ag-Grid Examples', 'ag-Grid Examples', 'javascript-grid-examples/');
         if (isFrameworkAngular() || isFrameworkAll()) {
             menuItemWithIcon('angular2_small.png', 1, 'Angular Examples', 'Angular Examples', 'example-angular/', true);
             menuItem(2, 'Angular Rich Grid', 'Rich Grid', 'example-angular-rich-grid/');
