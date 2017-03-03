@@ -1,8 +1,15 @@
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
-    {headerName: "#", width: 50, cellRenderer: function(params) {
-        return params.node.id + 1;
-    } },
+    {
+        headerName: "#",
+        width: 70,
+        cellRenderer: function(params) {
+            return Number(params.node.id) + 1;
+        },
+        checkboxSelection: true,
+        headerCheckboxSelection: true,
+        suppressMenu: true
+    },
     {headerName: "Athlete", field: "athlete", width: 150},
     {headerName: "Age", field: "age", width: 90},
     {headerName: "Country", field: "country", width: 120},
@@ -19,6 +26,7 @@ var gridOptions = {
     // note - we do not set 'virtualPaging' here, so the grid knows we are doing standard paging
     enableSorting: true,
     enableFilter: true,
+    suppressRowClickSelection: true,
     debug: true,
     rowSelection: 'multiple',
     enableColResize: true,

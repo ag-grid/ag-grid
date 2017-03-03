@@ -11,14 +11,19 @@ var listOfCountries = ['United States','Russia','Australia','Canada','Norway','C
 
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
-    {headerName: "#", width: 50,
+    {
+        headerName: "#",
+        width: 70,
         cellRenderer: function(params) {
-            return params.node.id + 1;
+            return params.node.id;
         },
+        checkboxSelection: true,
+        headerCheckboxSelection: true,
         // we don't want to sort by the row index, this doesn't make sense as the point
         // of the row index is to know the row index in what came back from the server
         suppressSorting: true,
-        suppressMenu: true },
+        suppressMenu: true
+    },
     {headerName: "Athlete", field: "athlete", width: 150, suppressMenu: true},
     {headerName: "Age", field: "age", width: 90, filter: 'number', filterParams: {newRowsAction: 'keep'}},
     {headerName: "Country", field: "country", width: 120, filter: 'set', filterParams: {values: listOfCountries, newRowsAction: 'keep'}},
@@ -35,6 +40,7 @@ var gridOptions = {
     enableServerSideSorting: true,
     enableServerSideFilter: true,
     enableColResize: true,
+    suppressRowClickSelection: true,
     paginationPageSize: 500,
     columnDefs: columnDefs,
     rowModelType: 'pagination',
