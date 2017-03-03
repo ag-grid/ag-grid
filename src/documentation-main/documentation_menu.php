@@ -232,22 +232,23 @@
     <div class="docsMenu-examples">
         <?php
 
+        menuItem(0, 'ag-Grid Examples', 'ag-Grid Examples', 'example-landing');
         if (isFrameworkAngular() || isFrameworkAll()) {
-            menuItemWithIcon('angular2_small.png', 0, 'Angular Examples', 'Angular Examples', 'example-angular/');
-            menuItem(1, 'Angular Rich Grid', 'Rich Grid', 'example-angular-rich-grid/');
-            menuItem(1, 'Angular Markup', 'Grid via Markup', 'example-angular-rich-grid-markup/');
-            menuItem(1, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
-            menuItem(1, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
-            menuItem(1, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
-            menuItem(1, 'Angular Floating Row', 'Floating Rows', 'example-angular-floating-row/');
-            menuItem(1, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
-            menuItem(1, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
-            menuItem(1, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
-            menuItem(1, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
+            menuItemWithIcon('angular2_small.png', 1, 'Angular Examples', 'Angular Examples', 'example-angular/', true);
+            menuItem(2, 'Angular Rich Grid', 'Rich Grid', 'example-angular-rich-grid/');
+            menuItem(2, 'Angular Markup', 'Grid via Markup', 'example-angular-rich-grid-markup/');
+            menuItem(2, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
+            menuItem(2, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
+            menuItem(2, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
+            menuItem(2, 'Angular Floating Row', 'Floating Rows', 'example-angular-floating-row/');
+            menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
+            menuItem(2, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
+            menuItem(2, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
+            menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
         }
-        menuItem(0, 'Styled Report', 'Styled Report', 'example-account-report/');
-        menuItem(0, 'File Browser', 'File Browser', 'example-file-browser/');
-        menuItem(0, 'Expressions and Context', 'Expressions and Context', 'example-expressions-and-context/');
+        menuItem(1, 'Styled Report', 'Styled Report', 'example-account-report/');
+        menuItem(1, 'File Browser', 'File Browser', 'example-file-browser/');
+        menuItem(1, 'Expressions and Context', 'Expressions and Context', 'example-expressions-and-context/');
         ?>
     </div>
 

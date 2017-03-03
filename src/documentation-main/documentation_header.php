@@ -35,14 +35,15 @@ setcookie($cookieKey, '', time()-300);
 
 setcookie($cookieKey, $framework, $oneHundredDaysFromNow, '/');
 
-function menuItem($indent, $localKey, $name, $url) {
-    menuItemWithIcon(null, $indent, $localKey, $name, $url);
+function menuItem($indent, $localKey, $name, $url, $noIndentStyling = false) {
+    menuItemWithIcon(null, $indent, $localKey, $name, $url, $noIndentStyling);
 }
 
-function menuItemWithIcon($icon, $indent, $localKey, $name, $url) {
-    $iconHtml = $icon!==null ? '<img class="enterprise-icon" src="../images/'.$icon.'"/> ' : '';
+function menuItemWithIcon($icon, $indent, $localKey, $name, $url, $noIndentStyling = false) {
+    $iconHtml = $icon!==null ? '<img class="enterprise-icon" src="../images/'.$icon.'" width="15px" /> ' : '';
     $padding = ($indent == 1) ? '&nbsp;&nbsp;' : '';
-    $indentClass = 'sidebarLink-indent'.$indent;
+    $padding = ($indent == 2) ? '&nbsp;&nbsp;&nbsp;&nbsp;' : $padding;
+    $indentClass = $noIndentStyling ? '' : 'sidebarLink-indent'.$indent;
     if ($GLOBALS[key] == $localKey) {
         print('<span class="sidebarLinkSelected">' . $padding . $iconHtml . $name . '</span>');
     } else {

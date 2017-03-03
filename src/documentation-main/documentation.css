@@ -76,7 +76,7 @@
     border-radius: 3px;
 }
 
-.sidebarLink-indent1 {
+.sidebarLink-indent1, .sidebarLink-indent2 {
     font-style: italic;
 }
 

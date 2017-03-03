@@ -2,7 +2,7 @@
 $key = "Angular Examples";
 $pageTitle = "ag-Grid Angular Examples";
 $pageDescription = "ag-Grid Angular Examples";
-$pageKeyboards = "ag-Grid angular axamples";
+$pageKeyboards = "ag-Grid angular examples";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';
 ?>
