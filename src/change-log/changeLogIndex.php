@@ -17,8 +17,8 @@ include '../documentation-main/documentation_header.php';
 
     <b>Small Breaking Change:</b>
 
-    For Angular 2+ users only: ag-grid-ng2 repository renamed tp ag-grid-angular. So in your
-    dependencies (package.json), reference ag-grid-angular, not ag-grid-ng2.
+    <p>For Angular 2+ users only: ag-grid-ng2 repository renamed tp ag-grid-angular. So in your
+    dependencies (package.json), reference ag-grid-angular, not ag-grid-ng2.</p>
 
     <b>Enhancements:</b>
     <ul>
