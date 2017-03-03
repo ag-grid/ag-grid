@@ -15,7 +15,7 @@ import {HeaderGroupWrapperComp} from "./headerGroup/headerGroupWrapperComp";
 import {FilterManager} from "../filter/filterManager";
 import {BaseFilter} from "../filter/baseFilter";
 import {ComponentProvider} from "../componentProvider";
-import {BaseFloatingFilterComp, IFloatingFilterComp} from "../filter/floatingFilter";
+import {IFloatingFilterWrapperComp} from "../filter/floatingFilterWrapper";
 import {IComponent} from "../interfaces/iComponent";
 
 export enum HeaderRowType {
@@ -66,7 +66,9 @@ export class HeaderRowComp extends Component {
         idsToDestroy.forEach( id => {
             var child = this.headerElements[id];
             this.getGui().removeChild(child.getGui());
-            child.destroy();
+            if (child.destroy){
+                child.destroy();
+            }
             delete this.headerElements[id];
         });
     }
@@ -196,24 +198,27 @@ export class HeaderRowComp extends Component {
                  */
                 let column = <Column> columnGroupChild;
                 let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                let floatingFilter : IFloatingFilterComp<any, any> = <any>this.componentProvider.newFloatingFilterComponent({
-                    currentParentModel:():any=>{
-                        let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                        return filterComponent.getNullableModel();
-                    },
-                    onFloatingFilterChanged:(change:any):void=>{
-                        let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                        filterComponent.setModel(change);
-                        (<BaseFilter<any, any, any>>filterComponent).onFloatingFilterChanged();
-                    },
-                    column:column
-                });
+                let floatingFilterWrapper : IFloatingFilterWrapperComp<any, any, any> = <any>this.componentProvider.newFloatingFilterWrapperComponent(
+                    column,
+                    {
+                        currentParentModel:():any=>{
+                            let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+                            return filterComponent.getNullableModel();
+                        },
+                        onFloatingFilterChanged:(change:any):void=>{
+                            let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+                            filterComponent.setModel(change);
+                            (<BaseFilter<any, any, any>>filterComponent).onFloatingFilterChanged();
+                        },
+                    }
+                );
+                result = floatingFilterWrapper;
+
                 column.addEventListener(Column.EVENT_FILTER_CHANGED, ()=>{
                     let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                    floatingFilter.onParentModelChanged(filterComponent.getModel());
+                    floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
                 });
-                result = floatingFilter;
-                floatingFilter.onParentModelChanged(filterComponent.getModel());
+                floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
                 break;
         }
 

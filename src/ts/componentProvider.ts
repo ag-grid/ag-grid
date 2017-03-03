@@ -13,10 +13,14 @@ import {
     TextFloatingFilterComp,
     NumberFloatingFilterComp,
     DateFloatingFilterComp,
-    EmptyFloatingFilterComp,
-    SetFloatingFilterComp
+    SetFloatingFilterComp, IFloatingFilterComp
 } from "./filter/floatingFilter";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {
+    IFloatingFilterWrapperParams, IFloatingFilterWrapperComp,
+    FloatingFilterWrapperComp, EmptyFloatingFilterWrapperComp
+} from "./filter/floatingFilterWrapper";
+import {Column} from "./entities/column";
 
 
 export interface ComponentConfig {
@@ -91,19 +95,27 @@ export class ComponentProvider {
                 optionalMethodList: [],
                 defaultComponent: DateFloatingFilterComp
             },
-            customFloatingFilter: {
+            floatingFilterWrapperComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: [],
-                defaultComponent: EmptyFloatingFilterComp
+                defaultComponent: FloatingFilterWrapperComp
+            },
+            emptyFloatingFilterWrapperComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: [],
+                defaultComponent: EmptyFloatingFilterWrapperComp
             }
         }
     }
 
     private newAgGridComponent<A extends IComponent<any> & B, B>
-    (holder:GridOptions | ColDef | ColGroupDef, componentName:string, defaultComponentName:string): A{
+    (holder:GridOptions | ColDef | ColGroupDef, componentName:string, defaultComponentName:string, mandatory:boolean = true): A{
         let thisComponentConfig: ComponentConfig= this.allComponentConfig[defaultComponentName];
         if (!thisComponentConfig){
-            throw Error(`Invalid component specified, there are no components of type : ${componentName} [${defaultComponentName}]`)
+            if (mandatory){
+                throw Error(`Invalid component specified, there are no components of type : ${componentName} [${defaultComponentName}]`)
+            }
+            return null;
         }
 
         let DefaultComponent : {new(): A} = <{new(): A}>thisComponentConfig.defaultComponent;
@@ -133,8 +145,10 @@ export class ComponentProvider {
         return <A>this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList);
     }
 
-    public createAgGridComponent<A extends IComponent<any>> (holder:GridOptions | ColDef | ColGroupDef, componentName:string, defaultComponentName:string, agGridParams:any): A{
-        let component: A = <A>this.newAgGridComponent(holder, componentName, defaultComponentName);
+    public createAgGridComponent<A extends IComponent<any>> (holder:GridOptions | ColDef | ColGroupDef, componentName:string, defaultComponentName:string, agGridParams:any, mandatory:boolean = true): A{
+        let component: A = <A>this.newAgGridComponent(holder, componentName, defaultComponentName, mandatory);
+        if (!component) return null;
+
         let customParams:any = holder ? (<any>holder)[componentName + "Params"] : null;
         let finalParams:any = {};
         _.mergeDeep(finalParams, agGridParams);
@@ -142,9 +156,6 @@ export class ComponentProvider {
 
         this.context.wireBean(component);
         component.init(finalParams);
-        if (!component){
-            throw Error (`Can't create ag-Grid component with name: ${componentName}`)
-        }
         return component;
     }
 
@@ -160,17 +171,32 @@ export class ComponentProvider {
         return <IHeaderGroupComp>this.createAgGridComponent(params.columnGroup.getColGroupDef(), "headerGroupComponent", "headerGroupComponent", params);
     }
 
-    public newFloatingFilterComponent<M> (params:IFloatingFilterParams<M>):InputTextFloatingFilterComp<M, any>{
-        let colDef = params.column.getColDef();
-        let floatingFilterToInstantiate: string;
+    public newFloatingFilterComponent<M> (type:string, colDef:ColDef, params:IFloatingFilterParams<M>):IFloatingFilterComp<M, any>{
+        let floatingFilterToInstantiate: string = type + "FloatingFilterComponent";
+        return <IFloatingFilterComp<any, any>> this.createAgGridComponent(colDef, "floatingFilterComponent", floatingFilterToInstantiate, params, false);
+    }
+
+    public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M>> (column:Column, params:IFloatingFilterParams<M>):IFloatingFilterWrapperComp<M, any, any>{
+        let colDef = column.getColDef();
+        let floatingFilterType: string;
+
         if (typeof  colDef.filter === 'string') {
-            floatingFilterToInstantiate = colDef.filter + "FloatingFilterComponent";
+            floatingFilterType = colDef.filter;
         } else if (!colDef.filter){
-            floatingFilterToInstantiate= this.gridOptionsWrapper.isEnterprise() ? 'setFloatingFilterComponent' : 'textFloatingFilterComponent';
+            floatingFilterType= this.gridOptionsWrapper.isEnterprise() ? 'set' : 'text';
         } else {
-            floatingFilterToInstantiate= 'customFloatingFilter';
+            floatingFilterType= 'custom';
         }
 
-        return <InputTextFloatingFilterComp<any, any>> this.createAgGridComponent(colDef, "floatingFilterComponent", floatingFilterToInstantiate, params);
+        let floatingFilter:IFloatingFilterComp<M, P> = this.newFloatingFilterComponent(floatingFilterType, colDef, params);
+        let floatingFilterWrapperComponentParams : IFloatingFilterWrapperParams <M, any> = {
+            column: column,
+            floatingFilterComp: floatingFilter
+        };
+
+        if (!floatingFilter){
+            return <IFloatingFilterWrapperComp<any, any, any>> this.createAgGridComponent(colDef, "floatingFilterWrapperComponent", "emptyFloatingFilterWrapperComponent", floatingFilterWrapperComponentParams);
+        }
+        return <IFloatingFilterWrapperComp<any, any, any>> this.createAgGridComponent(colDef, "floatingFilterWrapperComponent", "floatingFilterWrapperComponent", floatingFilterWrapperComponentParams);
     }
 }
