@@ -99,7 +99,7 @@ include 'documentation_header.php';
                 </div>
             </a>
 
-            <a href="/example-landing/" class="list-group-item">
+            <a href="/javascript-grid-examples/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/examples.svg" width="50" />
