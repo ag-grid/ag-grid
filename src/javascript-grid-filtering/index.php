@@ -100,14 +100,19 @@ gridOptions = {
     <p>
         Each filter can take additional filter params by setting <i>colDef.filterParams</i>.
         What parameters each filter type takes is explained in the section on each filter.
-        As an example, he following sets parameters for the text filter.
+        As an example, the following sets parameters for the text filter.
     </p>
 
     <pre>
 columnDefinition = {
+
     headerName: 'Athlete',
-    field: 'athlete',
+    field: 'athlete'
+
+    <span class="codeComment">// set the column to use text filter</span>
     filter: 'text',
+
+    <span class="codeComment">// pass in additional parameters to the text filter</span>
     filterParams: {apply: true, newRowsAction: 'keep'}
 }</pre>
 
@@ -116,9 +121,8 @@ columnDefinition = {
     <p>
         The example below demonstrates:
         <ul>
-        <li>Three filter types text filter, number filter and date filter.</li>
-        <li>Quick filter</li>
-        <li>using the <i>ag-header-cell-filtered</i> class, which is applied to the header
+        <li>Three filter types 1) text filter, 2) number filter and 3) date filter.</li>
+        <li>Using the <i>ag-header-cell-filtered</i> class, which is applied to the header
             cell when the header is filtered. By default, no style is applied to this class, the example shows
             applying a different color background to this style.</li>
         <li>'suppressFilter' is set on Total to hide the filter on this column</li>

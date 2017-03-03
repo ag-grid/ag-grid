@@ -807,8 +807,14 @@ PersonFilter.prototype.getApi = function () {
     }
 };
 
-// lazy, the example doesn't use getModel() and setModel()
-PersonFilter.prototype.getModel = function () {};
+PersonFilter.prototype.getModelAsString = function (model){
+    return model ? model : '';
+};
+
+PersonFilter.prototype.getModel = function () {
+    return this.filterText;
+};
+// lazy, the example doesn't use setModel()
 PersonFilter.prototype.setModel = function () {};
 
 function WinningsFilter() {
@@ -867,8 +873,26 @@ WinningsFilter.prototype.isFilterActive = function () {
     return !this.cbNoFilter.checked;
 };
 
-// lazy, the example doesn't use getModel() and setModel()
-WinningsFilter.prototype.getModel = function () {};
+WinningsFilter.prototype.getModelAsString = function (model) {
+    return model? model: '';
+};
+
+WinningsFilter.prototype.getModel = function () {
+    if (this.cbNoFilter.checked) {
+        return '';
+    } else if (this.cbPositive.checked) {
+        return 'value >= 0';
+    } else if (this.cbNegative.checked) {
+        return 'value < 0';
+    } else if (this.cbGreater50.checked) {
+        return 'value >= 50000';
+    } else if (this.cbGreater90.checked) {
+        return 'value >= 90000';
+    } else {
+        console.error('invalid checkbox selection');
+    }
+};
+// lazy, the example doesn't use setModel()
 WinningsFilter.prototype.setModel = function () {};
 
 function currencyCssFunc(params) {

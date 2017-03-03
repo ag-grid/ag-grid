@@ -61,10 +61,11 @@ include '../documentation-main/documentation_header.php';
     // after rows are loaded, it can do it here.</span>
     onNewRowsLoaded?(): void;
 
-    <span class="codeComment">// Gets called when the grid is destroyed. If your custom filter needs to do
+    <span class="codeComment">// Gets called when the Column is destroyed. If your custom filter needs to do
     // any resource cleaning up, do it here. A filter is NOT destroyed when it is
     // made 'not visible', as the gui is kept to be shown again if the user selects
-    // that filter again. The filter is destroyed when the grid is destroyed.</span>
+    // that filter again. The filter is destroyed when the column it is associated with is destroyed,
+    // either new columns are set into the grid, or the grid itself is destroyed.</span>
     destroy?(): void;
 }</pre>
 

@@ -46,10 +46,10 @@ include '../documentation-main/documentation_header.php';
     // after it is pressed.</span>
     afterGuiAttached?(params?: {hidePopup?: Function}): void;
 
-    <span class="codeComment">// Gets called when the grid is destroyed. If your custom filter needs to do
-    // any resource cleaning up, do it here. A filter is NOT destroyed when it is
-    // made 'not visible', as the gui is kept to be shown again if the user selects
-    // that filter again. The filter is destroyed when the grid is destroyed.</span>
+    <span class="codeComment">// Gets called when the column header section is destroyed.
+    // like column headers, the floating filter life span is only when the column is visible,
+    // so gets destroyed if column is made not visible or when user scrolls column out of
+    // view with horizontal scrolling</span>
     destroy?(): void;
 }</pre>
 
@@ -79,7 +79,7 @@ include '../documentation-main/documentation_header.php';
 
 
 
-<show-example example="exampleCustomFilter"></show-example>
+<show-example example="exampleCustomFloatingFilter"></show-example>
 
 <?php if (isFrameworkAngular()) { ?>
     <?php include './angular.php';?>
