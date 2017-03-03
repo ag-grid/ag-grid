@@ -18,8 +18,8 @@
 </style>
 
 <div class="news-box">
-    <div class="news-header">
-        <img src="../images/vue_small.png"/>
+    <div class="news-header" style="margin-bottom: 27px;">
+        <img src="../images/vue_large.png" align="left" width="50"/>
         1st March 2017
     </div>
     <div style="padding-top: 10px;">
@@ -39,7 +39,7 @@
 </div>
 
 <div class="news-box">
-    <img style="float: left" src="../images/svg/docs/newspaper.svg" width="20px"/>
+    <img style="float: left; margin-right: 10px:" src="../images/svg/docs/newspaper.svg" align="left" width="50"/>
     <div class="news-header">15th February 2017</div>
     <div style="padding-top: 10px;">
         <a href="../review-of-angularjs-grids/">
@@ -61,7 +61,7 @@
 </div>
 
 <div class="news-box">
-    <img style="float: left" src="../images/svg/docs/newspaper.svg" width="20px"/>
+    <img style="float: left; margin-right: 10px;" src="../images/svg/docs/newspaper.svg" align="left" width="50" />
     <div class="news-header">6th February 2017</div>
     <div style="padding-top: 10px;">
         <a href="../git-color/">
@@ -71,7 +71,7 @@
 </div>
 
 <div class="news-box">
-    <img style="float: left" src="../images/svg/docs/newspaper.svg" width="20px"/>
+    <img style="float: left; margin-right: 10px;" src="../images/svg/docs/newspaper.svg" align="left" width="50" />
     <div class="news-header">23rd January 2017</div>
     <div style="padding-top: 10px;">
         <a href="../ag-grid-understanding-webpack/">
@@ -83,11 +83,11 @@
 <div class="news-box">
     <div style="float: left;">
         <a href="https://www.ng-conf.org/">
-            <img src="https://www.ng-conf.org/wp-content/uploads/2016/09/logo.png" style="width: 90px"/>
+            <img src="https://www.ng-conf.org/wp-content/uploads/2016/09/logo.png" align="left" width="50" />
         </a>
     </div>
     <a href="https://www.ng-conf.org/">
-        <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+        <div style="margin-top: 10px; margin-bottom: 6px; text-align: left; margin-left: 60px;">
             <div style="font-weight: bold;">ng-conf</div>
             <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
             </div>
@@ -98,16 +98,16 @@
         </div>
     </a>
     <div>
-        ag-Grid will be at ng-conf 2017.This will be our premier appearance outside of Europe!
+        ag-Grid will be at ng-conf 2017. This will be our premier appearance outside of Europe!
     </div>
 </div>
 
 <div class="news-box">
     <div style="float: left;">
-        <img src="http://www.i2clipart.com/cliparts/6/1/e/d/clipart-viking-warning-61ed.png" style="width: 90px"/>
+        <img src="http://www.i2clipart.com/cliparts/6/1/e/d/clipart-viking-warning-61ed.png" align="left" width="50" />
     </div>
     <a href="https://ngvikings.org/">
-        <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+        <div style="margin-top: 10px; margin-bottom: 6px; text-align: left; margin-left: 60px;">
             <div style="font-weight: bold;">ngVikings</div>
             <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
             </div>
@@ -154,7 +154,7 @@
 
 
 <div class="news-box">
-    <img style="float: left" src="../images/svg/docs/newspaper.svg" width="20px"/>
+    <img style="float: left; margin-right: 10px;" src="../images/svg/docs/newspaper.svg" align="left" width="50"/>
     <div class="news-header">8th December 2016</div>
     <div style="padding-top: 10px;">
         <a href="../ag-grid-angular-aot-dynamic-components/">
@@ -221,7 +221,7 @@
 </div>
 
 <div class="news-box">
-    <img style="float: left" src="../images/svg/docs/newspaper.svg" width="20px"/>
+    <img style="float: left; margin-right: 10px;" src="../images/svg/docs/newspaper.svg" align="left" width="50"/>
     <div class="news-header">27th October 2016</div>
     <div style="padding-top: 10px;">
         <a href="../javascript-datagrid/">
