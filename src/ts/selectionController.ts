@@ -236,6 +236,9 @@ export class SelectionController {
         let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
         let callback = (rowNode: RowNode) => rowNode.selectThisNode(false);
 
+        // execute on all nodes in the model. if we are doing pagination, only
+        // the current page is used, thus if we 'deselect all' while on page 2,
+        // any selections on page 1 are left as is.
         if (justFiltered) {
             inMemoryRowModel.forEachNodeAfterFilter(callback);
         } else {
@@ -247,12 +250,6 @@ export class SelectionController {
             this.updateGroupsFromChildrenSelections();
         }
 
-        // we should not have to do this, as deselecting the nodes fires events
-        // that we pick up, however it's good to clean it down, as we are still
-        // left with entries pointing to 'undefined'
-        if (!justFiltered) {
-            this.selectedNodes = {};
-        }
         this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
     }
 

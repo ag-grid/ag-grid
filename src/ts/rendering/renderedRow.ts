@@ -979,22 +979,19 @@ export class RenderedRow extends BeanStub {
             return;
         }
 
-        // making local variables to make the below more readable
-        var gridOptionsWrapper = this.gridOptionsWrapper;
-
         // if no selection method enabled, do nothing
-        if (!gridOptionsWrapper.isRowSelection()) {
+        if (!this.gridOptionsWrapper.isRowSelection()) {
             return;
         }
 
         // if click selection suppressed, do nothing
-        if (gridOptionsWrapper.isSuppressRowClickSelection()) {
+        if (this.gridOptionsWrapper.isSuppressRowClickSelection()) {
             return;
         }
 
         if (this.rowNode.isSelected()) {
             if (multiSelectKeyPressed) {
-                if (gridOptionsWrapper.isRowDeselection()) {
+                if (this.gridOptionsWrapper.isRowDeselection()) {
                     this.rowNode.setSelectedParams({newValue: false});
                 }
             } else {

@@ -38,19 +38,27 @@ export class SelectAllFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelectAll.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
-        this.addDestroyableEventListener(this.cbSelectAll, AgCheckbox.EVENT_CHANGED, this.onCbSelectAll.bind(this));
 
-        if (this.filteredOnly) {
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.cbSelectAllVisible = this.isCheckboxSelection();
+
+        this.cbSelectAll.setVisible(this.cbSelectAllVisible);
+
+        if (this.cbSelectAllVisible) {
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
+
+            this.addDestroyableEventListener(this.cbSelectAll, AgCheckbox.EVENT_CHANGED, this.onCbSelectAll.bind(this));
+
+            // in case user is trying this feature with the wrong model type
+            this.checkRightRowModelType();
+
+            // make sure checkbox is showing the right state
+            this.updateStateOfCheckbox();
         }
 
-        this.showOrHideSelectAll();
-        this.updateStateOfCheckbox();
     }
 
-    private onFilterChanged(): void {
+    private onModelChanged(): void {
         this.updateStateOfCheckbox();
     }
 
@@ -119,20 +127,6 @@ export class SelectAllFeature extends BeanStub {
         if (!rowModelMatches) {
             console.log(`ag-Grid: selectAllCheckbox is only available if using normal or pagination row models, you are using ${rowModelType}`);
         }
-    }
-
-    private showOrHideSelectAll(): void {
-
-        this.cbSelectAllVisible = this.isCheckboxSelection();
-        this.cbSelectAll.setVisible(this.cbSelectAllVisible);
-
-        if (this.cbSelectAllVisible) {
-            // in case user is trying this feature with the wrong model type
-            this.checkRightRowModelType();
-            // make sure checkbox is showing the right state
-            this.updateStateOfCheckbox();
-        }
-
     }
 
     private onCbSelectAll(): void {
