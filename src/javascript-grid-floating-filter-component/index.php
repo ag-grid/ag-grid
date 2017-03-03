@@ -79,7 +79,7 @@ include '../documentation-main/documentation_header.php';
 
 
 
-<show-example example="exampleCustomFilter"></show-example>
+<show-example example="exampleCustomFloatingFilter"></show-example>
 
 <?php if (isFrameworkAngular()) { ?>
     <?php include './angular.php';?>
