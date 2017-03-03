@@ -112,7 +112,7 @@
     position: absolute;
     top: 14px;
     right: 10px;
-    font-size: 12px;
+    font-size: 13px;
     //transition: all .3s ease-in-out;
     color: #999;
 }
@@ -353,4 +353,42 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 
 .frameworkDropdownButton.frameworkAllButton {
     padding-left: 12px;
+}
+
+.backgroundGradient {
+    background: #539bd6; /* Old browsers */
+    background: -moz-linear-gradient(top, #539bd6 0%, #c3d6e5 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #539bd6 0%, #c3d6e5 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #539bd6 0%, #c3d6e5 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#539bd6', endColorstr='#c3d6e5', GradientType=0);
+    padding: 20px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    /*padding: 20px;*/
+}
+.section-icon-container {
+    float: left;
+    height: 80px;
+    display: inline-block;
+    padding-right: 20px;
+    padding-top: 10px;
+}
+.float-parent {
+    display: inline-block;
+}
+
+.expandAll, .expandAll:visited, .expandAll:active, .expandAll:focus  {
+    color: #333;
+    font-size: 13px;
+    display: block;
+    text-decoration: none;
+}
+
+.expandAll:hover {
+    color: #000;
+    text-decoration: none;
+}
+
+.documentationHeader {
+    margin: 0 0 20px;
 }

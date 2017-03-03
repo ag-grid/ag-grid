@@ -454,6 +454,8 @@ function isFrameworkWebComponents()
                 </div>
             <?php } ?>
 
+            <a href="#" class="expandAll text-center"><i class="fa fa-expand" aria-hidden="true"></i> Expand All</a>
+
             <div style="border: 1px solid #eee; margin-top: 30px; margin-bottom: 50px;">
             </div>
 
