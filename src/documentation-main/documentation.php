@@ -120,6 +120,10 @@ include 'documentation_header.php';
         <?php include 'documentation_sidebar.php'; ?>
     </div>
 
+     <div class="col-sm-2">
+        <?php include 'documentation_menu.php'; ?>
+    </div>
+
 </div>
 
 
