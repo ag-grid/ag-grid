@@ -98,10 +98,18 @@ include '../documentation-main/documentation_header.php';
 
 <h3 id="example">Custom Floating Filter Example</h3>
 
-<show-example example="exampleCustomFloatingFilter"></show-example>
+<p>
+In the following example you can see how the columns Gold, Silver, Bronze and Total have a custom floating filter
+NumberFloatingFilter. This filter substitutes the standard floating filter for a slider that the user can move to
+adjust how many medals of each column to filter by.
+</p>
 
 <p>
-    todo - describe example
+This particular example is using JQuery and limits the filter to only filter by 'greaterThan'. If the user moves the
+slider to the left corner the filter its removed.
 </p>
+
+<show-example example="exampleCustomFloatingFilter"></show-example>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

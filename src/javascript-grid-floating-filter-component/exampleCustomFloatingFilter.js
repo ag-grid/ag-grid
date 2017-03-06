@@ -69,7 +69,11 @@ NumberFloatingFilter.prototype.init = function (params) {
         min:0,
         max:params.maxValue,
         change: function(e, ui) {
+            //Every time the value of the slider changes
             if (!e.originalEvent) {
+                //If this event its triggered from outside. ie setModel() on the parent Filter we
+                //would be in this area of the code and we need to prevent an infinite loop:
+                //onParentModelChanged => onFloatingFilterChanged => onParentModelChanged => onFloatingFilterChanged ...
                return;
             }
             that.currentValue = ui.value;
@@ -81,7 +85,6 @@ NumberFloatingFilter.prototype.init = function (params) {
 };
 
 NumberFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
-
     // When the filter is empty we will receive a null message her
     if (!parentModel) {
         //If there is no filtering set to the minimun
@@ -93,6 +96,7 @@ NumberFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
         }
         this.currentValue = parentModel.filter;
     }
+    //Print a summary on the slider button
     this.eSlider.children(".ui-slider-handle").html(this.currentValue ? '>' + this.currentValue : '');
 };
 
@@ -103,6 +107,7 @@ NumberFloatingFilter.prototype.getGui = function () {
 NumberFloatingFilter.prototype.buildModel = function () {
     if (this.currentValue === 0) return null;
     return {
+        //In this example we are only interested in filtering by greaterThan
         type:'greaterThan',
         filter:Number(this.currentValue)
     }
