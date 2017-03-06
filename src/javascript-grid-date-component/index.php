@@ -165,7 +165,7 @@ gridOptions: {
                                     { root: './', files: 'exampleCustomDate.html,exampleCustomDate.js' }
                                 ]
                               }"
-                      plunker="https://embed.plnkr.co/hIMxzFxvZk34NnpGpvOT/"
+                      plunker="https://embed.plnkr.co/UQG80i3bRCGnkgtVwteC/"
                       exampleheight="500px">
 </show-complex-example>
 

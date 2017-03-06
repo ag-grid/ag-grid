@@ -255,7 +255,7 @@ var nameFilterInstance = api.getFilterInstance('name');</pre>
                                     { root: './', files: 'exampleFilterApi.html,exampleFilterApi.js' }
                                 ]
                               }"
-                          plunker="https://embed.plnkr.co/Mbpz8VjMqbdExgBrta6h/"
+                          plunker="https://embed.plnkr.co/0NoAA9cEZa1Zr9brMZ2I/"
                           exampleheight="500px">
     </show-complex-example>
 
