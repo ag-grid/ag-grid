@@ -42,7 +42,13 @@
     </div>
   </div>
 
-    <a href="#" class="expandAll text-right">Expand All <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+    <a href="#" class="expandAll text-right">
+        <?php if ($expandAll==='true') { ?>
+            Close All <i class="fa fa-arrow-down" aria-hidden="true"></i>
+        <?php } else { ?>
+            Expand All <i class="fa fa-arrow-right" aria-hidden="true"></i>
+        <?php } ?>
+    </a>
 
     <div class="docsMenu-header <?php if ($pageGroup == "basics" || $expandAll== "true") { ?> active<?php } ?>" data-id="getting_started">
         <h4>

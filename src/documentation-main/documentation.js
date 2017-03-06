@@ -271,9 +271,17 @@
     // Local storage/remember toggle state
     var cookieKeyExpandAll = "agGridExpandAll";
     var eExpandDivs = document.getElementsByClassName("docsMenu-header");
-    var expandAllLink = document.getElementsByClassName("expandAll");
+    var eExpandAll = document.querySelector(".expandAll");
 
     // cookieKeyExpandAll
+
+    function showExpandAll(show) {
+        if (show) {
+            eExpandAll.innerHTML = "Expand All <i class='fa fa-arrow-right' aria-hidden='true'></i>";
+        } else {
+            eExpandAll.innerHTML = "Close All <i class='fa fa-arrow-down' aria-hidden='true'></i>";
+        }
+    }
 
     // close framework dropdown when clicking outside
     document.body.addEventListener('click', hideFrameworkSelectionOnBodyClick, true);
@@ -304,7 +312,7 @@
         
         this.classList.toggle("active");
 
-        expandAllLink[0].innerHTML = "Expand All <i class='fa fa-arrow-right' aria-hidden='true'></i>";
+        showExpandAll(true);
         setCookie(cookieKeyExpandAll, 'false', 20);
     }
 
@@ -317,8 +325,8 @@
     }
 
     /* expand all dropdowns */
-    if (expandAllLink[0]) {
-        expandAllLink[0].addEventListener('click', function(){
+    if (eExpandAll) {
+        eExpandAll.addEventListener('click', function(){
             if (this.text.indexOf('Expand') > -1) {
                 expandAll();
             } else {
@@ -330,7 +338,7 @@
     function expandAll() {
         for (var i = 0; i < eExpandDivs.length; i++) {
             eExpandDivs[i].classList.add("active");
-            expandAllLink[0].innerHTML = "Close All <i class='fa fa-arrow-down' aria-hidden='true'></i>";
+            showExpandAll(false);
             setCookie(cookieKeyExpandAll, 'true', 20);
         }
     }
@@ -338,7 +346,7 @@
     function closeAll() {
         for (var i = 0; i < eExpandDivs.length; i++) {
             eExpandDivs[i].classList.remove("active");
-            expandAllLink[0].innerHTML = "Expand All <i class='fa fa-arrow-right' aria-hidden='true'></i>";
+            showExpandAll(true);
             setCookie(cookieKeyExpandAll, 'false', 20);
         }
     }
