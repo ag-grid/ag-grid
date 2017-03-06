@@ -159,7 +159,7 @@ gridOptions: {
     the date column for both the rich filter and the floating filter.
 </p>
 
-<show-complex-example example="exampleCustomDate.html"
+<show-complex-example example="./exampleCustomDate.html"
                       sources="{
                                 [
                                     { root: './', files: 'exampleCustomDate.html,exampleCustomDate.js' }
