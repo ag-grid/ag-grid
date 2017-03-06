@@ -1,8 +1,6 @@
 (function () {
 
-    
     var module = angular.module("documentation", []);
-    
 
     /*
      * Show Example directive
@@ -14,10 +12,6 @@
             templateUrl: "/showExample.html"
         }
     });
-
-    function endsWith(string, test) {
-        return string.lastIndexOf(test) + test.length === string.length;
-    }
 
     function ShowExampleController($scope, $http, $attrs) {
         var url = $attrs["url"];
@@ -274,57 +268,65 @@
         };
     });
 
+    // Local storage/remember toggle state
+    var cookieKeyExpandAll = "agGridExpandAll";
+    var eExpandDivs = document.getElementsByClassName("docsMenu-header");
+    var eExpandAll = document.querySelector(".expandAll");
 
-    /*
-     * Local storage/remember toggle state
-     */
+    // cookieKeyExpandAll
 
-    var localStorageKey = "agGrid_expandAll";
-    var toggleClasses = document.getElementsByClassName("docsMenu-header");
-    var expandAllState = JSON.parse(localStorage.getItem('agGrid_expandAll')); 
-    var expandAllLink = document.getElementsByClassName("expandAll");
+    function showExpandAll(show) {
+        if (show) {
+            eExpandAll.innerHTML = "Expand All <i class='fa fa-arrow-right' aria-hidden='true'></i>";
+        } else {
+            eExpandAll.innerHTML = "Close All <i class='fa fa-arrow-down' aria-hidden='true'></i>";
+        }
+    }
 
-    /* close framework dropdown when clicking outside */
-    document.body.addEventListener('click', handleBodyClick, true); 
-    function handleBodyClick() {
-        var frameworkElement = document.querySelectorAll('.frameworkBox');
-        var frameworkLink = document.querySelectorAll('.frameworkDropdownButton'); 
-        if (frameworkElement[0]) {
-            if (!frameworkElement[0].contains(event.target)) {
-                frameworkLink[0].classList.remove("active");
+    // close framework dropdown when clicking outside
+    document.body.addEventListener('click', hideFrameworkSelectionOnBodyClick, true);
+    function hideFrameworkSelectionOnBodyClick() {
+        var eFrameworkBox = document.querySelector('.frameworkBox');
+        var ePopupButton = document.querySelector('.frameworkDropdownButton');
+        if (eFrameworkBox) {
+            if (!eFrameworkBox.contains(event.target)) {
+                ePopupButton.classList.remove("active");
             }
         }
     }
 
-    for (var i = 0; i < toggleClasses.length; i++) {
-        toggleClasses[i].addEventListener('click', handleToggle, false);
+    for (var i = 0; i < eExpandDivs.length; i++) {
+        eExpandDivs[i].addEventListener('click', handleToggle, false);
     }
 
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires="+d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
 
     function handleToggle() {
-        var id = this.dataset.id;
-        
-        resetSingleToggle(id);
+
+        resetSingleToggle(this);
         
         this.classList.toggle("active");
-        /* if user is using normal menu reset expand all */
-        if (!this.classList.contains("active")) {
-            expandAllLink[0].innerHTML = "Expand All <i class='fa fa-arrow-right' aria-hidden='true'></i>";
-            localStorage.setItem(localStorageKey, false);
-        }
+
+        showExpandAll(true);
+        setCookie(cookieKeyExpandAll, 'false', 20);
     }
 
-    function resetSingleToggle(id) {
-        for (var i = 0; i < toggleClasses.length; i++) {
-            if (toggleClasses[i].dataset.id !== id) {
-                toggleClasses[i].classList.remove("active");
+    function resetSingleToggle(eDivToSkip) {
+        for (var i = 0; i < eExpandDivs.length; i++) {
+            if (eExpandDivs[i] !== eDivToSkip) {
+                eExpandDivs[i].classList.remove("active");
             }
         }
     }
 
     /* expand all dropdowns */
-    if (expandAllLink[0]) {
-        expandAllLink[0].addEventListener('click', function(){
+    if (eExpandAll) {
+        eExpandAll.addEventListener('click', function(){
             if (this.text.indexOf('Expand') > -1) {
                 expandAll();
             } else {
@@ -334,18 +336,18 @@
     }
 
     function expandAll() {
-        for (var i = 0; i < toggleClasses.length; i++) {
-            toggleClasses[i].classList.add("active");
-            expandAllLink[0].innerHTML = "Close All <i class='fa fa-arrow-down' aria-hidden='true'></i>";
-            localStorage.setItem(localStorageKey, true);
+        for (var i = 0; i < eExpandDivs.length; i++) {
+            eExpandDivs[i].classList.add("active");
+            showExpandAll(false);
+            setCookie(cookieKeyExpandAll, 'true', 20);
         }
     }
 
     function closeAll() {
-        for (var i = 0; i < toggleClasses.length; i++) {
-            toggleClasses[i].classList.remove("active");
-            expandAllLink[0].innerHTML = "Expand All <i class='fa fa-arrow-right' aria-hidden='true'></i>";
-            localStorage.setItem(localStorageKey, false);
+        for (var i = 0; i < eExpandDivs.length; i++) {
+            eExpandDivs[i].classList.remove("active");
+            showExpandAll(true);
+            setCookie(cookieKeyExpandAll, 'false', 20);
         }
     }
 
@@ -360,14 +362,5 @@
         var framework = this.dataset.id;
         window.location.href = '?framework=' + framework;
     }
-
-    initDocsMenu();
-
-    function initDocsMenu() {
-        if (expandAllState) {
-            expandAll();
-        }
-    }
-    
 
 })();

@@ -118,7 +118,7 @@ function clearAgeFilter() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
     ageFilterComponent.setFilter(null);
     ageFilterComponent.setFilterTo(null);
-    ageFilterComponent.setType('equeals');
+    ageFilterComponent.setType('equals');
     ageFilterComponent.onFilterChanged();
 }
 

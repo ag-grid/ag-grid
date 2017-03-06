@@ -42,9 +42,15 @@
     </div>
   </div>
 
-    <a href="#" class="expandAll text-right">Expand All <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+    <a href="#" class="expandAll text-right">
+        <?php if ($expandAll==='true') { ?>
+            Close All <i class="fa fa-arrow-down" aria-hidden="true"></i>
+        <?php } else { ?>
+            Expand All <i class="fa fa-arrow-right" aria-hidden="true"></i>
+        <?php } ?>
+    </a>
 
-    <div class="docsMenu-header <?php if ($pageGroup == "basics") { ?> active<?php } ?>" data-id="getting_started">
+    <div class="docsMenu-header <?php if ($pageGroup == "basics" || $expandAll== "true") { ?> active<?php } ?>" data-id="getting_started">
         <h4>
             <img src="../images/svg/docs/getting_started.svg" />
             &nbsp;
@@ -68,7 +74,7 @@
 
     </div>
 
-    <div class="docsMenu-header <?php if ($pageGroup == "interfacing") { ?> active<?php } ?>" data-id="interfacing">
+    <div class="docsMenu-header <?php if ($pageGroup == "interfacing" || $expandAll== "true") { ?> active<?php } ?>" data-id="interfacing">
         <h4>
             <img src="../images/svg/docs/interfacing.svg" />
             &nbsp;
@@ -89,7 +95,7 @@
         ?>
     </div>
 
-    <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "feature") { ?> active<?php } ?>" data-id="features">
+    <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "feature" || $expandAll== "true") { ?> active<?php } ?>" data-id="features">
         <h4>
             <img src="../images/svg/docs/features.svg" />
             &nbsp;
@@ -158,7 +164,7 @@
         ?>
     </div>
 
-    <div class="docsMenu-header<?php if ($pageGroup == "row_models") { ?> active<?php } ?>" data-id="row_models">
+    <div class="docsMenu-header<?php if ($pageGroup == "row_models" || $expandAll== "true") { ?> active<?php } ?>" data-id="row_models">
         <h4>
             <img src="../images/svg/docs/row_models.svg" />
             &nbsp;
@@ -177,7 +183,7 @@
         ?>
     </div>
     
-    <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "themes") { ?> active<?php } ?>" data-id="themes">
+    <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "themes" || $expandAll== "true") { ?> active<?php } ?>" data-id="themes">
         <h4>
             <img src="../images/svg/docs/themes.svg" />
             &nbsp;
@@ -199,7 +205,7 @@
 
     </div>
 
-    <div class="docsMenu-header<?php if ($pageGroup == "components") { ?> active<?php } ?>" data-id="components">
+    <div class="docsMenu-header<?php if ($pageGroup == "components" || $expandAll== "true") { ?> active<?php } ?>" data-id="components">
         <h4>
             <img src="../images/svg/docs/components.svg" />
             &nbsp;
@@ -220,7 +226,7 @@
         ?>
     </div>
 
-    <div class="docsMenu-header<?php if ($pageGroup == "examples") { ?> active<?php } ?>" data-id="examples">
+    <div class="docsMenu-header<?php if ($pageGroup == "examples" || $expandAll== "true") { ?> active<?php } ?>" data-id="examples">
         <h4>
             <img src="../images/svg/docs/examples.svg" />
             &nbsp;
@@ -253,7 +259,7 @@
     </div>
 
     <?php if ($version == 'latest') { ?>
-        <div class="docsMenu-header<?php if ($pageGroup == "misc") { ?> active<?php } ?>" data-id="misc">
+        <div class="docsMenu-header<?php if ($pageGroup == "misc" || $expandAll== "true") { ?> active<?php } ?>" data-id="misc">
             <h4>Misc</h4>
             <i class="fa fa-arrow-right" aria-hidden="true"></i>
         </div>
