@@ -332,8 +332,14 @@ gridOptions.api.setFilterModel(null);
     </show-complex-example>
 
 <h3 id="floatingFilter">Floating filters</h3>
+
 <p>
-    Floating filters can be activated through the gridOptions:
+    Floating Filters are and additional row under the column headers where the user will be able to
+    see and optionally edit the filters associated to each column.
+</p>
+
+<p>
+    Floating filters are activated by setting grid property <i>floatingFilter=true</i>:
 </p>
 
 <pre>
@@ -343,13 +349,10 @@ gridOptions = {
 }</pre>
 
 <p>
-    Once floating filters are activated, ag-Grid will show an additional row under the column headers where the user will
-    be able to see/edit the filters associated to each column.
-</p>
-
-<p>
-    The floating filters always work off the main filter from the column, and interact by calling
-    getModel and setModel.
+    Floating filters are an accessory to the main column filters. They do not contain their own state,
+    rather they display the state of the main filter, and if editable they set state on the main filter.
+    Underneath the hood this is done by using the main filters <i>getModel()</i> and <i>setModel()</i>
+    methods. For this reason, there is no api for getting or setting state of the floating filters.
 </p>
 
 <p>
