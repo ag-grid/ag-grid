@@ -79,7 +79,7 @@ the quick filter at least one. You will notice the quick filter text is correct 
                                     { root: './', files: 'exampleQuickFilter.html,exampleQuickFilter.js' }
                                 ]
                               }"
-                      plunker="https://embed.plnkr.co/nVhnmx2ftPBvzj5Ie9MJ/"
+                      plunker="https://embed.plnkr.co/XlK0mtmxrKZjYOn3t56x/"
                       exampleheight="500px">
 </show-complex-example>
 

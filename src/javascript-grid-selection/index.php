@@ -305,7 +305,7 @@ api.forEachNodeAfterFilter( function(node) {
                                 { root: './', files: 'example4.html,example4.js' }
                             ]
                           }"
-                      plunker="https://embed.plnkr.co/YGStgt8zOpA49lkHHB0i/"
+                      plunker="https://embed.plnkr.co/ehKrzYNuZ64CYBOClbL6/"
                       exampleheight="500px">
     </show-complex-example>
 
