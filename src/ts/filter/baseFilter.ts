@@ -162,9 +162,13 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         this.refreshFilterBodyUi();
     }
 
-    private doOnFilterChanged ():void{
+    private doOnFilterChanged (applyNow:boolean = false):void{
         this.filterParams.filterModifiedCallback();
-        if (!this.applyActive) {
+        let requiresApplyAndIsApplying: boolean = this.applyActive && applyNow;
+        let notRequiresApply: boolean = !this.applyActive;
+
+        let shouldFilter:boolean = notRequiresApply || requiresApplyAndIsApplying;
+        if (shouldFilter) {
             this.filterParams.filterChangedCallback();
         }
         this.refreshFilterBodyUi();
@@ -174,8 +178,8 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         this.doOnFilterChanged();
     }
 
-    public onFloatingFilterChanged ():void{
-        this.doOnFilterChanged();
+    public onFloatingFilterChanged (applyNow:boolean):void{
+        this.doOnFilterChanged(applyNow);
     }
 
     public generateFilterHeader():string{

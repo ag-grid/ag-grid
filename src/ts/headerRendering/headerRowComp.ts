@@ -17,6 +17,7 @@ import {BaseFilter} from "../filter/baseFilter";
 import {ComponentProvider} from "../componentProvider";
 import {IFloatingFilterWrapperComp} from "../filter/floatingFilterWrapper";
 import {IComponent} from "../interfaces/iComponent";
+import {IFloatingFilterParams} from "../filter/floatingFilter";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -198,7 +199,7 @@ export class HeaderRowComp extends Component {
                  */
                 let column = <Column> columnGroupChild;
                 let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                let floatingFilterParams = {
+                let floatingFilterParams:IFloatingFilterParams<any> = {
                     currentParentModel:():any=>{
                         let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
                         return (filterComponent.getNullableModel) ?
@@ -208,8 +209,15 @@ export class HeaderRowComp extends Component {
                     onFloatingFilterChanged:(change:any):void=>{
                         let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
                         filterComponent.setModel(change);
-                        (<BaseFilter<any, any, any>>filterComponent).onFloatingFilterChanged();
-                    }
+                        filterComponent.onFloatingFilterChanged(false);
+                    },
+                    onApplyFilter:(change:any):void=>{
+                        let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+                        filterComponent.setModel(change);
+                        filterComponent.onFloatingFilterChanged(true);
+                    },
+                    //This one might be overriden from the colDef
+                    suppressFilterButton: false
                 };
                 let floatingFilterWrapper : IFloatingFilterWrapperComp<any, any, any> = <any>this.componentProvider.newFloatingFilterWrapperComponent(
                     filterComponent,

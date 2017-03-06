@@ -8,9 +8,11 @@ import {_} from "../utils";
 import {IDateComp, IDateParams} from "../rendering/dateComponent";
 import {ComponentProvider} from "../componentProvider";
 import {Component} from "../widgets/component";
+import {Constants} from "../constants";
 
 export interface IFloatingFilterParams<M> {
     onFloatingFilterChanged:(change:M)=>void;
+    onApplyFilter:(change:M)=>void;
     currentParentModel:()=>M;
     suppressFilterButton: boolean;
 }
@@ -27,6 +29,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
     eColumnFloatingFilter: HTMLInputElement;
 
     onFloatingFilterChanged:(change:M)=>void;
+    onApplyFilter:(change:M)=>void;
     currentParentModel:()=>M;
 
     constructor(){
@@ -36,7 +39,9 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
     init (params:P):void{
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.currentParentModel = params.currentParentModel;
+        this.onApplyFilter = params.onApplyFilter;
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'input', this.syncUpWithParentFilter.bind(this));
+        this.addDestroyableEventListener(this.eColumnFloatingFilter, 'keypress', this.checkApply.bind(this));
     }
 
     abstract asParentModel ():M;
@@ -46,8 +51,14 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
         this.eColumnFloatingFilter.value = this.asFloatingFilterText (parentModel);
     }
 
-    syncUpWithParentFilter ():void{
+    syncUpWithParentFilter (e:KeyboardEvent):void{
         this.onFloatingFilterChanged(this.asParentModel());
+    }
+
+    checkApply (e:KeyboardEvent):void{
+        if (_.isKeyPressed(e, Constants.KEY_ENTER)){
+            this.onApplyFilter(this.asParentModel());
+        }
     }
 }
 

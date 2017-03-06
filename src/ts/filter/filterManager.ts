@@ -461,6 +461,7 @@ export class FilterManager {
     }
 
     private disposeFilterWrapper(filterWrapper: FilterWrapper): void {
+        filterWrapper.filter.setModel(null);
         if (filterWrapper.filter.destroy) {
             filterWrapper.filter.destroy();
         }
