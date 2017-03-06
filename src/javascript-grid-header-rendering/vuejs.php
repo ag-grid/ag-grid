@@ -4,13 +4,6 @@
     VueJS Header Rendering
 </h2>
 
-<p>
-    This section outlines how to use VueJS components inside the header. You should read about how
-    <a href="../javascript-grid-header-rendering/">Header Components</a> work in ag-Grid first before trying to
-    understand this section. For a full working example of Header Components in VueJS see
-    <a href="https://github.com/ceolter/ag-grid-vue-example">VueJS Example</a>.
-</p>
-
 <h3 id="header-component">Header Component</h3>
 
 <p>
@@ -18,3 +11,6 @@
 </p>
 
 <p>All you need to do is implement your VueJS component as normal, and provide it to the grid as documented above. Easy!</p>
+
+<p>For a full working example of Header Components in VueJS see
+<a href="https://github.com/ceolter/ag-grid-vue-example">VueJS Example</a>.
