@@ -1,12 +1,10 @@
-import {IMenu} from "./iMenu";
 import {Column} from "../entities/column";
-import {ColumnController} from "../columnController/columnController";
 
 export interface IMenuFactory {
 
-    showMenuAfterButtonClick(column: Column, eventSource: HTMLElement): void;
+    showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?:string): void;
 
-    showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent|Touch): void;
+    showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent|Touch, defaultTab?:string): void;
 
     isMenuEnabled(column: Column): boolean;
 }

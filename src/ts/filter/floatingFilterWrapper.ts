@@ -93,7 +93,7 @@ export class FloatingFilterWrapperComp<M, PC extends IFloatingFilterParams<M>, P
     }
 
     private showParentFilter(){
-        this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter);
+        this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filter');
     }
 
 }
