@@ -1035,7 +1035,7 @@ CountryFloatingFilterComponent.prototype.onParentModelChanged = function(model) 
                 'src="https://flags.fmcdn.net/data/flags/mini/'
                 + COUNTRY_CODES[country] + '.png">');
         });
-        this.eGui.innerHTML = '('+model.length+') ' + flagsHtml.join();
+        this.eGui.innerHTML = '('+model.length+') ' + flagsHtml.join('');
     } else {
         this.eGui.innerHTML = '';
     }
