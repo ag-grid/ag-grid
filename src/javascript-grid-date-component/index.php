@@ -156,7 +156,7 @@ gridOptions: {
 
 <p>
     The example below shows how to register a custom date component, and then how that component is automatically used in
-    the year column for both the rich filter and the floating filter.
+    the date column for both the rich filter and the floating filter.
 </p>
 
 <show-complex-example example="exampleCustomDate.html"
