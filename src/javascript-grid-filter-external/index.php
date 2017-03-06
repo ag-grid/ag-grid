@@ -44,7 +44,7 @@ include '../documentation-main/documentation_header.php';
                                     { root: './', files: 'exampleFilterExternal.html,exampleFilterExternal.js' }
                                 ]
                               }"
-                      plunker="https://embed.plnkr.co/Tf6CEsZh0dgHGEHtCdIL/"
+                      plunker="https://embed.plnkr.co/08TNWPFljkRArrXM84Ji/"
                       exampleheight="500px">
 </show-complex-example>
 

@@ -240,7 +240,7 @@ countryFilterComponent.onFilterChanged()
 
     <h2 id="commonFunctionality">Common Column Filtering Functionality And Examples</h2>
 
-    <p>The following can be found int the <a "../javascript-grid-filtering/">column filtering documentation page</a></p>
+    <p>The following can be found in the <a href="../javascript-grid-filtering/">column filtering documentation page</a></p>
     <p>
     <ul>
         <li>Common filtering params</li>

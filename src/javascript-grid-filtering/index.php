@@ -135,7 +135,7 @@ columnDefinition = {
                                     { root: './', files: 'example1.html,example1.js' }
                                 ]
                               }"
-                          plunker="https://embed.plnkr.co/PZ1kJCiQOerXr36cbTZ4/"
+                          plunker="https://embed.plnkr.co/pTreZEgQtV7OZRExQUjU/"
                           exampleheight="500px">
     </show-complex-example>
 
@@ -255,7 +255,7 @@ var nameFilterInstance = api.getFilterInstance('name');</pre>
                                     { root: './', files: 'exampleFilterApi.html,exampleFilterApi.js' }
                                 ]
                               }"
-                          plunker="https://embed.plnkr.co/5EyeTra5sahkg43TnL5L/"
+                          plunker="https://embed.plnkr.co/Mbpz8VjMqbdExgBrta6h/"
                           exampleheight="500px">
     </show-complex-example>
 
@@ -321,15 +321,7 @@ gridOptions.api.setFilterModel(null);
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <show-complex-example example="exampleFilterModel.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'exampleFilterModel.html,exampleFilterModel.js' }
-                                ]
-                              }"
-                          plunker="https://embed.plnkr.co/KDZENKpqCaPZWq8lNQU5/"
-                          exampleheight="500px">
-    </show-complex-example>
+    <show-example example="exampleFilterModel"></show-example>
 
 <h3 id="floatingFilter">Floating filters</h3>
 
