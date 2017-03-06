@@ -135,7 +135,7 @@ columnDefinition = {
                                     { root: './', files: 'example1.html,example1.js' }
                                 ]
                               }"
-                          plunker="https://embed.plnkr.co/PZ1kJCiQOerXr36cbTZ4/"
+                          plunker="https://embed.plnkr.co/pTreZEgQtV7OZRExQUjU/"
                           exampleheight="500px">
     </show-complex-example>
 
@@ -255,7 +255,7 @@ var nameFilterInstance = api.getFilterInstance('name');</pre>
                                     { root: './', files: 'exampleFilterApi.html,exampleFilterApi.js' }
                                 ]
                               }"
-                          plunker="https://embed.plnkr.co/5EyeTra5sahkg43TnL5L/"
+                          plunker="https://embed.plnkr.co/Mbpz8VjMqbdExgBrta6h/"
                           exampleheight="500px">
     </show-complex-example>
 
@@ -321,15 +321,7 @@ gridOptions.api.setFilterModel(null);
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <show-complex-example example="exampleFilterModel.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'exampleFilterModel.html,exampleFilterModel.js' }
-                                ]
-                              }"
-                          plunker="https://embed.plnkr.co/KDZENKpqCaPZWq8lNQU5/"
-                          exampleheight="500px">
-    </show-complex-example>
+    <show-example example="exampleFilterModel"></show-example>
 
 <h3 id="floatingFilter">Floating filters</h3>
 
@@ -387,9 +379,9 @@ will be empty.
 <p>
     The following example shows the following features of floating filters:
     <ul>
-        <li>Text filter: Have out of the box read/write floating filters (Country column)</li>
-        <li>Set filter: Have out of the box read floating filters  (Sport column)</li>
-        <li>Date and text filter: Have out of the box read/write floating filters for all filter except when switching
+        <li>Text filter: Have out of the box read/write floating filters (Sport column)</li>
+        <li>Set filter: Have out of the box read floating filters  (Country column)</li>
+        <li>Date and number filter: Have out of the box read/write floating filters for all filter except when switching
             to in range filtering, then the floating filter is read only (Age and date columns)</li>
         <li>Columns with the applyButton require the user to press enter on the floating filter for the filter to take
         effect (Gold column)</li>
