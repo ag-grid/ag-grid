@@ -101,6 +101,14 @@ include '../documentation-main/documentation_header.php';
             <td>Filter component to use for this column.</td>
         </tr>
         <tr>
+            <th>floatingFilterComponent<br/>floatingFilterComponentFramework</th>
+            <td>Floating filter component to use for this column.</td>
+        </tr>
+        <tr>
+            <th>floatingFilterComponentParams</th>
+            <td>Custom params to be passed to floatingFilterComponent/floatingFilterComponentFramework </td>
+        </tr>
+        <tr>
             <th>hide</th>
             <td>Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field
                 'visible' and mark it false to hide, however we want all default values to be false and we want columns to be

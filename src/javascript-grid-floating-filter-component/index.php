@@ -21,16 +21,18 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    To provide a custom floating filter, you have to provide it through the property customFloatingFilterComponent
-    in the column definition, in the form of a function. ag-Grid will call 'new' on this function and treat the generated
-    class instance as a floating filter component. A floating filter component class can be any function / class that
-    implements the following interface:
+    To provide a custom floating filter, you have to provide it through the column definition property
+    floatingFilterComponent if using plain JS or floatingFilterComponentFramework if you are using your favourite framework.
+
+    For plain JS (floatingFilterComponent) it needs to be provided in the form of a function. ag-Grid will call 'new' on
+    this function and treat the generated class instance as a floating filter component. A floating filter component
+    class can be any function /class that implements the following interface:
 </p>
 
 <pre>interface IFloatingFilter {
     <span class="codeComment">// mandatory methods</span>
 
-    <span class="codeComment">// The init(params) method is called on the filter once. See below for details on the parameters.</span>
+    <span class="codeComment">// The init(params) method is called on the floating filter once. See below for details on the parameters.</span>
     init(params: IFilterFloatingParams): void;
 
     <span class="codeComment">// This is a method that ag-Grid will call every time the model from the associated rich filter
@@ -38,18 +40,10 @@ include '../documentation-main/documentation_header.php';
     on it a visual representation of the latest model for the filter as it is being updated somewhere else.</span>
     onParentModelChanged(parentModel:any)
 
-    <span class="codeComment">// Returns the GUI for this filter. The GUI can be a) a string of html or b) a DOM element or node.</span>
-    getGui(): any;
+    <span class="codeComment">// Returns the dom html element for this floating filter.</span>
+    getGui(): HTMLElement;
 
     <span class="codeComment">// optional methods</span>
-
-    <span class="codeComment">// Gets called every time the popup is shown, after the gui returned in getGui is attached to the DOM.
-    // If the filter popup is closed and reopened, this method is called each time the filter is shown.
-    // This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM
-    // element. The params has one callback method 'hidePopup', which you can call at any later
-    // point to hide the popup - good if you have an 'Apply' button and you want to hide the popup
-    // after it is pressed.</span>
-    afterGuiAttached?(params?: {hidePopup?: Function}): void;
 
     <span class="codeComment">// Gets called when the column header section is destroyed.
     // like column headers, the floating filter life span is only when the column is visible,
@@ -77,14 +71,14 @@ include '../documentation-main/documentation_header.php';
     //In order to make this call you need to be able to produce a model object like the one this rich filter will
     //produce through getModel() after this call is completed, the parent rich filter will be updated and the
     //data on the grid filtered accordingly if applyButton=false.</span>
-    //onFloatingFilterChanged(change:any): void;
+    onFloatingFilterChanged(change:any): void;
 
     <span class="codeComment">
     // This is the callback you need to invoke from your component every time that you want to simulate the user
     //clicking the apply button on the rich filter. If there is no apply button on the rich filter, this callback
     //behaves exactly the same as onFloatingFilterChanged.
     //As onFloatingFilterChanged you need to be able to produce a model object.</span>
-    //onApplyFilter(change:any): void;
+    onApplyFilter(change:any): void;
 
     <span class="codeComment">// This is a shortcut to invoke getModel on the parent rich filter..</span>
     currentParentModel(): any;
