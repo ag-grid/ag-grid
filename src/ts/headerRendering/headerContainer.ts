@@ -123,7 +123,8 @@ export class HeaderContainer {
             this.eContainer.appendChild(headerRowComp.getGui());
         }
 
-        if (this.gridOptionsWrapper.isFloatingFilter() && (!this.gridOptionsWrapper.isPivotMode())) {
+        let floatingFilterActive = this.gridOptionsWrapper.isFloatingFilter() && !this.gridOptionsWrapper.isPivotMode();
+        if (floatingFilterActive) {
             var headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned, this.eRoot, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
