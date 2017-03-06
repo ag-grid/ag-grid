@@ -43,7 +43,6 @@ var hardcodedFilter = {
 var savedFilters = '[]';
 
 var gridOptions = {
-    floatingFilter:true,
     columnDefs: columnDefs,
     rowData: null,
     enableFilter: true,
