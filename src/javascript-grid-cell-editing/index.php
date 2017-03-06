@@ -397,5 +397,8 @@ colDef.cellEditorParams = {
 
     <show-example example="exampleSingleClickEditing"></show-example>
 
+<note>Cell Editing can also be done via Cell Editor Components - please see <a href="../javascript-grid-cell-editor">
+        Cell Editor Components</a> for more information.</note>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
