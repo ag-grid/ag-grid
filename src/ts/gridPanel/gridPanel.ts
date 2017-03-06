@@ -1454,7 +1454,8 @@ export class GridPanel extends BeanStub {
         var numberOfRowsInHeader = this.columnController.getHeaderRowCount();
         var totalHeaderHeight = headerHeight * numberOfRowsInHeader;
 
-        if (this.gridOptionsWrapper.isFloatingFilter()) {
+        let floatingFilterActive = this.gridOptionsWrapper.isFloatingFilter() && !this.gridOptionsWrapper.isPivotMode();
+        if (floatingFilterActive) {
             totalHeaderHeight += 20;
         }
 
