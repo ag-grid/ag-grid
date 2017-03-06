@@ -2,7 +2,7 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150, filter: PersonFilter, suppressMenu:true},
     {headerName: "Age", field: "age", width: 90, filter: 'number', suppressMenu:true},
-    {headerName: "Country", field: "country", width: 120, filter: 'text', suppressMenu:true},
+    {headerName: "Country", field: "country", width: 120, filter: 'set', suppressMenu:true},
     {headerName: "Year", field: "year", width: 90, filter: 'number', suppressMenu:true},
     {headerName: "Date", field: "date", width: 145, filter:'date', filterParams:{
         comparator:function (filterLocalDateAtMidnight, cellValue){
@@ -23,7 +23,7 @@ var columnDefs = [
             }
         }
     }, suppressMenu:true},
-    {headerName: "Sport", field: "sport", width: 110, suppressMenu:true},
+    {headerName: "Sport", field: "sport", width: 110, suppressMenu:true, filter:'text'},
     {headerName: "Gold", field: "gold", width: 100, filter: 'number', filterParams:{applyButton:true}, suppressMenu:true},
     {headerName: "Silver", field: "silver", width: 100, filter: 'number', floatingFilterComponentParams:{suppressFilterButton:true}},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'number', floatingFilterComponentParams:{suppressFilterButton:true}},

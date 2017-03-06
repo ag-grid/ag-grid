@@ -387,9 +387,9 @@ will be empty.
 <p>
     The following example shows the following features of floating filters:
     <ul>
-        <li>Text filter: Have out of the box read/write floating filters (Country column)</li>
-        <li>Set filter: Have out of the box read floating filters  (Sport column)</li>
-        <li>Date and text filter: Have out of the box read/write floating filters for all filter except when switching
+        <li>Text filter: Have out of the box read/write floating filters (Sport column)</li>
+        <li>Set filter: Have out of the box read floating filters  (Country column)</li>
+        <li>Date and number filter: Have out of the box read/write floating filters for all filter except when switching
             to in range filtering, then the floating filter is read only (Age and date columns)</li>
         <li>Columns with the applyButton require the user to press enter on the floating filter for the filter to take
         effect (Gold column)</li>
