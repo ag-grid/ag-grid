@@ -1,9 +1,9 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'set'},
-    {headerName: "Age", field: "age", width: 90, filter: 'number'},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
+    {headerName: "Athlete", field: "athlete", width: 150, filter: PersonFilter, suppressMenu:true},
+    {headerName: "Age", field: "age", width: 90, filter: 'number', suppressMenu:true},
+    {headerName: "Country", field: "country", width: 120, filter: 'text', suppressMenu:true},
+    {headerName: "Year", field: "year", width: 90, filter: 'number', suppressMenu:true},
     {headerName: "Date", field: "date", width: 145, filter:'date', filterParams:{
         comparator:function (filterLocalDateAtMidnight, cellValue){
             var dateAsString = cellValue;
@@ -22,15 +22,16 @@ var columnDefs = [
                 return 1;
             }
         }
-    }},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'number'},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'number'},
+    }, suppressMenu:true},
+    {headerName: "Sport", field: "sport", width: 110, suppressMenu:true},
+    {headerName: "Gold", field: "gold", width: 100, filter: 'number', filterParams:{applyButton:true}, suppressMenu:true},
+    {headerName: "Silver", field: "silver", width: 100, filter: 'number', floatingFilterComponentParams:{suppressFilterButton:true}},
+    {headerName: "Bronze", field: "bronze", width: 100, filter: 'number', floatingFilterComponentParams:{suppressFilterButton:true}},
     {headerName: "Total", field: "total", width: 100, filter: 'number', suppressFilter: true}
 ];
 
 var gridOptions = {
+    floatingFilter:true,
     columnDefs: columnDefs,
     rowData: null,
     enableFilter: true,
@@ -116,6 +117,8 @@ function ageBetween25And30() {
 function clearAgeFilter() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
     ageFilterComponent.setFilter(null);
+    ageFilterComponent.setFilterTo(null);
+    ageFilterComponent.setType('equeals');
     ageFilterComponent.onFilterChanged();
 }
 
@@ -137,6 +140,91 @@ function clearDateFilter(){
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
     dateFilterComponent.setDateFrom(null);
     dateFilterComponent.onFilterChanged();
+}
+
+function PersonFilter() {
+}
+
+PersonFilter.prototype.init = function (params) {
+    this.valueGetter = params.valueGetter;
+    this.filterText = null;
+    this.setupGui(params);
+};
+
+// not called by ag-Grid, just for us to help setup
+PersonFilter.prototype.setupGui = function (params) {
+    this.gui = document.createElement('div');
+    this.gui.innerHTML =
+        '<div style="padding: 4px;">' +
+        '<div style="font-weight: bold;">Custom Athlete Filter</div>' +
+        '<div><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Full name search..."/></div>' +
+        '<div style="margin-top: 20px; width: 200px;">This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.</div>' +
+        '</div>';
+
+    this.eFilterText = this.gui.querySelector('#filterText');
+    this.eFilterText.addEventListener("changed", listener);
+    this.eFilterText.addEventListener("paste", listener);
+    this.eFilterText.addEventListener("input", listener);
+// IE doesn't fire changed for special keys (eg delete, backspace), so need to
+// listen for this further ones
+    this.eFilterText.addEventListener("keydown", listener);
+    this.eFilterText.addEventListener("keyup", listener);
+
+    var that = this;
+
+    function listener(event) {
+        that.filterText = event.target.value;
+        params.filterChangedCallback();
+    }
+};
+
+PersonFilter.prototype.getGui = function () {
+    return this.gui;
+};
+
+PersonFilter.prototype.doesFilterPass = function (params) {
+// make sure each word passes separately, ie search for firstname, lastname
+    var passed = true;
+    var valueGetter = this.valueGetter;
+    this.filterText.toLowerCase().split(" ").forEach(function (filterWord) {
+        var value = valueGetter(params);
+        if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
+            passed = false;
+        }
+    });
+
+    return passed;
+};
+
+PersonFilter.prototype.isFilterActive = function () {
+    var isActive = this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
+    return isActive;
+};
+
+PersonFilter.prototype.getApi = function () {
+    var that = this;
+    return {
+        getModel: function () {
+            var model = {value: that.filterText.value};
+            return model;
+        },
+        setModel: function (model) {
+            that.eFilterText.value = model.value;
+        }
+    }
+};
+
+PersonFilter.prototype.getModelAsString = function (model){
+    return model ? model : '';
+};
+
+PersonFilter.prototype.getModel = function () {
+    return this.filterText;
+};
+// lazy, the example doesn't use setModel()
+PersonFilter.prototype.setModel = function () {};
+
+function WinningsFilter() {
 }
 
 // setup the grid after the page has finished loading

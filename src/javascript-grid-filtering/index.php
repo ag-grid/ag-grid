@@ -331,6 +331,77 @@ gridOptions.api.setFilterModel(null);
                           exampleheight="500px">
     </show-complex-example>
 
+<h3 id="floatingFilter">Floating filters</h3>
+<p>
+    Floating filters can be activated through the gridOptions:
+</p>
+
+<pre>
+gridOptions = {
+    <span class="codeComment">// turn on floating filters</span>
+    floatingFilter: true
+}</pre>
+
+<p>
+    Once floating filters are activated, ag-Grid will show an additional row under the column headers where the user will
+    be able to see/edit the filters associated to each column.
+</p>
+
+<p>
+    The floating filters always work off the main filter from the column, and interact by calling
+    getModel and setModel.
+</p>
+
+<p>
+    Every filter provided by ag-grid provides its own implementation of a floating filter so if you activate them, there
+    is nothing else that you need to do to start using them.
+</p>
+
+<p>
+    If you create your own filter you have two options to get its floating filter working.
+<ol>
+    <li>
+        You can <a href="../javascript-grid-floating-filter-component/">create your own floating filter</a>.
+    </li>
+    <li>
+        You can implement the method getModelAsString in your custom filter. If you implement this method and you don't
+        provide a custom floating filter, ag-grid will automatically provide a read-only version of a floating filter
+    </li>
+</ol>
+    If you don't provide any of these two options for your custom filter, the display area for the floating filter
+will be empty.
+</p>
+
+<p>
+    Every floating filter also takes a parameter to show/hide automatically a button that will open the main filter.
+</p>
+
+<p>
+    To see the specifics on what are all the parameters and the interface for a floating filter check out
+    <a href="../javascript-grid-floating-filter-component/">the docs for floating filter components</a>.
+</p>
+
+<p>
+    The following example shows the following features of floating filters:
+    <ul>
+        <li>Text filter: Have out of the box read/write floating filters (Country column)</li>
+        <li>Set filter: Have out of the box read floating filters  (Sport column)</li>
+        <li>Date and text filter: Have out of the box read/write floating filters for all filter except when switching
+            to in range filtering, then the floating filter is read only (Age and date columns)</li>
+        <li>Columns with the applyButton require the user to press enter on the floating filter for the filter to take
+        effect (Gold column)</li>
+        <li>Changes made from the outside are reflected automatically in the floating filters (Press any button)</li>
+        <li>Columns with custom filter have automatic read only filter if the custom filter implements the method
+        getModelAsString. (Athlete column)</li>
+        <li>The user can configure when to show/hide the button that shows the rich filter (Silver and Bronze columns)</li>
+        <li>Columns with suppressFilter=true don't have floating filters (Total column)</li>
+        <li>Combining suppressMenu and suppressFilter lets you control where the user access to the rich filter. In
+        this example suppressMenu = true for all the columns except Silver and Bronze</li>
+    </ul>
+</p>
+
+<show-example example="exampleFloatingFilter"></show-example>
+
 <h3>Server Side Filtering</h3>
 
 <p>

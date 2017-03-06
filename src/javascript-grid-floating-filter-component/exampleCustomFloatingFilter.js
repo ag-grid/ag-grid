@@ -30,22 +30,22 @@ var columnDefs = [
         floatingFilterComponentParams:{
             maxValue:7,
             suppressFilterButton:true
-        }},
+        }, suppressMenu:true},
     {headerName: "Silver", field: "silver", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
             maxValue:3,
             suppressFilterButton:true
-        }},
+        }, suppressMenu:true},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
             maxValue:2,
             suppressFilterButton:true
-        }},
+        }, suppressMenu:true},
     {headerName: "Total", field: "total", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
             maxValue:5,
             suppressFilterButton:true
-        }}
+        }, suppressMenu:true}
 ];
 
 var gridOptions = {
@@ -86,11 +86,14 @@ NumberFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
     if (!parentModel) {
         //If there is no filtering set to the minimun
         this.eSlider.slider( "option", "value", 0 );
+        this.currentValue = null;
     } else {
         if (parentModel.filter !== this.currentValue){
             this.eSlider.slider( "option", "value", parentModel.filter );
         }
+        this.currentValue = parentModel.filter;
     }
+    this.eSlider.children(".ui-slider-handle").html(this.currentValue ? '>' + this.currentValue : '');
 };
 
 NumberFloatingFilter.prototype.getGui = function () {
@@ -98,6 +101,7 @@ NumberFloatingFilter.prototype.getGui = function () {
 };
 
 NumberFloatingFilter.prototype.buildModel = function () {
+    if (this.currentValue === 0) return null;
     return {
         type:'greaterThan',
         filter:Number(this.currentValue)

@@ -32,8 +32,7 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    enableFilter: true,
-    floatingFilter: true
+    enableFilter: true
 };
 
 // setup the grid after the page has finished loading
