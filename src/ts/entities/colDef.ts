@@ -7,6 +7,7 @@ import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
 import {IHeaderComp, IHeader} from "../headerRendering/header/headerComp";
 import {IHeaderGroupComp} from "../headerRendering/headerGroup/headerGroupComp";
+import {IFloatingFilterComp} from "../filter/floatingFilter";
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
@@ -241,6 +242,11 @@ export interface ColDef extends AbstractColDef {
     headerComponentFramework?: {new (): any};
     /** The custom header component parameters**/
     headerComponentParams?:any
+
+    /** The custom header component to be used for rendering the floating filter. If none specified the default ag-Grid is used**/
+    floatingFilterComponent?: {new(): IFloatingFilterComp<any, any>};
+    floatingFilterComponentParams?:any;
+    floatingFilterComponentFramework?:{new (): any};
 }
 
 export interface IsColumnFunc {

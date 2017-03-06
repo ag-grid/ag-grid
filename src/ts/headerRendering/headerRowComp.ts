@@ -192,51 +192,58 @@ export class HeaderRowComp extends Component {
                 result = new HeaderGroupWrapperComp(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER :
-                /** We always get the freshest reference to the baseFilter because the filters get sometimes created
-                 * and destroyed beetwen calls
-                 *
-                 *let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                 */
                 let column = <Column> columnGroupChild;
-                let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                let floatingFilterParams:IFloatingFilterParams<any> = {
-                    currentParentModel:():any=>{
-                        let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                        return (filterComponent.getNullableModel) ?
-                            filterComponent.getNullableModel():
-                            filterComponent.getModel();
-                    },
-                    onFloatingFilterChanged:(change:any):void=>{
-                        let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                        filterComponent.setModel(change);
-                        filterComponent.onFloatingFilterChanged(false);
-                    },
-                    onApplyFilter:(change:any):void=>{
-                        let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                        filterComponent.setModel(change);
-                        filterComponent.onFloatingFilterChanged(true);
-                    },
-                    //This one might be overriden from the colDef
-                    suppressFilterButton: false
-                };
-                let floatingFilterWrapper : IFloatingFilterWrapperComp<any, any, any> = <any>this.componentProvider.newFloatingFilterWrapperComponent(
-                    filterComponent,
-                    column,
-                    <null>floatingFilterParams
-                );
-                result = floatingFilterWrapper;
-
-                column.addEventListener(Column.EVENT_FILTER_CHANGED, ()=>{
-                    let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                    floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
-                });
-                floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
+                result = this.createFloatingFilterWrapper(column);
                 break;
         }
 
 
         this.context.wireBean(result);
         return result;
+    }
+
+    private createFloatingFilterWrapper(column: Column):IFloatingFilterWrapperComp<any, any, any> {
+        let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+        let floatingFilterParams: IFloatingFilterParams<any> = this.createFloatingFilterParams(column);
+        let floatingFilterWrapper: IFloatingFilterWrapperComp<any, any, any> = this.componentProvider.newFloatingFilterWrapperComponent(
+            filterComponent,
+            column,
+            <null>floatingFilterParams
+        );
+        column.addEventListener(Column.EVENT_FILTER_CHANGED, () => {
+            let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+            floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
+        });
+        floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
+        return floatingFilterWrapper;
+    }
+
+    private createFloatingFilterParams(column: Column):IFloatingFilterParams<any> {
+        /** We always get the freshest reference to the baseFilter because the filters get sometimes created
+         * and destroyed beetwen calls
+         *
+         *let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+         */
+        return {
+            currentParentModel: (): any => {
+                let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+                return (filterComponent.getNullableModel) ?
+                    filterComponent.getNullableModel() :
+                    filterComponent.getModel();
+            },
+            onFloatingFilterChanged: (change: any): void => {
+                let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+                filterComponent.setModel(change);
+                filterComponent.onFloatingFilterChanged(false);
+            },
+            onApplyFilter: (change: any): void => {
+                let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+                filterComponent.setModel(change);
+                filterComponent.onFloatingFilterChanged(true);
+            },
+            //This one might be overriden from the colDef
+            suppressFilterButton: false
+        };
     }
 
 }
