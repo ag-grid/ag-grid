@@ -882,7 +882,7 @@ export class Utils {
     }
 
     static escape (toEscape:string):string {
-        if (!toEscape) return null;
+        if (toEscape === null) return null;
         if (!toEscape.replace) return toEscape;
 
         return toEscape.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr])
