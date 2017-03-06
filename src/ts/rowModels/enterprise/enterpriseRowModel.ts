@@ -1,6 +1,7 @@
 
 import {IRowModel} from "../../interfaces/iRowModel";
 import {RowNode} from "../../entities/rowNode";
+import {Constants} from "../../constants";
 
 export class EnterpriseRowModel implements IRowModel {
 
@@ -48,7 +49,7 @@ export class EnterpriseRowModel implements IRowModel {
     }
 
     public getType(): string {
-        return null;
+        return Constants.ROW_MODEL_TYPE_ENTERPRISE;
     }
 
 }

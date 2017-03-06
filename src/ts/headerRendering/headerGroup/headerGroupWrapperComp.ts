@@ -61,8 +61,13 @@ export class HeaderGroupWrapperComp extends Component {
         this.addClasses();
         this.setupMove(headerComponent.getGui(), displayName);
         this.setupWidth();
+        this.addAttributes();
 
         this.addFeature(this.context, new SetLeftFeature(this.columnGroup, this.getGui()));
+    }
+
+    private addAttributes(): void {
+        this.getGui().setAttribute("colId", this.columnGroup.getUniqueId());
     }
 
     private appendHeaderGroupComp(displayName: string): IHeaderGroupComp {

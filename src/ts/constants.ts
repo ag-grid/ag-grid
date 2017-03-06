@@ -46,6 +46,7 @@ export class Constants {
     static ROW_MODEL_TYPE_VIRTUAL = 'virtual';
     static ROW_MODEL_TYPE_VIEWPORT = 'viewport';
     static ROW_MODEL_TYPE_NORMAL = 'normal';
+    static ROW_MODEL_TYPE_ENTERPRISE = 'enterprise';
 
     static ALWAYS = 'always';
     static ONLY_WHEN_GROUPING = 'onlyWhenGrouping';
