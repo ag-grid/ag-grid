@@ -150,6 +150,20 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
                 }
             }
 
+            onNewRowsLoaded(): void {
+                if (this._agAwareComponent.onNewRowsLoaded) {
+                    this._agAwareComponent.onNewRowsLoaded();
+                }
+            }
+
+            getModelAsString(model: any): string {
+                let agAwareComponent = <any>this._agAwareComponent;
+                if (agAwareComponent.getModelAsString) {
+                    return agAwareComponent.getModelAsString(model);
+                }
+                return null;
+            }
+
             getFrameworkComponentInstance(): any {
                 return this._frameworkComponentInstance;
             }

@@ -282,6 +282,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public embedFullWidthRows: any = undefined;
     @Input() public suppressTabbing: any = undefined;
     @Input() public suppressPaginationPanel: any = undefined;
+    @Input() public paginationStartPage: any = undefined;
 
     /**
      * Outputs
