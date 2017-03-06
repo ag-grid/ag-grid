@@ -33,18 +33,21 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     private lastSelectedTab: string;
 
-    public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent): void {
+    public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent, defaultTab?:string): void {
 
         this.showMenu(column, (menu: EnterpriseMenu)=> {
             this.popupService.positionPopupUnderMouseEvent({
                 mouseEvent: mouseEvent,
                 ePopup: menu.getGui()
             });
-        });
+            if (defaultTab){
+                menu.showTab(defaultTab);
+            }
+        }, defaultTab);
 
     }
 
-    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement): void {
+    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?:string): void {
 
         this.showMenu(column, (menu: EnterpriseMenu)=> {
             this.popupService.positionPopupUnderComponent({eventSource: eventSource,
@@ -54,11 +57,14 @@ export class EnterpriseMenuFactory implements IMenuFactory {
                 minWidth: menu.getMinWidth(),
                 keepWithinBounds: true
             });
-        });
+            if (defaultTab){
+                menu.showTab(defaultTab);
+            }
+        }, defaultTab);
 
     }
 
-    public showMenu(column: Column, positionCallback: (menu: EnterpriseMenu)=>void): void {
+    public showMenu(column: Column, positionCallback: (menu: EnterpriseMenu)=>void, defaultTab?:string): void {
 
         var menu = new EnterpriseMenu(column, this.lastSelectedTab);
         this.context.wireBean(menu);
@@ -78,6 +84,10 @@ export class EnterpriseMenuFactory implements IMenuFactory {
         menu.afterGuiAttached({
             hidePopup: hidePopup
         });
+
+        if (!defaultTab){
+            menu.showTabBasedOnPreviousSelection();
+        }
 
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, (event: any) => {
             this.lastSelectedTab = event.key
@@ -165,15 +175,20 @@ export class EnterpriseMenu {
         });
     }
 
-    private showTabBasedOnPreviousSelection(): void {
+    public showTabBasedOnPreviousSelection(): void {
         // show the tab the user was on last time they had a menu open
-        if (this.tabItemColumns && this.initialSelection===EnterpriseMenu.TAB_COLUMNS) {
+        this.showTab(this.initialSelection);
+    }
+
+    public showTab(toShow:string) {
+        console.log('showing : ' + toShow + ' - ' + this.tabItemFilter)
+        if (this.tabItemColumns && toShow === EnterpriseMenu.TAB_COLUMNS) {
             this.tabbedLayout.showItem(this.tabItemColumns);
         }
-        else if (this.tabItemFilter&& this.initialSelection===EnterpriseMenu.TAB_FILTER) {
+        else if (this.tabItemFilter && toShow === EnterpriseMenu.TAB_FILTER) {
             this.tabbedLayout.showItem(this.tabItemFilter);
         }
-        else if (this.tabItemGeneral && this.initialSelection===EnterpriseMenu.TAB_GENERAL) {
+        else if (this.tabItemGeneral && toShow === EnterpriseMenu.TAB_GENERAL) {
             this.tabbedLayout.showItem(this.tabItemGeneral);
         }
         else {
@@ -337,7 +352,6 @@ export class EnterpriseMenu {
 
     public afterGuiAttached(params: any): void {
         this.tabbedLayout.setAfterAttachedParams({hidePopup: params.hidePopup});
-        this.showTabBasedOnPreviousSelection();
         this.hidePopupFunc = params.hidePopup;
 
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
