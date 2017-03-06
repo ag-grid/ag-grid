@@ -241,8 +241,8 @@ export class ExcelCreator implements IExcelCreator{
                 this.columnController,
                 this.valueService,
                 this.gridOptionsWrapper,
-                params.processCellCallback,
-                params.processHeaderCallback,
+                params ? params.processCellCallback : null,
+                params ? params.processHeaderCallback: null,
                 this.excelXmlFactory,
                 this.gridOptions.excelStyles,
                 this.styleLinker.bind(this)
