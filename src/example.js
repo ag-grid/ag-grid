@@ -376,6 +376,7 @@ var defaultCols = [
                     selectAllOnMiniFilter: true,
                     clearButton: true
                 },
+                floatingFilterComponent: CountryFloatingFilterComponent,
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -1012,6 +1013,33 @@ function countryCellRenderer(params) {
         return '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
     }
 }
+
+function CountryFloatingFilterComponent() {}
+
+CountryFloatingFilterComponent.prototype.init = function(params) {
+    this.params = params;
+    this.eGui = document.createElement('div');
+    this.eGui.innerHTML = 'text';
+};
+
+CountryFloatingFilterComponent.prototype.getGui = function() {
+    return this.eGui;
+};
+
+CountryFloatingFilterComponent.prototype.onParentModelChanged = function(model) {
+    // add in child, one for each flat
+    if (model) {
+        var flagsHtml = [];
+        model.forEach(function(country) {
+            flagsHtml.push('<img style="border: 0px; width: 15px; height: 10px; margin-left: 2px" ' +
+                'src="https://flags.fmcdn.net/data/flags/mini/'
+                + COUNTRY_CODES[country] + '.png">');
+        });
+        this.eGui.innerHTML = '('+model.length+') ' + flagsHtml.join();
+    } else {
+        this.eGui.innerHTML = '';
+    }
+};
 
 function CountryCellRenderer() {
     this.eGui = document.createElement('span');
