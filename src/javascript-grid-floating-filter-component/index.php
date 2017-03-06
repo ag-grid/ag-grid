@@ -68,24 +68,20 @@ include '../documentation-main/documentation_header.php';
     <span class="codeComment">// The column this filter is for</span>
     column: Column;
 
-    <span class="codeComment">
-    // This is the callback you need to invoke from your component every time that you want to update the model
-    //from your parent rich filter.
-    //In order to make this call you need to be able to produce a model object like the one this rich filter will
-    //produce through getModel() after this call is completed, the parent rich filter will be updated and the
-    //data on the grid filtered accordingly if applyButton=false.</span>
+    <span class="codeComment">// This is the callback you need to invoke from your component every time that you want to update the model
+    // from your parent rich filter. In order to make this call you need to be able to produce a model object
+    // like the one this rich filter will produce through getModel() after this call is completed, the parent
+    // rich filter will be updated and the data on the grid filtered accordingly if applyButton=false.</span>
     onFloatingFilterChanged(change:any): void;
 
-    <span class="codeComment">
-    // This is the callback you need to invoke from your component every time that you want to simulate the user
-    //clicking the apply button on the rich filter. If there is no apply button on the rich filter, this callback
-    //behaves exactly the same as onFloatingFilterChanged.
-    //As onFloatingFilterChanged you need to be able to produce a model object.</span>
+    <span class="codeComment">// This is the callback you need to invoke from your component every time that you want to simulate the user
+    // clicking the apply button on the rich filter. If there is no apply button on the rich filter, this callback
+    // behaves exactly the same as onFloatingFilterChanged.
+    // As onFloatingFilterChanged you need to be able to produce a model object.</span>
     onApplyFilter(change:any): void;
 
     <span class="codeComment">// This is a shortcut to invoke getModel on the parent rich filter..</span>
     currentParentModel(): any;
-
 }</pre>
 
 <h3 id="lifecycle">Floating Filter LifeCycle</h3>
@@ -100,6 +96,12 @@ include '../documentation-main/documentation_header.php';
     visibility.
 </p>
 
+<h3 id="example">Custom Floating Filter Example</h3>
+
 <show-example example="exampleCustomFloatingFilter"></show-example>
+
+<p>
+    todo - describe example
+</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>
