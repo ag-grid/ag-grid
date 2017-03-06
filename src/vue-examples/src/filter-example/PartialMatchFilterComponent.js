@@ -10,12 +10,10 @@ export default Vue.extend({
     },
     methods: {
         isFilterActive() {
-            console.log("isactive");
             return this.text !== null && this.text !== undefined && this.text !== '';
         },
 
         doesFilterPass(params){
-            console.log("filterpass");
             return !this.text || this.text.toLowerCase()
                     .split(" ")
                     .every((filterWord) => {

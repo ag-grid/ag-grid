@@ -66,4 +66,14 @@ document.addEventListener("DOMContentLoaded", function() {
                       exampleheight="130px">
 </show-complex-example>
 
+<h3>A Richer Example</h3>
+<p>
+    The below example is a more complex example demonstration much more interactivity and customisation.
+    The mechanism for setting up the grid
+    is the same as before. Don't worry about the finer details for now, how all the
+    different options are configured is explained in the relevant parts of the documentation.
+</p>
+
+<show-example example="html5grid"></show-example>
+
 </div>

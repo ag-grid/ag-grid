@@ -348,9 +348,10 @@ this.columnDefs = [
     </p>
 
     <h2 id="ag-grid-vuejs-examples">ag-Grid VueJS Example</h2>
-    <h3 id="example-rich-grid-without-components">Example: Rich Grid without Components</h3>
+    <h3 id="example-rich-grid-without-components">Example: Rich Grid</h3>
     <p>
-        The example below shows a rich configuration of ag-Grid, with no VueJS Components.
+        The example below shows a rich configuration of ag-Grid, with a VueJS Header Group Component and custom
+        Date Component Filter (under the DOB column).
     </p>
     <show-example url="../vue-examples/#/"
                   jsfile="../vue-examples/src/rich-grid-example/RichGridExample.vue"
