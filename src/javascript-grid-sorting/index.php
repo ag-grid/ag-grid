@@ -63,7 +63,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
                                     { root: './', files: 'example1.html,example1.js' }
                                 ]
                               }"
-                          plunker="https://embed.plnkr.co/kqE8KXcw9EfFq55JsAzR/"
+                          plunker="https://embed.plnkr.co/Juo2VlvgFKVbaITxamcS/"
                           exampleheight="350px">
     </show-complex-example>
 
@@ -110,7 +110,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
                                     { root: './', files: 'exampleSortingOrder.html,exampleSortingOrder.js' }
                                 ]
                               }"
-                          plunker="https://embed.plnkr.co/GU2YmYDdiaqEdqzvnnvy/"
+                          plunker="https://embed.plnkr.co/qnv5QmxC8ldSdQH9qFNz/"
                           exampleheight="350px">
     </show-complex-example>
 
@@ -148,7 +148,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
                                     { root: './', files: 'sortingApi.html,sortingApi.js' }
                                 ]
                               }"
-                          plunker="https://embed.plnkr.co/pbVt8QMfb0z8d2Ihzokm/"
+                          plunker="https://embed.plnkr.co/RCnt9c9nigG3Zpfj9RhL/"
                           exampleheight="350px">
     </show-complex-example>
 

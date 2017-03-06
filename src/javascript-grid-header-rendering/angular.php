@@ -3,12 +3,6 @@
     Angular Header Component
 </h2>
 
-<p>
-    This section outlines how to use Angular components inside the header. You should read about how
-    <a href="../javascript-grid-header-rendering/">Header Components</a> work in ag-Grid first before trying to
-    understand this section. For a full working example of Header Components in Angular see
-    <a href="https://github.com/ceolter/ag-grid-angular-example">Angular Example</a>.
-</p>
 
 <h3 id="header-component">Header Component</h3>
 
@@ -56,3 +50,7 @@
 
     <span class="codeComment">// no getGui() or destroy(), all handled by Angular</span>
 }</pre>
+
+<p>For a full working example of Header Components in Angular see
+    <a href="https://github.com/ceolter/ag-grid-angular-example">Angular Example</a>.
+</p>

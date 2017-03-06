@@ -81,6 +81,8 @@
     });
 
     function ShowComplexScriptExampleController($scope, $http, $attrs, $sce) {
+        // var trailingSlash = (window.location.pathname.indexOf("/", 1) === window.location.pathname.length - 1);
+        // $scope.source = trailingSlash? $attrs["example"] : window.location.pathname + "/" + $attrs["example"];
         $scope.source = $attrs["example"];
         $scope.selectedTab = 'example';
 
