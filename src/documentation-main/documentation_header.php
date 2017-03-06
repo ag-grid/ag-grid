@@ -11,7 +11,9 @@ if (strcmp($version, 'latest') == 0) {
 
 // framework is passed in as url parameter
 $framework = $_GET['framework'];
-$cookieKey = 'agGridFramework';
+$cookieKey_framework = 'agGridFramework';
+$cookieKey_expandAll = 'agGridExpandAll';
+$expandAll = $_COOKIE[$cookieKey_expandAll];
 
 // if framework url was not passed, or is invalid, set framework to all
 $allFrameworks = array('javascript', 'angular', 'angularjs', 'react', 'vue', 'aurelia', 'webcomponents', 'all');
@@ -19,8 +21,8 @@ $allFrameworks = array('javascript', 'angular', 'angularjs', 'react', 'vue', 'au
 // check if framework exists
 if (!in_array($framework, $allFrameworks)) {
     // set from cookie
-    if ($_COOKIE[$cookieKey]){
-        $framework = $_COOKIE[$cookieKey];
+    if ($_COOKIE[$cookieKey_framework]){
+        $framework = $_COOKIE[$cookieKey_framework];
     } else {
         $framework = 'all';
     }
@@ -31,9 +33,9 @@ $oneHundredDaysFromNow = time() + 60*60*24*100;
 //$domain = ($_SERVER['HTTP_HOST'] != 'localhost') ? $_SERVER['HTTP_HOST'] : false;
 
 // delete cookie first to avoid duplicates
-setcookie($cookieKey, '', time()-300);  
+setcookie($cookieKey_framework, '', time()-300);
 
-setcookie($cookieKey, $framework, $oneHundredDaysFromNow, '/');
+setcookie($cookieKey_framework, $framework, $oneHundredDaysFromNow, '/');
 
 function menuItem($indent, $localKey, $name, $url, $noIndentStyling = false) {
     menuItemWithIcon(null, $indent, $localKey, $name, $url, $noIndentStyling);
@@ -51,15 +53,13 @@ function menuItemWithIcon($icon, $indent, $localKey, $name, $url, $noIndentStyli
     }
 }
 
-function isFrameworkSelected($framework)
-{
+function isFrameworkSelected($framework) {
     if ($framework === $GLOBALS[framework]) {
         echo 'selected="selected"';
     }
 }
 
-function isFrameworkAll()
-{
+function isFrameworkAll() {
     return $GLOBALS[framework] === 'all';
 }
 
@@ -137,6 +137,8 @@ function isFrameworkWebComponents()
 </head>
 
 <body ng-app="documentation">
+
+Expand all = <?= $expandAll ?>
 
 <?php if ($version == 'latest') {
     $navKey = "documentation";
