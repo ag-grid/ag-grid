@@ -138,8 +138,6 @@ function isFrameworkWebComponents()
 
 <body ng-app="documentation">
 
-Expand all = <?= $expandAll ?>
-
 <?php if ($version == 'latest') {
     $navKey = "documentation";
     include '../includes/navbar.php';
