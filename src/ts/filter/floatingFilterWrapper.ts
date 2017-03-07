@@ -3,14 +3,14 @@ import {IMenuFactory} from "../interfaces/iMenuFactory";
 import {Column} from "../entities/column";
 import {_} from "../utils";
 import {SetLeftFeature} from "../rendering/features/setLeftFeature";
-import {IFloatingFilterParams, IFloatingFilterComp} from "./floatingFilter";
+import {IFloatingFilterParams, IFloatingFilterComp, FloatingFilterChange} from "./floatingFilter";
 import {Component} from "../widgets/component";
 import {RefSelector} from "../widgets/componentAnnotations";
 import {IComponent} from "../interfaces/iComponent";
 
-export interface IFloatingFilterWrapperParams<M, P extends IFloatingFilterParams<M>> {
+export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
     column:Column;
-    floatingFilterComp:IFloatingFilterComp<M, P>;
+    floatingFilterComp:IFloatingFilterComp<M, F, P>;
     suppressFilterButton: boolean;
 }
 
@@ -18,10 +18,10 @@ export interface IFloatingFilterWrapper <M>{
     onParentModelChanged(parentModel:M):void;
 }
 
-export interface IFloatingFilterWrapperComp<M, PC extends IFloatingFilterParams<M>, P extends IFloatingFilterWrapperParams<M, PC>> extends IFloatingFilterWrapper<M>, IComponent<P> { }
+export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P> { }
 
 
-export abstract class BaseFilterWrapperComp<M, PC extends IFloatingFilterParams<M>, P extends IFloatingFilterWrapperParams<M, PC>> extends Component implements IFloatingFilterWrapperComp<M, PC, P> {
+export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends Component implements IFloatingFilterWrapperComp<M, F, PC, P> {
     @Autowired('context') private context: Context;
 
     column: Column;
@@ -54,13 +54,13 @@ export abstract class BaseFilterWrapperComp<M, PC extends IFloatingFilterParams<
 }
 
 
-export class FloatingFilterWrapperComp<M, PC extends IFloatingFilterParams<M>, P extends IFloatingFilterWrapperParams<M, PC>> extends BaseFilterWrapperComp<M, PC, P> {
+export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends BaseFilterWrapperComp<M, F, PC, P> {
     @RefSelector('eButtonShowMainFilter')
     eButtonShowMainFilter: HTMLInputElement;
 
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
 
-    floatingFilterComp:IFloatingFilterComp<M, PC>;
+    floatingFilterComp:IFloatingFilterComp<M, F, PC>;
     suppressFilterButton:boolean;
 
 
@@ -98,7 +98,7 @@ export class FloatingFilterWrapperComp<M, PC extends IFloatingFilterParams<M>, P
 
 }
 
-export class EmptyFloatingFilterWrapperComp extends BaseFilterWrapperComp<any, any, any> {
+export class EmptyFloatingFilterWrapperComp extends BaseFilterWrapperComp<any, any, any, any> {
     enrichBody(body:HTMLElement):void{
 
     }

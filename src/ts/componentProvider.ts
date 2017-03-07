@@ -196,12 +196,12 @@ export class ComponentProvider {
         return <IHeaderGroupComp>this.createAgGridComponent(params.columnGroup.getColGroupDef(), "headerGroupComponent", "headerGroupComponent", params);
     }
 
-    private newFloatingFilterComponent<M> (type:string, colDef:ColDef, params:IFloatingFilterParams<M>):IFloatingFilterComp<M, any>{
+    private newFloatingFilterComponent<M> (type:string, colDef:ColDef, params:IFloatingFilterParams<M, any>):IFloatingFilterComp<M, any, any>{
         let floatingFilterToInstantiate: string = type === 'custom' ? 'floatingFilterComponent' : type + "FloatingFilterComponent";
-        return <IFloatingFilterComp<any, any>> this.createAgGridComponent(colDef, "floatingFilterComponent", floatingFilterToInstantiate, params, false);
+        return <IFloatingFilterComp<M, any, any>> this.createAgGridComponent(colDef, "floatingFilterComponent", floatingFilterToInstantiate, params, false);
     }
 
-    public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M>> (parent:IFilterComp, column:Column, params:IFloatingFilterParams<M>):IFloatingFilterWrapperComp<M, any, any>{
+    public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M, any>> (parent:IFilterComp, column:Column, params:IFloatingFilterParams<M, any>):IFloatingFilterWrapperComp<M, any, any, any>{
         let colDef = column.getColDef();
 
         if (colDef.suppressFilter){
@@ -218,8 +218,8 @@ export class ComponentProvider {
             floatingFilterType= 'custom';
         }
 
-        let floatingFilter:IFloatingFilterComp<M, P> = this.newFloatingFilterComponent(floatingFilterType, colDef, params);
-        let floatingFilterWrapperComponentParams : IFloatingFilterWrapperParams <M, any> = <any>{
+        let floatingFilter:IFloatingFilterComp<M, any, P> = this.newFloatingFilterComponent(floatingFilterType, colDef, params);
+        let floatingFilterWrapperComponentParams : IFloatingFilterWrapperParams <M, any, any> = <any>{
             column: column,
             floatingFilterComp: floatingFilter,
             suppressFilterButton: this.getParams(colDef, 'floatingFilterComponent', params).suppressFilterButton
@@ -237,14 +237,14 @@ export class ComponentProvider {
             floatingFilterWrapperComponentParams.floatingFilterComp = this.newFloatingFilterComponent('readModelAsString', colDef, params);
         }
 
-        return <IFloatingFilterWrapperComp<any, any, any>> this.createAgGridComponent(colDef, "floatingFilterWrapperComponent", "floatingFilterWrapperComponent", floatingFilterWrapperComponentParams);
+        return <IFloatingFilterWrapperComp<any, any, any, any>> this.createAgGridComponent(colDef, "floatingFilterWrapperComponent", "floatingFilterWrapperComponent", floatingFilterWrapperComponentParams);
     }
 
     private newEmptyFloatingFilterWrapperComponent(column:Column) {
-        let floatingFilterWrapperComponentParams : IFloatingFilterWrapperParams <any, any> = <any>{
+        let floatingFilterWrapperComponentParams : IFloatingFilterWrapperParams <any, any, any> = <any>{
             column: column,
             floatingFilterComp: null
         };
-        return <IFloatingFilterWrapperComp<any, any, any>> this.createAgGridComponent(column.getColDef(), "floatingFilterWrapperComponent", "emptyFloatingFilterWrapperComponent", floatingFilterWrapperComponentParams);
+        return <IFloatingFilterWrapperComp<any, any, any, any>> this.createAgGridComponent(column.getColDef(), "floatingFilterWrapperComponent", "emptyFloatingFilterWrapperComponent", floatingFilterWrapperComponentParams);
     }
 }
