@@ -35,6 +35,8 @@ export class SelectionController {
 
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this));
+        } else if (this.gridOptionsWrapper.isRowModelObservable()) {
+            this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.rowDataChanged.bind(this));
         } else {
             this.logger.log('dont know what to do here');
         }
@@ -172,6 +174,20 @@ export class SelectionController {
         this.logger.log('reset');
         this.selectedNodes = {};
         this.lastSelectedNode = null;
+    }
+
+    private rowDataChanged(): void {
+        // Check selected nodes still present in nodeset, if not, deselect
+        // them.
+        let changed: boolean = false;
+        _.iterateObject(this.selectedNodes, (key: string, selectedRow: RowNode) => {
+            if (!this.rowModel.isRowPresent(selectedRow)) {
+                delete this.selectedNodes[key];
+                if (this.lastSelectedNode == selectedRow) this.lastSelectedNode = null;
+                changed = true;
+            }
+        });
+        if (changed) this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
     }
 
     // returns a list of all nodes at 'best cost' - a feature to be used

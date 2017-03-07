@@ -1,3 +1,5 @@
+import {Observable} from "rxjs";
+
 import {RowNode} from "./rowNode";
 import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
@@ -157,6 +159,9 @@ export interface GridOptions {
 
     // changeable with impact
     rowData?: any[]; // should this be immutable for ag2?
+    // Rx data source:
+    rowDataSource?: Observable<any[]>;
+    rowDataSourceKeyProperty?: string;
     floatingTopRowData?: any[]; // should this be immutable ag2?
     floatingBottomRowData?: any[]; // should this be immutable ag2?
     showToolPanel?: boolean;

@@ -1,3 +1,5 @@
+import {Observable} from 'rxjs';
+
 import {RowNode} from "./entities/rowNode";
 import {
     GridOptions,
@@ -118,7 +120,8 @@ export class GridOptionsWrapper {
     public isRowModelPagination() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_PAGINATION; }
     public isRowModelVirtual() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL; }
     public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
-    public isRowModelDefault() { return !(this.isRowModelPagination() || this.isRowModelVirtual() || this.isRowModelViewport()); }
+    public isRowModelObservable() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_OBSERVABLE; }
+    public isRowModelDefault() { return !(this.isRowModelPagination() || this.isRowModelVirtual() || this.isRowModelViewport()|| this.isRowModelObservable()); }
 
     public isFullRowEdit() { return this.gridOptions.editType === 'fullRow'; }
     public isSuppressFocusAfterRefresh() { return isTrue(this.gridOptions.suppressFocusAfterRefresh); }
@@ -182,6 +185,8 @@ export class GridOptionsWrapper {
     public isSuppressPaginationPanel() { return isTrue(this.gridOptions.suppressPaginationPanel); }
 
     public getRowData(): any[] { return this.gridOptions.rowData; }
+    public getRowDataSource(): Observable<any[]> { return this.gridOptions.rowDataSource; }
+    public getRowDataSourceKeyProperty(): string { return this.gridOptions.rowDataSourceKeyProperty; }
     public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
     public isEnableRtl() { return isTrue(this.gridOptions.enableRtl); }
     public getGroupColumnDef(): ColDef { return this.gridOptions.groupColumnDef; }

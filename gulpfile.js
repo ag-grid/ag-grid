@@ -65,12 +65,12 @@ function cleanDist() {
 }
 
 function tscTask() {
-    var project = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
+    var tsProject = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
 
     var tsResult = gulp
         .src('src/ts/**/*.ts')
         //.pipe(sourcemaps.init())
-        .pipe(gulpTypescript(project));
+        .pipe(tsProject());
 
     return merge([
         tsResult.dts
