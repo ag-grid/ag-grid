@@ -21,9 +21,9 @@
 		// need to hide it initially to stop jumping
 	    var googleSearchResults = document.getElementById("googleSearchResults");
         var documentationSearchBox = document.getElementById("documentationSearchBox");
-        var gcseFormInput = document.querySelector("#documentationSearch .gsc-input-box input");
-        var gcseFormButton = document.querySelector("#documentationSearch .gsc-search-button input");
-        var gcseFormClose = document.querySelector("#documentationSearch .gsst_a");
+        var gcseFormInput = document.querySelector("#documentationSearch #documentationSearchBox .gsc-input input");
+        var gcseFormButton = document.querySelector("#documentationSearch #documentationSearchBox .gsc-search-button input");
+        var gcseFormClose = document.querySelector("#documentationSearch #documentationSearchBox .gsc-clear-button");
         googleSearchResults.style.display = "none";
 
         // slight delay so we can't see jump
