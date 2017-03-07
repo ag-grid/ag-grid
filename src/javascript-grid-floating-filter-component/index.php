@@ -112,4 +112,42 @@ slider to the left corner the filter its removed.
 <show-example example="exampleCustomFloatingFilter"></show-example>
 
 
+<h3 id="example">Custom Filter And Custom Floating Filter Example</h3>
+
+<p>
+This example extends the previous example by also providing its own Custom filter NumberFilter in the gold, silver, bronze and
+total columns which now its accessible though the column menu.
+
+In this example is important to note that:
+<ol>
+    <li>NumberFilter <i>getModel()</i> returns a Number representing the current greater than filter than.</li>
+    <li>NumberFilter <i>setModel(model)</i> takes an object that can be of ay type. If the value passed is numeric then the filter
+        gets applied with a condition of greater than</li>
+    <li>NumberFloatingFilter <i>onParentModelChanged(parentModel)</i>. Receives the product of <i>NumberFilter.getModel</i>
+    every time that the NumberFilter model changes</li>
+    <li>NumberFloatingFilter calls on <i>params.onFloatingFilterChanged(modelToAccept)</i> every time the user changes
+        the slider value. This will cause an automatic call into <i>NumberFilter.setModel(modelToAccept)</i> </li>
+    <li>Since NumberFilter <i>onFloatingFilterChanged(applyNow)</i> IS NOT implemented. Every time the user changes the
+        slider value the filter gets updated automatically. If this method was implemented it would get call it every
+        time the floating filter would change, and it would delegate to it the responsibility to perform the filtering.</li>
+</ol>
+</p>
+
+<show-example example="exampleCustomFilterAndFloatingFilter"></show-example>
+
+<h3 id="example">Custom Filter And Read-Only Floating Filter Example</h3>
+
+<p>
+If you want to provide only a custom filter but don't want to provide a custom floating filter, you can implement the
+method <i>Filter.getModelAsString()</i> and you will get for free a read-only floating filter.
+</p>
+
+<p>
+This example uses the previous custom filter implementing method <i>NumberFilter.getModelAsString()</i>. Note
+how there are no custom floating filters and yet each column using NumberFilter (gold, silver, bronze and total), have
+a read-only floating filter that gets updated as you change the values from their rich filter
+</p>
+
+<show-example example="exampleCustomFilterDefaultFloatingFilter"></show-example>
+
 <?php include '../documentation-main/documentation_footer.php';?>

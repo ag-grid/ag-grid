@@ -808,10 +808,6 @@ PersonFilter.prototype.setModel = function (model) {
     this.extractFilterText();
 };
 
-PersonFilter.prototype.onFloatingFilterChanged = function () {
-    this.params.filterChangedCallback();
-};
-
 PersonFilter.prototype.destroy = function () {
     this.eFilterText.removeEventListener("input", this.onFilterChanged);
 };
