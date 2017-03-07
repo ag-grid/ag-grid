@@ -348,19 +348,19 @@ gridOptions = {
 </p>
 
 <p>
-    Every filter provided by ag-grid provides its own implementation of a floating filter so if you activate them, there
-    is nothing else that you need to do to start using them.
+    All the default filters provided by ag-Grid provide their own implementation of a floating filter.
+    All you need to do to enable these floating filters is set the <i>floatingFilter=true</i> grid property.
 </p>
 
 <p>
-    If you create your own filter you have two options to get its floating filter working.
+    If you create your own filter you have two options to get its floating filters working for that filter:
 <ol>
     <li>
         You can <a href="../javascript-grid-floating-filter-component/">create your own floating filter</a>.
     </li>
     <li>
-        You can implement the method <i>getModelAsString</i> in your custom filter. If you implement this method and you don't
-        provide a custom floating filter, ag-grid will automatically provide a read-only version of a floating filter
+        You can implement the method <i>getModelAsString()</i> in your custom filter. If you implement this method and you don't
+        provide a custom floating filter, ag-Grid will automatically provide a read-only version of a floating filter
     </li>
 </ol>
     If you don't provide any of these two options for your custom filter, the display area for the floating filter
