@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
         There are several ways to refine the way your column filters look & feel in ag-grid.
         They all based around components which mean that you can use your favourite framework too:
         <ol>
-            <li>Create <a href="../javascript-grid-filter-component/">your own custom rich filter</a></li>
+            <li>Create <a href="../javascript-grid-filter-component/">your own custom filter</a></li>
             <li>Create <a href="../javascript-grid-floating-filter-component/">your own custom floating filter</a></li>
             <li>Create <a href="../javascript-grid-date-component/">your own custom date component</a> and customise your own date picker. (Applies to the default date filter
                 and the date floating filter)

@@ -1,6 +1,6 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'text'},
+    {headerName: "Athlete", field: "athlete", width: 150, filter: 'text', suppressFilter: true},
     {headerName: "Gold", field: "gold", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
             suppressFilterButton:true

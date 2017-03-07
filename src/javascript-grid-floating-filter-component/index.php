@@ -20,6 +20,28 @@ include '../documentation-main/documentation_header.php';
     in ag-Grid check the <a href="../javascript-grid-filtering/#floatingFilter">docs for floating filters</a>.
 </p>
 
+<h3 id="lifecycle">Floating Filter LifeCycle</h3>
+
+<p>
+    Floating filters do not contain filter state. They show the state of the actual filter. Floating
+    filters are only another GUI for the main filter. For this reason, floating filters lifecycle is
+    bound to the visibility of the column. So if you hide a column (either set not visible, or
+    horizontally scroll the column out of view) then the floating filter GUI component is destroyed.
+    If the column comes back into view, it is created again. This is different to column filters,
+    where the column filter will exist as long as the filter column exists, regardless of the columns
+    visibility.
+</p>
+
+<p>
+    In order to see how the floating filter interacts with its parent rich filter,
+    check the methods getModelAsString() and onFloatingFilterChanged(applyNow:boolean)
+    <a href="../javascript-grid-filter-component/">in the Filter component interface</a>.
+</p>
+
+<p>
+    To see examples of the different ways to implement floating filters, check the examples below.
+</p>
+
 <h3>Interface IFloatingFilter</h3>
 
 <p>
@@ -55,6 +77,7 @@ include '../documentation-main/documentation_header.php';
     destroy?(): void;
 }</pre>
 
+
 <h3 id="ifilter-params">IFloatingFilterParams</h3>
 
 <p>
@@ -82,31 +105,37 @@ include '../documentation-main/documentation_header.php';
 
     <span class="codeComment">// This is a shortcut to invoke getModel on the parent rich filter..</span>
     currentParentModel(): any;
+
+    <span class="codeComment">// Boolean flag to indicate if the button in the floating filter that opens the rich
+    // filter in a popup should be displayed</span>
+    suppressFilterButton: boolean;
 }</pre>
-
-<h3 id="lifecycle">Floating Filter LifeCycle</h3>
-
-<p>
-    Floating filters do not contain filter state. They show the state of the actual filter. Floating
-    filters are only another GUI for the main filter. For this reason, floating filters lifecycle is
-    bound to the visibility of the column. So if you hide a column (either set not visible, or
-    horizontally scroll the column out of view) then the floating filter GUI component is destroyed.
-    If the column comes back into view, it is created again. This is different to column filters,
-    where the column filter will exist as long as the filter column exists, regardless of the columns
-    visibility.
-</p>
 
 <h3 id="example">Custom Floating Filter Example</h3>
 
 <p>
 In the following example you can see how the columns Gold, Silver, Bronze and Total have a custom floating filter
-NumberFloatingFilter. This filter substitutes the standard floating filter for a slider that the user can move to
-adjust how many medals of each column to filter by.
+NumberFloatingFilter. This filter substitutes the standard floating filter for a input box that the user can change to
+adjust how many medals of each column to filter by based on a greater than filter.
 </p>
 
 <p>
-This particular example is using JQuery and limits the filter to only filter by 'greaterThan'. If the user moves the
-slider to the left corner the filter its removed.
+If the user removes the content of the input box, the filter its removed.
+</p>
+
+<p>
+    Note that in this example:
+<ol>
+    <li>The columns with the floating filter are using the standard number filter as the base filter</li>
+    <li>Since the parent filter is the number filter, the floating filter methods <i>onFloatingFilterChanged (parentModel)</i>,
+        <i>onApplyFilter (parentModel)</i> and <i>currentParentModel ():parentModel</i> take and receive model objects
+        that correspond to <a href="../javascript-grid-filter-number/#model">the model for the number filter</a></li>
+    <li>Since this floating filters are providing a subset of the functionality of their parent filter, which can
+    filter for other conditions which are not 'greaterThan' the user is prevented to see the parent filter by adding
+    <i>suppressFilterButton:true</i> in the <i>floatingFilterComponentParams</i> and <i>suppressMenu:true</i> in
+    the <i>colDef</i>
+    </li>
+</ol>
 </p>
 
 <show-example example="exampleCustomFloatingFilter"></show-example>
@@ -152,6 +181,11 @@ a read-only floating filter that gets updated as you change the values from thei
 
 <h3 id="example">Complex example with JQuery</h3>
 
+<p>The following example illustrates a complex scenario where all columns have ag-Grid floating filters, except for
+the columns: gold, silver, bronze and total, that have custom filter and custom floating filters that use jquery
+sliders</p>
+
 <show-example example="exampleComplexCustomFilterAndFloatingFilter"></show-example>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
