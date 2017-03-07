@@ -100,6 +100,7 @@ import {GridSerializer, BaseGridSerializingSession, RowType} from "./gridSeriali
 import {StylingService} from "./styling/stylingService";
 import {BaseFilter} from "./filter/baseFilter";
 import {DateFilter} from "./filter/dateFilter";
+import {simpleHttpRequest} from "./misc/simpleHttpRequest";
 
 export function populateClientExports(exports: any): void {
 
@@ -177,6 +178,7 @@ export function populateClientExports(exports: any): void {
     // misc
     exports.FocusService = FocusService;
     exports.MethodNotImplementedException = MethodNotImplementedException;
+    exports.simpleHttpRequest = simpleHttpRequest;
 
     // rendering / cellEditors
     exports.LargeTextCellEditor = LargeTextCellEditor;

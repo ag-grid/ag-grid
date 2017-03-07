@@ -23,6 +23,7 @@ import {ICellRendererFunc, ICellRenderer, ICellRendererComp} from "./rendering/c
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
+import {IEnterpriseDatasource} from "./rowModels/enterprise/enterpriseRowModel";
 
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -118,6 +119,7 @@ export class GridOptionsWrapper {
     public isRowModelPagination() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_PAGINATION; }
     public isRowModelVirtual() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL; }
     public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
+    public isRowModelEnterprise() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_ENTERPRISE; }
     public isRowModelDefault() { return !(this.isRowModelPagination() || this.isRowModelVirtual() || this.isRowModelViewport()); }
 
     public isFullRowEdit() { return this.gridOptions.editType === 'fullRow'; }
@@ -195,6 +197,7 @@ export class GridOptionsWrapper {
     public getColumnDefs() { return this.gridOptions.columnDefs; }
     public getDatasource(): IDatasource { return this.gridOptions.datasource; }
     public getViewportDatasource(): IViewportDatasource { return this.gridOptions.viewportDatasource; }
+    public getEnterpriseDatasource(): IEnterpriseDatasource { return this.gridOptions.enterpriseDatasource; }
     public isEnableSorting() { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); }
     public isEnableCellExpressions() { return isTrue(this.gridOptions.enableCellExpressions); }
     public isEnableGroupEdit() { return isTrue(this.gridOptions.enableGroupEdit); }

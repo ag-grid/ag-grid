@@ -35,6 +35,7 @@ import {Utils as _} from "./utils";
 import {FilterStage} from "./rowModels/inMemory/filterStage";
 import {SortStage} from "./rowModels/inMemory/sortStage";
 import {FlattenStage} from "./rowModels/inMemory/flattenStage";
+import {EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
 import {FocusService} from "./misc/focusService";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {Events} from "./events";
@@ -84,7 +85,8 @@ export class Grid {
     private static RowModelClasses: any = {
         virtual: VirtualPageRowModel,
         pagination: InMemoryRowModel,
-        normal: InMemoryRowModel
+        normal: InMemoryRowModel,
+        enterprise: EnterpriseRowModel
     };
 
     public static setEnterpriseBeans(enterpriseBeans: any[], rowModelClasses: any): void {

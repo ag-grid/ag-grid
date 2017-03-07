@@ -8,6 +8,7 @@ import {IAggFunc, ColGroupDef, ColDef} from "./colDef";
 import {IDatasource} from "../rowModels/iDatasource";
 import {GridCellDef} from "./gridCell";
 import {IDateComp} from "../rendering/dateComponent";
+import {IEnterpriseDatasource} from "../rowModels/enterprise/enterpriseRowModel";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -163,6 +164,7 @@ export interface GridOptions {
     columnDefs?: (ColDef|ColGroupDef)[];
     datasource?: IDatasource;
     viewportDatasource?: IViewportDatasource;
+    enterpriseDatasource?: IEnterpriseDatasource;
     // in properties
     headerHeight?: number;
 

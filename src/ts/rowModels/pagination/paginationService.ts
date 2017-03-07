@@ -118,7 +118,7 @@ export class PaginationService extends BeanStub {
         this.setDatasource(this.gridOptionsWrapper.getDatasource());
     }
 
-    public setDatasource(datasource: any) {
+    public setDatasource(datasource: IDatasource) {
         this.datasource = datasource;
 
         if (datasource) {

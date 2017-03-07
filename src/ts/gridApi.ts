@@ -34,6 +34,8 @@ import {IFilter, IFilterComp} from "./interfaces/iFilter";
 import {CsvExportParams} from "./exportParams";
 import {IExcelCreator} from "./interfaces/iExcelCreator";
 import {PaginationService} from "./rowModels/pagination/paginationService";
+import {IDatasource} from "./rowModels/iDatasource";
+import {IEnterpriseDatasource, EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -118,7 +120,16 @@ export class GridApi {
         this.excelCreator.exportDataAsExcel(params)
     }
 
-    public setDatasource(datasource:any) {
+    public setEnterpriseDatasource(datasource: IEnterpriseDatasource) {
+        if (this.gridOptionsWrapper.isRowModelEnterprise()) {
+            (<EnterpriseRowModel>this.rowModel).setDatasource(datasource);
+        } else {
+            console.warn(`ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_ENTERPRISE}'`)
+        }
+
+    }
+
+    public setDatasource(datasource: IDatasource) {
         if (this.gridOptionsWrapper.isRowModelPagination()) {
             this.paginationService.setDatasource(datasource);
         } else if (this.gridOptionsWrapper.isRowModelVirtual()) {
