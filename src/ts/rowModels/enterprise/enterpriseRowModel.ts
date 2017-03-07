@@ -65,10 +65,16 @@ export class EnterpriseRowModel implements IRowModel {
 
     private nextId: number;
 
+    // each time the data changes we increment the instance version.
+    // that way we know to discard any daemon network calls, that are bringing
+    // back data for an old version.
+    private instanceVersion = 0;
+
     @PostConstruct
     private postConstruct(): void {
 
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this, {step: Constants.STEP_EVERYTHING} ));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
 
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.datasource = this.gridOptionsWrapper.getEnterpriseDatasource();
@@ -84,13 +90,25 @@ export class EnterpriseRowModel implements IRowModel {
         }
     }
 
+    private onRowGroupOpened(event: any): void {
+        let openedNode = event.node;
+        if (openedNode.expanded && _.missing(openedNode.childrenAfterSort)) {
+            this.loadNode(openedNode);
+        } else {
+            this.mapAndFireModelUpdated();
+        }
+    }
+
     private reset(): void {
         this.nextId = 0;
         this.rowsToDisplay = null;
+        this.instanceVersion++;
+
         this.rootNode = new RowNode();
-        this.context.wireBean(this.rootNode);
         this.rootNode.group = true;
         this.rootNode.level = -1;
+        this.context.wireBean(this.rootNode);
+
         this.loadNode(this.rootNode);
 
         // this event: 1) clears selection 2) updates filters 3) shows/hides 'no rows' overlay
@@ -132,8 +150,8 @@ export class EnterpriseRowModel implements IRowModel {
         let pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
 
         let params = <IEnterpriseGetRowsParams> {
-            successCallback: this.successCallback.bind(this, rowNode),
-            failCallback: this.failCallback.bind(this, rowNode),
+            successCallback: this.successCallback.bind(this, this.instanceVersion, rowNode),
+            failCallback: this.failCallback.bind(this, this.instanceVersion, rowNode),
             rowGroupCols: rowGroupColumnVos,
             valueCols: valueColumnVos,
             pivotCols: pivotColumnVos,
@@ -152,35 +170,53 @@ export class EnterpriseRowModel implements IRowModel {
         });
     }
 
-    private successCallback(rowNode: RowNode, dataItems: any[]): void {
-        rowNode.childrenAfterSort = [];
+    private successCallback(instanceVersion: number, parentNode: RowNode, dataItems: any[]): void {
+        let isDaemon = instanceVersion !== this.instanceVersion;
+        if (isDaemon) { return; }
+
+        let groupCols = this.columnController.getRowGroupColumns();
+        let newNodesLevel = parentNode.level + 1;
+        let newNodesAreGroups = groupCols.length > newNodesLevel;
+        let field = newNodesAreGroups ? groupCols[newNodesLevel].getColDef().field : null;
+
+        parentNode.childrenAfterSort = [];
         if (dataItems) {
             dataItems.forEach( dataItem => {
 
                 let childNode = new RowNode();
                 this.context.wireBean(childNode);
 
-                childNode.group = false;
-                childNode.level = rowNode.level + 1;
-                childNode.parent = rowNode;
+                childNode.group = newNodesAreGroups;
+                childNode.level = newNodesLevel;
+                childNode.parent = parentNode;
 
                 childNode.setDataAndId(dataItem, this.nextId.toString());
 
-                childNode.data = dataItem;
+                if (newNodesAreGroups) {
+                    childNode.expanded = false;
+                    childNode.field = field;
+                    childNode.key = dataItem[field];
+                }
 
-                rowNode.childrenAfterSort.push(childNode);
+                parentNode.childrenAfterSort.push(childNode);
 
                 this.nextId++;
             });
         }
 
+        this.mapAndFireModelUpdated();
+    }
+
+    private mapAndFireModelUpdated(): void {
         this.doRowsToDisplay();
 
         let event: ModelUpdatedEvent = {animate: true, keepRenderedRows: true, newData: false};
         this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, event);
     }
 
-    private failCallback(rowNode: RowNode): void {
+    private failCallback(instanceVersion: number, rowNode: RowNode): void {
+        let isDaemon = instanceVersion !== this.instanceVersion;
+        if (isDaemon) { return; }
     }
 
     public getRow(index: number): RowNode {
