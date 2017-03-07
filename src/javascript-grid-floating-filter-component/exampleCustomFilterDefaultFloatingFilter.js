@@ -1,31 +1,6 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'text'},
-    {headerName: "Age", field: "age", width: 90, filter: 'number'},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 130, filter:'date', filterParams:{
-        comparator:function (filterLocalDateAtMidnight, cellValue){
-            var dateAsString = cellValue;
-            var dateParts  = dateAsString.split("/");
-            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
-
-            if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
-                return 0
-            }
-
-            if (cellDate < filterLocalDateAtMidnight) {
-                return -1;
-            }
-
-            if (cellDate > filterLocalDateAtMidnight) {
-                return 1;
-            }
-        }
-    }, floatingFilterComponentParams:{
-        suppressFilterButton:true
-    }},
-    {headerName: "Sport", field: "sport", width: 110},
+    {headerName: "Athlete", field: "athlete", width: 150, filter: 'text', suppressFilter: true},
     {headerName: "Gold", field: "gold", width: 100, filter: 'number', filter: NumberFilter, suppressMenu: true},
     {headerName: "Silver", field: "silver", width: 100, filter: 'number', filter: NumberFilter, suppressMenu: true},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'number', filter: NumberFilter, suppressMenu: true},

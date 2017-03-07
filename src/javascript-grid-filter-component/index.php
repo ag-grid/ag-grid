@@ -68,7 +68,7 @@ include '../documentation-main/documentation_header.php';
     // either new columns are set into the grid, or the grid itself is destroyed.</span>
     destroy?(): void;
 
-    <span class="codeComment">// optional methods used for floating filters</span>
+    <span class="codeComment">// Optional method used by ag-Grid when rendering floating filters.
 
     <span class="codeComment">// Used by ag-Grid when rendering floating filters and there isn't a floating filter
     // associated for this filter, this will happen if you create a custom filter and NOT a custom floating
@@ -76,22 +76,19 @@ include '../documentation-main/documentation_header.php';
     // a read-only floating filter by reading the model off from this method</span>
     getModelAsString?(model:any): string;
 
-    <span class="codeComment">/**
-     * Optional method used by ag-Grid when rendering floating filters.
-     *
-     * If this method IS NOT IMPLEMENTED, when the floating filter changes, ag-Grid will automatically call
-     * IFilterParams.filterChangedCallback,  triggering the filtering of the data based on the changes from
-     * the floating filter. For the simplest cases this is enough.
-     *
-     * IF IT IS IMPLEMENTED. ag-Grid will call it immediately after setting the model of this filter from
-     * the floating filter. Then it will delegate into this method the responsibility of calling
-     * IFilterParams.filterChangedCallback. This is useful if additional logic is necessary, for instance
-     * ag-Grid uses this in addition with the applyNow flag to handle the apply button logic in the default
-     * ag-Grid filters.
-     *
-     *     applyNow[true]: The floating filter would like to apply immediately now the filtering
-     *     applyNow[false]: The floating filter just notifies of a change in the filter model
-    */</span>
+
+     // If this method IS NOT IMPLEMENTED, when the floating filter changes, ag-Grid will automatically call
+     // IFilterParams.filterChangedCallback,  triggering the filtering of the data based on the changes from
+     // the floating filter. For the simplest cases this is enough.
+
+     // IF IT IS IMPLEMENTED. ag-Grid will call it immediately after setting the model of this filter from
+     // the floating filter. Then it will delegate into this method the responsibility of calling
+     // IFilterParams.filterChangedCallback. This is useful if additional logic is necessary, for instance
+     // ag-Grid out of the box filter components use this in addition with the applyNow flag to handle the
+     // apply button logic in the default ag-Grid filters.
+
+     //     applyNow[true]: The floating filter would like to apply immediately now the filtering
+     //     applyNow[false]: The floating filter just notifies of a change in the filter model</span>
     onFloatingFilterChanged ?(applyNow:boolean): void;
 
 }</pre>
