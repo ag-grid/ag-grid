@@ -150,4 +150,8 @@ a read-only floating filter that gets updated as you change the values from thei
 
 <show-example example="exampleCustomFilterDefaultFloatingFilter"></show-example>
 
+<h3 id="example">Complex example with JQuery</h3>
+
+<show-example example="exampleComplexCustomFilterAndFloatingFilter"></show-example>
+
 <?php include '../documentation-main/documentation_footer.php';?>
