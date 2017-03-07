@@ -115,6 +115,11 @@ export class ComponentProvider {
                 mandatoryMethodList: [],
                 optionalMethodList: [],
                 defaultComponent: EmptyFloatingFilterWrapperComp
+            },
+            floatingFilterComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: [],
+                defaultComponent: null
             }
         }
     }
@@ -145,7 +150,11 @@ export class ComponentProvider {
         if (!FrameworkComponentRaw){
             let ComponentToUse:{new(): IComponent<any>}= CustomAgGridComponent || DefaultComponent;
             if (!ComponentToUse){
-                throw Error ("Unexpected error loading default component for: " + componentName + " default component not found.");
+                if (mandatory){
+                    throw Error ("Unexpected error loading default component for: " + componentName + " default component not found.");
+                } else {
+                    return null;
+                }
             }
             return <A>new ComponentToUse ();
 
@@ -187,8 +196,8 @@ export class ComponentProvider {
         return <IHeaderGroupComp>this.createAgGridComponent(params.columnGroup.getColGroupDef(), "headerGroupComponent", "headerGroupComponent", params);
     }
 
-    public newFloatingFilterComponent<M> (type:string, colDef:ColDef, params:IFloatingFilterParams<M>):IFloatingFilterComp<M, any>{
-        let floatingFilterToInstantiate: string = type + "FloatingFilterComponent";
+    private newFloatingFilterComponent<M> (type:string, colDef:ColDef, params:IFloatingFilterParams<M>):IFloatingFilterComp<M, any>{
+        let floatingFilterToInstantiate: string = type === 'custom' ? 'floatingFilterComponent' : type + "FloatingFilterComponent";
         return <IFloatingFilterComp<any, any>> this.createAgGridComponent(colDef, "floatingFilterComponent", floatingFilterToInstantiate, params, false);
     }
 

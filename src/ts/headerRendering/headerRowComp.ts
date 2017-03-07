@@ -234,12 +234,20 @@ export class HeaderRowComp extends Component {
             onFloatingFilterChanged: (change: any): void => {
                 let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
                 filterComponent.setModel(change);
-                filterComponent.onFloatingFilterChanged(false);
+                if (filterComponent.onFloatingFilterChanged){
+                    filterComponent.onFloatingFilterChanged(false);
+                } else {
+                    this.filterManager.onFilterChanged();
+                }
             },
             onApplyFilter: (change: any): void => {
                 let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
                 filterComponent.setModel(change);
-                filterComponent.onFloatingFilterChanged(true);
+                if (filterComponent.onFloatingFilterChanged){
+                    filterComponent.onFloatingFilterChanged(true);
+                } else {
+                    this.filterManager.onFilterChanged();
+                }
             },
             //This one might be overriden from the colDef
             suppressFilterButton: false
