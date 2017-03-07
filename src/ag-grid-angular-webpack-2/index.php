@@ -204,6 +204,21 @@ if (process.env.ENV === 'production') {
     enableProdMode();
 }
 </pre>
-</div>
+
+    <h3>Override ag-Grid CSS</h3>
+    <p>There are many ways to override the CSS with Webpack, but if you use the configuration above then you can override ag-Grid CSS as follows:</p>
+    <ul>
+        <li>Place your application-wide CSS file(s) in a directory other than <code>./app</code> - for example <code>./css/</code>.
+            Remember that CSS under <code>./app</code> is treated differently - it is used for component-scoped styles.</li>
+        <li>In a suitable component - we suggest <code>boot.ts</code> import the CSS you want to include:</li>
+        <pre>import '../css/app.css';</pre>
+    </ul>
+
+    <p>And that's it - you can now override ag-Grid CSS with your own in <code>./css/app.css</code>. For example, the following
+        would set the cell background to green across the board.</p>
+    <pre>
+.ag-cell {
+    background-color: green;
+}</pre></div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
