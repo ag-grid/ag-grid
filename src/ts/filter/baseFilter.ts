@@ -4,7 +4,10 @@ import {QuerySelector} from "../widgets/componentAnnotations";
 import {Autowired, Context} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {_} from "../utils";
-import {IFloatingFilterParams, InputTextFloatingFilterComp} from "./floatingFilter";
+import {
+    IFloatingFilterParams, InputTextFloatingFilterComp, FloatingFilterChange,
+    BaseFloatingFilterChange
+} from "./floatingFilter";
 
 
 export interface Comparator<T>{
@@ -178,8 +181,11 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         this.doOnFilterChanged();
     }
 
-    public onFloatingFilterChanged (applyNow:boolean):void{
-        this.doOnFilterChanged(applyNow);
+    public onFloatingFilterChanged (change:FloatingFilterChange):void{
+        //It has to be of the type FloatingFilterWithApplyChange if it gets here
+        let casted:BaseFloatingFilterChange<M> = <BaseFloatingFilterChange<M>>change;
+        this.setModel(casted.model);
+        this.doOnFilterChanged(casted.apply);
     }
 
     public generateFilterHeader():string{

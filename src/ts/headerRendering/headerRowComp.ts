@@ -17,7 +17,7 @@ import {BaseFilter} from "../filter/baseFilter";
 import {ComponentProvider} from "../componentProvider";
 import {IFloatingFilterWrapperComp} from "../filter/floatingFilterWrapper";
 import {IComponent} from "../interfaces/iComponent";
-import {IFloatingFilterParams} from "../filter/floatingFilter";
+import {IFloatingFilterParams, FloatingFilterChange} from "../filter/floatingFilter";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -202,10 +202,10 @@ export class HeaderRowComp extends Component {
         return result;
     }
 
-    private createFloatingFilterWrapper(column: Column):IFloatingFilterWrapperComp<any, any, any> {
+    private createFloatingFilterWrapper(column: Column):IFloatingFilterWrapperComp<any, any, any, any> {
         let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-        let floatingFilterParams: IFloatingFilterParams<any> = this.createFloatingFilterParams(column);
-        let floatingFilterWrapper: IFloatingFilterWrapperComp<any, any, any> = this.componentProvider.newFloatingFilterWrapperComponent(
+        let floatingFilterParams: IFloatingFilterParams<any, any> = this.createFloatingFilterParams(column);
+        let floatingFilterWrapper: IFloatingFilterWrapperComp<any, any, any, any> = this.componentProvider.newFloatingFilterWrapperComponent(
             filterComponent,
             column,
             <null>floatingFilterParams
@@ -218,40 +218,39 @@ export class HeaderRowComp extends Component {
         return floatingFilterWrapper;
     }
 
-    private createFloatingFilterParams(column: Column):IFloatingFilterParams<any> {
+    private createFloatingFilterParams<M, F extends FloatingFilterChange>(column: Column):IFloatingFilterParams<M, F> {
         /** We always get the freshest reference to the baseFilter because the filters get sometimes created
          * and destroyed beetwen calls
          *
          *let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
          */
-        return {
-            currentParentModel: (): any => {
-                let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+        let baseParams:IFloatingFilterParams<M, F> = {
+            currentParentModel: (): M => {
+                let filterComponent: BaseFilter<any, any, M> = <any>this.filterManager.getFilterComponent(column);
                 return (filterComponent.getNullableModel) ?
                     filterComponent.getNullableModel() :
                     filterComponent.getModel();
             },
-            onFloatingFilterChanged: (change: any): void => {
-                let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                filterComponent.setModel(change);
+            onFloatingFilterChanged: (change: F|M): void => {
+                let filterComponent: BaseFilter<any, any, M> = <any>this.filterManager.getFilterComponent(column);
                 if (filterComponent.onFloatingFilterChanged){
-                    filterComponent.onFloatingFilterChanged(false);
+                    //If going through this branch of code the user MUST
+                    //be passing an object of type change that contains
+                    //a model propery inside and some other stuff
+                    filterComponent.onFloatingFilterChanged(<F>change);
                 } else {
-                    this.filterManager.onFilterChanged();
-                }
-            },
-            onApplyFilter: (change: any): void => {
-                let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-                filterComponent.setModel(change);
-                if (filterComponent.onFloatingFilterChanged){
-                    filterComponent.onFloatingFilterChanged(true);
-                } else {
+                    //If going through this branch of code the user MUST
+                    //be passing the plain model and delegating to ag-Grid
+                    //the responsibility to set the parent model and refresh
+                    //the filters
+                    filterComponent.setModel(<M>change);
                     this.filterManager.onFilterChanged();
                 }
             },
             //This one might be overriden from the colDef
             suppressFilterButton: false
         };
+        return baseParams;
     }
 
 }
