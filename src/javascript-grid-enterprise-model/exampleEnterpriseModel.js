@@ -1,14 +1,14 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete"},
-    {headerName: "Age", field: "age"},
+    {headerName: "Athlete", field: "athlete", enableRowGroup: true},
+    {headerName: "Age", field: "age", enableRowGroup: true},
     {headerName: "Country", field: "country", rowGroupIndex: 0, enableRowGroup: true},
-    {headerName: "Year", field: "year"},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
+    {headerName: "Year", field: "year", enableRowGroup: true},
+    {headerName: "Date", field: "date"},
+    {headerName: "Sport", field: "sport"},
+    {headerName: "Gold", field: "gold"},
+    {headerName: "Silver", field: "silver"},
+    {headerName: "Bronze", field: "bronze"},
+    {headerName: "Total", field: "total"}
 ];
 
 var gridOptions = {
@@ -16,21 +16,16 @@ var gridOptions = {
     enableColResize: true,
     rowModelType: 'enterprise',
     rowGroupPanelShow: 'always',
+    animateRows: true,
     debug: true
 };
 
 var allData;
 
-function EnterpriseDatasource() {
-}
+function EnterpriseDatasource() {}
 
 EnterpriseDatasource.prototype.getRows = function(params) {
-
-    // console.log('first is ', _.first(this.allData));
-    // console.log('group by is', _.groupBy(this.allData, ['country','age']));
-
     console.log('EnterpriseDatasource.getRows: params = ', params);
-
     getRowsFromServer(params);
 };
 
@@ -46,15 +41,20 @@ function getRowsFromServer(params) {
 
         var mappedValues = _.groupBy(this.allData, field);
 
-        var listOfKeys = Object.keys(mappedValues);
+        var lookingForChildren = params.groupKeys && params.groupKeys.length > 0;
 
-        var result = [];
-
-        listOfKeys.forEach(function(key) {
-            var item = {};
-            item[field] = key;
-            result.push(item)
-        });
+        if (lookingForChildren) {
+            var groupKey = params.groupKeys[0];
+            result = mappedValues[groupKey];
+        } else {
+            var listOfKeys = Object.keys(mappedValues);
+            var result = [];
+            listOfKeys.forEach(function(key) {
+                var item = {};
+                item[field] = key;
+                result.push(item)
+            });
+        }
 
     }
 
@@ -62,7 +62,6 @@ function getRowsFromServer(params) {
         params.successCallback(result);
     }, 1000);
 }
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

@@ -9,7 +9,10 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="row-models">Row Models</h2>
+    <h2 id="row-models">
+        <img src="../images/svg/docs/row_models.svg" width="50" />
+        Row Models
+    </h2>
 
     <p>
         ag-Grid can be configured to retrieve rows from the server in different ways. You should choose the way

@@ -1,8 +1,10 @@
 <?php if (!isFrameworkAll()) { ?>
-    <h2><img style="vertical-align: middle" src="/images/angular2_small.png" height="25px"/> Overview</h2>
+    <h2>
+        <img src="../images/svg/docs/getting_started.svg" width="50" />
+        <img style="vertical-align: middle" src="../images/angular2_small.png" height="25px"/>
+        Getting Started
+    </h2>
 <?php } ?>
-
-<h3>Introduction</h3>
 
 <p>
     This section will describe how to get up and running with ag-Grid and Angular in the quickest possible manner using

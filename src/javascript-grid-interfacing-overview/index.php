@@ -9,7 +9,10 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Interfacing Overview</h2>
+    <h2>
+        <img src="../images/svg/docs/interfacing.svg" width="50" />
+        Interfacing
+    </h2>
 
     <p>
         The interface to ag-Grid is modelled around standard DOM elements. This gives ag-Grid a consistent
