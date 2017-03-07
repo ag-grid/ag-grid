@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     In order to see how the floating filter interacts with its parent rich filter,
-    check the methods getModelAsString() and onFloatingFilterChanged(applyNow:boolean)
+    check the methods getModelAsString() and onFloatingFilterChanged(change:any)
     <a href="../javascript-grid-filter-component/">in the Filter component interface</a>.
 </p>
 
@@ -91,17 +91,11 @@ include '../documentation-main/documentation_header.php';
     <span class="codeComment">// The column this filter is for</span>
     column: Column;
 
-    <span class="codeComment">// This is the callback you need to invoke from your component every time that you want to update the model
-    // from your parent rich filter. In order to make this call you need to be able to produce a model object
-    // like the one this rich filter will produce through getModel() after this call is completed, the parent
-    // rich filter will be updated and the data on the grid filtered accordingly if applyButton=false.</span>
+    <span class="codeComment">// This is the callback you need to invoke from your component every time that you want
+    // to update the model from your parent rich filter. In order to make this call you need to be able to produce a
+    // model object like the one this rich filter will produce through getModel(). After this call is completed,
+    // the parent rich filter will be updated and the data on the grid filtered accordingly if applyButton=false.</span>
     onFloatingFilterChanged(change:any): void;
-
-    <span class="codeComment">// This is the callback you need to invoke from your component every time that you want to simulate the user
-    // clicking the apply button on the rich filter. If there is no apply button on the rich filter, this callback
-    // behaves exactly the same as onFloatingFilterChanged.
-    // As onFloatingFilterChanged you need to be able to produce a model object.</span>
-    onApplyFilter(change:any): void;
 
     <span class="codeComment">// This is a shortcut to invoke getModel on the parent rich filter..</span>
     currentParentModel(): any;
@@ -128,7 +122,7 @@ If the user removes the content of the input box, the filter its removed.
 <ol>
     <li>The columns with the floating filter are using the standard number filter as the base filter</li>
     <li>Since the parent filter is the number filter, the floating filter methods <i>onFloatingFilterChanged (parentModel)</i>,
-        <i>onApplyFilter (parentModel)</i> and <i>currentParentModel ():parentModel</i> take and receive model objects
+        and <i>currentParentModel ():parentModel</i> take and receive model objects
         that correspond to <a href="../javascript-grid-filter-number/#model">the model for the number filter</a></li>
     <li>Since this floating filters are providing a subset of the functionality of their parent filter, which can
     filter for other conditions which are not 'greaterThan' the user is prevented to see the parent filter by adding
@@ -156,8 +150,8 @@ In this example is important to note that:
     every time that the NumberFilter model changes</li>
     <li>NumberFloatingFilter calls on <i>params.onFloatingFilterChanged(modelToAccept)</i> every time the user changes
         the slider value. This will cause an automatic call into <i>NumberFilter.setModel(modelToAccept)</i> </li>
-    <li>Since NumberFilter <i>onFloatingFilterChanged(applyNow)</i> IS NOT implemented. Every time the user changes the
-        slider value the filter gets updated automatically. If this method was implemented it would get call it every
+    <li>Since NumberFilter <i>onFloatingFilterChanged(change)</i> IS NOT implemented. Every time the user changes the
+        input value the filter gets updated automatically. If this method was implemented it would get call it every
         time the floating filter would change, and it would delegate to it the responsibility to perform the filtering.</li>
 </ol>
 </p>
