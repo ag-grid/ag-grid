@@ -8,6 +8,8 @@ import {_} from "../../utils";
 import {EventService} from "../../eventService";
 import {Events, ModelUpdatedEvent} from "../../events";
 import {FlattenStage} from "../inMemory/flattenStage";
+import {ColumnController} from "../../columnController/columnController";
+import {Column} from "../../entities/column";
 
 // + get simple version working, no pagination, just parent / child lazy loading
 // + user changing dimensions
@@ -25,6 +27,11 @@ export interface IEnterpriseGetRowsParams {
 
     failCallback(): void;
 
+    rowGroupCols: ColumnVO[];
+    valueCols: ColumnVO[];
+    pivotCols: ColumnVO[];
+    groupKeys: string[];
+
     // sortModel: any,
     // filterModel: any,
     // context: any
@@ -34,6 +41,13 @@ export interface IEnterpriseDatasource {
     getRows(params: IEnterpriseGetRowsParams): void;
 }
 
+export class ColumnVO {
+    id: string;
+    displayName: string;
+    field: string;
+    aggFunc: string;
+}
+
 @Bean('rowModel')
 export class EnterpriseRowModel implements IRowModel {
 
@@ -41,6 +55,7 @@ export class EnterpriseRowModel implements IRowModel {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
     @Autowired('flattenStage') private flattenStage: FlattenStage;
+    @Autowired('columnController') private columnController: ColumnController;
 
     private rootNode: RowNode;
     private datasource: IEnterpriseDatasource;
@@ -53,9 +68,17 @@ export class EnterpriseRowModel implements IRowModel {
     @PostConstruct
     private postConstruct(): void {
 
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this, {step: Constants.STEP_EVERYTHING} ));
+
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.datasource = this.gridOptionsWrapper.getEnterpriseDatasource();
 
+        if (this.datasource) {
+            this.reset();
+        }
+    }
+
+    private onColumnRowGroupChanged(): void {
         if (this.datasource) {
             this.reset();
         }
@@ -72,6 +95,9 @@ export class EnterpriseRowModel implements IRowModel {
 
         // this event: 1) clears selection 2) updates filters 3) shows/hides 'no rows' overlay
         this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED);
+
+        // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start)
+        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
     }
 
     public setDatasource(datasource: IEnterpriseDatasource): void {
@@ -86,12 +112,44 @@ export class EnterpriseRowModel implements IRowModel {
         }, 0);
     }
 
+    private createGroupKeys(groupNode: RowNode): string[] {
+        let keys: string[] = [];
+
+        let pointer = groupNode;
+        while (pointer.level >= 0) {
+            keys.push(groupNode.key);
+            pointer = groupNode.parent;
+        }
+
+        return keys;
+    }
+
     private createLoadParams(rowNode: RowNode): IEnterpriseGetRowsParams {
+        let groupKeys = this.createGroupKeys(rowNode);
+
+        let rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
+        let valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
+        let pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
+
         let params = <IEnterpriseGetRowsParams> {
             successCallback: this.successCallback.bind(this, rowNode),
-            failCallback: this.failCallback.bind(this, rowNode)
+            failCallback: this.failCallback.bind(this, rowNode),
+            rowGroupCols: rowGroupColumnVos,
+            valueCols: valueColumnVos,
+            pivotCols: pivotColumnVos,
+            groupKeys: groupKeys
         };
+
         return params;
+    }
+
+    private toValueObjects(columns: Column[]): ColumnVO[] {
+        return columns.map( col => <ColumnVO> {
+            id: col.getId(),
+            aggFunc: col.getAggFunc(),
+            displayName: this.columnController.getDisplayNameForColumn(col, 'model'),
+            field: col.getColDef().field
+        });
     }
 
     private successCallback(rowNode: RowNode, dataItems: any[]): void {
