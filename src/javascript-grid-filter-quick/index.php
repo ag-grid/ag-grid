@@ -83,5 +83,17 @@ the quick filter at least one. You will notice the quick filter text is correct 
                       exampleheight="500px">
 </show-complex-example>
 
+<h3 id="server-side-filtering">Server Side Data</h3>
+
+<p>
+    Quick Filters only make sense with client side data (i.e. when using the In Memory row model).
+    For the other row models (<a href="/javascript-grid-pagination/">pagination</a>,
+    <a href="/javascript-grid-virtual-paging/">infinite scrolling</a> etc) you would need to implement your own server side sorting to
+    replicate Quick Filter functionality.</p>
+
+
+</p>
+
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
