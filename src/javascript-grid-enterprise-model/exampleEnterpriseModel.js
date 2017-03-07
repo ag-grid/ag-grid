@@ -15,7 +15,6 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableColResize: true,
     rowModelType: 'enterprise',
-    enterpriseDatasource: new EnterpriseDatasource(),
     debug: true
 };
 
@@ -24,7 +23,7 @@ function EnterpriseDatasource(allData) {
 }
 
 EnterpriseDatasource.prototype.getRows = function(params) {
-    console.log('EnterpriseDatasource.prototype.getRows');
+    params.successCallback(this.allData);
 };
 
 // setup the grid after the page has finished loading
