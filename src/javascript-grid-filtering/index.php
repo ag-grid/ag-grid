@@ -326,7 +326,7 @@ gridOptions.api.setFilterModel(null);
 <h3 id="floatingFilter">Floating filters</h3>
 
 <p>
-    Floating Filters are and additional row under the column headers where the user will be able to
+    Floating Filters are an additional row under the column headers where the user will be able to
     see and optionally edit the filters associated to each column.
 </p>
 
@@ -359,7 +359,7 @@ gridOptions = {
         You can <a href="../javascript-grid-floating-filter-component/">create your own floating filter</a>.
     </li>
     <li>
-        You can implement the method getModelAsString in your custom filter. If you implement this method and you don't
+        You can implement the method <i>getModelAsString</i> in your custom filter. If you implement this method and you don't
         provide a custom floating filter, ag-grid will automatically provide a read-only version of a floating filter
     </li>
 </ol>

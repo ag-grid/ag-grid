@@ -315,6 +315,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 // enablePivot: true,
                 filter: PersonFilter,
+                floatingFilterComponent: PersonFloatingFilterComponent,
                 checkboxSelection: function (params) {
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
@@ -740,11 +741,12 @@ function PersonFilter() {
 PersonFilter.prototype.init = function (params) {
     this.valueGetter = params.valueGetter;
     this.filterText = null;
-    this.setupGui(params);
+    this.params = params;
+    this.setupGui();
 };
 
 // not called by ag-Grid, just for us to help setup
-PersonFilter.prototype.setupGui = function (params) {
+PersonFilter.prototype.setupGui = function () {
     this.gui = document.createElement('div');
     this.gui.innerHTML =
         '<div style="padding: 4px;">' +
@@ -755,21 +757,18 @@ PersonFilter.prototype.setupGui = function (params) {
         '<div><img src="images/ag-Grid2-200.png" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
         '</div>';
 
-    this.eFilterText = this.gui.querySelector('#filterText');
-    this.eFilterText.addEventListener("changed", listener);
-    this.eFilterText.addEventListener("paste", listener);
-    this.eFilterText.addEventListener("input", listener);
-// IE doesn't fire changed for special keys (eg delete, backspace), so need to
-// listen for this further ones
-    this.eFilterText.addEventListener("keydown", listener);
-    this.eFilterText.addEventListener("keyup", listener);
-
     var that = this;
+    this.onFilterChanged = function() {
+        that.extractFilterText();
+        that.params.filterChangedCallback();
+    };
 
-    function listener(event) {
-        that.filterText = event.target.value;
-        params.filterChangedCallback();
-    }
+    this.eFilterText = this.gui.querySelector('#filterText');
+    this.eFilterText.addEventListener("input", this.onFilterChanged);
+};
+
+PersonFilter.prototype.extractFilterText = function () {
+    this.filterText = this.eFilterText.value;
 };
 
 PersonFilter.prototype.getGui = function () {
@@ -795,28 +794,52 @@ PersonFilter.prototype.isFilterActive = function () {
     return isActive;
 };
 
-PersonFilter.prototype.getApi = function () {
-    var that = this;
-    return {
-        getModel: function () {
-            var model = {value: that.filterText.value};
-            return model;
-        },
-        setModel: function (model) {
-            that.eFilterText.value = model.value;
-        }
-    }
-};
-
 PersonFilter.prototype.getModelAsString = function (model){
     return model ? model : '';
 };
 
 PersonFilter.prototype.getModel = function () {
-    return this.filterText;
+    return this.eFilterText.value;
 };
+
 // lazy, the example doesn't use setModel()
-PersonFilter.prototype.setModel = function () {};
+PersonFilter.prototype.setModel = function (model) {
+    this.eFilterText.value = model;
+    this.extractFilterText();
+};
+
+PersonFilter.prototype.destroy = function () {
+    this.eFilterText.removeEventListener("input", this.onFilterChanged);
+};
+
+function PersonFloatingFilterComponent() {}
+
+PersonFloatingFilterComponent.prototype.init = function(params) {
+    this.params = params;
+    this.eGui = document.createElement('input');
+    var eGui = this.eGui;
+    this.changeEventListener = function() {
+        params.onFloatingFilterChanged(eGui.value);
+    };
+    this.eGui.addEventListener('input', this.changeEventListener);
+};
+
+PersonFloatingFilterComponent.prototype.getGui = function() {
+    return this.eGui;
+};
+
+PersonFloatingFilterComponent.prototype.onParentModelChanged = function(model) {
+    // add in child, one for each flat
+    if (model) {
+        // this.eGui.value = model;
+    } else {
+        // this.eGui.value = '';
+    }
+};
+
+PersonFloatingFilterComponent.prototype.destroy = function() {
+    this.eGui.removeEventListener('input', this.changeEventListener);
+};
 
 function WinningsFilter() {
 }
