@@ -939,6 +939,7 @@ export class RenderedCell extends Component {
                 node: this.node,
                 colDef: this.column.getColDef(),
                 rowIndex: this.gridCell.rowIndex,
+                $scope: this.scope,
                 api: this.gridOptionsWrapper.getApi(),
                 context: this.gridOptionsWrapper.getContext()
             },
