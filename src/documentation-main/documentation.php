@@ -9,19 +9,9 @@ include 'documentation_header.php';
 
 <div class="row">
     <div class="col-md-9">
-        <div style="padding: 10px;">
-            <h2 class="documentationHeader">Documentation</h2>
-            ag-Grid is an Enterprise Grade Javascript Data Grid.
-            The purpose of ag-Grid is to provide a data grid that enterprise software developers
-            can use for building applications such as reporting and data analytics, business workflow
-            and data entry. The author, having spent years building applications in C++, Java and
-            Javascript, found the choice of grids in JavaScript lacking, especially in comparison
-            to what was in other languages frameworks. ag-Grid is the result of turning frustration
-            into answers, providing a grid worthy of enterprise development.
-        </div>
+        <h2 class="documentationHeader">Documentation</h2>
         <div class="list-group">
-            <div class="list-group-item">
-                <a href="/javascript-grid-getting-started/" style="color: #555;">
+            <a href="/javascript-grid-getting-started/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/getting_started.svg" width="50" />
@@ -34,23 +24,7 @@ include 'documentation_header.php';
                         to further sections to understand how particular features work.
                     </p>
                 </div>
-                <div style="display: flex;justify-content: space-between;padding-top: 10px">
-                    <a href="../javascript-grid-getting-started?framework=javascript" style="margin-left: -15px;color: #555;"><img style="vertical-align: middle" src="/images/javascript.png"
-                                                                                           height="25px"/>JavaScript</a>
-                    <a href="../javascript-grid-getting-started?framework=angular" style="color: #555;"><img style="vertical-align: middle" src="/images/angular2_small.png"
-                                                                                        height="25px"/>Angular</a>
-                    <a href="../javascript-grid-getting-started?framework=react" style="color: #555;"><img style="vertical-align: middle" src="/images/react_small.png"
-                                                                                       height="25px"/>React</a>
-                    <a href="../javascript-grid-getting-started?framework=vue" style="color: #555;"><img style="vertical-align: middle" src="/images/vue_small.png"
-                                                                                     height="25px"/>VueJS</a>
-                    <a href="../javascript-grid-getting-started?framework=aurelia" style="color: #555;"><img style="vertical-align: middle" src="/images/aurelia_small.png"
-                                                                                         height="25px"/>Aurelia</a>
-                    <a href="../javascript-grid-getting-started?framework=webcomponents" style="color: #555;"><img style="vertical-align: middle" src="/images/webComponents_small.png"
-                                                                                               height="25px"/>Web Components</a>
-
-                </div>
-                </a>
-            </div>
+            </a>
             <a href="/javascript-grid-interfacing-overview/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
@@ -59,6 +33,9 @@ include 'documentation_header.php';
                     <h4 class="list-group-item-heading">Interfacing</h4>
                     <p class="list-group-item-text">
 
+                        <!--                        Once you have <span style="font-style: italic">The Basics</span> covered, we suggest you take a look at the
+                                                <a href="../javascript-grid-interfacing-overview/">Interfacing Overview</a> next.
+                        -->
                         Lists all the configuration options (properties, events, api etc) for ag-Grid.
                         Use this as a quick reference to look all available options.
                     </p>
@@ -87,7 +64,7 @@ include 'documentation_header.php';
                     <h4>Row Models</h4>
                     <p class="list-group-item-text">
                         The grid supports many ways to load the data eg <i>pagination</i> and <i>virtual
-                        scrolling</i>. Learn how to apply these techniques to manage large amounts of
+                            scrolling</i>. Learn how to apply these techniques to manage large amounts of
                         data.
                     </p>
                 </div>
