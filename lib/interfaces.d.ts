@@ -1,4 +1,4 @@
-// ag-grid-react v8.1.0
+// ag-grid-react v8.2.0
 import { IHeaderGroup, IHeaderGroupParams, IHeader, IHeaderParams, IFilterParams, IDate, IDateParams, ICellRenderer, ICellRendererParams, ICellEditor, ICellEditorParams, IFilter } from "ag-grid/main";
 export interface AgReactFrameworkComponent<T> {
 }
