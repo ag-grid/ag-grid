@@ -49,10 +49,10 @@ echo ===========================================================================
 echo "SystemJS manual testing -- COPY AND PASTE THIS!!"
 echo "cd ag-grid-angular-example/systemjs_aot/"
 echo "npm start"
-echo "ctrl-c when done"
+echo "ctrl-c when done (http://localhost:3000)"
 echo "npm run clean-build:aot"
 echo "npm run lite:aot"
-echo "ctrl-c when done"
+echo "ctrl-c when done (http://localhost:8000)"
 
 
 echo =============================================================================================
@@ -73,7 +73,7 @@ echo ===========================================================================
 echo "Angular CLI manual testing -- COPY AND PASTE THIS!!"
 echo "cd ../angular-cli"
 echo "npm run start"
-echo "ctrl-c when done"
+echo "ctrl-c when done (http://localhost:4200)"
 echo "npm build --prod"
 echo "./node_modules/.bin/http-server dist/"
-echo "ctrl-c when done"
+echo "ctrl-c when done http://127.0.0.1:8080"
