@@ -40,7 +40,7 @@ do
             npm run build
             ;;
         "ag-grid-aurelia-example")
-            gulp
+            npm i
             ;;
         "ag-grid-angular-example/systemjs_aot")
             npm run clean-build:aot
