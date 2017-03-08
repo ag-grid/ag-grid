@@ -435,7 +435,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>paginationPageSize</th>
             <td>For normal paging, how many rows to show to a user at one time (ie page size).
-                In virtual pagination dictates the size of teh pages in the data cache. For both paging
+                In virtual pagination dictates the size of the pages in the data cache. For both paging
                 and virtual pagination, defines the block size the datasource is asked for data.</td>
         </tr>
         <tr>
