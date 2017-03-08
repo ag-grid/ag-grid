@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,6 +14,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var csvCreator_1 = require("./csvCreator");
 var rowRenderer_1 = require("./rendering/rowRenderer");
 var headerRenderer_1 = require("./headerRendering/headerRenderer");
@@ -25,17 +26,17 @@ var gridPanel_1 = require("./gridPanel/gridPanel");
 var valueService_1 = require("./valueService");
 var masterSlaveService_1 = require("./masterSlaveService");
 var eventService_1 = require("./eventService");
-var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
+var floatingRowModel_1 = require("./rowModels/floatingRowModel");
 var constants_1 = require("./constants");
 var context_1 = require("./context/context");
 var gridCore_1 = require("./gridCore");
 var sortController_1 = require("./sortController");
-var paginationController_1 = require("./rowControllers/paginationController");
 var focusedCellController_1 = require("./focusedCellController");
 var gridCell_1 = require("./entities/gridCell");
 var utils_1 = require("./utils");
 var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
 var cellEditorFactory_1 = require("./rendering/cellEditorFactory");
+var paginationService_1 = require("./rowModels/pagination/paginationService");
 var GridApi = (function () {
     function GridApi() {
     }
@@ -78,9 +79,17 @@ var GridApi = (function () {
         }
         this.excelCreator.exportDataAsExcel(params);
     };
+    GridApi.prototype.setEnterpriseDatasource = function (datasource) {
+        if (this.gridOptionsWrapper.isRowModelEnterprise()) {
+            this.rowModel.setDatasource(datasource);
+        }
+        else {
+            console.warn("ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '" + constants_1.Constants.ROW_MODEL_TYPE_ENTERPRISE + "'");
+        }
+    };
     GridApi.prototype.setDatasource = function (datasource) {
         if (this.gridOptionsWrapper.isRowModelPagination()) {
-            this.paginationController.setDatasource(datasource);
+            this.paginationService.setDatasource(datasource);
         }
         else if (this.gridOptionsWrapper.isRowModelVirtual()) {
             this.rowModel.setDatasource(datasource);
@@ -592,6 +601,36 @@ var GridApi = (function () {
     GridApi.prototype.checkGridSize = function () {
         this.gridPanel.setBodyAndHeaderHeights();
     };
+    GridApi.prototype.paginationIsLastPageFound = function () {
+        return this.paginationService.isLastPageFound();
+    };
+    GridApi.prototype.paginationGetPageSize = function () {
+        return this.paginationService.getPageSize();
+    };
+    GridApi.prototype.paginationGetCurrentPage = function () {
+        return this.paginationService.getCurrentPage();
+    };
+    GridApi.prototype.paginationGetTotalPages = function () {
+        return this.paginationService.getTotalPages();
+    };
+    GridApi.prototype.paginationGetRowCount = function () {
+        return this.paginationService.getRowCount();
+    };
+    GridApi.prototype.paginationGoToNextPage = function () {
+        this.paginationService.goToNextPage();
+    };
+    GridApi.prototype.paginationGoToPreviousPage = function () {
+        this.paginationService.goToPreviousPage();
+    };
+    GridApi.prototype.paginationGoToFirstPage = function () {
+        this.paginationService.goToFirstPage();
+    };
+    GridApi.prototype.paginationGoToLastPage = function () {
+        this.paginationService.goToLastPage();
+    };
+    GridApi.prototype.paginationGoToPage = function (page) {
+        this.paginationService.goToPage(page);
+    };
     return GridApi;
 }());
 __decorate([
@@ -663,9 +702,9 @@ __decorate([
     __metadata("design:type", sortController_1.SortController)
 ], GridApi.prototype, "sortController", void 0);
 __decorate([
-    context_1.Autowired('paginationController'),
-    __metadata("design:type", paginationController_1.PaginationController)
-], GridApi.prototype, "paginationController", void 0);
+    context_1.Autowired('paginationService'),
+    __metadata("design:type", paginationService_1.PaginationService)
+], GridApi.prototype, "paginationService", void 0);
 __decorate([
     context_1.Autowired('focusedCellController'),
     __metadata("design:type", focusedCellController_1.FocusedCellController)

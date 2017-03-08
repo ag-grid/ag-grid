@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -16,6 +16,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     static EVENT_FIRST_RIGHT_PINNED_CHANGED: string;
     static EVENT_VISIBLE_CHANGED: string;
     static EVENT_FILTER_CHANGED: string;
+    static EVENT_FILTER_ACTIVE_CHANGED: string;
     static EVENT_SORT_CHANGED: string;
     static EVENT_ROW_GROUP_CHANGED: string;
     static EVENT_PIVOT_CHANGED: string;
@@ -89,6 +90,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isSortAscending(): boolean;
     isSortDescending(): boolean;
     isSortNone(): boolean;
+    isSorting(): boolean;
     getSortedAt(): number;
     setSortedAt(sortedAt: number): void;
     setAggFunc(aggFunc: string | IAggFunc): void;

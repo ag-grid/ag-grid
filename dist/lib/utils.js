@@ -1,10 +1,11 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 // util class, only used when debugging, for printing time to console
@@ -22,11 +23,11 @@ var Timer = (function () {
 exports.Timer = Timer;
 /** HTML Escapes. */
 var HTML_ESCAPES = {
-    '&': '&amp',
-    '<': '&lt',
-    '>': '&gt',
-    '"': '&quot',
-    "'": '&#39'
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
 };
 var reUnescapedHtml = /[&<>"']/g;
 var Utils = (function () {
@@ -548,6 +549,8 @@ var Utils = (function () {
                 return valueA.localeCompare(valueB);
             }
             catch (e) {
+                // if something wrong with localeCompare, eg not supported
+                // by browser, then just continue without using it
             }
         }
         if (valueA < valueB) {
@@ -707,6 +710,9 @@ var Utils = (function () {
     Utils.setVisible = function (element, visible) {
         this.addOrRemoveCssClass(element, 'ag-hidden', !visible);
     };
+    Utils.setHidden = function (element, hidden) {
+        this.addOrRemoveCssClass(element, 'ag-visibility-hidden', hidden);
+    };
     Utils.isBrowserIE = function () {
         if (this.isIE === undefined) {
             this.isIE = false || !!document.documentMode; // At least IE6
@@ -805,7 +811,7 @@ var Utils = (function () {
         return !isNaN(parseFloat(value)) && isFinite(value);
     };
     Utils.escape = function (toEscape) {
-        if (!toEscape)
+        if (toEscape === null)
             return null;
         if (!toEscape.replace)
             return toEscape;

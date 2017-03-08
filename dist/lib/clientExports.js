@@ -1,10 +1,11 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var grid_1 = require("./grid");
 var gridApi_1 = require("./gridApi");
 var events_1 = require("./events");
@@ -47,11 +48,10 @@ var verticalStack_1 = require("./layout/verticalStack");
 var autoWidthCalculator_1 = require("./rendering/autoWidthCalculator");
 var renderedRow_1 = require("./rendering/renderedRow");
 var rowRenderer_1 = require("./rendering/rowRenderer");
-var filterStage_1 = require("./rowControllers/inMemory/filterStage");
-var flattenStage_1 = require("./rowControllers/inMemory/flattenStage");
-var sortStage_1 = require("./rowControllers/inMemory/sortStage");
-var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
-var paginationController_1 = require("./rowControllers/paginationController");
+var filterStage_1 = require("./rowModels/inMemory/filterStage");
+var flattenStage_1 = require("./rowModels/inMemory/flattenStage");
+var sortStage_1 = require("./rowModels/inMemory/sortStage");
+var floatingRowModel_1 = require("./rowModels/floatingRowModel");
 var component_1 = require("./widgets/component");
 var cellNavigationService_1 = require("./cellNavigationService");
 var columnChangeEvent_1 = require("./columnChangeEvent");
@@ -71,8 +71,8 @@ var utils_1 = require("./utils");
 var valueService_1 = require("./valueService");
 var popupService_1 = require("./widgets/popupService");
 var gridRow_1 = require("./entities/gridRow");
-var inMemoryRowModel_1 = require("./rowControllers/inMemory/inMemoryRowModel");
-var virtualPageRowModel_1 = require("./rowControllers/virtualPagination/virtualPageRowModel");
+var inMemoryRowModel_1 = require("./rowModels/inMemory/inMemoryRowModel");
+var virtualPageRowModel_1 = require("./rowModels/infinateScrolling/virtualPageRowModel");
 var animateSlideCellRenderer_1 = require("./rendering/cellRenderers/animateSlideCellRenderer");
 var cellEditorFactory_1 = require("./rendering/cellEditorFactory");
 var popupEditorWrapper_1 = require("./rendering/cellEditors/popupEditorWrapper");
@@ -95,9 +95,9 @@ var setLeftFeature_1 = require("./rendering/features/setLeftFeature");
 var renderedCell_1 = require("./rendering/renderedCell");
 var headerRowComp_1 = require("./headerRendering/headerRowComp");
 var animateShowChangeCellRenderer_1 = require("./rendering/cellRenderers/animateShowChangeCellRenderer");
-var inMemoryNodeManager_1 = require("./rowControllers/inMemory/inMemoryNodeManager");
-var virtualPageCache_1 = require("./rowControllers/virtualPagination/virtualPageCache");
-var virtualPage_1 = require("./rowControllers/virtualPagination/virtualPage");
+var inMemoryNodeManager_1 = require("./rowModels/inMemory/inMemoryNodeManager");
+var virtualPageCache_1 = require("./rowModels/infinateScrolling/virtualPageCache");
+var virtualPage_1 = require("./rowModels/infinateScrolling/virtualPage");
 var baseFrameworkFactory_1 = require("./baseFrameworkFactory");
 var methodNotImplementedException_1 = require("./misc/methodNotImplementedException");
 var touchListener_1 = require("./widgets/touchListener");
@@ -106,6 +106,9 @@ var xmlFactory_1 = require("./xmlFactory");
 var beanStub_1 = require("./context/beanStub");
 var gridSerializer_1 = require("./gridSerializer");
 var stylingService_1 = require("./styling/stylingService");
+var baseFilter_1 = require("./filter/baseFilter");
+var dateFilter_1 = require("./filter/dateFilter");
+var simpleHttpRequest_1 = require("./misc/simpleHttpRequest");
 function populateClientExports(exports) {
     // columnController
     exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
@@ -123,6 +126,7 @@ function populateClientExports(exports) {
     exports.Context = context_1.Context;
     exports.Autowired = context_1.Autowired;
     exports.PostConstruct = context_1.PostConstruct;
+    exports.PreConstruct = context_1.PreConstruct;
     exports.PreDestroy = context_1.PreDestroy;
     exports.Optional = context_1.Optional;
     exports.Bean = context_1.Bean;
@@ -143,6 +147,8 @@ function populateClientExports(exports) {
     exports.OriginalColumnGroup = originalColumnGroup_1.OriginalColumnGroup;
     exports.RowNode = rowNode_1.RowNode;
     // filter
+    exports.BaseFilter = baseFilter_1.BaseFilter;
+    exports.DateFilter = dateFilter_1.DateFilter;
     exports.FilterManager = filterManager_1.FilterManager;
     exports.NumberFilter = numberFilter_1.NumberFilter;
     exports.TextFilter = textFilter_1.TextFilter;
@@ -169,6 +175,7 @@ function populateClientExports(exports) {
     // misc
     exports.FocusService = focusService_1.FocusService;
     exports.MethodNotImplementedException = methodNotImplementedException_1.MethodNotImplementedException;
+    exports.simpleHttpRequest = simpleHttpRequest_1.simpleHttpRequest;
     // rendering / cellEditors
     exports.LargeTextCellEditor = largeTextCellEditor_1.LargeTextCellEditor;
     exports.PopupEditorWrapper = popupEditorWrapper_1.PopupEditorWrapper;
@@ -201,7 +208,6 @@ function populateClientExports(exports) {
     exports.InMemoryNodeManager = inMemoryNodeManager_1.InMemoryNodeManager;
     // rowControllers
     exports.FloatingRowModel = floatingRowModel_1.FloatingRowModel;
-    exports.PaginationController = paginationController_1.PaginationController;
     exports.VirtualPageRowModel = virtualPageRowModel_1.VirtualPageRowModel;
     exports.VirtualPageCache = virtualPageCache_1.VirtualPageCache;
     exports.VirtualPage = virtualPage_1.VirtualPage;

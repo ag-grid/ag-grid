@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,6 +14,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var popupService_1 = require("../widgets/popupService");
@@ -25,6 +26,7 @@ var context_1 = require("../context/context");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var dateFilter_1 = require("./dateFilter");
+var componentProvider_1 = require("../componentProvider");
 var FilterManager = (function () {
     function FilterManager() {
         this.allFilters = {};
@@ -392,6 +394,7 @@ var FilterManager = (function () {
         }
     };
     FilterManager.prototype.disposeFilterWrapper = function (filterWrapper) {
+        filterWrapper.filter.setModel(null);
         if (filterWrapper.filter.destroy) {
             filterWrapper.filter.destroy();
         }
@@ -457,6 +460,10 @@ __decorate([
     context_1.Autowired('context'),
     __metadata("design:type", context_1.Context)
 ], FilterManager.prototype, "context", void 0);
+__decorate([
+    context_1.Autowired('componentProvider'),
+    __metadata("design:type", componentProvider_1.ComponentProvider)
+], FilterManager.prototype, "componentProvider", void 0);
 __decorate([
     context_1.PostConstruct,
     __metadata("design:type", Function),

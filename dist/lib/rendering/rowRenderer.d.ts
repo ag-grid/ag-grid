@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -7,7 +7,8 @@ import { RenderedCell } from "./renderedCell";
 import { LoggerFactory } from "../logger";
 import { GridCell } from "../entities/gridCell";
 import { ColDef } from "../entities/colDef";
-export declare class RowRenderer {
+import { BeanStub } from "../context/beanStub";
+export declare class RowRenderer extends BeanStub {
     private columnController;
     private gridOptionsWrapper;
     private gridCore;
@@ -33,7 +34,6 @@ export declare class RowRenderer {
     private rowContainers;
     private refreshInProgress;
     private logger;
-    private destroyFunctions;
     agWire(loggerFactory: LoggerFactory): void;
     init(): void;
     getAllCellsForColumn(column: Column): HTMLElement[];
@@ -53,7 +53,7 @@ export declare class RowRenderer {
     private forEachRenderedRow(callback);
     addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
     refreshCells(rowNodes: RowNode[], cols: (string | ColDef | Column)[], animate?: boolean): void;
-    private destroy();
+    destroy(): void;
     private refreshAllVirtualRows(keepRenderedRows, animate);
     refreshGroupRows(): void;
     private removeVirtualRows(rowsToRemove);
@@ -80,4 +80,5 @@ export interface RefreshViewParams {
     animate?: boolean;
     suppressKeepFocus?: boolean;
     onlyBody?: boolean;
+    newData?: boolean;
 }

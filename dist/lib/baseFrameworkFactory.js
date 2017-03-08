@@ -1,10 +1,11 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /** The base frameworks, eg React & Angular 2, override this bean with implementations specific to their requirement. */
 var BaseFrameworkFactory = (function () {
     function BaseFrameworkFactory() {

@@ -1,15 +1,20 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -19,6 +24,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../widgets/component");
 var column_1 = require("../../entities/column");
 var utils_1 = require("../../utils");
@@ -27,7 +33,9 @@ var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var sortController_1 = require("../../sortController");
 var touchListener_1 = require("../../widgets/touchListener");
 var svgFactory_1 = require("../../svgFactory");
+var eventService_1 = require("../../eventService");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
+var events_1 = require("../../events");
 var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var HeaderComp = (function (_super) {
     __extends(HeaderComp, _super);
@@ -42,6 +50,7 @@ var HeaderComp = (function (_super) {
         this.setupSort();
         this.setupFilterIcon();
         this.setupText(params.displayName);
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_SORT_CHANGED, this.setMultiSortOrder.bind(this));
     };
     HeaderComp.prototype.setupText = function (displayName) {
         this.eText.innerHTML = displayName;
@@ -111,6 +120,7 @@ var HeaderComp = (function (_super) {
             utils_1.Utils.removeFromParent(this.eSortAsc);
             utils_1.Utils.removeFromParent(this.eSortDesc);
             utils_1.Utils.removeFromParent(this.eSortNone);
+            utils_1.Utils.removeFromParent(this.eSortOrder);
             return;
         }
         // add the event on the header, so when clicked, we do sorting
@@ -137,6 +147,26 @@ var HeaderComp = (function (_super) {
             utils_1.Utils.addOrRemoveCssClass(this.eSortNone, 'ag-hidden', alwaysHideNoSort || !this.params.column.isSortNone());
         }
     };
+    // we listen here for global sort events, NOT column sort events, as we want to do this
+    // when sorting has been set on all column (if we listened just for our col (where we
+    // set the asc / desc icons) then it's possible other cols are yet to get their sorting state.
+    HeaderComp.prototype.setMultiSortOrder = function () {
+        if (!this.eSortOrder) {
+            return;
+        }
+        var col = this.params.column;
+        var allColumnsWithSorting = this.sortController.getColumnsWithSortingOrdered();
+        var indexThisCol = allColumnsWithSorting.indexOf(col);
+        var moreThanOneColSorting = allColumnsWithSorting.length > 1;
+        var showIndex = col.isSorting() && moreThanOneColSorting;
+        utils_1.Utils.setVisible(this.eSortOrder, showIndex);
+        if (indexThisCol >= 0) {
+            this.eSortOrder.innerHTML = (indexThisCol + 1).toString();
+        }
+        else {
+            this.eSortOrder.innerHTML = '';
+        }
+    };
     HeaderComp.prototype.setupFilterIcon = function () {
         if (!this.eFilter) {
             return;
@@ -153,6 +183,7 @@ var HeaderComp = (function (_super) {
 HeaderComp.TEMPLATE = '<div>' +
     '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
     '  <div ref="eLabel" class="ag-header-cell-label">' +
+    '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +
     '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
     '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
     '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
@@ -173,6 +204,10 @@ __decorate([
     __metadata("design:type", Object)
 ], HeaderComp.prototype, "menuFactory", void 0);
 __decorate([
+    context_1.Autowired('eventService'),
+    __metadata("design:type", eventService_1.EventService)
+], HeaderComp.prototype, "eventService", void 0);
+__decorate([
     componentAnnotations_1.RefSelector('eFilter'),
     __metadata("design:type", HTMLElement)
 ], HeaderComp.prototype, "eFilter", void 0);
@@ -188,6 +223,10 @@ __decorate([
     componentAnnotations_1.RefSelector('eSortNone'),
     __metadata("design:type", HTMLElement)
 ], HeaderComp.prototype, "eSortNone", void 0);
+__decorate([
+    componentAnnotations_1.RefSelector('eSortOrder'),
+    __metadata("design:type", HTMLElement)
+], HeaderComp.prototype, "eSortOrder", void 0);
 __decorate([
     componentAnnotations_1.RefSelector('eMenu'),
     __metadata("design:type", HTMLElement)

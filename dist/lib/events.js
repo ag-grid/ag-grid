@@ -1,10 +1,11 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Events = (function () {
     function Events() {
     }
@@ -99,6 +100,9 @@ Events.EVENT_BODY_SCROLL = 'bodyScroll';
 /** All items from here down are used internally by the grid, not intended for external use. */
 Events.EVENT_FLASH_CELLS = 'flashCells';
 /** All the events from here down are experimental, should not be documented or used by ag-Grid customers */
+Events.EVENT_PAGINATION_RESET = 'paginationReset';
+Events.EVENT_PAGINATION_PAGE_LOADED = 'paginationPageLoaded';
+Events.EVENT_PAGINATION_PAGE_REQUESTED = 'paginationPageRequested';
 // not documented, as it's experimental, don't want people with dependencies on this
 Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
 Events.EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';

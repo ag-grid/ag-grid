@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { BorderLayout } from "../layout/borderLayout";
@@ -104,6 +104,7 @@ export declare class GridPanel extends BeanStub {
     private pageHorizontally(pagingKey);
     private pageDiagonally(pagingKey);
     private pageVertically(pagingKey);
+    scrollToTop(): void;
     private performScroll(scroll);
     private processMouseEvent(eventName, mouseEvent);
     private onContextMenu(mouseEvent);

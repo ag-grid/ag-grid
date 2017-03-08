@@ -1,15 +1,21 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../utils");
 var beanStub_1 = require("../context/beanStub");
 var Component = (function (_super) {
@@ -60,7 +66,11 @@ var Component = (function (_super) {
         });
     };
     Component.prototype.setTemplate = function (template) {
-        this.eGui = utils_1.Utils.loadTemplate(template);
+        var eGui = utils_1.Utils.loadTemplate(template);
+        this.setTemplateFromElement(eGui);
+    };
+    Component.prototype.setTemplateFromElement = function (element) {
+        this.eGui = element;
         this.eGui.__agComponent = this;
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();
@@ -89,6 +99,7 @@ var Component = (function (_super) {
                 }
             }
             else {
+                // put debug msg in here if query selector fails???
             }
         });
     };

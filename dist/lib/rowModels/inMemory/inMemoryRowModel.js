@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,6 +14,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../../utils");
 var constants_1 = require("../../constants");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
@@ -115,7 +116,11 @@ var InMemoryRowModel = (function () {
                 // start = new Date().getTime();
                 this.doRowsToDisplay();
         }
-        var event = { animate: params.animate, keepRenderedRows: params.keepRenderedRows };
+        var event = {
+            animate: params.animate,
+            keepRenderedRows: params.keepRenderedRows,
+            newData: params.newData
+        };
         this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED, event);
         if (this.$scope) {
             setTimeout(function () {
@@ -361,7 +366,11 @@ var InMemoryRowModel = (function () {
         // - shows 'no rows' overlay if needed
         this.eventService.dispatchEvent(events_1.Events.EVENT_ROW_DATA_CHANGED);
         if (refresh) {
-            this.refreshModel({ step: constants_1.Constants.STEP_EVERYTHING, groupState: groupState });
+            this.refreshModel({
+                step: constants_1.Constants.STEP_EVERYTHING,
+                groupState: groupState,
+                newData: true
+            });
         }
     };
     InMemoryRowModel.prototype.doRowsToDisplay = function () {
