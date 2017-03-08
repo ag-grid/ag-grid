@@ -27,7 +27,7 @@
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
-    <link inline rel="stylesheet" href="../documentation-main/documentation.css">
+    <link rel="stylesheet" href="../documentation-main/documentation.css">
     <script src="../documentation-main/documentation.js"></script>
 
     <!-- Hotjar Tracking Code for https://www.ag-grid.com/ -->

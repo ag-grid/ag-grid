@@ -2,9 +2,6 @@ import {Component} from '@angular/core';
 
 import {GridOptions} from 'ag-grid/main';
 
-// only import this if you are using the ag-Grid-Enterprise
-import 'ag-grid-enterprise/main';
-
 import {MedalRendererComponent} from "./medal-renderer.component";
 
 @Component({
