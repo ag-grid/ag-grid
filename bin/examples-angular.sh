@@ -61,10 +61,10 @@ echo ===========================================================================
 echo "Webpack manual testing -- COPY AND PASTE THIS!!"
 echo "cd ../webpack"
 echo "npm start"
-echo "ctrl-c when done"
+echo "ctrl-c when done http://localhost:8080/"
 echo "npm run build"
 echo "./node_modules/.bin/http-server dist/"
-echo "ctrl-c when done"
+echo "ctrl-c when done  http://127.0.0.1:8080"
 
 
 echo =============================================================================================
@@ -72,7 +72,7 @@ echo ===========================================================================
 echo =============================================================================================
 echo "Angular CLI manual testing -- COPY AND PASTE THIS!!"
 echo "cd ../angular-cli"
-echo "npm serve"
+echo "npm run start"
 echo "ctrl-c when done"
 echo "npm build --prod"
 echo "./node_modules/.bin/http-server dist/"
