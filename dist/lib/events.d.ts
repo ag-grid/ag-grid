@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
@@ -96,6 +96,9 @@ export declare class Events {
     /** All items from here down are used internally by the grid, not intended for external use. */
     static EVENT_FLASH_CELLS: string;
     /** All the events from here down are experimental, should not be documented or used by ag-Grid customers */
+    static EVENT_PAGINATION_RESET: string;
+    static EVENT_PAGINATION_PAGE_LOADED: string;
+    static EVENT_PAGINATION_PAGE_REQUESTED: string;
     static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED: string;
     static EVENT_SCROLL_VISIBILITY_CHANGED: string;
     static EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST: string;
@@ -110,6 +113,9 @@ export interface ModelUpdatedEvent {
      * it's the same data but sorted or filtered, in which case this is true, and rows
      * can animate around (eg rowNode id 24 is the same row node as last time). */
     keepRenderedRows: boolean;
+    /** If true, then this update was a result of setRowData() getting called. This
+     * gets the grid to scroll to the top again. */
+    newData: boolean;
 }
 export interface CellEvent {
     node: RowNode;

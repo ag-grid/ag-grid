@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,6 +17,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("./utils");
 var context_1 = require("./context/context");
 var context_2 = require("./context/context");
@@ -213,6 +214,9 @@ var SelectionController = (function () {
         if (justFiltered === void 0) { justFiltered = false; }
         var inMemoryRowModel = this.rowModel;
         var callback = function (rowNode) { return rowNode.selectThisNode(false); };
+        // execute on all nodes in the model. if we are doing pagination, only
+        // the current page is used, thus if we 'deselect all' while on page 2,
+        // any selections on page 1 are left as is.
         if (justFiltered) {
             inMemoryRowModel.forEachNodeAfterFilter(callback);
         }
@@ -222,12 +226,6 @@ var SelectionController = (function () {
         // the above does not clean up the parent rows if they are selected
         if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
-        }
-        // we should not have to do this, as deselecting the nodes fires events
-        // that we pick up, however it's good to clean it down, as we are still
-        // left with entries pointing to 'undefined'
-        if (!justFiltered) {
-            this.selectedNodes = {};
         }
         this.eventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
     };

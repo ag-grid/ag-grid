@@ -1,13 +1,13 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
-var paginationController_1 = require("./rowControllers/paginationController");
-var floatingRowModel_1 = require("./rowControllers/floatingRowModel");
+var floatingRowModel_1 = require("./rowModels/floatingRowModel");
 var selectionController_1 = require("./selectionController");
 var columnController_1 = require("./columnController/columnController");
 var rowRenderer_1 = require("./rendering/rowRenderer");
@@ -39,14 +39,15 @@ var focusedCellController_1 = require("./focusedCellController");
 var mouseEventService_1 = require("./gridPanel/mouseEventService");
 var cellNavigationService_1 = require("./cellNavigationService");
 var utils_1 = require("./utils");
-var filterStage_1 = require("./rowControllers/inMemory/filterStage");
-var sortStage_1 = require("./rowControllers/inMemory/sortStage");
-var flattenStage_1 = require("./rowControllers/inMemory/flattenStage");
+var filterStage_1 = require("./rowModels/inMemory/filterStage");
+var sortStage_1 = require("./rowModels/inMemory/sortStage");
+var flattenStage_1 = require("./rowModels/inMemory/flattenStage");
+var enterpriseRowModel_1 = require("./rowModels/enterprise/enterpriseRowModel");
 var focusService_1 = require("./misc/focusService");
 var cellEditorFactory_1 = require("./rendering/cellEditorFactory");
 var events_1 = require("./events");
-var virtualPageRowModel_1 = require("./rowControllers/virtualPagination/virtualPageRowModel");
-var inMemoryRowModel_1 = require("./rowControllers/inMemory/inMemoryRowModel");
+var virtualPageRowModel_1 = require("./rowModels/infinateScrolling/virtualPageRowModel");
+var inMemoryRowModel_1 = require("./rowModels/inMemory/inMemoryRowModel");
 var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
 var cellRendererService_1 = require("./rendering/cellRendererService");
 var valueFormatterService_1 = require("./rendering/valueFormatterService");
@@ -60,6 +61,7 @@ var stylingService_1 = require("./styling/stylingService");
 var columnHoverService_1 = require("./rendering/columnHoverService");
 var columnAnimationService_1 = require("./rendering/columnAnimationService");
 var componentProvider_1 = require("./componentProvider");
+var paginationService_1 = require("./rowModels/pagination/paginationService");
 var Grid = (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -102,12 +104,11 @@ var Grid = (function () {
                 filterManager_1.FilterManager, columnController_1.ColumnController, rowRenderer_1.RowRenderer,
                 headerRenderer_1.HeaderRenderer, expressionService_1.ExpressionService, balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder, csvCreator_1.CsvCreator, downloader_1.Downloader, xmlFactory_1.XmlFactory,
                 gridSerializer_1.GridSerializer, templateService_1.TemplateService, gridPanel_1.GridPanel, popupService_1.PopupService, valueService_1.ValueService, masterSlaveService_1.MasterSlaveService,
-                logger_1.LoggerFactory, columnUtils_1.ColumnUtils, autoWidthCalculator_1.AutoWidthCalculator,
-                paginationController_1.PaginationController, popupService_1.PopupService, gridCore_1.GridCore, standardMenu_1.StandardMenuFactory,
+                logger_1.LoggerFactory, columnUtils_1.ColumnUtils, autoWidthCalculator_1.AutoWidthCalculator, popupService_1.PopupService, gridCore_1.GridCore, standardMenu_1.StandardMenuFactory,
                 dragAndDropService_1.DragAndDropService, sortController_1.SortController, columnController_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService,
                 cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, focusService_1.FocusService,
                 cellEditorFactory_1.CellEditorFactory, cellRendererService_1.CellRendererService, valueFormatterService_1.ValueFormatterService, stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService,
-                columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService],
+                columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService, paginationService_1.PaginationService],
             components: [
                 { componentName: 'AgCheckbox', theClass: agCheckbox_1.AgCheckbox }
             ],
@@ -159,6 +160,7 @@ var Grid = (function () {
 Grid.RowModelClasses = {
     virtual: virtualPageRowModel_1.VirtualPageRowModel,
     pagination: inMemoryRowModel_1.InMemoryRowModel,
-    normal: inMemoryRowModel_1.InMemoryRowModel
+    normal: inMemoryRowModel_1.InMemoryRowModel,
+    enterprise: enterpriseRowModel_1.EnterpriseRowModel
 };
 exports.Grid = Grid;

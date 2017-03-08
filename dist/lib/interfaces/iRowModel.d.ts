@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "../entities/rowNode";
@@ -19,12 +19,12 @@ export interface IRowModel {
     removeItems(rowNodes: RowNode[], skipRefresh: boolean): void;
     /** Add an item at the end */
     addItems(items: any[], skipRefresh: boolean): void;
-    /** Returns true if this model has any rows, regardless of model filter. EG if rows present, but filtered
-     * out, this still returns false. If it returns true, then the grid shows the 'not rows' overlay - but we
+    /** Returns true if this model has no rows, regardless of model filter. EG if rows present, but filtered
+     * out, this still returns false. If it returns true, then the grid shows the 'no rows' overlay - but we
      * don't show that overlay if the rows are just filtered out. */
     isEmpty(): boolean;
-    /** Returns true if not rows (either not rows at all, or the rows are filtered out). This is what the grid
-     * uses to know if there are rows to render or now. */
+    /** Returns true if no rows (either no rows at all, or the rows are filtered out). This is what the grid
+     * uses to know if there are rows to render or not. */
     isRowsToRender(): boolean;
     /** Iterate through each node. What this does depends on the model type. For inMemory, goes through
      * all nodes. For pagination, goes through current page. For virtualPage, goes through what's loaded in memory. */

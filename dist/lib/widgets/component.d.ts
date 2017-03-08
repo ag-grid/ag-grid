@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Context } from "../context/context";
@@ -16,6 +16,7 @@ export declare class Component extends BeanStub implements IComponent<any> {
     private swapComponentForNode(newComponent, parentNode, childNode);
     private swapInComponentForQuerySelectors(newComponent, childNode);
     setTemplate(template: string): void;
+    setTemplateFromElement(element: HTMLElement): void;
     attributesSet(): void;
     private wireQuerySelectors();
     private addAnnotatedEventListeners();

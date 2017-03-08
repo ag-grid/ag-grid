@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,8 +17,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
-var paginationController_1 = require("./rowControllers/paginationController");
 var columnController_1 = require("./columnController/columnController");
 var rowRenderer_1 = require("./rendering/rowRenderer");
 var filterManager_1 = require("./filter/filterManager");
@@ -33,6 +33,7 @@ var borderLayout_1 = require("./layout/borderLayout");
 var context_1 = require("./context/context");
 var focusedCellController_1 = require("./focusedCellController");
 var component_1 = require("./widgets/component");
+var paginationComp_1 = require("./rowModels/pagination/paginationComp");
 var GridCore = (function () {
     function GridCore(loggerFactory) {
         this.destroyFunctions = [];
@@ -124,7 +125,9 @@ var GridCore = (function () {
             console.warn('ag-Grid: status bar is only available in ag-Grid-Enterprise');
         }
         var statusBarEnabled = this.statusBar && this.gridOptionsWrapper.isEnableStatusBar();
-        var paginationPanelEnabled = this.gridOptionsWrapper.isRowModelPagination() && !this.gridOptionsWrapper.isForPrint();
+        var paginationPanelEnabled = this.gridOptionsWrapper.isRowModelPagination()
+            && !this.gridOptionsWrapper.isForPrint()
+            && !this.gridOptionsWrapper.isSuppressPaginationPanel();
         if (!statusBarEnabled && !paginationPanelEnabled) {
             return null;
         }
@@ -133,7 +136,10 @@ var GridCore = (function () {
             eSouthPanel.appendChild(this.statusBar.getGui());
         }
         if (paginationPanelEnabled) {
-            eSouthPanel.appendChild(this.paginationController.getGui());
+            var paginationComp = new paginationComp_1.PaginationComp();
+            this.context.wireBean(paginationComp);
+            eSouthPanel.appendChild(paginationComp.getGui());
+            this.destroyFunctions.push(paginationComp.destroy.bind(paginationComp));
         }
         return eSouthPanel;
     };
@@ -255,10 +261,6 @@ __decorate([
     __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
 ], GridCore.prototype, "gridOptionsWrapper", void 0);
 __decorate([
-    context_1.Autowired('paginationController'),
-    __metadata("design:type", paginationController_1.PaginationController)
-], GridCore.prototype, "paginationController", void 0);
-__decorate([
     context_1.Autowired('rowModel'),
     __metadata("design:type", Object)
 ], GridCore.prototype, "rowModel", void 0);
@@ -306,6 +308,10 @@ __decorate([
     context_1.Autowired('focusedCellController'),
     __metadata("design:type", focusedCellController_1.FocusedCellController)
 ], GridCore.prototype, "focusedCellController", void 0);
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], GridCore.prototype, "context", void 0);
 __decorate([
     context_1.Optional('rowGroupCompFactory'),
     __metadata("design:type", Object)

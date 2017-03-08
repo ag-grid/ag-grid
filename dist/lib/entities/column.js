@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,6 +14,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var eventService_1 = require("../eventService");
 var utils_1 = require("../utils");
 var context_1 = require("../context/context");
@@ -180,6 +181,9 @@ var Column = (function () {
     Column.prototype.isSortNone = function () {
         return utils_1.Utils.missing(this.sort);
     };
+    Column.prototype.isSorting = function () {
+        return utils_1.Utils.exists(this.sort);
+    };
     Column.prototype.getSortedAt = function () {
         return this.sortedAt;
     };
@@ -214,8 +218,9 @@ var Column = (function () {
     Column.prototype.setFilterActive = function (active) {
         if (this.filterActive !== active) {
             this.filterActive = active;
-            this.eventService.dispatchEvent(Column.EVENT_FILTER_CHANGED);
+            this.eventService.dispatchEvent(Column.EVENT_FILTER_ACTIVE_CHANGED);
         }
+        this.eventService.dispatchEvent(Column.EVENT_FILTER_CHANGED);
     };
     Column.prototype.setPinned = function (pinned) {
         // pinning is not allowed when doing 'forPrint'
@@ -369,8 +374,10 @@ Column.EVENT_LAST_LEFT_PINNED_CHANGED = 'lastLeftPinnedChanged';
 Column.EVENT_FIRST_RIGHT_PINNED_CHANGED = 'firstRightPinnedChanged';
 // + renderedColumn - for changing visibility icon
 Column.EVENT_VISIBLE_CHANGED = 'visibleChanged';
-// + renderedHeaderCell - marks the header with filter icon
+// + every time the filter changes, used in the floating filters
 Column.EVENT_FILTER_CHANGED = 'filterChanged';
+// + renderedHeaderCell - marks the header with filter icon
+Column.EVENT_FILTER_ACTIVE_CHANGED = 'filterActiveChanged';
 // + renderedHeaderCell - marks the header with sort icon
 Column.EVENT_SORT_CHANGED = 'sortChanged';
 // + toolpanel, for gui updates

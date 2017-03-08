@@ -1,10 +1,11 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Constants = (function () {
     function Constants() {
     }
@@ -50,6 +51,7 @@ Constants.ROW_MODEL_TYPE_PAGINATION = 'pagination';
 Constants.ROW_MODEL_TYPE_VIRTUAL = 'virtual';
 Constants.ROW_MODEL_TYPE_VIEWPORT = 'viewport';
 Constants.ROW_MODEL_TYPE_NORMAL = 'normal';
+Constants.ROW_MODEL_TYPE_ENTERPRISE = 'enterprise';
 Constants.ALWAYS = 'always';
 Constants.ONLY_WHEN_GROUPING = 'onlyWhenGrouping';
 Constants.FLOATING_TOP = 'top';

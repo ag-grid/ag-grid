@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./rowNode";
@@ -8,9 +8,10 @@ import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ICellRendererFunc, ICellRendererComp } from "../rendering/cellRenderers/iCellRenderer";
 import { IAggFunc, ColGroupDef, ColDef } from "./colDef";
-import { IDatasource } from "../rowControllers/iDatasource";
+import { IDatasource } from "../rowModels/iDatasource";
 import { GridCellDef } from "./gridCell";
 import { IDateComp } from "../rendering/dateComponent";
+import { IEnterpriseDatasource } from "../rowModels/enterprise/enterpriseRowModel";
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
  ****************************************************************/
@@ -95,10 +96,13 @@ export interface GridOptions {
     paginationOverflowSize?: number;
     paginationInitialRowCount?: number;
     paginationPageSize?: number;
+    paginationStartPage?: number;
+    suppressPaginationPanel?: boolean;
     editType?: string;
     suppressTouch?: boolean;
     embedFullWidthRows?: boolean;
     excelStyles?: any[];
+    floatingFilter?: boolean;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. GOD DAMN IT!*
      ****************************************************************/
@@ -144,6 +148,7 @@ export interface GridOptions {
     columnDefs?: (ColDef | ColGroupDef)[];
     datasource?: IDatasource;
     viewportDatasource?: IViewportDatasource;
+    enterpriseDatasource?: IEnterpriseDatasource;
     headerHeight?: number;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
@@ -251,6 +256,9 @@ export interface GridOptions {
     onDragStopped?(event?: any): void;
     onItemsAdded?(event?: any): void;
     onItemsRemoved?(event?: any): void;
+    onPaginationReset?(event?: any): void;
+    onPaginationPageLoaded?(event?: any): void;
+    onPaginationPageRequested?(event?: any): void;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/

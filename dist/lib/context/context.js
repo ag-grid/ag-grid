@@ -1,10 +1,11 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../utils");
 var Context = (function () {
     function Context(params, logger) {
@@ -63,11 +64,14 @@ var Context = (function () {
         }
     };
     Context.prototype.wireBean = function (bean) {
+        if (!bean)
+            throw Error("Can't wire to bean since it is null");
         this.wireBeans([bean]);
     };
     Context.prototype.wireBeans = function (beans) {
         this.autoWireBeans(beans);
         this.methodWireBeans(beans);
+        this.preConstruct(beans);
         this.postConstruct(beans);
     };
     Context.prototype.createBeans = function () {
@@ -118,7 +122,11 @@ var Context = (function () {
     };
     Context.prototype.methodWireBeans = function (beans) {
         var _this = this;
-        beans.forEach(function (bean) { return _this.methodWireBean(bean); });
+        beans.forEach(function (bean) {
+            if (!bean)
+                throw Error("Can't wire to bean since it is null");
+            return _this.methodWireBean(bean);
+        });
     };
     Context.prototype.autoWireBean = function (bean) {
         var _this = this;
@@ -196,6 +204,14 @@ var Context = (function () {
             }
         });
     };
+    Context.prototype.preConstruct = function (beans) {
+        beans.forEach(function (bean) {
+            // try calling init methods
+            if (bean.__agBeanMetaData && bean.__agBeanMetaData.preConstructMethods) {
+                bean.__agBeanMetaData.preConstructMethods.forEach(function (methodName) { return bean[methodName](); });
+            }
+        });
+    };
     Context.prototype.getBean = function (name) {
         return this.lookupBeanInstance('getBean', name, true);
     };
@@ -225,6 +241,14 @@ function applyToConstructor(constructor, argArray) {
     var factoryFunction = constructor.bind.apply(constructor, args);
     return new factoryFunction();
 }
+function PreConstruct(target, methodName, descriptor) {
+    var props = getOrCreateProps(target);
+    if (!props.postConstructMethods) {
+        props.preConstructMethods = [];
+    }
+    props.preConstructMethods.push(methodName);
+}
+exports.PreConstruct = PreConstruct;
 function PostConstruct(target, methodName, descriptor) {
     var props = getOrCreateProps(target);
     if (!props.postConstructMethods) {

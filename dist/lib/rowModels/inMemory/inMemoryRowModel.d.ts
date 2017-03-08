@@ -1,8 +1,17 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "../../entities/rowNode";
 import { IInMemoryRowModel } from "../../interfaces/iInMemoryRowModel";
+export interface RefreshModelParams {
+    step: number;
+    groupState?: any;
+    keepRenderedRows?: boolean;
+    animate?: boolean;
+    keepEditingRows?: boolean;
+    newRowNodes?: RowNode[];
+    newData?: boolean;
+}
 export declare class InMemoryRowModel implements IInMemoryRowModel {
     private gridOptionsWrapper;
     private columnController;
@@ -26,14 +35,7 @@ export declare class InMemoryRowModel implements IInMemoryRowModel {
     private onSortChanged();
     getType(): string;
     private onValueChanged();
-    refreshModel(params: {
-        step: number;
-        groupState?: any;
-        keepRenderedRows?: boolean;
-        animate?: boolean;
-        keepEditingRows?: boolean;
-        newRowNodes?: RowNode[];
-    }): void;
+    refreshModel(params: RefreshModelParams): void;
     isEmpty(): boolean;
     isRowsToRender(): boolean;
     setDatasource(datasource: any): void;

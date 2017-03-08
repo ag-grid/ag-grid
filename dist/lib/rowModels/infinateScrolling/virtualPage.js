@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,6 +14,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../../utils");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var rowNode_1 = require("../../entities/rowNode");
@@ -111,6 +112,10 @@ var VirtualPage = (function () {
     VirtualPage.prototype.load = function () {
         var _this = this;
         this.state = VirtualPage.STATE_LOADING;
+        // PROBLEM . . . . when the user sets sort via colDef.sort, then this code
+        // is executing before the sort is set up, so server is not getting the sort
+        // model. need to change with regards order - so the server side request is
+        // AFTER thus it gets the right sort model.
         var params = {
             startRow: this.startRow,
             endRow: this.endRow,

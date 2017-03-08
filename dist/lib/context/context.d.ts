@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ILogger } from "../iLogger";
@@ -37,9 +37,11 @@ export declare class Context {
     private getBeansForParameters(parameters, beanName);
     private lookupBeanInstance(wiringBean, beanName, optional?);
     private postConstruct(beans);
+    private preConstruct(beans);
     getBean(name: string): any;
     destroy(): void;
 }
+export declare function PreConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void;
 export declare function PostConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void;
 export declare function PreDestroy(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void;
 export declare function Bean(beanName: string): Function;

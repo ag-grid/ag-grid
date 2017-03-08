@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 export declare class Constants {
@@ -42,6 +42,7 @@ export declare class Constants {
     static ROW_MODEL_TYPE_VIRTUAL: string;
     static ROW_MODEL_TYPE_VIEWPORT: string;
     static ROW_MODEL_TYPE_NORMAL: string;
+    static ROW_MODEL_TYPE_ENTERPRISE: string;
     static ALWAYS: string;
     static ONLY_WHEN_GROUPING: string;
     static FLOATING_TOP: string;

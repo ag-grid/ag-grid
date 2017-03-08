@@ -1,10 +1,20 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17,6 +27,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var gridPanel_1 = require("../gridPanel/gridPanel");
@@ -24,7 +35,7 @@ var expressionService_1 = require("../expressionService");
 var templateService_1 = require("../templateService");
 var valueService_1 = require("../valueService");
 var eventService_1 = require("../eventService");
-var floatingRowModel_1 = require("../rowControllers/floatingRowModel");
+var floatingRowModel_1 = require("../rowModels/floatingRowModel");
 var renderedRow_1 = require("./renderedRow");
 var events_1 = require("../events");
 var constants_1 = require("../constants");
@@ -35,34 +46,30 @@ var logger_1 = require("../logger");
 var focusedCellController_1 = require("../focusedCellController");
 var cellNavigationService_1 = require("../cellNavigationService");
 var gridCell_1 = require("../entities/gridCell");
-var RowRenderer = (function () {
+var beanStub_1 = require("../context/beanStub");
+var RowRenderer = (function (_super) {
+    __extends(RowRenderer, _super);
     function RowRenderer() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         // map of row ids to row objects. keeps track of which elements
         // are rendered for which rows in the dom.
-        this.renderedRows = {};
-        this.renderedTopFloatingRows = [];
-        this.renderedBottomFloatingRows = [];
+        _this.renderedRows = {};
+        _this.renderedTopFloatingRows = [];
+        _this.renderedBottomFloatingRows = [];
         // we only allow one refresh at a time, otherwise the internal memory structure here
         // will get messed up. this can happen if the user has a cellRenderer, and inside the
         // renderer they call an API method that results in another pass of the refresh,
         // then it will be trying to draw rows in the middle of a refresh.
-        this.refreshInProgress = false;
-        this.destroyFunctions = [];
+        _this.refreshInProgress = false;
+        return _this;
     }
     RowRenderer.prototype.agWire = function (loggerFactory) {
         this.logger = loggerFactory.create('RowRenderer');
     };
     RowRenderer.prototype.init = function () {
-        var _this = this;
         this.rowContainers = this.gridPanel.getRowContainers();
-        var modelUpdatedListener = this.onModelUpdated.bind(this);
-        var floatingRowDataChangedListener = this.onFloatingRowDataChanged.bind(this);
-        this.eventService.addEventListener(events_1.Events.EVENT_MODEL_UPDATED, modelUpdatedListener);
-        this.eventService.addEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, floatingRowDataChangedListener);
-        this.destroyFunctions.push(function () {
-            _this.eventService.removeEventListener(events_1.Events.EVENT_MODEL_UPDATED, modelUpdatedListener);
-            _this.eventService.removeEventListener(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, floatingRowDataChangedListener);
-        });
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
         this.refreshView();
     };
     RowRenderer.prototype.getAllCellsForColumn = function (column) {
@@ -107,7 +114,8 @@ var RowRenderer = (function () {
     RowRenderer.prototype.onModelUpdated = function (refreshEvent) {
         var params = {
             keepRenderedRows: refreshEvent.keepRenderedRows,
-            animate: refreshEvent.animate
+            animate: refreshEvent.animate,
+            newData: refreshEvent.newData
         };
         this.refreshView(params);
     };
@@ -157,6 +165,9 @@ var RowRenderer = (function () {
             this.rowContainers.fullWidth.setHeight(containerHeight);
             this.rowContainers.pinnedLeft.setHeight(containerHeight);
             this.rowContainers.pinnedRight.setHeight(containerHeight);
+        }
+        if (params.newData) {
+            this.gridPanel.scrollToTop();
         }
         this.refreshAllVirtualRows(params.keepRenderedRows, params.animate);
         if (!params.onlyBody) {
@@ -231,7 +242,7 @@ var RowRenderer = (function () {
         });
     };
     RowRenderer.prototype.destroy = function () {
-        this.destroyFunctions.forEach(function (func) { return func(); });
+        _super.prototype.destroy.call(this);
         var rowsToRemove = Object.keys(this.renderedRows);
         this.removeVirtualRows(rowsToRemove);
     };
@@ -658,7 +669,7 @@ var RowRenderer = (function () {
         }
     };
     return RowRenderer;
-}());
+}(beanStub_1.BeanStub));
 __decorate([
     context_1.Autowired('columnController'),
     __metadata("design:type", columnController_1.ColumnController)

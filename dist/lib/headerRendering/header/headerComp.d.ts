@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Component } from "../../widgets/component";
@@ -24,10 +24,12 @@ export declare class HeaderComp extends Component implements IHeaderComp {
     private gridOptionsWrapper;
     private sortController;
     private menuFactory;
+    private eventService;
     private eFilter;
     private eSortAsc;
     private eSortDesc;
     private eSortNone;
+    private eSortOrder;
     private eMenu;
     private eLabel;
     private eText;
@@ -42,6 +44,7 @@ export declare class HeaderComp extends Component implements IHeaderComp {
     showMenu(eventSource: HTMLElement): void;
     setupSort(): void;
     private onSortChanged();
+    private setMultiSortOrder();
     private setupFilterIcon();
     private onFilterChanged();
 }

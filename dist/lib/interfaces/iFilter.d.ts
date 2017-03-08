@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -24,6 +24,27 @@ export interface IFilter {
     /** If using React or Angular 2, returns the underlying component instance, so you can call methods
      * on it if you want. */
     getFrameworkComponentInstance?(): any;
+    /**
+     * Optional method used by ag-Grid when rendering floating filters and there isn't a floating filter
+     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
+     * filter.
+     */
+    getModelAsString?(model: any): string;
+    /**
+     * Optional method used by ag-Grid when rendering floating filters.
+     *
+     * If this method IS NOT IMPLEMENTED, when the floating filter changes, ag-Grid will automatically call
+     * IFilterParams.filterChangedCallback,  triggering the filtering of the data based on the changes from
+     * the floating filter. For the simplest cases this is enough.
+     *
+     * IF IT IS IMPLEMENTED. ag-Grid will delegate into this method the responsibility of calling
+     * IFilterParams.filterChangedCallback. This is useful if additional logic is necessary, for instance
+     * ag-Grid uses this in addition with the applyNow flag to handle the apply button logic in the default
+     * ag-Grid filters.
+     *
+     *     change: The exact same object passed on FloatingFilter.onFloatingFilterChanged
+     */
+    onFloatingFilterChanged?(change: any): void;
 }
 export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
 }
@@ -32,6 +53,9 @@ export interface IDoesFilterPassParams {
     data: any;
 }
 export interface IFilterParams {
+    clearButton?: boolean;
+    applyButton?: boolean;
+    newRowsAction?: string;
     column: Column;
     colDef: ColDef;
     rowModel: IRowModel;

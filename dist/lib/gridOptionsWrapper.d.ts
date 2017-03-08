@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
@@ -8,8 +8,9 @@ import { ColDef, IAggFunc, ColGroupDef } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnController";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { ICellRendererFunc, ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
-import { IDatasource } from "./rowControllers/iDatasource";
+import { IDatasource } from "./rowModels/iDatasource";
 import { GridCellDef } from "./entities/gridCell";
+import { IEnterpriseDatasource } from "./rowModels/enterprise/enterpriseRowModel";
 export declare class GridOptionsWrapper {
     private static MIN_COL_WIDTH;
     static PROP_HEADER_HEIGHT: string;
@@ -46,6 +47,7 @@ export declare class GridOptionsWrapper {
     isRowModelPagination(): boolean;
     isRowModelVirtual(): boolean;
     isRowModelViewport(): boolean;
+    isRowModelEnterprise(): boolean;
     isRowModelDefault(): boolean;
     isFullRowEdit(): boolean;
     isSuppressFocusAfterRefresh(): boolean;
@@ -101,6 +103,8 @@ export declare class GridOptionsWrapper {
     getPaginationOverflowSize(): number;
     getPaginationPageSize(): number;
     getPaginationInitialRowCount(): number;
+    getPaginationStartPage(): number;
+    isSuppressPaginationPanel(): boolean;
     getRowData(): any[];
     isGroupUseEntireRow(): boolean;
     isEnableRtl(): boolean;
@@ -115,6 +119,7 @@ export declare class GridOptionsWrapper {
     getColumnDefs(): (ColGroupDef | ColDef)[];
     getDatasource(): IDatasource;
     getViewportDatasource(): IViewportDatasource;
+    getEnterpriseDatasource(): IEnterpriseDatasource;
     isEnableSorting(): boolean;
     isEnableCellExpressions(): boolean;
     isEnableGroupEdit(): boolean;
@@ -151,6 +156,7 @@ export declare class GridOptionsWrapper {
     isSuppressParentsInRowNodes(): boolean;
     isEnableStatusBar(): boolean;
     isFunctionsReadOnly(): boolean;
+    isFloatingFilter(): boolean;
     getDefaultColDef(): ColDef;
     getDefaultColGroupDef(): ColGroupDef;
     getHeaderCellTemplate(): string;

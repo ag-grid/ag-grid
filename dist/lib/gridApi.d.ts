@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { MasterSlaveService } from "./masterSlaveService";
@@ -11,6 +11,8 @@ import { GridCell } from "./entities/gridCell";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./exportParams";
+import { IDatasource } from "./rowModels/iDatasource";
+import { IEnterpriseDatasource } from "./rowModels/enterprise/enterpriseRowModel";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column | ColDef;
@@ -35,7 +37,7 @@ export declare class GridApi {
     private context;
     private rowModel;
     private sortController;
-    private paginationController;
+    private paginationService;
     private focusedCellController;
     private rangeController;
     private clipboardService;
@@ -54,7 +56,8 @@ export declare class GridApi {
     exportDataAsCsv(params?: CsvExportParams): void;
     getDataAsExcel(params?: CsvExportParams): string;
     exportDataAsExcel(params?: CsvExportParams): void;
-    setDatasource(datasource: any): void;
+    setEnterpriseDatasource(datasource: IEnterpriseDatasource): void;
+    setDatasource(datasource: IDatasource): void;
     setViewportDatasource(viewportDatasource: IViewportDatasource): void;
     setRowData(rowData: any[]): void;
     setFloatingTopRowData(rows: any[]): void;
@@ -170,4 +173,14 @@ export declare class GridApi {
     setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void;
     getVirtualPageState(): any;
     checkGridSize(): void;
+    paginationIsLastPageFound(): boolean;
+    paginationGetPageSize(): number;
+    paginationGetCurrentPage(): number;
+    paginationGetTotalPages(): number;
+    paginationGetRowCount(): number;
+    paginationGoToNextPage(): void;
+    paginationGoToPreviousPage(): void;
+    paginationGoToFirstPage(): void;
+    paginationGoToLastPage(): void;
+    paginationGoToPage(page: number): void;
 }

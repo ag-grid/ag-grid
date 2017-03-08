@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Component } from "../../widgets/component";
@@ -23,6 +23,7 @@ export declare class HeaderGroupWrapperComp extends Component {
     private childColumnsDestroyFuncs;
     constructor(columnGroup: ColumnGroup, eRoot: HTMLElement, dragSourceDropTarget: DropTarget, pinned: string);
     private postConstruct();
+    private addAttributes();
     private appendHeaderGroupComp(displayName);
     private addClasses();
     private setupMove(eHeaderGroup, displayName);

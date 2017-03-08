@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.1.1
+// Type definitions for ag-grid v8.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -94,6 +94,7 @@ export declare class Utils {
     static getScrollbarWidth(): number;
     static isKeyPressed(event: KeyboardEvent, keyToCheck: number): boolean;
     static setVisible(element: HTMLElement, visible: boolean): void;
+    static setHidden(element: HTMLElement, hidden: boolean): void;
     static isBrowserIE(): boolean;
     static isBrowserEdge(): boolean;
     static isBrowserSafari(): boolean;

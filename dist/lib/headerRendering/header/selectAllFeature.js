@@ -1,15 +1,20 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.1.1
+ * @version v8.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -19,6 +24,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var agCheckbox_1 = require("../../widgets/agCheckbox");
 var beanStub_1 = require("../../context/beanStub");
 var context_1 = require("../../context/context");
@@ -41,19 +47,32 @@ var SelectAllFeature = (function (_super) {
         return _this;
     }
     SelectAllFeature.prototype.postConstruct = function () {
+        this.showOrHideSelectAll();
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelectAll.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
         this.addDestroyableEventListener(this.cbSelectAll, agCheckbox_1.AgCheckbox.EVENT_CHANGED, this.onCbSelectAll.bind(this));
-        if (this.filteredOnly) {
-            this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        }
-        this.showOrHideSelectAll();
-        this.updateStateOfCheckbox();
     };
-    SelectAllFeature.prototype.onFilterChanged = function () {
+    SelectAllFeature.prototype.showOrHideSelectAll = function () {
+        this.cbSelectAllVisible = this.isCheckboxSelection();
+        this.cbSelectAll.setVisible(this.cbSelectAllVisible);
+        if (this.cbSelectAllVisible) {
+            // in case user is trying this feature with the wrong model type
+            this.checkRightRowModelType();
+            // make sure checkbox is showing the right state
+            this.updateStateOfCheckbox();
+        }
+    };
+    SelectAllFeature.prototype.onModelChanged = function () {
+        if (!this.cbSelectAllVisible) {
+            return;
+        }
         this.updateStateOfCheckbox();
     };
     SelectAllFeature.prototype.onSelectionChanged = function () {
+        if (!this.cbSelectAllVisible) {
+            return;
+        }
         this.updateStateOfCheckbox();
     };
     SelectAllFeature.prototype.getNextCheckboxState = function (selectionCount) {
@@ -111,16 +130,6 @@ var SelectAllFeature = (function (_super) {
         var rowModelMatches = rowModelType === constants_1.Constants.ROW_MODEL_TYPE_NORMAL || constants_1.Constants.ROW_MODEL_TYPE_PAGINATION;
         if (!rowModelMatches) {
             console.log("ag-Grid: selectAllCheckbox is only available if using normal or pagination row models, you are using " + rowModelType);
-        }
-    };
-    SelectAllFeature.prototype.showOrHideSelectAll = function () {
-        this.cbSelectAllVisible = this.isCheckboxSelection();
-        this.cbSelectAll.setVisible(this.cbSelectAllVisible);
-        if (this.cbSelectAllVisible) {
-            // in case user is trying this feature with the wrong model type
-            this.checkRightRowModelType();
-            // make sure checkbox is showing the right state
-            this.updateStateOfCheckbox();
         }
     };
     SelectAllFeature.prototype.onCbSelectAll = function () {
