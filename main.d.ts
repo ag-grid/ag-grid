@@ -30,6 +30,7 @@ export * from './dist/lib/filter/baseFilter';
 export * from './dist/lib/filter/dateFilter';
 export * from './dist/lib/filter/filter';
 export * from './dist/lib/filter/filterManager';
+export * from './dist/lib/filter/floatingFilter';
 export * from './dist/lib/filter/numberFilter';
 export * from './dist/lib/filter/setFilterParameters';
 export * from './dist/lib/filter/textAndNumberFilterParameters';
