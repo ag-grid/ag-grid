@@ -39,30 +39,36 @@ export class SelectAllFeature extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
 
-        this.cbSelectAllVisible = this.isCheckboxSelection();
+        this.showOrHideSelectAll();
 
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelectAll.bind(this));
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
+
+        this.addDestroyableEventListener(this.cbSelectAll, AgCheckbox.EVENT_CHANGED, this.onCbSelectAll.bind(this));
+    }
+
+    private showOrHideSelectAll(): void {
+
+        this.cbSelectAllVisible = this.isCheckboxSelection();
         this.cbSelectAll.setVisible(this.cbSelectAllVisible);
 
         if (this.cbSelectAllVisible) {
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
-
-            this.addDestroyableEventListener(this.cbSelectAll, AgCheckbox.EVENT_CHANGED, this.onCbSelectAll.bind(this));
-
             // in case user is trying this feature with the wrong model type
             this.checkRightRowModelType();
-
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
         }
-
     }
 
     private onModelChanged(): void {
+        if (!this.cbSelectAllVisible) { return; }
         this.updateStateOfCheckbox();
     }
 
     private onSelectionChanged(): void {
+        if (!this.cbSelectAllVisible) { return; }
         this.updateStateOfCheckbox();
     }
 
