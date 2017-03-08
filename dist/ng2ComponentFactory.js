@@ -4,14 +4,24 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var core_1 = require("@angular/core");
 var main_1 = require("ag-grid/main");
 var baseComponentFactory_1 = require("./baseComponentFactory");
 var Ng2ComponentFactory = (function (_super) {
     __extends(Ng2ComponentFactory, _super);
     function Ng2ComponentFactory(_componentFactoryResolver) {
-        _super.call(this);
-        this._componentFactoryResolver = _componentFactoryResolver;
+        var _this = _super.call(this) || this;
+        _this._componentFactoryResolver = _componentFactoryResolver;
+        return _this;
     }
     Ng2ComponentFactory.prototype.createRendererFromComponent = function (componentType, viewContainerRef) {
         return this.adaptComponentToRenderer(componentType, viewContainerRef);
@@ -27,7 +37,7 @@ var Ng2ComponentFactory = (function (_super) {
         var CellRenderer = (function (_super) {
             __extends(CellRenderer, _super);
             function CellRenderer() {
-                _super.apply(this, arguments);
+                return _super !== null && _super.apply(this, arguments) || this;
             }
             CellRenderer.prototype.init = function (params) {
                 _super.prototype.init.call(this, params);
@@ -54,7 +64,7 @@ var Ng2ComponentFactory = (function (_super) {
         var CellEditor = (function (_super) {
             __extends(CellEditor, _super);
             function CellEditor() {
-                _super.apply(this, arguments);
+                return _super !== null && _super.apply(this, arguments) || this;
             }
             CellEditor.prototype.init = function (params) {
                 _super.prototype.init.call(this, params);
@@ -96,7 +106,7 @@ var Ng2ComponentFactory = (function (_super) {
         var Filter = (function (_super) {
             __extends(Filter, _super);
             function Filter() {
-                _super.apply(this, arguments);
+                return _super !== null && _super.apply(this, arguments) || this;
             }
             Filter.prototype.init = function (params) {
                 _super.prototype.init.call(this, params);
@@ -119,6 +129,18 @@ var Ng2ComponentFactory = (function (_super) {
                     this._agAwareComponent.afterGuiAttached(params);
                 }
             };
+            Filter.prototype.onNewRowsLoaded = function () {
+                if (this._agAwareComponent.onNewRowsLoaded) {
+                    this._agAwareComponent.onNewRowsLoaded();
+                }
+            };
+            Filter.prototype.getModelAsString = function (model) {
+                var agAwareComponent = this._agAwareComponent;
+                if (agAwareComponent.getModelAsString) {
+                    return agAwareComponent.getModelAsString(model);
+                }
+                return null;
+            };
             Filter.prototype.getFrameworkComponentInstance = function () {
                 return this._frameworkComponentInstance;
             };
@@ -136,15 +158,12 @@ var Ng2ComponentFactory = (function (_super) {
         var factory = this._componentFactoryResolver.resolveComponentFactory(componentType);
         return viewContainerRef.createComponent(factory);
     };
-    Ng2ComponentFactory.decorators = [
-        { type: core_1.Injectable },
-    ];
-    /** @nocollapse */
-    Ng2ComponentFactory.ctorParameters = function () { return [
-        { type: core_1.ComponentFactoryResolver, },
-    ]; };
     return Ng2ComponentFactory;
 }(baseComponentFactory_1.BaseComponentFactory));
+Ng2ComponentFactory = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [core_1.ComponentFactoryResolver])
+], Ng2ComponentFactory);
 exports.Ng2ComponentFactory = Ng2ComponentFactory;
 var BaseGuiComponent = (function () {
     function BaseGuiComponent() {

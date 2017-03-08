@@ -37,6 +37,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     localeText: any;
     icons: any;
     datasource: any;
+    enterpriseDatasource: any;
     viewportDatasource: any;
     groupRowRendererParams: any;
     aggFuncs: any;
@@ -177,6 +178,9 @@ export declare class AgGridNg2 implements AfterViewInit {
     enableGroupEdit: any;
     embedFullWidthRows: any;
     suppressTabbing: any;
+    suppressPaginationPanel: any;
+    paginationStartPage: any;
+    floatingFilter: any;
     /**
      * Outputs
      */
@@ -246,4 +250,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     cellMouseOver: EventEmitter<any>;
     cellMouseOut: EventEmitter<any>;
     columnHoverChanged: EventEmitter<any>;
+    paginationReset: EventEmitter<any>;
+    paginationPageLoaded: EventEmitter<any>;
+    paginationPageRequested: EventEmitter<any>;
 }

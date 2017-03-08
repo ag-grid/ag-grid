@@ -1,4 +1,13 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var core_1 = require("@angular/core");
 var main_1 = require("ag-grid/main");
 var ng2FrameworkFactory_1 = require("./ng2FrameworkFactory");
@@ -24,6 +33,7 @@ var AgGridNg2 = (function () {
         this.localeText = undefined;
         this.icons = undefined;
         this.datasource = undefined;
+        this.enterpriseDatasource = undefined;
         this.viewportDatasource = undefined;
         this.groupRowRendererParams = undefined;
         this.aggFuncs = undefined;
@@ -164,6 +174,9 @@ var AgGridNg2 = (function () {
         this.enableGroupEdit = undefined;
         this.embedFullWidthRows = undefined;
         this.suppressTabbing = undefined;
+        this.suppressPaginationPanel = undefined;
+        this.paginationStartPage = undefined;
+        this.floatingFilter = undefined;
         this._nativeElement = elementDef.nativeElement;
         // create all the events generically. this is done generically so that
         // if the list of grid events change, we don't need to change this code.
@@ -216,8 +229,8 @@ var AgGridNg2 = (function () {
         }
     };
     AgGridNg2.prototype.globalEventListener = function (eventType, event) {
-        // if we are tearing down, don't emit angular 2 events, as this causes
-        // problems with the angular 2 router
+        // if we are tearing down, don't emit angular events, as this causes
+        // problems with the angular router
         if (this._destroyed) {
             return;
         }
@@ -230,249 +243,932 @@ var AgGridNg2 = (function () {
             console.log('ag-Grid-ng2: could not find EventEmitter: ' + eventType);
         }
     };
-    AgGridNg2.decorators = [
-        { type: core_1.Component, args: [{
-                    selector: 'ag-grid-angular',
-                    template: '',
-                    providers: [
-                        ng2FrameworkFactory_1.Ng2FrameworkFactory,
-                        ng2FrameworkComponentWrapper_1.Ng2FrameworkComponentWrapper
-                    ],
-                    // tell angular we don't want view encapsulation, we don't want a shadow root
-                    encapsulation: core_1.ViewEncapsulation.None
-                },] },
-    ];
-    /** @nocollapse */
-    AgGridNg2.ctorParameters = function () { return [
-        { type: core_1.ElementRef, },
-        { type: core_1.ViewContainerRef, },
-        { type: ng2FrameworkFactory_1.Ng2FrameworkFactory, },
-        { type: ng2FrameworkComponentWrapper_1.Ng2FrameworkComponentWrapper, },
-        { type: core_1.ComponentFactoryResolver, },
-    ]; };
-    AgGridNg2.propDecorators = {
-        'columns': [{ type: core_1.ContentChildren, args: [agGridColumn_1.AgGridColumn,] },],
-        'gridOptions': [{ type: core_1.Input },],
-        'slaveGrids': [{ type: core_1.Input },],
-        'rowData': [{ type: core_1.Input },],
-        'floatingTopRowData': [{ type: core_1.Input },],
-        'floatingBottomRowData': [{ type: core_1.Input },],
-        'columnDefs': [{ type: core_1.Input },],
-        'defaultColDef': [{ type: core_1.Input },],
-        'rowStyle': [{ type: core_1.Input },],
-        'context': [{ type: core_1.Input },],
-        'groupColumnDef': [{ type: core_1.Input },],
-        'localeText': [{ type: core_1.Input },],
-        'icons': [{ type: core_1.Input },],
-        'datasource': [{ type: core_1.Input },],
-        'viewportDatasource': [{ type: core_1.Input },],
-        'groupRowRendererParams': [{ type: core_1.Input },],
-        'aggFuncs': [{ type: core_1.Input },],
-        'fullWidthCellRendererParams': [{ type: core_1.Input },],
-        'sortingOrder': [{ type: core_1.Input },],
-        'rowClass': [{ type: core_1.Input },],
-        'rowSelection': [{ type: core_1.Input },],
-        'overlayLoadingTemplate': [{ type: core_1.Input },],
-        'overlayNoRowsTemplate': [{ type: core_1.Input },],
-        'headerCellTemplate': [{ type: core_1.Input },],
-        'quickFilterText': [{ type: core_1.Input },],
-        'rowModelType': [{ type: core_1.Input },],
-        'rowHeight': [{ type: core_1.Input },],
-        'rowBuffer': [{ type: core_1.Input },],
-        'colWidth': [{ type: core_1.Input },],
-        'headerHeight': [{ type: core_1.Input },],
-        'groupDefaultExpanded': [{ type: core_1.Input },],
-        'minColWidth': [{ type: core_1.Input },],
-        'maxColWidth': [{ type: core_1.Input },],
-        'viewportRowModelPageSize': [{ type: core_1.Input },],
-        'viewportRowModelBufferSize': [{ type: core_1.Input },],
-        'layoutInterval': [{ type: core_1.Input },],
-        'autoSizePadding': [{ type: core_1.Input },],
-        'maxPagesInCache': [{ type: core_1.Input },],
-        'maxConcurrentDatasourceRequests': [{ type: core_1.Input },],
-        'paginationOverflowSize': [{ type: core_1.Input },],
-        'paginationPageSize': [{ type: core_1.Input },],
-        'paginationInitialRowCount': [{ type: core_1.Input },],
-        'headerCellRenderer': [{ type: core_1.Input },],
-        'localeTextFunc': [{ type: core_1.Input },],
-        'groupRowInnerRenderer': [{ type: core_1.Input },],
-        'groupRowRenderer': [{ type: core_1.Input },],
-        'isScrollLag': [{ type: core_1.Input },],
-        'isExternalFilterPresent': [{ type: core_1.Input },],
-        'getRowHeight': [{ type: core_1.Input },],
-        'doesExternalFilterPass': [{ type: core_1.Input },],
-        'getRowClass': [{ type: core_1.Input },],
-        'getRowStyle': [{ type: core_1.Input },],
-        'getHeaderCellTemplate': [{ type: core_1.Input },],
-        'traverseNode': [{ type: core_1.Input },],
-        'getContextMenuItems': [{ type: core_1.Input },],
-        'getMainMenuItems': [{ type: core_1.Input },],
-        'processRowPostCreate': [{ type: core_1.Input },],
-        'processCellForClipboard': [{ type: core_1.Input },],
-        'getNodeChildDetails': [{ type: core_1.Input },],
-        'groupRowAggNodes': [{ type: core_1.Input },],
-        'getRowNodeId': [{ type: core_1.Input },],
-        'isFullWidthCell': [{ type: core_1.Input },],
-        'fullWidthCellRenderer': [{ type: core_1.Input },],
-        'doesDataFlower': [{ type: core_1.Input },],
-        'toolPanelSuppressRowGroups': [{ type: core_1.Input },],
-        'toolPanelSuppressValues': [{ type: core_1.Input },],
-        'toolPanelSuppressPivots': [{ type: core_1.Input },],
-        'toolPanelSuppressPivotMode': [{ type: core_1.Input },],
-        'suppressRowClickSelection': [{ type: core_1.Input },],
-        'suppressCellSelection': [{ type: core_1.Input },],
-        'suppressHorizontalScroll': [{ type: core_1.Input },],
-        'debug': [{ type: core_1.Input },],
-        'enableColResize': [{ type: core_1.Input },],
-        'enableCellExpressions': [{ type: core_1.Input },],
-        'enableSorting': [{ type: core_1.Input },],
-        'enableServerSideSorting': [{ type: core_1.Input },],
-        'enableFilter': [{ type: core_1.Input },],
-        'enableServerSideFilter': [{ type: core_1.Input },],
-        'angularCompileRows': [{ type: core_1.Input },],
-        'angularCompileFilters': [{ type: core_1.Input },],
-        'angularCompileHeaders': [{ type: core_1.Input },],
-        'groupSuppressAutoColumn': [{ type: core_1.Input },],
-        'groupSelectsChildren': [{ type: core_1.Input },],
-        'groupIncludeFooter': [{ type: core_1.Input },],
-        'groupUseEntireRow': [{ type: core_1.Input },],
-        'groupSuppressRow': [{ type: core_1.Input },],
-        'groupSuppressBlankHeader': [{ type: core_1.Input },],
-        'forPrint': [{ type: core_1.Input },],
-        'suppressMenuHide': [{ type: core_1.Input },],
-        'rowDeselection': [{ type: core_1.Input },],
-        'unSortIcon': [{ type: core_1.Input },],
-        'suppressMultiSort': [{ type: core_1.Input },],
-        'suppressScrollLag': [{ type: core_1.Input },],
-        'singleClickEdit': [{ type: core_1.Input },],
-        'suppressLoadingOverlay': [{ type: core_1.Input },],
-        'suppressNoRowsOverlay': [{ type: core_1.Input },],
-        'suppressAutoSize': [{ type: core_1.Input },],
-        'suppressParentsInRowNodes': [{ type: core_1.Input },],
-        'showToolPanel': [{ type: core_1.Input },],
-        'suppressColumnMoveAnimation': [{ type: core_1.Input },],
-        'suppressMovableColumns': [{ type: core_1.Input },],
-        'suppressFieldDotNotation': [{ type: core_1.Input },],
-        'enableRangeSelection': [{ type: core_1.Input },],
-        'suppressEnterprise': [{ type: core_1.Input },],
-        'rowGroupPanelShow': [{ type: core_1.Input },],
-        'pivotPanelShow': [{ type: core_1.Input },],
-        'suppressContextMenu': [{ type: core_1.Input },],
-        'suppressMenuFilterPanel': [{ type: core_1.Input },],
-        'suppressMenuMainPanel': [{ type: core_1.Input },],
-        'suppressMenuColumnPanel': [{ type: core_1.Input },],
-        'enableStatusBar': [{ type: core_1.Input },],
-        'rememberGroupStateWhenNewData': [{ type: core_1.Input },],
-        'enableCellChangeFlash': [{ type: core_1.Input },],
-        'suppressDragLeaveHidesColumns': [{ type: core_1.Input },],
-        'suppressMiddleClickScrolls': [{ type: core_1.Input },],
-        'suppressPreventDefaultOnMouseWheel': [{ type: core_1.Input },],
-        'suppressUseColIdForGroups': [{ type: core_1.Input },],
-        'suppressCopyRowsToClipboard': [{ type: core_1.Input },],
-        'pivotMode': [{ type: core_1.Input },],
-        'suppressAggFuncInHeader': [{ type: core_1.Input },],
-        'suppressColumnVirtualisation': [{ type: core_1.Input },],
-        'suppressFocusAfterRefresh': [{ type: core_1.Input },],
-        'functionsPassive': [{ type: core_1.Input },],
-        'functionsReadOnly': [{ type: core_1.Input },],
-        'defaultColGroupDef': [{ type: core_1.Input },],
-        'editType': [{ type: core_1.Input },],
-        'scrollbarWidth': [{ type: core_1.Input },],
-        'groupRowInnerRendererFramework': [{ type: core_1.Input },],
-        'groupRowRendererFramework': [{ type: core_1.Input },],
-        'fullWidthCellRendererFramework': [{ type: core_1.Input },],
-        'processSecondaryColDef': [{ type: core_1.Input },],
-        'processSecondaryColGroupDef': [{ type: core_1.Input },],
-        'suppressRowHoverClass': [{ type: core_1.Input },],
-        'suppressTouch': [{ type: core_1.Input },],
-        'animateRows': [{ type: core_1.Input },],
-        'groupSelectsFiltered': [{ type: core_1.Input },],
-        'groupRemoveSingleChildren': [{ type: core_1.Input },],
-        'getBusinessKeyForNode': [{ type: core_1.Input },],
-        'checkboxSelection': [{ type: core_1.Input },],
-        'enableRtl': [{ type: core_1.Input },],
-        'suppressClickEdit': [{ type: core_1.Input },],
-        'enableRtlSupport': [{ type: core_1.Input },],
-        'excelStyles': [{ type: core_1.Input },],
-        'dateComponent': [{ type: core_1.Input },],
-        'dateComponentFramework': [{ type: core_1.Input },],
-        'dateComponentParams': [{ type: core_1.Input },],
-        'sendToClipboard': [{ type: core_1.Input },],
-        'navigateToNextCell': [{ type: core_1.Input },],
-        'tabToNextCell': [{ type: core_1.Input },],
-        'processCellFromClipboard': [{ type: core_1.Input },],
-        'getDocument': [{ type: core_1.Input },],
-        'enableGroupEdit': [{ type: core_1.Input },],
-        'embedFullWidthRows': [{ type: core_1.Input },],
-        'suppressTabbing': [{ type: core_1.Input },],
-        'gridReady': [{ type: core_1.Output },],
-        'columnEverythingChanged': [{ type: core_1.Output },],
-        'newColumnsLoaded': [{ type: core_1.Output },],
-        'columnPivotModeChanged': [{ type: core_1.Output },],
-        'columnRowGroupChanged': [{ type: core_1.Output },],
-        'columnPivotChanged': [{ type: core_1.Output },],
-        'gridColumnsChanged': [{ type: core_1.Output },],
-        'columnValueChanged': [{ type: core_1.Output },],
-        'columnMoved': [{ type: core_1.Output },],
-        'columnVisible': [{ type: core_1.Output },],
-        'columnPinned': [{ type: core_1.Output },],
-        'columnGroupOpened': [{ type: core_1.Output },],
-        'columnResized': [{ type: core_1.Output },],
-        'displayedColumnsChanged': [{ type: core_1.Output },],
-        'virtualColumnsChanged': [{ type: core_1.Output },],
-        'rowGroupOpened': [{ type: core_1.Output },],
-        'rowDataChanged': [{ type: core_1.Output },],
-        'floatingRowDataChanged': [{ type: core_1.Output },],
-        'rangeSelectionChanged': [{ type: core_1.Output },],
-        'columnRowGroupAddRequest': [{ type: core_1.Output },],
-        'columnRowGroupRemoveRequest': [{ type: core_1.Output },],
-        'columnPivotAddRequest': [{ type: core_1.Output },],
-        'columnPivotRemoveRequest': [{ type: core_1.Output },],
-        'columnValueAddRequest': [{ type: core_1.Output },],
-        'columnValueRemoveRequest': [{ type: core_1.Output },],
-        'columnAggFuncChangeRequest': [{ type: core_1.Output },],
-        'clipboardPaste': [{ type: core_1.Output },],
-        'modelUpdated': [{ type: core_1.Output },],
-        'cellClicked': [{ type: core_1.Output },],
-        'cellDoubleClicked': [{ type: core_1.Output },],
-        'cellContextMenu': [{ type: core_1.Output },],
-        'cellValueChanged': [{ type: core_1.Output },],
-        'cellFocused': [{ type: core_1.Output },],
-        'rowSelected': [{ type: core_1.Output },],
-        'selectionChanged': [{ type: core_1.Output },],
-        'beforeFilterChanged': [{ type: core_1.Output },],
-        'filterChanged': [{ type: core_1.Output },],
-        'afterFilterChanged': [{ type: core_1.Output },],
-        'filterModified': [{ type: core_1.Output },],
-        'beforeSortChanged': [{ type: core_1.Output },],
-        'sortChanged': [{ type: core_1.Output },],
-        'afterSortChanged': [{ type: core_1.Output },],
-        'virtualRowRemoved': [{ type: core_1.Output },],
-        'rowClicked': [{ type: core_1.Output },],
-        'rowDoubleClicked': [{ type: core_1.Output },],
-        'gridSizeChanged': [{ type: core_1.Output },],
-        'viewportChanged': [{ type: core_1.Output },],
-        'dragStarted': [{ type: core_1.Output },],
-        'dragStopped': [{ type: core_1.Output },],
-        'itemsAdded': [{ type: core_1.Output },],
-        'itemsRemoved': [{ type: core_1.Output },],
-        'columnRowGroupChangeRequest': [{ type: core_1.Output },],
-        'columnPivotChangeRequest': [{ type: core_1.Output },],
-        'columnValueChangeRequest': [{ type: core_1.Output },],
-        'rowValueChanged': [{ type: core_1.Output },],
-        'bodyScroll': [{ type: core_1.Output },],
-        'rowEditingStarted': [{ type: core_1.Output },],
-        'rowEditingStopped': [{ type: core_1.Output },],
-        'cellEditingStarted': [{ type: core_1.Output },],
-        'cellEditingStopped': [{ type: core_1.Output },],
-        'displayedColumnsWidthChanged': [{ type: core_1.Output },],
-        'scrollVisibilityChanged': [{ type: core_1.Output },],
-        'flashCells': [{ type: core_1.Output },],
-        'cellMouseOver': [{ type: core_1.Output },],
-        'cellMouseOut': [{ type: core_1.Output },],
-        'columnHoverChanged': [{ type: core_1.Output },],
-    };
     return AgGridNg2;
 }());
+__decorate([
+    core_1.ContentChildren(agGridColumn_1.AgGridColumn),
+    __metadata("design:type", core_1.QueryList)
+], AgGridNg2.prototype, "columns", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "gridOptions", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "slaveGrids", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "rowData", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "floatingTopRowData", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "floatingBottomRowData", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "columnDefs", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "defaultColDef", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "rowStyle", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "context", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupColumnDef", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "localeText", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "icons", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "datasource", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "enterpriseDatasource", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "viewportDatasource", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupRowRendererParams", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "aggFuncs", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "fullWidthCellRendererParams", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "sortingOrder", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "rowClass", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "rowSelection", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "overlayLoadingTemplate", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "overlayNoRowsTemplate", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "headerCellTemplate", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "quickFilterText", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "rowModelType", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "rowHeight", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "rowBuffer", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "colWidth", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "headerHeight", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupDefaultExpanded", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "minColWidth", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "maxColWidth", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "viewportRowModelPageSize", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "viewportRowModelBufferSize", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "layoutInterval", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "autoSizePadding", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "maxPagesInCache", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "maxConcurrentDatasourceRequests", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "paginationOverflowSize", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "paginationPageSize", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "paginationInitialRowCount", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "headerCellRenderer", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "localeTextFunc", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupRowInnerRenderer", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupRowRenderer", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "isScrollLag", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "isExternalFilterPresent", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "getRowHeight", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "doesExternalFilterPass", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "getRowClass", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "getRowStyle", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "getHeaderCellTemplate", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "traverseNode", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "getContextMenuItems", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "getMainMenuItems", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "processRowPostCreate", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "processCellForClipboard", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "getNodeChildDetails", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupRowAggNodes", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "getRowNodeId", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "isFullWidthCell", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "fullWidthCellRenderer", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "doesDataFlower", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "toolPanelSuppressRowGroups", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "toolPanelSuppressValues", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "toolPanelSuppressPivots", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "toolPanelSuppressPivotMode", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressRowClickSelection", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressCellSelection", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressHorizontalScroll", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "debug", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "enableColResize", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "enableCellExpressions", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "enableSorting", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "enableServerSideSorting", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "enableFilter", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "enableServerSideFilter", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "angularCompileRows", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "angularCompileFilters", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "angularCompileHeaders", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupSuppressAutoColumn", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupSelectsChildren", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupIncludeFooter", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupUseEntireRow", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupSuppressRow", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupSuppressBlankHeader", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "forPrint", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressMenuHide", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "rowDeselection", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "unSortIcon", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressMultiSort", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressScrollLag", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "singleClickEdit", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressLoadingOverlay", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressNoRowsOverlay", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressAutoSize", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressParentsInRowNodes", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "showToolPanel", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressColumnMoveAnimation", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressMovableColumns", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressFieldDotNotation", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "enableRangeSelection", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressEnterprise", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "rowGroupPanelShow", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "pivotPanelShow", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressContextMenu", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressMenuFilterPanel", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressMenuMainPanel", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressMenuColumnPanel", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "enableStatusBar", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "rememberGroupStateWhenNewData", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "enableCellChangeFlash", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressDragLeaveHidesColumns", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressMiddleClickScrolls", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressPreventDefaultOnMouseWheel", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressUseColIdForGroups", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressCopyRowsToClipboard", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "pivotMode", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressAggFuncInHeader", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressColumnVirtualisation", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressFocusAfterRefresh", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "functionsPassive", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "functionsReadOnly", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "defaultColGroupDef", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "editType", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "scrollbarWidth", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupRowInnerRendererFramework", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupRowRendererFramework", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "fullWidthCellRendererFramework", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "processSecondaryColDef", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "processSecondaryColGroupDef", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressRowHoverClass", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressTouch", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "animateRows", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupSelectsFiltered", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "groupRemoveSingleChildren", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "getBusinessKeyForNode", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "checkboxSelection", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "enableRtl", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressClickEdit", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "enableRtlSupport", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "excelStyles", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "dateComponent", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "dateComponentFramework", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "dateComponentParams", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "sendToClipboard", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "navigateToNextCell", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "tabToNextCell", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "processCellFromClipboard", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "getDocument", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "enableGroupEdit", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "embedFullWidthRows", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressTabbing", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "suppressPaginationPanel", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "paginationStartPage", void 0);
+__decorate([
+    core_1.Input(),
+    __metadata("design:type", Object)
+], AgGridNg2.prototype, "floatingFilter", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "gridReady", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnEverythingChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "newColumnsLoaded", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnPivotModeChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnRowGroupChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnPivotChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "gridColumnsChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnValueChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnMoved", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnVisible", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnPinned", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnGroupOpened", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnResized", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "displayedColumnsChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "virtualColumnsChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "rowGroupOpened", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "rowDataChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "floatingRowDataChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "rangeSelectionChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnRowGroupAddRequest", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnRowGroupRemoveRequest", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnPivotAddRequest", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnPivotRemoveRequest", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnValueAddRequest", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnValueRemoveRequest", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnAggFuncChangeRequest", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "clipboardPaste", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "modelUpdated", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "cellClicked", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "cellDoubleClicked", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "cellContextMenu", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "cellValueChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "cellFocused", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "rowSelected", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "selectionChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "beforeFilterChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "filterChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "afterFilterChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "filterModified", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "beforeSortChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "sortChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "afterSortChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "virtualRowRemoved", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "rowClicked", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "rowDoubleClicked", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "gridSizeChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "viewportChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "dragStarted", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "dragStopped", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "itemsAdded", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "itemsRemoved", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnRowGroupChangeRequest", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnPivotChangeRequest", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnValueChangeRequest", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "rowValueChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "bodyScroll", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "rowEditingStarted", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "rowEditingStopped", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "cellEditingStarted", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "cellEditingStopped", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "displayedColumnsWidthChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "scrollVisibilityChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "flashCells", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "cellMouseOver", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "cellMouseOut", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "columnHoverChanged", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "paginationReset", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "paginationPageLoaded", void 0);
+__decorate([
+    core_1.Output(),
+    __metadata("design:type", core_1.EventEmitter)
+], AgGridNg2.prototype, "paginationPageRequested", void 0);
+AgGridNg2 = __decorate([
+    core_1.Component({
+        selector: 'ag-grid-angular',
+        template: '',
+        providers: [
+            ng2FrameworkFactory_1.Ng2FrameworkFactory,
+            ng2FrameworkComponentWrapper_1.Ng2FrameworkComponentWrapper
+        ],
+        // tell angular we don't want view encapsulation, we don't want a shadow root
+        encapsulation: core_1.ViewEncapsulation.None
+    }),
+    __metadata("design:paramtypes", [core_1.ElementRef,
+        core_1.ViewContainerRef,
+        ng2FrameworkFactory_1.Ng2FrameworkFactory,
+        ng2FrameworkComponentWrapper_1.Ng2FrameworkComponentWrapper,
+        core_1.ComponentFactoryResolver])
+], AgGridNg2);
 exports.AgGridNg2 = AgGridNg2;
 //# sourceMappingURL=agGridNg2.js.map
