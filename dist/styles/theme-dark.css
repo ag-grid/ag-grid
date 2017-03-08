@@ -480,3 +480,11 @@
   background-color: #302e2e;
   color: #ccc;
 }
+.ag-dark .ag-floating-filter-button {
+  background-color: #302e2e;
+  color: #ccc;
+}
+.ag-dark .ag-floating-filter-body input {
+  background-color: #302e2e;
+  color: #ccc;
+}
