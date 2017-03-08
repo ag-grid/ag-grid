@@ -18,6 +18,17 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">8th March 2017</div>
+    <div class="news-header">ag-Grid 8.2.0 Released</div>
+    <div style="padding-top: 10px;">
+        ag-Grid 8.2.0 released introducing <a href="../javascript-grid-filtering/#floatingFilter">Floating Filters</a>,
+        <a href="../javascript-grid-pagination/#pagination-api">Pagination API</a> and some
+        more minor changes and bug fixes. See the <a href="../change-log/changeLogIndex.php">Change Log</a>
+        for full release details.
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header" style="margin-bottom: 27px;">
         <img src="../images/vue_large.png" align="left" width="50"/>
         1st March 2017
@@ -87,13 +98,9 @@
         </a>
     </div>
     <a href="https://www.ng-conf.org/">
-        <div style="margin-top: 10px; margin-bottom: 6px; text-align: left; margin-left: 60px;">
+        <div style="margin-bottom: 6px; text-align: left; margin-left: 60px;">
             <div style="font-weight: bold;">ng-conf</div>
-            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
-            </div>
             <div style="font-weight: bold;">April 5th - 7th</div>
-            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
-            </div>
             <div style="font-weight: bold;">Salt Late City, UT</div>
         </div>
     </a>
@@ -107,13 +114,9 @@
         <img src="http://www.i2clipart.com/cliparts/6/1/e/d/clipart-viking-warning-61ed.png" align="left" width="50" />
     </div>
     <a href="https://ngvikings.org/">
-        <div style="margin-top: 10px; margin-bottom: 6px; text-align: left; margin-left: 60px;">
+        <div style="margin-bottom: 6px; text-align: left; margin-left: 60px;">
             <div style="font-weight: bold;">ngVikings</div>
-            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
-            </div>
             <div style="font-weight: bold;">February 11th</div>
-            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
-            </div>
             <div style="font-weight: bold;">Copenhagen</div>
         </div>
     </a>
