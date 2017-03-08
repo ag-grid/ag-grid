@@ -84,6 +84,12 @@ function onPaginationPageLoaded() {
     setText('#lbCurrentPage', gridOptions.api.paginationGetCurrentPage() + 1);
     setText('#lbTotalPages', gridOptions.api.paginationGetTotalPages());
     setText('#lbLoading', 'false');
+
+    setLastButtonDisabled(!gridOptions.api.paginationIsLastPageFound());
+}
+
+function setLastButtonDisabled(disabled) {
+    document.querySelector('#btLast').disabled = disabled;
 }
 
 function onPaginationPageRequested() {

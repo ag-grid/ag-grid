@@ -12,7 +12,6 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    floatingFilter:true,
     columnDefs: columnDefs,
     rowData: null,
     animateRows: true,
