@@ -49,6 +49,7 @@ function setDataIntoGrid(data) {
 
 function selectJohnAndKenny(){
     var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
+    athleteFilterComponent.selectNothing ();
     athleteFilterComponent.selectValue ('John Joe Nevin');
     athleteFilterComponent.selectValue ('Kenny Egan');
     gridOptions.api.onFilterChanged();
