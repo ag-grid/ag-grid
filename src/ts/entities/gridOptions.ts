@@ -103,7 +103,7 @@ export interface GridOptions {
     embedFullWidthRows?: boolean;
     //This is an array of ExcelStyle, but because that class lives on the enterprise project is referenced as any from the client project
     excelStyles?: any[];
-    floatingFilter: boolean;
+    floatingFilter?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. GOD DAMN IT!*

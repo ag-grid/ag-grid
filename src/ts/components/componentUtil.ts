@@ -18,7 +18,7 @@ export class ComponentUtil {
         'editType'];
 
     public static OBJECT_PROPERTIES = [
-        'rowStyle','context','groupColumnDef','localeText','icons','datasource','viewportDatasource',
+        'rowStyle','context','groupColumnDef','localeText','icons','datasource','enterpriseDatasource','viewportDatasource',
         'groupRowRendererParams', 'aggFuncs', 'fullWidthCellRendererParams','defaultColGroupDef','defaultColDef'
     //,'cellRenderers','cellEditors'
     ];
