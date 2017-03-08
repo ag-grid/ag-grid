@@ -7,7 +7,7 @@ $pageKeyboards = "VueJS Vue Component ag-Grid";
 include('../includes/mediaHeader.php');
 ?>
 
-<link inline rel="stylesheet" href="../documentation-main/documentation.css">
+<link rel="stylesheet" href="../documentation-main/documentation.css">
 <script src="../documentation-main/documentation.js"></script>
 
 
