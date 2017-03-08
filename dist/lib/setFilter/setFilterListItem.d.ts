@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.1.0
+// ag-grid-enterprise v8.2.0
 import { Component, ICellRendererFunc, ICellRendererComp } from "ag-grid/main";
 export declare class SetFilterListItem extends Component {
     static EVENT_SELECTED: string;

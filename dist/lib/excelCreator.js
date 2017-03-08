@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.1.0
+// ag-grid-enterprise v8.2.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -189,7 +189,7 @@ var ExcelCreator = (function () {
         this.downloader.download(fileName, content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     };
     ExcelCreator.prototype.getDataAsExcelXml = function (params) {
-        return this.gridSerializer.serialize(new ExcelGridSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params.processCellCallback, params.processHeaderCallback, this.excelXmlFactory, this.gridOptions.excelStyles, this.styleLinker.bind(this)), params);
+        return this.gridSerializer.serialize(new ExcelGridSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params ? params.processCellCallback : null, params ? params.processHeaderCallback : null, this.excelXmlFactory, this.gridOptions.excelStyles, this.styleLinker.bind(this)), params);
     };
     ExcelCreator.prototype.styleLinker = function (rowType, rowIndex, colIndex, value, column, node) {
         if ((rowType === main_5.RowType.HEADER) || (rowType === main_5.RowType.HEADER_GROUPING))
