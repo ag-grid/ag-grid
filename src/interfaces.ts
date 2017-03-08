@@ -11,7 +11,9 @@ import {
     ICellEditor,
     ICellEditorParams,
     IFilter,
-    IAfterGuiAttachedParams
+    IAfterGuiAttachedParams,
+    IFloatingFilter,
+    IFloatingFilterParams
 } from "ag-grid/main";
 
 export interface AgFrameworkComponent<T> {
@@ -23,6 +25,7 @@ export interface AgFrameworkComponent<T> {
 
 export interface IHeaderGroupAngularComp extends IHeaderGroup, AgFrameworkComponent<IHeaderGroupParams> {}
 export interface IHeaderAngularComp extends IHeader, AgFrameworkComponent<IHeaderParams> {}
+export interface IFloatingFilterComp extends IFloatingFilter<any, any, any>, AgFrameworkComponent<IFloatingFilterParams<any, any>> {}
 export interface IDateAngularComp extends IDate, AgFrameworkComponent<IDateParams> {}
 export interface IFilterAngularComp extends IFilter, AgFrameworkComponent<IFilterParams> {}
 export interface ICellRendererAngularComp extends ICellRenderer, AgFrameworkComponent<ICellRendererParams> {}
