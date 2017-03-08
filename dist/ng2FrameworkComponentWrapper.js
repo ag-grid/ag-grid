@@ -10,9 +10,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 var core_1 = require("@angular/core");
 var main_1 = require("ag-grid/main");
 var Ng2FrameworkComponentWrapper = (function () {
@@ -29,7 +26,7 @@ var Ng2FrameworkComponentWrapper = (function () {
         var DynamicAgNg2Component = (function (_super) {
             __extends(DynamicAgNg2Component, _super);
             function DynamicAgNg2Component() {
-                _super.apply(this, arguments);
+                return _super !== null && _super.apply(this, arguments) || this;
             }
             DynamicAgNg2Component.prototype.init = function (params) {
                 _super.prototype.init.call(this, params);
@@ -63,17 +60,12 @@ var Ng2FrameworkComponentWrapper = (function () {
         var factory = this.componentFactoryResolver.resolveComponentFactory(componentType);
         return this.viewContainerRef.createComponent(factory);
     };
-    Ng2FrameworkComponentWrapper.decorators = [
-        { type: core_1.Injectable },
-    ];
-    /** @nocollapse */
-    Ng2FrameworkComponentWrapper.ctorParameters = function () { return []; };
-    Ng2FrameworkComponentWrapper = __decorate([
-        main_1.Bean("frameworkComponentWrapper"), 
-        __metadata('design:paramtypes', [])
-    ], Ng2FrameworkComponentWrapper);
     return Ng2FrameworkComponentWrapper;
 }());
+Ng2FrameworkComponentWrapper = __decorate([
+    core_1.Injectable(),
+    main_1.Bean("frameworkComponentWrapper")
+], Ng2FrameworkComponentWrapper);
 exports.Ng2FrameworkComponentWrapper = Ng2FrameworkComponentWrapper;
 var BaseGuiComponent = (function () {
     function BaseGuiComponent() {
