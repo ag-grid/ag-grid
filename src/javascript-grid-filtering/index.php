@@ -226,12 +226,11 @@ columnDefinition = {
     <pre><span class="codeComment">// Get a reference to the name filter instance</span>
 var nameFilterInstance = api.getFilterInstance('name');</pre>
     <p>
-        All of the methods in the IFilter interface (described above) are present, assuming the underlying
+        All of the methods of the IFilter interface are present, assuming the underlying
         filter implements the method. Your custom filters can add their own methods here that ag-Grid will
         not use but your application can use. What these extra methods do is up to you and between your
         customer filter and your application.
     </p>
-
 
 
     <h3>Example Filter API</h3>
@@ -299,8 +298,8 @@ gridOptions.api.setFilterModel(null);
     <h3 id="get_set_filter_model">Get / Set All Filter Models</h3>
 
     <p>
-        It is possible to get and set the state of <b>all</b> the filters via the api methods <i>gridOptions.api.getFilterModel</i>
-        and <i>gridOptions.api.setFilterModel</i>. These methods manage the filters states via the <i>getModel</i> and <i>setModel</i>
+        It is possible to get and set the state of <b>all</b> the filters via the api methods <i>api.getFilterModel()</i>
+        and <i>api.setFilterModel()</i>. These methods manage the filters states via the <i>getModel()</i> and <i>setModel()</i>
         methods of the individual filters.
     </p>
     <p>
@@ -338,6 +337,7 @@ gridOptions.api.setFilterModel(null);
 gridOptions = {
     <span class="codeComment">// turn on floating filters</span>
     floatingFilter: true
+    ...
 }</pre>
 
 <p>
@@ -350,21 +350,6 @@ gridOptions = {
 <p>
     All the default filters provided by ag-Grid provide their own implementation of a floating filter.
     All you need to do to enable these floating filters is set the <i>floatingFilter=true</i> grid property.
-</p>
-
-<p>
-    If you create your own filter you have two options to get its floating filters working for that filter:
-<ol>
-    <li>
-        You can <a href="../javascript-grid-floating-filter-component/">create your own floating filter</a>.
-    </li>
-    <li>
-        You can implement the method <i>getModelAsString()</i> in your custom filter. If you implement this method and you don't
-        provide a custom floating filter, ag-Grid will automatically provide a read-only version of a floating filter
-    </li>
-</ol>
-    If you don't provide any of these two options for your custom filter, the display area for the floating filter
-will be empty.
 </p>
 
 <p>

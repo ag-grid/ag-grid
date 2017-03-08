@@ -1,31 +1,67 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete"},
-    {headerName: "Age", field: "age"},
-    {headerName: "Country", field: "country"},
-    {headerName: "Year", field: "year"},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
+    {headerName: "Athlete", field: "athlete", enableRowGroup: true},
+    {headerName: "Age", field: "age", enableRowGroup: true},
+    {headerName: "Country", field: "country", rowGroupIndex: 0, enableRowGroup: true},
+    {headerName: "Year", field: "year", enableRowGroup: true},
+    {headerName: "Date", field: "date"},
+    {headerName: "Sport", field: "sport"},
+    {headerName: "Gold", field: "gold"},
+    {headerName: "Silver", field: "silver"},
+    {headerName: "Bronze", field: "bronze"},
+    {headerName: "Total", field: "total"}
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
     enableColResize: true,
     rowModelType: 'enterprise',
-    enterpriseDatasource: new EnterpriseDatasource(),
+    rowGroupPanelShow: 'always',
+    animateRows: true,
     debug: true
 };
 
-function EnterpriseDatasource(allData) {
-    this.allData = allData;
-}
+var allData;
+
+function EnterpriseDatasource() {}
 
 EnterpriseDatasource.prototype.getRows = function(params) {
-    console.log('EnterpriseDatasource.prototype.getRows');
+    console.log('EnterpriseDatasource.getRows: params = ', params);
+    getRowsFromServer(params);
 };
+
+function getRowsFromServer(params) {
+
+    var result = allData;
+    var rowGroupCols = params.rowGroupCols;
+
+    // if grouping, return the group
+    if (rowGroupCols.length > 0) {
+
+        var field = rowGroupCols[0].field;
+
+        var mappedValues = _.groupBy(this.allData, field);
+
+        var lookingForChildren = params.groupKeys && params.groupKeys.length > 0;
+
+        if (lookingForChildren) {
+            var groupKey = params.groupKeys[0];
+            result = mappedValues[groupKey];
+        } else {
+            var listOfKeys = Object.keys(mappedValues);
+            var result = [];
+            listOfKeys.forEach(function(key) {
+                var item = {};
+                item[field] = key;
+                result.push(item)
+            });
+        }
+
+    }
+
+    setTimeout( function() {
+        params.successCallback(result);
+    }, 1000);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
@@ -36,7 +72,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     agGrid.simpleHttpRequest({url: '../olympicWinners.json'})
         .then( function(rows) {
-            var datasource = new EnterpriseDatasource(rows);
+            allData = rows;
+            var datasource = new EnterpriseDatasource();
             gridOptions.api.setEnterpriseDatasource(datasource);
         }
     );

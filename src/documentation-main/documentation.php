@@ -9,7 +9,16 @@ include 'documentation_header.php';
 
 <div class="row">
     <div class="col-md-9">
-        <h2 class="documentationHeader">Documentation</h2>
+        <div style="padding: 10px;">
+            <h2 class="documentationHeader">Documentation</h2>
+            ag-Grid is an Enterprise Grade Javascript Data Grid.
+            The purpose of ag-Grid is to provide a data grid that enterprise software developers
+            can use for building applications such as reporting and data analytics, business workflow
+            and data entry. The author, having spent years building applications in C++, Java and
+            Javascript, found the choice of grids in JavaScript lacking, especially in comparison
+            to what was in other languages frameworks. ag-Grid is the result of turning frustration
+            into answers, providing a grid worthy of enterprise development.
+        </div>
         <div class="list-group">
             <a href="/javascript-grid-getting-started/" class="list-group-item">
                 <div class="float-parent">

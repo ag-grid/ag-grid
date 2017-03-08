@@ -831,9 +831,9 @@ PersonFloatingFilterComponent.prototype.getGui = function() {
 PersonFloatingFilterComponent.prototype.onParentModelChanged = function(model) {
     // add in child, one for each flat
     if (model) {
-        // this.eGui.value = model;
+        this.eGui.value = model;
     } else {
-        // this.eGui.value = '';
+        this.eGui.value = '';
     }
 };
 
@@ -1043,6 +1043,7 @@ CountryFloatingFilterComponent.prototype.init = function(params) {
     this.params = params;
     this.eGui = document.createElement('div');
     this.eGui.innerHTML = 'text';
+    this.eGui.style.borderTop = '1px solid lightgrey';
 };
 
 CountryFloatingFilterComponent.prototype.getGui = function() {
@@ -1053,12 +1054,22 @@ CountryFloatingFilterComponent.prototype.onParentModelChanged = function(model) 
     // add in child, one for each flat
     if (model) {
         var flagsHtml = [];
-        model.forEach(function(country) {
+        var printDotDotDot = false;
+        if (model.length > 4) {
+            var toPrint = model.slice(0, 4);
+            printDotDotDot = true;
+        } else {
+            var toPrint = model;
+        }
+        toPrint.forEach(function(country) {
             flagsHtml.push('<img style="border: 0px; width: 15px; height: 10px; margin-left: 2px" ' +
                 'src="https://flags.fmcdn.net/data/flags/mini/'
                 + COUNTRY_CODES[country] + '.png">');
         });
         this.eGui.innerHTML = '('+model.length+') ' + flagsHtml.join('');
+        if (printDotDotDot){
+            this.eGui.innerHTML = this.eGui.innerHTML + '...';
+        }
     } else {
         this.eGui.innerHTML = '';
     }

@@ -1,7 +1,11 @@
 <div>
 
     <?php if (!isFrameworkAll()) { ?>
-        <h2><img style="vertical-align: middle" src="/images/react_small.png" height="25px"/> Overview</h2>
+        <h2>
+            <img src="../images/svg/docs/getting_started.svg" width="50" />
+            <img style="vertical-align: middle" src="/images/react_small.png" height="25px"/>
+            Getting Started
+        </h2>
     <?php } ?>
 
     <?php

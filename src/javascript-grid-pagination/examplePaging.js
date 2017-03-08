@@ -8,7 +8,8 @@ var columnDefs = [
         },
         checkboxSelection: true,
         headerCheckboxSelection: true,
-        suppressMenu: true
+        suppressMenu: true,
+        suppressFilter:true
     },
     {headerName: "Athlete", field: "athlete", width: 150},
     {headerName: "Age", field: "age", width: 90},
@@ -23,6 +24,7 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    floatingFilter:true,
     // note - we do not set 'virtualPaging' here, so the grid knows we are doing standard paging
     enableSorting: true,
     enableFilter: true,
