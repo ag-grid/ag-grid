@@ -1,9 +1,16 @@
-// ag-grid-enterprise v8.1.0
+// ag-grid-enterprise v8.2.0
 export declare class LicenseManager {
     private static RELEASE_INFORMATION;
     private static licenseKey;
     private md5;
     validateLicense(): void;
+    private static extractExpiry(license);
+    private static extractLicenseComponents(licenseKey);
+    getLicenseDetails(licenseKey: string): {
+        licenseKey: string;
+        valid: boolean;
+        expiry: string;
+    };
     private static outputMessage(header, message);
     private static formatDate(date);
     private static getGridReleaseDate();

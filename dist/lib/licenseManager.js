@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.1.0
+// ag-grid-enterprise v8.2.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -19,13 +19,11 @@ var LicenseManager = LicenseManager_1 = (function () {
         var gridReleaseDate = LicenseManager_1.getGridReleaseDate();
         var valid = false;
         var current = false;
+        var expiry = null;
         if (!main_2.Utils.missingOrEmpty(LicenseManager_1.licenseKey) && LicenseManager_1.licenseKey.length > 32) {
-            var hashStart = LicenseManager_1.licenseKey.length - 32;
-            var md5 = LicenseManager_1.licenseKey.substring(hashStart);
-            var license = LicenseManager_1.licenseKey.substring(0, hashStart);
+            var _a = LicenseManager_1.extractLicenseComponents(LicenseManager_1.licenseKey), md5 = _a.md5, license = _a.license;
             if (md5 === this.md5.md5(license)) {
-                var restrictionHashed = license.substring(license.lastIndexOf('_') + 1, license.length);
-                var expiry = new Date(parseInt(LicenseManager_1.decode(restrictionHashed)));
+                expiry = LicenseManager_1.extractExpiry(license);
                 if (!isNaN(expiry.getTime())) {
                     valid = true;
                     current = (gridReleaseDate < expiry);
@@ -41,6 +39,30 @@ var LicenseManager = LicenseManager_1 = (function () {
             LicenseManager_1.outputMessage('********************* License not compatible with installed version of ag-Grid Enterprise. *********************', "Your license for ag-Grid Enterprise expired on " + formattedExpiryDate + " but the version installed was released on " + formattedReleaseDate + ". Please " +
                 'contact accounts@ag-grid.com to renew your license');
         }
+    };
+    LicenseManager.extractExpiry = function (license) {
+        var restrictionHashed = license.substring(license.lastIndexOf('_') + 1, license.length);
+        return new Date(parseInt(LicenseManager_1.decode(restrictionHashed)));
+    };
+    LicenseManager.extractLicenseComponents = function (licenseKey) {
+        var hashStart = licenseKey.length - 32;
+        var md5 = licenseKey.substring(hashStart);
+        var license = licenseKey.substring(0, hashStart);
+        return { md5: md5, license: license };
+    };
+    LicenseManager.prototype.getLicenseDetails = function (licenseKey) {
+        var _a = LicenseManager_1.extractLicenseComponents(licenseKey), md5 = _a.md5, license = _a.license;
+        var valid = (md5 === this.md5.md5(license));
+        var expiry;
+        if (valid) {
+            expiry = LicenseManager_1.extractExpiry(license);
+            valid = !isNaN(expiry.getTime());
+        }
+        return {
+            licenseKey: licenseKey,
+            valid: valid,
+            expiry: valid ? LicenseManager_1.formatDate(expiry) : null
+        };
     };
     LicenseManager.outputMessage = function (header, message) {
         console.error('****************************************************************************************************************');

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.1.0
+// ag-grid-enterprise v8.2.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -18,16 +18,19 @@ var svgFactory = ag_grid_1.SvgFactory.getInstance();
 var EnterpriseMenuFactory = (function () {
     function EnterpriseMenuFactory() {
     }
-    EnterpriseMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent) {
+    EnterpriseMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent, defaultTab) {
         var _this = this;
         this.showMenu(column, function (menu) {
             _this.popupService.positionPopupUnderMouseEvent({
                 mouseEvent: mouseEvent,
                 ePopup: menu.getGui()
             });
-        });
+            if (defaultTab) {
+                menu.showTab(defaultTab);
+            }
+        }, defaultTab);
     };
-    EnterpriseMenuFactory.prototype.showMenuAfterButtonClick = function (column, eventSource) {
+    EnterpriseMenuFactory.prototype.showMenuAfterButtonClick = function (column, eventSource, defaultTab) {
         var _this = this;
         this.showMenu(column, function (menu) {
             _this.popupService.positionPopupUnderComponent({ eventSource: eventSource,
@@ -37,9 +40,12 @@ var EnterpriseMenuFactory = (function () {
                 minWidth: menu.getMinWidth(),
                 keepWithinBounds: true
             });
-        });
+            if (defaultTab) {
+                menu.showTab(defaultTab);
+            }
+        }, defaultTab);
     };
-    EnterpriseMenuFactory.prototype.showMenu = function (column, positionCallback) {
+    EnterpriseMenuFactory.prototype.showMenu = function (column, positionCallback, defaultTab) {
         var _this = this;
         var menu = new EnterpriseMenu(column, this.lastSelectedTab);
         this.context.wireBean(menu);
@@ -51,6 +57,9 @@ var EnterpriseMenuFactory = (function () {
         menu.afterGuiAttached({
             hidePopup: hidePopup
         });
+        if (!defaultTab) {
+            menu.showTabBasedOnPreviousSelection();
+        }
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, function (event) {
             _this.lastSelectedTab = event.key;
         });
@@ -115,13 +124,17 @@ var EnterpriseMenu = (function () {
     };
     EnterpriseMenu.prototype.showTabBasedOnPreviousSelection = function () {
         // show the tab the user was on last time they had a menu open
-        if (this.tabItemColumns && this.initialSelection === EnterpriseMenu.TAB_COLUMNS) {
+        this.showTab(this.initialSelection);
+    };
+    EnterpriseMenu.prototype.showTab = function (toShow) {
+        console.log('showing : ' + toShow + ' - ' + this.tabItemFilter);
+        if (this.tabItemColumns && toShow === EnterpriseMenu.TAB_COLUMNS) {
             this.tabbedLayout.showItem(this.tabItemColumns);
         }
-        else if (this.tabItemFilter && this.initialSelection === EnterpriseMenu.TAB_FILTER) {
+        else if (this.tabItemFilter && toShow === EnterpriseMenu.TAB_FILTER) {
             this.tabbedLayout.showItem(this.tabItemFilter);
         }
-        else if (this.tabItemGeneral && this.initialSelection === EnterpriseMenu.TAB_GENERAL) {
+        else if (this.tabItemGeneral && toShow === EnterpriseMenu.TAB_GENERAL) {
             this.tabbedLayout.showItem(this.tabItemGeneral);
         }
         else {
@@ -260,7 +273,6 @@ var EnterpriseMenu = (function () {
     EnterpriseMenu.prototype.afterGuiAttached = function (params) {
         var _this = this;
         this.tabbedLayout.setAfterAttachedParams({ hidePopup: params.hidePopup });
-        this.showTabBasedOnPreviousSelection();
         this.hidePopupFunc = params.hidePopup;
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         var onBodyScroll = function (event) {

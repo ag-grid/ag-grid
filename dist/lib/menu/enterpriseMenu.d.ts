@@ -1,13 +1,13 @@
-// ag-grid-enterprise v8.1.0
+// ag-grid-enterprise v8.2.0
 import { IMenuFactory, Column } from "ag-grid";
 export declare class EnterpriseMenuFactory implements IMenuFactory {
     private context;
     private popupService;
     private gridOptionsWrapper;
     private lastSelectedTab;
-    showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent): void;
-    showMenuAfterButtonClick(column: Column, eventSource: HTMLElement): void;
-    showMenu(column: Column, positionCallback: (menu: EnterpriseMenu) => void): void;
+    showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent, defaultTab?: string): void;
+    showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?: string): void;
+    showMenu(column: Column, positionCallback: (menu: EnterpriseMenu) => void, defaultTab?: string): void;
     isMenuEnabled(column: Column): boolean;
 }
 export declare class EnterpriseMenu {
@@ -38,7 +38,8 @@ export declare class EnterpriseMenu {
     addEventListener(event: string, listener: Function): void;
     getMinWidth(): number;
     init(): void;
-    private showTabBasedOnPreviousSelection();
+    showTabBasedOnPreviousSelection(): void;
+    showTab(toShow: string): void;
     private onTabItemClicked(event);
     destroy(): void;
     private getMenuItems();
