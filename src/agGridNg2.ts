@@ -283,6 +283,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressTabbing: any = undefined;
     @Input() public suppressPaginationPanel: any = undefined;
     @Input() public paginationStartPage: any = undefined;
+    @Input() public floatingFilter: any = undefined;
 
     /**
      * Outputs
