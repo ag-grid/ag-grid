@@ -406,23 +406,22 @@ cellRendererParams: {
     </p>
     <p>
         The following pieces of code do the exact same thing:
-        <pre><code>
-// option 1 - tell the grid to group by row, the grid defaults to using
-// the default group cell renderer for the row with default settings.
+        <pre><code><span class="codeComment">// option 1 - tell the grid to group by row, the grid defaults to using</span>
+<span class="codeComment">// the default group cell renderer for the row with default settings.</span>
 gridOptions.groupUseEntireRow = true;
 
-// option 2 - this does the exact same as the above, except we configure
-// it explicitly rather than letting the grid choose the defaults.
-// we tell the grid what renderer to use (the built in renderer) and we
-// configure the default renderer with our own inner renderer
+<span class="codeComment">// option 2 - this does the exact same as the above, except we configure</span>
+<span class="codeComment">// it explicitly rather than letting the grid choose the defaults.</span>
+<span class="codeComment">// we tell the grid what renderer to use (the built in renderer) and we</span>
+<span class="codeComment">// configure the default renderer with our own inner renderer</span>
 gridOptions.groupUseEntireRow = true;
 gridOptions.groupRowRenderer:  'group';
 gridOptions.groupRowRendererParams: {
     innerRenderer: function(params) {return params.node.key;},
 };
 
-// option 3 - again the exact same. we allow the grid to choose the group
-// cell renderer, but we provide our own inner renderer.
+<span class="codeComment">// option 3 - again the exact same. we allow the grid to choose the group</span>
+<span class="codeComment">// cell renderer, but we provide our own inner renderer.</span>
 gridOptions.groupUseEntireRow = true;
 gridOptions.groupRowInnerRenderer: function(params) {return params.node.key;};
 </code></pre>
