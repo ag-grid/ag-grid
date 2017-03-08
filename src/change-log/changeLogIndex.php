@@ -24,7 +24,7 @@ include '../documentation-main/documentation_header.php';
         <li>Enhancement: Sorting now shows order of sort when sorting by multiple columns.</li>
     </ul>
 
-    <b>Bugfixes:</b>
+    <b>Bug Fixes:</b>
     <ul>
         <li>Bugfix: exportDataAsExcel no longer throws error when called with no arguments.</li>
         <li>Bugfix: Excel Export wasn't working with Open Office, now working.</li>
