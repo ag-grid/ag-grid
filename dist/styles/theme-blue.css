@@ -461,3 +461,11 @@
 .ag-blue .ag-select-agg-func-item:hover {
   background-color: #c7c7c7;
 }
+.ag-blue .ag-floating-filter-button {
+  background-color: #fff;
+  color: #222;
+}
+.ag-blue .ag-floating-filter-body input {
+  background-color: #fff;
+  color: #222;
+}
