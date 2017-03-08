@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
     <span class="codeComment">// Returns the GUI for this filter. The GUI can be a) a string of html or b) a DOM element or node.</span>
     getGui(): any;
 
-    <span class="codeComment">// This is used to show the filter icon in the header. If true, the filter icon will be shown.</span>
+    <span class="codeComment">// The grid calls this to know if the filter icon in the header should be shown. Return true to show.</span>
     isFilterActive(): boolean;
 
     <span class="codeComment">// The grid will ask each active filter, in turn, whether each row in the grid passes. If any
@@ -44,7 +44,8 @@ include '../documentation-main/documentation_header.php';
     <span class="codeComment">// Gets the filter state for storing</span>
     getModel(): any;
 
-    <span class="codeComment">// Restores the filter state.</span>
+    <span class="codeComment">// Restores the filter state. Called either as a result of user calling
+    // <i>gridApi.setSortModel</i> OR the floating filter changed (only if using floating filters).</span>
     setModel(model: any): void;
 
     <span class="codeComment">// optional methods</span>
@@ -58,7 +59,8 @@ include '../documentation-main/documentation_header.php';
     afterGuiAttached?(params?: {hidePopup?: Function}): void;
 
     <span class="codeComment">// Gets called when new rows are inserted into the grid. If the filter needs to change it's state
-    // after rows are loaded, it can do it here.</span>
+    // after rows are loaded, it can do it here. For example the set filters uses this to update the list of
+    // available values to select from (eg 'Ireland', 'UK' etc for Country filter).</span>
     onNewRowsLoaded?(): void;
 
     <span class="codeComment">// Gets called when the Column is destroyed. If your custom filter needs to do
@@ -68,28 +70,37 @@ include '../documentation-main/documentation_header.php';
     // either new columns are set into the grid, or the grid itself is destroyed.</span>
     destroy?(): void;
 
-    <span class="codeComment">// Only relevant if using floating filters.
+    <span class="codeComment">// Only used in conjunction with floating filters.
     //
-    // Used by ag-Grid when rendering floating filters and there is no floating filter
-    // associated for this filter. This will happen if you associate a custom filter to a column and
-    // do not specify a floating filter counterpart. In this case, ag-Grid will create
-    // a read-only floating filter by reading the model off from this method</span>
+    // If floating filters are turned on for the grid, but you have no floating filter
+    // configured for this column, then the grid will check for this method. If this
+    // method exists, then the grid will provide a read only floating filter for you
+    // and display the results of this method. For example, if your filter is a simple
+    // filter with one string input value, you could just return the simple string
+    // value here.
+    //
+    // If you are implementing a floating filter for your filter, then leave this method out.</span>
     getModelAsString?(model:any): string;
 
-    <span class="codeComment">// Only relevant if using floating filters.
+    <span class="codeComment">// Only used in conjunction with floating filters.
     //
-    // If this method IS NOT IMPLEMENTED, when the floating filter changes, ag-Grid will automatically call
-    // IFilterParams.filterChangedCallback,  triggering the filtering of the data based on the changes from
-    // the floating filter. For the simple cases this is enough and you won't need to implement this method
-    // even if you create your own filter and floating filter.
+    // When a floating filter changes and calls the <i>onFloatingFilterChanged(change)</i> callback then:
+    //   a) <i>filter.onFloatingFilterChanged(change)</i> gets called if it exists.
+    //   ELSE
+    //   b) <i>filter.setModel(model)</i> gets called.
     //
-    // IF IT IS IMPLEMENTED. ag-Grid will delegate into this method the responsibility of calling
-    // IFilterParams.filterChangedCallback. This is useful if additional logic is necessary. For instance
-    // ag-Grid out of the box filter components use this in addition with the applyNow flag to handle the
-    // apply button logic in the default ag-Grid filters.
+    // If <i>setModal(modal)</i> is used, then the change object you pass should be the model
+    // object the filter is expecting. The grid will then continue and update the grids rows
+    // based on the new filter state.
     //
-    //     change: The object passed from the floating filter call onFloatingFilterChanged</span>
-    onFloatingFilterChanged ?(change:any): void;
+    // If <i>onFloatingFilterChanged(change)</i> is used, then the change object you pass
+    // can be anything you like, as long as it's expected by your filter. The grid will
+    // update the grid rows for you, you will need to do this yourself by calling filter
+    // <i>filterChangedCallback()</i> if you need. Use this if your need to do more in your floating
+    // than <i>setModel()</i> does. For example ag-Grid out of the box filter components use
+    // this to also consider logic for the Apply button (as if Apply button is active, then
+    // the filter does not call <i>filterChangedCallback()</i>. </span>
+    onFloatingFilterChanged?(change:any): void;
 }</pre>
 
 <h4 id="ifilter-params">IFilterParams</h4>

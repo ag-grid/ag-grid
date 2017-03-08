@@ -11,13 +11,17 @@ include '../documentation-main/documentation_header.php';
 
 
 <p>
-    Floating Filter components allow you to add your own floating filter types to ag-Grid. Use this when the provided
-    floating filters do not meet your requirements.
+    Floating Filter components allow you to add your own floating filter types to ag-Grid. Use this:
+    <ul>
+        <li>When the provided floating filter for a provided filter does not meet your requirements and you
+        want to replace with one of your own.</li>
+        <li>Whe you have a custom filter and want to provide a floating filter for your custom filter.</li>
+    </ul>
 </p>
 
 <p>
     This page focuses on writing your own floating filters components. To see general information about floating filters
-    in ag-Grid check the <a href="../javascript-grid-filtering/#floatingFilter">docs for floating filters</a>.
+    in ag-Grid see <a href="../javascript-grid-filtering/#floatingFilter">floating filters</a>.
 </p>
 
 <h3 id="lifecycle">Floating Filter LifeCycle</h3>
@@ -28,21 +32,21 @@ include '../documentation-main/documentation_header.php';
     bound to the visibility of the column. So if you hide a column (either set not visible, or
     horizontally scroll the column out of view) then the floating filter GUI component is destroyed.
     If the column comes back into view, it is created again. This is different to column filters,
-    where the column filter will exist as long as the filter column exists, regardless of the columns
+    where the column filter will exist as long as the column exists, regardless of the columns
     visibility.
 </p>
 
 <p>
-    In order to see how the floating filter interacts with its parent rich filter,
-    check the methods getModelAsString() and onFloatingFilterChanged(change:any)
-    <a href="../javascript-grid-filter-component/">in the Filter component interface</a>.
+    For details on how the floating filter interacts with its associated column filter,
+    see the methods <i>getModelAsString()</i> and <i>onFloatingFilterChanged(change)</i> in the
+    <a href="../javascript-grid-filter-component/">filter component interface</a>.
 </p>
 
 <p>
     To see examples of the different ways to implement floating filters, check the examples below.
 </p>
 
-<h3>Interface IFloatingFilter</h3>
+<h3>Floating Filter Interface</h3>
 
 <p>
     To provide a custom floating filter, you have to provide it through the column definition property
@@ -54,7 +58,7 @@ include '../documentation-main/documentation_header.php';
     component. A floating filter component class can be any function /class that implements the following interface:
 </p>
 
-<pre>interface IFloatingFilter {
+<pre>interface IFloatingFilterComp {
     <span class="codeComment">// mandatory methods</span>
 
     <span class="codeComment">// The init(params) method is called on the floating filter once. See below for details on the parameters.</span>
@@ -121,8 +125,8 @@ If the user removes the content of the input box, the filter its removed.
     Note that in this example:
 <ol>
     <li>The columns with the floating filter are using the standard number filter as the base filter</li>
-    <li>Since the parent filter is the number filter, the floating filter methods <i>onFloatingFilterChanged (parentModel)</i>,
-        and <i>currentParentModel ():parentModel</i> take and receive model objects
+    <li>Since the parent filter is the number filter, the floating filter methods <i>onFloatingFilterChanged(parentModel)</i>,
+        and <i>currentParentModel():parentModel</i> take and receive model objects
         that correspond to <a href="../javascript-grid-filter-number/#model">the model for the number filter</a></li>
     <li>Since this floating filters are providing a subset of the functionality of their parent filter, which can
     filter for other conditions which are not 'greaterThan' the user is prevented to see the parent filter by adding
