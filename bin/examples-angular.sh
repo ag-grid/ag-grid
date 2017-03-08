@@ -42,3 +42,38 @@ do
 
     cd "$current_dir"
 done
+
+echo =============================================================================================
+echo =============================================================================================
+echo =============================================================================================
+echo "SystemJS manual testing -- COPY AND PASTE THIS!!"
+echo "cd ag-grid-angular-example/systemjs_aot/"
+echo "npm start"
+echo "ctrl-c when done"
+echo "npm run clean-build:aot"
+echo "npm run lite:aot"
+echo "ctrl-c when done"
+
+
+echo =============================================================================================
+echo =============================================================================================
+echo =============================================================================================
+echo "Webpack manual testing -- COPY AND PASTE THIS!!"
+echo "cd ../webpack"
+echo "npm start"
+echo "ctrl-c when done"
+echo "npm run build"
+echo "./node_modules/.bin/http-server dist/"
+echo "ctrl-c when done"
+
+
+echo =============================================================================================
+echo =============================================================================================
+echo =============================================================================================
+echo "Angular CLI manual testing -- COPY AND PASTE THIS!!"
+echo "cd ../angular-cli"
+echo "npm serve"
+echo "ctrl-c when done"
+echo "npm build --prod"
+echo "./node_modules/.bin/http-server dist/"
+echo "ctrl-c when done"

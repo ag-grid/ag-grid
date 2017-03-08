@@ -11,10 +11,10 @@ current_dir=$(pwd)
 echo =============================================================================================
 echo =============================================================================================
 echo =============================================================================================
-echo "Preparing examples for react"
+echo "Preparing examples for aurelia"
 
 ## for all the package.json containers replace version number
-declare -a subfolders=("ag-grid-react-example")
+declare -a subfolders=("ag-grid-aurelia-example")
 
 for subfolder in "${subfolders[@]}"
 do
@@ -27,7 +27,7 @@ do
 
     npm install "$current_dir/ag-grid/module.tgz"
     npm install "$current_dir/ag-grid-enterprise/module.tgz"
-    npm install "$current_dir/ag-grid-react/module.tgz"
+    npm install "$current_dir/ag-grid-aurelia/module.tgz"
 
     npm-install-peers
     npm i
@@ -46,9 +46,7 @@ done
 echo =============================================================================================
 echo =============================================================================================
 echo =============================================================================================
-echo "REACT manual testing -- COPY AND PASTE THIS!!"
-echo "cd ag-grid-react-example"
-echo "npm run standard"
-echo "Navigate to http://localhost:8080 and test - ctrl-c when done"
-echo "npm run large"
+echo "Aurelia manual testing -- COPY AND PASTE THIS!!"
+echo "cd ag-grid-aurelia-example"
+echo "au run"
 echo "Navigate to http://localhost:8080 and test - ctrl-c when done"
