@@ -163,6 +163,23 @@ include '../documentation-main/documentation_header.php';
     data: any
 }</pre>
 
+<h3>Associating Floating Filter</h3>
+
+<p>
+    If you create your own filter you have two options to get its floating filters working for that filter:
+<ol>
+    <li>
+        You can <a href="../javascript-grid-floating-filter-component/">create your own floating filter</a>.
+    </li>
+    <li>
+        You can implement the method <i>getModelAsString()</i> in your custom filter. If you implement this method and you don't
+        provide a custom floating filter, ag-Grid will automatically provide a read-only version of a floating filter
+    </li>
+</ol>
+If you don't provide any of these two options for your custom filter, the display area for the floating filter
+will be empty.
+</p>
+
 <h3 id="custom-filter-example">Custom Filter Example</h3>
 
 <p>

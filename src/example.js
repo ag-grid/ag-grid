@@ -1043,6 +1043,7 @@ CountryFloatingFilterComponent.prototype.init = function(params) {
     this.params = params;
     this.eGui = document.createElement('div');
     this.eGui.innerHTML = 'text';
+    this.eGui.style.borderTop = '1px solid lightgrey';
 };
 
 CountryFloatingFilterComponent.prototype.getGui = function() {
