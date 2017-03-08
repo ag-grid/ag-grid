@@ -46,7 +46,7 @@ include('../includes/mediaHeader.php');
         <hr/>
 
         <h3>
-            Senior Enterprise Developer x 1
+            Senior Enterprise Developer x 1 (approx £60k - £80k)
         </h3>
         <p>
             Core responsibility is to take ownership of large parts of ag-Grid development.
@@ -58,7 +58,7 @@ include('../includes/mediaHeader.php');
         <p>
             <b>Desirable Skills</b>
             <ul>
-            <li>Experience using ag-Grid and / or other JavaScript grid frameworks.</li>
+                <li>Experience using ag-Grid and / or other JavaScript grid frameworks.</li>
                 <li>At least 5 years experience building enterprise software.</li>
                 <li>JavaScript / TypeScript.</li>
                 <li>HTML / CSS / DOM.</li>
@@ -76,7 +76,7 @@ include('../includes/mediaHeader.php');
         <hr/>
 
         <h3>
-            Enterprise Developer x 1
+            Enterprise Developer x 1 (approx £50k - £60k)
         </h3>
         <p>
             Similar role to senior enterprise developer, however we are willing to take on
@@ -104,7 +104,7 @@ include('../includes/mediaHeader.php');
         <hr/>
 
         <h3>
-            First Level Support Engineer / ag-Grid Consultant
+            First Level Support Engineer / ag-Grid Consultant (approx £40k - £50k)
         </h3>
         <p>
             We want people to become experts in ag-Grid to a) help our customers with their
