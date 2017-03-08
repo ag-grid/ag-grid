@@ -15,7 +15,12 @@ gulp.task('release', ['inline-into-php']);
 function uncssTask() {
     return gulp.src('./dist/dist/bootstrap/css/bootstrap.css')
         .pipe(uncss({
-            html: ['src/**/*.php','src/**/*.html']
+            html: ['src/**/*.php','src/**/*.html'],
+            ignore: [
+                '.nav-pills > li.active > a',
+                '.nav-pills > li.active > a:hover',
+                '.nav-pills > li.active > a:focus',
+            ]
         }))
         .pipe(gulp.dest('./dist/dist/bootstrap/css'));
 }
