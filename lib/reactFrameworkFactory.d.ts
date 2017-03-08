@@ -1,4 +1,4 @@
-// ag-grid-react v8.1.0
+// ag-grid-react v8.2.0
 import { IFrameworkFactory, ColDef, ICellRendererComp, ICellRendererFunc, IFilterComp, GridOptions, ICellEditorComp } from 'ag-grid';
 export declare class ReactFrameworkFactory implements IFrameworkFactory {
     private agGridReact;
