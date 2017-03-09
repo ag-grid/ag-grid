@@ -16,8 +16,8 @@ export class AutoGroupColService {
         let groupAutoColumns: Column[] = [];
 
         if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
-            rowGroupColumns.forEach( rowGroupCol => {
-                groupAutoColumns.push(this.createOneAutoGroupColumn(rowGroupCol));
+            rowGroupColumns.forEach( (rowGroupCol: Column, index: number) => {
+                groupAutoColumns.push(this.createOneAutoGroupColumn(rowGroupCol, index));
             });
         } else {
             groupAutoColumns.push(this.createOneAutoGroupColumn());
@@ -26,7 +26,7 @@ export class AutoGroupColService {
         return groupAutoColumns;
     }
 
-    private createOneAutoGroupColumn(rowGroupCol?: Column): Column {
+    private createOneAutoGroupColumn(rowGroupCol?: Column, index?: number): Column {
         // if one provided by user, use it, otherwise create one
         let autoColDef = this.gridOptionsWrapper.getGroupColumnDef();
         if (!autoColDef) {
@@ -62,7 +62,8 @@ export class AutoGroupColService {
             _.assign(autoColDef, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
                 headerName: rowGroupColDef.headerName,
-                headerValueGetter: rowGroupColDef.headerValueGetter
+                headerValueGetter: rowGroupColDef.headerValueGetter,
+                field: rowGroupColDef.field
             });
 
             if (_.missing(autoColDef.cellRendererParams)) {
@@ -70,7 +71,13 @@ export class AutoGroupColService {
             } else {
                 autoColDef.cellRendererParams = _.cloneObject(autoColDef.cellRendererParams);
             }
-            autoColDef.cellRendererParams.groupField = rowGroupColDef.field;
+            autoColDef.cellRendererParams.restrictToOneGroup = true;
+
+            // if showing many cols, we don't want to show more than one with a checkbox for selection
+            if (index>0) {
+                autoColDef.headerCheckboxSelection = false;
+                autoColDef.cellRendererParams.checkbox = false;
+            }
 
             colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${Math.random()}-${rowGroupCol.getId()}`;
         } else {
