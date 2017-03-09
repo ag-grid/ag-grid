@@ -144,7 +144,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <show-example example="example1"></show-example>
+    <show-example example="exampleRowGroup"></show-example>
 
     <h3>Grouping Columns vs Full Width Groups</h3>
 
@@ -254,6 +254,13 @@ colDef.cellRendererParams = {
     </ul>
     </p>
 
+    <h3>One Or Many Group Columns</h3>
+
+    <show-example example="exampleGroupingManyGroupColumns"></show-example>
+
+    <h3>Hide Parent Rows When Open</h3>
+
+    <show-example example="exampleGroupingHideParents"></show-example>
 
     <h3>Grouping API</h3>
 
@@ -289,7 +296,7 @@ colDef.cellRendererParams = {
         The example below shows grouping on the county, with country an object within each row.
         <pre>rowItem = {
     athlete: 'Michael Phelps',
-    country: { // country is complex object, so need to provide colDef.keyCreator()
+        country: { <span class="codeComment">// country is complex object, so need to provide colDef.keyCreator()</span>
         name: 'United States',
         code: 'US'
     }
