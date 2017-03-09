@@ -34,6 +34,11 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>
+            We currently have an excellent small team and want to grow to increase the teams
+            capacity and reduce dependencies on key people. So we want to make you a join key person.
+        </p>
+
+        <p>
             Perks of working for ag-Grid are:
             <ul>
                 <li>Thriving young company.</li>
