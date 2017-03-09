@@ -31,7 +31,12 @@
         <div class="hide">
             <input type="hidden" value="NB79YK" name="form_id" id="form_id"/>
             <input type="hidden" value="57f3c21fac73aa8" name="wtc" id="wtc"/>
-            <input type="hidden" value="https://www.ag-grid.com/license-pricing.php?submitted=true" name="return_url" id="return_url"/>
+<!--            <input type="hidden" value="https://www.ag-grid.com/license-pricing.php?submitted=true" name="return_url" id="return_url"/>-->
+            <?php if ($startTrial) { ?>
+                <input type="hidden" value="https://www.ag-grid.com/thank-you-trial.php" name="return_url" id="return_url"/>
+            <?php } else { ?>
+                <input type="hidden" value="https://www.ag-grid.com/thank-you-enquiry.php" name="return_url" id="return_url"/>
+            <?php } ?>
             <input type="hidden" value="" name="WebToContact[gclid]" id="WebToContact_gclid"/>
         </div>
         <div class="hide"><input type="hidden" value="Website" name="WebToContact[source]" id="WebToContact_source"/></div>
@@ -55,9 +60,9 @@
             <input maxlength="100" class="form-control" placeholder="Email" type="text" value="" name="WebToContact[email]" id="WebToContact_email"/>
         </div>
         <div class="form-group">
-            <? if ($startTrial) { ?>
+            <?php if ($startTrial) { ?>
                 <label for="WebToContact[message]">Your message to us below.</label>
-            <? } else { ?>
+            <?php } else { ?>
                 <label for="WebToContact[message]">Your message to us below. If ordering, please provide the following information:</label>
                 <ul>
                     <li>Company Address and VAT Number (EU only for VAT number).</li>
@@ -66,23 +71,6 @@
                     <?php if( $formKey == "applicationDeveloper") { ?>
                     <li>Application Name</li>
                     <?php } ?>
-
-                    <!-- <li>Do you require an Application Developer or a Site Developer license?
-                        <i data-toggle="popover"
-                           title="<strong>Application Developer vs Site Developer?</strong"
-                           data-content="
-                           <p><strong>Application Developer License</strong> ties the license to one particular application within your organisation. A typical example is 5 licenses to cover an application with 5 developers working concurrently on it.
-                              This is best if you a) have only one (or a fixed number) of applications you need to license or b) you want to charge the license to a particular project(s). </p>
-                            <p><strong>Site Developer License</strong> allows unlimited applications to be developed by a fixed number of developers.
-                               A typical example is 5 license to cover an unlimited number of applications with 5 developers working
-                               across all applications concurrently. Use site license if you want to cover a group of developers developing any number of applications.</p>"
-                           class="fa fa-question-circle-o"
-                           aria-hidden="true"></i>
-                    </li> -->
-
-                    
-
-
 
                     <?php if( $formKey == "saasAndOEM") { ?>
                     <li>Will you be selling ag-Grid as part of a SAAS (Software as a Service) offering?
@@ -104,9 +92,9 @@
                     </li>
                     <?php } ?>
                 </ul>
-            <? } ?>
+            <?php } ?>
         </div>
-        <textarea rows="8" class="form-control" name="WebToContact[message]" id="WebToContact_message"><? if ($startTrial) { ?>
+        <textarea rows="8" class="form-control" name="WebToContact[message]" id="WebToContact_message"><?php if ($startTrial) { ?>
 Dear ag-Grid Team,
 
 I am interested in taking a two month trial of ag-Grid Enterprise.
@@ -114,14 +102,14 @@ I am interested in taking a two month trial of ag-Grid Enterprise.
 Please email me back with a license key that I can use for my trial.
 
 Thank you.
-<? } ?></textarea>
+<?php } ?></textarea>
 
         <div class="form-group" style="margin-top: 10px;">
-            <? if ($startTrial) { ?>
+            <?php if ($startTrial) { ?>
                 <input id="btn_submit" name="btn_submit" type="submit" class="btn btn-default" value="Request Trial"/>
-            <? } else { ?>
+            <?php } else { ?>
                 <input id="btn_submit" name="btn_submit" type="submit" class="btn btn-default" value="Send your info to ag-Grid"/>
-            <? } ?>
+            <?php } ?>
         </div>
     </form>
 </div>
@@ -172,19 +160,6 @@ Thank you.
                 return true;
             }
         }
-
-        /*
-        function validateEmail(fieldName) {
-            var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,20})?$/;
-            if (fieldVal(fieldName) == "" || !emailReg.test(fieldVal(fieldName))) {
-                alert("Invalid Email Address!");
-                fieldFocus(fieldName);
-                return false;
-            } else {
-                return true;
-            }
-        }
-        */
 
         window[formKey + "_validateForm"] = function() {
 

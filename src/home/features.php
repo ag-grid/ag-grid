@@ -44,7 +44,7 @@
                 <li><span class="feature-item">&#10004;</span><a href="<?php print($rootFolder) ?>javascript-grid-viewport/">Technical Support</a></li>
                 <li><span class="feature-item">&#10004;</span><a href="<?php print($rootFolder) ?>javascript-grid-grouping/">Grouping Rows</a></li>
                 <li><span class="feature-item">&#10004;</span><a href="<?php print($rootFolder) ?>javascript-grid-aggregation/">Aggregation</a></li>
-                <li><span class="feature-item">&#10004;</span><a href="<?php print($rootFolder) ?>javascript-grid-set-filtering/">Set Filtering</a></li>
+                <li><span class="feature-item">&#10004;</span><a href="<?php print($rootFolder) ?>javascript-grid-filter-set/">Set Filtering</a></li>
                 <li><span class="feature-item">&#10004;</span><a href="<?php print($rootFolder) ?>javascript-grid-pivoting/">Pivoting</a></li>
                 <li><span class="feature-item">&#10004;</span><a href="<?php print($rootFolder) ?>javascript-grid-clipboard/">Clipboard</a></li>
                 <li><span class="feature-item">&#10004;</span><a href="<?php print($rootFolder) ?>javascript-grid-viewport/">Viewport</a></li>

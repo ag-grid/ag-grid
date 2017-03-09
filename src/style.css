@@ -876,9 +876,11 @@ h1, h2, h3, h4, h5 {
         visibility: visible;
     }
 
+    /*
     .dropdown:hover .dropdown-menu {
         display: block;
     }
+    */
 
     .nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu {
         margin-top: 0;
@@ -916,9 +918,11 @@ h1, h2, h3, h4, h5 {
         visibility: visible;
     }
 
+    /*
     .dropdown:hover .dropdown-menu {
         display: block;
     }
+    */
 
     .nav-tabs .dropdown-menu, .nav-pills .dropdown-menu, .navbar .dropdown-menu {
         margin-top: 0;

@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
     <span class="codeComment">// Returns the GUI for this filter. The GUI can be a) a string of html or b) a DOM element or node.</span>
     getGui(): any;
 
-    <span class="codeComment">// This is used to show the filter icon in the header. If true, the filter icon will be shown.</span>
+    <span class="codeComment">// The grid calls this to know if the filter icon in the header should be shown. Return true to show.</span>
     isFilterActive(): boolean;
 
     <span class="codeComment">// The grid will ask each active filter, in turn, whether each row in the grid passes. If any
@@ -44,28 +44,63 @@ include '../documentation-main/documentation_header.php';
     <span class="codeComment">// Gets the filter state for storing</span>
     getModel(): any;
 
-    <span class="codeComment">// Restores the filter state.</span>
+    <span class="codeComment">// Restores the filter state. Called either as a result of user calling
+    // <i>gridApi.setSortModel</i> OR the floating filter changed (only if using floating filters).</span>
     setModel(model: any): void;
 
     <span class="codeComment">// optional methods</span>
 
-    <span class="codeComment">// Gets called every time the popup is shown, after the gui returned in getGui is attached to the DOM.
-    // If the filter popup is closed and reopened, this method is called each time the filter is shown.
-    // This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM
-    // element. The params has one callback method 'hidePopup', which you can call at any later
-    // point to hide the popup - good if you have an 'Apply' button and you want to hide the popup
-    // after it is pressed.</span>
+    <span class="codeComment">// Gets called every time the popup is shown, after the gui returned in
+    // getGui is attached to the DOM. If the filter popup is closed and reopened, this method is called
+    // each time the filter is shown. This is useful for any logic that requires attachment before executing,
+    // such as putting focus on a particular DOM element. The params has one callback method 'hidePopup',
+    // which you can call at any later point to hide the popup - good if you have an 'Apply' button and
+    // you want to hide the popup after it is pressed.</span>
     afterGuiAttached?(params?: {hidePopup?: Function}): void;
 
     <span class="codeComment">// Gets called when new rows are inserted into the grid. If the filter needs to change it's state
-    // after rows are loaded, it can do it here.</span>
+    // after rows are loaded, it can do it here. For example the set filters uses this to update the list of
+    // available values to select from (eg 'Ireland', 'UK' etc for Country filter).</span>
     onNewRowsLoaded?(): void;
 
-    <span class="codeComment">// Gets called when the grid is destroyed. If your custom filter needs to do
+    <span class="codeComment">// Gets called when the Column is destroyed. If your custom filter needs to do
     // any resource cleaning up, do it here. A filter is NOT destroyed when it is
     // made 'not visible', as the gui is kept to be shown again if the user selects
-    // that filter again. The filter is destroyed when the grid is destroyed.</span>
+    // that filter again. The filter is destroyed when the column it is associated with is destroyed,
+    // either new columns are set into the grid, or the grid itself is destroyed.</span>
     destroy?(): void;
+
+    <span class="codeComment">// Only used in conjunction with floating filters.
+    //
+    // If floating filters are turned on for the grid, but you have no floating filter
+    // configured for this column, then the grid will check for this method. If this
+    // method exists, then the grid will provide a read only floating filter for you
+    // and display the results of this method. For example, if your filter is a simple
+    // filter with one string input value, you could just return the simple string
+    // value here.
+    //
+    // If you are implementing a floating filter for your filter, then leave this method out.</span>
+    getModelAsString?(model:any): string;
+
+    <span class="codeComment">// Only used in conjunction with floating filters.
+    //
+    // When a floating filter changes and calls the <i>onFloatingFilterChanged(change)</i> callback then:
+    //   a) <i>filter.onFloatingFilterChanged(change)</i> gets called if it exists.
+    //   ELSE
+    //   b) <i>filter.setModel(model)</i> gets called.
+    //
+    // If <i>setModal(modal)</i> is used, then the change object you pass should be the model
+    // object the filter is expecting. The grid will then continue and update the grids rows
+    // based on the new filter state.
+    //
+    // If <i>onFloatingFilterChanged(change)</i> is used, then the change object you pass
+    // can be anything you like, as long as it's expected by your filter. The grid will
+    // update the grid rows for you, you will need to do this yourself by calling filter
+    // <i>filterChangedCallback()</i> if you need. Use this if your need to do more in your floating
+    // than <i>setModel()</i> does. For example ag-Grid out of the box filter components use
+    // this to also consider logic for the Apply button (as if Apply button is active, then
+    // the filter does not call <i>filterChangedCallback()</i>. </span>
+    onFloatingFilterChanged?(change:any): void;
 }</pre>
 
 <h4 id="ifilter-params">IFilterParams</h4>
@@ -139,6 +174,23 @@ include '../documentation-main/documentation_header.php';
     data: any
 }</pre>
 
+<h3>Associating Floating Filter</h3>
+
+<p>
+    If you create your own filter you have two options to get its floating filters working for that filter:
+<ol>
+    <li>
+        You can <a href="../javascript-grid-floating-filter-component/">create your own floating filter</a>.
+    </li>
+    <li>
+        You can implement the method <i>getModelAsString()</i> in your custom filter. If you implement this method and you don't
+        provide a custom floating filter, ag-Grid will automatically provide a read-only version of a floating filter
+    </li>
+</ol>
+If you don't provide any of these two options for your custom filter, the display area for the floating filter
+will be empty.
+</p>
+
 <h3 id="custom-filter-example">Custom Filter Example</h3>
 
 <p>
@@ -148,20 +200,20 @@ include '../documentation-main/documentation_header.php';
 
 <show-example example="exampleCustomFilter"></show-example>
 
-<div ng-if="isFramework('angular')">
+<?php if (isFrameworkAngular()) { ?>
     <?php include './angular.php';?>
-</div>
+<?php } ?>
 
-<div ng-if="isFramework('aurelia')">
+<?php if (isFrameworkAurelia()) { ?>
     <?php include './aurelia.php';?>
-</div>
+<?php } ?>
 
-<div ng-if="isFramework('react')">
+<?php if (isFrameworkReact()) { ?>
     <?php include './react.php';?>
-</div>
+<?php } ?>
 
-<div ng-if="isFramework('vue')">
-    <?php include './vue.php';?>
-</div>
+<?php if (isFrameworkVue()) { ?>
+    <?php include './vuejs.php';?>
+<?php } ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

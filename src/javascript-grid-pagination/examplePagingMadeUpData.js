@@ -13,6 +13,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowModelType: 'pagination',
     paginationPageSize: 100,
+    paginationStartPage: 5,
     datasource: new MyDatasource(1200)
 };
 

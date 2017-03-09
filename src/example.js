@@ -104,6 +104,7 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
+    floatingFilter:true,
 //debug: true,
 //     editType: 'fullRow',
 suppressEnterprise: true,
@@ -162,7 +163,8 @@ suppressEnterprise: true,
 //toolPanelSuppressValues: true,
 //groupSuppressAutoColumn: true,
 //groupAggFields: ['bankBalance','totalWinnings'],
-
+//     groupMultiAutoColumn: true,
+//     groupHideOpenParents: true,
 
 //suppressMenuFilterPanel: true,
 //suppressMenuMainPanel: true,
@@ -314,6 +316,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 // enablePivot: true,
                 filter: PersonFilter,
+                floatingFilterComponent: PersonFloatingFilterComponent,
                 checkboxSelection: function (params) {
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
@@ -375,6 +378,7 @@ var defaultCols = [
                     selectAllOnMiniFilter: true,
                     clearButton: true
                 },
+                floatingFilterComponent: CountryFloatingFilterComponent,
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -738,11 +742,12 @@ function PersonFilter() {
 PersonFilter.prototype.init = function (params) {
     this.valueGetter = params.valueGetter;
     this.filterText = null;
-    this.setupGui(params);
+    this.params = params;
+    this.setupGui();
 };
 
 // not called by ag-Grid, just for us to help setup
-PersonFilter.prototype.setupGui = function (params) {
+PersonFilter.prototype.setupGui = function () {
     this.gui = document.createElement('div');
     this.gui.innerHTML =
         '<div style="padding: 4px;">' +
@@ -753,21 +758,18 @@ PersonFilter.prototype.setupGui = function (params) {
         '<div><img src="images/ag-Grid2-200.png" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
         '</div>';
 
-    this.eFilterText = this.gui.querySelector('#filterText');
-    this.eFilterText.addEventListener("changed", listener);
-    this.eFilterText.addEventListener("paste", listener);
-    this.eFilterText.addEventListener("input", listener);
-// IE doesn't fire changed for special keys (eg delete, backspace), so need to
-// listen for this further ones
-    this.eFilterText.addEventListener("keydown", listener);
-    this.eFilterText.addEventListener("keyup", listener);
-
     var that = this;
+    this.onFilterChanged = function() {
+        that.extractFilterText();
+        that.params.filterChangedCallback();
+    };
 
-    function listener(event) {
-        that.filterText = event.target.value;
-        params.filterChangedCallback();
-    }
+    this.eFilterText = this.gui.querySelector('#filterText');
+    this.eFilterText.addEventListener("input", this.onFilterChanged);
+};
+
+PersonFilter.prototype.extractFilterText = function () {
+    this.filterText = this.eFilterText.value;
 };
 
 PersonFilter.prototype.getGui = function () {
@@ -793,22 +795,52 @@ PersonFilter.prototype.isFilterActive = function () {
     return isActive;
 };
 
-PersonFilter.prototype.getApi = function () {
-    var that = this;
-    return {
-        getModel: function () {
-            var model = {value: that.filterText.value};
-            return model;
-        },
-        setModel: function (model) {
-            that.eFilterText.value = model.value;
-        }
+PersonFilter.prototype.getModelAsString = function (model){
+    return model ? model : '';
+};
+
+PersonFilter.prototype.getModel = function () {
+    return this.eFilterText.value;
+};
+
+// lazy, the example doesn't use setModel()
+PersonFilter.prototype.setModel = function (model) {
+    this.eFilterText.value = model;
+    this.extractFilterText();
+};
+
+PersonFilter.prototype.destroy = function () {
+    this.eFilterText.removeEventListener("input", this.onFilterChanged);
+};
+
+function PersonFloatingFilterComponent() {}
+
+PersonFloatingFilterComponent.prototype.init = function(params) {
+    this.params = params;
+    this.eGui = document.createElement('input');
+    var eGui = this.eGui;
+    this.changeEventListener = function() {
+        params.onFloatingFilterChanged(eGui.value);
+    };
+    this.eGui.addEventListener('input', this.changeEventListener);
+};
+
+PersonFloatingFilterComponent.prototype.getGui = function() {
+    return this.eGui;
+};
+
+PersonFloatingFilterComponent.prototype.onParentModelChanged = function(model) {
+    // add in child, one for each flat
+    if (model) {
+        this.eGui.value = model;
+    } else {
+        this.eGui.value = '';
     }
 };
 
-// lazy, the example doesn't use getModel() and setModel()
-PersonFilter.prototype.getModel = function () {};
-PersonFilter.prototype.setModel = function () {};
+PersonFloatingFilterComponent.prototype.destroy = function() {
+    this.eGui.removeEventListener('input', this.changeEventListener);
+};
 
 function WinningsFilter() {
 }
@@ -866,8 +898,26 @@ WinningsFilter.prototype.isFilterActive = function () {
     return !this.cbNoFilter.checked;
 };
 
-// lazy, the example doesn't use getModel() and setModel()
-WinningsFilter.prototype.getModel = function () {};
+WinningsFilter.prototype.getModelAsString = function (model) {
+    return model? model: '';
+};
+
+WinningsFilter.prototype.getModel = function () {
+    if (this.cbNoFilter.checked) {
+        return '';
+    } else if (this.cbPositive.checked) {
+        return 'value >= 0';
+    } else if (this.cbNegative.checked) {
+        return 'value < 0';
+    } else if (this.cbGreater50.checked) {
+        return 'value >= 50000';
+    } else if (this.cbGreater90.checked) {
+        return 'value >= 90000';
+    } else {
+        console.error('invalid checkbox selection');
+    }
+};
+// lazy, the example doesn't use setModel()
 WinningsFilter.prototype.setModel = function () {};
 
 function currencyCssFunc(params) {
@@ -987,6 +1037,44 @@ function countryCellRenderer(params) {
         return '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
     }
 }
+
+function CountryFloatingFilterComponent() {}
+
+CountryFloatingFilterComponent.prototype.init = function(params) {
+    this.params = params;
+    this.eGui = document.createElement('div');
+    this.eGui.innerHTML = 'text';
+    this.eGui.style.borderTop = '1px solid lightgrey';
+};
+
+CountryFloatingFilterComponent.prototype.getGui = function() {
+    return this.eGui;
+};
+
+CountryFloatingFilterComponent.prototype.onParentModelChanged = function(model) {
+    // add in child, one for each flat
+    if (model) {
+        var flagsHtml = [];
+        var printDotDotDot = false;
+        if (model.length > 4) {
+            var toPrint = model.slice(0, 4);
+            printDotDotDot = true;
+        } else {
+            var toPrint = model;
+        }
+        toPrint.forEach(function(country) {
+            flagsHtml.push('<img style="border: 0px; width: 15px; height: 10px; margin-left: 2px" ' +
+                'src="https://flags.fmcdn.net/data/flags/mini/'
+                + COUNTRY_CODES[country] + '.png">');
+        });
+        this.eGui.innerHTML = '('+model.length+') ' + flagsHtml.join('');
+        if (printDotDotDot){
+            this.eGui.innerHTML = this.eGui.innerHTML + '...';
+        }
+    } else {
+        this.eGui.innerHTML = '';
+    }
+};
 
 function CountryCellRenderer() {
     this.eGui = document.createElement('span');

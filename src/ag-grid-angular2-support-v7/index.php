@@ -6,7 +6,7 @@ $pageKeyboards = "ag-Grid javascript datagrid angular 2 aot";
 
 include('../includes/mediaHeader.php');
 ?>
-<link inline rel="stylesheet" href="../documentation-main/documentation.css">
+<link rel="stylesheet" href="../documentation-main/documentation.css">
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">

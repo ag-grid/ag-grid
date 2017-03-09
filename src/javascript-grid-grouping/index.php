@@ -76,6 +76,11 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
+            <th>groupMultiAutoColumn</th>
+            <td>If using auto column, set to true to have each group in it's own column separate column, eg
+                if group by Country then Year, two auto columns will be created, one for country and one for year.</td>
+        </tr>
+        <tr>
             <th>groupSuppressRow</th>
             <td>If true, the group row won't be displayed and the groups will be expanded by default
                 with no ability to expand / contract the groups. Useful when you want to just 'group'
@@ -100,6 +105,11 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>groupRemoveSingleChildren</th>
             <td>Set to true to collapse groups that only have one child.</td>
+        </tr>
+        <tr>
+            <th>groupHideOpenParents</th>
+            <td>Set to true to hide parents that are open. When used with multiple columns for showing
+                groups, it can give more pleasing user experience.</td>
         </tr>
         <tr>
             <th>animateRows</th>
@@ -144,7 +154,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <show-example example="example1"></show-example>
+    <show-example example="exampleRowGroup"></show-example>
 
     <h3>Grouping Columns vs Full Width Groups</h3>
 
@@ -251,9 +261,98 @@ colDef.cellRendererParams = {
         <li><b>suppressPadding:</b> Set to true to node including any padding (indentation) in the child rows.</li>
         <li><b>innerRenderer:</b> The renderer to use for inside the cell (after grouping functions are added).</li>
         <li><b>footerValueGetter:</b> The value getter for the footer text. Can be a function or expression.</li>
+        <li><b>restrictToOneGroup:</b> If true, the column will only show one level of group, eg 'Country', and then another column will show 'Language'.</li>
     </ul>
     </p>
 
+    <h3>One Or Many Group Columns</h3>
+
+    <p>
+        Depending on your preference, when showing multiple levels of groups, you can have one column showing
+        all grouping levels, or one column per grouping level. To have a group column only show one level of groups,
+        set <i>restrictToOneGroup=true</i>.
+    </p>
+
+    <p>
+        Below are two similar examples. The first shows the groups in one column. The second has a dedicated column
+        for each group.
+    </p>
+
+    <h3>Example - Explicitly Configure One Group Column</h3>
+
+    <show-example example="exampleGroupingOneGroupColumns"></show-example>
+
+    <h3>Example - Explicitly Configure Many Group Columns</h3>
+
+    <show-example example="exampleGroupingManyGroupColumns"></show-example>
+
+    <h3>Example - Auto Configure Many Group Columns</h3>
+
+    <show-example example="exampleGroupingAutoManyGroupColumns"></show-example>
+
+    <h3>Replacing Groups with Children When Open</h3>
+
+    <p>
+        Depending on your preference, you may wish to hide parent rows when they are open.
+        This gives the impression to the user that the children takes the place of the
+        parent row. This feature only makes sense when groups are in different columns.
+        To turn this feature on, set <i>groupHideOpenParents=true</i>.
+    </p>
+
+    <pre><span class="codeComment">// OPTION 1 - configure with your own columns</span>
+var gridOptions = {
+    <span class="codeComment">// providing our own group cols, we don't want auto</span>
+    groupSuppressAutoColumn: true,
+    groupHideOpenParents: true,
+    ... <span class="codeComment">// other properties here</span>
+}
+
+var colDefs = {
+    <span class="codeComment">// the first group column</span>
+    {headerName: "Country", cellRenderer: 'group', field: "country", rowGroupIndex: 0,
+        cellRendererParams: { restrictToOneGroup: true }
+    },
+
+    <span class="codeComment">// the second group column</span>
+    {headerName: "Year", cellRenderer: 'group', field: "year", rowGroupIndex: 1,
+        cellRendererParams: {
+            restrictToOneGroup: true
+        }
+    },
+    ... <span class="codeComment">// other cols here</span>
+}
+
+<span class="codeComment">// OR OPTION 2 - use auto columns</span>
+var gridOptions = {
+    <span class="codeComment">// leave this property out, as want auto columns</span>
+    <span class="codeComment">// groupSuppressAutoColumn: true,</span>
+
+    groupHideOpenParents: true,
+    ... <span class="codeComment">// other properties here</span>
+}
+
+var colDefs = {
+    <span class="codeComment">// then provide the cols we want to group by, but hide them an no specific renderer</span>
+    {field: "country", rowGroupIndex: 0, hide: true},
+    {field: "year", rowGroupIndex: 1, hide: true},
+    ... <span class="codeComment">// other cols here</span>
+}</pre>
+
+    <p>
+        Below shows an example of this. Notice that each group row has
+        <a href="../javascript-grid-aggregation/">aggregated values</a>. When the group
+        is closed, the group row shows the aggregated result. When the group is open,
+        the group row is removed and in it's place the child rows are displayed.
+        To allow closing the group again, the group column knows to display the parent
+        group in the group column only (so you can click on the icon to close the group).
+    </p>
+
+    <p>
+        To help demonstrate this, the grid is configured to shade the rows different colors
+        for the different group levels.
+    </p>
+
+    <show-example example="exampleGroupingHideParents"></show-example>
 
     <h3>Grouping API</h3>
 
@@ -289,7 +388,7 @@ colDef.cellRendererParams = {
         The example below shows grouping on the county, with country an object within each row.
         <pre>rowItem = {
     athlete: 'Michael Phelps',
-    country: { // country is complex object, so need to provide colDef.keyCreator()
+        country: { <span class="codeComment">// country is complex object, so need to provide colDef.keyCreator()</span>
         name: 'United States',
         code: 'US'
     }
@@ -406,23 +505,22 @@ cellRendererParams: {
     </p>
     <p>
         The following pieces of code do the exact same thing:
-        <pre><code>
-// option 1 - tell the grid to group by row, the grid defaults to using
-// the default group cell renderer for the row with default settings.
+        <pre><code><span class="codeComment">// option 1 - tell the grid to group by row, the grid defaults to using</span>
+<span class="codeComment">// the default group cell renderer for the row with default settings.</span>
 gridOptions.groupUseEntireRow = true;
 
-// option 2 - this does the exact same as the above, except we configure
-// it explicitly rather than letting the grid choose the defaults.
-// we tell the grid what renderer to use (the built in renderer) and we
-// configure the default renderer with our own inner renderer
+<span class="codeComment">// option 2 - this does the exact same as the above, except we configure</span>
+<span class="codeComment">// it explicitly rather than letting the grid choose the defaults.</span>
+<span class="codeComment">// we tell the grid what renderer to use (the built in renderer) and we</span>
+<span class="codeComment">// configure the default renderer with our own inner renderer</span>
 gridOptions.groupUseEntireRow = true;
 gridOptions.groupRowRenderer:  'group';
 gridOptions.groupRowRendererParams: {
     innerRenderer: function(params) {return params.node.key;},
 };
 
-// option 3 - again the exact same. we allow the grid to choose the group
-// cell renderer, but we provide our own inner renderer.
+<span class="codeComment">// option 3 - again the exact same. we allow the grid to choose the group</span>
+<span class="codeComment">// cell renderer, but we provide our own inner renderer.</span>
 gridOptions.groupUseEntireRow = true;
 gridOptions.groupRowInnerRenderer: function(params) {return params.node.key;};
 </code></pre>
@@ -501,6 +599,12 @@ gridOptions.groupRowRendererParams: {
     </note>
 
     <show-example example="exampleRemoveSingleChildren"></show-example>
+
+    <note>
+        It is not possible to mix <i>groupRemoveSingleChildren</i> and <i>groupHideOpenParents</i>.
+        Technically, it doesn't make sense. Mixing these two will put you down a black hole so deep not
+        even Stephen Hawking will be able to save you.
+    </note>
 
     <h3>Suppress Group Row</h3>
 

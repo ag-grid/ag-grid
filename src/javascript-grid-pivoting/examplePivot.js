@@ -12,7 +12,8 @@ var gridOptions = {
     // set rowData to null or undefined to show loading panel by default
     pivotMode: true,
     enableColResize: true,
-    columnDefs: columnDefs
+    columnDefs: columnDefs,
+    floatingFilter:true
 };
 
 // setup the grid after the page has finished loading

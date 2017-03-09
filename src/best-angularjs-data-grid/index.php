@@ -1,11 +1,17 @@
 <?php
-$key = "Getting Started ng1";
+header("HTTP/1.1 301 Moved Permanently");
+header("Location: https://www.ag-grid.com/javascript-grid-getting-started/?framework=angularjs");
+?>
+
+
+<?php
+/*$key = "Getting Started ng1";
 $pageTitle = "AngularJS 1.x Datagrid";
 $pageDescription = "Shows an example of the best Javascript Datagrid. Explains how to set up the Best AngularJS 1.x Grid grid, ag-Grid, inside your browser.";
 $pageKeyboards = "Best AngularJS 1.x Grid Datagrid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
-?>
+*/?><!--
 
 <div>
 
@@ -236,4 +242,4 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
 
 </div>
 
-<?php include '../documentation-main/documentation_footer.php';?>
+--><?php /*include '../documentation-main/documentation_footer.php';*/?>

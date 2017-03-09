@@ -1,87 +1,6 @@
 (function () {
 
-    var module = angular.module("documentation", ['ngCookies']);
-    module.controller('DocumentationController', ['$scope', '$cookies', '$location', function ($scope, $cookies, $location) {
-
-        var model = {};
-
-        $scope.model = model;
-
-        model.onFrameworkChanged = function() {
-            window.location.href = '?framework='+model.framework;
-        };
-
-        model.framework = document.querySelector('#frameworkAttr').innerHTML;
-
-        $scope.frameworkContext = getFrameworkFromCookieAndDefaultIfNotDefined();
-
-        $scope.onFrameworkContextChanged = function () {
-            setCookie('frameworkContext', $scope.frameworkContext ? $scope.frameworkContext : 'all');
-        };
-
-        $scope.isFramework = function (framework) {
-            $scope.frameworkContext = getFrameworkFromCookieAndDefaultIfNotDefined();
-
-            if ($scope.frameworkContext === 'all') {
-                return true;
-            }
-
-            var frameworks = [].concat(framework);
-            for (var test of frameworks) {
-                if ($scope.frameworkContext === test) {
-                    return true;
-                }
-            }
-
-            return false;
-        };
-
-        function setCookie(name, value) {
-            $cookies.remove(name);
-            var n = new Date();
-            var expires = new Date(n.getFullYear() + 1, n.getMonth(), n.getDate());
-            $cookies.put(name,
-                value,
-                {
-                    path: "/",
-                    expires: expires
-                });
-        }
-
-        function getFrameworkFromCookieAndDefaultIfNotDefined() {
-            var frameworkContext = $cookies.get('frameworkContext');
-            if (!frameworkContext) {
-                frameworkContext = 'all';
-                setCookie('frameworkContext', frameworkContext);
-            }
-            $scope.frameworkContext = frameworkContext;
-            return $scope.frameworkContext;
-        }
-
-        $scope.divIsReady = function (divId) {
-            console.log(document.getElementById(divId));
-            if(document.getElementById(divId)) {
-                return true;
-            }
-            return false;
-        }
-        $scope.docsControllerReady = true;
-    }]);
-
-    module.controller('GettingStartedController', ['$scope', function ($scope) {
-        $scope.jsOpen = false;
-        $scope.angularJsOpen = false;
-        $scope.vueOpen = false;
-        $scope.reactOpen = false;
-        $scope.aureliaOpen = false;
-        $scope.webcomponentsOpen = false;
-
-        $scope.showGettingStarted = true;
-
-        $scope.toggleDiv = function (attribute) {
-            $scope[attribute] = !$scope[attribute];
-        }
-    }]);
+    var module = angular.module("documentation", []);
 
     /*
      * Show Example directive
@@ -93,10 +12,6 @@
             templateUrl: "/showExample.html"
         }
     });
-
-    function endsWith(string, test) {
-        return string.lastIndexOf(test) + test.length === string.length;
-    }
 
     function ShowExampleController($scope, $http, $attrs) {
         var url = $attrs["url"];
@@ -155,8 +70,8 @@
     }
 
     /*
-    * Multi-page (more than just js & html really) Examples with plunker support
-    */
+     * Multi-page (more than just js & html really) Examples with plunker support
+     */
     module.directive("showComplexExample", function () {
         return {
             scope: true,
@@ -166,26 +81,103 @@
     });
 
     function ShowComplexScriptExampleController($scope, $http, $attrs, $sce) {
+        // var trailingSlash = (window.location.pathname.indexOf("/", 1) === window.location.pathname.length - 1);
+        // $scope.source = trailingSlash? $attrs["example"] : window.location.pathname + "/" + $attrs["example"];
         $scope.source = $attrs["example"];
         $scope.selectedTab = 'example';
-        $scope.plunker = null;
 
-        if($attrs.plunker && $attrs.plunker.indexOf("https://embed.plnkr.co") === 0) {
-            $scope.plunker = $sce.trustAsResourceUrl($attrs.plunker);
+        $scope.plunker = null;
+        if ($attrs.plunker && $attrs.plunker.indexOf("https://embed.plnkr.co") === 0) {
+            var plunkerUrl = $attrs.plunker;
+            plunkerUrl += (plunkerUrl.indexOf("?") === -1) ? "?" : "&";
+            plunkerUrl += "show=preview";
+
+            $scope.plunker = $sce.trustAsResourceUrl(plunkerUrl);
         }
 
-        if ($attrs.extrapages) {
-            $scope.extraPages = $attrs.extrapages.split(',');
+        $scope.extraPages = [];
+
+        var sources = eval($attrs.sources);
+        sources.forEach(function(source) {
+            var root = source.root;
+            var files = source.files.split(',');
+
+            $scope.extraPages = $scope.extraPages.concat(files);
+
             $scope.extraPageContent = {};
-            $scope.extraPages.forEach(function (page) {
-                $http.get($attrs.extrapagesroot + page).then(function (response) {
-                    $scope.extraPageContent[page] = response.data;
+            files.forEach(function (file) {
+                $http.get(root + file).then(function (response) {
+                    $scope.extraPageContent[file] = response.data;
                 }).catch(function (response) {
-                    $scope.extraPageContent[page] = response.data;
+                    $scope.extraPageContent[file] = response.data;
                 });
             });
             $scope.extraPage = $scope.extraPages[0];
+        });
+
+        if ($attrs.exampleheight) {
+            $scope.iframeStyle = {height: $attrs.exampleheight};
+        } else {
+            $scope.iframeStyle = {height: '500px'}
         }
+
+        $scope.isActive = function (item) {
+            return $scope.selectedTab == item;
+        };
+        $scope.setActive = function (item) {
+            $scope.selectedTab = item;
+        };
+
+        $scope.isActivePage = function (item) {
+            return $scope.extraPage == item;
+        };
+        $scope.setActivePage = function (item) {
+            $scope.extraPage = item;
+        };
+    }
+
+    /*
+     * plunker only example
+     */
+    module.directive("showPlunkerExample", function () {
+        return {
+            scope: true,
+            controller: ShowPlunkerScriptExampleController,
+            templateUrl: "/showPlunkerExample.html"
+        }
+    });
+
+    function ShowPlunkerScriptExampleController($scope, $http, $attrs, $sce) {
+        $scope.selectedTab = 'editplunker';
+
+        $scope.plunker = null;
+        if ($attrs.plunker && $attrs.plunker.indexOf("https://embed.plnkr.co") === 0) {
+            var plunkerUrl = $attrs.plunker;
+            plunkerUrl += (plunkerUrl.indexOf("?") === -1) ? "?" : "&";
+            plunkerUrl += "show=preview";
+
+            $scope.plunker = $sce.trustAsResourceUrl(plunkerUrl);
+        }
+
+        $scope.extraPages = [];
+
+        var sources = eval($attrs.sources);
+        sources.forEach(function(source) {
+            var root = source.root;
+            var files = source.files.split(',');
+
+            $scope.extraPages = $scope.extraPages.concat(files);
+
+            $scope.extraPageContent = {};
+            files.forEach(function (file) {
+                $http.get(root + file).then(function (response) {
+                    $scope.extraPageContent[file] = response.data;
+                }).catch(function (response) {
+                    $scope.extraPageContent[file] = response.data;
+                });
+            });
+            $scope.extraPage = $scope.extraPages[0];
+        });
 
         if ($attrs.exampleheight) {
             $scope.iframeStyle = {height: $attrs.exampleheight};
@@ -277,5 +269,100 @@
             }
         };
     });
+
+    // Local storage/remember toggle state
+    var cookieKeyExpandAll = "agGridExpandAll";
+    var eExpandDivs = document.getElementsByClassName("docsMenu-header");
+    var eExpandAll = document.querySelector(".expandAll");
+
+    // cookieKeyExpandAll
+
+    function showExpandAll(show) {
+        if (show) {
+            eExpandAll.innerHTML = "Expand All <i class='fa fa-arrow-right' aria-hidden='true'></i>";
+        } else {
+            eExpandAll.innerHTML = "Close All <i class='fa fa-arrow-down' aria-hidden='true'></i>";
+        }
+    }
+
+    // close framework dropdown when clicking outside
+    document.body.addEventListener('click', hideFrameworkSelectionOnBodyClick, true);
+    function hideFrameworkSelectionOnBodyClick() {
+        var eFrameworkBox = document.querySelector('.frameworkBox');
+        var ePopupButton = document.querySelector('.frameworkDropdownButton');
+        if (eFrameworkBox) {
+            if (!eFrameworkBox.contains(event.target)) {
+                ePopupButton.classList.remove("active");
+            }
+        }
+    }
+
+    for (var i = 0; i < eExpandDivs.length; i++) {
+        eExpandDivs[i].addEventListener('click', handleToggle, false);
+    }
+
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires="+d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function handleToggle() {
+
+        resetSingleToggle(this);
+        
+        this.classList.toggle("active");
+
+        showExpandAll(true);
+        setCookie(cookieKeyExpandAll, 'false', 20);
+    }
+
+    function resetSingleToggle(eDivToSkip) {
+        for (var i = 0; i < eExpandDivs.length; i++) {
+            if (eExpandDivs[i] !== eDivToSkip) {
+                eExpandDivs[i].classList.remove("active");
+            }
+        }
+    }
+
+    /* expand all dropdowns */
+    if (eExpandAll) {
+        eExpandAll.addEventListener('click', function(){
+            if (this.text.indexOf('Expand') > -1) {
+                expandAll();
+            } else {
+                closeAll();
+            }
+        }, true);         
+    }
+
+    function expandAll() {
+        for (var i = 0; i < eExpandDivs.length; i++) {
+            eExpandDivs[i].classList.add("active");
+            showExpandAll(false);
+            setCookie(cookieKeyExpandAll, 'true', 20);
+        }
+    }
+
+    function closeAll() {
+        for (var i = 0; i < eExpandDivs.length; i++) {
+            eExpandDivs[i].classList.remove("active");
+            showExpandAll(true);
+            setCookie(cookieKeyExpandAll, 'false', 20);
+        }
+    }
+
+    /* framework dropdown menu */
+    var FrameworkLinks = document.getElementsByClassName("frameworkDropdown-link");
+
+    for (var i = 0; i < FrameworkLinks.length; i++) {
+        FrameworkLinks[i].addEventListener('click', handleFrameworkChange, false);
+    }
+
+    function handleFrameworkChange() {
+        var framework = this.dataset.id;
+        window.location.href = '?framework=' + framework;
+    }
 
 })();

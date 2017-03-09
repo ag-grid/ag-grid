@@ -1,11 +1,17 @@
 <?php
-$key = "Getting Started ng2";
+header("HTTP/1.1 301 Moved Permanently");
+header("Location: https://www.ag-grid.com/javascript-grid-getting-started/?framework=angular");
+?>
+
+
+<?php
+/*$key = "Getting Started ng2";
 $pageTitle = "Angular Datagrid";
 $pageDescription = "Demonstrate the best Angular datagrid. Shows and example of a datagrid for using with Angular.";
 $pageKeyboards = "Angular Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
-?>
+*/?><!--
 
 <div>
 
@@ -398,4 +404,4 @@ private getCountryFilterParams():any {
 
 </div>
 
-<?php include '../documentation-main/documentation_footer.php'; ?>
+--><?php /*include '../documentation-main/documentation_footer.php'; */?>

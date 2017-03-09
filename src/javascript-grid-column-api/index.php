@@ -49,79 +49,94 @@ include '../documentation-main/documentation_header.php';
             can be accessed.
         </p>
 
-        <? if (isFrameworkJavaScript()) { ?>
-            <h4>
-                <img src="/images/javascript.png" height="20"/>
-                Javascript
-            </h4>
-        <? } ?>
+        <?php if (isFrameworkJavaScript()) { ?>
+            <div>
+                <h4>
+                    <img  src="/images/javascript.png" height="20"/>
+                    Javascript
+                </h4>
+                <p>
+                    Use columnApi placed inside gridOptions by the grid during initialisation.
+                </p>
+            </div>
+        <?php } ?>
 
-        <? if (isFrameworkAngular1()) { ?>
-            <h4>
-                <img  src="/images/angularjs.png" height="20px"/>
-                AngularJS 1.x
-            </h4>
-        <? } ?>
+        <?php if (isFrameworkAngularJS()) { ?>
+            <div>
+                <h4>
+                    <img src="/images/angularjs.png" height="20px"/>
+                    AngularJS 1.x
+                </h4>
+                <p>
+                    Use columnApi placed inside gridOptions by the grid during initialisation.
+                </p>
+            </div>
+        <?php } ?>
 
-        <p>
-            Use columnApi placed inside gridOptions by the grid during initialisation.
-        </p>
+        <?php if (isFrameworkReact()) { ?>
+            <div>
+                <h4>
+                    <img src="/images/react.png" height="20px"/>
+                    React
+                </h4>
+                <p>
+                    Use the column API passed to you via the onGridReady callback of the React component. You can also
+                    use the columnApi placed inside gridOptions by the grid during initialisation.
+                </p>
+            </div>
+        <?php } ?>
 
-        <? if (isFrameworkJavaScript()) { ?>
-            <h4>
-                <img src="/images/react.png" height="20px"/>
-                React
-            </h4>
-            <p>
-                Use the column API passed to you via the onGridReady callback of the React component. You can also
-                use the columnApi placed inside gridOptions by the grid during initialisation.
-            </p>
-        <? } ?>
+        <?php if (isFrameworkAngular()) { ?>
+            <div>
+                <h4>
+                    <img src="/images/angular2.png" height="20px"/>
+                    Angular 2
+                </h4>
+                <p>
+                    Use columnApi placed inside gridOptions by the grid during initialisation. You can also
+                    use columnApi directly on the Angular grid component.
+                </p>
+            </div>
+        <?php } ?>
 
-        <div ng-if="isFramework('angular')">
-            <h4>
-                <img src="/images/angular2.png" height="20px"/>
-                Angular 2
-            </h4>
-            <p>
-                Use columnApi placed inside gridOptions by the grid during initialisation. You can also
-                use columnApi directly on the Angular grid component.
-            </p>
+        <?php if (isFrameworkVue()) { ?>
+            <div>
+                <h4>
+                    <img src="/images/vue_large.png" height="20px"/>
+                    VueJS
+                </h4>
+                <p>
+                    Use columnApi placed inside gridOptions by the grid during initialisation. You can also
+                    use columnApi directly on the VueJS grid component.
+                </p>
+            </div>
+        <?php } ?>
 
-        </div>
-        <div ng-if="isFramework('vue')">
-            <h4>
-                <img src="/images/vue_large.png" height="20px"/>
-                VueJS
-            </h4>
-            <p>
-                Use columnApi placed inside gridOptions by the grid during initialisation. You can also
-                use columnApi directly on the VueJS grid component.
-            </p>
+        <?php if (isFrameworkAurelia()) { ?>
+            <div>
+                <h4>
+                    <img src="/images/aurelia.png" height="20px"/>
+                    Aurelia Components
+                </h4>
+                <p>
+                    Use columnApi placed inside gridOptions by the grid during initialisation. You can also
+                    use columnApi directly on the DOM element.
+                </p>
+            </div>
+        <?php } ?>
 
-        </div>
-        <div ng-if="isFramework('aurelia')">
-            <h4>
-                <img src="/images/aurelia.png" height="20px"/>
-                Aurelia Components
-            </h4>
-            <p>
-                Use columnApi placed inside gridOptions by the grid during initialisation. You can also
-                use columnApi directly on the DOM element.
-            </p>
-
-        </div>
-        <div ng-if="isFramework('webcomponents')">
-            <h4>
-                <img src="/images/webComponents.png" height="20px"/>
-                Web Components
-            </h4>
-            <p>
-                Use columnApi placed inside gridOptions by the grid during initialisation. You can also
-                use columnApi directly on the DOM element.
-            </p>
-
-        </div>
+        <?php if (isFrameworkWebComponents()) { ?>
+            <div>
+                <h4>
+                    <img src="../images/webComponents.png" height="20px"/>
+                    Web Components
+                </h4>
+                <p>
+                    Use columnApi placed inside gridOptions by the grid during initialisation. You can also
+                    use columnApi directly on the DOM element.
+                </p>
+            </div>
+        <?php } ?>
 
         <h2 id="column-keys">Column Keys</h2>
 

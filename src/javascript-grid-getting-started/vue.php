@@ -1,9 +1,15 @@
 <div>
 
-    <h2 ng-if="!isFramework('all')" id="implementing-the-vuejs-datagrid"><img style="vertical-align: middle" src="/images/vue_small.png" height="25px"/> Overview</h2>
+    <?php if (!isFrameworkAll()) { ?>
+        <h2 id="implementing-the-vuejs-datagrid">
+            <img src="../images/svg/docs/getting_started.svg" width="50" />
+            <img style="vertical-align: middle" src="/images/vue_small.png" height="25px"/>
+            Getting Started
+        </h2>
+    <?php } ?>
 
     <?php
-    $framework = 'vue';
+    $frameworkChild = 'vue';
     include 'ag-grid-dependency-framework.php'
     ?>
 
@@ -345,89 +351,15 @@ this.columnDefs = [
         and custom filtering.
     </p>
 
-    <h4 id="parent_child">Child to Parent Communication</h4>
-
-    <p>There are a variety of ways to manage component communication in Angular (shared service, local variables etc), but you
-        often need a simple way to let a "parent" component know that something has happened on a "child" component. In this case
-        the simplest route is to use the <code>gridOptions.context</code> to hold a reference to the parent, which the child can then access.</p>
-
-    <pre>
-<span class="codeComment">// in the parent component - the component that hosts ag-grid-angular and specifies which angular components to use in the grid</span>
-beforeMount() {
-    this.gridOptions = {
-        context: {
-            componentParent: this
-        }
-    };
-    this.createRowData();
-    this.createColumnDefs();
-},
-
-<span class="codeComment">// in the child component - the Vue components created dynamically in the grid</span>
-<span class="codeComment">// the parent component can then be accessed as follows:</span>
-this.params.context.componentParent
-</pre>
-
-    <p>Note that although we've used <code>componentParent</code> as the property name here it can be anything - the main
-        point is that you can use the <code>context</code> mechanism to share information between the components.</p>
-
-    <p>The <span style="font-style: italic">"A Simple Example, using CellRenderers created from VueJS Components"</span> above illustrates this in the Child/Parent column:</p>
-    <ul>
-        <li><a href="https://github.com/ceolter/ag-grid-vue-example/blob/master/src/dynamic-component-example/DynamicComponentExample.vue" target="_blank" class="fa fa-external-link"> Parent & Child Component</a></li>
-    </ul>
-
-    <h3 id="building-bundling">Building & Bundling</h3>
-    <p>There are many ways to build and/or bundle an VueJS Application. We provide fully working examples using a simplified
-        Webpack build as part of the <a href="https://github.com/ceolter/ag-grid-vue-example">ag-grid-vue-example</a> on GitHub.</p>
-
-    <?php
-    $framework_enterprise = 'import Vue from "vue";
-import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
-
-// need if you use ag-grid enterprise features
-import "ag-grid-enterprise/main";
-
-...other dependencies';
-
-    include 'ag-grid-enterprise-framework.php'
-    ?>
-
-    <h2 id="ag-grid-vuejs-examples">ag-Grid VueJS Examples</h2>
-    <h3 id="example-rich-grid-without-components">Example: Rich Grid without Components</h3>
+    <h2 id="ag-grid-vuejs-examples">ag-Grid VueJS Example</h2>
+    <h3 id="example-rich-grid-without-components">Example: Rich Grid</h3>
     <p>
-        The example below shows a rich configuration of ag-Grid, with no VueJS Components.
+        The example below shows a rich configuration of ag-Grid, with a VueJS Header Group Component and custom
+        Date Component Filter (under the DOB column).
     </p>
     <show-example url="../vue-examples/#/"
                   jsfile="../vue-examples/src/rich-grid-example/RichGridExample.vue"
                   exampleHeight="525px"></show-example>
-
-    <h2 id="cell-rendering-cell-editing-using-vuej">Cell Rendering & Cell Editing using VueJS</h2>
-
-    <p>
-        It is possible to build
-        <a href="../javascript-grid-cell-rendering/#vue2CellRendering">cellRenderers</a>,
-        <a href="../javascript-grid-cell-editing/#vue2CellEditing">cellEditors</a> and
-        <a href="../javascript-grid-filtering/#vue2Filtering">filters</a> using VueJS. Doing each of these
-        is explained in the section on each.
-    </p>
-
-    <p>
-        Although it is possible to use VueJS for your customisations of ag-Grid, it is not necessary. The grid
-        will happily work with both VueJS and non-VueJS portions (eg cellRenderers in VueJS or normal JavaScript).
-        If you do use VueJS, be aware that you are adding an extra layer of indirection into ag-Grid. ag-Grid's
-        internal framework is already highly tuned to work incredibly fast and does not require VueJS or anything
-        else to make it faster. If you are looking for a lightning fast grid, even if you are using VueJS and
-        the ag-grid-vue component, consider using plain ag-Grid Components (as explained on the pages for
-        rendering etc) inside ag-Grid instead of creating VueJS counterparts.
-    </p>
-
-    <h2 id="next-steps">Next Steps...</h2>
-
-    <p>
-        Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>
-        to learn about accessing all the features of the grid.
-    </p>
 
 </div>
 

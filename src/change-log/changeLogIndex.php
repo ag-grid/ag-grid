@@ -13,12 +13,34 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+    <h2>Version 8.2.x</h2>
+
+    <b>Enhancements:</b>
+    <ul>
+        <li>Enhancement: <a href="../javascript-grid-filtering/#floatingFilter">Floating Filters</a>.</li>
+        <li>Enhancement: <a href="../javascript-grid-pagination/#pagination-api">Pagination API</a>.</li>
+        <li>Enhancement: Pagination now scrolls to top when you load new page.</li>
+        <li>Enhancement: Provided filters now have 'Clear Filter' button.</li>
+        <li>Enhancement: Sorting now shows order of sort when sorting by multiple columns.</li>
+    </ul>
+
+    <b>Bug Fixes:</b>
+    <ul>
+        <li>Bugfix: exportDataAsExcel no longer throws error when called with no arguments.</li>
+        <li>Bugfix: Excel Export wasn't working with Open Office, now working.</li>
+        <li>Bugfix: Excel Export was sometimes missing number values, now fixed.</li>
+        <li>Bugfix: 'Select All' checkbox now works with pagination.</li>
+        <li>Bugfix: Cell refresh now gets cellClassRules reapplied.</li>
+        <li>Bugfix: Horizontal DragService now uses gridOptions.getDocument().</li>
+
+    </ul>
+
     <h2>Version 8.1.x</h2>
 
     <b>Small Breaking Change:</b>
 
-    For Angular 2+ users only: ag-grid-ng2 repository renamed tp ag-grid-angular. So in your
-    dependencies (package.json), reference ag-grid-angular, not ag-grid-ng2.
+    <p>For Angular 2+ users only: ag-grid-ng2 repository renamed tp ag-grid-angular. So in your
+    dependencies (package.json), reference ag-grid-angular, not ag-grid-ng2.</p>
 
     <b>Enhancements:</b>
     <ul>

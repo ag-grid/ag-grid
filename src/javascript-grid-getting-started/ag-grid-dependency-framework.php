@@ -12,7 +12,7 @@
                     <td>bower install ag-grid</td>
                 </tr>
                 <tr>
-                    <td>bower install ag-grid-<?= $framework ?></td>
+                    <td>bower install ag-grid-<?= $frameworkChild ?></td>
                 </tr>
             </table>
         </td>
@@ -29,7 +29,7 @@
                     <td>npm install ag-grid</td>
                 </tr>
                 <tr>
-                    <td>npm install ag-grid-<?= $framework ?></td>
+                    <td>npm install ag-grid-<?= $frameworkChild ?></td>
                 </tr>
             </table>
         </td>
@@ -46,7 +46,7 @@
                     <td>Download ag-grid from <a href="https://github.com/ceolter/ag-grid">Github</a></td>
                 </tr>
                 <tr>
-                    <td>Download ag-grid-<?= $framework ?> from <a href="https://github.com/ceolter/ag-grid-<?= $framework ?>">Github</a></td>
+                    <td>Download ag-grid-<?= $frameworkChild ?> from <a href="https://github.com/ceolter/ag-grid-<?= $frameworkChild ?>">Github</a></td>
                 </tr>
             </table>
         </td>

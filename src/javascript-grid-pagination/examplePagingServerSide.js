@@ -11,30 +11,38 @@ var listOfCountries = ['United States','Russia','Australia','Canada','Norway','C
 
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
-    {headerName: "#", width: 50,
+    {
+        headerName: "#",
+        width: 70,
         cellRenderer: function(params) {
-            return params.node.id + 1;
+            return params.node.id;
         },
+        checkboxSelection: true,
+        headerCheckboxSelection: true,
         // we don't want to sort by the row index, this doesn't make sense as the point
         // of the row index is to know the row index in what came back from the server
         suppressSorting: true,
-        suppressMenu: true },
-    {headerName: "Athlete", field: "athlete", width: 150, suppressMenu: true},
+        suppressMenu: true,
+        suppressFilter:true
+    },
+    {headerName: "Athlete", field: "athlete", width: 150, suppressMenu: true, suppressFilter:true},
     {headerName: "Age", field: "age", width: 90, filter: 'number', filterParams: {newRowsAction: 'keep'}},
     {headerName: "Country", field: "country", width: 120, filter: 'set', filterParams: {values: listOfCountries, newRowsAction: 'keep'}},
     {headerName: "Year", field: "year", width: 90, filter: 'set', filterParams: {values: ['2000','2004','2008','2012'], newRowsAction: 'keep'}},
-    {headerName: "Date", field: "date", width: 110, suppressMenu: true},
-    {headerName: "Sport", field: "sport", width: 110, suppressMenu: true},
-    {headerName: "Gold", field: "gold", width: 100, suppressMenu: true},
-    {headerName: "Silver", field: "silver", width: 100, suppressMenu: true},
-    {headerName: "Bronze", field: "bronze", width: 100, suppressMenu: true},
-    {headerName: "Total", field: "total", width: 100, suppressMenu: true}
+    {headerName: "Date", field: "date", width: 110, suppressMenu: true, suppressFilter:true},
+    {headerName: "Sport", field: "sport", width: 110, suppressMenu: true, suppressFilter:true},
+    {headerName: "Gold", field: "gold", width: 100, suppressMenu: true, suppressFilter:true},
+    {headerName: "Silver", field: "silver", width: 100, suppressMenu: true, suppressFilter:true},
+    {headerName: "Bronze", field: "bronze", width: 100, suppressMenu: true, suppressFilter:true},
+    {headerName: "Total", field: "total", width: 100, suppressMenu: true, suppressFilter:true}
 ];
 
 var gridOptions = {
+    floatingFilter:true,
     enableServerSideSorting: true,
     enableServerSideFilter: true,
     enableColResize: true,
+    suppressRowClickSelection: true,
     paginationPageSize: 500,
     columnDefs: columnDefs,
     rowModelType: 'pagination',

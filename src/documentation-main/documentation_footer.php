@@ -6,6 +6,10 @@
 
 <?php include_once("../includes/footer.php"); ?>
 
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular-cookies.min.js"></script>
+<script src="../documentation-main/documentation.js"></script>
+
 <!-- start Google Search -->
 <script>
 	var gcseCallback = function() {
@@ -16,10 +20,16 @@
 		// show search results container
 		// need to hide it initially to stop jumping
 	    var googleSearchResults = document.getElementById("googleSearchResults");
-        var gcseFormInput = document.querySelector("#documentationSearch .gsc-input-box input");
-        var gcseFormButton = document.querySelector("#documentationSearch .gsc-search-button input");
-        var gcseFormClose = document.querySelector("#documentationSearch .gsst_a");
+        var documentationSearchBox = document.getElementById("documentationSearchBox");
+        var gcseFormInput = document.querySelector("#documentationSearch #documentationSearchBox .gsc-input input");
+        var gcseFormButton = document.querySelector("#documentationSearch #documentationSearchBox .gsc-search-button input");
+        var gcseFormClose = document.querySelector("#documentationSearch #documentationSearchBox .gsc-clear-button");
         googleSearchResults.style.display = "none";
+
+        // slight delay so we can't see jump
+        setTimeout(function() {
+            documentationSearchBox.style.opacity = 1;
+        }, 100);
 
         gcseFormInput.addEventListener("keydown", function(event){
            if (event.key === "Enter" && event.currentTarget.value !== "") {

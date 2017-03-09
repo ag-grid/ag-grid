@@ -4,7 +4,7 @@ var columnDefs = [
     {headerName: "Age", field: "age", width: 90, filter: 'number'},
     {headerName: "Country", field: "country", width: 120},
     {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110, filter:'date', filterParams:{
+    {headerName: "Date", field: "date", width: 145, filter:'date', filterParams:{
         comparator:function (filterLocalDateAtMidnight, cellValue){
             var dateAsString = cellValue;
             var dateParts  = dateAsString.split("/");

@@ -1,11 +1,16 @@
 <?php
-$key = "Getting Started React";
+header("HTTP/1.1 301 Moved Permanently");
+header("Location: https://www.ag-grid.com/javascript-grid-getting-started/?framework=react");
+?>
+
+<?php
+/*$key = "Getting Started React";
 $pageTitle = "Best React Datagrid";
 $pageDescription = "Demonstrates the best React Datagrid. Shows an example of a datagrid using React.";
 $pageKeyboards = "React Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
-?>
+*/?><!--
 
 <div>
 
@@ -319,4 +324,4 @@ somePointLater() {
 <!-- Example uses font awesome icons -->
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
-<?php include '../documentation-main/documentation_footer.php';?>
+--><?php /*include '../documentation-main/documentation_footer.php';*/?>

@@ -1,5 +1,5 @@
 <?php
-$key = "Filtering";
+$key = "Column Filter";
 $pageTitle = "ag-Grid Filtering";
 $pageDescription = "ag-Grid Filtering";
 $pageKeyboards = "ag-Grid Filtering";
@@ -9,20 +9,27 @@ include '../documentation-main/documentation_header.php';
 
 <p>
 
-    <h2 id="filtering">Filtering</h2>
+    <h2 id="filtering">Column Filter</h2>
+
+    <p>
+        Data in ag-Grid can be filtered in the following ways:
+        <ol>
+            <li><b>Column Filter</b>: A column filter is associated with a column and filters data based
+            on the value of that column only. The column filter is accessed via the column's menu and
+            may also have a <i>floating filter</i> element if floating filters are turned on.</li>
+            <li><a href="../javascript-grid-filter-quick/"><b>Quick Filter</b></a>: The quick filter is a simple text filter that filters across all columns.</li>
+            <li><a href="../javascript-grid-filter-external/"><b>External Filter</b></a>: External filters is a way for your application to apply bespoke
+            filtering with no restriction to the columns.</li>
+        </ol>
+        Column filters are tied to a column. Quick filter and external filter
+        are not tied to a column. This section of the documentation talks about column filters only.
+        For quick filter and external filter, see the relevant sections of the documentation.
+    </p>
 
     <p>
         You have two options for filtering, one is use one of the default built-in filters (easy but restricted to
         what's provided), or bake your own custom filters (no restrictions, build what you want, but takes more time).
     </p>
-
-    <note>
-        This page discusses filtering outside of the context of paging. To see how to implement server
-        side filtering, see the sections
-        <a href="/javascript-grid-pagination/">pagination</a>
-        and
-        <a href="/javascript-grid-virtual-paging/">virtual paging</a>
-    </note>
 
     <h3 id="enable-filtering">Enable Filtering</h3>
 
@@ -35,7 +42,19 @@ include '../documentation-main/documentation_header.php';
         When a filter is active on a column, the filter icon appears before the column name in the header.
     </p>
 
-    <h3 id="default-built-in-filters">Default Built-In Filters</h3>
+<pre>
+gridOptions = {
+    <span class="codeComment">// turn on filtering</span>
+    enableFilter: true,
+    ...
+    columnDefs = [
+        {headerName: "Athlete", field: "athlete", filter: 'text'}, <span class="codeComment">// text filter</span>
+        {headerName: "Age",     field: "age",     filter: 'number'}, <span class="codeComment">// number filter</span>
+        {headerName: "Sport",   field: "sport",   suppressFilter: true} <span class="codeComment">// NO filter</span>
+    ]
+}</pre>
+
+    <h3 id="default-built-in-filters">Filter Types</h3>
 
     <p>
         The following filter options can be set for a column definition:
@@ -48,219 +67,78 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>number</th>
-            <td>A number comparison filter. Functionality for matching on {equals, less than, greater than}.</td>
+            <td>A <a href="../javascript-grid-filter-number/">Number Filter</a> for number comparisons.</td>
         </tr>
         <tr>
             <th>text</th>
-            <td>A string comparison filter. Functionality for matching on {contains, starts with, ends with, equals}.</td>
+            <td>A <a href="../javascript-grid-filter-text/">Text Filter</a> for string comparisons.</td>
         </tr>
         <tr>
             <th>date</th>
-            <td>A date comparison filter. Functionality for matching on {equals, not equals, less than, greater than, in range}.</td>
+            <td>A <a href="../javascript-grid-filter-date/">Date Filter</a> for date comparisons.</td>
         </tr>
         <tr>
             <th>set</th>
-            <td>A set filter, influenced by how filters work in Microsoft Excel. This is an ag-Grid-Enterprise
-                feature and explained further <a href="../javascript-grid-set-filtering/">here</a></td>
+            <td>A <a href="../javascript-grid-filter-set/">Set Filter</a>, influenced by how filters work in
+                Microsoft Excel. This is an ag-Grid-Enterprise
+                feature.</td>
+        </tr>
+        <tr>
+            <th>-custom-</th>
+            <td>A <a href="../javascript-grid-filter-component/">Filter Component</a> where you can provide
+            you own filter written in a framework of your choice.</td>
         </tr>
     </table>
 
     <p>
-        If no filter type is specified, the default 'text' filter is used (unless you are using ag-Grid-Enterprise,
-        in which case the 'set' filter is the default).
+        If no filter type is specified, the default is 'text' for ag-Grid (free versions) and 'set'
+        for ag-Grid Enterprise.
     </p>
 
     <h3 id="filter-parameters">Filter Parameters</h3>
 
     <p>
-        As well as specifying the filter type, you can also provide setup parameters for the filters by setting
-        <code>colDef.filterParams</code>. The available parameters are specific to the filter type. What follows
-        is an example of setting 'apply=true' and 'newRowsAction=keep' on a text filter:
+        Each filter can take additional filter params by setting <i>colDef.filterParams</i>.
+        What parameters each filter type takes is explained in the section on each filter.
+        As an example, the following sets parameters for the text filter.
     </p>
 
     <pre>
 columnDefinition = {
-    headerName: "Athlete",
-    field: "athlete",
+
+    headerName: 'Athlete',
+    field: 'athlete'
+
+    <span class="codeComment">// set the column to use text filter</span>
     filter: 'text',
+
+    <span class="codeComment">// pass in additional parameters to the text filter</span>
     filterParams: {apply: true, newRowsAction: 'keep'}
 }</pre>
-
-    <h4 id="text-number-and-date-filter-parameters">Text, Number and Date Filter Parameters</h4>
-    <p>
-        The filter parameters for text, date and number filter have the following meaning:
-        <ul>
-            <li><b>newRowsAction:</b> What to do when new rows are loaded. The default is to reset the filter.
-                If you want to keep the filter status between row loads, then set this value to 'keep'.</li>
-            <li><b>apply:</b> Set to true to include an 'Apply' button with the filter and not filter
-                automatically as the selection changes.</li>
-        </ul>
-
-    </p>
-    <p>
-        The date filter has an additional property to specify how the filter date should be compared with the data
-        in your cell:
-        <ul>
-            <li><b>comparator:</b> A callback to specify how the current row's value compares to the filter.
-            This is explained below in the section <a href="./#dateFilterComparator">Date Filter Comparator</a>.</li>
-        </ul>
-    </p>
 
     <h3 id="built-in-filters-example">Built In Filters Example</h3>
 
     <p>
         The example below demonstrates:
         <ul>
-        <li>Three filter types text filter, number filter and date filter.</li>
-        <li>Quick filter</li>
-        <li>using the <i>ag-header-cell-filtered</i> class, which is applied to the header
+        <li>Three filter types 1) text filter, 2) number filter and 3) date filter.</li>
+        <li>Using the <i>ag-header-cell-filtered</i> class, which is applied to the header
             cell when the header is filtered. By default, no style is applied to this class, the example shows
             applying a different color background to this style.</li>
         <li>'suppressFilter' is set on Total to hide the filter on this column</li>
     </ul>
     </p>
 
-    <show-example example="example1"></show-example>
+    <show-complex-example example="example1.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'example1.html,example1.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/pTreZEgQtV7OZRExQUjU/"
+                          exampleheight="500px">
+    </show-complex-example>
 
-
-    <h3 id="dateFilter">Date Filter</h3>
-
-    <p>
-        The date filter allows filtering by dates. It is more complex than the text and number filters as it
-        allows custom comparators and also custom date pickers.
-    </p>
-
-    <h4 id="dateFilterComparator">Date Filter Comparator</h4>
-
-    <p>
-        Dates can be represented in your data in many ways e.g. as a JavaScript Date object, or as a string in
-        the format eg "26-MAR-2020" or something else different. How you represent dates will be particular to your
-        application.
-
-        If you are filtering JavaScript date objects the filter will work automatically, but if you are representing
-        your date in any other format you will have to provide your own <i>comparator</i> callback.
-    </p>
-
-    <p>
-        The <i>comparator</i> callback takes two parameters. The first parameter is a
-        Javascript date object with the local date at midnight
-        selected in the filter. The second parameter is the current value of the cell being evaluated.
-        The callback must return:
-    <ul>
-        <li>Any number < 0 if the cell value is less than the filter date</li>
-        <li>0 if the dates are the same</li>
-        <li>Any number > 0 if the cell value is greater than the filter date</li>
-    </ul>
-    This pattern is intended to be similar to the JavaScript <i>compareTo(a,b)</i> function.
-    </p>
-
-    <p>
-        Below is an example of using a date filter with a comparator.
-    </p>
-
-<pre>
-colDef = {
-    ...
-    <span class="codeComment">// specify we want to use the date filter</span>
-    filter: 'date',
-
-    <span class="codeComment">// add extra parameters for the date filter</span>
-    filterParams:{
-
-        <span class="codeComment">// provide comparator function</span>
-        comparator: function (filterLocalDateAtMidnight, cellValue) {
-
-            <span class="codeComment">// In the example application, dates are stored as dd/mm/yyyy</span>
-            <span class="codeComment">// We create a Date object for comparison against the filter date</span>
-            var dateParts  = cellValue.split("/");
-            var day = Number(dateParts[2]);
-            var month = Number(dateParts[1]) - 1;
-            var year = Number(dateParts[0]);
-            var cellDate = new Date(day, month, year);
-
-            <span class="codeComment">// Now that both parameters are Date objects, we can compare</span>
-            if (cellDate < filterLocalDateAtMidnight) {
-                return -1;
-            } else if (cellDate > filterLocalDateAtMidnight) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-    }
-}
-</pre>
-
-    <h4 id="custom-date-component">Custom Date Component</h4>
-
-    <p>
-        It is possible to specify your own component to be used as a date picker. By default the grid will us
-        the browser provided date picker for Chrome (as we think it's nice), but for all other browser it will
-        just provide a simple text field. It is assumed that you will have a chosen date picker for your application.
-        In this instance you can provide your chosen date picker to ag-Grid. This is done by providing a custom
-        Date Component via the grid property <i>dateComponent</i> as follows:
-    </p>
-
-<pre>
-gridOptions: {
-    ...
-    <span class="codeComment">// Here is where we specify the component to be used as the date picket widget</span>
-    dateComponent: MyDateEditor
-}},
-</pre>
-
-    <p>
-        The interface for dateComponent is similar to that of a cellRenderer and is as follows:
-    </p>
-
-<pre>
-interface IDateComp {
-    <span class="codeComment">// Callback received to signal the creation of this cellEditorRenderer,
-    // placeholder to create the necessary logic to setup the component,
-    // like initialising the gui, or any other part of your component</span>
-    init?(params: IDateParams): void;
-
-    <span class="codeComment">// Return the DOM element of your editor, this is what the grid puts into the DOM</span>
-    getGui(): HTMLElement;
-
-    <span class="codeComment">// Gets called once by grid after editing is finished.
-    // If your editor needs to do any cleanup, do it here</span>
-    destroy?(): void;
-
-    <span class="codeComment">// Returns the current date represented by this editor</span>
-    getDate(): Date;
-
-    <span class="codeComment">// Sets the date represented by this component</span>
-    setDate(date:Date): void;
-
-    <span class="codeComment">// A hook to perform any necessary operation just after the
-    // gui for this component has been renderer in the screen</span>
-    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
-}
-</pre>
-
-    <p>
-        The params object for the <i>DateComponent</i> has the following signature:
-    </p>
-
-<pre>
-export interface IDateCompParams {
-    <span class="codeComment">// Method for component to tell ag-Grid that the date has changed</span>
-    onDateChanged:()=>void
-}
-</pre>
-
-    <p>
-        The onDateChanged method is used to tell ag-Grid the date selection has changed.
-        You are responsible to hook this method inside your date component so that every time that the date changes
-        inside the component, this method is called, so that ag-Grid can proceed with the filtering.
-    </p>
-
-    <p>
-        See below an example of a custom JQuery date picker.
-    </p>
-
-    <show-example example="exampleCustomDate"></show-example>
 
     <h3 id="apply-function">Apply Function</h3>
 
@@ -274,123 +152,68 @@ export interface IDateCompParams {
         server side filtering (thus preventing unnecessary calls to the server).
     </p>
 
+    <h3 id="events">Filter Events</h3>
+
     <p>
-        The example below also demonstrates the filter hook callbacks (see your browser dev console).
-        <li>onFilterModified gets called when the filter changes regardless of the apply button.</li>
-        <li>onBeforeFilterChanged gets called before a new filter is applied.</li>
-        <li>onAfterFilterChanged gets called after a new filter is applied.</li>
+        Filtering results in the following events getting emitted:
+        <table class="table">
+            <tr>
+                <th>filterChanged</th>
+                <td>
+                    Filter has changed, grid also listens for this and updates the model.
+                </td>
+            </tr>
+            <tr>
+                <th>beforeFilterChanged</th>
+                <td>
+                    Filter has changed, grid has not updated.
+                </td>
+            </tr>
+            <tr>
+                <th>afterFilterChanged</th>
+                <td>
+                    Filter has changed, grid has updated.
+                </td>
+            </tr>
+            <tr>
+                <th>filterModified</th>
+                <td>
+                    Gets called when filter has been modified but <i>filterChanged</i>
+                    not necessarily called. This is useful when
+                    using an apply button inside the filter, as this event fires
+                    when the filter is modified, and then <i>filterChanged</i>
+                    is fired when the apply button is pressed.
+                </td>
+            </tr>
+        </table>
     </p>
 
-    <show-example example="exampleFilterApply"></show-example>
+    <h3 id="filter-and-events-example">Example: Apply Button and Filter Events</h3>
+
+    <p>
+        The example below also demonstrates using the apply button and filter events as follows:
+        <ul>
+            <li>onFilterModified gets called when the filter changes regardless of the apply button.</li>
+            <li>onBeforeFilterChanged gets called before a new filter is applied.</li>
+            <li>onAfterFilterChanged gets called after a new filter is applied.</li>
+        </ul>
+    </p>
+
+    <show-complex-example example="exampleFilterApply.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleFilterApply.html,exampleFilterApply.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/eIdTwdmysRxmhyOZJFbP/"
+                          exampleheight="500px">
+    </show-complex-example>
 
     <h3 id="filtering-animation">Filtering Animation</h3>
 
     <p>
         To enable animation of the rows after filtering, set grid property <i>animateRows=true</i>.
     </p>
-
-
-    <h3 id="externalFiltering">External Filtering</h3>
-
-    <p>
-        It is common for you to want to have widgets on the top of your grid that influence the grids filtering.
-        External filtering allows you to mix your own 'outside of the grid' filtering with the grids filtering.
-    </p>
-
-    <p>
-        The example below shows external filters in action. There are two methods on gridOptions you
-        need to implement: <i>isExternalFilterPresent()</i> and <i>doesExternalFilterPass(node)</i>.
-    </p>
-    <ul>
-
-    <li>
-        <b>isExternalFilterPresent</b> is called exactly once every time the grid senses a filter change.
-        It should return true if external filtering is active, otherwise false. If you return true, then
-        doesExternalFilterPass() will be called while filtering, otherwise doesExternalFilterPass() will
-        not be called.
-    </li>
-    <li>
-        <b>doesExternalFilterPass</b> is called once for each row node in the grid. If you return false,
-        the node will be excluded from the final set.
-    </li>
-    </ul>
-    <p>
-        If the external filter changes, then you need to call api.onFilterChanged() to tell the grid
-    </p>
-    <p>
-        The example below shows the external filters in action.
-    </p>
-
-    <show-example example="exampleFilterExternal"></show-example>
-
-    <h3 id="quick-filter">Quick Filter</h3>
-
-    <p>
-        In addition to the column specific filtering, a 'quick filter' (influenced by how filtering is done in Google
-        GMail) can also be applied. Set the quick filter text into the grid options and tell the grid, via the API,
-        to filter the data (which will include the new quick filter).
-    </p>
-
-    <h4 id="how-it-works">How it Works</h4>
-
-    <p>
-        Each node gets a <i>quick filter text</i> attached to it by concatenating all the values for each column.
-        For example, a {Employee Name, Job} table could have a row with quick filter text of 'Niall Crosby_Coffee Maker'.
-        The grid then does a simple string search, so if you search for 'Niall', it will find our example text.
-        Joining all the columns values into one string gives a huge performance boost. The values
-        are joined after the quick filter is requested for the first time and stored in the rowNode - the original
-        data that you provide is not changed.
-    </p>
-
-    <h4 id="overridingQuickFilter">Overriding the Quick Filter Value</h4>
-
-    <p>
-        If your data contains complex objects, then the quick filter will end up with [object,object] inside it
-        instead of searchable string values. Or maybe you want to format string values for searching (eg take out
-        accent characters, or take out commas from numbers). If you want to do this, then provide a <i>getQuickFilterText</i>
-        to the column definition, eg:
-    <pre>colDef = {
-    headerName: "D", field: "d",
-    getQuickFilterText: function(params) {
-        return params.value.name;
-    }
-}</pre>
-    Params contains {value, node, data, column, colDef}.
-    </p>
-    <note>
-        You only need to override the quick filter value if you have a problem. If you don't have a quick filter
-        problem, you don't need to use it, quick filter will work 'out of the box' in most cases.
-    </note>
-
-    <h4 id="reset-quick-filters">Reset Quick Filters</h4>
-
-    <p>Quick filters can be reset in any of the following ways:
-    <ul>
-        <li>Each rowNode has a <code>resetQuickFilterAggregateText</code> method on it - call this to reset the quick filter</li>
-        <li><code>rowNode.setDataValue(colKey, newValue)</code> will also reset the quick filter</li>
-        <li>Lastly, if using the grid editing features, when you update a cell, the quick filter will get reset.</li>
-    </ul>
-    </p>
-
-    <h4 id="quick-filter-example">Quick Filter Example</h4>
-
-    <p>
-        The example below shows the quick filter working on different data types. Each column demonstrates something
-        different as follows:
-    <ul>
-        <li>A - Simple column, nothing complex.</li>
-        <li>B - Complex object with 'dot' in field, quick filter works fine.</li>
-        <li>C - Complex object and value getter used, again quick filter works fine.</li>
-        <li>D - Complex object, quick filter would call 'toString' on the complex object, so getQuickFilterText is provided.</li>
-        <li>E - Complex object, not getQuickFilterText provided, so the quick filter text ends up with '[object,object]' for this column.</li>
-    </ul>
-    To see the quick filter text attached to each node, click 'Print Quick Filter Texts' button after you execute
-    the quick filter at least one. You will notice the quick filter text is correct for each column except E
-    (which would be fixed by adding an appropriate getQuickFilterText method like D does).
-    </p>
-
-    <show-example example="exampleQuickFilter"></show-example>
-
 
     <h3 id="accessing-filter-component-instances">Accessing Filter Component Instances</h3>
 
@@ -403,68 +226,12 @@ export interface IDateCompParams {
     <pre><span class="codeComment">// Get a reference to the name filter instance</span>
 var nameFilterInstance = api.getFilterInstance('name');</pre>
     <p>
-        All of the methods in the IFilter interface (described above) are present, assuming the underlying
+        All of the methods of the IFilter interface are present, assuming the underlying
         filter implements the method. Your custom filters can add their own methods here that ag-Grid will
         not use but your application can use. What these extra methods do is up to you and between your
         customer filter and your application.
     </p>
 
-    <h3 id="text-filter-component-methods">Text Filter Component Methods</h3>
-    <p>
-        In addition to implementing the IFilter interface, the text filter also provides the following
-        API methods:
-        <ul>
-        <li>getType(): Gets the type.</li>
-        <li>setType(string): Sets the type.</li>
-        <li>getFilter(): Gets the filter text.</li>
-        <li>setFilter(string): Sets the filter text.</li>
-        </ul>
-    </p>
-    <p>
-        The available types for the text filter are the strings: 'contains', 'equals', 'notEquals', 'startsWith' and 'endsWith'.
-    </p>
-    <p>
-        So for example, you can set the text of the 'name' filter to start with 'bob' as follows:
-    <pre>var nameFilter = api.getFilterInstance('name');
-nameFilter.setType('startsWith');
-nameFilter.setFilter('bob');</pre>
-    </p>
-
-    <p>
-        Or alternatively, you could just use the <i>setModel()</i> method as part of the main <i>IFilter</i>
-        interface as follows:
-    <pre>var nameFilter = api.getFilterInstance('name');
-var model = {type: 'startsWith', filter: 'bob'};
-nameFilter.setModel(model);</pre>
-    </p>
-
-    <h3>Number Filter Component Methods</h3>
-    <p>
-        Similar to the text filter, the number filter also provides the following API methods:
-    <ul>
-        <li>getType(): Gets the type.</li>
-        <li>setType(string): Sets the type.</li>
-        <li>getFilter(): Gets the filter text.</li>
-        <li>setFilter(number): Sets the filter text.</li>
-    </ul>
-    </p>
-
-    <h3>Date Filter Component Methods</h3>
-    <p>
-        Similar to the text and number filter, the number filter also provides the following API methods:
-    <ul>
-        <li>getDateFrom(): Gets the filter date as string with the format yyyy-mm-dd. If the filter type is "in range", it returns the first date from the range.</li>
-        <li>setDateFrom(dateAsString): Sets the date from. The format of the string must be yyyy-mm-dd.</li>
-        <li>getDateTo(): Gets the second filter date of an "in range" filter as string with the format yyyy-mm-dd, if the filter type is not "in range", then this returns null</li>
-        <li>setDateTo(dateAsString): Sets the date to of an "in range" filter. The format of the string must be yyyy-mm-dd.</li>
-        <li>getFilterType(): Gets the current type of the filter, the possible values are: equals, notEquals, lessThan, greaterThan, inRange.</li>
-        <li>setFilterType(filterName): Sets the current type of the filter, it can only be one of the acceptable types of date filter.</li>
-    </ul>
-    </p>
-
-    <p>
-        The available types for the text filter are the strings: 'equals', 'notEqual', 'lessThan', 'lessThanOrEqual', 'greaterThan' and 'greaterThanOrEqual'.
-    </p>
 
     <h3>Example Filter API</h3>
 
@@ -478,10 +245,18 @@ nameFilter.setModel(model);</pre>
     </p>
 
     <p>
-        (Note: the example uses the <a href="../javascript-grid-set-filtering/">enterprise set filter</a>).
+        (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <show-example example="exampleFilterApi"></show-example>
+    <show-complex-example example="exampleFilterApi.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleFilterApi.html,exampleFilterApi.js' }
+                                ]
+                              }"
+                          plunker="https://embed.plnkr.co/0NoAA9cEZa1Zr9brMZ2I/"
+                          exampleheight="500px">
+    </show-complex-example>
 
     <h4 id="reset_filters">Reset Individual Filters</h4>
 
@@ -523,8 +298,8 @@ gridOptions.api.setFilterModel(null);
     <h3 id="get_set_filter_model">Get / Set All Filter Models</h3>
 
     <p>
-        It is possible to get and set the state of <b>all</b> the filters via the api methods <i>gridOptions.api.getFilterModel</i>
-        and <i>gridOptions.api.setFilterModel</i>. These methods manage the filters states via the <i>getModel</i> and <i>setModel</i>
+        It is possible to get and set the state of <b>all</b> the filters via the api methods <i>api.getFilterModel()</i>
+        and <i>api.setFilterModel()</i>. These methods manage the filters states via the <i>getModel()</i> and <i>setModel()</i>
         methods of the individual filters.
     </p>
     <p>
@@ -542,11 +317,82 @@ gridOptions.api.setFilterModel(null);
     </p>
 
     <p>
-        (Note: the example uses the <a href="../javascript-grid-set-filtering/">enterprise set filter</a>).
+        (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
     <show-example example="exampleFilterModel"></show-example>
 
+<h3 id="floatingFilter">Floating filters</h3>
+
+<p>
+    Floating Filters are an additional row under the column headers where the user will be able to
+    see and optionally edit the filters associated to each column.
+</p>
+
+<p>
+    Floating filters are activated by setting grid property <i>floatingFilter=true</i>:
+</p>
+
+<pre>
+gridOptions = {
+    <span class="codeComment">// turn on floating filters</span>
+    floatingFilter: true
+    ...
+}</pre>
+
+<p>
+    Floating filters are an accessory to the main column filters. They do not contain their own state,
+    rather they display the state of the main filter, and if editable they set state on the main filter.
+    Underneath the hood this is done by using the main filters <i>getModel()</i> and <i>setModel()</i>
+    methods. For this reason, there is no api for getting or setting state of the floating filters.
+</p>
+
+<p>
+    All the default filters provided by ag-Grid provide their own implementation of a floating filter.
+    All you need to do to enable these floating filters is set the <i>floatingFilter=true</i> grid property.
+</p>
+
+<p>
+    Every floating filter also takes a parameter to show/hide automatically a button that will open the main filter.
+</p>
+
+<p>
+    To see the specifics on what are all the parameters and the interface for a floating filter check out
+    <a href="../javascript-grid-floating-filter-component/">the docs for floating filter components</a>.
+</p>
+
+<p>
+    The following example shows the following features of floating filters:
+    <ul>
+        <li>Text filter: Have out of the box read/write floating filters (Sport column)</li>
+        <li>Set filter: Have out of the box read floating filters  (Country column)</li>
+        <li>Date and number filter: Have out of the box read/write floating filters for all filter except when switching
+            to in range filtering, then the floating filter is read only (Age and date columns)</li>
+        <li>Columns with the applyButton require the user to press enter on the floating filter for the filter to take
+        effect (Gold column)</li>
+        <li>Changes made from the outside are reflected automatically in the floating filters (Press any button)</li>
+        <li>Columns with custom filter have automatic read only filter if the custom filter implements the method
+        getModelAsString. (Athlete column)</li>
+        <li>The user can configure when to show/hide the button that shows the rich filter (Silver and Bronze columns)</li>
+        <li>Columns with suppressFilter=true don't have floating filters (Total column)</li>
+        <li>Combining suppressMenu and suppressFilter lets you control where the user access to the rich filter. In
+        this example suppressMenu = true for all the columns except Silver and Bronze</li>
+    </ul>
+</p>
+
+<show-example example="exampleFloatingFilter"></show-example>
+
+<h3>Server Side Filtering</h3>
+
+<p>
+    Some of the row models
+    (<a href="/javascript-grid-pagination/">pagination</a> and
+    <a href="/javascript-grid-virtual-paging/">infinite scrolling</a>)
+    have further information on how to implement server side filtering.
+    For details on this, see the the sections
+    <a href="/javascript-grid-pagination/">pagination</a> and
+    <a href="/javascript-grid-virtual-paging/">infinite scrolling</a>.
+</p>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

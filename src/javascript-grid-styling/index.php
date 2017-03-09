@@ -7,9 +7,12 @@ $pageGroup = "themes";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2>
+<div>
 
-    <h2 id="themes">Themes</h2>
+    <h2 id="themes">
+        <img src="../images/svg/docs/themes.svg" width="50" />
+        Themes
+    </h2>
 
     <p>
         ag-Grid is designed to have it's look and feel derived from a theme.

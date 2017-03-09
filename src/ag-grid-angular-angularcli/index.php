@@ -1,11 +1,16 @@
 <?php
-$key = "Angular CLI";
+header("HTTP/1.1 301 Moved Permanently");
+header("Location: https://www.ag-grid.com/javascript-grid-getting-started/?framework=angular");
+?>
+
+<?php
+/*$key = "Angular CLI";
 $pageTitle = "Angular Datagrid using Angular CLI";
 $pageDescription = "Demonstrate the best Angular datagrid using Angular CLI.";
 $pageKeyboards = "Angular Grid Angular CLI";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
-?>
+*/?><!--
 
 <div>
 
@@ -209,4 +214,4 @@ export class AppModule {
 
 </div>
 
-<?php include '../documentation-main/documentation_footer.php'; ?>
+--><?php /*include '../documentation-main/documentation_footer.php'; */?>

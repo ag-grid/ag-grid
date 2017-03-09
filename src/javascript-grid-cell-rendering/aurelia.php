@@ -61,9 +61,6 @@
               jsfile="../aurelia-example/components/editor-example/editor-example.ts"
               html="../aurelia-example/components/editor-example/editor-example.html"></show-example>
 
-<h3 id="aurelia-methods-lifecycle"><img src="../images/aurelia_large.png" style="width: 20px;"/> Aurelia Methods / Lifecycle</h3>
-
-
 <h3 id="example-rendering-using-regular-cell-renderer-components">Example: Rendering using regular cellRenderer Components</h3>
 <p>
     A Rich Grid leveraging regular Cell Renderer Components

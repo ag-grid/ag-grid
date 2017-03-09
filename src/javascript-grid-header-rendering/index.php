@@ -392,6 +392,26 @@ columnGroup.removeEventListener('expandedChanged', listener);</pre>
 
     <show-example example="exampleHeaderGroupComponent"></show-example>
 
+    <?php if (isFrameworkAngular()) { ?>
+        <?php include './angular.php';?>
+    <?php } ?>
+
+    <?php if (isFrameworkAurelia()) { ?>
+        <?php include './aurelia.php';?>
+    <?php } ?>
+
+    <?php if (isFrameworkReact()) { ?>
+        <?php include './react.php';?>
+    <?php } ?>
+
+    <?php if (isFrameworkVue()) { ?>
+        <?php include './vuejs.php';?>
+    <?php } ?>
+
+    <hr>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+
     <!-- old bit, to be removed when we release v9 -->
 
     <div style="border-left: 4px solid lightcoral; padding-left: 4px;">
@@ -473,9 +493,9 @@ columnGroup.removeEventListener('expandedChanged', listener);</pre>
         <p>There are two methods useful in the API for showing the column menu if you don't like the provided logic:</p>
         <ul>
             <li><b>showColumnMenuAfterButtonClick(colKey, buttonElement)</b>: Shows a menu and positions relative
-            to the provided button element - so it appears over the element giving the impression of the dropdown menu.</li>
+                to the provided button element - so it appears over the element giving the impression of the dropdown menu.</li>
             <li><b>showColumnMenuAfterMouseClick(colKey, mouseEvent)</b>: Shows a menu and positions relative
-            to the provided mouse event - use this for context menu, so the menu appears where you click the mouse.</li>
+                to the provided mouse event - use this for context menu, so the menu appears where you click the mouse.</li>
         </ul>
         <p>It is unusual to use these methods, only use them if you can't get what you want from the normal behaviour.</p>
 
@@ -582,23 +602,6 @@ columnGroup.removeEventListener('expandedChanged', listener);</pre>
         <show-example example="example1"></show-example>
 
     </div>
-
-    <div ng-if="isFramework('angular')">
-        <?php include './angular.php';?>
-    </div>
-
-    <div ng-if="isFramework('aurelia')">
-        <?php include './aurelia.php';?>
-    </div>
-
-    <div ng-if="isFramework('react')">
-        <?php include './react.php';?>
-    </div>
-
-    <div ng-if="isFramework('vue')">
-        <?php include './vue.php';?>
-    </div>
-
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

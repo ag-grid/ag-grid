@@ -1,7 +1,7 @@
 <div class="collapsableDocs">
     <div class="collapsableDocs-header"
          onclick="javascript: this.classList.toggle('active');">
-        <div style="padding: 5px;vertical-align: middle"><?php include '../enterprise.php'; ?>&nbsp;&nbsp;<strong>Installing
+        <div style="padding: 5px;vertical-align: middle"><img src="../images/enterprise_50.png"/>&nbsp;&nbsp;<strong>Installing
                 ag-Grid-Enterprise</strong>
         </div>
         <i class="fa fa-arrow-right" aria-hidden="true"></i>

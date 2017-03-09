@@ -76,7 +76,7 @@ interface IDatasource {
         data comes back from the server, provide this info as the second parameter of the <i>successCallback</i>
     </p>
 
-    <h4 id="function-get-rows">Function getRows()</h4>
+    <h3 id="function-get-rows">Function getRows()</h3>
 
     <p>
         getRows is called by the grid to load pages into the browser side cache of pages. It takes parameter, called
@@ -149,7 +149,7 @@ interface IGetRowsParams {
         that the datasource then has access to.
     </p>
 
-    <h4 id="page-size">Page Size</h4>
+    <h3 id="page-size">Page Size</h3>
 
     <p>
         The page size is set using the grid property <i>paginationPageSize</i>. This is how large the 'pages' should be.
@@ -158,7 +158,7 @@ interface IGetRowsParams {
         grids page cache.
     </p>
 
-    <h4 id="next-steps">Next Steps</h4>
+    <h3 id="next-steps">Next Steps</h3>
 
     <p>
         Now that you can create a datasource, go onto the next sections to set up a datasource

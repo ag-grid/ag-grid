@@ -1,5 +1,10 @@
-<h2 ng-if="!isFramework('all')"><img style="vertical-align: middle" src="/images/javascript.png" height="25px"/>
-    Overview</h2>
+<?php if (!isFrameworkAll()) { ?>
+    <h2>
+        <img src="../images/svg/docs/getting_started.svg" width="50" />
+        <img style="vertical-align: middle" src="../images/javascript.png" height="25px"/>
+        Getting Started
+    </h2>
+<?php } ?>
 
 <?php include 'ag-grid-dependency.php' ?>
 
@@ -56,17 +61,23 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>With that in place we have a quick and simple Grid up and running:</p>
 
 <show-complex-example example="example-js.html"
-                      extraPagesRoot="./"
-                      extraPages="example-js.html,example-js.js"
+                      sources="{
+                            [
+                                { root: './', files: 'example-js.html,example-js.js' }
+                            ]
+                          }"
                       plunker="https://embed.plnkr.co/369YrrgCVrnPjD528OtT/"
                       exampleheight="130px">
 </show-complex-example>
 
+<h3>A Richer Example</h3>
+<p>
+    The below example is a more complex example demonstration much more interactivity and customisation.
+    The mechanism for setting up the grid
+    is the same as before. Don't worry about the finer details for now, how all the
+    different options are configured is explained in the relevant parts of the documentation.
+</p>
 
-<?php include 'ag-grid-bundletypes.php' ?>
-
-<?php include 'ag-grid-commonjs.php' ?>
-
-<?php include 'ag-grid-enterprise-dependency.php' ?>
+<show-example example="html5grid"></show-example>
 
 </div>

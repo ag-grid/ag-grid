@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Pagination allows the grid to lazy load rows from the server and display the rows one page at a time. The page to display is selected
-        by he user using the pagination panel that appears at the bottom of the page.
+        by the user using the pagination panel that appears at the bottom of the page.
     </p>
 
     <p>
@@ -31,14 +31,14 @@ include '../documentation-main/documentation_header.php';
         the total rows and pages are displayed as 'more' at the bottom of the page, and the 'last' button is disabled.
     </p>
 
-    <h4 id="aggregation-and-grouping">Aggregation and Grouping</h4>
+    <h3 id="aggregation-and-grouping">Aggregation and Grouping</h3>
 
     <p>
         Aggregation and grouping work exactly as when no paging, however their effect will be on the currently displayed page only. It is not
         posible to have the client aggregate or group on data that is not loaded from the server.
     </p>
 
-    <h4 id="sorting-filtering">Sorting & Filtering</h4>
+    <h3 id="sorting-filtering">Sorting & Filtering</h3>
 
     <p>
         You have two options for both sorting and filtering. Either you can allow the grid to do it on a particular page
@@ -66,7 +66,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="examplePaging"></show-example>
 
-    <h4 id="example-server-side-sorting-and-filtering">Example - Server Side Sorting and Filtering</h4>
+    <h3 id="example-server-side-sorting-and-filtering">Example - Server Side Sorting and Filtering</h3>
 
     <p>
         The following example extends the example above by adding server side filtering and sorting.
@@ -98,14 +98,153 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="examplePagingServerSide"></show-example>
 
-    <h4 id="configuring-a-bit-differently">Configuring A Bit Differently</h4>
+    <h3>
+        Start Page
+    </h3>
 
     <p>
-        The examples above use old style JavaScript objects for the datasource. This example turns things around slightly
-        and creates a datasource Class. The example also just creates (makes up) data on the fly.
+        The start page for pagination is by default zero (the first page). If you want another
+        page, set the property <i>paginationStartPage</i>.
+    </p>
+
+    <h3 id="configuring-a-bit-differently">Configuring A Bit Differently</h3>
+
+    <p>
+        To demonstrate further, the example below shows:
+        <ul>
+            <li>A JavaScript Class is used for the datasource.</li>
+            <li>Data is made up on the fly (probably not what your application would do, but good for testing
+                as it easily generates a large amount of data).</li>
+            <li>The start page for the datasource is set to 6 by setting <i>paginationStartPage=5</i>.</li>
+        </ul>
     </p>
 
     <show-example example="examplePagingMadeUpData"></show-example>
+
+    <h3 id="pagination-api">Pagination Events</h3>
+
+    <p>
+        The grid fires the following events with regards pagination:
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>paginationReset</th>
+            <td>
+                Pagination service is reset. This happens when a a) new datasource is set;
+                b) filter changed (for server side filtering only); b) sort changed (for
+                server side sorting only).
+            </td>
+        </tr>
+        <tr>
+            <th>paginationPageRequested</th>
+            <td>
+                Pagination page load is requested. Useful if you want to set a loading spinner
+                visible while the loading is happening (and remove the spinner on
+                <i>paginationPageLoaded</i> event.
+            </td>
+        </tr>
+        <tr>
+            <th>paginationPageLoaded</th>
+            <td>
+                Pagination page load is finished. If you need to update any GUI with
+                status of the pagination (eg what page number is currently loaded)
+                you should do it after this event.
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        Note that every <i>paginationPageRequested</i> does NOT result in a corresponding
+        <i>paginationPageLoaded</i> event. If the user requests a page to be loaded
+        before the previous load is finished (eg the user hits 'Next' three times in
+        quick succession) then only the last load will result in a <i>paginationPageLoaded</i>
+        event.
+    </p>
+
+    <h3 id="pagination-api">Pagination API</h3>
+
+    <p>
+        The following API is provided to interact with the pagination:
+    </p>
+
+    <table class="table">
+        <tr>
+            <th>paginationIsLastPageFound()</th>
+            <td>Returns true if last page of pagination is found, otherwise false.</td>
+        </tr>
+        <tr>
+            <th>paginationGetPageSize()</th>
+            <td>Returns the page size.</td>
+        </tr>
+        <tr>
+            <th>paginationGetCurrentPage()</th>
+            <td>Returns the currently displayed page.</td>
+        </tr>
+        <tr>
+            <th>paginationGetTotalPages()</th>
+            <td>Returns the total number of pages.</td>
+        </tr>
+        <tr>
+            <th>paginationGetRowCount()</th>
+            <td>Returns the number of rows in one page.</td>
+        </tr>
+        <tr>
+            <th>paginationGoToNextPage()</th>
+            <td>Get grid to load next page.</td>
+        </tr>
+        <tr>
+            <th>paginationGoToPreviousPage()</th>
+            <td>Get grid to load previous page.</td>
+        </tr>
+        <tr>
+            <th>paginationGoToFirstPage()</th>
+            <td>Get grid to load first page.</td>
+        </tr>
+        <tr>
+            <th>paginationGoToLastPage()</th>
+            <td>Get grid to load last page.</td>
+        </tr>
+        <tr>
+            <th>paginationGoToPage(index)</th>
+            <td>Get grid to load specific page. Pages are zero indexed, thus first page is index zero.</td>
+        </tr>
+    </table>
+
+    <p>
+        When using the pagination API, remember the page indexes are zero based in the grid, thus
+        page zero is the first page.
+    </p>
+
+    <h3>Suppressing Pagination Panel</h3>
+
+    <p>
+        If you want to use pagination, but do not want to show the pagination panel, then
+        set property <i>suppressPaginationPanel=true</i>. Use this if you want to provide
+        your own GUI for pagination outside of the grid.
+    </p>
+
+    <h3>Example: API, Events and Suppress Pagination Panel</h3>
+
+    <p>
+        Below shows another example where the API is used to control and get information
+        about the pagination. Because the pagination is controlled outside of the grid,
+        the pagination panel is also hidden. The following can be noted about the example:
+        <ul>
+            <li>
+                The total number of pages is only known when the user has hit the last page.
+            </li>
+            <li>
+                If the last page is known and you try to load a page past the last page,
+                the grid will load the last page.
+            </li>
+            <li>
+                If you try to load a page before
+            </li>
+        </ul>
+    </p>
+
+    <show-example example="examplePagingApi"></show-example>
 
 </div>
 

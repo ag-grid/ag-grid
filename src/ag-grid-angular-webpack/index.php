@@ -4,6 +4,16 @@ $pageTitle = "Angular Datagrid using Webpack";
 $pageDescription = "Demonstrate the best Angular  datagrid using Webpack.";
 $pageKeyboards = "Angular  Grid Webpack";
 $pageGroup = "basics";
+
+$framework = $_GET['framework'];
+if(is_null($framework)) {
+?>
+<script>
+    window.location.href = '?framework=angular';
+</script>
+<?php
+}
+
 include '../documentation-main/documentation_header.php';
 ?>
 
@@ -186,11 +196,27 @@ module.exports = webpackMerge(commonConfig, {
     <p>We don't use a development server with this configuration - we generate the final artifacts in the dist/ folder and expect this to be deploy to a server.</p>
     <p>We use the plugins to stop the build on an error, remove duplicates and minify and extract the CSS into cache busting hash named files.</p>
     <p>Finally, we use the DefinePlugin to provide an environment variable that we can use in our application code to <code>enableProdMode()</code></p>
-    <pre>
+<pre>
 if (process.env.ENV === 'production') {
     enableProdMode();
 }
 </pre>
+
+    <h3>Override ag-Grid CSS</h3>
+    <p>There are many ways to override the CSS with Webpack, but if you use the configuration above then you can override ag-Grid CSS as follows:</p>
+    <ul>
+        <li>Place your application-wide CSS file(s) in a directory other than <code>./app</code> - for example <code>./css/</code>.
+            Remember that CSS under <code>./app</code> is treated differently - it is used for component-scoped styles.</li>
+        <li>In a suitable component - we suggest <code>boot.ts</code> import the CSS you want to include:</li>
+        <pre>import '../css/app.css';</pre>
+    </ul>
+
+    <p>And that's it - you can now override ag-Grid CSS with your own in <code>./css/app.css</code>. For example, the following
+    would set the cell background to green across the board.</p>
+<pre>
+.ag-cell {
+    background-color: green;
+}</pre>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

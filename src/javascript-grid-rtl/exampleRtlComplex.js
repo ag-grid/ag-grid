@@ -80,6 +80,7 @@ var groupColumn = {
 };
 
 var gridOptions = {
+    floatingFilter: true,
     suppressEnterprise: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']

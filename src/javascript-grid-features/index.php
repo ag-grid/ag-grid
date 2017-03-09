@@ -9,7 +9,10 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="features">Features</h2>
+    <h2 id="features">
+        <img src="../images/svg/docs/features.svg" width="50" />
+        Features
+    </h2>
 
     <p>
         The features part of the documentation goes through all the features in detail

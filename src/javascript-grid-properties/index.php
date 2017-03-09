@@ -14,68 +14,93 @@ include '../documentation-main/documentation_header.php';
             Below are listed all the properties of the grid you can add.
         <p>
 
-            <div ng-if="isFramework(['javascript','angularjs'])">
+        <?php if (isFrameworkJavaScript()) { ?>
+            <div>
                 <h4>
                     <img src="/images/javascript.png" height="20"/>
-                    <img ng-if="isFramework('angularjs')" src="/images/angularjs.png" height="20px"/>
-                    Javascript <span ng-if="isFramework('angularjs')">and AngularJS 1.x</span>
+                    Javascript
                 </h4>
-        <p>
-            Add properties to the gridOptions object.
-        </p>
+                <p>
+                Add properties to the gridOptions object.
+                </p>
+            </div>
+        <?php } ?>
 
-    </div>
+        <?php if (isFrameworkAngularJS()) { ?>
+            <div>
+                <h4>
+                    <img src="/images/angularjs.png" height="20px"/>
+                    AngularJS 1.x</span>
+                </h4>
+                <p>
+                Add properties to the gridOptions object.
+                </p>
+            </div>
+        <?php } ?>
 
-    <div ng-if="isFramework('react')">
-        <h4>
-            <img src="/images/react.png" height="20px"/>
-            React
-        </h4>
-        <p>
-            Add properties to the gridOptions object, <b>or</b> you can also add as React props inside your JSX markup.
-        </p>
+        <?php if (isFrameworkReact()) { ?>
+            <div>
+                <h4>
+                    <img src="/images/react.png" height="20px"/>
+                    React
+                </h4>
+                <p>
+                    Add properties to the gridOptions object, <b>or</b> you can also add as React props inside your JSX markup.
+                </p>
+            </div>
+        <?php } ?>
 
-    </div>
+        <?php if (isFrameworkAngular()) { ?>
+            <div>
+                <h4>
+                    <img src="/images/angular2.png" height="20px"/>
+                    Angular
+                </h4>
+                <p>
+                    Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or Angular bound
+                    properties.
+                </p>
+            </div>
+        <?php } ?>
 
-    <div ng-if="isFramework(['angular','vue'])">
-        <h4 ng-if="isFramework('angular')">
-            <img src="/images/angular2.png" height="20px"/>
-            Angular
-        </h4>
-        <h4 ng-if="isFramework('vue')">
-            <img src="/images/vue_large.png" height="20px"/>
-            VueJS
-        </h4>
-        <p>
-            Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or VueJS bound
-            properties.
-        </p>
+        <?php if (isFrameworkVue()) { ?>
+            <div>
+                <h4>
+                    <img src="/images/vue_large.png" height="20px"/>
+                    VueJS
+                </h4>
+                <p>
+                    Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or VueJS bound
+                    properties.
+                </p>
+            </div>
+        <?php } ?>
 
-    </div>
+        <?php if (isFrameworkWebComponents()) { ?>
+            <div>
+                <h4>
+                    <img src="../images/webComponents.png" height="20px"/>
+                    Web Components
+                </h4>
+                <p>
+                    Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or set directly onto the
+                    DOM element.
+                </p>
+            </div>
+        <?php } ?>
 
-    <div ng-if="isFramework('webcomponents')">
-        <h4>
-            <img src="/images/webComponents.png" height="20px"/>
-            Web Components
-        </h4>
-        <p>
-            Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or set directly onto the
-            DOM element.
-        </p>
-
-    </div>
-
-    <div ng-if="isFramework('aurelia')">
-        <h4>
-            <img src="/images/aurelia.png" height="20px"/>
-            Aurelia Components
-        </h4>
-        <p>
-            Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or set directly onto the
-            DOM element.
-        </p>
-
-    </div>
+        <?php if (isFrameworkAurelia()) { ?>
+            <div>
+                <h4>
+                    <img src="/images/aurelia.png" height="20px"/>
+                    Aurelia Components
+                </h4>
+                <p>
+                    Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or set directly onto the
+                    DOM element.
+                </p>
+            </div>
+        <?php } ?>
 
     <table id="list-of-properties" class="table">
         <!-- Columns -->
@@ -260,7 +285,10 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>groupUseEntireRow<br/> groupDefaultExpanded<br/>
                 groupSelectsChildren<br/> groupSelectsFiltered<br/>
-                groupSuppressAutoColumn <br/> groupSuppressBlankHeader, <br/>groupRemoveSingleChildren</th>
+                groupSuppressAutoColumn <br/> groupSuppressBlankHeader <br/>
+                groupRemoveSingleChildren <br/> groupRemoveSingleChildren <br/>
+                groupMultiAutoColumn
+            </th>
             <td>Parameters for grouping. See the section on grouping for details explanation.</td>
         </tr>
         <tr>
@@ -410,8 +438,15 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>paginationPageSize</th>
             <td>For normal paging, how many rows to show to a user at one time (ie page size).
-                In virtual pagination dictates the size of teh pages in the data cache. For both paging
+                In virtual pagination dictates the size of the pages in the data cache. For both paging
                 and virtual pagination, defines the block size the datasource is asked for data.</td>
+        </tr>
+        <tr>
+            <th>paginationFirstPage</th>
+            <td>
+                The first page to use for pagination. So if you want to start on page 6, set this number
+                to 5 (pages are zero indexed).
+            </td>
         </tr>
         <tr>
             <th>datasource</th>
@@ -419,6 +454,15 @@ include '../documentation-main/documentation_header.php';
                 See <a href="../javascript-grid-datasource/">Datasource</a> for more information.
             </td>
         </tr>
+        <tr>
+            <th>suppressPaginationPanel</th>
+            <td>
+                Set to true if you want to use pagination but NOT want to display the grids
+                pagination panel. Use this if you want to provide your own GUI for pagination
+                outside of the grid.
+            </td>
+        </tr>
+
         <!------------------->
         <!-- Row Model: Infinite Scrolling -->
         <!------------------->

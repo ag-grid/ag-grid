@@ -46,34 +46,34 @@
             </p>
 
             <p>
-                Born from frustration with existing solutions, ag-Grid has evolved from aside project to the leading JavaScript data grid. We are a company built by developers for developers and true to our roots, we offer ag-Grid Free, an open source project that delivers world class grid performance. ag-Grid Enterprise is our commercially licensed offering which has enjoyed widespread adoption and permits us to keep delivering on our mission.
+                Born out of frustration with existing solutions, ag-Grid evolved from a side project to becoming the leading JavaScript datagrid on the market. We are a company built by developers for developers, and - true to our roots - we offer ag-Grid Free: an open-source project that delivers world class grid performance. ag-Grid Enterprise is our commercially-licensed offering which has enjoyed widespread adoption and permits us to keep delivering on our mission.
             </p>
 
             <p>    
-                Our story is proof that necessity is the mother of invention. During his time working in financial institutions in London, Niall Crosby - founder and CEO - struggled to find any data grid component that could deliver the performance required in tandem with a complete feature list. This struggle ultimately led Niall to pulling out the keyboard over Christmas holidays and starting ag-Grid as a side project. This side project was then released as open source and quickly developed a following. 
+                Our story is proof that necessity is the mother of invention. During his time working in London-based financial institutions, Niall Crosby - founder and CEO - struggled to find any datagrid component that could deliver the performance required in tandem with a complete feature list. This struggle ultimately led Niall to pulling out the keyboard one Christmas holiday period and starting ag-Grid as a side project. This was then released as open source and quickly developed a following. 
             </p>
 
             <p>
-                Niall found himself in the position of having to devote considerable time and effort to maintaining ag-Grid, even fielding feature requests from users. It became apparent that this thing had legs and the idea of ag-Grid Enterprise took seed in Niall’s head. Fast forward to March, 2016 and the first commercial version was launched.
+                Niall found himself having to devote considerable time and effort to maintaining ag-Grid, even fielding feature requests from users. It became apparent that this thing had legs - and the idea of ag-Grid Enterprise took seed in Niall’s mind. Fast forward to March 2016 and the first commercial version was launched.
             </p>
 
             <p>
-                 ag-Grid today is a self funded, boot strapped company with over 450 customers in 45 countries. Our product has resonated in the market - as our users face those same challenges that Niall did - and this has been central to our rapid growth. And we’re not stopping here, we are furiously working on the next great features to continue our mission.
+                Today, ag-Grid is a self-funded, bootstrapped company with over 500 customers in 49 countries. Our product has resonated in the market - as our users face the same challenges Niall did - and this has been central to our rapid growth. And we’re not stopping here: we are furiously working on the next great features to continue our mission.
             </p>
 
             <h2>
                 Our Principles:
             </h2>
             <p>
-                We believe that a data grid should be agnostic to the framework that developers choose - this allows flexibility and future proofs your development. This is also where the ag in ag-Grid comes from.
+                We believe that a datagrid should be agnostic to the framework that developers choose. This allows flexibility and future-proofs your development. This is also where the 'ag' in ag-Grid comes from.
             </p>
 
             <p>    
-                Our experience is building Enterprise applications, we know that the data grid is the core of an Enterprise application and needs to deliver performance and a rich feature set. 
+                Our experience is in building Enterprise applications: we know that the datagrid is at the core of an Enterprise application, and needs to deliver performance and a rich feature set. 
             </p>
 
             <p>
-                We give away for free what others charge for - ag-Grid Free  provides all of the features of our competion, we only charge when we go above and beyond with features that other grids don’t provide.
+                We give away what others charge for - ag-Grid Free provides all of the features of our competion. We only charge when we go above and beyond, with features that other grids don’t provide.
             </p>
         </div> <!-- end col -->
 
@@ -121,7 +121,7 @@
             <h3>Alberto Gutierrez</h3>
             <h4>Lead Developer - Data Internals</h4>
             <p>
-                Alberto joined the team in early 2017 and further broadens the Enterprise applications experience including e-commerce applications, TV platforms, airport management systems, financial applications, payments integration. He has joined Niall in enhancing and expanding the core features of the grid as well as contributing technical and industry knowledge.
+                Alberto joined the team in early 2017 and further broadens the Enterprise applications experience. With over 15 years across multiple industries, Alberto has been involved in all aspects of the software development lifecycle. He has joined Niall in enhancing and expanding the core features of the grid as well as contributing technical and industry knowledge. 
             </p>
         </div>
 
@@ -133,7 +133,7 @@
 
         <div class="col-md-4">
         <div>
-            <img src='images/will_upd.png'/>
+            <img src='images/will.png'/>
         </div>
         <h3>Will Halling</h3>
         <h4>UI Developer</h4>
@@ -155,7 +155,7 @@
 
         <div class="col-md-4">
             <div>
-                <img src='images/john.png'/>
+                <img src='images/armaan.png'/>
             </div>
             <h3>Armaan Anand</h3>
             <h4>Customer Experience Specialist</h4>
@@ -176,7 +176,7 @@
             <address>
             <strong>ag-Grid Ltd.</strong><br>
             The Treehouse, 2-10 Balham Station Road<br>
-            London, SW12 7SG
+            London, SW12 9SG
             United Kingdom<br>
 
             <p> 

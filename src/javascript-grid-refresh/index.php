@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="refresh">Refresh</h2>
+    <h2 id="refresh">Data Refresh</h2>
 
     <p>
         When the underlying data is changed for the grid, you can get the grid to refresh. The easiest way is to call

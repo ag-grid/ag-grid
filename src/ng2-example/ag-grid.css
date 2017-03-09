@@ -114,6 +114,45 @@ ag-grid-ng2 {
   height: 100%;
   position: absolute;
 }
+.ag-floating-filter {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  position: absolute;
+  display: inline-block;
+}
+.ag-floating-filter-body {
+  margin-right: 25px;
+  height: 20px;
+}
+.ag-floating-filter-full-body {
+  width: 100%;
+  height: 20px;
+}
+.ag-floating-filter-button {
+  width: 25px;
+  height: 20px;
+  float: right;
+  margin-top: -20px;
+}
+.ag-floating-filter-button button {
+  width: 25px;
+  height: 19px;
+  padding: 0;
+}
+.ag-floating-filter-input {
+  width: 100%;
+}
+.ag-floating-filter-input:read-only {
+  background-color: #eee;
+}
+.ag-floating-filter-menu {
+  position: absolute;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 .ag-dnd-ghost {
   font-size: 14px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -657,6 +696,16 @@ ag-grid-ng2 {
   width: 170px;
   margin: 4px;
 }
+.ag-floating-filter-body input {
+  width: 100%;
+  margin: 0;
+  height: 19px;
+}
+.ag-floating-filter-full-body input {
+  width: 100%;
+  margin: 0;
+  height: 19px;
+}
 .ag-filter-select {
   width: 110px;
   margin: 4px 4px 0px 4px;
@@ -710,6 +759,9 @@ ag-grid-ng2 {
 }
 .ag-hidden {
   display: none !important;
+}
+.ag-visibility-hidden {
+  visibility: hidden !important;
 }
 .ag-faded {
   opacity: 0.3;

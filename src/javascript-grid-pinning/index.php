@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="pinning">Pinning</h2>
+    <h2 id="pinning">Column Pinning</h2>
 
     <p>
         You can pin columns by setting the pinned attribute on the column definition to either 'left' or 'right'.

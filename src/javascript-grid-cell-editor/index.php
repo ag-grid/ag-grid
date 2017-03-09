@@ -205,12 +205,20 @@ colDef.cellEditorParams = {
 
 <show-example example="exampleEditorComponent"></show-example>
 
-<? if (isFrameworkAngular2()) { include './angular.php'; } ?>
+<?php if (isFrameworkAngular()) { ?>
+    <?php include './angular.php';?>
+<?php } ?>
 
-<? if (isFrameworkAurelia()) { include './aurelia.php'; } ?>
+<?php if (isFrameworkAurelia()) { ?>
+    <?php include './aurelia.php';?>
+<?php } ?>
 
-<? if (isFrameworkReact()) { include './react.php'; } ?>
+<?php if (isFrameworkReact()) { ?>
+    <?php include './react.php';?>
+<?php } ?>
 
-<? if (isFrameworkVue()) { include './vue.php'; } ?>
+<?php if (isFrameworkVue()) { ?>
+    <?php include './vuejs.php';?>
+<?php } ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

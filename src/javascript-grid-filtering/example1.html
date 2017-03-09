@@ -1,7 +1,7 @@
 <html>
 <head>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
-    <script src="../dist/ag-grid/ag-grid.js?ignore=notused40"></script>
+    <script src="../dist/ag-grid/ag-grid.js?ignore=notused41"></script>
     <script src="example1.js"></script>
 </head>
 <style>
@@ -10,13 +10,6 @@
     }
 </style>
 <body>
-    <input placeholder="Filter..." type="text"
-           onpaste="onFilterChanged(this.value)"
-           oninput="onFilterChanged(this.value)"
-           onchange="onFilterChanged(this.value)"
-           onchange="onFilterChanged(this.value)"
-           onkeydown="onFilterChanged(this.value)"
-           onkeyup="onFilterChanged(this.value)"/>
-    <div id="myGrid" class="ag-fresh" style="height: 450px; margin-top: 4px;"></div>
+    <div id="myGrid" class="ag-fresh" style="height: 100%;"></div>
 </body>
 </html>

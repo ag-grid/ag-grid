@@ -17,6 +17,28 @@
     }
 </style>
 
+<div class="news-box">
+    <div class="news-header">8th March 2017</div>
+    <div class="news-header">ag-Grid 8.2.0 Released</div>
+    <div style="padding-top: 10px;">
+        ag-Grid 8.2.0 released introducing <a href="../javascript-grid-filtering/#floatingFilter">Floating Filters</a>,
+        <a href="../javascript-grid-pagination/#pagination-api">Pagination API</a> and some
+        more minor changes and bug fixes. See the <a href="../change-log/changeLogIndex.php">Change Log</a>
+        for full release details.
+    </div>
+</div>
+
+<div class="news-box">
+    <div class="news-header" style="margin-bottom: 27px;">
+        <img src="../images/vue_large.png" align="left" width="50"/>
+        1st March 2017
+    </div>
+    <div style="padding-top: 10px;">
+        <a href="../vue-js-grid/">
+            Using VueJS Components in ag-Grid
+        </a>
+    </div>
+</div>
 
 <div class="news-box">
     <div class="news-header">20th February 2017</div>
@@ -28,6 +50,7 @@
 </div>
 
 <div class="news-box">
+    <img style="float: left; margin-right: 10px:" src="../images/svg/docs/newspaper.svg" align="left" width="50"/>
     <div class="news-header">15th February 2017</div>
     <div style="padding-top: 10px;">
         <a href="../review-of-angularjs-grids/">
@@ -49,22 +72,20 @@
 </div>
 
 <div class="news-box">
+    <img style="float: left; margin-right: 10px;" src="../images/svg/docs/newspaper.svg" align="left" width="50" />
     <div class="news-header">6th February 2017</div>
     <div style="padding-top: 10px;">
         <a href="../git-color/">
-            <img src="../images/agGridDaily.png"/>
-            <br/>
             Git on the Command Line - Improving the Experience
         </a>
     </div>
 </div>
 
 <div class="news-box">
+    <img style="float: left; margin-right: 10px;" src="../images/svg/docs/newspaper.svg" align="left" width="50" />
     <div class="news-header">23rd January 2017</div>
     <div style="padding-top: 10px;">
         <a href="../ag-grid-understanding-webpack/">
-            <img src="../images/agGridDaily.png"/>
-            <br/>
             Webpack Tutorial: Understanding How it Works
         </a>
     </div>
@@ -73,37 +94,29 @@
 <div class="news-box">
     <div style="float: left;">
         <a href="https://www.ng-conf.org/">
-            <img src="https://www.ng-conf.org/wp-content/uploads/2016/09/logo.png" style="width: 90px"/>
+            <img src="https://www.ng-conf.org/wp-content/uploads/2016/09/logo.png" align="left" width="50" />
         </a>
     </div>
     <a href="https://www.ng-conf.org/">
-        <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+        <div style="margin-bottom: 6px; text-align: left; margin-left: 60px;">
             <div style="font-weight: bold;">ng-conf</div>
-            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
-            </div>
             <div style="font-weight: bold;">April 5th - 7th</div>
-            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
-            </div>
             <div style="font-weight: bold;">Salt Late City, UT</div>
         </div>
     </a>
     <div>
-        ag-Grid will be at ng-conf 2017.This will be our premier appearance outside of Europe!
+        ag-Grid will be at ng-conf 2017. This will be our premier appearance outside of Europe!
     </div>
 </div>
 
 <div class="news-box">
     <div style="float: left;">
-        <img src="http://www.i2clipart.com/cliparts/6/1/e/d/clipart-viking-warning-61ed.png" style="width: 90px"/>
+        <img src="http://www.i2clipart.com/cliparts/6/1/e/d/clipart-viking-warning-61ed.png" align="left" width="50" />
     </div>
     <a href="https://ngvikings.org/">
-        <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
+        <div style="margin-bottom: 6px; text-align: left; margin-left: 60px;">
             <div style="font-weight: bold;">ngVikings</div>
-            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
-            </div>
             <div style="font-weight: bold;">February 11th</div>
-            <div style="margin-top: 10px; margin-bottom: 6px; text-align: center;">
-            </div>
             <div style="font-weight: bold;">Copenhagen</div>
         </div>
     </a>
@@ -144,11 +157,10 @@
 
 
 <div class="news-box">
+    <img style="float: left; margin-right: 10px;" src="../images/svg/docs/newspaper.svg" align="left" width="50"/>
     <div class="news-header">8th December 2016</div>
     <div style="padding-top: 10px;">
         <a href="../ag-grid-angular-aot-dynamic-components/">
-            <img src="../images/agGridDaily.png"/>
-            <br/>
             Understanding AOT and Dynamic Components in Angular 2
         </a>
     </div>
@@ -194,7 +206,7 @@
     <div class="news-header">9th November 2016</div>
     <div style="background-color: #122b40; padding: 6px; text-align: center;">
         <a href="http://angular-up.com/">
-            <img src="http://angular-up.com/img/sprites/angularup-light.png" style="width: 200px;"/>
+            <img src="http://angular-up.com/img/sprites/angularup-light.png" style="width: 100%;"/>
         </a>
     </div>
     <div style="padding-top: 10px;">
@@ -212,11 +224,10 @@
 </div>
 
 <div class="news-box">
+    <img style="float: left; margin-right: 10px;" src="../images/svg/docs/newspaper.svg" align="left" width="50"/>
     <div class="news-header">27th October 2016</div>
     <div style="padding-top: 10px;">
         <a href="../javascript-datagrid/">
-            <img src="../images/agGridDaily.png"/>
-            <br/>
             8 reasons to choose ag-Grid as your JavaScript Datagrid
         </a>
     </div>
@@ -255,7 +266,7 @@
     <div class="news-header">5th October 2016</div>
     <div class="news-header"></div>
     <a href="../ag-grid-angular-connect-2016/" style="text-align: center;">
-        <img src="../images/angularConnect2016/agGridStand-small.png"/>
+        <img src="../images/angularConnect2016/agGridStand-small.png" style="width: 100%;"/>
     </a>
     <a href="../ag-grid-angular-connect-2016/" style="text-align: center; padding-top: 10px;">
         We're gonna need a bigger boat
@@ -285,7 +296,7 @@
     <div class="news-header">Angular Connect London 2016</div>
     <div style="text-align: center;">
         <a href="https://www.youtube.com/watch?v=jamr2jmEzh8/">
-            <img src="../images/angularConnect2016Talk.png"/>
+            <img src="../images/angularConnect2016Talk.png" style="width: 100%;"/>
         </a>
     </div>
     <div style="padding-top: 10px;">

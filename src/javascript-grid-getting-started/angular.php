@@ -1,6 +1,10 @@
-<h2 ng-if="!isFramework('all')"><img style="vertical-align: middle" src="/images/angular2_small.png" height="25px"/> Overview</h2>
-
-<h3>Introduction</h3>
+<?php if (!isFrameworkAll()) { ?>
+    <h2>
+        <img src="../images/svg/docs/getting_started.svg" width="50" />
+        <img style="vertical-align: middle" src="../images/angular2_small.png" height="25px"/>
+        Getting Started
+    </h2>
+<?php } ?>
 
 <p>
     This section will describe how to get up and running with ag-Grid and Angular in the quickest possible manner using
@@ -13,6 +17,8 @@
 <p>We document the main steps required when using Angular-CLI below, but please refer to
     <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working
     example of this.</p>
+
+<note>Full Working Examples can be found in the <a href="../example-angular">Angular Examples</a> section.</note>
 
 <h2 id="pre-requisites">Pre-requisites</h2>
 <p>
@@ -32,33 +38,9 @@ cd ag-grid-test</pre>
 npm i ag-grid --save
 npm i ag-grid-angular --save</pre>
 
-<p>We are also going to assume an Angular version of 2.3.1 for this example - you can use a higher (or lower)
-    version here,
-    but you'll need to ensure that you choose the corresponding version of Angular CLI if you do so.</p>
-
-<p>The package dependencies should look something like this:</p>
-<pre>
-"dependencies": {
-    "@angular/common": "^2.3.1",
-    "@angular/compiler": "^2.3.1",
-    "@angular/core": "^2.3.1",
-    "@angular/forms": "^2.3.1",
-    "@angular/http": "^2.3.1",
-    "@angular/platform-browser": "^2.3.1",
-    "@angular/platform-browser-dynamic": "^2.3.1",
-    "ag-grid": "^8.1.0",
-    "ag-grid-angular": "^8.1.0",
-    "core-js": "^2.4.1",
-    "rxjs": "5.0.0-beta.12",
-    "ts-helpers": "^1.1.1",
-    "zone.js": "0.7.x"
-}</pre>
-
-<p>Note that we've removed <code>@angular/router</code> as we don't need it for our example.</p>
-
-<p>Let's clear the dependencies installed when we created the project and install our new ones:</p>
-<pre>rm -rf node_modules/*
-npm install</pre>
+<p>We are also going to assume an Angular CLI version 1.0.0-rc.x and Angular versions  of 2.4.x for this example -
+    you can use a higher (or lower) version here, but you'll need to ensure that you choose the corresponding version of
+    Angular CLI if you do so.</p>
 
 <p>Now let's create our main Application Component - this will be the component that creates the ag-Grid grid for
     us:</p>

@@ -3,17 +3,12 @@ $key = "Viewport";
 $pageTitle = "ag-Grid Providing Tree Data";
 $pageDescription = "You can provide the data to your grid in a tree format. This page explains how to set this up.";
 $pageKeyboards = "ag-Grid Javascript Tree";
-$pageGroup = "feature";
+$pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-    <h2>Viewport</h2>
-    <p>
-        <?php include '../enterprise.php';?>
-        &nbsp;
-        Viewport is available in ag-Grid Enterprise.
-
+    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Viewport</h2>
     <p>
         A Viewport is a rowModel that allows showing a 'window' of data in your client. Typically all the data
         will reside on the server and the server will know what data is displayed in the client. This is again
@@ -21,8 +16,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-           To enable the ViewPort, set the grid property <i>rowModelType='viewport'</i>.
-   </p>
+        To enable the ViewPort, set the grid property <i>rowModelType='viewport'</i>.
+    </p>
 
     <p>
         The term 'viewport' is a common term in GUI's used to describe the visible area when scrolls are used

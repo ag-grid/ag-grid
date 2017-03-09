@@ -118,7 +118,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleGroupSelection" example-height="450px"></show-example>
 
-    <h4 id="groupsSelectionExample2">Groups & Checkbox Selection Example 2 - No Select Leaf Nodes</h4>
+    <h4 id="groupsSelectionExample2"><img src="../images/enterprise_50.png" title="Enterprise Feature" /> Groups & Checkbox Selection Example 2 - No Select Leaf Nodes</h4>
 
     <p>
         The example below is similar to the previous example except it does not put checkboxes
@@ -299,7 +299,15 @@ api.forEachNodeAfterFilter( function(node) {
         data for selection purposes.
     </p>
 
-    <show-example example="example4"></show-example>
+    <show-complex-example example="example4.html"
+                      sources="{
+                            [
+                                { root: './', files: 'example4.html,example4.js' }
+                            ]
+                          }"
+                      plunker="https://embed.plnkr.co/ehKrzYNuZ64CYBOClbL6/"
+                      exampleheight="500px">
+    </show-complex-example>
 
     <h3 id="selectionArrowKeys">Selection with Keyboard Arrow Keys</h3>
 

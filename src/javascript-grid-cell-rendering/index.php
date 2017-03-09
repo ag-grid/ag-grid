@@ -379,7 +379,7 @@ colDef.cellRendererParams = {
     <li>'Days Sunshine' and 'Rainfall (10mm)' use simple functions to display icons.</li>
 </ul>
 
-<!--<show-example example="example2"></show-example>-->
+<show-example example="example2"></show-example>
 
 <h3 id="cell-renderers-and-row-groups">Cell Renderers and Row Groups</h3>
 
@@ -406,13 +406,21 @@ colDef.cellRenderer = function(params) {
 </pre>
 </p>
 
-<? if (isFrameworkAngular2()) { include './angular.php'; } ?>
+<?php if (isFrameworkAngular()) { ?>
+    <?php include './angular.php';?>
+<?php } ?>
 
-<? if (isFrameworkAurelia()) { include './aurelia.php'; } ?>
+<?php if (isFrameworkAurelia()) { ?>
+    <?php include './aurelia.php';?>
+<?php } ?>
 
-<? if (isFrameworkReact()) { include './react.php'; } ?>
+<?php if (isFrameworkReact()) { ?>
+    <?php include './react.php';?>
+<?php } ?>
 
-<? if (isFrameworkVue()) { include './vue.php'; } ?>
+<?php if (isFrameworkVue()) { ?>
+    <?php include './vuejs.php';?>
+<?php } ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
 

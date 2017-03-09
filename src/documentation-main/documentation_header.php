@@ -1,3 +1,105 @@
+<?php
+
+$version = 'latest';
+
+$rootFolder;
+if (strcmp($version, 'latest') == 0) {
+    $rootFolder = '/';
+} else {
+    $rootFolder = '/archive/' . $version . '/';
+}
+
+// framework is passed in as url parameter
+$framework = $_GET['framework'];
+$cookieKey_framework = 'agGridFramework';
+$cookieKey_expandAll = 'agGridExpandAll';
+$expandAll = $_COOKIE[$cookieKey_expandAll];
+
+// if framework url was not passed, or is invalid, set framework to all
+$allFrameworks = array('javascript', 'angular', 'angularjs', 'react', 'vue', 'aurelia', 'webcomponents', 'all');
+
+// check if framework exists
+if (!in_array($framework, $allFrameworks)) {
+    // set from cookie
+    if ($_COOKIE[$cookieKey_framework]){
+        $framework = $_COOKIE[$cookieKey_framework];
+    } else {
+        $framework = 'all';
+    }
+}
+
+$oneHundredDaysFromNow = time() + 60*60*24*100;
+
+//$domain = ($_SERVER['HTTP_HOST'] != 'localhost') ? $_SERVER['HTTP_HOST'] : false;
+
+// delete cookie first to avoid duplicates
+setcookie($cookieKey_framework, '', time()-300);
+
+setcookie($cookieKey_framework, $framework, $oneHundredDaysFromNow, '/');
+
+function menuItem($indent, $localKey, $name, $url, $noIndentStyling = false) {
+    menuItemWithIcon(null, $indent, $localKey, $name, $url, $noIndentStyling);
+}
+
+function menuItemWithIcon($icon, $indent, $localKey, $name, $url, $noIndentStyling = false) {
+    $iconHtml = $icon!==null ? '<img class="enterprise-icon" src="../images/'.$icon.'" width="15px" /> ' : '';
+    $padding = ($indent == 1) ? '&nbsp;&nbsp;' : '';
+    $padding = ($indent == 2) ? '&nbsp;&nbsp;&nbsp;&nbsp;' : $padding;
+    $indentClass = $noIndentStyling ? '' : 'sidebarLink-indent'.$indent;
+    if ($GLOBALS[key] == $localKey) {
+        print('<span class="sidebarLinkSelected">' . $padding . $iconHtml . $name . '</span>');
+    } else {
+        print('<a class="sidebarLink '.$indentClass.'" href="' . $GLOBALS[rootFolder] . $url . '?framework=' . $GLOBALS[framework] . '">' . $padding . $iconHtml . $name . '</a>');
+    }
+}
+
+function isFrameworkSelected($framework) {
+    if ($framework === $GLOBALS[framework]) {
+        echo 'selected="selected"';
+    }
+}
+
+function isFrameworkAll() {
+    return $GLOBALS[framework] === 'all';
+}
+
+function isFrameworkAngular()
+{
+    return $GLOBALS[framework] === 'angular' || $GLOBALS[framework] === 'all';
+}
+
+function isFrameworkJavaScript()
+{
+    return $GLOBALS[framework] === 'javascript' || $GLOBALS[framework] === 'all';
+}
+
+function isFrameworkAngularJS()
+{
+    return $GLOBALS[framework] === 'angularjs' || $GLOBALS[framework] === 'all';
+}
+
+function isFrameworkReact()
+{
+    return $GLOBALS[framework] === 'react' || $GLOBALS[framework] === 'all';
+}
+
+function isFrameworkVue()
+{
+    return $GLOBALS[framework] === 'vue' || $GLOBALS[framework] === 'all';
+}
+
+function isFrameworkAurelia()
+{
+    return $GLOBALS[framework] === 'aurelia' || $GLOBALS[framework] === 'all';
+}
+
+function isFrameworkWebComponents()
+{
+    return $GLOBALS[framework] === 'webcomponents' || $GLOBALS[framework] === 'all';
+}
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -11,14 +113,10 @@
     <link inline rel="stylesheet" href="../dist/bootstrap/css/bootstrap.css">
 
     <link inline rel="stylesheet" href="../style.css">
-    <link inline rel="stylesheet" href="../documentation-main/documentation.css">
+    <link rel="stylesheet" href="../documentation-main/documentation.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular-cookies.min.js"></script>
-    <script src="../documentation-main/documentation.js"></script>
 
     <!-- Hotjar Tracking Code for https://www.ag-grid.com/ -->
     <script>
@@ -38,76 +136,7 @@
 
 </head>
 
-<?php
-
-$version = 'latest';
-
-$rootFolder;
-if (strcmp($version, 'latest') == 0) {
-    $rootFolder = '/';
-} else {
-    $rootFolder = '/archive/' . $version . '/';
-}
-
-// framework is passed in as url parameter
-$framework = $_GET['framework'];
-
-// if framework url was not passed, or is invalid, set framework to all
-$allFrameworks = array('javascript','angular','angularjs','react','vue','aurelia','webcomponents');
-if (!in_array($framework, $allFrameworks)) {
-    $framework = 'all';
-}
-
-function normalItem($indent, $localKey, $name, $url) {
-    menuItem($indent, $localKey, $name, $url, false);
-}
-
-function menuItem($indent, $localKey, $name, $url, $enterprise) {
-    $enterpriseIcon = $enterprise ? '<img class="enterprise-icon" src="../images/enterprise.png"/> ' : '';
-    $padding = ($indent==1) ? '&nbsp;&nbsp;' : '';
-    if ($GLOBALS[key] == $localKey) {
-        print('<span class="sidebarLinkSelected">'.$padding.$enterpriseIcon.$name.'</span>');
-    } else {
-        print('<a class="sidebarLink" href="'.$GLOBALS[rootFolder].$url.'?framework='.$GLOBALS[framework].'">'.$padding.$enterpriseIcon.$name.'</a>');
-    }
-}
-
-function enterpriseItem($indent, $localKey, $name, $url) {
-    menuItem($indent, $localKey, $name, $url, true);
-}
-
-function isFrameworkSelected($framework) {
-    if ($framework===$GLOBALS[framework]) {
-        echo 'selected="selected"';
-    }
-}
-// calling it angular1 and angular2, as Angular and AngularJS are confusing,
-// in the web page (what user sees), we can stick with Angular and AngularJS
-function isFrameworkAngular2() {
-    return $GLOBALS[framework] === 'angular' || $GLOBALS[framework] === 'all';
-}
-function isFrameworkJavaScript() {
-    return $GLOBALS[framework] === 'javascript' || $GLOBALS[framework] === 'all';
-}
-function isFrameworkAngular1() {
-    return $GLOBALS[framework] === 'angularjs' || $GLOBALS[framework] === 'all';
-}
-function isFrameworkReact() {
-    return $GLOBALS[framework] === 'react' || $GLOBALS[framework] === 'all';
-}
-function isFrameworkVue() {
-    return $GLOBALS[framework] === 'vue' || $GLOBALS[framework] === 'all';
-}
-function isFrameworkAurelia() {
-    return $GLOBALS[framework] === 'aurelia' || $GLOBALS[framework] === 'all';
-}
-function isFrameworkWebComponents() {
-    return $GLOBALS[framework] === 'webcomponents' || $GLOBALS[framework] === 'all';
-}
-
-?>
-
-<body ng-app="documentation" ng-controller="DocumentationController">
+<body ng-app="documentation">
 
 <?php if ($version == 'latest') {
     $navKey = "documentation";
@@ -128,7 +157,7 @@ function isFrameworkWebComponents() {
 <?php } ?>
 
 <!-- this is passed to the javascript, so it knows the framework -->
-<span id="frameworkAttr" style="display: none;"><?= $framework?></span>
+<span id="frameworkAttr" style="display: none;"><?= $framework ?></span>
 
 <div class="header-row">
 
@@ -145,8 +174,10 @@ function isFrameworkWebComponents() {
                 </div>
                 <div id="documentationSearch">
                     <img src="/images/spinner.svg" class="documentationSearch-spinner active" width="24" height="24"/>
-                    <gcse:searchbox enableAutoComplete="true" enableHistory="true" autoCompleteMaxCompletions="5"
-                                    autoCompleteMatchType="any"></gcse:searchbox>
+                    <div id="documentationSearchBox" style="opacity: 0">
+                        <gcse:searchbox enableAutoComplete="true" enableHistory="true" autoCompleteMaxCompletions="5"
+                                        autoCompleteMatchType="any"></gcse:searchbox>
+                    </div>
                 </div>
             </div>
         </div>
@@ -155,203 +186,15 @@ function isFrameworkWebComponents() {
 
 </div>
 
-<div class="container" style="margin-top: 20px">
+<div class="container documentationContainer" style="margin-top: 20px">
 
     <div class="row">
 
-        <div class="col-sm-2">
-
-            <h4>Framework</h4>
-            <select id="framework" ng-change="model.onFrameworkChanged()"
-                    ng-model="model.framework">
-                <option value="all">All</option>
-                <option value="javascript">JavaScript</option>
-                <option value="angular">Angular</option>
-                <option value="angularjs">AngularJS 1.x</option>
-                <option value="react">ReactJS</option>
-                <option value="vue">VueJS</option>
-                <option value="aurelia">AureliaJS</option>
-                <option value="webcomponents">Web Components</option>
-            </select>
-
-            <div class="docsMenu-header<?php if ($pageGroup == "basics") { ?> active<?php } ?>"
-                 onclick="javascript: this.classList.toggle('active');">
-                <h4>Getting Started</h4>
-                <i class="fa fa-arrow-right" aria-hidden="true"></i>
-            </div>
-
-            <div class="docsMenu-content">
-
-                <?
-                normalItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
-                if (isFrameworkAngular2()) {
-                    normalItem(1, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/');
-                    normalItem(1, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/');
-                    normalItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');
-                }
-                ?>
-
-            </div>
-
-            <div class="docsMenu-header<? if ($pageGroup == "interfacing") { ?> active<? } ?>"
-                 onclick="javascript: this.classList.toggle('active');">
-                <h4>Interfacing</h4>
-                <i class="fa fa-arrow-right" aria-hidden="true"></i>
-            </div>
-
-            <div class="docsMenu-content">
-                <?
-                normalItem(0, 'Interfacing Overview', 'Overview', 'javascript-grid-interfacing-overview/');
-                normalItem(0, 'Properties', 'Properties', 'javascript-grid-properties/');
-                normalItem(0, 'columnDefs', 'Columns', 'javascript-grid-column-definitions/');
-                normalItem(0, 'Events', 'Events', 'javascript-grid-events/');
-                normalItem(0, 'Callbacks', 'Callbacks', 'javascript-grid-callbacks/');
-                normalItem(0, 'Grid API', 'Grid API', 'javascript-grid-api/');
-                normalItem(0, 'Column API', 'Column API', 'javascript-grid-column-api/');
-                ?>
-            </div>
-
-            <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "feature") { ?> active<?php } ?>"
-                 onclick="javascript: this.classList.toggle('active');">
-                <h4>Features</h4>
-                <i class="fa fa-arrow-right" aria-hidden="true"></i>
-            </div>
-
-            <div class="docsMenu-content">
-                <?
-                normalItem(0, 'Features', 'Overview', 'javascript-grid-features/');
-                normalItem(0, 'Width & Height', 'Width & Height', 'javascript-grid-width-and-height/');
-                normalItem(0, 'Sorting', 'Sorting', 'javascript-grid-sorting/');
-                normalItem(0, 'Filtering', 'Filtering', 'javascript-grid-filtering/');
-                enterpriseItem(0, 'Set Filtering', 'Set Filtering', 'javascript-grid-set-filtering/');
-                normalItem(0, 'Selection', 'Selection', 'javascript-grid-selection/');
-                enterpriseItem(0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
-                normalItem(0, 'Resizing', 'Resizing', 'javascript-grid-resizing/');
-                normalItem(0, 'Pinning', 'Pinning', 'javascript-grid-pinning/');
-                normalItem(0, 'Grouping Columns', 'Grouping Columns', 'javascript-grid-grouping-headers/');
-                normalItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
-                normalItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
-                normalItem(0, 'Floating', 'Floating Rows', 'javascript-grid-floating/');
-                normalItem(0, 'Value Getters', 'Value Getters', 'javascript-grid-value-getters/');
-                normalItem(0, 'Cell Expressions', 'Cell Expressions', 'javascript-grid-cell-expressions/');
-                normalItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
-                normalItem(0, 'Context', 'Context', 'javascript-grid-context/');
-                normalItem(0, 'InsertRemove', 'Insert & Remove', 'javascript-grid-insert-remove/');
-                normalItem(0, 'Refresh', 'Refresh', 'javascript-grid-refresh/');
-                normalItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
-                normalItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
-                normalItem(0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/');
-                normalItem(0, 'Full Width', 'Full Width Rows & Master Detail', 'javascript-grid-master-detail/');
-                normalItem(0, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave/');
-                normalItem(0, 'Touch', 'Touch', 'javascript-grid-touch/');
-                normalItem(0, 'Row Model', 'Row Model', 'javascript-grid-model/');
-                normalItem(0, 'Data Export', 'CSV Export', 'javascript-grid-export/');
-                enterpriseItem(0, 'Excel Export', 'Excel Export', 'javascript-grid-excel/');
-                normalItem(0, 'RTL', 'RTL', 'javascript-grid-rtl/');
-                normalItem(0, 'Icons', 'Icons', 'javascript-grid-icons/');
-                normalItem(0, 'Overlays', 'Overlays', 'javascript-grid-overlays/');
-                normalItem(0, 'For Print', 'For Print', 'javascript-grid-for-print/');
-
-                enterpriseItem(0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
-                enterpriseItem(1, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping/');
-                enterpriseItem(1, 'Aggregation', 'Aggregation', 'javascript-grid-aggregation/');
-                enterpriseItem(1, 'Pivoting', 'Pivoting', 'javascript-grid-pivoting/');
-
-                enterpriseItem(0, 'Tool Panel', 'Tool Panel', 'javascript-grid-tool-panel/');
-                enterpriseItem(0, 'Clipboard', 'Clipboard', 'javascript-grid-clipboard/');
-                enterpriseItem(0, 'Column Menu', 'Column Menu', 'javascript-grid-column-menu/');
-                enterpriseItem(0, 'Context Menu', 'Context Menu', 'javascript-grid-context-menu/');
-                enterpriseItem(0, 'Status Bar', 'Status Bar', 'javascript-grid-status-bar/');
-                enterpriseItem(0, 'License Key', 'License Key', 'javascript-grid-set-license/');
-
-                ?>
-            </div>
-
-            <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "themes") { ?> active<?php } ?>"
-                 onclick="javascript: this.classList.toggle('active');">
-                <h4>Themes</h4>
-                <i class="fa fa-arrow-right" aria-hidden="true"></i>
-            </div>
-
-            <div class="docsMenu-content">
-
-                <?
-                normalItem(0, 'Styling', 'Overview', 'javascript-grid-styling/');
-                normalItem(0, 'Fresh Theme', 'Fresh Theme', 'javascript-grid-themes/fresh-theme.php');
-                normalItem(0, 'Blue Theme', 'Blue Theme', 'javascript-grid-themes/blue-theme.php');
-                normalItem(0, 'Dark Theme', 'Dark Theme', 'javascript-grid-themes/dark-theme.php');
-                normalItem(0, 'Material Theme', 'Material Theme', 'javascript-grid-themes/material-theme.php');
-                normalItem(0, 'Bootstrap Theme', 'Bootstrap Theme', 'javascript-grid-themes/bootstrap-theme.php');
-                ?>
-
-            </div>
-
-            <div class="docsMenu-header<?php if ($pageGroup == "components") { ?> active<?php } ?>"
-                 onclick="javascript: this.classList.toggle('active');">
-                <h4>Components</h4>
-                <i class="fa fa-arrow-right" aria-hidden="true"></i>
-            </div>
-
-            <div class="docsMenu-content">
-                <?
-                normalItem(0, 'Components', 'Overview', 'javascript-grid-components/');
-                normalItem(0, 'Cell Rendering', 'Cell Rendering', 'javascript-grid-cell-rendering/');
-                normalItem(0, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/');
-                normalItem(0, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component/');
-                normalItem(0, 'Header Rendering', 'Header Components', 'javascript-grid-header-rendering/');
-                ?>
-            </div>
-
-            <div class="docsMenu-header<?php if ($pageGroup == "row_models") { ?> active<?php } ?>"
-                 onclick="javascript: this.classList.toggle('active');">
-                <h4>Row Models</h4>
-                <i class="fa fa-arrow-right" aria-hidden="true"></i>
-            </div>
-
-            <div class="docsMenu-content">
-                <?
-                normalItem(0, 'Row Models', 'Overview', 'javascript-grid-row-models/');
-                normalItem(0, 'Datasource', 'Datasource', 'javascript-grid-datasource/');
-                normalItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
-                normalItem(0, 'Infinite Scrolling', 'Infinite Scrolling', 'javascript-grid-virtual-paging/');
-                enterpriseItem(0, 'Viewport', 'Viewport', 'javascript-grid-viewport/');
-                ?>
-            </div>
-
-            <div class="docsMenu-header<?php if ($pageGroup == "examples") { ?> active<?php } ?>"
-                 onclick="javascript: this.classList.toggle('active');">
-                <h4>Examples</h4>
-                <i class="fa fa-arrow-right" aria-hidden="true"></i>
-            </div>
-
-            <div class="docsMenu-examples">
-                <?
-                normalItem(0, 'Styled Report', 'Styled Report', 'example-account-report/');
-                normalItem(0, 'File Browser', 'File Browser', 'example-file-browser/');
-                normalItem(0, 'Expressions and Context', 'Expressions and Context', 'example-expressions-and-context/');
-                ?>
-            </div>
-
-            <?php if ($version == 'latest') { ?>
-                <div class="docsMenu-header<?php if ($pageGroup == "misc") { ?> active<?php } ?>"
-                     onclick="javascript: this.classList.toggle('active');">
-                    <h4>Misc</h4>
-                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                </div>
-
-                <div class="docsMenu-content">
-                    <?
-                    normalItem(0, 'Change Log', 'Change Log', 'change-log/changeLogIndex.php');
-                    normalItem(0, 'Roadmap', 'Roadmap', 'javascript-grid-roadmap');
-                    normalItem(0, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials/');
-                    ?>
-                    <a class="sidebarLink" href="/archive/">Archive Docs</a>
-                </div>
-            <?php } ?>
-
+        <div class="col-sm-3 col-md-2">
+            <?php include 'documentation_menu.php'; ?>
         </div>
 
-        <div class="col-sm-10 blog-main">
+        <div class="col-sm-9 col-md-10 blog-main">
 
             <div id="googleSearchResults" style="display: none;">
                 <gcse:searchresults></gcse:searchresults>

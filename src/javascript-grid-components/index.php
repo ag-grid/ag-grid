@@ -9,7 +9,10 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="Components">Components</h2>
+    <h2 id="Components">
+        <img src="../images/svg/docs/components.svg" width="50" />
+        Components
+    </h2>
 
     <p>
         By default, the grid does not need to you to provide any components.

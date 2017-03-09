@@ -23,5 +23,8 @@
                 </div>
             </figure>
         </div>
+        <p class="text-center">
+            <a href="/testimonials.php"><small>View more Testimonials</small></a>
+        </p>
     </div>
 </section>

@@ -9,25 +9,20 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="width-and-height">Width and Height</h2>
-
-    <h4 id="fixed-width-and-height">Fixed Width and Height</h4>
+    <h2 id="width-and-height">Grid Size</h2>
 
     <p>
-        Set the width and height of the table by applying CSS to the containing div. Eg:
+        The grid width and height should be set using CSS width and height styles.
+        This can be done using pixels or percentages.
     </p>
 
-    <p/>
+    <pre><span class="codeComment">// set width using percentages</span>
+&lt;div id="myGrid" class="ag-fresh" <b>style="width: 100%; height: 100%;"</b>>&lt;/div>
 
-    <pre><code>style="width: 100px; height: 100px;"</code></pre>
+<span class="codeComment">// OR set width using fixed pixels</span>
+&lt;div id="myGrid" class="ag-fresh" <b>style="width: 500px; height: 200px;"</b>>&lt;/div></pre>
 
-    <h4 id="percent-width-and-height">Percent Width and Height</h4>
-
-    <p>
-        The width and / or height can also be set to a percentage. Eg:
-    </p>
-
-    <pre><code>style="width: 100%; height: 100%;"</code></pre>
+    <h3 id="percent-width-and-height">Pitfall When Using Percent Width & Height</h3>
 
     <p>
         If using % for your height, then make sure the container you are putting the grid into
@@ -38,13 +33,19 @@ include '../documentation-main/documentation_header.php';
         you want, then you have a CSS layout issue to solve outside of the grid.
     </p>
 
-    <h4 id="changing-width-and-height">Changing Width and Height</h4>
+    <h3 id="changing-width-and-height">Changing Width and Height</h3>
 
     <p>
         If the width and / or height change after the grid is initialised, the grid will
         automatically resize to fill the new area.
     </p>
 
+    <h3 id="example-width-and-height">Example: Setting and Changing Grid Width and Height</h3>
+
+    <p>
+        The example below shows setting the grid size and then changing it as the user
+        selects the buttons.
+    </p>
 
     <show-example example="exampleWidthAndHeight"></show-example>
 

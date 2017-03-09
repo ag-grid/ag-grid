@@ -1,0 +1,36 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused41"></script>
+    <script src="exampleFloatingFilter.js"></script>
+</head>
+<body>
+
+<div>
+    <span style="padding-bottom: 4px; display: inline-block;">
+        <button onclick="irelandAndUk()">Ireland & UK</button>
+        <button onclick="endingStan()">Countries Ending 'stan'</button>
+        <button onclick="setCountryModel()">Set Model ['Algeria','Argentina']</button>
+        <button onclick="printCountryModel()">Print Country Model</button>
+        <button onclick="clearCountryFilter()">Clear Country</button>
+        <button onclick="destroyCountryFilter()">Destroy Country</button>
+    </span>
+    <br/>
+    <span style="padding-bottom: 4px; display: inline-block;">
+        <button onclick="ageBelow25()">Age Below 25</button>
+        <button onclick="ageAbove30()">Age Above 30</button>
+        <button onclick="ageBetween25And30()">Age Between 25 and 30</button>
+        <button onclick="clearAgeFilter()">Clear Age Filter</button>
+    </span>
+    <br/>
+    <span style="padding-bottom: 4px; display: inline-block;">
+        <button onclick="after2010()">Date after 01/01/2010</button>
+        <button onclick="before2012()">Date before 01/01/2012</button>
+        <button onclick="clearDateFilter()">Clear Date Filter</button>
+    </span>
+
+</div>
+<div id="myGrid" class="ag-fresh" style="height: 400px;"></div>
+
+</body>
+</html>
