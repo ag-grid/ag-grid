@@ -61,13 +61,16 @@ export class FlattenStage implements IRowNodeStage {
                                           nextRowTop: NumberWrapper, reduce: boolean) {
         if (_.missingOrEmpty(rowsToFlatten)) { return; }
 
-        var groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
-        for (var i = 0; i < rowsToFlatten.length; i++) {
-            var rowNode = rowsToFlatten[i];
+        let groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
+        let hideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents();
 
-            var skipBecauseSuppressRow = groupSuppressRow && rowNode.group;
-            var skipBecauseReduce = reduce && !rowNode.group;
-            var skipGroupNode = skipBecauseReduce || skipBecauseSuppressRow;
+        for (let i = 0; i < rowsToFlatten.length; i++) {
+            let rowNode = rowsToFlatten[i];
+
+            let skipBecauseSuppressRow = groupSuppressRow && rowNode.group;
+            let skipBecauseReduce = reduce && !rowNode.group;
+            let skipBecauseOpen = hideOpenParents && rowNode.expanded;
+            let skipGroupNode = skipBecauseReduce || skipBecauseSuppressRow || skipBecauseOpen;
 
             if (!skipGroupNode) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop);
@@ -84,7 +87,7 @@ export class FlattenStage implements IRowNodeStage {
                 }
             }
             if (rowNode.canFlower && rowNode.expanded) {
-                var flowerNode = this.createFlowerNode(rowNode);
+                let flowerNode = this.createFlowerNode(rowNode);
                 this.addRowNodeToRowsToDisplay(flowerNode, result, nextRowTop);
             }
         }
