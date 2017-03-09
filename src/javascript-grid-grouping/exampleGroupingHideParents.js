@@ -3,32 +3,33 @@ var columnDefs = [
     // the first group column
     {headerName: "Country", cellRenderer: 'group', field: "country", rowGroupIndex: 0,
         cellRendererParams: {
-            groupKey: 'country'
+            restrictToOneGroup: true
         }
     },
 
     // and second group column
-    {headerName: "Year", cellRenderer: 'group', field: "year", rowGroupIndex: 1,
+    {headerName: "Year", cellRenderer: 'group', field: "year", rowGroupIndex: 1, width: 130,
         cellRendererParams: {
-            groupKey: 'year'
+            restrictToOneGroup: true
         }
     },
 
-    {headerName: "Athlete", field: "athlete"},
-    {headerName: "Gold", field: "gold", aggFunc: 'sum'},
-    {headerName: "Silver", field: "silver", aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", aggFunc: 'sum'},
-    {headerName: "Total", field: "total", aggFunc: 'sum'},
-    {headerName: "Age", field: "age"},
-    {headerName: "Date", field: "date"},
-    {headerName: "Sport", field: "sport"}
+    {headerName: "Athlete", field: "athlete", width: 150},
+    {headerName: "Gold", field: "gold", aggFunc: 'sum', width: 100},
+    {headerName: "Silver", field: "silver", aggFunc: 'sum', width: 100},
+    {headerName: "Bronze", field: "bronze", aggFunc: 'sum', width: 100},
+    {headerName: "Total", field: "total", aggFunc: 'sum', width: 100}
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     groupSuppressAutoColumn: true,
-    groupHideOpenParents: true
+    groupHideOpenParents: true,
+    animateRows: true,
+    onGridReady: function(params) {
+        // params.api.sizeColumnsToFit();
+    }
 };
 
 // setup the grid after the page has finished loading

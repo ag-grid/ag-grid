@@ -1,20 +1,11 @@
 var columnDefs = [
 
-    // the first group column
-    {headerName: "Country", cellRenderer: 'group', field: "country", rowGroupIndex: 0,
-        cellRendererParams: {
-            // this tells the grid to only show 'country' groups in this column,
-            restrictToOneGroup: true
-        }
-    },
+    // one column for showing the groups
+    {headerName: "Group", cellRenderer: 'group'},
 
-    // and second group column
-    {headerName: "Year", cellRenderer: 'group', field: "year", rowGroupIndex: 1,
-        cellRendererParams: {
-            // this tells the grid to only show 'year' groups in this column,
-            restrictToOneGroup: true
-        }
-    },
+    // the first group column
+    {headerName: "Country", field: "country", rowGroupIndex: 0, hide: true},
+    {headerName: "Year", field: "year", rowGroupIndex: 1, hide: true},
 
     {headerName: "Athlete", field: "athlete"},
     {headerName: "Gold", field: "gold"},

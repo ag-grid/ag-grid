@@ -1,20 +1,8 @@
 var columnDefs = [
 
-    // the first group column
-    {headerName: "Country", cellRenderer: 'group', field: "country", rowGroupIndex: 0,
-        cellRendererParams: {
-            // this tells the grid to only show 'country' groups in this column,
-            restrictToOneGroup: true
-        }
-    },
-
-    // and second group column
-    {headerName: "Year", cellRenderer: 'group', field: "year", rowGroupIndex: 1,
-        cellRendererParams: {
-            // this tells the grid to only show 'year' groups in this column,
-            restrictToOneGroup: true
-        }
-    },
+    // group by these cols, and hide them, and let grid sort out the grouping columns
+    {headerName: "Country", field: "country", rowGroupIndex: 0, hide: true},
+    {headerName: "Year", field: "year", rowGroupIndex: 1, hide: true},
 
     {headerName: "Athlete", field: "athlete"},
     {headerName: "Gold", field: "gold"},
@@ -25,9 +13,10 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    // we are defining the group columns, so tell the grid we don't
-    // want it to auto-generate group columns for us
-    groupSuppressAutoColumn: true,
+    // by default the grid will create auto columns, however the default
+    // behaviour is one column, set this property to true to get column
+    // per group
+    groupMultiAutoColumn: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }
