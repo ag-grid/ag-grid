@@ -154,6 +154,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
                     return !bodyCell;
                 }
             }
+        } else {
+            return false;
         }
     }
 
