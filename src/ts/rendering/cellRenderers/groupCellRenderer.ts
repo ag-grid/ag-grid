@@ -65,7 +65,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private setParams(params: any): void {
         if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
-            let nodeToSwapIn = this.isFirstChildOfFirstChild(params.node, params.groupKey);
+            let nodeToSwapIn = this.isFirstChildOfFirstChild(params.node, params.groupField);
             this.nodeWasSwapped = _.exists(nodeToSwapIn);
             if (this.nodeWasSwapped) {
                 let newParams = <any> {};
@@ -122,10 +122,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         // if the user only wants to show details for one group in this column,
         // then the group key here says which column we are interested in.
 
-        let groupKey = this.params.groupKey;
+        let groupKey = this.params.groupField;
         let rowNode = this.params.node;
 
-        let skipCheck = this.nodeWasSwapped || _.missing(this.params.groupKey);
+        let skipCheck = this.nodeWasSwapped || _.missing(this.params.groupField);
         if (skipCheck) { return false; }
 
         return groupKey !== rowNode.field;

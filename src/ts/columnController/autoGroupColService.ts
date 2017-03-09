@@ -70,7 +70,7 @@ export class AutoGroupColService {
             } else {
                 autoColDef.cellRendererParams = _.cloneObject(autoColDef.cellRendererParams);
             }
-            autoColDef.cellRendererParams.groupKey = rowGroupColDef.field;
+            autoColDef.cellRendererParams.groupField = rowGroupColDef.field;
 
             colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${Math.random()}-${rowGroupCol.getId()}`;
         } else {
