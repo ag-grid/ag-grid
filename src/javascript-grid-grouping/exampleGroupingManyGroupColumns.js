@@ -3,14 +3,14 @@ var columnDefs = [
     // the first group column
     {headerName: "Country", cellRenderer: 'group', field: "country", rowGroupIndex: 0,
         cellRendererParams: {
-            groupField: 'country'
+            restrictToOneGroup: true
         }
     },
 
     // and second group column
     {headerName: "Year", cellRenderer: 'group', field: "year", rowGroupIndex: 1,
         cellRendererParams: {
-            groupField: 'year'
+            restrictToOneGroup: true
         }
     },
 
