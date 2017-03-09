@@ -9,11 +9,12 @@ fi
 #first run pack
 cd $1/$2
 rm -rf dist
-rm -rf $2-*.tgz
+rm -rf module.tgz
 cd ../..
 dist-just-module.sh $1 $2
 cd $1/$2
 npm pack
+mv *.tgz module.tgz
 cd ../..
 
 ## for all the modules
@@ -23,11 +24,11 @@ do
     cd "$1/$module"
 
     rm -rf node_modules/$2
-    npm install ../$2/$2-*.tgz
+    npm install ../$2/module.tgz
 
     cd ../..
 done
 
-rm -rf $1/$2/$2-*.tgz
+rm -rf $1/$2/module.tgz
 
 

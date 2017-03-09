@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
-if [ "$#" -ne 1 ]
+if [ "$#" -ne 0 ]
   then
-    echo "You must supply the parent directory as the first param"
+    echo "This script doesnt take params"
     exit 1
 fi
 
-cd $1
 current_dir=$(pwd)
 
 
@@ -47,5 +46,3 @@ do
 
     cd "$current_dir"
 done
-
-cd ..

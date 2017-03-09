@@ -37,22 +37,22 @@ do
 
     rm package.json.old
 
-    npm install "$current_dir/ag-grid/ag-grid-$1.tgz"
-    npm install "$current_dir/ag-grid-enterprise/ag-grid-enterprise-$1.tgz"
+    npm install "$current_dir/ag-grid/module.tgz"
+    npm install "$current_dir/ag-grid-enterprise/module.tgz"
 
 
     case $subfolder in
         "ag-grid-angular-example/systemjs_aot"|"ag-grid-angular-example/webpack"|"ag-grid-angular-example/angular-cli")
-            npm install "$current_dir/ag-grid-angular/ag-grid-angular-$1.tgz"
+            npm install "$current_dir/ag-grid-angular/module.tgz"
             ;;
         "ag-grid-react-example")
-            npm install "$current_dir/ag-grid-react/ag-grid-react-$1.tgz"
+            npm install "$current_dir/ag-grid-react/module.tgz"
             ;;
         "ag-grid-aurelia-example")
-            npm install "$current_dir/ag-grid-aurelia/ag-grid-aurelia-$1.tgz"
+            npm install "$current_dir/ag-grid-aurelia/module.tgz"
             ;;
         "ag-grid-vue-example")
-            npm install "$current_dir/ag-grid-vue/ag-grid-vue-$1.tgz"
+            npm install "$current_dir/ag-grid-vue/module.tgz"
             ;;
     esac
 

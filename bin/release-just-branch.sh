@@ -51,7 +51,7 @@ do
             ## Replace peers version number
             sed -i .old -e 's/.*"ag-grid".*/    "ag-grid": "'$2'"/g' package.json
             ## Since we are still NOT publishing to npm use the locally generated npm package
-            npm install ../ag-grid/ag-grid-$1.tgz
+            npm install ../ag-grid/module.tgz
             ;;
         ##If it depends on ag-grid AND OTHERS. THIS CAN BE REFACTORED FOR SURE!
         "ag-grid-angular"|"ag-grid-vue")
@@ -61,7 +61,7 @@ do
             ## Replace peers version number
             sed -i .old -e 's/.*"ag-grid".*/    "ag-grid": "'$2'",/g' package.json
             ## Since we are still NOT publishing to npm use the locally generated npm package
-            npm install ../ag-grid/ag-grid-$1.tgz
+            npm install ../ag-grid/module.tgz
             ;;
     esac
 
@@ -85,6 +85,7 @@ do
 
     ## After everything is committed generate the NPM local package
     npm pack
+    mv *.tgz module.tgz
 
     cd ..
 done

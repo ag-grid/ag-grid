@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-if [ "$#" -ne 2 ]
+if [ "$#" -ne 1 ]
   then
-    echo "You must supply the target dir and the branch name"
+    echo "You must supply the branch name"
     exit 1
 fi
 
 
-echo "Checking out fresh branch in" $1
+echo "Switching to branch" $1
 mkdir $1
 cd $1
 
@@ -22,7 +22,7 @@ do
 
     cd $module
     git checkout -b $1
-    git branch --set-upstream-to=origin/$2
+    git branch --set-upstream-to=origin/$1
     git pull
 
     cd ..

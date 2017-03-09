@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 
-if [ "$#" -lt 2 ]
+if [ "$#" -lt 1 ]
   then
-    echo "You must supply the parent dir and at least one module to build"
+    echo "You must supply at least one module to build"
     exit 1
 fi
 
+current_dir=$(pwd)
 
 ## for all the modules
-IFS=' ' read -ra ADDR <<< "${@:2}"
+IFS=' ' read -ra ADDR <<< "${@:1}"
 for module in "${ADDR[@]}"
 do
-    cd "$1/$module"
+    cd "$module"
 
     case $module in
         "ag-grid-enterprise"|"ag-grid")
@@ -40,7 +41,7 @@ do
             npm run build
             ;;
         "ag-grid-aurelia-example")
-            gulp
+            npm i
             ;;
         "ag-grid-angular-example/systemjs_aot")
             npm run clean-build:aot
@@ -57,11 +58,11 @@ do
     then
         echo "Successfully dist!"
     else
-        echo "Could not dist $1/$module"
+        echo "Could not dist $module"
         exit 1
     fi
 
-    cd ../../
+    cd "$current_dir"
 done
 
 

@@ -2,7 +2,7 @@
 
 if [ "$#" -lt 2 ]
   then
-    echo "You must supply the version as first parameter and then at least one module"
+    echo "You must supply the branch as first parameter and then at least one module"
     exit 1
 fi
 
@@ -20,11 +20,6 @@ do
     echo =============================================================================================
 
     cd "$module"
-    rm "$module-$1.tgz" -f
-
-    git add .
-    git commit -m "$1"
-    git push --set-upstream origin $1
 
     git checkout master
     git merge $1 --no-commit --no-ff
