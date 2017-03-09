@@ -163,7 +163,8 @@ suppressEnterprise: true,
 //toolPanelSuppressValues: true,
 //groupSuppressAutoColumn: true,
 //groupAggFields: ['bankBalance','totalWinnings'],
-
+    groupMultiAutoColumn: true,
+    groupHideOpenParents: true,
 
 //suppressMenuFilterPanel: true,
 //suppressMenuMainPanel: true,
