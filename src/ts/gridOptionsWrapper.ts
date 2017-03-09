@@ -91,6 +91,10 @@ export class GridOptionsWrapper {
         if (this.isGroupSelectsChildren() && !this.isRowSelectionMulti()) {
             console.warn('ag-Grid: rowSelectionMulti must be true for groupSelectsChildren to make sense');
         }
+
+        if (this.isGroupRemoveSingleChildren() && this.isGroupHideOpenParents()) {
+            console.warn('ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don\'t ask us how to us these together on our support forum either you will get the same answer!');
+        }
     }
 
     private setupFrameworkComponents(): void {
