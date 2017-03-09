@@ -126,7 +126,19 @@ export class AggregationStage implements IRowNodeStage {
     // using column ID's (rather than, eg, valueGetters), so we need to have the value of the
     // group key in the data, so when copy to clipboard is executed, the value is picked up correctly.
     private putInValueForGroupNode(result: any, rowNode: RowNode): void {
-        result[ColumnController.GROUP_AUTO_COLUMN_ID] = rowNode.key;
+        let autoCols = this.columnController.getGroupAutoColumns();
+        if (!autoCols) { return; }
+        autoCols.forEach( autoCol => {
+            let rendererParams = autoCol.getColDef().cellRendererParams;
+            let groupKeyExists = Utils.exists(rendererParams) && Utils.exists(rendererParams.groupKey);
+            if (groupKeyExists) {
+                if (rendererParams.groupKey === rowNode.field) {
+                    result[autoCol.getColId()] = rowNode.key;
+                }
+            } else {
+                result[autoCol.getColId()] = rowNode.key;
+            }
+        });
     }
 
     private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
