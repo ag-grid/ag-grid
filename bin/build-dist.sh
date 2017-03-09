@@ -6,6 +6,7 @@ if [ "$#" -lt 1 ]
     exit 1
 fi
 
+current_dir=$(pwd)
 
 ## for all the modules
 IFS=' ' read -ra ADDR <<< "${@:1}"
@@ -18,7 +19,7 @@ do
         npm install ../ag-grid/module.tgz
     fi
 
-    cd ..
+    cd "$current_dir"
     build-module.sh $module
     dist-just-module.sh $module
     if [ $? -ne 0 ]
@@ -33,5 +34,5 @@ do
     npm pack
     mv *.tgz module.tgz
 
-    cd ..
+    cd "$current_dir"
 done

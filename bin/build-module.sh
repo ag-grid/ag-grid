@@ -6,6 +6,7 @@ if [ "$#" -lt 1 ]
     exit 1
 fi
 
+current_dir=$(pwd)
 
 ## for all the modules
 IFS=' ' read -ra ADDR <<< "${@:1}"
@@ -26,7 +27,7 @@ do
     esac
     npm install
 
-    cd ../
+    cd "$current_dir"
 done
 
 
