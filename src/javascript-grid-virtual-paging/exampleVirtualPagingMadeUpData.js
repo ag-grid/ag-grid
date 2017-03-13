@@ -41,8 +41,12 @@ MyDatasource.prototype.getRows = function(params) {
         rowsThisPage.push(record);
     }
 
-    // no need to pass the second 'rowCount' parameter as we have already provided it
-    params.successCallback(rowsThisPage);
+    // to mimic server call, we reply after a short delay
+    setTimeout( function() {
+        // no need to pass the second 'rowCount' parameter as we have already provided it
+        params.successCallback(rowsThisPage);
+    }, 500);
+
 };
 
 document.addEventListener('DOMContentLoaded', function() {
