@@ -30,12 +30,13 @@ import {VirtualPageRowModel} from "./rowModels/infinateScrolling/virtualPageRowM
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {IAggFuncService} from "./interfaces/iAggFuncService";
-import {IFilter, IFilterComp} from "./interfaces/iFilter";
+import {IFilterComp} from "./interfaces/iFilter";
 import {CsvExportParams} from "./exportParams";
 import {IExcelCreator} from "./interfaces/iExcelCreator";
 import {PaginationService} from "./rowModels/pagination/paginationService";
 import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource, EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
+import {PaginationDataSourceFactory} from "./rowModels/pagination/paginationDataSourceFactory";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -72,6 +73,7 @@ export class GridApi {
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
+    @Autowired('paginationDataSourceFactory') private paginationDataSourceFactory: PaginationDataSourceFactory;
 
     private inMemoryRowModel: IInMemoryRowModel;
     private virtualPageRowModel: VirtualPageRowModel;
@@ -154,6 +156,8 @@ export class GridApi {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             this.selectionController.reset();
             this.inMemoryRowModel.setRowData(rowData, true);
+        } else if (this.gridOptionsWrapper.isRowModelPagination()){
+            this.setDatasource(this.paginationDataSourceFactory.create (rowData));
         } else {
             console.log('cannot call setRowData unless using normal row model');
         }
