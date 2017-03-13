@@ -685,6 +685,10 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to not show context menu. Use if you don't want to use the default 'right click' context menu.</td>
         </tr>
         <tr>
+            <th>allowContextMenuWithControlKey</th>
+            <td>Allows context menu to show, even when ctrl key is held down.</td>
+        </tr>
+        <tr>
             <th>suppressEnterprise</th>
             <td>Turn off enterprise features. This is used by ag-Grid testers, mentioned
                 here in case someone is looking at the code and wondering.</td>

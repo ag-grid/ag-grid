@@ -14,7 +14,8 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     enableRangeSelection: true,
-    getContextMenuItems: getContextMenuItems
+    getContextMenuItems: getContextMenuItems,
+    allowContextMenuWithControlKey: true
 };
 
 function creatFlagImg(flag) {
