@@ -35,14 +35,14 @@ include('../includes/mediaHeader.php');
 
         <p>
             We currently have an excellent small team and want to grow to increase the teams
-            capacity and reduce dependencies on key people. So we want to make you a join key person.
+            capacity and reduce dependencies on key people. So we want to make you a joint key person.
         </p>
 
         <p>
             Perks of working for ag-Grid are:
             <ul>
                 <li>Thriving young company.</li>
-                <li>Get to attend travel and attend conferences.</li>
+                <li>Travel to and represent ag-Grid at international conferences.</li>
                 <li>Experience a company grow from a few people to world domination.</li>
                 <li>Exposure to latest front end frameworks.</li>
             </ul>
@@ -56,18 +56,19 @@ include('../includes/mediaHeader.php');
         <p>
             Core responsibility is to take ownership of large parts of ag-Grid development.
             In addition, given ag-Grid is a small company, you will be expected to by dynamic
-            and help out with everything from forum support issues, attend and speak at conferences,
+            and help out with everything from attending and speaking at conferences,
             take ownership of documentation and examples for features, blog to generate traffic
-            onto www.ag-grid.com, end-to-end testing of product, bring new ideas into the product.
+            onto www.ag-grid.com, end-to-end testing of product, help with support issues,
+            bring new ideas into the product.
         </p>
         <p>
             <b>Desirable Skills</b>
             <ul>
                 <li>Experience using ag-Grid and / or other JavaScript grid frameworks.</li>
                 <li>At least 5 years experience building enterprise software.</li>
+                <li>JavaScript UI frameworks eg Angular, React.</li>
                 <li>JavaScript / TypeScript.</li>
                 <li>HTML / CSS / DOM.</li>
-                <li>JavaScript UI frameworks eg Angular, React.</li>
                 <li>Experience with other enterprise programming languages eg C++, C# or Java.</li>
                 <li>Understanding of Object Oriented and Functional Programming.</li>
                 <li>Understanding of Enterprise Design Patterns</li>
@@ -92,10 +93,10 @@ include('../includes/mediaHeader.php');
             <b>Desirable Skills</b>
             <ul>
                 <li>Experience using ag-Grid and / or other JavaScript grid frameworks.</li>
+                <li>JavaScript UI frameworks eg Angular, React.</li>
                 <li>At least 2 years experience building enterprise software.</li>
                 <li>JavaScript / TypeScript.</li>
                 <li>HTML / CSS / DOM.</li>
-                <li>JavaScript UI frameworks eg Angular, React.</li>
                 <li>Experience with other enterprise programming languages eg C++, C# or Java.</li>
                 <li>Understanding of Object Oriented and Functional Programming.</li>
                 <li>Understanding of Enterprise Design Patterns.</li>
@@ -123,10 +124,10 @@ include('../includes/mediaHeader.php');
             <b>Desirable Skills</b>
             <ul>
                 <li>Experience using ag-Grid and / or other JavaScript grid frameworks.</li>
+                <li>JavaScript UI frameworks eg Angular, React.</li>
                 <li>At least 2 years experience building software.</li>
                 <li>JavaScript / TypeScript.</li>
                 <li>HTML / CSS / DOM.</li>
-                <li>JavaScript UI frameworks eg Angular, React.</li>
                 <li>Take ownership of modules and deliver.</li>
                 <li>Excellent written skills, so you can explain things to customers.</li>
             </ul>
