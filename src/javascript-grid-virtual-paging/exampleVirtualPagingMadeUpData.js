@@ -2,6 +2,9 @@ var alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 var columnDefs = [];
 
+var checkboxSelectionColumn = {checkboxSelection: true, headerName: '', width: 24};
+columnDefs.push(checkboxSelectionColumn);
+
 alphabet.forEach( function(letter) {
     columnDefs.push({headerName: letter.toUpperCase(), field: letter, width: 80});
 });
@@ -11,6 +14,12 @@ var gridOptions = {
     debug: true,
     columnDefs: columnDefs,
     rowModelType: 'virtual',
+    rowSelection: 'multiple',
+    maxPagesInCache: 2,
+    suppressRowClickSelection: true,
+    getRowNodeId: function(item) {
+        return item.a;
+    },
     datasource: new MyDatasource(100)
 };
 
