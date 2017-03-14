@@ -181,7 +181,6 @@ export class EnterpriseMenu {
     }
 
     public showTab(toShow:string) {
-        console.log('showing : ' + toShow + ' - ' + this.tabItemFilter)
         if (this.tabItemColumns && toShow === EnterpriseMenu.TAB_COLUMNS) {
             this.tabbedLayout.showItem(this.tabItemColumns);
         }
