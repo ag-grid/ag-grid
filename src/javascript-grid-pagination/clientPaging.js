@@ -33,13 +33,12 @@ var gridOptions = {
     rowSelection: 'multiple',
     enableColResize: true,
     columnDefs: columnDefs,
-    paginationPageSize: 20,
+    paginationPageSize: 500,
     rowModelType: 'clientPagination'
 };
 
 function onPageSizeChanged(newPageSize) {
-    this.gridOptions.paginationPageSize = new Number(newPageSize);
-    createNewDatasource();
+    this.gridOptions.api.paginationSetPageSize (Number(newPageSize));
 }
 
 // when json gets loaded, it's put here, and  the datasource reads in from here.
