@@ -101,19 +101,24 @@ export class PaginationService extends BeanStub {
         // if not doing pagination, then quite the setup
         if (!paginationEnabled) { return; }
 
-        if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
-            this.addDestroyableEventListener(
-                this.eventService,
-                Events.EVENT_FILTER_CHANGED,
-                this.reset.bind(this,false));
-        }
 
-        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            this.addDestroyableEventListener(
-                this.eventService,
-                Events.EVENT_SORT_CHANGED,
-                this.reset.bind(this,false));
-        }
+        this.gridOptionsWrapper.addEventListener("enableServerSideFilter", (valueHolder:any)=>{
+            if (!valueHolder.previousValue && valueHolder.currentValue) {
+                this.addDestroyableEventListener(
+                    this.eventService,
+                    Events.EVENT_FILTER_CHANGED,
+                    this.reset.bind(this,false));
+            }
+        });
+
+        this.gridOptionsWrapper.addEventListener("enableServerSideSorting", (valueHolder:any)=>{
+            if (!valueHolder.previousValue && valueHolder.currentValue) {
+                this.addDestroyableEventListener(
+                    this.eventService,
+                    Events.EVENT_SORT_CHANGED,
+                    this.reset.bind(this,false));
+            }
+        });
 
         this.setDatasource(this.gridOptionsWrapper.getDatasource());
     }
