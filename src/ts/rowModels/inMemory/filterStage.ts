@@ -1,8 +1,5 @@
-import {Bean} from "../../context/context";
-import {Autowired} from "../../context/context";
+import {Bean, Autowired} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {FilterManager} from "../../filter/filterManager";
-import {RowNode} from "../../entities/rowNode";
 import {IRowNodeStage, StageExecuteParams} from "../../interfaces/iRowNodeStage";
 import {FilterService} from "../../rowNodes/filterService";
 
