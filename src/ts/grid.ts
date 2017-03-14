@@ -60,6 +60,7 @@ import {SortService} from "./rowNodes/sortService";
 import {PaginationDataSourceFactory} from "./rowModels/pagination/paginationDataSourceFactory";
 import {FilterService} from "./rowNodes/filterService";
 import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
+import {AutoGroupColService} from "./columnController/autoGroupColService";
 
 export interface GridParams {
     // used by Web Components
@@ -157,7 +158,7 @@ export class Grid {
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService, FilterService, RowNodeFactory,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
-                ColumnHoverService, ColumnAnimationService, PaginationService, SortService, PaginationDataSourceFactory],
+                ColumnHoverService, ColumnAnimationService, PaginationService, SortService, PaginationDataSourceFactory, AutoGroupColService],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],

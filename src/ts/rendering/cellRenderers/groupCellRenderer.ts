@@ -65,7 +65,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private setParams(params: any): void {
         if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
-            let nodeToSwapIn = this.isFirstChildOfFirstChild(params.node, params.groupKey);
+            let nodeToSwapIn = this.isFirstChildOfFirstChild(params.node, params.colDef.field);
             this.nodeWasSwapped = _.exists(nodeToSwapIn);
             if (this.nodeWasSwapped) {
                 let newParams = <any> {};
@@ -88,7 +88,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.addPadding();
     }
 
-    private isFirstChildOfFirstChild(rowNode: RowNode, groupKey: string): RowNode {
+    private isFirstChildOfFirstChild(rowNode: RowNode, groupField: string): RowNode {
         let currentRowNode = rowNode;
 
         // if we are hiding groups, then if we are the first child, of the first child,
@@ -104,7 +104,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             let firstChild = _.exists(parentRowNode) && currentRowNode.childIndex === 0;
 
             if (firstChild) {
-                if (parentRowNode.field === groupKey) {
+                if (parentRowNode.field === groupField) {
                     foundFirstChildPath = true;
                     nodeToSwapIn = parentRowNode;
                 }
@@ -122,13 +122,15 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         // if the user only wants to show details for one group in this column,
         // then the group key here says which column we are interested in.
 
-        let groupKey = this.params.groupKey;
-        let rowNode = this.params.node;
+        let restrictToOneGroup = this.params.restrictToOneGroup;
 
-        let skipCheck = this.nodeWasSwapped || _.missing(this.params.groupKey);
+        let skipCheck = this.nodeWasSwapped || !restrictToOneGroup;
         if (skipCheck) { return false; }
 
-        return groupKey !== rowNode.field;
+        let groupField = this.params.colDef.field;
+        let rowNode = this.params.node;
+
+        return groupField !== rowNode.field;
     }
 
     // if we are doing embedded full width rows, we only show the renderer when
@@ -154,6 +156,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
                     return !bodyCell;
                 }
             }
+        } else {
+            return false;
         }
     }
 

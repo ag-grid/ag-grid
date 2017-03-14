@@ -571,7 +571,9 @@ export class GridPanel extends BeanStub {
     // gets called by rowRenderer when new data loaded, as it will want to scroll
     // to the top
     public scrollToTop(): void {
-        this.getPrimaryScrollViewport().scrollTop = 0;
+        if (!this.forPrint) {
+            this.getPrimaryScrollViewport().scrollTop = 0;
+        }
     }
 
     //Performs any scroll
@@ -651,10 +653,13 @@ export class GridPanel extends BeanStub {
 
     private onContextMenu(mouseEvent: MouseEvent): void {
 
-        // to allow us to debug in chrome, we ignore the event if ctrl is pressed,
-        // thus the normal menu is displayed
-        if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
-            return;
+        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
+        // not everyone wants this, so first 'if' below allows to turn this hack off.
+        if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
+            // then do the check
+            if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
+                return;
+            }
         }
 
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {

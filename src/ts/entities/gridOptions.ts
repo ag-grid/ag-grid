@@ -78,6 +78,7 @@ export interface GridOptions {
     rowGroupPanelShow?: string;
     pivotPanelShow?: string;
     suppressContextMenu?: boolean;
+    allowContextMenuWithControlKey?: boolean;
     suppressMenuFilterPanel?: boolean;
     suppressMenuMainPanel?: boolean;
     suppressMenuColumnPanel?: boolean;
@@ -132,6 +133,7 @@ export interface GridOptions {
     groupRemoveSingleChildren?: boolean;
     groupSuppressRow?: boolean;
     groupHideOpenParents?: boolean;
+    groupMultiAutoColumn?: boolean;
     groupSuppressBlankHeader?: boolean;
     forPrint?: boolean;
     groupColumnDef?: ColDef;

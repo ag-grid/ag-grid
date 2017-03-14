@@ -795,11 +795,15 @@ export class RenderedCell extends Component {
 
     private onContextMenu(mouseEvent: MouseEvent): void {
 
-        // to allow us to debug in chrome, we ignore the event if ctrl is pressed,
-        // thus the normal menu is displayed
-        if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
-            return;
+        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
+        // not everyone wants this, so first 'if' below allows to turn this hack off.
+        if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
+            // then do the check
+            if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
+                return;
+            }
         }
+
 
         var colDef = this.column.getColDef();
         var agEvent: any = this.createEvent(mouseEvent);
