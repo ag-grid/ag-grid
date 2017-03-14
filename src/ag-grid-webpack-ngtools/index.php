@@ -13,7 +13,7 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h1><img src="../images/webpack_large.png"/> Webpack Tutorial: Understanding ngtools/webpack</h1>
+        <h1><img src="../images/webpack_large.png"/> Webpack Tutorial: Understanding @ngtools/webpack</h1>
     </div>
 </div>
 
@@ -27,7 +27,7 @@ include('../includes/mediaHeader.php');
             blog I go through how to use ngtools/webpack, as well as describing the benefits in generally of using Webpack & AOT.</p>
 
         <note>It might be useful to go through an earlier blog I wrote on <a
-                    href="../ag-grid-understanding-webpack">Understanding Webpack</a> for a tutorial on Webpack core
+                    href="../ag-grid-webpack-ngtools">Understanding Webpack</a> for a tutorial on Webpack core
             concepts and ideas. This blog does go into some detail and assumes a certain level of Webpack understanding,
             especially in the latter half.</note>
 
@@ -692,8 +692,8 @@ export class AppComponent {
 
         <div style="margin-top: 20px;">
             <a href="https://twitter.com/share" class="twitter-share-button"
-               data-url="https://www.ag-grid.com/ag-grid-understanding-webpack/"
-               data-text="Webpack Tutorial: Understanding How it Works" data-via="seanlandsman"
+               data-url="https://www.ag-grid.com/ag-grid-webpack-ngtools/"
+               data-text="Webpack Tutorial: Understanding @ngtools/webpack" data-via="seanlandsman"
                data-size="large">Tweet</a>
             <script>!function (d, s, id) {
                     var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
@@ -711,8 +711,8 @@ export class AppComponent {
 
         <div>
             <a href="https://twitter.com/share" class="twitter-share-button"
-               data-url="https://www.ag-grid.com/ag-grid-understanding-webpack/"
-               data-text="Webpack Tutorial: Understanding How it Works" data-via="seanlandsman"
+               data-url="https://www.ag-grid.com/ag-grid-webpack-ngtools/"
+               data-text="Webpack Tutorial: Understanding @ngtools/webpack" data-via="seanlandsman"
                data-size="large">Tweet</a>
             <script>!function (d, s, id) {
                     var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';

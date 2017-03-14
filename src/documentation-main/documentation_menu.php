@@ -68,6 +68,7 @@
             menuItem(1, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/');
             menuItem(1, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/');
             menuItem(1, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/');
+            menuItem(1, 'Angular ngtools Webpack', '@ngtools/webpack', 'ag-grid-angular-ngtools-webpack/');
         }
         menuItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');
         ?>
