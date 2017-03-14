@@ -689,23 +689,39 @@ export class AppComponent {
         <note>For guidance on using @ngtoools/webpack with ag-Grid please see the <a
                     href="../ag-grid-angular-ngtools-webpack">ag-Grid @ngtools/webpack Documentation</a></note>
 
+        <div style="background-color: #eee; padding: 5px; display: inline-block;">
 
-        <div style="margin-top: 20px;">
-            <a href="https://twitter.com/share" class="twitter-share-button"
-               data-url="https://www.ag-grid.com/ag-grid-understanding-webpack/"
-               data-text="Webpack Tutorial: Understanding How it Works" data-via="seanlandsman"
-               data-size="large">Tweet</a>
-            <script>!function (d, s, id) {
-                    var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-                    if (!d.getElementById(id)) {
-                        js = d.createElement(s);
-                        js.id = id;
-                        js.src = p + '://platform.twitter.com/widgets.js';
-                        fjs.parentNode.insertBefore(js, fjs);
-                    }
-                }(document, 'script', 'twitter-wjs');</script>
+            <div style="margin-bottom: 5px;">If you liked this article then please share</div>
+
+        <table style="background-color: #eee;">
+            <tr>
+                <td>
+                    <script type="text/javascript" src="//www.redditstatic.com/button/button1.js"></script>
+                </td>
+                <td>
+                    &nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                    <a href="https://twitter.com/share" class="twitter-share-button"
+                       data-url="https://www.ag-grid.com/ag-grid-understanding-webpack/"
+                       data-text="Webpack Tutorial: Understanding How it Works" data-via="seanlandsman"
+                       data-size="large">Tweet</a>
+                    <script>!function (d, s, id) {
+                            var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+                            if (!d.getElementById(id)) {
+                                js = d.createElement(s);
+                                js.id = id;
+                                js.src = p + '://platform.twitter.com/widgets.js';
+                                fjs.parentNode.insertBefore(js, fjs);
+                            }
+                        }(document, 'script', 'twitter-wjs');</script>
+                </td>
+            </tr>
+        </table>
         </div>
-
+<!--
+        <a href="//www.reddit.com/submit" onclick="window.location = '//www.reddit.com/submit?url=' + encodeURIComponent(window.location); return false"> <img src="//www.redditstatic.com/spreddit7.gif" alt="submit to reddit" border="0" /> </a>
+-->
     </div>
     <div class="col-md-3">
 
@@ -764,7 +780,6 @@ export class AppComponent {
 
     </div>
 </div>
-
 
 <hr/>
 
