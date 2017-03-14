@@ -34,7 +34,7 @@ var gridOptions = {
     enableColResize: true,
     columnDefs: columnDefs,
     paginationPageSize: 20,
-    rowModelType: 'pagination'
+    rowModelType: 'clientPagination'
 };
 
 function onPageSizeChanged(newPageSize) {
