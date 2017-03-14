@@ -46,7 +46,7 @@ include('../includes/mediaHeader.php');
         <h3>Our Application</h3>
 
         <p>In order to focus on the build side of things our application is deliberately simple. All the file sizes and
-            load times are small given our applications simplicify, so it's worth noting the relative differences in size and load times,
+            load times are small given our applications simplicity, so it's worth noting the relative differences in size and load times,
             not the absolute values.</p>
 
             <p>We have a <code>Module</code>,
