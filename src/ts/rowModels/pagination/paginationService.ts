@@ -13,6 +13,10 @@ import {Constants} from "../../constants";
 import {IDatasource} from "./../iDatasource";
 import {BeanStub} from "../../context/beanStub";
 
+export enum PaginationType {
+    CLIENT, SERVER, NONE
+}
+
 @Bean('paginationService')
 export class PaginationService extends BeanStub {
 
@@ -27,6 +31,7 @@ export class PaginationService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     private inMemoryRowModel: IInMemoryRowModel;
 
+    private type:PaginationType = PaginationType.NONE;
     private callVersion = 0;
     private datasource: IDatasource;
     private pageSize: number;
@@ -124,10 +129,18 @@ export class PaginationService extends BeanStub {
             addFilterListener();
         }
 
-        this.setDatasource(this.gridOptionsWrapper.getDatasource());
+        //If it is in the grid, then it must be of server type
+        this.setDatasource(this.gridOptionsWrapper.getDatasource(), PaginationType.SERVER);
     }
 
-    public setDatasource(datasource: IDatasource) {
+    public setPageSize (pageSize:number):void{
+        this.gridOptionsWrapper.setProperty('paginationPageSize', pageSize);
+        this.pageSize = pageSize;
+        this.reset (true);
+    }
+
+    public setDatasource(datasource: IDatasource, type:PaginationType) {
+        this.type = type;
         this.datasource = datasource;
 
         if (datasource) {
@@ -165,17 +178,7 @@ export class PaginationService extends BeanStub {
             this.pageSize = 100;
         }
 
-        // see if we know the total number of pages, or if it's 'to be decided'
-        if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
-            this.rowCount = this.datasource.rowCount;
-            this.lastPageFound = true;
-            this.calculateTotalPages();
-        } else {
-            this.rowCount = 0;
-            this.lastPageFound = false;
-            this.totalPages = null;
-        }
-
+        this.updateCounts();
         this.resetCurrentPage();
 
         this.eventService.dispatchEvent(Events.EVENT_PAGINATION_RESET);
@@ -200,6 +203,7 @@ export class PaginationService extends BeanStub {
         lastRowIndex = _.cleanNumber(lastRowIndex);
         var firstId = this.currentPage * this.pageSize;
         this.inMemoryRowModel.setRowData(rows, true, firstId);
+        this.updateCounts();
         // see if we hit the last row
         if (!this.lastPageFound && lastRowIndex >= 0) {
             this.lastPageFound = true;
@@ -214,6 +218,19 @@ export class PaginationService extends BeanStub {
         }
 
         this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_LOADED);
+    }
+
+    private updateCounts() {
+        // see if we know the total number of pages, or if it's 'to be decided'
+        if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
+            this.rowCount = this.datasource.rowCount;
+            this.lastPageFound = true;
+            this.calculateTotalPages();
+        } else {
+            this.rowCount = 0;
+            this.lastPageFound = false;
+            this.totalPages = null;
+        }
     }
 
     private loadPage() {
@@ -246,7 +263,7 @@ export class PaginationService extends BeanStub {
         };
 
         // check if old version of datasource used
-        var getRowsParams = _.getFunctionParameters(this.datasource.getRows);
+        let getRowsParams = _.getFunctionParameters(this.datasource.getRows);
         if (getRowsParams.length > 1) {
             console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
             console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');

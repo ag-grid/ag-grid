@@ -33,7 +33,7 @@ import {IAggFuncService} from "./interfaces/iAggFuncService";
 import {IFilterComp} from "./interfaces/iFilter";
 import {CsvExportParams} from "./exportParams";
 import {IExcelCreator} from "./interfaces/iExcelCreator";
-import {PaginationService} from "./rowModels/pagination/paginationService";
+import {PaginationService, PaginationType} from "./rowModels/pagination/paginationService";
 import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource, EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
 import {PaginationDataSourceFactory} from "./rowModels/pagination/paginationDataSourceFactory";
@@ -133,7 +133,8 @@ export class GridApi {
 
     public setDatasource(datasource: IDatasource) {
         if (this.gridOptionsWrapper.isRowModelAnyPagination()) {
-            this.paginationService.setDatasource(datasource);
+            let type = this.gridOptionsWrapper.isRowModelClientPagination() ? PaginationType.CLIENT : PaginationType.SERVER;
+            this.paginationService.setDatasource(datasource, type);
         } else if (this.gridOptionsWrapper.isRowModelVirtual()) {
             (<VirtualPageRowModel>this.rowModel).setDatasource(datasource);
         } else {
@@ -745,6 +746,10 @@ export class GridApi {
 
     public paginationGoToPage(page: number): void {
         this.paginationService.goToPage(page);
+    }
+
+    public paginationSetPageSize (pageSize:number):void{
+        this.paginationService.setPageSize (pageSize);
     }
 
     /*

@@ -127,8 +127,7 @@ export class GridOptionsWrapper {
     public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
     public isRowModelEnterprise() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_ENTERPRISE; }
     public isRowModelDefault() { return !(
-        this.isRowModelPagination() ||
-        this.isRowModelClientPagination() ||
+        this.isRowModelAnyPagination() ||
         this.isRowModelVirtual() ||
         this.isRowModelViewport());
     }

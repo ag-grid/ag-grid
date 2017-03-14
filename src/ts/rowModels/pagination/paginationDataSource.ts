@@ -27,7 +27,7 @@ export class PaginationDataSource implements IDatasource{
         var rowsThisPage = afterFilterAndSort.slice(params.startRow, params.endRow);
         var lastRow = -1;
         if (afterFilterAndSort.length <= params.endRow) {
-            lastRow = this.rootNode.allLeafChildren.length;
+            lastRow = afterFilterAndSort.length;
         }
 
         this.rowCount = afterFilterAndSort.length;
