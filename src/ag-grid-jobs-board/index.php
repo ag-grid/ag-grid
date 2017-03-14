@@ -123,10 +123,7 @@ include('../includes/mediaHeader.php');
                     <li>At least 2 years experience building enterprise software.</li>
                     <li>JavaScript / TypeScript.</li>
                     <li>HTML / CSS / DOM.</li>
-                    <li>Experience with other enterprise programming languages eg C++, C# or Java.</li>
                     <li>Understanding of Object Oriented and Functional Programming.</li>
-                    <li>Understanding of Enterprise Design Patterns.</li>
-                    <li>Experience developing large enterprise systems.</li>
                     <li>Take ownership of modules and deliver.</li>
                     <li>Excellent written skills, to document features you develop.</li>
                     <li>Ability to code complex systems, beyond simple CRUD screens.</li>
