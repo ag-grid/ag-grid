@@ -669,15 +669,25 @@ export class AppComponent {
         while still being able to leverage the flexibility that Webpack offers. I can't see a good reason why you woudln't use the two
         together!</p>
 
-
         <note>Although the file sizes should be pretty consistent if you run this code, the load times can vary dramatically depending
         on your machine configuration and what the load on your machine is at the time. It's probably worth looking at the load times on average
         in a real-world application, rather than a particular page load to get an idea of the real benefits on offer with AOT.</note>
 
+        <p>For a slightly more real-world example I've taken a number of our ag-Grid Angular Examples and placed them on a single page to see
+        what improvements I could see. I've excluded file sizes from this as our examples include a number of non-compressible
+            images, but looking at the load times I saw the following improvements:</p>
 
+        <ul>
+            <li>Non-AOT: 2.2s</li>
+            <li>AOT: 1.64s</li>
+        </ul>
 
+        <p>That's a pretty decent improvement by the inclusion of a single plugin - and thats with relatively simple components. If
+        you scale up to a full application with many components and for example lazy loading, the improvement you would see
+        would be even greater.</p>
 
-
+        <note>For guidance on using @ngtoools/webpack with ag-Grid please see the <a
+                    href="../ag-grid-angular-ngtools-webpack">ag-Grid @ngtools/webpack Documentation</a></note>
 
 
         <div style="margin-top: 20px;">
