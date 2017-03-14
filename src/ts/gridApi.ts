@@ -156,7 +156,7 @@ export class GridApi {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             this.selectionController.reset();
             this.inMemoryRowModel.setRowData(rowData, true);
-        } else if (this.gridOptionsWrapper.isRowModelPagination()){
+        } else if (this.gridOptionsWrapper.isRowModelClientPagination()){
             this.setDatasource(this.paginationDataSourceFactory.create (rowData));
         } else {
             console.log('cannot call setRowData unless using normal row model');

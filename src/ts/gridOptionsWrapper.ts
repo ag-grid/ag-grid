@@ -116,6 +116,7 @@ export class GridOptionsWrapper {
     public getContext() { return this.gridOptions.context; }
     public isPivotMode() { return isTrue(this.gridOptions.pivotMode); }
 
+    public isRowModelClientPagination() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_CLIENT_TYPE_PAGINATION; }
     public isRowModelPagination() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_PAGINATION; }
     public isRowModelVirtual() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL; }
     public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
