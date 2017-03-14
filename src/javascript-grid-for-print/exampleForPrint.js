@@ -25,7 +25,6 @@ var rowData = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: rowData,
     enableColResize: true, //one of [true, false]
     enableSorting: true, //one of [true, false]
     enableFilter: true, //one of [true, false]
@@ -37,4 +36,5 @@ var gridOptions = {
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
+    gridOptions.api.setRowData(rowData);
 });

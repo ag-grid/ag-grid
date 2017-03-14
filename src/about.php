@@ -188,16 +188,16 @@
             </p>
         </div>
 
-        <div class="col-md-6">
-            <h2>
-                Careers:
-            </h2>
+        <div class="col-md-6" style="border: 1px solid grey; background: #fafafa; padding: 20px;">
+            <img src="../images/jobs-board.png" style="width: 150px; float: left; margin-right: 20px;"/>
+
             <p>
-                We are currently expanding and looking for Javascript Developers with Enterprise Applications experience. 
+                We are always looking for Javascript Developers with Enterprise Applications experience.
             </p>
             <p>
-                Please send your CV to <abbr title="email">info@ag-grid.com
+                Check the <a href="./ag-grid-jobs-board/">jobs board</a>.
             </p>
+
         </div>
     </div> <!-- end row -->
 </div>
