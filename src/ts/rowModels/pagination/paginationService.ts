@@ -97,28 +97,32 @@ export class PaginationService extends BeanStub {
             this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
         }
 
-        var paginationEnabled = this.gridOptionsWrapper.isRowModelPagination();
+        var paginationEnabled = this.gridOptionsWrapper.isRowModelAnyPagination();
         // if not doing pagination, then quite the setup
         if (!paginationEnabled) { return; }
 
 
-        this.gridOptionsWrapper.addEventListener("enableServerSideFilter", (valueHolder:any)=>{
-            if (!valueHolder.previousValue && valueHolder.currentValue) {
-                this.addDestroyableEventListener(
-                    this.eventService,
-                    Events.EVENT_FILTER_CHANGED,
-                    this.reset.bind(this,false));
-            }
-        });
+        let addSortListener = ()=>{
+            this.addDestroyableEventListener(
+                this.eventService,
+                Events.EVENT_SORT_CHANGED,
+                this.reset.bind(this,false));
+        };
 
-        this.gridOptionsWrapper.addEventListener("enableServerSideSorting", (valueHolder:any)=>{
-            if (!valueHolder.previousValue && valueHolder.currentValue) {
-                this.addDestroyableEventListener(
-                    this.eventService,
-                    Events.EVENT_SORT_CHANGED,
-                    this.reset.bind(this,false));
-            }
-        });
+        let addFilterListener = ()=>{
+            this.addDestroyableEventListener(
+                this.eventService,
+                Events.EVENT_FILTER_CHANGED,
+                this.reset.bind(this,false));
+        };
+
+        if (this.gridOptionsWrapper.isSortingProvided()) {
+            addSortListener();
+        }
+
+        if (this.gridOptionsWrapper.isFilterProvided()) {
+            addFilterListener();
+        }
 
         this.setDatasource(this.gridOptionsWrapper.getDatasource());
     }
@@ -222,12 +226,12 @@ export class PaginationService extends BeanStub {
         this.gridPanel.showLoadingOverlay();
 
         var sortModel: any;
-        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
+        if (this.gridOptionsWrapper.isSortingProvided()) {
             sortModel = this.sortController.getSortModel();
         }
 
         var filterModel: any;
-        if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
+        if (this.gridOptionsWrapper.isFilterProvided()) {
             filterModel = this.filterManager.getFilterModel();
         }
 

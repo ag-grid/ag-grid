@@ -99,7 +99,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     private onSortChanged(): void {
         // we only act on the sort event here if the user is doing in grid sorting.
         // we ignore it if the sorting is happening on the server side.
-        if (this.gridOptionsWrapper.isEnableServerSideSorting()) { return; }
+        if (this.gridOptionsWrapper.isSortingProvided()) { return; }
 
         var animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({step: Constants.STEP_SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true});

@@ -13,7 +13,7 @@ export class FilterStage implements IRowNodeStage {
         let rowNode = params.rowNode;
 
 
-        if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
+        if (this.gridOptionsWrapper.isFilterProvided()) {
             this.filterService.filter(rowNode, false);
         } else {
             this.filterService.filterAccordingToColumnState(rowNode);

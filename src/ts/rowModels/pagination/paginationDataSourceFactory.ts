@@ -14,9 +14,6 @@ export class PaginationDataSourceFactory {
     @Autowired('rowNodeFactory') private rowNodeFactory: RowNodeFactory;
 
     public create (data:any[]):IDatasource{
-        this.gridOptionsWrapper.setProperty("enableServerSideSorting", true);
-        this.gridOptionsWrapper.setProperty("enableServerSideFilter", true);
-
         return new PaginationDataSource (
             this.rowNodeFactory.create(data),
             this.sortService,

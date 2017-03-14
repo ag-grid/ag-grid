@@ -132,7 +132,7 @@ export class GridApi {
     }
 
     public setDatasource(datasource: IDatasource) {
-        if (this.gridOptionsWrapper.isRowModelPagination()) {
+        if (this.gridOptionsWrapper.isRowModelAnyPagination()) {
             this.paginationService.setDatasource(datasource);
         } else if (this.gridOptionsWrapper.isRowModelVirtual()) {
             (<VirtualPageRowModel>this.rowModel).setDatasource(datasource);

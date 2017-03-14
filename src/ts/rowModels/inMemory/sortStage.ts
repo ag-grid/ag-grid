@@ -11,7 +11,7 @@ export class SortStage {
 
     public execute(params: StageExecuteParams): void {
         // if the sorting is already done by the server, then we should not do it here
-        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
+        if (this.gridOptionsWrapper.isSortingProvided()) {
             this.sortService.sort(params.rowNode, null);
         }else{
             this.sortService.sortAccordingToColumnsState(params.rowNode);
