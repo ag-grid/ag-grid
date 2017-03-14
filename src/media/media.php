@@ -28,6 +28,31 @@ include('../includes/mediaHeader.php');
 
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="../ag-grid-webpack-ngtools/">
+                Webpack Tutorial: Using @ngTools/webpack
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            14th March 2017
+        </div>
+    </div>
+    <div style="color: #767676">
+        Self Published
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Tutorial on how to use @ngtools/Webpack with AOT
+    </div>
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="float: left; width: 240px;">
+        <a href="../vue-js-grid/">
+            <img src="../images/agGridDaily.png" style="width: 225px;"/>
+        </a>
+    </div>
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
             <a href="../vue-js-grid/">
                 Using VueJS Components in ag-Grid
             </a>
