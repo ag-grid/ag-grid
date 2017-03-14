@@ -19,9 +19,9 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 id="angular-building-with-webpack">Angular - Building with @ngtools/webpack 2</h1>
+    <h1 id="angular-building-with-webpack">Angular - Building with @ngtools/webpack</h1>
 
-    <p>We document the main steps required when using @ngtools/Webpack 2 below, but please refer to
+    <p>We document the main steps required when using @ngtools/Webpack below, but please refer to
         <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>
 
     <p>We have 2 Webpack Configurations in the example project - dev configuration and and AOT ready prod configuration.</p>
