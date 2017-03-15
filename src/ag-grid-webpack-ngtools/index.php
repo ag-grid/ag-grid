@@ -705,7 +705,7 @@ export class AppComponent {
                     <td>
                         <a href="https://twitter.com/share" class="twitter-share-button"
                            data-url="https://www.ag-grid.com/ag-grid-webpack-ngtools/"
-                           data-text="Webpack Tutorial: Understanding @ngtools/webpack" data-via="seanlandsman"
+                           data-text="Webpack Tutorial: Understanding ngtools/webpack" data-via="seanlandsman"
                            data-size="large">Tweet</a>
                         <script>!function (d, s, id) {
                                 var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
@@ -727,7 +727,7 @@ export class AppComponent {
         <div>
             <a href="https://twitter.com/share" class="twitter-share-button"
                data-url="https://www.ag-grid.com/ag-grid-webpack-ngtools/"
-               data-text="Webpack Tutorial: Understanding @ngtools/webpack" data-via="seanlandsman"
+               data-text="Webpack Tutorial: Understanding ngtools/webpack" data-via="seanlandsman"
                data-size="large">Tweet</a>
             <script>!function (d, s, id) {
                     var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
