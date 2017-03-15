@@ -263,9 +263,9 @@ export interface GridOptions {
     onFilterChanged?(event?: any): void;
     onAfterFilterChanged?(event?: any): void;
     onFilterModified?(event?: any): void;
-    onBeforeSortChanged?(event?: any): void;
-    onSortChanged?(event?: any): void;
-    onAfterSortChanged?(event?: any): void;
+    onBeforeSortChanged?(): void;
+    onSortChanged?(): void;
+    onAfterSortChanged?(): void;
     onVirtualRowRemoved?(event?: any): void;
     onRowClicked?(event?: any): void;
     onRowDoubleClicked?(event?: any): void;
