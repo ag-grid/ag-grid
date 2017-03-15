@@ -36,46 +36,4 @@ include '../documentation-main/documentation_header.php';
     Enable PHP MySQL extension (uncomment mysql lines in php.ini).
 </p>
 
-
-
-<?php
-
-phpinfo();
-
-print('A');
-
-//$link = mysqli_connect('mysql_host', 'mysql_user', 'mysql_password');
-
-print('B');
-
-/*class PaymentsDao {
-
-    function getAccount($id, $email) {
-        global $mysqli;
-
-        $stmt = $mysqli->prepare("SELECT name, amount FROM ceolter_portal.accounts where id = ? and email = ?");
-        $stmt->bind_param('is', $id, $email);
-
-        $stmt->execute();
-        $stmt->bind_result($name, $amount);
-
-        $result = NULL;
-
-        while($stmt->fetch()) {
-            $result = new Account;
-            $result->name = $name;
-            $result->id = $id;
-            $result->email = $email;
-            $result->amount = $amount;
-        }
-
-        $stmt->close();
-
-        return $result;
-    }
-
-}*/
-?>
-
-
 <?php include '../documentation-main/documentation_footer.php';?>

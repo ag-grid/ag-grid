@@ -32,7 +32,8 @@ EnterpriseDatasource.prototype.getRows = function(params) {
 function getRowsFromServer(params) {
 
     var result = allData;
-    var rowGroupCols = params.rowGroupCols;
+    var request = params.request;
+    var rowGroupCols = request.rowGroupCols;
 
     // if grouping, return the group
     if (rowGroupCols.length > 0) {
@@ -41,10 +42,10 @@ function getRowsFromServer(params) {
 
         var mappedValues = _.groupBy(this.allData, field);
 
-        var lookingForChildren = params.groupKeys && params.groupKeys.length > 0;
+        var lookingForChildren = request.groupKeys && request.groupKeys.length > 0;
 
         if (lookingForChildren) {
-            var groupKey = params.groupKeys[0];
+            var groupKey = request.groupKeys[0];
             result = mappedValues[groupKey];
         } else {
             var listOfKeys = Object.keys(mappedValues);
