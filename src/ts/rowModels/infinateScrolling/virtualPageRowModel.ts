@@ -11,9 +11,10 @@ import {FilterManager} from "../../filter/filterManager";
 import {Constants} from "../../constants";
 import {IDatasource} from "../iDatasource";
 import {VirtualPageCache, CacheParams} from "./virtualPageCache";
+import {BeanStub} from "../../context/beanStub";
 
 @Bean('rowModel')
-export class VirtualPageRowModel implements IRowModel {
+export class VirtualPageRowModel extends BeanStub implements IRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -22,11 +23,11 @@ export class VirtualPageRowModel implements IRowModel {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
-    private destroyFunctions: (()=>void)[] = [];
 
     private virtualPageCache: VirtualPageCache;
 
     private datasource: IDatasource;
+
     @PostConstruct
     public init(): void {
         if (!this.gridOptionsWrapper.isRowModelVirtual()) { return; }
@@ -36,16 +37,8 @@ export class VirtualPageRowModel implements IRowModel {
     }
 
     private addEventListeners(): void {
-        var onSortChangedListener = this.onSortChanged.bind(this);
-        var onFilterChangedListener = this.onFilterChanged.bind(this);
-
-        this.eventService.addEventListener(Events.EVENT_FILTER_CHANGED, onFilterChangedListener);
-        this.eventService.addEventListener(Events.EVENT_SORT_CHANGED, onSortChangedListener);
-
-        this.destroyFunctions.push( ()=> {
-            this.eventService.removeEventListener(Events.EVENT_FILTER_CHANGED, onFilterChangedListener);
-            this.eventService.removeEventListener(Events.EVENT_SORT_CHANGED, onSortChangedListener);
-        });
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     }
 
     private onFilterChanged(): void {
@@ -62,7 +55,7 @@ export class VirtualPageRowModel implements IRowModel {
 
     @PreDestroy
     public destroy(): void {
-        this.destroyFunctions.forEach( func => func() );
+        super.destroy();
     }
 
     public getType(): string {

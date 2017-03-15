@@ -35,8 +35,8 @@ import {CsvExportParams} from "./exportParams";
 import {IExcelCreator} from "./interfaces/iExcelCreator";
 import {PaginationService} from "./rowModels/pagination/paginationService";
 import {IDatasource} from "./rowModels/iDatasource";
-import {IEnterpriseDatasource, EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
 import {PaginationDataSourceFactory} from "./rowModels/pagination/paginationDataSourceFactory";
+import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -124,11 +124,11 @@ export class GridApi {
 
     public setEnterpriseDatasource(datasource: IEnterpriseDatasource) {
         if (this.gridOptionsWrapper.isRowModelEnterprise()) {
-            (<EnterpriseRowModel>this.rowModel).setDatasource(datasource);
+            // should really have an IEnterpriseRowModel interface, so we are not casting to any
+            (<any>this.rowModel).setDatasource(datasource);
         } else {
             console.warn(`ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_ENTERPRISE}'`)
         }
-
     }
 
     public setDatasource(datasource: IDatasource) {

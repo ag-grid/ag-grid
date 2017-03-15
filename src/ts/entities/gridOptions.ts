@@ -3,12 +3,12 @@ import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
 import {Column} from "./column";
 import {IViewportDatasource} from "../interfaces/iViewportDatasource";
-import {ICellRendererFunc, ICellRenderer, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
+import {ICellRendererFunc, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
 import {IAggFunc, ColGroupDef, ColDef} from "./colDef";
 import {IDatasource} from "../rowModels/iDatasource";
 import {GridCellDef} from "./gridCell";
 import {IDateComp} from "../rendering/dateComponent";
-import {IEnterpriseDatasource} from "../rowModels/enterprise/enterpriseRowModel";
+import {IEnterpriseDatasource} from "../interfaces/iEnterpriseDatasource";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *

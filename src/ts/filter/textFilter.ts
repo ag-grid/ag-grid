@@ -1,9 +1,9 @@
 import {Utils as _} from "../utils";
-import {IFilterParams, IDoesFilterPassParams} from "../interfaces/iFilter";
+import {IFilterParams, IDoesFilterPassParams, SerializedFilter} from "../interfaces/iFilter";
 import {ComparableBaseFilter, BaseFilter} from "./baseFilter";
 import {QuerySelector} from "../widgets/componentAnnotations";
 
-export interface SerializedTextFilter {
+export interface SerializedTextFilter extends SerializedFilter {
     filter:string
     type:string
 }
@@ -16,7 +16,8 @@ export class TextFilter extends ComparableBaseFilter <string, IFilterParams, Ser
     modelFromFloatingFilter(from: string): SerializedTextFilter {
         return {
             type: this.filter,
-            filter: from
+            filter: from,
+            filterType: 'text'
         };
     }
 
@@ -119,7 +120,6 @@ export class TextFilter extends ComparableBaseFilter <string, IFilterParams, Ser
         return this.filterText;
     }
 
-
     public resetState(): void{
         this.setFilter(null);
         this.setFilterType(BaseFilter.CONTAINS);
@@ -128,7 +128,8 @@ export class TextFilter extends ComparableBaseFilter <string, IFilterParams, Ser
     public serialize(): SerializedTextFilter{
         return {
             type: this.filter,
-            filter: this.filterText
+            filter: this.filterText,
+            filterType: 'text'
         }
     }
 

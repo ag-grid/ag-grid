@@ -49,6 +49,10 @@ export interface IFilter {
     onFloatingFilterChanged ?(change:any): void;
 }
 
+export interface SerializedFilter {
+    filterType: string;
+}
+
 export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
 }
 

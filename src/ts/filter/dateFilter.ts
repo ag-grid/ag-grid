@@ -1,4 +1,4 @@
-import {IFilterParams} from "../interfaces/iFilter";
+import {IFilterParams, SerializedFilter} from "../interfaces/iFilter";
 import {Component} from "../widgets/component";
 import {IDateParams, IDateComp} from "../rendering/dateComponent";
 import {QuerySelector} from "../widgets/componentAnnotations";
@@ -15,10 +15,10 @@ export interface IDateComparatorFunc {
     (filterLocalDateAtMidnight:Date, cellValue: any): number;
 }
 
-export interface SerializedDateFilter {
-    dateFrom:string
-    dateTo:string
-    type:string
+export interface SerializedDateFilter extends SerializedFilter {
+    dateFrom:string;
+    dateTo:string;
+    type:string;
 }
 
 export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, SerializedDateFilter> {
@@ -42,7 +42,8 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         return {
             dateFrom: from,
             dateTo: this.getDateTo(),
-            type: this.filter
+            type: this.filter,
+            filterType: 'date'
         };
     }
 
@@ -109,7 +110,8 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         return {
             dateTo: Utils.serializeDateToYyyyMmDd(this.dateToComponent.getDate(), "-"),
             dateFrom: Utils.serializeDateToYyyyMmDd(this.dateFromComponent.getDate(), "-"),
-            type: this.filter
+            type: this.filter,
+            filterType: 'date'
         }
     }
 

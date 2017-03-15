@@ -82,7 +82,8 @@ export class TextFloatingFilterComp extends InputTextFloatingFilterComp<Serializ
         let currentParentModel = this.currentParentModel();
         return {
             type: !currentParentModel ? 'contains': currentParentModel.type,
-            filter: this.eColumnFloatingFilter.value
+            filter: this.eColumnFloatingFilter.value,
+            filterType: 'text'
         }
     }
 }
@@ -127,7 +128,8 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
             model:{
                 type: type,
                 dateFrom: date,
-                dateTo: dateTo
+                dateTo: dateTo,
+                filterType: 'date'
             },
             apply:true
         });
@@ -184,7 +186,8 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
         return {
             type: !currentParentModel ? 'equals' : currentParentModel.type,
             filter: modelFilterValue,
-            filterTo: !currentParentModel ? null: currentParentModel.filterTo
+            filterTo: !currentParentModel ? null: currentParentModel.filterTo,
+            filterType: 'number'
         };
     }
 

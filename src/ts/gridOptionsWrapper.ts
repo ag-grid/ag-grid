@@ -23,7 +23,7 @@ import {ICellRendererFunc, ICellRenderer, ICellRendererComp} from "./rendering/c
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
-import {IEnterpriseDatasource} from "./rowModels/enterprise/enterpriseRowModel";
+import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -131,8 +131,18 @@ export class GridOptionsWrapper {
     public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
     public isToolPanelSuppressRowGroups() { return isTrue(this.gridOptions.toolPanelSuppressRowGroups); }
     public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
-    public isToolPanelSuppressPivots() { return isTrue(this.gridOptions.toolPanelSuppressPivots); }
-    public isToolPanelSuppressPivotMode() { return isTrue(this.gridOptions.toolPanelSuppressPivotMode); }
+    public isToolPanelSuppressPivots() {
+        // never allow pivot mode when using enterprise model
+        if (this.isRowModelEnterprise()) { return true; }
+        // otherwise, let user decide
+        return isTrue(this.gridOptions.toolPanelSuppressPivots);
+    }
+    public isToolPanelSuppressPivotMode() {
+        // never allow pivot mode when using enterprise model
+        if (this.isRowModelEnterprise()) { return true; }
+        // otherwise, let user decide
+        return isTrue(this.gridOptions.toolPanelSuppressPivotMode);
+    }
     public isSuppressTouch() { return isTrue(this.gridOptions.suppressTouch); }
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
     public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
