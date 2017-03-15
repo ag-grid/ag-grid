@@ -49,12 +49,24 @@ export class HeaderContainer {
         this.setupDragAndDrop();
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
 
         this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+    }
+
+    // if row group changes, that means we may need to add aggFunc's to the column headers,
+    // if the grid goes from no aggregation (ie no grouping) to grouping
+    private onColumnRowGroupChanged(): void {
+        this.onGridColumnsChanged();
+    }
+
+    // if the agg func of a column changes, then we may need to update the agg func in columns header
+    private onColumnValueChanged(): void {
+        this.onGridColumnsChanged();
     }
 
     private onColumnResized(): void {

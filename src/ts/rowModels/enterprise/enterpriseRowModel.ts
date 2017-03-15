@@ -75,10 +75,17 @@ export class EnterpriseRowModel implements IRowModel {
 
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
 
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.datasource = this.gridOptionsWrapper.getEnterpriseDatasource();
 
+        if (this.datasource) {
+            this.reset();
+        }
+    }
+
+    private onValueChanged(): void {
         if (this.datasource) {
             this.reset();
         }
@@ -135,9 +142,11 @@ export class EnterpriseRowModel implements IRowModel {
 
         let pointer = groupNode;
         while (pointer.level >= 0) {
-            keys.push(groupNode.key);
-            pointer = groupNode.parent;
+            keys.push(pointer.key);
+            pointer = pointer.parent;
         }
+
+        keys.reverse();
 
         return keys;
     }
