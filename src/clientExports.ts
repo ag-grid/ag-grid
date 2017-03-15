@@ -15,7 +15,7 @@ import {MenuList} from "./menu/menuList";
 import {RangeController} from "./rangeController";
 import {RowGroupColumnsPanel} from "./toolPanel/columnDrop/rowGroupColumnsPanel";
 import {ContextMenuFactory} from "./menu/contextMenu";
-import {ViewportRowModel} from "./viewport/viewportRowModel";
+import {ViewportRowModel} from "./rowModels/viewport/viewportRowModel";
 import {RichSelectCellEditor} from "./rendering/richSelect/richSelectCellEditor";
 import {RichSelectRow} from "./rendering/richSelect/richSelectRow";
 import {VirtualList} from "./rendering/virtualList";
