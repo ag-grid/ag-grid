@@ -123,30 +123,27 @@ gridOptions.getRowClass = function(params) {
 }
 </pre>
 
-
     <h3 id="cellClassRules">Column Definition cellClassRules</h3>
 
     <p>
-        ag-Grid allows rules to be applied to include certain classes. If you use AngularJS 1.x, then
-        this is similar to ng-class, where you specify classes as Javascript object keys, and rules
-        as object values.
-    </p>
-
-    <p>
-        Rules are provided as a Javascript class. The keys are class names and the values are expressions
-        that if evaluated to true, the class gets used. The expression can either be a Javascript function,
+        ag-Grid allows rules to be applied to include certain CSS classes The Rules are provided
+        as a JavaScript map. The keys are class names and the values are expressions
+        that if evaluated to true, the class gets used. The expression can either be a JavaScript function,
         or a string which is treated as a shorthand for a function by the grid.
     </p>
 
     <p>
-        This is best explained using the example below. The Year column has the following cellClassRules:
+        The following snippet is cellClassRules using functions on a year column:
     </p>
 
         <pre>cellClassRules: {
+    <span class="codeComment">// apply green to 2008</span>
     'rag-green-outer': function(params) { return params.value === 2008},
+    <span class="codeComment">// apply amber 2004</span>
     'rag-amber-outer': function(params) { return params.value === 2004},
+    <span class="codeComment">// apply red to 2000</span>
     'rag-red-outer': function(params) { return params.value === 2000}
-},</pre>
+}</pre>
 
     <p>
         When a function is provided the params object has the attributes: <i>value, data, node,
@@ -171,7 +168,10 @@ gridOptions.getRowClass = function(params) {
         </ul>
 
         In other words, x and ctx map value and context, all other attributes map the parameters of the same name.
+    </p>
 
+    <p>
+        The following snippet is cellClassRules using expressions on an age column:
     </p>
 
     <pre>cellClassRules: {
@@ -180,8 +180,17 @@ gridOptions.getRowClass = function(params) {
     'rag-red': 'x >= 25'
 }</pre>
 
+    <p>Below shows both cssClassRules snippets above in a full working example.</p>
+
     <show-example example="example1"></show-example>
 
+    <h4>Refresh of cellClassRules</h4>
+
+    <p>
+        If you refresh a cell, or a cell is updated due to editing, the cellClassRules
+        are applied again. If a rules executes a second time and returns true, where
+        previously it returned false, then the CSS class is removed.
+    </p>
 
 </div>
 
