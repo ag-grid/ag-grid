@@ -199,6 +199,8 @@ export class ComponentUtil {
         if (changes.pivotMode) {
             columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue));
         }
+
+        api.dispatchEvent(Events.EVENT_COMPONENT_STATE_CHANGED, changes);
     }
 
     public static toBoolean(value: any): boolean {

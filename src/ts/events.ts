@@ -136,6 +136,8 @@ export class Events {
     public static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
     public static EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
 
+    public static EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
+
     // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
     // to design these better around server side functions and then release to general public when fully working with
     // all the row models.
