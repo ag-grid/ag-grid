@@ -9,31 +9,186 @@ import {EventService} from "../../eventService";
 import {Events} from "../../events";
 import {FilterManager} from "../../filter/filterManager";
 import {IInMemoryRowModel} from "../../interfaces/iInMemoryRowModel";
-import {Constants} from "../../constants";
 import {IDatasource} from "./../iDatasource";
 import {BeanStub} from "../../context/beanStub";
+import {InMemoryPaginationDef, PaginationModel} from "../inMemory/inMemoryRowModel";
+import {Constants} from "../../constants";
 
 export enum PaginationType {
     CLIENT, SERVER, NONE
 }
 
-@Bean('paginationService')
-export class PaginationService extends BeanStub {
+export interface PaginationStrategy {
+    isReady ():boolean;
 
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
+    onLoadPage (currentPage:number, pageSize:number, doneCb:()=>void):void;
+
+    rowCount ():number;
+}
+
+@Bean('serverPaginationStrategy')
+export class ServerPaginationStrategy implements PaginationStrategy {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('eventService') private eventService: EventService;
-
     // we wire up rowModel, but cast to inMemoryRowModel before using it
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('sortController') private sortController: SortController;
+    @Autowired('filterManager') private filterManager: FilterManager;
     private inMemoryRowModel: IInMemoryRowModel;
 
-    private type:PaginationType = PaginationType.NONE;
     private callVersion = 0;
     private datasource: IDatasource;
+
+    @PostConstruct
+    public init() {
+        // if we are doing pagination, we are guaranteed that the model type
+        // is normal. if it is not, then this paginationController service
+        // will never be called.
+        this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
+    }
+
+    public setDatasource(datasource: IDatasource) {
+        this.datasource = datasource;
+
+        if (datasource) {
+            this.checkForDeprecated();
+        }
+    }
+
+    rowCount(): number {
+        return this.datasource.rowCount;
+    }
+
+    isReady(): boolean {
+        return _.missing(this.datasource);
+    }
+
+    onLoadPage(currentPage:number, pageSize:number, doneCb:()=>void): void {
+        let startRow = currentPage * pageSize;
+        let endRow = (currentPage + 1) * pageSize;
+
+        this.callVersion++;
+        let callVersionCopy = this.callVersion;
+        let that = this;
+        this.gridPanel.showLoadingOverlay();
+
+        let sortModel: any;
+        if (this.gridOptionsWrapper.isSortingProvided()) {
+            sortModel = this.sortController.getSortModel();
+        }
+
+        let filterModel: any;
+        if (this.gridOptionsWrapper.isFilterProvided()) {
+            filterModel = this.filterManager.getFilterModel();
+        }
+
+        let params = {
+            startRow: startRow,
+            endRow: endRow,
+            successCallback: successCallback,
+            failCallback: failCallback,
+            sortModel: sortModel,
+            filterModel: filterModel,
+            context: this.gridOptionsWrapper.getContext()
+        };
+
+        // check if old version of datasource used
+        let getRowsParams = _.getFunctionParameters(this.datasource.getRows);
+        if (getRowsParams.length > 1) {
+            console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
+            console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
+        }
+
+        // put in timeout, to force result to be async
+        setTimeout( ()=> {
+            this.datasource.getRows(params);
+        }, 0);
+
+
+
+        function successCallback(rows: any) {
+            if (that.isCallDaemon(callVersionCopy)) {
+                return;
+            }
+            that.pageLoaded(currentPage, pageSize, rows, doneCb);
+        }
+
+        function failCallback() {
+            if (that.isCallDaemon(callVersionCopy)) {
+                return;
+            }
+            // set in an empty set of rows, this will at
+            // least get rid of the loading panel, and
+            // stop blocking things
+            that.inMemoryRowModel.setRowData([], true);
+        }
+    }
+
+
+    private checkForDeprecated(): void {
+        let ds = <any> this.datasource;
+        if (_.exists(ds.pageSize)) {
+            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property paginationPageSize');
+        }
+    }
+
+    private isCallDaemon(versionCopy: any) {
+        return versionCopy !== this.callVersion;
+    }
+
+    private pageLoaded(currentPage:number, pageSize:number, rows: any, doneCb:()=>void) {
+        let firstId = currentPage * pageSize;
+        this.inMemoryRowModel.setRowData(rows, true, firstId);
+        doneCb();
+    }
+}
+
+@Bean('inMemoryPaginationStrategy')
+export class InMemoryPaginationStrategy implements PaginationStrategy {
+    @Autowired('rowModel') private rowModel: IRowModel;
+    private inMemoryRowModel: IInMemoryRowModel;
+    private paginationModel:PaginationModel;
+
+    @PostConstruct
+    public init() {
+        // if we are doing pagination, we are guaranteed that the model type
+        // is normal. if it is not, then this paginationController service
+        // will never be called.
+        this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
+    }
+
+    isReady(): boolean {
+        return true;
+    }
+
+    onLoadPage(currentPage: number, pageSize: number, doneCb: () => void): void {
+        this.setPaginationDef({
+            currentPage: currentPage,
+            pageSize: pageSize
+        });
+        this.inMemoryRowModel.refreshModel({step: Constants.STEP_PAGINATION);
+        doneCb();
+    }
+
+    rowCount(): number {
+        return this.paginationModel.allRowsCount;
+    }
+
+    setPaginationDef(memoryPaginationDef: InMemoryPaginationDef) {
+        this.paginationModel = this.inMemoryRowModel.paginate(memoryPaginationDef);
+    }
+}
+
+@Bean('paginationService')
+export class PaginationService extends BeanStub {
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('eventService') private eventService: EventService;
+    @Autowired('serverPaginationStrategy') private serverPaginationStrategy: ServerPaginationStrategy;
+    @Autowired('inMemoryPaginationStrategy') private inMemoryPaginationStrategy: InMemoryPaginationStrategy;
+    private type:PaginationType = PaginationType.NONE;
+
+
     private pageSize: number;
     private rowCount: number;
     private lastPageFound: boolean;
@@ -92,16 +247,20 @@ export class PaginationService extends BeanStub {
         this.loadPage();
     }
 
+    public activateInMemoryPagination (memoryPaginationDef:InMemoryPaginationDef){
+        this.type = PaginationType.CLIENT;
+        this.inMemoryPaginationStrategy.setPaginationDef (memoryPaginationDef);
+        this.reset(true);
+    }
+
+    public activateServerPagination (dataSource:IDatasource){
+        this.type = PaginationType.SERVER;
+        this.serverPaginationStrategy.setDatasource(dataSource);
+        this.reset(true);
+    }
+
     @PostConstruct
     public init() {
-
-        // if we are doing pagination, we are guaranteed that the model type
-        // is normal. if it is not, then this paginationController service
-        // will never be called.
-        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL) {
-            this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
-        }
-
         var paginationEnabled = this.gridOptionsWrapper.isRowModelAnyPagination();
         // if not doing pagination, then quite the setup
         if (!paginationEnabled) { return; }
@@ -121,16 +280,13 @@ export class PaginationService extends BeanStub {
                 this.reset.bind(this,false));
         };
 
-        if (this.gridOptionsWrapper.isSortingProvided()) {
+        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
             addSortListener();
         }
 
-        if (this.gridOptionsWrapper.isFilterProvided()) {
+        if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
             addFilterListener();
         }
-
-        //If it is in the grid, then it must be of server type
-        this.setDatasource(this.gridOptionsWrapper.getDatasource(), PaginationType.SERVER);
     }
 
     public setPageSize (pageSize:number):void{
@@ -139,29 +295,8 @@ export class PaginationService extends BeanStub {
         this.reset (true);
     }
 
-    public setDatasource(datasource: IDatasource, type:PaginationType) {
-        this.type = type;
-        this.datasource = datasource;
-
-        if (datasource) {
-            this.checkForDeprecated();
-            this.reset(true);
-        }
-    }
-
-    private checkForDeprecated(): void {
-        var ds = <any> this.datasource;
-        if (_.exists(ds.pageSize)) {
-            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property paginationPageSize');
-        }
-    }
-
     private reset(freshDatasource: boolean) {
-        // important to return here, as the user could be setting filter or sort before
-        // data-source is set
-        if (_.missing(this.datasource)) {
-            return;
-        }
+        if (!this.assertPaginating().isReady()) return;
 
         // if user is providing id's, then this means we can keep the selection between datsource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
@@ -199,103 +334,32 @@ export class PaginationService extends BeanStub {
         this.totalPages = Math.floor((this.rowCount - 1) / this.pageSize) + 1;
     }
 
-    private pageLoaded(rows: any, lastRowIndex: any) {
-        lastRowIndex = _.cleanNumber(lastRowIndex);
-        var firstId = this.currentPage * this.pageSize;
-        this.inMemoryRowModel.setRowData(rows, true, firstId);
-        this.updateCounts();
-        // see if we hit the last row
-        if (!this.lastPageFound && lastRowIndex >= 0) {
-            this.lastPageFound = true;
-            this.rowCount = lastRowIndex;
-            this.calculateTotalPages();
 
-            // if overshot pages, go back
-            if (this.currentPage > this.totalPages) {
-                this.currentPage = this.totalPages - 1;
-                this.loadPage();
-            }
-        }
-
-        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_LOADED);
-    }
 
     private updateCounts() {
-        // see if we know the total number of pages, or if it's 'to be decided'
-        if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
-            this.rowCount = this.datasource.rowCount;
-            this.lastPageFound = true;
-            this.calculateTotalPages();
-        } else {
-            this.rowCount = 0;
-            this.lastPageFound = false;
+        this.rowCount = this.assertPaginating().rowCount();
+        this.lastPageFound = this.rowCount !== null;
+        if (!this.lastPageFound){
             this.totalPages = null;
+        } else {
+            this.calculateTotalPages();
         }
     }
 
     private loadPage() {
-        var startRow = this.currentPage * this.pageSize;
-        var endRow = (this.currentPage + 1) * this.pageSize;
-
-        this.callVersion++;
-        var callVersionCopy = this.callVersion;
-        var that = this;
-        this.gridPanel.showLoadingOverlay();
-
-        var sortModel: any;
-        if (this.gridOptionsWrapper.isSortingProvided()) {
-            sortModel = this.sortController.getSortModel();
-        }
-
-        var filterModel: any;
-        if (this.gridOptionsWrapper.isFilterProvided()) {
-            filterModel = this.filterManager.getFilterModel();
-        }
-
-        var params = {
-            startRow: startRow,
-            endRow: endRow,
-            successCallback: successCallback,
-            failCallback: failCallback,
-            sortModel: sortModel,
-            filterModel: filterModel,
-            context: this.gridOptionsWrapper.getContext()
-        };
-
-        // check if old version of datasource used
-        let getRowsParams = _.getFunctionParameters(this.datasource.getRows);
-        if (getRowsParams.length > 1) {
-            console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
-            console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
-        }
-
-        // put in timeout, to force result to be async
-        setTimeout( ()=> {
-            this.datasource.getRows(params);
-        }, 0);
-
+        this.assertPaginating().onLoadPage(this.currentPage, this.pageSize, ()=>{
+            this.updateCounts();
+            this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_LOADED);
+        });
         this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_REQUESTED);
-
-        function successCallback(rows: any, lastRowIndex: any) {
-            if (that.isCallDaemon(callVersionCopy)) {
-                return;
-            }
-            that.pageLoaded(rows, lastRowIndex);
-        }
-
-        function failCallback() {
-            if (that.isCallDaemon(callVersionCopy)) {
-                return;
-            }
-            // set in an empty set of rows, this will at
-            // least get rid of the loading panel, and
-            // stop blocking things
-            that.inMemoryRowModel.setRowData([], true);
-        }
     }
 
-    private isCallDaemon(versionCopy: any) {
-        return versionCopy !== this.callVersion;
+    private assertPaginating ():PaginationStrategy{
+        if (this.type == PaginationType.NONE){
+            console.error(`Pagination can't be performed. The pagination has not been set.`);
+        }
+
+        return this.type === PaginationType.CLIENT ? this.inMemoryPaginationStrategy : this.serverPaginationStrategy;
     }
 
 }

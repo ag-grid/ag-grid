@@ -35,33 +35,66 @@ export interface RefreshModelParams {
     newData?: boolean;
 }
 
+export interface InMemoryPaginationDef {
+    pageSize: number
+    currentPage: number
+}
+
+export class PaginationModel {
+    static fromDef (totalNumberOfRows:number, def:InMemoryPaginationDef):PaginationModel{
+        let maxPotentialRowIndex:number = def.pageSize * (def.currentPage + 1);
+        let minPotentialRowIndex:number = def.currentPage === 0 ? 0 : (def.pageSize * def.currentPage) + 1;
+        let bLastPage: boolean = false;
+
+        if (totalNumberOfRows < maxPotentialRowIndex) {
+            bLastPage = true;
+        }
+
+        return new PaginationModel(
+            def,
+            minPotentialRowIndex,
+            bLastPage ? maxPotentialRowIndex - totalNumberOfRows : def.pageSize,
+            totalNumberOfRows
+        );
+    }
+
+    constructor(
+        public def: InMemoryPaginationDef,
+        public minPotentialIndex: number,
+        public currentPageSize: number,
+        public allRowsCount: number
+    ){}
+
+
+}
+
 @Bean('rowModel')
 export class InMemoryRowModel implements IInMemoryRowModel {
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('$scope') private $scope: any;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
-
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
+
     @Autowired('sortStage') private sortStage: IRowNodeStage;
     @Autowired('flattenStage') private flattenStage: IRowNodeStage;
-
     // enterprise stages
     @Optional('groupStage') private groupStage: IRowNodeStage;
+
     @Optional('aggregationStage') private aggregationStage: IRowNodeStage;
     @Optional('pivotStage') private pivotStage: IRowNodeStage;
-
     // top most node of the tree. the children are the user provided data.
     private rootNode: RowNode;
 
     private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
 
     private nodeManager: InMemoryNodeManager;
+    private paginationModel : PaginationModel;
 
     @PostConstruct
     public init(): void {
@@ -86,6 +119,12 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         }
     }
 
+    public paginate(paginationDef:InMemoryPaginationDef): PaginationModel {
+        let paginationModel = PaginationModel.fromDef(this.rootNode.childrenAfterFilter.length, paginationDef);
+        this.paginationModel = paginationModel;
+        return paginationModel;
+    }
+
     private onRowGroupOpened(): void {
         let animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({step: Constants.STEP_MAP, keepRenderedRows: true, animate: animate});
@@ -99,7 +138,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     private onSortChanged(): void {
         // we only act on the sort event here if the user is doing in grid sorting.
         // we ignore it if the sorting is happening on the server side.
-        if (this.gridOptionsWrapper.isSortingProvided()) { return; }
+        if (this.gridOptionsWrapper.isEnableServerSideSorting()) { return; }
 
         var animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({step: Constants.STEP_SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true});
@@ -200,8 +239,8 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         return this.rootNode;
     }
 
-    public getRow(index: number): RowNode {
-        return this.rowsToDisplay[index];
+    public getRow(viewIndex: number): RowNode {
+        return this.rowsToDisplay[viewIndex];
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
@@ -442,7 +481,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private doRowsToDisplay() {
-        this.rowsToDisplay = <RowNode[]> this.flattenStage.execute({rowNode: this.rootNode});
+        this.rowsToDisplay = <RowNode[]> this.flattenStage.execute({rowNode: this.rootNode, paginationModel:this.paginationModel});
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {

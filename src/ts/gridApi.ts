@@ -36,7 +36,6 @@ import {IExcelCreator} from "./interfaces/iExcelCreator";
 import {PaginationService, PaginationType} from "./rowModels/pagination/paginationService";
 import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource, EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
-import {PaginationDataSourceFactory} from "./rowModels/pagination/paginationDataSourceFactory";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -73,7 +72,6 @@ export class GridApi {
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
-    @Autowired('paginationDataSourceFactory') private paginationDataSourceFactory: PaginationDataSourceFactory;
 
     private inMemoryRowModel: IInMemoryRowModel;
     private virtualPageRowModel: VirtualPageRowModel;
@@ -132,9 +130,8 @@ export class GridApi {
     }
 
     public setDatasource(datasource: IDatasource) {
-        if (this.gridOptionsWrapper.isRowModelAnyPagination()) {
-            let type = this.gridOptionsWrapper.isRowModelClientPagination() ? PaginationType.CLIENT : PaginationType.SERVER;
-            this.paginationService.setDatasource(datasource, type);
+        if (this.gridOptionsWrapper.isRowModelPagination()) {
+            this.paginationService.activateServerPagination (datasource);
         } else if (this.gridOptionsWrapper.isRowModelVirtual()) {
             (<VirtualPageRowModel>this.rowModel).setDatasource(datasource);
         } else {
@@ -154,11 +151,15 @@ export class GridApi {
     }
     
     public setRowData(rowData: any[]) {
-        if (this.gridOptionsWrapper.isRowModelDefault()) {
+        if (this.gridOptionsWrapper.isRowModelDefault() || this.gridOptionsWrapper.isRowModelClientPagination()) {
             this.selectionController.reset();
             this.inMemoryRowModel.setRowData(rowData, true);
-        } else if (this.gridOptionsWrapper.isRowModelClientPagination()){
-            this.setDatasource(this.paginationDataSourceFactory.create (rowData));
+            if (this.gridOptionsWrapper.isRowModelClientPagination()){
+                this.paginationService.activateInMemoryPagination ({
+                    pageSize: this.gridOptionsWrapper.getPaginationPageSize() || 100,
+                    currentPage: 0
+                })
+            }
         } else {
             console.log('cannot call setRowData unless using normal row model');
         }
