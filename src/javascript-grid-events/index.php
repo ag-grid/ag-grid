@@ -390,6 +390,15 @@ include '../documentation-main/documentation_header.php';
         <th>rowDataChanged</th>
         <td>The client has set new data into the grid</td>
     </tr>
+    <tr>
+        <th>componentStateChanged</th>
+        <td>
+            Only used by React, Angular 2+, Web Components, Aurelia and VueJS ag-Grid components
+            (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
+            to bound properties, this event fires after the grid has finished processing the
+            change.
+        </td>
+    </tr>
 </table>
 </div>
 
