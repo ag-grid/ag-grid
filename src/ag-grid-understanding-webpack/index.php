@@ -1,7 +1,7 @@
 <?php
 
 $pageTitle = "Webpack Tutorial: Understanding How it Works";
-$pageDescription = "Webpack Tutorial -Understanding Webpack - Lessons Learnt at ag-Grid";
+$pageDescription = "This Webpack tutorial demonstrates building a simple application to learn how Webpack works. It's the guide we wish we had found before learning Webpack.";
 $pageKeyboards = "Webpack Tutorial";
 
 include('../includes/mediaHeader.php');
@@ -26,13 +26,13 @@ include('../includes/mediaHeader.php');
 
         <h2>Motivation</h2>
 
-        <p>This Webpack tutorial is my attempt to document what I learnt and is the blog I wish I'd found when I first started my
+        <p>This <a href="https://webpack.js.org/" target="_blank">Webpack</a> tutorial is my attempt to document what I learnt and is the blog I wish I'd found when I first started my
             Webpack journey,
             all those months ago.</p>
 
-        <p>When I first started working at ag-Grid (which is a great place to work!) I had to ramp up on many
+        <p>When I first started <a href="/ag-grid-jobs-board/" target="_blank">working at ag-Grid</a> (which is a great place to work!) I had to ramp up on many
             technologies
-            and frameworks that I hadn't used before. One of these was Webpack - a powerful bundler used in many
+            and frameworks that I hadn't used before. One of these was <a href="https://webpack.js.org/" target="_blank">Webpack</a> - a powerful bundler used in many
             applications & frameworks.</p>
 
         <p>We here at ag-Grid use Webpack to bundle our own products, as well as using it with some of our framework
@@ -922,7 +922,7 @@ img.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAACDyzWAAAC6
 <hr/>
 
 <footer class="license">
-    © ag-Grid Ltd 2015-2016
+    © ag-Grid Ltd. 2015-2017
 </footer>
 
 <?php
