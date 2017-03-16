@@ -7,13 +7,35 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2 id="quickFilter">Enterprise Row Model</h2>
+<h2 id="enterpriseRowModel">
+    <img src="../images/enterprise_50.png" title="Enterprise Feature"/>
+    Enterprise Row Model
+</h2>
 
-<p>
-    Here it is...
-</p>
+<div class="note">
+    <table>
+        <tbody><tr>
+            <td style="vertical-align: top;">
+                <img src="../images/lab.png" title="Enterprise Lab" style="padding: 10px;">
+            </td>
+            <td style="padding-left: 10px;">
+                <h4 class="ng-scope">
+                    Lab Feature - Not For Production
+                </h4>
+                <p class="ng-scope">
+                    Enterprise Row Model is currently in development, subject to change
+                    and not all edge cases are coded for. The purpose of including this
+                    feature in the latest release is to present the idea to our customers
+                    and get feedback. Feel free to look, try it out, and give feedback.
+                    However please do not plan a production release without first talking
+                    to us so we know what dependencies we have.
+                </p>
+            </td>
+        </tr>
+        </tbody></table>
+</div>
 
-<show-example example="exampleEnterpriseModel"></show-example>
+<show-example example="exampleEnterpriseSimpleJsDb"></show-example>
 
 <p>
     SQL for creating table in MySQL:
