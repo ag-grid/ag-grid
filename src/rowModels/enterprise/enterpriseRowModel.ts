@@ -102,6 +102,7 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
 
     private loadNode(rowNode: RowNode): void {
         let params = this.createLoadParams(rowNode);
+        rowNode.setLoading(true);
         setTimeout(()=> {
             this.datasource.getRows(params);
         }, 0);
@@ -162,6 +163,8 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         let newNodesAreGroups = groupCols.length > newNodesLevel;
         let field = newNodesAreGroups ? groupCols[newNodesLevel].getColDef().field : null;
 
+        parentNode.setLoading(false);
+
         parentNode.childrenAfterSort = [];
         if (dataItems) {
             dataItems.forEach( dataItem => {
@@ -200,6 +203,8 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
     private failCallback(instanceVersion: number, rowNode: RowNode): void {
         let isDaemon = instanceVersion !== this.instanceVersion;
         if (isDaemon) { return; }
+
+        rowNode.setLoading(false);
     }
 
     public getRow(index: number): RowNode {
