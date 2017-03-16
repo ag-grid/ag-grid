@@ -26,6 +26,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         '<span>' +
          '<span class="ag-group-expanded" ref="eExpanded"></span>' +
          '<span class="ag-group-contracted" ref="eContracted"></span>' +
+         '<span class="ag-group-loading" ref="eLoading"></span>' +
          '<span class="ag-group-checkbox" ref="eCheckbox"></span>' +
          '<span class="ag-group-value" ref="eValue"></span>' +
          '<span class="ag-group-child-count" ref="eChildCount"></span>' +
@@ -41,6 +42,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     @RefSelector('eExpanded') private eExpanded: HTMLElement;
     @RefSelector('eContracted') private eContracted: HTMLElement;
+    @RefSelector('eLoading') private eLoading: HTMLElement;
     @RefSelector('eCheckbox') private eCheckbox: HTMLElement;
     @RefSelector('eValue') private eValue: HTMLElement;
     @RefSelector('eChildCount') private eChildCount: HTMLElement;
@@ -347,12 +349,15 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let eGroupCell: HTMLElement = params.eGridCell;
         let eExpandedIcon = _.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null, svgFactory.createGroupContractedIcon);
         let eContractedIcon = _.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedIcon);
+        let eLoadingIcon = _.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null, svgFactory.createGroupLoadingIcon);
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
+        this.eLoading.appendChild(eLoadingIcon);
 
         let expandOrContractListener = this.onExpandOrContract.bind(this);
         this.addDestroyableEventListener(this.eExpanded, 'click', expandOrContractListener);
         this.addDestroyableEventListener(this.eContracted, 'click', expandOrContractListener);
+        this.addDestroyableEventListener(this.eLoading, 'click', expandOrContractListener);
 
         // if editing groups, then double click is to start editing
         if (!this.gridOptionsWrapper.isEnableGroupEdit()) {
@@ -361,9 +366,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         // expand / contract as the user hits enter
         this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
-
-        let showExpandAndContractIconsListener = this.showExpandAndContractIcons.bind(this);
-        this.addDestroyableEventListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, showExpandAndContractIconsListener);
+        this.addDestroyableEventListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
+        this.addDestroyableEventListener(params.node, RowNode.EVENT_LOADING_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
     }
 
@@ -392,12 +396,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let expandable = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
         if (expandable) {
             // if expandable, show one based on expand state
-            _.setVisible(this.eExpanded, rowNode.expanded);
             _.setVisible(this.eContracted, !rowNode.expanded);
+            _.setVisible(this.eExpanded, rowNode.expanded && !rowNode.loading);
+            _.setVisible(this.eLoading, rowNode.expanded && rowNode.loading);
         } else {
             // it not expandable, show neither
             _.setVisible(this.eExpanded, false);
             _.setVisible(this.eContracted, false);
+            _.setVisible(this.eLoading, false);
         }
     }
 }

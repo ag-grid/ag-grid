@@ -36,6 +36,7 @@ export class RowNode {
     public static EVENT_TOP_CHANGED = 'topChanged';
     public static EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
+    public static EVENT_LOADING_CHANGED = 'loadingChanged';
 
     @Autowired('eventService') private mainEventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -85,6 +86,8 @@ export class RowNode {
     public field: string;
     /** Groups only - The key for the group eg Ireland, UK, USA */
     public key: any;
+    /** True if rowNode is loading, used by Enterprise row model */
+    public loading: boolean;
 
     /** All user provided nodes */
     public allLeafChildren: RowNode[];
@@ -174,6 +177,14 @@ export class RowNode {
             }
         } else {
             this.id = id;
+        }
+    }
+
+    public setLoading(loading: boolean): void {
+        if (this.loading === loading) { return; }
+        this.loading = loading;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_LOADING_CHANGED);
         }
     }
 
