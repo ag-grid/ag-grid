@@ -33,8 +33,13 @@ var gridOptions = {
     rowSelection: 'multiple',
     enableColResize: true,
     columnDefs: columnDefs,
-    paginationPageSize: 500,
-    rowModelType: 'clientPagination'
+    paginationPageSize: 10,
+    rowModelType: 'clientPagination',
+    defaultColDef:{
+        enableRowGroup:true,
+        enablePivot:true,
+        enableValue:true
+    }
 };
 
 function onPageSizeChanged(newPageSize) {
