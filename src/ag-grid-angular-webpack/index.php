@@ -21,25 +21,198 @@ include '../documentation-main/documentation_header.php';
 
     <h1 id="angular-building-with-webpack">Angular - Building with Webpack</h1>
 
-    <p>We document the main steps required when using Webpack below, but please refer to
+    <p>We walk through the main steps required when using ag-Grid, Angular and Webpack below, but please refer to
         <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>
 
-    <p>Refer to the <a href="https://angular.io/docs/ts/latest/guide/webpack.html">Angular Site</a> on this topic for more information - it was used as the basis for our offering below.</p>
+    <h3>Initialise Project</h3>
 
-    <p>We have 3 Webpack Configurations in the example project - a common configuration, and then a dev and prod configuration that both use the common one.</p>
+<pre>
+mkdir ag-grid-webpack
+npm init
+<span class="codeComment">// accept defaults</span>
+</pre>
 
-    <h3 id="webpack-common-shared-configuration">Webpack Common (Shared) Configuration</h3>
-    <pre><span class="codeComment">// webpack.common.js</span>
+    <h3>Install Dependencies</h3>
+
+<pre>
+npm i --save ag-grid ag-grid-angular
+npm i --save @angular/common @angular/compiler @angular/compiler-cli @angular/core @angular/platform-browser @angular/platform-browser-dynamic typescript rxjs core-js zone.js
+npm i --save-dev webpack@1.14.x webpack-dev-server@1.16.x angular2-template-loader@0.6.x awesome-typescript-loader@3.1.x extract-text-webpack-plugin@1.0.x file-loader canonical-path @types/node
+npm i --save-dev css-loader style-loader html-loader html-webpack-plugin raw-loader url-loader
+
+<span class="codeComment">// optional - only necessary if you're using any of the Enterprise features</span>
+npm i --save ag-grid-enterprise
+</pre>
+
+    <h3>Create Application</h3>
+
+    <p>Our application will be a very simple one, consisting of a single Module, a single Component and a bootstrap file, as well a few utility files for vendor & polyfills:</p>
+
+<pre>
+<span class="codeComment">// app.module.ts </span>
+import {NgModule} from "@angular/core";
+import {BrowserModule} from "@angular/platform-browser";
+// ag-grid
+import {AgGridModule} from "ag-grid-angular/main";
+// application
+import {AppComponent} from "./app.component";
+
+@NgModule({
+    imports: [
+        BrowserModule,
+        AgGridModule.withComponents([]
+        )
+    ],
+    declarations: [
+        AppComponent
+    ],
+    bootstrap: [AppComponent]
+})
+export class AppModule {
+}
+
+<span class="codeComment">// app/app.component.ts </span>
+import {Component} from "@angular/core";
+
+import {GridOptions} from "ag-grid/main";
+
+@Component({
+    selector: 'my-app',
+    templateUrl: 'app.component.html'
+})
+export class AppComponent {
+    private gridOptions:GridOptions;
+    public rowData:any[];
+    private columnDefs:any[];
+
+    constructor() {
+        // we pass an empty gridOptions in, so we can grab the api out
+        this.gridOptions = &lt;GridOptions&gt;{
+            onGridReady: () =&gt; {
+                this.gridOptions.api.sizeColumnsToFit();
+            }
+        };
+        this.columnDefs = [
+            {headerName: "Make", field: "make"},
+            {headerName: "Model", field: "model"},
+            {headerName: "Price", field: "price"}
+        ];
+        this.rowData = [
+            {make: "Toyota", model: "Celica", price: 35000},
+            {make: "Ford", model: "Mondeo", price: 32000},
+            {make: "Porsche", model: "Boxter", price: 72000}
+        ];
+    }
+}
+
+<span class="codeComment">// app/app.component.html </span>
+&lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-fresh"
+                 [gridOptions]="gridOptions"
+                 [columnDefs]="columnDefs"
+                 [rowData]="rowData"&gt;
+&lt;/ag-grid-angular&gt;
+        
+<span class="codeComment">// app/boot.ts </span>
+import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
+import {AppModule} from "./app.module";
+
+// for enterprise customers
+// import {LicenseManager} from "ag-grid-enterprise/main";
+// LicenseManager.setLicenseKey("your license key");
+
+platformBrowserDynamic().bootstrapModule(AppModule);
+
+<span class="codeComment">// app/polyfills.ts </span>
+import "core-js/es6";
+import "core-js/es7/reflect";
+require('zone.js/dist/zone');
+if (process.env.ENV === 'production') {
+    // Production
+} else {
+    // Development
+    Error['stackTraceLimit'] = Infinity;
+    require('zone.js/dist/long-stack-trace-zone');
+}
+
+<span class="codeComment">// app/vendor.ts </span>
+// Angular
+import '@angular/platform-browser';
+import '@angular/platform-browser-dynamic';
+import '@angular/core';
+import '@angular/common';
+
+// RxJS
+import 'rxjs';
+
+// ag-grid
+import 'ag-grid/dist/styles/ag-grid.css';
+import 'ag-grid/dist/styles/theme-fresh.css';
+
+import 'ag-grid-angular/main'
+
+<span class="codeComment">// for ag-grid-enterprise users only </span>
+//import 'ag-grid-enterprise/main';
+</pre>
+
+
+
+    <h2>Webpack Configuration</h2>
+
+    <p>We have 2 Webpack Configurations in the example project - a dev configuration and a production configuration. In both
+    of these configurations we make use of an html file where our generated bundle(s) will be inserted and will serve as our application
+    starting point, as well as a helper file for within use of the webpack configurations:</p>
+<pre>
+<span class="codeComment">// config/helpers.js</span>
+var path = require('path');
+var _root = path.resolve(__dirname, '..');
+function root(args) {
+    args = Array.prototype.slice.call(arguments, 0);
+    return path.join.apply(path, [_root].concat(args));
+}
+exports.root = root;
+
+<span class="codeComment">// config/index.html</span>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;base href="/"&gt;
+    &lt;title&gt;ag-Grid & Angular With Webpack&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;my-app&gt;Loading...&lt;/my-app&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+    <p><code>helpers.js</code> helps us to resolve path easily, and <code>index.html</code> will be used by the
+        <code>HtmlWebpackPlugin</code> plugin to ensure the generated bundles are inserted dynamically, instead of us
+    needing to manage this ourselves.</p>
+
+    <h3 id="webpack-dev-configuration">Webpack Development Configuration</h3>
+
+<pre>
+<span class="codeComment">// config/webpack.dev.js</span>
 var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var helpers = require('./helpers');
+var path = require('path');
+
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+    devtool: 'cheap-module-eval-source-map',
+
     entry: {
         'polyfills': './app/polyfills.ts',
         'vendor': './app/vendor.ts',
         'app': './app/boot.ts'
+    },
+
+    output: {
+        path: helpers.root('dist'),
+        publicPath: 'http://localhost:8080/',
+        filename: '[name].js',
+        chunkFilename: '[id].chunk.js'
     },
 
     resolve: {
@@ -50,6 +223,7 @@ module.exports = {
         loaders: [
             {
                 test: /\.ts$/,
+                exclude: path.resolve(__dirname, "node_modules"),
                 loaders: ['awesome-typescript-loader', 'angular2-template-loader']
             },
             {
@@ -61,13 +235,16 @@ module.exports = {
                 loader: 'file?name=[path]/[name].[ext]'
             },
             {
+                // site wide css (excluding all css under the app dir)
                 test: /\.css$/,
-                exclude: helpers.root('src', 'app'),
+                exclude: helpers.root('app'),
                 loader: ExtractTextPlugin.extract('style', 'css?sourceMap')
             },
             {
+                // included styles under the app directory - these are for styles included
+                // with styleUrls
                 test: /\.css$/,
-                include: helpers.root('src', 'app'),
+                include: helpers.root('app'),
                 loader: 'raw'
             }
         ]
@@ -78,11 +255,20 @@ module.exports = {
             name: ['app', 'vendor', 'polyfills']
         }),
 
+        new ExtractTextPlugin('[name].css'),
+
         new HtmlWebpackPlugin({
             template: 'config/index.html'
         })
-    ]
-};</pre>
+    ],
+
+    devServer: {
+        historyApiFallback: true,
+        stats: 'minimal'
+    }
+};
+</pre>
+
     <p>
         <code>entry</code>
     </p>
@@ -100,7 +286,7 @@ module.exports = {
         <code>resolve</code>
     </p>
     <p>As our imports done specify what file extension to use, we need to specify what file types we want to match on - in this case
-    we're looking at TypeScript and JavaScript files, but you could also add CSS & HTML files too.</p>
+        we're looking at TypeScript and JavaScript files, but you could also add CSS & HTML files too.</p>
 
     <p>
         <code>module.loaders</code>
@@ -123,84 +309,124 @@ module.exports = {
         <li>HtmlWebpackPlugin: takes our supplied template index.html and inserts the generates JS & CSS files for us</li>
     </ul>
 
-    <h3 id="webpack-development-configuration">Webpack Development Configuration</h3>
-    <pre><span class="codeComment">// webpack.dev.js</span>
-var webpackMerge = require('webpack-merge');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var commonConfig = require('./webpack.common.js');
-var helpers = require('./helpers');
-
-module.exports = webpackMerge(commonConfig, {
-    devtool: 'cheap-module-eval-source-map',
-
-    output: {
-        path: helpers.root('dist'),
-        publicPath: 'http://localhost:8080/',
-        filename: '[name].js',
-        chunkFilename: '[id].chunk.js'
-    },
-
-    plugins: [
-        new ExtractTextPlugin('[name].css')
-    ],
-
-    devServer: {
-        historyApiFallback: true,
-        stats: 'minimal'
-    }
-});</pre>
-
     <p>The dev configuration doesn't generate any files - it keeps all bundles in memory, so you won't find any artifacts in the dist directory (from this configuration).</p>
 
     <h3 id="webpack-production-configuration">Webpack Production Configuration</h3>
-    <pre><span class="codeComment">// webpack.prod.js</span>
+<pre><span class="codeComment">// webpack.prod.js</span>
 var webpack = require('webpack');
-var webpackMerge = require('webpack-merge');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var commonConfig = require('./webpack.common.js');
+var path = require('path');
 var helpers = require('./helpers');
+
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const ENV = process.env.NODE_ENV = process.env.ENV = 'production';
 
-module.exports = webpackMerge(commonConfig, {
+module.exports = {
     devtool: 'source-map',
+
+    entry: {
+        'polyfills': './app/polyfills.ts',
+        'vendor': './app/vendor.ts',
+        'app': './app/boot.ts'
+    },
 
     output: {
         path: helpers.root('dist'),
         publicPath: '/',
-        filename: '[name].js',
-        chunkFilename: '[id].chunk.js'
+        filename: '[name].[hash].js',
+        chunkFilename: '[id].[hash].chunk.js'
     },
 
     htmlLoader: {
         minimize: false // workaround for ng2
     },
 
+    resolve: {
+        extensions: ['', '.ts', '.js']
+    }
+
+    module: {
+        loaders: [
+            {
+                test: /\.ts$/,
+                exclude: path.resolve(__dirname, "node_modules"),
+                loaders: ['awesome-typescript-loader', 'angular2-template-loader']
+            },
+            {
+                test: /\.html$/,
+                loader: 'html'
+            },
+            {
+                test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
+                loader: 'file?name=[path]/[name].[ext]'
+            },
+            {
+                // site wide css (excluding all css under the app dir)
+                test: /\.css$/,
+                exclude: helpers.root('app'),
+                loader: ExtractTextPlugin.extract('style', 'css?sourceMap')
+            },
+            {
+                // included styles under the app directory - these are for styles included
+                // with styleUrls
+                test: /\.css$/,
+                include: helpers.root('app'),
+                loader: 'raw'
+            }
+        ]
+    },
+
     plugins: [
-        new webpack.NoErrorsPlugin(),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: ['app', 'vendor', 'polyfills']
+        }),
+
+        new HtmlWebpackPlugin({
+            template: 'config/index.html'
+        }),
+
         new webpack.optimize.DedupePlugin(),
+
         new webpack.optimize.UglifyJsPlugin({ // https://github.com/angular/angular/issues/10618
             mangle: {
                 keep_fnames: true
             }
         }),
         new ExtractTextPlugin('[name].[hash].css'),
+
         new webpack.DefinePlugin({
             'process.env': {
                 'ENV': JSON.stringify(ENV)
             }
         })
     ]
-});
+};
 </pre>
     <p>We don't use a development server with this configuration - we generate the final artifacts in the dist/ folder and expect this to be deploy to a server.</p>
-    <p>We use the plugins to stop the build on an error, remove duplicates and minify and extract the CSS into cache busting hash named files.</p>
+    <p>We use the plugins to remove duplicates and minify and extract the CSS into cache busting hash named files.</p>
     <p>Finally, we use the DefinePlugin to provide an environment variable that we can use in our application code to <code>enableProdMode()</code></p>
 <pre>
 if (process.env.ENV === 'production') {
     enableProdMode();
 }
 </pre>
+
+    <p>With all this in place, we can now add the following npm scripts to our package.json:</p>
+
+    <pre>
+  "scripts": {
+    "start": "webpack-dev-server --config config/webpack.dev.js --inline --progress --port 8080",
+    "build": "webpack --config config/webpack.prod.js --progress --profile --bail"
+  },
+    </pre>
+
+    <p>Now we can either run <code>npm start</code> to run the development setup, or <code>npm run build</code> for the production build.
+    In the case of the production build the generated files will be under the <code>dist/</code> folder.</p>
+
+    <p>If we now run our applicatiom with the above code we will see this:</p>
+
+    <img src="../images/webpack_app.png" style="width: 100%">
 
     <h3>Override ag-Grid CSS</h3>
     <p>There are many ways to override the CSS with Webpack, but if you use the configuration above then you can override ag-Grid CSS as follows:</p>
