@@ -182,7 +182,7 @@
             <p> 
 
             <p>Email Enquiries:</p>
-            <abbr title="email">info@ag-grid.com
+            <abbr title="email">accounts@ag-grid.com
             </address>
 
             </p>

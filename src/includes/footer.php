@@ -45,7 +45,7 @@
 		            <p class="text-muted">ag-Grid LTD registered in the United Kingdom. Company No 07318192</p>
 		        </div>
 		        <div class="col-xs-12 col-md-6">
-		            <p class="text-muted pull-right">&copy; ag-Grid Ltd 2015-2016</p>
+		            <p class="text-muted pull-right">&copy; ag-Grid Ltd. 2015-2017</p>
 		        </div>
 		    </div>
 		</div>

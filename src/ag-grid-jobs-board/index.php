@@ -4,7 +4,7 @@ $pageTitle = "ag-Grid Jobs";
 $pageDescription = "ag-Grid is growing as a company. This page details positions we currently have.";
 $pageKeyboards = "ag-Grid jobs";
 
-include('../includes/mediaHeader.php');
+include('../includes/jobsHeader.php');
 ?>
 
 <style>
@@ -38,27 +38,27 @@ include('../includes/mediaHeader.php');
 
         <p>
             Would you like to join a rapidly growing company? We are currently looking to grow
-            the team and welcome candidates at different levels.
+            the team and have opportunities for all levels of experience.
         </p>
 
         <p>
-            All of the developers on ag-Grid come from building enterprise applications with
-            extensive experience using Java, C# and C++. Ideally we would like to grow our
+            All of the developers at ag-Grid have a background building enterprise applications with
+            extensive experience using Java, C# and C++. We would like to grow our
             team with similar people who can contribute to the high quality of software
-            that we provide. If you believe you will be a strong contributor to the ag-Grid
+            that we provide. If you want to be a strong contributor to the ag-Grid
             project, we want to hear from you.
         </p>
 
         <p>
-            We currently have an excellent small team and want to grow to increase the teams
+            We currently have a small, focused team that we want to grow to increase
             capacity and reduce dependencies on key people. We want to hire excellent people
             and will pay the right salary to get the right people in.
         </p>
 
         <p>
-            Perks of working for ag-Grid are:
+            Perks of working for ag-Grid:
             <ul>
-                <li>Thriving young company.</li>
+                <li>Thriving young company that is self-funded.</li>
                 <li>Work with the latest front end technologies.</li>
                 <li>Excellent software practices, no corporate baggage.</li>
                 <li>Travel to and represent ag-Grid at international conferences.</li>
@@ -67,17 +67,17 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>
-            For all job applications, email your CV with cover email to <b>accounts@ag-grid.com</b>.
+            To apply for the positions listed, send your CV with cover letter to <b>accounts@ag-grid.com</b>.
         </p>
 
         <div class="job">
             <p class="job-title">
-                Senior Enterprise Developer x 1
+                Senior Enterprise Developer
                 <span class="job-location">London, UK.</span>
             </p>
 
             <p>
-                Core responsi ility is to take ownership of large parts of ag-Grid development.
+                Your core responsibility will be to take ownership of large parts of ag-Grid development.
                 In addition, given ag-Grid is a small company, you will be expected to be dynamic
                 and help out with everything from attending and speaking at conferences,
                 take ownership of documentation and examples for features, blog to generate traffic
@@ -89,15 +89,15 @@ include('../includes/mediaHeader.php');
             <ul>
                 <li>Experience using ag-Grid and / or other JavaScript grid frameworks.</li>
                 <li>At least 5 years experience building enterprise software.</li>
-                <li>JavaScript UI frameworks eg Angular, React.</li>
+                <li>JavaScript UI frameworks e.g. Angular, React.</li>
                 <li>JavaScript / TypeScript.</li>
                 <li>HTML / CSS / DOM.</li>
-                <li>Experience with other enterprise programming languages eg C++, C# or Java.</li>
+                <li>Experience with other enterprise programming languages e.g, C++, C# or Java.</li>
                 <li>Understanding of Object Oriented and Functional Programming.</li>
                 <li>Understanding of Enterprise Design Patterns</li>
                 <li>Experience developing large enterprise systems.</li>
-                <li>Take ownership of modules and deliver.</li>
-                <li>Excellent written skills, to document features you develop.</li>
+                <li>Track record of taking ownership of modules and delivery.</li>
+                <li>Excellent written skills to document features as you develop.</li>
                 <li>Ability to code complex systems, beyond simple CRUD screens.</li>
             </ul>
             </p>
@@ -106,26 +106,24 @@ include('../includes/mediaHeader.php');
         <div class="job">
 
             <p class="job-title">
-                Mid-Level Enterprise Developer x 1
+                Mid-Level Enterprise Developer
                 <span class="job-location">London, UK.</span>
             </p>
             <b>Location: London, UK</b>
             <p>
-                Similar role to senior enterprise developer, however we are willing to take on
-                less experienced assuming strong contributions can be made in areas and
-                willing and looking to learn in other areas.
+                Similar role to Senior Enterprise Developer, however we will consider candiates with less experience. You will be a strong contributor to the code base and willing to learn in other areas.
             </p>
             <p>
                 <b>Desirable Skills</b>
                 <ul>
                     <li>Experience using ag-Grid and / or other JavaScript grid frameworks.</li>
-                    <li>JavaScript UI frameworks eg Angular, React.</li>
+                    <li>JavaScript UI frameworks e.g. Angular, React.</li>
                     <li>At least 2 years experience building enterprise software.</li>
                     <li>JavaScript / TypeScript.</li>
                     <li>HTML / CSS / DOM.</li>
                     <li>Understanding of Object Oriented and Functional Programming.</li>
-                    <li>Take ownership of modules and deliver.</li>
-                    <li>Excellent written skills, to document features you develop.</li>
+                    <li>Willing to take ownership of modules and delivery.</li>
+                    <li>Excellent written skills to document features as you develop.</li>
                     <li>Ability to code complex systems, beyond simple CRUD screens.</li>
                 </ul>
             </p>
@@ -140,12 +138,11 @@ include('../includes/mediaHeader.php');
             </p>
             <b>Location: London, UK</b>
             <p>
-                We want people to become experts in ag-Grid to a) help our customers with their
-                queries b) create examples of using ag-Grid features with current frameworks
-                c) blog about ag-Grid, get people interested d) be available to act as consultants
-                for ag-Grid for when our customers need hands on help. Part of this role will be
-                co-owning the support forum which is currently about 1hrs work per day. All developers
-                help with answering questions, however we take turns in making sure the support is water tight.
+                We are looking for people to become experts in ag-Grid. This role will see you help our customers with their
+                queries. You will also create examples demonstrating ag-Grid features with current frameworks. 
+                The role includes writing blogs about ag-Grid and other ways to get people interested. When required you will act as a consultant
+                when our customers need hands on help. An important part of this role will be
+                co-owning the support forum with the rest of the team.
             </p>
             <p>
                 <b>Desirable Skills</b>
@@ -169,7 +166,7 @@ include('../includes/mediaHeader.php');
 <hr/>
 
 <footer class="license">
-    © ag-Grid Ltd 2015-2016
+    © ag-Grid Ltd. 2015-2017
 </footer>
 
 <?php

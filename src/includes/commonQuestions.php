@@ -22,7 +22,7 @@
     <div class="col-md-12">
 
         <div class="question">
-            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_1">What is Application Developer vs Site Developer?</a>
+            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_1">What is the difference between Application Developer License and Site Developer License?</a>
         </div>
 
         <div class="answer collapse" id="answer_1">
@@ -48,7 +48,7 @@
     <div class="col-md-12">
 
         <div class="question">
-            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_2">What is OEM and SaaS License?</a>
+            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_2">What are OEM and SaaS Licenses?</a>
         </div>
 
         <div class="answer collapse" id="answer_2">
@@ -74,7 +74,7 @@
     <div class="col-md-12">
 
         <div class="question">
-            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_3">Do Developers Have to be Named?</a>
+            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_3">Do developers have to be named?</a>
         </div>
 
         <div class="answer collapse" id="answer_3">
@@ -92,7 +92,7 @@
     <div class="col-md-12">
 
         <div class="question">
-            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_4">What does Perpetual Mean?</a>
+            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_4">What does perpetual mean?</a>
         </div>
 
         <div class="answer collapse" id="answer_4">
@@ -113,12 +113,12 @@
     <div class="col-md-12">
 
         <div class="question">
-            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_5">Do You Provide Bulk or Other License Types?</a>
+            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_5">Do you provide bulk or other license types?</a>
         </div>
 
         <div class="answer collapse" id="answer_5">
         <p>
-            Yes. Get in touch and tell us what you are looking for and we can propose what we think is fair.
+            Yes. Get in touch and tell us what you are looking for. We are always open to dicussion and will propose what we think is fair.
         </p>
 
         </div>

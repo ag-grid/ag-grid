@@ -262,7 +262,7 @@ export class AppComponent {
 <hr/>
 
 <footer class="license">
-    © ag-Grid Ltd 2015-2016
+    © ag-Grid Ltd. 2015-2017
 </footer>
 
 <?php
