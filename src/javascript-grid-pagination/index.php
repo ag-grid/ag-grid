@@ -31,6 +31,11 @@ include '../documentation-main/documentation_header.php';
         the total rows and pages are displayed as 'more' at the bottom of the page, and the 'last' button is disabled.
     </p>
 
+    <h2 id="clientPagination">Client Pagination</h2>
+
+    <show-example example="clientPaging"></show-example>
+
+
     <h3 id="aggregation-and-grouping">Aggregation and Grouping</h3>
 
     <p>

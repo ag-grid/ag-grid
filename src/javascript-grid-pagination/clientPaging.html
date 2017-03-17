@@ -1,0 +1,21 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused41"></script>
+    <script src="clientPaging.js"></script>
+</head>
+<body>
+    <div style="box-sizing: border-box; padding-top: 30px; height: 100%;">
+        <div style="height: 100%;" id="myGrid" class="ag-fresh"></div>
+    </div>
+    <div style="position: fixed; top: 0px; left: 0px; padding: 10px;">
+        Page Size:
+        <select onchange="onPageSizeChanged(this.value)">
+            <option value="10">10</option>
+            <option value="100">100</option>
+            <option value="500" selected>500</option>
+            <option value="1000">1000</option>
+        </select>
+    </div>
+</body>
+</html>
