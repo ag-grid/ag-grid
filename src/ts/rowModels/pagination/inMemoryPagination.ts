@@ -34,12 +34,11 @@ export class InMemoryPaginationStrategy implements PaginationStrategy {
     onSortOrFilterPage(currentPage:number, pageSize:number, doneCb:()=>void): void {
         //In memory sort and filter handled directly by the inMemoryRowModel, at this point is performed
         //already so we only need to get the freshest pagination model.
-        this.paginationModel = this.inMemoryRowModel.getPaginationModel();
         doneCb();
     }
 
     rowCount(): number {
-        return this.paginationModel.allRowsCount;
+        return this.inMemoryRowModel.getPaginationModel().allRowsCount;
     }
 
     paginate(memoryPaginationDef: InMemoryPaginationDef) {

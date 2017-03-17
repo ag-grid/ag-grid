@@ -4,7 +4,7 @@ import {Bean, Autowired, PostConstruct} from "../../context/context";
 import {SelectionController} from "../../selectionController";
 import {EventService} from "../../eventService";
 import {Events} from "../../events";
-import {IDatasource} from "./../iDatasource";
+import {IDatasource} from "../iDatasource";
 import {BeanStub} from "../../context/beanStub";
 import {InMemoryPaginationDef} from "../inMemory/inMemoryRowModel";
 import {ServerPaginationStrategy} from "./serverPagination";
@@ -80,6 +80,39 @@ export class PaginationService extends BeanStub {
         }
     }
 
+    @PostConstruct
+    public init() {
+        this.addDestroyableEventListener(
+            this.eventService,
+            Events.EVENT_SORT_CHANGED,
+            ()=>{
+                this.reset(false, Events.EVENT_SORT_CHANGED)
+            });
+
+        this.addDestroyableEventListener(
+            this.eventService,
+            Events.EVENT_FILTER_CHANGED,
+            ()=>{
+                this.reset(false, Events.EVENT_FILTER_CHANGED)
+            });
+
+
+        this.addDestroyableEventListener(
+            this.eventService,
+                Events.EVENT_MODEL_UPDATED,
+                ()=>{
+                    this.updateCounts();
+                    if (this.getTotalPages()){
+                        if (this.getCurrentPage() > this.getTotalPages()){
+                            this.goToPage(this.getTotalPages() - 1);
+                            return;
+                        }
+                    }
+                    this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_LOADED);
+                }
+        );
+    }
+
     public goToPage(page: number): void {
         if (page<0) {
             // min page is zero
@@ -106,25 +139,16 @@ export class PaginationService extends BeanStub {
         this.reset(true);
     }
 
-    @PostConstruct
-    public init() {
-        var paginationEnabled = this.gridOptionsWrapper.isRowModelAnyPagination();
-        // if not doing pagination, then quite the setup
-        if (!paginationEnabled) { return; }
+    public updateCounts() {
+        if (this.type === PaginationType.NONE) return;
 
-        this.addDestroyableEventListener(
-            this.eventService,
-            Events.EVENT_SORT_CHANGED,
-            ()=>{
-                this.reset(false, Events.EVENT_SORT_CHANGED)
-            });
-
-        this.addDestroyableEventListener(
-            this.eventService,
-            Events.EVENT_FILTER_CHANGED,
-            ()=>{
-                this.reset(false, Events.EVENT_FILTER_CHANGED)
-            });
+        this.rowCount = this.assertPaginating().rowCount();
+        this.lastPageFound = this.rowCount !== null;
+        if (!this.lastPageFound){
+            this.totalPages = null;
+        } else {
+            this.calculateTotalPages();
+        }
     }
 
     private reset(freshDatasource: boolean, causedBy?:string) {
@@ -151,13 +175,13 @@ export class PaginationService extends BeanStub {
         this.loadPage(causedBy);
     }
 
+
+
     public setPageSize (pageSize:number):void{
         this.gridOptionsWrapper.setProperty('paginationPageSize', pageSize);
         this.pageSize = pageSize;
         this.reset (true);
     }
-
-
 
     private resetCurrentPage(): void {
         let userFirstPage = this.gridOptionsWrapper.getPaginationStartPage();
@@ -168,20 +192,10 @@ export class PaginationService extends BeanStub {
         }
     }
 
+
+
     private calculateTotalPages() {
         this.totalPages = Math.floor((this.rowCount - 1) / this.pageSize) + 1;
-    }
-
-
-
-    private updateCounts() {
-        this.rowCount = this.assertPaginating().rowCount();
-        this.lastPageFound = this.rowCount !== null;
-        if (!this.lastPageFound){
-            this.totalPages = null;
-        } else {
-            this.calculateTotalPages();
-        }
     }
 
     private loadPage(causedBy?:string) {

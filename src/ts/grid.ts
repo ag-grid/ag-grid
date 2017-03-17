@@ -56,13 +56,14 @@ import {ColumnHoverService} from "./rendering/columnHoverService";
 import {ColumnAnimationService} from "./rendering/columnAnimationService";
 import {ComponentProvider} from "./componentProvider";
 import {
-    PaginationService, ServerPaginationStrategy,
-    InMemoryPaginationStrategy
+    PaginationService
 } from "./rowModels/pagination/paginationService";
 import {SortService} from "./rowNodes/sortService";
 import {FilterService} from "./rowNodes/filterService";
 import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
 import {AutoGroupColService} from "./columnController/autoGroupColService";
+import {ServerPaginationStrategy} from "./rowModels/pagination/serverPagination";
+import {InMemoryPaginationStrategy} from "./rowModels/pagination/inMemoryPagination";
 
 export interface GridParams {
     // used by Web Components

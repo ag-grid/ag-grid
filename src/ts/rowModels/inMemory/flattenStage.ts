@@ -115,7 +115,7 @@ export class FlattenStage implements IRowNodeStage {
                 var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
                 rowNode.setRowHeight(rowHeight);
             }
-            rowNode.setRowTop(nextRowTop.value);
+            // rowNode.setRowTop(nextRowTop.value);
             rowNode.setRowIndex(result.length  - 1);
             nextRowTop.value += rowNode.rowHeight;
         }
