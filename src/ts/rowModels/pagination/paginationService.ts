@@ -82,6 +82,10 @@ export class PaginationService extends BeanStub {
 
     @PostConstruct
     public init() {
+        var paginationEnabled = this.gridOptionsWrapper.isRowModelAnyPagination();
+        // if not doing pagination, then quite the setup
+        if (!paginationEnabled) { return; }
+
         this.addDestroyableEventListener(
             this.eventService,
             Events.EVENT_SORT_CHANGED,

@@ -4,6 +4,8 @@ export interface IRowModel {
 
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode;
+    /** Returns the rowNode at the given index, for rendering. */
+    getRowForUi(index: number): RowNode;
     /** Returns the total row count. */
     getRowCount(): number;
     /** Returns the row index at the given pixel */

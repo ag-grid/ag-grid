@@ -32,8 +32,6 @@ export class ServerPaginationStrategy extends BeanStub implements PaginationStra
         this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
     }
 
-
-
     public setDatasource(datasource: IDatasource) {
         this.datasource = datasource;
 

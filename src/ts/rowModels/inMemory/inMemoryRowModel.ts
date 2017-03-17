@@ -217,7 +217,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                     this.doPagination();
                 }
             case constants.STEP_SET_HEIGHTS:
-                this.doSetHeights();
+                this.doSetRowTop();
         }
 
         let event: ModelUpdatedEvent = {
@@ -264,8 +264,13 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         return this.rootNode;
     }
 
-    public getRow(viewIndex: number): RowNode {
-        return this.rowsToDisplay[viewIndex];
+    public getRow(realIndex: number): RowNode {
+        return this.nonPaginatedRowsToDisplay[realIndex];
+    }
+
+    public getRowForUi(realIndex: number): RowNode {
+        let row = this.getRow(realIndex);
+        return this.isRowPresent(row) ? row : null;
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
@@ -278,8 +283,8 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     public getRowCount(): number {
-        if (this.rowsToDisplay) {
-            return this.rowsToDisplay.length;
+        if (this.nonPaginatedRowsToDisplay) {
+            return this.nonPaginatedRowsToDisplay.length;
         } else {
             return 0;
         }
@@ -298,11 +303,11 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         // quick check, if the pixel is out of bounds, then return last row
         if (pixelToMatch<=0) {
             // if pixel is less than or equal zero, it's always the first row
-            return 0;
+            return this.toRealIndex(0);
         }
         var lastNode = this.rowsToDisplay[this.rowsToDisplay.length-1];
         if (lastNode.rowTop<=pixelToMatch) {
-            return this.rowsToDisplay.length - 1;
+            return this.toRealIndex(this.rowsToDisplay.length - 1);
         }
 
         while (true) {
@@ -311,7 +316,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
             var currentRowNode = this.rowsToDisplay[midPointer];
 
             if (this.isRowInPixel(currentRowNode, pixelToMatch)) {
-                return midPointer;
+                return this.toRealIndex(midPointer);
             } else if (currentRowNode.rowTop < pixelToMatch) {
                 bottomPointer = midPointer + 1;
             } else if (currentRowNode.rowTop > pixelToMatch) {
@@ -319,6 +324,13 @@ export class InMemoryRowModel implements IInMemoryRowModel {
             }
 
         }
+
+    }
+
+    private toRealIndex(pageIndex: number): number {
+        if (!this.paginationDef) return pageIndex;
+        let realIndex = pageIndex + (this.paginationDef.pageSize * this.paginationDef.currentPage);
+        return realIndex;
     }
 
     private isRowInPixel(rowNode: RowNode, pixelToMatch: number): boolean {
@@ -519,7 +531,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         this.paginationModel = newPaginationModel;
     }
 
-    public doSetHeights() {
+    public doSetRowTop() {
         let accumulatedRowTop:number = 0;
         this.rowsToDisplay.forEach(rowToDisplay => {
             rowToDisplay.setRowTop(accumulatedRowTop);

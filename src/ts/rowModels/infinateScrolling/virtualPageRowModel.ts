@@ -28,6 +28,10 @@ export class VirtualPageRowModel extends BeanStub implements IRowModel {
 
     private datasource: IDatasource;
 
+    public getRowForUi(realIndex: number): RowNode {
+        return this.getRow(realIndex);
+    }
+
     @PostConstruct
     public init(): void {
         if (!this.gridOptionsWrapper.isRowModelVirtual()) { return; }
