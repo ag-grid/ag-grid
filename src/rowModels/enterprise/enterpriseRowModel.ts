@@ -195,6 +195,7 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
 
     private mapAndFireModelUpdated(): void {
         this.doRowsToDisplay();
+        this.doSetRowTop();
 
         let event: ModelUpdatedEvent = {animate: true, keepRenderedRows: true, newData: false};
         this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, event);
@@ -205,6 +206,14 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         if (isDaemon) { return; }
 
         rowNode.setLoading(false);
+    }
+
+    public doSetRowTop() {
+        let accumulatedRowTop:number = 0;
+        this.rowsToDisplay.forEach(rowToDisplay => {
+            rowToDisplay.setRowTop(accumulatedRowTop);
+            accumulatedRowTop += rowToDisplay.rowHeight;
+        });
     }
 
     public getRowForUi(realIndex: number): RowNode {
