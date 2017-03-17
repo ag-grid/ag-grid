@@ -36,6 +36,10 @@ export class ViewportRowModel implements IRowModel {
 
     private viewportDatasource: IViewportDatasource;
 
+    public getRowForUi(realIndex: number): RowNode {
+        return this.getRow(realIndex);
+    }
+
     @PostConstruct
     private init(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();

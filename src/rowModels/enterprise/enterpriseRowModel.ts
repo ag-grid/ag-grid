@@ -207,6 +207,10 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         rowNode.setLoading(false);
     }
 
+    public getRowForUi(realIndex: number): RowNode {
+        return this.getRow(realIndex);
+    }
+
     public getRow(index: number): RowNode {
         return this.rowsToDisplay[index];
     }
