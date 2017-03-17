@@ -41,9 +41,14 @@ export interface InMemoryPaginationDef {
 }
 
 export class PaginationModel {
+    public readonly minPotentialIndex: number;
+    public readonly currentPageSize: number;
+    public readonly allRowsCount: number;
+
+
     static fromDef (totalNumberOfRows:number, def:InMemoryPaginationDef):PaginationModel{
-        let maxPotentialRowIndex:number = def.pageSize * (def.currentPage + 1);
-        let minPotentialRowIndex:number = def.currentPage === 0 ? 0 : (def.pageSize * def.currentPage) + 1;
+        let maxPotentialRowIndex:number = def.pageSize * def.currentPage;
+        let minPotentialRowIndex:number = def.currentPage === 0 ? 0 : (def.pageSize * def.currentPage);
         let bLastPage: boolean = false;
 
         if (totalNumberOfRows < maxPotentialRowIndex) {
@@ -51,7 +56,6 @@ export class PaginationModel {
         }
 
         return new PaginationModel(
-            def,
             minPotentialRowIndex,
             bLastPage ? maxPotentialRowIndex - totalNumberOfRows : def.pageSize,
             totalNumberOfRows
@@ -59,11 +63,14 @@ export class PaginationModel {
     }
 
     constructor(
-        public def: InMemoryPaginationDef,
-        public minPotentialIndex: number,
-        public currentPageSize: number,
-        public allRowsCount: number
-    ){}
+        minPotentialIndex: number,
+        currentPageSize: number,
+        allRowsCount: number
+    ){
+        this.minPotentialIndex = minPotentialIndex;
+        this.currentPageSize = currentPageSize;
+        this.allRowsCount = allRowsCount;
+    }
 
 
 }
@@ -83,6 +90,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
     @Autowired('sortStage') private sortStage: IRowNodeStage;
     @Autowired('flattenStage') private flattenStage: IRowNodeStage;
+    @Autowired('paginationStage') private paginationStage: IRowNodeStage;
     // enterprise stages
     @Optional('groupStage') private groupStage: IRowNodeStage;
 
@@ -94,6 +102,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
 
     private nodeManager: InMemoryNodeManager;
+    private paginationDef : InMemoryPaginationDef;
     private paginationModel : PaginationModel;
 
     @PostConstruct
@@ -119,10 +128,14 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         }
     }
 
-    public paginate(paginationDef:InMemoryPaginationDef): PaginationModel {
-        let paginationModel = PaginationModel.fromDef(this.rootNode.childrenAfterFilter.length, paginationDef);
-        this.paginationModel = paginationModel;
-        return paginationModel;
+    public setPagination(paginationDef:InMemoryPaginationDef):PaginationModel{
+        this.paginationDef = paginationDef;
+        this.refreshModel({step: Constants.STEP_MAP});
+        return this.paginationModel;
+    }
+
+    public getPaginationModel ():PaginationModel{
+        return this.paginationModel;
     }
 
     private onRowGroupOpened(): void {
@@ -132,6 +145,9 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
     private onFilterChanged(): void {
         var animate = this.gridOptionsWrapper.isAnimateRows();
+        if (this.paginationDef){
+            this.paginationDef.currentPage = 0;
+        }
         this.refreshModel({step: Constants.STEP_FILTER, keepRenderedRows: true, animate: animate});
     }
 
@@ -193,6 +209,12 @@ export class InMemoryRowModel implements IInMemoryRowModel {
                 // start = new Date().getTime();
                 this.doRowsToDisplay();
                 // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
+            case constants.STEP_PAGINATE:
+                // start = new Date().getTime();
+                if (this.paginationDef){
+                    this.doPagination();
+                }
+            // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
         }
 
         let event: ModelUpdatedEvent = {
@@ -481,7 +503,17 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private doRowsToDisplay() {
-        this.rowsToDisplay = <RowNode[]> this.flattenStage.execute({rowNode: this.rootNode, paginationModel:this.paginationModel});
+        this.rowsToDisplay = <RowNode[]> this.flattenStage.execute({rowNode: this.rootNode});
+    }
+
+    public doPagination() {
+        this.paginationModel = PaginationModel.fromDef(this.rowsToDisplay.length, this.paginationDef);
+        this.rowsToDisplay = this.rowsToDisplay.slice(this.paginationModel.minPotentialIndex, this.paginationModel.minPotentialIndex + this.paginationModel.currentPageSize);
+        let accumulatedRowTop:number = 0;
+        this.rowsToDisplay.forEach(rowToDisplay => {
+            rowToDisplay.rowTop = accumulatedRowTop;
+            accumulatedRowTop += rowToDisplay.rowHeight;
+        })
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {

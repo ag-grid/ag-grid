@@ -27,5 +27,7 @@ export interface IInMemoryRowModel extends IRowModel {
     /** When all row heights should be reset */
     resetRowHeights(): void;
     /** To activate pagination call here passing the page size and the current page */
-    paginate(paginationDef:InMemoryPaginationDef): PaginationModel;
+    setPagination(paginationDef:InMemoryPaginationDef): PaginationModel;
+    /** If pagination is activated this will returned the current pagination model, otherwise null */
+    getPaginationModel(): PaginationModel;
 }
