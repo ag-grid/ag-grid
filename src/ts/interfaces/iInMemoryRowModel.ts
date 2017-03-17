@@ -1,11 +1,12 @@
 import {RowNode} from "../entities/rowNode";
 import {IRowModel} from "./iRowModel";
+import {InMemoryPaginationDef, RefreshModelParams, PaginationModel} from "../rowModels/inMemory/inMemoryRowModel";
 
 export interface IInMemoryRowModel extends IRowModel {
 
     /** InMemory model only. Gets the model to refresh. Provide a step for the
      * step in the pipeline you want to refresh from. */
-    refreshModel(params: {step: number, groupState?: any, keepRenderedRows?: boolean, animate?: boolean}): void;
+    refreshModel(params: RefreshModelParams): void;
     /** InMemory model only. If tree / group structure, returns the top level
      * nodes only. */
     getTopLevelNodes(): RowNode[];
@@ -25,4 +26,8 @@ export interface IInMemoryRowModel extends IRowModel {
     onRowHeightChanged(): void;
     /** When all row heights should be reset */
     resetRowHeights(): void;
+    /** To activate pagination call here passing the page size and the current page */
+    setPagination(paginationDef:InMemoryPaginationDef): PaginationModel;
+    /** If pagination is activated this will returned the current pagination model, otherwise null */
+    getPaginationModel(): PaginationModel;
 }
