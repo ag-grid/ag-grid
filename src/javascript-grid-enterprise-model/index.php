@@ -35,6 +35,43 @@ include '../documentation-main/documentation_header.php';
         </tbody></table>
 </div>
 
+<h3>Introduction</h3>
+
+<p>
+    The default row model for ag-Grid, the In Memory row model, will do grouping and
+    aggregation for you if you give it all the data. If the data will not fit in the browser
+    because it is to large, then you can use one of a) server side pagination b) infinite
+    scrolling or c) viewport. However all of these alternatives fall down as you loose
+    the ability to do grouping and aggregation.
+</p>
+
+<p>
+    The Enterprise Row Model presents the ability to have grouping and aggregation
+    on large datasets by delegating the aggregation to the server and lazy loading
+    the groups.
+</p>
+
+<p>
+    Some users might simply see it as lazy loading group data from the server. Eg
+    if you have a managers database table, you can display a list of all managers,
+    then then click 'expand' on the manager and the grid will then request
+    to get the 'employees' for that manager.
+</p>
+
+<p>
+    Or a more advanced use case would be to allow the user to slice and dice a large
+    dataset and have the backend generate SQL (or equivalent if not using a SQL
+    store) to create the result. This would be similar to how current data analysis
+    tools work, a mini-Business Intelligence experience.
+</p>
+
+<h3>Example - Slice and Diece</h3>
+
+<p>
+    Below shows an example of slicing and dicing the olympic winners. The example
+    mimics asking the server for data by implementing a proxy
+</p>
+
 <h4>What's Left</h4>
 <p>
     Before we believe the enterprise row model is ready for production, we want to solve
