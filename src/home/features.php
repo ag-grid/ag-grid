@@ -34,7 +34,7 @@
                 <li><span class="feature-item">&#10004;</span><a href="<?php print($rootFolder) ?>javascript-grid-internationalisation/">Internationalisation</a></li>
                 <li><span class="feature-item">&#10004;</span><a href="<?php print($rootFolder) ?>javascript-grid-icons/">Icons</a></li>
                 <li><span class="feature-item">&#10004;</span><a href="<?php print($rootFolder) ?>javascript-grid-overlays/">Overlays</a></li>
-                <li><span class="feature-item">&#10004;</span><a href="<?php print($rootFolder) ?>javascript-grid-overlays/">RTL</a></li>
+                <li><span class="feature-item">&#10004;</span><a href="<?php print($rootFolder) ?>javascript-grid-rtl/">RTL</a></li>
                 <li><span class="feature-item">&#10004;</span><a href="<?php print($rootFolder) ?>javascript-grid-for-print/">For Print</a></li>
             </ul>
         </div>

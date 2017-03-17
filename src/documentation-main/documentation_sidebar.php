@@ -18,6 +18,36 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header" style="margin-bottom: 27px;">
+        <img src="../images/webpack_small.png" align="left" width="50"/>
+        14th March 2017
+    </div>
+    <div style="padding-top: 10px;">
+        <a href="../ag-grid-webpack-ngtools/">
+            Webpack Tutorial: Using @ngTools/webpack
+        </a>
+    </div>
+</div>
+
+<div class="news-box">
+    <div class="news-header" style="margin-bottom: 27px;">
+        <img src="../images/angularjsdublin.jpeg" align="left" width="50"/>
+        14th March 2017
+    </div>
+    <div style="padding-top: 10px;">
+        We're excited to be speaking at <a href="https://www.meetup.com/AngularJSDublin/events/238342599/" target="_blank">AngularJS Dublin</a>
+        on the 23rd March! Pop in and hear us - we'd love to meet you.
+    </div>
+</div>
+
+<div class="news-box">
+    <img src="../images/jobs-board.png" style="width: 80px; float: left; margin-right: 10px;"/>
+    <div style="">
+        We are hiring, check the <a href="../ag-grid-jobs-board/">jobs board</a>.
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header">8th March 2017</div>
     <div class="news-header">ag-Grid 8.2.0 Released</div>
     <div style="padding-top: 10px;">
