@@ -1,88 +1,85 @@
 <?php
-header("HTTP/1.1 301 Moved Permanently");
-header("Location: https://www.ag-grid.com/javascript-grid-getting-started/?framework=all");
-?>
-
-<?php
-/*$key = "Getting Started Javascript";
+$key = "Getting Started Javascript";
 $pageTitle = "Javascript Datagrid";
 $pageDescription = "How to set up the Best Javascript Datagrid. Shows how to use ag-Grid to build a Javascript grid using only Javascript and without using any framework";
 $pageKeyboards = "Best Javascript Datagrid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
-*/?><!--
+?>
 
-<div>
+    <h2>
+        <img src="../images/svg/docs/getting_started.svg" width="50"/>
+        <img style="vertical-align: middle" src="../images/javascript.png" height="25px"/>
+        Getting Started
+    </h2>
 
-    <h1 id="implementing-the-javascript-datagrid">Implementing the JavaScript Datagrid</h1>
+<?php include '../javascript-grid-getting-started/ag-grid-dependency.php' ?>
 
-    <p>
-        When using no framework, you have the choice of using the bundled ag-Grid (which puts
-        the ag-Grid library into the global scope of the browser) or using a package manager
-        to access the CommonJS version of the grid.
+    <p>Here we've referenced the ag-Grid dependency in the <code>head</code> section, and specified a <code>div</code>
+        with
+        an ID of <code>myGrid</code>.</p>
+    <p>We've also specified the <a href="../http://localhost:8080/javascript-grid-themes/fresh-theme.php">Fresh
+            Theme</a> -
+        themes are we
+        we can define the look and feel of the Grid. More on that later.
     </p>
-    <h3>Pull in the ag-Grid Dependencies</h3>
-    <p>You'll need to ensure you refer to the ag-grid library correctly - this can be done in a number of ways, but
-        but you'll need to ensure you refer to either the ag-grid or the ag-grid-enterprise
-        dependency, depending on which feature set you're using (i.e. if you're using any Enterprise features you'll need ag-grid-enterprise)</p>
-    <p>As an example we'll use NPM to manage our dependencies, and then refer to the dependencies in our HTML file:</p>
-    <h5>Using ag-Grid</h5>
-    <pre><span class="codeComment">// package.json</span>
-"dependencies": {
-    "ag-grid": "8.0.x",
-}
+    <p><code>example1.js</code> would be where your application code would live in this example.</p>
 
-<span class="codeComment">// index.html</span>
-&lt;html>
-&lt;head>
-    &lt;script src="node_modules/ag-grid/dist/ag-grid.js">&lt;/script>
-    &lt;script src="&lt;your script>.js">&lt;/script>
-&lt;/head>
-</pre>
-    <h5>Using ag-Grid-Enterprise</h5>
-    <pre><span class="codeComment">// package.json</span>
-"dependencies": {
-    "ag-grid-enterprise": "8.0.x",
-}
 
-<span class="codeComment">// index.html</span>
-&lt;html>
-&lt;head>
-    &lt;script src="node_modules/ag-grid-enterprise/dist/ag-grid-enterprise.js">&lt;/script>
-    &lt;script src="&lt;your script>.js">&lt;/script>
-&lt;/head>
-</pre>
-    <p>In either of the above examples we're using the full JS dependency which includes styles & themes - you can optionally chose to use the version without styles included (<code>.noStyle.js</code>).
-        If you do this, you'll need to refer to the styles & themes separately, as below:</p>
+    <h3 id="javascript-simple-grid">Creating the Grid</h3>
+
+    <p>Now that we have a <code>div</code> for the Grid, we need to specify the following at a minimum:</p>
+    <ul>
+        <li>Columns</li>
+        <li>Row Data</li>
+    </ul>
+
+    <p>So let's create a simply example with 3 columns and 3 rows of data:</p>
     <pre>
-<span class="codeComment">// index.html</span>
-&lt;html>
-&lt;head>
-    &lt;script src="node_modules/ag-grid/dist/ag-grid.js">&lt;/script>
-    &lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet" />
-    &lt;link href="node_modules/ag-grid/dist/styles/theme-fresh.css" rel="stylesheet" />
-    &lt;script src="&lt;your script>.js">&lt;/script>
-&lt;/head>
+<span class="codeComment">// specify the columns</span>
+var columnDefs = [
+    {headerName: "Make", field: "make"},
+    {headerName: "Model", field: "model"},
+    {headerName: "Price", field: "price"}
+];
+
+<span class="codeComment">// specify the data</span>
+var rowData = [
+    {make: "Toyota", model: "Celica", price: 35000},
+    {make: "Ford", model: "Mondeo", price: 32000},
+    {make: "Porsche", model: "Boxter", price: 72000}
+];
+
+<span class="codeComment">// let the grid know which columns and what data to use</span>
+var gridOptions = {
+    columnDefs: columnDefs,
+    rowData: rowData
+};
+
+<span class="codeComment">// wait for the document to be loaded, otherwise ag-Grid will not find the div in the document.</span>
+document.addEventListener("DOMContentLoaded", function() {
+
+    <span class="codeComment">// lookup the container we want the Grid to use</span>
+    var eGridDiv = document.querySelector('#myGrid');
+
+    <span class="codeComment">// create the grid passing in the div to use together with the columns & data we want to use</span>
+    new agGrid.Grid(eGridDiv, gridOptions);
+});
 </pre>
-    </p>
 
-    <h3 id="using-bundled-ag-Grid-and-pure-javascript">Using Bundled ag-Grid and Pure Javascript</h3>
+    <p>With that in place we have a quick and simple Grid up and running:</p>
 
-    <p>
-        Reference the ag-Grid script from your
-        web page and then access the library through global scope as follows:
-    </p>
+    <show-complex-example example="example-js.html"
+                          sources="{
+                            [
+                                { root: './', files: 'example-js.html,example-js.js' }
+                            ]
+                          }"
+                          plunker="https://embed.plnkr.co/369YrrgCVrnPjD528OtT/"
+                          exampleheight="130px">
+    </show-complex-example>
 
-    <pre>// example creating a grid using raw Javascript
-var eGridDiv = document.querySelector('#myGrid'); // get a reference to the grid div
-new agGrid.Grid(eGridDiv, gridOptions); //create a new grid</pre>
-
-    <p>
-        Below is a simple example using standard Javascript.
-    </p>
-
-    <show-example example="example1"></show-example>
-
+    <h3>A Richer Example</h3>
     <p>
         The below example is a more complex example demonstration much more interactivity and customisation.
         The mechanism for setting up the grid
@@ -92,27 +89,6 @@ new agGrid.Grid(eGridDiv, gridOptions); //create a new grid</pre>
 
     <show-example example="html5grid"></show-example>
 
-    <h3 id="using-commonjs-and-pure-javascript">Using CommonJS and Pure Javascript</h3>
+    </div>
 
-    <p>
-        For an example of using the CommonJS and raw JavaScript version of ag-Grid, see
-        the example <a href="https://github.com/ceolter/ag-grid-commonjs-example">CommonJS, Gulp and Browersify</a> on Github.
-    </p>
-
-    <h3 id="destroy">Destroy</h3>
-
-    <p>
-        To get the grid to release resources, call api.destroy(). If you do not do this, old grids will hang around
-        and add to a memory leak problem in your application.
-    </p>
-
-    <h3 id="next-steps">Next Steps...</h3>
-
-    <p>
-        Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>
-        to learn about accessing all the features of the grid.
-    </p>
-</div>
-
-
---><?php /*include '../documentation-main/documentation_footer.php';*/?>
+<?php include '../documentation-main/documentation_footer.php'; ?>

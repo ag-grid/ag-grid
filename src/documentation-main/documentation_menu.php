@@ -3,10 +3,10 @@
         <h4 class="frameworkHeading">Framework</h4><button class="btn btn-default frameworkDropdownButton dropdown-toggle<?php if (isFrameworkAll()) { ?> frameworkAllButton<?php } ?>" type="button" onclick="this.classList.toggle('active');" data-toggle="dropdown">
                 <?php if (isFrameworkAll()) { ?>
                     All Frameworks
-                <?php } elseif (isFrameworkAngular()) { ?>
+                <?php } elseif (isFrameworkAngular2()) { ?>
                     <img src="/images/angular2_small.png" alt="Angular" />
                     Angular
-                <?php } elseif (isFrameworkAngularJS()) { ?>
+                <?php } elseif (isFrameworkAngular1()) { ?>
                     <img src="/images/angularjs_small.png" alt="Angular 1" />
                     Angular JS
                 <?php } elseif (isFrameworkAurelia()) { ?>
@@ -63,13 +63,38 @@
 
         <?php
         menuItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
-
-        if (isFrameworkAngular()) {
-            menuItem(1, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/');
-            menuItem(1, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/');
-            menuItem(1, 'Angular ngtools Webpack', '@ngtools/webpack', 'ag-grid-angular-ngtools-webpack/');
-            menuItem(1, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/');
+        if (isFrameworkJavaScript()) {
+            menuItem(1, 'Getting Started Javascript', 'Javascript', 'best-javascript-data-grid/');
         }
+
+        if (isFrameworkAngular2()) {
+            menuItem(1, 'Getting Started ng2', 'Angular 2+', 'best-angular-2-data-grid/');
+            menuItem(2, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/');
+            menuItem(2, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/');
+            menuItem(2, 'Angular ngtools Webpack', '@ngtools/webpack', 'ag-grid-angular-ngtools-webpack/');
+            menuItem(2, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/');
+        }
+
+        if (isFrameworkAngular1()) {
+            menuItem(1, 'Getting Started ng1', 'AngularJS 1.x', 'best-angularjs-data-grid/');
+        }
+
+        if (isFrameworkReact()) {
+            menuItem(1, 'Getting Started React', 'ReactJS', 'best-react-data-grid/');
+        }
+
+        if (isFrameworkVue()) {
+            menuItem(1, 'Getting Started VueJS', 'VueJS', 'best-vuejs-data-grid/');
+        }
+
+        if (isFrameworkAurelia()) {
+            menuItem(1, 'Getting Started Aurelia', 'Aurelia', 'best-aurelia-data-grid/');
+        }
+
+        if (isFrameworkWebComponents()) {
+            menuItem(1, 'Getting Started Web Components', 'Web Components', 'best-web-component-data-grid/');
+        }
+
         menuItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');
         ?>
 
@@ -150,6 +175,7 @@
         menuItem(0, 'Icons', 'Icons', 'javascript-grid-icons/');
         menuItem(0, 'Overlays', 'Overlays', 'javascript-grid-overlays/');
         menuItem(0, 'For Print', 'For Print', 'javascript-grid-for-print/');
+        menuItem(0, 'Responsiveness', 'Responsiveness', 'javascript-grid-responsiveness/');
 
         menuItemWithIcon('enterprise.png', 0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
         menuItemWithIcon('enterprise.png', 1, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping/');
@@ -242,7 +268,7 @@
         <?php
 
         menuItem(0, 'ag-Grid Examples', 'ag-Grid Examples', 'javascript-grid-examples/');
-        if (isFrameworkAngular() || isFrameworkAll()) {
+        if (isFrameworkAngular2() || isFrameworkAll()) {
             menuItemWithIcon('angular2_small.png', 1, 'Angular Examples', 'Angular Examples', 'example-angular/', true);
             menuItem(2, 'Angular Rich Grid', 'Rich Grid', 'example-angular-rich-grid/');
             menuItem(2, 'Angular Markup', 'Grid via Markup', 'example-angular-rich-grid-markup/');

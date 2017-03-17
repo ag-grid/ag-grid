@@ -63,7 +63,7 @@ function isFrameworkAll() {
     return $GLOBALS[framework] === 'all';
 }
 
-function isFrameworkAngular()
+function isFrameworkAngular2()
 {
     return $GLOBALS[framework] === 'angular' || $GLOBALS[framework] === 'all';
 }
@@ -73,7 +73,7 @@ function isFrameworkJavaScript()
     return $GLOBALS[framework] === 'javascript' || $GLOBALS[framework] === 'all';
 }
 
-function isFrameworkAngularJS()
+function isFrameworkAngular1()
 {
     return $GLOBALS[framework] === 'angularjs' || $GLOBALS[framework] === 'all';
 }

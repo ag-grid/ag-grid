@@ -1,30 +1,38 @@
 <?php
-header("HTTP/1.1 301 Moved Permanently");
-header("Location: https://www.ag-grid.com/javascript-grid-getting-started/?framework=aurelia");
-?>
-
-<?php
-/*$key = "Getting Started Aurelia";
+$key = "Getting Started Aurelia";
 $pageTitle = "Aurelia Datagrid";
 $pageDescription = "Demonstrate the best Aurelia datagrid. Shows and example of a datagrid for using with Aurelia.";
 $pageKeyboards = "Aurelia Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
-*/?><!--
+?>
 
 <div>
 
-    <h1 id="implementing-the-aurelia-datagrid">Implementing the Aurelia Datagrid</h1>
+    <h2 id="implementing-the-aurelia-datagrid">
+        <img src="../images/svg/docs/getting_started.svg" width="50"/>
+        <img style="vertical-align: middle" src="../images/aurelia_small.png" height="25px"/>
+        Getting Started
+    </h2>
 
-    <p>
-        If you are building an Aurelia application then you have the choice between A) using the plain JavaScript version
-        of ag-Grid or B) using the ag-Grid Aurelia Component from the <a href="https://github.com/ceolter/ag-grid-aurelia">
-            ag-grid-aurelia</a> project. If you use the ag-Grid Aurelia Component, then the grid's properties, events and API
+    <?php
+    $frameworkChild = 'aurelia';
+    include '../javascript-grid-getting-started/ag-grid-dependency-framework.php'
+    ?>
+
+    <p style="margin-top: 5px">
+        If you are building an Aurelia application then you have the choice between A) using the plain JavaScript
+        version
+        of ag-Grid or B) using the ag-Grid Aurelia Component from the <a
+                href="https://github.com/ceolter/ag-grid-aurelia">
+            ag-grid-aurelia</a> project. If you use the ag-Grid Aurelia Component, then the grid's properties, events
+        and API
         will all tie in with the Aurelia ecosystem - this will make your Aurelia coding easier.
     </p>
 
     <note>Please use the github project <a href="https://github.com/ceolter/ag-grid-aurelia">ag-grid-aurelia</a>
-        for feedback or issue reporting around ag-Grid's support for Aurelia.</note>
+        for feedback or issue reporting around ag-Grid's support for Aurelia.
+    </note>
 
     <h2 id="ag-grid-aurelia-features">ag-Grid Aurelia Features</h2>
 
@@ -46,46 +54,53 @@ include '../documentation-main/documentation_header.php';
         feature set:
     <ul>
         <li>A feature rich grid example, demonstrating many of ag-Grid's features using Aurelia as a wrapper
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.ts"
+               target="_blank" class="fa fa-external-link"> TypeScript</a> <a
+                    href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.html"
+                    target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>An example using markup to create a grid
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-declarative-example/rich-grid-declarative-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-declarative-example/rich-grid-declarative-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"
+               target="_blank" class="fa fa-external-link"> TypeScript</a> <a
+                    href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-declarative-example/rich-grid-declarative-example.html"
+                    target="_blank" class="fa fa-external-link"> html</a>
         </li>
-        <li>A Cell Editor Example - one with a popup editor, and another with a numeric editor. Each demonstrates different editor related features
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/editor-example/editor-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/editor-example/editor-example.html" target="_blank" class="fa fa-external-link"> html</a>
+        <li>A Cell Editor Example - one with a popup editor, and another with a numeric editor. Each demonstrates
+            different editor related features
+            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/editor-example/editor-example.ts"
+               target="_blank" class="fa fa-external-link"> TypeScript</a> <a
+                    href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/editor-example/editor-example.html"
+                    target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Floating Row Renderer Example
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.ts"
+               target="_blank" class="fa fa-external-link"> TypeScript</a> <a
+                    href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.html"
+                    target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Full Width Renderer Example
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/full-width-example/full-width-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/full-width-example/full-width-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/full-width-example/full-width-example.ts"
+               target="_blank" class="fa fa-external-link"> TypeScript</a> <a
+                    href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/full-width-example/full-width-example.html"
+                    target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Group Row Inner Renderer Example
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/group-row-example/group-row-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/group-row-example/group-row-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/group-row-example/group-row-example.ts"
+               target="_blank" class="fa fa-external-link"> TypeScript</a> <a
+                    href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/group-row-example/group-row-example.html"
+                    target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Filter Example
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/filter-example/filter-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/filter-example/filter-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/filter-example/filter-example.ts"
+               target="_blank" class="fa fa-external-link"> TypeScript</a> <a
+                    href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/filter-example/filter-example.html"
+                    target="_blank" class="fa fa-external-link"> html</a>
         </li>
     </ul>
     </p>
 
-    <h3 id="dependencies">Dependencies</h3>
-
-    <p>
-        In your package.json file, specify dependency on ag-grid AND ag-grid-aurelia.
-        The ag-grid package contains the core ag-grid engine and the ag-grid-aurelia
-        contains the Aurelia component.
-        <pre>"dependencies": {
-    ...
-    "ag-grid": "8.0.x",
-    "ag-grid-aurelia": "8.0.x"
-}</pre>
-    The major and minor versions should match. Every time a new major or minor
-    version of ag-Grid is released, the component will also be released. However
-    for patch versions, the component will not be released.
-    </p>
-
-    <p>You will then be able to access ag-Grid classes and components inside your application:</p>
+    <p>Once you have the ag-Grid dependencies installed, you will then be able to access ag-Grid classes and components
+        inside your application:</p>
 
     <pre>import {GridOptions, GridApi, ColumnApi} from "ag-grid";</pre>
 
@@ -99,7 +114,8 @@ include '../documentation-main/documentation_header.php';
 </pre>
 
     <p>
-        You will also need to configure Aurelia (aurelia_project/aurelia.json) to use ag-grid and ag-grid-aurelia as follows:
+        You will also need to configure Aurelia (aurelia_project/aurelia.json) to use ag-grid and ag-grid-aurelia as
+        follows:
     </p>
 
     <pre>      {
@@ -242,108 +258,7 @@ include '../documentation-main/documentation_header.php';
                   html="../aurelia-example/components/rich-grid-example/rich-grid-example.html"
                   exampleHeight="525px"></show-example>
 
-    <h2 id="ng2markup">Creating Grids with Markup</h2>
-
-    <p>You can create Grids either programatically (with pure JavaScript/Typescript/Components), or declare them via declaratively with markup.</p>
-    <p>The above section details how to specify the Grid itself. To declare columns you can specify them as follows:</p>
-
-    <h3 id="column-definition">Column Definition</h3>
-<pre>
-&lt;ag-grid-column header-name="Name" field="name" width.bind="150" pinned.bind="true"></ag-grid-column>
-</pre>
-
-    <p>This example declares a simple Column Definition, specifying header name, field and width.</p>
-
-    <h3 id="setting-column-properties">Setting Column Properties</h3>
-    <p>There are some simple rules you should follow when setting column properties via Markup:</p>
-<pre ng-non-bindable>
-<span class="codeComment">// string value</span>
-property-name="String Value"
-property-name="'String Value'"
-property-name="${Interpolated Value}"
-
-<span class="codeComment">// boolean value</span>
-property-name.bind="true|false"
-property-name.bind="{{Interpolated Value}}"
-property-name.bind="functionCallReturningABoolean()"
-
-<span class="codeComment">// numeric value</span>
-property-name="Numeric Value"
-property-name.bind="functionCallReturningANumber()"
-
-<span class="codeComment">// function value</span>
-property-name.bind="functionName"
-property-name.bind="functionCallReturningAFunction()"
-</pre>
-
-    <h4 id="setting-a-class-or-a-complex-value">Setting a Class or a Complex Value:</h4>
-    <p>You can set a Class or a Complex property in the following way:</p>
-<pre>
-<span class="codeComment">// return a Class definition for a Filter</span>
-filter.bind="getSkillFilter()"
-
-private getSkillFilter():any {
-    return SkillFilter;
-}
-
-<span class="codeComment">// return an Object for filterParams</span>
-filter-params.bind.bind="getCountryFilterParams()"
-
-private getCountryFilterParams():any {
-    return {
-        cellRenderer: this.countryCellRenderer,
-        cellHeight: 20
-    }
-}
-</pre>
-
-    <h3 id="grouped-column-definition">Grouped Column Definition</h3>
-    <p>To specify a Grouped Column, you can nest a column defintion:</p>
-<pre>
-&lt;ag-grid-column header-name="IT Skills">
-&lt;ag-grid-column header-name="Skills" width.bind="125" suppress-sorting.bind="true" cell-renderer.bind="skillsCellRenderer" filter.bind="getSkillFilter()">&lt;/ag-grid-column>
-&lt;ag-grid-column header-name="Proficiency" field="proficiency" width.bind="120"
-                cell-renderer.bind="percentCellRenderer" filter.bind="getProficiencyFilter()">&lt;/ag-grid-column>
-&lt;/ag-grid-column>
-</pre>
-    <p>In this example we have a parent Column of "IT Skills", with two child columns.</p>
-
-    <h3 id="example-rich-grid-using-markup">Example: Rich Grid using Markup</h3>
-    <p>
-        The example below shows the same rich grid as the example above, but with configuration done via Markup.
-    </p>
-    <show-example example="../aurelia-example/#/richgrid-declarative/true"
-                  jsfile="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"
-                  html="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"
-                  exampleHeight="525px"></show-example>
-
-    <h2 id="cell-rendering-cell-editing-using-aurelia">Cell Rendering & Cell Editing using Aurelia</h2>
-
-    <p>
-        It is possible to build
-        <a href="../javascript-grid-cell-rendering/#aureliaCellRendering">cellRenderers</a>,
-        <a href="../javascript-grid-cell-editing/#aureliaCellEditing">cellEditors</a> and
-        <a href="../javascript-grid-filtering/#aureliaFiltering">filters</a> using Aurelia. Doing each of these
-        is explained in the section on each.
-    </p>
-
-    <p>
-        Although it is possible to use Aurelia for your customisations of ag-Grid, it is not necessary. The grid
-        will happily work with both Aurelia and non-Aurelia portions (eg cellRenderers in Aurelia or normal JavaScript).
-        If you do use Aurelia, be aware that you are adding an extra layer of indirection into ag-Grid. ag-Grid's
-        internal framework is already highly tuned to work incredibly fast and does not require Aurelia or anything
-        else to make it faster. If you are looking for a lightning fast grid, even if you are using Aurelia and
-        the ag-grid-aurelia component, consider using plain ag-Grid Components (as explained on the pages for
-        rendering etc) inside ag-Grid instead of creating Aurelia counterparts.
-    </p>
-
-    <h2 id="next-steps">Next Steps...</h2>
-
-    <p>
-        Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>
-        to learn about accessing all the features of the grid.
-    </p>
-
 </div>
 
---><?php /*include '../documentation-main/documentation_footer.php'; */?>
+
+<?php include '../documentation-main/documentation_footer.php'; ?>

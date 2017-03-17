@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
             </div>
         <?php } ?>
 
-        <?php if (isFrameworkAngular()) { ?>
+        <?php if (isFrameworkAngular2()) { ?>
             <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
 
                 <?php if (isFrameworkAll()) { ?>
@@ -42,7 +42,7 @@ include '../documentation-main/documentation_header.php';
             </div>
         <?php } ?>
 
-        <?php if (isFrameworkAngularJS()) { ?>
+        <?php if (isFrameworkAngular1()) { ?>
             <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
 
                 <?php if (isFrameworkAll()) { ?>
@@ -280,7 +280,7 @@ include '../documentation-main/documentation_header.php';
 </div>
 
 
-<?php if (!isFrameworkAngular()) { ?>
+<?php if (!isFrameworkAngular2()) { ?>
 
     <div class="collapsableDocs">
         <div class="collapsableDocs-header"

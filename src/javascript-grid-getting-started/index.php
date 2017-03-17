@@ -7,8 +7,51 @@ $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
+<?php
+
+    $link = NULL;
+switch ($GLOBALS[framework]) {
+    case 'angular':
+        $link = '../best-angular-2-data-grid/';
+        break;
+    case 'javascript':
+        $link = '../best-javascript-data-grid/';
+        break;
+    case 'angularjs':
+        $link = '../best-angularjs-data-grid/';
+        break;
+    case 'react':
+        $link = '../best-react-data-grid/';
+        break;
+    case 'vue':
+        $link = '../best-vuejs-data-grid/';
+        break;
+    case 'aurelia':
+        $link = '../best-aurelia-data-grid/';
+        break;
+    case 'webcomponents':
+        $link = '../best-web-component-data-grid/';
+        break;
+    default:
+}
+    $linkHref = "<a href='".$link."'>here</a>";
+?>
 <div>
-        <?php if (isFrameworkAll()) { ?>
+
+    <h3>ag-Grid - Getting Started</h3>
+
+    <p>Learn how to get a simple
+        application working using ag-Grid with your preferred framework.
+        <?php if(!isFrameworkAll()) { ?>
+        Start <?= $linkHref?> to get a simple grid working in your application, then follow on
+        to further sections to understand how particular features work.
+    <?php } ?></p>
+
+    <?php if (isFrameworkAll()) { ?>
+
+    <p>On the left hand menu there are Getting Started entries for JavaScript, as well as all the major Frameworks. Please select
+    the item you're interested in to get started.</p>
+
             <h2>
                 <img src="../images/svg/docs/getting_started.svg" width="50" />
 
@@ -24,118 +67,6 @@ include '../documentation-main/documentation_header.php';
             <div>
                 You are viewing all frameworks. It is probable you are only
                 interested in one framework. Consider selecting a framework from the side menu.
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkJavaScript()) { ?>
-            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
-
-                <?php if (isFrameworkAll()) { ?>
-                <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                    <h4><img style="vertical-align: middle" src="/images/javascript.png" height="20px"/> Overview - JavaScript</h4>
-                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                </div>
-                <?php } ?>
-
-                <div>
-                    <?php include './javascript.php'; ?>
-                </div>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkAngular()) { ?>
-            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
-
-                <?php if (isFrameworkAll()) { ?>
-                    <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/angular2_small.png" height="20px"/> Overview - Angular</h4>
-                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                    </div>
-                <?php } ?>
-
-                <div>
-                    <?php include './angular.php'; ?>
-                </div>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkAngularJS()) { ?>
-            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
-
-                <?php if (isFrameworkAll()) { ?>
-                    <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/angularjs.png" height="20px"/> Overview - AngularJS 1.x</h4>
-                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                    </div>
-                <?php } ?>
-
-                <div>
-                    <?php include './angularjs.php'; ?>
-                </div>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkVue()) { ?>
-            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
-
-                <?php if (isFrameworkAll()) { ?>
-                    <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/vue_small.png" height="20px"/> Overview - VueJS</h4>
-                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                    </div>
-                <?php } ?>
-
-                <div>
-                    <?php include './vue.php'; ?>
-                </div>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkReact()) { ?>
-            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
-
-                <?php if (isFrameworkAll()) { ?>
-                    <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/react_small.png" height="20px"/> Overview - ReactJS</h4>
-                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                    </div>
-                <?php } ?>
-
-                <div>
-                    <?php include './react.php'; ?>
-                </div>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkAurelia()) { ?>
-            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
-
-                <?php if (isFrameworkAll()) { ?>
-                    <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/aurelia_small.png" height="20px"/> Overview - Aurelia</h4>
-                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                    </div>
-                <?php } ?>
-
-                <div>
-                    <?php include './aurelia.php'; ?>
-                </div>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkWebComponents()) { ?>
-            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
-
-                <?php if (isFrameworkAll()) { ?>
-                    <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="../images/webComponents.png" height="20px"/> Overview - Web Components</h4>
-                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                    </div>
-                <?php } ?>
-
-                <div>
-                    <?php include './webcomponents.php'; ?>
-                </div>
             </div>
         <?php } ?>
 
