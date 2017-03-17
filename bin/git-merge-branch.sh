@@ -19,8 +19,12 @@ do
     echo =============================================================================================
 
     cd $module
+    git checkout $2
+    git pull
     git checkout $1
     git pull
+    git merge $2
+    git push
     git checkout $2
     cd ..
 
