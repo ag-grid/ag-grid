@@ -33,10 +33,9 @@ import {IAggFuncService} from "./interfaces/iAggFuncService";
 import {IFilterComp} from "./interfaces/iFilter";
 import {CsvExportParams} from "./exportParams";
 import {IExcelCreator} from "./interfaces/iExcelCreator";
-import {PaginationService, PaginationType} from "./rowModels/pagination/paginationService";
+import {PaginationService} from "./rowModels/pagination/paginationService";
 import {IDatasource} from "./rowModels/iDatasource";
-import {IEnterpriseDatasource, EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
-import {PaginationDataSourceFactory} from "./rowModels/pagination/paginationDataSourceFactory";
+import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 
 export interface StartEditingCellParams {
     rowIndex: number;
