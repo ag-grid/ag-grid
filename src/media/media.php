@@ -21,6 +21,31 @@ include('../includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
+        <a href="../ag-grid-partners-with-webpack/">
+            <img src="../images/ag_grid_and_webpack.png" style="width: 225px;"/>
+        </a>
+    </div>
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="../ag-grid-webpack-ngtools/">
+                ag-Grid partners with webpack
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            20th March 2017
+        </div>
+    </div>
+    <div style="color: #767676">
+        Niall Crosby
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        ag-Grid and webpack announce their partnership that will see ag-Grid contribute to the future of webpack. This is the first commitment in our Corporate Social Responsibility as we give back to the community that we come from.
+    </div>
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="float: left; width: 240px;">
         <a href="../vue-js-grid/">
             <img src="../images/agGridDaily.png" style="width: 225px;"/>
         </a>
@@ -37,7 +62,7 @@ include('../includes/mediaHeader.php');
         </div>
     </div>
     <div style="color: #767676">
-        Self Published
+        Sean Landsman
     </div>
     <div style="color: #767676; padding-top: 20px;">
         Tutorial on how to use @ngtools/Webpack with AOT
@@ -62,7 +87,7 @@ include('../includes/mediaHeader.php');
         </div>
     </div>
     <div style="color: #767676">
-        Self Published
+        Sean Landsman
     </div>
     <div style="color: #767676; padding-top: 20px;">
         Tutorial on how to use ag-Grid using VueJS and dynamic VueJS Components.
@@ -112,7 +137,7 @@ include('../includes/mediaHeader.php');
         </div>
     </div>
     <div style="color: #767676">
-        Self Published
+        Sean Landsman
     </div>
     <div style="color: #767676; padding-top: 20px;">
         Configuring Git and enhancing your Command Line to give you instant feedback on where you are and what you're doing.
@@ -136,7 +161,7 @@ include('../includes/mediaHeader.php');
         </div>
     </div>
     <div style="color: #767676">
-        Self Published
+        Sean Landsman
     </div>
     <div style="color: #767676; padding-top: 20px;">
         Getting to grips with Webpack we go into detail on how to use Webpack to transpile and bundle code, as well as how to process
@@ -161,7 +186,7 @@ include('../includes/mediaHeader.php');
         </div>
     </div>
     <div style="color: #767676">
-        Self Published
+        Sean Landsman
     </div>
     <div style="color: #767676; padding-top: 20px;">
         Expanding on our previous blog entry, we go into detail on understanding how do use Dynamic Angular 2 Components with AOT.
