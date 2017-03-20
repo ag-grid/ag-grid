@@ -6,13 +6,9 @@ import {EventService} from "../../eventService";
 import {Events} from "../../events";
 import {IDatasource} from "../iDatasource";
 import {BeanStub} from "../../context/beanStub";
-import {InMemoryPaginationDef} from "../inMemory/inMemoryRowModel";
+import {PaginationDef} from "../inMemory/inMemoryRowModel";
 import {ServerPaginationStrategy} from "./serverPagination";
-import {InMemoryPaginationStrategy} from "./inMemoryPagination";
-
-export enum PaginationType {
-    CLIENT, SERVER, NONE
-}
+import {ClientSidePaginationStrategy} from "./inMemoryPagination";
 
 export interface PaginationStrategy {
     isReady ():boolean;
@@ -31,9 +27,8 @@ export class PaginationService extends BeanStub {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('serverPaginationStrategy') private serverPaginationStrategy: ServerPaginationStrategy;
-    @Autowired('inMemoryPaginationStrategy') private inMemoryPaginationStrategy: InMemoryPaginationStrategy;
+    @Autowired('clientSidePaginationStrategy') private clientSidePaginationStrategy: ClientSidePaginationStrategy;
     @Autowired('eventService') private eventService: EventService;
-    private type:PaginationType = PaginationType.NONE;
 
 
     private pageSize: number;
@@ -115,6 +110,18 @@ export class PaginationService extends BeanStub {
                     this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_LOADED);
                 }
         );
+
+        if (this.gridOptionsWrapper.getDatasource()){
+            this.activateServerPagination(this.gridOptionsWrapper.getDatasource());
+        }
+
+        if (this.gridOptionsWrapper.isRowModelClientPagination()){
+            this.clientSidePaginationStrategy.setPaginationDef({
+                pageSize: this.gridOptionsWrapper.getPaginationPageSize() || 100,
+                currentPage: this.gridOptionsWrapper.getPaginationStartPage() || 0
+            });
+            this.reset(true);
+        }
     }
 
     public goToPage(page: number): void {
@@ -131,23 +138,16 @@ export class PaginationService extends BeanStub {
         this.loadPage();
     }
 
-    public activateInMemoryPagination (memoryPaginationDef:InMemoryPaginationDef){
-        this.type = PaginationType.CLIENT;
-        this.inMemoryPaginationStrategy.paginate (memoryPaginationDef);
-        this.reset(true);
-    }
-
     public activateServerPagination (dataSource:IDatasource){
-        this.type = PaginationType.SERVER;
         this.serverPaginationStrategy.setDatasource(dataSource);
         this.reset(true);
     }
 
     public updateCounts() {
-        if (this.type === PaginationType.NONE) return;
+        if (!this.gridOptionsWrapper.isRowModelAnyPagination()) return;
 
-        this.rowCount = this.assertPaginating().rowCount();
-        this.lastPageFound = this.rowCount !== null;
+        this.rowCount = this.getPaginationStrategy().rowCount();
+        this.lastPageFound = _.exists(this.rowCount);
         if (!this.lastPageFound){
             this.totalPages = null;
         } else {
@@ -196,33 +196,33 @@ export class PaginationService extends BeanStub {
         }
     }
 
-
-
     private calculateTotalPages() {
         this.totalPages = Math.floor((this.rowCount - 1) / this.pageSize) + 1;
     }
 
-    private loadPage(causedBy?:string) {
-        let paginationStrategy:PaginationStrategy = this.assertPaginating();
+    private loadPage(causedByEvent?:string) {
+        let paginationStrategy = this.getPaginationStrategy();
 
-        let methodToDeletage = paginationStrategy.onLoadPage;
-        if (causedBy){
-            methodToDeletage = paginationStrategy.onSortOrFilterPage
-        }
-
-        methodToDeletage.bind(paginationStrategy)(this.currentPage, this.pageSize, ()=>{
+        let doneCallback = ()=>{
             this.updateCounts();
             this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_LOADED);
-        });
+        };
+
+        if (!causedByEvent) {
+            paginationStrategy.onLoadPage(this.currentPage, this.pageSize, doneCallback);
+        } else {
+            paginationStrategy.onSortOrFilterPage(this.currentPage, this.pageSize, doneCallback);
+        }
+
         this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_REQUESTED);
     }
 
-    private assertPaginating ():PaginationStrategy{
-        if (this.type == PaginationType.NONE){
+    private getPaginationStrategy ():PaginationStrategy{
+        if (!this.gridOptionsWrapper.isRowModelAnyPagination()){
             console.error(`Pagination can't be performed. The pagination has not been set.`);
         }
 
-        return this.type === PaginationType.CLIENT ? this.inMemoryPaginationStrategy : this.serverPaginationStrategy;
+        return this.gridOptionsWrapper.isRowModelClientPagination() ? this.clientSidePaginationStrategy : this.serverPaginationStrategy;
     }
 
 }

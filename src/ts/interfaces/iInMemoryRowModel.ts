@@ -1,6 +1,6 @@
 import {RowNode} from "../entities/rowNode";
 import {IRowModel} from "./iRowModel";
-import {InMemoryPaginationDef, RefreshModelParams, PaginationModel} from "../rowModels/inMemory/inMemoryRowModel";
+import {PaginationDef, RefreshModelParams, PaginationModel} from "../rowModels/inMemory/inMemoryRowModel";
 
 export interface IInMemoryRowModel extends IRowModel {
 
@@ -27,7 +27,7 @@ export interface IInMemoryRowModel extends IRowModel {
     /** When all row heights should be reset */
     resetRowHeights(): void;
     /** To activate pagination call here passing the page size and the current page */
-    setPagination(paginationDef:InMemoryPaginationDef): PaginationModel;
+    setPaginationDef(paginationDef:PaginationDef): PaginationModel;
     /** If pagination is activated this will returned the current pagination model, otherwise null */
     getPaginationModel(): PaginationModel;
 }

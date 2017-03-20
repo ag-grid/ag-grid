@@ -19,6 +19,7 @@ export class ServerPaginationStrategy extends BeanStub implements PaginationStra
     @Autowired('sortController') private sortController: SortController;
     @Autowired('filterManager') private filterManager: FilterManager;
     private inMemoryRowModel: IInMemoryRowModel;
+    private callbackRowCount: number;
 
 
     private callVersion = 0;
@@ -41,7 +42,7 @@ export class ServerPaginationStrategy extends BeanStub implements PaginationStra
     }
 
     rowCount(): number {
-        return this.datasource.rowCount;
+        return this.callbackRowCount || this.datasource.rowCount;
     }
 
     isReady(): boolean {
@@ -95,10 +96,14 @@ export class ServerPaginationStrategy extends BeanStub implements PaginationStra
 
 
 
-        function successCallback(rows: any) {
+        function successCallback(rows: any, lastRowIndex?: number) {
             if (that.isCallDaemon(callVersionCopy)) {
                 return;
             }
+            if (lastRowIndex >= 0) {
+                that.callbackRowCount = lastRowIndex;
+            }
+
             that.pageLoaded(currentPage, pageSize, rows, doneCb);
         }
 

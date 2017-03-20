@@ -35,7 +35,7 @@ export interface RefreshModelParams {
     newData?: boolean;
 }
 
-export interface InMemoryPaginationDef {
+export interface PaginationDef {
     pageSize: number
     currentPage: number
 }
@@ -46,7 +46,7 @@ export class PaginationModel {
     public readonly allRowsCount: number;
 
 
-    static fromDef (totalNumberOfRows:number, def:InMemoryPaginationDef):PaginationModel{
+    static fromDef (totalNumberOfRows:number, def:PaginationDef):PaginationModel{
         let maxPotentialRowIndex:number = def.pageSize * def.currentPage;
         let minPotentialRowIndex:number = def.currentPage === 0 ? 0 : (def.pageSize * def.currentPage);
         let bLastPage: boolean = false;
@@ -90,7 +90,6 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
     @Autowired('sortStage') private sortStage: IRowNodeStage;
     @Autowired('flattenStage') private flattenStage: IRowNodeStage;
-    @Autowired('paginationStage') private paginationStage: IRowNodeStage;
     // enterprise stages
     @Optional('groupStage') private groupStage: IRowNodeStage;
 
@@ -103,7 +102,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
 
     private nodeManager: InMemoryNodeManager;
-    private paginationDef : InMemoryPaginationDef;
+    private paginationDef : PaginationDef;
     private paginationModel : PaginationModel;
 
     @PostConstruct
@@ -129,7 +128,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         }
     }
 
-    public setPagination(paginationDef:InMemoryPaginationDef):PaginationModel{
+    public setPaginationDef(paginationDef:PaginationDef):PaginationModel{
         this.paginationDef = paginationDef;
         if (!this.paginationModel){
             this.refreshModel({step: Constants.STEP_MAP});
@@ -149,6 +148,10 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private onFilterChanged(): void {
+        // we only act on the filter event here if the user is doing in grid filter.
+        // we ignore it if the filtering is happening on the server side.
+        if (this.gridOptionsWrapper.isEnableServerSideFilter()) { return; }
+
         var animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({step: Constants.STEP_FILTER, keepRenderedRows: true, animate: animate});
     }

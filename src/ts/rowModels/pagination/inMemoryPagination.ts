@@ -2,14 +2,13 @@ import {Bean, Autowired, PostConstruct} from "../../context/context";
 import {PaginationStrategy} from "./paginationService";
 import {IRowModel} from "../../interfaces/iRowModel";
 import {IInMemoryRowModel} from "../../interfaces/iInMemoryRowModel";
-import {PaginationModel, InMemoryPaginationDef} from "../inMemory/inMemoryRowModel";
+import {PaginationModel, PaginationDef} from "../inMemory/inMemoryRowModel";
 
 
-@Bean('inMemoryPaginationStrategy')
-export class InMemoryPaginationStrategy implements PaginationStrategy {
+@Bean('clientSidePaginationStrategy')
+export class ClientSidePaginationStrategy implements PaginationStrategy {
     @Autowired('rowModel') private rowModel: IRowModel;
     private inMemoryRowModel: IInMemoryRowModel;
-    private paginationModel:PaginationModel;
 
     @PostConstruct
     public init() {
@@ -24,7 +23,7 @@ export class InMemoryPaginationStrategy implements PaginationStrategy {
     }
 
     onLoadPage(currentPage: number, pageSize: number, doneCb: () => void): void {
-        this.paginate({
+        this.setPaginationDef({
             currentPage: currentPage,
             pageSize: pageSize
         });
@@ -38,10 +37,11 @@ export class InMemoryPaginationStrategy implements PaginationStrategy {
     }
 
     rowCount(): number {
+        if (!this.inMemoryRowModel.getPaginationModel()) return null;
         return this.inMemoryRowModel.getPaginationModel().allRowsCount;
     }
 
-    paginate(memoryPaginationDef: InMemoryPaginationDef) {
-        this.paginationModel = this.inMemoryRowModel.setPagination(memoryPaginationDef);
+    setPaginationDef(memoryPaginationDef: PaginationDef) {
+        this.inMemoryRowModel.setPaginationDef(memoryPaginationDef);
     }
 }
