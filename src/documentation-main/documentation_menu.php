@@ -176,6 +176,7 @@
         menuItem(0, 'Overlays', 'Overlays', 'javascript-grid-overlays/');
         menuItem(0, 'For Print', 'For Print', 'javascript-grid-for-print/');
         menuItem(0, 'Responsiveness', 'Responsive Design', 'javascript-grid-responsiveness/');
+        menuItem(0, 'Testing', 'Testing', 'javascript-grid-testing/');
 
         menuItemWithIcon('enterprise.png', 0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
         menuItemWithIcon('enterprise.png', 1, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping/');
