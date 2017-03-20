@@ -28,7 +28,7 @@ include('../includes/mediaHeader.php');
 
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="../ag-grid-webpack-ngtools/">
+            <a href="../ag-grid-partners-with-webpack/">
                 ag-Grid partners with webpack
             </a>
         </div>
