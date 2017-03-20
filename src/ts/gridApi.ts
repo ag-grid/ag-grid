@@ -30,12 +30,13 @@ import {VirtualPageRowModel} from "./rowModels/infinateScrolling/virtualPageRowM
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {IAggFuncService} from "./interfaces/iAggFuncService";
-import {IFilterComp} from "./interfaces/iFilter";
+import {IFilter, IFilterComp} from "./interfaces/iFilter";
 import {CsvExportParams} from "./exportParams";
 import {IExcelCreator} from "./interfaces/iExcelCreator";
 import {PaginationService} from "./rowModels/pagination/paginationService";
 import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
+
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -127,11 +128,12 @@ export class GridApi {
         } else {
             console.warn(`ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_ENTERPRISE}'`)
         }
+
     }
 
     public setDatasource(datasource: IDatasource) {
         if (this.gridOptionsWrapper.isRowModelPagination()) {
-            this.paginationService.activateServerPagination (datasource);
+            this.paginationService.setDatasource(datasource);
         } else if (this.gridOptionsWrapper.isRowModelVirtual()) {
             (<VirtualPageRowModel>this.rowModel).setDatasource(datasource);
         } else {
@@ -149,9 +151,9 @@ export class GridApi {
             console.warn(`ag-Grid: you can only use a viewport datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIEWPORT}'`)
         }
     }
-    
+
     public setRowData(rowData: any[]) {
-        if (this.gridOptionsWrapper.isRowModelDefault() || this.gridOptionsWrapper.isRowModelClientPagination()) {
+        if (this.gridOptionsWrapper.isRowModelDefault()) {
             this.selectionController.reset();
             this.inMemoryRowModel.setRowData(rowData, true);
         } else {
@@ -251,7 +253,7 @@ export class GridApi {
         if (_.missing(this.inMemoryRowModel)) { console.log('cannot call refreshInMemoryRowModel unless using normal row model') }
         this.inMemoryRowModel.refreshModel({step: Constants.STEP_EVERYTHING});
     }
-    
+
     public expandAll() {
         if (_.missing(this.inMemoryRowModel)) { console.log('cannot call expandAll unless using normal row model') }
         this.inMemoryRowModel.expandOrCollapseAll(true);
@@ -443,7 +445,7 @@ export class GridApi {
             return this.filterManager.destroyFilter(column);
         }
     }
-    
+
     public getColumnDef(key: string|Column|ColDef) {
         var column = this.columnController.getPrimaryColumn(key);
         if (column) {
@@ -741,10 +743,6 @@ export class GridApi {
 
     public paginationGoToPage(page: number): void {
         this.paginationService.goToPage(page);
-    }
-
-    public paginationSetPageSize (pageSize:number):void{
-        this.paginationService.setPageSize (pageSize);
     }
 
     /*

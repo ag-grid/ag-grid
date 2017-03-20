@@ -384,7 +384,7 @@ export class RowRenderer extends BeanStub {
 
             if (this.gridOptionsWrapper.isForPrint()) {
                 newFirst = 0;
-                newLast = this.rowModel.getRowCount();
+                newLast = rowCount;
             } else {
 
                 let bodyVRange = this.gridPanel.getVerticalPixelRange();
@@ -447,7 +447,7 @@ export class RowRenderer extends BeanStub {
                 continue;
             }
             // check this row actually exists (in case overflow buffer window exceeds real data)
-            var node = this.rowModel.getRowForUi(rowIndex);
+            var node = this.rowModel.getRow(rowIndex);
             if (node) {
                 let renderedRow = this.getOrCreateRenderedRow(node, oldRenderedRowsByNodeId, animate);
                 _.pushAll(delayedCreateFunctions, renderedRow.getAndClearNextVMTurnFunctions());

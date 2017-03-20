@@ -6,7 +6,6 @@ import {SelectionController} from "../../selectionController";
 import {EventService} from "../../eventService";
 import {IRowNodeStage, StageExecuteParams} from "../../interfaces/iRowNodeStage";
 import {ColumnController} from "../../columnController/columnController";
-import {PaginationModel} from "./inMemoryRowModel";
 
 @Bean('flattenStage')
 export class FlattenStage implements IRowNodeStage {
@@ -39,14 +38,7 @@ export class FlattenStage implements IRowNodeStage {
         // will still lie around
         this.resetRowTops(rootNode);
 
-        let paginationModel = params.paginationModel;
-        let bla = paginationModel ? {
-            currentIndex: 0,
-            startIndex: paginationModel.minPotentialIndex,
-            endIndex: paginationModel.minPotentialIndex + paginationModel.currentPageSize
-        } : null;
-
-        this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, pivotMode, bla);
+        this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, pivotMode);
 
         return result;
     }
@@ -66,9 +58,8 @@ export class FlattenStage implements IRowNodeStage {
     }
 
     private recursivelyAddToRowsToDisplay(rowsToFlatten: RowNode[], result: RowNode[],
-                                          nextRowTop: NumberWrapper, reduce: boolean, bla: any) {
+                                          nextRowTop: NumberWrapper, reduce: boolean) {
         if (_.missingOrEmpty(rowsToFlatten)) { return; }
-
 
         let groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
         let hideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents();
@@ -82,47 +73,36 @@ export class FlattenStage implements IRowNodeStage {
             let skipGroupNode = skipBecauseReduce || skipBecauseSuppressRow || skipBecauseOpen;
 
             if (!skipGroupNode) {
-                this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, bla);
+                this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop);
             }
             if (rowNode.group) {
                 if (rowNode.expanded) {
-                    this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, reduce, bla);
+                    this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, reduce);
 
                     // put a footer in if user is looking for it
                     if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
                         this.ensureFooterNodeExists(rowNode);
-                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, bla);
+                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop);
                     }
                 }
             }
             if (rowNode.canFlower && rowNode.expanded) {
                 let flowerNode = this.createFlowerNode(rowNode);
-                this.addRowNodeToRowsToDisplay(flowerNode, result, nextRowTop, bla);
+                this.addRowNodeToRowsToDisplay(flowerNode, result, nextRowTop);
             }
         }
     }
 
     // duplicated method, it's also in floatingRowModel
-    private addRowNodeToRowsToDisplay(rowNode: RowNode, result: RowNode[], nextRowTop: NumberWrapper, bla: any): void {
-        let addRow = true;
-        if (bla){
-            addRow = (bla.currentIndex >= bla.startIndex && bla.currentIndex < bla.endIndex);
+    private addRowNodeToRowsToDisplay(rowNode: RowNode, result: RowNode[], nextRowTop: NumberWrapper): void {
+        result.push(rowNode);
+        if (_.missing(rowNode.rowHeight)) {
+            var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
+            rowNode.setRowHeight(rowHeight);
         }
-
-        if  (addRow) {
-            result.push(rowNode);
-            if (_.missing(rowNode.rowHeight)) {
-                var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
-                rowNode.setRowHeight(rowHeight);
-            }
-            // rowNode.setRowTop(nextRowTop.value);
-            rowNode.setRowIndex(result.length  - 1);
-            nextRowTop.value += rowNode.rowHeight;
-        }
-        if (bla){
-            bla.currentIndex++;
-        }
-
+        rowNode.setRowTop(nextRowTop.value);
+        rowNode.setRowIndex(result.length  - 1);
+        nextRowTop.value += rowNode.rowHeight;
     }
 
     private ensureFooterNodeExists(groupNode: RowNode): void {
