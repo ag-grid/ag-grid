@@ -18,6 +18,21 @@
 </style>
 
 <div class="news-box">
+<div class="news-header" style="margin-bottom: 4px;">
+    20th March 2017
+</div>
+
+        <img src="../images/ag_grid_and_webpack.png" width="100%;"/>
+
+    <div style="padding-top: 4px;">
+    We are excited to announce our
+        <a href="../ag-grid-partners-with-webpack/">
+             partnership with webpack.
+        </a> Read about how ag-Grid is giving back to the community.
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header" style="margin-bottom: 27px;">
         <img src="../images/webpack_small.png" align="left" width="50"/>
         14th March 2017

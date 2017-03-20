@@ -746,15 +746,11 @@ export class AppComponent {
             <p style="font-weight: bold;">
                 Sean Landsman
             </p>
-            <p>
-                I'm an experienced full stack technical lead with an extensive background in enterprise solutions. Over
-                19 years in the industry has taught me the value of quality code and good team collaboration. The bulk
-                of my background is on the server side, but like Niall am increasingly switching focus to include front
-                end
-                technologies.
+            <p>                
+                Sean was the first person that Niall asked to join the team. Sean ensures that we can keep the agnostic in ag-Grid... he is responsible for integrating with all of our supported frameworks. Many of customers will be familiar with Sean as he is very active in our user forums supporting the needs of our customers. He has also recently given a number of talks at conferences where his calm manner belies his years of experience.
             </p>
             <p>
-                Currently work on ag-Grid full time.
+               Lead Developer - Frameworks
             </p>
 
             <div>
