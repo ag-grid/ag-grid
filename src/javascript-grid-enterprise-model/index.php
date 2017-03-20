@@ -65,12 +65,40 @@ include '../documentation-main/documentation_header.php';
     tools work, a mini-Business Intelligence experience.
 </p>
 
-<h3>Example - Slice and Diece</h3>
+<h3>How it Works</h3>
+
+<p>
+    You provide the grid with a datasource. The interface for the datasource is as follows:
+</p>
+
+<pre><span class=""></span>
+interface IEnterpriseDatasource {
+    getRows(params: IEnterpriseGetRowsParams): void;
+}
+</pre>
+
+<h3>Example - Predefined Master Detail</h3>
+
+<p>
+    Below shows an example of predefined master / detail using the olympic winners.
+    It is pre-defined as we set the grid with a particular grouping, and then
+    our datasource knows that the grid will either be asking for the top level
+    nodes OR the grid will be looking for the lower level nodes for a country.
+</p>
+
+<p>
+</p>
+
+<show-example example="exampleEnterpriseSimpleJsDb"></show-example>
+
+<h3>Example - Slice and Dice</h3>
 
 <p>
     Below shows an example of slicing and dicing the olympic winners. The example
     mimics asking the server for data by implementing a proxy
 </p>
+
+<show-example example="exampleEnterpriseSliceAndDiceJsDb"></show-example>
 
 <h4>What's Left</h4>
 <p>
@@ -102,8 +130,6 @@ include '../documentation-main/documentation_header.php';
         <li></li>
     </ol>
 </p>
-
-<show-example example="exampleEnterpriseSimpleJsDb"></show-example>
 
 <p>
     SQL for creating table in MySQL:

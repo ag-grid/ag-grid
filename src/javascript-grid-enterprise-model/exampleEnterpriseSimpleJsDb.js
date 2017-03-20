@@ -1,22 +1,24 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", enableRowGroup: true},
-    {headerName: "Age", field: "age", enableRowGroup: true},
-    {headerName: "Country", field: "country", rowGroupIndex: 0, enableRowGroup: true},
-    {headerName: "Year", field: "year", enableRowGroup: true},
-    {headerName: "Sport", field: "sport", enableRowGroup: true},
-    {headerName: "Gold", field: "gold", aggFunc: 'sum'},
-    {headerName: "Silver", field: "silver", aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", aggFunc: 'sum'}
+    {headerName: "Athlete", field: "athlete"},
+    {headerName: "Age", field: "age"},
+    {headerName: "Country", field: "country", rowGroupIndex: 0},
+    {headerName: "Year", field: "year"},
+    {headerName: "Sport", field: "sport"},
+    {headerName: "Gold", field: "gold"},
+    {headerName: "Silver", field: "silver"},
+    {headerName: "Bronze", field: "bronze"}
 ];
 
 var gridOptions = {
     defaultColDef: {
+        width: 100,
         suppressFilter: true
     },
     columnDefs: columnDefs,
     enableColResize: true,
     rowModelType: 'enterprise',
-    rowGroupPanelShow: 'always',
+    rowGroupPanelShow: 'never',
+    functionsReadOnly: true,
     animateRows: true,
     debug: true
 };
@@ -27,15 +29,85 @@ function EnterpriseDatasource(fakeServer) {
 
 EnterpriseDatasource.prototype.getRows = function(params) {
     console.log('EnterpriseDatasource.getRows: params = ', params);
-    this.fakeServer.getData(params.request,
-        function successCallback(resultForGrid) {
-            params.successCallback(resultForGrid);
-        });
+
+    var request = params.request;
+
+    // if we are on the top level, then group keys will be [],
+    // if we are on the second level, then group keys will be like ['United States']
+    var groupKeys = request.groupKeys;
+    var doingTopLevel = groupKeys.length === 0;
+
+    if (doingTopLevel) {
+        this.fakeServer.getTopLevelCountryList(successCallback);
+    } else {
+        var country = request.groupKeys[0];
+        this.fakeServer.getCountryDetails(country, successCallback);
+    }
+
+    function successCallback(resultForGrid) {
+        params.successCallback(resultForGrid);
+    }
 };
 
 function FakeServer(allData) {
-    this.allData = allData;
+    this.initData(allData);
 }
+
+FakeServer.prototype.initData = function(allData) {
+    var topLevelCountryGroups = [];
+    var bottomLevelCountryDetails = {}; // will be a map of [country name => records]
+
+    allData.forEach( function(dataItem) {
+        // get country this item is for
+        var country = dataItem.country;
+
+        // get the top level group for this country
+        var childrenThisCountry = bottomLevelCountryDetails[country];
+        var groupThisCountry = _.find(topLevelCountryGroups, {country: country});
+        if (!childrenThisCountry) {
+            // no group exists yet, so create it
+            childrenThisCountry = [];
+            bottomLevelCountryDetails[country] = childrenThisCountry;
+
+            // add a group to the top level
+            groupThisCountry = {country: country, gold: 0, silver: 0, bronze: 0};
+            topLevelCountryGroups.push(groupThisCountry);
+        }
+
+        // add this record to the county group
+        childrenThisCountry.push(dataItem);
+
+        // increment the group sums
+        groupThisCountry.gold += dataItem.gold;
+        groupThisCountry.silver += dataItem.silver;
+        groupThisCountry.bronze += dataItem.bronze;
+    });
+
+    this.topLevelCountryGroups = topLevelCountryGroups;
+    this.bottomLevelCountryDetails = bottomLevelCountryDetails;
+};
+
+// when looking for the top list, always return back the full list of countries
+FakeServer.prototype.getTopLevelCountryList = function(callback) {
+
+    var result = this.topLevelCountryGroups;
+
+    // put the response into a timeout, so it looks like an async call from a server
+    setTimeout( function() {
+        callback(result);
+    }, 1000);
+};
+
+FakeServer.prototype.getCountryDetails = function(country, callback) {
+
+    var result = this.bottomLevelCountryDetails[country];
+
+    // put the response into a timeout, so it looks like an async call from a server
+    setTimeout( function() {
+        callback(result);
+    }, 1000);
+
+};
 
 FakeServer.prototype.getData = function(request, callback) {
 
@@ -82,51 +154,6 @@ FakeServer.prototype.getData = function(request, callback) {
         callback(result);
     }, 1000);
 };
-
-
-FakeServer.prototype.buildGroupsFromData = function(filteredData, rowGroupCols, groupKeys, valueCols) {
-    var rowGroupCol = rowGroupCols[groupKeys.length];
-    var field = rowGroupCol.field;
-    var mappedValues = _.groupBy(filteredData, field);
-    var listOfKeys = Object.keys(mappedValues);
-    var groups = [];
-    listOfKeys.forEach(function(key) {
-        var groupItem = {};
-        groupItem[field] = key;
-
-        valueCols.forEach(function(valueCol) {
-            var field = valueCol.field;
-            var sum = 0;
-            mappedValues[key].forEach( function(childItem) {
-                sum += childItem[field];
-            });
-            groupItem[field] = sum;
-        });
-
-        groups.push(groupItem)
-    });
-    return groups;
-};
-
-// if user is down some group levels, we take everything else out. eg
-// if user has opened the two groups United States and 2002, we filter
-// out everything that is not equal to United States and 2002.
-FakeServer.prototype.filterOutOtherGroups = function(originalData, groupKeys, rowGroupCols) {
-    var filteredData = originalData;
-
-    // if we are inside a group, then filter out everything that is not
-    // part of this group
-    groupKeys.forEach(function(groupKey, index) {
-        var rowGroupCol = rowGroupCols[index];
-        var field = rowGroupCol.field;
-        filteredData = _.filter(filteredData, function(item) {
-            return item[field] == groupKey;
-        });
-    });
-
-    return filteredData;
-};
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
