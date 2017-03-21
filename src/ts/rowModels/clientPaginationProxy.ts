@@ -39,6 +39,7 @@ export class ClientPaginationProxy extends BeanStub implements IPaginationServic
         this.active = this.gridOptionsWrapper.isClientPagination();
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
 
+        this.onModelUpdated();
         // this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', this.onPageSizeChanged.bind(this));
     }
 
@@ -49,10 +50,8 @@ export class ClientPaginationProxy extends BeanStub implements IPaginationServic
     }
 
     public goToPage(page: number): void {
-        if (!this.active) {
-            console.warn('ag-Grid: pagination not active, should not call goToPage()');
-            return;
-        }
+        if (!this.active) { return; }
+        if (this.currentPage === page) { return; }
         this.currentPage = page;
         this.onModelUpdated();
     }
@@ -133,6 +132,13 @@ export class ClientPaginationProxy extends BeanStub implements IPaginationServic
         }
     }
 
+    public goToPageWithIndex(index: any): void {
+        if (!this.active) { return; }
+
+        let pageNumber = Math.floor(index / this.pageSize);
+        this.goToPage(pageNumber);
+    }
+
     public getTotalRowCount ():number{
         return this.rowModel.getPageLastRow() + 1;
     }
@@ -174,6 +180,12 @@ export class ClientPaginationProxy extends BeanStub implements IPaginationServic
     private setIndexesAndBounds(): void {
 
         if (this.active) {
+            // show put this into super class
+            this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
+            if ( !(this.pageSize>=1) ) {
+                this.pageSize = 100;
+            }
+
             let totalRowCount = this.getTotalRowCount();
             this.totalPages = Math.floor((totalRowCount - 1) / this.pageSize) + 1;
 
@@ -191,12 +203,6 @@ export class ClientPaginationProxy extends BeanStub implements IPaginationServic
             let maxRowAllowed = this.rowModel.getPageLastRow();
             if (this.bottomRowIndex > maxRowAllowed) {
                 this.bottomRowIndex = maxRowAllowed;
-            }
-
-            // show put this into super class
-            this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
-            if ( !(this.pageSize>=1) ) {
-                this.pageSize = 100;
             }
 
         } else {

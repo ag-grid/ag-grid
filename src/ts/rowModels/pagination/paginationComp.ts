@@ -54,6 +54,11 @@ export class PaginationComp extends Component {
         } else {
             this.paginationService = this.serverPaginationService;
         }
+
+        // this is a hack - need to fix, seriously!!!
+        this.onPaginationReset();
+        this.onPageRequested();
+        this.onPageLoaded();
     }
 
     private onPaginationReset(): void {

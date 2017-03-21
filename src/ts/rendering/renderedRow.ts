@@ -609,8 +609,15 @@ export class RenderedRow extends BeanStub {
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
         if (_.exists(pixels)) {
-            let pagePixelOffset = this.clientPaginationProxy.getPixelOffset();
-            var topPx = (pixels - pagePixelOffset) + "px";
+
+            let pixelsWithOffset: number;
+            if (this.rowNode.isFloating()) {
+                pixelsWithOffset = pixels;
+            } else {
+                pixelsWithOffset = pixels - this.clientPaginationProxy.getPixelOffset();
+            }
+
+            var topPx = pixelsWithOffset + "px";
             this.eAllRowContainers.forEach( row => row.style.top = topPx);
         }
     }

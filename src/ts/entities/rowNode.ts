@@ -324,6 +324,10 @@ export class RowNode {
         });
     }
 
+    public isFloating(): boolean {
+        return this.floating === Constants.FLOATING_TOP || this.floating === Constants.FLOATING_BOTTOM;
+    }
+
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
     public setSelectedParams(params: SetSelectedParams): number {
 

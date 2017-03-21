@@ -631,6 +631,7 @@ export class GridApi {
         }
         let gridCellDef = <GridCellDef> {rowIndex: params.rowIndex, floating: null, column: column};
         var gridCell = new GridCell(gridCellDef);
+        this.gridPanel.ensureIndexVisible(params.rowIndex);
         this.rowRenderer.startEditingCell(gridCell, params.keyPress, params.charPress);
     }
 
