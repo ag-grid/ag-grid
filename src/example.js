@@ -148,6 +148,7 @@ suppressEnterprise: true,
     rowDeselection: true,
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
+    clientPagination: true,
     // embedFullWidthRows: true,
     // groupSelectsFiltered: true,
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
