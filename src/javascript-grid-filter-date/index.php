@@ -122,7 +122,7 @@ dobFilterComponent.setModel({
     type:'equals',
     dateFrom:'2008-08-24'
 });
-dobFilterComponent.onFilterChanged()
+gridOptions.api.onFilterChanged()
 
 <span class="codeComment">// NOTE number filter allows for ranges</span>
 dobFilterComponent.setModel({
@@ -130,7 +130,7 @@ dobFilterComponent.setModel({
     dateFrom:'2008-08-24'
     dateTo:'2012-08-24'
 });
-dobFilterComponent.onFilterChanged()
+gridOptions.api.onFilterChanged()
 </pre></p>
 
 <note>
