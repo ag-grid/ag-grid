@@ -1,7 +1,7 @@
 <?php
 $key = "Getting Started Aurelia";
 $pageTitle = "Aurelia Datagrid";
-$pageDescription = "Demonstrate the best Aurelia datagrid. Shows and example of a datagrid for using with Aurelia.";
+$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with Aurelia to deliver filtering, grouping, aggregation, pivoting and much more.";
 $pageKeyboards = "Aurelia Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
