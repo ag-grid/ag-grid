@@ -8,12 +8,14 @@ import {_} from "../../utils";
 import {EventService} from "../../eventService";
 import {Events} from "../../events";
 import {RowRenderer} from "../../rendering/rowRenderer";
+import {ClientPaginationProxy} from "../clientPaginationProxy";
 
 export class PaginationComp extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('serverPaginationService') private serverPaginationService: ServerPaginationService;
+    @Autowired('clientPaginationProxy') private clientPaginationProxy: ClientPaginationProxy;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     @RefSelector('btFirst') private btFirst: HTMLButtonElement;
@@ -48,7 +50,7 @@ export class PaginationComp extends Component {
         this.addDestroyableEventListener(this.btPrevious, 'click', this.onBtPrevious.bind(this));
 
         if (this.gridOptionsWrapper.isClientPagination()) {
-            this.paginationService = this.rowRenderer.getClientPaginationService();
+            this.paginationService = this.clientPaginationProxy;
         } else {
             this.paginationService = this.serverPaginationService;
         }

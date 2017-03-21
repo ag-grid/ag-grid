@@ -36,6 +36,7 @@ import {IExcelCreator} from "./interfaces/iExcelCreator";
 import {ServerPaginationService, IPaginationService} from "./rowModels/pagination/serverPaginationService";
 import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
+import {ClientPaginationProxy} from "./rowModels/clientPaginationProxy";
 
 
 export interface StartEditingCellParams {
@@ -66,6 +67,7 @@ export class GridApi {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('serverPaginationService') private serverPaginationService: ServerPaginationService;
+    @Autowired('clientPaginationProxy') private clientPaginationProxy: ClientPaginationProxy;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('clipboardService') private clipboardService: IClipboardService;
@@ -91,7 +93,7 @@ export class GridApi {
         }
 
         if (this.gridOptionsWrapper.isClientPagination()) {
-            this.paginationService = this.rowRenderer.getClientPaginationService();
+            this.paginationService = this.clientPaginationProxy;
         } else {
             this.paginationService = this.serverPaginationService;
         }
@@ -135,7 +137,6 @@ export class GridApi {
         } else {
             console.warn(`ag-Grid: you can only use an enterprise datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_ENTERPRISE}'`)
         }
-
     }
 
     public setDatasource(datasource: IDatasource) {

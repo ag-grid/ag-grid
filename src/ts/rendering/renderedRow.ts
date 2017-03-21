@@ -19,6 +19,7 @@ import {BeanStub} from "../context/beanStub";
 import {RowContainerComponent} from "./rowContainerComponent";
 import {ColumnAnimationService} from "./columnAnimationService";
 import {ColDef} from "../entities/colDef";
+import {ClientPaginationProxy} from "../rowModels/clientPaginationProxy";
 
 export class RenderedRow extends BeanStub {
 
@@ -33,6 +34,7 @@ export class RenderedRow extends BeanStub {
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
     @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('clientPaginationProxy') private clientPaginationProxy: ClientPaginationProxy;
 
     private ePinnedLeftRow: HTMLElement;
     private ePinnedRightRow: HTMLElement;
@@ -607,7 +609,7 @@ export class RenderedRow extends BeanStub {
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
         if (_.exists(pixels)) {
-            let pagePixelOffset = this.rowRenderer.getPagePixelOffset();
+            let pagePixelOffset = this.clientPaginationProxy.getPixelOffset();
             var topPx = (pixels - pagePixelOffset) + "px";
             this.eAllRowContainers.forEach( row => row.style.top = topPx);
         }

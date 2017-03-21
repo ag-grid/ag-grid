@@ -61,6 +61,7 @@ import {SortService} from "./rowNodes/sortService";
 import {FilterService} from "./rowNodes/filterService";
 import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
 import {AutoGroupColService} from "./columnController/autoGroupColService";
+import {ClientPaginationProxy} from "./rowModels/clientPaginationProxy";
 
 
 export interface GridParams {
@@ -151,7 +152,7 @@ export class Grid {
             seed: seed,
             beans: [rowModelClass, GridApi, ComponentProvider, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
-                FilterManager, ColumnController, RowRenderer,
+                FilterManager, ColumnController, ClientPaginationProxy, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory,
                 GridSerializer, TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
