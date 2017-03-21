@@ -208,16 +208,19 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         rowNode.setLoading(false);
     }
 
+    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+        return {
+            rowHeight: this.rowHeight,
+            rowTop: this.rowHeight * index
+        };
+    }
+
     public doSetRowTop() {
         let accumulatedRowTop:number = 0;
         this.rowsToDisplay.forEach(rowToDisplay => {
             rowToDisplay.setRowTop(accumulatedRowTop);
             accumulatedRowTop += rowToDisplay.rowHeight;
         });
-    }
-
-    public getRowForUi(realIndex: number): RowNode {
-        return this.getRow(realIndex);
     }
 
     public getRow(index: number): RowNode {
@@ -236,7 +239,7 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         }
     }
 
-    public getRowCombinedHeight(): number {
+    public getCurrentPageHeight(): number {
         return this.getRowCount() * this.rowHeight;
     }
 

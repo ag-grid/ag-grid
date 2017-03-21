@@ -36,10 +36,6 @@ export class ViewportRowModel implements IRowModel {
 
     private viewportDatasource: IViewportDatasource;
 
-    public getRowForUi(realIndex: number): RowNode {
-        return this.getRow(realIndex);
-    }
-
     @PostConstruct
     private init(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
@@ -152,7 +148,14 @@ export class ViewportRowModel implements IRowModel {
         }
     }
 
-    public getRowCombinedHeight(): number {
+    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+        return {
+            rowHeight: this.rowHeight,
+            rowTop: this.rowHeight * index
+        };
+    }
+
+    public getCurrentPageHeight(): number {
         return this.rowCount * this.rowHeight;
     }
 
