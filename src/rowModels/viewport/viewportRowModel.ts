@@ -136,8 +136,12 @@ export class ViewportRowModel implements IRowModel {
         return this.rowNodesByIndex[rowIndex];
     }
 
-    public getRowCount(): number {
-        return this.rowCount;
+    public getPageFirstRow(): number {
+        return 0;
+    }
+
+    public getPageLastRow(): number {
+        return this.rowCount - 1;
     }
 
     public getRowIndexAtPixel(pixel: number): number {

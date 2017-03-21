@@ -227,8 +227,12 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         return this.rowsToDisplay[index];
     }
 
-    public getRowCount(): number {
-        return this.rowsToDisplay ? this.rowsToDisplay.length : 0;
+    public getPageFirstRow(): number {
+        return 0;
+    }
+
+    public getPageLastRow(): number {
+        return this.rowsToDisplay ? this.rowsToDisplay.length - 1 : 0;
     }
 
     public getRowIndexAtPixel(pixel: number): number {
@@ -240,7 +244,7 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
     }
 
     public getCurrentPageHeight(): number {
-        return this.getRowCount() * this.rowHeight;
+        return this.getPageLastRow() * this.rowHeight;
     }
 
     public isEmpty(): boolean {
