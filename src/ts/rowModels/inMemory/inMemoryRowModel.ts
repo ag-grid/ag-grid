@@ -87,6 +87,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+        if (_.missing(this.rowsToDisplay)) { return null; }
         let rowNode = this.rowsToDisplay[index];
         if (rowNode) {
             return {
