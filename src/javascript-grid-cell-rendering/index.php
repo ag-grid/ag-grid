@@ -406,7 +406,7 @@ colDef.cellRenderer = function(params) {
 </pre>
 </p>
 
-<?php if (isFrameworkAngular()) { ?>
+<?php if (isFrameworkAngular2()) { ?>
     <?php include './angular.php';?>
 <?php } ?>
 
