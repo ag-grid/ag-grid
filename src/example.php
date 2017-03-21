@@ -40,6 +40,8 @@
             .ag-fresh .bad-score { background-color: rgba(200,0,0,0.4) }
             .ag-blue .bad-score { background-color: rgba(200,0,0,0.4) }
             .ag-dark .bad-score { background-color: rgba(100,0,0,0.4) }
+
+            button[disabled] { opacity: 0.5; }
         </style>
 
         <!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>

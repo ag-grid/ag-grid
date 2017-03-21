@@ -1,6 +1,6 @@
 <?php
 $key = "Getting Started Javascript";
-$pageTitle = "Javascript Datagrid";
+$pageTitle = "Getting Started: Javascript Datagrid";
 $pageDescription = "How to set up the Best Javascript Datagrid. Shows how to use ag-Grid to build a Javascript grid using only Javascript and without using any framework";
 $pageKeyboards = "Best Javascript Datagrid";
 $pageGroup = "basics";
@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
     <p>Here we've referenced the ag-Grid dependency in the <code>head</code> section, and specified a <code>div</code>
         with
         an ID of <code>myGrid</code>.</p>
-    <p>We've also specified the <a href="../http://localhost:8080/javascript-grid-themes/fresh-theme.php">Fresh
+    <p>We've also specified the <a href="../javascript-grid-themes/fresh-theme.php">Fresh
             Theme</a> -
         themes are we
         we can define the look and feel of the Grid. More on that later.
