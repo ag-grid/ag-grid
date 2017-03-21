@@ -6,6 +6,7 @@ import {
     ComponentAttached,
     ComponentDetached,
     children,
+    child,
     Container,
     ViewResources,
     TaskQueue
@@ -14,6 +15,7 @@ import {Grid, GridOptions, GridApi, ColumnApi, GridParams, ComponentUtil} from "
 import {AureliaFrameworkFactory} from "./aureliaFrameworkFactory";
 import {AgGridColumn} from "./agGridColumn";
 import {generateBindables} from "./agUtils";
+import {AgFullWidthRowTemplate} from './agTemplate';
 
 interface IPropertyChanges {
     [key: string]: any
@@ -43,6 +45,9 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
 
     @children('ag-grid-column')
     public columns: AgGridColumn[] = [];
+
+    @child('ag-full-width-row-template')
+    public fullWidthRowTemplate: AgFullWidthRowTemplate;
 
     constructor(element: Element,
                 private taskQueue: TaskQueue,
@@ -84,6 +89,11 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
                 .map((column: AgGridColumn) => {
                     return column.toColDef();
                 });
+        }
+
+        if (this.fullWidthRowTemplate) {
+            this.gridOptions.fullWidthCellRendererFramework =
+              {template: this.fullWidthRowTemplate.template};
         }
 
         new Grid(this._nativeElement, this.gridOptions, this.gridParams);

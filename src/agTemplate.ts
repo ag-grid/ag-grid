@@ -57,3 +57,15 @@ export class AgFilterTemplate {
         this.template = getTemplate(targetInstruction);
     }
 }
+
+@customElement('ag-full-width-row-template')
+@noView()
+@autoinject()
+@processContent(parseElement)
+export class AgFullWidthRowTemplate {
+    template: string;
+
+    constructor(targetInstruction: TargetInstruction) {
+        this.template = getTemplate(targetInstruction);
+    }
+}
