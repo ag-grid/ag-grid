@@ -1,8 +1,8 @@
 <?php
 $key = "Viewport";
-$pageTitle = "ag-Grid Providing Tree Data";
-$pageDescription = "You can provide the data to your grid in a tree format. This page explains how to set this up.";
-$pageKeyboards = "ag-Grid Javascript Tree";
+$pageTitle = "ag-Grid ViewPort";
+$pageDescription = "A Viewport is a rowModel that allows showing a 'window' of data in your client.";
+$pageKeyboards = "ag-Grid ViewPort";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>

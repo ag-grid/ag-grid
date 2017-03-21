@@ -175,7 +175,6 @@
         menuItem(0, 'Icons', 'Icons', 'javascript-grid-icons/');
         menuItem(0, 'Overlays', 'Overlays', 'javascript-grid-overlays/');
         menuItem(0, 'For Print', 'For Print', 'javascript-grid-for-print/');
-        menuItem(0, 'Responsiveness', 'Responsive Design', 'javascript-grid-responsiveness/');
 
         menuItemWithIcon('enterprise.png', 0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
         menuItemWithIcon('enterprise.png', 1, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping/');
@@ -298,6 +297,8 @@
             menuItem(0, 'Change Log', 'Change Log', 'change-log/changeLogIndex.php');
             menuItem(0, 'Roadmap', 'Roadmap', 'javascript-grid-roadmap');
             menuItem(0, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials/');
+            menuItem(0, 'Responsiveness', 'Responsive Design', 'javascript-grid-responsiveness/');
+            menuItem(0, 'Testing', 'Testing', 'javascript-grid-testing/');
             ?>
             <a class="sidebarLink" href="/archive/">Archive Docs</a>
         </div>
