@@ -13,7 +13,7 @@
                         </div>
                         <span id="animationAction"></span>
                     </div>
-                    <div id="animationGrid" class="ag-dark" style="height: 400px;"></div>
+                    <div id="animationGridSmall" class="ag-dark" style="height: 400px;"></div>
                 </div>
             </div>
             <div class="col-md-12">

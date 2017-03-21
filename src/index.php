@@ -104,7 +104,7 @@
 <script inline src="example-file-browser/fileBrowser.js"></script>
 <script inline src="javascript-grid-viewport/mockServer.js"></script>
 <script inline src="javascript-grid-viewport/exampleViewport.js"></script>
-<script inline src="javascript-grid-animation/exampleAnimation.js"></script>
+<script inline src="javascript-grid-animation/exampleAnimationSmall.js"></script>
 <!--<script inline src="home/example-themes.js"></script>-->
 
 <?php include_once("includes/analytics.php"); ?>

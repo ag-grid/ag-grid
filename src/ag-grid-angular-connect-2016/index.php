@@ -246,7 +246,7 @@ include('../includes/mediaHeader.php');
         <div style="float: right; padding-left: 20px; padding-bottom: 20px; padding-top: 5px;">
             <img src="../images/angularConnect2016/lighteningTalk.png"/>
             <div style="padding: 0px; width: 400px; color: darkgrey; font-size: 12px;">
-                Niall and Sean on stage giving the <a hreg="https://www.youtube.com/watch?v=jamr2jmEzh8">
+                Niall and Sean on stage giving the <a href="https://www.youtube.com/watch?v=jamr2jmEzh8">
                     3 minute lightening talk</a>.
             </div>
         </div>
