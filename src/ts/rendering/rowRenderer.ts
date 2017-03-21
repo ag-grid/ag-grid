@@ -25,9 +25,201 @@ import {NavigateToNextCellParams, TabToNextCellParams} from "../entities/gridOpt
 import {RowContainerComponent} from "./rowContainerComponent";
 import {ColDef} from "../entities/colDef";
 import {BeanStub} from "../context/beanStub";
+import {IPaginationService} from "../rowModels/pagination/serverPaginationService";
+import {IDatasource} from "../rowModels/iDatasource";
+
+export class RowBounds {
+    rowTop: number;
+    rowHeight: number;
+}
+
+export class ClientPaginationService extends BeanStub implements IPaginationService, IRowModel {
+
+    private rowModel: IRowModel;
+
+    private pageSize: number = 10;
+    private totalPages: number = null;
+    private currentPage: number = 0;
+
+    private topRowIndex = 0;
+    private bottomRowIndex = 0;
+
+    private topRowBounds: RowBounds;
+    private bottomRowBounds: RowBounds;
+
+    private pixelOffset = 0;
+
+    private eventService: EventService;
+
+    constructor(rowModel: IRowModel, eventService: EventService) {
+        super();
+        this.rowModel = rowModel;
+        this.eventService = eventService;
+        this.addDestroyableEventListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+    }
+
+    private onModelUpdated(refreshEvent?: ModelUpdatedEvent): void {
+        this.setIndexesAndBounds();
+        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_REQUESTED, refreshEvent);
+        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_LOADED, refreshEvent);
+    }
+
+    public goToPage(page: number): void {
+        this.currentPage = page;
+        this.onModelUpdated();
+    }
+
+    public getPixelOffset(): number {
+        return this.pixelOffset;
+    }
+
+    public getRow(index: number): RowNode {
+        let offSet = this.pageSize * this.currentPage;
+        return this.rowModel.getRow(index + offSet);
+    }
+
+    public getRowIndexAtPixel(pixel: number): number {
+        let modelPixel = pixel + this.getPixelOffset();
+        let modelIndex = this.rowModel.getRowIndexAtPixel(modelPixel);
+        let guiIndex = modelIndex - this.topRowIndex;
+        return guiIndex;
+    }
+
+    public getCurrentPageHeight(): number {
+        if (_.missing(this.topRowBounds) || _.missing(this.bottomRowBounds)) { return 0; }
+        return this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop;
+    }
+
+    public isRowPresent(rowNode: RowNode): boolean {
+        return this.isRowInPage(rowNode);
+    }
+
+    private isRowInPage(rowNode: RowNode): boolean {
+        if (!this.rowModel.isRowPresent(rowNode)) {
+            return false;
+        }
+        let nodeIsInPage = rowNode.rowIndex >= this.topRowIndex && rowNode.rowIndex <= this.bottomRowIndex;
+        return nodeIsInPage;
+    }
+
+    public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {
+        return this.rowModel.insertItemsAtIndex(index, items, skipRefresh);
+    }
+
+    public removeItems(rowNodes: RowNode[], skipRefresh: boolean): void {
+        this.rowModel.removeItems(rowNodes, skipRefresh);
+    }
+
+    public addItems(items: any[], skipRefresh: boolean): void {
+        this.rowModel.addItems(items, skipRefresh);
+    }
+
+    public isEmpty(): boolean {
+        return this.rowModel.isEmpty();
+    }
+
+    public isRowsToRender(): boolean {
+        return this.rowModel.isRowsToRender();
+    }
+
+    public forEachNode(callback: (rowNode: RowNode) => void): void {
+        return this.rowModel.forEachNode(callback);
+    }
+
+    public getType(): string {
+        return this.rowModel.getType();
+    }
+
+    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+        return this.rowModel.getRowBounds(index);
+    }
+
+    public getRowCount(): number {
+        let totalRowCount = this.rowModel.getRowCount();
+
+        let firstRowThisPage = this.pageSize * this.currentPage;
+        let lastRowThisPage = this.pageSize * (this.currentPage + 1);
+
+        if (lastRowThisPage > totalRowCount) {
+            return totalRowCount - firstRowThisPage;
+        } else {
+            return this.pageSize;
+        }
+    }
+
+    public getTotalRowCount ():number{
+        return this.rowModel.getRowCount();
+    }
+
+    public isLastPageFound(): boolean {
+        return true;
+    }
+
+    public getCurrentPage(): number {
+        return this.currentPage;
+    }
+
+    public goToNextPage(): void {
+        this.goToPage(this.currentPage + 1);
+    }
+
+    public goToPreviousPage(): void {
+        this.goToPage(this.currentPage - 1);
+    }
+
+    public goToFirstPage(): void {
+        this.goToPage(0);
+    }
+
+    public goToLastPage(): void {
+        let lastPage = Math.floor(this.rowModel.getRowCount() / this.pageSize);
+        this.goToPage(lastPage);
+    }
+
+    public getPageSize(): number {
+        return this.pageSize;
+    }
+
+    public getTotalPages(): number {
+        return this.totalPages;
+    }
+
+    private setIndexesAndBounds(): void {
+
+        let totalRowCount = this.rowModel.getRowCount();
+        this.totalPages = Math.floor((totalRowCount - 1) / this.pageSize) + 1;
+
+        if (this.currentPage >= this.totalPages) {
+            this.currentPage = this.totalPages - 1;
+        }
+
+        if (!_.isNumeric(this.currentPage) || this.currentPage < 0) {
+            this.currentPage = 0;
+        }
+
+        this.topRowIndex = this.pageSize * this.currentPage;
+        this.bottomRowIndex = (this.pageSize * (this.currentPage+1)) - 1;
+
+        let maxRowAllowed = this.rowModel.getRowCount() - 1;
+        if (this.bottomRowIndex > maxRowAllowed) {
+            this.bottomRowIndex = maxRowAllowed;
+        }
+
+        this.topRowBounds = this.rowModel.getRowBounds(this.topRowIndex);
+        this.bottomRowBounds = this.rowModel.getRowBounds(this.bottomRowIndex);
+
+        this.pixelOffset = _.exists(this.topRowBounds) ? this.topRowBounds.rowTop : 0;
+    }
+}
 
 @Bean('rowRenderer')
 export class RowRenderer extends BeanStub {
+
+    private clientPaginationService: ClientPaginationService;
+
+    public getClientPaginationService(): IPaginationService {
+        return this.clientPaginationService;
+    }
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -74,10 +266,30 @@ export class RowRenderer extends BeanStub {
     public init(): void {
         this.rowContainers = this.gridPanel.getRowContainers();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        if (this.gridOptionsWrapper.isClientPagination()) {
+            this.clientPaginationService = new ClientPaginationService(this.rowModel, this.eventService);
+            this.rowModel = this.clientPaginationService;
+
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_PAGE_LOADED, this.onPageLoaded.bind(this));
+        } else {
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        }
+
         this.addDestroyableEventListener(this.eventService, Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
 
         this.refreshView();
+    }
+
+    private onPageLoaded(refreshEvent: ModelUpdatedEvent = {animate: false, keepRenderedRows: false, newData: false}): void {
+        this.onModelUpdated(refreshEvent);
+    }
+
+    public getPagePixelOffset(): number {
+        if (this.clientPaginationService) {
+            return this.clientPaginationService.getPixelOffset();
+        } else {
+            return 0;
+        }
     }
 
     public getAllCellsForColumn(column: Column): HTMLElement[] {
@@ -155,6 +367,7 @@ export class RowRenderer extends BeanStub {
 
         };
         this.refreshView(params);
+        // this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_LOADED);
     }
 
     // if the row nodes are not rendered, no index is returned
@@ -196,7 +409,7 @@ export class RowRenderer extends BeanStub {
         let focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
 
         if (!this.gridOptionsWrapper.isForPrint()) {
-            var containerHeight = this.rowModel.getRowCombinedHeight();
+            var containerHeight = this.rowModel.getCurrentPageHeight();
             // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
             // we still want the scroll to be present, otherwise there would be no way to access the columns
             // on the RHS - and if that was where the filter was that cause no rows to be presented, there

@@ -99,6 +99,7 @@ export interface GridOptions {
     paginationPageSize?: number;
     paginationStartPage?: number;
     suppressPaginationPanel?: boolean;
+    clientPagination?: boolean;
     editType?: string;
     suppressTouch?: boolean;
     embedFullWidthRows?: boolean;

@@ -566,8 +566,15 @@ export class RenderedRow extends BeanStub {
 
     private addCellFocusedListener(): void {
         this.addDestroyableEventListener(this.mainEventService, Events.EVENT_CELL_FOCUSED, this.setRowFocusClasses.bind(this));
+        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_PAGINATION_PAGE_LOADED, this.onPaginationPageLoaded.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.setRowFocusClasses.bind(this));
         this.setRowFocusClasses();
+    }
+
+    private onPaginationPageLoaded(): void {
+        // it is possible this row is in the new page, but the page number has changed, which means
+        // it needs to reposition itself relative to the new page
+        this.onTopChanged();
     }
 
     public forEachRenderedCell(callback: (renderedCell: RenderedCell)=>void): void {
@@ -600,7 +607,8 @@ export class RenderedRow extends BeanStub {
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
         if (_.exists(pixels)) {
-            var topPx = pixels + "px";
+            let pagePixelOffset = this.rowRenderer.getPagePixelOffset();
+            var topPx = (pixels - pagePixelOffset) + "px";
             this.eAllRowContainers.forEach( row => row.style.top = topPx);
         }
     }

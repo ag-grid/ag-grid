@@ -33,7 +33,7 @@ import {IAggFuncService} from "./interfaces/iAggFuncService";
 import {IFilter, IFilterComp} from "./interfaces/iFilter";
 import {CsvExportParams} from "./exportParams";
 import {IExcelCreator} from "./interfaces/iExcelCreator";
-import {PaginationService} from "./rowModels/pagination/paginationService";
+import {ServerPaginationService, IPaginationService} from "./rowModels/pagination/serverPaginationService";
 import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 
@@ -65,7 +65,7 @@ export class GridApi {
     @Autowired('context') private context: Context;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('paginationService') private paginationService: PaginationService;
+    @Autowired('serverPaginationService') private serverPaginationService: ServerPaginationService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('clipboardService') private clipboardService: IClipboardService;
@@ -76,6 +76,7 @@ export class GridApi {
 
     private inMemoryRowModel: IInMemoryRowModel;
     private virtualPageRowModel: VirtualPageRowModel;
+    private paginationService: IPaginationService;
 
     @PostConstruct
     private init(): void {
@@ -87,6 +88,12 @@ export class GridApi {
             case Constants.ROW_MODEL_TYPE_VIRTUAL:
                 this.virtualPageRowModel = <VirtualPageRowModel> this.rowModel;
                 break;
+        }
+
+        if (this.gridOptionsWrapper.isClientPagination()) {
+            this.paginationService = this.rowRenderer.getClientPaginationService();
+        } else {
+            this.paginationService = this.serverPaginationService;
         }
     }
 
@@ -132,8 +139,8 @@ export class GridApi {
     }
 
     public setDatasource(datasource: IDatasource) {
-        if (this.gridOptionsWrapper.isRowModelPagination()) {
-            this.paginationService.setDatasource(datasource);
+        if (this.gridOptionsWrapper.isRowModelServerPagination()) {
+            this.serverPaginationService.setDatasource(datasource);
         } else if (this.gridOptionsWrapper.isRowModelVirtual()) {
             (<VirtualPageRowModel>this.rowModel).setDatasource(datasource);
         } else {
@@ -722,7 +729,7 @@ export class GridApi {
     }
 
     public paginationGetRowCount(): number {
-        return this.paginationService.getRowCount();
+        return this.paginationService.getTotalRowCount();
     }
 
     public paginationGoToNextPage(): void {

@@ -28,8 +28,8 @@ export class VirtualPageRowModel extends BeanStub implements IRowModel {
 
     private datasource: IDatasource;
 
-    public getRowForUi(realIndex: number): RowNode {
-        return this.getRow(realIndex);
+    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+        return this.virtualPageCache.getRowBounds(index);
     }
 
     @PostConstruct
@@ -186,8 +186,8 @@ export class VirtualPageRowModel extends BeanStub implements IRowModel {
         }
     }
 
-    public getRowCombinedHeight(): number {
-        return this.virtualPageCache ? this.virtualPageCache.getRowCombinedHeight() : 0;
+    public getCurrentPageHeight(): number {
+        return this.virtualPageCache ? this.virtualPageCache.getCurrentPageHeight() : 0;
     }
 
     public getRowIndexAtPixel(pixel: number): number {

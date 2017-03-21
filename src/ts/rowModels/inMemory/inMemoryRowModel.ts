@@ -86,6 +86,18 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         }
     }
 
+    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+        let rowNode = this.rowsToDisplay[index];
+        if (rowNode) {
+            return {
+                rowTop: rowNode.rowTop,
+                rowHeight: rowNode.rowHeight
+            }
+        } else {
+            return null;
+        }
+    }
+
     private onRowGroupOpened(): void {
         let animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({step: Constants.STEP_MAP, keepRenderedRows: true, animate: animate});
@@ -264,7 +276,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         return pixelInRow;
     }
 
-    public getRowCombinedHeight(): number {
+    public getCurrentPageHeight(): number {
         if (this.rowsToDisplay && this.rowsToDisplay.length > 0) {
             var lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
             var lastPixel = lastRow.rowTop + lastRow.rowHeight;

@@ -877,6 +877,9 @@ export class Utils {
         }
     }
 
+    /**
+     * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
+     */
     static isNumeric (value:any): boolean {
         return !isNaN(parseFloat(value)) && isFinite(value);
     }

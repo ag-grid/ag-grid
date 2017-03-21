@@ -3,16 +3,18 @@ import {Component} from "../../widgets/component";
 import {Autowired, PostConstruct} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {RefSelector} from "../../widgets/componentAnnotations";
-import {PaginationService} from "./paginationService";
+import {ServerPaginationService, IPaginationService} from "./serverPaginationService";
 import {_} from "../../utils";
 import {EventService} from "../../eventService";
 import {Events} from "../../events";
+import {RowRenderer} from "../../rendering/rowRenderer";
 
 export class PaginationComp extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('paginationService') private paginationService: PaginationService;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('serverPaginationService') private serverPaginationService: ServerPaginationService;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     @RefSelector('btFirst') private btFirst: HTMLButtonElement;
     @RefSelector('btPrevious') private btPrevious: HTMLButtonElement;
@@ -25,6 +27,8 @@ export class PaginationComp extends Component {
     @RefSelector('eSummaryPanel') private eSummaryPanel: any;
     @RefSelector('lbCurrent') private lbCurrent: any;
     @RefSelector('lbTotal') private lbTotal: any;
+
+    private paginationService: IPaginationService;
 
     constructor() {
         super();
@@ -42,6 +46,12 @@ export class PaginationComp extends Component {
         this.addDestroyableEventListener(this.btLast, 'click', this.onBtLast.bind(this));
         this.addDestroyableEventListener(this.btNext, 'click', this.onBtNext.bind(this));
         this.addDestroyableEventListener(this.btPrevious, 'click', this.onBtPrevious.bind(this));
+
+        if (this.gridOptionsWrapper.isClientPagination()) {
+            this.paginationService = this.rowRenderer.getClientPaginationService();
+        } else {
+            this.paginationService = this.serverPaginationService;
+        }
     }
 
     private onPaginationReset(): void {
@@ -132,7 +142,7 @@ export class PaginationComp extends Component {
         let currentPage = this.paginationService.getCurrentPage();
         let pageSize = this.paginationService.getPageSize();
         let maxRowFound = this.paginationService.isLastPageFound();
-        let rowCount = this.paginationService.getRowCount();
+        let rowCount = this.paginationService.getTotalRowCount();
 
         var startRow: any;
         var endRow: any;
@@ -161,7 +171,7 @@ export class PaginationComp extends Component {
     private setTotalLabels() {
         let maxRowFound = this.paginationService.isLastPageFound();
         let totalPages = this.paginationService.getTotalPages();
-        let rowCount = this.paginationService.getRowCount();
+        let rowCount = this.paginationService.getTotalRowCount();
 
         if (maxRowFound) {
             this.lbTotal.innerHTML = this.myToLocaleString(totalPages);

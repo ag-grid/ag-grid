@@ -44,6 +44,13 @@ export class VirtualPageCache {
         this.virtualRowCount = cacheSettings.paginationInitialRowCount;
     }
 
+    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+        return {
+            rowHeight: this.cacheParams.rowHeight,
+            rowTop: this.cacheParams.rowHeight * index
+        };
+    }
+
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('VirtualPageCache');
     }
@@ -55,7 +62,7 @@ export class VirtualPageCache {
         this.getRow(0);
     }
 
-    public getRowCombinedHeight(): number {
+    public getCurrentPageHeight(): number {
         return this.virtualRowCount * this.cacheParams.rowHeight;
     }
 

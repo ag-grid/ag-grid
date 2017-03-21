@@ -55,8 +55,8 @@ import {ColumnHoverService} from "./rendering/columnHoverService";
 import {ColumnAnimationService} from "./rendering/columnAnimationService";
 import {ComponentProvider} from "./componentProvider";
 import {
-    PaginationService
-} from "./rowModels/pagination/paginationService";
+    ServerPaginationService
+} from "./rowModels/pagination/serverPaginationService";
 import {SortService} from "./rowNodes/sortService";
 import {FilterService} from "./rowNodes/filterService";
 import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
@@ -158,7 +158,7 @@ export class Grid {
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService, FilterService, RowNodeFactory,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
-                ColumnHoverService, ColumnAnimationService, PaginationService, SortService, AutoGroupColService],
+                ColumnHoverService, ColumnAnimationService, ServerPaginationService, SortService, AutoGroupColService],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],

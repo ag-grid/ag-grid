@@ -13,8 +13,21 @@ import {Constants} from "../../constants";
 import {IDatasource} from "./../iDatasource";
 import {BeanStub} from "../../context/beanStub";
 
-@Bean('paginationService')
-export class PaginationService extends BeanStub {
+export interface IPaginationService {
+    isLastPageFound(): boolean;
+    getCurrentPage(): number;
+    goToNextPage(): void;
+    goToPreviousPage(): void;
+    goToFirstPage(): void;
+    goToLastPage(): void;
+    getPageSize(): number
+    getTotalPages(): number;
+    getTotalRowCount(): number;
+    goToPage(page: number): void;
+}
+
+@Bean('serverPaginationService')
+export class ServerPaginationService extends BeanStub implements IPaginationService {
 
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('gridPanel') private gridPanel: GridPanel;
@@ -51,7 +64,7 @@ export class PaginationService extends BeanStub {
         return this.totalPages;
     }
 
-    public getRowCount(): number {
+    public getTotalRowCount(): number {
         return this.rowCount;
     }
 
@@ -97,7 +110,7 @@ export class PaginationService extends BeanStub {
             this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
         }
 
-        var paginationEnabled = this.gridOptionsWrapper.isRowModelPagination();
+        var paginationEnabled = this.gridOptionsWrapper.isRowModelServerPagination();
         // if not doing pagination, then quite the setup
         if (!paginationEnabled) { return; }
 
