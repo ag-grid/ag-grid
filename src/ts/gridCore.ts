@@ -276,7 +276,7 @@ export class GridCore {
             throw 'Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory';
         }
         // look for the node index we want to display
-        var rowCount = this.rowModel.getRowCount();
+        var rowCount = this.rowModel.getPageLastRow() + 1;
         var comparatorIsAFunction = typeof comparator === 'function';
         var indexToSelect = -1;
         // go through all the nodes, find the one we want to show

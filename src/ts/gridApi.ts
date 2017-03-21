@@ -624,6 +624,10 @@ export class GridApi {
 
     public startEditingCell(params: StartEditingCellParams): void {
         var column = this.columnController.getGridColumn(params.colKey);
+        if (!column) {
+            console.warn(`ag-Grid: no column found for ${params.colKey}`);
+            return;
+        }
         let gridCellDef = <GridCellDef> {rowIndex: params.rowIndex, floating: null, column: column};
         var gridCell = new GridCell(gridCellDef);
         this.rowRenderer.startEditingCell(gridCell, params.keyPress, params.charPress);

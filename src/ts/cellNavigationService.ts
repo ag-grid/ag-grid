@@ -103,7 +103,7 @@ export class CellNavigationService {
             var lastBottomIndex = this.floatingRowModel.getFloatingBottomRowData().length - 1;
             return lastBottomIndex === gridRow.rowIndex;
         } else {
-            var lastBodyIndex = this.rowModel.getRowCount() - 1;
+            var lastBodyIndex = this.rowModel.getPageLastRow();
             return lastBodyIndex === gridRow.rowIndex;
         }
     }
@@ -147,7 +147,7 @@ export class CellNavigationService {
     }
 
     private getLastBodyCell(): GridRow {
-        var lastBodyRow = this.rowModel.getRowCount() - 1;
+        var lastBodyRow = this.rowModel.getPageLastRow();
         return new GridRow(lastBodyRow, null);
     }
 

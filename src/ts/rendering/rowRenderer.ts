@@ -74,15 +74,11 @@ export class ClientPaginationService extends BeanStub implements IPaginationServ
     }
 
     public getRow(index: number): RowNode {
-        let offSet = this.pageSize * this.currentPage;
-        return this.rowModel.getRow(index + offSet);
+        return this.rowModel.getRow(index);
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        let modelPixel = pixel + this.getPixelOffset();
-        let modelIndex = this.rowModel.getRowIndexAtPixel(modelPixel);
-        let guiIndex = modelIndex - this.topRowIndex;
-        return guiIndex;
+        return this.rowModel.getRowIndexAtPixel(pixel);
     }
 
     public getCurrentPageHeight(): number {
@@ -134,21 +130,23 @@ export class ClientPaginationService extends BeanStub implements IPaginationServ
         return this.rowModel.getRowBounds(index);
     }
 
-    public getRowCount(): number {
-        let totalRowCount = this.rowModel.getRowCount();
+    public getPageFirstRow(): number {
+        return this.pageSize * this.currentPage;
+    }
 
-        let firstRowThisPage = this.pageSize * this.currentPage;
-        let lastRowThisPage = this.pageSize * (this.currentPage + 1);
+    public getPageLastRow(): number {
+        let totalLastRow = (this.pageSize * (this.currentPage + 1)) - 1;
+        let pageLastRow = this.rowModel.getPageLastRow();
 
-        if (lastRowThisPage > totalRowCount) {
-            return totalRowCount - firstRowThisPage;
+        if (pageLastRow > totalLastRow) {
+            return totalLastRow;
         } else {
-            return this.pageSize;
+            return pageLastRow;
         }
     }
 
     public getTotalRowCount ():number{
-        return this.rowModel.getRowCount();
+        return this.rowModel.getPageLastRow() + 1;
     }
 
     public isLastPageFound(): boolean {
@@ -172,7 +170,8 @@ export class ClientPaginationService extends BeanStub implements IPaginationServ
     }
 
     public goToLastPage(): void {
-        let lastPage = Math.floor(this.rowModel.getRowCount() / this.pageSize);
+        let rowCount = this.rowModel.getPageLastRow() + 1;
+        let lastPage = Math.floor(rowCount / this.pageSize);
         this.goToPage(lastPage);
     }
 
@@ -186,7 +185,7 @@ export class ClientPaginationService extends BeanStub implements IPaginationServ
 
     private setIndexesAndBounds(): void {
 
-        let totalRowCount = this.rowModel.getRowCount();
+        let totalRowCount = this.getTotalRowCount();
         this.totalPages = Math.floor((totalRowCount - 1) / this.pageSize) + 1;
 
         if (this.currentPage >= this.totalPages) {
@@ -200,7 +199,7 @@ export class ClientPaginationService extends BeanStub implements IPaginationServ
         this.topRowIndex = this.pageSize * this.currentPage;
         this.bottomRowIndex = (this.pageSize * (this.currentPage+1)) - 1;
 
-        let maxRowAllowed = this.rowModel.getRowCount() - 1;
+        let maxRowAllowed = this.rowModel.getPageLastRow();
         if (this.bottomRowIndex > maxRowAllowed) {
             this.bottomRowIndex = maxRowAllowed;
         }
@@ -593,19 +592,22 @@ export class RowRenderer extends BeanStub {
             newLast = -1; // setting to -1 means nothing in range
         } else {
 
-            var rowCount = this.rowModel.getRowCount();
+            let pageFirstRow = this.rowModel.getPageFirstRow();
+            let pageLastRow = this.rowModel.getPageLastRow();
 
             if (this.gridOptionsWrapper.isForPrint()) {
-                newFirst = 0;
-                newLast = rowCount;
+                newFirst = pageFirstRow;
+                newLast = pageLastRow;
             } else {
+
+                let pixelOffset = this.clientPaginationService ? this.clientPaginationService.getPixelOffset() : 0;
 
                 let bodyVRange = this.gridPanel.getVerticalPixelRange();
                 var topPixel = bodyVRange.top;
                 var bottomPixel = bodyVRange.bottom;
 
-                var first = this.rowModel.getRowIndexAtPixel(topPixel);
-                var last = this.rowModel.getRowIndexAtPixel(bottomPixel);
+                var first = this.rowModel.getRowIndexAtPixel(topPixel + pixelOffset);
+                var last = this.rowModel.getRowIndexAtPixel(bottomPixel + pixelOffset);
 
                 //add in buffer
                 var buffer = this.gridOptionsWrapper.getRowBuffer();
@@ -613,11 +615,12 @@ export class RowRenderer extends BeanStub {
                 last = last + buffer;
 
                 // adjust, in case buffer extended actual size
-                if (first < 0) {
-                    first = 0;
+                if (first < pageFirstRow) {
+                    first = pageFirstRow;
                 }
-                if (last > rowCount - 1) {
-                    last = rowCount - 1;
+
+                if (last > pageLastRow) {
+                    last = pageLastRow;
                 }
 
                 newFirst = first;
@@ -833,7 +836,9 @@ export class RowRenderer extends BeanStub {
 
     public startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void {
         var cell = this.getComponentForCell(gridCell);
-        cell.startRowOrCellEdit(keyPress, charPress);
+        if (cell) {
+            cell.startRowOrCellEdit(keyPress, charPress);
+        }
     }
 
     private getComponentForCell(gridCell: GridCell): RenderedCell {

@@ -222,12 +222,16 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
     public getVirtualRowCount(): number {
         console.warn('ag-Grid: rowModel.getVirtualRowCount() is not longer a function, use rowModel.getRowCount() instead');
-        return this.getRowCount();
+        return this.getPageLastRow();
     }
 
-    public getRowCount(): number {
+    public getPageFirstRow(): number {
+        return 0;
+    }
+
+    public getPageLastRow(): number {
         if (this.rowsToDisplay) {
-            return this.rowsToDisplay.length;
+            return this.rowsToDisplay.length - 1;
         } else {
             return 0;
         }

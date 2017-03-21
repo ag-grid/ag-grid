@@ -484,7 +484,7 @@ export class GridPanel extends BeanStub {
         //where to scroll to
         let rowIndexToScrollTo = pagingKey === Constants.KEY_PAGE_HOME_NAME ?
             0:
-            this.rowModel.getRowCount() - 1;
+            this.rowModel.getPageLastRow();
         let rowToScrollTo: RowNode = this.rowModel.getRow(rowIndexToScrollTo);
 
 
@@ -505,7 +505,6 @@ export class GridPanel extends BeanStub {
         this.performScroll(diagonalScroll);
     }
 
-
     //EITHER CTRL UP/DOWN or PAGE UP/DOWN
     private pageVertically (pagingKey:string): void{
         if (pagingKey === Constants.KEY_CTRL_UP_NAME){
@@ -519,7 +518,7 @@ export class GridPanel extends BeanStub {
 
         if (pagingKey === Constants.KEY_CTRL_DOWN_NAME){
             this.performScroll({
-                rowToScrollTo: this.rowModel.getRow(this.rowModel.getRowCount() - 1),
+                rowToScrollTo: this.rowModel.getRow(this.rowModel.getPageLastRow()),
                 focusedRowTopDelta: this.getPrimaryScrollViewport().offsetHeight,
                 type: ScrollType.VERTICAL
             } as VerticalScroll);
@@ -716,7 +715,7 @@ export class GridPanel extends BeanStub {
 
             if (this.floatingRowModel.isEmpty(Constants.FLOATING_BOTTOM)) {
                 floatingEnd = null;
-                rowEnd = this.rowModel.getRowCount() - 1;
+                rowEnd = this.rowModel.getPageLastRow();
             } else {
                 floatingEnd = Constants.FLOATING_BOTTOM;
                 rowEnd = this.floatingRowModel.getFloatingBottomRowData().length = 1;
@@ -814,8 +813,8 @@ export class GridPanel extends BeanStub {
 
     public ensureIndexVisible(index: any) {
         this.logger.log('ensureIndexVisible: ' + index);
-        var lastRow = this.rowModel.getRowCount();
-        if (typeof index !== 'number' || index < 0 || index >= lastRow) {
+        var rowCount = this.rowModel.getPageLastRow() + 1;
+        if (typeof index !== 'number' || index < 0 || index >= rowCount) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
             return;
         }

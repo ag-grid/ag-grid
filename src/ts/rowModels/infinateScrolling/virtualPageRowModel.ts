@@ -194,8 +194,12 @@ export class VirtualPageRowModel extends BeanStub implements IRowModel {
         return this.virtualPageCache ? this.virtualPageCache.getRowIndexAtPixel(pixel) : -1;
     }
 
-    public getRowCount(): number {
-        return this.virtualPageCache ? this.virtualPageCache.getRowCount() : 0;
+    public getPageFirstRow(): number {
+        return 0;
+    }
+
+    public getPageLastRow(): number {
+        return this.virtualPageCache ? this.virtualPageCache.getRowCount() -1 : 0;
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {

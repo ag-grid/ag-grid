@@ -4,8 +4,10 @@ export interface IRowModel {
 
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode;
-    /** Returns the total row count. */
-    getRowCount(): number;
+    /** Returns the first and last rows to render. */
+    getPageFirstRow(): number;
+    getPageLastRow(): number;
+
     /** Returns the row index at the given pixel */
     getRowIndexAtPixel(pixel: number): number;
     /** Returns total height of all the rows - used to size the height of the grid div that contains the rows */
