@@ -200,7 +200,7 @@ will be empty.
 
 <show-example example="exampleCustomFilter"></show-example>
 
-<?php if (isFrameworkAngular()) { ?>
+<?php if (isFrameworkAngular2()) { ?>
     <?php include './angular.php';?>
 <?php } ?>
 

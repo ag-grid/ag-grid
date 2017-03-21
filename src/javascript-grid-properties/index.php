@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
             </div>
         <?php } ?>
 
-        <?php if (isFrameworkAngularJS()) { ?>
+        <?php if (isFrameworkAngular1()) { ?>
             <div>
                 <h4>
                     <img src="/images/angularjs.png" height="20px"/>
@@ -50,7 +50,7 @@ include '../documentation-main/documentation_header.php';
             </div>
         <?php } ?>
 
-        <?php if (isFrameworkAngular()) { ?>
+        <?php if (isFrameworkAngular2()) { ?>
             <div>
                 <h4>
                     <img src="/images/angular2.png" height="20px"/>

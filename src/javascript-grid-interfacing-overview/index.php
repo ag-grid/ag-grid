@@ -42,8 +42,8 @@ include '../documentation-main/documentation_header.php';
     <h2>
         <?php if (isFrameworkJavaScript()) { ?><img src="/images/javascript.png" height="50"/><?php } ?>
         <?php if (isFrameworkReact()) { ?><img src="/images/react.png" height="50"/><?php } ?>
-        <?php if (isFrameworkAngularJS()) { ?><img src="/images/angularjs.png" height="50"/><?php } ?>
-        <?php if (isFrameworkAngular()) { ?><img src="/images/angular2.png" height="50"/><?php } ?>
+        <?php if (isFrameworkAngular1()) { ?><img src="/images/angularjs.png" height="50"/><?php } ?>
+        <?php if (isFrameworkAngular2()) { ?><img src="/images/angular2.png" height="50"/><?php } ?>
         <?php if (isFrameworkVue()) { ?><img src="/images/vue_large.png" height="50"/><?php } ?>
         <?php if (isFrameworkWebComponents()) { ?><img src="../images/webComponents.png" height="50"/><?php } ?>
         <?php if (isFrameworkAurelia()) { ?><img src="/images/aurelia.png" height="50"/><?php } ?>
@@ -186,7 +186,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         </div>
     <?php } ?>
 
-    <?php if (isFrameworkAngular()) { ?>
+    <?php if (isFrameworkAngular2()) { ?>
         <div>
             <h2>
                 <img src="/images/angular2.png" height="50px"/>
