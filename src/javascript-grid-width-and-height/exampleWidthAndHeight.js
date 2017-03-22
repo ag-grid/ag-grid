@@ -32,6 +32,7 @@ function setWidthAndHeight(width, height) {
     var eGridDiv = document.querySelector('#myGrid');
     eGridDiv.style.width = width;
     eGridDiv.style.height = height;
+    gridOptions.api.doLayout();
 }
 
 // setup the grid after the page has finished loading
