@@ -231,7 +231,7 @@ export class ExcelCreator implements IExcelCreator{
         this.downloader.download(
             fileName,
             content,
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            "application/vnd.ms-excel"
         );
     }
 
