@@ -76,14 +76,16 @@ myGrid.setGridOptions(gridOptions);</code></pre>
 
     <show-example example="example-wc" example-height="160px"></show-example>
 
+    <h2 id="advanced-web-components-example">Advanced Web Components Example</h2>
+
+    <show-example example="webComponentDataGrid"></show-example>
+
     <h2 id="destroy">Destroy</h2>
 
     <p>
         To get the grid to release resources, call api.destroy(). If you do not do this, old grids will hang around
         and add to a memory leak problem in your application.
     </p>
-
-    <show-example example="webComponentDataGrid"></show-example>
 
 
 </div>
