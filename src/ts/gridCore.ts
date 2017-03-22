@@ -304,6 +304,14 @@ export class GridCore {
         // need to do layout first, as drawVirtualRows and setPinnedColHeight
         // need to know the result of the resizing of the panels.
         var sizeChanged = this.eRootPanel.doLayout();
+        // not sure why, this is a hack, but if size changed, it may need to be called
+        // again - as the size change can change whether scrolls are visible or not (i think).
+        // to see why, take this second 'doLayout' call out, and see example in docs for
+        // width & height, the grid will flicker as it doesn't get laid out correctly with
+        // one call to doLayout()
+        if (sizeChanged) {
+            this.eRootPanel.doLayout();
+        }
         // both of the two below should be done in gridPanel, the gridPanel should register 'resize' to the panel
         if (sizeChanged) {
             this.rowRenderer.drawVirtualRowsWithLock();
