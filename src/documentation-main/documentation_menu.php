@@ -95,6 +95,10 @@
             menuItem(1, 'Getting Started Web Components', 'Web Components', 'best-web-component-data-grid/');
         }
 
+        if(isFrameworkAll()) {
+            menuItem(1, 'Getting Started TypeScript & Webpack 2', 'TypeScript', 'ag-grid-typescript-webpack-2/');
+        }
+
         menuItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');
         ?>
 
