@@ -16,8 +16,8 @@ include '../documentation-main/documentation_header.php';
     <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=editor-component"
                           sources="{
                             [
-                                { root: '../ng2-example/app/editor-component-example/', files: 'editor.component.ts,editor.component.html,mood-editor.component.ts,mood-renderer.component.ts,numeric-editor.component.ts' },
-                                { root: '../ng2-example/app/', files: 'app.module.ts' }
+                                { root: '/ng2-example/app/editor-component-example/', files: 'editor.component.ts,editor.component.html,mood-editor.component.ts,mood-renderer.component.ts,numeric-editor.component.ts' },
+                                { root: '/ng2-example/app/', files: 'app.module.ts' }
                             ]
                           }"
                           plunker="https://embed.plnkr.co/259RDD/">

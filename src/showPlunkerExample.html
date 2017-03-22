@@ -3,7 +3,7 @@
         <a href="{{source}}" target="_blank" style="float: right;">open example in new tab</a>
         <li ng-show="extraPages.length > 0" ng-class="{active: selectedTab=='source'}" ><a ng-click="selectedTab='source'">Source Code</a></li>
         <li ng-class="{active: selectedTab=='editplunker'}" class="active"><a ng-click="selectedTab='editplunker'"><img src="/images/plunker.png" height="20px"> Edit Plunker</a></li>
-        <li><a href="{{plunker}}" target="_blank"><img src="/images/plunker.png" height="20px"> Open in Plunker <span class="fa fa-external-link"></span></a></li>
+        <li><a href="{{editPlunker}}" target="_blank"><img src="/images/plunker.png" height="20px"> Open in Plunker <span class="fa fa-external-link"></span></a></li>
     </ul>
 
     <div style="margin-top: 5px" class="tab-pane" ng-show="selectedTab=='source'">

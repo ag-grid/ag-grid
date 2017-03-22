@@ -4,7 +4,7 @@
         <li ng-class="{active: selectedTab=='example'}" class="active"><a ng-click="selectedTab='example'">Example</a></li>
         <li ng-class="{active: selectedTab=='source'}"><a ng-click="selectedTab='source'">Source Code</a></li>
         <li ng-show="plunker" ng-class="{active: selectedTab=='editplunker'}"><a ng-click="selectedTab='editplunker'"><img src="/images/plunker.png" height="20px"> Edit Plunker</a></li>
-        <li ng-show="plunker"><a href="{{plunker}}" target="_blank"><img src="/images/plunker.png" height="20px"> Open in Plunker <span class="fa fa-external-link"></span></a></li>
+        <li ng-show="editPlunker"><a href="{{editPlunker}}" target="_blank"><img src="/images/plunker.png" height="20px"> Open in Plunker <span class="fa fa-external-link"></span></a></li>
     </ul>
 
     <div class="tab-pane" ng-show="selectedTab=='example'">

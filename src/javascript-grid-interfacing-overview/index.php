@@ -449,12 +449,6 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
                     no binding is necessary, just the value is placed as an attribute
                     eg <i>row-height.bind="22"</i>.
                 </li>
-                <li><b>Grid API via IDs:</b> The grid in the example is created with an id
-                    by marking it with <i>#agGrid</i>. This in turn turns into a variable
-                    which can be used to access the grid's controller. The buttons
-                    Grid API and Column API buttons use this variable to access the grids
-                    API (the API's are attributes on the controller).
-                </li>
                 <li><b>Changing Properties:</b> When a property changes value, Aurelia
                     automatically passes the new value onto the grid. This is used in
                     the following locations:<br/>
@@ -472,7 +466,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
             </p>
 
             <pre><span class="codeComment">// notice the grid has an id called agGrid, which can be used to call the API</span>
-    &lt;g-grid-aurelia #agGrid class="ag-fresh"
+    &lt;g-grid-aurelia class="ag-fresh"
         <span class="codeComment">// items bound to properties on the controller</span>
         grid-options.bind="gridOptions"
         column-defs.bind="columnDefs"

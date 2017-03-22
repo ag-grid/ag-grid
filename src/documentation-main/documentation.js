@@ -13,20 +13,49 @@
         }
     });
 
+    var removeFilenameFromPath = function(pathname) {
+        if(pathname.lastIndexOf('/') === 0) {
+            // only the root slash present
+            return pathname;
+        }
+        return pathname.slice(0, pathname.lastIndexOf('/'));
+    };
+
+    let getPathWithTrailingSlash = function () {
+        var pathname = removeFilenameFromPath(window.location.pathname);
+        var trailingSlash = (pathname.indexOf("/", 1) === pathname.length - 1);
+        pathname += trailingSlash ? "" : "/";
+        return pathname;
+    };
+
+    let getExtensionForExample = function (jsfile) {
+        return jsfile.indexOf(".ts") >= 0 || jsfile.indexOf(".vue") >= 0 ? "" : ".js";
+    };
+
+    let getSourceLang = function (jsfile) {
+        if (jsfile.indexOf(".ts") >= 0) {
+            return "TypeScript";
+        } else if (jsfile.indexOf(".vue") >= 0) {
+            return "Vue";
+        }
+        return "JavaScript";
+    };
+
     function ShowExampleController($scope, $http, $attrs) {
+        var pathname = getPathWithTrailingSlash();
+
         var url = $attrs["url"];
         var example = $attrs["example"];
-        $scope.source = url ? url : (example.indexOf("?") === -1 ? (example + ".html") : example);
+
+        var jsfile = $attrs['jsfile'] ? $attrs['jsfile'] : example;
+        $scope.jsfile = pathname + jsfile + getExtensionForExample(jsfile);
+
         $scope.selectedTab = 'example';
-        $scope.jsfile = $attrs['jsfile'] ? $attrs['jsfile'] : example;
-        $scope.exeExtension = $scope.jsfile.indexOf(".ts") >= 0 || $scope.jsfile.indexOf(".vue") >= 0 ? "" : ".js";
-        $scope.htmlFile = $attrs['html'] ? $attrs['html'] : "./" + example + ".html";
-        $scope.sourceLang = "JavaScript";
-        if ($scope.jsfile.indexOf(".ts") >= 0) {
-            $scope.sourceLang = "TypeScript";
-        } else if ($scope.jsfile.indexOf(".vue") >= 0) {
-            $scope.sourceLang = "Vue";
-        }
+        $scope.sourceLang = getSourceLang($scope.jsfile);
+
+        $scope.source = url ? url : pathname + example + ".html"    ;
+
+        $scope.htmlFile = pathname + ($attrs['html'] ? $attrs['html'] : example + ".html");
 
         $scope.showHtmlTab = $scope.sourceLang !== "Vue";
 
@@ -55,7 +84,7 @@
                 $scope.html = response.data;
             });
         }
-        $http.get("./" + $scope.jsfile + $scope.exeExtension).then(function (response) {
+        $http.get($scope.jsfile).then(function (response) {
             $scope.javascript = response.data;
         }).catch(function (response) {
             $scope.javascript = response.data;
@@ -81,9 +110,9 @@
     });
 
     function ShowComplexScriptExampleController($scope, $http, $attrs, $sce) {
-        // var trailingSlash = (window.location.pathname.indexOf("/", 1) === window.location.pathname.length - 1);
-        // $scope.source = trailingSlash? $attrs["example"] : window.location.pathname + "/" + $attrs["example"];
-        $scope.source = $attrs["example"];
+        var pathname = getPathWithTrailingSlash();
+
+        $scope.source = pathname + $attrs["example"];
         $scope.selectedTab = 'example';
 
         $scope.plunker = null;
@@ -93,6 +122,7 @@
             plunkerUrl += "show=preview";
 
             $scope.plunker = $sce.trustAsResourceUrl(plunkerUrl);
+            $scope.editPlunker = $attrs.plunker.replace("embed.plnkr.co", "plnkr.co/edit") + "?p=info";
         }
 
         $scope.extraPages = [];
@@ -100,6 +130,7 @@
         var sources = eval($attrs.sources);
         sources.forEach(function(source) {
             var root = source.root;
+            root = root === "./" ? pathname : root;
             var files = source.files.split(',');
 
             $scope.extraPages = $scope.extraPages.concat(files);
@@ -157,6 +188,7 @@
             plunkerUrl += "show=preview";
 
             $scope.plunker = $sce.trustAsResourceUrl(plunkerUrl);
+            $scope.editPlunker = $attrs.plunker.replace("embed.plnkr.co", "plnkr.co/edit") + "?p=info";
         }
 
         $scope.extraPages = [];
@@ -311,7 +343,7 @@
     function handleToggle() {
 
         resetSingleToggle(this);
-        
+
         this.classList.toggle("active");
 
         showExpandAll(true);
@@ -334,7 +366,7 @@
             } else {
                 closeAll();
             }
-        }, true);         
+        }, true);
     }
 
     function expandAll() {
@@ -364,5 +396,4 @@
         var framework = this.dataset.id;
         window.location.href = '?framework=' + framework;
     }
-
 })();
