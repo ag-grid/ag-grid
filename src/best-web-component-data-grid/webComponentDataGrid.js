@@ -210,7 +210,7 @@
     function modelUpdated() {
         var model = gridOptions.api.getModel();
         var totalRows = gridOptions.rowData.length;
-        var processedRows = model.getRowCount();
+        var processedRows = model.getPageLastRow() - 1;
         var eSpan = document.querySelector('#rowCount');
         eSpan.innerHTML = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
     }

@@ -83,6 +83,9 @@ myGrid.setGridOptions(gridOptions);</code></pre>
         and add to a memory leak problem in your application.
     </p>
 
+    <show-example example="webComponentDataGrid"></show-example>
+
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
