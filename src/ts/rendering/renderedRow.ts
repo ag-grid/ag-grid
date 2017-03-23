@@ -601,6 +601,9 @@ export class RenderedRow extends BeanStub {
     }
 
     private onTopChanged(): void {
+        // top is not used in forPrint, as the rows are just laid out naturally
+        if (this.gridOptionsWrapper.isForPrint()) { return; }
+
         // console.log(`top changed for ${this.rowNode.id} = ${this.rowNode.rowTop}`);
         this.setRowTop(this.rowNode.rowTop);
     }

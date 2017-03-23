@@ -315,6 +315,13 @@ export class RowRenderer extends BeanStub {
         let rowsToRemove: string[];
         let oldRowsByNodeId: {[key: string]: RenderedRow} = {};
 
+        // never keep rendered rows if doing forPrint, as we do not use 'top' to
+        // position the rows in forPrint (use normal flow), so we have to remove
+        // all rows and insert them again from scratch
+        if (this.gridOptionsWrapper.isForPrint()) {
+            keepRenderedRows = false;
+        }
+
         if (keepRenderedRows) {
             rowsToRemove = [];
             _.iterateObject(this.renderedRows, (index: string, renderedRow: RenderedRow)=> {

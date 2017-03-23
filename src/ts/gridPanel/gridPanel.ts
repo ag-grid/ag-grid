@@ -815,6 +815,9 @@ export class GridPanel extends BeanStub {
     }
 
     public ensureIndexVisible(index: any) {
+        // if for print, everything is always visible
+        if (this.gridOptionsWrapper.isForPrint()) { return; }
+
         this.logger.log('ensureIndexVisible: ' + index);
         var rowCount = this.clientPaginationProxy.getTotalRowCount();
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
@@ -976,6 +979,9 @@ export class GridPanel extends BeanStub {
     }
 
     public ensureColumnVisible(key: any) {
+        // if for print, everything is always visible
+        if (this.gridOptionsWrapper.isForPrint()) { return; }
+
         var column = this.columnController.getGridColumn(key);
 
         if (!column) { return; }
