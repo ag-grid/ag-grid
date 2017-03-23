@@ -201,6 +201,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
     public setMiniFilter(newMiniFilter: any): void {
         this.model.setMiniFilter(newMiniFilter);
+        this.eMiniFilter.value = this.model.getMiniFilter();
     }
 
     public getMiniFilter() {
@@ -262,7 +263,9 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     }
 
     public resetState (){
-        this.model.setModel(null);
+        this.setMiniFilter(null);
+        this.model.setModel(null, true);
+        this.selectEverything();
     }
 
 }
