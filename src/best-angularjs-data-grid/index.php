@@ -1,7 +1,7 @@
 <?php
 $key = "Getting Started ng1";
 $pageTitle = "AngularJS 1.x Datagrid";
-$pageDescription = "Shows an example of the best Javascript Datagrid. Explains how to set up the Best AngularJS 1.x Grid grid, ag-Grid, inside your browser.";
+$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with Angular 1.x to deliver filtering, grouping, aggregation, pivoting and much more.";
 $pageKeyboards = "Best AngularJS 1.x Grid Datagrid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';

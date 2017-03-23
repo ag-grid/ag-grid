@@ -5,7 +5,7 @@
             </p>
         <div class="row">
             <div class="col-md-2" style="padding: 20px; text-align: center;">
-                <img src="../images/clients/JasonBoorn.jpg" class="circle" style="width: 100px;"/>
+                <img src="../images/clients/JasonBoorn_home.jpg" class="circle" style="width: 100px;"/>
             </div>
             <figure class="Testimonials-item col-md-4">
                 <blockquote>"We just made the move from Kendo to ag-Grid and we love it. It’s fast and very flexible."</blockquote>
@@ -14,7 +14,7 @@
                 </div>
             </figure>
             <div class="col-md-2" style="padding: 20px; text-align: center;">
-                <img src="../images/clients/RobinCote.jpg" class="circle" style="width: 100px;"/>
+                <img src="../images/clients/RobinCote_home.jpg" class="circle" style="width: 100px;"/>
             </div>
             <figure class="Testimonials-item col-md-4">
                 <blockquote>"Remarkable speed and extensibility, ag-Grid is the best web feature-rich BI tool on the market." </blockquote>

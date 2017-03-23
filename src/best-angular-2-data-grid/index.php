@@ -1,7 +1,7 @@
 <?php
 $key = "Getting Started ng2";
 $pageTitle = "Angular Datagrid";
-$pageDescription = "Demonstrate the best Angular datagrid. Shows and example of a datagrid for using with Angular.";
+$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with Angular 2.x to deliver filtering, grouping, aggregation, pivoting and much more.";
 $pageKeyboards = "Angular Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';

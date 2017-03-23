@@ -1,7 +1,7 @@
 <?php
 $key = "Getting Started VueJS";
 $pageTitle = "VueJS Datagrid";
-$pageDescription = "Demonstrate the best VueJS datagrid. Shows and example of a datagrid for using with VueJS.";
+$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with VueJS to deliver filtering, grouping, aggregation, pivoting and much more.";
 $pageKeyboards = "VueJS Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';

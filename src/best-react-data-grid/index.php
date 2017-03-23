@@ -1,7 +1,7 @@
 <?php
 $key = "Getting Started React";
 $pageTitle = "Best React Datagrid";
-$pageDescription = "Demonstrates the best React Datagrid. Shows an example of a datagrid using React.";
+$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with React to deliver filtering, grouping, aggregation, pivoting and much more.";
 $pageKeyboards = "React Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
