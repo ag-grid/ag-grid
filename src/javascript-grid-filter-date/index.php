@@ -42,6 +42,8 @@ A date filter can take the following parameters:
     <li><b>clearButton:</b> Set to true to include a 'Clear' button with the filter which when cliked
         will remove the filter conditions to this filter.</li>
     <li><b>comparator:</b> Needed if the data for this column are not native JS objects. See section below</li>
+    <li><b>inRangeInclusive:</b> Set to true so that when doing inRange date filters it will include
+        the dates you specify as minimum and maximum, otherwise it selects only the dates in between.</li>
 </ul>
 
 

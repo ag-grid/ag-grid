@@ -35,6 +35,8 @@ include '../documentation-main/documentation_header.php';
         automatically as the selection changes.</li>
     <li><b>clearButton:</b> Set to true to include a 'Clear' button with the filter which when cliked
         will remove the filter conditions to this filter.</li>
+    <li><b>inRangeInclusive:</b> Set to true so that when doing inRange number filters it will include
+        the numbers you specify as minimum and maximum, otherwise it selects only the numbers in between.</li>
 </ul>
 
 The parameters for the filter must be specified in the property filterParams inside the column definition
