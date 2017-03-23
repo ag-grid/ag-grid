@@ -266,11 +266,15 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
     }
 }
 
+export interface IScalarFilterParams extends IFilterParams{
+    inRangeInclusive?:boolean
+}
+
 /**
  * Comparable filter with scalar underlying values (ie numbers and dates. Strings are not scalar so have to extend
  * ComparableBaseFilter)
  */
-export abstract class ScalarBaseFilter<T, P extends IFilterParams, M> extends ComparableBaseFilter<T, P, M>{
+export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> extends ComparableBaseFilter<T, P, M>{
     public abstract comparator(): Comparator<T>;
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
@@ -308,9 +312,13 @@ export abstract class ScalarBaseFilter<T, P extends IFilterParams, M> extends Co
         }
 
         //From now on the type is a range and rawFilterValues must be an array!
-        let compareDateToResult: number = comparator((<T[]>rawFilterValues)[1], value);
+        let compareToResult: number = comparator((<T[]>rawFilterValues)[1], value);
         if (this.filter === BaseFilter.IN_RANGE){
-            return compareResult > 0 && compareDateToResult < 0
+            if (!this.filterParams.inRangeInclusive){
+                return compareResult > 0 && compareToResult < 0
+            }else{
+                return compareResult >= 0 && compareToResult <= 0
+            }
         }
 
         throw new Error('Unexpected type of date filter!: ' + this.filter);
