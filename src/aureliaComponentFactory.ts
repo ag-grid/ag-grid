@@ -20,17 +20,19 @@ export class AureliaComponentFactory {
             init(params: any) {
                 let bindingContext = {params: params};
                 this.view = viewFactory.create(container);
-                this.view.bind(bindingContext);
                 let controllers: any[] = (<any> this.view).controllers;
-
                 //initialize each controller
                 if (controllers && controllers.length){
                     controllers.forEach((c) => {
                         c.viewModel.params = params;
-                    })
+                    });
+                    this.view.bind(bindingContext);
                     //ICellRenderer doesn't have a guiAttached method so
                     //we call attach on the queue;
                     componentFactory.taskQueue.queueMicroTask(() => this.view.attached());
+                }
+                else {
+                    this.view.bind(bindingContext);
                 }
             }
 
@@ -59,7 +61,7 @@ export class AureliaComponentFactory {
             init(params: any): void {
                 let bindingContext = {params: params};
                 this.view = viewFactory.create(container);
-                this.view.bind(bindingContext);
+
 
                 let controllers: any[] = (<any> this.view).controllers;
 
@@ -75,6 +77,7 @@ export class AureliaComponentFactory {
                 else {
                     console.error('The editor template component is missing an IEditorViewModel or it contains more than one component');
                 }
+                this.view.bind(bindingContext);
             }
 
             public afterGuiAttached() {
