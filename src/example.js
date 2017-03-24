@@ -148,7 +148,7 @@ rowBuffer: 0,
     rowDeselection: true,
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
-    // clientPagination: true,
+    // pagination: true,
     // embedFullWidthRows: true,
     // groupSelectsFiltered: true,
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)

@@ -55,7 +55,7 @@ var gridOptions = {
     enableRangeSelection: true,
     columnDefs: columnDefs,
     paginationPageSize: 10,
-    clientPagination: true,
+    pagination: true,
     groupColumnDef: groupColumn,
     defaultColDef:{
         editable: true,

@@ -44,12 +44,14 @@ var gridOptions = {
     rowSelection: 'single',
     rowDeselection: true,
     columnDefs: columnDefs,
-    rowModelType: 'infinite',
-    paginationPageSize: 100,
+    rowModelType: 'virtual',
+    pagination: true,
+    paginationPageSize: 1000,
+    infinitePageSize: 1000,
     paginationOverflowSize: 2,
     maxConcurrentDatasourceRequests: 2,
     paginationInitialRowCount: 1,
-    maxPagesInCache: 2,
+    // maxPagesInCache: 2,
     getRowNodeId: function(item) {
         return item.id;
     }

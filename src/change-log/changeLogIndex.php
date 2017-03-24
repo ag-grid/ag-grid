@@ -12,6 +12,13 @@ include '../documentation-main/documentation_header.php';
     <note>
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
+    <h2>Version 9.0.x</h2>
+    <b>Refactoring:</b>
+    <ul>
+        Refactor: Virtual Row Model is now called Infinite Row Model. All properties and API's related to this
+        are now call 'Infinite' eg <i>setVirtualRowCount()</i> is now <i>setInfiniteRowCount()</i>. Grid will
+        log to console and help you when you are using the old method and property names.
+    </ul>
 
     <h2>Version 8.2.x</h2>
 
