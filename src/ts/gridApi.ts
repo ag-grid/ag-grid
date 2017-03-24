@@ -26,7 +26,7 @@ import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {IMenuFactory} from "./interfaces/iMenuFactory";
-import {VirtualPageRowModel} from "./rowModels/infinateScrolling/virtualPageRowModel";
+import {InfinitePageRowModel} from "./rowModels/infinateScrolling/infinitePageRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {IAggFuncService} from "./interfaces/iAggFuncService";
@@ -77,7 +77,7 @@ export class GridApi {
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
 
     private inMemoryRowModel: IInMemoryRowModel;
-    private virtualPageRowModel: VirtualPageRowModel;
+    private virtualPageRowModel: InfinitePageRowModel;
     private paginationService: IPaginationService;
 
     @PostConstruct
@@ -87,8 +87,9 @@ export class GridApi {
             case Constants.ROW_MODEL_TYPE_PAGINATION:
                 this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
                 break;
-            case Constants.ROW_MODEL_TYPE_VIRTUAL:
-                this.virtualPageRowModel = <VirtualPageRowModel> this.rowModel;
+            case Constants.ROW_MODEL_TYPE_INFINITE:
+            case Constants.ROW_MODEL_TYPE_VIRTUAL_DEPRECATED:
+                this.virtualPageRowModel = <InfinitePageRowModel> this.rowModel;
                 break;
         }
 
@@ -142,10 +143,10 @@ export class GridApi {
     public setDatasource(datasource: IDatasource) {
         if (this.gridOptionsWrapper.isRowModelServerPagination()) {
             this.serverPaginationService.setDatasource(datasource);
-        } else if (this.gridOptionsWrapper.isRowModelVirtual()) {
-            (<VirtualPageRowModel>this.rowModel).setDatasource(datasource);
+        } else if (this.gridOptionsWrapper.isRowModelInfinite()) {
+            (<InfinitePageRowModel>this.rowModel).setDatasource(datasource);
         } else {
-            console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIRTUAL}' or '${Constants.ROW_MODEL_TYPE_PAGINATION}'`)
+            console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_INFINITE}'`)
         }
     }
 

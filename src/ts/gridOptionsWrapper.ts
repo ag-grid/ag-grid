@@ -117,15 +117,14 @@ export class GridOptionsWrapper {
     public getContext() { return this.gridOptions.context; }
     public isPivotMode() { return isTrue(this.gridOptions.pivotMode); }
 
-    public is() { return this.isClientPagination() || this.isRowModelServerPagination(); }
-
     public isRowModelServerPagination() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_PAGINATION; }
-    public isRowModelVirtual() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL; }
+    public isRowModelInfinite() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL_DEPRECATED
+                                        || this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE; }
     public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
     public isRowModelEnterprise() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_ENTERPRISE; }
     public isRowModelDefault() { return !(
         this.isRowModelServerPagination() ||
-        this.isRowModelVirtual() ||
+        this.isRowModelInfinite() ||
         this.isRowModelViewport());
     }
 
@@ -433,6 +432,10 @@ export class GridOptionsWrapper {
         if (options.checkboxSelection) {
             console.warn('ag-grid: since version 8.0.x checkboxSelection is not supported as a grid option. ' +
                 'If you want this on all columns, use defaultColDef instead and set it there');
+        }
+        if (this.gridOptions.rowModelType===Constants.ROW_MODEL_TYPE_VIRTUAL_DEPRECATED) {
+            console.warn('ag-grid: since version 8.3.x row model type "virtual" is now called "infinite", ' +
+                'the grid will still work, but please change the property to use "infinite"');
         }
     }
 

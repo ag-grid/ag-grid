@@ -5,7 +5,7 @@ import {EventService} from "../../eventService";
 import {Events} from "../../events";
 import {LoggerFactory, Logger} from "../../logger";
 import {IDatasource} from "../iDatasource";
-import {VirtualPage} from "./virtualPage";
+import {InfinitePage} from "./infinitePage";
 
 export interface CacheParams {
     pageSize: number;
@@ -20,12 +20,12 @@ export interface CacheParams {
     lastAccessedSequence: NumberSequence;
 }
 
-export class VirtualPageCache {
+export class InfinitePageCache {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
-    private pages: {[pageNumber: string]: VirtualPage} = {};
+    private pages: {[pageNumber: string]: InfinitePage} = {};
 
     private activePageLoadsCount = 0;
     private pagesInCacheCount = 0;
@@ -68,7 +68,7 @@ export class VirtualPageCache {
 
     public forEachNode(callback: (rowNode: RowNode, index: number)=> void): void {
         var index = 0;
-        _.iterateObject(this.pages, (key: string, cachePage: VirtualPage)=> {
+        _.iterateObject(this.pages, (key: string, cachePage: InfinitePage)=> {
 
             var start = cachePage.getStartRow();
             var end = cachePage.getEndRow();
@@ -98,7 +98,7 @@ export class VirtualPageCache {
         }
     }
 
-    private moveItemsDown(page: VirtualPage, moveFromIndex: number, moveCount: number): void {
+    private moveItemsDown(page: InfinitePage, moveFromIndex: number, moveCount: number): void {
         let startRow = page.getStartRow();
         let endRow = page.getEndRow();
         var indexOfLastRowToMove = moveFromIndex + moveCount;
@@ -123,7 +123,7 @@ export class VirtualPageCache {
 
     }
 
-    private insertItems(page: VirtualPage, indexToInsert: number, items: any[]): RowNode[] {
+    private insertItems(page: InfinitePage, indexToInsert: number, items: any[]): RowNode[] {
         let pageStartRow = page.getStartRow();
         let pageEndRow = page.getEndRow();
         let newRowNodes: RowNode[] = [];
@@ -214,12 +214,12 @@ export class VirtualPageCache {
         return page.getRow(rowIndex);
     }
 
-    private createPage(pageNumber: number): VirtualPage {
+    private createPage(pageNumber: number): InfinitePage {
 
-        let newPage = new VirtualPage(pageNumber, this.cacheParams);
+        let newPage = new InfinitePage(pageNumber, this.cacheParams);
         this.context.wireBean(newPage);
 
-        newPage.addEventListener(VirtualPage.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
+        newPage.addEventListener(InfinitePage.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
 
         this.pages[pageNumber] = newPage;
         this.pagesInCacheCount++;
@@ -236,7 +236,7 @@ export class VirtualPageCache {
         return newPage;
     }
 
-    private removePageFromCache(pageToRemove: VirtualPage): void {
+    private removePageFromCache(pageToRemove: InfinitePage): void {
         if (!pageToRemove) {
             return;
         }
@@ -261,9 +261,9 @@ export class VirtualPageCache {
             return;
         }
 
-        var pageToLoad: VirtualPage = null;
-        _.iterateObject(this.pages, (key: string, cachePage: VirtualPage)=> {
-            if (cachePage.getState() === VirtualPage.STATE_DIRTY) {
+        var pageToLoad: InfinitePage = null;
+        _.iterateObject(this.pages, (key: string, cachePage: InfinitePage)=> {
+            if (cachePage.getState() === InfinitePage.STATE_DIRTY) {
                 pageToLoad = cachePage;
             }
         });
@@ -278,11 +278,11 @@ export class VirtualPageCache {
         }
     }
 
-    private findLeastRecentlyUsedPage(pageToExclude: VirtualPage): VirtualPage {
+    private findLeastRecentlyUsedPage(pageToExclude: InfinitePage): InfinitePage {
 
-        var lruPage: VirtualPage = null;
+        var lruPage: InfinitePage = null;
 
-        _.iterateObject(this.pages, (key: string, page: VirtualPage)=> {
+        _.iterateObject(this.pages, (key: string, page: InfinitePage)=> {
             // we exclude checking for the page just created, as this has yet to be accessed and hence
             // the lastAccessed stamp will not be updated for the first time yet
             if (page === pageToExclude) {
@@ -297,7 +297,7 @@ export class VirtualPageCache {
         return lruPage;
     }
 
-    private checkVirtualRowCount(page: VirtualPage, lastRow: any): void {
+    private checkVirtualRowCount(page: InfinitePage, lastRow: any): void {
         // if client provided a last row, we always use it, as it could change between server calls
         // if user deleted data and then called refresh on the grid.
         if (typeof lastRow === 'number' && lastRow >= 0) {
@@ -324,14 +324,14 @@ export class VirtualPageCache {
 
     public getPageState(): any {
         var result: any[] = [];
-        _.iterateObject(this.pages, (pageNumber: string, page: VirtualPage)=> {
+        _.iterateObject(this.pages, (pageNumber: string, page: InfinitePage)=> {
             result.push({pageNumber: pageNumber, startRow: page.getStartRow(), endRow: page.getEndRow(), pageStatus: page.getState()});
         });
         return result;
     }
 
     public refreshVirtualPageCache(): void {
-        _.iterateObject(this.pages, (pageId: string, page: VirtualPage)=> {
+        _.iterateObject(this.pages, (pageId: string, page: InfinitePage)=> {
             page.setDirty();
         });
         this.checkPageToLoad();

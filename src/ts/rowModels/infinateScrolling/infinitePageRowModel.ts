@@ -10,11 +10,11 @@ import {SortController} from "../../sortController";
 import {FilterManager} from "../../filter/filterManager";
 import {Constants} from "../../constants";
 import {IDatasource} from "../iDatasource";
-import {VirtualPageCache, CacheParams} from "./virtualPageCache";
+import {InfinitePageCache, CacheParams} from "./infinitePageCache";
 import {BeanStub} from "../../context/beanStub";
 
 @Bean('rowModel')
-export class VirtualPageRowModel extends BeanStub implements IRowModel {
+export class InfinitePageRowModel extends BeanStub implements IRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -24,17 +24,18 @@ export class VirtualPageRowModel extends BeanStub implements IRowModel {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
-    private virtualPageCache: VirtualPageCache;
+    private virtualPageCache: InfinitePageCache;
 
     private datasource: IDatasource;
 
     public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+        if (_.missing(this.virtualPageCache)) { return null; }
         return this.virtualPageCache.getRowBounds(index);
     }
 
     @PostConstruct
     public init(): void {
-        if (!this.gridOptionsWrapper.isRowModelVirtual()) { return; }
+        if (!this.gridOptionsWrapper.isRowModelInfinite()) { return; }
 
         this.addEventListeners();
         this.setDatasource(this.gridOptionsWrapper.getDatasource());
@@ -63,7 +64,7 @@ export class VirtualPageRowModel extends BeanStub implements IRowModel {
     }
 
     public getType(): string {
-        return Constants.ROW_MODEL_TYPE_VIRTUAL;
+        return Constants.ROW_MODEL_TYPE_INFINITE;
     }
 
     public setDatasource(datasource: IDatasource): void {
@@ -172,7 +173,7 @@ export class VirtualPageRowModel extends BeanStub implements IRowModel {
             this.virtualPageCache.destroy();
         }
 
-        this.virtualPageCache = new VirtualPageCache(cacheSettings);
+        this.virtualPageCache = new InfinitePageCache(cacheSettings);
         this.context.wireBean(this.virtualPageCache);
     }
 

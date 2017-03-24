@@ -1,4 +1,4 @@
-/** Datasource used by both PaginationController and VirtualPageRowModel */
+/** Datasource used by both PaginationController and InfinitePageRowModel */
 export interface IDatasource {
 
     /** If you know up front how many rows are in the dataset, set it here. Otherwise leave blank.*/

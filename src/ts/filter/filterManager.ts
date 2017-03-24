@@ -181,7 +181,7 @@ export class FilterManager {
             return null;
         }
 
-        if (this.gridOptionsWrapper.isRowModelVirtual()) {
+        if (this.gridOptionsWrapper.isRowModelInfinite()) {
             console.warn('ag-grid: cannot do quick filtering when doing virtual paging');
             return null;
         }

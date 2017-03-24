@@ -38,7 +38,7 @@ import {FlattenStage} from "./rowModels/inMemory/flattenStage";
 import {FocusService} from "./misc/focusService";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {Events} from "./events";
-import {VirtualPageRowModel} from "./rowModels/infinateScrolling/virtualPageRowModel";
+import {InfinitePageRowModel} from "./rowModels/infinateScrolling/infinitePageRowModel";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellRendererService} from "./rendering/cellRendererService";
@@ -90,7 +90,8 @@ export class Grid {
     // the default is InMemoryRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
     private static RowModelClasses: any = {
-        virtual: VirtualPageRowModel,
+        virtual: InfinitePageRowModel, // deprecated
+        infinite: InfinitePageRowModel,
         pagination: InMemoryRowModel,
         normal: InMemoryRowModel
     };
