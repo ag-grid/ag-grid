@@ -24,7 +24,8 @@ function tscTask() {
             declarationFiles: true,
             target: 'es5',
             noImplicitAny: true,
-            noEmitOnError: false
+            noEmitOnError: false,
+            lib: ["dom","es2015"]
         }));
 
     return merge([
