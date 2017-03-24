@@ -17,18 +17,6 @@
 
         <link rel="stylesheet" href="./style.css">
 
-<!-- Hotjar Tracking Code for https://www.ag-grid.com/ -->
-        <script>
-            (function(h,o,t,j,a,r){
-                h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-                h._hjSettings={hjid:372643,hjsv:5};
-                a=o.getElementsByTagName('head')[0];
-                r=o.createElement('script');r.async=1;
-                r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-                a.appendChild(r);
-            })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
-        </script>
-
         <style>
             label { font-weight: normal !important; }
             .blue { background-color: darkblue; color: lightblue; }
@@ -56,18 +44,6 @@
         <script src="./dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused41"></script>
 
         <script src="example.js"></script>
-
-        <!-- Hotjar Tracking Code for https://www.ag-grid.com/ -->
-        <script>
-            (function(h,o,t,j,a,r){
-                h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-                h._hjSettings={hjid:372643,hjsv:5};
-                a=o.getElementsByTagName('head')[0];
-                r=o.createElement('script');r.async=1;
-                r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-                a.appendChild(r);
-            })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
-        </script>
 
     </head>
 
