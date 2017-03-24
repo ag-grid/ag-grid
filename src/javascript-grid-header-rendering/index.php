@@ -55,8 +55,9 @@ var myColumns = {
 
     <note>
         Header Components were introduced in v8 of ag-Grid. Before this customising the header was done
-        a different way. The old way is described below and marked 'deprecated'. V9 of ag-Grid will remove
-        support for the old way.
+        a different way. The old way is described below and marked 'deprecated'. A future version of
+        ag-Grid will remove the old way. HOWEVER - we will not remove it until we have come up with a
+        way to allow changing the default template of the new header components.
     </note>
 
     <h2 id="headerComponent">Header Component</h2>
