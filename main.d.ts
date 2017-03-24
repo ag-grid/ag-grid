@@ -32,7 +32,6 @@ export * from './dist/lib/filter/filter';
 export * from './dist/lib/filter/filterManager';
 export * from './dist/lib/filter/floatingFilter';
 export * from './dist/lib/filter/numberFilter';
-export * from './dist/lib/filter/setFilterParameters';
 export * from './dist/lib/filter/textAndNumberFilterParameters';
 export * from './dist/lib/filter/textFilter';
 
@@ -111,9 +110,9 @@ export * from './dist/lib/rowModels/inMemory/inMemoryRowModel';
 export * from './dist/lib/rowModels/inMemory/inMemoryNodeManager';
 export * from './dist/lib/rowModels/inMemory/sortStage';
 
-export * from './dist/lib/rowModels/infinateScrolling/virtualPageRowModel';
-export * from './dist/lib/rowModels/infinateScrolling/virtualPageCache';
-export * from './dist/lib/rowModels/infinateScrolling/virtualPage';
+export * from './dist/lib/rowModels/infinateScrolling/infinitePageRowModel';
+export * from './dist/lib/rowModels/infinateScrolling/infinitePageCache';
+export * from './dist/lib/rowModels/infinateScrolling/infinitePage';
 
 export * from './dist/lib/rowModels/floatingRowModel';
 export * from './dist/lib/rowModels/iDatasource';

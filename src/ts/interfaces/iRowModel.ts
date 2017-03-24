@@ -39,4 +39,9 @@ export interface IRowModel {
     /** The base class returns the type. We use this instead of 'instanceof' as the client might provide
      * their own implementation of the models in the future. */
     getType(): string;
+    /**
+     * It tells us if this row model knows about the last row that it can produce. ie InMemoryRowModel = true
+     * InfiniteRowModel=false
+     */
+    isLastRowFound(): boolean;
 }

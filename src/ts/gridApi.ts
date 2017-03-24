@@ -93,7 +93,7 @@ export class GridApi {
                 break;
         }
 
-        if (this.gridOptionsWrapper.isClientPagination()) {
+        if (this.gridOptionsWrapper.isPagination()) {
             this.paginationService = this.clientPaginationProxy;
         } else {
             this.paginationService = this.serverPaginationService;

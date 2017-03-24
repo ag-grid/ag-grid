@@ -37,25 +37,24 @@ export interface RefreshModelParams {
 
 @Bean('rowModel')
 export class InMemoryRowModel implements IInMemoryRowModel {
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('$scope') private $scope: any;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
-
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
+
     @Autowired('sortStage') private sortStage: IRowNodeStage;
     @Autowired('flattenStage') private flattenStage: IRowNodeStage;
-
     // enterprise stages
     @Optional('groupStage') private groupStage: IRowNodeStage;
+
     @Optional('aggregationStage') private aggregationStage: IRowNodeStage;
     @Optional('pivotStage') private pivotStage: IRowNodeStage;
-
     // top most node of the tree. the children are the user provided data.
     private rootNode: RowNode;
 
@@ -84,6 +83,10 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
         }
+    }
+
+    isLastRowFound(): boolean {
+        return true;
     }
 
     public getRowBounds(index: number): {rowTop: number, rowHeight: number} {

@@ -49,7 +49,7 @@ export class PaginationComp extends Component {
         this.addDestroyableEventListener(this.btNext, 'click', this.onBtNext.bind(this));
         this.addDestroyableEventListener(this.btPrevious, 'click', this.onBtPrevious.bind(this));
 
-        if (this.gridOptionsWrapper.isClientPagination()) {
+        if (this.gridOptionsWrapper.isPagination()) {
             this.paginationService = this.clientPaginationProxy;
         } else {
             this.paginationService = this.serverPaginationService;
@@ -149,7 +149,8 @@ export class PaginationComp extends Component {
         let currentPage = this.paginationService.getCurrentPage();
         let pageSize = this.paginationService.getPageSize();
         let maxRowFound = this.paginationService.isLastPageFound();
-        let rowCount = this.paginationService.getTotalRowCount();
+        let rowCount = this.paginationService.isLastPageFound() ?
+            this.paginationService.getTotalRowCount() : null;
 
         var startRow: any;
         var endRow: any;
@@ -178,7 +179,8 @@ export class PaginationComp extends Component {
     private setTotalLabels() {
         let maxRowFound = this.paginationService.isLastPageFound();
         let totalPages = this.paginationService.getTotalPages();
-        let rowCount = this.paginationService.getTotalRowCount();
+        let rowCount = this.paginationService.isLastPageFound() ?
+            this.paginationService.getTotalRowCount() : null;
 
         if (maxRowFound) {
             this.lbTotal.innerHTML = this.myToLocaleString(totalPages);

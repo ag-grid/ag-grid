@@ -198,6 +198,7 @@ export class GridOptionsWrapper {
     public getMaxPagesInCache(): number { return this.gridOptions.maxPagesInCache; }
     public getPaginationOverflowSize(): number { return this.gridOptions.paginationOverflowSize; }
     public getPaginationPageSize(): number { return this.gridOptions.paginationPageSize; }
+    public getInfinitePageSize(): number { return this.gridOptions.infinitePageSize; }
     public getPaginationInitialRowCount(): number { return this.gridOptions.paginationInitialRowCount; }
     public getPaginationStartPage(): number { return this.gridOptions.paginationStartPage; }
     public isSuppressPaginationPanel() { return isTrue(this.gridOptions.suppressPaginationPanel); }
@@ -228,7 +229,7 @@ export class GridOptionsWrapper {
     public isAllowContextMenuWithControlKey() { return isTrue(this.gridOptions.allowContextMenuWithControlKey); }
     public isSuppressCopyRowsToClipboard() { return isTrue(this.gridOptions.suppressCopyRowsToClipboard); }
     public isEnableFilter() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); }
-    public isClientPagination() { return isTrue(this.gridOptions.clientPagination); }
+    public isPagination() { return isTrue(this.gridOptions.pagination); }
 
     public isEnableServerSideFilter() { return this.gridOptions.enableServerSideFilter; }
     public isSuppressScrollLag() { return isTrue(this.gridOptions.suppressScrollLag); }

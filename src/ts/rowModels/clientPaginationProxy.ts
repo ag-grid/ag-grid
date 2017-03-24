@@ -16,31 +16,34 @@ export class RowBounds {
 
 @Bean('clientPaginationProxy')
 export class ClientPaginationProxy extends BeanStub implements IPaginationService, IRowModel {
-
     @Autowired('rowModel') private rowModel: IRowModel;
+
+
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     private active: boolean;
 
     private pageSize: number;
-    private totalPages: number;
 
+    private totalPages: number;
     private currentPage = 0;
+
     private topRowIndex = 0;
     private bottomRowIndex = 0;
     private pixelOffset = 0;
-
     private topRowBounds: RowBounds;
-    private bottomRowBounds: RowBounds;
 
+    private bottomRowBounds: RowBounds;
     @PostConstruct
     private postConstruct() {
-        this.active = this.gridOptionsWrapper.isClientPagination();
+        this.active = this.gridOptionsWrapper.isPagination();
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
 
         this.onModelUpdated();
-        // this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', this.onPageSizeChanged.bind(this));
+    }
+
+    isLastRowFound(): boolean {
+        return this.rowModel.isLastRowFound();
     }
 
     private onModelUpdated(refreshEvent?: ModelUpdatedEvent): void {
@@ -144,7 +147,7 @@ export class ClientPaginationProxy extends BeanStub implements IPaginationServic
     }
 
     public isLastPageFound(): boolean {
-        return true;
+        return this.rowModel.isLastRowFound();
     }
 
     public getCurrentPage(): number {

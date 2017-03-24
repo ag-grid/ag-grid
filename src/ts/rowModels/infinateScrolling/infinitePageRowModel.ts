@@ -15,15 +15,15 @@ import {BeanStub} from "../../context/beanStub";
 
 @Bean('rowModel')
 export class InfinitePageRowModel extends BeanStub implements IRowModel {
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
+
     @Autowired('filterManager') private filterManager: FilterManager;
+
     @Autowired('sortController') private sortController: SortController;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
-
     private virtualPageCache: InfinitePageCache;
 
     private datasource: IDatasource;
@@ -39,6 +39,10 @@ export class InfinitePageRowModel extends BeanStub implements IRowModel {
 
         this.addEventListeners();
         this.setDatasource(this.gridOptionsWrapper.getDatasource());
+    }
+
+    public isLastRowFound(): boolean {
+        return this.virtualPageCache ? this.virtualPageCache.isMaxRowFound() : false;
     }
 
     private addEventListeners(): void {
@@ -93,7 +97,7 @@ export class InfinitePageRowModel extends BeanStub implements IRowModel {
         }
 
         if (_.exists(ds.pageSize)) {
-            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property paginationPageSize');
+            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property infinitePageSize');
         }
     }
 
@@ -141,7 +145,7 @@ export class InfinitePageRowModel extends BeanStub implements IRowModel {
             paginationOverflowSize: this.gridOptionsWrapper.getPaginationOverflowSize(),
             paginationInitialRowCount: this.gridOptionsWrapper.getPaginationInitialRowCount(),
             maxPagesInCache: this.gridOptionsWrapper.getMaxPagesInCache(),
-            pageSize: this.gridOptionsWrapper.getPaginationPageSize(),
+            pageSize: this.gridOptionsWrapper.getInfinitePageSize(),
             rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
 
             // the cache could create this, however it is also used by the pages, so handy to create it

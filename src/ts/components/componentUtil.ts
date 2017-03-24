@@ -31,8 +31,8 @@ export class ComponentUtil {
         'rowHeight','rowBuffer','colWidth','headerHeight','groupDefaultExpanded',
         'minColWidth','maxColWidth','viewportRowModelPageSize','viewportRowModelBufferSize',
         'layoutInterval','autoSizePadding','maxPagesInCache','maxConcurrentDatasourceRequests',
-        'paginationOverflowSize','paginationPageSize','paginationInitialRowCount','scrollbarWidth',
-        'paginationStartPage'
+        'paginationOverflowSize','paginationPageSize','infinitePageSize','paginationInitialRowCount',
+        'scrollbarWidth','paginationStartPage'
     ];
 
     public static BOOLEAN_PROPERTIES = [
@@ -54,7 +54,7 @@ export class ComponentUtil {
         'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly', 'suppressRowHoverClass',
         'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'enableRtl', 'suppressClickEdit',
         'enableGroupEdit', 'embedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter',
-        'groupHideOpenParents', 'groupMultiAutoColumn', 'clientPagination', 'stopEditingWhenGridLosesFocus'
+        'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
