@@ -76,7 +76,7 @@ export class RowRenderer extends BeanStub {
     @PostConstruct
     public init(): void {
         this.rowContainers = this.gridPanel.getRowContainers();
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_PAGE_LOADED, this.onPageLoaded.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
         this.refreshView();
     }
@@ -160,7 +160,7 @@ export class RowRenderer extends BeanStub {
 
         };
         this.refreshView(params);
-        // this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_LOADED);
+        // this.eventService.dispatchEvent(Events.DEPRECATED_EVENT_PAGINATION_PAGE_LOADED);
     }
 
     // if the row nodes are not rendered, no index is returned

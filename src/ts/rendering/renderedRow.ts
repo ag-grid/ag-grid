@@ -568,12 +568,12 @@ export class RenderedRow extends BeanStub {
 
     private addCellFocusedListener(): void {
         this.addDestroyableEventListener(this.mainEventService, Events.EVENT_CELL_FOCUSED, this.setRowFocusClasses.bind(this));
-        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_PAGINATION_PAGE_LOADED, this.onPaginationPageLoaded.bind(this));
+        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.setRowFocusClasses.bind(this));
         this.setRowFocusClasses();
     }
 
-    private onPaginationPageLoaded(): void {
+    private onPaginationChanged(): void {
         // it is possible this row is in the new page, but the page number has changed, which means
         // it needs to reposition itself relative to the new page
         this.onTopChanged();

@@ -48,8 +48,7 @@ export class ClientPaginationProxy extends BeanStub implements IPaginationServic
 
     private onModelUpdated(refreshEvent?: ModelUpdatedEvent): void {
         this.setIndexesAndBounds();
-        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_REQUESTED, refreshEvent);
-        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_LOADED, refreshEvent);
+        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_CHANGED, refreshEvent);
     }
 
     public goToPage(page: number): void {

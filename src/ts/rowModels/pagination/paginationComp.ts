@@ -40,9 +40,7 @@ export class PaginationComp extends Component {
     private postConstruct(): void {
         this.setTemplate(this.getTemplate());
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_RESET, this.onPaginationReset.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_PAGE_LOADED, this.onPageLoaded.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_PAGE_REQUESTED, this.onPageRequested.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
 
         this.addDestroyableEventListener(this.btFirst, 'click', this.onBtFirst.bind(this));
         this.addDestroyableEventListener(this.btLast, 'click', this.onBtLast.bind(this));
@@ -55,33 +53,19 @@ export class PaginationComp extends Component {
             this.paginationService = this.serverPaginationService;
         }
 
-        // this is a hack - need to fix, seriously!!!
-        this.onPaginationReset();
-        this.onPageRequested();
-        this.onPageLoaded();
+        this.onPaginationChanged();
     }
 
-    private onPaginationReset(): void {
-        this.showSummaryPanel(false);
+    private onPaginationChanged(): void{
+        this.enableOrDisableButtons();
+        this.updateRowLabels();
+        this.setCurrentPageLabel();
         this.setTotalLabels();
     }
 
-    private showSummaryPanel(show: boolean): void {
-        _.setHidden(this.eSummaryPanel, !show);
-    }
-
-    private onPageRequested(): void {
-        this.enableOrDisableButtons();
+    private setCurrentPageLabel(): void {
         let currentPage = this.paginationService.getCurrentPage();
         this.lbCurrent.innerHTML = this.myToLocaleString(currentPage + 1);
-    }
-
-    private onPageLoaded(): void {
-        this.enableOrDisableButtons();
-        this.updateRowLabels();
-        if (this.paginationService.isLastPageFound()) {
-            this.setTotalLabels();
-        }
     }
 
     private getTemplate(): string {
@@ -166,8 +150,6 @@ export class PaginationComp extends Component {
         }
         this.lbFirstRowOnPage.innerHTML = this.myToLocaleString(startRow);
         this.lbLastRowOnPage.innerHTML = this.myToLocaleString(endRow);
-
-        this.showSummaryPanel(true);
     }
 
     private isZeroPagesToDisplay() {
