@@ -278,12 +278,38 @@ export class GridPanel extends BeanStub {
         this.addMouseEvents();
         this.addKeyboardEvents();
         this.addBodyViewportListener();
+        this.addStopEditingWhenGridLosesFocus();
 
         if (this.$scope) {
             this.addAngularApplyCheck();
         }
 
         this.onDisplayedColumnsWidthChanged();
+    }
+
+    private addStopEditingWhenGridLosesFocus(): void {
+        if (this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) {
+            this.addDestroyableEventListener(this.eBody, 'focusout', (event: FocusEvent)=> {
+
+                // this is the element the focus is moving to
+                let elementWithFocus = event.relatedTarget;
+
+                // see if the element the focus is going to is part of the grid
+                let ourBodyFound = false;
+                let pointer: any = elementWithFocus;
+                while (_.exists(pointer)) {
+                    pointer = pointer.parentNode;
+                    if (pointer===this.eBody) {
+                        ourBodyFound = true;
+                    }
+                }
+
+                // if it is not part fo the grid, then we have lost focus
+                if (!ourBodyFound) {
+                    this.rowRenderer.stopEditing();
+                }
+            })
+        }
     }
 
     private addAngularApplyCheck(): void {

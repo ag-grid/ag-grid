@@ -194,6 +194,7 @@ export class GridOptionsWrapper {
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
     public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }
+    public isStopEditingWhenGridLosesFocus() { return isTrue(this.gridOptions.stopEditingWhenGridLosesFocus); }
     public getGroupDefaultExpanded(): number { return this.gridOptions.groupDefaultExpanded; }
     public getAutoSizePadding(): number { return this.gridOptions.autoSizePadding; }
 

@@ -51,6 +51,7 @@ export interface GridOptions {
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
+    stopEditingWhenGridLosesFocus?: boolean;
     debug?: boolean;
     icons?: any; // should be typed
     angularCompileRows?: boolean;
