@@ -77,7 +77,7 @@ export class GridApi {
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
 
     private inMemoryRowModel: IInMemoryRowModel;
-    private virtualPageRowModel: InfinitePageRowModel;
+    private infinitePageRowModel: InfinitePageRowModel;
     private paginationService: IPaginationService;
 
     @PostConstruct
@@ -89,7 +89,7 @@ export class GridApi {
                 break;
             case Constants.ROW_MODEL_TYPE_INFINITE:
             case Constants.ROW_MODEL_TYPE_VIRTUAL_DEPRECATED:
-                this.virtualPageRowModel = <InfinitePageRowModel> this.rowModel;
+                this.infinitePageRowModel = <InfinitePageRowModel> this.rowModel;
                 break;
         }
 
@@ -667,48 +667,73 @@ export class GridApi {
     }
 
     public refreshVirtualPageCache(): void {
-        if (this.virtualPageRowModel) {
-            this.virtualPageRowModel.refreshVirtualPageCache();
+        console.warn('ag-Grid: refreshVirtualPageCache() is now called refreshInfinitePageCache(), please call refreshInfinitePageCache() instead');
+        this.refreshInfinitePageCache();
+    }
+
+    public refreshInfinitePageCache(): void {
+        if (this.infinitePageRowModel) {
+            this.infinitePageRowModel.refreshVirtualPageCache();
         } else {
             console.warn(`ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.`);
         }
     }
 
     public purgeVirtualPageCache(): void {
-        if (this.virtualPageRowModel) {
-            this.virtualPageRowModel.purgeVirtualPageCache();
+        console.warn('ag-Grid: purgeVirtualPageCache() is now called purgeInfinitePageCache(), please call purgeInfinitePageCache() instead');
+        this.purgeInfinitePageCache();
+    }
+
+    public purgeInfinitePageCache(): void {
+        if (this.infinitePageRowModel) {
+            this.infinitePageRowModel.purgeVirtualPageCache();
         } else {
             console.warn(`ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.`);
         }
     }
 
     public getVirtualRowCount(): number {
-        if (this.virtualPageRowModel) {
-            return this.virtualPageRowModel.getVirtualRowCount();
+        console.warn('ag-Grid: getVirtualRowCount() is now called getInfiniteRowCount(), please call getInfiniteRowCount() instead');
+        return this.getInfiniteRowCount();
+    }
+
+    public getInfiniteRowCount(): number {
+        if (this.infinitePageRowModel) {
+            return this.infinitePageRowModel.getVirtualRowCount();
         } else {
             console.warn(`ag-Grid: api.getVirtualRowCount is only available when rowModelType='virtual'.`);
         }
     }
 
     public isMaxRowFound(): boolean {
-        if (this.virtualPageRowModel) {
-            return this.virtualPageRowModel.isMaxRowFound();
+        if (this.infinitePageRowModel) {
+            return this.infinitePageRowModel.isMaxRowFound();
         } else {
             console.warn(`ag-Grid: api.isMaxRowFound is only available when rowModelType='virtual'.`);
         }
     }
 
     public setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void {
-        if (this.virtualPageRowModel) {
-            this.virtualPageRowModel.setVirtualRowCount(rowCount, maxRowFound);
+        console.warn('ag-Grid: setVirtualRowCount() is now called setInfiniteRowCount(), please call setInfiniteRowCount() instead');
+        this.setInfiniteRowCount(rowCount, maxRowFound);
+    }
+
+    public setInfiniteRowCount(rowCount: number, maxRowFound?: boolean): void {
+        if (this.infinitePageRowModel) {
+            this.infinitePageRowModel.setVirtualRowCount(rowCount, maxRowFound);
         } else {
             console.warn(`ag-Grid: api.setVirtualRowCount is only available when rowModelType='virtual'.`);
         }
     }
 
     public getVirtualPageState(): any {
-        if (this.virtualPageRowModel) {
-            return this.virtualPageRowModel.getVirtualPageState();
+        console.warn('ag-Grid: getVirtualPageState() is now called getInfinitePageState(), please call getInfinitePageState() instead');
+        return this.getInfinitePageState();
+    }
+
+    public getInfinitePageState(): any {
+        if (this.infinitePageRowModel) {
+            return this.infinitePageRowModel.getVirtualPageState();
         } else {
             console.warn(`ag-Grid: api.getVirtualPageState is only available when rowModelType='virtual'.`);
         }
