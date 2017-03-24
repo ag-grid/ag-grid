@@ -22,7 +22,7 @@
     20th March 2017
 </div>
 
-        <img src="../images/ag_grid_and_webpack.png" width="100%;"/>
+        <img src="../images/newsbar/ag_grid_and_webpack.png" width="100%;"/>
 
     <div style="padding-top: 4px;">
     We are excited to announce our
@@ -34,7 +34,7 @@
 
 <div class="news-box">
     <div class="news-header" style="margin-bottom: 27px;">
-        <img src="../images/webpack_small.png" align="left" width="50"/>
+        <img src="../images/newsbar/webpack_large.png" align="left" width="50"/>
         14th March 2017
     </div>
     <div style="padding-top: 10px;">
@@ -46,7 +46,7 @@
 
 <div class="news-box">
     <div class="news-header" style="margin-bottom: 27px;">
-        <img src="../images/angularjsdublin.jpeg" align="left" width="50"/>
+        <img src="../images/newsbar/angularjsdublin.png" align="left" width="50"/>
         14th March 2017
     </div>
     <div style="padding-top: 10px;">
@@ -56,7 +56,7 @@
 </div>
 
 <div class="news-box">
-    <img src="../images/jobs-board.png" style="width: 80px; float: left; margin-right: 10px;"/>
+    <img src="../images/newsbar/jobs-board.png" style="width: 80px; float: left; margin-right: 10px;"/>
     <div style="">
         We are hiring, check the <a href="../ag-grid-jobs-board/">jobs board</a>.
     </div>
@@ -75,7 +75,7 @@
 
 <div class="news-box">
     <div class="news-header" style="margin-bottom: 27px;">
-        <img src="../images/vue_large.png" align="left" width="50"/>
+        <img src="../images/newsbar/vue_large.png" align="left" width="50"/>
         1st March 2017
     </div>
     <div style="padding-top: 10px;">
@@ -139,7 +139,7 @@
 <div class="news-box">
     <div style="float: left;">
         <a href="https://www.ng-conf.org/">
-            <img src="https://www.ng-conf.org/wp-content/uploads/2016/09/logo.png" align="left" width="50" />
+            <img src="../images/newsbar/logo.png" align="left" width="50" />
         </a>
     </div>
     <a href="https://www.ng-conf.org/">
@@ -156,7 +156,7 @@
 
 <div class="news-box">
     <div style="float: left;">
-        <img src="http://www.i2clipart.com/cliparts/6/1/e/d/clipart-viking-warning-61ed.png" align="left" width="50" />
+        <img src="../images/newsbar/viking.png" align="left" width="50" />
     </div>
     <a href="https://ngvikings.org/">
         <div style="margin-bottom: 6px; text-align: left; margin-left: 60px;">
@@ -251,7 +251,7 @@
     <div class="news-header">9th November 2016</div>
     <div style="background-color: #122b40; padding: 6px; text-align: center;">
         <a href="http://angular-up.com/">
-            <img src="http://angular-up.com/img/sprites/angularup-light.png" style="width: 100%;"/>
+            <img src="../images/newsbar/angularup-light.png" style="width: 100%;"/>
         </a>
     </div>
     <div style="padding-top: 10px;">
@@ -295,7 +295,7 @@
     <div class="news-header">ag-Grid Sponsors ng-Europe</div>
     <div style="text-align: center;">
         <a href="https://ngeurope.org/#platinum-sprs" style="text-align: center;">
-            <img src="../images/ngEurope.png"/>
+            <img src="../images/newsbar/ngEurope.png"/>
         </a>
     </div>
     <div style="padding-top: 10px;">
