@@ -40,6 +40,10 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         }
     }
 
+    public isLastRowFound(): boolean {
+        return true;
+    }
+
     private addEventListeners(): void {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));

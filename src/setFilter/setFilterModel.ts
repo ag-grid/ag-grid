@@ -1,6 +1,5 @@
 import {Utils} from "ag-grid/main";
 import {ColDef} from "ag-grid/main";
-import {SetFilterParameters} from "ag-grid/main";
 import {ISetFilterParams} from "./setFilter";
 
 // we cannot have 'null' as a key in a JavaScript map,
