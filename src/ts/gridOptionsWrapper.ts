@@ -3,12 +3,8 @@ import {
     GridOptions,
     NodeChildDetails,
     GetContextMenuItems,
-    GetMainMenuItems,
-    ProcessRowParams,
-    ProcessCellForExportParams,
-    GetRowNodeIdFunc,
     NavigateToNextCellParams,
-    TabToNextCellParams
+    TabToNextCellParams, GetMainMenuItems, GetRowNodeIdFunc, ProcessRowParams
 } from "./entities/gridOptions";
 import {EventService} from "./eventService";
 import {Constants} from "./constants";
@@ -24,6 +20,7 @@ import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
+import {ProcessCellForExportParams} from "./exportParams";
 
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;

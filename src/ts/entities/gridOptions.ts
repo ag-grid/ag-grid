@@ -9,6 +9,7 @@ import {IDatasource} from "../rowModels/iDatasource";
 import {GridCellDef} from "./gridCell";
 import {IDateComp} from "../rendering/dateComponent";
 import {IEnterpriseDatasource} from "../interfaces/iEnterpriseDatasource";
+import {ProcessCellForExportParams} from "../exportParams";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -352,22 +353,6 @@ export interface ProcessRowParams {
     api: GridApi,
     columnApi: ColumnApi,
     addRenderedRowListener: (eventType: string, listener: Function)=>void,
-    context: any
-}
-
-export interface ProcessCellForExportParams {
-    value: any,
-    node: RowNode,
-    column: Column,
-    api: GridApi,
-    columnApi: ColumnApi,
-    context: any
-}
-
-export interface ProcessHeaderForExportParams {
-    column: Column,
-    api: GridApi,
-    columnApi: ColumnApi,
     context: any
 }
 
