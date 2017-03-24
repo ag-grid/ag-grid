@@ -261,18 +261,23 @@ export class VirtualPageCache {
             return;
         }
 
-        var pageToLoad: VirtualPage = null;
-        _.iterateObject(this.pages, (key: string, cachePage: VirtualPage)=> {
+        var pagesToLoad: VirtualPage[] = [];
+        _.iterateObject(this.pages, (key: string, cachePage: VirtualPage, stopIteration: ()=>void)=> {
             if (cachePage.getState() === VirtualPage.STATE_DIRTY) {
-                pageToLoad = cachePage;
+                pagesToLoad.push(cachePage);
+                if(pagesToLoad.length >= this.cacheParams.maxConcurrentDatasourceRequests){
+                    stopIteration();
+                }
             }
         });
 
-        if (pageToLoad) {
-            pageToLoad.load();
-            this.activePageLoadsCount++;
-            this.logger.log(`checkPageToLoad: loading page ${pageToLoad.getPageNumber()}`);
-            this.printCacheStatus();
+        if (pagesToLoad.length > 0) {
+            pagesToLoad.forEach(page => {
+                page.load();
+                this.activePageLoadsCount++;
+                this.logger.log(`checkPageToLoad: loading page ${page.getPageNumber()}`);
+                this.printCacheStatus();
+            });
         } else {
             this.logger.log(`checkPageToLoad: no pages to load`);
         }
