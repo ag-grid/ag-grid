@@ -206,6 +206,7 @@ rowBuffer: 0,
 // floatingTopRowData: [{},{},{}],
 // floatingBottomRowData: [{},{},{}],
 // callback when row clicked
+//     stopEditingWhenGridLosesFocus: true,
     onRowClicked: function (params) {
         // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
     },

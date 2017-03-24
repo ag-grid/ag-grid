@@ -1,0 +1,23 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid/ag-grid.js?ignore=notused41"></script>
+    <script src="exampleStopEditWhenGridLosesFocus.js"></script>
+</head>
+
+<style>
+    .ag-cell-inline-editing {
+        border: 1px solid lightgreen !important;
+    }
+</style>
+
+<body>
+<div style="height: 100%; box-sizing: border-box; padding-top: 20px;">
+    <div id="myGrid" class="ag-fresh" style="height: 100%;"></div>
+</div>
+<div style="position: absolute; top: 0px; left: 0px; padding: 4px 4px 4px 10px;">
+    Clicking outside the grid will stop the editing <button>Dummy Save</button>
+    <input placeholder="click here, editing stops"/>
+</div>
+</body>
+</html>

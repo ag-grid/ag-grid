@@ -397,8 +397,29 @@ colDef.cellEditorParams = {
 
     <show-example example="exampleSingleClickEditing"></show-example>
 
-<note>Cell Editing can also be done via Cell Editor Components - please see <a href="../javascript-grid-cell-editor">
-        Cell Editor Components</a> for more information.</note>
+    <h3>Stop Editing When Grid Looses Focus</h3>
+
+    <p>
+        By default, the grid will not stop editing the currently editing cell when the grid
+        loses focus. This can be bad if, for example, you have a save button, and you need
+        the grid to stop editing before you execute your save function (eg you want to make
+        sure the edit is saved into the grids state).
+    </p>
+    <p>
+        If you want the grid to stop editing when focus leaves, set the grid property
+        <i>stopEditingWhenGridLosesFocus=true</i>.
+    </p>
+    <p>
+        By default, the grid not stop editing if you focus outside. The default is
+        good for custom popup cell editors as these can have the focus leave the grid
+        (eg if using a popup calendar widget). This would be bad as the grid would stop
+        editing as soon as your external popup appeared.
+    </p>
+
+    <show-example example="exampleStopEditWhenGridLosesFocus"></show-example>
+
+    <note>Cell Editing can also be done via Cell Editor Components - please see <a href="../javascript-grid-cell-editor">
+            Cell Editor Components</a> for more information.</note>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

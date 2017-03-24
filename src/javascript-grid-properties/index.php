@@ -263,9 +263,15 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>suppressClickEdit</th>
-            <td>Se this to true so that neither single or double click starts editing. This is useful when you want to
+            <td>Set this to true so that neither single or double click starts editing. This is useful when you want to
                 start the editing in another way, such as including a button in your cellRenderer.</td>
         </tr>
+        <tr>
+            <th>stopEditingWhenGridLosesFocus</th>
+            <td>Set this to true to stop cell editing when focus leaves the grid. The default is the grid stays editing
+            until focus goes onto another cell.</td>
+        </tr>
+
         <!------------------->
         <!-- Headers       -->
         <!------------------->
