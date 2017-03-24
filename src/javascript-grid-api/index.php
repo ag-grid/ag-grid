@@ -165,7 +165,7 @@ include '../documentation-main/documentation_header.php';
                 This works similar to the 'forEach' method on a Javascript array. This is called
                 for every node, ignoring any filtering or sorting applied within the grid.
                 If pagination, then gets called for the currently loaded page.
-                If virtual paging, then gets called for each virtual page loaded in the page cache.</td>
+                If using infinite row model, then gets called for each page loaded in the page cache.</td>
         </tr>
         <tr>
             <th>forEachNodeAfterFilter(callback)</th>

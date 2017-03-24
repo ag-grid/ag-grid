@@ -15,8 +15,7 @@ include '../documentation-main/documentation_header.php';
         Infinite scrolling allows the grid to lazy load rows from the server depending on what the scroll position is of the grid.
     </p>
     <p>
-        To enable infinite scrolling, set the grid property <i>rowModelType='virtual'</i> (the feature
-        used to be called Virtual Pagination, hence the name).
+        To enable infinite scrolling, set the grid property <i>rowModelType='infinite'</i>.
     </p>
     <p>
         If the grid knows how many pages in total at the start, the scroll will be sized to match the entire data set
@@ -37,8 +36,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The virtual model behind the grid contains a cache of pages. Each page contains a subset of the entire data set.
-        When the grid scrolls to a position where there is no corresponding page in the cache, the virtual model
+        The row model behind the grid contains a cache of pages. Each page contains a subset of the entire data set.
+        When the grid scrolls to a position where there is no corresponding page in the cache, the model
         uses the provided datasource (you provide the datasource) to get the rows for the requested page. In the diagram,
         the datasource is getting the rows from a database in a remote server.
     </p>
@@ -46,12 +45,12 @@ include '../documentation-main/documentation_header.php';
     <h3 id="turning-on-virtual-paging">Turning On Infinite Scrolling</h3>
 
     <p>
-        To turn on infinite scrolling, you must a) set the grid property rowModelType to virtual and b) provide a datasource.
+        To turn on infinite scrolling, you must a) set the grid property rowModelType to infinite and b) provide a datasource.
     </p>
 
     <pre>
 // before grid initialised
-gridOptions.rowModelType = 'virtual';
+gridOptions.rowModelType = 'infinite';
 gridOptions.datasource = myDataSource;
 
 // after grid initialised, you can set or change the datasource
@@ -60,8 +59,9 @@ gridOptions.api.setDatasource(myDataSource);</pre>
     <h3 id="aggregation-and-grouping">Aggregation and Grouping</h3>
 
     <p>
-        Aggregation and grouping are not available in infinite scrolling. This is because to do such would require the grid knowing
-        the entire data set, which is not possible when virtualising the pages.
+        Aggregation and grouping are not available in infinite scrolling.
+        This is because to do such would require the grid knowing
+        the entire data set, which is not possible when using the infinite row model.
     </p>
 
     <h3 id="sorting-filtering">Sorting & Filtering</h3>
@@ -200,39 +200,39 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         additional data.
     </p>
 
-    <h4 id="api-refresh-virtual-page-cache">&#8226; API refreshVirtualPageCache()</h4>
+    <h4 id="api-refresh-virtual-page-cache">&#8226; API refreshInfinitePageCache()</h4>
     <p>
         Marks all the currently loaded page caches for reload. If you have 10 pages in the cache, all 10 will be
         marked for reload. The old data will continue to be displayed until the new data is loaded.
     </p>
 
-    <h4 id="api-purge-virtual-page-cache">&#8226; API purgeVirtualPageCache()</h4>
+    <h4 id="api-purge-virtual-page-cache">&#8226; API purgeInfinitePageCache()</h4>
     <p>
         Purges the cache. The grid is then told to refresh. Only the pages required to display the current
         data on screen are fetched (typically no more than two). The grid will display nothing while the new
         pages are loaded. Use this to immediately remove the old data from the user.
     </p>
 
-    <h4 id="api-get-virtual-row-count">&#8226; API getVirtualRowCount()</h4>
+    <h4 id="api-get-virtual-row-count">&#8226; API getInfiniteRowCount()</h4>
     <p>
-        The virtual row count defines how many rows the grid allows scrolling to.
+        The row count defines how many rows the grid allows scrolling to.
     </p>
 
     <h4 id="api-is-max-row-found">&#8226; API isMaxRowFound()</h4>
     <p>
         The property maxRowFound is a boolean, true or false. When false, then the grid will allow scrolling beyond
-        the virtualRowCount looking for more rows. When the last row is found, maxRowFound becomes true, and the
+        the rowCount looking for more rows. When the last row is found, maxRowFound becomes true, and the
         grid will only scroll to the last available row as it has finished looking for more data.
     </p>
 
-    <h4 id="api-set-virtual-row-count">&#8226; API setVirtualRowCount(rowCount, maxRowFound)</h4>
+    <h4 id="api-set-virtual-row-count">&#8226; API setInfiniteRowCount(rowCount, maxRowFound)</h4>
     <p>
-        Sets the virtualRowCount and maxRowFound properties. The second parameter, maxRowFound, is optional and if
+        Sets the rowCount and maxRowFound properties. The second parameter, maxRowFound, is optional and if
         left out, only rowCount is set. Set rowCount to adjust the height of the vertical scroll. Set maxRowFound
         to enable / disable searching for more rows. Use this method if you add or remove rows into the dataset
         and need to reset the number of rows or put the data back into 'look for data' mode.</p>
 
-    <h4 id="api-get-virtual-page-state">&#8226; API getVirtualPageState()</h4>
+    <h4 id="api-get-virtual-page-state">&#8226; API getInfinitePageState()</h4>
     <p>
         Returns an object representing the state of the cache. This is useful for debugging and understanding
         how the cache is working.
@@ -293,12 +293,12 @@ gridOptions.api.setDatasource(myDataSource);</pre>
             <b>Delete 10 Rows @ 3</b>: Deletes rows from the server, then gets the grid to refresh.
         </li>
         <li>
-            <b>Set Row Count to 200</b>: Sets the virtual row count to 200. This adjusts the vertical scroll to
+            <b>Set Row Count to 200</b>: Sets the row count to 200. This adjusts the vertical scroll to
             show 200 rows. If the scroll is positioned at the end, this results in the grid automatically readjusting
             as it seeks ahead for the next page of data.
         </li>
         <li>
-            <b>Print Rows and Max Found</b>: Debugging method, prints virtualRowCount and maxFound to the console.
+            <b>Print Rows and Max Found</b>: Debugging method, prints rowCount and maxFound to the console.
         </li>
         <li>
             <b>Jump to 500</b>: Positions the grid so that row 500 is displayed.

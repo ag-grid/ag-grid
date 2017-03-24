@@ -52,18 +52,18 @@ function insertItemsAt2AndRefresh(count) {
     // if the data has stopped looking for the last row, then we need to adjust the
     // row count to allow for the extra data, otherwise the grid will not allow scrolling
     // to the last row. eg if we have 1000 rows, scroll all the way to the bottom (so
-    // maxRowFound=true), and then add 5 rows, the virtualRowCount needs to be adjusted
+    // maxRowFound=true), and then add 5 rows, the rowCount needs to be adjusted
     // to 1005, so grid can scroll to the end. the grid does NOT do this for you in the
     // refreshVirtualPageCache() method, as this would be assuming you want to do it which
     // is not true, maybe the row count is constant and you just want to refresh the details.
     var maxRowFound = gridOptions.api.isMaxRowFound();
     if (maxRowFound) {
-        var virtualRowCount = gridOptions.api.getVirtualRowCount();
-        gridOptions.api.setVirtualRowCount(virtualRowCount + count);
+        var rowCount = gridOptions.api.getInfiniteRowCount();
+        gridOptions.api.setInfiniteRowCount(rowCount + count);
     }
 
     // get grid to refresh the data
-    gridOptions.api.refreshVirtualPageCache();
+    gridOptions.api.refreshInfinitePageCache();
 }
 
 function insertItemsAt2(count) {
@@ -78,23 +78,23 @@ function insertItemsAt2(count) {
 
 function removeItem(start, limit) {
     allOfTheData.splice(start, limit);
-    gridOptions.api.refreshVirtualPageCache();
+    gridOptions.api.refreshInfinitePageCache();
 }
 
 function refreshCache() {
-    gridOptions.api.refreshVirtualPageCache();
+    gridOptions.api.refreshInfinitePageCache();
 }
 
 function purgeCache() {
-    gridOptions.api.purgeVirtualPageCache();
+    gridOptions.api.purgeInfinitePageCache();
 }
 
 function setRowCountTo200() {
-    gridOptions.api.setVirtualRowCount(200, false);
+    gridOptions.api.setInfiniteRowCount(200, false);
 }
 
 function rowsAndMaxFound() {
-    console.log('getVirtualRowCount() => ' + gridOptions.api.getVirtualRowCount());
+    console.log('getInfiniteRowCount() => ' + gridOptions.api.getInfiniteRowCount());
     console.log('isMaxRowFound() => ' + gridOptions.api.isMaxRowFound());
 }
 
@@ -113,13 +113,13 @@ function setPricesLow() {
 
 function printCacheState() {
     console.log('*** Cache State ***');
-    console.log(gridOptions.api.getVirtualPageState());
+    console.log(gridOptions.api.getInfinitePageState());
 }
 
 function jumpTo500() {
     // first up, need to make sure the grid is actually showing 500 or more rows
-    if (gridOptions.api.getVirtualRowCount() < 501) {
-        gridOptions.api.setVirtualRowCount(501, false);
+    if (gridOptions.api.getInfiniteRowCount() < 501) {
+        gridOptions.api.setInfiniteRowCount(501, false);
     }
     // next, we can jump to the row
     gridOptions.api.ensureIndexVisible(500);
@@ -158,7 +158,7 @@ var gridOptions = {
     rowSelection: 'multiple',
     rowDeselection: true,
     columnDefs: columnDefs,
-    rowModelType: 'virtual',
+    rowModelType: 'infinite',
     datasource: dataSource,
 
     maxPagesInCache: 2,

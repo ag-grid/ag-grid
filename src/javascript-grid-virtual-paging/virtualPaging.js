@@ -28,7 +28,7 @@ var gridOptions = {
     rowDeselection: true,
     columnDefs: columnDefs,
     // tell grid we want virtual row model type
-    rowModelType: 'virtual',
+    rowModelType: 'infinite',
     // how big each page in our page cache will be, default is 100
     paginationPageSize: 100,
     // how many extra blank rows to display to the user at the end of the dataset,

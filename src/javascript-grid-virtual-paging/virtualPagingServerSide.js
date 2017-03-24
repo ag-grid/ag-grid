@@ -45,7 +45,7 @@ var gridOptions = {
     rowSelection: 'single',
     rowDeselection: true,
     columnDefs: columnDefs,
-    rowModelType: 'virtual',
+    rowModelType: 'infinite',
     paginationPageSize: 100,
     paginationOverflowSize: 2,
     maxConcurrentDatasourceRequests: 2,

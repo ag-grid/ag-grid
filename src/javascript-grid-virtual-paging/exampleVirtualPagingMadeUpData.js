@@ -13,7 +13,7 @@ var gridOptions = {
     enableColResize: true,
     debug: true,
     columnDefs: columnDefs,
-    rowModelType: 'virtual',
+    rowModelType: 'infinite',
     rowSelection: 'multiple',
     maxPagesInCache: 2,
     suppressRowClickSelection: true,
