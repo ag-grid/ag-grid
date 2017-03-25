@@ -19,7 +19,7 @@ import {BeanStub} from "../context/beanStub";
 import {RowContainerComponent} from "./rowContainerComponent";
 import {ColumnAnimationService} from "./columnAnimationService";
 import {ColDef} from "../entities/colDef";
-import {ClientPaginationProxy} from "../rowModels/clientPaginationProxy";
+import {PaginationProxy} from "../rowModels/paginationProxy";
 
 export class RenderedRow extends BeanStub {
 
@@ -34,7 +34,7 @@ export class RenderedRow extends BeanStub {
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
     @Autowired('gridPanel') private gridPanel: GridPanel;
-    @Autowired('clientPaginationProxy') private clientPaginationProxy: ClientPaginationProxy;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     private ePinnedLeftRow: HTMLElement;
     private ePinnedRightRow: HTMLElement;
@@ -617,7 +617,7 @@ export class RenderedRow extends BeanStub {
             if (this.rowNode.isFloating()) {
                 pixelsWithOffset = pixels;
             } else {
-                pixelsWithOffset = pixels - this.clientPaginationProxy.getPixelOffset();
+                pixelsWithOffset = pixels - this.paginationProxy.getPixelOffset();
             }
 
             var topPx = pixelsWithOffset + "px";

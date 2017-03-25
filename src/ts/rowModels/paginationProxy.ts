@@ -14,8 +14,8 @@ export class RowBounds {
     rowHeight: number;
 }
 
-@Bean('clientPaginationProxy')
-export class ClientPaginationProxy extends BeanStub implements IPaginationService, IRowModel {
+@Bean('paginationProxy')
+export class PaginationProxy extends BeanStub implements IPaginationService, IRowModel {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('eventService') private eventService: EventService;
