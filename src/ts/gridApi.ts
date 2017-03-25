@@ -743,13 +743,16 @@ export class GridApi {
         this.gridPanel.setBodyAndHeaderHeights();
     }
 
-
     public paginationIsLastPageFound(): boolean {
         return this.paginationService.isLastPageFound();
     }
 
     public paginationGetPageSize(): number {
         return this.paginationService.getPageSize();
+    }
+
+    public paginationSetPageSize(size: number): void {
+        this.gridOptionsWrapper.setProperty('paginationPageSize', size);
     }
 
     public paginationGetCurrentPage(): number {

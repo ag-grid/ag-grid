@@ -39,6 +39,9 @@ export class PaginationProxy extends BeanStub implements IPaginationService, IRo
         this.active = this.gridOptionsWrapper.isPagination();
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+
+        this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
+
         this.onModelUpdated();
     }
 
@@ -179,14 +182,18 @@ export class PaginationProxy extends BeanStub implements IPaginationService, IRo
         return this.totalPages;
     }
 
+    private setPageSize(): void {
+        // show put this into super class
+        this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
+        if ( !(this.pageSize>=1) ) {
+            this.pageSize = 100;
+        }
+    }
+
     private setIndexesAndBounds(): void {
 
         if (this.active) {
-            // show put this into super class
-            this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
-            if ( !(this.pageSize>=1) ) {
-                this.pageSize = 100;
-            }
+            this.setPageSize();
 
             let totalRowCount = this.getTotalRowCount();
             this.totalPages = Math.floor((totalRowCount - 1) / this.pageSize) + 1;

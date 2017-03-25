@@ -195,7 +195,11 @@ export class ComponentUtil {
         if (changes.headerHeight) {
             api.setHeaderHeight(ComponentUtil.toNumber(changes.headerHeight.currentValue));
         }
-        
+
+        if (changes.paginationPageSize) {
+            api.paginationSetPageSize(ComponentUtil.toNumber(changes.paginationPageSize.currentValue));
+        }
+
         if (changes.pivotMode) {
             columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue));
         }
