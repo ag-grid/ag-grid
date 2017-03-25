@@ -242,6 +242,7 @@ export class GridOptionsWrapper {
     public isSuppressAggFuncInHeader() { return isTrue(this.gridOptions.suppressAggFuncInHeader); }
     public isSuppressMenuMainPanel() { return isTrue(this.gridOptions.suppressMenuMainPanel); }
     public isEnableRangeSelection(): boolean { return isTrue(this.gridOptions.enableRangeSelection); }
+    public isEnablePaginationAutoPageSize(): boolean { return isTrue(this.gridOptions.enablePaginationAutoPageSize); }
     public isRememberGroupStateWhenNewData(): boolean { return isTrue(this.gridOptions.rememberGroupStateWhenNewData); }
     public getIcons() { return this.gridOptions.icons; }
     public getAggFuncs(): {[key: string]: IAggFunc} { return this.gridOptions.aggFuncs; }
@@ -285,8 +286,11 @@ export class GridOptionsWrapper {
     public setProperty(key: string, value: any): void {
         var gridOptionsNoType = <any> this.gridOptions;
         var previousValue = gridOptionsNoType[key];
-        gridOptionsNoType[key] = value;
-        this.propertyEventService.dispatchEvent(key, {currentValue: value, previousValue: previousValue});
+
+        if (previousValue !== value) {
+            gridOptionsNoType[key] = value;
+            this.propertyEventService.dispatchEvent(key, {currentValue: value, previousValue: previousValue});
+        }
     }
 
     public addEventListener(key: string, listener: Function): void {

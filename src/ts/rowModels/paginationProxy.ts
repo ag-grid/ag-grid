@@ -8,6 +8,7 @@ import {RowNode} from "../entities/rowNode";
 import {_} from "../utils";
 import {Bean, Autowired, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {GridPanel} from "../gridPanel/gridPanel";
 
 export class RowBounds {
     rowTop: number;
@@ -18,6 +19,7 @@ export class RowBounds {
 export class PaginationProxy extends BeanStub implements IPaginationService, IRowModel {
 
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -43,6 +45,17 @@ export class PaginationProxy extends BeanStub implements IPaginationService, IRo
         this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
 
         this.onModelUpdated();
+
+        if (this.gridOptionsWrapper.isEnablePaginationAutoPageSize()) {
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, ()=> {
+                let rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+                let bodyHeight = this.gridPanel.getBodyHeight();
+                if (bodyHeight>0) {
+                    let newPageSize = Math.floor(bodyHeight / rowHeight);
+                    this.gridOptionsWrapper.setProperty('paginationPageSize', newPageSize);
+                }
+            });
+        }
     }
 
     public isLastRowFound(): boolean {

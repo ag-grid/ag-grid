@@ -189,6 +189,7 @@ export class GridPanel extends BeanStub {
     private lastTopPosition = -1;
 
     private animationThreadCount = 0;
+    private bodyHeight: number;
 
     // properties we use a lot, so keep reference
     private useScrollLag: boolean;
@@ -1510,18 +1511,29 @@ export class GridPanel extends BeanStub {
         var floatingBottomHeight = this.floatingRowModel.getFloatingBottomTotalHeight();
         var floatingBottomTop = heightOfContainer - floatingBottomHeight;
 
-        var heightOfCentreRows = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
+        let bodyHeight = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
 
         this.eBody.style.top = paddingTop + 'px';
-        this.eBody.style.height = heightOfCentreRows + 'px';
+        this.eBody.style.height = bodyHeight + 'px';
 
         this.eFloatingTop.style.top = totalHeaderHeight + 'px';
         this.eFloatingTop.style.height = floatingTopHeight + 'px';
         this.eFloatingBottom.style.height = floatingBottomHeight + 'px';
         this.eFloatingBottom.style.top = floatingBottomTop + 'px';
 
-        this.ePinnedLeftColsViewport.style.height = heightOfCentreRows + 'px';
-        this.ePinnedRightColsViewport.style.height = heightOfCentreRows + 'px';
+        this.ePinnedLeftColsViewport.style.height = bodyHeight + 'px';
+        this.ePinnedRightColsViewport.style.height = bodyHeight + 'px';
+
+        // bodyHeight property is used by pagination service, that may change number of rows
+        // in this page based on the height of the grid
+        if (this.bodyHeight !== bodyHeight) {
+            this.bodyHeight = bodyHeight;
+            this.eventService.dispatchEvent(Events.EVENT_BODY_HEIGHT_CHANGED);
+        }
+    }
+
+    public getBodyHeight(): number {
+        return this.bodyHeight;
     }
 
     public setHorizontalScrollPosition(hScrollPosition: number): void {
