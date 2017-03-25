@@ -25,6 +25,10 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="examplePaginationInfiniteScrolling"></show-example>
 
+    <h2 id="clientPagination">Pagination and In Memory Row Model</h2>
+
+    <show-example example="clientPaging"></show-example>
+
     <div style="border-left: 4px solid lightcoral; padding-left: 4px;">
 
         <h2 id="pagination">Server Side Pagination - Deprecated</h2>
@@ -48,11 +52,6 @@ include '../documentation-main/documentation_header.php';
             loaded. During the search for the last page, the grid is said to be in 'infinite pagination'. During infinite pagination,
             the total rows and pages are displayed as 'more' at the bottom of the page, and the 'last' button is disabled.
         </p>
-
-        <h2 id="clientPagination">Client Pagination</h2>
-
-        <show-example example="clientPaging"></show-example>
-
 
         <h3 id="aggregation-and-grouping">Aggregation and Grouping</h3>
 

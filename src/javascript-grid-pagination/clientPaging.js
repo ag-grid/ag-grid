@@ -66,7 +66,7 @@ var gridOptions = {
 };
 
 function onPageSizeChanged(newPageSize) {
-    this.gridOptions.api.paginationSetPageSize (Number(newPageSize));
+    this.gridOptions.api.paginationSetPageSize(Number(newPageSize));
 }
 
 // setup the grid after the page has finished loading
