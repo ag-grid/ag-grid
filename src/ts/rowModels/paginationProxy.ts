@@ -9,10 +9,55 @@ import {_} from "../utils";
 import {Bean, Autowired, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {GridPanel} from "../gridPanel/gridPanel";
+import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
 
 export class RowBounds {
     rowTop: number;
     rowHeight: number;
+}
+
+@Bean('paginationAutoPageSizeService')
+export class PaginationAutoPageSizeService extends BeanStub {
+
+    @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('eventService') private eventService: EventService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
+
+    private notActive(): boolean {
+        return !this.gridOptionsWrapper.isEnablePaginationAutoPageSize();
+    }
+
+    @PostConstruct
+    private postConstruct() {
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
+        this.checkPageSize();
+    }
+
+    private onScrollVisibilityChanged(): void {
+        this.checkPageSize();
+    }
+
+    private onBodyHeightChanged(): void {
+        this.checkPageSize();
+    }
+
+    private checkPageSize(): void {
+        if (this.notActive()) { return; }
+
+        let rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
+        let bodyHeight = this.gridPanel.getBodyHeight();
+
+        if (this.scrollVisibleService.isHBodyShowing()) {
+            bodyHeight = bodyHeight - this.gridOptionsWrapper.getScrollbarWidth();
+        }
+
+        if (bodyHeight>0) {
+            let newPageSize = Math.floor(bodyHeight / rowHeight);
+            this.gridOptionsWrapper.setProperty('paginationPageSize', newPageSize);
+        }
+    }
 }
 
 @Bean('paginationProxy')
@@ -45,17 +90,6 @@ export class PaginationProxy extends BeanStub implements IPaginationService, IRo
         this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
 
         this.onModelUpdated();
-
-        if (this.gridOptionsWrapper.isEnablePaginationAutoPageSize()) {
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, ()=> {
-                let rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-                let bodyHeight = this.gridPanel.getBodyHeight();
-                if (bodyHeight>0) {
-                    let newPageSize = Math.floor(bodyHeight / rowHeight);
-                    this.gridOptionsWrapper.setProperty('paginationPageSize', newPageSize);
-                }
-            });
-        }
     }
 
     public isLastRowFound(): boolean {
