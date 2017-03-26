@@ -53,6 +53,7 @@ var gridOptions = {
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
     enableRangeSelection: true,
+    // enablePaginationAutoPageSize: true,
     columnDefs: columnDefs,
     paginationPageSize: 10,
     pagination: true,
