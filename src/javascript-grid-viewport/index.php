@@ -249,6 +249,21 @@ interface IViewportDatasourceParams {
 
     <show-example example="exampleViewport"></show-example>
 
+    <h3>Example Paging with Viewport</h3>
+
+    <p>
+        In the example below, the following are set:
+        <ul>
+        <li><b><i>viewportRowModelPageSize=1</i></b>: Because we are showing exact pages, the user will not
+        be scrolling, so there is no need to set a minimum page size. Setting page size to 1 means the grid
+        will always ask from the top row through to the bottom row.</li>
+        <li><b><i>viewportRowModelBufferSize=0</i></b>: Likewise becasue there is no scrolling, there is no
+        sense in bringing back extra rows to act as a buffer.</li>
+    </ul>
+    </p>
+
+    <show-example example="examplePaginationViewport"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

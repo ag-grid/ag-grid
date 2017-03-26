@@ -41,6 +41,10 @@
         columnDefs: columnDefs,
         rowSelection: 'multiple',
         rowModelType: 'viewport',
+        pagination: true,
+        enablePaginationAutoPageSize: true,
+        viewportRowModelPageSize: 1,
+        viewportRowModelBufferSize: 0,
         // implement this so that we can do selection
         getRowNodeId: function (data) {
             // the code is unique, so perfect for the id
