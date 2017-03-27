@@ -49,7 +49,9 @@ export class AgGridColumn {
         }
 
         if (this.editorTemplate) {
-            colDef.editable = true;
+            if(colDef.editable === undefined) {
+                colDef.editable = true;
+            }
             colDef.cellEditorFramework = {template: this.editorTemplate.template};
             delete (<any>colDef).editorTemplate;
         }
