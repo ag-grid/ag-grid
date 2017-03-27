@@ -50,11 +50,22 @@ include '../documentation-main/documentation_header.php';
         <li><b>onlySelectedAllPages</b>: Only export selected rows including other pages (only makes sense when using pagination).</li>
         <li><b>columnSeparator</b>: The column separator. Defaults to comma.</li>
         <li><b>columnKeys</b>: Provide a list (an array) of column keys if you want to export specific columns.</li>
+        <li><b>shouldRowBeSkipped</b>: Allows you to skip entire rows from the export.</li>
         <li><b>processCellCallback</b>: Allows you to process (typically format) cells for the CSV.</li>
         <li><b>processHeaderCallback</b>: Allows you to create custom header values for the export.</li>
     </ul>
 
-    <h3 id="process-cell-callback">processCellCallback()</h3>
+
+    <h4>shouldRowBeSkipped()</h4>
+
+    <p>This callback allows you to entirely skip a row to be exported. The example below has an option 'Skip Group R'
+        which will entirely skip all the rows which Group=R.</p>
+
+    <p>
+        The callback params has the following attributes: node, api, context.
+    </p>
+
+    <h4>processCellCallback()</h4>
 
     <p>This callback allows you to format the cells for the export. The example below has an option 'Use Cell Callback'
     which puts all the items into upper case. This can be useful if, for example, you need to format date cells
