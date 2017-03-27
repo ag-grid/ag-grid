@@ -12,7 +12,7 @@
                 <div class="col-md-4 col-sm-4 col-xs-12">
                     <h3 class="text-left">What we Do</h3>
                     <p class="text-left">
-                        ag-Grid is now being used by thousands of enterprises worldwide. We are based in Google’s Techub@Campus incubation centre in London and work with many tier one investment banks, equity funds, government organisations and SMEs. Together, we are driving the future of ag-Grid.
+                        ag-Grid is now being used by thousands of enterprises worldwide. We are based in London and work with many tier one investment banks, equity funds, government organisations and SMEs. Together, we are driving the future of ag-Grid.
                     </p>
                 </div>
                 <div class="col-md-4 col-sm-4 col-xs-12">
