@@ -642,12 +642,19 @@ export class Utils {
     }
 
     static formatNumberTwoDecimalPlacesAndCommas(value: number): string {
+        if (typeof value !== 'number') { return ''; }
+
         // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
-        if (typeof value === 'number') {
-            return (Math.round(value * 100) / 100).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-        } else {
-            return '';
-        }
+        return (Math.round(value * 100) / 100).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    }
+
+    // the native method number.toLocaleString(undefined, {minimumFractionDigits: 0}) puts in decimal places in IE,
+    // so we use this method instead
+    static formatNumberCommas(value: number): string {
+        if (typeof value !== 'number') { return ''; }
+
+        // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
+        return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
 
     static prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void {

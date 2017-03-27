@@ -130,6 +130,8 @@ export class Events {
 
     public static EVENT_PAGINATION_CHANGED = 'paginationChanged';
 
+    public static EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
+
     public static DEPRECATED_EVENT_PAGINATION_RESET = 'paginationReset';
     public static DEPRECATED_EVENT_PAGINATION_PAGE_LOADED = 'paginationPageLoaded';
     public static DEPRECATED_EVENT_PAGINATION_PAGE_REQUESTED = 'paginationPageRequested';

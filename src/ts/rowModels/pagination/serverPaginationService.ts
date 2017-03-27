@@ -110,9 +110,14 @@ export class ServerPaginationService extends BeanStub implements IPaginationServ
             this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
         }
 
+        this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', () => {
+            this.reset(false);
+            this.setPageSize();
+        });
+
         this.setPageSize();
 
-        var paginationEnabled = this.gridOptionsWrapper.isRowModelServerPagination();
+        let paginationEnabled = this.gridOptionsWrapper.isRowModelServerPagination();
         // if not doing pagination, then quite the setup
         if (!paginationEnabled) { return; }
 

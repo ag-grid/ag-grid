@@ -54,7 +54,8 @@ export class ComponentUtil {
         'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly', 'suppressRowHoverClass',
         'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'enableRtl', 'suppressClickEdit',
         'enableGroupEdit', 'embedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter',
-        'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus'
+        'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus',
+        'enablePaginationAutoPageSize'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
@@ -195,7 +196,11 @@ export class ComponentUtil {
         if (changes.headerHeight) {
             api.setHeaderHeight(ComponentUtil.toNumber(changes.headerHeight.currentValue));
         }
-        
+
+        if (changes.paginationPageSize) {
+            api.paginationSetPageSize(ComponentUtil.toNumber(changes.paginationPageSize.currentValue));
+        }
+
         if (changes.pivotMode) {
             columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue));
         }

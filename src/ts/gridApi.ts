@@ -36,7 +36,7 @@ import {IExcelCreator} from "./interfaces/iExcelCreator";
 import {ServerPaginationService, IPaginationService} from "./rowModels/pagination/serverPaginationService";
 import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
-import {ClientPaginationProxy} from "./rowModels/clientPaginationProxy";
+import {PaginationProxy} from "./rowModels/paginationProxy";
 
 
 export interface StartEditingCellParams {
@@ -67,7 +67,7 @@ export class GridApi {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('serverPaginationService') private serverPaginationService: ServerPaginationService;
-    @Autowired('clientPaginationProxy') private clientPaginationProxy: ClientPaginationProxy;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('clipboardService') private clipboardService: IClipboardService;
@@ -94,7 +94,7 @@ export class GridApi {
         }
 
         if (this.gridOptionsWrapper.isPagination()) {
-            this.paginationService = this.clientPaginationProxy;
+            this.paginationService = this.paginationProxy;
         } else {
             this.paginationService = this.serverPaginationService;
         }
@@ -743,13 +743,16 @@ export class GridApi {
         this.gridPanel.setBodyAndHeaderHeights();
     }
 
-
     public paginationIsLastPageFound(): boolean {
         return this.paginationService.isLastPageFound();
     }
 
     public paginationGetPageSize(): number {
         return this.paginationService.getPageSize();
+    }
+
+    public paginationSetPageSize(size: number): void {
+        this.gridOptionsWrapper.setProperty('paginationPageSize', size);
     }
 
     public paginationGetCurrentPage(): number {

@@ -99,6 +99,7 @@ export interface GridOptions {
     paginationOverflowSize?: number;
     paginationInitialRowCount?: number;
     paginationPageSize?: number;
+    enablePaginationAutoPageSize?: number;
     infinitePageSize?: number;
     paginationStartPage?: number;
     suppressPaginationPanel?: boolean;

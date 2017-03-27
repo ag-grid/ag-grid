@@ -1,4 +1,4 @@
-import {Utils as _, Timer} from "../utils";
+import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {GridPanel, RowContainerComponents} from "../gridPanel/gridPanel";
 import {ExpressionService} from "../expressionService";
@@ -12,11 +12,10 @@ import {RowNode} from "../entities/rowNode";
 import {Events, ModelUpdatedEvent} from "../events";
 import {Constants} from "../constants";
 import {RenderedCell} from "./renderedCell";
-import {Bean, PreDestroy, Qualifier, Context, Autowired, PostConstruct, Optional} from "../context/context";
+import {Autowired, Bean, Context, Optional, PostConstruct, PreDestroy, Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import {ColumnController} from "../columnController/columnController";
 import {Logger, LoggerFactory} from "../logger";
-import {IRowModel} from "../interfaces/iRowModel";
 import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
 import {CellNavigationService} from "../cellNavigationService";
@@ -25,14 +24,12 @@ import {NavigateToNextCellParams, TabToNextCellParams} from "../entities/gridOpt
 import {RowContainerComponent} from "./rowContainerComponent";
 import {ColDef} from "../entities/colDef";
 import {BeanStub} from "../context/beanStub";
-import {IPaginationService} from "../rowModels/pagination/serverPaginationService";
-import {IDatasource} from "../rowModels/iDatasource";
-import {ClientPaginationProxy} from "../rowModels/clientPaginationProxy";
+import {PaginationProxy} from "../rowModels/paginationProxy";
 
 @Bean('rowRenderer')
 export class RowRenderer extends BeanStub {
 
-    @Autowired('clientPaginationProxy') private clientPaginationProxy: ClientPaginationProxy;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridCore') private gridCore: GridCore;
@@ -202,7 +199,7 @@ export class RowRenderer extends BeanStub {
         let focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
 
         if (!this.gridOptionsWrapper.isForPrint()) {
-            var containerHeight = this.clientPaginationProxy.getCurrentPageHeight();
+            var containerHeight = this.paginationProxy.getCurrentPageHeight();
             // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
             // we still want the scroll to be present, otherwise there would be no way to access the columns
             // on the RHS - and if that was where the filter was that cause no rows to be presented, there
@@ -388,27 +385,27 @@ export class RowRenderer extends BeanStub {
         var newFirst: number;
         var newLast: number;
 
-        if (!this.clientPaginationProxy.isRowsToRender()) {
+        if (!this.paginationProxy.isRowsToRender()) {
             newFirst = 0;
             newLast = -1; // setting to -1 means nothing in range
         } else {
 
-            let pageFirstRow = this.clientPaginationProxy.getPageFirstRow();
-            let pageLastRow = this.clientPaginationProxy.getPageLastRow();
+            let pageFirstRow = this.paginationProxy.getPageFirstRow();
+            let pageLastRow = this.paginationProxy.getPageLastRow();
 
             if (this.gridOptionsWrapper.isForPrint()) {
                 newFirst = pageFirstRow;
                 newLast = pageLastRow;
             } else {
 
-                let pixelOffset = this.clientPaginationProxy ? this.clientPaginationProxy.getPixelOffset() : 0;
+                let pixelOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
 
                 let bodyVRange = this.gridPanel.getVerticalPixelRange();
                 var topPixel = bodyVRange.top;
                 var bottomPixel = bodyVRange.bottom;
 
-                var first = this.clientPaginationProxy.getRowIndexAtPixel(topPixel + pixelOffset);
-                var last = this.clientPaginationProxy.getRowIndexAtPixel(bottomPixel + pixelOffset);
+                var first = this.paginationProxy.getRowIndexAtPixel(topPixel + pixelOffset);
+                var last = this.paginationProxy.getRowIndexAtPixel(bottomPixel + pixelOffset);
 
                 //add in buffer
                 var buffer = this.gridOptionsWrapper.getRowBuffer();
@@ -464,7 +461,7 @@ export class RowRenderer extends BeanStub {
                 continue;
             }
             // check this row actually exists (in case overflow buffer window exceeds real data)
-            var node = this.clientPaginationProxy.getRow(rowIndex);
+            var node = this.paginationProxy.getRow(rowIndex);
             if (node) {
                 let renderedRow = this.getOrCreateRenderedRow(node, oldRenderedRowsByNodeId, animate);
                 _.pushAll(delayedCreateFunctions, renderedRow.getAndClearNextVMTurnFunctions());
@@ -501,7 +498,7 @@ export class RowRenderer extends BeanStub {
             // editing row, only remove if it is no longer rendered, eg filtered out or new data set.
             // the reason we want to keep is if user is scrolling up and down, we don't want to loose
             // the context of the editing in process.
-            let rowNodePresent = this.clientPaginationProxy.isRowPresent(rowNode);
+            let rowNodePresent = this.paginationProxy.isRowPresent(rowNode);
             return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
         });
 
@@ -584,7 +581,7 @@ export class RowRenderer extends BeanStub {
 
             var skipGroupRows = this.gridOptionsWrapper.isGroupUseEntireRow();
             if (skipGroupRows) {
-                var rowNode = this.clientPaginationProxy.getRow(nextCell.rowIndex);
+                var rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
                 if (!rowNode.group) {
                     break;
                 }

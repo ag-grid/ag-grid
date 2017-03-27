@@ -61,7 +61,7 @@ import {SortService} from "./rowNodes/sortService";
 import {FilterService} from "./rowNodes/filterService";
 import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
 import {AutoGroupColService} from "./columnController/autoGroupColService";
-import {ClientPaginationProxy} from "./rowModels/clientPaginationProxy";
+import {PaginationAutoPageSizeService, PaginationProxy} from "./rowModels/paginationProxy";
 
 
 export interface GridParams {
@@ -151,9 +151,9 @@ export class Grid {
         let contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
-            beans: [rowModelClass, GridApi, ComponentProvider, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
+            beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
-                FilterManager, ColumnController, ClientPaginationProxy, RowRenderer,
+                FilterManager, ColumnController, PaginationProxy, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory,
                 GridSerializer, TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,

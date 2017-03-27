@@ -197,7 +197,7 @@ export class InfinitePageCache {
     }
 
     // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,
-    // it will want new pages in teh cache as it asks for rows. only when we are inserting /
+    // it will want new pages in the cache as it asks for rows. only when we are inserting /
     // removing rows via the api is dontCreatePage set, where we move rows between the pages.
     public getRow(rowIndex: number, dontCreatePage = false): RowNode {
         var pageNumber = Math.floor(rowIndex / this.cacheParams.pageSize);

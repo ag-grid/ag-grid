@@ -30,7 +30,16 @@ function isTrue(value: any): boolean {
     return value === true || value === 'true';
 }
 
-function positiveNumberOrZero(value: any, defaultValue: number): number {
+function zeroOrGreater(value: any, defaultValue: number): number {
+    if (value >= 0) {
+        return value;
+    } else {
+        // zero gets returned if number is missing or the wrong type
+        return defaultValue;
+    }
+}
+
+function oneOrGreater(value: any, defaultValue: number): number {
     if (value > 0) {
         return value;
     } else {
@@ -242,6 +251,7 @@ export class GridOptionsWrapper {
     public isSuppressAggFuncInHeader() { return isTrue(this.gridOptions.suppressAggFuncInHeader); }
     public isSuppressMenuMainPanel() { return isTrue(this.gridOptions.suppressMenuMainPanel); }
     public isEnableRangeSelection(): boolean { return isTrue(this.gridOptions.enableRangeSelection); }
+    public isEnablePaginationAutoPageSize(): boolean { return isTrue(this.gridOptions.enablePaginationAutoPageSize); }
     public isRememberGroupStateWhenNewData(): boolean { return isTrue(this.gridOptions.rememberGroupStateWhenNewData); }
     public getIcons() { return this.gridOptions.icons; }
     public getAggFuncs(): {[key: string]: IAggFunc} { return this.gridOptions.aggFuncs; }
@@ -278,16 +288,19 @@ export class GridOptionsWrapper {
 
     public getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellForClipboard; }
     public getProcessCellFromClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellFromClipboard; }
-    public getViewportRowModelPageSize(): number { return positiveNumberOrZero(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE); }
-    public getViewportRowModelBufferSize(): number { return positiveNumberOrZero(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); }
+    public getViewportRowModelPageSize(): number { return oneOrGreater(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE); }
+    public getViewportRowModelBufferSize(): number { return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); }
     // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
     // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
 
     public setProperty(key: string, value: any): void {
         var gridOptionsNoType = <any> this.gridOptions;
         var previousValue = gridOptionsNoType[key];
-        gridOptionsNoType[key] = value;
-        this.propertyEventService.dispatchEvent(key, {currentValue: value, previousValue: previousValue});
+
+        if (previousValue !== value) {
+            gridOptionsNoType[key] = value;
+            this.propertyEventService.dispatchEvent(key, {currentValue: value, previousValue: previousValue});
+        }
     }
 
     public addEventListener(key: string, listener: Function): void {

@@ -27,7 +27,7 @@ import {Column} from "../entities/column";
 import {RowContainerComponent} from "../rendering/rowContainerComponent";
 import {GridCell} from "../entities/gridCell";
 import {RowNode} from "../entities/rowNode";
-import {ClientPaginationProxy} from "../rowModels/clientPaginationProxy";
+import {PaginationProxy} from "../rowModels/paginationProxy";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -126,7 +126,7 @@ export class GridPanel extends BeanStub {
     @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Autowired('eventService') private eventService: EventService;
 
-    @Autowired('clientPaginationProxy') private clientPaginationProxy: ClientPaginationProxy;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('dragService') private dragService: DragService;
@@ -189,6 +189,7 @@ export class GridPanel extends BeanStub {
     private lastTopPosition = -1;
 
     private animationThreadCount = 0;
+    private bodyHeight: number;
 
     // properties we use a lot, so keep reference
     private useScrollLag: boolean;
@@ -231,7 +232,7 @@ export class GridPanel extends BeanStub {
     }
 
     private showOrHideOverlay(): void {
-        if (this.clientPaginationProxy.isEmpty() && !this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
+        if (this.paginationProxy.isEmpty() && !this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
             this.showNoRowsOverlay();
         } else {
             this.hideOverlay();
@@ -513,8 +514,8 @@ export class GridPanel extends BeanStub {
         //where to scroll to
         let rowIndexToScrollTo = pagingKey === Constants.KEY_PAGE_HOME_NAME ?
             0:
-            this.clientPaginationProxy.getPageLastRow();
-        let rowToScrollTo: RowNode = this.clientPaginationProxy.getRow(rowIndexToScrollTo);
+            this.paginationProxy.getPageLastRow();
+        let rowToScrollTo: RowNode = this.paginationProxy.getRow(rowIndexToScrollTo);
 
 
         //***************************************************************************
@@ -538,7 +539,7 @@ export class GridPanel extends BeanStub {
     private pageVertically (pagingKey:string): void{
         if (pagingKey === Constants.KEY_CTRL_UP_NAME){
             this.performScroll({
-                rowToScrollTo: this.clientPaginationProxy.getRow(0),
+                rowToScrollTo: this.paginationProxy.getRow(0),
                 focusedRowTopDelta: 0,
                 type: ScrollType.VERTICAL
             } as VerticalScroll);
@@ -547,7 +548,7 @@ export class GridPanel extends BeanStub {
 
         if (pagingKey === Constants.KEY_CTRL_DOWN_NAME){
             this.performScroll({
-                rowToScrollTo: this.clientPaginationProxy.getRow(this.clientPaginationProxy.getPageLastRow()),
+                rowToScrollTo: this.paginationProxy.getRow(this.paginationProxy.getPageLastRow()),
                 focusedRowTopDelta: this.getPrimaryScrollViewport().offsetHeight,
                 type: ScrollType.VERTICAL
             } as VerticalScroll);
@@ -564,7 +565,7 @@ export class GridPanel extends BeanStub {
         //      b) find what is the delta of that compared to the current scroll
 
         let focusedCell : GridCell = this.focusedCellController.getFocusedCell();
-        let focusedRowNode = this.clientPaginationProxy.getRow(focusedCell.rowIndex);
+        let focusedRowNode = this.paginationProxy.getRow(focusedCell.rowIndex);
         let focusedAbsoluteTop = focusedRowNode.rowTop;
         let selectionTopDelta = focusedAbsoluteTop - this.getPrimaryScrollViewport().scrollTop;
 
@@ -579,13 +580,13 @@ export class GridPanel extends BeanStub {
         let pageSize: number = this.getPrimaryScrollViewport().offsetHeight;
 
         let currentTopmostPixel = this.getPrimaryScrollViewport().scrollTop;
-        let currentTopmostRow = this.clientPaginationProxy.getRow(this.clientPaginationProxy.getRowIndexAtPixel(currentTopmostPixel));
+        let currentTopmostRow = this.paginationProxy.getRow(this.paginationProxy.getRowIndexAtPixel(currentTopmostPixel));
         let currentTopmostRowTop = currentTopmostRow.rowTop;
         let toScrollUnadjusted = pagingKey == Constants.KEY_PAGE_DOWN_NAME ?
             pageSize + currentTopmostRowTop :
             currentTopmostRowTop - pageSize;
 
-        let nextScreenTopmostRow = this.clientPaginationProxy.getRow(this.clientPaginationProxy.getRowIndexAtPixel(toScrollUnadjusted));
+        let nextScreenTopmostRow = this.paginationProxy.getRow(this.paginationProxy.getRowIndexAtPixel(toScrollUnadjusted));
 
         let verticalScroll : VerticalScroll = {
             rowToScrollTo: nextScreenTopmostRow,
@@ -645,11 +646,11 @@ export class GridPanel extends BeanStub {
         let focusedColumn: Column;
         switch (scroll.type){
             case ScrollType.VERTICAL:
-                focusedRowIndex = this.clientPaginationProxy.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + verticalScroll.focusedRowTopDelta);
+                focusedRowIndex = this.paginationProxy.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + verticalScroll.focusedRowTopDelta);
                 focusedColumn = focusedCellBeforeScrolling.column;
                 break;
             case ScrollType.DIAGONAL:
-                focusedRowIndex = this.clientPaginationProxy.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + diagonalScroll.focusedRowTopDelta);
+                focusedRowIndex = this.paginationProxy.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + diagonalScroll.focusedRowTopDelta);
                 focusedColumn = diagonalScroll.columnToScrollTo;
                 break;
             case ScrollType.HORIZONTAL:
@@ -731,7 +732,7 @@ export class GridPanel extends BeanStub {
     }
 
     private onCtrlAndA(event: KeyboardEvent): boolean {
-        if (this.rangeController && this.clientPaginationProxy.isRowsToRender()) {
+        if (this.rangeController && this.paginationProxy.isRowsToRender()) {
             var rowEnd: number;
             var floatingStart: string;
             var floatingEnd: string;
@@ -744,7 +745,7 @@ export class GridPanel extends BeanStub {
 
             if (this.floatingRowModel.isEmpty(Constants.FLOATING_BOTTOM)) {
                 floatingEnd = null;
-                rowEnd = this.clientPaginationProxy.getTotalRowCount() - 1;
+                rowEnd = this.paginationProxy.getTotalRowCount() - 1;
             } else {
                 floatingEnd = Constants.FLOATING_BOTTOM;
                 rowEnd = this.floatingRowModel.getFloatingBottomRowData().length = 1;
@@ -845,16 +846,16 @@ export class GridPanel extends BeanStub {
         if (this.gridOptionsWrapper.isForPrint()) { return; }
 
         this.logger.log('ensureIndexVisible: ' + index);
-        var rowCount = this.clientPaginationProxy.getTotalRowCount();
+        var rowCount = this.paginationProxy.getTotalRowCount();
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
             return;
         }
 
-        this.clientPaginationProxy.goToPageWithIndex(index);
+        this.paginationProxy.goToPageWithIndex(index);
 
-        var nodeAtIndex = this.clientPaginationProxy.getRow(index);
-        let pixelOffset = this.clientPaginationProxy.getPixelOffset();
+        var nodeAtIndex = this.paginationProxy.getRow(index);
+        let pixelOffset = this.paginationProxy.getPixelOffset();
         var rowTopPixel = nodeAtIndex.rowTop - pixelOffset;
         var rowBottomPixel = rowTopPixel + nodeAtIndex.rowHeight;
 
@@ -1510,18 +1511,29 @@ export class GridPanel extends BeanStub {
         var floatingBottomHeight = this.floatingRowModel.getFloatingBottomTotalHeight();
         var floatingBottomTop = heightOfContainer - floatingBottomHeight;
 
-        var heightOfCentreRows = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
+        let bodyHeight = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
 
         this.eBody.style.top = paddingTop + 'px';
-        this.eBody.style.height = heightOfCentreRows + 'px';
+        this.eBody.style.height = bodyHeight + 'px';
 
         this.eFloatingTop.style.top = totalHeaderHeight + 'px';
         this.eFloatingTop.style.height = floatingTopHeight + 'px';
         this.eFloatingBottom.style.height = floatingBottomHeight + 'px';
         this.eFloatingBottom.style.top = floatingBottomTop + 'px';
 
-        this.ePinnedLeftColsViewport.style.height = heightOfCentreRows + 'px';
-        this.ePinnedRightColsViewport.style.height = heightOfCentreRows + 'px';
+        this.ePinnedLeftColsViewport.style.height = bodyHeight + 'px';
+        this.ePinnedRightColsViewport.style.height = bodyHeight + 'px';
+
+        // bodyHeight property is used by pagination service, that may change number of rows
+        // in this page based on the height of the grid
+        if (this.bodyHeight !== bodyHeight) {
+            this.bodyHeight = bodyHeight;
+            this.eventService.dispatchEvent(Events.EVENT_BODY_HEIGHT_CHANGED);
+        }
+    }
+
+    public getBodyHeight(): number {
+        return this.bodyHeight;
     }
 
     public setHorizontalScrollPosition(hScrollPosition: number): void {
