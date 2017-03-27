@@ -162,6 +162,7 @@
         menuItem(0, 'Cell Expressions', 'Cell Expressions', 'javascript-grid-cell-expressions/');
         menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
         menuItem(0, 'Cell Editing', 'Cell Editing', 'javascript-grid-cell-editing/');
+        menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
         menuItem(0, 'Context', 'Context', 'javascript-grid-context/');
         menuItem(0, 'InsertRemove', 'Insert & Remove', 'javascript-grid-insert-remove/');
         menuItem(0, 'Refresh', 'Data Refresh', 'javascript-grid-refresh/');
@@ -208,8 +209,7 @@
         <?php
         menuItem(0, 'Row Models', 'Overview', 'javascript-grid-row-models/');
         menuItem(0, 'Datasource', 'Datasource', 'javascript-grid-datasource/');
-        menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
-        menuItem(0, 'Infinite Scrolling', 'Infinite Scrolling', 'javascript-grid-virtual-paging/');
+        menuItem(0, 'Infinite Scrolling', 'Infinite Scrolling', 'javascript-grid-infinite-scrolling/');
         menuItemWithIcon('enterprise.png', 0, 'Viewport', 'Viewport', 'javascript-grid-viewport/');
         menuItemWithIcon('lab.png', 0, 'Enterprise', 'Enterprise', 'javascript-grid-enterprise-model/');
         ?>
