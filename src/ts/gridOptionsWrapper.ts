@@ -20,7 +20,7 @@ import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
-import {ProcessCellForExportParams} from "./exportParams";
+import {CsvExportParams, ProcessCellForExportParams} from "./exportParams";
 
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -260,6 +260,7 @@ export class GridOptionsWrapper {
 
     public getDefaultColDef(): ColDef { return this.gridOptions.defaultColDef; }
     public getDefaultColGroupDef(): ColGroupDef { return this.gridOptions.defaultColGroupDef; }
+    public getDefaultExportParams(): CsvExportParams { return this.gridOptions.defaultExportParams; }
 
     public getHeaderCellTemplate() { return this.gridOptions.headerCellTemplate; }
     public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }

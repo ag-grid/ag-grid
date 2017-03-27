@@ -9,7 +9,7 @@ import {IDatasource} from "../rowModels/iDatasource";
 import {GridCellDef} from "./gridCell";
 import {IDateComp} from "../rendering/dateComponent";
 import {IEnterpriseDatasource} from "../interfaces/iEnterpriseDatasource";
-import {ProcessCellForExportParams} from "../exportParams";
+import {CsvExportParams, ProcessCellForExportParams} from "../exportParams";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -124,6 +124,7 @@ export interface GridOptions {
     // cellEditors?: {[key: string]: {new(): ICellEditor}};
     defaultColGroupDef?: ColGroupDef;
     defaultColDef?: ColDef;
+    defaultExportParams?: CsvExportParams;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. FOR FUCKS SAKE! *

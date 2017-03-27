@@ -29,11 +29,8 @@ export interface CsvExportParams extends ExportParams{
 }
 
 export interface ShouldRowBeSkippedParams {
-    value: any,
     node: RowNode,
-    column: Column,
     api: GridApi,
-    columnApi: ColumnApi,
     context: any
 }
 
