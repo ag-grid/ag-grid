@@ -40,13 +40,12 @@ include '../documentation-main/documentation_header.php';
 <p>
     The default row model for ag-Grid, the In Memory row model, will do grouping and
     aggregation for you if you give it all the data. If the data will not fit in the browser
-    because it is to large, then you can use one of a) server side pagination b) infinite
-    scrolling or c) viewport. However all of these alternatives fall down as you loose
-    the ability to do grouping and aggregation.
+    because it is to large, then you can use either a) <i>infinite scrolling</i> row model or
+    b) <i>viewport</i> row model. However these row models cannot do grouping or aggregation.
 </p>
 
 <p>
-    The Enterprise Row Model presents the ability to have grouping and aggregation
+    The <b>Enterprise Row Model</b> presents the ability to have grouping and aggregation
     on large datasets by delegating the aggregation to the server and lazy loading
     the groups.
 </p>
@@ -77,7 +76,7 @@ interface IEnterpriseDatasource {
 }
 </pre>
 
-<h3>Example - Predefined Master Detail</h3>
+<h3>Example - Predefined Master Detail - Mocked Server</h3>
 
 <p>
     Below shows an example of predefined master / detail using the olympic winners.
@@ -87,20 +86,48 @@ interface IEnterpriseDatasource {
 </p>
 
 <p>
+    In your application, your server side would know where to get the data based
+    on what the user is looking for, eg if using a relational database, it could go
+    to the 'countries' table to get the list of countries and then the 'winners'
+    table to get the details as the user expands the group.
+</p>
+
+<p>
+    In the example, the work your server would do is mocked for demonstrations
+    purposes (as the online examples are self contained and do not contact any
+    servers).
 </p>
 
 <show-example example="exampleEnterpriseSimpleJsDb"></show-example>
 
-<h3>Example - Slice and Dice</h3>
+<h3>Example - Slice and Dice - Mocked Server</h3>
 
 <p>
-    Below shows an example of slicing and dicing the olympic winners. The example
-    mimics asking the server for data by implementing a proxy
+    Below shows an example of slicing and dicing the olympic winners. The user
+    has full control over what they aggregate over by dragging the columns to the
+    group drop zone. For example, in the example below, you can remove the grouping
+    on 'country' and group by 'year' instead, or you can group by both.
+</p>
+
+<p>
+    For your application, your server side would need to understand the requests
+    from the client. Typically this would be used in a reporting scenario, where the
+    server side would build SQL (or the SQL equivalent if using a no-SQL data store)
+    and run it against the data store.
+</p>
+
+<p>
+    The example below mocks a data store for demonstration purposes.
 </p>
 
 <show-example example="exampleEnterpriseSliceAndDiceJsDb"></show-example>
 
+<h3>Example - Slice and Dice - Real Server</h3>
+
+
+
 <h4>What's Left</h4>
+
 <p>
     Before we believe the enterprise row model is ready for production, we want to solve
     the following problems:
