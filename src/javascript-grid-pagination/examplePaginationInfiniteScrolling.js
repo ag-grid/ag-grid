@@ -46,6 +46,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowModelType: 'virtual',
     pagination: true,
+    enablePaginationAutoPageSize: true,
     paginationPageSize: 1000,
     infinitePageSize: 1000,
     paginationOverflowSize: 2,
