@@ -213,7 +213,8 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>sortingOrder</th>
-            <td>SPL TODO</td>
+            <td>Array defining the order in which sorting occurs (if sorting is enabled). Values can be <code>asc</code>,
+                <code>desc</code> or <code>null</code>. For example: <code>sortingOrder: ['asc', 'desc']</code>.</td>
         </tr>
 
 
