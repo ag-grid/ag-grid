@@ -58,6 +58,12 @@ function onBtExport() {
         fileName: document.querySelector('#fileName').value
     };
 
+    if (getBooleanValue('#skipGroupR')) {
+        params.shouldRowBeSkipped = function(params) {
+            return params.node.data.country.charAt(0) === 'R'
+        };
+    }
+
     if (getBooleanValue('#useCellCallback')) {
         params.processCellCallback = function(params) {
             if (params.value && params.value.toUpperCase) {

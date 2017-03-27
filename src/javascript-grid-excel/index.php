@@ -51,9 +51,20 @@ include '../documentation-main/documentation_header.php';
         <li><b>onlySelected</b>: Only export selected rows.</li>
         <li><b>onlySelectedAllPages</b>: Only export selected rows including other pages (only applicable when using pagination).</li>
         <li><b>columnKeys</b>: Provide a list (an array) of column keys to export specific columns.</li>
-        <li><b>processCellCallback</b>: Allows you to process (typically format) cells for the CSV.</li>
+        <li><b>shouldRowBeSkipped</b>: Allows you to skip entire rows from the export.</li>
+        <li><b>processCellCallback</b>: Allows you to process (typically format) cells for the export.</li>
         <li><b>processHeaderCallback</b>: Allows you to create custom header values for the export.</li>
     </ul>
+
+
+    <h4>shouldRowBeSkipped()</h4>
+
+    <p>This callback allows you to entirely skip a row to be exported. The example below has an option 'Skip Group R'
+        which will entirely skip all the rows which Group=R.</p>
+
+    <p>
+        The callback params has the following attributes: node, api, context.
+    </p>
 
     <h4>processCellCallback()</h4>
 
@@ -72,6 +83,11 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The callback params has the following attributes: column, api, columnApi, context.
+    </p>
+
+    <p>
+        You can assign default export parameters to your Excel export by setting the property <i>defaultExportParams</i>
+        in your gridOptions. This is useful if you are planning the user to let export the data via the contextual menu.
     </p>
 
     <h3>

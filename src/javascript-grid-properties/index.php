@@ -112,6 +112,11 @@ include '../documentation-main/documentation_header.php';
             <td>Array of <a href="../javascript-grid-column-definitions/">Column Definitions</a>.</td>
         </tr>
         <tr>
+            <th>defaultExportParams</th>
+            <td>A default configuration object used to export to <a href="../javascript-grid-export/">csv</a> or
+                <a href="../javascript-grid-excel/">excel</a></td>
+        </tr>
+        <tr>
             <th>defaultColDef</th>
             <td>A <a href="../javascript-grid-column-definitions/#defaultProperties">default column</a> definition.
                 All column definitions will use these properties. Items defined in the
