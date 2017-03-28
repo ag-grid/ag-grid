@@ -1,7 +1,7 @@
 <?php
 $key = "Enterprise";
-$pageTitle = "JavaScript Grid Enterprise Model";
-$pageDescription = "the most advanced row model for ag-Grid is the Enterprise row model, allowing server side grouping and aggregation.";
+$pageTitle = "ag-Grid New Enterprise Model";
+$pageDescription = "ag-Grid is going bringing datagrids to the next level with it's Enterprise Data Model, allowing slicing and dicing of data driven by your UI.";
 $pageKeyboards = "ag-Grid Enterprise Row Model";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
             </td>
             <td style="padding-left: 10px;">
                 <h4 class="ng-scope">
-                    Lab Feature - Not For Production
+                    Lab Feature
                 </h4>
                 <p class="ng-scope">
                     Enterprise Row Model is currently in development, subject to change
@@ -185,26 +185,38 @@ export interface ColumnVO {
     It is not possible to put up a full end to end example our the documentation
     website, as we cannot host servers on our website, and even if we did, you would
     not be able to run it locally. Instead we have put a full end to end example
-    in Github at <a ></a>
+    in Github at <a href="https://github.com/ceolter/ag-grid-enterprise-mysql-sample/">
+    https://github.com/ceolter/ag-grid-enterprise-mysql-sample/</a> and there
+    is also a YouTube video <a href="">TBD</a>.
 </p>
 
-<h4>What's Left</h4>
+<p>
+    The example puts all the olympic winners data into a MySQL database and creates SQL
+    on the fly based on what the user is querying. This is a full end to end example of
+    the type of slicing and dicing we want ag-Grid to be able to do in your enterprise
+    applications.
+</p>
+
+<h2>What's Left To DO?</h2>
 
 <p>
-    Before we believe the enterprise row model is ready for production, we want to solve
-    the following problems:
+    If you are excited about using this new row model in production, then you will want to know
+    what changes to expect before we mark it as a 'ready for production' feature. This following
+    is a list of items we indent doing:
     <ol>
         <li><b>Infinite Scrolling:</b> The grid works great at handling large data, as long as
-        each groups children isn't small set. For example, if grouping by country, shop and
+        each groups children is a small set. For example, if grouping by country, shop and
         widget, you could have 50 countries, 50 shops in each country, and 100 widgets in each
         shop. That means you will at most take 100 items back from the server in one call
         even thought there are 250,000 (50x50x100) widgets in total. However if the user
-        decided to remove all grouping, and bring back all low levels rows, then that is a
-        problem. It is our plan to implement infinite scrolling (similar to the
+        decided to remove all grouping, and bring back all low level rows, then that is a
+        problem as the grid will ask from 250,000 items.
+        It is our plan to implement infinite scrolling (similar to the
         <a href="../javascript-grid-virtual-paging/">infinite scrolling row model</a>)
         for each level of the grouping tree, so each group node will effectively have it's
         own infinite scroll, so the grid will in theory be able to handle an infinite
-        amount of data, no matter how many children a particular group has.
+        amount of data, no matter how many children a particular group has, and have this
+            infinite amount of data sliced and diced using the Enterprise Row Model.
         </li>
         <li><b>Caching Expiring of Data:</b> As a follow on from implementing infinite
         scrolling, data will also need to be cached and purged. Purging is important
@@ -214,31 +226,58 @@ export interface ColumnVO {
         side database for generating SQL on the fly to do dynamic slicing and dicing of
         data from a Relational SQL database. We could extend our server side implementations
         to cover many of the popular SQL and no-SQL databases, in both JavaScript (for those
-        doing NodeJS servers) and Java (for those working in finance, where Java is dominant
+        doing NodeJS servers) and Java (for those working in big enterprise, where Java is dominant
         for server side development).</li>
-        <li></li>
     </ol>
 </p>
 
-<p>
-    SQL for creating table in MySQL:
-    <pre>create table olympic_winners (
-    athlete varchar(20),
-    age int,
-    country varchar(20),
-    country_group varchar(2),
-    year int,
-    date varchar(20),
-    sport varchar(20),
-    gold int,
-    silver int,
-    bronze int,
-    total int
-);</pre>
+<h2>Feedback</h2>
 
-    Data was then exported from ag-Grid using <a href="../javascript-grid-export/">CSV Export</a> example
-    and imported into MySQL database using <a href="https://www.mysql.com/products/workbench/">MySQL Workbench</a>.
-    Enable PHP MySQL extension (uncomment mysql lines in php.ini).
-</p>
+<p>We have released this unfinished iteration of the Enterprise Row Model to get feedback. If you
+have an opinion or ideas, please place comments below. If you think it's a good idea, please upvote
+us on Reddit (or be the first person to create a Reddit post about it).</p>
+
+
+<table style="background-color: #eee;">
+    <tr>
+        <td>
+            <script type="text/javascript" src="//www.redditstatic.com/button/button1.js"></script>
+        </td>
+        <td>
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            <a href="https://twitter.com/share" class="twitter-share-button"
+               data-url="https://www.ag-grid.com/ag-grid-partners-with-webpack/"
+               data-text="ag-Grid partners with webpack" data-via="ceolter"
+               data-size="large">Tweet</a>
+            <script>!function (d, s, id) {
+                    var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+                    if (!d.getElementById(id)) {
+                        js = d.createElement(s);
+                        js.id = id;
+                        js.src = p + '://platform.twitter.com/widgets.js';
+                        fjs.parentNode.insertBefore(js, fjs);
+                    }
+                }(document, 'script', 'twitter-wjs');</script>
+        </td>
+    </tr>
+</table>
+
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'aggrid';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
