@@ -7,7 +7,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+<ul>
 
     <h2 id="row-models">
         <img src="../images/svg/docs/row_models.svg" width="50" />
@@ -15,17 +15,35 @@ include '../documentation-main/documentation_header.php';
     </h2>
 
     <p>
-        ag-Grid can be configured to retrieve rows from the server in different ways. You should choose the way
-        which best suits your needs. The supported ways are as follows:
+        The grid follows an MVC pattern. Each data item is wrapped in a <b>Row Node</b> and then
+        stored in a <b>Row Model</b>. The grid rendering engine listens for changes to the row model
+        and draws rows on the screen when the rows change (eg after a filter or a sort is applied).
+    </p>
+
+    <p>
+        Depending on your needs, the grid can be configured with different row models. The row models
+        differ in how the data is loaded. You can load all the data and hand it
+        over to the grid (In Memory Row Model) or you can keep mos tof the data on the server
+        and lazy-load based on what is currently visible to the user (Infinite Scrolling,
+        Viewport and Enterprise Row Models).
+    </p>
+    <p>
+        The following is a summary of the different row models:
         <ul>
-            <li><b>In Memory:</b> This is the default. The grid will load all of the data into the grid in one go.</li>
-            <li><b>Pagination:</b> This is standard pagination, the grid will load the data in pages and provide next & previous buttons.</li>
-            <li><b>Virtual Paging:</b> This will present the data to the user in one screen with a vertical scrollbar.
+            <li><a href="../javascript-grid-in-memory/"><b>In Memory:</b></a> This is the default. The grid will load all of the data into the grid in one go.
+            The grid can then perform filtering, sorting, grouping, pivoting and aggregation all in memory.</li>
+            <li><a href="../javascript-grid-infinite-scrolling/"><b>Infinite Scrolling:</b></a> This will present the data to the user in one screen with a vertical scrollbar.
                 The grid will retrieve the data from the server in blocks using a least recently used algorithm to
-                cache the blocks on the client.</li>
-            <li><b>Viewport:</b> This will present the data to the user on screen with a vertical scrollbar.
+                cache the blocks on the client. Use this if you have a large (to large to bring back from the server
+                in one go) and flat list (not grouped) of data that you want to show to the user.</li>
+            <li><a href="../javascript-grid-viewport/"><b>Viewport:</b></a> This will present the data to the user on screen with a vertical scrollbar.
                 The grid will inform the server exactly what data it is displaying (first and last row) and the
-                server will provide data for exactly those rows only.</li>
+                server will provide data for exactly those rows only. Use this if you want the server to know exactly
+                what the user is viewing, typically used for updates in live datastreams (as server knows exactly
+                what each user is looking at).</li>
+            <li><a href="../javascript-grid-enterprise-model/"><b><img src="../images/lab.png" style="width: 10px;"/> Enterprise:</b></a> Enterprise will be a way to do lazy loading of grouped data
+            with slice and dice capability. If you are building a reporting application, then you are going
+            to be very interested in the enterprise model.</li>
         </ul>
     </p>
 
@@ -50,60 +68,60 @@ include '../documentation-main/documentation_header.php';
         }
     </style>
 
-    <h3 id="row-model-summary">Row Model Summary</h3>
+    <h3 id="row-model-summary">Row Model Comparisons</h3>
 
-    <table class="row-model-table">
-        <tr class="first-row">
-            <td>Model</td>
-            <td>Grouping</td>
-            <td>Aggregation</td>
-            <td>Filtering</td>
-            <td>Sorting</td>
-            <td>Server State</td>
-            <td>Availability</td>
-        </tr>
-        <tr class="item-row">
-            <td>In Memory</td>
-            <td>Yes</td>
-            <td>Yes</td>
-            <td>Yes</td>
-            <td>Yes</td>
-            <td>No</td>
-            <td>Free</td>
-        </tr>
-        <tr class="item-row">
-            <td>Pagination</td>
-            <td>Per Page</td>
-            <td>Per Page</td>
-            <td>Per Page or Server Side</td>
-            <td>Per Page or Server Side</td>
-            <td>No</td>
-            <td>Free</td>
-        </tr>
-        <tr class="item-row">
-            <td>Virtual Paging</td>
-            <td>No</td>
-            <td>No</td>
-            <td>Server Side Only</td>
-            <td>Server Side Only</td>
-            <td>No</td>
-            <td>Free</td>
-        </tr>
-        <tr class="item-row">
-            <td>Viewport</td>
-            <td>No</td>
-            <td>No</td>
-            <td>Server Side Only</td>
-            <td>Server Side Only</td>
-            <td>Yes</td>
-            <td>Enterprise</td>
-        </tr>
-    </table>
+    <p>
+        The following table compares the row models highlights.
+    </p>
+
+    <p>
+        <table class="row-model-table">
+            <tr class="first-row">
+                <td>Model</td>
+                <td>Sorting & Filtering</td>
+                <td>Grouping & Aggregation</td>
+                <td>Server State</td>
+                <td>Availability</td>
+            </tr>
+            <tr class="item-row">
+                <td><a href="../javascript-grid-in-memory/">In Memory</a></td>
+                <td>Inside the Grid</td>
+                <td>Inside the Grid*</td>
+                <td>No</td>
+                <td>ag-Grid (Free)</td>
+            </tr>
+            <tr class="item-row">
+                <td><a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a></td>
+                <td>Server Side</td>
+                <td>No</td>
+                <td>No</td>
+                <td>ag-Grid (Free)</td>
+            </tr>
+            <tr class="item-row">
+                <td><a href="../javascript-grid-viewport/">Viewport</a></td>
+                <td>Server Side</td>
+                <td>No</td>
+                <td>Yes</td>
+                <td>ag-Grid Enterprise</td>
+            </tr>
+            <tr class="item-row">
+                <td><img src="../images/lab.png" style="width: 15px;"/> <a href="../javascript-grid-enterprise-model/">Enterprise</a></td>
+                <td>Server Side</td>
+                <td>No</td>
+                <td>No</td>
+                <td>ag-Grid Enterprise</td>
+            </tr>
+        </table>
+    </p>
+
+    <p>
+        * Grouping and Aggregation for the In Memory row model is available in ag-Grid Enterprise only.
+    </p>
 
     <h3 id="setting-row-model">Setting Row Model</h3>
 
     <p>
-        What row model you use is set as a grid property. Set it to one of <i>{normal, pagination, virtual, viewport}</i>.
+        What row model you use is set as a grid property. Set it to one of <i>{normal, infinite, viewport, enterprise}</i>.
         The default is <i>normal</i>.
     </p>
 
@@ -111,38 +129,52 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Which row model you use will depend on your application. Here are some rules of thumb:
-    <ul>
-        <li>If you are not sure, use default In Memory. The grid can handle massive (100k+) amounts of data. The grid will only
-            render what's visible on the screen (40 rows approx???) even if you have thousands of rows returned from your
-            server. You will not kill the grid with too much data - rather your browser will run out of memory before
-            the grid gets into problems. So if you are unsure, go with In Memory row model first and only change if you need another.</li>
-        <li>If you do not want to shift all the data from your server to your client, as the amount of data is too
-            large to shift over the network or to extract from the underlying datasource, then use either pagination
-            or virtual paging. Each one takes data from the server in blocks. Pagination allows the user to view the
-            data using next / previous buttons. Virtual pagination allows the user to view the data with a vertical scroll.</li>
-        <li>If you want the server to know exactly what the user is looking at, then use viewport, as this will
-            put the state on the server side. This is best when you have changing data and want to push updates
-            to the client when the server side data changes.</li>
-    </ul>
+        <ul>
+            <li>
+                If you are not sure, use default <b><a href="../javascript-grid-in-memory/">In Memory</a></b>.
+                The grid can handle massive (100k+) amounts of data. The grid will only
+                render what's visible on the screen (40 rows approx???) even if you have thousands of rows returned from your
+                server. You will not kill the grid with too much data - rather your browser will run out of memory before
+                the grid gets into problems. So if you are unsure, go with In Memory row model first and only change if you need another.
+                With In Memory, you get sorting, filtering, group, pivoting and aggregation all done for you by the grid.
+                You can also provide your own filters, sorts and aggregation functions to customise these operations.
+                All of the examples in the documentation use the In Memory model unless specifically specified
+                otherwise.
+            </li>
+            <li>
+                If you do not want to shift all the data from your server to your client, as the amount of data is too
+                large to shift over the network or to extract from the underlying datasource, then use on of viewport,
+                infinite scrolling or enterprise. Each one takes data from the server in different ways.
+            </li>
+            <li>
+                Use <b><a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a></b>
+                to bring back a list of data one block at a time from the server.
+                As the user scrolls down (or progresses the pages using pagination) the grid will ask for more rows.
+                This is the easiest way to present a large dataset to the user while only loading a subset from the
+                server at any given time.
+            </li>
+            <li>
+                Use <b><a href="../javascript-grid-viewport/">Viewport</a></b> if you want the server to know exactly what the user is looking at.
+                This is best when you have a large amount of changing data and want to push updates
+                to the client when the server side data changes. Knowing exactly what the user is looking
+                at means you only have to push updates to the relevant users.</li>
+            </li>
+            <li>
+                Use <b><a href="../javascript-grid-enterprise-model/">Enterprise</a></b> if you want to load large amounts of data that is grouped, or you want
+                to allow the user to slice and dice data from the client. This is best used for reporting
+                applications or other applications that need to present large amounts of hierarchical data.
+            </li>
+        </ul>
     </p>
 
-    <h3 id="next-steps">Next Steps</h3>
+    <h2>Grid Datasource</h2>
 
     <p>
-        For <b>In Memory</b> (ie normal) there is nothing else to do. This is the default for the grid and
-        no other configuration is required.
-    </p>
-    <p>
-        For <b>Pagination</b> and <b>Virtual Paging</b> you need to create a
-        <a href="../javascript-grid-datasource/">Datasource</a>. Then go to the section either on
-        <a href="../javascript-grid-pagination/">Pagination</a> or
-        <a href="../javascript-grid-virtual-paging/">Virtual Paging</a>. A datasource can be used
-        by pagination or virtual paging.
-    </p>
-    <p>
-        For <b>Viewport</b> go to the section
-        <a href="../javascript-grid-viewport/">Viewport</a> where you will learn how to create a Viewport
-        Datasouce. A ViewportDatasource is used by viewport only.
+        The <a href="../javascript-grid-in-memory/">In Memory</a> row model does not need a datasource.
+        <a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a>,
+        <a href="../javascript-grid-viewport/">Viewport</a> and
+        <a href="../javascript-grid-enterprise-model/">Enterprise</a> all use a datasource. The documentation
+        on each row model type explains how to configure the datasource for the particular row model.
     </p>
 
 </div>
