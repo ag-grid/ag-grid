@@ -55,7 +55,7 @@ var gridOptions = {
     enableRangeSelection: true,
     // enablePaginationAutoPageSize: true,
     columnDefs: columnDefs,
-    paginationPageSize: 10,
+    paginationPageSize: 150,
     pagination: true,
     groupColumnDef: groupColumn,
     defaultColDef:{
