@@ -7,7 +7,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<ul>
+<div>
 
     <h2 id="row-models">
         <img src="../images/svg/docs/row_models.svg" width="50" />
