@@ -274,7 +274,7 @@ interface IViewportDatasourceParams {
                 will always ask from the top row through to the bottom row.
             </li>
             <li>
-                <b><i>viewportRowModelBufferSize=0</i></b>: Likewise becasue there is no scrolling, there is no
+                <b><i>viewportRowModelBufferSize=0</i></b>: Likewise because there is no scrolling, there is no
                 sense in bringing back extra rows to act as a buffer.
             </li>
         </ul>
