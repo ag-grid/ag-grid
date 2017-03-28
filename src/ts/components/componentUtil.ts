@@ -31,7 +31,7 @@ export class ComponentUtil {
         'rowHeight','rowBuffer','colWidth','headerHeight','groupDefaultExpanded',
         'minColWidth','maxColWidth','viewportRowModelPageSize','viewportRowModelBufferSize',
         'layoutInterval','autoSizePadding','maxPagesInCache','maxConcurrentDatasourceRequests',
-        'paginationOverflowSize','paginationPageSize','infinitePageSize','paginationInitialRowCount',
+        'paginationOverflowSize','paginationPageSize','infiniteBlockSize','infiniteInitialRowCount',
         'scrollbarWidth','paginationStartPage'
     ];
 

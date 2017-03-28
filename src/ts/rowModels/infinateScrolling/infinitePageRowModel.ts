@@ -143,9 +143,9 @@ export class InfinitePageRowModel extends BeanStub implements IRowModel {
             // or a new datasource is set
             maxConcurrentDatasourceRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
             paginationOverflowSize: this.gridOptionsWrapper.getPaginationOverflowSize(),
-            paginationInitialRowCount: this.gridOptionsWrapper.getPaginationInitialRowCount(),
+            paginationInitialRowCount: this.gridOptionsWrapper.getInfiniteInitialRowCount(),
             maxPagesInCache: this.gridOptionsWrapper.getMaxPagesInCache(),
-            pageSize: this.gridOptionsWrapper.getInfinitePageSize(),
+            pageSize: this.gridOptionsWrapper.getInfiniteBlockSize(),
             rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
 
             // the cache could create this, however it is also used by the pages, so handy to create it

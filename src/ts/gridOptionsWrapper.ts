@@ -207,8 +207,8 @@ export class GridOptionsWrapper {
     public getMaxPagesInCache(): number { return this.gridOptions.maxPagesInCache; }
     public getPaginationOverflowSize(): number { return this.gridOptions.paginationOverflowSize; }
     public getPaginationPageSize(): number { return this.gridOptions.paginationPageSize; }
-    public getInfinitePageSize(): number { return this.gridOptions.infinitePageSize; }
-    public getPaginationInitialRowCount(): number { return this.gridOptions.paginationInitialRowCount; }
+    public getInfiniteBlockSize(): number { return this.gridOptions.infiniteBlockSize; }
+    public getInfiniteInitialRowCount(): number { return this.gridOptions.infiniteInitialRowCount; }
     public getPaginationStartPage(): number { return this.gridOptions.paginationStartPage; }
     public isSuppressPaginationPanel() { return isTrue(this.gridOptions.suppressPaginationPanel); }
 
@@ -451,6 +451,9 @@ export class GridOptionsWrapper {
         if (this.gridOptions.rowModelType===Constants.ROW_MODEL_TYPE_VIRTUAL_DEPRECATED) {
             console.warn('ag-grid: since version 8.3.x row model type "virtual" is now called "infinite", ' +
                 'the grid will still work, but please change the property to use "infinite"');
+        }
+        if (options.paginationInitialRowCount) {
+            console.warn('ag-grid: since version 9.0.x paginationInitialRowCount is now called infiniteInitialRowCount');
         }
     }
 
