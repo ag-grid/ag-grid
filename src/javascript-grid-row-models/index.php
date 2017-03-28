@@ -30,20 +30,20 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <style>
-        .item-row {
+        .row-model-table .item-row {
             border-top: 1px solid lightgray;
         }
-        .first-row {
+        .row-model-table .first-row {
             background-color: aliceblue;
             font-weight: bold;
         }
 
-        td {
+        .row-model-table td {
             padding: 4px;
             border-left: 1px solid lightgray;
         }
 
-        table {
+        .row-model-table {
             border-top: 1px solid lightgray;
             border-bottom: 1px solid lightgray;
             border-right: 1px solid lightgray;
@@ -52,7 +52,7 @@ include '../documentation-main/documentation_header.php';
 
     <h3 id="row-model-summary">Row Model Summary</h3>
 
-    <table>
+    <table class="row-model-table">
         <tr class="first-row">
             <td>Model</td>
             <td>Grouping</td>
@@ -111,18 +111,18 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Which row model you use will depend on your application. Here are some rules of thumb:
-        <ul>
+    <ul>
         <li>If you are not sure, use default In Memory. The grid can handle massive (100k+) amounts of data. The grid will only
-        render what's visible on the screen (40 rows approx???) even if you have thousands of rows returned from your
-        server. You will not kill the grid with too much data - rather your browser will run out of memory before
-        the grid gets into problems. So if you are unsure, go with In Memory row model first and only change if you need another.</li>
+            render what's visible on the screen (40 rows approx???) even if you have thousands of rows returned from your
+            server. You will not kill the grid with too much data - rather your browser will run out of memory before
+            the grid gets into problems. So if you are unsure, go with In Memory row model first and only change if you need another.</li>
         <li>If you do not want to shift all the data from your server to your client, as the amount of data is too
-        large to shift over the network or to extract from the underlying datasource, then use either pagination
-        or virtual paging. Each one takes data from the server in blocks. Pagination allows the user to view the
-        data using next / previous buttons. Virtual pagination allows the user to view the data with a vertical scroll.</li>
+            large to shift over the network or to extract from the underlying datasource, then use either pagination
+            or virtual paging. Each one takes data from the server in blocks. Pagination allows the user to view the
+            data using next / previous buttons. Virtual pagination allows the user to view the data with a vertical scroll.</li>
         <li>If you want the server to know exactly what the user is looking at, then use viewport, as this will
-        put the state on the server side. This is best when you have changing data and want to push updates
-        to the client when the server side data changes.</li>
+            put the state on the server side. This is best when you have changing data and want to push updates
+            to the client when the server side data changes.</li>
     </ul>
     </p>
 

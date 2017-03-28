@@ -173,7 +173,6 @@
         menuItem(0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');
         menuItem(0, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave/');
         menuItem(0, 'Touch', 'Touch', 'javascript-grid-touch/');
-        menuItem(0, 'Row Model', 'Row Model', 'javascript-grid-model/');
         menuItem(0, 'Data Export', 'CSV Export', 'javascript-grid-export/');
         menuItemWithIcon('enterprise.png', 0, 'Excel Export', 'Excel Export', 'javascript-grid-excel/');
         menuItem(0, 'RTL', 'RTL', 'javascript-grid-rtl/');
@@ -208,7 +207,8 @@
     <div class="docsMenu-content">
         <?php
         menuItem(0, 'Row Models', 'Overview', 'javascript-grid-row-models/');
-        menuItem(0, 'Datasource', 'Datasource', 'javascript-grid-datasource/');
+        menuItem(0, 'Row Node', 'Row Node', 'javascript-grid-row-node/');
+        menuItem(0, 'In Memory', 'In Memory', 'javascript-grid-in-memory/');
         menuItem(0, 'Infinite Scrolling', 'Infinite Scrolling', 'javascript-grid-infinite-scrolling/');
         menuItemWithIcon('enterprise.png', 0, 'Viewport', 'Viewport', 'javascript-grid-viewport/');
         menuItemWithIcon('lab.png', 0, 'Enterprise', 'Enterprise', 'javascript-grid-enterprise-model/');

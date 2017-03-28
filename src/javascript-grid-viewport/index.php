@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Viewport</h2>
+    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Viewport Row Model</h2>
     <p>
         A Viewport is a rowModel that allows showing a 'window' of data in your client. Typically all the data
         will reside on the server and the server will know what data is displayed in the client. This is again
