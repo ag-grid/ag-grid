@@ -567,7 +567,7 @@ export class GridPanel extends BeanStub {
         let focusedCell : GridCell = this.focusedCellController.getFocusedCell();
         let focusedRowNode = this.paginationProxy.getRow(focusedCell.rowIndex);
         let focusedAbsoluteTop = focusedRowNode.rowTop;
-        let selectionTopDelta = focusedAbsoluteTop - this.getPrimaryScrollViewport().scrollTop;
+        let selectionTopDelta = (focusedAbsoluteTop - this.getPrimaryScrollViewport().scrollTop) - this.paginationProxy.getPixelOffset();
 
 
         //***************************************************************************
@@ -577,14 +577,17 @@ export class GridPanel extends BeanStub {
         //  c) then find what is the row that would appear the first one in the screen and adjust it to its top pos
         //      this will avoid having half printed rows at the top
 
-        let pageSize: number = this.getPrimaryScrollViewport().offsetHeight;
+        let currentPageTopmostPixel = this.getPrimaryScrollViewport().scrollTop;
+        let currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopmostPixel + this.paginationProxy.getPixelOffset());
+        let currentPageTopmostRow = this.paginationProxy.getRow(currentPageTopRow);
+        let viewportSize: number = this.getPrimaryScrollViewport().offsetHeight;
+        let maxPageSize: number = this.paginationProxy.getCurrentPageHeight();
+        let pageSize: number = maxPageSize < viewportSize ? maxPageSize : viewportSize;
 
-        let currentTopmostPixel = this.getPrimaryScrollViewport().scrollTop;
-        let currentTopmostRow = this.paginationProxy.getRow(this.paginationProxy.getRowIndexAtPixel(currentTopmostPixel));
-        let currentTopmostRowTop = currentTopmostRow.rowTop;
+        let currentTopmostRowBottom = currentPageTopmostRow.rowTop + currentPageTopmostRow.rowHeight;
         let toScrollUnadjusted = pagingKey == Constants.KEY_PAGE_DOWN_NAME ?
-            pageSize + currentTopmostRowTop :
-            currentTopmostRowTop - pageSize;
+            pageSize + currentTopmostRowBottom :
+            currentTopmostRowBottom - pageSize;
 
         let nextScreenTopmostRow = this.paginationProxy.getRow(this.paginationProxy.getRowIndexAtPixel(toScrollUnadjusted));
 
@@ -615,14 +618,19 @@ export class GridPanel extends BeanStub {
 
         //***************************************************************************
         // Scroll screen
+        let newScrollTop:number;
         switch (scroll.type){
             case ScrollType.VERTICAL:
                 verticalScroll = <VerticalScroll> scroll;
-                this.getPrimaryScrollViewport().scrollTop = verticalScroll.rowToScrollTo.rowTop;
+                this.ensureIndexVisible(verticalScroll.rowToScrollTo.rowIndex);
+                newScrollTop = verticalScroll.rowToScrollTo.rowTop - this.paginationProxy.getPixelOffset();
+                this.getPrimaryScrollViewport().scrollTop = newScrollTop;
                 break;
             case ScrollType.DIAGONAL:
                 diagonalScroll = <DiagonalScroll> scroll;
-                this.getPrimaryScrollViewport().scrollTop = diagonalScroll.rowToScrollTo.rowTop;
+                this.ensureIndexVisible(diagonalScroll.rowToScrollTo.rowIndex);
+                newScrollTop = diagonalScroll.rowToScrollTo.rowTop - this.paginationProxy.getPixelOffset();
+                this.getPrimaryScrollViewport().scrollTop = newScrollTop;
                 this.getPrimaryScrollViewport().scrollLeft = diagonalScroll.columnToScrollTo.getLeft();
                 break;
             case ScrollType.HORIZONTAL:
@@ -646,11 +654,11 @@ export class GridPanel extends BeanStub {
         let focusedColumn: Column;
         switch (scroll.type){
             case ScrollType.VERTICAL:
-                focusedRowIndex = this.paginationProxy.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + verticalScroll.focusedRowTopDelta);
+                focusedRowIndex = this.paginationProxy.getRowIndexAtPixel(newScrollTop + this.paginationProxy.getPixelOffset() + verticalScroll.focusedRowTopDelta);
                 focusedColumn = focusedCellBeforeScrolling.column;
                 break;
             case ScrollType.DIAGONAL:
-                focusedRowIndex = this.paginationProxy.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + diagonalScroll.focusedRowTopDelta);
+                focusedRowIndex = this.paginationProxy.getRowIndexAtPixel(newScrollTop + this.paginationProxy.getPixelOffset() + diagonalScroll.focusedRowTopDelta);
                 focusedColumn = diagonalScroll.columnToScrollTo;
                 break;
             case ScrollType.HORIZONTAL:
