@@ -11,26 +11,16 @@ include '../documentation-main/documentation_header.php';
 
     <h2 id="virtual-paging-infinite-scrolling">Infinite Scrolling Row Model</h2>
 
-    <div style="background-color: #9acfea">
-        ****** Alberto to do:
-        <ul>
-            <li>Niall copied the datasource documentation into this page. Make the new datasource documentation fit with the rest of the docs - eg use the newer doc sections
-            (cell renderers and editors, or the floating rows) to style, eg put in interface with lots of comments</li>
-        </ul>
-    </div>
-
     <p>
-        Infinite scrolling allows the grid to lazy load rows from the server depending on what the scroll position is of the grid.
+        Infinite scrolling allows the grid to lazy load rows from the server depending on what
+        the scroll position is of the grid. In it's simplest form, the more the user scrolls
+        down, the more rows get loaded.
     </p>
     <p>
-        To enable infinite scrolling, set the grid property <i>rowModelType='infinite'</i>.
-    </p>
-    <p>
-        If the grid knows how many pages in total at the start, the scroll will be sized to match the entire data set
-        despite the data set not loaded from the server.
-    </p>
-    <p>
-        If the grid does not know how many pages at the start, the scroll will extend automatically until the last row is reached.
+        The grid will have an 'auto extending' vertical scroll. That means as the scroll reaches
+        the bottom position, the grid will extend the height to allow scrolling even further down,
+        almost making it impossible for the user to reach the bottom. This will stop happening
+        once the grid has extended the scroll to reach the last record in the table.
     </p>
 
     <h3 id="how-it-works">How it Works</h3>
@@ -56,88 +46,59 @@ include '../documentation-main/documentation_header.php';
         To turn on infinite scrolling, you must a) set the grid property rowModelType to infinite and b) provide a datasource.
     </p>
 
-    <pre>
-// before grid initialised
+    <pre><span class="codeComment">// before grid initialised</span>
 gridOptions.rowModelType = 'infinite';
 gridOptions.datasource = myDataSource;
 
-// after grid initialised, you can set or change the datasource
+<span class="codeComment">// after grid initialised, you can set or change the datasource</span>
 gridOptions.api.setDatasource(myDataSource);</pre>
-
-
 
     <h2 id="datasource">Datasource</h2>
 
     <p>
-        A datasource is used when using row models a) pagination and b) virtual paging. This section explains the
-        datasource used in each fo these row models.
+        A datasource is must be provided to do infinite scrolling. You specify the datasource as a grid property
+        or using the grid API.
     </p>
 
-    <h4 id="setting-up-a-datasource">Setting up a Datasource</h4>
-
-    <p>
-        The datasource is set either as a grid property or by calling setDatasource API method.
-    </p>
-
-    <pre><span class="codeComment">// before grid initialised</span>
+    <pre><span class="codeComment">// set as a property</span>
 gridOptions.datasource = myDatasource;
 
-<span class="codeComment">// using the api</span>
+<span class="codeComment">// or use the api after the grid is initialised</span>
 gridOptions.api.setDatasource(myDatasource);</pre>
 
-    <note>
-        If you are getting the error: "TypeError: Cannot read property 'setDatasource' of undefined" - it's because
-        you are trying to set the datasource through the setDatasource method, but the API has not been attached
-        to the gridOptions yet by the grid. To get around this, set the datasource in the 'ready()' method.
-    </note>
-
-    <h4 id="changing-a-datasource">Changing a Datasource</h4>
+    <h3 id="changing-a-datasource">Changing the Datasource</h3>
 
     <p>
         Changing the datasource after the grid is initialised will reset the paging in the grid. This is useful if the context of your
         data changes, ie if you want to look at a different set of data.
     </p>
 
-    <p>
-        <b>Note:</b> If you call <i>setDatasource</i> the grid will act assuming
+    <note>
+        If you call <i>setDatasource()</i> the grid will act assuming
         it's a new datasource, resetting the paging. However you can pass in the same datasource instance.
         So your application, for example, might have one instance of a datasource that is aware of some
         external context (eg the business date selected for a report, or the 'bank ATM instance' data you are
         connecting to), and when the context changes, you want to reset, but still keep the same datasource
         instance. In this case, just call setDatasource() and pass the same datasource in again.
-    </p>
+    </note>
 
-    <h4 id="the-datasource-object">The Datasource Object</h4>
+    <h3 id="the-datasource-object">Datasource Interface</h3>
 
     <p>
-        The datasource you provide should implement the following interface:
+        In a nutshell, every time the grid wants more rows, it will call <i>getRows()</i> on the datasource.
+        The datasource responds with the rows requested. Your datasource for infinite scrolling should
+        implement the following interface:
     </p>
 
-    <pre><span class="codeComment">// Datasource used by both PaginationController and VirtualPageRowModel</span>
+    <pre><span class="codeComment">// Infinite Scrolling Datasource</span>
 interface IDatasource {
-
-    <span class="codeComment">// If you know up front how many rows are in the dataset, set it here. Otherwise leave blank.</span>
-    rowCount?: number;
 
     <span class="codeComment">// Callback the grid calls that you implement to fetch rows from the server. See below for params.</span>
     getRows(params: IGetRowsParams): void;
-}
-</pre>
-
-    <h4 id="row-count">Row Count</h4>
-    <p>
-        The total number of rows, if known, is set using the attribute rowCount. If it's unknown, do not set, or set to -1. This
-        will put the grid into <i>infinite scrolling</i> mode until the last row is reached. The definition of infinite scrolling
-        depends on whether you are doing pagination or virtual paging and is explained in each of those sections.
-        <b>rowCount is only used when you set the datasource</b> - if you discover what the last row is after
-        data comes back from the server, provide this info as the second parameter of the <i>successCallback</i>
-    </p>
-
-    <h3 id="function-get-rows">Function getRows()</h3>
+}</pre>
 
     <p>
-        getRows is called by the grid to load pages into the browser side cache of pages. It takes parameter, called
-        params, which has the following interface:
+        The getRows() method takes the following parameters:
     </p>
 
     <pre><span class="codeComment">// Params for the above IDatasource.getRows()</span>
@@ -149,95 +110,94 @@ interface IGetRowsParams {
     <span class="codeComment">// The first row index to NOT get.</span>
     endRow: number;
 
+    <span class="codeComment">// If doing server side sorting, contains the sort model</span>
+    sortModel: any,
+
+    <span class="codeComment">// If doing server side filtering, contains the filter model</span>
+    filterModel: any;
+
+    <span class="codeComment">// The grid context object</span>
+    context: any;
+
     <span class="codeComment">// Callback to call for the result when successful.</span>
     successCallback(rowsThisPage: any[], lastRow?: number): void;
 
     <span class="codeComment">// Callback to call for the result when successful.</span>
     failCallback(): void;
-
-    <span class="codeComment">// If doing server side sorting, contains the sort model</span>
-    sortModel: any,
-
-    <span class="codeComment">// If doing server side filtering, contains the filter model</span>
-    filterModel: any,
-
-    <span class="codeComment">// The grid context object</span>
-    context: any
 }</pre>
 
-    <p>
-        <b>startRow</b> and <b>endRow</b> define the range expected for the call. For example, if page
-        size is 100, the getRows function will be called with start = 0 and end = 100 and the
-        grid will expect a result with rows 100 rows 0..99.
-    </p>
+    <h3 id="function-get-rows">Function getRows()</h3>
 
     <p>
-        <b>successCallback</b> and <b>failCallback</b> are provided to either give the grid
-        data, or to let it know the call failed. This is designed to work with the promise pattern
-        that Javascript HTTP calls use. The datasource must call one, and exactly one, of these
-        methods, to ensure correct operation of the grid. Even if your server request fails, you must
-        call 'failCallback'.
+        The <i>getRows()</i> function is called by the grid to load pages into the browser side cache of pages.
+        It takes the following as parameters:
+        <ul>
+            <li>
+                The <b>startRow</b> and <b>endRow</b> define the range expected for the call. For example, if page
+                size is 100, the getRows function will be called with start = 0 and end = 100 and the
+                grid will expect a result with 100 rows, that's rows 0..99.
+            </li>
+            <li>
+                The <b>successCallback(rowsThisBlock, lastRowIndex)</b> should be called when you successfully receive data
+                from the server. The callback has the following parameters:
+                <ul>
+                    <li><b>rowsThisBlock</b> should be the rows you have received for the current block.</li>
+                    <li><b>lastRow</b> should be the index of the last row if known.</li>
+                </ul>
+            </li>
+            <li>
+                The <b>failCallback()</b> should be called if the loading failed. Either one of
+                successCallback() or failCallback() should be called exactly once.
+            </li>
+            <li>
+                The <a href="../javascript-grid-context/"><b>context</b></a> is just passed as is
+                an nothing to do with infinite scrolling. It's there if you need it for providing
+                application state.
+            </li>
+        </ul>
     </p>
+
+    <h3>Setting Last Row Index</h3>
 
     <p>
-        <b>successCallback</b> expects the following parameters:<br/>
-    <ul>
-        <li><b>rowsThisPage:</b> An array of rows loaded for this page.</li>
-        <li><b>lastRow:</b> The total number of rows, if known.</li>
-    </ul>
+        The success callback parameter <b>lastRow</b> is used to move the grid out of infinite scrolling.
+        If the last row is known, then this should be the index of the last row. If the last row is unknown,
+        then leave blank (undefined, null or -1). This attribute is only used when in infinite scrolling / paging.
+        Once the total record count is known, the <i>lastRow</i> parameter will be ignored.
     </p>
+
+    <h3 id="page-size">Block Size</h3>
 
     <p>
-        <b>failCallback</b> expects no parameters. It is up to your application to inform the
-        user of the error. Informing the grid is necessary for the grid to internally clean up
-        after the failure.<br/>
+        The block size is set using the grid property <i>infiniteBlockSize</i>. This is how large the 'pages' should be.
+        Each call to your datasource will be for one block.
     </p>
-
-    <p>
-        <b>lastRow</b> is used to move the grid out of infinite scrolling. If the last row is known,
-        then this should be the index of the last row. If the last row is unknown, then leave
-        blank (undefined, null or -1). This attribute is only used when in infinite scrolling / paging.
-        Once the total record count is known, the total numbers of rows is fixed and cannot be
-        changed for this grid (unless a new datasource is provided).
-    </p>
-
-    <p>
-        <b>context</b> is the grids context. Use this is you want to pass some context information
-        that the datasource then has access to.
-    </p>
-
-    <h3 id="page-size">Page Size</h3>
-
-    <p>
-        The page size is set using the grid property <i>paginationPageSize</i>. This is how large the 'pages' should be.
-        Each call to your datasource will be for one page. For simple pagination, one page is display
-        to the user at a time. For virtual pagination, the page size is the size of the page in the
-        grids page cache.
-    </p>
-
-
 
     <h3 id="aggregation-and-grouping">Aggregation and Grouping</h3>
 
     <p>
         Aggregation and grouping are not available in infinite scrolling.
-        This is because to do such would require the grid knowing
-        the entire data set, which is not possible when using the infinite row model.
+        This is because to do such would require the grid knowing the entire data set,
+        which is not possible when using the infinite row model. If you need aggregation and / or
+        grouping for large datasets, check the <a href="../javascript-grid-enterprise-model/">Enterprise
+        Row Model</a> for doing aggregations on the server side.
     </p>
 
     <h3 id="sorting-filtering">Sorting & Filtering</h3>
 
     <p>
-        Client side sorting & filtering does not make sense in infinite scrolling and is just not supported.
-    </p>
-
-    <p>
-        Server side sorting & filtering is supported.
+        The grid cannot do sorting or filtering for you, as it does not have all of the data. To do
+        sorting or filtering must be done on the server side. For this reason, if the sort or filter
+        changes, the grid will use the datasource to get the data again and provide the sort and filter
+        state to you.
     </p>
 
     <h3 id="simple-example-no-sorting-or-filtering">Simple Example - No Sorting or Filtering</h3>
 
-    The example below shows infinite scrolling. The example makes use of infinite scrolling and caching.
+    <p>
+        The example below shows infinite scrolling. The example makes use of infinite scrolling and caching.
+        Notice that the grid will load more data when you bring the scroll all the way to the bottom.
+    </p>
 
     <show-example example="virtualPaging"></show-example>
 
@@ -354,7 +314,7 @@ interface IGetRowsParams {
         otherwise it won't work and an infinite loop of requesting pages will happen.
     </p>
 
-    <h4 id="property-pagination-initial-row-count">&#8226; Property paginationInitialRowCount</h4>
+    <h4 id="property-pagination-initial-row-count">&#8226; Property infiniteInitialRowCount</h4>
     <p>
         How many rows to initially allow the user to scroll to. This is handy if you expect large data sizes
         and you want the scrollbar to cover many pages before it has to start readjusting for the loading of
@@ -488,14 +448,12 @@ interface IGetRowsParams {
 
     <h2 id="pagination">Pagination with Infinite Scrolling</h2>
 
-    <div style="background-color: #9acfea">
-        ******************** Alberto, to do: need three examples:
-        <ol>
-        <li>Set to 15 rows per page for both pagination and infinite scrolling.</li>
-        <li>Set to 15 rows for pagination but 100 rows for infinite scrolling.</li>
-        <li>With 'auto' rows for pagination and 100 rows for infinite scrolling (what we would recommend).</li>
-    </ol>
-    </div>
+    <p>
+        As with all row models, it is possible to enable pagination with infinite scrolling.
+        With infinite scrolling, it is possible to mix and match with the configuration to
+        achieve different effects. Below shows examples of having the pagination page size
+        smaller than, larger than and equal to the infinite scrolling block size.
+    </p>
 
     <show-example example="examplePaginationInfiniteScrolling"></show-example>
 

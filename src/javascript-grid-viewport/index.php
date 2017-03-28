@@ -225,7 +225,7 @@ interface IViewportDatasourceParams {
         The default buffer size is 5. To change this, set the grid property <i>viewportRowModelBufferSize</i>.
     </p>
 
-    <h2>Example</h2>
+    <h2>Example Viewport</h2>
 
     <p>
         The example below shows a viewport in action.
@@ -247,22 +247,47 @@ interface IViewportDatasourceParams {
         position and pushes data to the client based on the viewport position.
     </p>
 
-    <show-example example="exampleViewport"></show-example>
+    <show-complex-example example="exampleViewport.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleViewport.html,exampleViewport.js,mockServer.js,viewportDatasource.js' }
+                                ]
+                              }"
+                          exampleheight="500px">
+    </show-complex-example>
 
-    <h3>Example Paging with Viewport</h3>
+    <h3>Example Viewport with Pagination</h3>
 
     <p>
-        In the example below, the following are set:
+        The example below is almost identical to the above example with the following differences:
         <ul>
-        <li><b><i>viewportRowModelPageSize=1</i></b>: Because we are showing exact pages, the user will not
-        be scrolling, so there is no need to set a minimum page size. Setting page size to 1 means the grid
-        will always ask from the top row through to the bottom row.</li>
-        <li><b><i>viewportRowModelBufferSize=0</i></b>: Likewise becasue there is no scrolling, there is no
-        sense in bringing back extra rows to act as a buffer.</li>
-    </ul>
+            <li>
+                <b><i>pagination=true</i></b>: To enable pagination.
+            </li>
+            <li>
+                <b><i>paginationAutoPageSize=true</i></b>: To set the pagination size to the height of the grid,
+                so no vertical scrolls are used.
+            </li>
+            <li>
+                <b><i>viewportRowModelPageSize=1</i></b>: Because we are showing exact pages, the user will not
+                be scrolling, so there is no need to set a minimum page size. Setting page size to 1 means the grid
+                will always ask from the top row through to the bottom row.
+            </li>
+            <li>
+                <b><i>viewportRowModelBufferSize=0</i></b>: Likewise becasue there is no scrolling, there is no
+                sense in bringing back extra rows to act as a buffer.
+            </li>
+        </ul>
     </p>
 
-    <show-example example="examplePaginationViewport"></show-example>
+    <show-complex-example example="examplePaginationViewport.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'examplePaginationViewport.html,examplePaginationViewport.js,mockServer.js,viewportDatasource.js' }
+                                ]
+                              }"
+                          exampleheight="500px">
+    </show-complex-example>
 
 </div>
 

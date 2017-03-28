@@ -129,28 +129,28 @@ include '../documentation-main/documentation_header.php';
                 <td><a href="../javascript-grid-in-memory/">In Memory</a></td>
                 <td>Inside the Grid</td>
                 <td>Inside the Grid*</td>
-                <td>No</td>
+                <td>Stateless</td>
                 <td>ag-Grid (Free)</td>
             </tr>
             <tr class="item-row">
                 <td><a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a></td>
                 <td>Server Side</td>
                 <td>No</td>
-                <td>No</td>
+                <td>Stateless</td>
                 <td>ag-Grid (Free)</td>
             </tr>
             <tr class="item-row">
                 <td><a href="../javascript-grid-viewport/">Viewport</a></td>
                 <td>Server Side</td>
                 <td>No</td>
-                <td>Yes</td>
+                <td>Stateful</td>
                 <td>ag-Grid Enterprise</td>
             </tr>
             <tr class="item-row">
                 <td><img src="../images/lab.png" style="width: 15px;"/> <a href="../javascript-grid-enterprise-model/">Enterprise</a></td>
                 <td>Server Side</td>
-                <td>No</td>
-                <td>No</td>
+                <td>Server Side</td>
+                <td>Stateless</td>
                 <td>ag-Grid Enterprise</td>
             </tr>
         </table>

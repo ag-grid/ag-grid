@@ -40,7 +40,7 @@ var gridOptions = {
     maxConcurrentDatasourceRequests: 2,
     // how many rows to initially show in the grid. having 1 shows a blank row, so it looks like
     // the grid is loading from the users perspective (as we have a spinner in the first col)
-    paginationInitialRowCount: 1,
+    infiniteInitialRowCount: 1,
     // how many pages to store in cache. default is undefined, which allows an infinite sized cache,
     // pages are never purged. this should be set for large data to stop your browser from getting
     // full of data

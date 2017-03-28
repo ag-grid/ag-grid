@@ -49,7 +49,7 @@ var gridOptions = {
     paginationPageSize: 100,
     paginationOverflowSize: 2,
     maxConcurrentDatasourceRequests: 2,
-    paginationInitialRowCount: 1,
+    infiniteInitialRowCount: 1,
     maxPagesInCache: 2,
     getRowNodeId: function(item) {
         return item.id;
