@@ -286,7 +286,7 @@
         }
         menuItem(1, 'Styled Report', 'Styled Report', 'example-account-report/');
         menuItem(1, 'File Browser', 'File Browser', 'example-file-browser/');
-        menuItem(1, 'Expressions and Context', 'Expressions and Context', 'example-expressions-and-context/');
+        menuItem(1, 'Expressions and Context', 'Expressions', 'example-expressions-and-context/');
         ?>
     </div>
 

@@ -38,10 +38,10 @@ include '../documentation-main/documentation_header.php';
 <h3>Introduction</h3>
 
 <p>
-    The default row model for ag-Grid, the In Memory row model, will do grouping and
+    The default row model for ag-Grid, the <b>In Memory</b> row model, will do grouping and
     aggregation for you if you give it all the data. If the data will not fit in the browser
-    because it is to large, then you can use either a) <i>infinite scrolling</i> row model or
-    b) <i>viewport</i> row model. However these row models cannot do grouping or aggregation.
+    because it is to large, then you can use either <b>Infinite Scrolling</b> row model or
+    <b>Viewport</b> row model. However these row models cannot do grouping or aggregation.
 </p>
 
 <p>
@@ -70,11 +70,68 @@ include '../documentation-main/documentation_header.php';
     You provide the grid with a datasource. The interface for the datasource is as follows:
 </p>
 
-<pre><span class=""></span>
+<pre><span class="codeComment">// datasource for enterprise row model</span>
 interface IEnterpriseDatasource {
+
+    <span class="codeComment">// just one method, to get the rows</span>
     getRows(params: IEnterpriseGetRowsParams): void;
 }
 </pre>
+
+<p>
+    The getRows takes the following parameters:
+</p>
+
+<pre>interface IEnterpriseGetRowsParams {
+
+    <span class="codeComment">// details for the request</span>
+    request: IEnterpriseGetRowsRequest;
+
+    <span class="codeComment">// success callback, pass the rows back the grid asked for</span>
+    successCallback(rowsThisPage: any[]): void;
+
+    <span class="codeComment">// fail callback, tell the grid the call failed so it can adjust it's state</span>
+    failCallback(): void;
+}
+</pre>
+
+<p>
+    The request, with details about what the grid needs, has the following structure:
+</p>
+
+<pre>interface IEnterpriseGetRowsRequest {
+
+    <span class="codeComment">// details for the request</span>
+    rowGroupCols: ColumnVO[];
+
+    <span class="codeComment">// columns that have aggregations on them</span>
+    valueCols: ColumnVO[];
+
+    <span class="codeComment">// what groups the user is viewing</span>
+    groupKeys: string[];
+
+    <span class="codeComment">// if filtering, what the filter model is</span>
+    filterModel: any;
+
+    <span class="codeComment">// if sorting, what the sort model is</span>
+    sortModel: any;
+}
+
+<span class="codeComment">// we pass a VO (Value Object) of the column and not the column itself,</span>
+<span class="codeComment">// so the data can be converted to JSON and passed to server side</span>
+export interface ColumnVO {
+    id: string;
+    displayName: string;
+    field: string;
+    aggFunc: string;
+}
+</pre>
+
+<p>
+    All the interfaces above is a lot to take in. The best thing to do is look at the examples below
+    and debug through them with teh web console and observed what is passed back as you interact
+    with the grid.
+</p>
 
 <h3>Example - Predefined Master Detail - Mocked Server</h3>
 
@@ -124,7 +181,12 @@ interface IEnterpriseDatasource {
 
 <h3>Example - Slice and Dice - Real Server</h3>
 
-
+<p>
+    It is not possible to put up a full end to end example our the documentation
+    website, as we cannot host servers on our website, and even if we did, you would
+    not be able to run it locally. Instead we have put a full end to end example
+    in Github at <a ></a>
+</p>
 
 <h4>What's Left</h4>
 
