@@ -167,7 +167,14 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <h2>Grid Datasource</h2>
+    <h2 id="datasource">Pagination</h2>
+
+    <p>
+        Pagination can be applied to any of the row model types. The documentation on each row model
+        type covers pagination for that row model type.
+    </p>
+
+    <h2 id="datasource">Grid Datasource</h2>
 
     <p>
         The <a href="../javascript-grid-in-memory/">In Memory</a> row model does not need a datasource.
