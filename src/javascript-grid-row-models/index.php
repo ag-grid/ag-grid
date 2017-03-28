@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         Depending on your needs, the grid can be configured with different row models. The row models
         differ in how the data is loaded. You can load all the data and hand it
-        over to the grid (In Memory Row Model) or you can keep mos tof the data on the server
+        over to the grid (In Memory Row Model) or you can keep most of the data on the server
         and lazy-load based on what is currently visible to the user (Infinite Scrolling,
         Viewport and Enterprise Row Models).
     </p>
@@ -44,6 +44,48 @@ include '../documentation-main/documentation_header.php';
             <li><a href="../javascript-grid-enterprise-model/"><b><img src="../images/lab.png" style="width: 10px;"/> Enterprise:</b></a> Enterprise will be a way to do lazy loading of grouped data
             with slice and dice capability. If you are building a reporting application, then you are going
             to be very interested in the enterprise model.</li>
+        </ul>
+    </p>
+
+    <h3>Light Overview of Row Model</h3>
+
+    <p>
+        Below shows a very cut down and simplistic class diagram of the interaction between
+        the grid's rendering engine (RowRenderer) and the Row Models.
+    </p>
+
+    <p>
+        <img src="./rowModels.png"/>
+    </p>
+
+    <p>
+        The following should be noted from the diagram:
+        <ul>
+            <li>
+                The grid has exactly one <b>RowRenderer</b> instance. The RowRenderer contains a reference to the PaginationProxy
+                where it asks for the rows one at a time for rendering.
+            </li>
+            <li>
+                The grid has exactly one <b>PaginationProxy</b> instance. The PaginationProxy will either a) do nothing
+                if pagination is not active and just forward all requests to the Row Model or b) do pagination if
+                pagination is active. The PaginationProxy has exactly one RowModel instance.
+            </li>
+            <li>
+                You can configure the grid to us any of the provided <b>Row Models</b> - that's why RowModel is in
+                italics, it means it's an interface, the concrete implementation is what you decide at run time.
+                The RowModel contains alist of RowNodes. The RowModel may have a list of all the RowNodes (In Memory Row Model) or have
+                a DataSource where it can lazy load RowNodes
+            </li>
+            <li>
+                A <b>RowNode</b> has a reference to exactly one row data item (the client application provides
+                the row data items). The RowNode has state information about the row item, such as whether it is
+                selected, and what it's height is.
+            </li>
+            <li>
+                When there is a change in state in the RowNodes, the RowModel fires a <b>modelUpdates</b>
+                event which gets the RowRenderer to refresh. This happens for many reasons, or example the
+                data is sorted, filtered, a group is opened, or the underlying data has changed.
+            </li>
         </ul>
     </p>
 
@@ -80,7 +122,7 @@ include '../documentation-main/documentation_header.php';
                 <td>Model</td>
                 <td>Sorting & Filtering</td>
                 <td>Grouping & Aggregation</td>
-                <td>Server State</td>
+                <td>Server State**</td>
                 <td>Availability</td>
             </tr>
             <tr class="item-row">
@@ -116,6 +158,11 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         * Grouping and Aggregation for the In Memory row model is available in ag-Grid Enterprise only.
+    </p>
+    <p>
+        ** Server State means your server is aware of client state. For viewport, the server knows exactly
+        what each user is currently looking at, whereas all other row models access the server is a stateless
+        fashion.
     </p>
 
     <h3 id="setting-row-model">Setting Row Model</h3>

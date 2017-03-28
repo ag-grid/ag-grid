@@ -26,6 +26,7 @@ include '../documentation-main/documentation_header.php';
         ****** Alberto to do:
         <ul>
             <li>Example showing start page.</li>
+            <li>Example showing auto page size.</li>
             <li>Section explaining the API (copy paste from the old one??).</li>
             <li>Section on pagination events.</li>
             <li>Example showing 1) API, 2) Suppress Pagination Panel (eg if they want to do pagination

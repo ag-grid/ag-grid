@@ -1,5 +1,5 @@
 <?php
-$key = "Quick Filter";
+$key = "Enterprise";
 $pageTitle = "JavaScript Grid Enterprise Model";
 $pageDescription = "the most advanced row model for ag-Grid is the Enterprise row model, allowing server side grouping and aggregation.";
 $pageKeyboards = "ag-Grid Enterprise Row Model";
