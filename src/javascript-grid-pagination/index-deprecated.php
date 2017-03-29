@@ -12,10 +12,8 @@ include '../documentation-main/documentation_header.php';
         <note>
             <b>Notice on Pagination</b>
             <p>
-                In v9.0 ag-Grid pagination changed. See the <a href="index-deprecated.php">old pagination documentation</a>
-                for how it used to work. We recommend moving to
-                <a href="../javascript-grid-infinite-scrolling/#pagination">pagination with infinite scrolling</a>
-                as a way of migration to the new mechanism.
+                In v9.0 ag-Grid pagination changed. See the <a href="index.php">new pagination documentation</a>
+                to see how it works now and to see how you can migrate if you are using this deprecated pagination.
             </p>
             <b>What was wrong with the old way?</b>
             <p>
