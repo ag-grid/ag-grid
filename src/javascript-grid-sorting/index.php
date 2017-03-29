@@ -162,20 +162,20 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         by agGrid and can be configured like the following:
     </p>
 
-    <pre>// when using the ag-Grid bundle with global agGrid variable:
+    <pre><span class="codeComment">// when using the ag-Grid bundle with global agGrid variable:</span>
 var groupColumn = {
     headerName: "Group",
-    comparator: agGrid.defaultGroupComparator, // this is the important bit
+    comparator: agGrid.defaultGroupComparator, <span class="codeComment">// this is the important bit</span>
     cellRenderer: {
         renderer: "group",
     }
 };
 
-// when using CommmonJS
+<span class="codeComment">// when using CommmonJS</span>
 import {defaultGroupComparator} from 'ag-grid/main';
 var groupColumn = {
     headerName: "Group",
-    comparator: defaultGroupComparator, // this is the important bit
+    comparator: defaultGroupComparator, <span class="codeComment">// this is the important bit</span>
     cellRenderer: {
         renderer: "group",
     }

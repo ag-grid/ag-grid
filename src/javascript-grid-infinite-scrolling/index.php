@@ -344,6 +344,13 @@ interface IGetRowsParams {
                     additional data.</p>
             </td>
         </tr>
+        <tr id="property-infinite-block-size">
+            <th>infiniteBlockSize</th>
+            <td>
+                <p>How many rows for each infinite block.</p>
+            </td>
+        </tr>
+
 
     </table>
 
