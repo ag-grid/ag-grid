@@ -96,13 +96,16 @@ export interface GridOptions {
     functionsPassive?: boolean;
     maxConcurrentDatasourceRequests?: number;
     maxPagesInCache?: number;
+
     paginationOverflowSize?: number;
     infiniteInitialRowCount?: number;
     paginationPageSize?: number;
-    enablePaginationAutoPageSize?: number;
     infiniteBlockSize?: number;
+    paginationAutoPageSize?: number;
     paginationStartPage?: number;
     suppressPaginationPanel?: boolean;
+
+    infinitePageSize?: number;
     pagination?: boolean;
     editType?: string;
     suppressTouch?: boolean;
@@ -282,6 +285,10 @@ export interface GridOptions {
     onDragStopped?(event?: any): void;
     onItemsAdded?(event?: any): void;
     onItemsRemoved?(event?: any): void;
+
+
+
+
     onPaginationReset?(event?: any): void;
     onPaginationPageLoaded?(event?: any): void;
     onPaginationPageRequested?(event?: any): void;

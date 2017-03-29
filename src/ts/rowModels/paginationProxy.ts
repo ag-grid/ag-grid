@@ -25,7 +25,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     private notActive(): boolean {
-        return !this.gridOptionsWrapper.isEnablePaginationAutoPageSize();
+        return !this.gridOptionsWrapper.isPaginationAutoPageSize();
     }
 
     @PostConstruct
@@ -90,6 +90,9 @@ export class PaginationProxy extends BeanStub implements IPaginationService, IRo
         this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
 
         this.onModelUpdated();
+
+        let paginationStartPage = this.gridOptionsWrapper.getPaginationStartPage();
+        this.currentPage = paginationStartPage ? paginationStartPage : 0;
     }
 
     public isLastRowFound(): boolean {
