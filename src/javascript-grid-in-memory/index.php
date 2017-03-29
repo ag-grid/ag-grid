@@ -9,48 +9,37 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="row-model">In Memory Row Model</h2>
-
-    <p>
-        You pass row data to the grid. The grid will not modify the array you pass it, ie the grid may apply
-        sorting or filtering to the data, however this will be done outside of the array you provide the data in.
-        The grid will also not attempt to modify any of the individual data items (unless you are using the editing
-        features of the grid, in which case the grid will update the edited fields only). This guarantees no side
-        effects to your data from the grid.
-    </p>
-
-    <p>
-        The data is 'managed' via the rowController. This section explains how the rowController works.
-    </p>
-
-    <note>
-        You do not need to know this. However it is helpful to understand what's going on inside the grid sometimes.
-    </note>
-
-    <h2 id="row-models">Row Models</h2>
-
-    <p>
-        There are three row row models used in the grid:
-        <ul>
-            <li><b>In Memory Row Model:</b></li> This is the most common. It allows the full set of filtering, sorting
-            and grouping inside the grid. When doing pagination, this model is used to display one page at a time in the
-            grid. The only times this is not used is when using virtual pagination or viewport.
-            <li><b>Virtual Page Row Model:</b></li> This is used when doing virtual pagination.
-            <li><b>Viewport Row Model:</b></li> This is used when doing viewport.
-        </ul>
-
-        The virtual page row model is explained in the section <a href="../javascript-grid-virtual-paging/">Virtual
-        Paging and Infinite Scrolling</a>. The viewport row model is explained in the section
-        <a href="../javascript-grid-viewport/">Viewport</a>. The remainder of this section of the documentation
-        focuses on the In Memory Row Model.
-
-    </p>
-
     <h2 id="in-memory-row-model">In Memory Row Model</h2>
 
     <p>
+        The simplest row model to use is the In Memory Row Model. This row model takes
+        all of the data to be displayed and provides the following features inside the grid:
+        <ul>
+            <li>Filtering</li>
+            <li>Sorting</li>
+            <li>Grouping*</li>
+            <li>Aggregation*</li>
+            <li>Pivoting*</li>
+        </ul>
+    * Grouping, Aggregation and Pivoting are available in ag-Grid Enterprise only.
+    </p>
+
+    <p>
+        The in memory row model is the default row model for ag-Grid and used in all the examples
+        (unless the example is explicitly demonstrating another row model). As such, the usage
+        of the in memory row model is not explained in detail here. Please refer to the main
+        parts of the grid documentation in how the features work with the in memory row model.
+    </p>
+
+    <h2>How It Works</h2>
+
+    <p>
+        You do not need to know how the in memory row model works, however it can be helpful
+        for those who are interested.
+    </p>
+    <p>
         The in memory row model is responsible for working out how to display the rows inside the grid.
-        It has a complex data structures, representing the data in difference states. The states are as follows:
+        It has a complex data structure, representing the data in difference states. The states are as follows:
         <ul>
         <li><b>State 1: Row Data:</b> Row data the application provides.</li>
         <li><b>State 2: All Rows:</b> Each data item the application provides wrapped in a rowNode object.</li>
