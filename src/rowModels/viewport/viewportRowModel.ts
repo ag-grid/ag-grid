@@ -148,6 +148,10 @@ export class ViewportRowModel implements IRowModel {
         return this.rowCount - 1;
     }
 
+    public getRowCount(): number {
+        return this.rowCount;
+    }
+
     public getRowIndexAtPixel(pixel: number): number {
         if (this.rowHeight !== 0) { // avoid divide by zero error
             return Math.floor(pixel / this.rowHeight);

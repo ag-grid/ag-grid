@@ -239,6 +239,10 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         return this.rowsToDisplay ? this.rowsToDisplay.length - 1 : 0;
     }
 
+    public getRowCount(): number {
+        return this.rowsToDisplay ? this.rowsToDisplay.length : 0;
+    }
+
     public getRowIndexAtPixel(pixel: number): number {
         if (this.rowHeight !== 0) { // avoid divide by zero error
             return Math.floor(pixel / this.rowHeight);
