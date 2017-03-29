@@ -181,6 +181,15 @@ export declare class AgGridNg2 implements AfterViewInit {
     suppressPaginationPanel: any;
     paginationStartPage: any;
     floatingFilter: any;
+    groupHideOpenParents: any;
+    defaultExportParams: any;
+    infiniteBlockSize: any;
+    infiniteInitialRowCount: any;
+    allowContextMenuWithControlKey: any;
+    groupMultiAutoColumn: any;
+    pagination: any;
+    stopEditingWhenGridLosesFocus: any;
+    paginationAutoPageSize: any;
     /**
      * Outputs
      */
@@ -253,4 +262,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     paginationReset: EventEmitter<any>;
     paginationPageLoaded: EventEmitter<any>;
     paginationPageRequested: EventEmitter<any>;
+    paginationChanged: EventEmitter<any>;
+    bodyHeightChanged: EventEmitter<any>;
+    componentStateChanged: EventEmitter<any>;
 }

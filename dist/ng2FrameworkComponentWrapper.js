@@ -62,8 +62,12 @@ var Ng2FrameworkComponentWrapper = (function () {
     };
     return Ng2FrameworkComponentWrapper;
 }());
+Ng2FrameworkComponentWrapper.decorators = [
+    { type: core_1.Injectable },
+];
+/** @nocollapse */
+Ng2FrameworkComponentWrapper.ctorParameters = function () { return []; };
 Ng2FrameworkComponentWrapper = __decorate([
-    core_1.Injectable(),
     main_1.Bean("frameworkComponentWrapper")
 ], Ng2FrameworkComponentWrapper);
 exports.Ng2FrameworkComponentWrapper = Ng2FrameworkComponentWrapper;

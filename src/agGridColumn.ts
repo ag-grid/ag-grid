@@ -1,7 +1,6 @@
 import {Component, Input, ContentChildren, QueryList} from "@angular/core";
 import {
     ColDef,
-    SetFilterParameters,
     TextAndNumberFilterParameters,
     ICellEditor,
     ICellRendererFunc,
@@ -11,7 +10,8 @@ import {
     IsColumnFunc,
     IAggFunc,
     ColGroupDef,
-    GetQuickFilterTextParams
+    GetQuickFilterTextParams,
+    ISetFilterParams
 } from "ag-grid/main";
 
 @Component({
@@ -128,7 +128,7 @@ export class AgGridColumn {
         new (): IFilter;
     };
     @Input() public filterFramework: any;
-    @Input() public filterParams: SetFilterParameters | TextAndNumberFilterParameters;
+    @Input() public filterParams: ISetFilterParams | TextAndNumberFilterParameters;
     @Input() public cellClassRules: {
         [cssClassName: string]: (Function | string);
     };
