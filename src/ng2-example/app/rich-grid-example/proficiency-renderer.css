@@ -19,11 +19,15 @@ label {
     padding-left: 4px;
     font-weight: bold;
     font-size: 13px;
-    z-index: 100;
+    z-index: 10;
 }
 
 .div-outer-div {
     display: inline-block;
     height: 100%;
     width: 100%;
+}
+
+.ag-menu {
+    z-index: 50;
 }
