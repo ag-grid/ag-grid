@@ -197,6 +197,14 @@ export interface ColumnVO {
     applications.
 </p>
 
+<h2>Pagination</h2>
+<p>
+    To enable pagination when using the enterprise row model, all you have to do is turning pagination on with
+    <i>pagination=true</i>. Find below an example.
+</p>
+
+<show-example example="exampleEnterpriseSimpleJsDbPagination"></show-example>
+
 <h2>What's Left To DO?</h2>
 
 <p>
