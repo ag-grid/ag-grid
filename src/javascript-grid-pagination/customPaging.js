@@ -55,6 +55,8 @@ var gridOptions = {
     enableRangeSelection: true,
     columnDefs: columnDefs,
     pagination: true,
+    paginationPageSize:10,
+    paginationStartPage:4,
     groupColumnDef: groupColumn,
     defaultColDef:{
         editable: true,
@@ -63,6 +65,10 @@ var gridOptions = {
         enableValue:true
     }
 };
+
+function onPageSizeChanged(newPageSize) {
+    this.gridOptions.api.paginationSetPageSize(Number(newPageSize));
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

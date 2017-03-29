@@ -54,6 +54,7 @@ var gridOptions = {
     pivotPanelShow: 'always',
     enableRangeSelection: true,
     columnDefs: columnDefs,
+    paginationAutoPageSize:true,
     pagination: true,
     groupColumnDef: groupColumn,
     defaultColDef:{
