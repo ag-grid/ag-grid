@@ -1,3 +1,4 @@
+
 var listOfCountries = ['United States','Russia','Australia','Canada','Norway','China','Zimbabwe','Netherlands','South Korea','Croatia',
     'France','Japan','Hungary','Germany','Poland','South Africa','Sweden','Ukraine','Italy','Czech Republic','Austria','Finland','Romania',
     'Great Britain','Jamaica','Singapore','Belarus','Chile','Spain','Tunisia','Brazil','Slovakia','Costa Rica','Bulgaria','Switzerland',
@@ -176,13 +177,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', '../olympicWinners.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            var httpResponse = JSON.parse(httpRequest.responseText);
-            setRowData(httpResponse);
-        }
-    };
+    agGrid.simpleHttpRequest({url: '../olympicWinners.json'})
+        .then( function(rows) {
+                setRowData(rows);
+            }
+        );
 });
