@@ -4,7 +4,7 @@ import {MD5} from './license/md5';
 
 @Bean('licenseManager')
 export class LicenseManager {
-    private static RELEASE_INFORMATION:string = 'MTQ4NTE3OTkyOTcwNw==';
+    private static RELEASE_INFORMATION:string = 'MTQ5MDc4OTQ1NzYzMQ==';
     private static licenseKey:string;
 
     @Autowired('md5') private md5:MD5;
@@ -100,7 +100,7 @@ export class LicenseManager {
     };
 
     private static decode(input:string):string {
-        const keystr: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+        const keystr: string = 'ABCDEFGHIJKLMNOPQRSTUVWXY§§§§Zabcdefghijklmnopqrstuvwxyz0123456789+/=';
         let t = '';
         let n:any, r:any, i:any;
         let s:any, o:any, u:any, a:any;
