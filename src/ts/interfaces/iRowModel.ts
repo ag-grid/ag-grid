@@ -8,6 +8,9 @@ export interface IRowModel {
     getPageFirstRow(): number;
     getPageLastRow(): number;
 
+    /** This is legacy, not used by ag-Grid, but keeping for backward compatibility */
+    getRowCount(): number;
+
     /** Returns the row index at the given pixel */
     getRowIndexAtPixel(pixel: number): number;
     /** Returns total height of all the rows - used to size the height of the grid div that contains the rows */

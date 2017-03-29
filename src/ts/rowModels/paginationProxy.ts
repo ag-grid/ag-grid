@@ -187,6 +187,10 @@ export class PaginationProxy extends BeanStub implements IPaginationService, IRo
         }
     }
 
+    public getRowCount(): number {
+        return this.rowModel.getRowCount();
+    }
+
     public goToPageWithIndex(index: any): void {
         if (!this.active) { return; }
 

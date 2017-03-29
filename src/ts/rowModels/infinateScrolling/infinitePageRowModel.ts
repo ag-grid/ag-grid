@@ -207,6 +207,10 @@ export class InfinitePageRowModel extends BeanStub implements IRowModel {
         return this.virtualPageCache ? this.virtualPageCache.getRowCount() -1 : 0;
     }
 
+    public getRowCount(): number {
+        return this.virtualPageCache ? this.virtualPageCache.getRowCount() : 0;
+    }
+
     public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {
         if (this.virtualPageCache) {
             this.virtualPageCache.insertItemsAtIndex(index, items);

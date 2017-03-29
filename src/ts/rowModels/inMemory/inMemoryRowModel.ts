@@ -85,8 +85,16 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         }
     }
 
-    isLastRowFound(): boolean {
+    public isLastRowFound(): boolean {
         return true;
+    }
+
+    public getRowCount(): number {
+        if (this.rowsToDisplay) {
+            return this.rowsToDisplay.length;
+        } else {
+            return 0;
+        }
     }
 
     public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
