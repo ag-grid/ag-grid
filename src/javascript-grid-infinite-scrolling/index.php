@@ -199,7 +199,7 @@ interface IGetRowsParams {
         Notice that the grid will load more data when you bring the scroll all the way to the bottom.
     </p>
 
-    <show-example example="virtualPaging"></show-example>
+    <show-example example="exampleInfinite"></show-example>
 
     <h3 id="selection">Selection</h3>
 
@@ -255,7 +255,14 @@ interface IGetRowsParams {
         ag-Grid-Enterprise is not required for infinite scrolling)
     </p>
 
-    <show-example example="virtualPagingServerSide"></show-example>
+    <show-complex-example example="exampleInfiniteServerSide.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleInfiniteServerSide.html,exampleInfiniteServerSideCommon.js,exampleInfiniteServerSide.js' }
+                                ]
+                              }"
+                          exampleheight="350px">
+    </show-complex-example>
 
     <h3 id="configuring-a-bit-differently">Configuring A Bit Differently</h3>
 
@@ -264,7 +271,14 @@ interface IGetRowsParams {
         and creates a datasource Class. The example also just creates (makes up) data on the fly.
     </p>
 
-    <show-example example="exampleVirtualPagingMadeUpData"></show-example>
+    <show-complex-example example="exampleInfiniteMadeUpData.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleInfiniteMadeUpData.html,exampleInfiniteMadeUpData.js' }
+                                ]
+                              }"
+                          exampleheight="350px">
+    </show-complex-example>
 
     <h3 id="loading-spinner">Loading Spinner</h3>
 
@@ -444,18 +458,101 @@ interface IGetRowsParams {
     get called after the data is set as well as when the row is created (when the data may not yet be available).
     </p>
 
-    <show-example example="exampleInsertRemoveVirtualPaging"></show-example>
+    <show-complex-example example="exampleInsertRemoveVirtualPaging.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleInsertRemoveVirtualPaging.html,exampleInsertRemoveVirtualPaging.js' }
+                                ]
+                              }"
+                          exampleheight="350px">
+    </show-complex-example>
 
     <h2 id="pagination">Pagination with Infinite Scrolling</h2>
 
     <p>
         As with all row models, it is possible to enable pagination with infinite scrolling.
         With infinite scrolling, it is possible to mix and match with the configuration to
-        achieve different effects. Below shows examples of having the pagination page size
-        smaller than, larger than and equal to the infinite scrolling block size.
+        achieve different effects. The following examples are presented to show the different
+        combinations you can have.
+
+        <table class="table">
+            <tr>
+                <th>Example</th>
+                <th>Page Size</th>
+                <th>Block Size</th>
+                <th>Comment</th>
+            </tr>
+            <tr>
+                <td>Example 1</td>
+                <td>Auto</td>
+                <td>Large</td>
+                <td>Most Recommended</td>
+            </tr>
+            <tr>
+                <td>Example 2</td>
+                <td>Equal</td>
+                <td>Equal</td>
+                <td>Recommended Sometimes</td>
+            </tr>
+            <tr>
+                <td>Example 3</td>
+                <td>Large</td>
+                <td>Small</td>
+                <td>Not Recommended</td>
+            </tr>
+        </table>
+
     </p>
 
-    <show-example example="examplePaginationInfiniteScrolling"></show-example>
+    <h3>Example 1: Auto Pagination Page Size, Large Infinite Block Size</h3>
+
+    <p>
+        This example is the recommended approach. The infinite block size is larger than the pages size,
+        so the grid loads data for a few pages, allowing the user to hit 'next' a few times before a server
+        sided call is needed.
+    </p>
+
+    <show-complex-example example="examplePaginationInfinite1.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'examplePaginationInfinite1.html,examplePaginationInfinite1.js,exampleInfiniteServerSide.js' }
+                                ]
+                              }"
+                          exampleheight="350px">
+    </show-complex-example>
+
+    <h3>Example 2: Equal Pagination Page Size and Large Infinite Block Size</h3>
+
+    <p>
+        This example demonstrates having the page and block sizes equal. Here the server is hit
+        every time a new page is navigated to.
+    </p>
+
+    <show-complex-example example="examplePaginationInfinite1.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'examplePaginationInfinite2.html,examplePaginationInfinite2.js,exampleInfiniteServerSide.js' }
+                                ]
+                              }"
+                          exampleheight="350px">
+    </show-complex-example>
+
+    <h3>Example 3: Large Pagination Page Size and Small Infinite Block Size</h3>
+
+    <p>
+        This examples hows a large pages size and a small block size. The grid behaves weird as each page is
+        individually working as an infinite scroll. Although it is correct, the grid is doing exactly what you
+        asked it to do, however it is not recommended, as it gives a very poor user experience.
+    </p>
+
+    <show-complex-example example="examplePaginationInfinite1.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'examplePaginationInfinite3.html,examplePaginationInfinite3.js,exampleInfiniteServerSide.js' }
+                                ]
+                              }"
+                          exampleheight="350px">
+    </show-complex-example>
 
 </div>
 
