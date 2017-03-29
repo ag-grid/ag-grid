@@ -232,7 +232,6 @@ export class GridOptionsWrapper {
     public isEnableGroupEdit() { return isTrue(this.gridOptions.enableGroupEdit); }
     public isSuppressMiddleClickScrolls() { return isTrue(this.gridOptions.suppressMiddleClickScrolls); }
     public isSuppressPreventDefaultOnMouseWheel() { return isTrue(this.gridOptions.suppressPreventDefaultOnMouseWheel); }
-    public isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
     public isSuppressColumnVirtualisation() { return isTrue(this.gridOptions.suppressColumnVirtualisation); }
     public isSuppressContextMenu() { return isTrue(this.gridOptions.suppressContextMenu); }
     public isAllowContextMenuWithControlKey() { return isTrue(this.gridOptions.allowContextMenuWithControlKey); }
@@ -240,7 +239,10 @@ export class GridOptionsWrapper {
     public isEnableFilter() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); }
     public isPagination() { return isTrue(this.gridOptions.pagination); }
 
+    // these are deprecated, should remove them when we take out server side pagination
     public isEnableServerSideFilter() { return this.gridOptions.enableServerSideFilter; }
+    public isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
+
     public isSuppressScrollLag() { return isTrue(this.gridOptions.suppressScrollLag); }
     public isSuppressMovableColumns() { return isTrue(this.gridOptions.suppressMovableColumns); }
     public isAnimateRows() { return isTrue(this.gridOptions.animateRows); }
