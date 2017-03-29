@@ -455,6 +455,9 @@ export class GridOptionsWrapper {
         if (options.paginationInitialRowCount) {
             console.warn('ag-grid: since version 9.0.x paginationInitialRowCount is now called infiniteInitialRowCount');
         }
+        if (options.infinitePageSize) {
+            console.warn('ag-grid: since version 9.0.x infinitePageSize is now called infiniteBlockSize');
+        }
     }
 
     public getLocaleTextFunc() {
