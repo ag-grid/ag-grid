@@ -7,24 +7,12 @@ import {
     ICellRendererFunc,
     Component,
     BaseFilter,
-    QuerySelector
+    QuerySelector,
+    ISetFilterParams
 } from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
-
-export interface ISetFilterParams extends IFilterParams {
-    suppressRemoveEntries ?: boolean;
-    values ?: any;
-    cellHeight: number;
-    apply: boolean;
-    suppressSorting: boolean;
-    cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
-    newRowsAction: string;
-    suppressMiniFilter:boolean;
-    selectAllOnMiniFilter:boolean;
-    comparator?: (a: any, b: any) => number;
-}
 
 export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     private model: SetFilterModel;
