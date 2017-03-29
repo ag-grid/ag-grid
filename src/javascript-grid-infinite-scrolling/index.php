@@ -307,102 +307,137 @@ interface IGetRowsParams {
         to allow you control of the cache.
     </p>
 
-    <h4 id="property-overflow-size">&#8226; Property overflowSize</h4>
-    <p>
-        When infinite scrolling is active, this says how many rows beyond the current last row
-        the scrolls should allow to scroll. For example, if 200 rows already loaded from server,
-        and overflowSize is 50, the scroll will allow scrolling to row 250. Default is 1.
-    </p>
 
-    <h4 id="property-max-concurrent-requests">&#8226; Property maxConcurrentRequests</h4>
-    <p>
-        How many requests to hit the server with concurrently. If the max is reached, requests are queued.
-        Default is 1, thus by default, only one request will be active at any given time.
-    </p>
+    <h3 id="properties">Properties</h3>
+    <table class="table">
+        <tr>
+            <th>Property</th>
+            <th>Description</th>
+        </tr>
+        <tr id="property-overflow-size">
+            <th>overflowSize</th>
+            <td>
+                <p>When infinite scrolling is active, this says how many rows beyond the current last row
+                    the scrolls should allow to scroll. For example, if 200 rows already loaded from server,
+                    and overflowSize is 50, the scroll will allow scrolling to row 250. Default is 1.</p>
+            </td>
+        </tr>
+        <tr id="property-max-concurrent-requests">
+            <th>maxConcurrentRequests</th>
+            <td><p>How many requests to hit the server with concurrently. If the max is reached, requests are queued.
+                    Default is 1, thus by default, only one request will be active at any given time.</p></td>
+        </tr>
+        <tr id="property-max-pages-in-cache">
+            <th>maxPagesInCache</th>
+            <td>
+                <p>How many pages to cache in the client. Default is no limit, so every requested
+                    page is kept. Use this if you have memory concerns, so pages least recently viewed are purged. If used, make
+                    sure you have enough pages in cache to display one whole view of the table (ie what's within the scrollable area),
+                    otherwise it won't work and an infinite loop of requesting pages will happen.</p>
+            </td>
+        </tr>
+        <tr id="property-pagination-initial-row-count">
+            <th>infiniteInitialRowCount</th>
+            <td>
+                <p>How many rows to initially allow the user to scroll to. This is handy if you expect large data sizes
+                    and you want the scrollbar to cover many pages before it has to start readjusting for the loading of
+                    additional data.</p>
+            </td>
+        </tr>
 
-    <h4 id="property-max-pages-in-cache">&#8226; Property maxPagesInCache</h4>
-    <p>
-        How many pages to cache in the client. Default is no limit, so every requested
-        page is kept. Use this if you have memory concerns, so pages least recently viewed are purged. If used, make
-        sure you have enough pages in cache to display one whole view of the table (ie what's within the scrollable area),
-        otherwise it won't work and an infinite loop of requesting pages will happen.
-    </p>
+    </table>
 
-    <h4 id="property-pagination-initial-row-count">&#8226; Property infiniteInitialRowCount</h4>
-    <p>
-        How many rows to initially allow the user to scroll to. This is handy if you expect large data sizes
-        and you want the scrollbar to cover many pages before it has to start readjusting for the loading of
-        additional data.
-    </p>
+    <h3 id="api">API - Inifinite Scrolling</h3>
+    <table class="table">
+        <tr>
+            <th>Method</th>
+            <th>Description</th>
+        </tr>
+        <tr id="api-refresh-virtual-page-cache">
+            <th>refreshInfinitePageCache()</th>
+            <td><p>Marks all the currently loaded page caches for reload. If you have 10 pages in the cache, all 10 will be
+                    marked for reload. The old data will continue to be displayed until the new data is loaded.</p></td>
+        </tr>
+        <tr id="api-purge-virtual-page-cache">
+            <th>purgeInfinitePageCache()</th>
+            <td><p>Purges the cache. The grid is then told to refresh. Only the pages required to display the current
+                    data on screen are fetched (typically no more than two). The grid will display nothing while the new
+                    pages are loaded. Use this to immediately remove the old data from the user.</p></td>
+        </tr>
+        <tr id="property-max-pages-in-cache">
+            <th>maxPagesInCache()</th>
+            <td>
+                <p>How many pages to cache in the client. Default is no limit, so every requested
+                    page is kept. Use this if you have memory concerns, so pages least recently viewed are purged. If used, make
+                    sure you have enough pages in cache to display one whole view of the table (ie what's within the scrollable area),
+                    otherwise it won't work and an infinite loop of requesting pages will happen.</p>
+            </td>
+        </tr>
+        <tr id="api-get-virtual-row-count">
+            <th>getInfiniteRowCount()</th>
+            <td>
+                <p>The row count defines how many rows the grid allows scrolling to.</p>
+            </td>
+        </tr>
+        <tr id="api-is-max-row-found">
+            <th>isMaxRowFound()</th>
+            <td><p>The property maxRowFound is a boolean, true or false. When false, then the grid will allow scrolling beyond
+                    the rowCount looking for more rows. When the last row is found, maxRowFound becomes true, and the
+                    grid will only scroll to the last available row as it has finished looking for more data.</p></td>
+        </tr>
+        <tr id="api-set-virtual-row-count">
+            <th>setInfiniteRowCount(rowCount, maxRowFound)</th>
+            <td>
+            Sets the rowCount and maxRowFound properties. The second parameter, maxRowFound, is optional and if
+            left out, only rowCount is set. Set rowCount to adjust the height of the vertical scroll. Set maxRowFound
+            to enable / disable searching for more rows. Use this method if you add or remove rows into the dataset
+            and need to reset the number of rows or put the data back into 'look for data' mode.</td></tr>
 
-    <h4 id="api-refresh-virtual-page-cache">&#8226; API refreshInfinitePageCache()</h4>
-    <p>
-        Marks all the currently loaded page caches for reload. If you have 10 pages in the cache, all 10 will be
-        marked for reload. The old data will continue to be displayed until the new data is loaded.
-    </p>
+        <tr id="api-get-virtual-page-state">
+            <th>getInfinitePageState()</th>
+            <td>
+                Returns an object representing the state of the cache. This is useful for debugging and understanding
+                how the cache is working.</td></tr>
 
-    <h4 id="api-purge-virtual-page-cache">&#8226; API purgeInfinitePageCache()</h4>
-    <p>
-        Purges the cache. The grid is then told to refresh. Only the pages required to display the current
-        data on screen are fetched (typically no more than two). The grid will display nothing while the new
-        pages are loaded. Use this to immediately remove the old data from the user.
-    </p>
+    </table>
 
-    <h4 id="api-get-virtual-row-count">&#8226; API getInfiniteRowCount()</h4>
-    <p>
-        The row count defines how many rows the grid allows scrolling to.
-    </p>
 
-    <h4 id="api-is-max-row-found">&#8226; API isMaxRowFound()</h4>
-    <p>
-        The property maxRowFound is a boolean, true or false. When false, then the grid will allow scrolling beyond
-        the rowCount looking for more rows. When the last row is found, maxRowFound becomes true, and the
-        grid will only scroll to the last available row as it has finished looking for more data.
-    </p>
 
-    <h4 id="api-set-virtual-row-count">&#8226; API setInfiniteRowCount(rowCount, maxRowFound)</h4>
-    <p>
-        Sets the rowCount and maxRowFound properties. The second parameter, maxRowFound, is optional and if
-        left out, only rowCount is set. Set rowCount to adjust the height of the vertical scroll. Set maxRowFound
-        to enable / disable searching for more rows. Use this method if you add or remove rows into the dataset
-        and need to reset the number of rows or put the data back into 'look for data' mode.</p>
+    <h3 id="api">API - Inserting / Removing Rows</h3>
+    <table class="table">
+        <tr>
+            <th>Method</th>
+            <th>Description</th>
+        </tr>
+        <tr id="api-insert-items-at-index">
+            <th>insertItemsAtIndex(index, items)</th>
+            <td><p>Inserts items at the provided location inside the grid. If you use this, you MUST ensure that the data
+                    store you are sourcing from (eg the database) is also updated, as the subsequent cache page loads will
+                    need to be consistent with what is inside the grid. Doing an insert will require rows to be moved
+                    after the insert location (pushed down to make room) - this can leave blank rows in pages in the cache
+                    (if a page has to be moved down, and the previous page is not loaded for it to take rows from). If this
+                    is the case, then the page will be marked for a refresh.</p>
+                <p>
+                    Inserting rows into the infinite scrolling row model allows for your grid to be out of sync with the
+                    underlying data store and hence can either cause synchronisation issues, or simply difficult code to
+                    maintain even if you get it right, especially in multi-user environments. It is strongly suggested you
+                    don't use the insertItemsAtIndex() method, rather you update the source and then refresh the cache.
+                </p></td>
+        </tr>
+        <tr id="api-remove-items">
+            <th>removeItems(rowNodes)</th>
+            <td><p>This method is not supported by infinite scrolling. It is not supported as the grid has no way of knowing
+                    the index of the rowNodes to be removed if the data is not currently loaded into the cache.</p></td>
+        </tr>
+        <tr id="api-add-items">
+            <th>addItems(dataItems)</th>
+            <td>
+                <p>This method is not supported by infinite scrolling. It is not supported as the grid has no way of knowing
+                    the end of the data dataset to be appended to if the data is not currently loaded into the cache.</p>
+            </td>
+        </tr>
+    </table>
 
-    <h4 id="api-get-virtual-page-state">&#8226; API getInfinitePageState()</h4>
-    <p>
-        Returns an object representing the state of the cache. This is useful for debugging and understanding
-        how the cache is working.
-    </p>
-
-    <h3 id="inserting-removing-rows">Inserting / Removing Rows</h3>
-
-    <h4 id="api-insert-items-at-index">&#8226; API insertItemsAtIndex(index, items)</h4>
-    <p>
-        Inserts items at the provided location inside the grid. If you use this, you MUST ensure that the data
-        store you are sourcing from (eg the database) is also updated, as the subsequent cache page loads will
-        need to be consistent with what is inside the grid. Doing an insert will require rows to be moved
-        after the insert location (pushed down to make room) - this can leave blank rows in pages in the cache
-        (if a page has to be moved down, and the previous page is not loaded for it to take rows from). If this
-        is the case, then the page will be marked for a refresh.
-    </p>
-
-    <p>
-        Inserting rows into the infinite scrolling row model allows for your grid to be out of sync with the
-        underlying data store and hence can either cause synchronisation issues, or simply difficult code to
-        maintain even if you get it right, especially in multi-user environments. It is strongly suggested you
-        don't use the insertItemsAtIndex() method, rather you update the source and then refresh the cache.
-    </p>
-
-    <h4 id="api-remove-items">&#8226; API removeItems(rowNodes)</h4>
-    <p>
-        This method is not supported by infinite scrolling. It is not supported as the grid has no way of knowing
-        the index of the rowNodes to be removed if the data is not currently loaded into the cache.
-    </p>
-
-    <h4 id="api-add-items">&#8226; API addItems(dataItems)</h4>
-    <p>
-        This method is not supported by infinite scrolling. It is not supported as the grid has no way of knowing
-        the end of the data dataset to be appended to if the data is not currently loaded into the cache.
-    </p>
 
     <h4 id="adding-removing-summary">&#8226; Adding / Removing Summary</h4>
 

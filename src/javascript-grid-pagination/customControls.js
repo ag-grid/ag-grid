@@ -16,7 +16,6 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    // note - we do not set 'virtualPaging' here, so the grid knows we are doing standard paging
     enableSorting: true,
     enableFilter: true,
     debug: true,
