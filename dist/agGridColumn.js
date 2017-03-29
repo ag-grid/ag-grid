@@ -1,15 +1,6 @@
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 var core_1 = require("@angular/core");
-var AgGridColumn = AgGridColumn_1 = (function () {
+var AgGridColumn = (function () {
     function AgGridColumn() {
     }
     AgGridColumn.prototype.hasChildColumns = function () {
@@ -43,316 +34,91 @@ var AgGridColumn = AgGridColumn_1 = (function () {
     ;
     return AgGridColumn;
 }());
-__decorate([
-    core_1.ContentChildren(AgGridColumn_1),
-    __metadata("design:type", core_1.QueryList)
-], AgGridColumn.prototype, "childColumns", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String)
-], AgGridColumn.prototype, "headerName", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String)
-], AgGridColumn.prototype, "columnGroupShow", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "headerClass", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "toolPanelClass", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "headerValueGetter", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Array)
-], AgGridColumn.prototype, "pivotKeys", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "suppressToolPanel", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Array)
-], AgGridColumn.prototype, "children", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String)
-], AgGridColumn.prototype, "groupId", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "openByDefault", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "marryChildren", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String)
-], AgGridColumn.prototype, "colId", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String)
-], AgGridColumn.prototype, "sort", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Number)
-], AgGridColumn.prototype, "sortedAt", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Array)
-], AgGridColumn.prototype, "sortingOrder", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String)
-], AgGridColumn.prototype, "field", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "hide", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "pinned", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String)
-], AgGridColumn.prototype, "tooltipField", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", String)
-], AgGridColumn.prototype, "headerTooltip", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "valueGetter", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Function)
-], AgGridColumn.prototype, "keyCreator", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "headerCellRenderer", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "headerCellTemplate", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Number)
-], AgGridColumn.prototype, "width", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Number)
-], AgGridColumn.prototype, "minWidth", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Number)
-], AgGridColumn.prototype, "maxWidth", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "cellClass", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "cellStyle", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "cellRenderer", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "cellRendererFramework", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "cellRendererParams", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "cellEditor", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "cellEditorFramework", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "cellEditorParams", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "floatingCellRenderer", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "floatingCellRendererFramework", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "floatingCellRendererParams", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Function)
-], AgGridColumn.prototype, "cellFormatter", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Function)
-], AgGridColumn.prototype, "floatingCellFormatter", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "aggFunc", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Number)
-], AgGridColumn.prototype, "rowGroupIndex", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Number)
-], AgGridColumn.prototype, "pivotIndex", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Function)
-], AgGridColumn.prototype, "comparator", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "checkboxSelection", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "suppressMenu", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "suppressSorting", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "suppressMovable", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "suppressFilter", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "unSortIcon", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "suppressSizeToFit", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "suppressResize", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "suppressAutoSize", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "enableRowGroup", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "enablePivot", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "enableValue", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "editable", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Function)
-], AgGridColumn.prototype, "getQuickFilterText", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "suppressNavigable", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Function)
-], AgGridColumn.prototype, "newValueHandler", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "volatile", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "filter", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "filterFramework", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "filterParams", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "cellClassRules", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Function)
-], AgGridColumn.prototype, "onCellValueChanged", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Function)
-], AgGridColumn.prototype, "onCellClicked", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Function)
-], AgGridColumn.prototype, "onCellDoubleClicked", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Function)
-], AgGridColumn.prototype, "onCellContextMenu", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "icons", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Boolean)
-], AgGridColumn.prototype, "enableCellChangeFlash", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "headerGroupComponentFramework", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "headerGroupComponentParams", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "headerComponentFramework", void 0);
-__decorate([
-    core_1.Input(),
-    __metadata("design:type", Object)
-], AgGridColumn.prototype, "headerComponentParams", void 0);
-AgGridColumn = AgGridColumn_1 = __decorate([
-    core_1.Component({
-        selector: 'ag-grid-column',
-        template: ''
-    })
-], AgGridColumn);
+AgGridColumn.decorators = [
+    { type: core_1.Component, args: [{
+                selector: 'ag-grid-column',
+                template: ''
+            },] },
+];
+/** @nocollapse */
+AgGridColumn.ctorParameters = function () { return []; };
+AgGridColumn.propDecorators = {
+    'childColumns': [{ type: core_1.ContentChildren, args: [AgGridColumn,] },],
+    'headerName': [{ type: core_1.Input },],
+    'columnGroupShow': [{ type: core_1.Input },],
+    'headerClass': [{ type: core_1.Input },],
+    'toolPanelClass': [{ type: core_1.Input },],
+    'headerValueGetter': [{ type: core_1.Input },],
+    'pivotKeys': [{ type: core_1.Input },],
+    'suppressToolPanel': [{ type: core_1.Input },],
+    'children': [{ type: core_1.Input },],
+    'groupId': [{ type: core_1.Input },],
+    'openByDefault': [{ type: core_1.Input },],
+    'marryChildren': [{ type: core_1.Input },],
+    'colId': [{ type: core_1.Input },],
+    'sort': [{ type: core_1.Input },],
+    'sortedAt': [{ type: core_1.Input },],
+    'sortingOrder': [{ type: core_1.Input },],
+    'field': [{ type: core_1.Input },],
+    'hide': [{ type: core_1.Input },],
+    'pinned': [{ type: core_1.Input },],
+    'tooltipField': [{ type: core_1.Input },],
+    'headerTooltip': [{ type: core_1.Input },],
+    'valueGetter': [{ type: core_1.Input },],
+    'keyCreator': [{ type: core_1.Input },],
+    'headerCellRenderer': [{ type: core_1.Input },],
+    'headerCellTemplate': [{ type: core_1.Input },],
+    'width': [{ type: core_1.Input },],
+    'minWidth': [{ type: core_1.Input },],
+    'maxWidth': [{ type: core_1.Input },],
+    'cellClass': [{ type: core_1.Input },],
+    'cellStyle': [{ type: core_1.Input },],
+    'cellRenderer': [{ type: core_1.Input },],
+    'cellRendererFramework': [{ type: core_1.Input },],
+    'cellRendererParams': [{ type: core_1.Input },],
+    'cellEditor': [{ type: core_1.Input },],
+    'cellEditorFramework': [{ type: core_1.Input },],
+    'cellEditorParams': [{ type: core_1.Input },],
+    'floatingCellRenderer': [{ type: core_1.Input },],
+    'floatingCellRendererFramework': [{ type: core_1.Input },],
+    'floatingCellRendererParams': [{ type: core_1.Input },],
+    'cellFormatter': [{ type: core_1.Input },],
+    'floatingCellFormatter': [{ type: core_1.Input },],
+    'aggFunc': [{ type: core_1.Input },],
+    'rowGroupIndex': [{ type: core_1.Input },],
+    'pivotIndex': [{ type: core_1.Input },],
+    'comparator': [{ type: core_1.Input },],
+    'checkboxSelection': [{ type: core_1.Input },],
+    'suppressMenu': [{ type: core_1.Input },],
+    'suppressSorting': [{ type: core_1.Input },],
+    'suppressMovable': [{ type: core_1.Input },],
+    'suppressFilter': [{ type: core_1.Input },],
+    'unSortIcon': [{ type: core_1.Input },],
+    'suppressSizeToFit': [{ type: core_1.Input },],
+    'suppressResize': [{ type: core_1.Input },],
+    'suppressAutoSize': [{ type: core_1.Input },],
+    'enableRowGroup': [{ type: core_1.Input },],
+    'enablePivot': [{ type: core_1.Input },],
+    'enableValue': [{ type: core_1.Input },],
+    'editable': [{ type: core_1.Input },],
+    'getQuickFilterText': [{ type: core_1.Input },],
+    'suppressNavigable': [{ type: core_1.Input },],
+    'newValueHandler': [{ type: core_1.Input },],
+    'volatile': [{ type: core_1.Input },],
+    'filter': [{ type: core_1.Input },],
+    'filterFramework': [{ type: core_1.Input },],
+    'filterParams': [{ type: core_1.Input },],
+    'cellClassRules': [{ type: core_1.Input },],
+    'onCellValueChanged': [{ type: core_1.Input },],
+    'onCellClicked': [{ type: core_1.Input },],
+    'onCellDoubleClicked': [{ type: core_1.Input },],
+    'onCellContextMenu': [{ type: core_1.Input },],
+    'icons': [{ type: core_1.Input },],
+    'enableCellChangeFlash': [{ type: core_1.Input },],
+    'headerGroupComponentFramework': [{ type: core_1.Input },],
+    'headerGroupComponentParams': [{ type: core_1.Input },],
+    'headerComponentFramework': [{ type: core_1.Input },],
+    'headerComponentParams': [{ type: core_1.Input },],
+};
 exports.AgGridColumn = AgGridColumn;
-var AgGridColumn_1;
 //# sourceMappingURL=agGridColumn.js.map

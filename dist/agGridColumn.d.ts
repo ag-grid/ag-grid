@@ -1,5 +1,5 @@
 import { QueryList } from "@angular/core";
-import { ColDef, SetFilterParameters, TextAndNumberFilterParameters, ICellEditor, ICellRendererFunc, ICellRenderer, IFilter, RowNode, IsColumnFunc, IAggFunc, ColGroupDef, GetQuickFilterTextParams } from "ag-grid/main";
+import { ColDef, TextAndNumberFilterParameters, ICellEditor, ICellRendererFunc, ICellRenderer, IFilter, RowNode, IsColumnFunc, IAggFunc, ColGroupDef, GetQuickFilterTextParams, ISetFilterParams } from "ag-grid/main";
 export declare class AgGridColumn {
     childColumns: QueryList<AgGridColumn>;
     hasChildColumns(): boolean;
@@ -77,7 +77,7 @@ export declare class AgGridColumn {
         new (): IFilter;
     };
     filterFramework: any;
-    filterParams: SetFilterParameters | TextAndNumberFilterParameters;
+    filterParams: ISetFilterParams | TextAndNumberFilterParameters;
     cellClassRules: {
         [cssClassName: string]: (Function | string);
     };
