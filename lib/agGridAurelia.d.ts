@@ -1,8 +1,9 @@
-// ag-grid-aurelia v8.2.0
+// ag-grid-aurelia v9.0.0
 import { ComponentAttached, ComponentDetached, Container, ViewResources, TaskQueue } from "aurelia-framework";
 import { GridOptions, GridApi, ColumnApi } from "ag-grid/main";
 import { AureliaFrameworkFactory } from "./aureliaFrameworkFactory";
 import { AgGridColumn } from "./agGridColumn";
+import { AgFullWidthRowTemplate } from './agTemplate';
 export declare class AgGridAurelia implements ComponentAttached, ComponentDetached {
     private taskQueue;
     private auFrameworkFactory;
@@ -17,6 +18,7 @@ export declare class AgGridAurelia implements ComponentAttached, ComponentDetach
     api: GridApi;
     columnApi: ColumnApi;
     columns: AgGridColumn[];
+    fullWidthRowTemplate: AgFullWidthRowTemplate;
     constructor(element: Element, taskQueue: TaskQueue, auFrameworkFactory: AureliaFrameworkFactory, container: Container, viewResources: ViewResources);
     attached(): void;
     initGrid(): void;
