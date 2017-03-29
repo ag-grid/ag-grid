@@ -3,4 +3,4 @@
 // and then override the following properties
 
 gridOptions.pagination = true;
-gridOptions.enablePaginationAutoPageSize = true;
+gridOptions.paginationAutoPageSize = true;

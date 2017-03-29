@@ -25,7 +25,7 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li>Enhancement: New event <i>bodyHeightChanged</i>, gets called when the body height changes,
             thus the number rows rendered may change. This is used by the grid for setting the page
-            size when <i>enablePaginationAutoPageSize=true</i>.</li>
+            size when <i>paginationAutoPageSize=true</i>.</li>
     </ul>
 
     <h2>Version 8.2.x</h2>

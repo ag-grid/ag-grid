@@ -472,8 +472,7 @@ interface IGetRowsParams {
     <p>
         As with all row models, it is possible to enable pagination with infinite scrolling.
         With infinite scrolling, it is possible to mix and match with the configuration to
-        achieve different effects. The following examples are presented to show the different
-        combinations you can have.
+        achieve different effects. The following examples are presented:
 
         <table class="table">
             <tr>
@@ -494,15 +493,18 @@ interface IGetRowsParams {
                 <td>Equal</td>
                 <td>Recommended Sometimes</td>
             </tr>
-            <tr>
-                <td>Example 3</td>
-                <td>Large</td>
-                <td>Small</td>
-                <td>Not Recommended</td>
-            </tr>
         </table>
 
     </p>
+
+    <note>
+        <p><b>Having smaller infinite blocks size than your paginatino page size is not supported</b></p>
+        <p>
+            You must have infinite block size greater than or equal to the pagination page size.
+            If you have a smaller block size, the grid will not fetch enough rows to display
+            one page. This breaks how infinite scrolling works and is not supported.
+        </p>
+    </note>
 
     <h3>Example 1: Auto Pagination Page Size, Large Infinite Block Size</h3>
 
@@ -528,27 +530,10 @@ interface IGetRowsParams {
         every time a new page is navigated to.
     </p>
 
-    <show-complex-example example="examplePaginationInfinite1.html"
+    <show-complex-example example="examplePaginationInfinite2.html"
                           sources="{
                                 [
                                     { root: './', files: 'examplePaginationInfinite2.html,examplePaginationInfinite2.js,exampleInfiniteServerSide.js' }
-                                ]
-                              }"
-                          exampleheight="350px">
-    </show-complex-example>
-
-    <h3>Example 3: Large Pagination Page Size and Small Infinite Block Size</h3>
-
-    <p>
-        This example shows a large pages size and a small block size. The grid behaves weird as each page is
-        individually working as an infinite scroll. Although it is correct, the grid is doing exactly what you
-        asked it to do, however it is not recommended, as it gives a very poor user experience.
-    </p>
-
-    <show-complex-example example="examplePaginationInfinite3.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'examplePaginationInfinite3.html,examplePaginationInfinite3.js,exampleInfiniteServerSide.js' }
                                 ]
                               }"
                           exampleheight="350px">
