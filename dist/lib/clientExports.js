@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.2.0
+// ag-grid-enterprise v9.0.0
 "use strict";
 var columnSelectPanel_1 = require("./toolPanel/columnsSelect/columnSelectPanel");
 var renderedColumn_1 = require("./toolPanel/columnsSelect/renderedColumn");
@@ -17,7 +17,7 @@ var menuList_1 = require("./menu/menuList");
 var rangeController_1 = require("./rangeController");
 var rowGroupColumnsPanel_1 = require("./toolPanel/columnDrop/rowGroupColumnsPanel");
 var contextMenu_1 = require("./menu/contextMenu");
-var viewportRowModel_1 = require("./viewport/viewportRowModel");
+var viewportRowModel_1 = require("./rowModels/viewport/viewportRowModel");
 var richSelectCellEditor_1 = require("./rendering/richSelect/richSelectCellEditor");
 var richSelectRow_1 = require("./rendering/richSelect/richSelectRow");
 var virtualList_1 = require("./rendering/virtualList");

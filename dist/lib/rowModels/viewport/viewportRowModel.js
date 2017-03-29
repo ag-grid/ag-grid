@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.2.0
+// ag-grid-enterprise v9.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -29,6 +29,9 @@ var ViewportRowModel = (function () {
     };
     ViewportRowModel.prototype.destroy = function () {
         this.destroyCurrentDatasource();
+    };
+    ViewportRowModel.prototype.isLastRowFound = function () {
+        return true;
     };
     ViewportRowModel.prototype.destroyCurrentDatasource = function () {
         if (this.viewportDatasource && this.viewportDatasource.destroy) {
@@ -103,6 +106,12 @@ var ViewportRowModel = (function () {
         }
         return this.rowNodesByIndex[rowIndex];
     };
+    ViewportRowModel.prototype.getPageFirstRow = function () {
+        return 0;
+    };
+    ViewportRowModel.prototype.getPageLastRow = function () {
+        return this.rowCount - 1;
+    };
     ViewportRowModel.prototype.getRowCount = function () {
         return this.rowCount;
     };
@@ -114,7 +123,13 @@ var ViewportRowModel = (function () {
             return 0;
         }
     };
-    ViewportRowModel.prototype.getRowCombinedHeight = function () {
+    ViewportRowModel.prototype.getRowBounds = function (index) {
+        return {
+            rowHeight: this.rowHeight,
+            rowTop: this.rowHeight * index
+        };
+    };
+    ViewportRowModel.prototype.getCurrentPageHeight = function () {
         return this.rowCount * this.rowHeight;
     };
     ViewportRowModel.prototype.isEmpty = function () {
