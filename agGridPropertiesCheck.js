@@ -4,25 +4,22 @@ HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? function () {} : 
 HTMLInputElement = typeof HTMLInputElement === 'undefined' ? function () {} : HTMLInputElement;
 HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? function () {} : HTMLButtonElement;
 
-require('./node_modules/reflect-metadata');
-
 var {AgGridNg2} = require('./dist/agGridNg2');
 var {ComponentUtil} = require("ag-grid/main");
 
 var missingProperties = [];
 ComponentUtil.ALL_PROPERTIES.forEach((property) => {
-    if (!Reflect.getOwnMetadata('propMetadata', AgGridNg2).hasOwnProperty(property)) {
+    if (!AgGridNg2.propDecorators.hasOwnProperty(property)) {
         missingProperties.push(`Grid property ${property} does not exist on AgGridNg2`)
     }
 });
 
 var missingEvents = [];
 ComponentUtil.EVENTS.forEach((event) => {
-    if (!Reflect.getOwnMetadata('propMetadata', AgGridNg2).hasOwnProperty(event)) {
+    if (!AgGridNg2.propDecorators.hasOwnProperty(event)) {
         missingEvents.push(`Grid event ${event} does not exist on AgGridNg2`)
     }
 });
-
 
 if(missingProperties.length || missingEvents.length) {
     console.error("*************************** BUILD FAILED ***************************");
