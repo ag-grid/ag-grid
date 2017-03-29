@@ -63,15 +63,14 @@ $linkHref = "<a href='" . $link . "'>here</a>";
                 and <a href="../javascript-grid-api">API</a> available to you.</li>
         </ul>
 
-        <note>        <h2>
-                Viewing All Frameworks
-            </h2>
-            <div>
-                You are viewing all frameworks. It is probable you are only
-                interested in one framework. Consider selecting a framework from the top left side menu - this will ensure you
-                are only shown documentation relevant to the technologies you're interested in.
-            </div>
-        </note>
+        <h2>
+            Selecting A Framework
+        </h2>
+        <div>
+            You are currently viewing all frameworks. This is fine. However you might want to consider
+            selecting a framework from the top left side menu - this will ensure you
+            are only shown documentation relevant to the framework you're interested in.
+        </div>
     <?php } ?>
 
     <h2>Browser Support/Compatibility</h2>
