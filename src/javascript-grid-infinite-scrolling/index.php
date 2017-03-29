@@ -540,12 +540,12 @@ interface IGetRowsParams {
     <h3>Example 3: Large Pagination Page Size and Small Infinite Block Size</h3>
 
     <p>
-        This examples hows a large pages size and a small block size. The grid behaves weird as each page is
+        This example shows a large pages size and a small block size. The grid behaves weird as each page is
         individually working as an infinite scroll. Although it is correct, the grid is doing exactly what you
         asked it to do, however it is not recommended, as it gives a very poor user experience.
     </p>
 
-    <show-complex-example example="examplePaginationInfinite1.html"
+    <show-complex-example example="examplePaginationInfinite3.html"
                           sources="{
                                 [
                                     { root: './', files: 'examplePaginationInfinite3.html,examplePaginationInfinite3.js,exampleInfiniteServerSide.js' }
