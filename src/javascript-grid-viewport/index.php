@@ -256,7 +256,7 @@ interface IViewportDatasourceParams {
                           exampleheight="500px">
     </show-complex-example>
 
-    <h3>Example Viewport with Pagination</h3>
+    <h3 id="pagination">Example Viewport with Pagination</h3>
 
     <p>
         The example below is almost identical to the above example with the following differences:

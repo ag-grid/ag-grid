@@ -43,24 +43,23 @@ include '../documentation-main/documentation_header.php';
         aggregate into one value that it then returns.
     </p>
 
-        <pre><code><b>// Option 1: column that uses the built in 'sum' function</b>
+        <pre><span class="codeComment">// Option 1: column that uses the built in 'sum' function</span>
 colDef1.aggFunc = 'sum';
 
-<b>// Option 2: register aggFunc to grid called 'abc', then reference by name</b>
+<span class="codeComment">// Option 2: register aggFunc to grid called 'abc', then reference by name</span>
 gridOptions.api.addAggFunc('abc', myCustomAggFunc);
 colDef2.aggFunc = 'abc';
 
-<b>// Option 3: column uses a function directly</b>
+<span class="codeComment">// Option 3: column uses a function directly</span>
 colDef3.aggFunc = myCustomAggFunc;
-                
-<b>// this is the function 2 and 3 above are using</b>
+
+<span class="codeComment">// this is the function 2 and 3 above are using</span>
 function myCustomAggFunc(values) {
     var sum = 0;
     values.forEach( function(value) {sum += value;} );
     return sum;
 }
-</code></pre>
-
+</pre>
 
     <h4>Example Option 1 - Simple Summing</h4>
 

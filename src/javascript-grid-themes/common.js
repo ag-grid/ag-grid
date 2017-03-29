@@ -44,9 +44,11 @@ var gridOptions = {
     groupSelectsChildren: true,
     groupDefaultExpanded: -1,
     groupSuppressAutoColumn: true,
-    checkboxSelection: function (params) {
-        var isGrouping = gridOptions.columnApi.getRowGroupColumns().length > 0;
-        return params.colIndex === 0 && !isGrouping;
+    defaultColDef: {
+        checkboxSelection: function (params) {
+            var isGrouping = gridOptions.columnApi.getRowGroupColumns().length > 0;
+            return params.colIndex === 0 && !isGrouping;
+        }
     },
     rowSelection: "multiple"
 };

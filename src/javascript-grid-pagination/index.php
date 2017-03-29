@@ -156,9 +156,9 @@ include '../documentation-main/documentation_header.php';
         row model) is used for the examples on this page.</p>
     
     <p>To see the specifics of pagination on the
-    other row models check the relevant documentation for <a href="/javascript-grid-infinite-scrolling/">infinite row model</a>,
-    <a href="/javascript-grid-viewport/">viewport row model</a> and
-    <a href="/javascript-grid-enterprise-model/">enterprise row model</a>.</p>
+    other row models check the relevant documentation for <a href="/javascript-grid-infinite-scrolling/#pagination">infinite row model</a>,
+    <a href="/javascript-grid-viewport/#pagination">viewport row model</a> and
+    <a href="/javascript-grid-enterprise-model/#pagination">enterprise row model</a>.</p>
 
     <h2 id="paginationFeatures">Features While Using Pagination</h2>
 
