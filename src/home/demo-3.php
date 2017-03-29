@@ -1,5 +1,7 @@
 <section class="HomeSection HomeDemo hidden-xs">
 
+    <style>.cell-number {text-align: right;}</style>
+
     <div class="container">
         <div class="row">
         <h4 class="text-center">Connect to Live Data Streams and provide Visual Highlights to Changes</h4>
