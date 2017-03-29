@@ -262,6 +262,12 @@
 .ag-fresh .ag-rtl .ag-group-contracted {
   padding-left: 4px;
 }
+.ag-fresh .ag-ltr .ag-group-loading {
+  padding-right: 4px;
+}
+.ag-fresh .ag-rtl .ag-group-loading {
+  padding-left: 4px;
+}
 .ag-fresh .ag-ltr .ag-group-value {
   padding-right: 2px;
 }
