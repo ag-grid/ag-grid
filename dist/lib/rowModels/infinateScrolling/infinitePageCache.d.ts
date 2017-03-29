@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { NumberSequence } from "../../utils";
@@ -16,7 +16,7 @@ export interface CacheParams {
     datasource: IDatasource;
     lastAccessedSequence: NumberSequence;
 }
-export declare class VirtualPageCache {
+export declare class InfinitePageCache {
     private eventService;
     private context;
     private pages;
@@ -28,9 +28,13 @@ export declare class VirtualPageCache {
     private logger;
     private active;
     constructor(cacheSettings: CacheParams);
+    getRowBounds(index: number): {
+        rowTop: number;
+        rowHeight: number;
+    };
     private setBeans(loggerFactory);
     private init();
-    getRowCombinedHeight(): number;
+    getCurrentPageHeight(): number;
     forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
     getRowIndexAtPixel(pixel: number): number;
     private moveItemsDown(page, moveFromIndex, moveCount);

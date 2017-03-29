@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v9.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,49 +36,54 @@ var events_1 = require("../../events");
 var filterManager_1 = require("../../filter/filterManager");
 var constants_1 = require("../../constants");
 var beanStub_1 = require("../../context/beanStub");
-var PaginationService = (function (_super) {
-    __extends(PaginationService, _super);
-    function PaginationService() {
+var ServerPaginationService = (function (_super) {
+    __extends(ServerPaginationService, _super);
+    function ServerPaginationService() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.callVersion = 0;
+        _this.pageSize = 100;
+        _this.rowCount = 0;
+        _this.lastPageFound = false;
+        _this.totalPages = 0;
+        _this.currentPage = 0;
         return _this;
     }
-    PaginationService.prototype.isLastPageFound = function () {
+    ServerPaginationService.prototype.isLastPageFound = function () {
         return this.lastPageFound;
     };
-    PaginationService.prototype.getPageSize = function () {
+    ServerPaginationService.prototype.getPageSize = function () {
         return this.pageSize;
     };
-    PaginationService.prototype.getCurrentPage = function () {
+    ServerPaginationService.prototype.getCurrentPage = function () {
         return this.currentPage;
     };
-    PaginationService.prototype.getTotalPages = function () {
+    ServerPaginationService.prototype.getTotalPages = function () {
         return this.totalPages;
     };
-    PaginationService.prototype.getRowCount = function () {
+    ServerPaginationService.prototype.getTotalRowCount = function () {
         return this.rowCount;
     };
-    PaginationService.prototype.goToNextPage = function () {
+    ServerPaginationService.prototype.goToNextPage = function () {
         this.goToPage(this.currentPage + 1);
     };
-    PaginationService.prototype.goToPreviousPage = function () {
+    ServerPaginationService.prototype.goToPreviousPage = function () {
         this.goToPage(this.currentPage - 1);
     };
-    PaginationService.prototype.goToFirstPage = function () {
+    ServerPaginationService.prototype.goToFirstPage = function () {
         this.goToPage(0);
     };
-    PaginationService.prototype.goToLastPage = function () {
+    ServerPaginationService.prototype.goToLastPage = function () {
         if (this.lastPageFound) {
             this.goToPage(this.totalPages - 1);
         }
     };
-    PaginationService.prototype.goToPage = function (page) {
+    ServerPaginationService.prototype.goToPage = function (page) {
         if (page < 0) {
             // min page is zero
             this.currentPage = 0;
         }
         else if (this.lastPageFound && page > this.totalPages) {
-            // max page is totalPages-1 IF we konw the last page
+            // max page is totalPages-1 IF we know the last page
             this.currentPage = this.totalPages - 1;
         }
         else {
@@ -87,14 +92,20 @@ var PaginationService = (function (_super) {
         }
         this.loadPage();
     };
-    PaginationService.prototype.init = function () {
+    ServerPaginationService.prototype.init = function () {
+        var _this = this;
         // if we are doing pagination, we are guaranteed that the model type
         // is normal. if it is not, then this paginationController service
         // will never be called.
         if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
             this.inMemoryRowModel = this.rowModel;
         }
-        var paginationEnabled = this.gridOptionsWrapper.isRowModelPagination();
+        this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', function () {
+            _this.reset(false);
+            _this.setPageSize();
+        });
+        this.setPageSize();
+        var paginationEnabled = this.gridOptionsWrapper.isRowModelServerPagination();
         // if not doing pagination, then quite the setup
         if (!paginationEnabled) {
             return;
@@ -107,20 +118,27 @@ var PaginationService = (function (_super) {
         }
         this.setDatasource(this.gridOptionsWrapper.getDatasource());
     };
-    PaginationService.prototype.setDatasource = function (datasource) {
+    ServerPaginationService.prototype.setDatasource = function (datasource) {
         this.datasource = datasource;
         if (datasource) {
             this.checkForDeprecated();
             this.reset(true);
         }
     };
-    PaginationService.prototype.checkForDeprecated = function () {
+    ServerPaginationService.prototype.checkForDeprecated = function () {
         var ds = this.datasource;
         if (utils_1.Utils.exists(ds.pageSize)) {
-            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property paginationPageSize');
+            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property infinPageSize');
         }
     };
-    PaginationService.prototype.reset = function (freshDatasource) {
+    ServerPaginationService.prototype.setPageSize = function () {
+        // copy pageSize, to guard against it changing the the datasource between calls
+        this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
+        if (!(this.pageSize >= 1)) {
+            this.pageSize = 100;
+        }
+    };
+    ServerPaginationService.prototype.reset = function (freshDatasource) {
         // important to return here, as the user could be setting filter or sort before
         // data-source is set
         if (utils_1.Utils.missing(this.datasource)) {
@@ -134,11 +152,7 @@ var PaginationService = (function (_super) {
         if (resetSelectionController) {
             this.selectionController.reset();
         }
-        // copy pageSize, to guard against it changing the the datasource between calls
-        this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
-        if (!(this.pageSize >= 1)) {
-            this.pageSize = 100;
-        }
+        this.setPageSize();
         // see if we know the total number of pages, or if it's 'to be decided'
         if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
             this.rowCount = this.datasource.rowCount;
@@ -148,13 +162,14 @@ var PaginationService = (function (_super) {
         else {
             this.rowCount = 0;
             this.lastPageFound = false;
-            this.totalPages = null;
+            this.totalPages = 0;
         }
         this.resetCurrentPage();
-        this.eventService.dispatchEvent(events_1.Events.EVENT_PAGINATION_RESET);
+        this.eventService.dispatchEvent(events_1.Events.DEPRECATED_EVENT_PAGINATION_RESET);
+        this.eventService.dispatchEvent(events_1.Events.EVENT_PAGINATION_CHANGED);
         this.loadPage();
     };
-    PaginationService.prototype.resetCurrentPage = function () {
+    ServerPaginationService.prototype.resetCurrentPage = function () {
         var userFirstPage = this.gridOptionsWrapper.getPaginationStartPage();
         if (userFirstPage > 0) {
             this.currentPage = userFirstPage;
@@ -163,10 +178,10 @@ var PaginationService = (function (_super) {
             this.currentPage = 0;
         }
     };
-    PaginationService.prototype.calculateTotalPages = function () {
+    ServerPaginationService.prototype.calculateTotalPages = function () {
         this.totalPages = Math.floor((this.rowCount - 1) / this.pageSize) + 1;
     };
-    PaginationService.prototype.pageLoaded = function (rows, lastRowIndex) {
+    ServerPaginationService.prototype.pageLoaded = function (rows, lastRowIndex) {
         lastRowIndex = utils_1.Utils.cleanNumber(lastRowIndex);
         var firstId = this.currentPage * this.pageSize;
         this.inMemoryRowModel.setRowData(rows, true, firstId);
@@ -181,9 +196,10 @@ var PaginationService = (function (_super) {
                 this.loadPage();
             }
         }
-        this.eventService.dispatchEvent(events_1.Events.EVENT_PAGINATION_PAGE_LOADED);
+        this.eventService.dispatchEvent(events_1.Events.DEPRECATED_EVENT_PAGINATION_PAGE_LOADED);
+        this.eventService.dispatchEvent(events_1.Events.EVENT_PAGINATION_CHANGED);
     };
-    PaginationService.prototype.loadPage = function () {
+    ServerPaginationService.prototype.loadPage = function () {
         var _this = this;
         var startRow = this.currentPage * this.pageSize;
         var endRow = (this.currentPage + 1) * this.pageSize;
@@ -218,7 +234,8 @@ var PaginationService = (function (_super) {
         setTimeout(function () {
             _this.datasource.getRows(params);
         }, 0);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_PAGINATION_PAGE_REQUESTED);
+        this.eventService.dispatchEvent(events_1.Events.DEPRECATED_EVENT_PAGINATION_PAGE_REQUESTED);
+        this.eventService.dispatchEvent(events_1.Events.EVENT_PAGINATION_CHANGED);
         function successCallback(rows, lastRowIndex) {
             if (that.isCallDaemon(callVersionCopy)) {
                 return;
@@ -235,46 +252,46 @@ var PaginationService = (function (_super) {
             that.inMemoryRowModel.setRowData([], true);
         }
     };
-    PaginationService.prototype.isCallDaemon = function (versionCopy) {
+    ServerPaginationService.prototype.isCallDaemon = function (versionCopy) {
         return versionCopy !== this.callVersion;
     };
-    return PaginationService;
+    return ServerPaginationService;
 }(beanStub_1.BeanStub));
 __decorate([
     context_1.Autowired('filterManager'),
     __metadata("design:type", filterManager_1.FilterManager)
-], PaginationService.prototype, "filterManager", void 0);
+], ServerPaginationService.prototype, "filterManager", void 0);
 __decorate([
     context_1.Autowired('gridPanel'),
     __metadata("design:type", gridPanel_1.GridPanel)
-], PaginationService.prototype, "gridPanel", void 0);
+], ServerPaginationService.prototype, "gridPanel", void 0);
 __decorate([
     context_1.Autowired('gridOptionsWrapper'),
     __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], PaginationService.prototype, "gridOptionsWrapper", void 0);
+], ServerPaginationService.prototype, "gridOptionsWrapper", void 0);
 __decorate([
     context_1.Autowired('selectionController'),
     __metadata("design:type", selectionController_1.SelectionController)
-], PaginationService.prototype, "selectionController", void 0);
+], ServerPaginationService.prototype, "selectionController", void 0);
 __decorate([
     context_1.Autowired('sortController'),
     __metadata("design:type", sortController_1.SortController)
-], PaginationService.prototype, "sortController", void 0);
+], ServerPaginationService.prototype, "sortController", void 0);
 __decorate([
     context_1.Autowired('eventService'),
     __metadata("design:type", eventService_1.EventService)
-], PaginationService.prototype, "eventService", void 0);
+], ServerPaginationService.prototype, "eventService", void 0);
 __decorate([
     context_1.Autowired('rowModel'),
     __metadata("design:type", Object)
-], PaginationService.prototype, "rowModel", void 0);
+], ServerPaginationService.prototype, "rowModel", void 0);
 __decorate([
     context_1.PostConstruct,
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
-], PaginationService.prototype, "init", null);
-PaginationService = __decorate([
-    context_1.Bean('paginationService')
-], PaginationService);
-exports.PaginationService = PaginationService;
+], ServerPaginationService.prototype, "init", null);
+ServerPaginationService = __decorate([
+    context_1.Bean('serverPaginationService')
+], ServerPaginationService);
+exports.ServerPaginationService = ServerPaginationService;

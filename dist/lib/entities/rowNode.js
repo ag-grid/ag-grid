@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v9.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -76,6 +76,15 @@ var RowNode = (function () {
         }
         else {
             this.id = id;
+        }
+    };
+    RowNode.prototype.setLoading = function (loading) {
+        if (this.loading === loading) {
+            return;
+        }
+        this.loading = loading;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_LOADING_CHANGED);
         }
     };
     RowNode.prototype.clearRowTop = function () {
@@ -203,6 +212,9 @@ var RowNode = (function () {
             tailingNodeInSequence: tailingNodeInSequence,
             rangeSelect: false
         });
+    };
+    RowNode.prototype.isFloating = function () {
+        return this.floating === constants_1.Constants.FLOATING_TOP || this.floating === constants_1.Constants.FLOATING_BOTTOM;
     };
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
     RowNode.prototype.setSelectedParams = function (params) {
@@ -411,6 +423,7 @@ RowNode.EVENT_HEIGHT_CHANGED = 'heightChanged';
 RowNode.EVENT_TOP_CHANGED = 'topChanged';
 RowNode.EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
 RowNode.EVENT_EXPANDED_CHANGED = 'expandedChanged';
+RowNode.EVENT_LOADING_CHANGED = 'loadingChanged';
 __decorate([
     context_1.Autowired('eventService'),
     __metadata("design:type", eventService_1.EventService)

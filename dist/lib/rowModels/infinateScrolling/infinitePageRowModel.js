@@ -1,10 +1,20 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v9.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -24,46 +34,50 @@ var events_1 = require("../../events");
 var sortController_1 = require("../../sortController");
 var filterManager_1 = require("../../filter/filterManager");
 var constants_1 = require("../../constants");
-var virtualPageCache_1 = require("./virtualPageCache");
-var VirtualPageRowModel = (function () {
-    function VirtualPageRowModel() {
-        this.destroyFunctions = [];
+var infinitePageCache_1 = require("./infinitePageCache");
+var beanStub_1 = require("../../context/beanStub");
+var InfinitePageRowModel = (function (_super) {
+    __extends(InfinitePageRowModel, _super);
+    function InfinitePageRowModel() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    VirtualPageRowModel.prototype.init = function () {
-        if (!this.gridOptionsWrapper.isRowModelVirtual()) {
+    InfinitePageRowModel.prototype.getRowBounds = function (index) {
+        if (utils_1.Utils.missing(this.virtualPageCache)) {
+            return null;
+        }
+        return this.virtualPageCache.getRowBounds(index);
+    };
+    InfinitePageRowModel.prototype.init = function () {
+        if (!this.gridOptionsWrapper.isRowModelInfinite()) {
             return;
         }
         this.addEventListeners();
         this.setDatasource(this.gridOptionsWrapper.getDatasource());
     };
-    VirtualPageRowModel.prototype.addEventListeners = function () {
-        var _this = this;
-        var onSortChangedListener = this.onSortChanged.bind(this);
-        var onFilterChangedListener = this.onFilterChanged.bind(this);
-        this.eventService.addEventListener(events_1.Events.EVENT_FILTER_CHANGED, onFilterChangedListener);
-        this.eventService.addEventListener(events_1.Events.EVENT_SORT_CHANGED, onSortChangedListener);
-        this.destroyFunctions.push(function () {
-            _this.eventService.removeEventListener(events_1.Events.EVENT_FILTER_CHANGED, onFilterChangedListener);
-            _this.eventService.removeEventListener(events_1.Events.EVENT_SORT_CHANGED, onSortChangedListener);
-        });
+    InfinitePageRowModel.prototype.isLastRowFound = function () {
+        return this.virtualPageCache ? this.virtualPageCache.isMaxRowFound() : false;
     };
-    VirtualPageRowModel.prototype.onFilterChanged = function () {
+    InfinitePageRowModel.prototype.addEventListeners = function () {
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+    };
+    InfinitePageRowModel.prototype.onFilterChanged = function () {
         if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
             this.reset();
         }
     };
-    VirtualPageRowModel.prototype.onSortChanged = function () {
+    InfinitePageRowModel.prototype.onSortChanged = function () {
         if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
             this.reset();
         }
     };
-    VirtualPageRowModel.prototype.destroy = function () {
-        this.destroyFunctions.forEach(function (func) { return func(); });
+    InfinitePageRowModel.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
     };
-    VirtualPageRowModel.prototype.getType = function () {
-        return constants_1.Constants.ROW_MODEL_TYPE_VIRTUAL;
+    InfinitePageRowModel.prototype.getType = function () {
+        return constants_1.Constants.ROW_MODEL_TYPE_INFINITE;
     };
-    VirtualPageRowModel.prototype.setDatasource = function (datasource) {
+    InfinitePageRowModel.prototype.setDatasource = function (datasource) {
         this.datasource = datasource;
         // only reset if we have a valid datasource to working with
         if (datasource) {
@@ -71,7 +85,7 @@ var VirtualPageRowModel = (function () {
             this.reset();
         }
     };
-    VirtualPageRowModel.prototype.checkForDeprecated = function () {
+    InfinitePageRowModel.prototype.checkForDeprecated = function () {
         var ds = this.datasource;
         // the number of concurrent loads we are allowed to the server
         if (utils_1.Utils.exists(ds.maxConcurrentRequests)) {
@@ -84,16 +98,16 @@ var VirtualPageRowModel = (function () {
             console.error('ag-Grid: since version 5.1.x, overflowSize is replaced with grid property paginationOverflowSize');
         }
         if (utils_1.Utils.exists(ds.pageSize)) {
-            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property paginationPageSize');
+            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property infinitePageSize');
         }
     };
-    VirtualPageRowModel.prototype.isEmpty = function () {
+    InfinitePageRowModel.prototype.isEmpty = function () {
         return utils_1.Utils.missing(this.virtualPageCache);
     };
-    VirtualPageRowModel.prototype.isRowsToRender = function () {
+    InfinitePageRowModel.prototype.isRowsToRender = function () {
         return utils_1.Utils.exists(this.virtualPageCache);
     };
-    VirtualPageRowModel.prototype.reset = function () {
+    InfinitePageRowModel.prototype.reset = function () {
         // important to return here, as the user could be setting filter or sort before
         // data-source is set
         if (utils_1.Utils.missing(this.datasource)) {
@@ -109,7 +123,7 @@ var VirtualPageRowModel = (function () {
         this.resetCache();
         this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED);
     };
-    VirtualPageRowModel.prototype.resetCache = function () {
+    InfinitePageRowModel.prototype.resetCache = function () {
         var cacheSettings = {
             // the user provided datasource
             datasource: this.datasource,
@@ -121,9 +135,9 @@ var VirtualPageRowModel = (function () {
             // or a new datasource is set
             maxConcurrentDatasourceRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
             paginationOverflowSize: this.gridOptionsWrapper.getPaginationOverflowSize(),
-            paginationInitialRowCount: this.gridOptionsWrapper.getPaginationInitialRowCount(),
+            paginationInitialRowCount: this.gridOptionsWrapper.getInfiniteInitialRowCount(),
             maxPagesInCache: this.gridOptionsWrapper.getMaxPagesInCache(),
-            pageSize: this.gridOptionsWrapper.getPaginationPageSize(),
+            pageSize: this.gridOptionsWrapper.getInfiniteBlockSize(),
             rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
             // the cache could create this, however it is also used by the pages, so handy to create it
             // here as the settings are also passed to the pages
@@ -151,54 +165,60 @@ var VirtualPageRowModel = (function () {
         if (this.virtualPageCache) {
             this.virtualPageCache.destroy();
         }
-        this.virtualPageCache = new virtualPageCache_1.VirtualPageCache(cacheSettings);
+        this.virtualPageCache = new infinitePageCache_1.InfinitePageCache(cacheSettings);
         this.context.wireBean(this.virtualPageCache);
     };
-    VirtualPageRowModel.prototype.getRow = function (rowIndex) {
+    InfinitePageRowModel.prototype.getRow = function (rowIndex) {
         return this.virtualPageCache ? this.virtualPageCache.getRow(rowIndex) : null;
     };
-    VirtualPageRowModel.prototype.forEachNode = function (callback) {
+    InfinitePageRowModel.prototype.forEachNode = function (callback) {
         if (this.virtualPageCache) {
             this.virtualPageCache.forEachNode(callback);
         }
     };
-    VirtualPageRowModel.prototype.getRowCombinedHeight = function () {
-        return this.virtualPageCache ? this.virtualPageCache.getRowCombinedHeight() : 0;
+    InfinitePageRowModel.prototype.getCurrentPageHeight = function () {
+        return this.virtualPageCache ? this.virtualPageCache.getCurrentPageHeight() : 0;
     };
-    VirtualPageRowModel.prototype.getRowIndexAtPixel = function (pixel) {
+    InfinitePageRowModel.prototype.getRowIndexAtPixel = function (pixel) {
         return this.virtualPageCache ? this.virtualPageCache.getRowIndexAtPixel(pixel) : -1;
     };
-    VirtualPageRowModel.prototype.getRowCount = function () {
+    InfinitePageRowModel.prototype.getPageFirstRow = function () {
+        return 0;
+    };
+    InfinitePageRowModel.prototype.getPageLastRow = function () {
+        return this.virtualPageCache ? this.virtualPageCache.getRowCount() - 1 : 0;
+    };
+    InfinitePageRowModel.prototype.getRowCount = function () {
         return this.virtualPageCache ? this.virtualPageCache.getRowCount() : 0;
     };
-    VirtualPageRowModel.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {
+    InfinitePageRowModel.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {
         if (this.virtualPageCache) {
             this.virtualPageCache.insertItemsAtIndex(index, items);
         }
     };
-    VirtualPageRowModel.prototype.removeItems = function (rowNodes, skipRefresh) {
+    InfinitePageRowModel.prototype.removeItems = function (rowNodes, skipRefresh) {
         console.log('ag-Grid: it is not possible to removeItems when using virtual pagination. Instead use the ' +
             'API to refresh the cache');
     };
-    VirtualPageRowModel.prototype.addItems = function (items, skipRefresh) {
+    InfinitePageRowModel.prototype.addItems = function (items, skipRefresh) {
         console.log('ag-Grid: it is not possible to add items when using virtual pagination as the grid does not ' +
             'know that last index of your data - instead either use insertItemsAtIndex OR refresh the cache.');
     };
-    VirtualPageRowModel.prototype.isRowPresent = function (rowNode) {
+    InfinitePageRowModel.prototype.isRowPresent = function (rowNode) {
         console.log('ag-Grid: not supported.');
         return false;
     };
-    VirtualPageRowModel.prototype.refreshVirtualPageCache = function () {
+    InfinitePageRowModel.prototype.refreshVirtualPageCache = function () {
         if (this.virtualPageCache) {
             this.virtualPageCache.refreshVirtualPageCache();
         }
     };
-    VirtualPageRowModel.prototype.purgeVirtualPageCache = function () {
+    InfinitePageRowModel.prototype.purgeVirtualPageCache = function () {
         if (this.virtualPageCache) {
             this.virtualPageCache.purgeVirtualPageCache();
         }
     };
-    VirtualPageRowModel.prototype.getVirtualRowCount = function () {
+    InfinitePageRowModel.prototype.getVirtualRowCount = function () {
         if (this.virtualPageCache) {
             return this.virtualPageCache.getVirtualRowCount();
         }
@@ -206,17 +226,17 @@ var VirtualPageRowModel = (function () {
             return null;
         }
     };
-    VirtualPageRowModel.prototype.isMaxRowFound = function () {
+    InfinitePageRowModel.prototype.isMaxRowFound = function () {
         if (this.virtualPageCache) {
             return this.virtualPageCache.isMaxRowFound();
         }
     };
-    VirtualPageRowModel.prototype.setVirtualRowCount = function (rowCount, maxRowFound) {
+    InfinitePageRowModel.prototype.setVirtualRowCount = function (rowCount, maxRowFound) {
         if (this.virtualPageCache) {
             this.virtualPageCache.setVirtualRowCount(rowCount, maxRowFound);
         }
     };
-    VirtualPageRowModel.prototype.getVirtualPageState = function () {
+    InfinitePageRowModel.prototype.getVirtualPageState = function () {
         if (this.virtualPageCache) {
             return this.virtualPageCache.getPageState();
         }
@@ -224,45 +244,45 @@ var VirtualPageRowModel = (function () {
             return null;
         }
     };
-    return VirtualPageRowModel;
-}());
+    return InfinitePageRowModel;
+}(beanStub_1.BeanStub));
 __decorate([
     context_1.Autowired('gridOptionsWrapper'),
     __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], VirtualPageRowModel.prototype, "gridOptionsWrapper", void 0);
+], InfinitePageRowModel.prototype, "gridOptionsWrapper", void 0);
 __decorate([
     context_1.Autowired('filterManager'),
     __metadata("design:type", filterManager_1.FilterManager)
-], VirtualPageRowModel.prototype, "filterManager", void 0);
+], InfinitePageRowModel.prototype, "filterManager", void 0);
 __decorate([
     context_1.Autowired('sortController'),
     __metadata("design:type", sortController_1.SortController)
-], VirtualPageRowModel.prototype, "sortController", void 0);
+], InfinitePageRowModel.prototype, "sortController", void 0);
 __decorate([
     context_1.Autowired('selectionController'),
     __metadata("design:type", selectionController_1.SelectionController)
-], VirtualPageRowModel.prototype, "selectionController", void 0);
+], InfinitePageRowModel.prototype, "selectionController", void 0);
 __decorate([
     context_1.Autowired('eventService'),
     __metadata("design:type", eventService_1.EventService)
-], VirtualPageRowModel.prototype, "eventService", void 0);
+], InfinitePageRowModel.prototype, "eventService", void 0);
 __decorate([
     context_1.Autowired('context'),
     __metadata("design:type", context_1.Context)
-], VirtualPageRowModel.prototype, "context", void 0);
+], InfinitePageRowModel.prototype, "context", void 0);
 __decorate([
     context_1.PostConstruct,
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
-], VirtualPageRowModel.prototype, "init", null);
+], InfinitePageRowModel.prototype, "init", null);
 __decorate([
     context_1.PreDestroy,
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
-], VirtualPageRowModel.prototype, "destroy", null);
-VirtualPageRowModel = __decorate([
+], InfinitePageRowModel.prototype, "destroy", null);
+InfinitePageRowModel = __decorate([
     context_1.Bean('rowModel')
-], VirtualPageRowModel);
-exports.VirtualPageRowModel = VirtualPageRowModel;
+], InfinitePageRowModel);
+exports.InfinitePageRowModel = InfinitePageRowModel;

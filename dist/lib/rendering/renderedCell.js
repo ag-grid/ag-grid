@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v9.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -691,10 +691,13 @@ var RenderedCell = (function (_super) {
         this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_MOUSE_OVER, agEvent);
     };
     RenderedCell.prototype.onContextMenu = function (mouseEvent) {
-        // to allow us to debug in chrome, we ignore the event if ctrl is pressed,
-        // thus the normal menu is displayed
-        if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
-            return;
+        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
+        // not everyone wants this, so first 'if' below allows to turn this hack off.
+        if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
+            // then do the check
+            if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
+                return;
+            }
         }
         var colDef = this.column.getColDef();
         var agEvent = this.createEvent(mouseEvent);
@@ -816,6 +819,7 @@ var RenderedCell = (function (_super) {
             node: this.node,
             colDef: this.column.getColDef(),
             rowIndex: this.gridCell.rowIndex,
+            $scope: this.scope,
             api: this.gridOptionsWrapper.getApi(),
             context: this.gridOptionsWrapper.getContext()
         }, function (className) {

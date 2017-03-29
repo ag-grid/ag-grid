@@ -1,9 +1,9 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { IFilterParams, IDoesFilterPassParams } from "../interfaces/iFilter";
+import { IFilterParams, IDoesFilterPassParams, SerializedFilter } from "../interfaces/iFilter";
 import { ComparableBaseFilter } from "./baseFilter";
-export interface SerializedTextFilter {
+export interface SerializedTextFilter extends SerializedFilter {
     filter: string;
     type: string;
 }

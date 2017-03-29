@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./rowNode";
@@ -11,7 +11,8 @@ import { IAggFunc, ColGroupDef, ColDef } from "./colDef";
 import { IDatasource } from "../rowModels/iDatasource";
 import { GridCellDef } from "./gridCell";
 import { IDateComp } from "../rendering/dateComponent";
-import { IEnterpriseDatasource } from "../rowModels/enterprise/enterpriseRowModel";
+import { IEnterpriseDatasource } from "../interfaces/iEnterpriseDatasource";
+import { CsvExportParams, ProcessCellForExportParams } from "../exportParams";
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
  ****************************************************************/
@@ -50,6 +51,7 @@ export interface GridOptions {
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
+    stopEditingWhenGridLosesFocus?: boolean;
     debug?: boolean;
     icons?: any;
     angularCompileRows?: boolean;
@@ -76,6 +78,7 @@ export interface GridOptions {
     rowGroupPanelShow?: string;
     pivotPanelShow?: string;
     suppressContextMenu?: boolean;
+    allowContextMenuWithControlKey?: boolean;
     suppressMenuFilterPanel?: boolean;
     suppressMenuMainPanel?: boolean;
     suppressMenuColumnPanel?: boolean;
@@ -94,10 +97,13 @@ export interface GridOptions {
     maxConcurrentDatasourceRequests?: number;
     maxPagesInCache?: number;
     paginationOverflowSize?: number;
-    paginationInitialRowCount?: number;
+    infiniteInitialRowCount?: number;
     paginationPageSize?: number;
+    infiniteBlockSize?: number;
+    paginationAutoPageSize?: number;
     paginationStartPage?: number;
     suppressPaginationPanel?: boolean;
+    pagination?: boolean;
     editType?: string;
     suppressTouch?: boolean;
     embedFullWidthRows?: boolean;
@@ -111,6 +117,7 @@ export interface GridOptions {
     suppressScrollLag?: boolean;
     defaultColGroupDef?: ColGroupDef;
     defaultColDef?: ColDef;
+    defaultExportParams?: CsvExportParams;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. FOR FUCKS SAKE! *
      ****************************************************************/
@@ -121,6 +128,8 @@ export interface GridOptions {
     groupUseEntireRow?: boolean;
     groupRemoveSingleChildren?: boolean;
     groupSuppressRow?: boolean;
+    groupHideOpenParents?: boolean;
+    groupMultiAutoColumn?: boolean;
     groupSuppressBlankHeader?: boolean;
     forPrint?: boolean;
     groupColumnDef?: ColDef;
@@ -243,9 +252,9 @@ export interface GridOptions {
     onFilterChanged?(event?: any): void;
     onAfterFilterChanged?(event?: any): void;
     onFilterModified?(event?: any): void;
-    onBeforeSortChanged?(event?: any): void;
-    onSortChanged?(event?: any): void;
-    onAfterSortChanged?(event?: any): void;
+    onBeforeSortChanged?(): void;
+    onSortChanged?(): void;
+    onAfterSortChanged?(): void;
     onVirtualRowRemoved?(event?: any): void;
     onRowClicked?(event?: any): void;
     onRowDoubleClicked?(event?: any): void;
@@ -318,20 +327,6 @@ export interface ProcessRowParams {
     api: GridApi;
     columnApi: ColumnApi;
     addRenderedRowListener: (eventType: string, listener: Function) => void;
-    context: any;
-}
-export interface ProcessCellForExportParams {
-    value: any;
-    node: RowNode;
-    column: Column;
-    api: GridApi;
-    columnApi: ColumnApi;
-    context: any;
-}
-export interface ProcessHeaderForExportParams {
-    column: Column;
-    api: GridApi;
-    columnApi: ColumnApi;
     context: any;
 }
 export interface NavigateToNextCellParams {

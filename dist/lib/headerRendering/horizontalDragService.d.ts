@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 /** need to get this class to use the dragService, so no duplication */

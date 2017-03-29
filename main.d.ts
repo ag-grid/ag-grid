@@ -61,6 +61,7 @@ export * from './dist/lib/interfaces/iComponent';
 export * from './dist/lib/interfaces/iContextMenuFactory';
 export * from './dist/lib/interfaces/iEventEmitter';
 export * from './dist/lib/interfaces/iEnterpriseDatasource';
+export * from './dist/lib/interfaces/iEnterpriseDatasource';
 export * from './dist/lib/interfaces/iExcelCreator';
 export * from './dist/lib/interfaces/iFrameworkFactory';
 export * from './dist/lib/interfaces/iFilter';
@@ -69,6 +70,7 @@ export * from './dist/lib/interfaces/iMenuFactory';
 export * from './dist/lib/interfaces/iRangeController';
 export * from './dist/lib/interfaces/iRowModel';
 export * from './dist/lib/interfaces/iRowNodeStage';
+export * from './dist/lib/interfaces/iSetFilterParams';
 export * from './dist/lib/interfaces/iViewportDatasource';
 
 export * from './dist/lib/layout/borderLayout';

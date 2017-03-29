@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
@@ -96,11 +96,14 @@ export declare class Events {
     /** All items from here down are used internally by the grid, not intended for external use. */
     static EVENT_FLASH_CELLS: string;
     /** All the events from here down are experimental, should not be documented or used by ag-Grid customers */
-    static EVENT_PAGINATION_RESET: string;
-    static EVENT_PAGINATION_PAGE_LOADED: string;
-    static EVENT_PAGINATION_PAGE_REQUESTED: string;
+    static EVENT_PAGINATION_CHANGED: string;
+    static EVENT_BODY_HEIGHT_CHANGED: string;
+    static DEPRECATED_EVENT_PAGINATION_RESET: string;
+    static DEPRECATED_EVENT_PAGINATION_PAGE_LOADED: string;
+    static DEPRECATED_EVENT_PAGINATION_PAGE_REQUESTED: string;
     static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED: string;
     static EVENT_SCROLL_VISIBILITY_CHANGED: string;
+    static EVENT_COMPONENT_STATE_CHANGED: string;
     static EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST: string;
     static EVENT_COLUMN_PIVOT_CHANGE_REQUEST: string;
     static EVENT_COLUMN_VALUE_CHANGE_REQUEST: string;
