@@ -51,7 +51,17 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
     }
 
     public gridOptionsFullWidthCellRenderer(gridOptions: GridOptions): {new (): ICellRendererComp;} | ICellRendererFunc | string {
-        return this._baseFrameworkFactory.gridOptionsFullWidthCellRenderer(gridOptions);
+        if (gridOptions.fullWidthCellRendererFramework) {
+            if (!gridOptions.fullWidthCellRendererFramework.$viewFactory) {
+                gridOptions.fullWidthCellRendererFramework.$viewFactory =
+                  this._viewCompiler.compile(gridOptions.fullWidthCellRendererFramework.template, this._viewResources);
+            }
+            return this._componentFactory.createRendererFromTemplate(this._container, gridOptions.fullWidthCellRendererFramework.$viewFactory);
+        } else {
+            return this._baseFrameworkFactory.gridOptionsFullWidthCellRenderer(gridOptions);
+        }
+
+
     }
 
     public gridOptionsGroupRowRenderer(gridOptions: GridOptions): {
