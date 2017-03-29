@@ -265,7 +265,7 @@ colDef.cellRendererParams = {
     </ul>
     </p>
 
-    <h3>One Or Many Group Columns</h3>
+    <h3 id="manyGroupColumns">One Or Many Group Columns</h3>
 
     <p>
         Depending on your preference, when showing multiple levels of groups, you can have one column showing
@@ -290,7 +290,7 @@ colDef.cellRendererParams = {
 
     <show-example example="exampleGroupingAutoManyGroupColumns"></show-example>
 
-    <h3>Replacing Groups with Children When Open</h3>
+    <h3 id="replacingChildren">Replacing Groups with Children When Open</h3>
 
     <p>
         Depending on your preference, you may wish to hide parent rows when they are open.

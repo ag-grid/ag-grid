@@ -12,7 +12,52 @@ include '../documentation-main/documentation_header.php';
     <note>
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
+
     <h2>Version 9.0.x</h2>
+
+    <b>Big Feature: Client Side Pagination (AG-91)</b>
+
+    <p>
+        ag-Grid 9.0.x introduces <a href="../javascript-grid-pagination/">client side pagination</a>. This replaces the old 'pagination row model' which forced
+        you to bring back pagination pages one page at a time from the server. The client side pagination works
+        with all row models and paginates on the client side. This means you have pagination work with the default
+        in memory row model (and do filtering, sorting, grouping, pivoting etc on the data on the client side),
+        or you can also put pagination in front of the viewport row model or infinite scrolling row model.
+    </p>
+
+    <b>Big Feature: Improved Column Groups (AG-315)</b>
+
+    <p>
+        ag-Grid 9.0.x also introduces
+        <a href="../javascript-grid-grouping/#manyGroupColumns">multiple columns for groups</a>
+        and
+        <a href="../javascript-grid-grouping/#replacingChildren">multi columns while grouping</a>.
+    </p>
+
+    <b>Enhancements</b>
+    <ul>
+        <li>Enhancement: New <a href="../javascript-grid-pagination/">client side pagination</a> that works with all row models.</li>
+        <li>Enhancement: New event <i>bodyHeightChanged</i>, gets called when the body height changes,
+            thus the number rows rendered may change. This is used by the grid for setting the page
+            size when <i>paginationAutoPageSize=true</i>.</li>
+        <li>Enhancement: First pass of <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a>,
+        to allow ag-Grid users to see work in progress for our server side filtering, sorting, grouping and aggregation.</li>
+        <li>Enhancement (AG-349): Filter: Provided 'in range' filters now have parameter <i>inRangeInclusive</i> to include the start and end range values.</li>
+        <li>Enhancement (AG-334): New event <i>componentStateChanged</i>: When frameworks (eg Angular 2, React, VueJS, Aurelia, Web Components) change a grid property, this event gets fired AFTER the grid has actioned the change.</li>
+        <li>Enhancement (AG-318): New property <i>allowContextMenuWithControlKey</i>, removes suppression of the context menu when ctrl is held down.</li>
+        <li>Enhancement (AG-307): New property <a href="../javascript-grid-cell-editing/#manyGroupColumns"><i>stopEditingWhenGridLosesFocus</i></a>, for cell editing, so that taking focus off the grid stops the editing and saves values.</li>
+    </ul>
+
+
+    <b>Bug Fixes:</b>
+
+    <ul>
+        <li>Bugfix (AG-355): Set Filter: setModel(null) was failing when selectMiniFilter = true.</li>
+        <li>Bugfix (AG-351): For Print: sorting and filtering was broken in forPrint.</li>
+        <li>Bugfix (AG-320): For Print was not working when using api.setRowData()</li>
+        <li>Bugfix (AG-314): (Angular 1.x) $scope got dropped form cellClass callback, is now back in.</li>
+        <li>Bugfix (AG-274): Column grouping and pinned columns were giving wrong header widths.</li>
+    </ul>
 
     <b>Refactoring:</b>
     <ul>
@@ -21,12 +66,6 @@ include '../documentation-main/documentation_header.php';
         log to console and help you when you are using the old method and property names.
     </ul>
 
-    <b>Enhancements</b>
-    <ul>
-        <li>Enhancement: New event <i>bodyHeightChanged</i>, gets called when the body height changes,
-            thus the number rows rendered may change. This is used by the grid for setting the page
-            size when <i>paginationAutoPageSize=true</i>.</li>
-    </ul>
 
     <h2>Version 8.2.x</h2>
 
