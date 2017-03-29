@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v9.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -156,7 +156,7 @@ var FilterManager = (function () {
         if (utils_1.Utils.missing(newFilter) || newFilter === "") {
             return null;
         }
-        if (this.gridOptionsWrapper.isRowModelVirtual()) {
+        if (this.gridOptionsWrapper.isRowModelInfinite()) {
             console.warn('ag-grid: cannot do quick filtering when doing virtual paging');
             return null;
         }

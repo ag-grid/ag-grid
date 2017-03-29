@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v9.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,7 +36,8 @@ var TextFilter = (function (_super) {
     TextFilter.prototype.modelFromFloatingFilter = function (from) {
         return {
             type: this.filter,
-            filter: from
+            filter: from,
+            filterType: 'text'
         };
     };
     TextFilter.prototype.getApplicableFilterTypes = function () {
@@ -133,7 +134,8 @@ var TextFilter = (function (_super) {
     TextFilter.prototype.serialize = function () {
         return {
             type: this.filter,
-            filter: this.filterText
+            filter: this.filterText,
+            filterType: 'text'
         };
     };
     TextFilter.prototype.parse = function (model) {

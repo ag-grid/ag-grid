@@ -1,9 +1,21 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { IDatasource } from "./../iDatasource";
 import { BeanStub } from "../../context/beanStub";
-export declare class PaginationService extends BeanStub {
+export interface IPaginationService {
+    isLastPageFound(): boolean;
+    getCurrentPage(): number;
+    goToNextPage(): void;
+    goToPreviousPage(): void;
+    goToFirstPage(): void;
+    goToLastPage(): void;
+    getPageSize(): number;
+    getTotalPages(): number;
+    getTotalRowCount(): number;
+    goToPage(page: number): void;
+}
+export declare class ServerPaginationService extends BeanStub implements IPaginationService {
     private filterManager;
     private gridPanel;
     private gridOptionsWrapper;
@@ -23,7 +35,7 @@ export declare class PaginationService extends BeanStub {
     getPageSize(): number;
     getCurrentPage(): number;
     getTotalPages(): number;
-    getRowCount(): number;
+    getTotalRowCount(): number;
     goToNextPage(): void;
     goToPreviousPage(): void;
     goToFirstPage(): void;
@@ -32,6 +44,7 @@ export declare class PaginationService extends BeanStub {
     init(): void;
     setDatasource(datasource: IDatasource): void;
     private checkForDeprecated();
+    private setPageSize();
     private reset(freshDatasource);
     private resetCurrentPage();
     private calculateTotalPages();

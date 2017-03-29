@@ -1,20 +1,25 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "../../entities/rowNode";
 import { IRowModel } from "../../interfaces/iRowModel";
 import { IDatasource } from "../iDatasource";
-export declare class VirtualPageRowModel implements IRowModel {
+import { BeanStub } from "../../context/beanStub";
+export declare class InfinitePageRowModel extends BeanStub implements IRowModel {
     private gridOptionsWrapper;
     private filterManager;
     private sortController;
     private selectionController;
     private eventService;
     private context;
-    private destroyFunctions;
     private virtualPageCache;
     private datasource;
+    getRowBounds(index: number): {
+        rowTop: number;
+        rowHeight: number;
+    };
     init(): void;
+    isLastRowFound(): boolean;
     private addEventListeners();
     private onFilterChanged();
     private onSortChanged();
@@ -28,8 +33,10 @@ export declare class VirtualPageRowModel implements IRowModel {
     private resetCache();
     getRow(rowIndex: number): RowNode;
     forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
-    getRowCombinedHeight(): number;
+    getCurrentPageHeight(): number;
     getRowIndexAtPixel(pixel: number): number;
+    getPageFirstRow(): number;
+    getPageLastRow(): number;
     getRowCount(): number;
     insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void;
     removeItems(rowNodes: RowNode[], skipRefresh: boolean): void;

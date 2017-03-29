@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -9,6 +9,7 @@ import { GridCell } from "../entities/gridCell";
 import { ColDef } from "../entities/colDef";
 import { BeanStub } from "../context/beanStub";
 export declare class RowRenderer extends BeanStub {
+    private paginationProxy;
     private columnController;
     private gridOptionsWrapper;
     private gridCore;
@@ -22,7 +23,6 @@ export declare class RowRenderer extends BeanStub {
     private floatingRowModel;
     private context;
     private loggerFactory;
-    private rowModel;
     private focusedCellController;
     private rangeController;
     private cellNavigationService;
@@ -36,6 +36,7 @@ export declare class RowRenderer extends BeanStub {
     private logger;
     agWire(loggerFactory: LoggerFactory): void;
     init(): void;
+    private onPageLoaded(refreshEvent?);
     getAllCellsForColumn(column: Column): HTMLElement[];
     refreshAllFloatingRows(): void;
     private refreshFloatingRows(renderedRows, rowNodes, pinnedLeftContainerComp, pinnedRightContainerComp, bodyContainerComp, fullWidthContainerComp);

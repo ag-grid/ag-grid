@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Component } from "../widgets/component";
@@ -75,11 +75,14 @@ export declare abstract class ComparableBaseFilter<T, P extends IFilterParams, M
     isFilterActive(): boolean;
     setFilterType(filterType: string): void;
 }
+export interface IScalarFilterParams extends IFilterParams {
+    inRangeInclusive?: boolean;
+}
 /**
  * Comparable filter with scalar underlying values (ie numbers and dates. Strings are not scalar so have to extend
  * ComparableBaseFilter)
  */
-export declare abstract class ScalarBaseFilter<T, P extends IFilterParams, M> extends ComparableBaseFilter<T, P, M> {
+export declare abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> extends ComparableBaseFilter<T, P, M> {
     abstract comparator(): Comparator<T>;
     doesFilterPass(params: IDoesFilterPassParams): boolean;
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v9.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,7 +37,8 @@ var NumberFilter = (function (_super) {
         return {
             type: this.filter,
             filter: Number(from),
-            filterTo: this.filterNumberTo
+            filterTo: this.filterNumberTo,
+            filterType: 'number'
         };
     };
     NumberFilter.prototype.getApplicableFilterTypes = function () {
@@ -122,7 +123,8 @@ var NumberFilter = (function (_super) {
         return {
             type: this.filter,
             filter: this.filterNumber,
-            filterTo: this.filterNumberTo
+            filterTo: this.filterNumberTo,
+            filterType: 'number'
         };
     };
     NumberFilter.prototype.parse = function (model) {

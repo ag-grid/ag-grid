@@ -105,7 +105,6 @@ export interface GridOptions {
     paginationStartPage?: number;
     suppressPaginationPanel?: boolean;
 
-    infinitePageSize?: number;
     pagination?: boolean;
     editType?: string;
     suppressTouch?: boolean;

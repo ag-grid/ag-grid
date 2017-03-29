@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v9.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -72,7 +72,7 @@ var valueService_1 = require("./valueService");
 var popupService_1 = require("./widgets/popupService");
 var gridRow_1 = require("./entities/gridRow");
 var inMemoryRowModel_1 = require("./rowModels/inMemory/inMemoryRowModel");
-var virtualPageRowModel_1 = require("./rowModels/infinateScrolling/virtualPageRowModel");
+var infinitePageRowModel_1 = require("./rowModels/infinateScrolling/infinitePageRowModel");
 var animateSlideCellRenderer_1 = require("./rendering/cellRenderers/animateSlideCellRenderer");
 var cellEditorFactory_1 = require("./rendering/cellEditorFactory");
 var popupEditorWrapper_1 = require("./rendering/cellEditors/popupEditorWrapper");
@@ -96,8 +96,8 @@ var renderedCell_1 = require("./rendering/renderedCell");
 var headerRowComp_1 = require("./headerRendering/headerRowComp");
 var animateShowChangeCellRenderer_1 = require("./rendering/cellRenderers/animateShowChangeCellRenderer");
 var inMemoryNodeManager_1 = require("./rowModels/inMemory/inMemoryNodeManager");
-var virtualPageCache_1 = require("./rowModels/infinateScrolling/virtualPageCache");
-var virtualPage_1 = require("./rowModels/infinateScrolling/virtualPage");
+var infinitePageCache_1 = require("./rowModels/infinateScrolling/infinitePageCache");
+var infinitePage_1 = require("./rowModels/infinateScrolling/infinitePage");
 var baseFrameworkFactory_1 = require("./baseFrameworkFactory");
 var methodNotImplementedException_1 = require("./misc/methodNotImplementedException");
 var touchListener_1 = require("./widgets/touchListener");
@@ -208,9 +208,9 @@ function populateClientExports(exports) {
     exports.InMemoryNodeManager = inMemoryNodeManager_1.InMemoryNodeManager;
     // rowControllers
     exports.FloatingRowModel = floatingRowModel_1.FloatingRowModel;
-    exports.VirtualPageRowModel = virtualPageRowModel_1.VirtualPageRowModel;
-    exports.VirtualPageCache = virtualPageCache_1.VirtualPageCache;
-    exports.VirtualPage = virtualPage_1.VirtualPage;
+    exports.VirtualPageRowModel = infinitePageRowModel_1.InfinitePageRowModel;
+    exports.VirtualPageCache = infinitePageCache_1.InfinitePageCache;
+    exports.VirtualPage = infinitePage_1.InfinitePage;
     //styling
     exports.StylingService = stylingService_1.StylingService;
     // widgets

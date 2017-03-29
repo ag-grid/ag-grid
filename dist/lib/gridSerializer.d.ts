@@ -1,13 +1,12 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "./entities/column";
 import { ColumnController } from "./columnController/columnController";
-import { ProcessCellForExportParams, ProcessHeaderForExportParams } from "./entities/gridOptions";
 import { RowNode } from "./entities/rowNode";
 import { ValueService } from "./valueService";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { CsvExportParams } from "./exportParams";
+import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exportParams";
 /**
  * This interface works in conjuction with the GridSerializer. When serializing a grid, an instance that implements this interface
  * must be passed in, the serializer will call back to the provided methods and finally call to parse to obtain the final result
@@ -85,7 +84,7 @@ export declare class GridSerializer {
     private selectionController;
     private balancedColumnTreeBuilder;
     private gridOptionsWrapper;
-    serialize(gridSerializingSession: GridSerializingSession, params?: CsvExportParams): string;
+    serialize(gridSerializingSession: GridSerializingSession, userParams?: CsvExportParams): string;
 }
 export declare enum RowType {
     HEADER_GROUPING = 0,

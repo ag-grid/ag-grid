@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v9.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -274,9 +274,14 @@ var ScalarBaseFilter = (function (_super) {
             return compareResult != 0;
         }
         //From now on the type is a range and rawFilterValues must be an array!
-        var compareDateToResult = comparator(rawFilterValues[1], value);
+        var compareToResult = comparator(rawFilterValues[1], value);
         if (this.filter === BaseFilter.IN_RANGE) {
-            return compareResult > 0 && compareDateToResult < 0;
+            if (!this.filterParams.inRangeInclusive) {
+                return compareResult > 0 && compareToResult < 0;
+            }
+            else {
+                return compareResult >= 0 && compareToResult <= 0;
+            }
         }
         throw new Error('Unexpected type of date filter!: ' + this.filter);
     };
