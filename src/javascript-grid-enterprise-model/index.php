@@ -186,8 +186,8 @@ export interface ColumnVO {
     website, as we cannot host servers on our website, and even if we did, you would
     not be able to run it locally. Instead we have put a full end to end example
     in Github at <a href="https://github.com/ceolter/ag-grid-enterprise-mysql-sample/">
-    https://github.com/ceolter/ag-grid-enterprise-mysql-sample/</a> and there
-    is also a YouTube video <a href="">TBD</a>.
+    https://github.com/ceolter/ag-grid-enterprise-mysql-sample/</a> and we are working
+    on a YouTube video while will showcase it.
 </p>
 
 <p>

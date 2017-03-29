@@ -18,6 +18,29 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">29th March 2017</div>
+    <div class="news-header">ag-Grid 9.0.0 Released</div>
+    <div>
+        <ul style="padding-left: 20px;">
+            <li>
+                <a href="../javascript-grid-pagination/">Client Side Pagination</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-grouping/#manyGroupColumns">Multiple Columns for Groups</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-grouping/#replacingChildren">Children Inlining for Groups</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a>
+            </li>
+        </ul>
+        See the <a href="../change-log/changeLogIndex.php">Change Log</a>
+        for full release details.
+    </div>
+</div>
+
+<div class="news-box">
 <div class="news-header" style="margin-bottom: 4px;">
     20th March 2017
 </div>
