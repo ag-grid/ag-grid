@@ -11,6 +11,8 @@ import {SvgFactory} from "../../svgFactory";
 import {EventService} from "../../eventService";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {Events} from "../../events";
+import {ColumnApi} from "../../columnController/columnController";
+import {GridApi} from "../../gridApi";
 
 export interface IHeaderParams {
     column: Column;
@@ -20,7 +22,8 @@ export interface IHeaderParams {
     showColumnMenu: (source:HTMLElement)=>void;
     progressSort: (multiSort?: boolean)=>void;
     setSort: (sort: string, multiSort?: boolean)=>void;
-    eventService: EventService
+    columnApi: ColumnApi,
+    api: GridApi
 }
 
 export interface IHeader {
