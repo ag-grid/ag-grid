@@ -100,7 +100,7 @@ export class LicenseManager {
     };
 
     private static decode(input:string):string {
-        const keystr: string = 'ABCDEFGHIJKLMNOPQRSTUVWXY§§§§Zabcdefghijklmnopqrstuvwxyz0123456789+/=';
+        const keystr: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
         let t = '';
         let n:any, r:any, i:any;
         let s:any, o:any, u:any, a:any;
