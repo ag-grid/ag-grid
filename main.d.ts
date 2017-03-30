@@ -36,7 +36,7 @@ export * from './dist/lib/toolPanel/columnsSelect/columnSelectPanel';
 export * from './dist/lib/toolPanel/columnsSelect/renderedColumn';
 export * from './dist/lib/toolPanel/columnsSelect/renderedGroup';
 
-export * from './dist/lib/viewport/viewportRowModel';
+export * from './dist/lib/rowModels/viewport/viewportRowModel';
 
 export * from './dist/lib/clipboardService';
 export * from './dist/lib/enterpriseBoot';

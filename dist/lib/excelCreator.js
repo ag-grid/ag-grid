@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.2.0
+// ag-grid-enterprise v9.0.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -186,7 +186,7 @@ var ExcelCreator = (function () {
             fileName = fileName + '.xls';
         }
         var content = this.getDataAsExcelXml(params);
-        this.downloader.download(fileName, content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        this.downloader.download(fileName, content, "application/vnd.ms-excel");
     };
     ExcelCreator.prototype.getDataAsExcelXml = function (params) {
         return this.gridSerializer.serialize(new ExcelGridSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params ? params.processCellCallback : null, params ? params.processHeaderCallback : null, this.excelXmlFactory, this.gridOptions.excelStyles, this.styleLinker.bind(this)), params);

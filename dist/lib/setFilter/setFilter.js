@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.2.0
+// ag-grid-enterprise v9.0.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -151,6 +151,7 @@ var SetFilter = (function (_super) {
     };
     SetFilter.prototype.setMiniFilter = function (newMiniFilter) {
         this.model.setMiniFilter(newMiniFilter);
+        this.eMiniFilter.value = this.model.getMiniFilter();
     };
     SetFilter.prototype.getMiniFilter = function () {
         return this.model.getMiniFilter();
@@ -199,7 +200,9 @@ var SetFilter = (function (_super) {
         this.virtualList.refresh();
     };
     SetFilter.prototype.resetState = function () {
-        this.model.setModel(null);
+        this.setMiniFilter(null);
+        this.model.setModel(null, true);
+        this.selectEverything();
     };
     return SetFilter;
 }(main_1.BaseFilter));

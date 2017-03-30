@@ -1,4 +1,4 @@
-// ag-grid-enterprise v8.2.0
+// ag-grid-enterprise v9.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -89,7 +89,7 @@ var LicenseManager = LicenseManager_1 = (function () {
     };
     ;
     LicenseManager.decode = function (input) {
-        var keystr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+        var keystr = 'ABCDEFGHIJKLMNOPQRSTUVWXY§§§§Zabcdefghijklmnopqrstuvwxyz0123456789+/=';
         var t = '';
         var n, r, i;
         var s, o, u, a;
@@ -139,7 +139,7 @@ var LicenseManager = LicenseManager_1 = (function () {
     };
     return LicenseManager;
 }());
-LicenseManager.RELEASE_INFORMATION = 'MTQ4NTE3OTkyOTcwNw==';
+LicenseManager.RELEASE_INFORMATION = 'MTQ5MDc4OTQ1NzYzMQ==';
 __decorate([
     main_1.Autowired('md5'),
     __metadata("design:type", md5_1.MD5)
