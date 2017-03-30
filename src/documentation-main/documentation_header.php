@@ -121,7 +121,7 @@ function isFrameworkWebComponents()
 </head>
 
 <body ng-app="documentation">
-
+<?php include_once '../php-utils/printPropertiesTable.php' ?>
 <?php if ($version == 'latest') {
     $navKey = "documentation";
     include '../includes/navbar.php';

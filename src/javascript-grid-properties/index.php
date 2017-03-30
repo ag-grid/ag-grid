@@ -445,35 +445,10 @@ include '../documentation-main/documentation_header.php';
         <!-- Row Model: Pagination -->
         <!------------------->
         <tr>
-            <th colspan="2"><h2>Row Model: Pagination</h2></th>
+            <th colspan="2"><h2>Pagination</h2></th>
         </tr>
-        <tr>
-            <th>paginationPageSize</th>
-            <td>For normal paging, how many rows to show to a user at one time (ie page size).
-                In virtual pagination dictates the size of the pages in the data cache. For both paging
-                and virtual pagination, defines the block size the datasource is asked for data.</td>
-        </tr>
-        <tr>
-            <th>paginationFirstPage</th>
-            <td>
-                The first page to use for pagination. So if you want to start on page 6, set this number
-                to 5 (pages are zero indexed).
-            </td>
-        </tr>
-        <tr>
-            <th>datasource</th>
-            <td>A datasource is used when using row models a) pagination and b) virtual paging. This section explains the datasource used in each fo these row models.
-                See <a href="../javascript-grid-datasource/">Datasource</a> for more information.
-            </td>
-        </tr>
-        <tr>
-            <th>suppressPaginationPanel</th>
-            <td>
-                Set to true if you want to use pagination but NOT want to display the grids
-                pagination panel. Use this if you want to provide your own GUI for pagination
-                outside of the grid.
-            </td>
-        </tr>
+        <?php include '../javascript-grid-pagination/paginationProperties.php'?>
+        <?php printPropertiesTable($paginationProperties) ?>
 
         <!------------------->
         <!-- Row Model: Infinite Scrolling -->

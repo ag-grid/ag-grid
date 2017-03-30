@@ -11,6 +11,7 @@ include '../documentation-main/documentation_header.php';
 
     <h2 id="pagination">Pagination</h2>
 
+
     <note>
         <p>In v9.0 ag-Grid pagination changed. See the <a href="index-deprecated.php">old pagination documentation</a>
         for how it used to work.</p>
@@ -34,100 +35,16 @@ include '../documentation-main/documentation_header.php';
 
     <br>
     <h3 id="properties">Properties</h3>
-    <table class="table">
-        <tr>
-            <th>Property</th>
-            <th>Description</th>
-        </tr>
-        <tr>
-            <th>pagination</th>
-            <td>
-                <p>True - Pagination is enabled.</p>
-                <p>False (Default) - Pagination is disabled.</p>
-            </td>
-        </tr>
-        <tr>
-            <th>paginationPageSize</th>
-            <td><p>Number. How many rows to load per page. Default value = 100. If <i>paginationAutoPageSize</i>
-                is specified, this property is ignored</p></td>
-        </tr>
-        <tr>
-            <th>paginationAutoPageSize</th>
-            <td>
-                <p>True - The number of rows to load per page is automatically adjusted by ag-Grid so each page
-                    shows enough rows to just fill the area designated for the grid.</p>
-                <p>False (Default) - paginationPageSize is used.</p>
-            </td>
-        </tr>
-        <tr>
-            <th>suppressPaginationPanel</th>
-            <td>
-                <p>True - The out of the box ag-Grid controls for navigation are hidden. This is useful if
-                    <i>clientPagination=true</i> and you want to provide your own pagination controls.</p>
-                <p>False (Default) - when <i>clientPagination=true</i> It automatically shows at the bottom the necessary
-                    controls so that the user can navigate through the different pages.</p>
-                </td>
-        </tr>
-        <tr>
-            <th>paginationStartPage</th>
-            <td><p>Number. The starting page that will be shown by ag-Grid. If this number
-                is greater than the maximum number of pages, ag-Grid will place the user in the last page.</p></td>
-        </tr>
-    </table>
+    <?php include 'paginationProperties.php' ?>
+    <?php printPropertiesTable($paginationProperties) ?>
+
 
     <p>The following methods compose the pagination API are all available from <i>gridOptions.api</i></p>
 
     <br>
     <h3 id="properties">API</h3>
-    <table class="table">
-        <tr>
-            <th>Method</th>
-            <th>Description</th>
-        </tr>
-        <tr>
-            <th>paginationIsLastPageFound()</th>
-            <td>
-                <p>Returns true when last page known. This will always be true if you are using the in memory row model
-                    for pagination.</p>
-                <p>Returns false when last page now known. This only happens when using infinite scrolling row model.</p></td>
-        </tr>
-        <tr>
-            <th>paginationGetPageSize()</th>
-            <td><p>How many rows ag-Grid is showing per page.</p></td>
-        </tr>
-        <tr>
-            <th>paginationSetPageSize(newPageSize)</th>
-            <td><p>Sets the <i>paginationPageSize</i> to <i>newPageSize</i> Then it repaginates the grid so the changes
-                    are applied immediately on the screen.</p></td>
-        </tr>
-        <tr>
-            <th>paginationGetCurrentPage()</th>
-            <td>
-                <p>Returns the 0 index based page which ag-Grid is showing right now.</p>
-                </td>
-        </tr>
-        <tr>
-            <th>paginationGetTotalPages()</th>
-            <td><p>Returns the total number of pages. If <i>paginationIsLastPageFound() == false</i> returns null.</p>
-            </td>
-        </tr>
-        <tr>
-            <th>paginationGetRowCount()</th>
-            <td><p>The total number of rows. If <i>paginationIsLastPageFound() == false</i> returns null.</p>
-            </td>
-        </tr>
-        <tr>
-            <th>paginationGoToPage(pageNumber)</th>
-            <td><p>Goes to the specified page. If the page requested doesn't exist, it will go to the last
-            page.</p>
-            </td>
-        </tr>
-        <tr>
-            <th>paginationGoToNextPage()<br>paginationGoToPreviousPage()<br>paginationGoToFirstPage()<br>paginationGoToLastPage()</th>
-            <td><p>Shorthands for <i>goToPage(relevantPageNumber)</i>.</p>
-            </td>
-        </tr>
-    </table>
+    <?php include 'paginationProperties.php' ?>
+    <?php printPropertiesTable($paginationApi) ?>
 
     <br>
     <h3 id="events">Events</h3>

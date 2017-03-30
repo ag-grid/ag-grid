@@ -541,6 +541,15 @@ include '../documentation-main/documentation_header.php';
             <td>Copies the selected range down, similar to Ctrl+D in Excel.</td>
         </tr>
 
+        <!------------------->
+        <!-- Pagination -->
+        <!------------------->
+        <tr>
+            <th colspan="2"><h2>Pagination</h2></th>
+        </tr>
+        <?php include '../javascript-grid-pagination/paginationProperties.php' ?>
+        <?php printPropertiesRows($paginationApi) ?>
+
 
         <!------------------->
         <!-- Miscellaneous -->
