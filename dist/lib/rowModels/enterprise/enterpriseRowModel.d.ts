@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.0.0
+// ag-grid-enterprise v9.0.1
 import { IRowModel, RowNode, BeanStub, IEnterpriseDatasource } from "ag-grid";
 export declare class EnterpriseRowModel extends BeanStub implements IRowModel {
     private gridOptionsWrapper;
