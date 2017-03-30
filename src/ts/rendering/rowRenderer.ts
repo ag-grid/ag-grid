@@ -795,6 +795,12 @@ export class RowRenderer extends BeanStub {
             // or row that is not currently in view, hence the renderedCell would not exist
             var nextRenderedCell = this.getComponentForCell(nextCell);
 
+            // if next cell is fullWidth row, then no rendered cell,
+            // as fullWidth rows have no cells, so we skip it
+            if (_.missing(nextRenderedCell)) {
+                continue;
+            }
+
             // if editing, but cell not editable, skip cell
             if (startEditing && !nextRenderedCell.isCellEditable()) {
                 continue;
