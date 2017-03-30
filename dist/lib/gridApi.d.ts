@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { MasterSlaveService } from "./masterSlaveService";
@@ -12,7 +12,7 @@ import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./exportParams";
 import { IDatasource } from "./rowModels/iDatasource";
-import { IEnterpriseDatasource } from "./rowModels/enterprise/enterpriseRowModel";
+import { IEnterpriseDatasource } from "./interfaces/iEnterpriseDatasource";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column | ColDef;
@@ -37,7 +37,8 @@ export declare class GridApi {
     private context;
     private rowModel;
     private sortController;
-    private paginationService;
+    private serverPaginationService;
+    private paginationProxy;
     private focusedCellController;
     private rangeController;
     private clipboardService;
@@ -46,7 +47,8 @@ export declare class GridApi {
     private cellRendererFactory;
     private cellEditorFactory;
     private inMemoryRowModel;
-    private virtualPageRowModel;
+    private infinitePageRowModel;
+    private paginationService;
     private init();
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     __getMasterSlaveService(): MasterSlaveService;
@@ -167,14 +169,20 @@ export declare class GridApi {
     removeItems(rowNodes: RowNode[], skipRefresh?: boolean): void;
     addItems(items: any[], skipRefresh?: boolean): void;
     refreshVirtualPageCache(): void;
+    refreshInfinitePageCache(): void;
     purgeVirtualPageCache(): void;
+    purgeInfinitePageCache(): void;
     getVirtualRowCount(): number;
+    getInfiniteRowCount(): number;
     isMaxRowFound(): boolean;
     setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void;
+    setInfiniteRowCount(rowCount: number, maxRowFound?: boolean): void;
     getVirtualPageState(): any;
+    getInfinitePageState(): any;
     checkGridSize(): void;
     paginationIsLastPageFound(): boolean;
     paginationGetPageSize(): number;
+    paginationSetPageSize(size: number): void;
     paginationGetCurrentPage(): number;
     paginationGetTotalPages(): number;
     paginationGetRowCount(): number;

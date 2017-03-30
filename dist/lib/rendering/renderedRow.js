@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v9.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,7 @@ var cellRendererFactory_1 = require("./cellRendererFactory");
 var gridPanel_1 = require("../gridPanel/gridPanel");
 var beanStub_1 = require("../context/beanStub");
 var columnAnimationService_1 = require("./columnAnimationService");
+var paginationProxy_1 = require("../rowModels/paginationProxy");
 var RenderedRow = (function (_super) {
     __extends(RenderedRow, _super);
     function RenderedRow(parentScope, rowRenderer, bodyContainerComp, fullWidthContainerComp, pinnedLeftContainerComp, pinnedRightContainerComp, node, animateIn) {
@@ -467,8 +468,14 @@ var RenderedRow = (function (_super) {
     };
     RenderedRow.prototype.addCellFocusedListener = function () {
         this.addDestroyableEventListener(this.mainEventService, events_1.Events.EVENT_CELL_FOCUSED, this.setRowFocusClasses.bind(this));
+        this.addDestroyableEventListener(this.mainEventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_ROW_INDEX_CHANGED, this.setRowFocusClasses.bind(this));
         this.setRowFocusClasses();
+    };
+    RenderedRow.prototype.onPaginationChanged = function () {
+        // it is possible this row is in the new page, but the page number has changed, which means
+        // it needs to reposition itself relative to the new page
+        this.onTopChanged();
     };
     RenderedRow.prototype.forEachRenderedCell = function (callback) {
         utils_1.Utils.iterateObject(this.renderedCells, function (key, renderedCell) {
@@ -491,6 +498,10 @@ var RenderedRow = (function (_super) {
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
     };
     RenderedRow.prototype.onTopChanged = function () {
+        // top is not used in forPrint, as the rows are just laid out naturally
+        if (this.gridOptionsWrapper.isForPrint()) {
+            return;
+        }
         // console.log(`top changed for ${this.rowNode.id} = ${this.rowNode.rowTop}`);
         this.setRowTop(this.rowNode.rowTop);
     };
@@ -498,7 +509,14 @@ var RenderedRow = (function (_super) {
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
         if (utils_1.Utils.exists(pixels)) {
-            var topPx = pixels + "px";
+            var pixelsWithOffset = void 0;
+            if (this.rowNode.isFloating()) {
+                pixelsWithOffset = pixels;
+            }
+            else {
+                pixelsWithOffset = pixels - this.paginationProxy.getPixelOffset();
+            }
+            var topPx = pixelsWithOffset + "px";
             this.eAllRowContainers.forEach(function (row) { return row.style.top = topPx; });
         }
     };
@@ -1008,6 +1026,10 @@ __decorate([
     context_1.Autowired('gridPanel'),
     __metadata("design:type", gridPanel_1.GridPanel)
 ], RenderedRow.prototype, "gridPanel", void 0);
+__decorate([
+    context_1.Autowired('paginationProxy'),
+    __metadata("design:type", paginationProxy_1.PaginationProxy)
+], RenderedRow.prototype, "paginationProxy", void 0);
 __decorate([
     context_1.PostConstruct,
     __metadata("design:type", Function),

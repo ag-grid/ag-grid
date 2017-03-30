@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./rowNode";
@@ -92,19 +92,19 @@ export interface ColDef extends AbstractColDef {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     cellRendererFramework?: any;
-    cellRendererParams?: {};
+    cellRendererParams?: any;
     /** Cell editor */
     cellEditor?: {
         new (): ICellEditorComp;
     } | string;
     cellEditorFramework?: any;
-    cellEditorParams?: {};
+    cellEditorParams?: any;
     /** A function for rendering a floating cell. */
     floatingCellRenderer?: {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     floatingCellRendererFramework?: any;
-    floatingCellRendererParams?: {};
+    floatingCellRendererParams?: any;
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     cellFormatter?: (params: any) => string;
     /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */

@@ -1,8 +1,8 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
-import { GridOptions, NodeChildDetails, GetContextMenuItems, GetMainMenuItems, ProcessRowParams, ProcessCellForExportParams, GetRowNodeIdFunc, NavigateToNextCellParams, TabToNextCellParams } from "./entities/gridOptions";
+import { GridOptions, NodeChildDetails, GetContextMenuItems, NavigateToNextCellParams, TabToNextCellParams, GetMainMenuItems, GetRowNodeIdFunc, ProcessRowParams } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
 import { ColDef, IAggFunc, ColGroupDef } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnController";
@@ -10,7 +10,8 @@ import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { ICellRendererFunc, ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { IDatasource } from "./rowModels/iDatasource";
 import { GridCellDef } from "./entities/gridCell";
-import { IEnterpriseDatasource } from "./rowModels/enterprise/enterpriseRowModel";
+import { IEnterpriseDatasource } from "./interfaces/iEnterpriseDatasource";
+import { CsvExportParams, ProcessCellForExportParams } from "./exportParams";
 export declare class GridOptionsWrapper {
     private static MIN_COL_WIDTH;
     static PROP_HEADER_HEIGHT: string;
@@ -44,8 +45,8 @@ export declare class GridOptionsWrapper {
     isRowSelectionMulti(): boolean;
     getContext(): any;
     isPivotMode(): boolean;
-    isRowModelPagination(): boolean;
-    isRowModelVirtual(): boolean;
+    isRowModelServerPagination(): boolean;
+    isRowModelInfinite(): boolean;
     isRowModelViewport(): boolean;
     isRowModelEnterprise(): boolean;
     isRowModelDefault(): boolean;
@@ -60,6 +61,8 @@ export declare class GridOptionsWrapper {
     isEnableCellChangeFlash(): boolean;
     isGroupSelectsChildren(): boolean;
     isGroupSelectsFiltered(): boolean;
+    isGroupHideOpenParents(): boolean;
+    isGroupMultiAutoColumn(): boolean;
     isGroupRemoveSingleChildren(): boolean;
     isGroupIncludeFooter(): boolean;
     isGroupSuppressBlankHeader(): boolean;
@@ -96,13 +99,15 @@ export declare class GridOptionsWrapper {
     isEnableColResize(): boolean;
     isSingleClickEdit(): boolean;
     isSuppressClickEdit(): boolean;
+    isStopEditingWhenGridLosesFocus(): boolean;
     getGroupDefaultExpanded(): number;
     getAutoSizePadding(): number;
     getMaxConcurrentDatasourceRequests(): number;
     getMaxPagesInCache(): number;
     getPaginationOverflowSize(): number;
     getPaginationPageSize(): number;
-    getPaginationInitialRowCount(): number;
+    getInfiniteBlockSize(): number;
+    getInfiniteInitialRowCount(): number;
     getPaginationStartPage(): number;
     isSuppressPaginationPanel(): boolean;
     getRowData(): any[];
@@ -125,12 +130,14 @@ export declare class GridOptionsWrapper {
     isEnableGroupEdit(): boolean;
     isSuppressMiddleClickScrolls(): boolean;
     isSuppressPreventDefaultOnMouseWheel(): boolean;
-    isEnableServerSideSorting(): boolean;
     isSuppressColumnVirtualisation(): boolean;
     isSuppressContextMenu(): boolean;
+    isAllowContextMenuWithControlKey(): boolean;
     isSuppressCopyRowsToClipboard(): boolean;
     isEnableFilter(): boolean;
+    isPagination(): boolean;
     isEnableServerSideFilter(): boolean;
+    isEnableServerSideSorting(): boolean;
     isSuppressScrollLag(): boolean;
     isSuppressMovableColumns(): boolean;
     isAnimateRows(): boolean;
@@ -141,6 +148,7 @@ export declare class GridOptionsWrapper {
     isSuppressAggFuncInHeader(): boolean;
     isSuppressMenuMainPanel(): boolean;
     isEnableRangeSelection(): boolean;
+    isPaginationAutoPageSize(): boolean;
     isRememberGroupStateWhenNewData(): boolean;
     getIcons(): any;
     getAggFuncs(): {
@@ -159,6 +167,7 @@ export declare class GridOptionsWrapper {
     isFloatingFilter(): boolean;
     getDefaultColDef(): ColDef;
     getDefaultColGroupDef(): ColGroupDef;
+    getDefaultExportParams(): CsvExportParams;
     getHeaderCellTemplate(): string;
     getHeaderCellTemplateFunc(): (params: any) => string | HTMLElement;
     getNodeChildDetailsFunc(): ((dataItem: any) => NodeChildDetails);

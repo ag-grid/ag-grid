@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v9.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -99,7 +99,12 @@ exports.BaseGridSerializingSession = BaseGridSerializingSession;
 var GridSerializer = (function () {
     function GridSerializer() {
     }
-    GridSerializer.prototype.serialize = function (gridSerializingSession, params) {
+    GridSerializer.prototype.serialize = function (gridSerializingSession, userParams) {
+        var baseParams = this.gridOptionsWrapper.getDefaultExportParams();
+        var params = {};
+        utils_1.Utils.assign(params, baseParams);
+        utils_1.Utils.assign(params, userParams);
+        var dontSkipRows = function () { return false; };
         var skipGroups = params && params.skipGroups;
         var skipHeader = params && params.skipHeader;
         var columnGroups = params && params.columnGroups;
@@ -112,6 +117,9 @@ var GridSerializer = (function () {
         var onlySelected = params && params.onlySelected;
         var columnKeys = params && params.columnKeys;
         var onlySelectedAllPages = params && params.onlySelectedAllPages;
+        var rowSkipper = (params && params.shouldRowBeSkipped) || dontSkipRows;
+        var api = this.gridOptionsWrapper.getApi();
+        var context = this.gridOptionsWrapper.getContext();
         // when in pivot mode, we always render cols on screen, never 'all columns'
         var isPivotMode = this.columnController.isPivotMode();
         var rowModelNormal = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL;
@@ -209,6 +217,13 @@ var GridSerializer = (function () {
             if (nodeIsRootNode && !node.leafGroup) {
                 return;
             }
+            var shouldRowBeSkipped = rowSkipper({
+                node: node,
+                api: api,
+                context: context
+            });
+            if (shouldRowBeSkipped)
+                return;
             var rowAccumulator = gridSerializingSession.onNewBodyRow();
             columnsToExport.forEach(function (column, index) {
                 rowAccumulator.onColumn(column, index, node);

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RenderedCell } from "./renderedCell";
@@ -19,6 +19,7 @@ export declare class RenderedRow extends BeanStub {
     private focusedCellController;
     private cellRendererService;
     private gridPanel;
+    private paginationProxy;
     private ePinnedLeftRow;
     private ePinnedRightRow;
     private eBodyRow;
@@ -88,6 +89,7 @@ export declare class RenderedRow extends BeanStub {
     private addHoverClass(hover);
     private setRowFocusClasses();
     private addCellFocusedListener();
+    private onPaginationChanged();
     forEachRenderedCell(callback: (renderedCell: RenderedCell) => void): void;
     private addNodeDataChangedListener();
     private onTopChanged();

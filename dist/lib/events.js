@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v9.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -100,12 +100,15 @@ Events.EVENT_BODY_SCROLL = 'bodyScroll';
 /** All items from here down are used internally by the grid, not intended for external use. */
 Events.EVENT_FLASH_CELLS = 'flashCells';
 /** All the events from here down are experimental, should not be documented or used by ag-Grid customers */
-Events.EVENT_PAGINATION_RESET = 'paginationReset';
-Events.EVENT_PAGINATION_PAGE_LOADED = 'paginationPageLoaded';
-Events.EVENT_PAGINATION_PAGE_REQUESTED = 'paginationPageRequested';
+Events.EVENT_PAGINATION_CHANGED = 'paginationChanged';
+Events.EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
+Events.DEPRECATED_EVENT_PAGINATION_RESET = 'paginationReset';
+Events.DEPRECATED_EVENT_PAGINATION_PAGE_LOADED = 'paginationPageLoaded';
+Events.DEPRECATED_EVENT_PAGINATION_PAGE_REQUESTED = 'paginationPageRequested';
 // not documented, as it's experimental, don't want people with dependencies on this
 Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
 Events.EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
+Events.EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
 // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
 // to design these better around server side functions and then release to general public when fully working with
 // all the row models.

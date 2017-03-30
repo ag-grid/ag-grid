@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v9.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -81,7 +81,8 @@ var TextFloatingFilterComp = (function (_super) {
         var currentParentModel = this.currentParentModel();
         return {
             type: !currentParentModel ? 'contains' : currentParentModel.type,
-            filter: this.eColumnFloatingFilter.value
+            filter: this.eColumnFloatingFilter.value,
+            filterType: 'text'
         };
     };
     return TextFloatingFilterComp;
@@ -121,7 +122,8 @@ var DateFloatingFilterComp = (function (_super) {
             model: {
                 type: type,
                 dateFrom: date,
-                dateTo: dateTo
+                dateTo: dateTo,
+                filterType: 'date'
             },
             apply: true
         });
@@ -182,7 +184,8 @@ var NumberFloatingFilterComp = (function (_super) {
         return {
             type: !currentParentModel ? 'equals' : currentParentModel.type,
             filter: modelFilterValue,
-            filterTo: !currentParentModel ? null : currentParentModel.filterTo
+            filterTo: !currentParentModel ? null : currentParentModel.filterTo,
+            filterType: 'number'
         };
     };
     NumberFloatingFilterComp.prototype.asNumber = function (value) {

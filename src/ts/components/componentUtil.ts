@@ -32,7 +32,7 @@ export class ComponentUtil {
         'minColWidth','maxColWidth','viewportRowModelPageSize','viewportRowModelBufferSize',
         'layoutInterval','autoSizePadding','maxPagesInCache','maxConcurrentDatasourceRequests',
         'paginationOverflowSize','paginationPageSize','infiniteBlockSize','infiniteInitialRowCount',
-        'scrollbarWidth','paginationStartPage'
+        'scrollbarWidth','paginationStartPage','infiniteBlockSize'
     ];
 
     public static BOOLEAN_PROPERTIES = [

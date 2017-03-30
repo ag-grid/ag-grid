@@ -1,10 +1,10 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v9.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "../../entities/rowNode";
 import { IEventEmitter } from "../../interfaces/iEventEmitter";
-import { CacheParams } from "./virtualPageCache";
-export declare class VirtualPage implements IEventEmitter {
+import { CacheParams } from "./infinitePageCache";
+export declare class InfinitePage implements IEventEmitter {
     static EVENT_LOAD_COMPLETE: string;
     static STATE_DIRTY: string;
     static STATE_LOADING: string;
