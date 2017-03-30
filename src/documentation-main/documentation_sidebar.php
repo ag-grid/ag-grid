@@ -18,6 +18,18 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">30th March 2017</div>
+    <div>
+        <img src="../images/YouTubeSmall.png" style="position: relative; top: -2px;"/>
+        Movie explaining the
+        <a href="https://www.youtube.com/watch?v=dRQtpULw6Hw">
+            Enterprise Row Model
+        </a>.
+    </div>
+</div>
+
+
+<div class="news-box">
     <div class="news-header">29th March 2017</div>
     <div class="news-header">ag-Grid 9.0.0 Released</div>
     <div>

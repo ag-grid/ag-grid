@@ -30,6 +30,14 @@ include '../documentation-main/documentation_header.php';
                     However please do not plan a production release without first talking
                     to us so we know what dependencies we have.
                 </p>
+                <p>
+                    Check out
+                    <a href="https://www.youtube.com/watch?v=dRQtpULw6Hw">
+                        <img src="../images/YouTubeSmall.png" style="position: relative; top: -2px;"/>
+                        YouTube Movie
+                    </a>
+                    explaining what the Enterprise Row Model is.
+                </p>
             </td>
         </tr>
         </tbody></table>
@@ -186,8 +194,12 @@ export interface ColumnVO {
     website, as we cannot host servers on our website, and even if we did, you would
     not be able to run it locally. Instead we have put a full end to end example
     in Github at <a href="https://github.com/ceolter/ag-grid-enterprise-mysql-sample/">
-    https://github.com/ceolter/ag-grid-enterprise-mysql-sample/</a> and we are working
-    on a YouTube video while will showcase it.
+    https://github.com/ceolter/ag-grid-enterprise-mysql-sample/</a> and you can also
+    see it working on our
+    <a href="https://www.youtube.com/watch?v=dRQtpULw6Hw">
+        <img src="../images/YouTubeSmall.png" style="position: relative; top: -2px;"/>
+        YouTube Movie
+    </a>.
 </p>
 
 <p>
