@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.0.0
+// ag-grid-enterprise v9.0.1
 "use strict";
 var main_1 = require("ag-grid/main");
 var enterpriseMenu_1 = require("./menu/enterpriseMenu");

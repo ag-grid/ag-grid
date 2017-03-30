@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.0.0
+// ag-grid-enterprise v9.0.1
 import { Column } from "ag-grid/main";
 import { AbstractColumnDropPanel } from "./abstractColumnDropPanel";
 export declare class RowGroupColumnsPanel extends AbstractColumnDropPanel {

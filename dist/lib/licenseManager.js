@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.0.0
+// ag-grid-enterprise v9.0.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -89,7 +89,7 @@ var LicenseManager = LicenseManager_1 = (function () {
     };
     ;
     LicenseManager.decode = function (input) {
-        var keystr = 'ABCDEFGHIJKLMNOPQRSTUVWXY§§§§Zabcdefghijklmnopqrstuvwxyz0123456789+/=';
+        var keystr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
         var t = '';
         var n, r, i;
         var s, o, u, a;

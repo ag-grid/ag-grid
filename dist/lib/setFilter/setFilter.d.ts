@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.0.0
+// ag-grid-enterprise v9.0.1
 import { IDoesFilterPassParams, BaseFilter, ISetFilterParams } from "ag-grid/main";
 export declare class SetFilter extends BaseFilter<string, ISetFilterParams, string[]> {
     private model;
