@@ -23,7 +23,8 @@ export interface IHeaderParams {
     progressSort: (multiSort?: boolean)=>void;
     setSort: (sort: string, multiSort?: boolean)=>void;
     columnApi: ColumnApi,
-    api: GridApi
+    api: GridApi,
+    context: any
 }
 
 export interface IHeader {

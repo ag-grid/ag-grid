@@ -21,7 +21,8 @@ export interface IHeaderGroupParams {
     displayName: string;
     setExpanded: (expanded:boolean)=>void;
     api: GridApi,
-    columnApi: ColumnApi
+    columnApi: ColumnApi,
+    context: any
 }
 
 export interface IHeaderGroup {

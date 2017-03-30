@@ -131,7 +131,8 @@ export class HeaderWrapperComp extends Component {
                 this.sortController.setSortForColumn(this.column, sort, !!multiSort);
             },
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            context: this.gridOptionsWrapper.getContext()
         };
         let headerComp: IHeaderComp = this.componentProvider.newHeaderComponent(params);
 

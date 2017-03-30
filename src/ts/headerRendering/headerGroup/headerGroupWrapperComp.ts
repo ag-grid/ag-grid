@@ -81,7 +81,8 @@ export class HeaderGroupWrapperComp extends Component {
                 this.columnController.setColumnGroupOpened(this.columnGroup, expanded);
             },
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            context: this.gridOptionsWrapper.getContext()
         };
         let headerComp = this.componentProvider.newHeaderGroupComponent(params);
         this.appendChild(headerComp);
