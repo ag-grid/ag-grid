@@ -4,7 +4,7 @@ import {IRowModel, RowNode, Constants, Bean, PostConstruct, Autowired, Context,
     IEnterpriseDatasource, IEnterpriseGetRowsParams, ColumnVO} from "ag-grid";
 
 @Bean('rowModel')
-export class EnterpriseRowModel extends BeanStub implements IRowModel {
+export class EnterpriseRowModelOld extends BeanStub implements IRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
@@ -70,7 +70,7 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
     }
 
     private onRowGroupOpened(event: any): void {
-        let openedNode = event.node;
+        let openedNode = <RowNode> event.node;
         if (openedNode.expanded && _.missing(openedNode.childrenAfterSort)) {
             this.loadNode(openedNode);
         } else {
