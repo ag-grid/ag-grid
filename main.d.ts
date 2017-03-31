@@ -112,9 +112,9 @@ export * from './dist/lib/rowModels/inMemory/inMemoryRowModel';
 export * from './dist/lib/rowModels/inMemory/inMemoryNodeManager';
 export * from './dist/lib/rowModels/inMemory/sortStage';
 
-export * from './dist/lib/rowModels/infinateScrolling/infinitePageRowModel';
-export * from './dist/lib/rowModels/infinateScrolling/infinitePageCache';
-export * from './dist/lib/rowModels/infinateScrolling/infinitePage';
+export * from './dist/lib/rowModels/infinite/infiniteRowModel';
+export * from './dist/lib/rowModels/infinite/infiniteCache';
+export * from './dist/lib/rowModels/infinite/infiniteBlock';
 
 export * from './dist/lib/rowModels/floatingRowModel';
 export * from './dist/lib/rowModels/iDatasource';

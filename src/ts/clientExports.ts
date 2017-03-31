@@ -217,9 +217,9 @@ export function populateClientExports(exports: any): void {
 
     // rowControllers
     exports.FloatingRowModel = FloatingRowModel;
-    exports.VirtualPageRowModel = InfiniteRowModel;
-    exports.VirtualPageCache = InfiniteCache;
-    exports.VirtualPage = InfiniteBlock;
+    exports.InfiniteRowModel = InfiniteRowModel;
+    exports.InfiniteCache = InfiniteCache;
+    exports.InfiniteBlock = InfiniteBlock;
 
     //styling
     exports.StylingService = StylingService;

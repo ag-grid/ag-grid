@@ -11,6 +11,7 @@ import {IRowModel} from "../interfaces/iRowModel";
 import {Constants} from "../constants";
 import {Utils as _} from "../utils";
 import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
+import {InfiniteCache} from "../rowModels/infinite/infiniteCache";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -103,6 +104,9 @@ export class RowNode {
 
     /** Children mapped by the pivot columns */
     public childrenMapped: {[key: string]: any} = {};
+
+    /** Enterprise Row Model Only - the children are in an infinite cache */
+    public childrenCache: InfiniteCache;
 
     /** Groups only - True if group is expanded, otherwise false */
     public expanded: boolean;
