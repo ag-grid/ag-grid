@@ -4,7 +4,7 @@ import {IRowModel, RowNode, Constants, Bean, PostConstruct, Autowired, Context,
     IEnterpriseDatasource, IEnterpriseGetRowsParams, ColumnVO} from "ag-grid";
 
 @Bean('rowModel')
-export class EnterpriseRowModelOld extends BeanStub implements IRowModel {
+export class EnterpriseRowModel extends BeanStub implements IRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;

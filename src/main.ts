@@ -20,10 +20,10 @@ import {PivotCompFactory} from "./pivotCompFactory";
 import {MenuItemMapper} from "./menu/menuItemMapper";
 import {ExcelCreator} from "./excelCreator";
 import {ExcelXmlFactory} from "./excelXmlFactory";
-import {EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModelNew";
-import {EnterpriseRowModelOld} from "./rowModels/enterprise/enterpriseRowModel";
+import {EnterpriseRowModelNew} from "./rowModels/enterprise/enterpriseRowModelNew";
+import {EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
 
-var rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModelOld};
+var rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModel};
 
 Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
