@@ -85,11 +85,10 @@ FakeServer.prototype.getData = function(request, callback) {
     }, 1000);
 };
 
-
 FakeServer.prototype.buildGroupsFromData = function(filteredData, rowGroupCols, groupKeys, valueCols) {
     var rowGroupCol = rowGroupCols[groupKeys.length];
     var field = rowGroupCol.field;
-    var mappedValues = _.groupBy(filteredData, field);
+    var mappedValues = this.groupBy(filteredData, field);
     var listOfKeys = Object.keys(mappedValues);
     var groups = [];
     listOfKeys.forEach(function(key) {
@@ -115,13 +114,15 @@ FakeServer.prototype.buildGroupsFromData = function(filteredData, rowGroupCols, 
 // out everything that is not equal to United States and 2002.
 FakeServer.prototype.filterOutOtherGroups = function(originalData, groupKeys, rowGroupCols) {
     var filteredData = originalData;
+    var that = this;
 
     // if we are inside a group, then filter out everything that is not
     // part of this group
     groupKeys.forEach(function(groupKey, index) {
         var rowGroupCol = rowGroupCols[index];
         var field = rowGroupCol.field;
-        filteredData = _.filter(filteredData, function(item) {
+
+        filteredData = that.filter(filteredData, function(item) {
             return item[field] == groupKey;
         });
     });
@@ -129,6 +130,31 @@ FakeServer.prototype.filterOutOtherGroups = function(originalData, groupKeys, ro
     return filteredData;
 };
 
+// simple implementation of lodash groupBy
+FakeServer.prototype.groupBy = function(data, field) {
+    var result = {};
+    data.forEach( function(item) {
+        var key = item[field];
+        var listForThisKey = result[key];
+        if (!listForThisKey) {
+            listForThisKey = [];
+            result[key] = listForThisKey;
+        }
+        listForThisKey.push(item);
+    });
+    return result;
+};
+
+// simple implementation of lodash filter
+FakeServer.prototype.filter = function(data, callback) {
+    var result = [];
+    data.forEach( function(item) {
+        if (callback(item)) {
+            result.push(item);
+        }
+    });
+    return result;
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
