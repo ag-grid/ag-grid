@@ -397,7 +397,7 @@ colDef.cellEditorParams = {
 
     <show-example example="exampleSingleClickEditing"></show-example>
 
-    <h3 id="losingFocusStopsEditing">Stop Editing When Grid Looses Focus</h3>
+    <h3 id="losingFocusStopsEditing">Stop Editing When Grid Loses Focus</h3>
 
     <p>
         By default, the grid will not stop editing the currently editing cell when the grid
