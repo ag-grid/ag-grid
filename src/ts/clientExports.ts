@@ -64,7 +64,7 @@ import {ValueService} from "./valueService";
 import {PopupService} from "./widgets/popupService";
 import {GridRow} from "./entities/gridRow";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
-import {InfinitePageRowModel} from "./rowModels/infinateScrolling/infinitePageRowModel";
+import {InfiniteRowModel} from "./rowModels/infinite/infiniteRowModel";
 import {AnimateSlideCellRenderer} from "./rendering/cellRenderers/animateSlideCellRenderer";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {PopupEditorWrapper} from "./rendering/cellEditors/popupEditorWrapper";
@@ -88,8 +88,8 @@ import {RenderedCell} from "./rendering/renderedCell";
 import {HeaderRowComp} from "./headerRendering/headerRowComp";
 import {AnimateShowChangeCellRenderer} from "./rendering/cellRenderers/animateShowChangeCellRenderer";
 import {InMemoryNodeManager} from "./rowModels/inMemory/inMemoryNodeManager";
-import {InfinitePageCache} from "./rowModels/infinateScrolling/infinitePageCache";
-import {InfinitePage} from "./rowModels/infinateScrolling/infinitePage";
+import {InfiniteCache} from "./rowModels/infinite/infiniteCache";
+import {InfiniteBlock} from "./rowModels/infinite/infiniteBlock";
 import {BaseFrameworkFactory} from "./baseFrameworkFactory";
 import {MethodNotImplementedException} from "./misc/methodNotImplementedException";
 import {TouchListener} from "./widgets/touchListener";
@@ -217,9 +217,9 @@ export function populateClientExports(exports: any): void {
 
     // rowControllers
     exports.FloatingRowModel = FloatingRowModel;
-    exports.VirtualPageRowModel = InfinitePageRowModel;
-    exports.VirtualPageCache = InfinitePageCache;
-    exports.VirtualPage = InfinitePage;
+    exports.VirtualPageRowModel = InfiniteRowModel;
+    exports.VirtualPageCache = InfiniteCache;
+    exports.VirtualPage = InfiniteBlock;
 
     //styling
     exports.StylingService = StylingService;

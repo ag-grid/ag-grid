@@ -10,27 +10,26 @@ import {SortController} from "../../sortController";
 import {FilterManager} from "../../filter/filterManager";
 import {Constants} from "../../constants";
 import {IDatasource} from "../iDatasource";
-import {InfinitePageCache, CacheParams} from "./infinitePageCache";
+import {InfiniteCache, InfiniteCacheParams} from "./infiniteCache";
 import {BeanStub} from "../../context/beanStub";
 
 @Bean('rowModel')
-export class InfinitePageRowModel extends BeanStub implements IRowModel {
+export class InfiniteRowModel extends BeanStub implements IRowModel {
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
-
     @Autowired('filterManager') private filterManager: FilterManager;
-
     @Autowired('sortController') private sortController: SortController;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
-    private virtualPageCache: InfinitePageCache;
+
+    private infiniteCache: InfiniteCache;
 
     private datasource: IDatasource;
 
     public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
-        if (_.missing(this.virtualPageCache)) { return null; }
-        return this.virtualPageCache.getRowBounds(index);
+        if (_.missing(this.infiniteCache)) { return null; }
+        return this.infiniteCache.getRowBounds(index);
     }
 
     @PostConstruct
@@ -42,7 +41,7 @@ export class InfinitePageRowModel extends BeanStub implements IRowModel {
     }
 
     public isLastRowFound(): boolean {
-        return this.virtualPageCache ? this.virtualPageCache.isMaxRowFound() : false;
+        return this.infiniteCache ? this.infiniteCache.isMaxRowFound() : false;
     }
 
     private addEventListeners(): void {
@@ -102,11 +101,11 @@ export class InfinitePageRowModel extends BeanStub implements IRowModel {
     }
 
     public isEmpty(): boolean {
-        return _.missing(this.virtualPageCache);
+        return _.missing(this.infiniteCache);
     }
 
     public isRowsToRender(): boolean {
-        return _.exists(this.virtualPageCache);
+        return _.exists(this.infiniteCache);
     }
 
     private reset() {
@@ -119,8 +118,8 @@ export class InfinitePageRowModel extends BeanStub implements IRowModel {
         // if user is providing id's, then this means we can keep the selection between datsource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
-        var userGeneratingRows = _.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
-        if (!userGeneratingRows) {
+        var userGeneratingIds = _.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
+        if (!userGeneratingIds) {
             this.selectionController.reset();
         }
 
@@ -130,7 +129,7 @@ export class InfinitePageRowModel extends BeanStub implements IRowModel {
     }
 
     private resetCache(): void {
-        let cacheSettings = <CacheParams> {
+        let cacheSettings = <InfiniteCacheParams> {
             // the user provided datasource
             datasource: this.datasource,
 
@@ -141,9 +140,9 @@ export class InfinitePageRowModel extends BeanStub implements IRowModel {
             // properties - this way we take a snapshot of them, so if user changes any, they will be
             // used next time we create a new cache, which is generally after a filter or sort change,
             // or a new datasource is set
-            maxConcurrentDatasourceRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
-            paginationOverflowSize: this.gridOptionsWrapper.getPaginationOverflowSize(),
-            paginationInitialRowCount: this.gridOptionsWrapper.getInfiniteInitialRowCount(),
+            maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
+            overflowSize: this.gridOptionsWrapper.getPaginationOverflowSize(),
+            initialRowCount: this.gridOptionsWrapper.getInfiniteInitialRowCount(),
             maxPagesInCache: this.gridOptionsWrapper.getMaxPagesInCache(),
             pageSize: this.gridOptionsWrapper.getInfiniteBlockSize(),
             rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
@@ -154,8 +153,8 @@ export class InfinitePageRowModel extends BeanStub implements IRowModel {
         };
 
         // set defaults
-        if ( !(cacheSettings.maxConcurrentDatasourceRequests>=1) ) {
-            cacheSettings.maxConcurrentDatasourceRequests = 2;
+        if ( !(cacheSettings.maxConcurrentRequests>=1) ) {
+            cacheSettings.maxConcurrentRequests = 2;
         }
         // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
         // server for one page at a time. so the default if not specified is 100.
@@ -163,40 +162,40 @@ export class InfinitePageRowModel extends BeanStub implements IRowModel {
             cacheSettings.pageSize = 100;
         }
         // if user doesn't give initial rows to display, we assume zero
-        if ( !(cacheSettings.paginationInitialRowCount>=1) ) {
-            cacheSettings.paginationInitialRowCount = 0;
+        if ( !(cacheSettings.initialRowCount>=1) ) {
+            cacheSettings.initialRowCount = 0;
         }
         // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
         // the current page and request first row of next page
-        if ( !(cacheSettings.paginationOverflowSize>=1) ) {
-            cacheSettings.paginationOverflowSize = 1;
+        if ( !(cacheSettings.overflowSize>=1) ) {
+            cacheSettings.overflowSize = 1;
         }
 
         // if not first time creating a cache, need to destroy the old one
-        if (this.virtualPageCache) {
-            this.virtualPageCache.destroy();
+        if (this.infiniteCache) {
+            this.infiniteCache.destroy();
         }
 
-        this.virtualPageCache = new InfinitePageCache(cacheSettings);
-        this.context.wireBean(this.virtualPageCache);
+        this.infiniteCache = new InfiniteCache(cacheSettings);
+        this.context.wireBean(this.infiniteCache);
     }
 
     public getRow(rowIndex: number): RowNode {
-        return this.virtualPageCache ? this.virtualPageCache.getRow(rowIndex) : null;
+        return this.infiniteCache ? this.infiniteCache.getRow(rowIndex) : null;
     }
 
     public forEachNode(callback: (rowNode: RowNode, index: number)=> void): void {
-        if (this.virtualPageCache) {
-            this.virtualPageCache.forEachNode(callback);
+        if (this.infiniteCache) {
+            this.infiniteCache.forEachNode(callback);
         }
     }
 
     public getCurrentPageHeight(): number {
-        return this.virtualPageCache ? this.virtualPageCache.getCurrentPageHeight() : 0;
+        return this.infiniteCache ? this.infiniteCache.getCurrentPageHeight() : 0;
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        return this.virtualPageCache ? this.virtualPageCache.getRowIndexAtPixel(pixel) : -1;
+        return this.infiniteCache ? this.infiniteCache.getRowIndexAtPixel(pixel) : -1;
     }
 
     public getPageFirstRow(): number {
@@ -204,16 +203,16 @@ export class InfinitePageRowModel extends BeanStub implements IRowModel {
     }
 
     public getPageLastRow(): number {
-        return this.virtualPageCache ? this.virtualPageCache.getRowCount() -1 : 0;
+        return this.infiniteCache ? this.infiniteCache.getRowCount() -1 : 0;
     }
 
     public getRowCount(): number {
-        return this.virtualPageCache ? this.virtualPageCache.getRowCount() : 0;
+        return this.infiniteCache ? this.infiniteCache.getRowCount() : 0;
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {
-        if (this.virtualPageCache) {
-            this.virtualPageCache.insertItemsAtIndex(index, items);
+        if (this.infiniteCache) {
+            this.infiniteCache.insertItemsAtIndex(index, items);
         }
     }
 
@@ -232,41 +231,41 @@ export class InfinitePageRowModel extends BeanStub implements IRowModel {
         return false;
     }
 
-    public refreshVirtualPageCache(): void {
-        if (this.virtualPageCache) {
-            this.virtualPageCache.refreshVirtualPageCache();
+    public refreshCache(): void {
+        if (this.infiniteCache) {
+            this.infiniteCache.refreshCache();
         }
     }
 
-    public purgeVirtualPageCache(): void {
-        if (this.virtualPageCache) {
-            this.virtualPageCache.purgeVirtualPageCache();
+    public purgeCache(): void {
+        if (this.infiniteCache) {
+            this.infiniteCache.purgeCache();
         }
     }
 
     public getVirtualRowCount(): number {
-        if (this.virtualPageCache) {
-            return this.virtualPageCache.getVirtualRowCount();
+        if (this.infiniteCache) {
+            return this.infiniteCache.getVirtualRowCount();
         } else {
             return null;
         }
     }
 
     public isMaxRowFound(): boolean {
-        if (this.virtualPageCache) {
-            return this.virtualPageCache.isMaxRowFound();
+        if (this.infiniteCache) {
+            return this.infiniteCache.isMaxRowFound();
         }
     }
 
     public setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void {
-        if (this.virtualPageCache) {
-            this.virtualPageCache.setVirtualRowCount(rowCount, maxRowFound);
+        if (this.infiniteCache) {
+            this.infiniteCache.setVirtualRowCount(rowCount, maxRowFound);
         }
     }
 
-    public getVirtualPageState(): any {
-        if (this.virtualPageCache) {
-            return this.virtualPageCache.getPageState();
+    public getPageState(): any {
+        if (this.infiniteCache) {
+            return this.infiniteCache.getPageState();
         } else {
             return null;
         }

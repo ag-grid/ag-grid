@@ -5,9 +5,9 @@ import {Context, Autowired, PostConstruct} from "../../context/context";
 import {EventService} from "../../eventService";
 import {IGetRowsParams} from "../iDatasource";
 import {IEventEmitter} from "../../interfaces/iEventEmitter";
-import {CacheParams} from "./infinitePageCache";
+import {InfiniteCacheParams} from "./infiniteCache";
 
-export class InfinitePage implements IEventEmitter {
+export class InfiniteBlock implements IEventEmitter {
 
     public static EVENT_LOAD_COMPLETE = 'loadComplete';
 
@@ -19,7 +19,7 @@ export class InfinitePage implements IEventEmitter {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
 
-    private state = InfinitePage.STATE_DIRTY;
+    private state = InfiniteBlock.STATE_DIRTY;
 
     private version = 0;
 
@@ -30,11 +30,11 @@ export class InfinitePage implements IEventEmitter {
     private endRow: number;
     private rowNodes: RowNode[];
 
-    private cacheParams: CacheParams;
+    private cacheParams: InfiniteCacheParams;
 
     private localEventService = new EventService();
 
-    constructor(pageNumber: number, cacheSettings: CacheParams) {
+    constructor(pageNumber: number, cacheSettings: InfiniteCacheParams) {
         this.pageNumber = pageNumber;
         this.cacheParams = cacheSettings;
 
@@ -47,7 +47,7 @@ export class InfinitePage implements IEventEmitter {
     public setDirty(): void {
         // in case any current loads in progress, this will have their results ignored
         this.version++;
-        this.state = InfinitePage.STATE_DIRTY;
+        this.state = InfiniteBlock.STATE_DIRTY;
     }
 
     public setDirtyAndPurge(): void {
@@ -141,7 +141,7 @@ export class InfinitePage implements IEventEmitter {
 
     public load(): void {
 
-        this.state = InfinitePage.STATE_LOADING;
+        this.state = InfiniteBlock.STATE_LOADING;
 
         // PROBLEM . . . . when the user sets sort via colDef.sort, then this code
         // is executing before the sort is set up, so server is not getting the sort
@@ -176,9 +176,9 @@ export class InfinitePage implements IEventEmitter {
     }
 
     private pageLoadFailed() {
-        this.state = InfinitePage.STATE_FAILED;
+        this.state = InfiniteBlock.STATE_FAILED;
         var event = {success: true, page: this};
-        this.localEventService.dispatchEvent(InfinitePage.EVENT_LOAD_COMPLETE, event);
+        this.localEventService.dispatchEvent(InfiniteBlock.EVENT_LOAD_COMPLETE, event);
     }
 
     private populateWithRowData(rows: any[]): void {
@@ -202,7 +202,7 @@ export class InfinitePage implements IEventEmitter {
         // from the server that was sent before we refreshed the cache,
         // if the load was done as a result of a cache refresh
         if (version===this.version) {
-            this.state = InfinitePage.STATE_LOADED;
+            this.state = InfiniteBlock.STATE_LOADED;
             this.populateWithRowData(rows);
         }
 
@@ -211,7 +211,7 @@ export class InfinitePage implements IEventEmitter {
         // check here if lastrow should be set
         var event = {success: true, page: this, lastRow: lastRow};
 
-        this.localEventService.dispatchEvent(InfinitePage.EVENT_LOAD_COMPLETE, event);
+        this.localEventService.dispatchEvent(InfiniteBlock.EVENT_LOAD_COMPLETE, event);
     }
 
 }

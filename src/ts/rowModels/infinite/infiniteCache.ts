@@ -5,32 +5,32 @@ import {EventService} from "../../eventService";
 import {Events} from "../../events";
 import {LoggerFactory, Logger} from "../../logger";
 import {IDatasource} from "../iDatasource";
-import {InfinitePage} from "./infinitePage";
+import {InfiniteBlock} from "./infiniteBlock";
 
-export interface CacheParams {
+export interface InfiniteCacheParams {
     pageSize: number;
     rowHeight: number;
     maxPagesInCache: number;
-    maxConcurrentDatasourceRequests: number;
-    paginationOverflowSize: number;
-    paginationInitialRowCount: number;
+    maxConcurrentRequests: number;
+    overflowSize: number;
+    initialRowCount: number;
     sortModel: any;
     filterModel: any;
     datasource: IDatasource;
     lastAccessedSequence: NumberSequence;
 }
 
-export class InfinitePageCache {
+export class InfiniteCache {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
-    private pages: {[pageNumber: string]: InfinitePage} = {};
+    private pages: {[pageNumber: string]: InfiniteBlock} = {};
 
     private activePageLoadsCount = 0;
     private pagesInCacheCount = 0;
 
-    private cacheParams: CacheParams;
+    private cacheParams: InfiniteCacheParams;
 
     private virtualRowCount: number;
     private maxRowFound = false;
@@ -39,9 +39,9 @@ export class InfinitePageCache {
 
     private active = true;
 
-    constructor(cacheSettings: CacheParams) {
+    constructor(cacheSettings: InfiniteCacheParams) {
         this.cacheParams = cacheSettings;
-        this.virtualRowCount = cacheSettings.paginationInitialRowCount;
+        this.virtualRowCount = cacheSettings.initialRowCount;
     }
 
     public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
@@ -68,7 +68,7 @@ export class InfinitePageCache {
 
     public forEachNode(callback: (rowNode: RowNode, index: number)=> void): void {
         var index = 0;
-        _.iterateObject(this.pages, (key: string, cachePage: InfinitePage)=> {
+        _.iterateObject(this.pages, (key: string, cachePage: InfiniteBlock)=> {
 
             var start = cachePage.getStartRow();
             var end = cachePage.getEndRow();
@@ -98,7 +98,7 @@ export class InfinitePageCache {
         }
     }
 
-    private moveItemsDown(page: InfinitePage, moveFromIndex: number, moveCount: number): void {
+    private moveItemsDown(page: InfiniteBlock, moveFromIndex: number, moveCount: number): void {
         let startRow = page.getStartRow();
         let endRow = page.getEndRow();
         var indexOfLastRowToMove = moveFromIndex + moveCount;
@@ -123,7 +123,7 @@ export class InfinitePageCache {
 
     }
 
-    private insertItems(page: InfinitePage, indexToInsert: number, items: any[]): RowNode[] {
+    private insertItems(page: InfiniteBlock, indexToInsert: number, items: any[]): RowNode[] {
         let pageStartRow = page.getStartRow();
         let pageEndRow = page.getEndRow();
         let newRowNodes: RowNode[] = [];
@@ -214,12 +214,12 @@ export class InfinitePageCache {
         return page.getRow(rowIndex);
     }
 
-    private createPage(pageNumber: number): InfinitePage {
+    private createPage(pageNumber: number): InfiniteBlock {
 
-        let newPage = new InfinitePage(pageNumber, this.cacheParams);
+        let newPage = new InfiniteBlock(pageNumber, this.cacheParams);
         this.context.wireBean(newPage);
 
-        newPage.addEventListener(InfinitePage.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
+        newPage.addEventListener(InfiniteBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
 
         this.pages[pageNumber] = newPage;
         this.pagesInCacheCount++;
@@ -236,7 +236,7 @@ export class InfinitePageCache {
         return newPage;
     }
 
-    private removePageFromCache(pageToRemove: InfinitePage): void {
+    private removePageFromCache(pageToRemove: InfiniteBlock): void {
         if (!pageToRemove) {
             return;
         }
@@ -256,14 +256,14 @@ export class InfinitePageCache {
     private checkPageToLoad() {
         this.printCacheStatus();
 
-        if (this.activePageLoadsCount >= this.cacheParams.maxConcurrentDatasourceRequests) {
+        if (this.activePageLoadsCount >= this.cacheParams.maxConcurrentRequests) {
             this.logger.log(`checkPageToLoad: max loads exceeded`);
             return;
         }
 
-        var pageToLoad: InfinitePage = null;
-        _.iterateObject(this.pages, (key: string, cachePage: InfinitePage)=> {
-            if (cachePage.getState() === InfinitePage.STATE_DIRTY) {
+        var pageToLoad: InfiniteBlock = null;
+        _.iterateObject(this.pages, (key: string, cachePage: InfiniteBlock)=> {
+            if (cachePage.getState() === InfiniteBlock.STATE_DIRTY) {
                 pageToLoad = cachePage;
             }
         });
@@ -278,11 +278,11 @@ export class InfinitePageCache {
         }
     }
 
-    private findLeastRecentlyUsedPage(pageToExclude: InfinitePage): InfinitePage {
+    private findLeastRecentlyUsedPage(pageToExclude: InfiniteBlock): InfiniteBlock {
 
-        var lruPage: InfinitePage = null;
+        var lruPage: InfiniteBlock = null;
 
-        _.iterateObject(this.pages, (key: string, page: InfinitePage)=> {
+        _.iterateObject(this.pages, (key: string, page: InfiniteBlock)=> {
             // we exclude checking for the page just created, as this has yet to be accessed and hence
             // the lastAccessed stamp will not be updated for the first time yet
             if (page === pageToExclude) {
@@ -297,7 +297,7 @@ export class InfinitePageCache {
         return lruPage;
     }
 
-    private checkVirtualRowCount(page: InfinitePage, lastRow: any): void {
+    private checkVirtualRowCount(page: InfiniteBlock, lastRow: any): void {
         // if client provided a last row, we always use it, as it could change between server calls
         // if user deleted data and then called refresh on the grid.
         if (typeof lastRow === 'number' && lastRow >= 0) {
@@ -307,7 +307,7 @@ export class InfinitePageCache {
         } else if (!this.maxRowFound) {
             // otherwise, see if we need to add some virtual rows
             var lastRowIndex = (page.getPageNumber() + 1) * this.cacheParams.pageSize;
-            var lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.paginationOverflowSize;
+            var lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.overflowSize;
 
             if (this.virtualRowCount < lastRowIndexPlusOverflow) {
                 this.virtualRowCount = lastRowIndexPlusOverflow;
@@ -324,20 +324,20 @@ export class InfinitePageCache {
 
     public getPageState(): any {
         var result: any[] = [];
-        _.iterateObject(this.pages, (pageNumber: string, page: InfinitePage)=> {
+        _.iterateObject(this.pages, (pageNumber: string, page: InfiniteBlock)=> {
             result.push({pageNumber: pageNumber, startRow: page.getStartRow(), endRow: page.getEndRow(), pageStatus: page.getState()});
         });
         return result;
     }
 
-    public refreshVirtualPageCache(): void {
-        _.iterateObject(this.pages, (pageId: string, page: InfinitePage)=> {
+    public refreshCache(): void {
+        _.iterateObject(this.pages, (pageId: string, page: InfiniteBlock)=> {
             page.setDirty();
         });
         this.checkPageToLoad();
     }
 
-    public purgeVirtualPageCache(): void {
+    public purgeCache(): void {
         var pagesList = _.values(this.pages);
         pagesList.forEach( virtualPage => this.removePageFromCache(virtualPage) );
         this.dispatchModelUpdated();
