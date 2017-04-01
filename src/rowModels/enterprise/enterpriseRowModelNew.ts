@@ -1,8 +1,8 @@
 import {IRowModel, RowNode, Constants, Bean, PostConstruct, Autowired, Context,
     _, EventService, Events, ModelUpdatedEvent, FlattenStage, ColumnController,
     Column, FilterManager, SortController, BeanStub, GridOptionsWrapper,
-    IEnterpriseDatasource, IEnterpriseGetRowsParams, ColumnVO, InfiniteCache,
-    InfiniteCacheParams, NumberSequence} from "ag-grid";
+    IEnterpriseDatasource, IEnterpriseGetRowsParams, ColumnVO, NumberSequence} from "ag-grid";
+import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
 
 @Bean('rowModel')
 export class EnterpriseRowModelNew extends BeanStub implements IRowModel {
@@ -88,19 +88,16 @@ export class EnterpriseRowModelNew extends BeanStub implements IRowModel {
     }
 
     private createNodeCache(rowNode: RowNode): void {
-        let params: InfiniteCacheParams = {
-            rowHeight: 25,
-            pageSize: 100,
-            datasource: null,
-            filterModel: null,
-            sortModel: null,
-            initialRowCount: 200,
+        let params: EnterpriseCacheParams = {
+            datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
-            maxConcurrentRequests: 2,
-            maxPagesInCache: 10,
-            overflowSize: 1
+            overflowSize: 2,
+            initialRowCount: 2,
+            pageSize: 10,
+            rowHeight: 25
         };
-        rowNode.childrenCache = new InfiniteCache(params);
+        rowNode.childrenCache = new EnterpriseCache(params);
+        this.context.wireBean(rowNode.childrenCache);
     }
 
     public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
