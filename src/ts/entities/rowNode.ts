@@ -12,6 +12,7 @@ import {Constants} from "../constants";
 import {Utils as _} from "../utils";
 import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
 import {InfiniteCache} from "../rowModels/infinite/infiniteCache";
+import {IEnterpriseCache} from "../interfaces/iEnterpriseCache";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -106,7 +107,7 @@ export class RowNode {
     public childrenMapped: {[key: string]: any} = {};
 
     /** Enterprise Row Model Only - the children are in an infinite cache */
-    public childrenCache: InfiniteCache;
+    public childrenCache: IEnterpriseCache;
 
     /** Groups only - True if group is expanded, otherwise false */
     public expanded: boolean;

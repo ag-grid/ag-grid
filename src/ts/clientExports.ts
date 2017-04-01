@@ -88,8 +88,8 @@ import {RenderedCell} from "./rendering/renderedCell";
 import {HeaderRowComp} from "./headerRendering/headerRowComp";
 import {AnimateShowChangeCellRenderer} from "./rendering/cellRenderers/animateShowChangeCellRenderer";
 import {InMemoryNodeManager} from "./rowModels/inMemory/inMemoryNodeManager";
-import {InfiniteCache} from "./rowModels/infinite/infiniteCache";
-import {InfiniteBlock} from "./rowModels/infinite/infiniteBlock";
+import {InfiniteCache, RowNodeCache} from "./rowModels/infinite/infiniteCache";
+import {InfiniteBlock, RowNodeBlock} from "./rowModels/infinite/infiniteBlock";
 import {BaseFrameworkFactory} from "./baseFrameworkFactory";
 import {MethodNotImplementedException} from "./misc/methodNotImplementedException";
 import {TouchListener} from "./widgets/touchListener";
@@ -218,10 +218,12 @@ export function populateClientExports(exports: any): void {
     // rowControllers
     exports.FloatingRowModel = FloatingRowModel;
     exports.InfiniteRowModel = InfiniteRowModel;
+    exports.RowNodeCache = RowNodeCache;
     exports.InfiniteCache = InfiniteCache;
+    exports.RowNodeBlock = RowNodeBlock;
     exports.InfiniteBlock = InfiniteBlock;
 
-    //styling
+    // styling
     exports.StylingService = StylingService;
 
     // widgets
