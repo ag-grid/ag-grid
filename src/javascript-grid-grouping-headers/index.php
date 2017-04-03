@@ -73,7 +73,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         A group can have children initially hidden. If you want to show or hide children,
         set <i>columnGroupShow</i> to either 'open' or 'closed' to one or more of the children.
-        When a children set have <i>columnGroupShow</i> set, it behaves in the following way:
+        When a children set has <i>columnGroupShow</i> set, it behaves in the following way:
         <ul>
             <li><b>open:</b> The child is only shown when the group is open.</li>
             <li><b>closed:</b> The child is only shown when the group is closed.</li>
