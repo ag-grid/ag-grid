@@ -178,7 +178,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
             <p>
                 The API's are accessible through the component. This is useful in two situations.
-                The first us by using an ID. In the example above, the ID is given
+                The first is by using an ID. In the example above, the ID is given
                 as '#myGrid' which then allows something like this:
             </p>
 
@@ -250,7 +250,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
             <p>
                 The API's are accessible through the component. This is useful in two situations.
-                The first us by using an Angular ID. In the example above, the ID is given
+                The first is by using an Angular ID. In the example above, the ID is given
                 as '#myGrid' which then allows something like this:
             </p>
 
@@ -320,7 +320,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
             <p>
                 The API's are accessible through the component. This is useful in two situations.
-                The first us by using an ID. In the example above, the ID is given
+                The first is by using an ID. In the example above, the ID is given
                 as '#myGrid' which then allows something like this:
             </p>
 
