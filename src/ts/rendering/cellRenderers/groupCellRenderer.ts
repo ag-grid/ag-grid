@@ -253,12 +253,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         if (_.missing(columnOfGroupedCol)) {
             columnOfGroupedCol = params.column;
         }
-        let colDefOfGroupedCol = columnOfGroupedCol.getColDef();
 
         let groupName = this.getGroupName();
         let valueFormatted = this.valueFormatterService.formatValue(columnOfGroupedCol, params.node, params.scope, params.rowIndex, groupName);
 
-        let groupedColCellRenderer = colDefOfGroupedCol.getCellRenderer();
+        let groupedColCellRenderer = columnOfGroupedCol.getCellRenderer();
 
         // reuse the params but change the value
         if (typeof groupedColCellRenderer === 'function') {
@@ -266,6 +265,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             params.value = groupName;
             params.valueFormatted = valueFormatted;
 
+            let colDefOfGroupedCol = columnOfGroupedCol.getColDef();
             let groupedColCellRendererParams = colDefOfGroupedCol ? colDefOfGroupedCol.cellRendererParams : null;
 
             // because we are talking about the different column to the original, any user provided params
