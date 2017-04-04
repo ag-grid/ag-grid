@@ -244,34 +244,38 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private createGroupCell(): void {
         let params = this.params;
         // pull out the column that the grouping is on
-        var rowGroupColumns = this.params.columnApi.getRowGroupColumns();
+        let rowGroupColumns = this.params.columnApi.getRowGroupColumns();
 
         // if we are using in memory grid grouping, then we try to look up the column that
         // we did the grouping on. however if it is not possible (happens when user provides
         // the data already grouped) then we just the current col, ie use cellRenderer of current col
-        var columnOfGroupedCol = rowGroupColumns[params.node.rowGroupIndex];
+        let columnOfGroupedCol = rowGroupColumns[params.node.rowGroupIndex];
         if (_.missing(columnOfGroupedCol)) {
             columnOfGroupedCol = params.column;
         }
-        var colDefOfGroupedCol = columnOfGroupedCol.getColDef();
+        let colDefOfGroupedCol = columnOfGroupedCol.getColDef();
 
-        var groupName = this.getGroupName();
-        var valueFormatted = this.valueFormatterService.formatValue(columnOfGroupedCol, params.node, params.scope, params.rowIndex, groupName);
+        let groupName = this.getGroupName();
+        let valueFormatted = this.valueFormatterService.formatValue(columnOfGroupedCol, params.node, params.scope, params.rowIndex, groupName);
+
+        let groupedColCellRenderer = colDefOfGroupedCol.getCellRenderer();
 
         // reuse the params but change the value
-        if (colDefOfGroupedCol && typeof colDefOfGroupedCol.cellRenderer === 'function') {
+        if (typeof groupedColCellRenderer === 'function') {
             // reuse the params but change the value
             params.value = groupName;
             params.valueFormatted = valueFormatted;
 
+            let groupedColCellRendererParams = colDefOfGroupedCol ? colDefOfGroupedCol.cellRendererParams : null;
+
             // because we are talking about the different column to the original, any user provided params
             // are for the wrong column, so need to copy them in again.
-            if (colDefOfGroupedCol.cellRendererParams) {
-                _.assign(params, colDefOfGroupedCol.cellRendererParams);
+            if (groupedColCellRendererParams) {
+                _.assign(params, groupedColCellRenderer);
             }
             this.cellRendererService.useCellRenderer(colDefOfGroupedCol.cellRenderer, this.eValue, params);
         } else {
-            var valueToRender = _.exists(valueFormatted) ? valueFormatted : groupName;
+            let valueToRender = _.exists(valueFormatted) ? valueFormatted : groupName;
             if (_.exists(valueToRender) && valueToRender !== '') {
                 this.eValue.appendChild(document.createTextNode(valueToRender));
             }
