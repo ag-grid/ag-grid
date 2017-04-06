@@ -50,12 +50,6 @@ include '../documentation-main/documentation_header.php';
         To hide a column using the tool panel, click the icon beside the columns name.
     </p>
 
-    <h4>Reorder Columns</h4>
-    <p>
-        To reorder the columns (either the displayed columns or the groups)
-        drag the column to a new location in the list.
-    </p>
-
     <h4>Group by Columns</h4>
     <p>
         To group by a column, drag the column down to the group GUI. The order of the column
