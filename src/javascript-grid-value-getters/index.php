@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
         A value getter is either a function or an expression for getting the value for a cell. The result of the value
         getter is then forwarded to the cell renderer for rendering. Thus it is possible to have a value getter for
         example calculating a total of columns, and then a cell renderer for rendering currency, that renders decoupled
-        form how the value is generated.
+        from how the value is generated.
     </p>
 
     <p>
@@ -110,7 +110,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        If you what to update the columns (say after a change in the data which requires a new column name)
+        If you want to update the columns (say after a change in the data which requires a new column name)
         then get the grid to update by calling <i>api.refreshHeader()</i>.
     </p>
 
