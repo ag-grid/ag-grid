@@ -181,11 +181,36 @@ colDef.cellEditorParams = {
     <h4 id="callback-new-value-handlers">Callback: New Value Handlers</h4>
 
     <p>
-        If you want to use the simple text editing, but want to format the result in some way
-        before inserting into the row, then you can provide a <i>newValueHandler</i> to the column.
-        This will allow you to add additional validation or conversation to the value. The example
-        below shows the newValueHandler in action in the 'Upper Case Only' column.
+        A newValueHandler is the inverse of a valueGetter. If you want to set the value into the data yourself
+        and not use the field, then use the newValueHandler. Use a newValueHandler if:
+        <ol>
+            <li>
+                A field value alone cannot be used, eg you want to place the new value into an array at a
+                particular index.
+            </li>
+            <li>
+                You want to do some formatting to the value before placing it.
+            </li>
+        </ol>
     </p>
+    <pre><span class="codeComment">// this does exactly what a field does, no difference,</span>
+<span class="codeComment">// but provided to demonstrate the equivalent of just using field</span>
+colDef.newValueHandler = function(params) {
+    var field = params.colDef.field;
+    var data = params.data;
+    var value = params.newValue;
+    data[field] = value;
+}
+
+<span class="codeComment">// this one does some formatting first, and doesn't use the field</span>
+colDef.newValueHandler = function(params) {
+    var data = params.data;
+    var value = params.newValue;
+    <span class="codeComment">// change the value, maybe we want it in upper case</span>
+    var value = formatTheValueSomehow(value);
+    data.iAmNotUsingTheField = value;
+}
+</pre>
 
     <p>
         newValueHandler is provided a params object with attributes:<br/>
