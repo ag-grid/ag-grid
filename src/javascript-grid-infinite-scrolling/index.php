@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Infinite scrolling allows the grid to lazy load rows from the server depending on what
-        the scroll position is of the grid. In it's simplest form, the more the user scrolls
+        the scroll position is of the grid. In its simplest form, the more the user scrolls
         down, the more rows get loaded.
     </p>
     <p>
@@ -56,7 +56,7 @@ gridOptions.api.setDatasource(myDataSource);</pre>
     <h2 id="datasource">Datasource</h2>
 
     <p>
-        A datasource is must be provided to do infinite scrolling. You specify the datasource as a grid property
+        A datasource must be provided to do infinite scrolling. You specify the datasource as a grid property
         or using the grid API.
     </p>
 
@@ -186,8 +186,8 @@ interface IGetRowsParams {
     <h3 id="sorting-filtering">Sorting & Filtering</h3>
 
     <p>
-        The grid cannot do sorting or filtering for you, as it does not have all of the data. To do
-        sorting or filtering must be done on the server side. For this reason, if the sort or filter
+        The grid cannot do sorting or filtering for you, as it does not have all of the data. 
+        Sorting or filtering must be done on the server side. For this reason, if the sort or filter
         changes, the grid will use the datasource to get the data again and provide the sort and filter
         state to you.
     </p>

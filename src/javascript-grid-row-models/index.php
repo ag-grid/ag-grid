@@ -71,15 +71,15 @@ include '../documentation-main/documentation_header.php';
                 pagination is active. The PaginationProxy has exactly one RowModel instance.
             </li>
             <li>
-                You can configure the grid to us any of the provided <b>Row Models</b> - that's why RowModel is in
+                You can configure the grid to use any of the provided <b>Row Models</b> - that's why RowModel is in
                 italics, it means it's an interface, the concrete implementation is what you decide at run time.
-                The RowModel contains alist of RowNodes. The RowModel may have a list of all the RowNodes (In Memory Row Model) or have
+                The RowModel contains a list of RowNodes. The RowModel may have a list of all the RowNodes (In Memory Row Model) or have
                 a DataSource where it can lazy load RowNodes
             </li>
             <li>
                 A <b>RowNode</b> has a reference to exactly one row data item (the client application provides
                 the row data items). The RowNode has state information about the row item, such as whether it is
-                selected, and what it's height is.
+                selected and the height of it.
             </li>
             <li>
                 When there is a change in state in the RowNodes, the RowModel fires a <b>modelUpdates</b>
