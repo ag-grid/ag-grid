@@ -47,6 +47,10 @@ var gridOptions = {
         applyFilter: 'daApplyFilter...',
         // for number filter
         equals: 'daEquals',
+        notEqual: 'daNotEquals',
+        lessThanOrEqual: 'daLessThanOrEqual',
+        greaterThanOrEqual: 'daGreaterThanOrEqual',
+        inRange:'daInRange',
         lessThan: 'daLessThan',
         greaterThan: 'daGreaterThan',
         // for text filter
