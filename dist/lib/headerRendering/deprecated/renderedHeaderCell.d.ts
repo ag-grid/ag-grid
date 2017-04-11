@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v9.0.0
+// Type definitions for ag-grid v9.0.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../../entities/column";
