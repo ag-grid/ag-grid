@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.0.0
+ * @version v9.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,7 +45,7 @@ var flattenStage_1 = require("./rowModels/inMemory/flattenStage");
 var focusService_1 = require("./misc/focusService");
 var cellEditorFactory_1 = require("./rendering/cellEditorFactory");
 var events_1 = require("./events");
-var infinitePageRowModel_1 = require("./rowModels/infinateScrolling/infinitePageRowModel");
+var infiniteRowModel_1 = require("./rowModels/infinite/infiniteRowModel");
 var inMemoryRowModel_1 = require("./rowModels/inMemory/inMemoryRowModel");
 var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
 var cellRendererService_1 = require("./rendering/cellRendererService");
@@ -162,8 +162,8 @@ var Grid = (function () {
 // the default is InMemoryRowModel, which is also used for pagination.
 // the enterprise adds viewport to this list.
 Grid.RowModelClasses = {
-    virtual: infinitePageRowModel_1.InfinitePageRowModel,
-    infinite: infinitePageRowModel_1.InfinitePageRowModel,
+    virtual: infiniteRowModel_1.InfiniteRowModel,
+    infinite: infiniteRowModel_1.InfiniteRowModel,
     pagination: inMemoryRowModel_1.InMemoryRowModel,
     normal: inMemoryRowModel_1.InMemoryRowModel
 };

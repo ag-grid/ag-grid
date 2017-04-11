@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.0.0
+ * @version v9.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -570,7 +570,7 @@ var GridApi = (function () {
     };
     GridApi.prototype.refreshInfinitePageCache = function () {
         if (this.infinitePageRowModel) {
-            this.infinitePageRowModel.refreshVirtualPageCache();
+            this.infinitePageRowModel.refreshCache();
         }
         else {
             console.warn("ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.");
@@ -582,7 +582,7 @@ var GridApi = (function () {
     };
     GridApi.prototype.purgeInfinitePageCache = function () {
         if (this.infinitePageRowModel) {
-            this.infinitePageRowModel.purgeVirtualPageCache();
+            this.infinitePageRowModel.purgeCache();
         }
         else {
             console.warn("ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.");
@@ -626,7 +626,7 @@ var GridApi = (function () {
     };
     GridApi.prototype.getInfinitePageState = function () {
         if (this.infinitePageRowModel) {
-            return this.infinitePageRowModel.getVirtualPageState();
+            return this.infinitePageRowModel.getPageState();
         }
         else {
             console.warn("ag-Grid: api.getVirtualPageState is only available when rowModelType='virtual'.");
