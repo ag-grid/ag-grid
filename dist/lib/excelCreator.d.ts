@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.0.1
+// ag-grid-enterprise v9.0.2
 import { ColumnController } from 'ag-grid/main';
 import { ValueService } from 'ag-grid/main';
 import { Column } from 'ag-grid/main';
