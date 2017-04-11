@@ -27,7 +27,9 @@ export function initialiseAgGridWithWebComponents() {
            },
            get: function () {
                return this.__agGridGetProperty(key);
-           }
+           },
+           enumerable: true,
+           configurable: true
        });
     });
 
