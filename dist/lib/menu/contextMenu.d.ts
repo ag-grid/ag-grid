@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.0.1
+// ag-grid-enterprise v9.0.2
 import { IContextMenuFactory, RowNode, Column } from "ag-grid";
 export declare class ContextMenuFactory implements IContextMenuFactory {
     private context;

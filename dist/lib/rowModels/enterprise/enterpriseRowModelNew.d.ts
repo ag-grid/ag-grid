@@ -1,19 +1,12 @@
 // ag-grid-enterprise v9.0.2
 import { IRowModel, RowNode, BeanStub, IEnterpriseDatasource } from "ag-grid";
-export declare class EnterpriseRowModel extends BeanStub implements IRowModel {
+export declare class EnterpriseRowModelNew extends BeanStub implements IRowModel {
     private gridOptionsWrapper;
     private eventService;
     private context;
-    private flattenStage;
-    private columnController;
-    private filterManager;
-    private sortController;
     private rootNode;
     private datasource;
     private rowHeight;
-    private rowsToDisplay;
-    private nextId;
-    private instanceVersion;
     private postConstruct();
     isLastRowFound(): boolean;
     private addEventListeners();
@@ -24,18 +17,11 @@ export declare class EnterpriseRowModel extends BeanStub implements IRowModel {
     private onRowGroupOpened(event);
     private reset();
     setDatasource(datasource: IEnterpriseDatasource): void;
-    private loadNode(rowNode);
-    private createGroupKeys(groupNode);
-    private createLoadParams(rowNode);
-    private toValueObjects(columns);
-    private successCallback(instanceVersion, parentNode, dataItems);
-    private mapAndFireModelUpdated();
-    private failCallback(instanceVersion, rowNode);
+    private createNodeCache(rowNode);
     getRowBounds(index: number): {
         rowTop: number;
         rowHeight: number;
     };
-    doSetRowTop(): void;
     getRow(index: number): RowNode;
     getPageFirstRow(): number;
     getPageLastRow(): number;
@@ -45,7 +31,6 @@ export declare class EnterpriseRowModel extends BeanStub implements IRowModel {
     isEmpty(): boolean;
     isRowsToRender(): boolean;
     getType(): string;
-    private doRowsToDisplay();
     forEachNode(callback: (rowNode: RowNode) => void): void;
     insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void;
     removeItems(rowNodes: RowNode[], skipRefresh: boolean): void;

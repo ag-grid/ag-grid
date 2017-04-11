@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.0.1
+// ag-grid-enterprise v9.0.2
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -77,7 +77,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var main_1 = __webpack_require__(2);
 	var enterpriseMenu_1 = __webpack_require__(125);
@@ -126,7 +126,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -198,7 +198,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var popupService_1 = __webpack_require__(49);
 	var gridRow_1 = __webpack_require__(38);
 	var inMemoryRowModel_1 = __webpack_require__(115);
-	var infinitePageRowModel_1 = __webpack_require__(112);
+	var infiniteRowModel_1 = __webpack_require__(112);
 	var animateSlideCellRenderer_1 = __webpack_require__(76);
 	var cellEditorFactory_1 = __webpack_require__(68);
 	var popupEditorWrapper_1 = __webpack_require__(71);
@@ -222,8 +222,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var headerRowComp_1 = __webpack_require__(89);
 	var animateShowChangeCellRenderer_1 = __webpack_require__(77);
 	var inMemoryNodeManager_1 = __webpack_require__(116);
-	var infinitePageCache_1 = __webpack_require__(113);
-	var infinitePage_1 = __webpack_require__(114);
+	var infiniteCache_1 = __webpack_require__(113);
+	var infiniteBlock_1 = __webpack_require__(114);
 	var baseFrameworkFactory_1 = __webpack_require__(117);
 	var methodNotImplementedException_1 = __webpack_require__(82);
 	var touchListener_1 = __webpack_require__(59);
@@ -334,10 +334,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    exports.InMemoryNodeManager = inMemoryNodeManager_1.InMemoryNodeManager;
 	    // rowControllers
 	    exports.FloatingRowModel = floatingRowModel_1.FloatingRowModel;
-	    exports.VirtualPageRowModel = infinitePageRowModel_1.InfinitePageRowModel;
-	    exports.VirtualPageCache = infinitePageCache_1.InfinitePageCache;
-	    exports.VirtualPage = infinitePage_1.InfinitePage;
-	    //styling
+	    exports.InfiniteRowModel = infiniteRowModel_1.InfiniteRowModel;
+	    exports.RowNodeCache = infiniteCache_1.RowNodeCache;
+	    exports.InfiniteCache = infiniteCache_1.InfiniteCache;
+	    exports.RowNodeBlock = infiniteBlock_1.RowNodeBlock;
+	    exports.InfiniteBlock = infiniteBlock_1.InfiniteBlock;
+	    // styling
 	    exports.StylingService = stylingService_1.StylingService;
 	    // widgets
 	    exports.AgCheckbox = agCheckbox_1.AgCheckbox;
@@ -387,7 +389,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -432,7 +434,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var focusService_1 = __webpack_require__(46);
 	var cellEditorFactory_1 = __webpack_require__(68);
 	var events_1 = __webpack_require__(12);
-	var infinitePageRowModel_1 = __webpack_require__(112);
+	var infiniteRowModel_1 = __webpack_require__(112);
 	var inMemoryRowModel_1 = __webpack_require__(115);
 	var cellRendererFactory_1 = __webpack_require__(75);
 	var cellRendererService_1 = __webpack_require__(79);
@@ -549,8 +551,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	// the default is InMemoryRowModel, which is also used for pagination.
 	// the enterprise adds viewport to this list.
 	Grid.RowModelClasses = {
-	    virtual: infinitePageRowModel_1.InfinitePageRowModel,
-	    infinite: infinitePageRowModel_1.InfinitePageRowModel,
+	    virtual: infiniteRowModel_1.InfiniteRowModel,
+	    infinite: infiniteRowModel_1.InfiniteRowModel,
 	    pagination: inMemoryRowModel_1.InMemoryRowModel,
 	    normal: inMemoryRowModel_1.InMemoryRowModel
 	};
@@ -563,7 +565,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -1097,7 +1099,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -1207,7 +1209,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -1270,7 +1272,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -1611,7 +1613,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -2624,7 +2626,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -2747,7 +2749,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -2980,7 +2982,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -3105,7 +3107,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -3675,7 +3677,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    GridApi.prototype.refreshInfinitePageCache = function () {
 	        if (this.infinitePageRowModel) {
-	            this.infinitePageRowModel.refreshVirtualPageCache();
+	            this.infinitePageRowModel.refreshCache();
 	        }
 	        else {
 	            console.warn("ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.");
@@ -3687,7 +3689,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    GridApi.prototype.purgeInfinitePageCache = function () {
 	        if (this.infinitePageRowModel) {
-	            this.infinitePageRowModel.purgeVirtualPageCache();
+	            this.infinitePageRowModel.purgeCache();
 	        }
 	        else {
 	            console.warn("ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.");
@@ -3731,7 +3733,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    GridApi.prototype.getInfinitePageState = function () {
 	        if (this.infinitePageRowModel) {
-	            return this.infinitePageRowModel.getVirtualPageState();
+	            return this.infinitePageRowModel.getPageState();
 	        }
 	        else {
 	            console.warn("ag-Grid: api.getVirtualPageState is only available when rowModelType='virtual'.");
@@ -3897,7 +3899,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -4071,7 +4073,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -4350,7 +4352,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -6158,7 +6160,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -6413,7 +6415,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -6830,7 +6832,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -6988,7 +6990,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -7106,7 +7108,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -7191,7 +7193,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -7393,7 +7395,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -7447,7 +7449,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -7642,7 +7644,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -7782,7 +7784,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8449,6 +8451,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // we have to call this after ensureColumnVisible - otherwise it could be a virtual column
 	            // or row that is not currently in view, hence the renderedCell would not exist
 	            var nextRenderedCell = this.getComponentForCell(nextCell);
+	            // if next cell is fullWidth row, then no rendered cell,
+	            // as fullWidth rows have no cells, so we skip it
+	            if (utils_1.Utils.missing(nextRenderedCell)) {
+	                continue;
+	            }
 	            // if editing, but cell not editable, skip cell
 	            if (startEditing && !nextRenderedCell.isCellEditable()) {
 	                continue;
@@ -8566,7 +8573,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -10194,7 +10201,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -10408,7 +10415,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -10566,7 +10573,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -11027,7 +11034,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -11331,7 +11338,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -11523,7 +11530,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -11786,7 +11793,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12040,7 +12047,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12097,7 +12104,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12291,7 +12298,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12332,7 +12339,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12409,7 +12416,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12499,7 +12506,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12571,7 +12578,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12643,7 +12650,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12951,7 +12958,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -13043,7 +13050,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14088,7 +14095,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15214,7 +15221,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15350,7 +15357,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15714,7 +15721,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16202,7 +16209,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16466,7 +16473,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16626,7 +16633,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16922,7 +16929,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17141,7 +17148,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17209,7 +17216,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17379,7 +17386,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17563,7 +17570,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17794,7 +17801,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17926,7 +17933,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18232,7 +18239,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18331,7 +18338,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18579,7 +18586,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18771,7 +18778,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19018,7 +19025,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19138,7 +19145,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19247,7 +19254,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19362,7 +19369,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19583,7 +19590,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19886,7 +19893,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19996,7 +20003,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20097,7 +20104,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20172,7 +20179,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20260,7 +20267,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20296,7 +20303,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20332,7 +20339,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20406,7 +20413,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20492,7 +20499,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20587,7 +20594,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20695,7 +20702,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20932,18 +20939,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (utils_1.Utils.missing(columnOfGroupedCol)) {
 	            columnOfGroupedCol = params.column;
 	        }
-	        var colDefOfGroupedCol = columnOfGroupedCol.getColDef();
 	        var groupName = this.getGroupName();
 	        var valueFormatted = this.valueFormatterService.formatValue(columnOfGroupedCol, params.node, params.scope, params.rowIndex, groupName);
+	        var groupedColCellRenderer = columnOfGroupedCol.getCellRenderer();
 	        // reuse the params but change the value
-	        if (colDefOfGroupedCol && typeof colDefOfGroupedCol.cellRenderer === 'function') {
+	        if (typeof groupedColCellRenderer === 'function') {
 	            // reuse the params but change the value
 	            params.value = groupName;
 	            params.valueFormatted = valueFormatted;
+	            var colDefOfGroupedCol = columnOfGroupedCol.getColDef();
+	            var groupedColCellRendererParams = colDefOfGroupedCol ? colDefOfGroupedCol.cellRendererParams : null;
 	            // because we are talking about the different column to the original, any user provided params
 	            // are for the wrong column, so need to copy them in again.
-	            if (colDefOfGroupedCol.cellRendererParams) {
-	                utils_1.Utils.assign(params, colDefOfGroupedCol.cellRendererParams);
+	            if (groupedColCellRendererParams) {
+	                utils_1.Utils.assign(params, groupedColCellRenderer);
 	            }
 	            this.cellRendererService.useCellRenderer(colDefOfGroupedCol.cellRenderer, this.eValue, params);
 	        }
@@ -21137,7 +21146,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -21246,7 +21255,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -21309,7 +21318,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -21445,7 +21454,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -21465,7 +21474,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -21551,7 +21560,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -21624,7 +21633,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -21871,7 +21880,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22013,7 +22022,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22184,7 +22193,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22557,7 +22566,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22830,7 +22839,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -23240,7 +23249,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -23345,7 +23354,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -23460,7 +23469,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -23524,7 +23533,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -23635,7 +23644,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            setSort: function (sort, multiSort) {
 	                _this.sortController.setSortForColumn(_this.column, sort, !!multiSort);
 	            },
-	            eventService: this.eventService
+	            api: this.gridApi,
+	            columnApi: this.columnApi,
+	            context: this.gridOptionsWrapper.getContext()
 	        };
 	        var headerComp = this.componentProvider.newHeaderComponent(params);
 	        this.appendChild(headerComp);
@@ -23782,6 +23793,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __metadata("design:type", gridApi_1.GridApi)
 	], HeaderWrapperComp.prototype, "gridApi", void 0);
 	__decorate([
+	    context_1.Autowired('columnApi'),
+	    __metadata("design:type", columnController_1.ColumnApi)
+	], HeaderWrapperComp.prototype, "columnApi", void 0);
+	__decorate([
 	    context_1.Autowired('sortController'),
 	    __metadata("design:type", sortController_1.SortController)
 	], HeaderWrapperComp.prototype, "sortController", void 0);
@@ -23820,7 +23835,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -23994,7 +24009,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -24194,7 +24209,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -24231,6 +24246,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dragAndDropService_1 = __webpack_require__(88);
 	var setLeftFeature_1 = __webpack_require__(64);
 	var componentProvider_1 = __webpack_require__(56);
+	var gridApi_1 = __webpack_require__(13);
 	var HeaderGroupWrapperComp = (function (_super) {
 	    __extends(HeaderGroupWrapperComp, _super);
 	    function HeaderGroupWrapperComp(columnGroup, eRoot, dragSourceDropTarget, pinned) {
@@ -24264,7 +24280,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            columnGroup: this.columnGroup,
 	            setExpanded: function (expanded) {
 	                _this.columnController.setColumnGroupOpened(_this.columnGroup, expanded);
-	            }
+	            },
+	            api: this.gridApi,
+	            columnApi: this.columnApi,
+	            context: this.gridOptionsWrapper.getContext()
 	        };
 	        var headerComp = this.componentProvider.newHeaderGroupComponent(params);
 	        this.appendChild(headerComp);
@@ -24487,6 +24506,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __metadata("design:type", componentProvider_1.ComponentProvider)
 	], HeaderGroupWrapperComp.prototype, "componentProvider", void 0);
 	__decorate([
+	    context_1.Autowired('gridApi'),
+	    __metadata("design:type", gridApi_1.GridApi)
+	], HeaderGroupWrapperComp.prototype, "gridApi", void 0);
+	__decorate([
+	    context_1.Autowired('columnApi'),
+	    __metadata("design:type", columnController_1.ColumnApi)
+	], HeaderGroupWrapperComp.prototype, "columnApi", void 0);
+	__decorate([
 	    context_1.PostConstruct,
 	    __metadata("design:type", Function),
 	    __metadata("design:paramtypes", []),
@@ -24501,7 +24528,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -24622,7 +24649,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -24932,7 +24959,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25039,7 +25066,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25135,7 +25162,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25180,7 +25207,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25298,7 +25325,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25332,7 +25359,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25382,7 +25409,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25483,7 +25510,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25535,7 +25562,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25624,7 +25651,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25676,7 +25703,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25773,7 +25800,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25947,7 +25974,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25981,50 +26008,50 @@ return /******/ (function(modules) { // webpackBootstrap
 	var sortController_1 = __webpack_require__(61);
 	var filterManager_1 = __webpack_require__(48);
 	var constants_1 = __webpack_require__(10);
-	var infinitePageCache_1 = __webpack_require__(113);
+	var infiniteCache_1 = __webpack_require__(113);
 	var beanStub_1 = __webpack_require__(40);
-	var InfinitePageRowModel = (function (_super) {
-	    __extends(InfinitePageRowModel, _super);
-	    function InfinitePageRowModel() {
+	var InfiniteRowModel = (function (_super) {
+	    __extends(InfiniteRowModel, _super);
+	    function InfiniteRowModel() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
-	    InfinitePageRowModel.prototype.getRowBounds = function (index) {
-	        if (utils_1.Utils.missing(this.virtualPageCache)) {
+	    InfiniteRowModel.prototype.getRowBounds = function (index) {
+	        if (utils_1.Utils.missing(this.infiniteCache)) {
 	            return null;
 	        }
-	        return this.virtualPageCache.getRowBounds(index);
+	        return this.infiniteCache.getRowBounds(index);
 	    };
-	    InfinitePageRowModel.prototype.init = function () {
+	    InfiniteRowModel.prototype.init = function () {
 	        if (!this.gridOptionsWrapper.isRowModelInfinite()) {
 	            return;
 	        }
 	        this.addEventListeners();
 	        this.setDatasource(this.gridOptionsWrapper.getDatasource());
 	    };
-	    InfinitePageRowModel.prototype.isLastRowFound = function () {
-	        return this.virtualPageCache ? this.virtualPageCache.isMaxRowFound() : false;
+	    InfiniteRowModel.prototype.isLastRowFound = function () {
+	        return this.infiniteCache ? this.infiniteCache.isMaxRowFound() : false;
 	    };
-	    InfinitePageRowModel.prototype.addEventListeners = function () {
+	    InfiniteRowModel.prototype.addEventListeners = function () {
 	        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
 	        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
 	    };
-	    InfinitePageRowModel.prototype.onFilterChanged = function () {
+	    InfiniteRowModel.prototype.onFilterChanged = function () {
 	        if (this.gridOptionsWrapper.isEnableServerSideFilter()) {
 	            this.reset();
 	        }
 	    };
-	    InfinitePageRowModel.prototype.onSortChanged = function () {
+	    InfiniteRowModel.prototype.onSortChanged = function () {
 	        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
 	            this.reset();
 	        }
 	    };
-	    InfinitePageRowModel.prototype.destroy = function () {
+	    InfiniteRowModel.prototype.destroy = function () {
 	        _super.prototype.destroy.call(this);
 	    };
-	    InfinitePageRowModel.prototype.getType = function () {
+	    InfiniteRowModel.prototype.getType = function () {
 	        return constants_1.Constants.ROW_MODEL_TYPE_INFINITE;
 	    };
-	    InfinitePageRowModel.prototype.setDatasource = function (datasource) {
+	    InfiniteRowModel.prototype.setDatasource = function (datasource) {
 	        this.datasource = datasource;
 	        // only reset if we have a valid datasource to working with
 	        if (datasource) {
@@ -26032,7 +26059,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.reset();
 	        }
 	    };
-	    InfinitePageRowModel.prototype.checkForDeprecated = function () {
+	    InfiniteRowModel.prototype.checkForDeprecated = function () {
 	        var ds = this.datasource;
 	        // the number of concurrent loads we are allowed to the server
 	        if (utils_1.Utils.exists(ds.maxConcurrentRequests)) {
@@ -26048,13 +26075,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property infinitePageSize');
 	        }
 	    };
-	    InfinitePageRowModel.prototype.isEmpty = function () {
-	        return utils_1.Utils.missing(this.virtualPageCache);
+	    InfiniteRowModel.prototype.isEmpty = function () {
+	        return utils_1.Utils.missing(this.infiniteCache);
 	    };
-	    InfinitePageRowModel.prototype.isRowsToRender = function () {
-	        return utils_1.Utils.exists(this.virtualPageCache);
+	    InfiniteRowModel.prototype.isRowsToRender = function () {
+	        return utils_1.Utils.exists(this.infiniteCache);
 	    };
-	    InfinitePageRowModel.prototype.reset = function () {
+	    InfiniteRowModel.prototype.reset = function () {
 	        // important to return here, as the user could be setting filter or sort before
 	        // data-source is set
 	        if (utils_1.Utils.missing(this.datasource)) {
@@ -26063,14 +26090,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // if user is providing id's, then this means we can keep the selection between datsource hits,
 	        // as the rows will keep their unique id's even if, for example, server side sorting or filtering
 	        // is done.
-	        var userGeneratingRows = utils_1.Utils.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
-	        if (!userGeneratingRows) {
+	        var userGeneratingIds = utils_1.Utils.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
+	        if (!userGeneratingIds) {
 	            this.selectionController.reset();
 	        }
 	        this.resetCache();
 	        this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED);
 	    };
-	    InfinitePageRowModel.prototype.resetCache = function () {
+	    InfiniteRowModel.prototype.resetCache = function () {
 	        var cacheSettings = {
 	            // the user provided datasource
 	            datasource: this.datasource,
@@ -26080,10 +26107,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // properties - this way we take a snapshot of them, so if user changes any, they will be
 	            // used next time we create a new cache, which is generally after a filter or sort change,
 	            // or a new datasource is set
-	            maxConcurrentDatasourceRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
-	            paginationOverflowSize: this.gridOptionsWrapper.getPaginationOverflowSize(),
-	            paginationInitialRowCount: this.gridOptionsWrapper.getInfiniteInitialRowCount(),
-	            maxPagesInCache: this.gridOptionsWrapper.getMaxPagesInCache(),
+	            maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
+	            overflowSize: this.gridOptionsWrapper.getPaginationOverflowSize(),
+	            initialRowCount: this.gridOptionsWrapper.getInfiniteInitialRowCount(),
+	            maxBlocksInCache: this.gridOptionsWrapper.getMaxPagesInCache(),
 	            pageSize: this.gridOptionsWrapper.getInfiniteBlockSize(),
 	            rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
 	            // the cache could create this, however it is also used by the pages, so handy to create it
@@ -26091,8 +26118,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            lastAccessedSequence: new utils_1.NumberSequence()
 	        };
 	        // set defaults
-	        if (!(cacheSettings.maxConcurrentDatasourceRequests >= 1)) {
-	            cacheSettings.maxConcurrentDatasourceRequests = 2;
+	        if (!(cacheSettings.maxConcurrentRequests >= 1)) {
+	            cacheSettings.maxConcurrentRequests = 2;
 	        }
 	        // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
 	        // server for one page at a time. so the default if not specified is 100.
@@ -26100,139 +26127,139 @@ return /******/ (function(modules) { // webpackBootstrap
 	            cacheSettings.pageSize = 100;
 	        }
 	        // if user doesn't give initial rows to display, we assume zero
-	        if (!(cacheSettings.paginationInitialRowCount >= 1)) {
-	            cacheSettings.paginationInitialRowCount = 0;
+	        if (!(cacheSettings.initialRowCount >= 1)) {
+	            cacheSettings.initialRowCount = 0;
 	        }
 	        // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
 	        // the current page and request first row of next page
-	        if (!(cacheSettings.paginationOverflowSize >= 1)) {
-	            cacheSettings.paginationOverflowSize = 1;
+	        if (!(cacheSettings.overflowSize >= 1)) {
+	            cacheSettings.overflowSize = 1;
 	        }
 	        // if not first time creating a cache, need to destroy the old one
-	        if (this.virtualPageCache) {
-	            this.virtualPageCache.destroy();
+	        if (this.infiniteCache) {
+	            this.infiniteCache.destroy();
 	        }
-	        this.virtualPageCache = new infinitePageCache_1.InfinitePageCache(cacheSettings);
-	        this.context.wireBean(this.virtualPageCache);
+	        this.infiniteCache = new infiniteCache_1.InfiniteCache(cacheSettings);
+	        this.context.wireBean(this.infiniteCache);
 	    };
-	    InfinitePageRowModel.prototype.getRow = function (rowIndex) {
-	        return this.virtualPageCache ? this.virtualPageCache.getRow(rowIndex) : null;
+	    InfiniteRowModel.prototype.getRow = function (rowIndex) {
+	        return this.infiniteCache ? this.infiniteCache.getRow(rowIndex) : null;
 	    };
-	    InfinitePageRowModel.prototype.forEachNode = function (callback) {
-	        if (this.virtualPageCache) {
-	            this.virtualPageCache.forEachNode(callback);
+	    InfiniteRowModel.prototype.forEachNode = function (callback) {
+	        if (this.infiniteCache) {
+	            this.infiniteCache.forEachNode(callback);
 	        }
 	    };
-	    InfinitePageRowModel.prototype.getCurrentPageHeight = function () {
-	        return this.virtualPageCache ? this.virtualPageCache.getCurrentPageHeight() : 0;
+	    InfiniteRowModel.prototype.getCurrentPageHeight = function () {
+	        return this.infiniteCache ? this.infiniteCache.getCurrentPageHeight() : 0;
 	    };
-	    InfinitePageRowModel.prototype.getRowIndexAtPixel = function (pixel) {
-	        return this.virtualPageCache ? this.virtualPageCache.getRowIndexAtPixel(pixel) : -1;
+	    InfiniteRowModel.prototype.getRowIndexAtPixel = function (pixel) {
+	        return this.infiniteCache ? this.infiniteCache.getRowIndexAtPixel(pixel) : -1;
 	    };
-	    InfinitePageRowModel.prototype.getPageFirstRow = function () {
+	    InfiniteRowModel.prototype.getPageFirstRow = function () {
 	        return 0;
 	    };
-	    InfinitePageRowModel.prototype.getPageLastRow = function () {
-	        return this.virtualPageCache ? this.virtualPageCache.getRowCount() - 1 : 0;
+	    InfiniteRowModel.prototype.getPageLastRow = function () {
+	        return this.infiniteCache ? this.infiniteCache.getRowCount() - 1 : 0;
 	    };
-	    InfinitePageRowModel.prototype.getRowCount = function () {
-	        return this.virtualPageCache ? this.virtualPageCache.getRowCount() : 0;
+	    InfiniteRowModel.prototype.getRowCount = function () {
+	        return this.infiniteCache ? this.infiniteCache.getRowCount() : 0;
 	    };
-	    InfinitePageRowModel.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {
-	        if (this.virtualPageCache) {
-	            this.virtualPageCache.insertItemsAtIndex(index, items);
+	    InfiniteRowModel.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {
+	        if (this.infiniteCache) {
+	            this.infiniteCache.insertItemsAtIndex(index, items);
 	        }
 	    };
-	    InfinitePageRowModel.prototype.removeItems = function (rowNodes, skipRefresh) {
+	    InfiniteRowModel.prototype.removeItems = function (rowNodes, skipRefresh) {
 	        console.log('ag-Grid: it is not possible to removeItems when using virtual pagination. Instead use the ' +
 	            'API to refresh the cache');
 	    };
-	    InfinitePageRowModel.prototype.addItems = function (items, skipRefresh) {
+	    InfiniteRowModel.prototype.addItems = function (items, skipRefresh) {
 	        console.log('ag-Grid: it is not possible to add items when using virtual pagination as the grid does not ' +
 	            'know that last index of your data - instead either use insertItemsAtIndex OR refresh the cache.');
 	    };
-	    InfinitePageRowModel.prototype.isRowPresent = function (rowNode) {
+	    InfiniteRowModel.prototype.isRowPresent = function (rowNode) {
 	        console.log('ag-Grid: not supported.');
 	        return false;
 	    };
-	    InfinitePageRowModel.prototype.refreshVirtualPageCache = function () {
-	        if (this.virtualPageCache) {
-	            this.virtualPageCache.refreshVirtualPageCache();
+	    InfiniteRowModel.prototype.refreshCache = function () {
+	        if (this.infiniteCache) {
+	            this.infiniteCache.refreshCache();
 	        }
 	    };
-	    InfinitePageRowModel.prototype.purgeVirtualPageCache = function () {
-	        if (this.virtualPageCache) {
-	            this.virtualPageCache.purgeVirtualPageCache();
+	    InfiniteRowModel.prototype.purgeCache = function () {
+	        if (this.infiniteCache) {
+	            this.infiniteCache.purgeCache();
 	        }
 	    };
-	    InfinitePageRowModel.prototype.getVirtualRowCount = function () {
-	        if (this.virtualPageCache) {
-	            return this.virtualPageCache.getVirtualRowCount();
+	    InfiniteRowModel.prototype.getVirtualRowCount = function () {
+	        if (this.infiniteCache) {
+	            return this.infiniteCache.getVirtualRowCount();
 	        }
 	        else {
 	            return null;
 	        }
 	    };
-	    InfinitePageRowModel.prototype.isMaxRowFound = function () {
-	        if (this.virtualPageCache) {
-	            return this.virtualPageCache.isMaxRowFound();
+	    InfiniteRowModel.prototype.isMaxRowFound = function () {
+	        if (this.infiniteCache) {
+	            return this.infiniteCache.isMaxRowFound();
 	        }
 	    };
-	    InfinitePageRowModel.prototype.setVirtualRowCount = function (rowCount, maxRowFound) {
-	        if (this.virtualPageCache) {
-	            this.virtualPageCache.setVirtualRowCount(rowCount, maxRowFound);
+	    InfiniteRowModel.prototype.setVirtualRowCount = function (rowCount, maxRowFound) {
+	        if (this.infiniteCache) {
+	            this.infiniteCache.setVirtualRowCount(rowCount, maxRowFound);
 	        }
 	    };
-	    InfinitePageRowModel.prototype.getVirtualPageState = function () {
-	        if (this.virtualPageCache) {
-	            return this.virtualPageCache.getPageState();
+	    InfiniteRowModel.prototype.getPageState = function () {
+	        if (this.infiniteCache) {
+	            return this.infiniteCache.getPageState();
 	        }
 	        else {
 	            return null;
 	        }
 	    };
-	    return InfinitePageRowModel;
+	    return InfiniteRowModel;
 	}(beanStub_1.BeanStub));
 	__decorate([
 	    context_1.Autowired('gridOptionsWrapper'),
 	    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-	], InfinitePageRowModel.prototype, "gridOptionsWrapper", void 0);
+	], InfiniteRowModel.prototype, "gridOptionsWrapper", void 0);
 	__decorate([
 	    context_1.Autowired('filterManager'),
 	    __metadata("design:type", filterManager_1.FilterManager)
-	], InfinitePageRowModel.prototype, "filterManager", void 0);
+	], InfiniteRowModel.prototype, "filterManager", void 0);
 	__decorate([
 	    context_1.Autowired('sortController'),
 	    __metadata("design:type", sortController_1.SortController)
-	], InfinitePageRowModel.prototype, "sortController", void 0);
+	], InfiniteRowModel.prototype, "sortController", void 0);
 	__decorate([
 	    context_1.Autowired('selectionController'),
 	    __metadata("design:type", selectionController_1.SelectionController)
-	], InfinitePageRowModel.prototype, "selectionController", void 0);
+	], InfiniteRowModel.prototype, "selectionController", void 0);
 	__decorate([
 	    context_1.Autowired('eventService'),
 	    __metadata("design:type", eventService_1.EventService)
-	], InfinitePageRowModel.prototype, "eventService", void 0);
+	], InfiniteRowModel.prototype, "eventService", void 0);
 	__decorate([
 	    context_1.Autowired('context'),
 	    __metadata("design:type", context_1.Context)
-	], InfinitePageRowModel.prototype, "context", void 0);
+	], InfiniteRowModel.prototype, "context", void 0);
 	__decorate([
 	    context_1.PostConstruct,
 	    __metadata("design:type", Function),
 	    __metadata("design:paramtypes", []),
 	    __metadata("design:returntype", void 0)
-	], InfinitePageRowModel.prototype, "init", null);
+	], InfiniteRowModel.prototype, "init", null);
 	__decorate([
 	    context_1.PreDestroy,
 	    __metadata("design:type", Function),
 	    __metadata("design:paramtypes", []),
 	    __metadata("design:returntype", void 0)
-	], InfinitePageRowModel.prototype, "destroy", null);
-	InfinitePageRowModel = __decorate([
+	], InfiniteRowModel.prototype, "destroy", null);
+	InfiniteRowModel = __decorate([
 	    context_1.Bean('rowModel')
-	], InfinitePageRowModel);
-	exports.InfinitePageRowModel = InfinitePageRowModel;
+	], InfiniteRowModel);
+	exports.InfiniteRowModel = InfiniteRowModel;
 
 
 /***/ },
@@ -26241,11 +26268,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
+	var __extends = (this && this.__extends) || (function () {
+	    var extendStatics = Object.setPrototypeOf ||
+	        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+	        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+	    return function (d, b) {
+	        extendStatics(d, b);
+	        function __() { this.constructor = d; }
+	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	    };
+	})();
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -26264,44 +26301,105 @@ return /******/ (function(modules) { // webpackBootstrap
 	var eventService_1 = __webpack_require__(6);
 	var events_1 = __webpack_require__(12);
 	var logger_1 = __webpack_require__(7);
-	var infinitePage_1 = __webpack_require__(114);
-	var InfinitePageCache = (function () {
-	    function InfinitePageCache(cacheSettings) {
-	        this.pages = {};
-	        this.activePageLoadsCount = 0;
-	        this.pagesInCacheCount = 0;
+	var infiniteBlock_1 = __webpack_require__(114);
+	var RowNodeCache = (function () {
+	    function RowNodeCache(params) {
 	        this.maxRowFound = false;
 	        this.active = true;
-	        this.cacheParams = cacheSettings;
-	        this.virtualRowCount = cacheSettings.paginationInitialRowCount;
+	        this.virtualRowCount = params.initialRowCount;
+	        this.rowNodeCacheParams = params;
 	    }
-	    InfinitePageCache.prototype.getRowBounds = function (index) {
+	    RowNodeCache.prototype.isActive = function () {
+	        return this.active;
+	    };
+	    RowNodeCache.prototype.getVirtualRowCount = function () {
+	        return this.virtualRowCount;
+	    };
+	    RowNodeCache.prototype.hack_setVirtualRowCount = function (virtualRowCount) {
+	        this.virtualRowCount = virtualRowCount;
+	    };
+	    RowNodeCache.prototype.isMaxRowFound = function () {
+	        return this.maxRowFound;
+	    };
+	    // as we are not a context managed bean, we cannot use @PreDestroy
+	    RowNodeCache.prototype.destroy = function () {
+	        this.active = false;
+	    };
+	    RowNodeCache.prototype.checkVirtualRowCount = function (page, lastRow) {
+	        // if client provided a last row, we always use it, as it could change between server calls
+	        // if user deleted data and then called refresh on the grid.
+	        if (typeof lastRow === 'number' && lastRow >= 0) {
+	            this.virtualRowCount = lastRow;
+	            this.maxRowFound = true;
+	            this.dispatchModelUpdated();
+	        }
+	        else if (!this.maxRowFound) {
+	            // otherwise, see if we need to add some virtual rows
+	            var lastRowIndex = (page.getPageNumber() + 1) * this.rowNodeCacheParams.pageSize;
+	            var lastRowIndexPlusOverflow = lastRowIndex + this.rowNodeCacheParams.overflowSize;
+	            if (this.virtualRowCount < lastRowIndexPlusOverflow) {
+	                this.virtualRowCount = lastRowIndexPlusOverflow;
+	                this.dispatchModelUpdated();
+	            }
+	        }
+	    };
+	    RowNodeCache.prototype.setVirtualRowCount = function (rowCount, maxRowFound) {
+	        this.virtualRowCount = rowCount;
+	        // if undefined is passed, we do not set this value, if one of {true,false}
+	        // is passed, we do set the value.
+	        if (utils_1.Utils.exists(maxRowFound)) {
+	            this.maxRowFound = maxRowFound;
+	        }
+	        // if we are still searching, then the row count must not end at the end
+	        // of a particular page, otherwise the searching will not pop into the
+	        // next page
+	        if (!this.maxRowFound) {
+	            if (this.virtualRowCount % this.rowNodeCacheParams.pageSize === 0) {
+	                this.virtualRowCount++;
+	            }
+	        }
+	        this.dispatchModelUpdated();
+	    };
+	    return RowNodeCache;
+	}());
+	exports.RowNodeCache = RowNodeCache;
+	var InfiniteCache = (function (_super) {
+	    __extends(InfiniteCache, _super);
+	    function InfiniteCache(params) {
+	        var _this = _super.call(this, params) || this;
+	        _this.blocks = {};
+	        _this.activePageLoadsCount = 0;
+	        _this.blocksCount = 0;
+	        _this.cacheParams = params;
+	        return _this;
+	    }
+	    InfiniteCache.prototype.getRowBounds = function (index) {
 	        return {
 	            rowHeight: this.cacheParams.rowHeight,
 	            rowTop: this.cacheParams.rowHeight * index
 	        };
 	    };
-	    InfinitePageCache.prototype.setBeans = function (loggerFactory) {
+	    InfiniteCache.prototype.setBeans = function (loggerFactory) {
 	        this.logger = loggerFactory.create('VirtualPageCache');
 	    };
-	    InfinitePageCache.prototype.init = function () {
+	    InfiniteCache.prototype.init = function () {
 	        // start load of data, as the virtualRowCount will remain at 0 otherwise,
 	        // so we need this to kick things off, otherwise grid would never call getRow()
 	        this.getRow(0);
 	    };
-	    InfinitePageCache.prototype.getCurrentPageHeight = function () {
-	        return this.virtualRowCount * this.cacheParams.rowHeight;
+	    InfiniteCache.prototype.getCurrentPageHeight = function () {
+	        return this.getVirtualRowCount() * this.cacheParams.rowHeight;
 	    };
-	    InfinitePageCache.prototype.forEachNode = function (callback) {
+	    InfiniteCache.prototype.forEachNode = function (callback) {
 	        var _this = this;
 	        var index = 0;
-	        utils_1.Utils.iterateObject(this.pages, function (key, cachePage) {
+	        utils_1.Utils.iterateObject(this.blocks, function (key, cachePage) {
 	            var start = cachePage.getStartRow();
 	            var end = cachePage.getEndRow();
 	            for (var rowIndex = start; rowIndex < end; rowIndex++) {
 	                // we check against virtualRowCount as this page may be the last one, and if it is, then
 	                // it's probable that the last rows are not part of the set
-	                if (rowIndex < _this.virtualRowCount) {
+	                if (rowIndex < _this.getVirtualRowCount()) {
 	                    var rowNode = cachePage.getRow(rowIndex);
 	                    callback(rowNode, index);
 	                    index++;
@@ -26309,11 +26407,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        });
 	    };
-	    InfinitePageCache.prototype.getRowIndexAtPixel = function (pixel) {
+	    InfiniteCache.prototype.getRowIndexAtPixel = function (pixel) {
 	        if (this.cacheParams.rowHeight !== 0) {
 	            var rowIndexForPixel = Math.floor(pixel / this.cacheParams.rowHeight);
-	            if (rowIndexForPixel >= this.virtualRowCount) {
-	                return this.virtualRowCount - 1;
+	            if (rowIndexForPixel >= this.getVirtualRowCount()) {
+	                return this.getVirtualRowCount() - 1;
 	            }
 	            else {
 	                return rowIndexForPixel;
@@ -26323,7 +26421,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return 0;
 	        }
 	    };
-	    InfinitePageCache.prototype.moveItemsDown = function (page, moveFromIndex, moveCount) {
+	    InfiniteCache.prototype.moveItemsDown = function (page, moveFromIndex, moveCount) {
 	        var startRow = page.getStartRow();
 	        var endRow = page.getEndRow();
 	        var indexOfLastRowToMove = moveFromIndex + moveCount;
@@ -26344,7 +26442,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    };
-	    InfinitePageCache.prototype.insertItems = function (page, indexToInsert, items) {
+	    InfiniteCache.prototype.insertItems = function (page, indexToInsert, items) {
 	        var pageStartRow = page.getStartRow();
 	        var pageEndRow = page.getEndRow();
 	        var newRowNodes = [];
@@ -26360,13 +26458,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        return newRowNodes;
 	    };
-	    InfinitePageCache.prototype.insertItemsAtIndex = function (indexToInsert, items) {
+	    InfiniteCache.prototype.insertItemsAtIndex = function (indexToInsert, items) {
 	        var _this = this;
 	        // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
-	        var pageIds = Object.keys(this.pages).map(function (str) { return parseInt(str); }).sort().reverse();
+	        var pageIds = Object.keys(this.blocks).map(function (str) { return parseInt(str); }).sort().reverse();
 	        var newNodes = [];
 	        pageIds.forEach(function (pageId) {
-	            var page = _this.pages[pageId];
+	            var page = _this.blocks[pageId];
 	            var pageEndRow = page.getEndRow();
 	            // if the insertion is after this page, then this page is not impacted
 	            if (pageEndRow <= indexToInsert) {
@@ -26376,86 +26474,82 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var newNodesThisPage = _this.insertItems(page, indexToInsert, items);
 	            newNodesThisPage.forEach(function (rowNode) { return newNodes.push(rowNode); });
 	        });
-	        if (this.maxRowFound) {
-	            this.virtualRowCount += items.length;
+	        if (this.isMaxRowFound()) {
+	            this.hack_setVirtualRowCount(this.getVirtualRowCount() + items.length);
 	        }
 	        this.dispatchModelUpdated();
 	        this.eventService.dispatchEvent(events_1.Events.EVENT_ITEMS_ADDED, newNodes);
 	    };
-	    InfinitePageCache.prototype.getRowCount = function () {
-	        return this.virtualRowCount;
+	    InfiniteCache.prototype.getRowCount = function () {
+	        return this.getVirtualRowCount();
 	    };
-	    InfinitePageCache.prototype.onPageLoaded = function (event) {
+	    InfiniteCache.prototype.onPageLoaded = function (event) {
 	        // if we are not active, then we ignore all events, otherwise we could end up getting the
 	        // grid to refresh even though we are no longer the active cache
-	        if (!this.active) {
+	        if (!this.isActive()) {
 	            return;
 	        }
 	        this.logger.log("onPageLoaded: page = " + event.page.getPageNumber() + ", lastRow = " + event.lastRow);
 	        this.activePageLoadsCount--;
-	        this.checkPageToLoad();
+	        this.checkBlockToLoad();
 	        if (event.success) {
 	            this.checkVirtualRowCount(event.page, event.lastRow);
 	        }
 	    };
-	    // as we are not a context managed bean, we cannot use @PreDestroy
-	    InfinitePageCache.prototype.destroy = function () {
-	        this.active = false;
-	    };
 	    // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,
 	    // it will want new pages in the cache as it asks for rows. only when we are inserting /
 	    // removing rows via the api is dontCreatePage set, where we move rows between the pages.
-	    InfinitePageCache.prototype.getRow = function (rowIndex, dontCreatePage) {
+	    InfiniteCache.prototype.getRow = function (rowIndex, dontCreatePage) {
 	        if (dontCreatePage === void 0) { dontCreatePage = false; }
 	        var pageNumber = Math.floor(rowIndex / this.cacheParams.pageSize);
-	        var page = this.pages[pageNumber];
+	        var page = this.blocks[pageNumber];
 	        if (!page) {
 	            if (dontCreatePage) {
 	                return null;
 	            }
 	            else {
-	                page = this.createPage(pageNumber);
+	                page = this.createBlock(pageNumber);
 	            }
 	        }
 	        return page.getRow(rowIndex);
 	    };
-	    InfinitePageCache.prototype.createPage = function (pageNumber) {
-	        var newPage = new infinitePage_1.InfinitePage(pageNumber, this.cacheParams);
-	        this.context.wireBean(newPage);
-	        newPage.addEventListener(infinitePage_1.InfinitePage.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
-	        this.pages[pageNumber] = newPage;
-	        this.pagesInCacheCount++;
-	        var needToPurge = utils_1.Utils.exists(this.cacheParams.maxPagesInCache)
-	            && this.pagesInCacheCount > this.cacheParams.maxPagesInCache;
+	    InfiniteCache.prototype.createBlock = function (blockNumber) {
+	        var newBlock = new infiniteBlock_1.InfiniteBlock(blockNumber, this.cacheParams);
+	        this.context.wireBean(newBlock);
+	        newBlock.addEventListener(infiniteBlock_1.InfiniteBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
+	        this.blocks[blockNumber] = newBlock;
+	        this.blocksCount++;
+	        var needToPurge = utils_1.Utils.exists(this.cacheParams.maxBlocksInCache)
+	            && this.blocksCount > this.cacheParams.maxBlocksInCache;
 	        if (needToPurge) {
-	            var lruPage = this.findLeastRecentlyUsedPage(newPage);
-	            this.removePageFromCache(lruPage);
+	            var lruPage = this.findLeastRecentlyUsedPage(newBlock);
+	            this.removeBlockFromCache(lruPage);
 	        }
-	        this.checkPageToLoad();
-	        return newPage;
+	        this.checkBlockToLoad();
+	        return newBlock;
 	    };
-	    InfinitePageCache.prototype.removePageFromCache = function (pageToRemove) {
+	    InfiniteCache.prototype.removeBlockFromCache = function (pageToRemove) {
 	        if (!pageToRemove) {
 	            return;
 	        }
-	        delete this.pages[pageToRemove.getPageNumber()];
-	        this.pagesInCacheCount--;
+	        delete this.blocks[pageToRemove.getPageNumber()];
+	        this.blocksCount--;
 	        // we do not want to remove the 'loaded' event listener, as the
 	        // concurrent loads count needs to be updated when the load is complete
 	        // if the purged page is in loading state
 	    };
-	    InfinitePageCache.prototype.printCacheStatus = function () {
+	    InfiniteCache.prototype.printCacheStatus = function () {
 	        this.logger.log("checkPageToLoad: activePageLoadsCount = " + this.activePageLoadsCount + ", pages = " + JSON.stringify(this.getPageState()));
 	    };
-	    InfinitePageCache.prototype.checkPageToLoad = function () {
+	    InfiniteCache.prototype.checkBlockToLoad = function () {
 	        this.printCacheStatus();
-	        if (this.activePageLoadsCount >= this.cacheParams.maxConcurrentDatasourceRequests) {
+	        if (this.activePageLoadsCount >= this.cacheParams.maxConcurrentRequests) {
 	            this.logger.log("checkPageToLoad: max loads exceeded");
 	            return;
 	        }
 	        var pageToLoad = null;
-	        utils_1.Utils.iterateObject(this.pages, function (key, cachePage) {
-	            if (cachePage.getState() === infinitePage_1.InfinitePage.STATE_DIRTY) {
+	        utils_1.Utils.iterateObject(this.blocks, function (key, cachePage) {
+	            if (cachePage.getState() === infiniteBlock_1.InfiniteBlock.STATE_DIRTY) {
 	                pageToLoad = cachePage;
 	            }
 	        });
@@ -26469,9 +26563,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.logger.log("checkPageToLoad: no pages to load");
 	        }
 	    };
-	    InfinitePageCache.prototype.findLeastRecentlyUsedPage = function (pageToExclude) {
+	    InfiniteCache.prototype.findLeastRecentlyUsedPage = function (pageToExclude) {
 	        var lruPage = null;
-	        utils_1.Utils.iterateObject(this.pages, function (key, page) {
+	        utils_1.Utils.iterateObject(this.blocks, function (key, page) {
 	            // we exclude checking for the page just created, as this has yet to be accessed and hence
 	            // the lastAccessed stamp will not be updated for the first time yet
 	            if (page === pageToExclude) {
@@ -26483,94 +26577,53 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	        return lruPage;
 	    };
-	    InfinitePageCache.prototype.checkVirtualRowCount = function (page, lastRow) {
-	        // if client provided a last row, we always use it, as it could change between server calls
-	        // if user deleted data and then called refresh on the grid.
-	        if (typeof lastRow === 'number' && lastRow >= 0) {
-	            this.virtualRowCount = lastRow;
-	            this.maxRowFound = true;
-	            this.dispatchModelUpdated();
-	        }
-	        else if (!this.maxRowFound) {
-	            // otherwise, see if we need to add some virtual rows
-	            var lastRowIndex = (page.getPageNumber() + 1) * this.cacheParams.pageSize;
-	            var lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.paginationOverflowSize;
-	            if (this.virtualRowCount < lastRowIndexPlusOverflow) {
-	                this.virtualRowCount = lastRowIndexPlusOverflow;
-	                this.dispatchModelUpdated();
-	            }
-	        }
-	    };
-	    InfinitePageCache.prototype.dispatchModelUpdated = function () {
-	        if (this.active) {
+	    InfiniteCache.prototype.dispatchModelUpdated = function () {
+	        if (this.isActive()) {
 	            this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED);
 	        }
 	    };
-	    InfinitePageCache.prototype.getPageState = function () {
+	    InfiniteCache.prototype.getPageState = function () {
 	        var result = [];
-	        utils_1.Utils.iterateObject(this.pages, function (pageNumber, page) {
+	        utils_1.Utils.iterateObject(this.blocks, function (pageNumber, page) {
 	            result.push({ pageNumber: pageNumber, startRow: page.getStartRow(), endRow: page.getEndRow(), pageStatus: page.getState() });
 	        });
 	        return result;
 	    };
-	    InfinitePageCache.prototype.refreshVirtualPageCache = function () {
-	        utils_1.Utils.iterateObject(this.pages, function (pageId, page) {
+	    InfiniteCache.prototype.refreshCache = function () {
+	        utils_1.Utils.iterateObject(this.blocks, function (pageId, page) {
 	            page.setDirty();
 	        });
-	        this.checkPageToLoad();
+	        this.checkBlockToLoad();
 	    };
-	    InfinitePageCache.prototype.purgeVirtualPageCache = function () {
+	    InfiniteCache.prototype.purgeCache = function () {
 	        var _this = this;
-	        var pagesList = utils_1.Utils.values(this.pages);
-	        pagesList.forEach(function (virtualPage) { return _this.removePageFromCache(virtualPage); });
+	        var pagesList = utils_1.Utils.values(this.blocks);
+	        pagesList.forEach(function (virtualPage) { return _this.removeBlockFromCache(virtualPage); });
 	        this.dispatchModelUpdated();
 	    };
-	    InfinitePageCache.prototype.getVirtualRowCount = function () {
-	        return this.virtualRowCount;
-	    };
-	    InfinitePageCache.prototype.isMaxRowFound = function () {
-	        return this.maxRowFound;
-	    };
-	    InfinitePageCache.prototype.setVirtualRowCount = function (rowCount, maxRowFound) {
-	        this.virtualRowCount = rowCount;
-	        // if undefined is passed, we do not set this value, if one of {true,false}
-	        // is passed, we do set the value.
-	        if (utils_1.Utils.exists(maxRowFound)) {
-	            this.maxRowFound = maxRowFound;
-	        }
-	        // if we are still searching, then the row count must not end at the end
-	        // of a particular page, otherwise the searching will not pop into the
-	        // next page
-	        if (!this.maxRowFound) {
-	            if (this.virtualRowCount % this.cacheParams.pageSize === 0) {
-	                this.virtualRowCount++;
-	            }
-	        }
-	        this.dispatchModelUpdated();
-	    };
-	    return InfinitePageCache;
-	}());
+	    return InfiniteCache;
+	}(RowNodeCache));
 	__decorate([
 	    context_1.Autowired('eventService'),
 	    __metadata("design:type", eventService_1.EventService)
-	], InfinitePageCache.prototype, "eventService", void 0);
+	], InfiniteCache.prototype, "eventService", void 0);
 	__decorate([
 	    context_1.Autowired('context'),
 	    __metadata("design:type", context_1.Context)
-	], InfinitePageCache.prototype, "context", void 0);
+	], InfiniteCache.prototype, "context", void 0);
 	__decorate([
 	    __param(0, context_1.Qualifier('loggerFactory')),
 	    __metadata("design:type", Function),
 	    __metadata("design:paramtypes", [logger_1.LoggerFactory]),
 	    __metadata("design:returntype", void 0)
-	], InfinitePageCache.prototype, "setBeans", null);
+	], InfiniteCache.prototype, "setBeans", null);
 	__decorate([
 	    context_1.PostConstruct,
 	    __metadata("design:type", Function),
 	    __metadata("design:paramtypes", []),
 	    __metadata("design:returntype", void 0)
-	], InfinitePageCache.prototype, "init", null);
-	exports.InfinitePageCache = InfinitePageCache;
+	], InfiniteCache.prototype, "init", null);
+	exports.InfiniteCache = InfiniteCache;
 
 
 /***/ },
@@ -26579,11 +26632,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
+	var __extends = (this && this.__extends) || (function () {
+	    var extendStatics = Object.setPrototypeOf ||
+	        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+	        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+	    return function (d, b) {
+	        extendStatics(d, b);
+	        function __() { this.constructor = d; }
+	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	    };
+	})();
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
 	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -26599,106 +26662,168 @@ return /******/ (function(modules) { // webpackBootstrap
 	var rowNode_1 = __webpack_require__(30);
 	var context_1 = __webpack_require__(8);
 	var eventService_1 = __webpack_require__(6);
-	var InfinitePage = (function () {
-	    function InfinitePage(pageNumber, cacheSettings) {
-	        this.state = InfinitePage.STATE_DIRTY;
+	var RowNodeBlock = (function () {
+	    function RowNodeBlock(blockNumber, rowNodeCacheParams) {
 	        this.version = 0;
+	        this.state = RowNodeBlock.STATE_DIRTY;
 	        this.localEventService = new eventService_1.EventService();
-	        this.pageNumber = pageNumber;
-	        this.cacheParams = cacheSettings;
+	        this.rowNodeCacheParams = rowNodeCacheParams;
+	        this.blockNumber = blockNumber;
 	        // we don't need to calculate these now, as the inputs don't change,
 	        // however it makes the code easier to read if we work them out up front
-	        this.startRow = pageNumber * cacheSettings.pageSize;
-	        this.endRow = this.startRow + cacheSettings.pageSize;
+	        this.startRow = blockNumber * rowNodeCacheParams.pageSize;
+	        this.endRow = this.startRow + rowNodeCacheParams.pageSize;
 	    }
-	    InfinitePage.prototype.setDirty = function () {
+	    RowNodeBlock.prototype.addEventListener = function (eventType, listener) {
+	        this.localEventService.addEventListener(eventType, listener);
+	    };
+	    RowNodeBlock.prototype.removeEventListener = function (eventType, listener) {
+	        this.localEventService.removeEventListener(eventType, listener);
+	    };
+	    RowNodeBlock.prototype.getVersion = function () {
+	        return this.version;
+	    };
+	    RowNodeBlock.prototype.getLastAccessed = function () {
+	        return this.lastAccessed;
+	    };
+	    RowNodeBlock.prototype.getRow = function (rowIndex) {
+	        this.lastAccessed = this.rowNodeCacheParams.lastAccessedSequence.next();
+	        var localIndex = rowIndex - this.startRow;
+	        return this.rowNodes[localIndex];
+	    };
+	    RowNodeBlock.prototype.init = function (beans) {
+	        this.beans = beans;
+	        this.createRowNodes();
+	    };
+	    RowNodeBlock.prototype.getStartRow = function () {
+	        return this.startRow;
+	    };
+	    RowNodeBlock.prototype.getEndRow = function () {
+	        return this.endRow;
+	    };
+	    RowNodeBlock.prototype.getPageNumber = function () {
+	        return this.blockNumber;
+	    };
+	    RowNodeBlock.prototype.setDirty = function () {
 	        // in case any current loads in progress, this will have their results ignored
 	        this.version++;
-	        this.state = InfinitePage.STATE_DIRTY;
+	        this.state = RowNodeBlock.STATE_DIRTY;
 	    };
-	    InfinitePage.prototype.setDirtyAndPurge = function () {
+	    RowNodeBlock.prototype.setDirtyAndPurge = function () {
 	        this.setDirty();
 	        this.rowNodes.forEach(function (rowNode) {
 	            rowNode.setData(null);
 	        });
 	    };
-	    InfinitePage.prototype.getStartRow = function () {
-	        return this.startRow;
-	    };
-	    InfinitePage.prototype.getEndRow = function () {
-	        return this.endRow;
-	    };
-	    InfinitePage.prototype.getPageNumber = function () {
-	        return this.pageNumber;
-	    };
-	    InfinitePage.prototype.addEventListener = function (eventType, listener) {
-	        this.localEventService.addEventListener(eventType, listener);
-	    };
-	    InfinitePage.prototype.removeEventListener = function (eventType, listener) {
-	        this.localEventService.removeEventListener(eventType, listener);
-	    };
-	    InfinitePage.prototype.getLastAccessed = function () {
-	        return this.lastAccessed;
-	    };
-	    InfinitePage.prototype.getState = function () {
+	    RowNodeBlock.prototype.getState = function () {
 	        return this.state;
 	    };
-	    InfinitePage.prototype.setRowNode = function (rowIndex, rowNode) {
+	    RowNodeBlock.prototype.setRowNode = function (rowIndex, rowNode) {
 	        var localIndex = rowIndex - this.startRow;
 	        this.rowNodes[localIndex] = rowNode;
 	        rowNode.setRowIndex(rowIndex);
 	        this.setTopOnRowNode(rowNode, rowIndex);
 	    };
-	    InfinitePage.prototype.setBlankRowNode = function (rowIndex) {
+	    RowNodeBlock.prototype.setBlankRowNode = function (rowIndex) {
 	        var localIndex = rowIndex - this.startRow;
 	        var newRowNode = this.createBlankRowNode(rowIndex);
 	        this.rowNodes[localIndex] = newRowNode;
 	        return newRowNode;
 	    };
-	    InfinitePage.prototype.setNewData = function (rowIndex, dataItem) {
+	    RowNodeBlock.prototype.setNewData = function (rowIndex, dataItem) {
 	        var newRowNode = this.setBlankRowNode(rowIndex);
 	        newRowNode.setDataAndId(dataItem, rowIndex.toString());
 	        return newRowNode;
 	    };
-	    InfinitePage.prototype.init = function () {
-	        this.createRowNodes();
+	    RowNodeBlock.prototype.createBlankRowNode = function (rowIndex) {
+	        var rowNode = new rowNode_1.RowNode();
+	        this.beans.context.wireBean(rowNode);
+	        rowNode.setRowHeight(this.rowNodeCacheParams.rowHeight);
+	        rowNode.setRowIndex(rowIndex);
+	        this.setTopOnRowNode(rowNode, rowIndex);
+	        return rowNode;
 	    };
 	    // creates empty row nodes, data is missing as not loaded yet
-	    InfinitePage.prototype.createRowNodes = function () {
+	    RowNodeBlock.prototype.createRowNodes = function () {
 	        this.rowNodes = [];
-	        for (var i = 0; i < this.cacheParams.pageSize; i++) {
+	        for (var i = 0; i < this.rowNodeCacheParams.pageSize; i++) {
 	            var rowIndex = this.startRow + i;
 	            var rowNode = this.createBlankRowNode(rowIndex);
 	            this.rowNodes.push(rowNode);
 	        }
 	    };
-	    InfinitePage.prototype.setTopOnRowNode = function (rowNode, rowIndex) {
+	    RowNodeBlock.prototype.load = function () {
+	        this.state = RowNodeBlock.STATE_LOADING;
+	        this.loadFromDatasource();
+	    };
+	    RowNodeBlock.prototype.pageLoadFailed = function () {
+	        this.state = RowNodeBlock.STATE_FAILED;
+	        var event = { success: true, page: this };
+	        this.localEventService.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
+	    };
+	    RowNodeBlock.prototype.populateWithRowData = function (rows) {
+	        var _this = this;
+	        this.rowNodes.forEach(function (rowNode, index) {
+	            var data = rows[index];
+	            if (utils_1.Utils.exists(data)) {
+	                // this means if the user is not providing id's we just use the
+	                // index for the row. this will allow selection to work (that is based
+	                // on index) as long user is not inserting or deleting rows,
+	                // or wanting to keep selection between server side sorting or filtering
+	                var indexOfRow = _this.startRow + index;
+	                rowNode.setDataAndId(data, indexOfRow.toString());
+	            }
+	            else {
+	                rowNode.setDataAndId(undefined, undefined);
+	            }
+	        });
+	    };
+	    RowNodeBlock.prototype.pageLoaded = function (version, rows, lastRow) {
+	        // we need to check the version, in case there was an old request
+	        // from the server that was sent before we refreshed the cache,
+	        // if the load was done as a result of a cache refresh
+	        if (version === this.version) {
+	            this.state = RowNodeBlock.STATE_LOADED;
+	            this.populateWithRowData(rows);
+	        }
+	        lastRow = utils_1.Utils.cleanNumber(lastRow);
+	        // check here if lastrow should be set
+	        var event = { success: true, page: this, lastRow: lastRow };
+	        this.localEventService.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
+	    };
+	    return RowNodeBlock;
+	}());
+	RowNodeBlock.EVENT_LOAD_COMPLETE = 'loadComplete';
+	RowNodeBlock.STATE_DIRTY = 'dirty';
+	RowNodeBlock.STATE_LOADING = 'loading';
+	RowNodeBlock.STATE_LOADED = 'loaded';
+	RowNodeBlock.STATE_FAILED = 'failed';
+	exports.RowNodeBlock = RowNodeBlock;
+	var InfiniteBlock = (function (_super) {
+	    __extends(InfiniteBlock, _super);
+	    function InfiniteBlock(pageNumber, cacheSettings) {
+	        var _this = _super.call(this, pageNumber, cacheSettings) || this;
+	        _this.cacheParams = cacheSettings;
+	        return _this;
+	    }
+	    InfiniteBlock.prototype.init = function () {
+	        _super.prototype.init.call(this, {
+	            context: this.context
+	        });
+	    };
+	    InfiniteBlock.prototype.setTopOnRowNode = function (rowNode, rowIndex) {
 	        rowNode.rowTop = this.cacheParams.rowHeight * rowIndex;
 	    };
-	    InfinitePage.prototype.createBlankRowNode = function (rowIndex) {
-	        var rowNode = new rowNode_1.RowNode();
-	        this.context.wireBean(rowNode);
-	        rowNode.setRowHeight(this.cacheParams.rowHeight);
-	        rowNode.setRowIndex(rowIndex);
-	        this.setTopOnRowNode(rowNode, rowIndex);
-	        return rowNode;
-	    };
-	    InfinitePage.prototype.getRow = function (rowIndex) {
-	        this.lastAccessed = this.cacheParams.lastAccessedSequence.next();
-	        var localIndex = rowIndex - this.startRow;
-	        return this.rowNodes[localIndex];
-	    };
-	    InfinitePage.prototype.load = function () {
+	    InfiniteBlock.prototype.loadFromDatasource = function () {
 	        var _this = this;
-	        this.state = InfinitePage.STATE_LOADING;
 	        // PROBLEM . . . . when the user sets sort via colDef.sort, then this code
 	        // is executing before the sort is set up, so server is not getting the sort
 	        // model. need to change with regards order - so the server side request is
 	        // AFTER thus it gets the right sort model.
 	        var params = {
-	            startRow: this.startRow,
-	            endRow: this.endRow,
-	            successCallback: this.pageLoaded.bind(this, this.version),
+	            startRow: this.getStartRow(),
+	            endRow: this.getEndRow(),
+	            successCallback: this.pageLoaded.bind(this, this.getVersion()),
 	            failCallback: this.pageLoadFailed.bind(this),
 	            sortModel: this.cacheParams.sortModel,
 	            filterModel: this.cacheParams.filterModel,
@@ -26719,63 +26844,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	            _this.cacheParams.datasource.getRows(params);
 	        }, 0);
 	    };
-	    InfinitePage.prototype.pageLoadFailed = function () {
-	        this.state = InfinitePage.STATE_FAILED;
-	        var event = { success: true, page: this };
-	        this.localEventService.dispatchEvent(InfinitePage.EVENT_LOAD_COMPLETE, event);
-	    };
-	    InfinitePage.prototype.populateWithRowData = function (rows) {
-	        var _this = this;
-	        this.rowNodes.forEach(function (rowNode, index) {
-	            var data = rows[index];
-	            if (utils_1.Utils.exists(data)) {
-	                // this means if the user is not providing id's we just use the
-	                // index for the row. this will allow selection to work (that is based
-	                // on index) as long user is not inserting or deleting rows,
-	                // or wanting to keep selection between server side sorting or filtering
-	                var indexOfRow = _this.startRow + index;
-	                rowNode.setDataAndId(data, indexOfRow.toString());
-	            }
-	            else {
-	                rowNode.setDataAndId(undefined, undefined);
-	            }
-	        });
-	    };
-	    InfinitePage.prototype.pageLoaded = function (version, rows, lastRow) {
-	        // we need to check the version, in case there was an old request
-	        // from the server that was sent before we refreshed the cache,
-	        // if the load was done as a result of a cache refresh
-	        if (version === this.version) {
-	            this.state = InfinitePage.STATE_LOADED;
-	            this.populateWithRowData(rows);
-	        }
-	        lastRow = utils_1.Utils.cleanNumber(lastRow);
-	        // check here if lastrow should be set
-	        var event = { success: true, page: this, lastRow: lastRow };
-	        this.localEventService.dispatchEvent(InfinitePage.EVENT_LOAD_COMPLETE, event);
-	    };
-	    return InfinitePage;
-	}());
-	InfinitePage.EVENT_LOAD_COMPLETE = 'loadComplete';
-	InfinitePage.STATE_DIRTY = 'dirty';
-	InfinitePage.STATE_LOADING = 'loading';
-	InfinitePage.STATE_LOADED = 'loaded';
-	InfinitePage.STATE_FAILED = 'failed';
+	    return InfiniteBlock;
+	}(RowNodeBlock));
 	__decorate([
 	    context_1.Autowired('gridOptionsWrapper'),
 	    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-	], InfinitePage.prototype, "gridOptionsWrapper", void 0);
+	], InfiniteBlock.prototype, "gridOptionsWrapper", void 0);
 	__decorate([
 	    context_1.Autowired('context'),
 	    __metadata("design:type", context_1.Context)
-	], InfinitePage.prototype, "context", void 0);
+	], InfiniteBlock.prototype, "context", void 0);
 	__decorate([
 	    context_1.PostConstruct,
 	    __metadata("design:type", Function),
 	    __metadata("design:paramtypes", []),
 	    __metadata("design:returntype", void 0)
-	], InfinitePage.prototype, "init", null);
-	exports.InfinitePage = InfinitePage;
+	], InfiniteBlock.prototype, "init", null);
+	exports.InfiniteBlock = InfiniteBlock;
 
 
 /***/ },
@@ -26784,7 +26869,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27300,7 +27385,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27487,7 +27572,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27535,7 +27620,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27609,7 +27694,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27665,7 +27750,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27712,7 +27797,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27741,7 +27826,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            },
 	            get: function () {
 	                return this.__agGridGetProperty(key);
-	            }
+	            },
+	            enumerable: true,
+	            configurable: true
 	        });
 	    });
 	    var agGridProtoNoType = AgileGridProto;
@@ -27831,7 +27918,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27936,7 +28023,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27982,7 +28069,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v9.0.0
+	 * @version v9.0.2
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -28022,7 +28109,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -28358,7 +28445,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -28500,7 +28587,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -28769,7 +28856,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -29013,7 +29100,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 129 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -29175,7 +29262,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -29282,7 +29369,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -29480,7 +29567,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -29984,7 +30071,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -30280,7 +30367,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 134 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -30502,7 +30589,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 135 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -30695,7 +30782,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 136 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -30906,7 +30993,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 137 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -31057,7 +31144,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 138 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -31188,7 +31275,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 139 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -31243,7 +31330,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 140 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31478,7 +31565,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 141 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var main_1 = __webpack_require__(2);
 	// we cannot have 'null' as a key in a JavaScript map,
@@ -31767,7 +31854,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 142 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31849,7 +31936,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 143 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32006,7 +32093,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 144 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32171,7 +32258,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 145 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32234,7 +32321,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 146 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -32391,7 +32478,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 147 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -32581,7 +32668,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32771,7 +32858,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 149 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32820,7 +32907,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 150 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32981,7 +33068,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 151 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -33220,7 +33307,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 152 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33359,7 +33446,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 153 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33688,7 +33775,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 154 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33892,7 +33979,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 155 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33974,7 +34061,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 156 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34082,7 +34169,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 157 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34161,7 +34248,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 158 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34269,7 +34356,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 159 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -34306,7 +34393,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -34343,7 +34430,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 161 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34606,7 +34693,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -34964,7 +35051,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var __extends = (this && this.__extends) || function (d, b) {
 	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -35249,7 +35336,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-enterprise v9.0.1
+	// ag-grid-enterprise v9.0.2
 	"use strict";
 	var columnSelectPanel_1 = __webpack_require__(126);
 	var renderedColumn_1 = __webpack_require__(128);
