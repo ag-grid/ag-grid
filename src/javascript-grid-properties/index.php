@@ -441,6 +441,12 @@ include '../documentation-main/documentation_header.php';
                 isScrollLag. This is a function, as it's expected your code will check the environment to decide
                 whether to use scroll lag or not.</td>
         </tr>
+        <tr>
+            <th>suppressScrollOnNewData</th>
+            <td>When true, the grid will not scroll to the top when new row data is provided. Use this
+            if you don't want the default behaviour of scrolling to the top every time you load new data.</td>
+        </tr>
+
         <!------------------->
         <!-- Row Model: Pagination -->
         <!------------------->

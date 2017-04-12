@@ -25,9 +25,9 @@ var gridOptions = {
     columnDefs: columnDefs,
     pagination: true,
     suppressPaginationPanel: true,
+    suppressScrollOnNewData: true,
     onPaginationChanged: onPaginationPageLoaded
 };
-
 
 function setText(selector, text) {
     document.querySelector(selector).innerHTML = text;

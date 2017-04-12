@@ -9,6 +9,15 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+    <h4>Enhancements:</h4>
+    <ul>
+        <li>
+            New property <i>suppressScrollOnNewData</i>. When true, the grid will not scroll to the top
+            when new row data is provided. Use this if you don't want the default behaviour of scrolling
+            to the top every time you load new data..
+        </li>
+    </ul>
+
     <note>
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>

@@ -128,7 +128,10 @@ include '../documentation-main/documentation_header.php';
     update the information about the current pagination status. We also call methods on the pagination API to change
     the pagination state.</p>
 
-    <p>A summary of the API methods and events can be found at the top of this documentation page</p>
+    <p>A summary of the API methods and events can be found at the top of this documentation page.</p>
+
+    <p>The example also sets property <i>suppressScrollOnNewData=true</i>, which tells the grid to NOT
+    scroll to the top when the page changes.</p>
 
     <show-example example="customControls"></show-example>
 </div>
