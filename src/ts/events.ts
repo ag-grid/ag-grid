@@ -163,6 +163,8 @@ export interface ModelUpdatedEvent {
     /** If true, then this update was a result of setRowData() getting called. This
      * gets the grid to scroll to the top again. */
     newData: boolean;
+    /** True when pagination and a new page is navigated to. */
+    newPage: boolean;
 }
 
 export interface CellEvent {

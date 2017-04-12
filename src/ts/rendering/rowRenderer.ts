@@ -78,7 +78,7 @@ export class RowRenderer extends BeanStub {
         this.refreshView();
     }
 
-    private onPageLoaded(refreshEvent: ModelUpdatedEvent = {animate: false, keepRenderedRows: false, newData: false}): void {
+    private onPageLoaded(refreshEvent: ModelUpdatedEvent = {animate: false, keepRenderedRows: false, newData: false, newPage: false}): void {
         this.onModelUpdated(refreshEvent);
     }
 
@@ -153,8 +153,8 @@ export class RowRenderer extends BeanStub {
         let params: RefreshViewParams = {
             keepRenderedRows: refreshEvent.keepRenderedRows,
             animate: refreshEvent.animate,
-            newData: refreshEvent.newData
-
+            newData: refreshEvent.newData,
+            newPage: refreshEvent.newPage
         };
         this.refreshView(params);
         // this.eventService.dispatchEvent(Events.DEPRECATED_EVENT_PAGINATION_PAGE_LOADED);
@@ -211,7 +211,10 @@ export class RowRenderer extends BeanStub {
             this.rowContainers.pinnedRight.setHeight(containerHeight);
         }
 
-        if (params.newData) {
+
+        let scrollToTop = params.newData || params.newPage;
+        let suppressScrollToTop = this.gridOptionsWrapper.isSuppressScrollOnNewData();
+        if (scrollToTop && !suppressScrollToTop) {
             this.gridPanel.scrollToTop();
         }
 
@@ -830,4 +833,5 @@ export interface RefreshViewParams {
     onlyBody?:boolean;
     // when new data, grid scrolls back to top
     newData?:boolean;
+    newPage?:boolean;
 }

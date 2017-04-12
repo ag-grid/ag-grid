@@ -46,6 +46,7 @@ export interface GridOptions {
     enableGroupEdit?: boolean;
     suppressMiddleClickScrolls?: boolean;
     suppressPreventDefaultOnMouseWheel?: boolean;
+    suppressScrollOnNewData?: boolean;
     colWidth?: number;
     minColWidth?: number;
     maxColWidth?: number;

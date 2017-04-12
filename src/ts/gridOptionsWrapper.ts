@@ -168,6 +168,7 @@ export class GridOptionsWrapper {
     public isSuppressMultiSort() { return isTrue(this.gridOptions.suppressMultiSort); }
     public isGroupSuppressAutoColumn() { return isTrue(this.gridOptions.groupSuppressAutoColumn); }
     public isSuppressDragLeaveHidesColumns() { return isTrue(this.gridOptions.suppressDragLeaveHidesColumns); }
+    public isSuppressScrollOnNewData() { return isTrue(this.gridOptions.suppressScrollOnNewData); }
     public isForPrint() { return isTrue(this.gridOptions.forPrint); }
     public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
     public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }

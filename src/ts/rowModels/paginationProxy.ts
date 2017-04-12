@@ -108,7 +108,8 @@ export class PaginationProxy extends BeanStub implements IPaginationService, IRo
         if (!this.active) { return; }
         if (this.currentPage === page) { return; }
         this.currentPage = page;
-        this.onModelUpdated();
+        let event: ModelUpdatedEvent = { animate: false, keepRenderedRows: false, newData: false, newPage: true };
+        this.onModelUpdated(event);
     }
 
     public getPixelOffset(): number {

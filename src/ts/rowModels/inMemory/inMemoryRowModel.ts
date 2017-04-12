@@ -183,7 +183,8 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         let event: ModelUpdatedEvent = {
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
-            newData: params.newData};
+            newData: params.newData,
+            newPage: false};
         this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, event);
 
         if (this.$scope) {
