@@ -18,6 +18,13 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
+    <h4>Bugfix:</h4>
+    <ul>
+        <li>
+            Property <i>groupDefaultExpanded</i> was not working for expanding all groups in pivot mode.
+        </li>
+    </ul>
+
     <note>
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
