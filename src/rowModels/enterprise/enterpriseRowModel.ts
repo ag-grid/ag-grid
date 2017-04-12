@@ -201,7 +201,7 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         this.doRowsToDisplay();
         this.doSetRowTop();
 
-        let event: ModelUpdatedEvent = {animate: true, keepRenderedRows: true, newData: false};
+        let event: ModelUpdatedEvent = {animate: true, keepRenderedRows: true, newData: false, newPage: false};
         this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, event);
     }
 
