@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.0.0
+ * @version v9.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -667,6 +667,11 @@ var RowRenderer = (function (_super) {
             // we have to call this after ensureColumnVisible - otherwise it could be a virtual column
             // or row that is not currently in view, hence the renderedCell would not exist
             var nextRenderedCell = this.getComponentForCell(nextCell);
+            // if next cell is fullWidth row, then no rendered cell,
+            // as fullWidth rows have no cells, so we skip it
+            if (utils_1.Utils.missing(nextRenderedCell)) {
+                continue;
+            }
             // if editing, but cell not editable, skip cell
             if (startEditing && !nextRenderedCell.isCellEditable()) {
                 continue;

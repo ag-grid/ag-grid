@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.0.0
+ * @version v9.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,7 +29,9 @@ function initialiseAgGridWithWebComponents() {
             },
             get: function () {
                 return this.__agGridGetProperty(key);
-            }
+            },
+            enumerable: true,
+            configurable: true
         });
     });
     var agGridProtoNoType = AgileGridProto;
