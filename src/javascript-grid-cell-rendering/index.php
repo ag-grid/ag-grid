@@ -26,8 +26,7 @@ include '../documentation-main/documentation_header.php';
         lifecycle methods. Use this if you need to do cleanup when the cell is removed or have
         refresh requirements.</li>
     <li>string: The cellRenderer is looked up from the provided cellRenderers. Use this if you
-        want to use a built in renderer (eg 'group') or you want to register your own cellRenderers
-        for reuse.</li>
+        want to use a built in renderer (eg 'group').</li>
 </ul>
 </p>
 
