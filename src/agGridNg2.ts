@@ -199,6 +199,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressRowClickSelection: any = undefined;
     @Input() public suppressCellSelection: any = undefined;
     @Input() public suppressHorizontalScroll: any = undefined;
+    @Input() public suppressScrollOnNewData: any = undefined;
     @Input() public debug: any = undefined;
     @Input() public enableColResize: any = undefined;
     @Input() public enableCellExpressions: any = undefined;

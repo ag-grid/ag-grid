@@ -82,6 +82,7 @@ var AgGridNg2 = (function () {
         this.suppressRowClickSelection = undefined;
         this.suppressCellSelection = undefined;
         this.suppressHorizontalScroll = undefined;
+        this.suppressScrollOnNewData = undefined;
         this.debug = undefined;
         this.enableColResize = undefined;
         this.enableCellExpressions = undefined;
@@ -338,6 +339,7 @@ AgGridNg2.propDecorators = {
     'suppressRowClickSelection': [{ type: core_1.Input },],
     'suppressCellSelection': [{ type: core_1.Input },],
     'suppressHorizontalScroll': [{ type: core_1.Input },],
+    'suppressScrollOnNewData': [{ type: core_1.Input },],
     'debug': [{ type: core_1.Input },],
     'enableColResize': [{ type: core_1.Input },],
     'enableCellExpressions': [{ type: core_1.Input },],

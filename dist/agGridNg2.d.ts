@@ -95,6 +95,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     suppressRowClickSelection: any;
     suppressCellSelection: any;
     suppressHorizontalScroll: any;
+    suppressScrollOnNewData: any;
     debug: any;
     enableColResize: any;
     enableCellExpressions: any;
