@@ -9,6 +9,15 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
+
+    <note>
+        For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
+    </note>
+
+    <h2>Version 9.0.x</h2>
+
+    <h3>Verion 9.0.3</h3>
+
     <h4>Enhancements:</h4>
     <ul>
         <li>
@@ -23,17 +32,10 @@ include '../documentation-main/documentation_header.php';
         <li>
             Property <i>groupDefaultExpanded</i> was not working for expanding all groups in pivot mode.
         </li>
+        <li>
+            Fixed typescript type of the property <i>paginationAutoPageSize</i> from number, to the correct type boolean.
+        </li>
     </ul>
-
-    <note>
-        For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
-    </note>
-
-    <h2>Version 9.0.x</h2>
-
-    <h3>Verion 9.0.3</h3>
-
-    <b>Bug Fix</b>: Fixed typescript type of the property <i>paginationAutoPageSize</i> from number, to the correct type boolean.
 
     <h3>Verion 9.0.2</h3>
 
