@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.0.2
+// ag-grid-enterprise v9.0.3
 import { MenuItemDef, Component } from "ag-grid";
 export declare class MenuItemComponent extends Component {
     private gridOptionsWrapper;
