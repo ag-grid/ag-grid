@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v9.0.2
+// Type definitions for ag-grid v9.0.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./rowNode";
@@ -45,6 +45,7 @@ export interface GridOptions {
     enableGroupEdit?: boolean;
     suppressMiddleClickScrolls?: boolean;
     suppressPreventDefaultOnMouseWheel?: boolean;
+    suppressScrollOnNewData?: boolean;
     colWidth?: number;
     minColWidth?: number;
     maxColWidth?: number;
@@ -100,7 +101,7 @@ export interface GridOptions {
     infiniteInitialRowCount?: number;
     paginationPageSize?: number;
     infiniteBlockSize?: number;
-    paginationAutoPageSize?: number;
+    paginationAutoPageSize?: boolean;
     paginationStartPage?: number;
     suppressPaginationPanel?: boolean;
     pagination?: boolean;

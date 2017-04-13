@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.0.2
+ * @version v9.0.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -145,7 +145,8 @@ var InMemoryRowModel = (function () {
         var event = {
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
-            newData: params.newData
+            newData: params.newData,
+            newPage: false
         };
         this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED, event);
         if (this.$scope) {
