@@ -6,14 +6,12 @@
     }
 
     function printPropertiesRows ($properties){
-        foreach ($properties as list($a, $b)) {
-            // $a contains the first element of the nested array,
-            // and $b contains the second element.
+        foreach ($properties as $property) {
             print "     
                     <tr>
-                        <th>$a</th>
+                        <th>$property[0]</th>
                         <td>
-                            $b
+                            $property[1]
                         </td>
                     </tr>
                 ";

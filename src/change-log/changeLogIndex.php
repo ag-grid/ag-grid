@@ -31,6 +31,10 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 9.0.x</h2>
 
+    <h3>Verion 9.0.3</h3>
+
+    <b>Bug Fix</b>: Fixed typescript type of the property <i>paginationAutoPageSize</i> from number, to the correct type boolean.
+
     <h3>Verion 9.0.2</h3>
 
     <b>Bug Fix</b>: Fixed Web Components issue, error "Cannot redefine property: infiniteBlockSize" solved.
