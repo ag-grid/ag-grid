@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.0.2
+// ag-grid-enterprise v9.0.3
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -163,7 +163,7 @@ var EnterpriseRowModel = (function (_super) {
     EnterpriseRowModel.prototype.mapAndFireModelUpdated = function () {
         this.doRowsToDisplay();
         this.doSetRowTop();
-        var event = { animate: true, keepRenderedRows: true, newData: false };
+        var event = { animate: true, keepRenderedRows: true, newData: false, newPage: false };
         this.eventService.dispatchEvent(ag_grid_1.Events.EVENT_MODEL_UPDATED, event);
     };
     EnterpriseRowModel.prototype.failCallback = function (instanceVersion, rowNode) {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.0.2
+// ag-grid-enterprise v9.0.3
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -30,11 +30,15 @@ var GroupStage = (function () {
             expandByDefault = this.gridOptionsWrapper.getGroupDefaultExpanded();
         }
         var includeParents = !this.gridOptionsWrapper.isSuppressParentsInRowNodes();
+        var isPivot = this.columnController.isPivotMode();
+        // because we are not creating the root node each time, we have the logic
+        // here to change leafGroup once.
+        rootNode.leafGroup = groupedCols.length === 0;
         if (newRowNodes) {
-            this.insertRowNodes(newRowNodes, rootNode, groupedCols, expandByDefault, includeParents);
+            this.insertRowNodes(newRowNodes, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
         }
         else {
-            this.recursivelyGroup(rootNode, groupedCols, 0, expandByDefault, includeParents);
+            this.recursivelyGroup(rootNode, groupedCols, 0, expandByDefault, includeParents, isPivot);
             // remove single children only works when doing a new grouping, it is not compatible with
             // inserting / removing rows, as the group which a new record may belong to may have already
             // been snipped out.
@@ -72,15 +76,14 @@ var GroupStage = (function () {
             }
         }
     };
-    GroupStage.prototype.recursivelyGroup = function (rowNode, groupColumns, level, expandByDefault, includeParents) {
+    GroupStage.prototype.recursivelyGroup = function (rowNode, groupColumns, level, expandByDefault, includeParents, isPivot) {
         var _this = this;
         var groupingThisLevel = level < groupColumns.length;
-        rowNode.leafGroup = level === groupColumns.length;
         if (groupingThisLevel) {
             var groupColumn = groupColumns[level];
-            this.bucketIntoChildrenAfterGroup(rowNode, groupColumn, expandByDefault, level, includeParents);
+            this.bucketIntoChildrenAfterGroup(rowNode, groupColumn, expandByDefault, level, includeParents, groupColumns.length, isPivot);
             rowNode.childrenAfterGroup.forEach(function (child) {
-                _this.recursivelyGroup(child, groupColumns, level + 1, expandByDefault, includeParents);
+                _this.recursivelyGroup(child, groupColumns, level + 1, expandByDefault, includeParents, isPivot);
             });
         }
         else {
@@ -90,29 +93,29 @@ var GroupStage = (function () {
             });
         }
     };
-    GroupStage.prototype.bucketIntoChildrenAfterGroup = function (rowNode, groupColumn, expandByDefault, level, includeParents) {
+    GroupStage.prototype.bucketIntoChildrenAfterGroup = function (rowNode, groupColumn, expandByDefault, level, includeParents, numberOfGroupColumns, isPivot) {
         var _this = this;
         rowNode.childrenAfterGroup = [];
         rowNode.childrenMapped = {};
         rowNode.allLeafChildren.forEach(function (child) {
-            _this.placeNodeIntoNextGroup(rowNode, child, groupColumn, expandByDefault, level, includeParents);
+            _this.placeNodeIntoNextGroup(rowNode, child, groupColumn, expandByDefault, level, includeParents, numberOfGroupColumns, isPivot);
         });
     };
-    GroupStage.prototype.insertRowNodes = function (newRowNodes, rootNode, groupColumns, expandByDefault, includeParents) {
+    GroupStage.prototype.insertRowNodes = function (newRowNodes, rootNode, groupColumns, expandByDefault, includeParents, isPivot) {
         var _this = this;
         newRowNodes.forEach(function (rowNode) {
             var nextGroup = rootNode;
             groupColumns.forEach(function (groupColumn, level) {
-                nextGroup = _this.placeNodeIntoNextGroup(nextGroup, rowNode, groupColumn, expandByDefault, level, includeParents);
+                nextGroup = _this.placeNodeIntoNextGroup(nextGroup, rowNode, groupColumn, expandByDefault, level, includeParents, groupColumns.length, isPivot);
             });
             rowNode.parent = nextGroup;
         });
     };
-    GroupStage.prototype.placeNodeIntoNextGroup = function (previousGroup, nodeToPlace, groupColumn, expandByDefault, level, includeParents) {
+    GroupStage.prototype.placeNodeIntoNextGroup = function (previousGroup, nodeToPlace, groupColumn, expandByDefault, level, includeParents, numberOfGroupColumns, isPivot) {
         var groupKey = this.getKeyForNode(groupColumn, nodeToPlace);
         var nextGroup = previousGroup.childrenMapped[groupKey];
         if (!nextGroup) {
-            nextGroup = this.createGroup(groupColumn, groupKey, previousGroup, expandByDefault, level, includeParents);
+            nextGroup = this.createGroup(groupColumn, groupKey, previousGroup, expandByDefault, level, includeParents, numberOfGroupColumns, isPivot);
             previousGroup.childrenMapped[groupKey] = nextGroup;
             previousGroup.childrenAfterGroup.push(nextGroup);
         }
@@ -131,7 +134,7 @@ var GroupStage = (function () {
         }
         return result;
     };
-    GroupStage.prototype.createGroup = function (groupColumn, groupKey, parent, expandByDefault, level, includeParents) {
+    GroupStage.prototype.createGroup = function (groupColumn, groupKey, parent, expandByDefault, level, includeParents, numberOfGroupColumns, isPivot) {
         var nextGroup = new main_1.RowNode();
         this.context.wireBean(nextGroup);
         nextGroup.group = true;
@@ -140,7 +143,15 @@ var GroupStage = (function () {
         // id's of the leaf nodes.
         nextGroup.id = (this.groupIdSequence.next() * -1).toString();
         nextGroup.key = groupKey;
-        nextGroup.expanded = this.isExpanded(expandByDefault, level);
+        // if doing pivoting, then the leaf group is never expanded,
+        // as we do not show leaf rows
+        nextGroup.leafGroup = level === (numberOfGroupColumns - 1);
+        if (isPivot && nextGroup.leafGroup) {
+            nextGroup.expanded = false;
+        }
+        else {
+            nextGroup.expanded = this.isExpanded(expandByDefault, level);
+        }
         nextGroup.allLeafChildren = [];
         nextGroup.allChildrenCount = 0;
         nextGroup.rowGroupIndex = level;
