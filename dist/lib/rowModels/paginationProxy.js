@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.0.2
+ * @version v9.0.3
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -133,7 +133,8 @@ var PaginationProxy = (function (_super) {
             return;
         }
         this.currentPage = page;
-        this.onModelUpdated();
+        var event = { animate: false, keepRenderedRows: false, newData: false, newPage: true };
+        this.onModelUpdated(event);
     };
     PaginationProxy.prototype.getPixelOffset = function () {
         return this.pixelOffset;

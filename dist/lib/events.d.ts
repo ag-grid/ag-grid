@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v9.0.2
+// Type definitions for ag-grid v9.0.3
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
@@ -119,6 +119,8 @@ export interface ModelUpdatedEvent {
     /** If true, then this update was a result of setRowData() getting called. This
      * gets the grid to scroll to the top again. */
     newData: boolean;
+    /** True when pagination and a new page is navigated to. */
+    newPage: boolean;
 }
 export interface CellEvent {
     node: RowNode;
