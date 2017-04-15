@@ -135,7 +135,7 @@ export class SvgFactory {
     //    return _.loadTemplate(svg);
     //}
 
-    private static getFromCacheOrCreate(key: string, data: string, className: string): HTMLImageElement {
+    private static getFromCacheOrCreate(key: string, data: string, className = ''): HTMLImageElement {
         // return document.createElement('img');
         let eCachedImg: HTMLImageElement = this.imageCache[key];
         if (!eCachedImg) {

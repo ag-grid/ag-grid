@@ -838,7 +838,8 @@ export class RenderedCell extends Component {
     }
 
     private onMouseDown(): void {
-        if (event.target.classList.indexOf('checkbox') !== -1) {
+        var elClassList = (<HTMLElement> event.target).classList;
+        if (elClassList.contains('checkbox')) {
             event.stopPropagation();
             return;
         }
