@@ -36,7 +36,7 @@ export interface ExcelMixedStyle {
 }
 
 export class ExcelGridSerializingSession extends BaseGridSerializingSession {
-    private styleIds:string[];
+    private stylesByIds:any;
     private mixedStyles:{[key:string]: ExcelMixedStyle} = {};
     private mixedStyleCounter:number = 0;
     private excelStyles: ExcelStyle[];
@@ -52,12 +52,12 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
         private styleLinker:(rowType: RowType, rowIndex:number, colIndex:number, value:string, column:Column, node:RowNode)=> string[]
     ){
         super(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, (raw: string) => Utils.escape(raw));
+        this.stylesByIds = {};
         if (!baseExcelStyles) {
-            this.styleIds = [];
             this.excelStyles = [];
         }else{
-            this.styleIds = baseExcelStyles.map((it:ExcelStyle)=>{
-                return it.id
+            baseExcelStyles.forEach((it:ExcelStyle)=>{
+                this.stylesByIds[it.id] = it;
             });
             this.excelStyles = baseExcelStyles.slice();
         }
@@ -175,22 +175,37 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession {
             key: key,
             result: resultantStyle
         };
-        this.excelStyles.push(resultantStyle)
-        this.styleIds.push(excelId);
+        this.excelStyles.push(resultantStyle);
+        this.stylesByIds[excelId] = resultantStyle;
     }
 
     private styleExists (styleId:string):boolean{
         if (styleId == null) return false;
 
-        return this.styleIds.indexOf(styleId) > -1
+        return this.stylesByIds[styleId];
     }
 
 
     private createCell(styleId: string, type: ExcelDataType, value: string) :ExcelCell{
+        let actualStyle:ExcelStyle = this.stylesByIds[styleId];
+        let styleExists:boolean = actualStyle != null;
+
+        function getType ():ExcelDataType{
+            if (
+                styleExists &&
+                actualStyle.dataType
+            ) switch (actualStyle.dataType){
+                case 'string': return ExcelDataType.String;
+                case 'number': return ExcelDataType.Number;
+            }
+
+            return type;
+        }
+
         return {
-            styleId: this.styleExists(styleId) ? styleId : null,
+            styleId: styleExists ? styleId : null,
             data: {
-                type: type,
+                type: getType(),
                 value: value
             }
         };

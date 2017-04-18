@@ -398,6 +398,7 @@ export interface ExcelStyle {
     interior?: ExcelInterior
     numberFormat?: ExcelNumberFormat
     protection?: ExcelProtection
+    dataType?:string
 }
 
 export interface ExcelProtection {
