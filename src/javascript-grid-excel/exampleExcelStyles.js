@@ -26,17 +26,17 @@ var columnDefs = [{
         {headerName: "Gold", field: "gold", width: 100, cellClassRules:{
             boldBorders: function(params) { return params.value > 2}
         }},
-        {headerName: "Silver", field: "silver", width: 100},
+        {headerName: "Silver", field: "silver", width: 100, cellClass:'textFormat'},
         {headerName: "Bronze", field: "bronze", width: 100},
         {headerName: "Total", field: "total", width: 100}
     ]
 }];
 
 var floatingTopRow = { athlete: 'Floating Top Athlete', age: 999, country: 'Floating Top Country', year: 2020,
-    date: '01-08-2020', sport: 'Floating Top Sport', gold: 22, silver: 33, bronze: 44, total: 55};
+    date: '01-08-2020', sport: 'Floating Top Sport', gold: 22, silver: '003', bronze: 44, total: 55};
 
 var floatingBottomRow = { athlete: 'Floating Bottom Athlete', age: 888, country: 'Floating Bottom Country', year: 2030,
-    date: '01-08-2030', sport: 'Floating Bottom Sport', gold: 222, silver: 233, bronze: 244, total: 255};
+    date: '01-08-2030', sport: 'Floating Bottom Sport', gold: 222, silver: '005', bronze: 244, total: 255};
 
 var gridOptions = {
     columnDefs: columnDefs,
@@ -96,6 +96,9 @@ var gridOptions = {
             numberFormat:{
                 format: '#,##0.00'
             }
+        },{
+            id: 'textFormat',
+            dataType: 'string'
         }
 
     ]

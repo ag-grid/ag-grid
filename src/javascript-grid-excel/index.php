@@ -211,6 +211,11 @@ include '../documentation-main/documentation_header.php';
                     when worksheet protection is enabled.</li>
             </ul>
         </li>
+        <li><b>dataType</b> (optional): One of (string or number). In most cases this is not necessary since this value is
+            guessed based in weather the cell content is numeric or not. This is helpful if you want to fix the type of the
+            cell. ie. If your cell content is 003, this cell will be default be interpreted as numeric, and in Excel, it will
+            show up as 3. But if you want to keep your original formatting, you can do so by setting this property to string.
+        </li>
 </ul>
 
     <h4>Excel borders</h4>
@@ -340,6 +345,10 @@ var gridOptions = {
             <li>As you can see in the column "Group", the Excel styles can be combined into cellClassRules and cellClass</li>
             <li>Note that there are specific to Excel styles applied, the age column has a number formatting style applied
                 and the group column uses italic and bold font</li>
+            <li>
+                The silver column has a style with <i>dataType=string</i>. This forces this column to be rendered as text in
+                Excel even though all of their cells are numeric
+            </li>
         </ul>
     </p>
 
