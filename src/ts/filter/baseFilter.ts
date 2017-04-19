@@ -184,8 +184,8 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
     public onFloatingFilterChanged (change:FloatingFilterChange):void{
         //It has to be of the type FloatingFilterWithApplyChange if it gets here
         let casted:BaseFloatingFilterChange<M> = <BaseFloatingFilterChange<M>>change;
-        this.setModel(casted.model);
-        this.doOnFilterChanged(casted.apply);
+        this.setModel(casted ? casted.model : null);
+        this.doOnFilterChanged(casted ? casted.apply : false);
     }
 
     public generateFilterHeader():string{
