@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 9.0.x</h2>
 
-    <h3>Verion 9.0.3</h3>
+    <h3>Version 9.0.3</h3>
 
     <h4>Enhancements:</h4>
     <ul>
@@ -37,15 +37,15 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <h3>Verion 9.0.2</h3>
+    <h3>Version 9.0.2</h3>
 
     <b>Bug Fix</b>: Fixed Web Components issue, error "Cannot redefine property: infiniteBlockSize" solved.
 
-    <h3>Verion 9.0.1</h3>
+    <h3>Version 9.0.1</h3>
 
     <b>Bug Fix: </b> License key was broken.
 
-    <h3>Verion 9.0.0</h3>
+    <h3>Version 9.0.0</h3>
 
     <b>Big Feature: Client Side Pagination (AG-91)</b>
 
