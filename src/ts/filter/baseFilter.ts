@@ -283,7 +283,7 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
 
         let rawFilterValues : T[] | T= this.filterValues();
         let from : T= Array.isArray(rawFilterValues) ? rawFilterValues[0]: rawFilterValues;
-        if (!from) return true;
+        if (from == null) return true;
 
         let compareResult = comparator(from, value);
 
