@@ -10,16 +10,16 @@ import {ValueService} from "./valueService";
 import {MasterSlaveService} from "./masterSlaveService";
 import {EventService} from "./eventService";
 import {FloatingRowModel} from "./rowModels/floatingRowModel";
-import {ColDef, IAggFunc, ColGroupDef} from "./entities/colDef";
+import {ColDef, ColGroupDef, IAggFunc} from "./entities/colDef";
 import {RowNode} from "./entities/rowNode";
 import {Constants} from "./constants";
 import {Column} from "./entities/column";
-import {Bean, PostConstruct, Context, Autowired, Optional} from "./context/context";
+import {Autowired, Bean, Context, Optional, PostConstruct} from "./context/context";
 import {GridCore} from "./gridCore";
 import {IRowModel} from "./interfaces/iRowModel";
 import {SortController} from "./sortController";
 import {FocusedCellController} from "./focusedCellController";
-import {IRangeController, RangeSelection, AddRangeSelectionParams} from "./interfaces/iRangeController";
+import {AddRangeSelectionParams, IRangeController, RangeSelection} from "./interfaces/iRangeController";
 import {GridCell, GridCellDef} from "./entities/gridCell";
 import {IClipboardService} from "./interfaces/iClipboardService";
 import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
@@ -30,10 +30,10 @@ import {InfiniteRowModel} from "./rowModels/infinite/infiniteRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {IAggFuncService} from "./interfaces/iAggFuncService";
-import {IFilter, IFilterComp} from "./interfaces/iFilter";
+import {IFilterComp} from "./interfaces/iFilter";
 import {CsvExportParams} from "./exportParams";
-import {IExcelCreator} from "./interfaces/iExcelCreator";
-import {ServerPaginationService, IPaginationService} from "./rowModels/pagination/serverPaginationService";
+import {ExcelExportParams, IExcelCreator} from "./interfaces/iExcelCreator";
+import {IPaginationService, ServerPaginationService} from "./rowModels/pagination/serverPaginationService";
 import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
@@ -121,12 +121,12 @@ export class GridApi {
         this.csvCreator.exportDataAsCsv(params)
     }
 
-    public getDataAsExcel(params?: CsvExportParams): string {
+    public getDataAsExcel(params?: ExcelExportParams): string {
         if (!this.excelCreator) { console.warn('ag-Grid: Excel export is only available in ag-Grid Enterprise'); }
         return this.excelCreator.getDataAsExcelXml(params);
     }
 
-    public exportDataAsExcel(params?: CsvExportParams): void {
+    public exportDataAsExcel(params?: ExcelExportParams): void {
         if (!this.excelCreator) { console.warn('ag-Grid: Excel export is only available in ag-Grid Enterprise'); }
         this.excelCreator.exportDataAsExcel(params)
     }

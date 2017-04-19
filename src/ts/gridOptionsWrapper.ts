@@ -1,26 +1,29 @@
 import {RowNode} from "./entities/rowNode";
 import {
-    GridOptions,
-    NodeChildDetails,
     GetContextMenuItems,
+    GetMainMenuItems,
+    GetRowNodeIdFunc,
+    GridOptions,
     NavigateToNextCellParams,
-    TabToNextCellParams, GetMainMenuItems, GetRowNodeIdFunc, ProcessRowParams
+    NodeChildDetails,
+    ProcessRowParams,
+    TabToNextCellParams
 } from "./entities/gridOptions";
 import {EventService} from "./eventService";
 import {Constants} from "./constants";
 import {ComponentUtil} from "./components/componentUtil";
 import {GridApi} from "./gridApi";
-import {ColDef, IAggFunc, ColGroupDef} from "./entities/colDef";
-import {Bean, Qualifier, Autowired, PostConstruct, PreDestroy} from "./context/context";
-import {ColumnController, ColumnApi} from "./columnController/columnController";
+import {ColDef, ColGroupDef, IAggFunc} from "./entities/colDef";
+import {Autowired, Bean, PostConstruct, PreDestroy, Qualifier} from "./context/context";
+import {ColumnApi, ColumnController} from "./columnController/columnController";
 import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
-import {ICellRendererFunc, ICellRenderer, ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererFunc} from "./rendering/cellRenderers/iCellRenderer";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
-import {CsvExportParams, ProcessCellForExportParams} from "./exportParams";
+import {BaseExportParams, ProcessCellForExportParams} from "./exportParams";
 
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -273,7 +276,7 @@ export class GridOptionsWrapper {
 
     public getDefaultColDef(): ColDef { return this.gridOptions.defaultColDef; }
     public getDefaultColGroupDef(): ColGroupDef { return this.gridOptions.defaultColGroupDef; }
-    public getDefaultExportParams(): CsvExportParams { return this.gridOptions.defaultExportParams; }
+    public getDefaultExportParams(): BaseExportParams { return this.gridOptions.defaultExportParams; }
 
     public getHeaderCellTemplate() { return this.gridOptions.headerCellTemplate; }
     public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }

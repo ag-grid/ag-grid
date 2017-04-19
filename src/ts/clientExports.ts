@@ -18,7 +18,16 @@ import {ColumnKeyCreator} from "./columnController/columnKeyCreator";
 import {ColumnUtils} from "./columnController/columnUtils";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
 import {GroupInstanceIdCreator} from "./columnController/groupInstanceIdCreator";
-import {Context, Autowired, PostConstruct, PreConstruct, Optional, Bean, Qualifier, PreDestroy} from "./context/context";
+import {
+    Autowired,
+    Bean,
+    Context,
+    Optional,
+    PostConstruct,
+    PreConstruct,
+    PreDestroy,
+    Qualifier
+} from "./context/context";
 import {DragAndDropService, DragSourceType, HDirection, VDirection} from "./dragAndDrop/dragAndDropService";
 import {DragService} from "./dragAndDrop/dragService";
 import {FilterManager} from "./filter/filterManager";
@@ -59,7 +68,7 @@ import {SelectionController} from "./selectionController";
 import {SortController} from "./sortController";
 import {SvgFactory} from "./svgFactory";
 import {TemplateService} from "./templateService";
-import {Utils, NumberSequence, _} from "./utils";
+import {_, NumberSequence, Utils} from "./utils";
 import {ValueService} from "./valueService";
 import {PopupService} from "./widgets/popupService";
 import {GridRow} from "./entities/gridRow";
@@ -78,7 +87,7 @@ import {GroupCellRenderer} from "./rendering/cellRenderers/groupCellRenderer";
 import {CellRendererService} from "./rendering/cellRendererService";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
 import {CheckboxSelectionComponent} from "./rendering/checkboxSelectionComponent";
-import {QuerySelector, Listener} from "./widgets/componentAnnotations";
+import {Listener, QuerySelector} from "./widgets/componentAnnotations";
 import {AgCheckbox} from "./widgets/agCheckbox";
 import {BodyDropPivotTarget} from "./headerRendering/bodyDropPivotTarget";
 import {BodyDropTarget} from "./headerRendering/bodyDropTarget";
@@ -96,7 +105,7 @@ import {TouchListener} from "./widgets/touchListener";
 import {ScrollVisibleService} from "./gridPanel/scrollVisibleService";
 import {XmlFactory} from "./xmlFactory";
 import {BeanStub} from "./context/beanStub";
-import {GridSerializer, BaseGridSerializingSession, RowType} from "./gridSerializer";
+import {BaseGridSerializingSession, GridSerializer, RowType} from "./gridSerializer";
 import {StylingService} from "./styling/stylingService";
 import {BaseFilter} from "./filter/baseFilter";
 import {DateFilter} from "./filter/dateFilter";

@@ -10,7 +10,7 @@ import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParam
 
 var LINE_SEPARATOR = '\r\n';
 
-export class CsvSerializingSession extends BaseGridSerializingSession {
+export class CsvSerializingSession extends BaseGridSerializingSession<string> {
     private result:string = '';
     private lineOpened:boolean = false;
 

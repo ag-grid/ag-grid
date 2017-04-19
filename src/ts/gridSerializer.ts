@@ -1,5 +1,5 @@
 import {Column} from "./entities/column";
-import {Bean, Autowired} from "./context/context";
+import {Autowired, Bean} from "./context/context";
 import {ColumnController} from "./columnController/columnController";
 import {Constants} from "./constants";
 import {IRowModel} from "./interfaces/iRowModel";
@@ -11,7 +11,10 @@ import {SelectionController} from "./selectionController";
 import {ValueService} from "./valueService";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {
-    CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams,
+    BaseExportParams,
+    ExportParams,
+    ProcessCellForExportParams,
+    ProcessHeaderForExportParams,
     ShouldRowBeSkippedParams
 } from "./exportParams";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
@@ -46,7 +49,7 @@ import {GridApi} from "./gridApi";
 
  */
 
-export interface GridSerializingSession {
+export interface GridSerializingSession<T> {
     /**
      * INITIAL METHOD
      */
@@ -56,7 +59,7 @@ export interface GridSerializingSession {
     /**
      * ROW METHODS
      */
-    addCustomHeader(customHeader: string): void;
+    addCustomHeader(customHeader: T): void;
 
     onNewHeaderGroupingRow ():RowSpanningAccumulator;
 
@@ -64,7 +67,7 @@ export interface GridSerializingSession {
 
     onNewBodyRow (): RowAccumulator;
 
-    addCustomFooter(customFooter: string): void;
+    addCustomFooter(customFooter: T): void;
 
     /**
      * FINAL RESULT
@@ -80,7 +83,7 @@ export interface RowSpanningAccumulator {
     onColumn(header: string, index: number, span:number):void;
 }
 
-export abstract class BaseGridSerializingSession implements GridSerializingSession{
+export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T>{
     constructor(
         public columnController:ColumnController,
         public valueService:ValueService,
@@ -92,9 +95,9 @@ export abstract class BaseGridSerializingSession implements GridSerializingSessi
 
     abstract prepare(columnsToExport: Column[]) : void;
 
-    abstract addCustomHeader(customHeader: string): void;
+    abstract addCustomHeader(customHeader: T): void;
 
-    abstract addCustomFooter(customFooter: string): void;
+    abstract addCustomFooter(customFooter: T): void;
 
     abstract onNewHeaderGroupingRow (): RowSpanningAccumulator;
 
@@ -180,9 +183,9 @@ export class GridSerializer {
     @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    public serialize(gridSerializingSession: GridSerializingSession, userParams?: CsvExportParams): string {
-        let baseParams:CsvExportParams = this.gridOptionsWrapper.getDefaultExportParams();
-        let params:CsvExportParams = <any>{};
+    public serialize<T>(gridSerializingSession: GridSerializingSession<T>, userParams?: ExportParams<T>): string {
+        let baseParams:BaseExportParams = this.gridOptionsWrapper.getDefaultExportParams();
+        let params:ExportParams<T> = <any>{};
         _.assign(params, baseParams);
         _.assign(params, userParams);
 

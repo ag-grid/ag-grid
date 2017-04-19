@@ -4,7 +4,7 @@ import {RowNode} from "./entities/rowNode";
 import {GridApi} from "./gridApi";
 import {ColumnApi} from "./columnController/columnController";
 
-export interface ExportParams {
+export interface BaseExportParams{
     skipHeader?: boolean;
     columnGroups?:boolean;
     skipFooters?: boolean;
@@ -22,9 +22,12 @@ export interface ExportParams {
     processHeaderCallback?(params: ProcessHeaderForExportParams): string;
 }
 
-export interface CsvExportParams extends ExportParams{
-    customHeader?: string;
-    customFooter?: string;
+export interface ExportParams<T> extends BaseExportParams{
+    customHeader?: T;
+    customFooter?: T;
+}
+
+export interface CsvExportParams extends ExportParams<string>{
     columnSeparator?: string;
 }
 
