@@ -54,6 +54,9 @@ include '../documentation-main/documentation_header.php';
         <li><b>shouldRowBeSkipped</b>: Allows you to skip entire rows from the export.</li>
         <li><b>processCellCallback</b>: Allows you to process (typically format) cells for the export.</li>
         <li><b>processHeaderCallback</b>: Allows you to create custom header values for the export.</li>
+        <li><b>customHeader</b>: If you want to put some rows at the top of the xls file, stick it here.
+            The format of this rows is specified below in the section custom rows.</li>
+        <li><b>customFooter</b>: Same as customHeader, but for the end of the file.</li>
     </ul>
 
 
@@ -89,6 +92,52 @@ include '../documentation-main/documentation_header.php';
         You can assign default export parameters to your Excel export by setting the property <i>defaultExportParams</i>
         in your gridOptions. This is useful if you are planning the user to let export the data via the contextual menu.
     </p>
+
+    <h4>Custom rows</h4>
+
+    <p>You can pass your custom rows in the properties <i>customHeader</i> amd <i>customFooter</i>. This properties are
+        expected to contain an array of array of ExcelCell objects, which itself contains ExcelData objects. </p>
+
+    <p>Each item in the array is considered to be a row in the excel export</p>
+
+    <p>Find below the definition of these interfaces and an example</p>
+
+    <?php include 'customRowProperties.php' ?>
+
+    <p>
+    <b>ExcelCell</b>
+    <?php printPropertiesTable($excelCell) ?>
+    </p>
+
+    <p>
+    <b>ExcelData</b>
+    <?php printPropertiesTable($excelData) ?>
+    </p>
+
+    <p>
+    <b>Example</b>
+    <p>The following example shows 4 custom rows, note that:</p>
+    <ul>
+        <li>The first and the last row are empty '[]'</li>
+        <li>The second row spans 2 columns</li>
+        <li>The third row has 2 cells. The first cell is a label (string) and the second one a total (number)</li>
+        <li>All cells have styles associated. These styles need to be specified as part of the <i>gridOptions</i>. See
+        below 'Export with Styles'
+        </li>
+    </ul>
+    <pre>
+[
+    [],
+    [{styleId:'bigHeader', data:{type:'String', value:'Summary'}}],
+    [
+        {styleId:'label', data:{type:'String', value:'Sales'}, mergeAcross:2},
+        {styleId:'amount', data:{type:'Number', value:'3695.36'}}
+    ],
+    []
+]</pre>
+    </p>
+
+    <p>
 
     <h3>
         What Gets Exported

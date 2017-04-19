@@ -84,6 +84,30 @@ function onBtExport() {
         };
     }
 
+    if (getBooleanValue('#appendHeader')) {
+        params.customHeader  = [
+            [],
+            [{data:{type:'String', value:'Summary'}}],
+            [
+                {data:{type:'String', value:'Sales'}, mergeAcross:2},
+                {data:{type:'Number', value:'3695.36'}}
+            ],
+            []
+        ];
+    }
+
+    if (getBooleanValue('#appendFooter')) {
+        params.customFooter  = [
+            [],
+            [{data:{type:'String', value:'Footer'}}],
+            [
+                {data:{type:'String', value:'Purchases'}, mergeAcross:2},
+                {data:{type:'Number', value:'7896.35'}}
+            ],
+            []
+        ];
+    }
+
     gridOptions.api.exportDataAsExcel(params);
 }
 

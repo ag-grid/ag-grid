@@ -99,6 +99,11 @@ var gridOptions = {
         },{
             id: 'textFormat',
             dataType: 'string'
+        },{
+            id: 'bigHeader',
+            font:{
+                size: 25
+            }
         }
 
     ]
@@ -121,6 +126,12 @@ function onBtExport() {
         fileName: document.querySelector('#fileName').value
     };
 
+    if (getBooleanValue('#skipGroupR')) {
+        params.shouldRowBeSkipped = function(params) {
+            return params.node.data.country.charAt(0) === 'R'
+        };
+    }
+
     if (getBooleanValue('#useCellCallback')) {
         params.processCellCallback = function(params) {
             if (params.value && params.value.toUpperCase) {
@@ -134,6 +145,37 @@ function onBtExport() {
     if (getBooleanValue('#useSpecificColumns')) {
         params.columnKeys = ['country','bronze'];
     }
+
+    if (getBooleanValue('#processHeaders')) {
+        params.processHeaderCallback  = function(params) {
+            return params.column.getColDef().headerName.toUpperCase();
+        };
+    }
+
+    if (getBooleanValue('#appendHeader')) {
+        params.customHeader  = [
+            [],
+            [{styleId:'bigHeader', data:{type:'String', value:'Summary'}}],
+            [
+                {data:{type:'String', value:'Sales'}, mergeAcross:2},
+                {data:{type:'Number', value:'3695.36'}}
+            ],
+            []
+        ];
+    }
+
+    if (getBooleanValue('#appendFooter')) {
+        params.customFooter  = [
+            [],
+            [{styleId:'bigHeader', data:{type:'String', value:'Footer'}}],
+            [
+                {data:{type:'String', value:'Purchases'}, mergeAcross:2},
+                {data:{type:'Number', value:'7896.35'}}
+            ],
+            []
+        ];
+    }
+
 
     if (getBooleanValue('#processHeaders')) {
         params.processHeaderCallback  = function(params) {
