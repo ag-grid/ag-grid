@@ -505,6 +505,20 @@ include '../documentation-main/documentation_header.php';
                 b) the data object c) a comparator function (that takes the node as a parameter, and returns
                 true for match, false for no match)</td>
         </tr>
+        <tr id="getVerticalPixelRange">
+            <th>getVerticalPixelRange()</th>
+            <td>Returns a JSON object with two properties:
+                <p>
+                <ul>
+                    <li>
+                        top: The top pixel position of the current scroll in the grid
+                    </li>
+                    <li>
+                        bottom: The bottom pixel position of the current scroll in the grid
+                    </li>
+                </ul>
+            </td>
+        </tr>
 
         <!------------------->
         <!-- Overlays -->
