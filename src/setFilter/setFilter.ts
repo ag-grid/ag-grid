@@ -29,6 +29,8 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         super();
     }
 
+    public customInit(){}
+
     modelFromFloatingFilter(from: string): string[] {
         return [from];
     }
