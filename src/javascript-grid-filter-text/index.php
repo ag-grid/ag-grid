@@ -43,6 +43,11 @@ include '../documentation-main/documentation_header.php';
         automatically as the selection changes.</li>
     <li><b>clearButton:</b> Set to true to include a 'Clear' button with the filter which when cliked
         will remove the filter conditions to this filter.</li>
+    <li><b>textCustomComparator:</b> Used to override what to filter based on the user input. See textCustomComparator
+        section below </li>
+    <li><b>filterOptions:</b> If specified, limits the amount of options presented in the filter UI, it must be
+        a string array containing some of the following values {equals, notEqual, contains, notContains, startsWith,
+        endsWith}</li>
     </ul>
 
 The parameters for the filter must be specified in the property filterParams inside the column definition
@@ -54,6 +59,68 @@ object
     }
 }</pre></p>
 </p>
+
+<h3 id="textCustomComparator">Text Custom Comparator</h3>
+<p>
+    By default the text filter does strict case insensitive text filtering: ie If you provide as data for a text column
+    the following values ['1,234.5USD', '345GBP']:
+    <ul><li><b>contains '1,2'</b> Will show 1 value: ['1,234.5USD']</li>
+    <li><b>contains '12'</b> Will show 0 values</li>
+    <li><b>contains '$'</b> Will show 0 values</li>
+    <li><b>contains 'gbp'</b> Will show 1 value ['345GBP']</li></ul>
+
+</p>
+
+<p>
+    You can change the default behaviour by providing your own <i>textCustomComparator</i>. Using your own <i>textCustomComparator</i>
+    you can provide your own logic to decide when to include a row in the filtered results.
+</p>
+
+<p>The <i>textCustomComparator</i> is a function with the following signature:</p>
+
+<pre>
+(filter:string, gridValue:any, filterText:string):boolean;
+</pre>
+
+<ul>
+    <li><b>filter:string</b> The applicable filter type being tested. One of: {equals, notEqual, contains, notContains,
+        startsWith, endsWith}</li>
+    <li><b>gridValue:any</b> The value about to be filtered, if this column has a value getter, this value will be
+        coming off the value getter, otherwise it is the raw value injected into the grid</li>
+    <li><b>filterText:string</b> The value to filter by.</li>
+    <li><b>returns:boolean</b> True if the value passes the filter, otherwise false.</li>
+</ul>
+
+<p>
+    The following is an example of a textCustomComparator that mimics the current implementation of ag-Grid. This can be
+    used as a template to create your own.
+</p>
+
+<pre>
+function myComparator (filter, value, filterText){
+    var filterTextLoweCase = filterText.toLowerCase();
+    var valueLowerCase = value.toString().toLowerCase();
+    switch (filter) {
+    case 'contains':
+        return valueLowerCase.indexOf(filterTextLoweCase) >= 0;
+    case 'notContains':
+        return valueLowerCase.indexOf(filterTextLoweCase) === -1;
+    case 'equals':
+        return valueLowerCase === filterTextLoweCase;
+    case 'notEqual':
+        return valueLowerCase != filterTextLoweCase;
+    case 'startsWith':
+        return valueLowerCase.indexOf(filterTextLoweCase) === 0;
+    case 'endsWith':
+        var index = valueLowerCase.lastIndexOf(filterTextLoweCase);
+        return index >= 0 && index === (valueLowerCase.length - filterTextLoweCase.length);
+    default:
+        // should never happen
+        console.warn('invalid filter type ' + filter);
+        return false;
+    }
+}
+</pre>
 
 <h2 id="model">Text Filter Model</h2>
 
@@ -79,7 +146,7 @@ athleteFilterComponent.onFilterChanged()
     The text filter model has the following attributes:
 </p>
 <ul>
-    <li><b>type:</b> The type of text filter to apply. One of: {equals, notEquals, contains, notContains,
+    <li><b>type:</b> The type of text filter to apply. One of: {equals, notEqual, contains, notContains,
         startsWith, endsWith}</li>
     <li><b>filter:</b> The actual filter text to apply.</li>
 </ul>
@@ -103,6 +170,17 @@ athleteFilterComponent.onFilterChanged()
     <li>Filter button: This button is a shortcut to show the rich filter editor</li>
 </ul>
 </p>
+
+<h2 id="example">Example</h2>
+<p>
+<ul>
+    <li>The athlete column has only two filter options: <i>filterOptions=['contains','notContains']</i></li>
+    <li>The country column has only one filter option: <i>filterOptions=['contains']</i></li>
+    <li>The country column has a <i>textCustomComparator</i> so that there are aliases that can be entered in the filter
+    ie: if you filter using the text 'usa' it will match United States or 'holland' will match 'Netherlands'</li>
+</ul>
+</p>
+<show-example example="exampleFilter"></show-example>
 
 <h2 id="commonFunctionality">Common Column Filtering Functionality And Examples</h2>
 
