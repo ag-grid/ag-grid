@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
             <a href="#material-design2" class="column-links column-items">ag-Grid with Material Design Components - Set
                 2</a>
             <a href="#typeahead" class="column-links column-items">ag-Grid with a TypeAhead Component</a>
-            <a href="#typeahead" class="column-links column-items">ag-Grid with ng2-boostrap Components</a>
+            <a href="#ng2bootstrap" class="column-links column-items">ag-Grid with ng2-boostrap Components</a>
         </div>
     </div>
 
@@ -61,8 +61,9 @@ include '../documentation-main/documentation_header.php';
 
     <hr/>
 
-    <h4 id="ng2bootstrap">ag-Grid with ng2-bootstrap Components</h4>
-    <p>This example uses the <code>ng2-boostrap</code> components as part of Editor Components.</p>
+    <h4 id="typeahead">ag-Grid with TypeAhead Component</h4>
+    <p>This example uses the <code>ng2-typeahead</code> directive as part of an Editor Component.</p>
+    <p>Please note that <code>ng2-typeahead</code> does not appear to be AOT friendly, so please keep this in mind if you choose to use it.</p>
 
     <show-plunker-example sources="{
                             [
