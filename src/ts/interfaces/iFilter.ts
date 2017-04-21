@@ -74,4 +74,5 @@ export interface IFilterParams {
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean;
     context: any;
     $scope: any;
+    filterOptions?: string[];
 }
