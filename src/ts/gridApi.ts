@@ -198,6 +198,10 @@ export class GridApi {
         this.columnController.setColumnDefs(colDefs);
     }
 
+    public getVerticalPixelRange(): any {
+        return this.gridPanel.getVerticalPixelRange();
+    }
+
     public refreshRows(rowNodes: RowNode[]): void {
         this.rowRenderer.refreshRows(rowNodes);
     }
