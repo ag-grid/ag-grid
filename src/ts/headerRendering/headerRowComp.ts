@@ -1,5 +1,5 @@
 import {Component} from "../widgets/component";
-import {PostConstruct, Autowired, Context} from "../context/context";
+import {Autowired, Context, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import {ColumnGroup} from "../entities/columnGroup";
@@ -17,7 +17,7 @@ import {BaseFilter} from "../filter/baseFilter";
 import {ComponentProvider} from "../componentProvider";
 import {IFloatingFilterWrapperComp} from "../filter/floatingFilterWrapper";
 import {IComponent} from "../interfaces/iComponent";
-import {IFloatingFilterParams, FloatingFilterChange} from "../filter/floatingFilter";
+import {FloatingFilterChange, IFloatingFilterParams} from "../filter/floatingFilter";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -203,10 +203,9 @@ export class HeaderRowComp extends Component {
     }
 
     private createFloatingFilterWrapper(column: Column):IFloatingFilterWrapperComp<any, any, any, any> {
-        let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
         let floatingFilterParams: IFloatingFilterParams<any, any> = this.createFloatingFilterParams(column);
+
         let floatingFilterWrapper: IFloatingFilterWrapperComp<any, any, any, any> = this.componentProvider.newFloatingFilterWrapperComponent(
-            filterComponent,
             column,
             <null>floatingFilterParams
         );
@@ -214,7 +213,11 @@ export class HeaderRowComp extends Component {
             let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
             floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
         });
-        floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
+        let cachedFilter = <any>this.filterManager.cachedFilter(column);
+        if (cachedFilter){
+            let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+            floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
+        }
         return floatingFilterWrapper;
     }
 

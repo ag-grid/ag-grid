@@ -309,7 +309,7 @@ export class FilterManager {
     }
 
     public getOrCreateFilterWrapper(column: Column): FilterWrapper {
-        var filterWrapper = this.allFilters[column.getColId()];
+        var filterWrapper = this.cachedFilter(column);
 
         if (!filterWrapper) {
             filterWrapper = this.createFilterWrapper(column);
@@ -317,6 +317,10 @@ export class FilterManager {
         }
 
         return filterWrapper;
+    }
+
+    public cachedFilter (column: Column):FilterWrapper{
+        return this.allFilters[column.getColId()];
     }
 
     private createFilterInstance(column: Column): IFilterComp {
