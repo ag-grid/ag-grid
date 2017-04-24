@@ -454,7 +454,7 @@ include '../documentation-main/documentation_header.php';
             <th colspan="2"><h2>Pagination</h2></th>
         </tr>
         <?php include '../javascript-grid-pagination/paginationProperties.php'?>
-        <?php printPropertiesTable($paginationProperties) ?>
+        <?php printPropertiesRows($paginationProperties) ?>
 
         <!------------------->
         <!-- Row Model: Infinite Scrolling -->
