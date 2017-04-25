@@ -54,21 +54,21 @@ include('../includes/faqHeader.php');
     <h2>License and Pricing</h2>
 
         <div class="question">
-            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_1">What is the difference between Application Developer License and Site Developer License?</a>
+            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_1">What is the difference between Single Application Developer License and Multiple Application Developer License?</a>
         </div>
 
         <div class="answer collapse" id="answer_1">
             <p>
-                Application developer license ties the license to one particular application within your organisation.
+                Single Application developer license ties the license to one particular application within your organisation.
                 A typical example is 5 licenses to cover an application with 5 developers working concurrently on it.
                 This is best if you a) have only one (or a fixed number) of applications you need to license or b) you
                 want to charge the license to a particular project(s).
             </p>
 
             <p>
-                Site developer license allows unlimited applications to be developed by a fixed number of developers.
+                Multiple Application developer license allows unlimited applications to be developed by a fixed number of developers.
                 A typical example is 5 license to cover an unlimited number of applications with 5 developers working
-                across all applications concurrently. Use site license if you want to cover a group
+                across all applications concurrently. Use Multiple Application license if you want to cover a group
                 of developers developing any number of applications.
             </p>
         </div>
