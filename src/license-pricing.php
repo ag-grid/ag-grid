@@ -114,7 +114,7 @@ include 'includes/headerRow.php'; ?>
                 <b>Are you using ag-Grid Enterprise in one application? </b>
             </p>
             <p>   
-                If it's a single application, an Application License is correct otherwise a Site License is best.
+                If it's one application, a Single Application License is correct otherwise a Multiple Application License is best.
             </p>
             <p>   
                 <b>Is your application for an internal or external end-user?</b>
@@ -153,7 +153,7 @@ include 'includes/headerRow.php'; ?>
                 <div class="col-md-4">
                     <div class="pricing-plan">
                         <div class="pricing-plan-top">
-                            <h4>Application Developer</h4>
+                            <h4>Single Application Developer</h4>
                             <div>
                                 <span class="price">&pound;495</span>
                                 <span class="price-sub">per Developer</span>
@@ -173,7 +173,7 @@ include 'includes/headerRow.php'; ?>
                     <div class="recommend-badge">Recommended</div>
                     <div class="pricing-plan red">
                         <div class="pricing-plan-top">
-                            <h4>Site Developer</span></h4>
+                            <h4>Multiple Application Developer</span></h4>
                             <div>
                                 <span class="price">&pound;795</span>
                                 <span class="price-sub">per Developer</span>
