@@ -11,3 +11,11 @@ create-links
 
 # runs 'npm install' and 'gulp abc' to build everything
 build-dist-all
+
+<or>
+
+build-dist <proj1> <proj2>...
+eg
+build-dist ag-grid ag-grid-enterprise
+
+then create links
