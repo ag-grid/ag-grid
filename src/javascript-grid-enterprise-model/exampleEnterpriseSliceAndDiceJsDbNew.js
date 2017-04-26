@@ -28,7 +28,7 @@ function EnterpriseDatasource(fakeServer) {
 }
 
 EnterpriseDatasource.prototype.getRows = function(params) {
-    console.log('EnterpriseDatasource.getRows: params = ', params);
+    // console.log('EnterpriseDatasource.getRows: params = ', params);
     this.fakeServer.getData(params.request,
         function successCallback(resultForGrid) {
             params.successCallback(resultForGrid);
@@ -78,11 +78,14 @@ FakeServer.prototype.getData = function(request, callback) {
         }
     }
 
+    // if using blocks, only return back the subset
+    var result = result.slice(request.startRow, request.endRow);
+
     // so that the example behaves like a server side call, we put
     // it in a timeout to a) give a delay and b) make it asynchronous
     setTimeout( function() {
         callback(result);
-    }, 1000);
+    }, 500);
 };
 
 FakeServer.prototype.buildGroupsFromData = function(filteredData, rowGroupCols, groupKeys, valueCols) {
