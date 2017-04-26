@@ -155,19 +155,12 @@ export abstract class RowNodeBlock {
         this.localEventService.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
     }
 
+    protected abstract setDataAndId(rowNode: RowNode, data: any, index: number): void;
+
     private populateWithRowData(rows: any[]): void {
         this.rowNodes.forEach( (rowNode: RowNode, index: number)=> {
             var data = rows[index];
-            if (_.exists(data)) {
-                // this means if the user is not providing id's we just use the
-                // index for the row. this will allow selection to work (that is based
-                // on index) as long user is not inserting or deleting rows,
-                // or wanting to keep selection between server side sorting or filtering
-                var indexOfRow = this.startRow + index;
-                rowNode.setDataAndId(data, indexOfRow.toString());
-            } else {
-                rowNode.setDataAndId(undefined, undefined);
-            }
+            this.setDataAndId(rowNode, data, this.startRow + index);
         });
     }
 
@@ -207,6 +200,18 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         let rowNode = super.createBlankRowNode(rowIndex);
         this.setIndexAndTopOnRowNode(rowNode, rowIndex);
         return rowNode;
+    }
+
+    protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
+        if (_.exists(data)) {
+            // this means if the user is not providing id's we just use the
+            // index for the row. this will allow selection to work (that is based
+            // on index) as long user is not inserting or deleting rows,
+            // or wanting to keep selection between server side sorting or filtering
+            rowNode.setDataAndId(data, index.toString());
+        } else {
+            rowNode.setDataAndId(undefined, undefined);
+        }
     }
 
     public setRowNode(rowIndex: number, rowNode: RowNode): void {
