@@ -34,7 +34,6 @@ export class RowRenderer extends BeanStub {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('gridPanel') private gridPanel: GridPanel;
-    @Autowired('$compile') private $compile: any;
     @Autowired('$scope') private $scope: any;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('templateService') private templateService: TemplateService;

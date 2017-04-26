@@ -65,6 +65,7 @@ export abstract class RowNodeBlock {
         return this.lastAccessed;
     }
 
+    // todo: this is used by infinite, however it is over ridden by enterprise
     public getRow(rowIndex: number): RowNode {
         this.lastAccessed = this.rowNodeCacheParams.lastAccessedSequence.next();
         var localIndex = rowIndex - this.startRow;
@@ -101,8 +102,6 @@ export abstract class RowNodeBlock {
         });
     }
 
-    protected abstract setTopOnRowNode(rowNode: RowNode, rowIndex: number): void;
-
     public getState(): string {
         return this.state;
     }
@@ -110,8 +109,6 @@ export abstract class RowNodeBlock {
     public setRowNode(rowIndex: number, rowNode: RowNode): void {
         var localIndex = rowIndex - this.startRow;
         this.rowNodes[localIndex] = rowNode;
-        rowNode.setRowIndex(rowIndex);
-        this.setTopOnRowNode(rowNode, rowIndex);
     }
 
     public setBlankRowNode(rowIndex: number): RowNode {
@@ -127,12 +124,10 @@ export abstract class RowNodeBlock {
         return newRowNode;
     }
 
-    private createBlankRowNode(rowIndex: number): RowNode {
+    protected createBlankRowNode(rowIndex: number): RowNode {
         let rowNode = new RowNode();
         this.beans.context.wireBean(rowNode);
         rowNode.setRowHeight(this.rowNodeCacheParams.rowHeight);
-        rowNode.setRowIndex(rowIndex);
-        this.setTopOnRowNode(rowNode, rowIndex);
         return rowNode;
     }
 
@@ -156,7 +151,7 @@ export abstract class RowNodeBlock {
 
     protected pageLoadFailed() {
         this.state = RowNodeBlock.STATE_FAILED;
-        var event = {success: true, page: this};
+        var event = {success: false, page: this};
         this.localEventService.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
     }
 
@@ -208,6 +203,17 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         this.cacheParams = cacheSettings;
     }
 
+    protected createBlankRowNode(rowIndex: number): RowNode {
+        let rowNode = super.createBlankRowNode(rowIndex);
+        this.setIndexAndTopOnRowNode(rowNode, rowIndex);
+        return rowNode;
+    }
+
+    public setRowNode(rowIndex: number, rowNode: RowNode): void {
+        super.setRowNode(rowIndex, rowNode);
+        this.setIndexAndTopOnRowNode(rowNode, rowIndex);
+    }
+
     @PostConstruct
     protected init(): void {
         super.init({
@@ -215,7 +221,8 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         });
     }
 
-    protected setTopOnRowNode(rowNode: RowNode, rowIndex: number): void {
+    private setIndexAndTopOnRowNode(rowNode: RowNode, rowIndex: number): void {
+        rowNode.setRowIndex(rowIndex);
         rowNode.rowTop = this.cacheParams.rowHeight * rowIndex;
     }
 

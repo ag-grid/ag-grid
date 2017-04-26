@@ -6,24 +6,25 @@ import {Events} from "../../events";
 import {LoggerFactory, Logger} from "../../logger";
 import {IDatasource} from "../iDatasource";
 import {InfiniteBlock} from "./infiniteBlock";
+import {BeanStub} from "../../context/beanStub";
 
 export interface RowNodeCacheParams {
     initialRowCount: number;
     pageSize: number;
     overflowSize: number;
     rowHeight: number;
+    sortModel: any;
+    filterModel: any;
     lastAccessedSequence: NumberSequence;
 }
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {
     maxBlocksInCache: number;
     maxConcurrentRequests: number;
-    sortModel: any;
-    filterModel: any;
     datasource: IDatasource;
 }
 
-export abstract class RowNodeCache {
+export abstract class RowNodeCache extends BeanStub {
 
     private virtualRowCount: number;
     private maxRowFound = false;
@@ -33,6 +34,7 @@ export abstract class RowNodeCache {
     private active = true;
 
     constructor(params: RowNodeCacheParams) {
+        super();
         this.virtualRowCount = params.initialRowCount;
         this.rowNodeCacheParams = params;
     }
