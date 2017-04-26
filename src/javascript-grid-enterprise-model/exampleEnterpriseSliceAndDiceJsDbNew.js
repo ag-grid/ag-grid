@@ -1,5 +1,5 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", enableRowGroup: true},
+    {headerName: "Athlete", field: "athlete", enableRowGroup: true, rowGroupIndex: 1},
     {headerName: "Age", field: "age", enableRowGroup: true},
     {headerName: "Country", field: "country", enableRowGroup: true},
     {headerName: "Year", field: "year", enableRowGroup: true},
