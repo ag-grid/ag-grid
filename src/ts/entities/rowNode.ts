@@ -11,7 +11,7 @@ import {IRowModel} from "../interfaces/iRowModel";
 import {Constants} from "../constants";
 import {Utils as _} from "../utils";
 import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
-import {InfiniteCache} from "../rowModels/infinite/infiniteCache";
+import {InfiniteCache, RowNodeCache} from "../rowModels/infinite/infiniteCache";
 import {IEnterpriseCache} from "../interfaces/iEnterpriseCache";
 
 export interface SetSelectedParams {
@@ -107,7 +107,7 @@ export class RowNode {
     public childrenMapped: {[key: string]: any} = {};
 
     /** Enterprise Row Model Only - the children are in an infinite cache */
-    public childrenCache: IEnterpriseCache;
+    public childrenCache: RowNodeCache;
 
     /** Groups only - True if group is expanded, otherwise false */
     public expanded: boolean;

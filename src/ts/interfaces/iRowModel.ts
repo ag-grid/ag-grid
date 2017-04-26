@@ -43,8 +43,9 @@ export interface IRowModel {
      * their own implementation of the models in the future. */
     getType(): string;
     /**
-     * It tells us if this row model knows about the last row that it can produce. ie InMemoryRowModel = true
-     * InfiniteRowModel=false
+     * It tells us if this row model knows about the last row that it can produce. This is used by the
+     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is
+     * not shown. This is always true for InMemoryRowModel. It toggles for InfiniteRowModel.
      */
     isLastRowFound(): boolean;
 }

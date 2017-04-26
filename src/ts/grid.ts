@@ -167,7 +167,8 @@ export class Grid {
             debug: !!gridOptions.debug
         };
 
-        this.context = new Context(contextParams, new Logger('Context', contextParams.debug));
+        let isLoggingFunc = ()=> contextParams.debug;
+        this.context = new Context(contextParams, new Logger('Context', isLoggingFunc));
 
         var eventService = this.context.getBean('eventService');
         var readyEvent = {
@@ -190,6 +191,9 @@ export class Grid {
             } else {
                 console.error('ag-Grid: count not find matching row model for rowModelType ' + rowModelType);
                 if (rowModelType==='viewport') {
+                    console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
+                }
+                if (rowModelType==='enterprise') {
                     console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
                 }
             }

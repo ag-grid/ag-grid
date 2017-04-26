@@ -1061,10 +1061,18 @@ export class NumberSequence {
         this.step = step;
     }
 
-    public next() : number {
+    public next(): number {
         var valToReturn = this.nextValue;
         this.nextValue += this.step;
         return valToReturn;
+    }
+
+    public peek(): number {
+        return this.nextValue;
+    }
+
+    public skip(count: number): void {
+        this.nextValue += count;
     }
 }
 
