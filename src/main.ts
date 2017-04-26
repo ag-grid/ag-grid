@@ -23,7 +23,7 @@ import {ExcelXmlFactory} from "./excelXmlFactory";
 import {EnterpriseRowModelNew} from "./rowModels/enterprise/enterpriseRowModelNew";
 import {EnterpriseRowModel} from "./rowModels/enterprise/enterpriseRowModel";
 
-var rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModel};
+var rowModelTypes = {viewport: ViewportRowModel, enterprise: EnterpriseRowModelNew};
 
 Grid.setEnterpriseBeans([ToolPanelComp, EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, RowGroupCompFactory, PivotCompFactory,
     PivotColumnsPanel, RangeController, ClipboardService, PivotStage, PivotColDefService,
