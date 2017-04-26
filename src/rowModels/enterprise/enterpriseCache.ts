@@ -20,6 +20,7 @@ import {
     Qualifier,
     LoggerFactory
 } from "ag-grid";
+import {EnterpriseRowModel} from "./enterpriseRowModel";
 
 export interface EnterpriseCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];
@@ -114,13 +115,8 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
     private forEachBlockInOrder( callback: (blockId: number, block: EnterpriseBlock)=>void ): void {
 
         // list of block id's, they are NUMBERS, not strings, and sorted numerically
-        let blockIds = Object.keys(this.blocks);
-        let blockIdsAsNumbers = blockIds.map( idStr => {
-            let result = parseInt(idStr);
-            return result;
-        } );
-        let blockIdsSorted = blockIdsAsNumbers.sort( (a,b) => a - b );
-        // let blockIdsSorted = Object.keys(this.blocks).map( idStr => parseInt(idStr) ).sort();
+        let numberComparator = (a: number, b: number) => a - b; // default comparator for array is string comparison
+        let blockIdsSorted = Object.keys(this.blocks).map( idStr => parseInt(idStr) ).sort(numberComparator);
 
         blockIdsSorted.forEach( blockId => {
             let currentBlock = this.blocks[blockId];
@@ -167,7 +163,7 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
                 blockNumber = localIndex / this.params.pageSize;
                 displayIndexStart = this.firstDisplayIndex + (blockNumber * this.params.pageSize);
             }
-            block = this.createBlock(blockNumber, displayIndexStart);
+            block = this.createBlock(blockNumber, displayIndexStart, 0);
 
             console.log(`block missing, rowIndex = ${rowIndex}, creating #${blockNumber}, displayIndexStart = ${displayIndexStart}`);
         }
@@ -177,9 +173,9 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
         return rowNode;
     }
 
-    private createBlock(blockNumber: number, displayIndex: number): EnterpriseBlock {
+    private createBlock(blockNumber: number, displayIndex: number, level: number): EnterpriseBlock {
 
-        let newBlock = new EnterpriseBlock(blockNumber, this.parentRowNode, this.params);
+        let newBlock = new EnterpriseBlock(blockNumber, this.parentRowNode, this.params, level);
         this.context.wireBean(newBlock);
 
         let displayIndexSequence = new NumberSequence(displayIndex);
@@ -235,6 +231,11 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
     public getLastDisplayedIndex(): number {
         return this.lastDisplayIndex;
     }
+
+    public isIndexInCache(index: number): boolean {
+        return index >= this.firstDisplayIndex && index <= this.lastDisplayIndex;
+    }
+
 }
 
 export class EnterpriseBlock extends RowNodeBlock {
@@ -249,10 +250,40 @@ export class EnterpriseBlock extends RowNodeBlock {
 
     private parentRowNode: RowNode;
 
-    constructor(pageNumber: number, parentRowNode: RowNode, params: EnterpriseCacheParams) {
+    private level: number;
+    private groupLevel: boolean;
+    private groupField: string;
+
+    constructor(pageNumber: number, parentRowNode: RowNode, params: EnterpriseCacheParams, level: number) {
         super(pageNumber, params);
         this.params = params;
         this.parentRowNode = parentRowNode;
+        this.level = level;
+        this.groupLevel = level < params.rowGroupCols.length;
+        if (this.groupLevel) {
+            this.groupField = params.rowGroupCols[level].field;
+        }
+    }
+
+    public getRow(rowIndex: number): RowNode {
+        // fixme: need to have a binary search here, so we are not looping through the list each time
+        let start = this.getStartRow();
+        let end = this.getEndRow();
+
+        for (let i = start; i<end; i++) {
+            let rowNode = super.getRow(i);
+            let childrenCache = <EnterpriseCache> rowNode.childrenCache;
+            if (rowNode.rowIndex === rowIndex) {
+                return rowNode;
+            } else if (childrenCache && childrenCache.isIndexInCache(rowIndex)) {
+                return childrenCache.getRow(rowIndex);
+            }
+        }
+
+        // this should never happen - means the grid has asked for a row,
+        // and we were not able to locate it. returning null will end up in a blank
+        // row (better while we develop, rather than grid crapping out)
+        return null;
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -266,11 +297,40 @@ export class EnterpriseBlock extends RowNodeBlock {
         });
     }
 
+    protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
+        if (_.exists(data)) {
+            // this means if the user is not providing id's we just use the
+            // index for the row. this will allow selection to work (that is based
+            // on index) as long user is not inserting or deleting rows,
+            // or wanting to keep selection between server side sorting or filtering
+            rowNode.setDataAndId(data, index.toString());
+            rowNode.key = data[this.groupField];
+        } else {
+            rowNode.setDataAndId(undefined, undefined);
+            rowNode.key = null;
+        }
+    }
+
     protected loadFromDatasource(): void {
         let params = this.createLoadParams();
         setTimeout(()=> {
             this.params.datasource.getRows(params);
         }, 0);
+    }
+
+    protected createBlankRowNode(rowIndex: number): RowNode {
+        let rowNode = super.createBlankRowNode(rowIndex);
+
+        rowNode.group = this.groupLevel;
+        rowNode.level = this.level;
+        rowNode.parent = this.parentRowNode;
+
+        if (rowNode.group) {
+            rowNode.expanded = false;
+            rowNode.field = this.groupField;
+        }
+
+        return rowNode;
     }
 
     private createGroupKeys(groupNode: RowNode): string[] {
@@ -293,12 +353,17 @@ export class EnterpriseBlock extends RowNodeBlock {
         let start = this.getStartRow();
         let end = this.getEndRow();
 
-        for (let i= start; i<=end; i++) {
-            let rowNode = this.getRow(i);
+        for (let i = start; i<=end; i++) {
+            let rowNode = super.getRow(i);
             if (rowNode) {
                 let rowIndex = displayIndexSeq.next();
                 rowNode.setRowIndex(rowIndex);
                 rowNode.rowTop = this.params.rowHeight * rowIndex;
+
+                if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
+                    let enterpriseCache = <EnterpriseCache> rowNode.childrenCache;
+                    enterpriseCache.setDisplayIndexes(displayIndexSeq);
+                }
             }
         }
 

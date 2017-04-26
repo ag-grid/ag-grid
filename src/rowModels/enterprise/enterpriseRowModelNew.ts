@@ -72,8 +72,11 @@ export class EnterpriseRowModelNew extends BeanStub implements IRowModel {
         let openedNode = <RowNode> event.node;
         if (openedNode.expanded && _.missing(openedNode.childrenCache)) {
             this.createNodeCache(openedNode);
+            this.updateRowIndexes();
+            this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
         } else {
-            // this.mapAndFireModelUpdated();
+            this.updateRowIndexes();
+            this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
         }
     }
 
@@ -151,7 +154,12 @@ export class EnterpriseRowModelNew extends BeanStub implements IRowModel {
         };
     }
 
-    private setRowIndexes(): void {
+    private onCacheUpdated(): void {
+        this.updateRowIndexes();
+        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+    }
+
+    public updateRowIndexes(): void {
         let cacheExists = _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
         if (cacheExists) {
             // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
@@ -170,12 +178,6 @@ export class EnterpriseRowModelNew extends BeanStub implements IRowModel {
         } else {
             return null;
         }
-    }
-
-    private onCacheUpdated(): void {
-        this.logger.log('onCacheUpdated()');
-        this.setRowIndexes();
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
     }
 
     public getPageFirstRow(): number {
