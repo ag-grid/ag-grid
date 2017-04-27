@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.0.3
+ * @version v9.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -184,14 +184,17 @@ var HeaderRowComp = (function (_super) {
     };
     HeaderRowComp.prototype.createFloatingFilterWrapper = function (column) {
         var _this = this;
-        var filterComponent = this.filterManager.getFilterComponent(column);
         var floatingFilterParams = this.createFloatingFilterParams(column);
-        var floatingFilterWrapper = this.componentProvider.newFloatingFilterWrapperComponent(filterComponent, column, floatingFilterParams);
+        var floatingFilterWrapper = this.componentProvider.newFloatingFilterWrapperComponent(column, floatingFilterParams);
         column.addEventListener(column_1.Column.EVENT_FILTER_CHANGED, function () {
             var filterComponent = _this.filterManager.getFilterComponent(column);
             floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
         });
-        floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
+        var cachedFilter = this.filterManager.cachedFilter(column);
+        if (cachedFilter) {
+            var filterComponent = this.filterManager.getFilterComponent(column);
+            floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
+        }
         return floatingFilterWrapper;
     };
     HeaderRowComp.prototype.createFloatingFilterParams = function (column) {

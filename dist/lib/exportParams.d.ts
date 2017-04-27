@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v9.0.3
+// Type definitions for ag-grid v9.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColDef } from "./entities/colDef";
@@ -6,7 +6,7 @@ import { Column } from "./entities/column";
 import { RowNode } from "./entities/rowNode";
 import { GridApi } from "./gridApi";
 import { ColumnApi } from "./columnController/columnController";
-export interface ExportParams {
+export interface BaseExportParams {
     skipHeader?: boolean;
     columnGroups?: boolean;
     skipFooters?: boolean;
@@ -23,9 +23,11 @@ export interface ExportParams {
     processCellCallback?(params: ProcessCellForExportParams): string;
     processHeaderCallback?(params: ProcessHeaderForExportParams): string;
 }
-export interface CsvExportParams extends ExportParams {
-    customHeader?: string;
-    customFooter?: string;
+export interface ExportParams<T> extends BaseExportParams {
+    customHeader?: T;
+    customFooter?: T;
+}
+export interface CsvExportParams extends ExportParams<string> {
     columnSeparator?: string;
 }
 export interface ShouldRowBeSkippedParams {
