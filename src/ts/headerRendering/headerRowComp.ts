@@ -228,6 +228,7 @@ export class HeaderRowComp extends Component {
          *let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
          */
         let baseParams:IFloatingFilterParams<M, F> = {
+            column:column,
             currentParentModel: (): M => {
                 let filterComponent: BaseFilter<any, any, M> = <any>this.filterManager.getFilterComponent(column);
                 return (filterComponent.getNullableModel) ?

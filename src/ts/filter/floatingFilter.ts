@@ -9,11 +9,13 @@ import {IDateComp, IDateParams} from "../rendering/dateComponent";
 import {ComponentProvider} from "../componentProvider";
 import {Component} from "../widgets/component";
 import {Constants} from "../constants";
+import {Column} from "../entities/column";
 
 export interface FloatingFilterChange{
 }
 
 export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
+    column:Column,
     onFloatingFilterChanged:(change:F|M)=>void;
     currentParentModel:()=>M;
     suppressFilterButton: boolean;
