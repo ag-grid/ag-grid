@@ -1,7 +1,30 @@
-import {IRowModel, RowNode, Constants, Bean, PostConstruct, Autowired, Context,
-    _, EventService, Events, ModelUpdatedEvent, FlattenStage, ColumnController,
-    Column, FilterManager, SortController, BeanStub, GridOptionsWrapper,
-    IEnterpriseDatasource, IEnterpriseGetRowsParams, ColumnVO} from "ag-grid";
+import {
+    _,
+    Autowired,
+    Bean,
+    BeanStub,
+    Column,
+    ColumnController,
+    ColumnVO,
+    Constants,
+    Context,
+    Events,
+    EventService,
+    FilterManager,
+    FlattenStage,
+    IEnterpriseDatasource,
+    IRowModel,
+    Logger,
+    ModelUpdatedEvent,
+    LoggerFactory,
+    NumberSequence,
+    PostConstruct,
+    Qualifier,
+    RowNode,
+    GridOptionsWrapper,
+    SortController
+} from "ag-grid";
+import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
 
 @Bean('rowModel')
 export class EnterpriseRowModel extends BeanStub implements IRowModel {
@@ -9,46 +32,43 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
-    @Autowired('flattenStage') private flattenStage: FlattenStage;
+    // @Autowired('flattenStage') private flattenStage: FlattenStage;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
 
     private rootNode: RowNode;
     private datasource: IEnterpriseDatasource;
+
     private rowHeight: number;
 
-    private rowsToDisplay: RowNode[];
+    private cacheParams: EnterpriseCacheParams;
 
-    private nextId: number;
-
-    // each time the data changes we increment the instance version.
-    // that way we know to discard any daemon network calls, that are bringing
-    // back data for an old version.
-    private instanceVersion = 0;
+    private logger: Logger;
 
     @PostConstruct
     private postConstruct(): void {
-
-        this.addEventListeners();
-
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        this.datasource = this.gridOptionsWrapper.getEnterpriseDatasource();
+        this.addEventListeners();
+    }
 
-        if (this.datasource) {
-            this.reset();
-        }
+    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
+        this.logger = loggerFactory.create('EnterpriseRowModel');
     }
 
     public isLastRowFound(): boolean {
-        return true;
+        if (_.exists(this.rootNode) && _.exists(this.rootNode.childrenCache)) {
+            return this.rootNode.childrenCache.isMaxRowFound();
+        } else {
+            return false;
+        }
     }
 
     private addEventListeners(): void {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
 
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     }
@@ -71,17 +91,17 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
 
     private onRowGroupOpened(event: any): void {
         let openedNode = <RowNode> event.node;
-        if (openedNode.expanded && _.missing(openedNode.childrenAfterSort)) {
-            this.loadNode(openedNode);
+        if (openedNode.expanded && _.missing(openedNode.childrenCache)) {
+            this.createNodeCache(openedNode);
+            this.updateRowIndexes();
+            this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
         } else {
-            this.mapAndFireModelUpdated();
+            this.updateRowIndexes();
+            this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
         }
     }
 
     private reset(): void {
-        this.nextId = 0;
-        this.rowsToDisplay = null;
-        this.instanceVersion++;
 
         this.rootNode = new RowNode();
         this.rootNode.group = true;
@@ -89,7 +109,9 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         this.context.wireBean(this.rootNode);
 
         if (this.datasource) {
-            this.loadNode(this.rootNode);
+            this.cacheParams = this.createCacheParams();
+            this.createNodeCache(this.rootNode);
+            this.updateRowIndexes();
         }
 
         // this event: 1) clears selection 2) updates filters 3) shows/hides 'no rows' overlay
@@ -104,51 +126,6 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         this.reset();
     }
 
-    private loadNode(rowNode: RowNode): void {
-        let params = this.createLoadParams(rowNode);
-        rowNode.setLoading(true);
-        setTimeout(()=> {
-            this.datasource.getRows(params);
-        }, 0);
-    }
-
-    private createGroupKeys(groupNode: RowNode): string[] {
-        let keys: string[] = [];
-
-        let pointer = groupNode;
-        while (pointer.level >= 0) {
-            keys.push(pointer.key);
-            pointer = pointer.parent;
-        }
-
-        keys.reverse();
-
-        return keys;
-    }
-
-    private createLoadParams(rowNode: RowNode): IEnterpriseGetRowsParams {
-        let groupKeys = this.createGroupKeys(rowNode);
-
-        let rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
-        let valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
-
-        let request = {
-            rowGroupCols: rowGroupColumnVos,
-            valueCols: valueColumnVos,
-            groupKeys: groupKeys,
-            filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.sortController.getSortModel()
-        };
-
-        let params = <IEnterpriseGetRowsParams> {
-            successCallback: this.successCallback.bind(this, this.instanceVersion, rowNode),
-            failCallback: this.failCallback.bind(this, this.instanceVersion, rowNode),
-            request: request
-        };
-
-        return params;
-    }
-
     private toValueObjects(columns: Column[]): ColumnVO[] {
         return columns.map( col => <ColumnVO> {
             id: col.getId(),
@@ -158,58 +135,38 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         });
     }
 
-    private successCallback(instanceVersion: number, parentNode: RowNode, dataItems: any[]): void {
-        let isDaemon = instanceVersion !== this.instanceVersion;
-        if (isDaemon) { return; }
+    private createCacheParams(): EnterpriseCacheParams {
 
-        let groupCols = this.columnController.getRowGroupColumns();
-        let newNodesLevel = parentNode.level + 1;
-        let newNodesAreGroups = groupCols.length > newNodesLevel;
-        let field = newNodesAreGroups ? groupCols[newNodesLevel].getColDef().field : null;
+        let rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
+        let valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
 
-        parentNode.setLoading(false);
+        let params: EnterpriseCacheParams = {
+            // the columns the user has grouped and aggregated by
+            valueCols: valueColumnVos,
+            rowGroupCols: rowGroupColumnVos,
 
-        parentNode.childrenAfterSort = [];
-        if (dataItems) {
-            dataItems.forEach( dataItem => {
+            // sort and filter model
+            filterModel: this.filterManager.getFilterModel(),
+            sortModel: this.sortController.getSortModel(),
 
-                let childNode = new RowNode();
-                this.context.wireBean(childNode);
+            datasource: this.datasource,
+            lastAccessedSequence: new NumberSequence(),
+            overflowSize: 1,
+            initialRowCount: 1,
+            pageSize: 100,
+            rowHeight: this.rowHeight
+        };
 
-                childNode.group = newNodesAreGroups;
-                childNode.level = newNodesLevel;
-                childNode.parent = parentNode;
-
-                childNode.setDataAndId(dataItem, this.nextId.toString());
-
-                if (newNodesAreGroups) {
-                    childNode.expanded = false;
-                    childNode.field = field;
-                    childNode.key = dataItem[field];
-                }
-
-                parentNode.childrenAfterSort.push(childNode);
-
-                this.nextId++;
-            });
-        }
-
-        this.mapAndFireModelUpdated();
+        return params;
     }
 
-    private mapAndFireModelUpdated(): void {
-        this.doRowsToDisplay();
-        this.doSetRowTop();
+    private createNodeCache(rowNode: RowNode): void {
+        let cache = new EnterpriseCache(this.cacheParams, rowNode);
+        this.context.wireBean(cache);
 
-        let event: ModelUpdatedEvent = {animate: true, keepRenderedRows: true, newData: false, newPage: false};
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, event);
-    }
+        cache.addEventListener(EnterpriseCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
 
-    private failCallback(instanceVersion: number, rowNode: RowNode): void {
-        let isDaemon = instanceVersion !== this.instanceVersion;
-        if (isDaemon) { return; }
-
-        rowNode.setLoading(false);
+        rowNode.childrenCache = cache;
     }
 
     public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
@@ -219,16 +176,30 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         };
     }
 
-    public doSetRowTop() {
-        let accumulatedRowTop:number = 0;
-        this.rowsToDisplay.forEach(rowToDisplay => {
-            rowToDisplay.setRowTop(accumulatedRowTop);
-            accumulatedRowTop += rowToDisplay.rowHeight;
-        });
+    private onCacheUpdated(): void {
+        this.updateRowIndexes();
+        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+    }
+
+    public updateRowIndexes(): void {
+        let cacheExists = _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
+        if (cacheExists) {
+            // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
+            let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
+            let numberSequence = new NumberSequence();
+            enterpriseCache.setDisplayIndexes(numberSequence);
+        }
     }
 
     public getRow(index: number): RowNode {
-        return this.rowsToDisplay[index];
+        let cacheExists = _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
+        if (cacheExists) {
+            // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
+            let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
+            return enterpriseCache.getRow(index);
+        } else {
+            return null;
+        }
     }
 
     public getPageFirstRow(): number {
@@ -236,39 +207,52 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
     }
 
     public getPageLastRow(): number {
-        return this.rowsToDisplay ? this.rowsToDisplay.length - 1 : 0;
+        let cacheExists = _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
+        let lastRow: number;
+        if (cacheExists) {
+            // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
+            let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
+            lastRow = enterpriseCache.getLastDisplayedIndex();
+        } else {
+            lastRow = 0;
+        }
+        return lastRow;
     }
 
     public getRowCount(): number {
-        return this.rowsToDisplay ? this.rowsToDisplay.length : 0;
+        return this.getPageLastRow() + 1;
     }
 
     public getRowIndexAtPixel(pixel: number): number {
+        // fixme: the InfiniteCache also has this method, should it be reused from there?
+        // fixme: or maybe take out of InfiniteCache, and put in InfiniteModel
         if (this.rowHeight !== 0) { // avoid divide by zero error
-            return Math.floor(pixel / this.rowHeight);
+            var rowIndexForPixel = Math.floor(pixel / this.rowHeight);
+            if (rowIndexForPixel > this.getPageLastRow()) {
+                return this.getPageLastRow();
+            } else {
+                return rowIndexForPixel;
+            }
         } else {
             return 0;
         }
     }
 
     public getCurrentPageHeight(): number {
-        return this.getPageLastRow() * this.rowHeight;
+        let pageHeight = this.rowHeight * this.getRowCount();
+        return pageHeight;
     }
 
     public isEmpty(): boolean {
-        return _.missing(this.rootNode);
+        return false;
     }
 
     public isRowsToRender(): boolean {
-        return this.rowsToDisplay ? this.rowsToDisplay.length > 0 : false;
+        return this.getRowCount() > 0;
     }
 
     public getType(): string {
         return Constants.ROW_MODEL_TYPE_ENTERPRISE;
-    }
-
-    private doRowsToDisplay() {
-        this.rowsToDisplay = <RowNode[]> this.flattenStage.execute({rowNode: this.rootNode});
     }
 
     public forEachNode(callback: (rowNode: RowNode)=>void): void {

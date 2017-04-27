@@ -21,6 +21,7 @@ import {
     LoggerFactory
 } from "ag-grid";
 import {EnterpriseRowModel} from "./enterpriseRowModel";
+import {EnterpriseBlock} from "./enterpriseBlock";
 
 export interface EnterpriseCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];
@@ -95,7 +96,7 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
 
             lastBlockId = blockId;
 
-            currentBlock.setDisplayIndexes(numberSequence);
+            currentBlock.setDisplayIndexes(numberSequence, this.getVirtualRowCount());
         });
 
         // if any blocks missing at the end, need to increase the row index for them also
@@ -163,9 +164,9 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
                 blockNumber = localIndex / this.params.pageSize;
                 displayIndexStart = this.firstDisplayIndex + (blockNumber * this.params.pageSize);
             }
-            block = this.createBlock(blockNumber, displayIndexStart, 0);
+            block = this.createBlock(blockNumber, displayIndexStart);
 
-            console.log(`block missing, rowIndex = ${rowIndex}, creating #${blockNumber}, displayIndexStart = ${displayIndexStart}`);
+            this.logger.log(`block missing, rowIndex = ${rowIndex}, creating #${blockNumber}, displayIndexStart = ${displayIndexStart}`);
         }
 
         let rowNode = block.getRow(rowIndex);
@@ -173,13 +174,13 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
         return rowNode;
     }
 
-    private createBlock(blockNumber: number, displayIndex: number, level: number): EnterpriseBlock {
+    private createBlock(blockNumber: number, displayIndex: number): EnterpriseBlock {
 
-        let newBlock = new EnterpriseBlock(blockNumber, this.parentRowNode, this.params, level);
+        let newBlock = new EnterpriseBlock(blockNumber, this.parentRowNode, this.params);
         this.context.wireBean(newBlock);
 
         let displayIndexSequence = new NumberSequence(displayIndex);
-        newBlock.setDisplayIndexes(displayIndexSequence);
+        newBlock.setDisplayIndexes(displayIndexSequence, this.getVirtualRowCount());
 
         newBlock.addEventListener(EnterpriseBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
 
@@ -238,173 +239,3 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
 
 }
 
-export class EnterpriseBlock extends RowNodeBlock {
-
-    @Autowired('context') private context: Context;
-
-    private logger: Logger;
-
-    private displayStartIndex: number;
-    private displayEndIndex: number;
-    private params: EnterpriseCacheParams;
-
-    private parentRowNode: RowNode;
-
-    private level: number;
-    private groupLevel: boolean;
-    private groupField: string;
-
-    constructor(pageNumber: number, parentRowNode: RowNode, params: EnterpriseCacheParams, level: number) {
-        super(pageNumber, params);
-        this.params = params;
-        this.parentRowNode = parentRowNode;
-        this.level = level;
-        this.groupLevel = level < params.rowGroupCols.length;
-        if (this.groupLevel) {
-            this.groupField = params.rowGroupCols[level].field;
-        }
-    }
-
-    public getRow(rowIndex: number): RowNode {
-        // fixme: need to have a binary search here, so we are not looping through the list each time
-        let start = this.getStartRow();
-        let end = this.getEndRow();
-
-        for (let i = start; i<end; i++) {
-            let rowNode = super.getRow(i);
-            let childrenCache = <EnterpriseCache> rowNode.childrenCache;
-            if (rowNode.rowIndex === rowIndex) {
-                return rowNode;
-            } else if (childrenCache && childrenCache.isIndexInCache(rowIndex)) {
-                return childrenCache.getRow(rowIndex);
-            }
-        }
-
-        // this should never happen - means the grid has asked for a row,
-        // and we were not able to locate it. returning null will end up in a blank
-        // row (better while we develop, rather than grid crapping out)
-        return null;
-    }
-
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('EnterpriseBlock');
-    }
-
-    @PostConstruct
-    protected init(): void {
-        super.init({
-            context: this.context
-        });
-    }
-
-    protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
-        if (_.exists(data)) {
-            // this means if the user is not providing id's we just use the
-            // index for the row. this will allow selection to work (that is based
-            // on index) as long user is not inserting or deleting rows,
-            // or wanting to keep selection between server side sorting or filtering
-            rowNode.setDataAndId(data, index.toString());
-            rowNode.key = data[this.groupField];
-        } else {
-            rowNode.setDataAndId(undefined, undefined);
-            rowNode.key = null;
-        }
-    }
-
-    protected loadFromDatasource(): void {
-        let params = this.createLoadParams();
-        setTimeout(()=> {
-            this.params.datasource.getRows(params);
-        }, 0);
-    }
-
-    protected createBlankRowNode(rowIndex: number): RowNode {
-        let rowNode = super.createBlankRowNode(rowIndex);
-
-        rowNode.group = this.groupLevel;
-        rowNode.level = this.level;
-        rowNode.parent = this.parentRowNode;
-
-        if (rowNode.group) {
-            rowNode.expanded = false;
-            rowNode.field = this.groupField;
-        }
-
-        return rowNode;
-    }
-
-    private createGroupKeys(groupNode: RowNode): string[] {
-        let keys: string[] = [];
-
-        let pointer = groupNode;
-        while (pointer.level >= 0) {
-            keys.push(pointer.key);
-            pointer = pointer.parent;
-        }
-
-        keys.reverse();
-
-        return keys;
-    }
-
-    public setDisplayIndexes(displayIndexSeq: NumberSequence): void {
-        this.displayStartIndex = displayIndexSeq.peek();
-
-        let start = this.getStartRow();
-        let end = this.getEndRow();
-
-        for (let i = start; i<=end; i++) {
-            let rowNode = super.getRow(i);
-            if (rowNode) {
-                let rowIndex = displayIndexSeq.next();
-                rowNode.setRowIndex(rowIndex);
-                rowNode.rowTop = this.params.rowHeight * rowIndex;
-
-                if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
-                    let enterpriseCache = <EnterpriseCache> rowNode.childrenCache;
-                    enterpriseCache.setDisplayIndexes(displayIndexSeq);
-                }
-            }
-        }
-
-        this.displayEndIndex = displayIndexSeq.peek() - 1;
-    }
-
-    private createLoadParams(): IEnterpriseGetRowsParams {
-        let groupKeys = this.createGroupKeys(this.parentRowNode);
-
-        let request: IEnterpriseGetRowsRequest = {
-            startRow: this.getStartRow(),
-            endRow: this.getEndRow(),
-            rowGroupCols: this.params.rowGroupCols,
-            valueCols: this.params.valueCols,
-            groupKeys: groupKeys,
-            filterModel: this.params.filterModel,
-            sortModel: this.params.sortModel
-        };
-
-        let params = <IEnterpriseGetRowsParams> {
-            successCallback: this.pageLoaded.bind(this, this.getVersion()),
-            failCallback: this.pageLoadFailed.bind(this),
-            request: request
-        };
-
-        return params;
-    }
-
-    public isIndexInBlock(index: number): boolean {
-        return index >= this.displayStartIndex && index <= this.displayEndIndex;
-    }
-
-    public isBlockBefore(index: number): boolean {
-        return index > this.displayEndIndex;
-    }
-
-    public getDisplayStartIndex(): number {
-        return this.displayStartIndex;
-    }
-
-    public getDisplayEndIndex(): number {
-        return this.displayEndIndex;
-    }
-}
