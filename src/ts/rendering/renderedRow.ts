@@ -13,13 +13,45 @@ import {FocusedCellController} from "../focusedCellController";
 import {Constants} from "../constants";
 import {CellRendererService} from "./cellRendererService";
 import {CellRendererFactory} from "./cellRendererFactory";
-import {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "./cellRenderers/iCellRenderer";
+import {ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {BeanStub} from "../context/beanStub";
 import {RowContainerComponent} from "./rowContainerComponent";
 import {ColumnAnimationService} from "./columnAnimationService";
 import {ColDef} from "../entities/colDef";
 import {PaginationProxy} from "../rowModels/paginationProxy";
+import {Component} from "../widgets/component";
+import {SvgFactory} from "../svgFactory";
+import {RefSelector} from "../widgets/componentAnnotations";
+
+var svgFactory = SvgFactory.getInstance();
+
+class TempStubCell extends Component {
+
+    private static TEMPLATE =
+        `<div class="ag-stub-cell">
+            <span class="ag-loading-icon" ref="eLoadingIcon"></span>
+            <span class="ag-loading-text" ref="eLoadingText"></span>
+        </div>`;
+
+    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+
+    @RefSelector('eLoadingIcon') private eLoadingIcon: HTMLElement;
+    @RefSelector('eLoadingText') private eLoadingText: HTMLElement;
+
+    constructor() {
+        super(TempStubCell.TEMPLATE);
+    }
+
+    public init(params: ICellRendererParams): void {
+
+        let eLoadingIcon = _.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null, svgFactory.createGroupLoadingIcon);
+        this.eLoadingIcon.appendChild(eLoadingIcon);
+
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
+    }
+}
 
 export class RenderedRow extends BeanStub {
 
@@ -116,7 +148,24 @@ export class RenderedRow extends BeanStub {
         this.animateIn = animateIn;
     }
 
+    private setupRowStub(animateInRowTop: boolean): void {
+        this.fullWidthRow = true;
+        this.fullWidthCellRenderer = TempStubCell;
+
+        if (_.missing(this.fullWidthCellRenderer)) {
+            console.warn(`ag-Grid: you need to provide a fullWidthCellRenderer if using isFullWidthCell()`);
+        }
+
+        this.createFullWidthRow(animateInRowTop);
+    }
+
     private setupRowContainers(animateInRowTop: boolean): void {
+
+        // fixme: hack - to get loading working for Enterprise Model
+        if (this.rowNode.stub) {
+            this.setupRowStub(animateInRowTop);
+            return;
+        }
 
         let isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
         let isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
@@ -1102,6 +1151,10 @@ export class RenderedRow extends BeanStub {
             } else {
                 classes.push('ag-row-level-0');
             }
+        }
+
+        if (this.rowNode.stub) {
+            classes.push('ag-row-stub');
         }
 
         if (this.fullWidthRow) {
