@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.0.3
+// ag-grid-enterprise v9.1.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -23,6 +23,7 @@ var SetFilter = (function (_super) {
     function SetFilter() {
         return _super.call(this) || this;
     }
+    SetFilter.prototype.customInit = function () { };
     SetFilter.prototype.modelFromFloatingFilter = function (from) {
         return [from];
     };
