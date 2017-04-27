@@ -1,17 +1,17 @@
-// Type definitions for ag-grid v9.0.3
+// Type definitions for ag-grid v9.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
-import { GridOptions, NodeChildDetails, GetContextMenuItems, NavigateToNextCellParams, TabToNextCellParams, GetMainMenuItems, GetRowNodeIdFunc, ProcessRowParams } from "./entities/gridOptions";
+import { GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, NavigateToNextCellParams, NodeChildDetails, ProcessRowParams, TabToNextCellParams } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
-import { ColDef, IAggFunc, ColGroupDef } from "./entities/colDef";
+import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnController";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
-import { ICellRendererFunc, ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
+import { ICellRendererComp, ICellRendererFunc } from "./rendering/cellRenderers/iCellRenderer";
 import { IDatasource } from "./rowModels/iDatasource";
 import { GridCellDef } from "./entities/gridCell";
 import { IEnterpriseDatasource } from "./interfaces/iEnterpriseDatasource";
-import { CsvExportParams, ProcessCellForExportParams } from "./exportParams";
+import { BaseExportParams, ProcessCellForExportParams } from "./exportParams";
 export declare class GridOptionsWrapper {
     private static MIN_COL_WIDTH;
     static PROP_HEADER_HEIGHT: string;
@@ -168,7 +168,7 @@ export declare class GridOptionsWrapper {
     isFloatingFilter(): boolean;
     getDefaultColDef(): ColDef;
     getDefaultColGroupDef(): ColGroupDef;
-    getDefaultExportParams(): CsvExportParams;
+    getDefaultExportParams(): BaseExportParams;
     getHeaderCellTemplate(): string;
     getHeaderCellTemplateFunc(): (params: any) => string | HTMLElement;
     getNodeChildDetailsFunc(): ((dataItem: any) => NodeChildDetails);
