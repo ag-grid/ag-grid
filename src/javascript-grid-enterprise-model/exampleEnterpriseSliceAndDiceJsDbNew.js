@@ -14,13 +14,17 @@ var gridOptions = {
         suppressFilter: true,
         width: 100
     },
+    rowBuffer: 0,
     columnDefs: columnDefs,
     enableColResize: true,
     rowModelType: 'enterprise',
     rowGroupPanelShow: 'always',
     animateRows: true,
     debug: true,
-    showToolPanel: true
+    showToolPanel: true,
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
+    }
 };
 
 function EnterpriseDatasource(fakeServer) {
@@ -30,8 +34,8 @@ function EnterpriseDatasource(fakeServer) {
 EnterpriseDatasource.prototype.getRows = function(params) {
     // console.log('EnterpriseDatasource.getRows: params = ', params);
     this.fakeServer.getData(params.request,
-        function successCallback(resultForGrid) {
-            params.successCallback(resultForGrid);
+        function successCallback(resultForGrid, lastRow) {
+            params.successCallback(resultForGrid, lastRow);
         });
 };
 
@@ -78,14 +82,20 @@ FakeServer.prototype.getData = function(request, callback) {
         }
     }
 
+    // we mimic finding the last row. if the request exceeds the length of the
+    // list, then we assume the last row is found. this would be similar to hitting
+    // a database, where we have gone past the last row.
+    var lastRowFound = (result.length <= request.endRow);
+    var lastRow = lastRowFound ? result.length : null;
+
     // if using blocks, only return back the subset
     var result = result.slice(request.startRow, request.endRow);
 
     // so that the example behaves like a server side call, we put
     // it in a timeout to a) give a delay and b) make it asynchronous
     setTimeout( function() {
-        callback(result);
-    }, 500);
+        callback(result, lastRow);
+    }, 1000);
 };
 
 FakeServer.prototype.buildGroupsFromData = function(filteredData, rowGroupCols, groupKeys, valueCols) {
