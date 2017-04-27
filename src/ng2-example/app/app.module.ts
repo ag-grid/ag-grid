@@ -38,14 +38,17 @@ import {StyledComponent} from "./floating-row-example/styled-renderer.component"
 import {FullWidthComponent} from "./full-width-example/full-width-renderer.component";
 import {NameAndAgeRendererComponent} from "./full-width-example/name-age-renderer.component";
 // grouped inner
-import {MedalRendererComponent} from "./grouped-row-example/medal-renderer.component";
-import {GroupRowComponent} from "./grouped-row-example/group-row-renderer.component";
+import {MedalRendererComponent} from "./grouped-row-inner-renderer-example/medal-renderer.component";
+import {GroupRowComponent} from "./grouped-row-inner-renderer-example/group-row-renderer.component";
 // filter
 import {FilterComponentComponent} from "./filter-component-example/filter.component";
 import {PartialMatchFilterComponent} from "./filter-component-example/partial-match-filter.component";
 // master detail
 import {MasterComponent} from "./master-detail-example/masterdetail-master.component";
 import {DetailPanelComponent} from "./master-detail-example/detail-panel.component";
+import {GroupedDataComponent} from "./grouped-data-example/grouped-data.component";
+import {CountryRendererComponent} from "./grouped-data-example/country-renderer.component";
+// grouped data
 
 @NgModule({
     imports: [
@@ -70,7 +73,8 @@ import {DetailPanelComponent} from "./master-detail-example/detail-panel.compone
                 DetailPanelComponent,
                 DateComponent,
                 HeaderComponent,
-                HeaderGroupComponent
+                HeaderGroupComponent,
+                CountryRendererComponent
             ]),
         RatioModule,
         ClickableModule
@@ -102,7 +106,9 @@ import {DetailPanelComponent} from "./master-detail-example/detail-panel.compone
         FilterComponentComponent,
         PartialMatchFilterComponent,
         MasterComponent,
-        DetailPanelComponent
+        DetailPanelComponent,
+        GroupedDataComponent,
+        CountryRendererComponent
     ],
     bootstrap: [AppComponent]
 })

@@ -18,9 +18,10 @@ export class AppComponent {
         {key: 'editor-component', title: "Cell Editor Component Example"},
         {key: 'floating-row', title: "Floating Row Renderer Example"},
         {key: 'full-width', title: "Full Width Renderer Example"},
-        {key: 'group-row', title: "Group Row Renderer Example"},
+        {key: 'group-row', title: "Grouped Row Inner Renderer Example"},
         {key: 'filter', title: "Filters Component Example"},
         {key: 'master-detail', title: "Master Detail Example"},
+        {key: 'grouped-data', title: "Grouped Data Example"}
     ];
 
     constructor() {
