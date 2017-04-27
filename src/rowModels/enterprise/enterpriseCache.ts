@@ -176,7 +176,7 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
 
     private createBlock(blockNumber: number, displayIndex: number): EnterpriseBlock {
 
-        let newBlock = new EnterpriseBlock(blockNumber, this.parentRowNode, this.params);
+        let newBlock = new EnterpriseBlock(blockNumber, this.parentRowNode, this.params, this);
         this.context.wireBean(newBlock);
 
         let displayIndexSequence = new NumberSequence(displayIndex);

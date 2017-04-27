@@ -32,6 +32,7 @@ export class EnterpriseBlock extends RowNodeBlock {
     private displayStartIndex: number;
     private displayEndIndex: number;
     private params: EnterpriseCacheParams;
+    private parentCache: EnterpriseCache;
 
     private parentRowNode: RowNode;
 
@@ -39,10 +40,11 @@ export class EnterpriseBlock extends RowNodeBlock {
     private groupLevel: boolean;
     private groupField: string;
 
-    constructor(pageNumber: number, parentRowNode: RowNode, params: EnterpriseCacheParams) {
+    constructor(pageNumber: number, parentRowNode: RowNode, params: EnterpriseCacheParams, parentCache: EnterpriseCache) {
         super(pageNumber, params);
         this.params = params;
         this.parentRowNode = parentRowNode;
+        this.parentCache = parentCache;
 
         this.level = parentRowNode.level + 1;
         this.groupLevel = this.level < params.rowGroupCols.length;
@@ -53,25 +55,38 @@ export class EnterpriseBlock extends RowNodeBlock {
 
     public getRow(rowIndex: number): RowNode {
 
-        // fixme: should do binary search here
+        // do binary search of tree
+        // http://oli.me.uk/2013/06/08/searching-javascript-arrays-with-a-binary-search/
+        let bottomPointer = this.getStartRow();
 
-        let start = this.getStartRow();
-        let end = this.getEndRow();
+        // the end row depends on whether all this block is used or not. if the virtual row count
+        // is before the end, then not all the row is used
+        let virtualRowCount = this.parentCache.getVirtualRowCount();
+        let endRow = this.getEndRow();
+        let actualEnd = (virtualRowCount < endRow) ? virtualRowCount : endRow;
 
-        for (let i = start; i<end; i++) {
-            let rowNode = super.getRow(i);
-            let childrenCache = <EnterpriseCache> rowNode.childrenCache;
-            if (rowNode.rowIndex === rowIndex) {
-                return rowNode;
-            } else if (rowNode.expanded && childrenCache && childrenCache.isIndexInCache(rowIndex)) {
+        let topPointer = actualEnd - 1;
+
+        while (true) {
+
+            let midPointer = Math.floor((bottomPointer + topPointer) / 2);
+            let currentRowNode = super.getRow(midPointer);
+
+            if (currentRowNode.rowIndex === rowIndex) {
+                return currentRowNode;
+            }
+
+            let childrenCache = <EnterpriseCache> currentRowNode.childrenCache;
+            if (currentRowNode.rowIndex === rowIndex) {
+                return currentRowNode;
+            } else if (currentRowNode.expanded && childrenCache && childrenCache.isIndexInCache(rowIndex)) {
                 return childrenCache.getRow(rowIndex);
+            } else if (currentRowNode.rowIndex < rowIndex) {
+                bottomPointer = midPointer + 1;
+            } else if (currentRowNode.rowIndex > rowIndex) {
+                topPointer = midPointer - 1;
             }
         }
-
-        // this should never happen - means the grid has asked for a row,
-        // and we were not able to locate it. returning null will end up in a blank
-        // row (better while we develop, rather than grid crapping out)
-        return null;
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
