@@ -4,25 +4,29 @@ var columnDefs = [
     {headerName: "Gold", field: "gold", filter: 'number', suppressMenu:true,
         floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
-            suppressFilterButton:true
+            suppressFilterButton:true,
+            color:'red'
         }
     },
     {headerName: "Silver", field: "silver", filter: 'number', suppressMenu:true,
         floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
-            suppressFilterButton:true
+            suppressFilterButton:true,
+            color:'blue'
         }
     },
     {headerName: "Bronze", field: "bronze", filter: 'number', suppressMenu:true,
         floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
-            suppressFilterButton:true
+            suppressFilterButton:true,
+            color:'green'
         }
     },
     {headerName: "Total", field: "total", filter: 'number', suppressMenu:true,
         floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
-            suppressFilterButton:true
+            suppressFilterButton:true,
+            color:'orange'
         }
     }
 ];
@@ -43,6 +47,7 @@ NumberFloatingFilter.prototype.init = function (params) {
     this.eGui.innerHTML = '&gt; <input style="width:20px" type="text"/>'
     this.currentValue = null;
     this.eFilterInput = this.eGui.querySelector('input');
+    this.eFilterInput.style.color = params.color;
     var that = this;
     function onInputBoxChanged(){
         if (that.eFilterInput.value === ''){
@@ -52,11 +57,11 @@ NumberFloatingFilter.prototype.init = function (params) {
         }
 
         that.currentValue = Number(that.eFilterInput.value);
-        that.onFloatingFilterChanged({
+        that.onFloatingFilterChanged({model:{
             //In this example we are only interested in filtering by greaterThan
             type:'greaterThan',
             filter:that.currentValue
-        });
+        }});
     }
     this.eFilterInput.addEventListener('input', onInputBoxChanged);
 };

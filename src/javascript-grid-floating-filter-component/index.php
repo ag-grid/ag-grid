@@ -118,6 +118,16 @@ adjust how many medals of each column to filter by based on a greater than filte
 </p>
 
 <p>
+Since this example its using standard filters, the object that needs to be passed to the method <i>onParentFilterChanged()</i>
+needs to provide two properties:
+    <ul>
+        <li><b>apply</b>: Ignored unless <i>applyButton=true</i>. If true the filter is changed AND applied, if
+        it is false, is only changed.</li>
+        <li><b>model</b>: The model object that represents the new filter state.</li>
+</ul>
+</p>
+
+<p>
 If the user removes the content of the input box, the filter its removed.
 </p>
 
@@ -131,7 +141,9 @@ If the user removes the content of the input box, the filter its removed.
     <li>Since this floating filters are providing a subset of the functionality of their parent filter, which can
     filter for other conditions which are not 'greaterThan' the user is prevented to see the parent filter by adding
     <i>suppressFilterButton:true</i> in the <i>floatingFilterComponentParams</i> and <i>suppressMenu:true</i> in
-    the <i>colDef</i>
+    the <i>colDef</i></li>
+    <li><i>floatingFilterParams</i> for all the medal columns have an additional param that is used to customise the
+        font color of the floating filter input text box</li>
     </li>
 </ol>
 </p>
