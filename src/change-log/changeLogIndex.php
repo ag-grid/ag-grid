@@ -16,6 +16,42 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 9.0.x</h2>
 
+    <h3>Version 9.1.0</h3>
+
+    <h4>Enhancements:</h4>
+    <ul>
+        <li>
+            Enhancement (AG-346): Floating Filters/Performance: Floating filters won't slow down vertical scrolling anymore
+            as they lazily interact with the filters now.
+        </li>
+        <li>
+            Enhancement (AG-399): Excel export: Allow additional excel style property <i>dataType</i> to force custom
+            data type for a column
+        </li>
+        <li>
+            Enhancement (AG-390): Excel export: Allow <i>customHeader()</i> and <i>customFooter()</i> callbacks to add
+            custom rows either at the header or the footer of the exported excel file
+        </li>
+        <li>
+            Enhancement (AG-387): Text filter: Allow <i>textCustomComparator()</i>
+        </li>
+        <li>
+            Enhancement (AG-378): Filter: Added filterParam <i>filterOptions</i> which takes a string array of valid filter
+            types that the user can select from the filter UI in the filter menu
+        </li>
+        <li>
+            Enhancement (AG-368): added <i>columnApi</i> and grid api <i>api</i> to header comp params.
+        </li>
+    </ul>
+
+    <h4>Bugfix:</h4>
+    <ul>
+        <li>Bugfix (AG-391): Number Filter: Fixed bug where filtering by 0 will filter everything out</li>
+        <li>Bugfix (AG-382/359): Date Filter: Fixed bug where using the cross to clear the date filter will throw an error</li>
+        <li>Bugfix (AG-373): WebComponents: initialiseAgGridWithWebComponents no longer was working</li>
+        <li>Bugfix (AG-370): Keyboard navigation: Keyboard navigation should skip full with rows</li>
+    </ul>
+
     <h3>Version 9.0.3</h3>
 
     <h4>Enhancements:</h4>
