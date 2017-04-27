@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.0.3
+// ag-grid-enterprise v9.1.0
 import { IAggFuncService, IAggFunc, GridOptionsWrapper } from "ag-grid/main";
 export declare class AggFuncService implements IAggFuncService {
     private static AGG_SUM;
