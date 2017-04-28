@@ -319,6 +319,23 @@
     ?>
 </div>
 
+<div class="docsMenu-header<?php if ($pageGroup == "thirdparty" || $expandAll == "true") { ?> active<?php } ?>"
+     data-id="thirdparty">
+    <h4>
+<!--        <img src="../images/svg/docs/examples.svg"/>-->
+        &nbsp;
+        Third Party
+    </h4>
+    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+</div>
+
+<div class="docsMenu-content">
+    <?php
+
+    menuItem(0, 'ag-Grid OpenFin', 'OpenFin Examples', 'javascript-grid-openfin/');
+    ?>
+</div>
+
 <?php if ($version == 'latest') { ?>
     <div class="docsMenu-header<?php if ($pageGroup == "misc" || $expandAll == "true") { ?> active<?php } ?>"
          data-id="misc">
