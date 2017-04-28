@@ -223,8 +223,6 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        // fixme: the InfiniteCache also has this method, should it be reused from there?
-        // fixme: or maybe take out of InfiniteCache, and put in InfiniteModel
         if (this.rowHeight !== 0) { // avoid divide by zero error
             var rowIndexForPixel = Math.floor(pixel / this.rowHeight);
             if (rowIndexForPixel > this.getPageLastRow()) {
@@ -255,7 +253,9 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
     }
 
     public forEachNode(callback: (rowNode: RowNode)=>void): void {
-        console.log('forEachNode not supported in enterprise row model');
+        if (this.rootNode && this.rootNode.childrenCache) {
+            this.rootNode.childrenCache.forEachNode(callback, new NumberSequence());
+        }
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {
