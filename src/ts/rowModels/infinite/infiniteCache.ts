@@ -26,7 +26,8 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
     }
 
     @PostConstruct
-    private init(): void {
+    protected init(): void {
+        super.init();
         // start load of data, as the virtualRowCount will remain at 0 otherwise,
         // so we need this to kick things off, otherwise grid would never call getRow()
         this.getRow(0);
@@ -98,7 +99,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
             this.hack_setVirtualRowCount(this.getVirtualRowCount() + items.length);
         }
 
-        this.dispatchModelUpdated();
+        this.onCacheUpdated();
         this.eventService.dispatchEvent(Events.EVENT_ITEMS_ADDED, newNodes);
     }
 
@@ -106,7 +107,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
     // it will want new pages in the cache as it asks for rows. only when we are inserting /
     // removing rows via the api is dontCreatePage set, where we move rows between the pages.
     public getRow(rowIndex: number, dontCreatePage = false): RowNode {
-        let blockId = Math.floor(rowIndex / this.cacheParams.pageSize);
+        let blockId = Math.floor(rowIndex / this.cacheParams.blockSize);
         let block = this.getBlock(blockId);
 
         if (!block) {
@@ -146,7 +147,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
             return;
         }
 
-        this.removeBlock(pageToRemove.getPageNumber());
+        this.destroyBlock(pageToRemove);
 
         // we do not want to remove the 'loaded' event listener, as the
         // concurrent loads count needs to be updated when the load is complete
@@ -172,12 +173,6 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
         return lruPage;
     }
 
-    protected dispatchModelUpdated(): void {
-        if (this.isActive()) {
-            this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
-        }
-    }
-
     public refreshCache(): void {
         this.forEachBlockInOrder( block => block.setDirty() );
         this.checkBlockToLoad();
@@ -185,7 +180,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
 
     public purgeCache(): void {
         this.forEachBlockInOrder( block => this.removeBlockFromCache(block));
-        this.dispatchModelUpdated();
+        this.onCacheUpdated();
     }
 
 }

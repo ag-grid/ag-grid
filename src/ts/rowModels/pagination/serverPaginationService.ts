@@ -150,7 +150,7 @@ export class ServerPaginationService extends BeanStub implements IPaginationServ
     private checkForDeprecated(): void {
         var ds = <any> this.datasource;
         if (_.exists(ds.pageSize)) {
-            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property infinPageSize');
+            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property infinitePageSize');
         }
     }
 

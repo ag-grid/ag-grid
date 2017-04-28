@@ -12,6 +12,7 @@ import {Constants} from "../../constants";
 import {IDatasource} from "../iDatasource";
 import {InfiniteCache, InfiniteCacheParams} from "./infiniteCache";
 import {BeanStub} from "../../context/beanStub";
+import {RowNodeCache} from "../cache/rowNodeCache";
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IRowModel {
@@ -101,7 +102,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
             console.error('ag-Grid: since version 5.1.x, overflowSize is replaced with grid property paginationOverflowSize');
         }
 
-        if (_.exists(ds.pageSize)) {
+        if (_.exists(ds.blockSize)) {
             console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property infinitePageSize');
         }
     }
@@ -150,7 +151,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
             overflowSize: this.gridOptionsWrapper.getPaginationOverflowSize(),
             initialRowCount: this.gridOptionsWrapper.getInfiniteInitialRowCount(),
             maxBlocksInCache: this.gridOptionsWrapper.getMaxPagesInCache(),
-            pageSize: this.gridOptionsWrapper.getInfiniteBlockSize(),
+            blockSize: this.gridOptionsWrapper.getInfiniteBlockSize(),
             rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
 
             // the cache could create this, however it is also used by the pages, so handy to create it
@@ -164,8 +165,8 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         }
         // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
         // server for one page at a time. so the default if not specified is 100.
-        if ( !(cacheSettings.pageSize>=1) ) {
-            cacheSettings.pageSize = 100;
+        if ( !(cacheSettings.blockSize>=1) ) {
+            cacheSettings.blockSize = 100;
         }
         // if user doesn't give initial rows to display, we assume zero
         if ( !(cacheSettings.initialRowCount>=1) ) {
@@ -184,6 +185,12 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
 
         this.infiniteCache = new InfiniteCache(cacheSettings);
         this.context.wireBean(this.infiniteCache);
+
+        this.infiniteCache.addEventListener(RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
+    }
+
+    private onCacheUpdated(): void {
+        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
     }
 
     public getRow(rowIndex: number): RowNode {

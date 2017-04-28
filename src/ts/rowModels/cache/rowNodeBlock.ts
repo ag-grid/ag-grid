@@ -49,8 +49,8 @@ export abstract class RowNodeBlock extends BeanStub {
 
         // we don't need to calculate these now, as the inputs don't change,
         // however it makes the code easier to read if we work them out up front
-        this.startRow = blockNumber * rowNodeCacheParams.pageSize;
-        this.endRow = this.startRow + rowNodeCacheParams.pageSize;
+        this.startRow = blockNumber * rowNodeCacheParams.blockSize;
+        this.endRow = this.startRow + rowNodeCacheParams.blockSize;
     }
 
     public forEachNode(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence, rowCount: number): void {
@@ -148,7 +148,7 @@ export abstract class RowNodeBlock extends BeanStub {
     // creates empty row nodes, data is missing as not loaded yet
     protected createRowNodes(): void {
         this.rowNodes = [];
-        for (let i = 0; i < this.rowNodeCacheParams.pageSize; i++) {
+        for (let i = 0; i < this.rowNodeCacheParams.blockSize; i++) {
             let rowIndex = this.startRow + i;
             let rowNode = this.createBlankRowNode(rowIndex);
             this.rowNodes.push(rowNode);
