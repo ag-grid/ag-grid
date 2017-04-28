@@ -2,7 +2,7 @@ import {NumberSequence, Utils as _} from "../../utils";
 import {RowNode} from "../../entities/rowNode";
 import {BeanStub} from "../../context/beanStub";
 import {RowNodeBlock} from "./rowNodeBlock";
-import {InfiniteBlock} from "../infinite/infiniteBlock";
+import {Logger} from "../../logger";
 
 export interface RowNodeCacheParams {
     initialRowCount: number;
@@ -13,24 +13,42 @@ export interface RowNodeCacheParams {
     maxBlocksInCache: number;
     rowHeight: number;
     lastAccessedSequence: NumberSequence;
+    maxConcurrentRequests: number;
 }
 
-export abstract class RowNodeCache<T extends RowNodeBlock> extends BeanStub {
+export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCacheParams> extends BeanStub {
 
     private virtualRowCount: number;
     private maxRowFound = false;
 
-    private rowNodeCacheParams: RowNodeCacheParams;
+    protected cacheParams: P;
 
     private active = true;
+    private activePageLoadsCount = 0;
 
     private blocks: {[blockNumber: string]: T} = {};
     private blockCount = 0;
 
-    constructor(params: RowNodeCacheParams) {
+    protected logger: Logger;
+
+    constructor(cacheParams: P) {
         super();
-        this.virtualRowCount = params.initialRowCount;
-        this.rowNodeCacheParams = params;
+        this.virtualRowCount = cacheParams.initialRowCount;
+        this.cacheParams = cacheParams;
+    }
+
+    public getBlockState(): any {
+        let result: any[] = [];
+        this.forEachBlockInOrder( (block: RowNodeBlock, id: number) => {
+            let stateItem = {
+                blockNumber: id,
+                startRow: block.getStartRow(),
+                endRow: block.getEndRow(),
+                pageStatus: block.getState()
+            };
+            result.push(stateItem);
+        });
+        return result;
     }
 
     public isActive(): boolean {
@@ -54,7 +72,53 @@ export abstract class RowNodeCache<T extends RowNodeBlock> extends BeanStub {
         this.active = false;
     }
 
-    protected checkVirtualRowCount(page: InfiniteBlock, lastRow: any): void {
+    protected onPageLoaded(event: any): void {
+        // if we are not active, then we ignore all events, otherwise we could end up getting the
+        // grid to refresh even though we are no longer the active cache
+        if (!this.isActive()) {
+            return;
+        }
+
+        this.logger.log(`onPageLoaded: page = ${event.page.getPageNumber()}, lastRow = ${event.lastRow}`);
+        this.activePageLoadsCount--;
+        this.checkBlockToLoad();
+
+        if (event.success) {
+            this.checkVirtualRowCount(event.page, event.lastRow);
+        }
+    }
+
+    private printCacheStatus(): void {
+        this.logger.log(`checkPageToLoad: activePageLoadsCount = ${this.activePageLoadsCount}, 
+                            pages = ${JSON.stringify(this.getBlockState())}`);
+    }
+
+    protected checkBlockToLoad() {
+        this.printCacheStatus();
+
+        if (this.activePageLoadsCount >= this.cacheParams.maxConcurrentRequests) {
+            this.logger.log(`checkPageToLoad: max loads exceeded`);
+            return;
+        }
+
+        let pageToLoad: RowNodeBlock = null;
+        this.forEachBlockInOrder( block => {
+            if (block.getState() === RowNodeBlock.STATE_DIRTY) {
+                pageToLoad = block;
+            }
+        });
+
+        if (pageToLoad) {
+            pageToLoad.load();
+            this.activePageLoadsCount++;
+            this.logger.log(`checkPageToLoad: loading page ${pageToLoad.getPageNumber()}`);
+            this.printCacheStatus();
+        } else {
+            this.logger.log(`checkPageToLoad: no pages to load`);
+        }
+    }
+
+    protected checkVirtualRowCount(page: T, lastRow: any): void {
         // if client provided a last row, we always use it, as it could change between server calls
         // if user deleted data and then called refresh on the grid.
         if (typeof lastRow === 'number' && lastRow >= 0) {
@@ -63,8 +127,8 @@ export abstract class RowNodeCache<T extends RowNodeBlock> extends BeanStub {
             this.dispatchModelUpdated();
         } else if (!this.maxRowFound) {
             // otherwise, see if we need to add some virtual rows
-            var lastRowIndex = (page.getPageNumber() + 1) * this.rowNodeCacheParams.pageSize;
-            var lastRowIndexPlusOverflow = lastRowIndex + this.rowNodeCacheParams.overflowSize;
+            var lastRowIndex = (page.getPageNumber() + 1) * this.cacheParams.pageSize;
+            var lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.overflowSize;
 
             if (this.virtualRowCount < lastRowIndexPlusOverflow) {
                 this.virtualRowCount = lastRowIndexPlusOverflow;
@@ -85,7 +149,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock> extends BeanStub {
         // of a particular page, otherwise the searching will not pop into the
         // next page
         if (!this.maxRowFound) {
-            if (this.virtualRowCount % this.rowNodeCacheParams.pageSize === 0) {
+            if (this.virtualRowCount % this.cacheParams.pageSize === 0) {
                 this.virtualRowCount++;
             }
         }

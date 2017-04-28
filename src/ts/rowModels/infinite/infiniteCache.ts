@@ -1,4 +1,4 @@
-import {NumberSequence, Utils as _} from "../../utils";
+import {Utils as _} from "../../utils";
 import {RowNode} from "../../entities/rowNode";
 import {Autowired, Context, PostConstruct, Qualifier} from "../../context/context";
 import {EventService} from "../../eventService";
@@ -9,24 +9,16 @@ import {InfiniteBlock} from "./infiniteBlock";
 import {RowNodeCache, RowNodeCacheParams} from "../cache/rowNodeCache";
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {
-    maxConcurrentRequests: number;
     datasource: IDatasource;
 }
 
-export class InfiniteCache extends RowNodeCache<InfiniteBlock> {
+export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCacheParams> {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
-    private activePageLoadsCount = 0;
-
-    private cacheParams: InfiniteCacheParams;
-
-    private logger: Logger;
-
     constructor(params: InfiniteCacheParams) {
         super(params);
-        this.cacheParams = params;
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -43,7 +35,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock> {
     private moveItemsDown(page: InfiniteBlock, moveFromIndex: number, moveCount: number): void {
         let startRow = page.getStartRow();
         let endRow = page.getEndRow();
-        var indexOfLastRowToMove = moveFromIndex + moveCount;
+        let indexOfLastRowToMove = moveFromIndex + moveCount;
 
         // all rows need to be moved down below the insertion index
         for (let currentRowIndex = endRow - 1; currentRowIndex >= startRow; currentRowIndex--) {
@@ -64,20 +56,20 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock> {
         }
     }
 
-    private insertItems(page: InfiniteBlock, indexToInsert: number, items: any[]): RowNode[] {
-        let pageStartRow = page.getStartRow();
-        let pageEndRow = page.getEndRow();
+    private insertItems(block: InfiniteBlock, indexToInsert: number, items: any[]): RowNode[] {
+        let pageStartRow = block.getStartRow();
+        let pageEndRow = block.getEndRow();
         let newRowNodes: RowNode[] = [];
 
         // next stage is insert the rows into this page, if applicable
         for (let index = 0; index < items.length; index++) {
-            var rowIndex = indexToInsert + index;
+            let rowIndex = indexToInsert + index;
 
             let currentRowInThisPage = rowIndex >= pageStartRow && rowIndex < pageEndRow;
 
             if (currentRowInThisPage) {
-                var dataItem = items[index];
-                var newRowNode = page.setNewData(rowIndex, dataItem);
+                let dataItem = items[index];
+                let newRowNode = block.setNewData(rowIndex, dataItem);
                 newRowNodes.push(newRowNode);
             }
         }
@@ -110,22 +102,6 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock> {
         this.eventService.dispatchEvent(Events.EVENT_ITEMS_ADDED, newNodes);
     }
 
-    private onPageLoaded(event: any): void {
-        // if we are not active, then we ignore all events, otherwise we could end up getting the
-        // grid to refresh even though we are no longer the active cache
-        if (!this.isActive()) {
-            return;
-        }
-
-        this.logger.log(`onPageLoaded: page = ${event.page.getPageNumber()}, lastRow = ${event.lastRow}`);
-        this.activePageLoadsCount--;
-        this.checkBlockToLoad();
-
-        if (event.success) {
-            this.checkVirtualRowCount(event.page, event.lastRow);
-        }
-    }
-
     // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,
     // it will want new pages in the cache as it asks for rows. only when we are inserting /
     // removing rows via the api is dontCreatePage set, where we move rows between the pages.
@@ -156,7 +132,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock> {
         let needToPurge = _.exists(this.cacheParams.maxBlocksInCache)
             && this.getBlockCount() > this.cacheParams.maxBlocksInCache;
         if (needToPurge) {
-            var lruPage = this.findLeastRecentlyUsedPage(newBlock);
+            let lruPage = this.findLeastRecentlyUsedPage(newBlock);
             this.removeBlockFromCache(lruPage);
         }
 
@@ -177,38 +153,9 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock> {
         // if the purged page is in loading state
     }
 
-    private printCacheStatus(): void {
-        this.logger.log(`checkPageToLoad: activePageLoadsCount = ${this.activePageLoadsCount}, pages = ${JSON.stringify(this.getBlockState())}`);
-    }
-
-    private checkBlockToLoad() {
-        this.printCacheStatus();
-
-        if (this.activePageLoadsCount >= this.cacheParams.maxConcurrentRequests) {
-            this.logger.log(`checkPageToLoad: max loads exceeded`);
-            return;
-        }
-
-        var pageToLoad: InfiniteBlock = null;
-        this.forEachBlockInOrder( (block: InfiniteBlock)=> {
-            if (block.getState() === InfiniteBlock.STATE_DIRTY) {
-                pageToLoad = block;
-            }
-        });
-
-        if (pageToLoad) {
-            pageToLoad.load();
-            this.activePageLoadsCount++;
-            this.logger.log(`checkPageToLoad: loading page ${pageToLoad.getPageNumber()}`);
-            this.printCacheStatus();
-        } else {
-            this.logger.log(`checkPageToLoad: no pages to load`);
-        }
-    }
-
     private findLeastRecentlyUsedPage(pageToExclude: InfiniteBlock): InfiniteBlock {
 
-        var lruPage: InfiniteBlock = null;
+        let lruPage: InfiniteBlock = null;
 
         this.forEachBlockInOrder( (block: InfiniteBlock)=> {
             // we exclude checking for the page just created, as this has yet to be accessed and hence
@@ -229,20 +176,6 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock> {
         if (this.isActive()) {
             this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
         }
-    }
-
-    public getBlockState(): any {
-        var result: any[] = [];
-        this.forEachBlockInOrder( (block: InfiniteBlock, id: number) => {
-            let stateItem = {
-                blockNumber: id,
-                startRow: block.getStartRow(),
-                endRow: block.getEndRow(),
-                pageStatus: block.getState()
-            };
-            result.push(stateItem);
-        });
-        return result;
     }
 
     public refreshCache(): void {
