@@ -332,7 +332,8 @@
 <div class="docsMenu-content">
     <?php
 
-    menuItem(0, 'ag-Grid OpenFin', 'OpenFin Examples', 'javascript-grid-openfin/');
+    menuItem(0, 'ag-Grid OpenFin', 'OpenFin', 'javascript-grid-openfin/');
+    menuItem(0, 'ag-Grid Graphing', 'Graphing', 'javascript-grid-graphing/');
     ?>
 </div>
 
