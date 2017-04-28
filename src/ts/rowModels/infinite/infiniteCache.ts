@@ -5,7 +5,7 @@ import {EventService} from "../../eventService";
 import {Events} from "../../events";
 import {LoggerFactory, Logger} from "../../logger";
 import {IDatasource} from "../iDatasource";
-import {InfiniteBlock} from "./infiniteBlock";
+import {InfiniteBlock, RowNodeBlock} from "./infiniteBlock";
 import {BeanStub} from "../../context/beanStub";
 
 export interface RowNodeCacheParams {
@@ -15,16 +15,16 @@ export interface RowNodeCacheParams {
     rowHeight: number;
     sortModel: any;
     filterModel: any;
+    maxBlocksInCache: number;
     lastAccessedSequence: NumberSequence;
 }
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {
-    maxBlocksInCache: number;
     maxConcurrentRequests: number;
     datasource: IDatasource;
 }
 
-export abstract class RowNodeCache extends BeanStub {
+export abstract class RowNodeCache<T extends RowNodeBlock> extends BeanStub {
 
     private virtualRowCount: number;
     private maxRowFound = false;
@@ -32,6 +32,9 @@ export abstract class RowNodeCache extends BeanStub {
     private rowNodeCacheParams: RowNodeCacheParams;
 
     private active = true;
+
+    private blocks: {[blockNumber: string]: T} = {};
+    private blockCount = 0;
 
     constructor(params: RowNodeCacheParams) {
         super();
@@ -99,18 +102,59 @@ export abstract class RowNodeCache extends BeanStub {
         this.dispatchModelUpdated();
     }
 
+    protected forEachBlockInOrder(callback: (block: T, id: number)=>void): void {
+        let ids = this.getBlockIdsSorted();
+        this.forEachBlockId(ids, callback);
+    }
+
+    protected forEachBlockInReverseOrder(callback: (block: T, id: number)=>void): void {
+        let ids = this.getBlockIdsSorted().reverse();
+        this.forEachBlockId(ids, callback);
+    }
+
+    private forEachBlockId(ids: number[], callback: (block: T, id: number)=>void): void {
+        ids.forEach( id => {
+            let block = this.blocks[id];
+            callback(block, id);
+        });
+    }
+
+    protected getBlockIdsSorted(): number[] {
+        // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
+        let numberComparator = (a: number, b: number) => a - b; // default comparator for array is string comparison
+        let blockIds = Object.keys(this.blocks).map(idStr => parseInt(idStr)).sort(numberComparator);
+        return blockIds;
+    }
+
+    protected getBlock(blockId: string|number): T {
+        return this.blocks[blockId];
+    }
+
+    protected setBlock(id: number, block: T): void {
+        this.blocks[id] = block;
+        this.blockCount++;
+    }
+
+    protected removeBlock(id: number): void {
+        delete this.blocks[id];
+        this.blockCount--;
+    }
+
+    protected getBlockCount(): number {
+        return this.blockCount;
+    }
+
     protected abstract dispatchModelUpdated(): void;
+
+    public abstract getRow(rowIndex: number): RowNode;
 }
 
-export class InfiniteCache extends RowNodeCache {
+export class InfiniteCache extends RowNodeCache<InfiniteBlock> {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
-    private blocks: {[blockNumber: string]: InfiniteBlock} = {};
-
     private activePageLoadsCount = 0;
-    private blocksCount = 0;
 
     private cacheParams: InfiniteCacheParams;
 
@@ -143,23 +187,23 @@ export class InfiniteCache extends RowNodeCache {
         return this.getVirtualRowCount() * this.cacheParams.rowHeight;
     }
 
+    // fixme: this needs to use a sequence, so it can be shared with the enterprise model
     public forEachNode(callback: (rowNode: RowNode, index: number)=> void): void {
         var index = 0;
-        _.iterateObject(this.blocks, (key: string, cachePage: InfiniteBlock)=> {
-
-            var start = cachePage.getStartRow();
-            var end = cachePage.getEndRow();
+        this.forEachBlockInOrder( (block: InfiniteBlock)=> {
+            var start = block.getStartRow();
+            var end = block.getEndRow();
 
             for (let rowIndex = start; rowIndex < end; rowIndex++) {
                 // we check against virtualRowCount as this page may be the last one, and if it is, then
                 // it's probable that the last rows are not part of the set
                 if (rowIndex < this.getVirtualRowCount()) {
-                    var rowNode = cachePage.getRow(rowIndex);
+                    var rowNode = block.getRow(rowIndex);
                     callback(rowNode, index);
                     index++;
                 }
             }
-        });
+        } );
     }
 
     public getRowIndexAtPixel(pixel: number): number {
@@ -222,20 +266,18 @@ export class InfiniteCache extends RowNodeCache {
 
     public insertItemsAtIndex(indexToInsert: number, items: any[]): void {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
-        let pageIds = Object.keys(this.blocks).map(str => parseInt(str)).sort().reverse();
 
         let newNodes: RowNode[] = [];
-        pageIds.forEach(pageId => {
-            let page = this.blocks[pageId];
-            let pageEndRow = page.getEndRow();
+        this.forEachBlockInReverseOrder( (block: InfiniteBlock, pageId: number) => {
+            let pageEndRow = block.getEndRow();
 
             // if the insertion is after this page, then this page is not impacted
             if (pageEndRow <= indexToInsert) {
                 return;
             }
 
-            this.moveItemsDown(page, indexToInsert, items.length);
-            let newNodesThisPage = this.insertItems(page, indexToInsert, items);
+            this.moveItemsDown(block, indexToInsert, items.length);
+            let newNodesThisPage = this.insertItems(block, indexToInsert, items);
             newNodesThisPage.forEach(rowNode => newNodes.push(rowNode));
         });
 
@@ -271,18 +313,18 @@ export class InfiniteCache extends RowNodeCache {
     // it will want new pages in the cache as it asks for rows. only when we are inserting /
     // removing rows via the api is dontCreatePage set, where we move rows between the pages.
     public getRow(rowIndex: number, dontCreatePage = false): RowNode {
-        var pageNumber = Math.floor(rowIndex / this.cacheParams.pageSize);
-        var page = this.blocks[pageNumber];
+        let blockId = Math.floor(rowIndex / this.cacheParams.pageSize);
+        let block = this.getBlock(blockId);
 
-        if (!page) {
+        if (!block) {
             if (dontCreatePage) {
                 return null;
             } else {
-                page = this.createBlock(pageNumber);
+                block = this.createBlock(blockId);
             }
         }
 
-        return page.getRow(rowIndex);
+        return block.getRow(rowIndex);
     }
 
     private createBlock(blockNumber: number): InfiniteBlock {
@@ -292,11 +334,10 @@ export class InfiniteCache extends RowNodeCache {
 
         newBlock.addEventListener(InfiniteBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
 
-        this.blocks[blockNumber] = newBlock;
-        this.blocksCount++;
+        this.setBlock(blockNumber, newBlock);
 
         let needToPurge = _.exists(this.cacheParams.maxBlocksInCache)
-            && this.blocksCount > this.cacheParams.maxBlocksInCache;
+            && this.getBlockCount() > this.cacheParams.maxBlocksInCache;
         if (needToPurge) {
             var lruPage = this.findLeastRecentlyUsedPage(newBlock);
             this.removeBlockFromCache(lruPage);
@@ -312,8 +353,7 @@ export class InfiniteCache extends RowNodeCache {
             return;
         }
 
-        delete this.blocks[pageToRemove.getPageNumber()];
-        this.blocksCount--;
+        this.removeBlock(pageToRemove.getPageNumber());
 
         // we do not want to remove the 'loaded' event listener, as the
         // concurrent loads count needs to be updated when the load is complete
@@ -333,9 +373,9 @@ export class InfiniteCache extends RowNodeCache {
         }
 
         var pageToLoad: InfiniteBlock = null;
-        _.iterateObject(this.blocks, (key: string, cachePage: InfiniteBlock)=> {
-            if (cachePage.getState() === InfiniteBlock.STATE_DIRTY) {
-                pageToLoad = cachePage;
+        this.forEachBlockInOrder( (block: InfiniteBlock)=> {
+            if (block.getState() === InfiniteBlock.STATE_DIRTY) {
+                pageToLoad = block;
             }
         });
 
@@ -353,15 +393,15 @@ export class InfiniteCache extends RowNodeCache {
 
         var lruPage: InfiniteBlock = null;
 
-        _.iterateObject(this.blocks, (key: string, page: InfiniteBlock)=> {
+        this.forEachBlockInOrder( (block: InfiniteBlock)=> {
             // we exclude checking for the page just created, as this has yet to be accessed and hence
             // the lastAccessed stamp will not be updated for the first time yet
-            if (page === pageToExclude) {
+            if (block === pageToExclude) {
                 return;
             }
 
-            if (_.missing(lruPage) || page.getLastAccessed() < lruPage.getLastAccessed()) {
-                lruPage = page;
+            if (_.missing(lruPage) || block.getLastAccessed() < lruPage.getLastAccessed()) {
+                lruPage = block;
             }
         });
 
@@ -376,22 +416,25 @@ export class InfiniteCache extends RowNodeCache {
 
     public getPageState(): any {
         var result: any[] = [];
-        _.iterateObject(this.blocks, (pageNumber: string, page: InfiniteBlock)=> {
-            result.push({pageNumber: pageNumber, startRow: page.getStartRow(), endRow: page.getEndRow(), pageStatus: page.getState()});
+        this.forEachBlockInOrder( (block: InfiniteBlock, id: number) => {
+            let stateItem = {
+                blockNumber: id,
+                startRow: block.getStartRow(),
+                endRow: block.getEndRow(),
+                pageStatus: block.getState()
+            };
+            result.push(stateItem);
         });
         return result;
     }
 
     public refreshCache(): void {
-        _.iterateObject(this.blocks, (pageId: string, page: InfiniteBlock)=> {
-            page.setDirty();
-        });
+        this.forEachBlockInOrder( block => block.setDirty() );
         this.checkBlockToLoad();
     }
 
     public purgeCache(): void {
-        var pagesList = _.values(this.blocks);
-        pagesList.forEach( virtualPage => this.removeBlockFromCache(virtualPage) );
+        this.forEachBlockInOrder( block => this.removeBlockFromCache(block));
         this.dispatchModelUpdated();
     }
 

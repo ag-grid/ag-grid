@@ -6,12 +6,13 @@ import {EventService} from "../../eventService";
 import {IGetRowsParams} from "../iDatasource";
 import {IEventEmitter} from "../../interfaces/iEventEmitter";
 import {InfiniteCacheParams, RowNodeCacheParams} from "./infiniteCache";
+import {BeanStub} from "../../context/beanStub";
 
 export interface RowNodeBlockBeans {
     context: Context;
 }
 
-export abstract class RowNodeBlock {
+export abstract class RowNodeBlock extends BeanStub {
 
     public static EVENT_LOAD_COMPLETE = 'loadComplete';
 
@@ -37,9 +38,16 @@ export abstract class RowNodeBlock {
 
     private rowNodeCacheParams: RowNodeCacheParams;
 
-    private localEventService = new EventService();
+    // gets base class to load, based on what the datasource type is
+    protected abstract loadFromDatasource(): void;
+
+    // how we set the data and id is also dependent ton the base class, as the enterprise
+    // model is concerned with groups (so has to set keys for the group)
+    protected abstract setDataAndId(rowNode: RowNode, data: any, index: number): void;
 
     constructor(blockNumber: number, rowNodeCacheParams: RowNodeCacheParams) {
+        super();
+
         this.rowNodeCacheParams = rowNodeCacheParams;
         this.blockNumber = blockNumber;
 
@@ -47,14 +55,6 @@ export abstract class RowNodeBlock {
         // however it makes the code easier to read if we work them out up front
         this.startRow = blockNumber * rowNodeCacheParams.pageSize;
         this.endRow = this.startRow + rowNodeCacheParams.pageSize;
-    }
-
-    public addEventListener(eventType: string, listener: Function): void {
-        this.localEventService.addEventListener(eventType, listener);
-    }
-
-    public removeEventListener(eventType: string, listener: Function): void {
-        this.localEventService.removeEventListener(eventType, listener);
     }
 
     public getVersion(): number {
@@ -65,7 +65,9 @@ export abstract class RowNodeBlock {
         return this.lastAccessed;
     }
 
-    // todo: this is used by infinite, however it is over ridden by enterprise
+    // this gets the row using local (not display) indexes. for infinite scrolling, the
+    // local index is the same as the display index. however for enterprise, they are different,
+    // hence enterprise overrides this method.
     public getRow(rowIndex: number): RowNode {
         this.lastAccessed = this.rowNodeCacheParams.lastAccessedSequence.next();
         var localIndex = rowIndex - this.startRow;
@@ -141,9 +143,6 @@ export abstract class RowNodeBlock {
         }
     }
 
-    // gets base class to load, based on what the datasource type is
-    protected abstract loadFromDatasource(): void;
-
     public load(): void {
         this.state = RowNodeBlock.STATE_LOADING;
         this.loadFromDatasource();
@@ -152,10 +151,8 @@ export abstract class RowNodeBlock {
     protected pageLoadFailed() {
         this.state = RowNodeBlock.STATE_FAILED;
         var event = {success: false, page: this};
-        this.localEventService.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
+        this.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
     }
-
-    protected abstract setDataAndId(rowNode: RowNode, data: any, index: number): void;
 
     private populateWithRowData(rows: any[]): void {
         this.rowNodes.forEach( (rowNode: RowNode, index: number)=> {
@@ -178,7 +175,7 @@ export abstract class RowNodeBlock {
         // check here if lastrow should be set
         var event = {success: true, page: this, lastRow: lastRow};
 
-        this.localEventService.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
+        this.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
     }
 
 }
