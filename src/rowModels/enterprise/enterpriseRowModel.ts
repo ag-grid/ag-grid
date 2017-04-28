@@ -153,6 +153,7 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
             lastAccessedSequence: new NumberSequence(),
             overflowSize: 1,
             initialRowCount: 1,
+            maxConcurrentRequests: 2,
             maxBlocksInCache: 10,
             pageSize: 100,
             rowHeight: this.rowHeight

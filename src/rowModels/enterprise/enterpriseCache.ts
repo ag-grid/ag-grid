@@ -2,16 +2,13 @@ import {
     InfiniteCacheParams,
     _,
     Logger,
-    IEnterpriseGetRowsRequest,
     RowNode,
     Context,
-    PostConstruct,
     Autowired,
     Events,
     EventService,
     IEnterpriseCache,
     IEnterpriseDatasource,
-    IEnterpriseGetRowsParams,
     NumberSequence,
     RowNodeBlock,
     RowNodeCache,
@@ -20,7 +17,6 @@ import {
     Qualifier,
     LoggerFactory
 } from "ag-grid";
-import {EnterpriseRowModel} from "./enterpriseRowModel";
 import {EnterpriseBlock} from "./enterpriseBlock";
 
 export interface EnterpriseCacheParams extends RowNodeCacheParams {
@@ -34,16 +30,12 @@ export interface EnterpriseCacheParams extends RowNodeCacheParams {
 // + group opened / closed
 // + rows are loaded, as this will prob change the row count
 
-export class EnterpriseCache extends RowNodeCache<EnterpriseBlock> implements IEnterpriseCache {
+export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCacheParams> implements IEnterpriseCache {
 
     public static EVENT_CACHE_UPDATED = 'cacheUpdated';
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
-
-    private logger: Logger;
-
-    private params: EnterpriseCacheParams;
 
     // this will always be zero for the top level cache only,
     // all the other ones chance as the groups open and close
@@ -52,9 +44,8 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock> implements IE
 
     private parentRowNode: RowNode;
 
-    constructor(params: EnterpriseCacheParams, parentRowNode: RowNode) {
-        super(params);
-        this.params = params;
+    constructor(cacheParams: EnterpriseCacheParams, parentRowNode: RowNode) {
+        super(cacheParams);
         this.parentRowNode = parentRowNode;
     }
 
@@ -79,7 +70,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock> implements IE
             // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
             // the cache if any row nodes are open.
             let blocksSkippedCount = blockId - lastBlockId - 1;
-            let rowsSkippedCount = blocksSkippedCount * this.params.pageSize;
+            let rowsSkippedCount = blocksSkippedCount * this.cacheParams.pageSize;
             if (rowsSkippedCount>0) {
                 numberSequence.skip(rowsSkippedCount);
             }
@@ -93,7 +84,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock> implements IE
         // eg if block size = 10, we have total rows of 25 (indexes 0 .. 24), but first 2 blocks loaded (because
         // last row was ejected from cache), then:
         // lastVisitedRow = 19, virtualRowCount = 25, rows not accounted for = 5 (24 - 19)
-        let lastVisitedRow = ((lastBlockId + 1) * this.params.pageSize) -1;
+        let lastVisitedRow = ((lastBlockId + 1) * this.cacheParams.pageSize) -1;
         let rowCount = this.getVirtualRowCount();
         let rowsNotAccountedFor = rowCount - lastVisitedRow - 1;
         if (rowsNotAccountedFor > 0) {
@@ -135,13 +126,13 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock> implements IE
                 blockNumber = beforeBlock.getPageNumber();
                 displayIndexStart = beforeBlock.getDisplayStartIndex();
                 while (displayIndexStart < rowIndex) {
-                    displayIndexStart += this.params.pageSize;
+                    displayIndexStart += this.cacheParams.pageSize;
                     blockNumber++;
                 }
             } else {
                 let localIndex = rowIndex - this.firstDisplayIndex;
-                blockNumber = localIndex / this.params.pageSize;
-                displayIndexStart = this.firstDisplayIndex + (blockNumber * this.params.pageSize);
+                blockNumber = localIndex / this.cacheParams.pageSize;
+                displayIndexStart = this.firstDisplayIndex + (blockNumber * this.cacheParams.pageSize);
             }
             block = this.createBlock(blockNumber, displayIndexStart);
 
@@ -155,7 +146,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock> implements IE
 
     private createBlock(blockNumber: number, displayIndex: number): EnterpriseBlock {
 
-        let newBlock = new EnterpriseBlock(blockNumber, this.parentRowNode, this.params, this);
+        let newBlock = new EnterpriseBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
         this.context.wireBean(newBlock);
 
         let displayIndexSequence = new NumberSequence(displayIndex);
@@ -165,8 +156,8 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock> implements IE
 
         this.setBlock(blockNumber, newBlock);
 
-        let needToPurge = _.exists(this.params.maxBlocksInCache)
-            && this.getBlockCount() > this.params.maxBlocksInCache;
+        let needToPurge = _.exists(this.cacheParams.maxBlocksInCache)
+            && this.getBlockCount() > this.cacheParams.maxBlocksInCache;
         // if (needToPurge) {
         //     var lruPage = this.findLeastRecentlyUsedPage(newBlock);
         //     this.removeBlockFromCache(lruPage);
@@ -175,36 +166,6 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock> implements IE
         this.checkBlockToLoad();
 
         return newBlock;
-    }
-
-    private checkBlockToLoad() {
-
-        var pageToLoad: EnterpriseBlock = null;
-        this.forEachBlockInOrder(block => {
-            if (block.getState() === EnterpriseBlock.STATE_DIRTY) {
-                pageToLoad = block;
-            }
-        });
-
-        if (pageToLoad) {
-            pageToLoad.load();
-        }
-    }
-
-    private onPageLoaded(event: any): void {
-        // if we are not active, then we ignore all events, otherwise we could end up getting the
-        // grid to refresh even though we are no longer the active cache
-        if (!this.isActive()) {
-            return;
-        }
-
-        this.logger.log(`onPageLoaded: page = ${event.page.getPageNumber()}, lastRow = ${event.lastRow}`);
-        // this.activePageLoadsCount--;
-        // this.checkBlockToLoad();
-
-        if (event.success) {
-            this.checkVirtualRowCount(event.page, event.lastRow);
-        }
     }
 
     public getLastDisplayedIndex(): number {
