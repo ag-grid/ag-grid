@@ -1,4 +1,4 @@
-import {Utils as _} from "../../utils";
+import {NumberSequence, Utils as _} from "../../utils";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {RowNode} from "../../entities/rowNode";
 import {Context, Autowired, PostConstruct} from "../../context/context";
@@ -55,6 +55,22 @@ export abstract class RowNodeBlock extends BeanStub {
         // however it makes the code easier to read if we work them out up front
         this.startRow = blockNumber * rowNodeCacheParams.pageSize;
         this.endRow = this.startRow + rowNodeCacheParams.pageSize;
+    }
+
+    public forEachNode(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence, rowCount: number): void {
+        for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex++) {
+            // we check against virtualRowCount as this page may be the last one, and if it is, then
+            // it's probable that the last rows are not part of the set
+            if (rowIndex < rowCount) {
+                let rowNode = this.getRow(rowIndex);
+                callback(rowNode, sequence.next());
+                // this will only every happen for enterprise row model, as infinite
+                // row model doesn't have groups
+                if (rowNode.childrenCache) {
+                    rowNode.childrenCache.forEachNode(callback, sequence);
+                }
+            }
+        }
     }
 
     public getVersion(): number {
@@ -136,9 +152,9 @@ export abstract class RowNodeBlock extends BeanStub {
     // creates empty row nodes, data is missing as not loaded yet
     protected createRowNodes(): void {
         this.rowNodes = [];
-        for (var i = 0; i < this.rowNodeCacheParams.pageSize; i++) {
-            var rowIndex = this.startRow + i;
-            var rowNode = this.createBlankRowNode(rowIndex);
+        for (let i = 0; i < this.rowNodeCacheParams.pageSize; i++) {
+            let rowIndex = this.startRow + i;
+            let rowNode = this.createBlankRowNode(rowIndex);
             this.rowNodes.push(rowNode);
         }
     }
@@ -187,10 +203,10 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
 
     private cacheParams: InfiniteCacheParams;
 
-    constructor(pageNumber: number, cacheSettings: InfiniteCacheParams) {
-        super(pageNumber, cacheSettings);
+    constructor(pageNumber: number, params: InfiniteCacheParams) {
+        super(pageNumber, params);
 
-        this.cacheParams = cacheSettings;
+        this.cacheParams = params;
     }
 
     protected createBlankRowNode(rowIndex: number): RowNode {

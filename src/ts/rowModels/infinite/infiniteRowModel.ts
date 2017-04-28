@@ -27,14 +27,20 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
 
     private datasource: IDatasource;
 
+    private rowHeight: number;
+
     public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
-        if (_.missing(this.infiniteCache)) { return null; }
-        return this.infiniteCache.getRowBounds(index);
+        return {
+            rowHeight: this.rowHeight,
+            rowTop: this.rowHeight * index
+        };
     }
 
     @PostConstruct
     public init(): void {
         if (!this.gridOptionsWrapper.isRowModelInfinite()) { return; }
+
+        this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
 
         this.addEventListeners();
         this.setDatasource(this.gridOptionsWrapper.getDatasource());
@@ -186,16 +192,25 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
 
     public forEachNode(callback: (rowNode: RowNode, index: number)=> void): void {
         if (this.infiniteCache) {
-            this.infiniteCache.forEachNode(callback);
+            this.infiniteCache.forEachNode(callback, new NumberSequence());
         }
     }
 
     public getCurrentPageHeight(): number {
-        return this.infiniteCache ? this.infiniteCache.getCurrentPageHeight() : 0;
+        return this.getRowCount() * this.rowHeight;
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        return this.infiniteCache ? this.infiniteCache.getRowIndexAtPixel(pixel) : -1;
+        if (this.rowHeight !== 0) { // avoid divide by zero error
+            var rowIndexForPixel = Math.floor(pixel / this.rowHeight);
+            if (rowIndexForPixel > this.getPageLastRow()) {
+                return this.getPageLastRow();
+            } else {
+                return rowIndexForPixel;
+            }
+        } else {
+            return 0;
+        }
     }
 
     public getPageFirstRow(): number {
@@ -203,11 +218,11 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     }
 
     public getPageLastRow(): number {
-        return this.infiniteCache ? this.infiniteCache.getRowCount() -1 : 0;
+        return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() -1 : 0;
     }
 
     public getRowCount(): number {
-        return this.infiniteCache ? this.infiniteCache.getRowCount() : 0;
+        return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() : 0;
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {

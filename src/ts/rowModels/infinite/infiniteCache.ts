@@ -12,10 +12,10 @@ export interface RowNodeCacheParams {
     initialRowCount: number;
     pageSize: number;
     overflowSize: number;
-    rowHeight: number;
     sortModel: any;
     filterModel: any;
     maxBlocksInCache: number;
+    rowHeight: number;
     lastAccessedSequence: NumberSequence;
 }
 
@@ -102,6 +102,12 @@ export abstract class RowNodeCache<T extends RowNodeBlock> extends BeanStub {
         this.dispatchModelUpdated();
     }
 
+    public forEachNode(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence): void {
+        this.forEachBlockInOrder( block => {
+            block.forEachNode(callback, sequence, this.virtualRowCount);
+        });
+    }
+
     protected forEachBlockInOrder(callback: (block: T, id: number)=>void): void {
         let ids = this.getBlockIdsSorted();
         this.forEachBlockId(ids, callback);
@@ -165,13 +171,6 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock> {
         this.cacheParams = params;
     }
 
-    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
-        return {
-            rowHeight: this.cacheParams.rowHeight,
-            rowTop: this.cacheParams.rowHeight * index
-        };
-    }
-
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('VirtualPageCache');
     }
@@ -181,42 +180,6 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock> {
         // start load of data, as the virtualRowCount will remain at 0 otherwise,
         // so we need this to kick things off, otherwise grid would never call getRow()
         this.getRow(0);
-    }
-
-    public getCurrentPageHeight(): number {
-        return this.getVirtualRowCount() * this.cacheParams.rowHeight;
-    }
-
-    // fixme: this needs to use a sequence, so it can be shared with the enterprise model
-    public forEachNode(callback: (rowNode: RowNode, index: number)=> void): void {
-        var index = 0;
-        this.forEachBlockInOrder( (block: InfiniteBlock)=> {
-            var start = block.getStartRow();
-            var end = block.getEndRow();
-
-            for (let rowIndex = start; rowIndex < end; rowIndex++) {
-                // we check against virtualRowCount as this page may be the last one, and if it is, then
-                // it's probable that the last rows are not part of the set
-                if (rowIndex < this.getVirtualRowCount()) {
-                    var rowNode = block.getRow(rowIndex);
-                    callback(rowNode, index);
-                    index++;
-                }
-            }
-        } );
-    }
-
-    public getRowIndexAtPixel(pixel: number): number {
-        if (this.cacheParams.rowHeight !== 0) { // avoid divide by zero error
-            var rowIndexForPixel = Math.floor(pixel / this.cacheParams.rowHeight);
-            if (rowIndexForPixel >= this.getVirtualRowCount()) {
-                return this.getVirtualRowCount() - 1;
-            } else {
-                return rowIndexForPixel;
-            }
-        } else {
-            return 0;
-        }
     }
 
     private moveItemsDown(page: InfiniteBlock, moveFromIndex: number, moveCount: number): void {
@@ -268,7 +231,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock> {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
 
         let newNodes: RowNode[] = [];
-        this.forEachBlockInReverseOrder( (block: InfiniteBlock, pageId: number) => {
+        this.forEachBlockInReverseOrder( (block: InfiniteBlock) => {
             let pageEndRow = block.getEndRow();
 
             // if the insertion is after this page, then this page is not impacted
@@ -287,10 +250,6 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock> {
 
         this.dispatchModelUpdated();
         this.eventService.dispatchEvent(Events.EVENT_ITEMS_ADDED, newNodes);
-    }
-
-    public getRowCount(): number {
-        return this.getVirtualRowCount();
     }
 
     private onPageLoaded(event: any): void {
