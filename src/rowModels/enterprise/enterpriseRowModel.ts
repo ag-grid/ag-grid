@@ -19,6 +19,7 @@ import {
     LoggerFactory,
     NumberSequence,
     PostConstruct,
+    RowNodeCache,
     Qualifier,
     RowNode,
     GridOptionsWrapper,
@@ -155,7 +156,7 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
             initialRowCount: 1,
             maxConcurrentRequests: 2,
             maxBlocksInCache: 10,
-            pageSize: 100,
+            blockSize: 100,
             rowHeight: this.rowHeight
         };
 
@@ -166,7 +167,7 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         let cache = new EnterpriseCache(this.cacheParams, rowNode);
         this.context.wireBean(cache);
 
-        cache.addEventListener(EnterpriseCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
+        cache.addEventListener(RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
 
         rowNode.childrenCache = cache;
     }

@@ -14,6 +14,7 @@ import {
     RowNodeCache,
     RowNodeCacheParams,
     ColumnVO,
+    PostConstruct,
     Qualifier,
     LoggerFactory
 } from "ag-grid";
@@ -31,8 +32,6 @@ export interface EnterpriseCacheParams extends RowNodeCacheParams {
 // + rows are loaded, as this will prob change the row count
 
 export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCacheParams> implements IEnterpriseCache {
-
-    public static EVENT_CACHE_UPDATED = 'cacheUpdated';
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
@@ -53,10 +52,9 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         this.logger = loggerFactory.create('EnterpriseCache');
     }
 
-    protected dispatchModelUpdated(): void {
-        if (this.isActive()) {
-            this.dispatchEvent(EnterpriseCache.EVENT_CACHE_UPDATED);
-        }
+    @PostConstruct
+    protected init(): void {
+        super.init();
     }
 
     public setDisplayIndexes(numberSequence: NumberSequence): void {
@@ -70,7 +68,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
             // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
             // the cache if any row nodes are open.
             let blocksSkippedCount = blockId - lastBlockId - 1;
-            let rowsSkippedCount = blocksSkippedCount * this.cacheParams.pageSize;
+            let rowsSkippedCount = blocksSkippedCount * this.cacheParams.blockSize;
             if (rowsSkippedCount>0) {
                 numberSequence.skip(rowsSkippedCount);
             }
@@ -84,7 +82,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         // eg if block size = 10, we have total rows of 25 (indexes 0 .. 24), but first 2 blocks loaded (because
         // last row was ejected from cache), then:
         // lastVisitedRow = 19, virtualRowCount = 25, rows not accounted for = 5 (24 - 19)
-        let lastVisitedRow = ((lastBlockId + 1) * this.cacheParams.pageSize) -1;
+        let lastVisitedRow = ((lastBlockId + 1) * this.cacheParams.blockSize) -1;
         let rowCount = this.getVirtualRowCount();
         let rowsNotAccountedFor = rowCount - lastVisitedRow - 1;
         if (rowsNotAccountedFor > 0) {
@@ -126,13 +124,13 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
                 blockNumber = beforeBlock.getPageNumber();
                 displayIndexStart = beforeBlock.getDisplayStartIndex();
                 while (displayIndexStart < rowIndex) {
-                    displayIndexStart += this.cacheParams.pageSize;
+                    displayIndexStart += this.cacheParams.blockSize;
                     blockNumber++;
                 }
             } else {
                 let localIndex = rowIndex - this.firstDisplayIndex;
-                blockNumber = localIndex / this.cacheParams.pageSize;
-                displayIndexStart = this.firstDisplayIndex + (blockNumber * this.cacheParams.pageSize);
+                blockNumber = localIndex / this.cacheParams.blockSize;
+                displayIndexStart = this.firstDisplayIndex + (blockNumber * this.cacheParams.blockSize);
             }
             block = this.createBlock(blockNumber, displayIndexStart);
 
