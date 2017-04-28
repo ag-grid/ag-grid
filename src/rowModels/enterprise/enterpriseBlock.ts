@@ -1,26 +1,21 @@
 import {
-    InfiniteCacheParams,
     _,
-    Logger,
-    IEnterpriseGetRowsRequest,
-    RowNode,
-    Context,
-    PostConstruct,
     Autowired,
+    Context,
     Events,
     EventService,
-    IEnterpriseCache,
-    IEnterpriseDatasource,
     IEnterpriseGetRowsParams,
+    IEnterpriseGetRowsRequest,
+    InfiniteCacheParams,
+    Logger,
     NumberSequence,
+    PostConstruct,
     RowNodeBlock,
-    RowNodeCache,
-    RowNodeCacheParams,
-    ColumnVO,
+    LoggerFactory,
     Qualifier,
-    LoggerFactory
+    RowNode
 } from "ag-grid";
-import {EnterpriseRowModel} from "./enterpriseRowModel";
+
 import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
 
 export class EnterpriseBlock extends RowNodeBlock {
