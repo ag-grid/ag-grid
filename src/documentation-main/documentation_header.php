@@ -53,6 +53,40 @@ function menuItemWithIcon($icon, $indent, $localKey, $name, $url, $noIndentStyli
     }
 }
 
+function menuItemCollapsibleParent($indent, $localKey, $name, $url, $parentId) {
+    $padding = ($indent == 1) ? '&nbsp;&nbsp;' : '';
+    $padding = ($indent == 2) ? '&nbsp;&nbsp;&nbsp;&nbsp;' : $padding;
+    $indentClass = 'sidebarLink-indent'.$indent;
+    if ($GLOBALS[key] == $localKey) {
+        print('<span class="sidebarLinkSelected" style="display: inline-block">' . $padding . $name . '</span>');
+    } else {
+        print('<a class="sidebarLink '.$indentClass.'" style="display: inline-block" href="' . $GLOBALS[rootFolder] . $url . '?framework=' . $GLOBALS[framework] . '">' . $padding . $name . '</a>');
+    }
+    print('<input id="'.$parentId.'" type="checkbox" >');
+    print('<label style="float: right" for="'.$parentId.'"></label>');
+}
+
+function menuItemCollapsibleChild($indent, $localKey, $name, $url, $parentId, $childId, $position = 'middle') {
+    $padding = ($indent == 1) ? '&nbsp;&nbsp;' : '';
+    $padding = ($indent == 2) ? '&nbsp;&nbsp;&nbsp;&nbsp;' : $padding;
+    $indentClass = 'sidebarLink-indent'.$indent;
+
+    if($position == 'start') {
+        print('<div id="'.$childId.'"><section>');
+    }
+
+    if ($GLOBALS[key] == $localKey) {
+        print('<script>expanCollapsibledGroup(\''.$parentId.'\')</script>');
+        print('<span class="sidebarLinkSelected" style="display: inline-block">' . $padding . $name . '</span>');
+    } else {
+        print('<a class="sidebarLink '.$indentClass.'" style="display: inline-block" href="' . $GLOBALS[rootFolder] . $url . '?framework=' . $GLOBALS[framework] . '">' . $padding . $name . '</a>');
+    }
+
+    if($position == 'end') {
+        print('</section></div>');
+    }
+}
+
 function isFrameworkSelected($framework) {
     if ($framework === $GLOBALS[framework]) {
         echo 'selected="selected"';
