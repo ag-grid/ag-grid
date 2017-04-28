@@ -97,8 +97,6 @@ import {RenderedCell} from "./rendering/renderedCell";
 import {HeaderRowComp} from "./headerRendering/headerRowComp";
 import {AnimateShowChangeCellRenderer} from "./rendering/cellRenderers/animateShowChangeCellRenderer";
 import {InMemoryNodeManager} from "./rowModels/inMemory/inMemoryNodeManager";
-import {InfiniteCache, RowNodeCache} from "./rowModels/infinite/infiniteCache";
-import {InfiniteBlock, RowNodeBlock} from "./rowModels/infinite/infiniteBlock";
 import {BaseFrameworkFactory} from "./baseFrameworkFactory";
 import {MethodNotImplementedException} from "./misc/methodNotImplementedException";
 import {TouchListener} from "./widgets/touchListener";
@@ -110,6 +108,10 @@ import {StylingService} from "./styling/stylingService";
 import {BaseFilter} from "./filter/baseFilter";
 import {DateFilter} from "./filter/dateFilter";
 import {simpleHttpRequest} from "./misc/simpleHttpRequest";
+import {RowNodeCache} from "./rowModels/cache/rowNodeCache";
+import {InfiniteCache} from "./rowModels/infinite/infiniteCache";
+import {RowNodeBlock} from "./rowModels/cache/rowNodeBlock";
+import {InfiniteBlock} from "./rowModels/infinite/infiniteBlock";
 
 export function populateClientExports(exports: any): void {
 

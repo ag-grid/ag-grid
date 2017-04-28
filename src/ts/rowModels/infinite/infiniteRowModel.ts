@@ -278,9 +278,9 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         }
     }
 
-    public getPageState(): any {
+    public getBlockState(): any {
         if (this.infiniteCache) {
-            return this.infiniteCache.getPageState();
+            return this.infiniteCache.getBlockState();
         } else {
             return null;
         }

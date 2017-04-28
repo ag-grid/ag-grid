@@ -11,9 +11,8 @@ import {IRowModel} from "../interfaces/iRowModel";
 import {Constants} from "../constants";
 import {Utils as _} from "../utils";
 import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
-import {InfiniteCache, RowNodeCache} from "../rowModels/infinite/infiniteCache";
-import {IEnterpriseCache} from "../interfaces/iEnterpriseCache";
-import {RowNodeBlock} from "../rowModels/infinite/infiniteBlock";
+import {RowNodeCache} from "../rowModels/cache/rowNodeCache";
+import {RowNodeBlock} from "../rowModels/cache/rowNodeBlock";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to

@@ -737,7 +737,7 @@ export class GridApi {
 
     public getInfinitePageState(): any {
         if (this.infinitePageRowModel) {
-            return this.infinitePageRowModel.getPageState();
+            return this.infinitePageRowModel.getBlockState();
         } else {
             console.warn(`ag-Grid: api.getVirtualPageState is only available when rowModelType='virtual'.`);
         }
