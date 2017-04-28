@@ -153,6 +153,7 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
             lastAccessedSequence: new NumberSequence(),
             overflowSize: 1,
             initialRowCount: 1,
+            maxBlocksInCache: 10,
             pageSize: 100,
             rowHeight: this.rowHeight
         };
@@ -194,9 +195,7 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
     public getRow(index: number): RowNode {
         let cacheExists = _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
         if (cacheExists) {
-            // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
-            let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
-            return enterpriseCache.getRow(index);
+            return this.rootNode.childrenCache.getRow(index);
         } else {
             return null;
         }

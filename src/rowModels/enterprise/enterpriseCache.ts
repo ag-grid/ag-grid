@@ -34,7 +34,7 @@ export interface EnterpriseCacheParams extends RowNodeCacheParams {
 // + group opened / closed
 // + rows are loaded, as this will prob change the row count
 
-export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
+export class EnterpriseCache extends RowNodeCache<EnterpriseBlock> implements IEnterpriseCache {
 
     public static EVENT_CACHE_UPDATED = 'cacheUpdated';
 
@@ -44,9 +44,6 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
     private logger: Logger;
 
     private params: EnterpriseCacheParams;
-
-    private blocks: {[blockNumber: string]: EnterpriseBlock} = {};
-    private blocksCount = 0;
 
     // this will always be zero for the top level cache only,
     // all the other ones chance as the groups open and close
@@ -71,19 +68,12 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
         }
     }
 
-    @PostConstruct
-    private init(): void {
-        // start load of data, as the virtualRowCount will remain at 0 otherwise,
-        // so we need this to kick things off, otherwise grid would never call getRow()
-        this.getRow(0);
-    }
-
     public setDisplayIndexes(numberSequence: NumberSequence): void {
         this.firstDisplayIndex = numberSequence.peek();
 
         let lastBlockId = -1;
 
-        this.forEachBlockInOrder( (blockId: number, currentBlock: EnterpriseBlock)=> {
+        this.forEachBlockInOrder( (currentBlock: EnterpriseBlock, blockId: number)=> {
 
             // if we skipped blocks, then we need to skip the row indexes. we assume that all missing
             // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
@@ -113,18 +103,7 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
         this.lastDisplayIndex = numberSequence.peek() - 1;
     }
 
-    private forEachBlockInOrder( callback: (blockId: number, block: EnterpriseBlock)=>void ): void {
-
-        // list of block id's, they are NUMBERS, not strings, and sorted numerically
-        let numberComparator = (a: number, b: number) => a - b; // default comparator for array is string comparison
-        let blockIdsSorted = Object.keys(this.blocks).map( idStr => parseInt(idStr) ).sort(numberComparator);
-
-        blockIdsSorted.forEach( blockId => {
-            let currentBlock = this.blocks[blockId];
-            callback(blockId, currentBlock);
-        });
-    }
-
+    // gets called in a) init() above and b) by the grid
     public getRow(rowIndex: number): RowNode {
 
         // if we have the block, then this is the block
@@ -132,7 +111,7 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
         // this is the last block that we have BEFORE the right block
         let beforeBlock: EnterpriseBlock = null;
 
-        this.forEachBlockInOrder( (blockId: number, currentBlock: EnterpriseBlock)=> {
+        this.forEachBlockInOrder( currentBlock => {
             if (currentBlock.isIndexInBlock(rowIndex)) {
                 block = currentBlock;
             } else if (currentBlock.isBlockBefore(rowIndex)) {
@@ -184,16 +163,15 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
 
         newBlock.addEventListener(EnterpriseBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
 
-        this.blocks[blockNumber] = newBlock;
-        this.blocksCount++;
-        //
-        // let needToPurge = _.exists(this.cacheParams.maxBlocksInCache)
-        //     && this.blocksCount > this.cacheParams.maxBlocksInCache;
+        this.setBlock(blockNumber, newBlock);
+
+        let needToPurge = _.exists(this.params.maxBlocksInCache)
+            && this.getBlockCount() > this.params.maxBlocksInCache;
         // if (needToPurge) {
         //     var lruPage = this.findLeastRecentlyUsedPage(newBlock);
         //     this.removeBlockFromCache(lruPage);
         // }
-        //
+
         this.checkBlockToLoad();
 
         return newBlock;
@@ -202,9 +180,9 @@ export class EnterpriseCache extends RowNodeCache implements IEnterpriseCache {
     private checkBlockToLoad() {
 
         var pageToLoad: EnterpriseBlock = null;
-        _.iterateObject(this.blocks, (key: string, cachePage: EnterpriseBlock)=> {
-            if (cachePage.getState() === EnterpriseBlock.STATE_DIRTY) {
-                pageToLoad = cachePage;
+        this.forEachBlockInOrder(block => {
+            if (block.getState() === EnterpriseBlock.STATE_DIRTY) {
+                pageToLoad = block;
             }
         });
 

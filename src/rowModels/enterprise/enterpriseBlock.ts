@@ -67,6 +67,11 @@ export class EnterpriseBlock extends RowNodeBlock {
 
         let topPointer = actualEnd - 1;
 
+        if (_.missing(topPointer) || _.missing(bottomPointer)) {
+            console.log(`ag-grid: error: topPointer = ${topPointer}, bottomPointer = ${bottomPointer}`);
+            return null;
+        }
+
         while (true) {
 
             let midPointer = Math.floor((bottomPointer + topPointer) / 2);
