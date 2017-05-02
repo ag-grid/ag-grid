@@ -177,14 +177,8 @@ export class HeaderRowComp extends Component {
         switch (this.type) {
             case HeaderRowType.COLUMN :
                 if (this.isUsingOldHeaderRenderer(<Column> columnGroupChild)) {
-                    ////// DEPRECATED - TAKE THIS OUT IN V9
-                    if (!warningGiven) {
-                        console.warn('ag-Grid: since v8, custom headers are now done using components. Please refer to the documentation https://www.ag-grid.com/javascript-grid-header-rendering/. Support for the old way will be dropped in v9.');
-                        warningGiven = true;
-                    }
                     result = new RenderedHeaderCell(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
                 } else {
-                    // the future!!!
                     result = new HeaderWrapperComp(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
                 }
                 break;
@@ -258,6 +252,3 @@ export class HeaderRowComp extends Component {
     }
 
 }
-
-// remove this in v9, when we take out support for the old headers
-let warningGiven = false;
