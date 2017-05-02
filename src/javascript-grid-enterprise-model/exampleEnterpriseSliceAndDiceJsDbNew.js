@@ -20,7 +20,7 @@ var gridOptions = {
     rowModelType: 'enterprise',
     rowGroupPanelShow: 'always',
     animateRows: true,
-    debug: true,
+    debug: false,
     showToolPanel: true,
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,
@@ -97,7 +97,7 @@ FakeServer.prototype.getData = function(request, callback) {
     // it in a timeout to a) give a delay and b) make it asynchronous
     setTimeout( function() {
         callback(result, lastRow);
-    }, 1000);
+    }, 2000);
 };
 
 FakeServer.prototype.buildGroupsFromData = function(filteredData, rowGroupCols, groupKeys, valueCols) {
