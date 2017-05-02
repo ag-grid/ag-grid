@@ -28,8 +28,21 @@ include '../documentation-main/documentation_header.php';
                                 { root: './', files: 'stocksMasterDetail.html,stocksMasterDetail.js' }
                             ]
                           }"
-                          plunker="https://embed.plnkr.co/qmgvkW/",
+                          plunker="",
                           exampleheight="800px">
+    </show-complex-example>
+
+    <h3>Inline Graphs using jQuery Sparklines</h3>
+
+    <p>jQuery Sparklines is a great library that offers small but rich graphs - idea for use within ag-Grid.</p>
+
+    <show-complex-example example="./inlineGraphs.html"
+                          sources="{
+                            [
+                                { root: './', files: 'inlineGraphs.html,inlineGraphs.js' }
+                            ]
+                          }"
+                          plunker="">
     </show-complex-example>
 
 </div>
