@@ -122,55 +122,12 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
     }
 
     private createBlock(blockNumber: number): InfiniteBlock {
-
         let newBlock = new InfiniteBlock(blockNumber, this.cacheParams);
         this.context.wireBean(newBlock);
 
-        newBlock.addEventListener(InfiniteBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
-
-        this.setBlock(blockNumber, newBlock);
-
-        let needToPurge = _.exists(this.cacheParams.maxBlocksInCache)
-            && this.getBlockCount() > this.cacheParams.maxBlocksInCache;
-        if (needToPurge) {
-            let lruPage = this.findLeastRecentlyUsedPage(newBlock);
-            this.removeBlockFromCache(lruPage);
-        }
-
-        this.checkBlockToLoad();
+        this.postCreateBlock(newBlock);
 
         return newBlock;
-    }
-
-    private removeBlockFromCache(pageToRemove: InfiniteBlock): void {
-        if (!pageToRemove) {
-            return;
-        }
-
-        this.destroyBlock(pageToRemove);
-
-        // we do not want to remove the 'loaded' event listener, as the
-        // concurrent loads count needs to be updated when the load is complete
-        // if the purged page is in loading state
-    }
-
-    private findLeastRecentlyUsedPage(pageToExclude: InfiniteBlock): InfiniteBlock {
-
-        let lruPage: InfiniteBlock = null;
-
-        this.forEachBlockInOrder( (block: InfiniteBlock)=> {
-            // we exclude checking for the page just created, as this has yet to be accessed and hence
-            // the lastAccessed stamp will not be updated for the first time yet
-            if (block === pageToExclude) {
-                return;
-            }
-
-            if (_.missing(lruPage) || block.getLastAccessed() < lruPage.getLastAccessed()) {
-                lruPage = block;
-            }
-        });
-
-        return lruPage;
     }
 
     public refreshCache(): void {

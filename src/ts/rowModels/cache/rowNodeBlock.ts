@@ -3,9 +3,11 @@ import {RowNode} from "../../entities/rowNode";
 import {Context} from "../../context/context";
 import {BeanStub} from "../../context/beanStub";
 import {RowNodeCacheParams} from "./rowNodeCache";
+import {RowRenderer} from "../../rendering/rowRenderer";
 
 export interface RowNodeBlockBeans {
     context: Context;
+    rowRenderer: RowRenderer;
 }
 
 export abstract class RowNodeBlock extends BeanStub {
@@ -126,8 +128,8 @@ export abstract class RowNodeBlock extends BeanStub {
     }
 
     public setBlankRowNode(rowIndex: number): RowNode {
-        var localIndex = rowIndex - this.startRow;
-        var newRowNode = this.createBlankRowNode(rowIndex);
+        let localIndex = rowIndex - this.startRow;
+        let newRowNode = this.createBlankRowNode(rowIndex);
         this.rowNodes[localIndex] = newRowNode;
         return newRowNode;
     }
@@ -167,10 +169,17 @@ export abstract class RowNodeBlock extends BeanStub {
     }
 
     private populateWithRowData(rows: any[]): void {
+        let rowNodesToRefresh: RowNode[] = [];
         this.rowNodes.forEach( (rowNode: RowNode, index: number)=> {
-            var data = rows[index];
+            let data = rows[index];
+            if (rowNode.stub) {
+                rowNodesToRefresh.push(rowNode);
+            }
             this.setDataAndId(rowNode, data, this.startRow + index);
         });
+        if (rowNodesToRefresh.length > 0) {
+            this.beans.rowRenderer.refreshRows(rowNodesToRefresh);
+        }
     }
 
     protected pageLoaded(version: number, rows: any[], lastRow: number) {

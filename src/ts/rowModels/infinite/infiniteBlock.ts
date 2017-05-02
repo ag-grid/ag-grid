@@ -6,11 +6,13 @@ import {IGetRowsParams} from "../iDatasource";
 import {IEventEmitter} from "../../interfaces/iEventEmitter";
 import {InfiniteCacheParams} from "./infiniteCache";
 import {RowNodeBlock} from "../cache/rowNodeBlock";
+import {RowRenderer} from "../../rendering/rowRenderer";
 
 export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private cacheParams: InfiniteCacheParams;
 
@@ -46,7 +48,8 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
     @PostConstruct
     protected init(): void {
         super.init({
-            context: this.context
+            context: this.context,
+            rowRenderer: this.rowRenderer
         });
     }
 

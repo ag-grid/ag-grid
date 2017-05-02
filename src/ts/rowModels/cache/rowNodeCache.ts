@@ -78,6 +78,54 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         }
     }
 
+    protected findLeastRecentlyUsedPage(pageToExclude: T): T {
+
+        let lruPage: T = null;
+
+        this.forEachBlockInOrder( (block: T)=> {
+            // we exclude checking for the page just created, as this has yet to be accessed and hence
+            // the lastAccessed stamp will not be updated for the first time yet
+            if (block === pageToExclude) {
+                return;
+            }
+
+            if (_.missing(lruPage) || block.getLastAccessed() < lruPage.getLastAccessed()) {
+                lruPage = block;
+            }
+        });
+
+        return lruPage;
+    }
+
+
+    protected postCreateBlock(newBlock: T): void {
+
+        newBlock.addEventListener(RowNodeBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
+
+        this.setBlock(newBlock.getPageNumber(), newBlock);
+
+        let needToPurge = _.exists(this.cacheParams.maxBlocksInCache)
+            && this.getBlockCount() > this.cacheParams.maxBlocksInCache;
+        if (needToPurge) {
+            let lruPage = this.findLeastRecentlyUsedPage(newBlock);
+            this.removeBlockFromCache(lruPage);
+        }
+
+        this.checkBlockToLoad();
+    }
+
+    protected removeBlockFromCache(pageToRemove: T): void {
+        if (!pageToRemove) {
+            return;
+        }
+
+        this.destroyBlock(pageToRemove);
+
+        // we do not want to remove the 'loaded' event listener, as the
+        // concurrent loads count needs to be updated when the load is complete
+        // if the purged page is in loading state
+    }
+
     // gets called after: 1) block loaded 2) block created 3) cache refresh
     protected checkBlockToLoad() {
         this.cacheParams.rowNodeBlockLoader.checkBlockToLoad();
