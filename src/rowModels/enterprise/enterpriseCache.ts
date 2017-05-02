@@ -129,7 +129,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
                 }
             } else {
                 let localIndex = rowIndex - this.firstDisplayIndex;
-                blockNumber = localIndex / this.cacheParams.blockSize;
+                blockNumber = Math.floor(localIndex / this.cacheParams.blockSize);
                 displayIndexStart = this.firstDisplayIndex + (blockNumber * this.cacheParams.blockSize);
             }
             block = this.createBlock(blockNumber, displayIndexStart);
@@ -150,18 +150,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         let displayIndexSequence = new NumberSequence(displayIndex);
         newBlock.setDisplayIndexes(displayIndexSequence, this.getVirtualRowCount());
 
-        newBlock.addEventListener(EnterpriseBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
-
-        this.setBlock(blockNumber, newBlock);
-
-        let needToPurge = _.exists(this.cacheParams.maxBlocksInCache)
-            && this.getBlockCount() > this.cacheParams.maxBlocksInCache;
-        // if (needToPurge) {
-        //     var lruPage = this.findLeastRecentlyUsedPage(newBlock);
-        //     this.removeBlockFromCache(lruPage);
-        // }
-
-        this.checkBlockToLoad();
+        this.postCreateBlock(newBlock);
 
         return newBlock;
     }

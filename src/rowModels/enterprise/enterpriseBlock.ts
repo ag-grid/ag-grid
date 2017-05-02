@@ -4,6 +4,7 @@ import {
     Context,
     Events,
     EventService,
+    RowRenderer,
     IEnterpriseGetRowsParams,
     IEnterpriseGetRowsRequest,
     InfiniteCacheParams,
@@ -21,6 +22,7 @@ import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
 export class EnterpriseBlock extends RowNodeBlock {
 
     @Autowired('context') private context: Context;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private logger: Logger;
 
@@ -96,7 +98,8 @@ export class EnterpriseBlock extends RowNodeBlock {
     @PostConstruct
     protected init(): void {
         super.init({
-            context: this.context
+            context: this.context,
+            rowRenderer: this.rowRenderer
         });
     }
 

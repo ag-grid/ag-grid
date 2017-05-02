@@ -176,10 +176,29 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
             overflowSize: 1,
             initialRowCount: 1,
             maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
-            maxBlocksInCache: 10,
-            blockSize: 100,
+            maxBlocksInCache: this.gridOptionsWrapper.getMaxPagesInCache(),
+            blockSize: this.gridOptionsWrapper.getInfiniteBlockSize(),
             rowHeight: this.rowHeight
         };
+
+        // set defaults
+        if ( !(params.maxConcurrentRequests>=1) ) {
+            params.maxConcurrentRequests = 2;
+        }
+        // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
+        // server for one page at a time. so the default if not specified is 100.
+        if ( !(params.blockSize>=1) ) {
+            params.blockSize = 100;
+        }
+        // if user doesn't give initial rows to display, we assume zero
+        if ( !(params.initialRowCount>=1) ) {
+            params.initialRowCount = 0;
+        }
+        // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
+        // the current page and request first row of next page
+        if ( !(params.overflowSize>=1) ) {
+            params.overflowSize = 1;
+        }
 
         return params;
     }
@@ -294,7 +313,6 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
-        console.log('isRowPresent not supported in enterprise row model');
         return false;
     }
 
