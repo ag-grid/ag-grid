@@ -127,6 +127,7 @@
         "AverageVolume": 29290860.390243903
       }
     ],
+    "targetExpenditure": "R&D",
     "Expenditure": {
       "R&D": 45,
       "Marketing": 7,
@@ -261,6 +262,7 @@
         "AverageVolume": 2244176.43902439
       }
     ],
+    "targetExpenditure": "Marketing",
     "Expenditure": {
       "R&D": 53,
       "Marketing": 4,
@@ -395,6 +397,7 @@
         "AverageVolume": 3594024.3658536584
       }
     ],
+    "targetExpenditure": "Infrastructure",
     "Expenditure": {
       "R&D": 21,
       "Marketing": 23,
@@ -529,6 +532,7 @@
         "AverageVolume": 2905403.2926829266
       }
     ],
+    "targetExpenditure": "Marketing",
     "Expenditure": {
       "R&D": 33,
       "Marketing": 13,
@@ -663,6 +667,7 @@
         "AverageVolume": 1499057.536585366
       }
     ],
+    "targetExpenditure": "Infrastructure",
     "Expenditure": {
       "R&D": 18,
       "Marketing": 20,
@@ -797,6 +802,7 @@
         "AverageVolume": 1921588.975609756
       }
     ],
+    "targetExpenditure": "R&D",
     "Expenditure": {
       "R&D": 21,
       "Marketing": 23,
@@ -931,6 +937,7 @@
         "AverageVolume": 24186713.292682927
       }
     ],
+    "targetExpenditure": "R&D",
     "Expenditure": {
       "R&D": 56,
       "Marketing": 0,
@@ -1065,6 +1072,7 @@
         "AverageVolume": 24064803.048780486
       }
     ],
+    "targetExpenditure": "R&D",
     "Expenditure": {
       "R&D": 30,
       "Marketing": 24,
@@ -1199,6 +1207,7 @@
         "AverageVolume": 5570362.024390244
       }
     ],
+    "targetExpenditure": "Infrastructure",
     "Expenditure": {
       "R&D": 20,
       "Marketing": 10,

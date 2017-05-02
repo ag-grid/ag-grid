@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
                                 { root: './', files: 'stocksMasterDetail.html,stocksMasterDetail.js' }
                             ]
                           }"
-                          plunker="",
+                          plunker=""
                           exampleheight="800px">
     </show-complex-example>
 
@@ -42,7 +42,8 @@ include '../documentation-main/documentation_header.php';
                                 { root: './', files: 'inlineGraphs.html,inlineGraphs.js' }
                             ]
                           }"
-                          plunker="">
+                          plunker=""
+                          exampleheight="820px">
     </show-complex-example>
 
 </div>

@@ -22,6 +22,16 @@ let gridOptions = {
     onSelectionChanged: function (params) {
         "use strict";
         publishSelectedSymbols();
+    },
+    onModelUpdated: () => {
+        "use strict";
+        // automatically select these symbols at load time
+        let preselectedSymbols = ["aapl","adbe","intc","msft"];
+        gridOptions.api.forEachNode((node) => {
+            if(preselectedSymbols.indexOf(node.data.Symbol) !== -1) {
+                node.setSelected(true);
+            }
+        })
     }
 };
 
@@ -141,13 +151,6 @@ let requestStockDataLoad = function (stockSymbols) {
 };
 
 let loadStockDetail = function (metric, graphType, stockSymbols) {
-    let noRowsMessage = document.querySelector('.center');
-    if(!stockSymbols || stockSymbols.length === 0) {
-        noRowsMessage.style.display = "inline-block";
-        return;
-    }
-    noRowsMessage.style.display = "None";
-
     Promise.all(requestStockDataLoad(stockSymbols))
         .then(values => {
             "use strict";
