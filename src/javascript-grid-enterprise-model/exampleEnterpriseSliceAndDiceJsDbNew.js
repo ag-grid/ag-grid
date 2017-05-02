@@ -22,6 +22,8 @@ var gridOptions = {
     animateRows: true,
     debug: true,
     showToolPanel: true,
+    // restrict to 2 server side calls concurrently
+    maxConcurrentDatasourceRequests: 2,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }
