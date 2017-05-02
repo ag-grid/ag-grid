@@ -1,6 +1,6 @@
 var fruitValues = ['Apple','Banana','Orange','Pear'];
 var animalValues = ['Elephant','Monkey','Lion','Zebra','Mouse'];
-var colorValues = ['Blue','Black','Green','Orange','Red','Purple','Pink','Yellow'];
+var colorValues = ['Blue','Purple','Black','Green','Orange','Red','Pink','Yellow'];
 var locationValues = ['North','South','East','West'];
 
 var columnDefs = [
@@ -12,9 +12,15 @@ var columnDefs = [
             newRowsAction: 'keep'
         }
     },
-    {headerName: "Color - Values", field: "color", width: 150, filter: 'set',
+    {headerName: "Color - Values (Sorted)", field: "color", width: 250, filter: 'set',
         filterParams: {
             values: colorValues
+        }
+    },
+    {headerName: "Color - Values (As provided)", field: "color", width: 250, filter: 'set',
+        filterParams: {
+            values: colorValues,
+            suppressSorting: true
         }
     },
     {headerName: "Location - Values + Keep", field: "location", width: 250, filter: 'set',
