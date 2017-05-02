@@ -30,6 +30,10 @@ export class Logger {
         this.isLoggingFunc = isLoggingFunc;
     }
 
+    public isLogging(): boolean {
+        return this.isLoggingFunc();
+    }
+
     public log(message: string) {
         if (this.isLoggingFunc()) {
             console.log('ag-Grid.' + this.name + ': ' + message);

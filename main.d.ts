@@ -115,6 +115,7 @@ export * from './dist/lib/rowModels/inMemory/sortStage';
 
 export * from './dist/lib/rowModels/cache/rowNodeBlock';
 export * from './dist/lib/rowModels/cache/rowNodeCache';
+export * from './dist/lib/rowModels/cache/rowNodeBlockLoader';
 
 export * from './dist/lib/rowModels/infinite/infiniteRowModel';
 export * from './dist/lib/rowModels/infinite/infiniteCache';

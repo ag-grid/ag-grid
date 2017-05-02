@@ -3,6 +3,7 @@ import {RowNode} from "../../entities/rowNode";
 import {BeanStub} from "../../context/beanStub";
 import {RowNodeBlock} from "./rowNodeBlock";
 import {Logger} from "../../logger";
+import {RowNodeBlockLoader} from "./rowNodeBlockLoader";
 
 export interface RowNodeCacheParams {
     initialRowCount: number;
@@ -14,6 +15,7 @@ export interface RowNodeCacheParams {
     rowHeight: number;
     lastAccessedSequence: NumberSequence;
     maxConcurrentRequests: number;
+    rowNodeBlockLoader: RowNodeBlockLoader;
 }
 
 export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCacheParams> extends BeanStub {
@@ -26,7 +28,6 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
     protected cacheParams: P;
 
     private active: boolean;
-    private activeBlockLoadsCount = 0;
 
     private blocks: {[blockNumber: string]: T} = {};
     private blockCount = 0;
@@ -37,20 +38,6 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         super();
         this.virtualRowCount = cacheParams.initialRowCount;
         this.cacheParams = cacheParams;
-    }
-
-    public getBlockState(): any {
-        let result: any[] = [];
-        this.forEachBlockInOrder( (block: RowNodeBlock, id: number) => {
-            let stateItem = {
-                blockNumber: id,
-                startRow: block.getStartRow(),
-                endRow: block.getEndRow(),
-                pageStatus: block.getState()
-            };
-            result.push(stateItem);
-        });
-        return result;
     }
 
     protected init(): void {
@@ -83,7 +70,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         }
 
         this.logger.log(`onPageLoaded: page = ${event.page.getPageNumber()}, lastRow = ${event.lastRow}`);
-        this.activeBlockLoadsCount--;
+        this.cacheParams.rowNodeBlockLoader.loadComplete();
         this.checkBlockToLoad();
 
         if (event.success) {
@@ -91,35 +78,9 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         }
     }
 
-    private printCacheStatus(): void {
-        this.logger.log(`checkPageToLoad: activePageLoadsCount = ${this.activeBlockLoadsCount},`
-            + ` pages = ${JSON.stringify(this.getBlockState())}`);
-    }
-
     // gets called after: 1) block loaded 2) block created 3) cache refresh
     protected checkBlockToLoad() {
-        this.printCacheStatus();
-
-        if (this.activeBlockLoadsCount >= this.cacheParams.maxConcurrentRequests) {
-            this.logger.log(`checkPageToLoad: max loads exceeded`);
-            return;
-        }
-
-        let blockToLoad: RowNodeBlock = null;
-        this.forEachBlockInOrder( block => {
-            if (block.getState() === RowNodeBlock.STATE_DIRTY) {
-                blockToLoad = block;
-            }
-        });
-
-        if (blockToLoad) {
-            blockToLoad.load();
-            this.activeBlockLoadsCount++;
-            this.logger.log(`checkPageToLoad: loading page ${blockToLoad.getPageNumber()}`);
-            this.printCacheStatus();
-        } else {
-            this.logger.log(`checkPageToLoad: no pages to load`);
-        }
+        this.cacheParams.rowNodeBlockLoader.checkBlockToLoad();
     }
 
     protected checkVirtualRowCount(block: T, lastRow: any): void {
@@ -162,12 +123,12 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
     }
 
     public forEachNode(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence): void {
-        this.forEachBlockInOrder( block => {
+        this.forEachBlockInOrder(block => {
             block.forEachNode(callback, sequence, this.virtualRowCount);
         });
     }
 
-    protected forEachBlockInOrder(callback: (block: T, id: number)=>void): void {
+    public forEachBlockInOrder(callback: (block: T, id: number)=>void): void {
         let ids = this.getBlockIdsSorted();
         this.forEachBlockId(ids, callback);
     }
@@ -198,12 +159,14 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
     protected setBlock(id: number, block: T): void {
         this.blocks[id] = block;
         this.blockCount++;
+        this.cacheParams.rowNodeBlockLoader.addBlock(block);
     }
 
     protected destroyBlock(block: T): void {
         delete this.blocks[block.getPageNumber()];
         block.destroy();
         this.blockCount--;
+        this.cacheParams.rowNodeBlockLoader.removeBlock(block);
     }
 
     protected getBlockCount(): number {

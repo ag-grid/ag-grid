@@ -191,3 +191,4 @@ export abstract class RowNodeBlock extends BeanStub {
     }
 
 }
+

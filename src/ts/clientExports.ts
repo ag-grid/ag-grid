@@ -112,6 +112,7 @@ import {RowNodeCache} from "./rowModels/cache/rowNodeCache";
 import {InfiniteCache} from "./rowModels/infinite/infiniteCache";
 import {RowNodeBlock} from "./rowModels/cache/rowNodeBlock";
 import {InfiniteBlock} from "./rowModels/infinite/infiniteBlock";
+import {RowNodeBlockLoader} from "./rowModels/cache/rowNodeBlockLoader";
 
 export function populateClientExports(exports: any): void {
 
@@ -233,6 +234,7 @@ export function populateClientExports(exports: any): void {
     exports.InfiniteCache = InfiniteCache;
     exports.RowNodeBlock = RowNodeBlock;
     exports.InfiniteBlock = InfiniteBlock;
+    exports.RowNodeBlockLoader = RowNodeBlockLoader;
 
     // styling
     exports.StylingService = StylingService;

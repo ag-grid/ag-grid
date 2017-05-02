@@ -22,7 +22,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('VirtualPageCache');
+        this.logger = loggerFactory.create('InfiniteCache');
     }
 
     @PostConstruct
@@ -174,12 +174,12 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
     }
 
     public refreshCache(): void {
-        this.forEachBlockInOrder( block => block.setDirty() );
+        this.forEachBlockInOrder(block => block.setDirty() );
         this.checkBlockToLoad();
     }
 
     public purgeCache(): void {
-        this.forEachBlockInOrder( block => this.removeBlockFromCache(block));
+        this.forEachBlockInOrder(block => this.removeBlockFromCache(block));
         this.onCacheUpdated();
     }
 
