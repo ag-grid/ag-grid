@@ -23,6 +23,7 @@ import {
     Qualifier,
     RowNode,
     GridOptionsWrapper,
+    RowNodeBlockLoader,
     SortController
 } from "ag-grid";
 import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
@@ -46,6 +47,8 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
     private cacheParams: EnterpriseCacheParams;
 
     private logger: Logger;
+
+    private rowNodeBlockLoader: RowNodeBlockLoader;
 
     @PostConstruct
     private postConstruct(): void {
@@ -110,8 +113,10 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         this.context.wireBean(this.rootNode);
 
         if (this.datasource) {
+            this.createNewRowNodeBlockLoader();
             this.cacheParams = this.createCacheParams();
             this.createNodeCache(this.rootNode);
+
             this.updateRowIndexes();
         }
 
@@ -120,6 +125,20 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
 
         // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start)
         this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+    }
+
+    private createNewRowNodeBlockLoader(): void {
+        this.destroyRowNodeBlockLoader();
+        let maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
+        this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests);
+        this.context.wireBean(this.rowNodeBlockLoader);
+    }
+
+    private destroyRowNodeBlockLoader(): void {
+        if (this.rowNodeBlockLoader) {
+            this.rowNodeBlockLoader.destroy();
+            this.rowNodeBlockLoader = null;
+        }
     }
 
     public setDatasource(datasource: IEnterpriseDatasource): void {
@@ -150,11 +169,13 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
             filterModel: this.filterManager.getFilterModel(),
             sortModel: this.sortController.getSortModel(),
 
+            rowNodeBlockLoader: this.rowNodeBlockLoader,
+
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
             overflowSize: 1,
             initialRowCount: 1,
-            maxConcurrentRequests: 2,
+            maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
             maxBlocksInCache: 10,
             blockSize: 100,
             rowHeight: this.rowHeight
