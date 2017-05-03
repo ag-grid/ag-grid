@@ -36,6 +36,7 @@ export class EnterpriseBlock extends RowNodeBlock {
     private level: number;
     private groupLevel: boolean;
     private groupField: string;
+    private nodeIdPrefix: string;
 
     constructor(pageNumber: number, parentRowNode: RowNode, params: EnterpriseCacheParams, parentCache: EnterpriseCache) {
         super(pageNumber, params);
@@ -47,6 +48,28 @@ export class EnterpriseBlock extends RowNodeBlock {
         this.groupLevel = this.level < params.rowGroupCols.length;
         if (this.groupLevel) {
             this.groupField = params.rowGroupCols[this.level].field;
+        }
+
+        this.createNodeIdPrefix();
+    }
+
+    private createNodeIdPrefix(): void {
+        let parts: string[] = [];
+        let rowNode = this.parentRowNode;
+        while (_.exists(rowNode.key)) {
+            parts.push(rowNode.key);
+            rowNode = rowNode.parent;
+        }
+        if (parts.length>0) {
+            this.nodeIdPrefix = parts.reverse().join('-') + '-';
+        }
+    }
+
+    protected createIdForIndex(index: number): string {
+        if (_.exists(this.nodeIdPrefix)) {
+            return this.nodeIdPrefix + index.toString();
+        } else {
+            return index.toString();
         }
     }
 
@@ -108,11 +131,21 @@ export class EnterpriseBlock extends RowNodeBlock {
         rowNode.stub = false;
 
         if (_.exists(data)) {
-            // this means if the user is not providing id's we just use the
-            // index for the row. this will allow selection to work (that is based
-            // on index) as long user is not inserting or deleting rows,
-            // or wanting to keep selection between server side sorting or filtering
-            rowNode.setDataAndId(data, index.toString());
+            // if the user is not providing id's, then we build an id based on the index.
+            // for infinite scrolling, the index is used on it's own. for enterprise,
+            // we combine the index with the level and group key, so that the id is
+            // unique across the set.
+            //
+            // unique id is needed for selection (so selection can be maintained when
+            // doing server side sorting / filtering) - if user is not providing id's
+            // (and we use the indexes) then selection will not work between sorting &
+            // filtering.
+            //
+            // id's are also used by the row renderer for updating the dom as it identifies
+            // rowNodes by id
+            let idToUse = this.createIdForIndex(index);
+
+            rowNode.setDataAndId(data, idToUse);
             rowNode.key = data[this.groupField];
         } else {
             rowNode.setDataAndId(undefined, undefined);
