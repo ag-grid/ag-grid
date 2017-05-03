@@ -9,10 +9,10 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h3><img src="../images/openfin.png" width="50"  /> ag-Grid OpenFin Integration</h3>
+    <h3><img src="../images/openfin.png" width="50"  /> ag-Grid <a href="https://openfin.co/">OpenFin</a> Integration</h3>
 
-    <p>OpenFin provides runtime technology solutions for financial desktops. Below we document and illustrate how you can use
-    ag-Grid within the OpenFin platform.</p>
+    <p><a href="https://openfin.co/">OpenFin</a> provides runtime technology solutions for financial desktops. Below we document and illustrate how you can use
+    ag-Grid within the <a href="https://openfin.co/">OpenFin</a> platform.</p>
 
     <note>Full working examples can be found <a href="https://github.com/ceolter/ag-grid-openfin-example"> in GitHub</a></note>
 
@@ -33,7 +33,7 @@ npm install
 
     <h3>A Simple Grid</h3>
 
-    <p>A simple ag-Grid running within the OpenFin container.</p>
+    <p>A simple ag-Grid running within the <a href="https://openfin.co/">OpenFin</a> container.</p>
 
     <p>Open a terminal and run the following command:</p>
     <pre>npm run simple-grid</pre>
@@ -42,7 +42,7 @@ npm install
 
     <h3>A Richer Grid</h3>
 
-    <p>A more sophisticated ag-Grid example running within the OpenFin container.</p>
+    <p>A more sophisticated ag-Grid example running within the <a href="https://openfin.co/">OpenFin</a> container.</p>
 
     <p>Open a terminal and run the following command:</p>
     <pre>npm run rich-grid</pre>
@@ -51,7 +51,7 @@ npm install
 
     <h3>A Master/Detail Grid - Single Application</h3>
 
-    <p>A MasterDetail example within a single OpenFin application</p>
+    <p>A MasterDetail example within a single <a href="https://openfin.co/">OpenFin</a> application</p>
 
     <p>Open a terminal and run the following command:</p>
     <pre>npm run masterdetail-master-single</pre>
@@ -60,7 +60,7 @@ npm install
 
     <h3>A Master/Detail Grid - Multiple Applications</h3>
 
-    <p>A MasterDetail example within seperate OpenFin applications making use of the OpenFin <code>InterApplicationBus</code>.</p>
+    <p>A MasterDetail example within seperate <a href="https://openfin.co/">OpenFin</a> applications making use of the <a href="https://openfin.co/">OpenFin</a> <code>InterApplicationBus</code>.</p>
 
     <p>Here when a row is clicked on in the "master" application, more detailed information is displayed in the "detail" application.</p>
 
@@ -75,8 +75,8 @@ npm install
 
     <h3>A Summary/Graph Grid - Multiple Applications</h3>
 
-    <p>Similar to the Master/Detail example above, this example runs within seperate OpenFin applications making use
-        of the OpenFin <code>InterApplicationBus</code>.</p>
+    <p>Similar to the Master/Detail example above, this example runs within seperate <a href="https://openfin.co/">OpenFin</a> applications making use
+        of the <a href="https://openfin.co/">OpenFin</a> <code>InterApplicationBus</code>.</p>
 
     <p>Here when a row is clicked on in the "master" application, more detailed information is displayed in the "detail"
         application making use of <code>d3</code> to render the resulting graphs.</p>
