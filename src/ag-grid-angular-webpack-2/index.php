@@ -4,6 +4,7 @@ $pageTitle = "Angular Datagrid using Webpack 2";
 $pageDescription = "Demonstrate the best Angular datagrid using Webpack 2.";
 $pageKeyboards = "Angular Grid Webpack 2";
 $pageGroup = "basics";
+$angularParent = "checked";
 
 $framework = $_GET['framework'];
 if(is_null($framework)) {

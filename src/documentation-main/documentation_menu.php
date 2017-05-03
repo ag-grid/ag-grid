@@ -1,10 +1,3 @@
-<script>
-    function expanCollapsibledGroup(toggleId) {
-        document.getElementById(toggleId).checked = true
-    }
-
-</script>
-
 <div class="dropdown frameworkBox">
     <div class="frameworkContainer">
         <h4 class="frameworkHeading">Framework</h4>
@@ -94,7 +87,7 @@
         menuItemCollapsibleChild(2, 'Angular CLI', 'Angular CLI', 'ag-grid-angular-angularcli/', 'angularParent', 'angularChild', 'start');
         menuItemCollapsibleChild(2, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/', 'angularParent', 'angularChild');
         menuItemCollapsibleChild(2, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/', 'angularParent', 'angularChild');
-        menuItemCollapsibleChild(2, 'Angular ngtools Webpack', '@ngtools/webpack', 'ag-grid-angular-ngtools-webpack/', 'angularParent', 'angularChild');
+        menuItemCollapsibleChild(2, 'Angular ngtools Webpack', 'ngtools/webpack', 'ag-grid-angular-ngtools-webpack/', 'angularParent', 'angularChild');
         menuItemCollapsibleChild(2, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/', 'angularParent', 'angularChild', 'end');
     }
 
@@ -322,7 +315,7 @@
 <div class="docsMenu-header<?php if ($pageGroup == "thirdparty" || $expandAll == "true") { ?> active<?php } ?>"
      data-id="thirdparty">
     <h4>
-<!--        <img src="../images/svg/docs/examples.svg"/>-->
+        <img src="../images/svg/docs/abc.svg"/>
         &nbsp;
         Third Party
     </h4>
@@ -332,8 +325,9 @@
 <div class="docsMenu-content">
     <?php
 
-    menuItem(0, 'ag-Grid OpenFin', 'OpenFin', 'javascript-grid-openfin/');
-    menuItem(0, 'ag-Grid Graphing', 'Graphing', 'javascript-grid-graphing/');
+    menuItem(0, 'ag-Grid Third Party Examples', 'Overview', 'javascript-grid-third-party/');
+    menuItem(1, 'ag-Grid OpenFin', 'OpenFin', 'javascript-grid-openfin/');
+    menuItem(1, 'ag-Grid Graphing', 'Graphing', 'javascript-grid-graphing/');
     ?>
 </div>
 

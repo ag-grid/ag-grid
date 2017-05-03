@@ -4,6 +4,7 @@ $pageTitle = "Angular Datagrid using @ngtools/webpack";
 $pageDescription = "Demonstrate the best Angular datagrid using @ngtools/webpack.";
 $pageKeyboards = "Angular Grid ngtools webpack 2";
 $pageGroup = "basics";
+$angularParent = "checked";
 
 $framework = $_GET['framework'];
 if(is_null($framework)) {
