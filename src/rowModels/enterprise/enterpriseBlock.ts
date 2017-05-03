@@ -201,7 +201,6 @@ export class EnterpriseBlock extends RowNodeBlock {
         for (let i = start; i<=end; i++) {
             // the blocks can have extra rows in them, if they are the last block
             // in the cache and the virtual row count doesn't divide evenly by the
-            //
             if (i >= virtualRowCount) { continue; }
 
             let rowNode = super.getRow(i);
