@@ -135,8 +135,8 @@ export abstract class RowNodeBlock extends BeanStub {
     }
 
     public setNewData(rowIndex: number, dataItem: any): RowNode {
-        var newRowNode = this.setBlankRowNode(rowIndex);
-        newRowNode.setDataAndId(dataItem, rowIndex.toString());
+        let newRowNode = this.setBlankRowNode(rowIndex);
+        this.setDataAndId(newRowNode, dataItem, this.startRow + rowIndex);
         return newRowNode;
     }
 
