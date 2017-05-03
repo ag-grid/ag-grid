@@ -36,6 +36,18 @@ include '../documentation-main/documentation_header.php';
 
     <p>jQuery Sparklines is a great library that offers small but rich graphs - idea for use within ag-Grid.</p>
 
+    <p>In this example we demonstrate the following:</p>
+
+    <ul>
+        <li>Close Trend: Inline <span style="font-style: italic">summary</span> trend graph. If clicked on the full time-series
+        will be displayed below.</li>
+        <li>Average Volume: The average volume per year in a Bar Graph.</li>
+        <li>Target Expenditure: Illustrates how a graph can be used withing a cell editor. If double clicked (or enter
+            pressed) a popup editor in the form of a Pie Chart will be shown - when a segment is clicked on the value
+            will be saved down to the grid.</li>
+        <li>Expenditure: Expenditure shown in a Pie Chart.</li>
+    </ul>
+
     <show-complex-example example="./inlineGraphs.html"
                           sources="{
                             [

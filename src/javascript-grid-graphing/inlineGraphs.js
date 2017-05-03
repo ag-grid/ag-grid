@@ -297,8 +297,7 @@ function renderLineGraph(symbol) {
             g.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x))
-                .select(".domain")
-                .remove();
+                .select(".domain");
 
             g.append("g")
                 .call(d3.axisLeft(y))
