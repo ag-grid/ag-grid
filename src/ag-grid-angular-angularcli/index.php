@@ -75,7 +75,7 @@ export class RedComponentComponent {
 </pre>
 
 <p>For our Application component, we'll have the following:</p>
-<pre>
+<pre ng-non-bindable>
 <span class="codeComment">// src/app/my-grid-application/my-grid-application.component.ts</span>
 import {Component} from "@angular/core";
 import {GridOptions} from "ag-grid";

@@ -49,7 +49,7 @@ npm i --save ag-grid-enterprise
 
     <p>Our application will be a very simple one, consisting of a single Module, a single Component and a bootstrap file, as well a few utility files for vendor & polyfills:</p>
 
-<pre>
+<pre ng-non-bindable>
 <span class="codeComment">// app.module.ts </span>
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";

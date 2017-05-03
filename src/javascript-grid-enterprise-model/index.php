@@ -3,7 +3,7 @@ $key = "Enterprise";
 $pageTitle = "ag-Grid New Enterprise Model";
 $pageDescription = "ag-Grid is going bringing datagrids to the next level with it's Enterprise Data Model, allowing slicing and dicing of data driven by your UI.";
 $pageKeyboards = "ag-Grid Enterprise Row Model";
-$pageGroup = "feature";
+$pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
