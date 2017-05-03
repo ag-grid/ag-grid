@@ -24,6 +24,8 @@ var gridOptions = {
     showToolPanel: true,
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,
+    infiniteBlockSize: 20,
+    maxPagesInCache: 2,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }
