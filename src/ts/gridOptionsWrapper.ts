@@ -213,6 +213,7 @@ export class GridOptionsWrapper {
     public getPaginationPageSize(): number { return this.gridOptions.paginationPageSize; }
     public getInfiniteBlockSize(): number { return this.gridOptions.infiniteBlockSize; }
     public getInfiniteInitialRowCount(): number { return this.gridOptions.infiniteInitialRowCount; }
+    public isPurgeClosedRowNodes() { return isTrue(this.gridOptions.purgeClosedRowNodes); }
     public getPaginationStartPage(): number { return this.gridOptions.paginationStartPage; }
     public isSuppressPaginationPanel() { return isTrue(this.gridOptions.suppressPaginationPanel); }
 
