@@ -166,7 +166,7 @@ export interface ColumnVO {
 <show-complex-example example="exampleEnterpriseSimpleJsDb.html"
                       sources="{
                                 [
-                                    { root: './', files: 'exampleEnterpriseSimpleJsDb.html,exampleEnterpriseSimpleJsDb.js,exampleEnterpriseFakeServer' }
+                                    { root: './', files: 'exampleEnterpriseSimpleJsDb.html,exampleEnterpriseSimpleJsDb.js,fakeServerSimple.js' }
                                 ]
                               }"
                       exampleheight="500px">
@@ -232,7 +232,7 @@ export interface ColumnVO {
 <show-complex-example example="exampleEnterpriseSimpleJsDbPagination.html"
                       sources="{
                                 [
-                                    { root: './', files: 'exampleEnterpriseSimpleJsDbPagination.html,exampleEnterpriseSimpleJsDbPagination.js,exampleEnterpriseFakeServer.js' }
+                                    { root: './', files: 'exampleEnterpriseSimpleJsDbPagination.html,exampleEnterpriseSimpleJsDbPagination.js,fakeServerSimple.js' }
                                 ]
                               }"
                       exampleheight="500px">
