@@ -73,6 +73,10 @@ export class EnterpriseBlock extends RowNodeBlock {
         }
     }
 
+    public getNodeIdPrefix(): string {
+        return this.nodeIdPrefix;
+    }
+
     public getRow(rowIndex: number): RowNode {
 
         // do binary search of tree
@@ -92,10 +96,21 @@ export class EnterpriseBlock extends RowNodeBlock {
             return null;
         }
 
+        let count = 0;
+
         while (true) {
 
+            count++;
+            if (count>1000) {
+                debugger;
+            }
+
             let midPointer = Math.floor((bottomPointer + topPointer) / 2);
-            let currentRowNode = super.getRow(midPointer);
+            let currentRowNode = super.getRowUsingLocalIndex(midPointer);
+
+            if (!currentRowNode) {
+                console.log(`missing rowNode`);
+            }
 
             if (currentRowNode.rowIndex === rowIndex) {
                 return currentRowNode;
@@ -203,7 +218,7 @@ export class EnterpriseBlock extends RowNodeBlock {
             // in the cache and the virtual row count doesn't divide evenly by the
             if (i >= virtualRowCount) { continue; }
 
-            let rowNode = super.getRow(i);
+            let rowNode = this.getRowUsingLocalIndex(i);
             if (rowNode) {
                 let rowIndex = displayIndexSeq.next();
                 rowNode.setRowIndex(rowIndex);
@@ -251,6 +266,10 @@ export class EnterpriseBlock extends RowNodeBlock {
 
     public getDisplayStartIndex(): number {
         return this.displayStartIndex;
+    }
+
+    public getDisplayEndIndex(): number {
+        return this.displayEndIndex;
     }
 
 }

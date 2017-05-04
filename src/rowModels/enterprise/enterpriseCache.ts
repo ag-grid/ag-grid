@@ -27,10 +27,6 @@ export interface EnterpriseCacheParams extends RowNodeCacheParams {
     lastAccessedSequence: NumberSequence;
 }
 
-// indexes change when:
-// + group opened / closed
-// + rows are loaded, as this will prob change the row count
-
 export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCacheParams> implements IEnterpriseCache {
 
     @Autowired('eventService') private eventService: EventService;
@@ -119,13 +115,23 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
             // because missing blocks are always fully closed, we can work out
             // the start index of the block we want by hopping from the closes block,
             // as we know the row count in closed blocks is equal to the page size
-
             if (beforeBlock) {
-                blockNumber = beforeBlock.getPageNumber();
-                displayIndexStart = beforeBlock.getDisplayStartIndex();
-                while (displayIndexStart < rowIndex) {
+                blockNumber = beforeBlock.getPageNumber() + 1;
+                displayIndexStart = beforeBlock.getDisplayEndIndex();
+
+                let isInRange = ():boolean => {
+                    return rowIndex >= displayIndexStart && rowIndex < (displayIndexStart + this.cacheParams.blockSize);
+                };
+
+                let count = 0;
+
+                while (!isInRange()) {
                     displayIndexStart += this.cacheParams.blockSize;
                     blockNumber++;
+                    count++;
+                    if (count>1000) {
+                        debugger;
+                    }
                 }
             } else {
                 let localIndex = rowIndex - this.firstDisplayIndex;
