@@ -43,6 +43,18 @@ export abstract class RowNodeBlock extends BeanStub {
     // model is concerned with groups (so has to set keys for the group)
     protected abstract setDataAndId(rowNode: RowNode, data: any, index: number): void;
 
+    // this gets the row using display indexes. for infinite scrolling, the
+    // local index is the same as the display index, so the override just calls
+    // getRowUsingLocalIndex(). however for enterprise, they are different, hence
+    // enterprise does logic before calling getRowUsingLocalIndex().
+    public abstract getRow(displayIndex: number): RowNode;
+
+    // returns the node id prefix, which is essentially the id of the cache
+    // that the block belongs to. this is used for debugging purposes, where the
+    // user can get the state of the cache, it lets us include what cache the block
+    // belongs to
+    public abstract getNodeIdPrefix(): string;
+
     constructor(blockNumber: number, rowNodeCacheParams: RowNodeCacheParams) {
         super();
 
@@ -55,20 +67,36 @@ export abstract class RowNodeBlock extends BeanStub {
         this.endRow = this.startRow + rowNodeCacheParams.blockSize;
     }
 
-    public forEachNode(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence, rowCount: number): void {
+    public isAnyNodeOpen(rowCount: number): boolean {
+        let result = false;
+        this.forEachNodeCallback( (rowNode: RowNode) => {
+            if (rowNode.expanded) {
+                result = true;
+            }
+        }, rowCount);
+        return result;
+    }
+
+    private forEachNodeCallback(callback: (rowNode: RowNode, index: number)=> void, rowCount: number): void {
         for (let rowIndex = this.startRow; rowIndex < this.endRow; rowIndex++) {
-            // we check against virtualRowCount as this page may be the last one, and if it is, then
-            // it's probable that the last rows are not part of the set
+            // we check against rowCount as this page may be the last one, and if it is, then
+            // the last rows are not part of the set
             if (rowIndex < rowCount) {
-                let rowNode = this.getRow(rowIndex);
-                callback(rowNode, sequence.next());
-                // this will only every happen for enterprise row model, as infinite
-                // row model doesn't have groups
-                if (rowNode.childrenCache) {
-                    rowNode.childrenCache.forEachNode(callback, sequence);
-                }
+                let rowNode = this.getRowUsingLocalIndex(rowIndex);
+                callback(rowNode, rowIndex);
             }
         }
+    }
+
+    public forEachNode(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence, rowCount: number): void {
+        this.forEachNodeCallback( (rowNode: RowNode) => {
+            callback(rowNode, sequence.next());
+            // this will only every happen for enterprise row model, as infinite
+            // row model doesn't have groups
+            if (rowNode.childrenCache) {
+                rowNode.childrenCache.forEachNode(callback, sequence);
+            }
+        }, rowCount);
     }
 
     public getVersion(): number {
@@ -79,10 +107,7 @@ export abstract class RowNodeBlock extends BeanStub {
         return this.lastAccessed;
     }
 
-    // this gets the row using local (not display) indexes. for infinite scrolling, the
-    // local index is the same as the display index. however for enterprise, they are different,
-    // hence enterprise overrides this method.
-    public getRow(rowIndex: number): RowNode {
+    public getRowUsingLocalIndex(rowIndex: number): RowNode {
         this.lastAccessed = this.rowNodeCacheParams.lastAccessedSequence.next();
         var localIndex = rowIndex - this.startRow;
         return this.rowNodes[localIndex];
@@ -180,6 +205,16 @@ export abstract class RowNodeBlock extends BeanStub {
         if (rowNodesToRefresh.length > 0) {
             this.beans.rowRenderer.refreshRows(rowNodesToRefresh);
         }
+    }
+
+    public destroy(): void {
+        super.destroy();
+        this.rowNodes.forEach( rowNode => {
+            if (rowNode.childrenCache) {
+                rowNode.childrenCache.destroy();
+                rowNode.childrenCache = null;
+            }
+        });
     }
 
     protected pageLoaded(version: number, rows: any[], lastRow: number) {

@@ -53,6 +53,14 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         });
     }
 
+    public getNodeIdPrefix(): string {
+        return null;
+    }
+
+    public getRow(displayIndex: number): RowNode {
+        return this.getRowUsingLocalIndex(displayIndex);
+    }
+
     private setIndexAndTopOnRowNode(rowNode: RowNode, rowIndex: number): void {
         rowNode.setRowIndex(rowIndex);
         rowNode.rowTop = this.cacheParams.rowHeight * rowIndex;

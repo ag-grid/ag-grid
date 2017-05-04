@@ -70,6 +70,7 @@ export class RowNodeBlockLoader {
         let result: any[] = [];
         this.blocks.forEach( (block: RowNodeBlock) => {
             let stateItem = {
+                nodeIdPrefix: block.getNodeIdPrefix(),
                 blockNumber: block.getPageNumber(),
                 startRow: block.getStartRow(),
                 endRow: block.getEndRow(),

@@ -40,6 +40,11 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         this.cacheParams = cacheParams;
     }
 
+    public destroy(): void {
+        super.destroy();
+        this.forEachBlockInOrder( block => this.destroyBlock(block) );
+    }
+
     protected init(): void {
         this.active = true;
         this.addDestroyFunc( ()=> this.active = false );
@@ -78,39 +83,50 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         }
     }
 
-    protected findLeastRecentlyUsedPage(pageToExclude: T): T {
+    private purgeBlocksIfNeeded(blockToExclude: T): void {
+        // no purge if user didn't give maxBlocksInCache
+        if (_.missing(this.cacheParams.maxBlocksInCache)) { return; }
+        // no purge if block count is less than max allowed
+        if (this.blockCount <= this.cacheParams.maxBlocksInCache) { return; }
 
-        let lruPage: T = null;
-
+        // put all candidate blocks into a list for sorting
+        let blocksForPurging: T[] = [];
         this.forEachBlockInOrder( (block: T)=> {
             // we exclude checking for the page just created, as this has yet to be accessed and hence
             // the lastAccessed stamp will not be updated for the first time yet
-            if (block === pageToExclude) {
+            if (block === blockToExclude) {
                 return;
             }
 
-            if (_.missing(lruPage) || block.getLastAccessed() < lruPage.getLastAccessed()) {
-                lruPage = block;
-            }
+            blocksForPurging.push(block);
         });
 
-        return lruPage;
+        // todo: need to verify that this sorts items in the right order
+        blocksForPurging.sort( (a: T, b: T) => b.getLastAccessed() - a.getLastAccessed());
+
+        // we remove (maxBlocksInCache - 1) as we already excluded the 'just created' page.
+        // in other words, after the splice operation below, we have taken out the blocks
+        // we want to keep, which means we are left with blocks that we can potentially purge
+        let blocksToKeep = this.cacheParams.maxBlocksInCache - 1;
+        blocksForPurging.splice(0, blocksToKeep);
+
+        // try and purge each block
+        blocksForPurging.forEach( block => {
+            // we never purge blocks if they are open, as purging them would mess up with
+            // our indexes, it would be very messy to restore the purged block to it's
+            // previous state if it had open children (and what if open children of open
+            // children, jeeeesus, just thinking about it freaks me out) so best is have a
+            // rule, if block is open, we never purge.
+            if (block.isAnyNodeOpen(this.virtualRowCount)) { return; }
+            // at this point, block is not needed, and no open nodes, so burn baby burn
+            this.removeBlockFromCache(block);
+        });
     }
 
-
     protected postCreateBlock(newBlock: T): void {
-
         newBlock.addEventListener(RowNodeBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
-
         this.setBlock(newBlock.getPageNumber(), newBlock);
-
-        let needToPurge = _.exists(this.cacheParams.maxBlocksInCache)
-            && this.getBlockCount() > this.cacheParams.maxBlocksInCache;
-        if (needToPurge) {
-            let lruPage = this.findLeastRecentlyUsedPage(newBlock);
-            this.removeBlockFromCache(lruPage);
-        }
-
+        this.purgeBlocksIfNeeded(newBlock);
         this.checkBlockToLoad();
     }
 
@@ -140,8 +156,8 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
             this.onCacheUpdated();
         } else if (!this.maxRowFound) {
             // otherwise, see if we need to add some virtual rows
-            var lastRowIndex = (block.getPageNumber() + 1) * this.cacheParams.blockSize;
-            var lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.overflowSize;
+            let lastRowIndex = (block.getPageNumber() + 1) * this.cacheParams.blockSize;
+            let lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.overflowSize;
 
             if (this.virtualRowCount < lastRowIndexPlusOverflow) {
                 this.virtualRowCount = lastRowIndexPlusOverflow;
@@ -215,10 +231,6 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         block.destroy();
         this.blockCount--;
         this.cacheParams.rowNodeBlockLoader.removeBlock(block);
-    }
-
-    protected getBlockCount(): number {
-        return this.blockCount;
     }
 
     // gets called 1) row count changed 2) cache purged 3) items inserted
