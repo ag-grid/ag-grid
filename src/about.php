@@ -132,17 +132,6 @@
     <div class="row" style="margin-top: 50px;">
 
         <div class="col-md-4">
-        <div>
-            <img src='images/will.png'/>
-        </div>
-        <h3>Will Halling</h3>
-        <h4>UI Developer</h4>
-        <p>
-           Will is a recent addition the team, joining to work with Sean in supporting our rapidly growing customer base. Will has over 10 years in various front-end technologies including those supported by ag-Grid. Will is at the frontline of our Enterprise Support forum and also contributes to our user documentation and knowledge sharing.
-        </p>
-        </div>
-
-        <div class="col-md-4">
             <div>
                 <img src='images/john.png'/>
             </div>
@@ -153,16 +142,6 @@
             </p>
         </div>
 
-        <div class="col-md-4">
-            <div>
-                <img src='images/armaan.png'/>
-            </div>
-            <h3>Armaan Anand</h3>
-            <h4>Customer Experience Specialist</h4>
-            <p>
-                Armaan is our latest hire and has joined the Customer Experience team. With a background in sales and marketing, Armaan is now the welcoming face of ag-Grid for new enquiries while also providing support to the many operations functions in the business.
-            </p>
-        </div>
     </div>
 
     <div class="row" style="margin-top: 50px;">
