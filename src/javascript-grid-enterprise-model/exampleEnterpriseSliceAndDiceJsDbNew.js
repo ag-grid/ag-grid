@@ -20,11 +20,11 @@ var gridOptions = {
     rowModelType: 'enterprise',
     rowGroupPanelShow: 'always',
     animateRows: true,
-    debug: false,
+    debug: true,
     showToolPanel: true,
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,
-    infiniteBlockSize: 20,
+    infiniteBlockSize: 100,
     maxPagesInCache: 2,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
