@@ -163,7 +163,14 @@ export interface ColumnVO {
     servers).
 </p>
 
-<show-example example="exampleEnterpriseSimpleJsDb"></show-example>
+<show-complex-example example="exampleEnterpriseSimpleJsDb.html"
+                      sources="{
+                                [
+                                    { root: './', files: 'exampleEnterpriseSimpleJsDb.html,exampleEnterpriseSimpleJsDb.js,exampleEnterpriseFakeServer' }
+                                ]
+                              }"
+                      exampleheight="500px">
+</show-complex-example>
 
 <h3>Example - Slice and Dice - Mocked Server</h3>
 
@@ -185,7 +192,14 @@ export interface ColumnVO {
     The example below mocks a data store for demonstration purposes.
 </p>
 
-<show-example example="exampleEnterpriseSliceAndDiceJsDb"></show-example>
+<show-complex-example example="exampleEnterpriseSliceAndDiceJsDb.html"
+                      sources="{
+                                [
+                                    { root: './', files: 'exampleEnterpriseSliceAndDiceJsDb.html,exampleEnterpriseSliceAndDiceJsDb.js' }
+                                ]
+                              }"
+                      exampleheight="500px">
+</show-complex-example>
 
 <h3>Example - Slice and Dice - Real Server</h3>
 
@@ -215,7 +229,14 @@ export interface ColumnVO {
     <i>pagination=true</i>. Find below an example.
 </p>
 
-<show-example example="exampleEnterpriseSimpleJsDbPagination"></show-example>
+<show-complex-example example="exampleEnterpriseSimpleJsDbPagination.html"
+                      sources="{
+                                [
+                                    { root: './', files: 'exampleEnterpriseSimpleJsDbPagination.html,exampleEnterpriseSimpleJsDbPagination.js,exampleEnterpriseFakeServer.js' }
+                                ]
+                              }"
+                      exampleheight="500px">
+</show-complex-example>
 
 <h3>What's Left To DO?</h3>
 

@@ -1,7 +1,7 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", enableRowGroup: true},
+    {headerName: "Athlete", field: "athlete", enableRowGroup: true, rowGroupIndex: 1},
     {headerName: "Age", field: "age", enableRowGroup: true},
-    {headerName: "Country", field: "country", rowGroupIndex: 0, enableRowGroup: true},
+    {headerName: "Country", field: "country", enableRowGroup: true},
     {headerName: "Year", field: "year", enableRowGroup: true},
     {headerName: "Sport", field: "sport", enableRowGroup: true},
     {headerName: "Gold", field: "gold", aggFunc: 'sum'},
@@ -14,13 +14,23 @@ var gridOptions = {
         suppressFilter: true,
         width: 100
     },
+    rowBuffer: 0,
     columnDefs: columnDefs,
     enableColResize: true,
     rowModelType: 'enterprise',
     rowGroupPanelShow: 'always',
     animateRows: true,
     debug: true,
-    showToolPanel: true
+    showToolPanel: true,
+    suppressAggFuncInHeader: true,
+    // restrict to 2 server side calls concurrently
+    maxConcurrentDatasourceRequests: 2,
+    infiniteBlockSize: 100,
+    maxPagesInCache: 2,
+    purgeClosedRowNodes: true,
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
+    }
 };
 
 function EnterpriseDatasource(fakeServer) {
@@ -28,10 +38,10 @@ function EnterpriseDatasource(fakeServer) {
 }
 
 EnterpriseDatasource.prototype.getRows = function(params) {
-    console.log('EnterpriseDatasource.getRows: params = ', params);
+    // console.log('EnterpriseDatasource.getRows: params = ', params);
     this.fakeServer.getData(params.request,
-        function successCallback(resultForGrid) {
-            params.successCallback(resultForGrid);
+        function successCallback(resultForGrid, lastRow) {
+            params.successCallback(resultForGrid, lastRow);
         });
 };
 
@@ -78,11 +88,20 @@ FakeServer.prototype.getData = function(request, callback) {
         }
     }
 
+    // we mimic finding the last row. if the request exceeds the length of the
+    // list, then we assume the last row is found. this would be similar to hitting
+    // a database, where we have gone past the last row.
+    var lastRowFound = (result.length <= request.endRow);
+    var lastRow = lastRowFound ? result.length : null;
+
+    // only return back the rows that the user asked for
+    var result = result.slice(request.startRow, request.endRow);
+
     // so that the example behaves like a server side call, we put
     // it in a timeout to a) give a delay and b) make it asynchronous
     setTimeout( function() {
-        callback(result);
-    }, 1000);
+        callback(result, lastRow);
+    }, 200);
 };
 
 FakeServer.prototype.buildGroupsFromData = function(filteredData, rowGroupCols, groupKeys, valueCols) {
@@ -165,9 +184,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     agGrid.simpleHttpRequest({url: '../olympicWinners.json'})
         .then( function(rows) {
-            var fakeServer = new FakeServer(rows);
-            var datasource = new EnterpriseDatasource(fakeServer);
-            gridOptions.api.setEnterpriseDatasource(datasource);
-        }
-    );
+                var fakeServer = new FakeServer(rows);
+                var datasource = new EnterpriseDatasource(fakeServer);
+                gridOptions.api.setEnterpriseDatasource(datasource);
+            }
+        );
 });
