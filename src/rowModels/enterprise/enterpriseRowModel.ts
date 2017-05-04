@@ -95,14 +95,18 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
 
     private onRowGroupOpened(event: any): void {
         let openedNode = <RowNode> event.node;
-        if (openedNode.expanded && _.missing(openedNode.childrenCache)) {
-            this.createNodeCache(openedNode);
-            this.updateRowIndexes();
-            this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+        if (openedNode.expanded) {
+            if (_.missing(openedNode.childrenCache)) {
+                this.createNodeCache(openedNode);
+            }
         } else {
-            this.updateRowIndexes();
-            this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+            if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(openedNode.childrenCache)) {
+                openedNode.childrenCache.destroy();
+                openedNode.childrenCache = null;
+            }
         }
+        this.updateRowIndexes();
+        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
     }
 
     private reset(): void {
