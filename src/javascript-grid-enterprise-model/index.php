@@ -163,10 +163,10 @@ export interface ColumnVO {
     servers).
 </p>
 
-<show-complex-example example="exampleEnterpriseSimpleJsDb.html"
+<show-complex-example example="exampleEnterpriseSimple.html"
                       sources="{
                                 [
-                                    { root: './', files: 'exampleEnterpriseSimpleJsDb.html,exampleEnterpriseSimpleJsDb.js,fakeServerSimple.js' }
+                                    { root: './', files: 'exampleEnterpriseSimple.html,exampleEnterpriseSimple.js,mockServerSimple.js' }
                                 ]
                               }"
                       exampleheight="500px">
@@ -192,10 +192,10 @@ export interface ColumnVO {
     The example below mocks a data store for demonstration purposes.
 </p>
 
-<show-complex-example example="exampleEnterpriseSliceAndDiceJsDb.html"
+<show-complex-example example="exampleEnterpriseSliceAndDice.html"
                       sources="{
                                 [
-                                    { root: './', files: 'exampleEnterpriseSliceAndDiceJsDb.html,exampleEnterpriseSliceAndDiceJsDb.js' }
+                                    { root: './', files: 'exampleEnterpriseSliceAndDice.html,exampleEnterpriseSliceAndDice.js,mockServerComplex.js' }
                                 ]
                               }"
                       exampleheight="500px">
@@ -229,10 +229,10 @@ export interface ColumnVO {
     <i>pagination=true</i>. Find below an example.
 </p>
 
-<show-complex-example example="exampleEnterpriseSimpleJsDbPagination.html"
+<show-complex-example example="exampleEnterpriseSimplePagination.html"
                       sources="{
                                 [
-                                    { root: './', files: 'exampleEnterpriseSimpleJsDbPagination.html,exampleEnterpriseSimpleJsDbPagination.js,fakeServerSimple.js' }
+                                    { root: './', files: 'exampleEnterpriseSimplePagination.html,exampleEnterpriseSimplePagination.js,mockServerSimple.js' }
                                 ]
                               }"
                       exampleheight="500px">
