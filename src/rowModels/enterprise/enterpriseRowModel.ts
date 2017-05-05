@@ -106,7 +106,10 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
             }
         }
         this.updateRowIndexes();
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+
+        let modelUpdatedEvent = <ModelUpdatedEvent> { animate: true, keepRenderedRows: true };
+
+        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, modelUpdatedEvent);
     }
 
     private reset(): void {
@@ -225,7 +228,8 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
 
     private onCacheUpdated(): void {
         this.updateRowIndexes();
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+        let modelUpdatedEvent = <ModelUpdatedEvent> { animate: true, keepRenderedRows: true };
+        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, modelUpdatedEvent);
     }
 
     public updateRowIndexes(): void {
