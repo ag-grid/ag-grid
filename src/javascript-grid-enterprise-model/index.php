@@ -166,7 +166,7 @@ export interface ColumnVO {
 <p>
     The example demonstrates the following:
     <ul>
-        <li><b>Filtering:</b> The age, </li>
+        <li><b>Filtering:</b> The age, country and year columns have filters.</li>
     </ul>
 </p>
 
