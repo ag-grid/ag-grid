@@ -223,6 +223,34 @@ export interface ColumnVO {
     applications.
 </p>
 
+<h3 id="selection">Example - Selection with Enterprise Row Model</h3>
+
+<p>
+    And this is how you do selection
+</p>
+
+<show-complex-example example="exampleEnterpriseSelection.html"
+                      sources="{
+                                [
+                                    { root: './', files: 'exampleEnterpriseSelection.html,exampleEnterpriseSelection.js,mockServerComplex.js' }
+                                ]
+                              }"
+                      exampleheight="500px">
+</show-complex-example>
+
+<p>
+    And checkbox selection
+</p>
+
+<show-complex-example example="exampleEnterpriseCheckboxSelection.html"
+                      sources="{
+                                [
+                                    { root: './', files: 'exampleEnterpriseCheckboxSelection.html,exampleEnterpriseCheckboxSelection.js,mockServerComplex.js' }
+                                ]
+                              }"
+                      exampleheight="500px">
+</show-complex-example>
+
 <h3 id="pagination">Example - Pagination with Enterprise Row Model</h3>
 <p>
     To enable pagination when using the enterprise row model, all you have to do is turning pagination on with

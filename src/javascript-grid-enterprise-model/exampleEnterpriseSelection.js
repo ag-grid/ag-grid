@@ -21,8 +21,8 @@ var gridOptions = {
     rowGroupPanelShow: 'always',
     animateRows: true,
     debug: true,
-    showToolPanel: true,
     suppressAggFuncInHeader: true,
+    rowSelection: 'multiple',
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,
     infiniteBlockSize: 100,

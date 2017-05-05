@@ -1,8 +1,17 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", enableRowGroup: true},
+    {headerName: "Athlete", field: "athlete",
+        checkboxSelection: function(params) {
+            return !params.node.group;
+        },
+        enableRowGroup: true
+    },
     {headerName: "Age", field: "age", enableRowGroup: true},
-    {headerName: "Country", field: "country", enableRowGroup: true, rowGroupIndex: 0},
-    {headerName: "Year", field: "year", enableRowGroup: true, rowGroupIndex: 1},
+    {headerName: "Country", field: "country", enableRowGroup: true,
+        rowGroupIndex: 0
+    },
+    {headerName: "Year", field: "year", enableRowGroup: true,
+        rowGroupIndex: 1
+    },
     {headerName: "Sport", field: "sport", enableRowGroup: true},
     {headerName: "Gold", field: "gold", aggFunc: 'sum'},
     {headerName: "Silver", field: "silver", aggFunc: 'sum'},
@@ -21,13 +30,25 @@ var gridOptions = {
     rowGroupPanelShow: 'always',
     animateRows: true,
     debug: true,
-    showToolPanel: true,
     suppressAggFuncInHeader: true,
+    rowSelection: 'multiple',
+    suppressRowClickSelection: true,
+    // groupSelectsChildren: true, // not supported for Enterprise Model
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,
     infiniteBlockSize: 100,
     maxPagesInCache: 2,
     purgeClosedRowNodes: true,
+    groupColumnDef: {
+        field: 'athlete',
+        headerName: "Group",
+        width: 200,
+        cellRenderer: 'group',
+        // headerCheckboxSelection: true, // not supported for Enterprise Model
+        cellRendererParams: {
+            checkbox: true
+        }
+    },
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }
