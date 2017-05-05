@@ -60,6 +60,37 @@ FakeServer.prototype.initData = function(allData) {
 
     this.topLevelCountryGroups = topLevelCountryGroups;
     this.bottomLevelCountryDetails = bottomLevelCountryDetails;
+
+    this.topLevelCountryGroups.sort(function(a,b) { return a.country < b.country ? -1 : 1; });
+};
+
+FakeServer.prototype.sortList = function(data, sortModel) {
+    var sortPresent = sortModel && sortModel.length > 0;
+    if (!sortPresent) {
+        return data;
+    }
+    // do an in memory sort of the data, across all the fields
+    var resultOfSort = data.slice();
+    resultOfSort.sort(function(a,b) {
+        for (var k = 0; k<sortModel.length; k++) {
+            var sortColModel = sortModel[k];
+            var valueA = a[sortColModel.colId];
+            var valueB = b[sortColModel.colId];
+            // this filter didn't find a difference, move onto the next one
+            if (valueA==valueB) {
+                continue;
+            }
+            var sortDirection = sortColModel.sort === 'asc' ? 1 : -1;
+            if (valueA > valueB) {
+                return sortDirection;
+            } else {
+                return sortDirection * -1;
+            }
+        }
+        // no filters found a difference
+        return 0;
+    });
+    return resultOfSort;
 };
 
 // when looking for the top list, always return back the full list of countries
@@ -71,19 +102,22 @@ FakeServer.prototype.getTopLevelCountryList = function(callback, request) {
     // put the response into a timeout, so it looks like an async call from a server
     setTimeout( function() {
         callback(rowData, lastRow);
-    }, 1000);
+    }, 200);
 };
 
 FakeServer.prototype.getCountryDetails = function(callback, country, request) {
 
     var countryDetails = this.bottomLevelCountryDetails[country];
-    var lastRow = this.getLastRowResult(countryDetails, request);
-    var rowData = this.getBlockFromResult(countryDetails, request);
+
+    var countryDetailsSorted = this.sortList(countryDetails, request.sortModel);
+
+    var lastRow = this.getLastRowResult(countryDetailsSorted, request);
+    var rowData = this.getBlockFromResult(countryDetailsSorted, request);
 
     // put the response into a timeout, so it looks like an async call from a server
     setTimeout( function() {
         callback(rowData, lastRow);
-    }, 1000);
+    }, 200);
 };
 
 FakeServer.prototype.getBlockFromResult = function(data, request) {

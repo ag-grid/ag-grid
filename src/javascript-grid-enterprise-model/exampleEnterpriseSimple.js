@@ -14,6 +14,7 @@ var gridOptions = {
         width: 100,
         suppressFilter: true
     },
+    enableSorting: true,
     columnDefs: columnDefs,
     enableColResize: true,
     // use the enterprise row model

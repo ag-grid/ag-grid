@@ -18,6 +18,7 @@ var gridOptions = {
     enableColResize: true,
     rowModelType: 'enterprise',
     rowGroupPanelShow: 'never',
+    enableSorting: true,
     functionsReadOnly: true,
     animateRows: true,
     debug: true,

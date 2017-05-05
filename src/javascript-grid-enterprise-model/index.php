@@ -226,7 +226,13 @@ export interface ColumnVO {
 <h3 id="selection">Example - Selection with Enterprise Row Model</h3>
 
 <p>
-    And this is how you do selection
+    And this is how you do selection.
+</p>
+
+<p>
+    If providing your own id's, the id's MUST be unique across the grid, for both
+    groups and rows. You must provide your own id's to keep selection when you sort
+    or filter.
 </p>
 
 <show-complex-example example="exampleEnterpriseSelection.html"
