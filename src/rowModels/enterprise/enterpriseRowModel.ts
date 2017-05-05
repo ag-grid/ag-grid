@@ -130,7 +130,9 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
         // this event: 1) clears selection 2) updates filters 3) shows/hides 'no rows' overlay
         this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED);
 
-        // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start)
+        // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).
+        // important to NOT pass in an event with keepRenderedRows or animate, as we want the renderer
+        // to treat the rows as new rows, as it's all new data
         this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
     }
 
