@@ -163,6 +163,13 @@ export interface ColumnVO {
     servers).
 </p>
 
+<p>
+    The example demonstrates the following:
+    <ul>
+        <li><b>Filtering:</b> The age, </li>
+    </ul>
+</p>
+
 <show-complex-example example="exampleEnterpriseSimple.html"
                       sources="{
                                 [

@@ -1,4 +1,3 @@
-
 function EnterpriseDatasource(fakeServer) {
     this.fakeServer = fakeServer;
 }
@@ -33,15 +32,17 @@ FakeServer.prototype.getData = function(request, callback) {
 
     var result;
 
+    var filteredData = this.filterList(this.allData, filterModel);
+
     // if not grouping, just return the full set
     if (rowGroupCols.length===0) {
-        result = this.allData;
+        result = filteredData;
     } else {
         // otherwise if grouping, a few steps...
 
         // first, if not the top level, take out everything that is not under the group
         // we are looking at.
-        var filteredData = this.filterOutOtherGroups(this.allData, groupKeys, rowGroupCols);
+        var filteredData = this.filterOutOtherGroups(filteredData, groupKeys, rowGroupCols);
 
         // if grouping, return the group
         var showingGroups = rowGroupCols.length > groupKeys.length;
@@ -55,7 +56,7 @@ FakeServer.prototype.getData = function(request, callback) {
     }
 
     // sort data if needed
-    result = this.sortList(result, request.sortModel);
+    result = this.sortList(result, sortModel);
 
     // we mimic finding the last row. if the request exceeds the length of the
     // list, then we assume the last row is found. this would be similar to hitting
@@ -100,6 +101,53 @@ FakeServer.prototype.sortList = function(data, sortModel) {
         return 0;
     });
     return resultOfSort;
+};
+
+FakeServer.prototype.filterList = function(data, filterModel) {
+    var filterPresent = filterModel && Object.keys(filterModel).length > 0;
+    if (!filterPresent) {
+        return data;
+    }
+
+    var resultOfFilter = [];
+    for (var i = 0; i<data.length; i++) {
+        var item = data[i];
+
+        if (filterModel.age) {
+            var age = item.age;
+            var allowedAge = parseInt(filterModel.age.filter);
+            if (filterModel.age.type == 'equals') {
+                if (age !== allowedAge) {
+                    continue;
+                }
+            } else if (filterModel.age.type == 'lessThan') {
+                if (age >= allowedAge) {
+                    continue;
+                }
+            } else {
+                if (age <= allowedAge) {
+                    continue;
+                }
+            }
+        }
+
+        if (filterModel.year) {
+            if (filterModel.year.indexOf(item.year.toString()) < 0) {
+                // year didn't match, so skip this record
+                continue;
+            }
+        }
+
+        if (filterModel.country) {
+            if (filterModel.country.indexOf(item.country)<0) {
+                continue;
+            }
+        }
+
+        resultOfFilter.push(item);
+    }
+
+    return resultOfFilter;
 };
 
 FakeServer.prototype.buildGroupsFromData = function(filteredData, rowGroupCols, groupKeys, valueCols) {

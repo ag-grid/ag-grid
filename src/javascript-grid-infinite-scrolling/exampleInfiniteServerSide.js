@@ -26,7 +26,12 @@ var columnDefs = [
         suppressMenu: true,
         suppressFilter: true},
     {headerName: "Athlete", field: "athlete", width: 150, suppressMenu: true, suppressFilter: true},
-    {headerName: "Age", field: "age", width: 90, filter: 'number', filterParams: {newRowsAction: 'keep'}},
+    {headerName: "Age", field: "age", width: 90, filter: 'number',
+        filterParams: {
+            filterOptions: ['equals','lessThan','greaterThan'],
+            newRowsAction: 'keep'
+        }
+    },
     {headerName: "Country", field: "country", width: 120, filter: 'set', filterParams: {values: listOfCountries, newRowsAction: 'keep'}},
     {headerName: "Year", field: "year", width: 90, filter: 'set', filterParams: {values: ['2000','2004','2008','2012'], newRowsAction: 'keep'}},
     {headerName: "Date", field: "date", width: 110, suppressMenu: true, suppressFilter: true},
@@ -136,11 +141,11 @@ function filterData(filterModel, data) {
             // EQUALS = 1;
             // LESS_THAN = 2;
             // GREATER_THAN = 3;
-            if (filterModel.age.type == 1) {
+            if (filterModel.age.type == 'equals') {
                 if (age !== allowedAge) {
                     continue;
                 }
-            } else if (filterModel.age.type == 2) {
+            } else if (filterModel.age.type == 'lessThan') {
                 if (age >= allowedAge) {
                     continue;
                 }
