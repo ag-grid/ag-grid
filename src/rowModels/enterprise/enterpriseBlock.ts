@@ -142,7 +142,6 @@ export class EnterpriseBlock extends RowNodeBlock {
     }
 
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
-        // stub gets set to true here, and then false when this rowNode gets it's data
         rowNode.stub = false;
 
         if (_.exists(data)) {
