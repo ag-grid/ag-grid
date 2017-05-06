@@ -637,7 +637,7 @@ export class ColumnController {
         if (active === column.isValueActive()) {return;}
         column.setValueActive(active);
         if (active && !column.getAggFunc()) {
-            let defaultAggFunc = this.aggFuncService.getDefaultAggFunc();
+            let defaultAggFunc = this.aggFuncService.getDefaultAggFunc(column);
             column.setAggFunc(defaultAggFunc);
         }
     }
