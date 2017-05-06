@@ -166,7 +166,15 @@ export interface ColumnVO {
 <p>
     The example demonstrates the following:
     <ul>
-        <li><b>Filtering:</b> The age, country and year columns have filters.</li>
+        <li><b>Grouping:</b> The data is grouped by country.</li>
+        <li><b>Aggregation:</b> The server always sum's gold, silver and bronze.
+        The columns are not set as value columns, and hence the user cannot change
+        the aggregation function. The server just assumes if grouping, then these
+        </li>
+        <li><b>Filtering:</b> The age, country and year columns have filters.
+            The filtering is done on the server side.</li>
+        <li><b>Sorting:</b> For example, sort by Athlete, then expand a group and you will
+            see Athlete is sorted. The sorting is done on the server side.</li>
     </ul>
 </p>
 

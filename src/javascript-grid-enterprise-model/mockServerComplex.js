@@ -162,11 +162,45 @@ FakeServer.prototype.buildGroupsFromData = function(filteredData, rowGroupCols, 
 
         valueCols.forEach(function(valueCol) {
             var field = valueCol.field;
-            var sum = 0;
-            mappedValues[key].forEach( function(childItem) {
-                sum += childItem[field];
-            });
-            groupItem[field] = sum;
+
+            // the aggregation we do depends on which agg func the user picked
+            switch (valueCol.aggFunc) {
+                case 'sum':
+                    var sum = 0;
+                    mappedValues[key].forEach( function(childItem) {
+                        var value = childItem[field];
+                        sum += value;
+                    });
+                    groupItem[field] = sum;
+                    break;
+                case 'min':
+                    var min = null;
+                    mappedValues[key].forEach( function(childItem) {
+                        var value = childItem[field];
+                        if (min===null || min > value) {
+                            min = value;
+                        }
+                    });
+                    groupItem[field] = min;
+                    break;
+                case 'max':
+                    var max = null;
+                    mappedValues[key].forEach( function(childItem) {
+                        var value = childItem[field];
+                        if (max===null || max < value) {
+                            max = value;
+                        }
+                    });
+                    groupItem[field] = max;
+                    break;
+                case 'random':
+                    groupItem[field] = Math.random(); // just make up a number
+                    break;
+                default:
+                    console.warn('unrecognised aggregation function: ' + valueCol.aggFunc);
+                    break;
+            }
+
         });
 
         groups.push(groupItem)
