@@ -137,7 +137,7 @@ export class ColumnComponent extends Component {
 
         var virtualList = new VirtualList();
 
-        var rows = this.aggFuncService.getFuncNames();
+        var rows = this.aggFuncService.getFuncNames(this.column);
 
         virtualList.setModel({
             getRow: function(index: number) { return rows[index]; },

@@ -143,7 +143,7 @@ export class MenuItemMapper {
 
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var columnIsAlreadyAggValue = column.isValueActive();
-        var funcNames = this.aggFuncService.getFuncNames();
+        var funcNames = this.aggFuncService.getFuncNames(column);
 
         var columnToUse: Column;
         if (column.isPrimary()) {

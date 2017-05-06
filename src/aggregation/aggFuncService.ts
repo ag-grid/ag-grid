@@ -1,5 +1,5 @@
 import {
-    IAggFuncService, IAggFunc, Bean, Utils, PostConstruct, Autowired, GridOptionsWrapper
+    IAggFuncService, IAggFunc, Bean, Utils, PostConstruct, Autowired, GridOptionsWrapper, Column, _
 } from "ag-grid/main";
 
 @Bean('aggFuncService')
@@ -38,12 +38,20 @@ export class AggFuncService implements IAggFuncService {
         this.aggFuncsMap[AggFuncService.AGG_AVG] = aggAvg;
     }
 
-    public getDefaultAggFunc(): string {
-        if (this.aggFuncsMap[AggFuncService.AGG_SUM]) {
-            // use 'sum' if it's still there (ie user has not removed it)
+    public getDefaultAggFunc(column: Column): string {
+
+        let allKeys = this.getFuncNames(column);
+
+        // use 'sum' if it's a) allowed for the column and b) still registered
+        // (ie not removed by user)
+        let sumInKeysList = allKeys.indexOf(AggFuncService.AGG_SUM) >= 0;
+        let sumInFuncs = _.exists(this.aggFuncsMap[AggFuncService.AGG_SUM]);
+
+        let useSum =  sumInKeysList && sumInFuncs;
+
+        if (useSum) {
             return AggFuncService.AGG_SUM;
         } else {
-            var allKeys = this.getFuncNames();
             if (Utils.existsAndNotEmpty(allKeys)) {
                 return allKeys[0];
             } else {
@@ -66,8 +74,13 @@ export class AggFuncService implements IAggFuncService {
         return this.aggFuncsMap[name];
     }
 
-    public getFuncNames(): string[] {
-        return Object.keys(this.aggFuncsMap).sort();
+    public getFuncNames(column: Column): string[] {
+        let userAllowedFuncs = column.getColDef().allowedAggFuncs;
+        if (_.exists(userAllowedFuncs)) {
+            return userAllowedFuncs;
+        } else {
+            return Object.keys(this.aggFuncsMap).sort();
+        }
     }
 
     public clear(): void {
