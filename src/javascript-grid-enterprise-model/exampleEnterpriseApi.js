@@ -15,7 +15,6 @@ var gridOptions = {
     animateRows: true,
     debug: true,
     enableSorting: true,
-    showToolPanel: true,
     suppressAggFuncInHeader: true,
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,
@@ -26,6 +25,15 @@ var gridOptions = {
         params.api.sizeColumnsToFit();
     }
 };
+
+function purgeCache(route) {
+    gridOptions.api.purgeInfinitePageCache(route);
+}
+
+function getBlockState() {
+    var blockState = gridOptions.api.getInfinitePageState();
+    console.log(blockState);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

@@ -354,7 +354,7 @@ interface IGetRowsParams {
 
     </table>
 
-    <h3 id="api">API - Inifinite Scrolling</h3>
+    <h3 id="api">API - Infinite Scrolling</h3>
     <table class="table">
         <tr>
             <th>Method</th>
@@ -370,15 +370,6 @@ interface IGetRowsParams {
             <td><p>Purges the cache. The grid is then told to refresh. Only the pages required to display the current
                     data on screen are fetched (typically no more than two). The grid will display nothing while the new
                     pages are loaded. Use this to immediately remove the old data from the user.</p></td>
-        </tr>
-        <tr id="property-max-pages-in-cache">
-            <th>maxPagesInCache()</th>
-            <td>
-                <p>How many pages to cache in the client. Default is no limit, so every requested
-                    page is kept. Use this if you have memory concerns, so pages least recently viewed are purged. If used, make
-                    sure you have enough pages in cache to display one whole view of the table (ie what's within the scrollable area),
-                    otherwise it won't work and an infinite loop of requesting pages will happen.</p>
-            </td>
         </tr>
         <tr id="api-get-virtual-row-count">
             <th>getInfiniteRowCount()</th>
