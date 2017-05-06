@@ -45,7 +45,7 @@ export class RowNodeBlockLoader {
         this.printCacheStatus();
 
         if (this.activeBlockLoadsCount >= this.maxConcurrentRequests) {
-            this.logger.log(`checkPageToLoad: max loads exceeded`);
+            this.logger.log(`checkBlockToLoad: max loads exceeded`);
             return;
         }
 
@@ -59,24 +59,28 @@ export class RowNodeBlockLoader {
         if (blockToLoad) {
             blockToLoad.load();
             this.activeBlockLoadsCount++;
-            this.logger.log(`checkPageToLoad: loading page ${blockToLoad.getPageNumber()}`);
+            this.logger.log(`checkBlockToLoad: loading page ${blockToLoad.getPageNumber()}`);
             this.printCacheStatus();
         } else {
-            this.logger.log(`checkPageToLoad: no pages to load`);
+            this.logger.log(`checkBlockToLoad: no pages to load`);
         }
     }
 
     public getBlockState(): any {
-        let result: any[] = [];
+        let result: any = {};
         this.blocks.forEach( (block: RowNodeBlock) => {
+            let nodeIdPrefix = block.getNodeIdPrefix();
             let stateItem = {
-                nodeIdPrefix: block.getNodeIdPrefix(),
                 blockNumber: block.getPageNumber(),
                 startRow: block.getStartRow(),
                 endRow: block.getEndRow(),
                 pageStatus: block.getState()
             };
-            result.push(stateItem);
+            if (_.exists(nodeIdPrefix)) {
+                result[nodeIdPrefix + block.getPageNumber()] = stateItem;
+            } else {
+                result[block.getPageNumber()] = stateItem;
+            }
         });
         return result;
     }
@@ -84,8 +88,8 @@ export class RowNodeBlockLoader {
     private printCacheStatus(): void {
 
         if (this.logger.isLogging()) {
-            this.logger.log(`checkPageToLoad: activePageLoadsCount = ${this.activeBlockLoadsCount},`
-                + ` pages = ${JSON.stringify(this.getBlockState())}`);
+            this.logger.log(`printCacheStatus: activePageLoadsCount = ${this.activeBlockLoadsCount},`
+                + ` blocks = ${JSON.stringify(this.getBlockState())}`);
         }
     }
 }

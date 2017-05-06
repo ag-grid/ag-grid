@@ -37,6 +37,7 @@ import {IPaginationService, ServerPaginationService} from "./rowModels/paginatio
 import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
+import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
 
 
 export interface StartEditingCellParams {
@@ -79,6 +80,7 @@ export class GridApi {
     private inMemoryRowModel: IInMemoryRowModel;
     private infinitePageRowModel: InfiniteRowModel;
     private paginationService: IPaginationService;
+    private enterpriseRowModel: IEnterpriseRowModel;
 
     @PostConstruct
     private init(): void {
@@ -90,6 +92,9 @@ export class GridApi {
             case Constants.ROW_MODEL_TYPE_INFINITE:
             case Constants.ROW_MODEL_TYPE_VIRTUAL_DEPRECATED:
                 this.infinitePageRowModel = <InfiniteRowModel> this.rowModel;
+                break;
+            case Constants.ROW_MODEL_TYPE_ENTERPRISE:
+                this.enterpriseRowModel = <IEnterpriseRowModel> this.rowModel;
                 break;
         }
 
@@ -679,7 +684,7 @@ export class GridApi {
         if (this.infinitePageRowModel) {
             this.infinitePageRowModel.refreshCache();
         } else {
-            console.warn(`ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.`);
+            console.warn(`ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='infinite'.`);
         }
     }
 
@@ -688,11 +693,13 @@ export class GridApi {
         this.purgeInfinitePageCache();
     }
 
-    public purgeInfinitePageCache(): void {
+    public purgeInfinitePageCache(route?: string[]): void {
         if (this.infinitePageRowModel) {
             this.infinitePageRowModel.purgeCache();
+        } else if (this.enterpriseRowModel) {
+            this.enterpriseRowModel.purgeCache(route);
         } else {
-            console.warn(`ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.`);
+            console.warn(`ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='infinite' or rowModelType='enterprise'.`);
         }
     }
 
@@ -738,8 +745,10 @@ export class GridApi {
     public getInfinitePageState(): any {
         if (this.infinitePageRowModel) {
             return this.infinitePageRowModel.getBlockState();
+        } else if (this.enterpriseRowModel) {
+            return this.enterpriseRowModel.getBlockState();
         } else {
-            console.warn(`ag-Grid: api.getVirtualPageState is only available when rowModelType='virtual'.`);
+            console.warn(`ag-Grid: api.getInfinitePageState is only available when rowModelType='infinite' or rowModelType='enterprise'.`);
         }
     }
 

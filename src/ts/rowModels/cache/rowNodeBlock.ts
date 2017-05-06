@@ -88,15 +88,23 @@ export abstract class RowNodeBlock extends BeanStub {
         }
     }
 
-    public forEachNode(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence, rowCount: number): void {
+    private forEachNode(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence, rowCount: number, deep: boolean): void {
         this.forEachNodeCallback( (rowNode: RowNode) => {
             callback(rowNode, sequence.next());
             // this will only every happen for enterprise row model, as infinite
             // row model doesn't have groups
-            if (rowNode.childrenCache) {
-                rowNode.childrenCache.forEachNode(callback, sequence);
+            if (deep && rowNode.childrenCache) {
+                rowNode.childrenCache.forEachNodeDeep(callback, sequence);
             }
         }, rowCount);
+    }
+
+    public forEachNodeDeep(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence, rowCount: number): void {
+        this.forEachNode(callback, sequence, rowCount, true);
+    }
+
+    public forEachNodeShallow(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence, rowCount: number): void {
+        this.forEachNode(callback, sequence, rowCount, false);
     }
 
     public getVersion(): number {

@@ -34,6 +34,8 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
     protected logger: Logger;
 
+    public abstract getRow(rowIndex: number): RowNode;
+
     constructor(cacheParams: P) {
         super();
         this.virtualRowCount = cacheParams.initialRowCount;
@@ -186,9 +188,9 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         this.onCacheUpdated();
     }
 
-    public forEachNode(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence): void {
+    public forEachNodeDeep(callback: (rowNode: RowNode, index: number)=> void, sequence: NumberSequence): void {
         this.forEachBlockInOrder(block => {
-            block.forEachNode(callback, sequence, this.virtualRowCount);
+            block.forEachNodeDeep(callback, sequence, this.virtualRowCount);
         });
     }
 
@@ -242,5 +244,9 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         }
     }
 
-    public abstract getRow(rowIndex: number): RowNode;
+    public purgeCache(): void {
+        this.forEachBlockInOrder(block => this.removeBlockFromCache(block));
+        this.onCacheUpdated();
+    }
+
 }

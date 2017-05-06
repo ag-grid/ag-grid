@@ -130,14 +130,13 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
         return newBlock;
     }
 
+    // we have this on infinite row model only, not enterprise row model,
+    // because for enterprise, it would leave the children in inconsistent
+    // state - eg if a node had children, but after the refresh it had data
+    // for a different row, then the children would be with the wrong row node.
     public refreshCache(): void {
         this.forEachBlockInOrder(block => block.setDirty() );
         this.checkBlockToLoad();
-    }
-
-    public purgeCache(): void {
-        this.forEachBlockInOrder(block => this.removeBlockFromCache(block));
-        this.onCacheUpdated();
     }
 
 }

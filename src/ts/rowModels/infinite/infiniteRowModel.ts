@@ -221,7 +221,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
 
     public forEachNode(callback: (rowNode: RowNode, index: number)=> void): void {
         if (this.infiniteCache) {
-            this.infiniteCache.forEachNode(callback, new NumberSequence());
+            this.infiniteCache.forEachNodeDeep(callback, new NumberSequence());
         }
     }
 

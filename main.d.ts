@@ -60,6 +60,7 @@ export * from './dist/lib/interfaces/iCompFactory';
 export * from './dist/lib/interfaces/iComponent';
 export * from './dist/lib/interfaces/iContextMenuFactory';
 export * from './dist/lib/interfaces/iEnterpriseCache';
+export * from './dist/lib/interfaces/iEnterpriseRowModel';
 export * from './dist/lib/interfaces/iEventEmitter';
 export * from './dist/lib/interfaces/iEnterpriseDatasource';
 export * from './dist/lib/interfaces/iEnterpriseDatasource';
