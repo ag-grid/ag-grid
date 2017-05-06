@@ -320,8 +320,6 @@ export class RenderedRow extends BeanStub {
             context: this.gridOptionsWrapper.getContext()
         });
 
-        this.addDataChangedListener();
-
         this.initialised = true;
     }
 
@@ -379,18 +377,6 @@ export class RenderedRow extends BeanStub {
         this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-editing', value) );
         let event = value ? Events.EVENT_ROW_EDITING_STARTED : Events.EVENT_ROW_EDITING_STOPPED;
         this.mainEventService.dispatchEvent(event, {node: this.rowNode});
-    }
-
-    // because data can change, especially in virtual pagination and viewport row models, need to allow setting
-    // styles and classes after the data has changed
-    private addDataChangedListener(): void {
-
-        var dataChangedListener = ()=> {
-            this.addStyleFromRowStyleFunc();
-            this.addClassesFromRowClass();
-        };
-
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, dataChangedListener);
     }
 
     private angular1Compile(element: Element): void {
@@ -641,10 +627,16 @@ export class RenderedRow extends BeanStub {
             var animate = false;
             var newData = true;
             this.forEachRenderedCell( renderedCell => renderedCell.refreshCell(animate, newData) );
-            // check for selected also, as this could be after lazy loading of the row data, in which csae
+            // check for selected also, as this could be after lazy loading of the row data, in which case
             // the id might of just gotten set inside the row and the row selected state may of changed
             // as a result. this is what happens when selected rows are loaded in virtual pagination.
+            // - niall note - since moving to the stub component, this may no longer be true, as replacing
+            // the stub component now replaces the entire row
             this.onRowSelected();
+
+            // as data has changed, then the style and class needs to be recomputed
+            this.addStyleFromRowStyleFunc();
+            this.addClassesFromRowClass();
         };
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
     }
