@@ -9,10 +9,10 @@ var columnDefs = [
     {headerName: "avg(age)", field: "age", width: 90, aggFunc: avgAggFunction},
     // here we use a custom sum function that was registered with the grid,
     // which overrides the built in sum function
-    {headerName: "sum(gold)", field: "gold", width: 100, aggFunc: 'sum'},
+    {headerName: "sum(gold)", field: "gold", width: 100, aggFunc: 'sum', enableValue: true},
     // and these two use the built in sum func
-    {headerName: "abc(silver)", field: "silver", width: 100, aggFunc: '123'},
-    {headerName: "xyz(bronze)", field: "bronze", width: 100, aggFunc: 'xyz'},
+    {headerName: "abc(silver)", field: "silver", width: 100, aggFunc: '123', enableValue: true},
+    {headerName: "xyz(bronze)", field: "bronze", width: 100, aggFunc: 'xyz', enableValue: true},
     {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0, hide: true},
     {headerName: "Year", field: "year", width: 90, rowGroupIndex: 1, hide: true}
 ];
