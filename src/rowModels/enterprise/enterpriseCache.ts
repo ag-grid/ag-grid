@@ -169,5 +169,29 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         return index >= this.firstDisplayIndex && index <= this.lastDisplayIndex;
     }
 
+    public getChildCache(keys: string[]): EnterpriseCache {
+        if (_.missingOrEmpty(keys)) { return this; }
+
+        let nextKey = keys[0];
+
+        let nextEnterpriseCache: EnterpriseCache = null;
+
+        this.forEachBlockInOrder(block => {
+            // callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number
+            block.forEachNodeShallow( rowNode => {
+                if (rowNode.key === nextKey) {
+                    nextEnterpriseCache = <EnterpriseCache> rowNode.childrenCache;
+                }
+            }, new NumberSequence(), this.getVirtualRowCount());
+        });
+
+        if (nextEnterpriseCache) {
+            let keyListForNextLevel = keys.slice(1, keys.length);
+            return nextEnterpriseCache.getChildCache(keyListForNextLevel);
+        } else {
+            return null;
+        }
+    }
+
 }
 

@@ -24,12 +24,13 @@ import {
     RowNode,
     GridOptionsWrapper,
     RowNodeBlockLoader,
-    SortController
+    SortController,
+    IEnterpriseRowModel
 } from "ag-grid";
 import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
 
 @Bean('rowModel')
-export class EnterpriseRowModel extends BeanStub implements IRowModel {
+export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
@@ -306,7 +307,25 @@ export class EnterpriseRowModel extends BeanStub implements IRowModel {
 
     public forEachNode(callback: (rowNode: RowNode)=>void): void {
         if (this.rootNode && this.rootNode.childrenCache) {
-            this.rootNode.childrenCache.forEachNode(callback, new NumberSequence());
+            this.rootNode.childrenCache.forEachNodeDeep(callback, new NumberSequence());
+        }
+    }
+
+    public purgeCache(route: string[] = []): void {
+        if (this.rootNode && this.rootNode.childrenCache) {
+            let topLevelCache = <EnterpriseCache> this.rootNode.childrenCache;
+            let cacheToPurge = topLevelCache.getChildCache(route);
+            if (cacheToPurge) {
+                cacheToPurge.purgeCache();
+            }
+        }
+    }
+
+    public getBlockState(): any {
+        if (this.rowNodeBlockLoader) {
+            return this.rowNodeBlockLoader.getBlockState();
+        } else {
+            return null;
         }
     }
 
