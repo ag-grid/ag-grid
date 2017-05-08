@@ -186,7 +186,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
             overflowSize: 1,
             initialRowCount: 1,
             maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
-            maxBlocksInCache: this.gridOptionsWrapper.getMaxPagesInCache(),
+            maxBlocksInCache: this.gridOptionsWrapper.getMaxBlocksInCache(),
             blockSize: this.gridOptionsWrapper.getInfiniteBlockSize(),
             rowHeight: this.rowHeight
         };
