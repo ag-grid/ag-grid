@@ -694,17 +694,28 @@ export class GridApi {
     }
 
     public purgeVirtualPageCache(): void {
-        console.warn('ag-Grid: purgeVirtualPageCache() is now called purgeInfinitePageCache(), please call purgeInfinitePageCache() instead');
+        console.warn('ag-Grid: purgeVirtualPageCache() is now called purgeInfiniteCache(), please call purgeInfiniteCache() instead');
         this.purgeInfinitePageCache();
     }
 
-    public purgeInfinitePageCache(route?: string[]): void {
+    public purgeInfinitePageCache(): void {
+        console.warn('ag-Grid: purgeInfinitePageCache() is now called purgeInfiniteCache(), please call purgeInfiniteCache() instead');
+        this.purgeInfiniteCache();
+    }
+
+    public purgeInfiniteCache(): void {
         if (this.infinitePageRowModel) {
             this.infinitePageRowModel.purgeCache();
-        } else if (this.enterpriseRowModel) {
+        } else {
+            console.warn(`ag-Grid: api.purgeInfiniteCache is only available when rowModelType='infinite'.`);
+        }
+    }
+
+    public purgeEnterpriseCache(route?: string[]): void {
+        if (this.enterpriseRowModel) {
             this.enterpriseRowModel.purgeCache(route);
         } else {
-            console.warn(`ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='infinite' or rowModelType='enterprise'.`);
+            console.warn(`ag-Grid: api.purgeEnterpriseCache is only available when rowModelType='enterprise'.`);
         }
     }
 
@@ -743,17 +754,22 @@ export class GridApi {
     }
 
     public getVirtualPageState(): any {
-        console.warn('ag-Grid: getVirtualPageState() is now called getInfinitePageState(), please call getInfinitePageState() instead');
-        return this.getInfinitePageState();
+        console.warn('ag-Grid: getVirtualPageState() is now called getCacheBlockState(), please call getCacheBlockState() instead');
+        return this.getCacheBlockState();
     }
 
     public getInfinitePageState(): any {
+        console.warn('ag-Grid: getInfinitePageState() is now called getCacheBlockState(), please call getCacheBlockState() instead');
+        return this.getCacheBlockState();
+    }
+
+    public getCacheBlockState(): any {
         if (this.infinitePageRowModel) {
             return this.infinitePageRowModel.getBlockState();
         } else if (this.enterpriseRowModel) {
             return this.enterpriseRowModel.getBlockState();
         } else {
-            console.warn(`ag-Grid: api.getInfinitePageState is only available when rowModelType='infinite' or rowModelType='enterprise'.`);
+            console.warn(`ag-Grid: api.getCacheBlockState() is only available when rowModelType='infinite' or rowModelType='enterprise'.`);
         }
     }
 
