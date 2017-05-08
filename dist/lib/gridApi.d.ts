@@ -1,16 +1,17 @@
-// Type definitions for ag-grid v9.0.3
+// Type definitions for ag-grid v9.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { MasterSlaveService } from "./masterSlaveService";
-import { ColDef, IAggFunc, ColGroupDef } from "./entities/colDef";
+import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { IRowModel } from "./interfaces/iRowModel";
-import { RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeController";
+import { AddRangeSelectionParams, RangeSelection } from "./interfaces/iRangeController";
 import { GridCell } from "./entities/gridCell";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./exportParams";
+import { ExcelExportParams } from "./interfaces/iExcelCreator";
 import { IDatasource } from "./rowModels/iDatasource";
 import { IEnterpriseDatasource } from "./interfaces/iEnterpriseDatasource";
 export interface StartEditingCellParams {
@@ -56,8 +57,8 @@ export declare class GridApi {
     getLastRenderedRow(): number;
     getDataAsCsv(params?: CsvExportParams): string;
     exportDataAsCsv(params?: CsvExportParams): void;
-    getDataAsExcel(params?: CsvExportParams): string;
-    exportDataAsExcel(params?: CsvExportParams): void;
+    getDataAsExcel(params?: ExcelExportParams): string;
+    exportDataAsExcel(params?: ExcelExportParams): void;
     setEnterpriseDatasource(datasource: IEnterpriseDatasource): void;
     setDatasource(datasource: IDatasource): void;
     setViewportDatasource(viewportDatasource: IViewportDatasource): void;
@@ -69,6 +70,7 @@ export declare class GridApi {
     getFloatingTopRow(index: number): RowNode;
     getFloatingBottomRow(index: number): RowNode;
     setColumnDefs(colDefs: (ColDef | ColGroupDef)[]): void;
+    getVerticalPixelRange(): any;
     refreshRows(rowNodes: RowNode[]): void;
     refreshCells(rowNodes: RowNode[], cols: (string | ColDef | Column)[], animate?: boolean): void;
     rowDataChanged(rows: any): void;

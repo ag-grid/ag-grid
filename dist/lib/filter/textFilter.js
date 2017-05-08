@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.0.3
+ * @version v9.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,6 +33,9 @@ var TextFilter = (function (_super) {
     function TextFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    TextFilter.prototype.customInit = function () {
+        this.comparator = this.filterParams.textCustomComparator ? this.filterParams.textCustomComparator : TextFilter.DEFAULT_COMPARATOR;
+    };
     TextFilter.prototype.modelFromFloatingFilter = function (from) {
         return {
             type: this.filter,
@@ -50,7 +53,7 @@ var TextFilter = (function (_super) {
     };
     TextFilter.prototype.initialiseFilterBodyUi = function () {
         this.addDestroyableEventListener(this.eFilterTextField, 'input', this.onFilterTextFieldChanged.bind(this));
-        this.setType(baseFilter_1.BaseFilter.CONTAINS);
+        this.setType(this.defaultFilter);
     };
     TextFilter.prototype.refreshFilterBodyUi = function () { };
     TextFilter.prototype.afterGuiAttached = function () {
@@ -77,27 +80,7 @@ var TextFilter = (function (_super) {
                 return false;
             }
         }
-        var filterTextLoweCase = this.filterText.toLowerCase();
-        var valueLowerCase = value.toString().toLowerCase();
-        switch (this.filter) {
-            case TextFilter.CONTAINS:
-                return valueLowerCase.indexOf(filterTextLoweCase) >= 0;
-            case TextFilter.NOT_CONTAINS:
-                return valueLowerCase.indexOf(filterTextLoweCase) === -1;
-            case TextFilter.EQUALS:
-                return valueLowerCase === filterTextLoweCase;
-            case TextFilter.NOT_EQUAL:
-                return valueLowerCase != filterTextLoweCase;
-            case TextFilter.STARTS_WITH:
-                return valueLowerCase.indexOf(filterTextLoweCase) === 0;
-            case TextFilter.ENDS_WITH:
-                var index = valueLowerCase.lastIndexOf(filterTextLoweCase);
-                return index >= 0 && index === (valueLowerCase.length - filterTextLoweCase.length);
-            default:
-                // should never happen
-                console.warn('invalid filter type ' + this.filter);
-                return false;
-        }
+        return this.comparator(this.filter, value, this.filterText);
     };
     TextFilter.prototype.onFilterTextFieldChanged = function () {
         var filterText = utils_1.Utils.makeNull(this.eFilterTextField.value);
@@ -147,6 +130,29 @@ var TextFilter = (function (_super) {
     };
     return TextFilter;
 }(baseFilter_1.ComparableBaseFilter));
+TextFilter.DEFAULT_COMPARATOR = function (filter, value, filterText) {
+    var filterTextLoweCase = filterText.toLowerCase();
+    var valueLowerCase = value.toString().toLowerCase();
+    switch (filter) {
+        case TextFilter.CONTAINS:
+            return valueLowerCase.indexOf(filterTextLoweCase) >= 0;
+        case TextFilter.NOT_CONTAINS:
+            return valueLowerCase.indexOf(filterTextLoweCase) === -1;
+        case TextFilter.EQUALS:
+            return valueLowerCase === filterTextLoweCase;
+        case TextFilter.NOT_EQUAL:
+            return valueLowerCase != filterTextLoweCase;
+        case TextFilter.STARTS_WITH:
+            return valueLowerCase.indexOf(filterTextLoweCase) === 0;
+        case TextFilter.ENDS_WITH:
+            var index = valueLowerCase.lastIndexOf(filterTextLoweCase);
+            return index >= 0 && index === (valueLowerCase.length - filterTextLoweCase.length);
+        default:
+            // should never happen
+            console.warn('invalid filter type ' + filter);
+            return false;
+    }
+};
 __decorate([
     componentAnnotations_1.QuerySelector('#filterText'),
     __metadata("design:type", HTMLInputElement)

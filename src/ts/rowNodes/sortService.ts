@@ -10,6 +10,10 @@ export interface SortOption {
     column:Column
 }
 
+export interface SortedRowNode {
+    currentPos:number,
+    rowNode:RowNode
+}
 
 @Bean('sortService')
 export class SortService {
@@ -33,14 +37,24 @@ export class SortService {
 
         let sortActive = _.exists(sortOptions) && sortOptions.length > 0;
         if (sortActive) {
-            rowNode.childrenAfterSort.sort(this.compareRowNodes.bind(this, sortOptions));
+            // RE https://ag-grid.atlassian.net/browse/AG-444
+            //Javascript sort is non deterministic when all the array items are equals
+            //ie Comparator always returns 0, so if you want to ensure the array keeps its
+            //order, then you need to add an additional sorting condition manually, in this
+            //case we are going to inspect the original array position
+            let sortedRowNodes:SortedRowNode[] = rowNode.childrenAfterSort.map((it, pos)=>{return {currentPos:pos, rowNode:it}});
+            sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
+            rowNode.childrenAfterSort = sortedRowNodes.map (sorted=>sorted.rowNode);
         }
 
         this.updateChildIndexes(rowNode);
     }
 
 
-    private compareRowNodes(sortOptions: any, nodeA: RowNode, nodeB: RowNode) {
+    private compareRowNodes(sortOptions: any, sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode) {
+        let nodeA:RowNode = sortedNodeA.rowNode;
+        let nodeB:RowNode = sortedNodeB.rowNode;
+
         // Iterate columns, return the first that doesn't match
         for (let i = 0, len = sortOptions.length; i < len; i++) {
             let sortOption = sortOptions[i];
@@ -62,8 +76,8 @@ export class SortService {
                 return comparatorResult * sortOption.inverter;
             }
         }
-        // All matched, these are identical as far as the sort is concerned:
-        return 0;
+        // All matched, we make is so that the original sort order is kept:
+        return sortedNodeA.currentPos - sortedNodeB.currentPos;
     }
 
     private updateChildIndexes(rowNode: RowNode) {

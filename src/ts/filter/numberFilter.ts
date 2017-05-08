@@ -57,7 +57,6 @@ export class NumberFilter extends ScalarBaseFilter<number, IScalarFilterParams, 
 
     public initialiseFilterBodyUi() {
         this.filterNumber = null;
-        this.setFilterType(NumberFilter.EQUALS);
         this.eFilterTextField = <HTMLInputElement> this.getGui().querySelector("#filterText");
 
         this.addDestroyableEventListener(this.eFilterTextField, "input", this.onTextFieldsChanged.bind(this));

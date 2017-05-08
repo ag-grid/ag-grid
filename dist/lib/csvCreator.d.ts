@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v9.0.3
+// Type definitions for ag-grid v9.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowAccumulator, BaseGridSerializingSession, RowSpanningAccumulator } from "./gridSerializer";
@@ -7,7 +7,7 @@ import { ColumnController } from "./columnController/columnController";
 import { ValueService } from "./valueService";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exportParams";
-export declare class CsvSerializingSession extends BaseGridSerializingSession {
+export declare class CsvSerializingSession extends BaseGridSerializingSession<string> {
     private suppressQuotes;
     private columnSeparator;
     private result;

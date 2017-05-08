@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v9.0.3
+// Type definitions for ag-grid v9.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Component } from "../widgets/component";
@@ -33,6 +33,7 @@ export declare abstract class BaseFilter<T, P extends IFilterParams, M> extends 
     filterParams: P;
     clearActive: boolean;
     applyActive: boolean;
+    defaultFilter: string;
     filter: string;
     private eButtonsPanel;
     private eApplyButton;
@@ -41,6 +42,7 @@ export declare abstract class BaseFilter<T, P extends IFilterParams, M> extends 
     private gridOptionsWrapper;
     init(params: P): void;
     onClearButton(): void;
+    abstract customInit(): void;
     abstract isFilterActive(): boolean;
     abstract modelFromFloatingFilter(from: string): M;
     abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
@@ -84,5 +86,6 @@ export interface IScalarFilterParams extends IFilterParams {
  */
 export declare abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> extends ComparableBaseFilter<T, P, M> {
     abstract comparator(): Comparator<T>;
+    customInit(): void;
     doesFilterPass(params: IDoesFilterPassParams): boolean;
 }
