@@ -32,6 +32,8 @@ export class ValueService {
     }
 
     public getValue(column: Column, node: RowNode): any {
+        if (node.group && column.getColId() === node.field) return node.key;
+
         return this.getValueUsingSpecificData(column, node.data, node);
     }
 
