@@ -210,7 +210,7 @@ export class SetFilterModel {
     }
 
     public selectEverything() {
-        if (!this.filterParams.selectAllOnMiniFilter){
+        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter){
             this.selectOn(this.allUniqueValues);
         } else {
             this.selectOn(this.displayedValues);

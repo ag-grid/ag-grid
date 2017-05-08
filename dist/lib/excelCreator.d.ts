@@ -1,31 +1,25 @@
-// ag-grid-enterprise v9.0.3
-import { ColumnController } from 'ag-grid/main';
-import { ValueService } from 'ag-grid/main';
-import { Column } from 'ag-grid/main';
-import { IExcelCreator } from 'ag-grid/main';
-import { ExcelXmlFactory, ExcelCell, ExcelStyle } from "./excelXmlFactory";
-import { RowAccumulator, RowType, BaseGridSerializingSession, RowSpanningAccumulator } from 'ag-grid/main';
-import { RowNode } from 'ag-grid/main';
-import { GridOptionsWrapper } from 'ag-grid/main';
-import { ProcessCellForExportParams, ProcessHeaderForExportParams } from 'ag-grid/main';
-import { ExportParams } from 'ag-grid/main';
+// ag-grid-enterprise v9.1.0
+import { BaseGridSerializingSession, Column, ColumnController, ExcelCell, ExcelExportParams, ExcelStyle, GridOptionsWrapper, IExcelCreator, ProcessCellForExportParams, ProcessHeaderForExportParams, RowAccumulator, RowNode, RowSpanningAccumulator, RowType, ValueService } from "ag-grid/main";
+import { ExcelXmlFactory } from "./excelXmlFactory";
 export interface ExcelMixedStyle {
     key: string;
     excelID: string;
     result: ExcelStyle;
 }
-export declare class ExcelGridSerializingSession extends BaseGridSerializingSession {
+export declare class ExcelGridSerializingSession extends BaseGridSerializingSession<ExcelCell[][]> {
     private excelXmlFactory;
     private styleLinker;
-    private styleIds;
+    private stylesByIds;
     private mixedStyles;
     private mixedStyleCounter;
     private excelStyles;
+    private customHeader;
+    private customFooter;
     constructor(columnController: ColumnController, valueService: ValueService, gridOptionsWrapper: GridOptionsWrapper, processCellCallback: (params: ProcessCellForExportParams) => string, processHeaderCallback: (params: ProcessHeaderForExportParams) => string, excelXmlFactory: ExcelXmlFactory, baseExcelStyles: ExcelStyle[], styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode) => string[]);
     private rows;
     private cols;
-    addCustomHeader(customHeader: string): void;
-    addCustomFooter(customFooter: string): void;
+    addCustomHeader(customHeader: ExcelCell[][]): void;
+    addCustomFooter(customFooter: ExcelCell[][]): void;
     prepare(columnsToExport: Column[]): void;
     onNewHeaderGroupingRow(): RowSpanningAccumulator;
     onNewHeaderRow(): RowAccumulator;
@@ -48,7 +42,7 @@ export declare class ExcelCreator implements IExcelCreator {
     private gridOptionsWrapper;
     private gridOptions;
     private stylingService;
-    exportDataAsExcel(params?: ExportParams): void;
-    getDataAsExcelXml(params?: ExportParams): string;
+    exportDataAsExcel(params?: ExcelExportParams): void;
+    getDataAsExcelXml(params?: ExcelExportParams): string;
     private styleLinker(rowType, rowIndex, colIndex, value, column, node);
 }

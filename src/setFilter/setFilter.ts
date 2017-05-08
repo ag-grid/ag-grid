@@ -45,7 +45,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
 
-        this.model = new SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.suppressSorting);
+        this.model = new SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting);
         this.virtualList.setModel(new ModelWrapper(this.model));
         _.setVisible(<HTMLElement>this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
 
