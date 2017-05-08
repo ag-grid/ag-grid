@@ -18,6 +18,28 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header" style="margin-bottom: 27px;">
+        <img src="../images/liberty_statue.png" align="right" width="100"/>
+        2nd May 2017
+    
+    </div>
+    <div class="news-header">
+    
+    <p>
+    ag-Grid in New York!</div>
+    </p>
+    
+    <div>
+        We will be exhibiting at the <a href="https://www.benzingafintechawards.com/">Benzinga Global Fintech Awards</a> on May 11th.
+        </p>
+    </div>
+
+    <div>    
+        We are also dropping by our clients so get in touch if you'd like to meet the team.
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header">30th March 2017</div>
     <div>
         <img src="../images/YouTubeSmall.png" style="position: relative; top: -2px;"/>

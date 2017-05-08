@@ -1,312 +1,354 @@
- <div class="dropdown frameworkBox">
+<div class="dropdown frameworkBox">
     <div class="frameworkContainer">
-        <h4 class="frameworkHeading">Framework</h4><button class="btn btn-default frameworkDropdownButton dropdown-toggle<?php if (isFrameworkAll()) { ?> frameworkAllButton<?php } ?>" type="button" onclick="this.classList.toggle('active');" data-toggle="dropdown">
-                <?php if (isFrameworkAll()) { ?>
-                    All Frameworks
-                <?php } elseif (isFrameworkAngular2()) { ?>
-                    <img src="/images/angular2_small.png" alt="Angular" />
-                    Angular
-                <?php } elseif (isFrameworkAngular1()) { ?>
-                    <img src="/images/angularjs_small.png" alt="Angular 1" />
-                    Angular JS
-                <?php } elseif (isFrameworkAurelia()) { ?>
-                    <img src="/images/aurelia_small.png" alt="Aurelia" />
-                    Aurelia
-                <?php } elseif (isFrameworkReact()) { ?>
-                    <img src="/images/svg/react.alt.svg" width="22" alt="React" />
-                    React
-                <?php } elseif (isFrameworkVue()) { ?>
-                    <img src="/images/vue_small.png" alt="Vue" />
-                    Vue JS
-                <?php } elseif (isFrameworkJavaScript()) { ?>
-                    <img src="/images/javascript_small.png" alt="JavaScript" />
-                    JavaScript
-                <?php } elseif (isFrameworkWebComponents()) { ?>
-                    <img src="/images/webComponents_small.png" alt="Web Components" />
-                    <span class="web-components">Web Components</span>
-                <?php } ?>
+        <h4 class="frameworkHeading">Framework</h4>
+        <button class="btn btn-default frameworkDropdownButton dropdown-toggle<?php if (isFrameworkAll()) { ?> frameworkAllButton<?php } ?>"
+                type="button" onclick="this.classList.toggle('active');" data-toggle="dropdown">
+            <?php if (isFrameworkAll()) { ?>
+                All Frameworks
+            <?php } elseif (isFrameworkAngular2()) { ?>
+                <img src="/images/angular2_small.png" alt="Angular"/>
+                Angular
+            <?php } elseif (isFrameworkAngular1()) { ?>
+                <img src="/images/angularjs_small.png" alt="Angular 1"/>
+                Angular JS
+            <?php } elseif (isFrameworkAurelia()) { ?>
+                <img src="/images/aurelia_small.png" alt="Aurelia"/>
+                Aurelia
+            <?php } elseif (isFrameworkReact()) { ?>
+                <img src="/images/svg/react.alt.svg" width="22" alt="React"/>
+                React
+            <?php } elseif (isFrameworkVue()) { ?>
+                <img src="/images/vue_small.png" alt="Vue"/>
+                Vue JS
+            <?php } elseif (isFrameworkJavaScript()) { ?>
+                <img src="/images/javascript_small.png" alt="JavaScript"/>
+                JavaScript
+            <?php } elseif (isFrameworkWebComponents()) { ?>
+                <img src="/images/webComponents_small.png" alt="Web Components"/>
+                <span class="web-components">Web Components</span>
+            <?php } ?>
 
-        <span class="caret"></span></button>
+            <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li class="frameworkDropdownText">Documentation not relevant to your framework choice will be filtered out.</li>
-          <li class="divider"></li>
-          <li><a class="frameworkDropdown-link" data-id="javascript" href="#"><img src="/images/javascript_small.png" alt="JavaScript" /> Just JavaScript (no framework)</a></li>
-          <li><a class="frameworkDropdown-link" data-id="angular" href="#"><img src="/images/angularjs_small.png" alt="Angular 1" /> Angular (Angular 2 and later)</a></li>
-          <li><a class="frameworkDropdown-link" data-id="angularjs" href="#"><img src="/images/angularjs_small.png" alt="Angular 1" /> Angular JS (Angular 1)</a></li>
-          <li><a class="frameworkDropdown-link" data-id="aurelia" href="#"><img src="/images/aurelia_small.png" alt="Aurelia" /> Aurelia</a></li>
-          <li><a class="frameworkDropdown-link" data-id="react" href="#"><img src="/images/svg/react.alt.svg" width="22" alt="React" /> React</a></li>
-          <li><a class="frameworkDropdown-link" data-id="vue" href="#"><img src="/images/vue_small.png" width="22" alt="Vue" /> Vue JS</a></li>
-          <li><a class="frameworkDropdown-link" data-id="webcomponents" href="#"><img src="../images/webComponents_small.png" alt="Web Components" /> Web Components</a></li>
-          <li><a class="frameworkDropdown-link all-frameworks" data-id="all" href="#">All Frameworks (show everything)</a></li>
+            <li class="frameworkDropdownText">Documentation not relevant to your framework choice will be filtered
+                out.
+            </li>
+            <li class="divider"></li>
+            <li><a class="frameworkDropdown-link" data-id="javascript" href="#"><img src="/images/javascript_small.png"
+                                                                                     alt="JavaScript"/> Just JavaScript
+                    (no framework)</a></li>
+            <li><a class="frameworkDropdown-link" data-id="angular" href="#"><img src="/images/angularjs_small.png"
+                                                                                  alt="Angular 1"/> Angular (Angular 2
+                    and later)</a></li>
+            <li><a class="frameworkDropdown-link" data-id="angularjs" href="#"><img src="/images/angularjs_small.png"
+                                                                                    alt="Angular 1"/> Angular JS
+                    (Angular 1)</a></li>
+            <li><a class="frameworkDropdown-link" data-id="aurelia" href="#"><img src="/images/aurelia_small.png"
+                                                                                  alt="Aurelia"/> Aurelia</a></li>
+            <li><a class="frameworkDropdown-link" data-id="react" href="#"><img src="/images/svg/react.alt.svg"
+                                                                                width="22" alt="React"/> React</a></li>
+            <li><a class="frameworkDropdown-link" data-id="vue" href="#"><img src="/images/vue_small.png" width="22"
+                                                                              alt="Vue"/> Vue JS</a></li>
+            <li><a class="frameworkDropdown-link" data-id="webcomponents" href="#"><img
+                            src="../images/webComponents_small.png" alt="Web Components"/> Web Components</a></li>
+            <li><a class="frameworkDropdown-link all-frameworks" data-id="all" href="#">All Frameworks (show
+                    everything)</a></li>
         </ul>
     </div>
-  </div>
+</div>
 
-    <a href="#" class="expandAll text-right">
-        <?php if ($expandAll==='true') { ?>
-            Close All <i class="fa fa-arrow-down" aria-hidden="true"></i>
-        <?php } else { ?>
-            Expand All <i class="fa fa-arrow-right" aria-hidden="true"></i>
-        <?php } ?>
-    </a>
-
-    <div class="docsMenu-header <?php if ($pageGroup == "basics" || $expandAll== "true") { ?> active<?php } ?>" data-id="getting_started">
-        <h4>
-            <img src="../images/svg/docs/getting_started.svg" />
-            &nbsp;
-            Getting Started
-        </h4>
-        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-    </div>
-
-    <div class="docsMenu-content">
-
-        <?php
-        menuItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
-        if (isFrameworkJavaScript()) {
-            menuItem(1, 'Getting Started Javascript', 'Javascript', 'best-javascript-data-grid/');
-        }
-
-        if (isFrameworkAngular2()) {
-            menuItem(1, 'Getting Started ng2', 'Angular 2+', 'best-angular-2-data-grid/');
-            menuItem(2, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/');
-            menuItem(2, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/');
-            menuItem(2, 'Angular ngtools Webpack', '@ngtools/webpack', 'ag-grid-angular-ngtools-webpack/');
-            menuItem(2, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/');
-        }
-
-        if (isFrameworkAngular1()) {
-            menuItem(1, 'Getting Started ng1', 'AngularJS 1.x', 'best-angularjs-data-grid/');
-        }
-
-        if (isFrameworkReact()) {
-            menuItem(1, 'Getting Started React', 'ReactJS', 'best-react-data-grid/');
-        }
-
-        if (isFrameworkVue()) {
-            menuItem(1, 'Getting Started VueJS', 'VueJS', 'best-vuejs-data-grid/');
-        }
-
-        if (isFrameworkAurelia()) {
-            menuItem(1, 'Getting Started Aurelia', 'Aurelia', 'best-aurelia-data-grid/');
-        }
-
-        if (isFrameworkWebComponents()) {
-            menuItem(1, 'Getting Started Web Components', 'Web Components', 'best-web-component-data-grid/');
-        }
-
-        if(isFrameworkAll()) {
-            menuItem(1, 'Getting Started TypeScript & Webpack 2', 'TypeScript', 'ag-grid-typescript-webpack-2/');
-        }
-
-        menuItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');
-        ?>
-
-    </div>
-
-    <div class="docsMenu-header <?php if ($pageGroup == "interfacing" || $expandAll== "true") { ?> active<?php } ?>" data-id="interfacing">
-        <h4>
-            <img src="../images/svg/docs/interfacing.svg" />
-            &nbsp;
-            Interfacing
-        </h4>
-        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-    </div>
-
-    <div class="docsMenu-content">
-        <?php
-        menuItem(0, 'Interfacing Overview', 'Overview', 'javascript-grid-interfacing-overview/');
-        menuItem(0, 'Properties', 'Properties', 'javascript-grid-properties/');
-        menuItem(0, 'columnDefs', 'Columns', 'javascript-grid-column-definitions/');
-        menuItem(0, 'Events', 'Events', 'javascript-grid-events/');
-        menuItem(0, 'Callbacks', 'Callbacks', 'javascript-grid-callbacks/');
-        menuItem(0, 'Grid API', 'Grid API', 'javascript-grid-api/');
-        menuItem(0, 'Column API', 'Column API', 'javascript-grid-column-api/');
-        ?>
-    </div>
-
-    <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "feature" || $expandAll== "true") { ?> active<?php } ?>" data-id="features">
-        <h4>
-            <img src="../images/svg/docs/features.svg" />
-            &nbsp;
-            Features
-        </h4>
-        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-    </div>
-
-    <div class="docsMenu-content">
-        <?php
-        menuItem(0, 'Features', 'Overview', 'javascript-grid-features/');
-        menuItem(0, 'Width & Height', 'Grid Size', 'javascript-grid-width-and-height/');
-        menuItem(0, 'Sorting', 'Sorting', 'javascript-grid-sorting/');
-        menuItem(0, 'Column Filter', 'Column Filter', 'javascript-grid-filtering/');
-
-        menuItem(1, 'Text Filter', 'Text Filter', 'javascript-grid-filter-text/');
-        menuItem(1, 'Number Filter', 'Number Filter', 'javascript-grid-filter-number/');
-        menuItem(1, 'Date Filter', 'Date Filter', 'javascript-grid-filter-date/');
-        menuItemWithIcon('enterprise.png', 1, 'Set Filtering', 'Set Filter', 'javascript-grid-filter-set/');
-        menuItem(1, 'Custom Filter', 'Custom Filter', 'javascript-grid-filter-custom/');
-
-        menuItem(0, 'Quick Filter', 'Quick Filter', 'javascript-grid-filter-quick/');
-        menuItem(0, 'External Filter', 'External Filter', 'javascript-grid-filter-external/');
-
-        menuItem(0, 'Selection', 'Selection', 'javascript-grid-selection/');
-        menuItemWithIcon('enterprise.png', 0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
-        menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
-        menuItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
-        menuItem(0, 'Grouping Columns', 'Grouping Columns', 'javascript-grid-grouping-headers/');
-        menuItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
-        menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
-        menuItem(0, 'Floating', 'Floating Rows', 'javascript-grid-floating/');
-        menuItem(0, 'Value Getters', 'Value Getters', 'javascript-grid-value-getters/');
-        menuItem(0, 'Cell Expressions', 'Cell Expressions', 'javascript-grid-cell-expressions/');
-        menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
-        menuItem(0, 'Cell Editing', 'Cell Editing', 'javascript-grid-cell-editing/');
-        menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
-        menuItem(0, 'Context', 'Context', 'javascript-grid-context/');
-        menuItem(0, 'InsertRemove', 'Insert & Remove', 'javascript-grid-insert-remove/');
-        menuItem(0, 'Refresh', 'Data Refresh', 'javascript-grid-refresh/');
-        menuItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
-        menuItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
-        menuItem(0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/');
-        menuItem(0, 'Full Width Rows', 'Full Width Rows', 'javascript-grid-full-width-rows/');
-        menuItem(0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');
-        menuItem(0, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave/');
-        menuItem(0, 'Touch', 'Touch', 'javascript-grid-touch/');
-        menuItem(0, 'Data Export', 'CSV Export', 'javascript-grid-export/');
-        menuItemWithIcon('enterprise.png', 0, 'Excel Export', 'Excel Export', 'javascript-grid-excel/');
-        menuItem(0, 'RTL', 'RTL', 'javascript-grid-rtl/');
-        menuItem(0, 'Icons', 'Icons', 'javascript-grid-icons/');
-        menuItem(0, 'Overlays', 'Overlays', 'javascript-grid-overlays/');
-        menuItem(0, 'For Print', 'For Print', 'javascript-grid-for-print/');
-
-        menuItemWithIcon('enterprise.png', 0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
-        menuItemWithIcon('enterprise.png', 1, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping/');
-        menuItemWithIcon('enterprise.png', 1, 'Aggregation', 'Aggregation', 'javascript-grid-aggregation/');
-        menuItemWithIcon('enterprise.png', 1, 'Pivoting', 'Pivoting', 'javascript-grid-pivoting/');
-
-        menuItemWithIcon('enterprise.png', 0, 'Tool Panel', 'Tool Panel', 'javascript-grid-tool-panel/');
-        menuItemWithIcon('enterprise.png', 0, 'Clipboard', 'Clipboard', 'javascript-grid-clipboard/');
-        menuItemWithIcon('enterprise.png', 0, 'Column Menu', 'Column Menu', 'javascript-grid-column-menu/');
-        menuItemWithIcon('enterprise.png', 0, 'Context Menu', 'Context Menu', 'javascript-grid-context-menu/');
-        menuItemWithIcon('enterprise.png', 0, 'Status Bar', 'Status Bar', 'javascript-grid-status-bar/');
-        menuItemWithIcon('enterprise.png', 0, 'License Key', 'License Key', 'javascript-grid-set-license/');
-
-        ?>
-    </div>
-
-    <div class="docsMenu-header<?php if ($pageGroup == "row_models" || $expandAll== "true") { ?> active<?php } ?>" data-id="row_models">
-        <h4>
-            <img src="../images/svg/docs/row_models.svg" />
-            &nbsp;
-            Row Models
-        </h4>
-        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-    </div>
-
-    <div class="docsMenu-content">
-        <?php
-        menuItem(0, 'Row Models', 'Overview', 'javascript-grid-row-models/');
-        menuItem(0, 'Row Node', 'Row Node', 'javascript-grid-row-node/');
-        menuItem(0, 'In Memory', 'In Memory', 'javascript-grid-in-memory/');
-        menuItem(0, 'Infinite Scrolling', 'Infinite Scrolling', 'javascript-grid-infinite-scrolling/');
-        menuItemWithIcon('enterprise.png', 0, 'Viewport', 'Viewport', 'javascript-grid-viewport/');
-        menuItemWithIcon('lab.png', 0, 'Enterprise', 'Enterprise', 'javascript-grid-enterprise-model/');
-        ?>
-    </div>
-    
-    <div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "themes" || $expandAll== "true") { ?> active<?php } ?>" data-id="themes">
-        <h4>
-            <img src="../images/svg/docs/themes.svg" />
-            &nbsp;
-            Themes
-        </h4>
-        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-    </div>
-
-    <div class="docsMenu-content">
-
-        <?php
-        menuItem(0, 'Styling', 'Overview', 'javascript-grid-styling/');
-        menuItem(0, 'Fresh Theme', 'Fresh Theme', 'javascript-grid-themes/fresh-theme.php');
-        menuItem(0, 'Blue Theme', 'Blue Theme', 'javascript-grid-themes/blue-theme.php');
-        menuItem(0, 'Dark Theme', 'Dark Theme', 'javascript-grid-themes/dark-theme.php');
-        menuItem(0, 'Material Theme', 'Material Theme', 'javascript-grid-themes/material-theme.php');
-        menuItem(0, 'Bootstrap Theme', 'Bootstrap Theme', 'javascript-grid-themes/bootstrap-theme.php');
-        ?>
-
-    </div>
-
-    <div class="docsMenu-header<?php if ($pageGroup == "components" || $expandAll== "true") { ?> active<?php } ?>" data-id="components">
-        <h4>
-            <img src="../images/svg/docs/components.svg" />
-            &nbsp;
-            Components
-        </h4>
-        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-    </div>
-
-    <div class="docsMenu-content">
-        <?php
-        menuItem(0, 'Components', 'Overview', 'javascript-grid-components/');
-        menuItem(0, 'Date Component', 'Date Component', 'javascript-grid-date-component/');
-        menuItem(0, 'Cell Rendering', 'Cell Renderer', 'javascript-grid-cell-rendering/');
-        menuItem(0, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/');
-        menuItem(0, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component/');
-        menuItem(0, 'Floating Filter Component', 'Floating Filter Component', 'javascript-grid-floating-filter-component/');
-        menuItem(0, 'Header Rendering', 'Header Component', 'javascript-grid-header-rendering/');
-        ?>
-    </div>
-
-    <div class="docsMenu-header<?php if ($pageGroup == "examples" || $expandAll== "true") { ?> active<?php } ?>" data-id="examples">
-        <h4>
-            <img src="../images/svg/docs/examples.svg" />
-            &nbsp;
-            Examples
-        </h4>
-        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-    </div>
-
-    <div class="docsMenu-examples">
-        <?php
-
-        menuItem(0, 'ag-Grid Examples', 'ag-Grid Examples', 'javascript-grid-examples/');
-        if (isFrameworkAngular2() || isFrameworkAll()) {
-            menuItemWithIcon('angular2_small.png', 1, 'Angular Examples', 'Angular Examples', 'example-angular/', true);
-            menuItem(2, 'Angular Rich Grid', 'Rich Grid', 'example-angular-rich-grid/');
-            menuItem(2, 'Angular Markup', 'Grid via Markup', 'example-angular-rich-grid-markup/');
-            menuItem(2, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
-            menuItem(2, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
-            menuItem(2, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
-            menuItem(2, 'Angular Floating Row', 'Floating Rows', 'example-angular-floating-row/');
-            menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
-            menuItem(2, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
-            menuItem(2, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
-            menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
-        }
-        menuItem(1, 'Styled Report', 'Styled Report', 'example-account-report/');
-        menuItem(1, 'File Browser', 'File Browser', 'example-file-browser/');
-        menuItem(1, 'Expressions and Context', 'Expressions', 'example-expressions-and-context/');
-        ?>
-    </div>
-
-    <?php if ($version == 'latest') { ?>
-        <div class="docsMenu-header<?php if ($pageGroup == "misc" || $expandAll== "true") { ?> active<?php } ?>" data-id="misc">
-            <h4>Misc</h4>
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
-        </div>
-
-        <div class="docsMenu-content">
-            <?php
-            menuItem(0, 'Change Log', 'Change Log', 'change-log/changeLogIndex.php');
-            menuItem(0, 'Roadmap', 'Roadmap', 'javascript-grid-roadmap');
-            menuItem(0, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials/');
-            menuItem(0, 'Responsiveness', 'Responsive Design', 'javascript-grid-responsiveness/');
-            menuItem(0, 'Testing', 'Testing', 'javascript-grid-testing/');
-            ?>
-            <a class="sidebarLink" href="/archive/">Archive Docs</a>
-        </div>
+<a href="#" class="expandAll text-right">
+    <?php if ($expandAll === 'true') { ?>
+        Close All <i class="fa fa-arrow-down" aria-hidden="true"></i>
+    <?php } else { ?>
+        Expand All <i class="fa fa-arrow-right" aria-hidden="true"></i>
     <?php } ?>
+</a>
+
+<div class="docsMenu-header <?php if ($pageGroup == "basics" || $expandAll == "true") { ?> active<?php } ?>"
+     data-id="getting_started">
+    <h4>
+        <img src="../images/svg/docs/getting_started.svg"/>
+        &nbsp;
+        Getting Started
+    </h4>
+    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+</div>
+<div class="docsMenu-content">
+
+    <?php
+    menuItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
+    if (isFrameworkJavaScript()) {
+        menuItem(1, 'Getting Started Javascript', 'Javascript', 'best-javascript-data-grid/');
+    }
+
+    if (isFrameworkAngular2()) {
+        menuItemCollapsibleParent(1, 'Getting Started ng2', 'Angular 2.x/4.x', 'best-angular-2-data-grid/', 'angularParent');
+        menuItemCollapsibleChild(2, 'Angular CLI', 'Angular CLI', 'ag-grid-angular-angularcli/', 'angularParent', 'angularChild', 'start');
+        menuItemCollapsibleChild(2, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/', 'angularParent', 'angularChild');
+        menuItemCollapsibleChild(2, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/', 'angularParent', 'angularChild');
+        menuItemCollapsibleChild(2, 'Angular ngtools Webpack', 'ngtools/webpack', 'ag-grid-angular-ngtools-webpack/', 'angularParent', 'angularChild');
+        menuItemCollapsibleChild(2, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/', 'angularParent', 'angularChild', 'end');
+    }
+
+    if (isFrameworkAngular1()) {
+        menuItem(1, 'Getting Started ng1', 'AngularJS 1.x', 'best-angularjs-data-grid/');
+    }
+
+    if (isFrameworkReact()) {
+        menuItem(1, 'Getting Started React', 'ReactJS', 'best-react-data-grid/');
+    }
+
+    if (isFrameworkVue()) {
+        menuItem(1, 'Getting Started VueJS', 'VueJS', 'best-vuejs-data-grid/');
+    }
+
+    if (isFrameworkAurelia()) {
+        menuItem(1, 'Getting Started Aurelia', 'Aurelia', 'best-aurelia-data-grid/');
+    }
+
+    if (isFrameworkWebComponents()) {
+        menuItem(1, 'Getting Started Web Components', 'Web Components', 'best-web-component-data-grid/');
+    }
+
+    if (isFrameworkAll()) {
+        menuItem(1, 'Getting Started TypeScript & Webpack 2', 'TypeScript', 'ag-grid-typescript-webpack-2/');
+    }
+
+    menuItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');
+    ?>
+
+</div>
+
+<div class="docsMenu-header <?php if ($pageGroup == "interfacing" || $expandAll == "true") { ?> active<?php } ?>"
+     data-id="interfacing">
+    <h4>
+        <img src="../images/svg/docs/interfacing.svg"/>
+        &nbsp;
+        Interfacing
+    </h4>
+    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+</div>
+
+<div class="docsMenu-content">
+    <?php
+    menuItem(0, 'Interfacing Overview', 'Overview', 'javascript-grid-interfacing-overview/');
+    menuItem(0, 'Properties', 'Properties', 'javascript-grid-properties/');
+    menuItem(0, 'columnDefs', 'Columns', 'javascript-grid-column-definitions/');
+    menuItem(0, 'Events', 'Events', 'javascript-grid-events/');
+    menuItem(0, 'Callbacks', 'Callbacks', 'javascript-grid-callbacks/');
+    menuItem(0, 'Grid API', 'Grid API', 'javascript-grid-api/');
+    menuItem(0, 'Column API', 'Column API', 'javascript-grid-column-api/');
+    ?>
+</div>
+
+<div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "feature" || $expandAll == "true") { ?> active<?php } ?>"
+     data-id="features">
+    <h4>
+        <img src="../images/svg/docs/features.svg"/>
+        &nbsp;
+        Features
+    </h4>
+    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+</div>
+
+<div class="docsMenu-content">
+    <?php
+    menuItem(0, 'Features', 'Overview', 'javascript-grid-features/');
+    menuItem(0, 'Width & Height', 'Grid Size', 'javascript-grid-width-and-height/');
+    menuItem(0, 'Sorting', 'Sorting', 'javascript-grid-sorting/');
+    menuItem(0, 'Column Filter', 'Column Filter', 'javascript-grid-filtering/');
+
+    menuItem(1, 'Text Filter', 'Text Filter', 'javascript-grid-filter-text/');
+    menuItem(1, 'Number Filter', 'Number Filter', 'javascript-grid-filter-number/');
+    menuItem(1, 'Date Filter', 'Date Filter', 'javascript-grid-filter-date/');
+    menuItemWithIcon('enterprise.png', 1, 'Set Filtering', 'Set Filter', 'javascript-grid-filter-set/');
+    menuItem(1, 'Custom Filter', 'Custom Filter', 'javascript-grid-filter-custom/');
+
+    menuItem(0, 'Quick Filter', 'Quick Filter', 'javascript-grid-filter-quick/');
+    menuItem(0, 'External Filter', 'External Filter', 'javascript-grid-filter-external/');
+
+    menuItem(0, 'Selection', 'Selection', 'javascript-grid-selection/');
+    menuItemWithIcon('enterprise.png', 0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
+    menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
+    menuItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
+    menuItem(0, 'Grouping Columns', 'Grouping Columns', 'javascript-grid-grouping-headers/');
+    menuItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
+    menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
+    menuItem(0, 'Floating', 'Floating Rows', 'javascript-grid-floating/');
+    menuItem(0, 'Value Getters', 'Value Getters', 'javascript-grid-value-getters/');
+    menuItem(0, 'Cell Expressions', 'Cell Expressions', 'javascript-grid-cell-expressions/');
+    menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
+    menuItem(0, 'Cell Editing', 'Cell Editing', 'javascript-grid-cell-editing/');
+    menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
+    menuItem(0, 'Context', 'Context', 'javascript-grid-context/');
+    menuItem(0, 'InsertRemove', 'Insert & Remove', 'javascript-grid-insert-remove/');
+    menuItem(0, 'Refresh', 'Data Refresh', 'javascript-grid-refresh/');
+    menuItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
+    menuItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
+    menuItem(0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/');
+    menuItem(0, 'Full Width Rows', 'Full Width Rows', 'javascript-grid-full-width-rows/');
+    menuItem(0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');
+    menuItem(0, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave/');
+    menuItem(0, 'Touch', 'Touch', 'javascript-grid-touch/');
+    menuItem(0, 'Data Export', 'CSV Export', 'javascript-grid-export/');
+    menuItemWithIcon('enterprise.png', 0, 'Excel Export', 'Excel Export', 'javascript-grid-excel/');
+    menuItem(0, 'RTL', 'RTL', 'javascript-grid-rtl/');
+    menuItem(0, 'Icons', 'Icons', 'javascript-grid-icons/');
+    menuItem(0, 'Overlays', 'Overlays', 'javascript-grid-overlays/');
+    menuItem(0, 'For Print', 'For Print', 'javascript-grid-for-print/');
+
+    menuItemWithIcon('enterprise.png', 0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
+    menuItemWithIcon('enterprise.png', 1, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping/');
+    menuItemWithIcon('enterprise.png', 1, 'Aggregation', 'Aggregation', 'javascript-grid-aggregation/');
+    menuItemWithIcon('enterprise.png', 1, 'Pivoting', 'Pivoting', 'javascript-grid-pivoting/');
+
+    menuItemWithIcon('enterprise.png', 0, 'Tool Panel', 'Tool Panel', 'javascript-grid-tool-panel/');
+    menuItemWithIcon('enterprise.png', 0, 'Clipboard', 'Clipboard', 'javascript-grid-clipboard/');
+    menuItemWithIcon('enterprise.png', 0, 'Column Menu', 'Column Menu', 'javascript-grid-column-menu/');
+    menuItemWithIcon('enterprise.png', 0, 'Context Menu', 'Context Menu', 'javascript-grid-context-menu/');
+    menuItemWithIcon('enterprise.png', 0, 'Status Bar', 'Status Bar', 'javascript-grid-status-bar/');
+    menuItemWithIcon('enterprise.png', 0, 'License Key', 'License Key', 'javascript-grid-set-license/');
+
+    ?>
+</div>
+
+<div class="docsMenu-header<?php if ($pageGroup == "row_models" || $expandAll == "true") { ?> active<?php } ?>"
+     data-id="row_models">
+    <h4>
+        <img src="../images/svg/docs/row_models.svg"/>
+        &nbsp;
+        Row Models
+    </h4>
+    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+</div>
+
+<div class="docsMenu-content">
+    <?php
+    menuItem(0, 'Row Models', 'Overview', 'javascript-grid-row-models/');
+    menuItem(0, 'Row Node', 'Row Node', 'javascript-grid-row-node/');
+    menuItem(0, 'In Memory', 'In Memory', 'javascript-grid-in-memory/');
+    menuItem(0, 'Infinite Scrolling', 'Infinite Scrolling', 'javascript-grid-infinite-scrolling/');
+    menuItemWithIcon('enterprise.png', 0, 'Viewport', 'Viewport', 'javascript-grid-viewport/');
+    menuItemWithIcon('lab.png', 0, 'Enterprise', 'Enterprise', 'javascript-grid-enterprise-model/');
+    ?>
+</div>
+
+<div class="docsMenu-header docsMenu-header_feature<?php if ($pageGroup == "themes" || $expandAll == "true") { ?> active<?php } ?>"
+     data-id="themes">
+    <h4>
+        <img src="../images/svg/docs/themes.svg"/>
+        &nbsp;
+        Themes
+    </h4>
+    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+</div>
+
+<div class="docsMenu-content">
+
+    <?php
+    menuItem(0, 'Styling', 'Overview', 'javascript-grid-styling/');
+    menuItem(0, 'Fresh Theme', 'Fresh Theme', 'javascript-grid-themes/fresh-theme.php');
+    menuItem(0, 'Blue Theme', 'Blue Theme', 'javascript-grid-themes/blue-theme.php');
+    menuItem(0, 'Dark Theme', 'Dark Theme', 'javascript-grid-themes/dark-theme.php');
+    menuItem(0, 'Material Theme', 'Material Theme', 'javascript-grid-themes/material-theme.php');
+    menuItem(0, 'Bootstrap Theme', 'Bootstrap Theme', 'javascript-grid-themes/bootstrap-theme.php');
+    ?>
+
+</div>
+
+<div class="docsMenu-header<?php if ($pageGroup == "components" || $expandAll == "true") { ?> active<?php } ?>"
+     data-id="components">
+    <h4>
+        <img src="../images/svg/docs/components.svg"/>
+        &nbsp;
+        Components
+    </h4>
+    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+</div>
+
+<div class="docsMenu-content">
+    <?php
+    menuItem(0, 'Components', 'Overview', 'javascript-grid-components/');
+    menuItem(0, 'Date Component', 'Date Component', 'javascript-grid-date-component/');
+    menuItem(0, 'Cell Rendering', 'Cell Renderer', 'javascript-grid-cell-rendering/');
+    menuItem(0, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/');
+    menuItem(0, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component/');
+    menuItem(0, 'Floating Filter Component', 'Floating Filter Component', 'javascript-grid-floating-filter-component/');
+    menuItem(0, 'Header Rendering', 'Header Component', 'javascript-grid-header-rendering/');
+    ?>
+</div>
+
+<div class="docsMenu-header<?php if ($pageGroup == "examples" || $expandAll == "true") { ?> active<?php } ?>"
+     data-id="examples">
+    <h4>
+        <img src="../images/svg/docs/examples.svg"/>
+        &nbsp;
+        Examples
+    </h4>
+    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+</div>
+
+<div class="docsMenu-examples">
+    <?php
+
+    menuItem(0, 'ag-Grid Examples', 'ag-Grid Examples', 'javascript-grid-examples/');
+    if (isFrameworkAngular2() || isFrameworkAll()) {
+        menuItemWithIcon('angular2_small.png', 1, 'Angular Examples', 'Angular Examples', 'example-angular/', true);
+        menuItem(2, 'Angular Rich Grid', 'Rich Grid', 'example-angular-rich-grid/');
+        menuItem(2, 'Angular Markup', 'Grid via Markup', 'example-angular-rich-grid-markup/');
+        menuItem(2, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
+        menuItem(2, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
+        menuItem(2, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
+        menuItem(2, 'Angular Floating Row', 'Floating Rows', 'example-angular-floating-row/');
+        menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
+        menuItem(2, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
+        menuItem(2, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
+        menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
+    }
+    menuItem(1, 'Styled Report', 'Styled Report', 'example-account-report/');
+    menuItem(1, 'File Browser', 'File Browser', 'example-file-browser/');
+    menuItem(1, 'Expressions and Context', 'Expressions', 'example-expressions-and-context/');
+    ?>
+</div>
+
+<div class="docsMenu-header<?php if ($pageGroup == "thirdparty" || $expandAll == "true") { ?> active<?php } ?>"
+     data-id="thirdparty">
+    <h4>
+        <img src="../images/svg/docs/abc.svg"/>
+        &nbsp;
+        Third Party
+    </h4>
+    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+</div>
+
+<div class="docsMenu-content">
+    <?php
+
+    menuItem(0, 'ag-Grid Third Party Examples', 'Overview', 'javascript-grid-third-party/');
+    menuItem(1, 'ag-Grid OpenFin', 'OpenFin', 'javascript-grid-openfin/');
+    menuItem(1, 'ag-Grid Graphing', 'Graphing', 'javascript-grid-graphing/');
+    ?>
+</div>
+
+<?php if ($version == 'latest') { ?>
+    <div class="docsMenu-header<?php if ($pageGroup == "misc" || $expandAll == "true") { ?> active<?php } ?>"
+         data-id="misc">
+        <h4>Misc</h4>
+        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+    </div>
+
+    <div class="docsMenu-content">
+        <?php
+        menuItem(0, 'Change Log', 'Change Log', 'change-log/changeLogIndex.php');
+        menuItem(0, 'Roadmap', 'Roadmap', 'javascript-grid-roadmap');
+        menuItem(0, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials/');
+        menuItem(0, 'Responsiveness', 'Responsive Design', 'javascript-grid-responsiveness/');
+        menuItem(0, 'Testing', 'Testing', 'javascript-grid-testing/');
+        ?>
+        <a class="sidebarLink" href="/archive/">Archive Docs</a>
+    </div>
+<?php } ?>
 
 <div style="border: 1px solid #eee; margin-top: 30px; margin-bottom: 50px;">
 </div>
@@ -358,11 +400,14 @@
               target="_blank" novalidate
               style="padding: 0px">
             <div id="mc_embed_signup_scroll">
-                <input style="width: 140px; margin-top: 4px;" placeholder="Email Address..." type="email" value="" name="EMAIL"
+                <input style="width: 140px; margin-top: 4px;" placeholder="Email Address..." type="email" value=""
+                       name="EMAIL"
                        class="required email" id="mce-EMAIL">
-                <input style="width: 140px; margin-top: 4px;" placeholder="First Name" type="text" value="" name="FNAME" class=""
+                <input style="width: 140px; margin-top: 4px;" placeholder="First Name" type="text" value="" name="FNAME"
+                       class=""
                        id="mce-FNAME">
-                <input style="width: 140px; margin-top: 4px;" placeholder="Last Name" type="text" value="" name="LNAME" class=""
+                <input style="width: 140px; margin-top: 4px;" placeholder="Last Name" type="text" value="" name="LNAME"
+                       class=""
                        id="mce-LNAME">
                 <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"
                        style="padding-left: 10px; padding-right: 10px; margin: 0px; ; margin-top: 4px; height: 20px; line-height: 20px;">
@@ -384,7 +429,8 @@
     Follow on Twitter
 
     <a href="http://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="medium"></a>
-    <a href="http://twitter.com/seanlandsman" class="twitter-follow-button" data-show-count="false" data-size="medium"></a>
+    <a href="http://twitter.com/seanlandsman" class="twitter-follow-button" data-show-count="false"
+       data-size="medium"></a>
 
     <script>!function (d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';

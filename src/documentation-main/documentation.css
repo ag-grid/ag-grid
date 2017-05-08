@@ -219,6 +219,43 @@ a.column-links:hover {
     width: 350px;
 }
 
+input[collapsible] {
+    display: none;
+    visibility: hidden;
+}
+
+label[collapsible] {
+    text-align: center;
+}
+
+label[collapsible]::before {
+    font-family: Consolas, monaco, monospace;
+    font-weight: bold;
+    font-size: 15px;
+    content: "+";
+    vertical-align: text-top;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 3px;
+    background: radial-gradient(ellipse at center, #CCC 50%, transparent 50%);
+}
+
+#angularChild {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #FFF;
+}
+
+#angularParent:checked ~ #angularChild {
+    height: 120px;
+}
+
+#angularParent:checked ~ label[collapsible]::before {
+    content: "-";
+}
+
 /*
 * === Google Custom search in docs ===
 */

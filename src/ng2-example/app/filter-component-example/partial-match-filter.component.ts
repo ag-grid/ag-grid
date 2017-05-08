@@ -38,7 +38,7 @@ export class PartialMatchFilterComponent implements IFilterAngularComp {
     }
 
     setModel(model: any): void {
-        this.text = model.value;
+        this.text = model ? model.value : '';
     }
 
     afterGuiAttached(params: IAfterGuiAttachedParams): void {
