@@ -27,7 +27,7 @@ var gridOptions = {
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,
     infiniteBlockSize: 100,
-    maxPagesInCache: 2,
+    maxBlocksInCache: 2,
     purgeClosedRowNodes: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();

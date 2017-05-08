@@ -258,7 +258,7 @@ interface IGetRowsParams {
     <show-complex-example example="exampleInfiniteServerSide.html"
                           sources="{
                                 [
-                                    { root: './', files: 'exampleInfiniteServerSide.html,exampleInfiniteServerSideCommon.js,exampleInfiniteServerSide.js' }
+                                    { root: './', files: 'exampleInfiniteServerSide.html,exampleInfiniteServerSide.js' }
                                 ]
                               }"
                           exampleheight="350px">
@@ -366,7 +366,7 @@ interface IGetRowsParams {
                     marked for reload. The old data will continue to be displayed until the new data is loaded.</p></td>
         </tr>
         <tr id="api-purge-virtual-page-cache">
-            <th>purgeInfinitePageCache()</th>
+            <th>purgeInfiniteCache()</th>
             <td><p>Purges the cache. The grid is then told to refresh. Only the pages required to display the current
                     data on screen are fetched (typically no more than two). The grid will display nothing while the new
                     pages are loaded. Use this to immediately remove the old data from the user.</p></td>
@@ -392,7 +392,7 @@ interface IGetRowsParams {
             and need to reset the number of rows or put the data back into 'look for data' mode.</td></tr>
 
         <tr id="api-get-virtual-page-state">
-            <th>getInfinitePageState()</th>
+            <th>getCacheBlockState()</th>
             <td>
                 Returns an object representing the state of the cache. This is useful for debugging and understanding
                 how the cache is working.</td></tr>

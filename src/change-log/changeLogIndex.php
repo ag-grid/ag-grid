@@ -28,8 +28,22 @@ include '../documentation-main/documentation_header.php';
     <h4>Breaking Changes:</h4>
     <ul>
         <li>
-            Property <i>maxPagesInCache</i> renamed to <i>maxBlocksInCache</i>
-            API <i>refreshInfinitePageCache</i> renamed to <i>refreshInfiniteCache</i>
+            The cache in 'infinite row model' now deals with blocks of rows, not pages, to avoid
+            terminology confusion with the pagination feature.
+            <ul>
+                <li>
+                    Property <i>maxPagesInCache</i> renamed to <i>maxBlocksInCache</i>
+                </li>
+                <li>
+                    API <i>refreshInfinitePageCache</i> renamed to <i>refreshInfiniteCache</i>
+                </li>
+                <li>
+                    API <i>purgeInfinitePageCache</i> renamed to <i>purgeInfiniteCache</i>
+                </li>
+                <li>
+                    API <i>getInfinitePageState</i> renamed to <i>getBlockCacheState</i>
+                </li>
+            </ul>
         </li>
     </ul>
 
