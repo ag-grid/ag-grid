@@ -230,7 +230,7 @@
     menuItem(0, 'In Memory', 'In Memory', 'javascript-grid-in-memory/');
     menuItem(0, 'Infinite Scrolling', 'Infinite Scrolling', 'javascript-grid-infinite-scrolling/');
     menuItemWithIcon('enterprise.png', 0, 'Viewport', 'Viewport', 'javascript-grid-viewport/');
-    menuItemWithIcon('lab.png', 0, 'Enterprise', 'Enterprise', 'javascript-grid-enterprise-model/');
+    menuItemWithIcon('enterprise.png', 0, 'Enterprise', 'Enterprise', 'javascript-grid-enterprise-model/');
     ?>
 </div>
 

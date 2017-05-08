@@ -71,7 +71,7 @@ FakeServer.prototype.getData = function(request, callback) {
     // it in a timeout to a) give a delay and b) make it asynchronous
     setTimeout( function() {
         callback(result, lastRow);
-    }, 200);
+    }, 1000);
 };
 
 FakeServer.prototype.sortList = function(data, sortModel) {

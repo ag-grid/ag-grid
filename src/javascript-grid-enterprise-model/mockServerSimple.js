@@ -102,7 +102,7 @@ FakeServer.prototype.getTopLevelCountryList = function(callback, request) {
     // put the response into a timeout, so it looks like an async call from a server
     setTimeout( function() {
         callback(rowData, lastRow);
-    }, 200);
+    }, 1000);
 };
 
 FakeServer.prototype.getCountryDetails = function(callback, country, request) {
@@ -117,7 +117,7 @@ FakeServer.prototype.getCountryDetails = function(callback, country, request) {
     // put the response into a timeout, so it looks like an async call from a server
     setTimeout( function() {
         callback(rowData, lastRow);
-    }, 200);
+    }, 1000);
 };
 
 FakeServer.prototype.getBlockFromResult = function(data, request) {

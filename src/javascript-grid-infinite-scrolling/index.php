@@ -328,7 +328,7 @@ interface IGetRowsParams {
                     Default is 1, thus by default, only one request will be active at any given time.</p></td>
         </tr>
         <tr id="property-max-pages-in-cache">
-            <th>maxPagesInCache</th>
+            <th>maxBlocksInCache</th>
             <td>
                 <p>How many pages to cache in the client. Default is no limit, so every requested
                     page is kept. Use this if you have memory concerns, so pages least recently viewed are purged. If used, make
@@ -361,7 +361,7 @@ interface IGetRowsParams {
             <th>Description</th>
         </tr>
         <tr id="api-refresh-virtual-page-cache">
-            <th>refreshInfinitePageCache()</th>
+            <th>refreshInfiniteCache()</th>
             <td><p>Marks all the currently loaded page caches for reload. If you have 10 pages in the cache, all 10 will be
                     marked for reload. The old data will continue to be displayed until the new data is loaded.</p></td>
         </tr>
