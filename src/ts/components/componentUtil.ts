@@ -30,7 +30,7 @@ export class ComponentUtil {
     public static NUMBER_PROPERTIES = [
         'rowHeight','rowBuffer','colWidth','headerHeight','groupDefaultExpanded',
         'minColWidth','maxColWidth','viewportRowModelPageSize','viewportRowModelBufferSize',
-        'layoutInterval','autoSizePadding','maxPagesInCache','maxConcurrentDatasourceRequests',
+        'layoutInterval','autoSizePadding','maxBlocksInCache','maxConcurrentDatasourceRequests',
         'paginationOverflowSize','paginationPageSize','infiniteBlockSize','infiniteInitialRowCount',
         'scrollbarWidth','paginationStartPage','infiniteBlockSize'
     ];

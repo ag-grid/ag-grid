@@ -166,7 +166,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
             maxConcurrentRequests: maxConcurrentRequests,
             overflowSize: this.gridOptionsWrapper.getPaginationOverflowSize(),
             initialRowCount: this.gridOptionsWrapper.getInfiniteInitialRowCount(),
-            maxBlocksInCache: this.gridOptionsWrapper.getMaxPagesInCache(),
+            maxBlocksInCache: this.gridOptionsWrapper.getMaxBlocksInCache(),
             blockSize: this.gridOptionsWrapper.getInfiniteBlockSize(),
             rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
 

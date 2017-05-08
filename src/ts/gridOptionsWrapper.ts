@@ -215,7 +215,7 @@ export class GridOptionsWrapper {
     public getAutoSizePadding(): number { return this.gridOptions.autoSizePadding; }
 
     public getMaxConcurrentDatasourceRequests(): number { return this.gridOptions.maxConcurrentDatasourceRequests; }
-    public getMaxPagesInCache(): number { return this.gridOptions.maxPagesInCache; }
+    public getMaxBlocksInCache(): number { return this.gridOptions.maxBlocksInCache; }
     public getPaginationOverflowSize(): number { return this.gridOptions.paginationOverflowSize; }
     public getPaginationPageSize(): number { return this.gridOptions.paginationPageSize; }
     public getInfiniteBlockSize(): number { return this.gridOptions.infiniteBlockSize; }
@@ -472,6 +472,9 @@ export class GridOptionsWrapper {
         }
         if (options.infinitePageSize) {
             console.warn('ag-grid: since version 9.0.x infinitePageSize is now called infiniteBlockSize');
+        }
+        if (options.maxPagesInCache) {
+            console.warn('ag-grid: since version 10.0.x maxPagesInCache is now called maxBlocksInCache');
         }
     }
 

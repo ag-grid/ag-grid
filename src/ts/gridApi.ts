@@ -676,15 +676,20 @@ export class GridApi {
     }
 
     public refreshVirtualPageCache(): void {
-        console.warn('ag-Grid: refreshVirtualPageCache() is now called refreshInfinitePageCache(), please call refreshInfinitePageCache() instead');
-        this.refreshInfinitePageCache();
+        console.warn('ag-Grid: refreshVirtualPageCache() is now called refreshInfiniteCache(), please call refreshInfiniteCache() instead');
+        this.refreshInfiniteCache();
     }
 
     public refreshInfinitePageCache(): void {
+        console.warn('ag-Grid: refreshInfinitePageCache() is now called refreshInfiniteCache(), please call refreshInfiniteCache() instead');
+        this.refreshInfiniteCache();
+    }
+
+    public refreshInfiniteCache(): void {
         if (this.infinitePageRowModel) {
             this.infinitePageRowModel.refreshCache();
         } else {
-            console.warn(`ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='infinite'.`);
+            console.warn(`ag-Grid: api.refreshInfiniteCache is only available when rowModelType='infinite'.`);
         }
     }
 

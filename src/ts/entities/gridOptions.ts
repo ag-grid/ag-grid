@@ -97,7 +97,7 @@ export interface GridOptions {
     functionsReadOnly?: boolean;
     functionsPassive?: boolean;
     maxConcurrentDatasourceRequests?: number;
-    maxPagesInCache?: number;
+    maxBlocksInCache?: number;
     purgeClosedRowNodes?: boolean;
 
     paginationOverflowSize?: number;
