@@ -51,6 +51,9 @@ export class AggregationStage implements IRowNodeStage {
             }
         });
 
+        //Optionally prevent the aggregation at the root Node
+        //https://ag-grid.atlassian.net/browse/AG-388
+        if (rowNode.level === -1 && this.gridOptionsWrapper.isSuppressAggAtRootLevel()) return;
         this.aggregateRowNode(rowNode, measureColumns, pivotColumns);
     }
 
@@ -61,11 +64,11 @@ export class AggregationStage implements IRowNodeStage {
         var userProvidedGroupRowAggNodes = this.gridOptionsWrapper.getGroupRowAggNodesFunc();
 
         var aggResult: any;
-        if (userProvidedGroupRowAggNodes) {
+        if (rowNode.group && userProvidedGroupRowAggNodes) {
             aggResult = userProvidedGroupRowAggNodes(rowNode.childrenAfterFilter);
         } else if (measureColumnsMissing) {
             aggResult = null;
-        } else if (pivotColumnsMissing) {
+        } else if (rowNode.group && pivotColumnsMissing) {
             aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, measureColumns);
         } else {
             aggResult = this.aggregateRowNodeUsingValuesAndPivot(rowNode);
