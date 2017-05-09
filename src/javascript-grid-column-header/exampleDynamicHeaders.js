@@ -24,10 +24,10 @@ var gridOptions = {
     rowData: null,
     enableColResize: true,
     floatingFilter:true,
-    groupHeaderHeight:25,
+    groupHeaderHeight:75,
     headerHeight: 150,
-    floatingFiltersHeight:20,
-    pivotHeaderHeight:25,
+    floatingFiltersHeight:50,
+    pivotHeaderHeight:30,
     enableSorting:true,
     showToolPanel:true
 };
