@@ -26,7 +26,7 @@ var gridOptions = {
     rowSelection: 'multiple',
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,
-    infiniteBlockSize: 100,
+    cacheBlockSize: 100,
     maxBlocksInCache: 2,
     purgeClosedRowNodes: true,
     onGridReady: function(params) {

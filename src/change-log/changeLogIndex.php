@@ -28,11 +28,18 @@ include '../documentation-main/documentation_header.php';
     <h4>Breaking Changes:</h4>
     <ul>
         <li>
-            The cache in 'infinite row model' now deals with blocks of rows, not pages, to avoid
-            terminology confusion with the pagination feature.
+            The cache in 'infinite row model' now deals with <b>blocks</b> of rows,
+            not <b>pages</b> of rows. To avoid terminology confusion (with pagination feature)
+            the following name changes were made:
             <ul>
                 <li>
                     Property <i>maxPagesInCache</i> renamed to <i>maxBlocksInCache</i>
+                </li>
+                <li>
+                    Property <i>infiniteBlockSize</i> renamed to <i>cacheBlockSize</i>
+                </li>
+                <li>
+                    Property <i>paginationOverflowSize</i> renamed to <i>cacheOverflowSize</i>
                 </li>
                 <li>
                     API <i>refreshInfinitePageCache</i> renamed to <i>refreshInfiniteCache</i>
