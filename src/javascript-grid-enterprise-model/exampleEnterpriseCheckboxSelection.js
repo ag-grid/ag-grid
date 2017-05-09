@@ -1,10 +1,5 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete",
-        checkboxSelection: function(params) {
-            return !params.node.group;
-        },
-        enableRowGroup: true
-    },
+    {headerName: "Athlete", field: "athlete", enableRowGroup: true},
     {headerName: "Age", field: "age", enableRowGroup: true},
     {headerName: "Country", field: "country", enableRowGroup: true,
         rowGroupIndex: 0
@@ -12,7 +7,11 @@ var columnDefs = [
     {headerName: "Year", field: "year", enableRowGroup: true,
         rowGroupIndex: 1
     },
-    {headerName: "Sport", field: "sport", enableRowGroup: true},
+    {headerName: "Sport", field: "sport", enableRowGroup: true,
+        checkboxSelection: function(params) {
+            return !params.node.group;
+        }
+    },
     {headerName: "Gold", field: "gold", aggFunc: 'sum'},
     {headerName: "Silver", field: "silver", aggFunc: 'sum'},
     {headerName: "Bronze", field: "bronze", aggFunc: 'sum'}
@@ -38,7 +37,7 @@ var gridOptions = {
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,
     infiniteBlockSize: 100,
-    maxPagesInCache: 2,
+    maxBlocksInCache: 2,
     purgeClosedRowNodes: true,
     groupColumnDef: {
         field: 'athlete',

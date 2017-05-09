@@ -41,9 +41,11 @@ include '../documentation-main/documentation_header.php';
                 server will provide data for exactly those rows only. Use this if you want the server to know exactly
                 what the user is viewing, typically used for updates in live datastreams (as server knows exactly
                 what each user is looking at).</li>
-            <li><a href="../javascript-grid-enterprise-model/"><b><img src="../images/lab.png" style="width: 10px;"/> Enterprise:</b></a> Enterprise will be a way to do lazy loading of grouped data
-            with slice and dice capability. If you are building a reporting application, then you are going
-            to be very interested in the enterprise model.</li>
+            <li><a href="../javascript-grid-enterprise-model/"><b>Enterprise:</b></a>
+                Enterprise allows lazy loading of grouped data with server side grouping and aggregation
+                with slice and dice capability. Use this if you want the user to experience grouping and / or
+                aggregations that are done on the server side, or if you want the user to navigate very large
+                datasets of grouped data, or you simple want to lazy load group data.</li>
         </ul>
     </p>
 
@@ -126,28 +128,28 @@ include '../documentation-main/documentation_header.php';
                 <td>Availability</td>
             </tr>
             <tr class="item-row">
-                <td><a href="../javascript-grid-in-memory/">In Memory</a></td>
+                <td><a href="../javascript-grid-in-memory/"><b>In Memory</b></a></td>
                 <td>Inside the Grid</td>
                 <td>Inside the Grid*</td>
                 <td>Stateless</td>
                 <td>ag-Grid (Free)</td>
             </tr>
             <tr class="item-row">
-                <td><a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a></td>
+                <td><a href="../javascript-grid-infinite-scrolling/"><b>Infinite Scrolling</b></a></td>
                 <td>Server Side</td>
                 <td>No</td>
                 <td>Stateless</td>
                 <td>ag-Grid (Free)</td>
             </tr>
             <tr class="item-row">
-                <td><a href="../javascript-grid-viewport/">Viewport</a></td>
+                <td><a href="../javascript-grid-viewport/"><b>Viewport</b></a></td>
                 <td>Server Side</td>
                 <td>No</td>
                 <td>Stateful</td>
                 <td>ag-Grid Enterprise</td>
             </tr>
             <tr class="item-row">
-                <td><img src="../images/lab.png" style="width: 15px;"/> <a href="../javascript-grid-enterprise-model/">Enterprise</a></td>
+                <td><a href="../javascript-grid-enterprise-model/"><b>Enterprise</b></a></td>
                 <td>Server Side</td>
                 <td>Server Side</td>
                 <td>Stateless</td>

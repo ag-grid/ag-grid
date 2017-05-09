@@ -3,7 +3,7 @@
 <html>
     <head lang="en">
     <meta charset="UTF-8">
-        <title>ag-Grid - The JavaScript Datagrid for Enterprise</title>
+        <title>JavaScript Grid</title>
         <meta name="description" content="A feature rich datagrid designed for Enterprise. Easily integrate with your framework to deliver filtering, grouping, aggregation, pivoting and much more.">
         <meta name="keywords" content="javascript data grid react angularjs angular 2 web components aurelia"/>
         <meta property="og:image" content="https://www.ag-grid.com/images/ag-Grid2-200.png"/>
@@ -27,7 +27,7 @@
                             <?php include 'images/logo-dark-hacked.svg'; ?>
                         </h1>
 
-                        <h1 style="padding-bottom: 10px; padding-top: 10px;">The JavaScript Datagrid for Enterprise</h1>
+                        <h1 style="padding-bottom: 10px; padding-top: 10px;">The Best Grid In The World</h1>
 
                         <h2>
                             <a class="btn btn-primary btn-large" href="/javascript-grid-getting-started/">

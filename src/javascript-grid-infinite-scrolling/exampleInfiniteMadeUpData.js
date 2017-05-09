@@ -15,7 +15,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowModelType: 'infinite',
     rowSelection: 'multiple',
-    maxPagesInCache: 2,
+    maxBlocksInCache: 2,
     suppressRowClickSelection: true,
     getRowNodeId: function(item) {
         return item.a;
