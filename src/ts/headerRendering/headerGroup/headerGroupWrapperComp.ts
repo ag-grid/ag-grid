@@ -98,6 +98,12 @@ export class HeaderGroupWrapperComp extends Component {
         } else {
             this.addCssClass('ag-header-group-cell-with-group');
         }
+
+        if (this.columnController.isPivotMode()){
+            this.addCssClass('ag-header-pivot');
+        }else{
+            this.removeCssClass('ag-header-pivot');
+        }
     }
 
     private setupMove(eHeaderGroup: HTMLElement, displayName: string): void {

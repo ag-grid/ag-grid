@@ -76,19 +76,23 @@ export class HeaderRowComp extends Component {
 
     private onRowHeightChanged(): void {
         let headerRowCount = this.columnController.getHeaderRowCount();
-        if (this.gridOptionsWrapper.isFloatingFilter()){
-            headerRowCount ++;
-        }
-        let numberOfFloating = this.gridOptionsWrapper.isFloatingFilter() ? 1 : 0;
-        let numberOfNonGroups = 1 + numberOfFloating;
-        let numberOfGroups = headerRowCount - numberOfNonGroups;
-
         let sizes:number[]=[];
 
-        for (let i=0; i<numberOfGroups; i++) sizes.push(this.gridOptionsWrapper.getGroupHeaderHeight());
-        sizes.push(this.gridOptionsWrapper.getHeaderHeight());
-        for (let i=0; i<numberOfFloating; i++) sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight());
+        if (!this.columnController.isPivotMode()){
+            if (this.gridOptionsWrapper.isFloatingFilter()){
+                headerRowCount ++;
+            }
+            let numberOfFloating = this.gridOptionsWrapper.isFloatingFilter() ? 1 : 0;
+            let numberOfNonGroups = 1 + numberOfFloating;
+            let numberOfGroups = headerRowCount - numberOfNonGroups;
 
+
+            for (let i=0; i<numberOfGroups; i++) sizes.push(this.gridOptionsWrapper.getGroupHeaderHeight());
+            sizes.push(this.gridOptionsWrapper.getHeaderHeight());
+            for (let i=0; i<numberOfFloating; i++) sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight());
+        }else{
+            for (let i=0; i<headerRowCount; i++) sizes.push(this.gridOptionsWrapper.getPivotHeaderHeight());
+        }
 
         let rowHeight = 0;
         for (let i=0; i<this.dept; i++) rowHeight+=sizes[i];
