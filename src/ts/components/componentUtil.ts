@@ -28,7 +28,8 @@ export class ComponentUtil {
     ];
 
     public static NUMBER_PROPERTIES = [
-        'rowHeight','rowBuffer','colWidth','headerHeight','groupDefaultExpanded',
+        'rowHeight','rowBuffer','colWidth','headerHeight','groupHeaderHeight', 'floatingFiltersHeight',
+        'pivotHeaderHeight', 'groupDefaultExpanded',
         'minColWidth','maxColWidth','viewportRowModelPageSize','viewportRowModelBufferSize',
         'layoutInterval','autoSizePadding','maxBlocksInCache','maxConcurrentDatasourceRequests',
         'paginationOverflowSize','paginationPageSize','infiniteBlockSize','infiniteInitialRowCount',

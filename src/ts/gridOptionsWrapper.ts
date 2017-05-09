@@ -341,6 +341,32 @@ export class GridOptionsWrapper {
         }
     }
 
+    public getFloatingFiltersHeight(): number {
+        if (typeof this.gridOptions.floatingFiltersHeight === 'number') {
+            return this.gridOptions.floatingFiltersHeight;
+        } else {
+            return 20;
+        }
+    }
+
+    public getGroupHeaderHeight(): number {
+        if (typeof this.gridOptions.groupHeaderHeight === 'number') {
+            return this.gridOptions.groupHeaderHeight;
+        } else {
+            return this.getHeaderHeight();
+        }
+    }
+
+    public getPivotHeaderHeight(): number {
+        if (typeof this.gridOptions.pivotHeaderHeight === 'number') {
+            return this.gridOptions.pivotHeaderHeight;
+        } else {
+            return this.getHeaderHeight();
+        }
+    }
+
+
+
     public isExternalFilterPresent() {
         if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
             return this.gridOptions.isExternalFilterPresent();

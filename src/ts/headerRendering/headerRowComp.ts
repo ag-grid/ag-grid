@@ -75,9 +75,26 @@ export class HeaderRowComp extends Component {
     }
 
     private onRowHeightChanged(): void {
-        var rowHeight = this.gridOptionsWrapper.getHeaderHeight();
-        this.getGui().style.top = (this.dept * rowHeight) + 'px';
-        this.getGui().style.height = rowHeight + 'px';
+        let headerRowCount = this.columnController.getHeaderRowCount();
+        if (this.gridOptionsWrapper.isFloatingFilter()){
+            headerRowCount ++;
+        }
+        let numberOfFloating = this.gridOptionsWrapper.isFloatingFilter() ? 1 : 0;
+        let numberOfNonGroups = 1 + numberOfFloating;
+        let numberOfGroups = headerRowCount - numberOfNonGroups;
+
+        let sizes:number[]=[];
+
+        for (let i=0; i<numberOfGroups; i++) sizes.push(this.gridOptionsWrapper.getGroupHeaderHeight());
+        sizes.push(this.gridOptionsWrapper.getHeaderHeight());
+        for (let i=0; i<numberOfFloating; i++) sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight());
+
+
+        let rowHeight = 0;
+        for (let i=0; i<this.dept; i++) rowHeight+=sizes[i];
+
+        this.getGui().style.top = rowHeight + 'px';
+        this.getGui().style.height = sizes[this.dept] + 'px';
     }
 
     //noinspection JSUnusedLocalSymbols

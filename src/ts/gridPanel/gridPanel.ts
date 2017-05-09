@@ -1501,13 +1501,23 @@ export class GridPanel extends BeanStub {
             return;
         }
 
-        var headerHeight = this.gridOptionsWrapper.getHeaderHeight();
-        var numberOfRowsInHeader = this.columnController.getHeaderRowCount();
-        var totalHeaderHeight = headerHeight * numberOfRowsInHeader;
+        let headerRowCount = this.columnController.getHeaderRowCount();
 
-        let floatingFilterActive = this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode();
-        if (floatingFilterActive) {
-            totalHeaderHeight += 20;
+        let totalHeaderHeight = 0
+        if (!this.columnController.isPivotMode()){
+            if (this.gridOptionsWrapper.isFloatingFilter()){
+                headerRowCount ++;
+            }
+            let numberOfFloating = (this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode()) ? 1 : 0;
+            let numberOfNonGroups = 1 + numberOfFloating;
+            let numberOfGroups = headerRowCount - numberOfNonGroups;
+
+
+            totalHeaderHeight = numberOfFloating * this.gridOptionsWrapper.getFloatingFiltersHeight();
+            totalHeaderHeight += numberOfGroups * this.gridOptionsWrapper.getGroupHeaderHeight();
+            totalHeaderHeight += this.gridOptionsWrapper.getHeaderHeight();
+        }else{
+            totalHeaderHeight = headerRowCount * this.gridOptionsWrapper.getPivotHeaderHeight();
         }
 
         this.eHeader.style['height'] = totalHeaderHeight + 'px';
