@@ -53,7 +53,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowModelType: 'infinite',
     paginationPageSize: 100,
-    paginationOverflowSize: 2,
+    cacheOverflowSize: 2,
     maxConcurrentDatasourceRequests: 2,
     infiniteInitialRowCount: 1,
     maxBlocksInCache: 2,

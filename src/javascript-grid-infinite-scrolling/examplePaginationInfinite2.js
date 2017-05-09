@@ -4,4 +4,4 @@
 
 gridOptions.pagination = true;
 gridOptions.paginationPageSize = 10;
-gridOptions.infiniteBlockSize = 10;
+gridOptions.cacheBlockSize = 10;

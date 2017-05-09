@@ -26,7 +26,9 @@ include '../documentation-main/documentation_header.php';
     <h3 id="how-it-works">How it Works</h3>
 
     <p>
-        The following diagram is a high level overview:
+        The grid will ask your application, via a datasource, for the rows in blocks.
+        Each block contains a subset of rows of the entire
+        data set. The following diagram is a high level overview.
     </p>
 
     <p>
@@ -34,10 +36,9 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The row model behind the grid contains a cache of pages. Each page contains a subset of the entire data set.
-        When the grid scrolls to a position where there is no corresponding page in the cache, the model
-        uses the provided datasource (you provide the datasource) to get the rows for the requested page. In the diagram,
-        the datasource is getting the rows from a database in a remote server.
+        When the grid scrolls to a position where there is no corresponding block of rows loaded, the model
+        uses the provided datasource to get the rows for the requested block.
+        In the diagram, the datasource is getting the rows from a database in a remote server.
     </p>
 
     <h3 id="turning-on-virtual-paging">Turning On Infinite Scrolling</h3>
@@ -69,13 +70,13 @@ gridOptions.api.setDatasource(myDatasource);</pre>
     <h3 id="changing-a-datasource">Changing the Datasource</h3>
 
     <p>
-        Changing the datasource after the grid is initialised will reset the paging in the grid. This is useful if the context of your
-        data changes, ie if you want to look at a different set of data.
+        Changing the datasource after the grid is initialised will reset the infinite scrolling in the grid.
+        This is useful if the context of your data changes, ie if you want to look at a different set of data.
     </p>
 
     <note>
         If you call <i>setDatasource()</i> the grid will act assuming
-        it's a new datasource, resetting the paging. However you can pass in the same datasource instance.
+        it's a new datasource, resetting the block cache. However you can pass in the same datasource instance.
         So your application, for example, might have one instance of a datasource that is aware of some
         external context (eg the business date selected for a report, or the 'bank ATM instance' data you are
         connecting to), and when the context changes, you want to reset, but still keep the same datasource
@@ -120,7 +121,7 @@ interface IGetRowsParams {
     context: any;
 
     <span class="codeComment">// Callback to call for the result when successful.</span>
-    successCallback(rowsThisPage: any[], lastRow?: number): void;
+    successCallback(rowsThisBlock: any[], lastRow?: number): void;
 
     <span class="codeComment">// Callback to call for the result when successful.</span>
     failCallback(): void;
@@ -129,11 +130,11 @@ interface IGetRowsParams {
     <h3 id="function-get-rows">Function getRows()</h3>
 
     <p>
-        The <i>getRows()</i> function is called by the grid to load pages into the browser side cache of pages.
+        The <i>getRows()</i> function is called by the grid to load a block of rows into the browser side cache of blocks.
         It takes the following as parameters:
         <ul>
             <li>
-                The <b>startRow</b> and <b>endRow</b> define the range expected for the call. For example, if page
+                The <b>startRow</b> and <b>endRow</b> define the range expected for the call. For example, if block
                 size is 100, the getRows function will be called with start = 0 and end = 100 and the
                 grid will expect a result with 100 rows, that's rows 0..99.
             </li>
@@ -150,9 +151,12 @@ interface IGetRowsParams {
                 successCallback() or failCallback() should be called exactly once.
             </li>
             <li>
+                The <b>filterModel()</b> and <b>sortModel()</b> are passed for doing server side sorting and filtering.
+            </li>
+            <li>
                 The <a href="../javascript-grid-context/"><b>context</b></a> is just passed as is
-                an nothing to do with infinite scrolling. It's there if you need it for providing
-                application state.
+                and nothing to do with infinite scrolling. It's there if you need it for providing
+                application state to your datasource.
             </li>
         </ul>
     </p>
@@ -162,14 +166,31 @@ interface IGetRowsParams {
     <p>
         The success callback parameter <b>lastRow</b> is used to move the grid out of infinite scrolling.
         If the last row is known, then this should be the index of the last row. If the last row is unknown,
-        then leave blank (undefined, null or -1). This attribute is only used when in infinite scrolling / paging.
+        then leave blank (undefined, null or -1). This attribute is only used when in infinite scrolling.
         Once the total record count is known, the <i>lastRow</i> parameter will be ignored.
     </p>
 
-    <h3 id="page-size">Block Size</h3>
+    <p>
+        Under normal operation, you will return null or undefined for lastRow for every time getRows() is called
+        with the exception of when you get to the last block. For example, if block size is 100 and you have 250 rows,
+        when getRows() is called for the third time, you will return back 50 rows in the result and set rowCount to 250.
+        This will then get the grid to set the scrollbar to fit exactly 250 rows and will not ask for any more blocks.
+    </p>
+
+    <h2 id="datasource">Block Cache</h2>
 
     <p>
-        The block size is set using the grid property <i>infiniteBlockSize</i>. This is how large the 'pages' should be.
+        The grid keeps the blocks in a cache. You have the choice to never expire the blocks, or to set a
+        limit to the number of blocks kept. If you set a limit, then as you scroll down, previous blocks
+        will be discarded and will be loaded again if the user scrolls back up. The maximum blocks to keep
+        in the cache is set using the <i>maxBlocksInCache</i> property.
+    </p>
+
+    <h3 id="block-size">Block Size</h3>
+
+    <p>
+        The block size is set using the grid property <i>cacheBlockSize</i>. This is how many rows each block in the
+        cache should contain.
         Each call to your datasource will be for one block.
     </p>
 
@@ -195,7 +216,7 @@ interface IGetRowsParams {
     <h3 id="simple-example-no-sorting-or-filtering">Simple Example - No Sorting or Filtering</h3>
 
     <p>
-        The example below shows infinite scrolling. The example makes use of infinite scrolling and caching.
+        The example below makes use of infinite scrolling and caching.
         Notice that the grid will load more data when you bring the scroll all the way to the bottom.
     </p>
 
@@ -222,7 +243,7 @@ interface IGetRowsParams {
 }</pre>
 
     <p>
-        Once you have <i>getRowNodeId</i> implemented, selection will persist across sorts and filters.
+        Once you have <i>getRowNodeId()</i> implemented, selection will persist across sorts and filters.
     </p>
 
     <h3 id="example-sorting-filtering-and-selection">Example - Sorting, Filtering and Selection</h3>
@@ -245,14 +266,14 @@ interface IGetRowsParams {
     <p>
         When a row is selected, the selection will remain inside the grid, even if the grid gets sorted
         or filtered. Notice that when the grid loads a selected row (eg select first row, scroll down
-        so first page is removed form cache, then scroll back up again) the row is not highlighted
+        so the first block is removed form cache, then scroll back up again) the row is not highlighted
         until the row is loaded from the server. This is because the grid is waiting to see what the id
         is of the row to be loaded.
     </p>
 
     <p>
-        (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the set filter with server side filtering,
-        ag-Grid-Enterprise is not required for infinite scrolling)
+        (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the set filter with server side
+        filtering, ag-Grid-Enterprise is not required for infinite scrolling)
     </p>
 
     <show-complex-example example="exampleInfiniteServerSide.html"
@@ -307,7 +328,6 @@ interface IGetRowsParams {
         to allow you control of the cache.
     </p>
 
-
     <h3 id="properties">Properties</h3>
     <table class="table">
         <tr>
@@ -315,7 +335,7 @@ interface IGetRowsParams {
             <th>Description</th>
         </tr>
         <tr id="property-overflow-size">
-            <th>overflowSize</th>
+            <th>cacheOverflowSize</th>
             <td>
                 <p>When infinite scrolling is active, this says how many rows beyond the current last row
                     the scrolls should allow to scroll. For example, if 200 rows already loaded from server,
@@ -327,31 +347,30 @@ interface IGetRowsParams {
             <td><p>How many requests to hit the server with concurrently. If the max is reached, requests are queued.
                     Default is 1, thus by default, only one request will be active at any given time.</p></td>
         </tr>
-        <tr id="property-max-pages-in-cache">
+        <tr id="property-max-blocks-in-cache">
             <th>maxBlocksInCache</th>
             <td>
-                <p>How many pages to cache in the client. Default is no limit, so every requested
-                    page is kept. Use this if you have memory concerns, so pages least recently viewed are purged. If used, make
-                    sure you have enough pages in cache to display one whole view of the table (ie what's within the scrollable area),
-                    otherwise it won't work and an infinite loop of requesting pages will happen.</p>
+                <p>How many blocks to cache in the client. Default is no limit, so every requested
+                    block is kept. Use this if you have memory concerns, so blocks least recently viewed are purged.
+                    If used, make sure you have enough blocks in the cache to display one whole view of the table
+                    (ie what's within the scrollable area), otherwise it won't work and an infinite loop of
+                    requesting blocks will happen.</p>
             </td>
         </tr>
         <tr id="property-pagination-initial-row-count">
             <th>infiniteInitialRowCount</th>
             <td>
                 <p>How many rows to initially allow the user to scroll to. This is handy if you expect large data sizes
-                    and you want the scrollbar to cover many pages before it has to start readjusting for the loading of
+                    and you want the scrollbar to cover many blocks before it has to start readjusting for the loading of
                     additional data.</p>
             </td>
         </tr>
         <tr id="property-infinite-block-size">
-            <th>infiniteBlockSize</th>
+            <th>cacheBlockSize</th>
             <td>
-                <p>How many rows for each infinite block.</p>
+                <p>How many rows for each block in the cache.</p>
             </td>
         </tr>
-
-
     </table>
 
     <h3 id="api">API - Infinite Scrolling</h3>
@@ -360,16 +379,17 @@ interface IGetRowsParams {
             <th>Method</th>
             <th>Description</th>
         </tr>
-        <tr id="api-refresh-virtual-page-cache">
+        <tr id="api-refresh-infinite-cache">
             <th>refreshInfiniteCache()</th>
-            <td><p>Marks all the currently loaded page caches for reload. If you have 10 pages in the cache, all 10 will be
-                    marked for reload. The old data will continue to be displayed until the new data is loaded.</p></td>
+            <td><p>Marks all the currently loaded blocks in the cache for reload. If you have 10 blocks in the cache,
+                    all 10 will be marked for reload. The old data will continue to be displayed until the new data
+                    is loaded.</p></td>
         </tr>
-        <tr id="api-purge-virtual-page-cache">
+        <tr id="api-purge-infinite-cache">
             <th>purgeInfiniteCache()</th>
-            <td><p>Purges the cache. The grid is then told to refresh. Only the pages required to display the current
+            <td><p>Purges the cache. The grid is then told to refresh. Only the blocks required to display the current
                     data on screen are fetched (typically no more than two). The grid will display nothing while the new
-                    pages are loaded. Use this to immediately remove the old data from the user.</p></td>
+                    blocks are loaded. Use this to immediately remove the old data from the user.</p></td>
         </tr>
         <tr id="api-get-virtual-row-count">
             <th>getInfiniteRowCount()</th>
@@ -386,20 +406,19 @@ interface IGetRowsParams {
         <tr id="api-set-virtual-row-count">
             <th>setInfiniteRowCount(rowCount, maxRowFound)</th>
             <td>
-            Sets the rowCount and maxRowFound properties. The second parameter, maxRowFound, is optional and if
-            left out, only rowCount is set. Set rowCount to adjust the height of the vertical scroll. Set maxRowFound
-            to enable / disable searching for more rows. Use this method if you add or remove rows into the dataset
-            and need to reset the number of rows or put the data back into 'look for data' mode.</td></tr>
-
-        <tr id="api-get-virtual-page-state">
+                Sets the rowCount and maxRowFound properties. The second parameter, maxRowFound, is optional and if
+                left out, only rowCount is set. Set rowCount to adjust the height of the vertical scroll. Set maxRowFound
+                to enable / disable searching for more rows. Use this method if you add or remove rows into the dataset
+                and need to reset the number of rows or put the data back into 'look for data' mode.
+            </td>
+        </tr>
+        <tr id="api-get-cache-block-state">
             <th>getCacheBlockState()</th>
             <td>
                 Returns an object representing the state of the cache. This is useful for debugging and understanding
                 how the cache is working.</td></tr>
 
     </table>
-
-
 
     <h3 id="api">API - Inserting / Removing Rows</h3>
     <table class="table">
@@ -410,11 +429,11 @@ interface IGetRowsParams {
         <tr id="api-insert-items-at-index">
             <th>insertItemsAtIndex(index, items)</th>
             <td><p>Inserts items at the provided location inside the grid. If you use this, you MUST ensure that the data
-                    store you are sourcing from (eg the database) is also updated, as the subsequent cache page loads will
+                    store you are sourcing from (eg the database) is also updated, as the subsequent cache block loads will
                     need to be consistent with what is inside the grid. Doing an insert will require rows to be moved
-                    after the insert location (pushed down to make room) - this can leave blank rows in pages in the cache
-                    (if a page has to be moved down, and the previous page is not loaded for it to take rows from). If this
-                    is the case, then the page will be marked for a refresh.</p>
+                    after the insert location (pushed down to make room) - this can leave blank rows in blocks in the cache
+                    (if a block has to be moved down, and the previous block is not loaded for it to take rows from). If this
+                    is the case, then the block will be marked for a refresh.</p>
                 <p>
                     Inserting rows into the infinite scrolling row model allows for your grid to be out of sync with the
                     underlying data store and hence can either cause synchronisation issues, or simply difficult code to
@@ -440,9 +459,8 @@ interface IGetRowsParams {
     <h4 id="adding-removing-summary">&#8226; Adding / Removing Summary</h4>
 
     <p>
-        Adding / removing rows directly in the grid for infinite scrolling is in general bad news as you are
-        giving a viewport and scrolling through data that resides on the server. It is better to update the
-        data on the server and refresh the page cache.
+        Adding / removing rows directly in the grid for infinite scrolling is not recommended as it will complicate
+        your application. It will make your life easier if you update the data on the server and refresh the block cache.
     </p>
 
     <h3 id="example-using-cache-api-methods">Example - Using Cache API Methods</h3>
@@ -463,7 +481,7 @@ interface IGetRowsParams {
         <li>
             <b>Set Row Count to 200</b>: Sets the row count to 200. This adjusts the vertical scroll to
             show 200 rows. If the scroll is positioned at the end, this results in the grid automatically readjusting
-            as it seeks ahead for the next page of data.
+            as it seeks ahead for the next block of data.
         </li>
         <li>
             <b>Print Rows and Max Found</b>: Debugging method, prints rowCount and maxFound to the console.
@@ -476,7 +494,7 @@ interface IGetRowsParams {
         </li>
         <li>
             <b>Set Prices High & Set Prices Low</b>: Sets the prices ON THE SERVER SIDE to either high or low prices.
-            This will not impact the grid until after a page cache is loaded. Use these buttons then then further
+            This will not impact the grid until after a block cache is loaded. Use these buttons then then further
             test the refresh and purge methods.
         </li>
         <li>
@@ -531,7 +549,7 @@ interface IGetRowsParams {
     </p>
 
     <note>
-        <p><b>Having smaller infinite blocks size than your paginatino page size is not supported</b></p>
+        <p><b>Having smaller infinite blocks size than your pagination page size is not supported</b></p>
         <p>
             You must have infinite block size greater than or equal to the pagination page size.
             If you have a smaller block size, the grid will not fetch enough rows to display

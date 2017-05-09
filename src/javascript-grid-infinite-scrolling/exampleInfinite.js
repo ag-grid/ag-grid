@@ -34,7 +34,7 @@ var gridOptions = {
     // how many extra blank rows to display to the user at the end of the dataset,
     // which sets the vertical scroll and then allows the grid to request viewing more rows of data.
     // default is 1, ie show 1 row.
-    paginationOverflowSize: 2,
+    cacheOverflowSize: 2,
     // how many server side requests to send at a time. if user is scrolling lots, then the requests
     // are throttled down
     maxConcurrentDatasourceRequests: 2,
