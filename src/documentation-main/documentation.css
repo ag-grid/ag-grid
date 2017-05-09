@@ -219,16 +219,16 @@ a.column-links:hover {
     width: 350px;
 }
 
-input {
+input[collapsible] {
     display: none;
     visibility: hidden;
 }
 
-label {
+label[collapsible] {
     text-align: center;
 }
 
-label::before {
+label[collapsible]::before {
     font-family: Consolas, monaco, monospace;
     font-weight: bold;
     font-size: 15px;
@@ -242,7 +242,7 @@ label::before {
 }
 
 #angularChild {
-    height: 0px;
+    height: 0;
     overflow: hidden;
     transition: height 0.5s;
     color: #FFF;
@@ -252,7 +252,7 @@ label::before {
     height: 120px;
 }
 
-#angularParent:checked ~ label::before {
+#angularParent:checked ~ label[collapsible]::before {
     content: "-";
 }
 

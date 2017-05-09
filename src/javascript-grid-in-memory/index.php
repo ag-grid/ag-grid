@@ -3,7 +3,7 @@ $key = "In Memory";
 $pageTitle = "ag-Grid In Memory Row Model";
 $pageDescription = "Row data in ag-Grid is stored internally in a row model. This page describes how this row model works and how to interact with it.";
 $pageKeyboards = "ag-Grid data row model";
-$pageGroup = "feature";
+$pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 

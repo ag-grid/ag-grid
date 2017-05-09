@@ -3,7 +3,7 @@ $key = "Enterprise";
 $pageTitle = "ag-Grid New Enterprise Model";
 $pageDescription = "ag-Grid is going bringing datagrids to the next level with it's Enterprise Data Model, allowing slicing and dicing of data driven by your UI.";
 $pageKeyboards = "ag-Grid Enterprise Row Model";
-$pageGroup = "feature";
+$pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
@@ -11,39 +11,6 @@ include '../documentation-main/documentation_header.php';
     <img src="../images/enterprise_50.png" title="Enterprise Feature"/>
     Enterprise Row Model
 </h2>
-
-<div class="note">
-    <table>
-        <tbody><tr>
-            <td style="vertical-align: top;">
-                <img src="../images/lab.png" title="Enterprise Lab" style="padding: 10px;">
-            </td>
-            <td style="padding-left: 10px;">
-                <h4 class="ng-scope">
-                    Lab Feature
-                </h4>
-                <p class="ng-scope">
-                    Enterprise Row Model is currently in development, subject to change
-                    and not all edge cases are coded for. The purpose of including this
-                    feature in the latest release is to present the idea to our customers
-                    and get feedback. Feel free to look, try it out, and give feedback.
-                    However please do not plan a production release without first talking
-                    to us so we know what dependencies we have.
-                </p>
-                <p>
-                    Check out
-                    <a href="https://www.youtube.com/watch?v=dRQtpULw6Hw">
-                        <img src="../images/YouTubeSmall.png" style="position: relative; top: -2px;"/>
-                        YouTube Movie
-                    </a>
-                    explaining what the Enterprise Row Model is.
-                </p>
-            </td>
-        </tr>
-        </tbody></table>
-</div>
-
-<h3>Introduction</h3>
 
 <p>
     The default row model for ag-Grid, the <b>In Memory</b> row model, will do grouping and
@@ -163,7 +130,29 @@ export interface ColumnVO {
     servers).
 </p>
 
-<show-example example="exampleEnterpriseSimpleJsDb"></show-example>
+<p>
+    The example demonstrates the following:
+    <ul>
+        <li><b>Grouping:</b> The data is grouped by country.</li>
+        <li><b>Aggregation:</b> The server always sum's gold, silver and bronze.
+        The columns are not set as value columns, and hence the user cannot change
+        the aggregation function. The server just assumes if grouping, then these
+        </li>
+        <li><b>Filtering:</b> The age, country and year columns have filters.
+            The filtering is done on the server side.</li>
+        <li><b>Sorting:</b> For example, sort by Athlete, then expand a group and you will
+            see Athlete is sorted. The sorting is done on the server side.</li>
+    </ul>
+</p>
+
+<show-complex-example example="exampleEnterpriseSimple.html"
+                      sources="{
+                                [
+                                    { root: './', files: 'exampleEnterpriseSimple.html,exampleEnterpriseSimple.js,mockServerSimple.js' }
+                                ]
+                              }"
+                      exampleheight="500px">
+</show-complex-example>
 
 <h3>Example - Slice and Dice - Mocked Server</h3>
 
@@ -185,7 +174,14 @@ export interface ColumnVO {
     The example below mocks a data store for demonstration purposes.
 </p>
 
-<show-example example="exampleEnterpriseSliceAndDiceJsDb"></show-example>
+<show-complex-example example="exampleEnterpriseSliceAndDice.html"
+                      sources="{
+                                [
+                                    { root: './', files: 'exampleEnterpriseSliceAndDice.html,exampleEnterpriseSliceAndDice.js,columns.js,mockServerComplex.js' }
+                                ]
+                              }"
+                      exampleheight="500px">
+</show-complex-example>
 
 <h3>Example - Slice and Dice - Real Server</h3>
 
@@ -209,95 +205,109 @@ export interface ColumnVO {
     applications.
 </p>
 
+<h3 id="selection">Example - Selection with Enterprise Row Model</h3>
+
+<p>
+    And this is how you do selection.
+</p>
+
+<p>
+    If providing your own id's, the id's MUST be unique across the grid, for both
+    groups and rows. You must provide your own id's to keep selection when you sort
+    or filter.
+</p>
+
+<show-complex-example example="exampleEnterpriseSelection.html"
+                      sources="{
+                                [
+                                    { root: './', files: 'exampleEnterpriseSelection.html,exampleEnterpriseSelection.js,mockServerComplex.js' }
+                                ]
+                              }"
+                      exampleheight="500px">
+</show-complex-example>
+
+<p>
+    And checkbox selection
+</p>
+
+<show-complex-example example="exampleEnterpriseCheckboxSelection.html"
+                      sources="{
+                                [
+                                    { root: './', files: 'exampleEnterpriseCheckboxSelection.html,exampleEnterpriseCheckboxSelection.js,mockServerComplex.js' }
+                                ]
+                              }"
+                      exampleheight="500px">
+</show-complex-example>
+
+<h3 id="api">Enterprise Model API</h3>
+
+<p>
+    The grid has the following API to allow you to interact with the enterprise cache.
+</p>
+
+<table class="table">
+    <tr>
+        <th>Method</th>
+        <th>Description</th>
+    </tr>
+    <tr id="api-purge-virtual-page-cache">
+        <th>purgeInfinitePageCache(route: string[])</th>
+        <td><p>Purges the cache. If you pass no parameters, then the top level cache is purged. To
+                purge a child cache, then pass in the string of keys to get to the child cache.
+                For example, to purge the cache two levels down under 'Canada' and then '2002', pass
+                in the string array ['Canada','2002']. If you purge a cache, then all row nodes
+            for that cache will be reset to the closed state, and all child caches will be destroyed.</p></td>
+    </tr>
+    <tr id="api-get-virtual-page-state">
+        <th>getInfinitePageState()</th>
+        <td>
+            Returns an object representing the state of the cache. This is useful for debugging and understanding
+            how the cache is working.</td>
+    </tr>
+</table>
+
+<p>
+    Below shows the API in action. The following can be noted:
+<ul>
+    <li>
+        Button <b>Purge Everything</b> purges the top level cache.
+    </li>
+    <li>
+        Button <b>Purge [Canada]</b> purges the Canada cache only. To see this in action, make sure you have
+        Canada expanded.
+    </li>
+    <li>
+        Button <b>Purge [Canada,2002]</b> purges the 2002 cache under Canada only. To see this in action, make
+        sure you have Canada and then 2002 expanded.
+    </li>
+    <li>
+        Button <b>Print Block State</b> prints the state of the blocks in the cache to the console.
+    </li>
+</ul>
+</p>
+
+<show-complex-example example="exampleEnterpriseApi.html"
+                      sources="{
+                                [
+                                    { root: './', files: 'exampleEnterpriseApi.html,exampleEnterpriseApi.js,columns.js,mockServerComplex.js' }
+                                ]
+                              }"
+                      exampleheight="500px">
+</show-complex-example>
+
 <h3 id="pagination">Example - Pagination with Enterprise Row Model</h3>
 <p>
     To enable pagination when using the enterprise row model, all you have to do is turning pagination on with
     <i>pagination=true</i>. Find below an example.
 </p>
 
-<show-example example="exampleEnterpriseSimpleJsDbPagination"></show-example>
-
-<h3>What's Left To DO?</h3>
-
-<p>
-    If you are excited about using this new row model in production, then you will want to know
-    what changes to expect before we mark it as a 'ready for production' feature. This following
-    is a list of items we indent doing:
-    <ol>
-        <li><b>Infinite Scrolling:</b> The grid works great at handling large data, as long as
-        each groups children is a small set. For example, if grouping by country, shop and
-        widget, you could have 50 countries, 50 shops in each country, and 100 widgets in each
-        shop. That means you will at most take 100 items back from the server in one call
-        even thought there are 250,000 (50x50x100) widgets in total. However if the user
-        decided to remove all grouping, and bring back all low level rows, then that is a
-        problem as the grid will ask from 250,000 items.
-        It is our plan to implement infinite scrolling (similar to the
-        <a href="../javascript-grid-virtual-paging/">infinite scrolling row model</a>)
-        for each level of the grouping tree, so each group node will effectively have it's
-        own infinite scroll, so the grid will in theory be able to handle an infinite
-        amount of data, no matter how many children a particular group has, and have this
-            infinite amount of data sliced and diced using the Enterprise Row Model.
-        </li>
-        <li><b>Caching Expiring of Data:</b> As a follow on from implementing infinite
-        scrolling, data will also need to be cached and purged. Purging is important
-        so the user is able to continually open and close groups with the browser
-        indefinitely filling it's memory.</li>
-        <li><b>Server Side Support:</b> Above we presented a demo of using MySQL as a client
-        side database for generating SQL on the fly to do dynamic slicing and dicing of
-        data from a Relational SQL database. We could extend our server side implementations
-        to cover many of the popular SQL and no-SQL databases, in both JavaScript (for those
-        doing NodeJS servers) and Java (for those working in big enterprise, where Java is dominant
-        for server side development).</li>
-    </ol>
-</p>
-
-<h3>Feedback</h3>
-
-<p>We have released this unfinished iteration of the Enterprise Row Model to get feedback. If you
-have an opinion or ideas, please place comments below. If you think it's a good idea, please upvote
-us on Reddit (or be the first person to create a Reddit post about it).</p>
-
-
-<table style="background-color: #eee;">
-    <tr>
-        <td>
-            <script type="text/javascript" src="//www.redditstatic.com/button/button1.js"></script>
-        </td>
-        <td>
-            &nbsp;&nbsp;&nbsp;
-        </td>
-        <td>
-            <a href="https://twitter.com/share" class="twitter-share-button"
-               data-url="https://www.ag-grid.com/ag-grid-partners-with-webpack/"
-               data-text="ag-Grid partners with webpack" data-via="ceolter"
-               data-size="large">Tweet</a>
-            <script>!function (d, s, id) {
-                    var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-                    if (!d.getElementById(id)) {
-                        js = d.createElement(s);
-                        js.id = id;
-                        js.src = p + '://platform.twitter.com/widgets.js';
-                        fjs.parentNode.insertBefore(js, fjs);
-                    }
-                }(document, 'script', 'twitter-wjs');</script>
-        </td>
-    </tr>
-</table>
-
-
-<div id="disqus_thread"></div>
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = 'aggrid';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-
+<show-complex-example example="exampleEnterpriseSimplePagination.html"
+                      sources="{
+                                [
+                                    { root: './', files: 'exampleEnterpriseSimplePagination.html,exampleEnterpriseSimplePagination.js,mockServerSimple.js' }
+                                ]
+                              }"
+                      exampleheight="500px">
+</show-complex-example>
 
 <?php include '../documentation-main/documentation_footer.php';?>

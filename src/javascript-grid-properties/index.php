@@ -284,10 +284,8 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th colspan="2"><h2>Headers</h2></th>
         </tr>
-        <tr>
-            <th>headerHeight</th>
-            <td>Height, in pixels, of the header row. The default is 25px. If grouping, each group row will be this height.</td>
-        </tr>
+        <?php include '../javascript-grid-resizing/headerHeightProperties.php' ?>
+        <?php printPropertiesRows($headerHeightProperties) ?>
         <!------------------->
         <!-- Row Grouping & Pivoting       -->
         <!------------------->
@@ -350,6 +348,10 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>suppressAggFuncInHeader</th>
             <td>When true, column headers won't include the aggFunc, eg 'sum(Bank Balance)' will just be 'Bank Balance'.</td>
+        </tr>
+        <tr>
+            <th>suppressAggAtRootLevel</th>
+            <td>When true, the aggregations won't be computed for root node of the grid.</td>
         </tr>
         <tr>
             <th>functionsReadOnly</th>

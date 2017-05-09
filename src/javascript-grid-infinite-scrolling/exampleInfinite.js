@@ -34,7 +34,7 @@ var gridOptions = {
     // how many extra blank rows to display to the user at the end of the dataset,
     // which sets the vertical scroll and then allows the grid to request viewing more rows of data.
     // default is 1, ie show 1 row.
-    paginationOverflowSize: 2,
+    cacheOverflowSize: 2,
     // how many server side requests to send at a time. if user is scrolling lots, then the requests
     // are throttled down
     maxConcurrentDatasourceRequests: 2,
@@ -44,7 +44,7 @@ var gridOptions = {
     // how many pages to store in cache. default is undefined, which allows an infinite sized cache,
     // pages are never purged. this should be set for large data to stop your browser from getting
     // full of data
-    maxPagesInCache: 2
+    maxBlocksInCache: 2
 };
 
 function setRowData(allOfTheData) {

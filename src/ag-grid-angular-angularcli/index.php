@@ -4,6 +4,8 @@ $pageTitle = "Angular Datagrid";
 $pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with Angular 2.x to deliver filtering, grouping, aggregation, pivoting and much more.";
 $pageKeyboards = "Angular Grid";
 $pageGroup = "basics";
+$angularParent = "checked";
+
 include '../documentation-main/documentation_header.php';
 ?>
 
@@ -73,7 +75,7 @@ export class RedComponentComponent {
 </pre>
 
 <p>For our Application component, we'll have the following:</p>
-<pre>
+<pre ng-non-bindable>
 <span class="codeComment">// src/app/my-grid-application/my-grid-application.component.ts</span>
 import {Component} from "@angular/core";
 import {GridOptions} from "ag-grid";

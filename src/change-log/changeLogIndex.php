@@ -14,6 +14,46 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+    <h2>Version 10.0.x</h2>
+
+    <h3>Version 10.0.1</h3>
+
+    <h4>Enhancements:</h4>
+    <ul>
+        <li>
+            <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a>
+        </li>
+    </ul>
+
+    <h4>Breaking Changes:</h4>
+    <ul>
+        <li>
+            The cache in 'infinite row model' now deals with <b>blocks</b> of rows,
+            not <b>pages</b> of rows. To avoid terminology confusion (with pagination feature)
+            the following name changes were made:
+            <ul>
+                <li>
+                    Property <i>maxPagesInCache</i> renamed to <i>maxBlocksInCache</i>
+                </li>
+                <li>
+                    Property <i>infiniteBlockSize</i> renamed to <i>cacheBlockSize</i>
+                </li>
+                <li>
+                    Property <i>paginationOverflowSize</i> renamed to <i>cacheOverflowSize</i>
+                </li>
+                <li>
+                    API <i>refreshInfinitePageCache</i> renamed to <i>refreshInfiniteCache</i>
+                </li>
+                <li>
+                    API <i>purgeInfinitePageCache</i> renamed to <i>purgeInfiniteCache</i>
+                </li>
+                <li>
+                    API <i>getInfinitePageState</i> renamed to <i>getBlockCacheState</i>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
     <h2>Version 9.0.x</h2>
 
     <h3>Version 9.1.0</h3>

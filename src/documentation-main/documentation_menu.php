@@ -1,10 +1,3 @@
-<script>
-    function expanCollapsibledGroup(toggleId) {
-        document.getElementById(toggleId).checked = true
-    }
-
-</script>
-
 <div class="dropdown frameworkBox">
     <div class="frameworkContainer">
         <h4 class="frameworkHeading">Framework</h4>
@@ -94,7 +87,7 @@
         menuItemCollapsibleChild(2, 'Angular CLI', 'Angular CLI', 'ag-grid-angular-angularcli/', 'angularParent', 'angularChild', 'start');
         menuItemCollapsibleChild(2, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/', 'angularParent', 'angularChild');
         menuItemCollapsibleChild(2, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/', 'angularParent', 'angularChild');
-        menuItemCollapsibleChild(2, 'Angular ngtools Webpack', '@ngtools/webpack', 'ag-grid-angular-ngtools-webpack/', 'angularParent', 'angularChild');
+        menuItemCollapsibleChild(2, 'Angular ngtools Webpack', 'ngtools/webpack', 'ag-grid-angular-ngtools-webpack/', 'angularParent', 'angularChild');
         menuItemCollapsibleChild(2, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/', 'angularParent', 'angularChild', 'end');
     }
 
@@ -179,6 +172,7 @@
     menuItemWithIcon('enterprise.png', 0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
     menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
     menuItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
+    menuItem(0, 'Column Header', 'Column Header', 'javascript-grid-column-header/');
     menuItem(0, 'Grouping Columns', 'Grouping Columns', 'javascript-grid-grouping-headers/');
     menuItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
     menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
@@ -237,7 +231,7 @@
     menuItem(0, 'In Memory', 'In Memory', 'javascript-grid-in-memory/');
     menuItem(0, 'Infinite Scrolling', 'Infinite Scrolling', 'javascript-grid-infinite-scrolling/');
     menuItemWithIcon('enterprise.png', 0, 'Viewport', 'Viewport', 'javascript-grid-viewport/');
-    menuItemWithIcon('lab.png', 0, 'Enterprise', 'Enterprise', 'javascript-grid-enterprise-model/');
+    menuItemWithIcon('enterprise.png', 0, 'Enterprise', 'Enterprise', 'javascript-grid-enterprise-model/');
     ?>
 </div>
 
@@ -322,7 +316,7 @@
 <div class="docsMenu-header<?php if ($pageGroup == "thirdparty" || $expandAll == "true") { ?> active<?php } ?>"
      data-id="thirdparty">
     <h4>
-<!--        <img src="../images/svg/docs/examples.svg"/>-->
+        <img src="../images/svg/docs/abc.svg"/>
         &nbsp;
         Third Party
     </h4>
@@ -332,8 +326,9 @@
 <div class="docsMenu-content">
     <?php
 
-    menuItem(0, 'ag-Grid OpenFin', 'OpenFin', 'javascript-grid-openfin/');
-    menuItem(0, 'ag-Grid Graphing', 'Graphing', 'javascript-grid-graphing/');
+    menuItem(0, 'ag-Grid Third Party Examples', 'Overview', 'javascript-grid-third-party/');
+    menuItem(1, 'ag-Grid OpenFin', 'OpenFin', 'javascript-grid-openfin/');
+    menuItem(1, 'ag-Grid Graphing', 'Graphing', 'javascript-grid-graphing/');
     ?>
 </div>
 

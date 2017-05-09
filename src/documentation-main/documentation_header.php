@@ -57,13 +57,16 @@ function menuItemCollapsibleParent($indent, $localKey, $name, $url, $parentId) {
     $padding = ($indent == 1) ? '&nbsp;&nbsp;' : '';
     $padding = ($indent == 2) ? '&nbsp;&nbsp;&nbsp;&nbsp;' : $padding;
     $indentClass = 'sidebarLink-indent'.$indent;
+
+    $checked = $GLOBALS[$parentId];
     if ($GLOBALS[key] == $localKey) {
+        $checked = " checked ";
         print('<span class="sidebarLinkSelected" style="display: inline-block">' . $padding . $name . '</span>');
     } else {
         print('<a class="sidebarLink '.$indentClass.'" style="display: inline-block" href="' . $GLOBALS[rootFolder] . $url . '?framework=' . $GLOBALS[framework] . '">' . $padding . $name . '</a>');
     }
-    print('<input id="'.$parentId.'" type="checkbox" >');
-    print('<label style="float: right" for="'.$parentId.'"></label>');
+    print('<input collapsible id="'.$parentId.'" type="checkbox" '.$checked.'>');
+    print('<label collapsible style="float: right" for="'.$parentId.'"></label>');
 }
 
 function menuItemCollapsibleChild($indent, $localKey, $name, $url, $parentId, $childId, $position = 'middle') {
@@ -76,7 +79,7 @@ function menuItemCollapsibleChild($indent, $localKey, $name, $url, $parentId, $c
     }
 
     if ($GLOBALS[key] == $localKey) {
-        print('<script>expanCollapsibledGroup(\''.$parentId.'\')</script>');
+//        print('<script>expandCollapsibleGroup(\''.$parentId.'\')</script>');
         print('<span class="sidebarLinkSelected" style="display: inline-block">' . $padding . $name . '</span>');
     } else {
         print('<a class="sidebarLink '.$indentClass.'" style="display: inline-block" href="' . $GLOBALS[rootFolder] . $url . '?framework=' . $GLOBALS[framework] . '">' . $padding . $name . '</a>');

@@ -207,6 +207,14 @@ include '../documentation-main/documentation_header.php';
                 Or provide your own agg function.</td>
         </tr>
         <tr>
+            <th>allowedAggFuncs</th>
+            <td>
+                Aggregation functions allowed on this column eg ['sum','avg']. If missing, all installed functions are allowed.
+                This will restrict what the GUI allows to select only, does not impact when you set columns
+                function via the API.
+            </td>
+        </tr>
+        <tr>
             <th>rowGroupIndex</th>
             <td>Set this in columns you want to group by. If only grouping by one column, set this to any number (eg 0).
             If grouping by multiple columns, set this to where you want this column to be in the group (eg 0 for first, 1 for second, and so on).</td>

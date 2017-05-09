@@ -355,7 +355,7 @@ include '../documentation-main/documentation_header.php';
         <!-- Navigation -->
         <!------------------->
         <tr>
-            <th colspan="2"><h2>Groups</h2></th>
+            <th colspan="2"><h2>Navigation</h2></th>
         </tr>
         <tr>
             <th>getFocusedCell()</th>
