@@ -53,7 +53,10 @@ export class AggregationStage implements IRowNodeStage {
 
         //Optionally prevent the aggregation at the root Node
         //https://ag-grid.atlassian.net/browse/AG-388
-        if (rowNode.level === -1 && this.gridOptionsWrapper.isSuppressAggAtRootLevel()) return;
+        let notPivoting = !this.columnController.isPivotMode();
+        let suppressAggAtRootLevel = this.gridOptionsWrapper.isSuppressAggAtRootLevel();
+        let isRootNode = rowNode.level === -1;
+        if (isRootNode && suppressAggAtRootLevel && notPivoting) return;
         this.aggregateRowNode(rowNode, measureColumns, pivotColumns);
     }
 
