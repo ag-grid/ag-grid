@@ -216,9 +216,9 @@ export class GridOptionsWrapper {
 
     public getMaxConcurrentDatasourceRequests(): number { return this.gridOptions.maxConcurrentDatasourceRequests; }
     public getMaxBlocksInCache(): number { return this.gridOptions.maxBlocksInCache; }
-    public getPaginationOverflowSize(): number { return this.gridOptions.paginationOverflowSize; }
+    public getCacheOverflowSize(): number { return this.gridOptions.cacheOverflowSize; }
     public getPaginationPageSize(): number { return this.gridOptions.paginationPageSize; }
-    public getInfiniteBlockSize(): number { return this.gridOptions.infiniteBlockSize; }
+    public getCacheBlockSize(): number { return this.gridOptions.cacheBlockSize; }
     public getInfiniteInitialRowCount(): number { return this.gridOptions.infiniteInitialRowCount; }
     public isPurgeClosedRowNodes() { return isTrue(this.gridOptions.purgeClosedRowNodes); }
     public getPaginationStartPage(): number { return this.gridOptions.paginationStartPage; }
@@ -497,10 +497,16 @@ export class GridOptionsWrapper {
             console.warn('ag-grid: since version 9.0.x paginationInitialRowCount is now called infiniteInitialRowCount');
         }
         if (options.infinitePageSize) {
-            console.warn('ag-grid: since version 9.0.x infinitePageSize is now called infiniteBlockSize');
+            console.warn('ag-grid: since version 9.0.x infinitePageSize is now called cacheBlockSize');
+        }
+        if (options.infiniteBlockSize) {
+            console.warn('ag-grid: since version 10.0.x infinitePageSize is now called cacheBlockSize');
         }
         if (options.maxPagesInCache) {
             console.warn('ag-grid: since version 10.0.x maxPagesInCache is now called maxBlocksInCache');
+        }
+        if (options.paginationOverflowSize) {
+            console.warn('ag-grid: since version 10.0.x paginationOverflowSize is now called cacheOverflowSize');
         }
     }
 

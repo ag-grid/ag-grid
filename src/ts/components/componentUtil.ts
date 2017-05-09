@@ -32,7 +32,7 @@ export class ComponentUtil {
         'pivotHeaderHeight', 'groupDefaultExpanded',
         'minColWidth','maxColWidth','viewportRowModelPageSize','viewportRowModelBufferSize',
         'layoutInterval','autoSizePadding','maxBlocksInCache','maxConcurrentDatasourceRequests',
-        'paginationOverflowSize','paginationPageSize','infiniteBlockSize','infiniteInitialRowCount',
+        'cacheOverflowSize','paginationPageSize','infiniteBlockSize','infiniteInitialRowCount',
         'scrollbarWidth','paginationStartPage','infiniteBlockSize'
     ];
 
