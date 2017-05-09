@@ -100,10 +100,10 @@ export interface GridOptions {
     maxBlocksInCache?: number;
     purgeClosedRowNodes?: boolean;
 
-    paginationOverflowSize?: number;
+    cacheOverflowSize?: number;
     infiniteInitialRowCount?: number;
     paginationPageSize?: number;
-    infiniteBlockSize?: number;
+    cacheBlockSize?: number;
     paginationAutoPageSize?: boolean;
     paginationStartPage?: number;
     suppressPaginationPanel?: boolean;
