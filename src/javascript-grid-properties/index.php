@@ -284,10 +284,8 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th colspan="2"><h2>Headers</h2></th>
         </tr>
-        <tr>
-            <th>headerHeight</th>
-            <td>Height, in pixels, of the header row. The default is 25px. If grouping, each group row will be this height.</td>
-        </tr>
+        <?php include '../javascript-grid-resizing/headerHeightProperties.php' ?>
+        <?php printPropertiesRows($headerHeightProperties) ?>
         <!------------------->
         <!-- Row Grouping & Pivoting       -->
         <!------------------->
