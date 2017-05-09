@@ -98,6 +98,7 @@ include '../documentation-main/documentation_header.php';
         after you press the button.
     </p>
 
+    <show-example example="example2"></show-example>
 
     <h3 id="properties">Header Height Properties</h3>
     <?php include 'headerHeightProperties.php' ?>
