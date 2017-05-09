@@ -172,6 +172,7 @@
     menuItemWithIcon('enterprise.png', 0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
     menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
     menuItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
+    menuItem(0, 'Column Header', 'Column Header', 'javascript-grid-column-header/');
     menuItem(0, 'Grouping Columns', 'Grouping Columns', 'javascript-grid-grouping-headers/');
     menuItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
     menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
