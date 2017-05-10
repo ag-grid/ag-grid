@@ -100,17 +100,6 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="example2"></show-example>
 
-    <h3 id="properties">Header Height Properties</h3>
-    <?php include 'headerHeightProperties.php' ?>
-    <?php printPropertiesTable($headerHeightProperties) ?>
-
-    <p>
-        The example below shows how to change the headers height to allow for a different look and feel, check that
-        all the different header heights have been applied.
-    </p>
-
-    <show-example example="dynamicHeaders"></show-example>
-
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

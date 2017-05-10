@@ -107,6 +107,13 @@ pivotHeaderHeight:30,
 
     <show-example example="exampleDynamicHeaders"></show-example>
 
+<h3 id="headerHeight">Dynamic Header Heights</h3>
+
+As you can see in the example below, if you change any of the header heights, this change will be reflected automatically.
+
+    <show-example example="exampleDynamicHeaders2"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
+

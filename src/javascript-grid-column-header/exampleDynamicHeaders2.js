@@ -24,13 +24,13 @@ var gridOptions = {
     rowData: null,
     enableColResize: true,
     floatingFilter:true,
-    groupHeaderHeight:75,
-    headerHeight: 150,
-    floatingFiltersHeight:50,
-    pivotHeaderHeight:30,
     enableSorting:true,
     showToolPanel:true
 };
+
+function setHeaderHeight (value){
+    gridOptions.api.setHeaderHeight(value);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
