@@ -32,6 +32,19 @@ function setHeaderHeight (value){
     gridOptions.api.setHeaderHeight(value);
 }
 
+function setGroupHeaderHeight (value){
+    gridOptions.api.setGroupHeaderHeight(value);
+}
+
+function setFloatingFiltersHeight (value){
+    gridOptions.api.setFloatingFiltersHeight(value);
+}
+
+function setPivotFiltersHeight (value){
+    gridOptions.api.setPivotFiltersHeight(value);
+}
+
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
