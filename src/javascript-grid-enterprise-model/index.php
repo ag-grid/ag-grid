@@ -13,24 +13,57 @@ include '../documentation-main/documentation_header.php';
 </h2>
 
 <p>
-    The default row model for ag-Grid, the <b>In Memory</b> row model, will do grouping and
-    aggregation for you if you give it all the data. If the data will not fit in the browser
-    because it is to large, then you can use either <b>Infinite Scrolling</b> row model or
-    <b>Viewport</b> row model. However these row models cannot do grouping or aggregation.
+    The Enterprise Row Model is arguably the most powerful of the row models in ag-Grid
+    and presents the ultimate 'big data' user experience, allowing the user to
+    navigate through very large data sets using a mixture of server side grouping and aggregation
+    while using infinite scrolling to bring the data back in blocks to the client.
+</p>
+
+<h3>Enterprise Row Model Features</h3>
+
+<p>
+    The best way to learn what the Enterprise Model does is to break it down into the core features
+    and understand how they individually contribute to the Enterprise Model experience.
+    You may benefit from the combination of all these
+    features or just be interested in a subset. The features of the
+    enterprise row model are listed as follows:
 </p>
 
 <p>
-    The <b>Enterprise Row Model</b> presents the ability to have grouping and aggregation
-    on large datasets by delegating the aggregation to the server and lazy loading
-    the groups.
+    The features of the Enterprise Row Model are:
+    <ul>
+        <li>
+            <b>Lazy Loading of Groups:</b> The grid will load the top level rows only. Children
+            of groups are only loaded when the user expands the group. Some applications may use
+            the Enterprise Row Model for this one feature alone e.g. you might have a managers database table,
+            you can display a list of all managers, then then click 'expand' on the manager and the grid
+            will then request to get the 'employees' for that manager.
+        </li>
+        <li>
+            <b>Server Side Grouping and Aggregation:</b> Because the data is coming back from the server one group
+            level at a time, this allows you to do aggregation on the server, returning back the aggregated
+            results for the top level parent rows. For example you could include 'employee count' as an attribute
+            on the returned manager record, to say how many employees a manager manages.
+        </li>
+        <li>
+            <b>Infinite Scrolling:</b> Rows are read back from the server in blocks to provide the experience
+            of infinite scrolling. This happens at each grouping level
+            (ie the top level rows are brought back in blocks, then when you expand a group, the children
+            of that group are also loaded in blocks). This allows viewing very large datasets in the browser by
+            only bringing back data one block at a time. This feature reuses the logic from the
+            <a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a> row model, so understanding
+            how that row model works will help you in understanding this part of the enterprise row model.
+        </li>
+        <li>
+            <b>Slice and Dice:</b> Assuming your server side can build the data query, you can allow the user
+            to use the ag-Grid UI to drag columns around to select what columns you want to group by and aggregate
+            on. What the user selects will then be forwarded to your datasource as part of the request. This feature
+            is advanced and will require some difficult server side coding from you, however if done correctly then
+            your users will have an experience of slicing and dicing large data in real time, something previously
+            available in dedicated reporting tools, now you can embed it into your application.</li>
+    </ul>
 </p>
 
-<p>
-    Some users might simply see it as lazy loading group data from the server. Eg
-    if you have a managers database table, you can display a list of all managers,
-    then then click 'expand' on the manager and the grid will then request
-    to get the 'employees' for that manager.
-</p>
 
 <p>
     Or a more advanced use case would be to allow the user to slice and dice a large
