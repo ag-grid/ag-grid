@@ -522,7 +522,7 @@ export class RowNode {
     }
 
     private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean): number {
-        var children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
+        var children = groupSelectsFiltered ? this.getFilteredLeafNodes(this) : this.childrenAfterGroup;
         let updatedCount = 0;
         if (_.missing(children)) { return; }
         for (var i = 0; i<children.length; i++) {
@@ -534,6 +534,15 @@ export class RowNode {
         }
         return updatedCount;
     }
+
+    private getFilteredLeafNodes = function (node: RowNode, leafs?: RowNode[]) {
+        leafs = leafs || [];
+
+        //If it has filter children then recurse on them else it is a leaf so add to the array. 
+        node.childrenAfterFilter ? node.childrenAfterFilter.forEach(child => this.getLeafNodes(child, leafs)) : leafs.push(node);
+
+        return leafs;
+    };
 
     public addEventListener(eventType: string, listener: Function): void {
         if (!this.eventService) { this.eventService = new EventService(); }
