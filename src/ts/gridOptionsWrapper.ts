@@ -57,6 +57,9 @@ export class GridOptionsWrapper {
     private static MIN_COL_WIDTH = 10;
 
     public static PROP_HEADER_HEIGHT = 'headerHeight';
+    public static PROP_GROUP_HEADER_HEIGHT = 'groupHeaderHeight';
+    public static PROP_FLOATING_FILTERS_HEIGHT = 'floatingFiltersHeight';
+    public static PROP_PIVOT_FILTERS_HEIGHT = 'pivotFiltersHeight';
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;

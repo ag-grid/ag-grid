@@ -514,6 +514,21 @@ export class GridApi {
         this.doLayout();
     }
 
+    public setGroupHeaderHeight(headerHeight: number) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, headerHeight);
+        this.doLayout();
+    }
+
+    public setFloatingFiltersHeight(headerHeight: number) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, headerHeight);
+        this.doLayout();
+    }
+
+    public setPivotFiltersHeight(headerHeight: number) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_FILTERS_HEIGHT, headerHeight);
+        this.doLayout();
+    }
+
     public showToolPanel(show:any) {
         this.gridCore.showToolPanel(show);
     }
