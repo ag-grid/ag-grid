@@ -27,7 +27,9 @@ var columnDefs = [
             return literalMatch || contains(valueLowerCase, aliases[filterTextLoweCase]);
         }
     }},
-    {headerName: "Year", field: "year", width: 90}
+    {headerName: "Year", field: "year", width: 90, filter:'number', filterParams:{
+        filterOptions:['inRange']
+    }}
 ];
 
 var gridOptions = {
