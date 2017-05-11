@@ -524,8 +524,13 @@ export class GridApi {
         this.doLayout();
     }
 
-    public setPivotFiltersHeight(headerHeight: number) {
-        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_FILTERS_HEIGHT, headerHeight);
+    public setPivotGroupHeaderHeight(headerHeight: number) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, headerHeight);
+        this.doLayout();
+    }
+
+    public setPivotHeaderHeight(headerHeight: number) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, headerHeight);
         this.doLayout();
     }
 

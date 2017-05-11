@@ -181,9 +181,10 @@ export interface GridOptions {
     enterpriseDatasource?: IEnterpriseDatasource;
     // in properties
     headerHeight?: number;
-    groupHeaderHeight?: number;
-    floatingFiltersHeight?: number;
     pivotHeaderHeight?: number;
+    groupHeaderHeight?: number;
+    pivotGroupHeaderHeight?: number;
+    floatingFiltersHeight?: number;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

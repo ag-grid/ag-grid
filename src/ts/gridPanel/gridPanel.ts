@@ -355,9 +355,12 @@ export class GridPanel extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ITEMS_REMOVED, this.onRowDataChanged.bind(this));
 
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
+
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
+
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_FILTERS_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
     }
 
     private addDragListeners(): void {
@@ -1506,22 +1509,32 @@ export class GridPanel extends BeanStub {
 
         let headerRowCount = this.columnController.getHeaderRowCount();
 
-        let totalHeaderHeight = 0
+        let totalHeaderHeight: number;
+        let numberOfFloating = 0;
+        let groupHeight:number;
+        let headerHeight:number;
         if (!this.columnController.isPivotMode()){
+            _.removeCssClass(this.eHeader, 'ag-pivot-on');
+            _.addCssClass(this.eHeader, 'ag-pivot-off');
             if (this.gridOptionsWrapper.isFloatingFilter()){
                 headerRowCount ++;
             }
-            let numberOfFloating = (this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode()) ? 1 : 0;
-            let numberOfNonGroups = 1 + numberOfFloating;
-            let numberOfGroups = headerRowCount - numberOfNonGroups;
-
-
-            totalHeaderHeight = numberOfFloating * this.gridOptionsWrapper.getFloatingFiltersHeight();
-            totalHeaderHeight += numberOfGroups * this.gridOptionsWrapper.getGroupHeaderHeight();
-            totalHeaderHeight += this.gridOptionsWrapper.getHeaderHeight();
+            numberOfFloating = (this.gridOptionsWrapper.isFloatingFilter()) ? 1 : 0;
+            groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
+            headerHeight = this.gridOptionsWrapper.getHeaderHeight();
         }else{
-            totalHeaderHeight = headerRowCount * this.gridOptionsWrapper.getPivotHeaderHeight();
+            _.removeCssClass(this.eHeader, 'ag-pivot-off');
+            _.addCssClass(this.eHeader, 'ag-pivot-on');
+            numberOfFloating = 0;
+            groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
+            headerHeight = this.gridOptionsWrapper.getPivotHeaderHeight();
         }
+        let numberOfNonGroups = 1 + numberOfFloating;
+        let numberOfGroups = headerRowCount - numberOfNonGroups;
+
+        totalHeaderHeight = numberOfFloating * this.gridOptionsWrapper.getFloatingFiltersHeight();
+        totalHeaderHeight += numberOfGroups * groupHeight;
+        totalHeaderHeight += headerHeight;
 
         this.eHeader.style['height'] = totalHeaderHeight + 'px';
 

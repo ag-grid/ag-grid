@@ -40,7 +40,7 @@ var svgFactory = SvgFactory.getInstance();
 export class HeaderComp extends Component implements IHeaderComp {
 
     private static TEMPLATE =
-        '<div>' +
+        '<div class="ag-cell-label-container">' +
         '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
         '  <div ref="eLabel" class="ag-header-cell-label">' +
         '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +

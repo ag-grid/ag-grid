@@ -64,11 +64,11 @@ export class RenderedHeaderCell extends Component {
     public init(): void {
         let eGui = this.headerTemplateLoader.createHeaderElement(this.column);
         this.setGui(eGui);
-        _.addCssClass(eGui, 'ag-header-cell');
 
         this.createScope();
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), eGui, this.gridOptionsWrapper, this.column, null);
+        _.addCssClass(eGui, 'ag-header-cell');
 
         // label div
         var eHeaderCellLabel = <HTMLElement> eGui.querySelector('#agHeaderCellLabel');

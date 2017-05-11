@@ -29,7 +29,7 @@ export class ComponentUtil {
 
     public static NUMBER_PROPERTIES = [
         'rowHeight','rowBuffer','colWidth','headerHeight','groupHeaderHeight', 'floatingFiltersHeight',
-        'pivotHeaderHeight', 'groupDefaultExpanded',
+        'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded',
         'minColWidth','maxColWidth','viewportRowModelPageSize','viewportRowModelBufferSize',
         'layoutInterval','autoSizePadding','maxBlocksInCache','maxConcurrentDatasourceRequests',
         'cacheOverflowSize','paginationPageSize','infiniteBlockSize','infiniteInitialRowCount',
