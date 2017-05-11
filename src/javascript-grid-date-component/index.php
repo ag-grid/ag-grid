@@ -79,6 +79,9 @@ gridOptions: {
 
     <span class="codeComment">// Gets called when the component is destroyed.</span>
     destroy?(): void;
+
+     <span class="codeComment">// The grid API</span>
+    api: any;
 }</pre>
 
 <h4>IFilterParams</h4>
