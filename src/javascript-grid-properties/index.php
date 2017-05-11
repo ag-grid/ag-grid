@@ -284,7 +284,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th colspan="2"><h2>Headers</h2></th>
         </tr>
-        <?php include '../javascript-grid-resizing/headerHeightProperties.php' ?>
+        <?php include '../javascript-grid-column-header/headerHeightProperties.php' ?>
         <?php printPropertiesRows($headerHeightProperties) ?>
         <!------------------->
         <!-- Row Grouping & Pivoting       -->

@@ -157,6 +157,9 @@ include '../documentation-main/documentation_header.php';
     // scope is created for each column filter and provided here. Just ignore this if
     // you are not using Angular 1</span>
     $scope: any;
+
+     <span class="codeComment">// The grid API</span>
+    api: any;
 }</pre>
 
 <h4 id="i-does-filter-pass-params">IDoesFilterPassParams</h4>
