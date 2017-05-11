@@ -48,6 +48,10 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
         this.currentParentModel = params.currentParentModel;
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'input', this.syncUpWithParentFilter.bind(this));
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'keypress', this.checkApply.bind(this));
+        let columnDef = (<any>params.column.getDefinition());
+        if (columnDef.filterParams && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange'){
+            this.eColumnFloatingFilter.readOnly = true;
+        }
     }
 
     abstract asParentModel ():M;
@@ -147,6 +151,8 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
 }
 
 export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<SerializedNumberFilter, IFloatingFilterParams<SerializedNumberFilter, BaseFloatingFilterChange<SerializedNumberFilter>>>{
+
+
     asFloatingFilterText(parentModel: SerializedNumberFilter): string {
         let rawParentModel = this.currentParentModel();
         if (!parentModel && !rawParentModel) return '';
