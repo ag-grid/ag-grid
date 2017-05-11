@@ -7,22 +7,45 @@
 </head>
 <body>
 <body>
-<div style="height: 100%; box-sizing: border-box; padding-top: 20px;">
+<div style="height: 100%; box-sizing: border-box; padding-top: 70px;">
     <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
 </div>
 <div style="position: absolute; top: 0px; left: 0px; margin-left: 10px; margin-top: 4px;">
-    groupHeaderHeight:
-    <button onclick="setGroupHeaderHeight(25)">25px</button>
-    <button onclick="setGroupHeaderHeight(50)">50px</button>
-    headerHeight:
-    <button onclick="setHeaderHeight(25)">25px</button>
-    <button onclick="setHeaderHeight(50)">50px</button>
-    floatingFiltersHeight:
-    <button onclick="setFloatingFiltersHeight(25)">25px</button>
-    <button onclick="setFloatingFiltersHeight(50)">50px</button>
-    pivotHeaderHeight:
-    <button onclick="setPivotFiltersHeight(25)">25px</button>
-    <button onclick="setPivotFiltersHeight(50)">50px</button>
+    <table>
+        <tr>
+            <td>groupHeaderHeight:</td>
+            <td>
+                <button onclick="setGroupHeaderHeight(25)">25px</button>
+                <button onclick="setGroupHeaderHeight(50)">50px</button>
+            </td>
+            <td>headerHeight:</td>
+            <td>
+                <button onclick="setHeaderHeight(25)">25px</button>
+                <button onclick="setHeaderHeight(50)">50px</button>
+            </td>
+        </tr>
+        <tr>
+            <td>pivotGroupHeaderHeight:</td>
+            <td>
+                <button onclick="setPivotGroupHeaderHeight(25)">25px</button>
+                <button onclick="setPivotGroupHeaderHeight(50)">50px</button>
+            </td>
+            <td>pivotHeaderHeight:</td>
+            <td>
+                <button onclick="setPivotHeaderHeight(25)">25px</button>
+                <button onclick="setPivotHeaderHeight(50)">50px</button>
+            </td>
+        </tr>
+        <tr>
+            <td>floatingFiltersHeight:</td>
+            <td>
+                <button onclick="setFloatingFiltersHeight(25)">25px</button>
+                <button onclick="setFloatingFiltersHeight(50)">50px</button>
+            </td>
+        </tr>
+    </table>
+
+
 </div>
 </body>
 </body>
