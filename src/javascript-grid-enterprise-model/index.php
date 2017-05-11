@@ -235,16 +235,43 @@ export interface ColumnVO {
     applications.
 </p>
 
-<h3 id="selection">Example - Selection with Enterprise Row Model</h3>
+<h3 id="selection">Selection with Enterprise Row Model</h3>
 
 <p>
-    And this is how you do selection.
+    Selecting rows and groups in the enterprise row model is supported.
+    Just set the property <i>rowSelection</i> to either <i>single</i>
+    or <i>multiple</i> as with any other row model.
+</p>
+
+<h4 id="selection"><b>Selecting Group Nodes</b></h4>
+<p>
+    When you select a group, the children of that group may or may not be loaded
+    into the grid. For this reason the setting <i>groupSelectsChildren=true</i> (which
+    selects all the children of the group when you select a group) does not make
+    sense. When you select a group, the group row only will be marked as selected.
+</p>
+
+<h4 id="selection"><b>Providing Node ID's</b></h4>
+<p>
+    Providing node ID's is optional. If you provide your own node id's
+    (using the <i>getRowNodeId()</i> callback)
+    then you must make sure that the rows have unique ID's across your entire data
+    set. This means all the groups and all leaf level nodes must have unique
+    id's, even if the leafs are not part of the same group. This is because
+    the grid uses node id behind the scenes to identify selected rows.
 </p>
 
 <p>
-    If providing your own id's, the id's MUST be unique across the grid, for both
-    groups and rows. You must provide your own id's to keep selection when you sort
-    or filter.
+    If you do not provide node id's, the grid will provide the id's for you,
+    and will make sure they are unique.
+</p>
+
+<h3 id="selection">Example - Click Selection Selection</h3>
+
+<p>
+    The example below shows simple click selection. When you click on a leaf level
+    row, the row is selected. Standard click selection does not allow selecting groups,
+    as clicking on groups is reserved for opening and closing the groups.
 </p>
 
 <show-complex-example example="exampleEnterpriseSelection.html"
@@ -256,8 +283,21 @@ export interface ColumnVO {
                       exampleheight="500px">
 </show-complex-example>
 
+<h3 id="selection">Example - Checkbox Selection</h3>
+
 <p>
-    And checkbox selection
+    Below shows another example using checkbox selection. The example shows:
+    <ul>
+        <li>
+            Checkbox selection on the group column allowing selection of any row.
+        </li>
+        <li>
+            Checkbox selection on the group year column allowing selection on leaf
+            level rows only.
+        </li>
+    </ul>
+    The example shows checkboxes on two columns. This is for comparison in the example
+    only. Normal applications generally have the checkbox only on one column.
 </p>
 
 <show-complex-example example="exampleEnterpriseCheckboxSelection.html"
@@ -281,7 +321,7 @@ export interface ColumnVO {
         <th>Description</th>
     </tr>
     <tr id="api-purge-virtual-page-cache">
-        <th>purgeInfinitePageCache(route: string[])</th>
+        <th>purgeInfinitePageCache(route)</th>
         <td><p>Purges the cache. If you pass no parameters, then the top level cache is purged. To
                 purge a child cache, then pass in the string of keys to get to the child cache.
                 For example, to purge the cache two levels down under 'Canada' and then '2002', pass
@@ -325,7 +365,7 @@ export interface ColumnVO {
                       exampleheight="500px">
 </show-complex-example>
 
-<h3 id="pagination">Example - Pagination with Enterprise Row Model</h3>
+<h3 id="pagination">Pagination with Enterprise Row Model</h3>
 <p>
     To enable pagination when using the enterprise row model, all you have to do is turning pagination on with
     <i>pagination=true</i>. Find below an example.
