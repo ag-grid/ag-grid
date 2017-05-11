@@ -24,28 +24,50 @@ var gridOptions = {
     rowData: null,
     enableColResize: true,
     floatingFilter:true,
-    enableSorting:true,
-    showToolPanel:true
+    enableSorting:true
 };
+
+function setIdText (id, value){
+    document.getElementById (id).innerHTML = value == null ? 'null' : value;
+}
+
+function setPivotOn(){
+    document.getElementsByClassName('requiresPivot')[0].style.display = 'table-row';
+    document.getElementsByClassName('requiresNotPivot')[0].style.display = 'none';
+    gridOptions.columnApi.setPivotMode(true);
+    setIdText('pivot', 'on')
+}
+
+function setPivotOff(){
+    document.getElementsByClassName('requiresPivot')[0].style.display = 'none';
+    document.getElementsByClassName('requiresNotPivot')[0].style.display = 'table-row';
+    gridOptions.columnApi.setPivotMode(false);
+    setIdText('pivot', 'off')
+}
 
 function setHeaderHeight (value){
     gridOptions.api.setHeaderHeight(value);
+    setIdText('headerHeight', value)
 }
 
 function setGroupHeaderHeight (value){
     gridOptions.api.setGroupHeaderHeight(value);
+    setIdText('groupHeaderHeight', value)
 }
 
 function setFloatingFiltersHeight (value){
     gridOptions.api.setFloatingFiltersHeight(value);
+    setIdText('floatingFiltersHeight', value)
 }
 
 function setPivotGroupHeaderHeight (value){
     gridOptions.api.setPivotGroupHeaderHeight(value);
+    setIdText('pivotGroupHeaderHeight', value)
 }
 
 function setPivotHeaderHeight (value){
     gridOptions.api.setPivotHeaderHeight(value);
+    setIdText('pivotHeaderHeight', value)
 }
 
 

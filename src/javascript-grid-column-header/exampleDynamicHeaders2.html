@@ -13,34 +13,46 @@
 <div style="position: absolute; top: 0px; left: 0px; margin-left: 10px; margin-top: 4px;">
     <table>
         <tr>
-            <td>groupHeaderHeight:</td>
+            <td>pivot (<span id="pivot">off</span>)</td>
             <td>
-                <button onclick="setGroupHeaderHeight(25)">25px</button>
-                <button onclick="setGroupHeaderHeight(50)">50px</button>
-            </td>
-            <td>headerHeight:</td>
-            <td>
-                <button onclick="setHeaderHeight(25)">25px</button>
-                <button onclick="setHeaderHeight(50)">50px</button>
+                <button onclick="setPivotOn()">on</button>
+                <button onclick="setPivotOff()">off</button>
             </td>
         </tr>
         <tr>
-            <td>pivotGroupHeaderHeight:</td>
+            <td>groupHeaderHeight (<span id="groupHeaderHeight">null</span>):</td>
             <td>
-                <button onclick="setPivotGroupHeaderHeight(25)">25px</button>
+                <button onclick="setGroupHeaderHeight(40)">40px</button>
+                <button onclick="setGroupHeaderHeight(60)">60px</button>
+                <button onclick="setGroupHeaderHeight(null)">null</button>
+            </td>
+            <td>headerHeight (<span id="headerHeight">null</span>)</td>
+            <td>
+                <button onclick="setHeaderHeight(70)">70px</button>
+                <button onclick="setHeaderHeight(80)">80px</button>
+                <button onclick="setHeaderHeight(null)">null</button>
+            </td>
+        </tr>
+        <tr class="requiresPivot" style="display: none">
+            <td>pivotGroupHeaderHeight (<span id="pivotGroupHeaderHeight">null</span>)</td>
+            <td>
                 <button onclick="setPivotGroupHeaderHeight(50)">50px</button>
+                <button onclick="setPivotGroupHeaderHeight(70)">70px</button>
+                <button onclick="setPivotGroupHeaderHeight(null)">null</button>
             </td>
-            <td>pivotHeaderHeight:</td>
+            <td>pivotHeaderHeight (<span id="pivotHeaderHeight">null</span>)</td>
             <td>
-                <button onclick="setPivotHeaderHeight(25)">25px</button>
-                <button onclick="setPivotHeaderHeight(50)">50px</button>
+                <button onclick="setPivotHeaderHeight(60)">60px</button>
+                <button onclick="setPivotHeaderHeight(80)">80px</button>
+                <button onclick="setPivotHeaderHeight(null)">null</button>
             </td>
         </tr>
-        <tr>
-            <td>floatingFiltersHeight:</td>
+        <tr class="requiresNotPivot">
+            <td>floatingFiltersHeight (<span id="floatingFiltersHeight">null</span>)</td>
             <td>
-                <button onclick="setFloatingFiltersHeight(25)">25px</button>
-                <button onclick="setFloatingFiltersHeight(50)">50px</button>
+                <button onclick="setFloatingFiltersHeight(35)">35px</button>
+                <button onclick="setFloatingFiltersHeight(55)">55px</button>
+                <button onclick="setFloatingFiltersHeight(null)">null</button>
             </td>
         </tr>
     </table>

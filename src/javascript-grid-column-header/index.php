@@ -143,6 +143,8 @@ include '../documentation-main/documentation_header.php';
 <h3 id="headerHeight">Dynamic Header Heights</h3>
 
 As you can see in the example below, if you change any of the header heights, this change will be reflected automatically.
+Note how if the value is set to null, it might reuse other values. To see all the interactions check the properties
+descriptions at the top of the page
 
     <show-example example="exampleDynamicHeaders2"></show-example>
 
