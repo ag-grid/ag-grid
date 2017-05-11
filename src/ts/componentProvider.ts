@@ -220,6 +220,9 @@ export class ComponentProvider {
         let finalParams: any = {};
         _.mergeDeep(finalParams, agGridParams);
         _.mergeDeep(finalParams, customParams);
+        if (!finalParams.api){
+            finalParams.api = this.gridOptions.api;
+        }
         return finalParams;
     }
 
