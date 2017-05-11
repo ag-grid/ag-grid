@@ -22,15 +22,13 @@ include '../documentation-main/documentation_header.php';
 <h3>Enterprise Row Model Features</h3>
 
 <p>
-    The best way to learn what the Enterprise Model does is to break it down into the core features
-    and understand how they individually contribute to the Enterprise Model experience.
+    The best way to learn what the Enterprise Model does is to break it down into the core features.
     You may benefit from the combination of all these
     features or just be interested in a subset. The features of the
-    enterprise row model are listed as follows:
+    enterprise row model are:
 </p>
 
 <p>
-    The features of the Enterprise Row Model are:
     <ul>
         <li>
             <b>Lazy Loading of Groups:</b> The grid will load the top level rows only. Children
@@ -60,22 +58,16 @@ include '../documentation-main/documentation_header.php';
             on. What the user selects will then be forwarded to your datasource as part of the request. This feature
             is advanced and will require some difficult server side coding from you, however if done correctly then
             your users will have an experience of slicing and dicing large data in real time, something previously
-            available in dedicated reporting tools, now you can embed it into your application.</li>
+            only available in expensive reporting tools, now you can embed it into your JavaScript application.</li>
     </ul>
 </p>
 
+<h3>Enterprise Datasource</h3>
 
 <p>
-    Or a more advanced use case would be to allow the user to slice and dice a large
-    dataset and have the backend generate SQL (or equivalent if not using a SQL
-    store) to create the result. This would be similar to how current data analysis
-    tools work, a mini-Business Intelligence experience.
-</p>
-
-<h3>How it Works</h3>
-
-<p>
-    You provide the grid with a datasource. The interface for the datasource is as follows:
+    Similar to the <a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a> and
+    <a href="../javascript-grid-viewport/">Viewport</a> row models, you provide the grid with a datasource.
+    The interface for the datasource is as follows:
 </p>
 
 <pre><span class="codeComment">// datasource for enterprise row model</span>
@@ -87,7 +79,10 @@ interface IEnterpriseDatasource {
 </pre>
 
 <p>
-    The getRows takes the following parameters:
+    Each time the grid requires more rows, it will call the <i>getRows()</i> method.
+    The method is passed a <i>params</i> object that contains two callbacks (one for
+    success and one for failure) and a request object with details what row the grid
+    is looking for. The interface for the <i>params</i> is as follows:
 </p>
 
 <pre>interface IEnterpriseGetRowsParams {
@@ -104,7 +99,9 @@ interface IEnterpriseDatasource {
 </pre>
 
 <p>
-    The request, with details about what the grid needs, has the following structure:
+    The request, with details about what the grid needs. The success and failure callbacks are not included
+    inside the request object to keep the request object simple data. This allows the request object to be
+    a candidate for serialising and sending to your server. The request has the following interface:
 </p>
 
 <pre>interface IEnterpriseGetRowsRequest {
@@ -126,7 +123,7 @@ interface IEnterpriseDatasource {
 }
 
 <span class="codeComment">// we pass a VO (Value Object) of the column and not the column itself,</span>
-<span class="codeComment">// so the data can be converted to JSON and passed to server side</span>
+<span class="codeComment">// so the data can be converted to a JSON string and passed to server side</span>
 export interface ColumnVO {
     id: string;
     displayName: string;
@@ -137,24 +134,27 @@ export interface ColumnVO {
 
 <p>
     All the interfaces above is a lot to take in. The best thing to do is look at the examples below
-    and debug through them with teh web console and observed what is passed back as you interact
+    and debug through them with the web console and observed what is passed back as you interact
     with the grid.
 </p>
 
 <h3>Example - Predefined Master Detail - Mocked Server</h3>
 
 <p>
-    Below shows an example of predefined master / detail using the olympic winners.
+    Below shows an example of predefined master / detail using the olympic winners dataset.
     It is pre-defined as we set the grid with a particular grouping, and then
     our datasource knows that the grid will either be asking for the top level
-    nodes OR the grid will be looking for the lower level nodes for a country.
+    nodes (country list) OR the grid will be looking for the leaf nodes (winners
+    for a particular country).
 </p>
 
 <p>
     In your application, your server side would know where to get the data based
-    on what the user is looking for, eg if using a relational database, it could go
-    to the 'countries' table to get the list of countries and then the 'winners'
-    table to get the details as the user expands the group.
+    on what the user is looking for, eg it could go to a relational database table
+    table to get the list of countries and then a web service to get the winners
+    for the country as the user expands the group (a web service to get the winners
+    per country is improbable, however the example demonstrates you do not need to
+    go to the same datastore for the different levels in the grid).
 </p>
 
 <p>
@@ -168,13 +168,15 @@ export interface ColumnVO {
     <ul>
         <li><b>Grouping:</b> The data is grouped by country.</li>
         <li><b>Aggregation:</b> The server always sum's gold, silver and bronze.
-        The columns are not set as value columns, and hence the user cannot change
-        the aggregation function. The server just assumes if grouping, then these
+            The columns are not set as value columns, and hence the user cannot change
+            the aggregation function via the column menu. The server just assumes if grouping,
+            then these columns should be aggregated using a sum function.
         </li>
         <li><b>Filtering:</b> The age, country and year columns have filters.
-            The filtering is done on the server side.</li>
-        <li><b>Sorting:</b> For example, sort by Athlete, then expand a group and you will
-            see Athlete is sorted. The sorting is done on the server side.</li>
+            The filter state is passed to the server to allow executing the filter on the server side.</li>
+        <li><b>Sorting:</b> The sorting, similar to filtering, is done on the server side.
+            For example, sort by Athlete, then expand a group and you will
+            see Athlete is sorted. </li>
     </ul>
 </p>
 
@@ -219,16 +221,11 @@ export interface ColumnVO {
 <h3>Example - Slice and Dice - Real Server</h3>
 
 <p>
-    It is not possible to put up a full end to end example our the documentation
-    website, as we cannot host servers on our website, and even if we did, you would
-    not be able to run it locally. Instead we have put a full end to end example
+    It is not possible to put up a full end to end example of the Enterprise row model
+    on the documentation website, as we cannot host servers on our website.
+    Instead we have put a full end to end example
     in Github at <a href="https://github.com/ceolter/ag-grid-enterprise-mysql-sample/">
-    https://github.com/ceolter/ag-grid-enterprise-mysql-sample/</a> and you can also
-    see it working on our
-    <a href="https://www.youtube.com/watch?v=dRQtpULw6Hw">
-        <img src="../images/YouTubeSmall.png" style="position: relative; top: -2px;"/>
-        YouTube Movie
-    </a>.
+    https://github.com/ceolter/ag-grid-enterprise-mysql-sample/</a>.
 </p>
 
 <p>
