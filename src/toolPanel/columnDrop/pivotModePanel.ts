@@ -47,6 +47,7 @@ export class PivotModePanel extends Component {
         var newValue = this.cbPivotMode.isSelected();
         if (newValue !== this.columnController.isPivotMode()) {
             this.columnController.setPivotMode(newValue);
+            this.gridOptionsWrapper.getApi().refreshHeader();
         }
     }
     
