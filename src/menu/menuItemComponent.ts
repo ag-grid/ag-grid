@@ -65,6 +65,10 @@ export class MenuItemComponent extends Component {
         } else {
             this.addGuiEventListener('click', this.onOptionSelected.bind(this));
         }
+
+        if (this.params.cssClasses){
+            this.params.cssClasses.forEach(it=>_.addCssClass(this.getGui(), it));
+        }
     }
 
     private onOptionSelected(): void {
