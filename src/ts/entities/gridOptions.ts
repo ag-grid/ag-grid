@@ -342,6 +342,7 @@ export interface MenuItemDef {
     checked?: boolean;
     icon?: HTMLElement|string;
     subMenu?: (MenuItemDef|string)[];
+    cssClasses?: string[];
 }
 
 export interface GetMainMenuItemsParams {
