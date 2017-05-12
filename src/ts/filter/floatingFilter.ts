@@ -49,7 +49,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'input', this.syncUpWithParentFilter.bind(this));
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'keypress', this.checkApply.bind(this));
         let columnDef = (<any>params.column.getDefinition());
-        if (columnDef.filterParams && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange'){
+        if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange'){
             this.eColumnFloatingFilter.readOnly = true;
         }
     }
