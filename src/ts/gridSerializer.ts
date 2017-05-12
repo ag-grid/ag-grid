@@ -255,7 +255,8 @@ export class GridSerializer {
                 let columnIndex :number = 0;
                 displayedGroups.forEach((it:ColumnGroupChild)=>{
                     let casted:ColumnGroup = it as ColumnGroup;
-                    gridRowIterator.onColumn(casted.getDefinition().headerName, columnIndex ++, casted.getChildren().length - 1);
+                    let definition = casted.getDefinition();
+                    gridRowIterator.onColumn(definition != null ? definition.headerName : '', columnIndex ++, casted.getChildren().length - 1);
                 });
             }
 
