@@ -210,17 +210,18 @@ export class Utils {
 
     static mergeDeep(object: any, source: any): void {
         if (this.exists(source)) {
-            this.iterateObject(source, function(key: string, value: any) {
+            this.iterateObject(source, function(key: string, target: any) {
                 let currentValue: any = object[key];
-                let target: any = source[key];
 
                 if (currentValue == null){
-                    object[key] = value;
+                    object[key] = target;
+                    return;
                 }
 
                 if (typeof currentValue === 'object'){
                     if (target){
-                        Utils.mergeDeep (object[key], target)
+                        Utils.mergeDeep (currentValue, target)
+                        return;
                     }
                 }
 
