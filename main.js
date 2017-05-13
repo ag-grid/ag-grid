@@ -12,9 +12,9 @@ exports.BaseAureliaEditor = require('./lib/editorViewModels').BaseAureliaEditor;
 
 function configure(config) {
     config.globalResources(
-      './lib/agGridAurelia',
-      './lib/agGridColumn',
-      './lib/agTemplate'
+      PLATFORM.moduleName('./lib/agGridAurelia'),
+      PLATFORM.moduleName('./lib/agGridColumn'),
+      PLATFORM.moduleName('./lib/agTemplate')
     );
 }
 
