@@ -494,7 +494,7 @@ interface IGetRowsParams {
         </li>
         <li>
             <b>Set Prices High & Set Prices Low</b>: Sets the prices ON THE SERVER SIDE to either high or low prices.
-            This will not impact the grid until after a block cache is loaded. Use these buttons then then further
+            This will not impact the grid until after a block cache is loaded. Use these buttons to then further
             test the refresh and purge methods.
         </li>
         <li>

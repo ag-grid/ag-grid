@@ -169,6 +169,9 @@ var myColumns = {
     <span class="codeComment">// pass in the html element of the column menu to have the </span>
     <span class="codeComment">// grid position the menu over the button.</span>
     showColumnMenu(menuButton: HTMLElement): void;
+
+     <span class="codeComment">// The grid API</span>
+    api: any;
 }</pre>
 
     <h3 id="sorting">Sorting</h3>

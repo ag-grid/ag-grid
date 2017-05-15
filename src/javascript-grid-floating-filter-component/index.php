@@ -107,6 +107,9 @@ include '../documentation-main/documentation_header.php';
     <span class="codeComment">// Boolean flag to indicate if the button in the floating filter that opens the rich
     // filter in a popup should be displayed</span>
     suppressFilterButton: boolean;
+
+    <span class="codeComment">// The grid API</span>
+    api: any;
 }</pre>
 
 <h3 id="example">Custom Floating Filter Example</h3>

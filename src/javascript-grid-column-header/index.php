@@ -29,6 +29,12 @@ include '../documentation-main/documentation_header.php';
     <?php include 'headerHeightProperties.php' ?>
     <?php printPropertiesTable($headerHeightProperties) ?>
 
+    <p>
+        All these properties also have setter methods that can be called from the api and will change the header
+        heights dynamically.
+    </p>
+    <?php printPropertiesTable($headerHeightApi) ?>
+
     <h3 id="textOrientation">Text Orientation</h3>
 
     <p>
@@ -45,37 +51,56 @@ include '../documentation-main/documentation_header.php';
         <li>The header heights have all been changed in the gridOptions:
             <pre>...
 
-    <span class="codeComment">//Ahtlete Details</span>
+    <span class="codeComment">//Group columns</span>
     groupHeaderHeight:75,
 
-    <span class="codeComment">//Vertically oriented column labels</span>
+    <span class="codeComment">//Label columns</span>
     headerHeight: 150,
 
     <span class="codeComment">//Floating filter</span>
     floatingFiltersHeight:50,
 
-    <span class="codeComment">//Pivoting, requires turning on pivot mode</span>
-    pivotHeaderHeight:30,
+    <span class="codeComment">//Pivoting, requires turning on pivot mode. Label columns</span>
+    pivotGroupHeaderHeight:50,
+
+    <span class="codeComment">//Pivoting, requires turning on pivot mode. Group columns</span>
+    pivotGroupHeaderHeight:100,
 
 ...</pre>
         </li>
-        <li>The grouped column header <i>Athlete Details</i> has an specific style applied to it to make it bigger:
-            <pre>
-.ag-header-group-cell {
+        <li>The grouped column header <i>Athlete Details</i> has an specific style applied to it to make it bigger. Note
+            that the style is slightly different depending if pivoting or not:
+<pre>.ag-pivot-off .ag-header-group-cell{
     font-size: 50px;
+    color: red;
+}
+
+.ag-pivot-on .ag-header-group-cell{
+    font-size: 25px;
+    color: green;
 }</pre>
         </li>
         <li>
-            The column labels have CSS applied to them so they are displayed vertically and the sort arrows make
-            sense.
-            <pre>
+            The column labels have CSS applied to them so they are displayed vertically.
+<pre>.ag-cell-label-container{
+    <span class="codeComment">/*Necessary to allow for text to grow vertically*/</span>
+    height: 100%;
+}
+
 .ag-header-cell-label {
+    <span class="codeComment">/*Necessary to allow for text to grow vertically*/</span>
+    height: 100%;
+    padding:0 !important;
+}
+
+.ag-header-cell-label .ag-header-cell-text{
+    <span class="codeComment">/*Force the width corresponding at how much width</span>
+    <span class="codeComment">we need once the text is layed out vertically*/</span>
+    width: 30px;
     transform: rotate(90deg);
     margin-top: 50px;
-    text-overflow: clip;
-}
-.ag-header-cell-label svg {
-    transform: rotate(-90deg);
+    <span class="codeComment">/*Since we are rotating a span*/</span>
+    display: inline-block;
 }</pre>
         </li>
         <li>
@@ -99,12 +124,14 @@ include '../documentation-main/documentation_header.php';
 }</pre>
         </li>
         <li>
-            In pivot mode, the font size used has also been increased, but is not as big as the one used for the column
-            grouping. To test this enable pivot, put athlete as a row group, and gold, silver, bronze and total as
-            values
-            <pre>
-.ag-header-pivot {
-    font-size: 18px;
+            The styling of the column labels have also be tweaked depending if pivoting or not
+<pre>.ag-pivot-off .ag-header-cell-label{
+    color:#8a6d3b;
+}
+
+.ag-pivot-on .ag-header-cell-label{
+    color:#1b6d85;
+    font-weight: bold;
 }</pre>
         </li>
     </ul>
@@ -116,6 +143,8 @@ include '../documentation-main/documentation_header.php';
 <h3 id="headerHeight">Dynamic Header Heights</h3>
 
 As you can see in the example below, if you change any of the header heights, this change will be reflected automatically.
+Note how if the value is set to null, it might reuse other values. To see all the interactions check the properties
+descriptions at the top of the page
 
     <show-example example="exampleDynamicHeaders2"></show-example>
 
