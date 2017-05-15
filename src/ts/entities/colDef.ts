@@ -202,6 +202,9 @@ export interface ColDef extends AbstractColDef {
     /** If true, this cell gets refreshed when api.softRefreshView() gets called. */
     volatile?: boolean;
 
+    /** If true, this cell will be in editing mode after first click. */
+    singleClickEdit?: boolean;
+
     /** Cell template to use for cell. Useful for AngularJS cells. */
     template?: string;
 
