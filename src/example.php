@@ -30,8 +30,6 @@
             .ag-dark .bad-score { background-color: rgba(100,0,0,0.4) }
 
             button[disabled] { opacity: 0.5; }
-
-            .ag-menu { margin-top: 40px; margin-left: -150px; }
         </style>
 
         <!--        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
