@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
             <b>Lazy Loading of Groups:</b> The grid will load the top level rows only. Children
             of groups are only loaded when the user expands the group. Some applications may use
             the Enterprise Row Model for this one feature alone e.g. you might have a managers database table,
-            you can display a list of all managers, then then click 'expand' on the manager and the grid
+            you can display a list of all managers, then click 'expand' on the manager and the grid
             will then request to get the 'employees' for that manager.
         </li>
         <li>
@@ -99,9 +99,9 @@ interface IEnterpriseDatasource {
 </pre>
 
 <p>
-    The request, with details about what the grid needs. The success and failure callbacks are not included
-    inside the request object to keep the request object simple data. This allows the request object to be
-    a candidate for serialising and sending to your server. The request has the following interface:
+    The request gives details on what the grid is looking for. The success and failure callbacks are not included
+    inside the request object to keep the request object simple data (ie simple data types, no functions). This
+    allows the request object to be serialised (eg via JSON) and sent to your server. The request has the following interface:
 </p>
 
 <pre>interface IEnterpriseGetRowsRequest {
@@ -133,9 +133,9 @@ export interface ColumnVO {
 </pre>
 
 <p>
-    All the interfaces above is a lot to take in. The best thing to do is look at the examples below
-    and debug through them with the web console and observed what is passed back as you interact
-    with the grid.
+    Studying the interfaces above alone probably won't describe the whole story in an understandable way. The best
+    thing to do is look at the examples below and debug through them with the web console and observe what is
+    passed back as you interact with the grid.
 </p>
 
 <h3>Example - Predefined Master Detail - Mocked Server</h3>
@@ -150,7 +150,7 @@ export interface ColumnVO {
 
 <p>
     In your application, your server side would know where to get the data based
-    on what the user is looking for, eg it could go to a relational database table
+    on what the user is looking for, eg it could go to a relational database
     table to get the list of countries and then a web service to get the winners
     for the country as the user expands the group (a web service to get the winners
     per country is improbable, however the example demonstrates you do not need to
@@ -234,6 +234,15 @@ export interface ColumnVO {
     the type of slicing and dicing we want ag-Grid to be able to do in your enterprise
     applications.
 </p>
+
+<note>
+    The example is provided to show what logic you will need on the server side. It is
+    provided 'as is' and we hope you find it useful. It is not provided as part of the
+    ag-Grid Enterprise product, and as such it is not something we intend to enhance
+    and support. It is our intention for ag-Grid users to create their own server side
+    connectors to connect into their bespoke data stores. In the future, depending on
+    customer demand, we may provide connectors to server sides stores.
+</note>
 
 <h3 id="selection">Selection with Enterprise Row Model</h3>
 
