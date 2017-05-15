@@ -39,12 +39,12 @@ var dtsHeaderTemplate =
 gulp.task('default', ['webpack-all']);
 gulp.task('release', ['webpack-all']);
 
-gulp.task('webpack-all', ['webpack','webpack-minify','webpack-noStyle','webpack-minify-noStyle'], tscTask);
+gulp.task('webpack-all', ['webpack', 'webpack-minify', 'webpack-noStyle', 'webpack-minify-noStyle'], tscTask);
 
-gulp.task('webpack-minify-noStyle', ['tsc','stylus'], webpackTask.bind(null, true, false));
-gulp.task('webpack-noStyle', ['tsc','stylus'], webpackTask.bind(null, false, false));
-gulp.task('webpack-minify', ['tsc','stylus'], webpackTask.bind(null, true, true));
-gulp.task('webpack', ['tsc','stylus'], webpackTask.bind(null, false, true));
+gulp.task('webpack-minify-noStyle', ['tsc', 'stylus'], webpackTask.bind(null, true, false));
+gulp.task('webpack-noStyle', ['tsc', 'stylus'], webpackTask.bind(null, false, false));
+gulp.task('webpack-minify', ['tsc', 'stylus'], webpackTask.bind(null, true, true));
+gulp.task('webpack', ['tsc', 'stylus'], webpackTask.bind(null, false, true));
 
 gulp.task('stylus-watch', ['stylus-no-clean'], stylusWatch);
 gulp.task('stylus-no-clean', stylusTask);
@@ -74,12 +74,12 @@ function tscTask() {
 
     return merge([
         tsResult.dts
-            .pipe(header(dtsHeaderTemplate, { pkg : pkg }))
+            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/lib')),
         tsResult.js
-            // .pipe(sourcemaps.init({loadMaps: true}))
-            // .pipe(sourcemaps.write('./'))
-            .pipe(header(headerTemplate, { pkg : pkg }))
+        // .pipe(sourcemaps.init({loadMaps: true}))
+        // .pipe(sourcemaps.write('./'))
+            .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/lib'))
     ])
 }
@@ -88,7 +88,18 @@ function webpackTask(minify, styles) {
 
     var plugins = [];
     if (minify) {
-        plugins.push(new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}}));
+        plugins.push(
+            new webpack.optimize.UglifyJsPlugin(
+                {
+                    output: {
+                        comments: false
+                    },
+                    compress: {
+                        warnings: false
+                    }
+                }
+            )
+        );
     }
     var mainFile = styles ? './main-with-styles.js' : './main.js';
 
@@ -111,12 +122,12 @@ function webpackTask(minify, styles) {
             //devtool: 'inline-source-map',
             module: {
                 loaders: [
-                    { test: /\.css$/, loader: "style-loader!css-loader" }
+                    {test: /\.css$/, loader: "style-loader!css-loader"}
                 ]
             },
             plugins: plugins
         }))
-        .pipe(header(bundleTemplate, { pkg : pkg }))
+        .pipe(header(bundleTemplate, {pkg: pkg}))
         .pipe(gulp.dest('./dist/'));
 }
 
