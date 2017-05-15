@@ -16,7 +16,7 @@ var bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 gulp.task('default', ['webpack-all']);
 gulp.task('release', ['webpack-all']);
 
-gulp.task('webpack-all', ['webpack','webpack-minify','webpack-noStyle','webpack-minify-noStyle'], tscTask);
+gulp.task('webpack-all', ['webpack', 'webpack-minify', 'webpack-noStyle', 'webpack-minify-noStyle'], tscTask);
 
 gulp.task('webpack-minify-noStyle', ['tsc'], webpackTask.bind(null, true, false));
 gulp.task('webpack-noStyle', ['tsc'], webpackTask.bind(null, false, false));
@@ -43,10 +43,10 @@ function tscTask() {
 
     return merge([
         tsResult.dts
-            .pipe(header(headerTemplate, { pkg : pkg }))
+            .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/lib')),
         tsResult.js
-            .pipe(header(headerTemplate, { pkg : pkg }))
+            .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/lib'))
     ])
 }
@@ -55,7 +55,18 @@ function webpackTask(minify, styles) {
 
     var plugins = [];
     if (minify) {
-        plugins.push(new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}}));
+        plugins.push(
+            new webpack.optimize.UglifyJsPlugin(
+                {
+                    output: {
+                        comments: false
+                    },
+                    compress: {
+                        warnings: false
+                    }
+                }
+            )
+        );
     }
     var mainFile = styles ? './webpack-with-styles.js' : './webpack.js';
 
@@ -78,11 +89,11 @@ function webpackTask(minify, styles) {
             //devtool: 'inline-source-map',
             module: {
                 loaders: [
-                    { test: /\.css$/, loader: "style-loader!css-loader" }
+                    {test: /\.css$/, loader: "style-loader!css-loader"}
                 ]
             },
             plugins: plugins
         }))
-        .pipe(header(bundleTemplate, { pkg : pkg }))
+        .pipe(header(bundleTemplate, {pkg: pkg}))
         .pipe(gulp.dest('./dist/'));
 }
