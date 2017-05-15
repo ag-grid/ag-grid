@@ -1447,6 +1447,15 @@ export class GridPanel extends BeanStub {
 
         let changeDetected = false;
 
+        // if we are v scrolling, then one of these will have the scroll position.
+        // we us this inside the if(changedDetected), so we don't always use it, however
+        // it is changed when we make a pinned panel not visible, so we have to check it
+        // before we change display on the pinned panels
+        let scrollTop = Math.max(
+            this.eBodyViewport.scrollTop,
+            this.ePinnedLeftColsViewport.scrollTop,
+            this.ePinnedRightColsViewport.scrollTop);
+
         let showLeftPinned = this.columnController.isPinningLeft();
         if (showLeftPinned !== this.pinningLeft) {
             this.pinningLeft = showLeftPinned;
@@ -1466,12 +1475,6 @@ export class GridPanel extends BeanStub {
         if (changeDetected) {
             let bodyVScrollActive = this.isBodyVerticalScrollActive();
             this.eBodyViewport.style.overflowY = bodyVScrollActive ? 'auto' : 'hidden';
-
-            // if we are v scrolling, then one of these will have the scroll position
-            let scrollTop = Math.max(
-                this.eBodyViewport.scrollTop,
-                this.ePinnedLeftColsViewport.scrollTop,
-                this.ePinnedRightColsViewport.scrollTop);
 
             // the body either uses it's scroll (when scrolling) or it's style.top
             // (when following the scroll of a pinned section), so we need to set it
