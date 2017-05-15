@@ -139,9 +139,9 @@ export class GroupStage implements IRowNodeStage {
 
     private placeNodeIntoNextGroup(previousGroup: RowNode, nodeToPlace: RowNode, groupColumn: Column, expandByDefault: any,
                                    level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
-        var groupKey = this.getKeyForNode(groupColumn, nodeToPlace);
+        let groupKey = this.getKeyForNode(groupColumn, nodeToPlace);
 
-        var nextGroup = <RowNode> previousGroup.childrenMapped[groupKey];
+        let nextGroup = <RowNode> previousGroup.childrenMapped[groupKey];
         if (!nextGroup) {
             nextGroup = this.createGroup(groupColumn, groupKey, previousGroup, expandByDefault, level, includeParents, numberOfGroupColumns, isPivot);
             previousGroup.childrenMapped[groupKey] = nextGroup;
@@ -168,16 +168,16 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private createGroup(groupColumn: Column, groupKey: string, parent: RowNode, expandByDefault: any, level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
-        var nextGroup = new RowNode();
+        let nextGroup = new RowNode();
         this.context.wireBean(nextGroup);
 
         nextGroup.group = true;
         nextGroup.field = groupColumn.getColDef().field;
+        nextGroup.rowGroupColumn = groupColumn;
         // we use negative number for the ids of the groups, this makes sure we don't clash with the
         // id's of the leaf nodes.
         nextGroup.id = (this.groupIdSequence.next()*-1).toString();
         nextGroup.key = groupKey;
-
 
         // if doing pivoting, then the leaf group is never expanded,
         // as we do not show leaf rows
