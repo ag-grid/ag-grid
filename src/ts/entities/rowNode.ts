@@ -85,6 +85,8 @@ export class RowNode {
     public footer: boolean;
     /** Groups only - The field we are grouping on eg Country*/
     public field: string;
+    /** Groups only - the row group column for this group */
+    public rowGroupColumn: Column;
     /** Groups only - The key for the group eg Ireland, UK, USA */
     public key: any;
     /** Used by enterprise row model, true if this row node is a stub */

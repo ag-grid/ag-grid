@@ -65,7 +65,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private setParams(params: any): void {
         if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
-            let nodeToSwapIn = this.isFirstChildOfFirstChild(params.node, params.colDef.field);
+            let nodeToSwapIn = this.isFirstChildOfFirstChild(params.node, params.column);
             this.nodeWasSwapped = _.exists(nodeToSwapIn);
             if (this.nodeWasSwapped) {
                 let newParams = <any> {};
@@ -88,7 +88,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.addPadding();
     }
 
-    private isFirstChildOfFirstChild(rowNode: RowNode, groupField: string): RowNode {
+    private isFirstChildOfFirstChild(rowNode: RowNode, groupColumn: Column): RowNode {
         let currentRowNode = rowNode;
 
         // if we are hiding groups, then if we are the first child, of the first child,
@@ -104,7 +104,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             let firstChild = _.exists(parentRowNode) && currentRowNode.childIndex === 0;
 
             if (firstChild) {
-                if (parentRowNode.field === groupField) {
+                if (parentRowNode.rowGroupColumn === groupColumn) {
                     foundFirstChildPath = true;
                     nodeToSwapIn = parentRowNode;
                 }
@@ -127,10 +127,13 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let skipCheck = this.nodeWasSwapped || !restrictToOneGroup;
         if (skipCheck) { return false; }
 
-        let groupField = this.params.colDef.field;
-        let rowNode = this.params.node;
+        // let groupField = this.params.colDef.field;
+        // let rowNode = this.params.node;
 
-        return groupField !== rowNode.field;
+        let columnGroup = this.params.column;
+        let rowGroup = this.params.node.rowGroupColumn;
+
+        return columnGroup !== rowGroup;
     }
 
     // if we are doing embedded full width rows, we only show the renderer when
