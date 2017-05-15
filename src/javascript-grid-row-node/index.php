@@ -38,15 +38,16 @@ include '../documentation-main/documentation_header.php';
 
     <p>
     <ul>
-        <li><b>footer:</b> True if row is a footer. Footers  have group = true and footer = true.</li>
-        <li><b>field:</b> The field we are grouping on eg Country.</li>
         <li><b>key:</b> The key for the grouping eg Ireland, UK, USA.</li>
+        <li><b>field:</b> The field (string) we are grouping on eg 'country'.</li>
+        <li><b>rowGroupColumn:</b> The row group column used for this group, eg the Country column instance.</li>
+        <li><b>expanded:</b> True if group is expanded, otherwise false.</li>
+        <li><b>footer:</b> True if row is a footer. Footers  have group = true and footer = true.</li>
         <li><b>childrenAfterGroup:</b> Children of this group. If multi levels of grouping, shows only immediate children.</li>
         <li><b>allLeafChildren:</b> All lowest level nodes beneath this node, no groups.</li>
         <li><b>childrenAfterFilter:</b> Filtered children of this group.</li>
         <li><b>childrenAfterSort:</b> Sorted children of this group.</li>
         <li><b>allChildrenCount:</b> Number of children and grand children.</li>
-        <li><b>expanded:</b> True if group is expanded, otherwise false.</li>
         <li><b>sibling:</b> If doing footers, reference to the footer node for this group.</li>
     </ul>
     </p>

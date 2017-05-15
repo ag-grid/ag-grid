@@ -25,6 +25,13 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
+    <h4>Bug Fixes:</h4>
+    <ul>
+        <li>
+            AG-377: Property restrictToOneGroup didn't work when field was missing in colDef (ie value getter used instead). Now works.
+        </li>
+    </ul>
+
     <h4>Breaking Changes:</h4>
     <ul>
         <li>
