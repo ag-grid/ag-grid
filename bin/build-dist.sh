@@ -20,13 +20,21 @@ do
     fi
 
     cd "$current_dir"
+
     build-module.sh $module
+    if [ $? -ne 0 ]
+    then
+        echo "Stopping release-just-branch.sh"
+        exit 1
+    fi
+
     dist-just-module.sh $module
     if [ $? -ne 0 ]
     then
         echo "Stopping release-just-branch.sh"
         exit 1
     fi
+
     cd "$module"
 
     ## After everything is committed generate the NPM local package

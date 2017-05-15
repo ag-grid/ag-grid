@@ -7,6 +7,7 @@ if [ "$#" -ne 2 ]
 fi
 
 
+git-reset-dist.sh
 echo "Merging $1 into $2"
 
 ## for all the modules
@@ -26,6 +27,10 @@ do
     git merge $2
     git push
     git checkout $2
+    git pull
+    git merge $1
+    git push
+    git checkout $1
     cd ..
 
 done

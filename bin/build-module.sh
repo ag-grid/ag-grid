@@ -25,7 +25,25 @@ do
             npm install vue
             ;;
     esac
+
+    if [ $? -eq 0 ]
+    then
+        echo "Successfully build!"
+    else
+        echo "Could not build $module"
+        exit 1
+    fi
+
+
     npm install
+
+    if [ $? -eq 0 ]
+    then
+        echo "Successfully build!"
+    else
+        echo "Could not build $module"
+        exit 1
+    fi
 
     cd "$current_dir"
 done
