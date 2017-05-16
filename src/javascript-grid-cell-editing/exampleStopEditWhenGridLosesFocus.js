@@ -64,9 +64,6 @@ YearCellEditor.prototype.init = function(params) {
     this.eGui = tempElement.firstChild;
 };
 
-YearCellEditor.prototype.destroy = function() {
-};
-
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
