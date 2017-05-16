@@ -92,6 +92,10 @@ include '../documentation-main/documentation_header.php';
         if you want to.
     </p>
 
+    <h3>Menu Item Separators</h3>
+    <p>You can add menu item separators as follows:</p>
+    <pre>menuItems.push('separator')</pre>
+
     <h3>Example Column Menu</h3>
 
     <p>
