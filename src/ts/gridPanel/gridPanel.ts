@@ -28,6 +28,8 @@ import {RowContainerComponent} from "../rendering/rowContainerComponent";
 import {GridCell} from "../entities/gridCell";
 import {RowNode} from "../entities/rowNode";
 import {PaginationProxy} from "../rowModels/paginationProxy";
+import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
+import {RenderedCell} from "../rendering/renderedCell";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -296,17 +298,20 @@ export class GridPanel extends BeanStub {
                 let elementWithFocus = event.relatedTarget;
 
                 // see if the element the focus is going to is part of the grid
-                let ourBodyFound = false;
+                let clickInsideGrid = false;
                 let pointer: any = elementWithFocus;
-                while (_.exists(pointer)) {
+
+                while (_.exists(pointer) && !clickInsideGrid) {
+
+                    let isPopup = !!this.gridOptionsWrapper.getDomData(pointer, PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER);
+                    let isBody = this.eBody == pointer;
+
+                    clickInsideGrid = isPopup || isBody;
+
                     pointer = pointer.parentNode;
-                    if (pointer===this.eBody) {
-                        ourBodyFound = true;
-                    }
                 }
 
-                // if it is not part fo the grid, then we have lost focus
-                if (!ourBodyFound) {
+                if (!clickInsideGrid) {
                     this.rowRenderer.stopEditing();
                 }
             })
@@ -429,14 +434,15 @@ export class GridPanel extends BeanStub {
 
     private getRowForEvent(event: MouseEvent | KeyboardEvent): RenderedRow {
 
-        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
         var sourceElement = _.getTarget(event);
 
         while (sourceElement) {
-            var domData = (<any>sourceElement)[domDataKey];
-            if (domData && domData.renderedRow) {
-                return <RenderedRow> domData.renderedRow;
+
+            let renderedRow = this.gridOptionsWrapper.getDomData(sourceElement, RenderedRow.DOM_DATA_KEY_RENDERED_ROW);
+            if (renderedRow) {
+                return renderedRow;
             }
+
             sourceElement = sourceElement.parentElement;
         }
 

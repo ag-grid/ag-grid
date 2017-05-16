@@ -57,6 +57,8 @@ export class RenderedRow extends BeanStub {
 
     public static EVENT_RENDERED_ROW_REMOVED = 'renderedRowRemoved';
 
+    public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
@@ -195,12 +197,12 @@ export class RenderedRow extends BeanStub {
     }
 
     private addDomData(eRowContainer: Element): void {
-        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
-        var gridCellNoType = <any> eRowContainer;
-        gridCellNoType[domDataKey] = {
-            renderedRow: this
-        };
-        this.addDestroyFunc( ()=> { gridCellNoType[domDataKey] = null; } );
+
+        this.gridOptionsWrapper.setDomData(eRowContainer, RenderedRow.DOM_DATA_KEY_RENDERED_ROW, this);
+
+        this.addDestroyFunc( ()=> {
+            this.gridOptionsWrapper.setDomData(eRowContainer, RenderedRow.DOM_DATA_KEY_RENDERED_ROW, null) }
+        );
     }
 
     private setupFullWidthContainers(animateInRowTop: boolean): void {

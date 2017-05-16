@@ -11,14 +11,13 @@ export class MouseEventService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public getRenderedCellForEvent(event: MouseEvent | KeyboardEvent): RenderedCell {
-        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
-        var sourceElement = _.getTarget(event);
+
+        let sourceElement = _.getTarget(event);
 
         while (sourceElement) {
-            var domData = (<any>sourceElement)[domDataKey];
-            if (domData && domData.renderedCell) {
-                let renderedCell = <RenderedCell> domData.renderedCell;
-                return renderedCell;
+            let renderedCell = this.gridOptionsWrapper.getDomData(sourceElement, RenderedCell.DOM_DATA_KEY_RENDERED_CELL);
+            if (renderedCell) {
+                return <RenderedCell> renderedCell;
             }
             sourceElement = sourceElement.parentElement;
         }
@@ -27,7 +26,7 @@ export class MouseEventService {
     }
 
     public getGridCellForEvent(event: MouseEvent | KeyboardEvent): GridCell {
-        var renderedCell = this.getRenderedCellForEvent(event);
+        let renderedCell = this.getRenderedCellForEvent(event);
         return renderedCell ? renderedCell.getGridCell() : null;
     }
 

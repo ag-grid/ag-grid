@@ -61,6 +61,8 @@ export class RenderedCell extends Component {
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
+    public static DOM_DATA_KEY_RENDERED_CELL = 'renderedCell';
+
     private eGridCell: HTMLElement; // the outer cell
     private eSpanWithValue: HTMLElement; // inner cell
     private eCellWrapper: HTMLElement;
@@ -401,12 +403,10 @@ export class RenderedCell extends Component {
     }
 
     private addDomData(): void {
-        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
-        var gridCellNoType = <any>this.eGridCell;
-        gridCellNoType[domDataKey] = {
-            renderedCell: this
-        };
-        this.addDestroyFunc( ()=> gridCellNoType[domDataKey] = null );
+        this.gridOptionsWrapper.setDomData(this.eGridCell, RenderedCell.DOM_DATA_KEY_RENDERED_CELL, this);
+        this.addDestroyFunc( ()=>
+            this.gridOptionsWrapper.setDomData(this.eGridCell, RenderedCell.DOM_DATA_KEY_RENDERED_CELL, null)
+        );
     }
 
     private onEnterKeyDown(): void {

@@ -125,8 +125,23 @@ export class GridOptionsWrapper {
         this.groupRowInnerRenderer = this.frameworkFactory.gridOptionsGroupRowInnerRenderer(this.gridOptions);
     }
 
-    public getDomDataKey(): string {
-        return this.domDataKey;
+    // returns the dom data, or undefined if not found
+    public getDomData(element: Element, key: string): any {
+        let domData = (<any>element)[this.domDataKey];
+        if (domData) {
+            return domData[key];
+        } else {
+            return undefined;
+        }
+    }
+
+    public setDomData(element: Element, key: string, value: any): any {
+        let domData = (<any>element)[this.domDataKey];
+        if (_.missing(domData)) {
+            domData = {};
+            (<any>element)[this.domDataKey] = domData;
+        }
+        domData[key] = value;
     }
 
     // the cellRenderers come from the instances for this class, not from gridOptions, which allows
