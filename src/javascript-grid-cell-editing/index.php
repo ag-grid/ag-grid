@@ -441,6 +441,21 @@ colDef.newValueHandler = function(params) {
         editing as soon as your external popup appeared.
     </p>
 
+    <p>
+        The example below shows the editing with <i>stopEditingWhenGridLosesFocus=true</i>.
+        Notice the following:
+        <ul>
+            <li>
+                Double click to start editing 'Age', then click outside the grid (on the 'Dummy Save'
+                button, or the dummy text field) and the grid will stop editing.
+            </li>
+            <li>
+                Double click to start editing 'Year', a custom popup editor appears, you can click
+                anywhere on the popup editor, but once you click outside the editor, the popup closes.
+            </li>
+        </ul>
+    </p>
+
     <show-example example="exampleStopEditWhenGridLosesFocus"></show-example>
 
     <note>Cell Editing can also be done via Cell Editor Components - please see <a href="../javascript-grid-cell-editor">
