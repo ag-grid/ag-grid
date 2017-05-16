@@ -100,6 +100,23 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="example2"></show-example>
 
+
+    <h3 id="resizing-example">Sizing Columns By Default</h3>
+
+    <p>
+        It is possible to have the grid auto size the columns to fill the width by default. Do
+        this by calling <i>api.sizeColumnsToFit()</i> on the <i>gridReady</i> event.
+    </p>
+
+    <p>
+        Note that <i>api.sizeColumnsToFit()</i> needs to know the grid width in order to do it's
+        maths. If the grid is not attached to the DOM, then this will be unknown. In the example
+        below, the grid is not attached to the DOM when it is created (and hence api.sizeColumnsToFix()
+        should fail). The grid checks again after 100ms, and tries to resize again. This is needed
+        for some frameworks (eg Angular) as DOM objects are used before getting attached.
+    </p>
+    <show-example example="exampleDivNotInDom"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
