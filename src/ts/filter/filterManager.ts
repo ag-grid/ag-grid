@@ -32,6 +32,8 @@ export class FilterManager {
     @Autowired('context') private context: Context;
     @Autowired('componentProvider') private componentProvider: ComponentProvider;
 
+    public static QUICK_FILTER_SEPARATOR = '\n';
+
     private allFilters: any = {};
     private quickFilter: string = null;
 
@@ -283,7 +285,7 @@ export class FilterManager {
                 stringParts.push(valueAfterCallback.toString().toUpperCase());
             }
         });
-        node.quickFilterAggregateText = stringParts.join('_');
+        node.quickFilterAggregateText = stringParts.join(FilterManager.QUICK_FILTER_SEPARATOR);
     }
 
     private onNewRowsLoaded() {
