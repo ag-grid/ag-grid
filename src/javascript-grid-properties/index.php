@@ -217,6 +217,10 @@ include '../documentation-main/documentation_header.php';
             <td>Rows are filtered using this text as a 'quick filter'.</td>
         </tr>
         <tr>
+            <th>cacheQuickFilter</th>
+            <td>Set to true to turn on the quick filter cache, used for a performance gain.</td>
+        </tr>
+        <tr>
             <th>sortingOrder</th>
             <td>Array defining the order in which sorting occurs (if sorting is enabled). Values can be <code>asc</code>,
                 <code>desc</code> or <code>null</code>. For example: <code>sortingOrder: ['asc', 'desc']</code>.</td>

@@ -48,6 +48,9 @@ for (var i = 0; i<100; i++) {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        editable: true
+    },
     columnDefs: columnDefs,
     rowData: rowData
 };
@@ -62,8 +65,23 @@ function onPrintQuickFilterTexts() {
     });
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+function reset() {
+
+    var rbCache = document.querySelector('#cbCache');
+    var cacheActive = rbCache.checked;
+    console.log('using cache = ' + cacheActive);
+    gridOptions.cacheQuickFilter = cacheActive;
+
+    // if old grid, then destroy it
+    if (gridOptions.api) {
+        gridOptions.api.destroy();
+    }
+
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
+}
+
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function() {
+    reset();
 });

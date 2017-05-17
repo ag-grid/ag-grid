@@ -11,22 +11,15 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     In addition to the column specific filtering, a 'quick filter' (influenced by how filtering is done in Google
-    GMail) can also be applied. Set the quick filter text into the grid options and tell the grid, via the API,
-    to filter the data (which will include the new quick filter).
+    GMail) can also be applied. Set the quick filter by using the Grid's API:
+
+    <pre>api.setQuickFilter('new filter text');</pre>
+
+    If you are using a framework such as Angular or React, you can set bind the quick filter text to the
+    <code>quickFilter</code> attribute.
 </p>
 
-<h4 id="how-it-works">How it Works</h4>
-
-<p>
-    Each node gets a <i>quick filter text</i> attached to it by concatenating all the values for each column.
-    For example, a {Employee Name, Job} table could have a row with quick filter text of 'Niall Crosby_Coffee Maker'.
-    The grid then does a simple string search, so if you search for 'Niall', it will find our example text.
-    Joining all the columns values into one string gives a huge performance boost. The values
-    are joined after the quick filter is requested for the first time and stored in the rowNode - the original
-    data that you provide is not changed.
-</p>
-
-<h4 id="overridingQuickFilter">Overriding the Quick Filter Value</h4>
+<h3 id="overridingQuickFilter">Overriding the Quick Filter Value</h3>
 
 <p>
     If your data contains complex objects, then the quick filter will end up with [object,object] inside it
@@ -46,9 +39,27 @@ Params contains {value, node, data, column, colDef}.
     problem, you don't need to use it, quick filter will work 'out of the box' in most cases.
 </note>
 
-<h4 id="reset-quick-filters">Reset Quick Filters</h4>
+<h3 id="how-it-works">Quick Filter Cache</h3>
 
-<p>Quick filters can be reset in any of the following ways:
+<p>
+    By default, the quick filter checks each columns value, including running it's value getters
+    if present, each time the quick filter is executed. If your data set is large, you may wish
+    to enable the quick filter cache by setting <code>cacheQuickFilter=true</code>.
+</p>
+
+<p>
+    When the cache is enabled, each node gets a 'quick filter text' attached to it by
+    concatenating all the values for each column. For example, a {Employee Name, Job} table could have a
+    row with quick filter text of 'NIALL CROSBY\nCOFFEE MAKER'.
+    The grid then does a simple string search, so if you search for 'Niall', it will find our example text.
+    Joining all the columns values into one string gives a huge performance boost. The values
+    are joined after the quick filter is requested for the first time and stored in the rowNode - the original
+    data that you provide is not changed.
+</p>
+
+<h4 id="reset-quick-filters">Reset Cache Text</h4>
+
+<p>Quick filter cache text can be reset in any of the following ways:
 <ul>
     <li>Each rowNode has a <code>resetQuickFilterAggregateText</code> method on it - call this to reset the quick filter</li>
     <li><code>rowNode.setDataValue(colKey, newValue)</code> will also reset the quick filter</li>
@@ -56,30 +67,44 @@ Params contains {value, node, data, column, colDef}.
 </ul>
 </p>
 
-<h4 id="quick-filter-example">Quick Filter Example</h4>
+<p>
+    If you are not using the cache setting, then you can ignore all this.
+</p>
+
+<h3 id="quick-filter-example">Quick Filter Example</h3>
 
 <p>
     The example below shows the quick filter working on different data types. Each column demonstrates something
     different as follows:
-<ul>
-    <li>A - Simple column, nothing complex.</li>
-    <li>B - Complex object with 'dot' in field, quick filter works fine.</li>
-    <li>C - Complex object and value getter used, again quick filter works fine.</li>
-    <li>D - Complex object, quick filter would call 'toString' on the complex object, so getQuickFilterText is provided.</li>
-    <li>E - Complex object, not getQuickFilterText provided, so the quick filter text ends up with '[object,object]' for this column.</li>
-</ul>
-To see the quick filter text attached to each node, click 'Print Quick Filter Texts' button after you execute
-the quick filter at least one. You will notice the quick filter text is correct for each column except E
-(which would be fixed by adding an appropriate getQuickFilterText method like D does).
+</p><ul>
+        <li>A - Simple column, nothing complex.</li>
+        <li>B - Complex object with 'dot' in field, quick filter works fine.</li>
+        <li>C - Complex object and value getter used, again quick filter works fine.</li>
+        <li>D - Complex object, quick filter would call 'toString' on the complex object, so getQuickFilterText is provided.</li>
+        <li>E - Complex object, not getQuickFilterText provided, so the quick filter text ends up with '[object,object]' for this column.</li>
+    </ul>
+
+    The example also demonstrates using the cache vs not using the cache. Selecting one of the following
+    will reset the grid and work as follows:
+    <ul>
+        <li><b>Normal Quick Filter:</b> The cache is not used. Value getters are executed on each node each
+            time the filter is executed.</li>
+        <li><b>Cache Quick Filter:</b> The cache is used. Value getters are executed first time the quick
+            filter is run.</li>
+    </ul>
+
+    To see the quick filter text attached to each node while using the cache, click 'Print Quick Filter Texts'
+    button after you execute the quick filter at least one. You will notice the quick filter text is correct
+    for each column except E (which would be fixed by adding an appropriate getQuickFilterText method like D does).
 </p>
 
+<!-- todo-plunk plunker="https://embed.plnkr.co/XlK0mtmxrKZjYOn3t56x/" -->
 <show-complex-example example="exampleQuickFilter.html"
                       sources="{
                                 [
                                     { root: './', files: 'exampleQuickFilter.html,exampleQuickFilter.js' }
                                 ]
                               }"
-                      plunker="https://embed.plnkr.co/XlK0mtmxrKZjYOn3t56x/"
                       exampleheight="500px">
 </show-complex-example>
 
