@@ -205,8 +205,6 @@ export class FilterManager {
     }
 
     public onFilterChanged(): void {
-        this.eventService.dispatchEvent(Events.EVENT_BEFORE_FILTER_CHANGED);
-
         this.setAdvancedFilterPresent();
         this.updateFilterFlagInColumns();
         this.checkExternalFilter();
@@ -218,8 +216,6 @@ export class FilterManager {
         });
 
         this.eventService.dispatchEvent(Events.EVENT_FILTER_CHANGED);
-
-        this.eventService.dispatchEvent(Events.EVENT_AFTER_FILTER_CHANGED);
     }
 
     public isQuickFilterPresent(): boolean {

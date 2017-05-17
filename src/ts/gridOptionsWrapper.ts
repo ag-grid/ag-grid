@@ -95,7 +95,8 @@ export class GridOptionsWrapper {
 
     @PostConstruct
     public init(): void {
-        this.eventService.addGlobalListener(this.globalEventHandler.bind(this));
+        let async = this.useAsyncEvents();
+        this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
 
         this.setupFrameworkComponents();
 
@@ -186,6 +187,7 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.toolPanelSuppressPivotMode);
     }
     public isSuppressTouch() { return isTrue(this.gridOptions.suppressTouch); }
+    public useAsyncEvents() { return !isTrue(this.gridOptions.suppressAsyncEvents); }
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
     public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
     public isGroupSelectsFiltered() { return isTrue(this.gridOptions.groupSelectsFiltered); }

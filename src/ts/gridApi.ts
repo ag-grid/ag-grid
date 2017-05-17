@@ -571,11 +571,13 @@ export class GridApi {
     }
 
     public addEventListener(eventType: string, listener: Function): void {
-        this.eventService.addEventListener(eventType, listener);
+        let async = this.gridOptionsWrapper.useAsyncEvents();
+        this.eventService.addEventListener(eventType, listener, async);
     }
 
     public addGlobalListener(listener: Function): void {
-        this.eventService.addGlobalListener(listener);
+        let async = this.gridOptionsWrapper.useAsyncEvents();
+        this.eventService.addGlobalListener(listener, async);
     }
 
     public removeEventListener(eventType: string, listener: Function): void {

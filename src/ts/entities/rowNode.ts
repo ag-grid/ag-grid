@@ -13,6 +13,7 @@ import {Utils as _} from "../utils";
 import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
 import {RowNodeCache, RowNodeCacheParams} from "../rowModels/cache/rowNodeCache";
 import {RowNodeBlock} from "../rowModels/cache/rowNodeBlock";
+import {IEventEmitter} from "../interfaces/iEventEmitter";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -27,7 +28,7 @@ export interface SetSelectedParams {
     groupSelectsFiltered?: boolean;
 }
 
-export class RowNode {
+export class RowNode implements IEventEmitter {
 
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_DATA_CHANGED = 'dataChanged';
