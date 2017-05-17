@@ -212,6 +212,7 @@ export class GridOptionsWrapper {
     public isSuppressTabbing() { return isTrue(this.gridOptions.suppressTabbing); }
 
     public getQuickFilterText(): string { return this.gridOptions.quickFilterText; }
+    public isCacheQuickFilter() { return isTrue(this.gridOptions.cacheQuickFilter); }
     public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
     public isSuppressMenuHide() { return isTrue(this.gridOptions.suppressMenuHide); }
     public getRowStyle() { return this.gridOptions.rowStyle; }

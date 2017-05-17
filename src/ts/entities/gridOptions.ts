@@ -91,6 +91,7 @@ export interface GridOptions {
     viewportRowModelBufferSize?: number;
     enableCellChangeFlash?: boolean;
     quickFilterText?: string;
+    cacheQuickFilter?: boolean;
     aggFuncs?: {[key: string]: IAggFunc};
     suppressColumnVirtualisation?: boolean;
     layoutInterval?: number;

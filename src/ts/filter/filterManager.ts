@@ -230,59 +230,102 @@ export class FilterManager {
         return this.doesRowPassFilter(node, filterToSkip);
     }
 
-    public doesRowPassFilter(node: any, filterToSkip?: any): boolean {
-        //first up, check quick filter
-        if (this.isQuickFilterPresent()) {
-            if (!node.quickFilterAggregateText) {
-                this.aggregateRowForQuickFilter(node);
+    private doesRowPassQuickFilterNoCache(node: RowNode): boolean {
+        let columns = this.columnController.getAllPrimaryColumns();
+        let filterPasses = false;
+        columns.forEach( column => {
+            if (filterPasses) { return; }
+            let part = this.getQuickFilterTextForColumn(column, node);
+            if (_.exists(part)) {
+                if (part.indexOf(this.quickFilter)>=0) {
+                    filterPasses = true;
+                }
             }
-            if (node.quickFilterAggregateText.indexOf(this.quickFilter) < 0) {
-                //quick filter fails, so skip item
+        });
+        return filterPasses;
+    }
+
+    private doesRowPassQuickFilterCache(node: any): boolean {
+        if (!node.quickFilterAggregateText) {
+            this.aggregateRowForQuickFilter(node);
+        }
+        let filterPasses = node.quickFilterAggregateText.indexOf(this.quickFilter) >= 0;
+        return filterPasses;
+    }
+
+    private doesRowPassQuickFilter(node: any): boolean {
+        let filterPasses: boolean;
+        if (this.gridOptionsWrapper.isCacheQuickFilter()) {
+            filterPasses = this.doesRowPassQuickFilterCache(node);
+        } else {
+            filterPasses = this.doesRowPassQuickFilterNoCache(node);
+        }
+        return filterPasses;
+    }
+
+    public doesRowPassFilter(node: any, filterToSkip?: any): boolean {
+
+        // the row must pass ALL of the filters, so if any of them fail,
+        // we return true. that means if a row passes the quick filter,
+        // but fails the column filter, it fails overall
+
+        // first up, check quick filter
+        if (this.isQuickFilterPresent()) {
+            if (!this.doesRowPassQuickFilter(node)) {
                 return false;
             }
         }
 
-        //secondly, give the client a chance to reject this row
+        // secondly, give the client a chance to reject this row
         if (this.externalFilterPresent) {
             if (!this.gridOptionsWrapper.doesExternalFilterPass(node)) {
                 return false;
             }
         }
 
-        //lastly, check our internal advanced filter
+        // lastly, check our internal advanced filter
         if (this.advancedFilterPresent) {
             if (!this.doesFilterPass(node, filterToSkip)) {
                 return false;
             }
         }
 
-        //got this far, all filters pass
+        // got this far, all filters pass
         return true;
+    }
+
+    private getQuickFilterTextForColumn(column: Column, rowNode: RowNode): string {
+        var value = this.valueService.getValue(column, rowNode);
+
+        var valueAfterCallback: any;
+        var colDef = column.getColDef();
+        if (column.getColDef().getQuickFilterText) {
+            var params: GetQuickFilterTextParams = {
+                value: value,
+                node: rowNode,
+                data: rowNode.data,
+                column: column,
+                colDef: colDef
+            };
+            valueAfterCallback = column.getColDef().getQuickFilterText(params);
+        } else {
+            valueAfterCallback = value;
+        }
+
+        if (valueAfterCallback && valueAfterCallback !== '') {
+            return valueAfterCallback.toString().toUpperCase();
+        } else {
+            return null;
+        }
     }
 
     private aggregateRowForQuickFilter(node: RowNode) {
         var stringParts: string[] = [];
         var columns = this.columnController.getAllPrimaryColumns();
         columns.forEach( column => {
-            var value = this.valueService.getValue(column, node);
-
-            var valueAfterCallback: any;
-            var colDef = column.getColDef();
-            if (column.getColDef().getQuickFilterText) {
-                var params: GetQuickFilterTextParams = {
-                    value: value,
-                    node: node,
-                    data: node.data,
-                    column: column,
-                    colDef: colDef
-                };
-                valueAfterCallback = column.getColDef().getQuickFilterText(params);
-            } else {
-                valueAfterCallback = value;
-            }
-
-            if (valueAfterCallback && valueAfterCallback !== '') {
-                stringParts.push(valueAfterCallback.toString().toUpperCase());
+            let part = this.getQuickFilterTextForColumn(column, node);
+            if (_.exists(part)) {
+                stringParts.push(part);
             }
         });
         node.quickFilterAggregateText = stringParts.join(FilterManager.QUICK_FILTER_SEPARATOR);
