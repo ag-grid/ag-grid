@@ -23,6 +23,11 @@ include '../documentation-main/documentation_header.php';
         <li>
             <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a>
         </li>
+        <li>
+            By default, quick filter no longer caches the values. This means quick filters work a bit
+            slower, but are more dependable (cache does not go out of date). The cache can still be turned
+            on using the property <i>cacheQuickFilter=true</i>.
+        </li>
     </ul>
 
     <h4>Bug Fixes:</h4>
