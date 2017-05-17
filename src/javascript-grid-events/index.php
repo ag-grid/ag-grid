@@ -221,21 +221,15 @@ include '../documentation-main/documentation_header.php';
     </tr>
 
     <tr>
-        <th>sortChanged<br/>beforeSortChanged<br/>afterSortChanged</th>
+        <th>sortChanged</th>
         <td>
-            sortChanged -> Sort has changed, grid also listens for this and updates the model.<br/>
-            beforeSortChanged -> Sort has changed, grid has not updated.<br/>
-            afterSortChanged -> Sort has changed, grid has updated.<br/>
+            Sort has changed, grid also listens for this and updates the model.<br/>
         </td>
     </tr>
     <tr>
-        <th>filterChanged</br>beforeFilterChanged<br/>afterFilterChanged<br/>filterModified</th>
+        <th>filterChanged</th>
         <td>
-            filterChanged -> Filter has changed, grid also listens for this and updates the model.<br/>
-            beforeFilterChanged -> Filter has changed, grid has not updated.<br/>
-            afterFilterChanged -> Filter has changed, grid has updated.<br/>
-            filterModified -> Gets called when filter has been modified, but grid not informed. Useful when
-            using an apply button inside the filter.<br/>
+            Filter has changed, grid also listens for this and updates the model.<br/>
         </td>
     </tr>
 

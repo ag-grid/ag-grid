@@ -103,6 +103,7 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
+    // suppressAsyncEvents: true,
     suppressAggAtRootLevel: true,
     floatingFilter:true,
 //debug: true,

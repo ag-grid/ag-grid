@@ -700,6 +700,12 @@ include '../documentation-main/documentation_header.php';
             <th>suppressTouch</th>
             <td>Disables touch support (but does not remove the browsers efforts to simulate mouse events on touch).</td>
         </tr>
+        <tr>
+            <th>suppressAsyncEvents</th>
+            <td>Disables the async nature of the events introduced in v10, and makes them syncrhonous. This property
+            is only introduced for the purpose of supporting legacy code which has a dependency to sync events. It is
+            strongly recommended that you don't change this property unless you have legacy issues</td>
+        </tr>
     </table>
 </div>
 
