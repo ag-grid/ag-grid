@@ -37,6 +37,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
         this.showMenu(column, (menu: EnterpriseMenu)=> {
             this.popupService.positionPopupUnderMouseEvent({
+                type: 'columnMenu',
                 mouseEvent: mouseEvent,
                 ePopup: menu.getGui()
             });
@@ -50,7 +51,9 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?:string): void {
 
         this.showMenu(column, (menu: EnterpriseMenu)=> {
-            this.popupService.positionPopupUnderComponent({eventSource: eventSource,
+            this.popupService.positionPopupUnderComponent({
+                type: 'columnMenu',
+                eventSource: eventSource,
                 ePopup: menu.getGui(),
                 nudgeX: -9,
                 nudgeY: -26,

@@ -167,6 +167,7 @@ export class ColumnComponent extends Component {
         virtualList.setComponentCreator(this.createAggSelect.bind(this, hidePopup));
 
         this.popupService.positionPopupUnderComponent({
+            type: 'aggFuncSelect',
             eventSource: this.getGui(),
             ePopup: ePopup,
             keepWithinBounds: true
