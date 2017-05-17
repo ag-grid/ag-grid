@@ -3,6 +3,7 @@ import {Constants} from "../constants";
 import {Bean, Autowired} from "../context/context";
 import {GridCore} from "../gridCore";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {PostProcessPopupParams} from "../entities/gridOptions";
 
 @Bean('popupService')
 export class PopupService {
@@ -67,6 +68,7 @@ export class PopupService {
     }
 
     public positionPopupUnderMouseEvent(params: {
+                            type: string,
                             mouseEvent: MouseEvent|Touch,
                             ePopup: HTMLElement}): void {
 
@@ -78,9 +80,12 @@ export class PopupService {
             y: params.mouseEvent.clientY - parentRect.top,
             keepWithinBounds: true
         });
+
+        this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type);
     }
 
     public positionPopupUnderComponent(params: {
+                            type: string,
                             eventSource: HTMLElement,
                             ePopup: HTMLElement,
                             minWidth?: number,
@@ -100,9 +105,25 @@ export class PopupService {
             y: sourceRect.top - parentRect.top + sourceRect.height,
             keepWithinBounds: params.keepWithinBounds
         });
+
+        this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type);
+    }
+
+    private callPostProcessPopup(ePopup: HTMLElement, eventSource: HTMLElement, mouseEvent: MouseEvent|Touch, type:string): void {
+        let callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
+        if (callback) {
+            let params: PostProcessPopupParams = {
+                ePopup: ePopup,
+                type: type,
+                eventSource: eventSource,
+                mouseEvent: mouseEvent
+            };
+            callback(params);
+        }
     }
 
     public positionPopupOverComponent(params: {
+        type: string,
         eventSource: HTMLElement,
         ePopup: HTMLElement,
         minWidth?: number,
@@ -122,6 +143,8 @@ export class PopupService {
             y: sourceRect.top - parentRect.top,
             keepWithinBounds: params.keepWithinBounds
         });
+
+        this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type);
     }
     
     private positionPopup(params: {

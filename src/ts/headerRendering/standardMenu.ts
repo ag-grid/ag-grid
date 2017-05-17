@@ -23,6 +23,7 @@ export class StandardMenuFactory implements IMenuFactory {
     public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent|Touch): void {
         this.showPopup(column, (eMenu: HTMLElement) => {
             this.popupService.positionPopupUnderMouseEvent({
+                type: 'columnMenu',
                 mouseEvent: mouseEvent,
                 ePopup: eMenu
             });
@@ -31,7 +32,7 @@ export class StandardMenuFactory implements IMenuFactory {
 
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement): void {
         this.showPopup(column, (eMenu: HTMLElement) => {
-            this.popupService.positionPopupUnderComponent({eventSource: eventSource, ePopup: eMenu, keepWithinBounds: true});
+            this.popupService.positionPopupUnderComponent({type: 'columnMenu', eventSource: eventSource, ePopup: eMenu, keepWithinBounds: true});
         });
     }
 
