@@ -1315,3 +1315,50 @@ h1, h2, h3, h4, h5 {
     top: 5px;
     left: 0;
 }
+
+.examples{
+    padding-top: 5px;
+}
+
+.example{
+    padding: 0 30px;
+}
+
+.example h1{
+    font-weight: bold;
+    padding-bottom: 5px;
+    border-bottom: 1px solid lightgrey;
+    margin-bottom: 5px;
+    font-size: 25px;
+    color: #4a4a4a;
+}
+
+.example p{
+    min-height: 100px;
+    color: #4a4a4a;
+}
+
+
+.example-icon{
+    float: left;
+    font-size: 55px !important;
+    color: #4a4a4a;
+    text-align: center;
+    padding-left: 5px;
+    padding-top: 7px;
+}
+
+
+
+.narrow{
+    padding-left: 15px;
+}
+
+.xnarrow{
+    padding-left: 20px;
+}
+
+.example p {
+    margin-left: 75px;
+}
+

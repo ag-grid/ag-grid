@@ -1,0 +1,34 @@
+.columns {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+    margin-top: -0.75rem;
+}
+
+.columns:not(:last-child) {
+    margin-bottom: 0.75rem;
+}
+
+.columns:not(.is-desktop) {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.column.is-6, .column.is-6-tablet {
+    -webkit-box-flex: 0;
+    -ms-flex: none;
+    flex: none;
+    width: 50%;
+}
+
+.column {
+    display: block;
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    -ms-flex-negative: 1;
+    flex-shrink: 1;
+    padding: 0.75rem;
+}
