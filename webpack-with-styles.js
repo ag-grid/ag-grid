@@ -6,6 +6,8 @@ populateClientExports(exports);
 
 // also add in in exports for ag-Grid-Standard, as it's webpack, we want both packed up
 exports.Grid = require('ag-grid/main').Grid;
+exports.simpleHttpRequest = require('ag-grid/main').simpleHttpRequest;
+exports.initialiseAgGridWithAngular1 = require('ag-grid/main').initialiseAgGridWithAngular1;
 
 require('ag-grid/dist/styles/ag-grid.css');
 require('ag-grid/dist/styles/theme-fresh.css');
