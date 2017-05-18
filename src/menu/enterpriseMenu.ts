@@ -37,6 +37,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
         this.showMenu(column, (menu: EnterpriseMenu)=> {
             this.popupService.positionPopupUnderMouseEvent({
+                column: column,
                 type: 'columnMenu',
                 mouseEvent: mouseEvent,
                 ePopup: menu.getGui()
@@ -52,6 +53,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
         this.showMenu(column, (menu: EnterpriseMenu)=> {
             this.popupService.positionPopupUnderComponent({
+                column: column,
                 type: 'columnMenu',
                 eventSource: eventSource,
                 ePopup: menu.getGui(),

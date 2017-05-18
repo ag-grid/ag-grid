@@ -170,7 +170,8 @@ export class ColumnComponent extends Component {
             type: 'aggFuncSelect',
             eventSource: this.getGui(),
             ePopup: ePopup,
-            keepWithinBounds: true
+            keepWithinBounds: true,
+            column: this.column
         });
 
         virtualList.refresh();
