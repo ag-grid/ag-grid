@@ -5,9 +5,10 @@ var populateClientExports = require('./dist/lib/clientExports').populateClientEx
 populateClientExports(exports);
 
 // also add in in exports for ag-Grid-Standard, as it's webpack, we want both packed up
-exports.Grid = require('ag-grid/main').Grid;
-exports.simpleHttpRequest = require('ag-grid/main').simpleHttpRequest;
-exports.initialiseAgGridWithAngular1 = require('ag-grid/main').initialiseAgGridWithAngular1;
+var agGrid = require('ag-grid/main');
+Object.keys(agGrid).forEach(function(key) {
+    exports[key] = agGrid[key];
+});
 
 require('ag-grid/dist/styles/ag-grid.css');
 require('ag-grid/dist/styles/theme-fresh.css');
