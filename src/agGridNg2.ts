@@ -295,7 +295,17 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public pagination: any = undefined;
     @Input() public stopEditingWhenGridLosesFocus: any = undefined;
     @Input() public paginationAutoPageSize: any = undefined;
-
+    @Input() public groupHeaderHeight: any = undefined;
+    @Input() public floatingFiltersHeight: any = undefined;
+    @Input() public pivotHeaderHeight: any = undefined;
+    @Input() public pivotGroupHeaderHeight: any = undefined;
+    @Input() public maxBlocksInCache: any = undefined;
+    @Input() public cacheOverflowSize: any = undefined;
+    @Input() public suppressAggAtRootLevel: any = undefined;
+    @Input() public purgeClosedRowNodes: any = undefined;
+    @Input() public postProcessPopup: any = undefined;
+    @Input() public suppressAsyncEvents: any = undefined;
+    @Input() public cacheQuickFilter: any = undefined;
     /**
      * Outputs
      */
@@ -334,13 +344,9 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public cellFocused: EventEmitter<any>;
     @Output() public rowSelected: EventEmitter<any>;
     @Output() public selectionChanged: EventEmitter<any>;
-    @Output() public beforeFilterChanged: EventEmitter<any>;
     @Output() public filterChanged: EventEmitter<any>;
-    @Output() public afterFilterChanged: EventEmitter<any>;
     @Output() public filterModified: EventEmitter<any>;
-    @Output() public beforeSortChanged: EventEmitter<any>;
     @Output() public sortChanged: EventEmitter<any>;
-    @Output() public afterSortChanged: EventEmitter<any>;
     @Output() public virtualRowRemoved: EventEmitter<any>;
     @Output() public rowClicked: EventEmitter<any>;
     @Output() public rowDoubleClicked: EventEmitter<any>;
@@ -372,5 +378,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public bodyHeightChanged: EventEmitter<any>;
     @Output() public componentStateChanged: EventEmitter<any>;
 
+    // deprecated
+    @Output() public afterFilterChanged: EventEmitter<any>;
 }
 
