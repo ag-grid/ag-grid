@@ -660,7 +660,9 @@ export class RenderedCell extends Component {
         );
 
         this.popupService.positionPopupOverComponent({
-            type: 'cellEditor',
+            column: this.column,
+            rowNode: this.node,
+            type: 'popupCellEditor',
             eventSource: this.eGridCell,
             ePopup: ePopupGui,
             keepWithinBounds: true
