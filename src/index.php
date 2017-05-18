@@ -11,7 +11,12 @@
         <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
         <link inline href="dist/bootstrap/css/bootstrap.css" rel="stylesheet" >
         <link inline href="style.css" rel="stylesheet" >
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <?php include 'includes/meta.php'; ?>
+
+        <style>
+
+        </style>
 
     </head>
 
