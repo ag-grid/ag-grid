@@ -13,7 +13,25 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    getMainMenuItems: getMainMenuItems
+    getMainMenuItems: getMainMenuItems,
+    postProcessPopup: function(params) {
+        // check callback is for menu
+        if (params.type !== 'columnMenu') {
+            return;
+        }
+        var columnId = params.column.getId();
+        if (columnId === 'gold') {
+            var ePopup = params.ePopup;
+
+            var oldTopStr = ePopup.style.top;
+            // remove 'px' from the string (ag-Grid uses px positioning)
+            oldTopStr = oldTopStr.substring(0,oldTopStr.indexOf('px'));
+            var oldTop = parseInt(oldTopStr);
+            var newTop = oldTop + 25;
+
+            ePopup.style.top = newTop + 'px';
+        }
+    }
 };
 
 function getMainMenuItems(params) {
