@@ -404,7 +404,7 @@ var gridOptions = {
     <show-example example="exampleExcelStyles"></show-example>
 
 
-    <h3>
+    <h3 id="exportToXlsx">
         Exporting To XLSX
     </h3>
     <p>
