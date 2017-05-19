@@ -19,13 +19,15 @@ include('../includes/mediaHeader.php');
         <p>
             While creating ag-Grid, the best grid in the world, I desired a JavaScript
             datagrid that could navigate and manage big data in a way that had never been done before.
-            Before tackling the big data problem, I solved the small data problem, to make ag-Grid better than
-            all the other grids doing what they did. But I wanted more. This post explains the
-            challenges I had with big data and how the latest version of ag-Grid brings to the table something
+            Before tackling the big data problem, I solved the small data problem, by making
+            ag-Grid better than all the other grids when all the data could fit in browser memory.
+            That was a good start! This post explains the
+            challenges I had with big data (when the data doesn't fit into browser memory)
+            and how the latest version of ag-Grid brings to the table something
             previously undone in any JavaScript datagrid or even library.
         </p>
 
-        <h4>The Problem</h4>
+        <h3>The Problem</h3>
 
         <p>
             Browsers are not designed for working with large amounts of data. They are intended to surf the
@@ -46,19 +48,19 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>
-            One thing I really wanted to do was allow the user to slice and dice the data on the fly by dragging
-            columns to the top of the grid for grouping and have aggregations (such as summing fields).
-            To be able to group the data on the fly is something enterprise users like to do.
-            When all the data is in the browser, grouping and aggregating like this can be do in the browser.
-            But when the data doesn't fit in the browser, something else needs to be done...
+            Some users like working with much larger sets of data beyond the limits of 'snap'.
+            It's normal for business users to be working through one million or more rows,
+            even dragging columns around to group on the fly.
+            If all the data was in the browser then ag-Grid grouping and aggregation would work,
+            but when the data doesn't fit in the browser, something else needs to be done...
         </p>
 
         <h3>Old School Pagination</h3>
 
         <p>
             One obvious way to deal with managing data is to use pagination, to bring back data one page at a time
-            from the server. This will work, but I don't want the end users having to hit 'next' tons of times to get
-            to the data that they want. I wanted something more modern...
+            from the server. This will work, but I don't want the end users having to hit 'next' multiple times to get
+            to the data that they want. Also it doesn't easily work with grouping. I wanted something more modern...
         </p>
 
         <h3>'Facebook Like' Infinite Scrolling</h3>
@@ -82,7 +84,7 @@ include('../includes/mediaHeader.php');
             As the user scrolls down, more rows are loaded seamlessly. The user can then use the grid UI to group
             and aggregate the data which the grid appears to all do in browser memory. The grid sends
             the group information to the server and then reads back the top level groups first for display in the grid.
-            As the user opens a group, the children of the group are loaded. All of these loads (both group and child
+            As the user opens a group, the children of the group are lazy loaded. All of these loads (both group and child
             levels) are done using infinite scrolling so each individual level of the group tree can be incredibly large.
         </p>
 
