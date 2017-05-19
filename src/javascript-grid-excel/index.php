@@ -403,4 +403,80 @@ var gridOptions = {
 
     <show-example example="exampleExcelStyles"></show-example>
 
+
+    <h3>
+        Exporting To XLSX
+    </h3>
+    <p>
+        The xls files that we create are based on
+        <a href="https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx">Excel own XML specification</a>. This
+        is not compatible with the xlsx format, which is the preferred format of newer MS Excel versions.
+    </p>
+        Because of that when you open one of our exported files in a recent MS office version you might see this error:
+    </p>
+    <p>
+        <img src="/excel_error.png/">
+    </p>
+    </p>
+    If you want to export to xlsx, you can reuse the XML that we generate and pass it onto a third
+    party library that would convert it into XLSX.
+    </p>
+    </p>
+    As specified in the API section above, <i>api.getDataAsExcel(params)</i> is the method that you need to call to
+    obtain the XML that we generate
+    </p>
+    </p>
+    The following example shows how this can be achieved by using <a href="http://sheetjs.com/" target="_blank">SheetJs</a>
+    </p>
+
+    <h3>
+        SheetJs Custom XLSX Export Example - Without styles
+    </h3>
+    <p>
+        In the following example note that:
+    </p>
+    <ul>
+        <li><a href="http://sheetjs.com/" target="_blank">sheetJs</a> Is included as a third party library</li>
+        <li>
+            The "Export to Excel (xlsx)" button reuses the XML and passes it to sheetJs to generate a xlsx</li>
+<pre>
+    var content = gridOptions.api.getDataAsExcel(params);
+    var workbook = XLSX.read(content, {type: 'binary'});
+    var xlsxContent = XLSX.write(workbook, {bookType: 'xlsx', type: 'base64'});</pre>
+        </li>
+        <li>There is some code to handle the conversion from base64 to blob adapted from
+            <a href="http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript">stackOverflow</a></li>
+        <li>There is some code to handle the download of the blob:
+<pre>function download (params, content){
+    var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
+    var fileName = fileNamePresent ? params.fileName : 'noWarning.xlsx';
+
+
+    var blobObject = b64toBlob(content, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+
+    if (window.navigator.msSaveOrOpenBlob) {
+        <span class="codeComment">// Internet Explorer</span>
+        window.navigator.msSaveOrOpenBlob(blobObject, fileName);
+    } else {
+        <span class="codeComment">// Chrome</span>
+        var downloadLink = document.createElement("a");
+        downloadLink.href = URL.createObjectURL(blobObject);
+        downloadLink.download = fileName;
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+}</pre></li>
+    <li>Note that this example doesnt't import the styles to xls. To add styling to the xlsx, the logic could be extended
+        to read the XML styling information received from
+        <i>gridOptions.api.getDataAsExcel(params)</i>, and it could thn be passed into SheetJs through the object returned by
+        <i>XLSX.read(content, {type: 'binary'})</i>. The reason this example is not exporting styles is because that it will
+        go beyond of the purpose of demonstrating that you can reuse the XML we provide anyway you want.
+    </li>
+    </ul>
+
+    <show-example example="exampleXlsx"></show-example>
+
+
 <?php include '../documentation-main/documentation_footer.php';?>
