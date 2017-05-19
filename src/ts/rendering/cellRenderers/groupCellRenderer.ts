@@ -298,7 +298,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         if (this.params.suppressCount) { return; }
 
         // todo: this should be listening to 'child count changed' event on rowNode
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_AFTER_FILTER_CHANGED, this.updateChildCount.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.TBD_EVENT_AFTER_FILTER_CHANGED, this.updateChildCount.bind(this));
 
         // filtering changes the child count, so need to cater for it
         this.updateChildCount();

@@ -6,6 +6,7 @@ import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {IEventEmitter} from "./interfaces/iEventEmitter";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {Events} from "./events";
 
 @Bean('eventService')
 export class EventService implements IEventEmitter {
@@ -24,6 +25,21 @@ export class EventService implements IEventEmitter {
     // this is an old idea niall had, should really take it out, was to do with ordering who gets to process
     // events first, to give model and service objects preference over the view
     private static PRIORITY = '-P1';
+
+    private static DEPRECATED_EVENTS:{[key:string]:string} = (():{[key:string]:string}=>{
+        let deprecatedEvents:{[key:string]:string} = {};
+        let deprecatedInV10Msg = function (deprecated:string, solution:string) {
+            return `The event ${deprecated} has been deprecated in v10. This event is 
+            not going to be triggered anymore, you should listen instead to: ${solution}`;
+        };
+
+        deprecatedEvents[Events.DEPRECATED_EVENT_BEFORE_FILTER_CHANGED]= deprecatedInV10Msg(Events.DEPRECATED_EVENT_BEFORE_FILTER_CHANGED, Events.EVENT_FILTER_CHANGED);
+        deprecatedEvents[Events.DEPRECATED_EVENT_AFTER_SORT_CHANGED]= deprecatedInV10Msg(Events.DEPRECATED_EVENT_AFTER_SORT_CHANGED, Events.EVENT_SORT_CHANGED);
+        deprecatedEvents[Events.DEPRECATED_EVENT_BEFORE_SORT_CHANGED]= deprecatedInV10Msg(Events.DEPRECATED_EVENT_BEFORE_SORT_CHANGED, Events.EVENT_SORT_CHANGED);
+        return deprecatedEvents;
+    }) ();
+
+
 
     // because this class is used both inside the context and outside the context, we do not
     // use autowired attributes, as that would be confusing, as sometimes the attributes
@@ -56,16 +72,29 @@ export class EventService implements IEventEmitter {
     }
 
     public addEventListener(eventType: string, listener: Function, async = false): void {
+        if (! this.assertNotDeprecated(eventType)) return;
+
         let listenerList = this.getListenerList(eventType, async);
         if (listenerList.indexOf(listener)<0) {
             listenerList.push(listener);
         }
     }
 
+    private assertNotDeprecated (eventType:string):boolean{
+        let deprecatedEvent = EventService.DEPRECATED_EVENTS[eventType];
+        if (deprecatedEvent){
+            console.warn(deprecatedEvent);
+            return false;
+        }
+
+        return true;
+    }
+
     // for some events, it's important that the model gets to hear about them before the view,
     // as the model may need to update before the view works on the info. if you register
     // via this method, you get notified before the view parts
     public addModalPriorityEventListener(eventType: string, listener: Function, async = false): void {
+        if (! this.assertNotDeprecated(eventType)) return;
         this.addEventListener(eventType + EventService.PRIORITY, listener, async);
     }
 

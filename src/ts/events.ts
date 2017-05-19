@@ -78,12 +78,19 @@ export class Events {
 
     /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */
     public static EVENT_FILTER_CHANGED = 'filterChanged';
-    public static EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
+    //This should be deprecated, can not be deprecated in v10 because it is used internally
+    // See AG-471
+    public static TBD_EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
+    /** deprecated event */
+    public static DEPRECATED_EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
 
     /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
     public static EVENT_FILTER_MODIFIED = 'filterModified';
 
     public static EVENT_SORT_CHANGED = 'sortChanged';
+    /** deprecated events */
+    public static DEPRECATED_EVENT_BEFORE_SORT_CHANGED = 'beforeSortChanged';
+    public static DEPRECATED_EVENT_AFTER_SORT_CHANGED = 'afterSortChanged';
 
     /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */
     public static EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
