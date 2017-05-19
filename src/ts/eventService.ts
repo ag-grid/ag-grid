@@ -33,6 +33,7 @@ export class EventService implements IEventEmitter {
             not going to be triggered anymore, you should listen instead to: ${solution}`;
         };
 
+        deprecatedEvents[Events.DEPRECATED_EVENT_AFTER_FILTER_CHANGED]= deprecatedInV10Msg(Events.DEPRECATED_EVENT_AFTER_FILTER_CHANGED, Events.EVENT_FILTER_CHANGED);
         deprecatedEvents[Events.DEPRECATED_EVENT_BEFORE_FILTER_CHANGED]= deprecatedInV10Msg(Events.DEPRECATED_EVENT_BEFORE_FILTER_CHANGED, Events.EVENT_FILTER_CHANGED);
         deprecatedEvents[Events.DEPRECATED_EVENT_AFTER_SORT_CHANGED]= deprecatedInV10Msg(Events.DEPRECATED_EVENT_AFTER_SORT_CHANGED, Events.EVENT_SORT_CHANGED);
         deprecatedEvents[Events.DEPRECATED_EVENT_BEFORE_SORT_CHANGED]= deprecatedInV10Msg(Events.DEPRECATED_EVENT_BEFORE_SORT_CHANGED, Events.EVENT_SORT_CHANGED);

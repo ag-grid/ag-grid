@@ -78,9 +78,8 @@ export class Events {
 
     /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */
     public static EVENT_FILTER_CHANGED = 'filterChanged';
-    //This should be deprecated, can not be deprecated in v10 because it is used internally
     // See AG-471
-    public static TBD_EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
+    public static DEPRECATED_EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
     /** deprecated event */
     public static DEPRECATED_EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
 

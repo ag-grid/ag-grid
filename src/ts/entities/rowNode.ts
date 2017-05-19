@@ -33,6 +33,7 @@ export class RowNode implements IEventEmitter {
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_DATA_CHANGED = 'dataChanged';
     public static EVENT_CELL_CHANGED = 'cellChanged';
+    public static EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED = 'allChildrenCountChanged';
     public static EVENT_MOUSE_ENTER = 'mouseEnter';
     public static EVENT_MOUSE_LEAVE = 'mouseLeave';
     public static EVENT_HEIGHT_CHANGED = 'heightChanged';
@@ -197,6 +198,14 @@ export class RowNode implements IEventEmitter {
         this.rowTop = rowTop;
         if (this.eventService) {
             this.eventService.dispatchEvent(RowNode.EVENT_TOP_CHANGED);
+        }
+    }
+
+    public setAllChildrenCount(allChildrenCount: number): void {
+        if (this.allChildrenCount === allChildrenCount) { return; }
+        this.allChildrenCount = allChildrenCount;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED);
         }
     }
 
