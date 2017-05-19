@@ -190,7 +190,7 @@ export class GroupStage implements IRowNodeStage {
         }
 
         nextGroup.allLeafChildren = [];
-        nextGroup.allChildrenCount = 0;
+        nextGroup.setAllChildrenCount(0);
         nextGroup.rowGroupIndex = level;
 
         nextGroup.parent = includeParents ? parent : null;
