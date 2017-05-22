@@ -21,12 +21,12 @@ export function View_AgGridColumn_0(l:any):import0.ɵViewDefinition {
 function View_AgGridColumn_Host_0(l:any):import0.ɵViewDefinition {
   return import0.ɵvid(0,[
     (l()(),import0.ɵeld(0,(null as any),(null as any),2,'ag-grid-column',([] as any[]),(null as any),(null as any),(null as any),View_AgGridColumn_0,RenderType_AgGridColumn)),
-      import0.ɵdid(24576,[[
+      import0.ɵdid(49152,[[
         1,
         4
       ]
     ],1,import1.AgGridColumn,([] as any[]),(null as any),(null as any)),
-    import0.ɵqud(301989888,1,{childColumns: 1})
+    import0.ɵqud(603979776,1,{childColumns: 1})
   ]
   ,(null as any),(null as any));
 }
@@ -108,4 +108,4 @@ export const AgGridColumnNgFactory:import0.ComponentFactory<import1.AgGridColumn
   headerComponentParams: 'headerComponentParams'
 }
 ,{},([] as any[]));
-//# sourceMappingURL=data:application/json;base64,eyJmaWxlIjoiL1VzZXJzL2FsYmVydG8vR29vZ2xlIERyaXZlL2FnLWdyaWQvcmVsZWFzZXMvOS4xLjAvYWctZ3JpZC1hbmd1bGFyL2Rpc3QvYWdHcmlkQ29sdW1uLm5nZmFjdG9yeS50cyIsInZlcnNpb24iOjMsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIm5nOi8vL1VzZXJzL2FsYmVydG8vR29vZ2xlIERyaXZlL2FnLWdyaWQvcmVsZWFzZXMvOS4xLjAvYWctZ3JpZC1hbmd1bGFyL2Rpc3QvYWdHcmlkQ29sdW1uLmQudHMiLCJuZzovLy9Vc2Vycy9hbGJlcnRvL0dvb2dsZSBEcml2ZS9hZy1ncmlkL3JlbGVhc2VzLzkuMS4wL2FnLWdyaWQtYW5ndWxhci9kaXN0L2FnR3JpZENvbHVtbi5kLnRzLkFnR3JpZENvbHVtbl9Ib3N0Lmh0bWwiXSwic291cmNlc0NvbnRlbnQiOlsiICIsIjxhZy1ncmlkLWNvbHVtbj48L2FnLWdyaWQtY29sdW1uPiJdLCJtYXBwaW5ncyI6IkFBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7SUNBQTtrQkFBQTtRQUFBO1FBQUE7TUFBQTtJQUFBO2dCQUFBOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7In0=
+//# sourceMappingURL=data:application/json;base64,eyJmaWxlIjoiL1VzZXJzL2FsYmVydG8vdm9sYXRpbGUvcmVsZWFzZXMvMTAuMC4wL2FnLWdyaWQtYW5ndWxhci9kaXN0L2FnR3JpZENvbHVtbi5uZ2ZhY3RvcnkudHMiLCJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJuZzovLy9Vc2Vycy9hbGJlcnRvL3ZvbGF0aWxlL3JlbGVhc2VzLzEwLjAuMC9hZy1ncmlkLWFuZ3VsYXIvZGlzdC9hZ0dyaWRDb2x1bW4uZC50cyIsIm5nOi8vL1VzZXJzL2FsYmVydG8vdm9sYXRpbGUvcmVsZWFzZXMvMTAuMC4wL2FnLWdyaWQtYW5ndWxhci9kaXN0L2FnR3JpZENvbHVtbi5kLnRzLkFnR3JpZENvbHVtbl9Ib3N0Lmh0bWwiXSwic291cmNlc0NvbnRlbnQiOlsiICIsIjxhZy1ncmlkLWNvbHVtbj48L2FnLWdyaWQtY29sdW1uPiJdLCJtYXBwaW5ncyI6IkFBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7SUNBQTtrQkFBQTtRQUFBO1FBQUE7TUFBQTtJQUFBO2dCQUFBOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7In0=

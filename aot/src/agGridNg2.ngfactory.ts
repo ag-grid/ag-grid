@@ -23,14 +23,14 @@ export function View_AgGridNg2_0(l:any):import0.ɵViewDefinition {
 }
 function View_AgGridNg2_Host_0(l:any):import0.ɵViewDefinition {
   return import0.ɵvid(0,[
-    (l()(),import0.ɵeld(8388608,(null as any),(null as any),4,'ag-grid-angular',([] as any[]),(null as any),(null as any),(null as any),View_AgGridNg2_0,RenderType_AgGridNg2)),
-    import0.ɵprd(256,(null as any),import1.Ng2FrameworkFactory,import1.Ng2FrameworkFactory,[
+    (l()(),import0.ɵeld(16777216,(null as any),(null as any),4,'ag-grid-angular',([] as any[]),(null as any),(null as any),(null as any),View_AgGridNg2_0,RenderType_AgGridNg2)),
+    import0.ɵprd(512,(null as any),import1.Ng2FrameworkFactory,import1.Ng2FrameworkFactory,[
       import2.BaseComponentFactory,
       import0.NgZone
     ]
     ),
-    import0.ɵprd(256,(null as any),import3.Ng2FrameworkComponentWrapper,import3.Ng2FrameworkComponentWrapper,([] as any[])),
-    import0.ɵdid(2449408,(null as any),1,import4.AgGridNg2,[
+    import0.ɵprd(512,(null as any),import3.Ng2FrameworkComponentWrapper,import3.Ng2FrameworkComponentWrapper,([] as any[])),
+    import0.ɵdid(4898816,(null as any),1,import4.AgGridNg2,[
       import0.ElementRef,
       import0.ViewContainerRef,
       import1.Ng2FrameworkFactory,
@@ -38,7 +38,7 @@ function View_AgGridNg2_Host_0(l:any):import0.ɵViewDefinition {
       import0.ComponentFactoryResolver
     ]
     ,(null as any),(null as any)),
-    import0.ɵqud(301989888,1,{columns: 1})
+    import0.ɵqud(603979776,1,{columns: 1})
   ]
   ,(null as any),(null as any));
 }
@@ -209,7 +209,18 @@ export const AgGridNg2NgFactory:import0.ComponentFactory<import4.AgGridNg2> = im
   groupMultiAutoColumn: 'groupMultiAutoColumn',
   pagination: 'pagination',
   stopEditingWhenGridLosesFocus: 'stopEditingWhenGridLosesFocus',
-  paginationAutoPageSize: 'paginationAutoPageSize'
+  paginationAutoPageSize: 'paginationAutoPageSize',
+  groupHeaderHeight: 'groupHeaderHeight',
+  floatingFiltersHeight: 'floatingFiltersHeight',
+  pivotHeaderHeight: 'pivotHeaderHeight',
+  pivotGroupHeaderHeight: 'pivotGroupHeaderHeight',
+  maxBlocksInCache: 'maxBlocksInCache',
+  cacheOverflowSize: 'cacheOverflowSize',
+  suppressAggAtRootLevel: 'suppressAggAtRootLevel',
+  purgeClosedRowNodes: 'purgeClosedRowNodes',
+  postProcessPopup: 'postProcessPopup',
+  suppressAsyncEvents: 'suppressAsyncEvents',
+  cacheQuickFilter: 'cacheQuickFilter'
 }
 ,{
   gridReady: 'gridReady',
@@ -247,13 +258,9 @@ export const AgGridNg2NgFactory:import0.ComponentFactory<import4.AgGridNg2> = im
   cellFocused: 'cellFocused',
   rowSelected: 'rowSelected',
   selectionChanged: 'selectionChanged',
-  beforeFilterChanged: 'beforeFilterChanged',
   filterChanged: 'filterChanged',
-  afterFilterChanged: 'afterFilterChanged',
   filterModified: 'filterModified',
-  beforeSortChanged: 'beforeSortChanged',
   sortChanged: 'sortChanged',
-  afterSortChanged: 'afterSortChanged',
   virtualRowRemoved: 'virtualRowRemoved',
   rowClicked: 'rowClicked',
   rowDoubleClicked: 'rowDoubleClicked',
@@ -283,7 +290,11 @@ export const AgGridNg2NgFactory:import0.ComponentFactory<import4.AgGridNg2> = im
   paginationPageRequested: 'paginationPageRequested',
   paginationChanged: 'paginationChanged',
   bodyHeightChanged: 'bodyHeightChanged',
-  componentStateChanged: 'componentStateChanged'
+  componentStateChanged: 'componentStateChanged',
+  beforeFilterChanged: 'beforeFilterChanged',
+  afterFilterChanged: 'afterFilterChanged',
+  beforeSortChanged: 'beforeSortChanged',
+  afterSortChanged: 'afterSortChanged'
 }
 ,([] as any[]));
-//# sourceMappingURL=data:application/json;base64,eyJmaWxlIjoiL1VzZXJzL2FsYmVydG8vR29vZ2xlIERyaXZlL2FnLWdyaWQvcmVsZWFzZXMvOS4xLjAvYWctZ3JpZC1hbmd1bGFyL3NyYy9hZ0dyaWROZzIubmdmYWN0b3J5LnRzIiwidmVyc2lvbiI6Mywic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsibmc6Ly8vVXNlcnMvYWxiZXJ0by9Hb29nbGUgRHJpdmUvYWctZ3JpZC9yZWxlYXNlcy85LjEuMC9hZy1ncmlkLWFuZ3VsYXIvc3JjL2FnR3JpZE5nMi50cyIsIm5nOi8vL1VzZXJzL2FsYmVydG8vR29vZ2xlIERyaXZlL2FnLWdyaWQvcmVsZWFzZXMvOS4xLjAvYWctZ3JpZC1hbmd1bGFyL3NyYy9hZ0dyaWROZzIudHMuQWdHcmlkTmcyX0hvc3QuaHRtbCJdLCJzb3VyY2VzQ29udGVudCI6WyIgIiwiPGFnLWdyaWQtYW5ndWxhcj48L2FnLWdyaWQtYW5ndWxhcj4iXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0lDQUE7Z0JBQUE7OztJQUFBO0lBQUE7Z0JBQUE7Z0JBQUE7Ozs7OztJQUFBO0tBQUE7Z0JBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7In0=
+//# sourceMappingURL=data:application/json;base64,eyJmaWxlIjoiL1VzZXJzL2FsYmVydG8vdm9sYXRpbGUvcmVsZWFzZXMvMTAuMC4wL2FnLWdyaWQtYW5ndWxhci9zcmMvYWdHcmlkTmcyLm5nZmFjdG9yeS50cyIsInZlcnNpb24iOjMsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIm5nOi8vL1VzZXJzL2FsYmVydG8vdm9sYXRpbGUvcmVsZWFzZXMvMTAuMC4wL2FnLWdyaWQtYW5ndWxhci9zcmMvYWdHcmlkTmcyLnRzIiwibmc6Ly8vVXNlcnMvYWxiZXJ0by92b2xhdGlsZS9yZWxlYXNlcy8xMC4wLjAvYWctZ3JpZC1hbmd1bGFyL3NyYy9hZ0dyaWROZzIudHMuQWdHcmlkTmcyX0hvc3QuaHRtbCJdLCJzb3VyY2VzQ29udGVudCI6WyIgIiwiPGFnLWdyaWQtYW5ndWxhcj48L2FnLWdyaWQtYW5ndWxhcj4iXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0lDQUE7Z0JBQUE7OztJQUFBO0lBQUE7Z0JBQUE7Z0JBQUE7Ozs7OztJQUFBO0tBQUE7Z0JBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OzsifQ==

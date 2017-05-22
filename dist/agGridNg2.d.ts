@@ -191,6 +191,17 @@ export declare class AgGridNg2 implements AfterViewInit {
     pagination: any;
     stopEditingWhenGridLosesFocus: any;
     paginationAutoPageSize: any;
+    groupHeaderHeight: any;
+    floatingFiltersHeight: any;
+    pivotHeaderHeight: any;
+    pivotGroupHeaderHeight: any;
+    maxBlocksInCache: any;
+    cacheOverflowSize: any;
+    suppressAggAtRootLevel: any;
+    purgeClosedRowNodes: any;
+    postProcessPopup: any;
+    suppressAsyncEvents: any;
+    cacheQuickFilter: any;
     /**
      * Outputs
      */
@@ -229,13 +240,9 @@ export declare class AgGridNg2 implements AfterViewInit {
     cellFocused: EventEmitter<any>;
     rowSelected: EventEmitter<any>;
     selectionChanged: EventEmitter<any>;
-    beforeFilterChanged: EventEmitter<any>;
     filterChanged: EventEmitter<any>;
-    afterFilterChanged: EventEmitter<any>;
     filterModified: EventEmitter<any>;
-    beforeSortChanged: EventEmitter<any>;
     sortChanged: EventEmitter<any>;
-    afterSortChanged: EventEmitter<any>;
     virtualRowRemoved: EventEmitter<any>;
     rowClicked: EventEmitter<any>;
     rowDoubleClicked: EventEmitter<any>;
@@ -266,4 +273,8 @@ export declare class AgGridNg2 implements AfterViewInit {
     paginationChanged: EventEmitter<any>;
     bodyHeightChanged: EventEmitter<any>;
     componentStateChanged: EventEmitter<any>;
+    beforeFilterChanged: EventEmitter<any>;
+    afterFilterChanged: EventEmitter<any>;
+    beforeSortChanged: EventEmitter<any>;
+    afterSortChanged: EventEmitter<any>;
 }

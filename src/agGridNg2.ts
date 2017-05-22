@@ -379,6 +379,9 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public componentStateChanged: EventEmitter<any>;
 
     // deprecated
+    @Output() public beforeFilterChanged: EventEmitter<any>;
     @Output() public afterFilterChanged: EventEmitter<any>;
+    @Output() public beforeSortChanged: EventEmitter<any>;
+    @Output() public afterSortChanged: EventEmitter<any>;
 }
 
