@@ -72,8 +72,9 @@ echo ===========================================================================
 echo =============================================================================================
 echo "Angular CLI manual testing -- COPY AND PASTE THIS!!"
 echo "cd ../angular-cli"
-echo "npm run start"
-echo "ctrl-c when done (http://localhost:4200)"
-echo "./node_modules/.bin/ng"
+echo "./node_modules/.bin/ng build --prod"
+echo "./node_modules/.bin/http-server dist/"
+echo "ctrl-c when done (http://127.0.0.1:8080)"
+echo "./node_modules/.bin/ng build --aot"
 echo "./node_modules/.bin/http-server dist/"
 echo "ctrl-c when done http://127.0.0.1:8080"
