@@ -315,7 +315,7 @@ api.forEachNodeAfterFilter( function(node) {
         By default, you can select a row on mouse click. And you can navigate up and down the rows
         using your keyboard keys. But the selection state does not correlate with the navigation keys.
         However, we can add this behaviour using your own
-        <a href="/javascript-grid-keyboard-navigation/#customNavigation">Custom Navigation</a>.
+        <a href="../javascript-grid-keyboard-navigation/#customNavigation">Custom Navigation</a>.
     </p>
 
     <p>

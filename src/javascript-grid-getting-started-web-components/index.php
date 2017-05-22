@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        In the meantime, check out the <a href="/example-web-component-grid/">Web Components Example</a>
+        In the meantime, check out the <a href="../example-web-component-grid/">Web Components Example</a>
     </p>
 
 </div>

@@ -13,8 +13,15 @@ include '../documentation-main/documentation_header.php';
 
 
     <p>
-        Below are listed all the events of the grid you can listen to.
+        Below are listed all the events of the grid you can listen to. The events are asynchronously so that the state
+        of the grid will be settled by the time your event callback gets invoked.
     <p>
+
+    <note>
+        Events in ag-Grid became asynchronous in version 10.0.0. Before this, events were not asynchronous and you
+        were not guaranteed the grid was finished before the event was fired. The new method of asynchronous events
+        makes the grid work much better with systems designed around state and events, eg React.
+    </note>
 
     <?php if (isFrameworkJavaScript()) { ?>
         <div>

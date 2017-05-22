@@ -183,11 +183,6 @@ include '../documentation-main/documentation_header.php';
                 over the column header.</td>
         </tr>
         <tr>
-            <th>suppressMenuHide</th>
-            <td>Set to true to always show the column menu button, rather than only showing when the mouse is
-                over the column header.</td>
-        </tr>
-        <tr>
             <th>groupColumnDef</th>
             <td>Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping,
                 this column is not included.</td>
@@ -554,7 +549,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>excelStyles</th>
-            <td>The list of Excel styles to be used when <a href="/javascript-grid-excel/">exporting to Excel</a></td>
+            <td>The list of Excel styles to be used when <a href="../javascript-grid-excel/">exporting to Excel</a></td>
         </tr>
         <tr>
             <th>scrollbarWidth</th>

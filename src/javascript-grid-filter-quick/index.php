@@ -112,8 +112,8 @@ Params contains {value, node, data, column, colDef}.
 
 <p>
     Quick Filters only make sense with client side data (i.e. when using the In Memory row model).
-    For the other row models (<a href="/javascript-grid-pagination/">pagination</a>,
-    <a href="/javascript-grid-virtual-paging/">infinite scrolling</a> etc) you would need to implement your own server side sorting to
+    For the other row models (<a href="../javascript-grid-pagination/">pagination</a>,
+    <a href="../javascript-grid-virtual-paging/">infinite scrolling</a> etc) you would need to implement your own server side sorting to
     replicate Quick Filter functionality.</p>
 
 
