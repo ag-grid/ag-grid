@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -118,7 +118,8 @@ var Grid = (function () {
             ],
             debug: !!gridOptions.debug
         };
-        this.context = new context_1.Context(contextParams, new logger_1.Logger('Context', contextParams.debug));
+        var isLoggingFunc = function () { return contextParams.debug; };
+        this.context = new context_1.Context(contextParams, new logger_1.Logger('Context', isLoggingFunc));
         var eventService = this.context.getBean('eventService');
         var readyEvent = {
             api: gridOptions.api,
@@ -147,6 +148,9 @@ var Grid = (function () {
             else {
                 console.error('ag-Grid: count not find matching row model for rowModelType ' + rowModelType);
                 if (rowModelType === 'viewport') {
+                    console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
+                }
+                if (rowModelType === 'enterprise') {
                     console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
                 }
             }

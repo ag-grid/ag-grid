@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,11 +37,20 @@ var SortService = (function () {
         rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
         var sortActive = utils_1._.exists(sortOptions) && sortOptions.length > 0;
         if (sortActive) {
-            rowNode.childrenAfterSort.sort(this.compareRowNodes.bind(this, sortOptions));
+            // RE https://ag-grid.atlassian.net/browse/AG-444
+            //Javascript sort is non deterministic when all the array items are equals
+            //ie Comparator always returns 0, so if you want to ensure the array keeps its
+            //order, then you need to add an additional sorting condition manually, in this
+            //case we are going to inspect the original array position
+            var sortedRowNodes = rowNode.childrenAfterSort.map(function (it, pos) { return { currentPos: pos, rowNode: it }; });
+            sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
+            rowNode.childrenAfterSort = sortedRowNodes.map(function (sorted) { return sorted.rowNode; });
         }
         this.updateChildIndexes(rowNode);
     };
-    SortService.prototype.compareRowNodes = function (sortOptions, nodeA, nodeB) {
+    SortService.prototype.compareRowNodes = function (sortOptions, sortedNodeA, sortedNodeB) {
+        var nodeA = sortedNodeA.rowNode;
+        var nodeB = sortedNodeB.rowNode;
         // Iterate columns, return the first that doesn't match
         for (var i = 0, len = sortOptions.length; i < len; i++) {
             var sortOption = sortOptions[i];
@@ -62,8 +71,8 @@ var SortService = (function () {
                 return comparatorResult * sortOption.inverter;
             }
         }
-        // All matched, these are identical as far as the sort is concerned:
-        return 0;
+        // All matched, we make is so that the original sort order is kept:
+        return sortedNodeA.currentPos - sortedNodeB.currentPos;
     };
     SortService.prototype.updateChildIndexes = function (rowNode) {
         if (utils_1._.missing(rowNode.childrenAfterSort)) {

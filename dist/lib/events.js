@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -60,18 +60,18 @@ Events.EVENT_SELECTION_CHANGED = 'selectionChanged';
 Events.EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
 Events.EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
 Events.EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
-/** 3 events for filtering. The grid LISTENS for filterChanged, and does the filter here. The before and after
- * are for the client, if it wants to do something before or after the filter getting applied. */
-Events.EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
+/** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */
 Events.EVENT_FILTER_CHANGED = 'filterChanged';
-Events.EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
+// See AG-471
+Events.DEPRECATED_EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
+/** deprecated event */
+Events.DEPRECATED_EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
 /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
 Events.EVENT_FILTER_MODIFIED = 'filterModified';
-/** 3 events for sorting. The grid LISTENS for sortChanged, and does the filter here. The before and after
- * are for the client, if it wants to do something before or after the sort getting applied. */
-Events.EVENT_BEFORE_SORT_CHANGED = 'beforeSortChanged';
 Events.EVENT_SORT_CHANGED = 'sortChanged';
-Events.EVENT_AFTER_SORT_CHANGED = 'afterSortChanged';
+/** deprecated events */
+Events.DEPRECATED_EVENT_BEFORE_SORT_CHANGED = 'beforeSortChanged';
+Events.DEPRECATED_EVENT_AFTER_SORT_CHANGED = 'afterSortChanged';
 /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */
 Events.EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
 Events.EVENT_ROW_CLICKED = 'rowClicked';

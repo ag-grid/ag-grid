@@ -1,8 +1,8 @@
-// Type definitions for ag-grid v9.1.0
+// Type definitions for ag-grid v10.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
-import { GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, NavigateToNextCellParams, NodeChildDetails, ProcessRowParams, TabToNextCellParams } from "./entities/gridOptions";
+import { GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, NavigateToNextCellParams, NodeChildDetails, PostProcessPopupParams, ProcessRowParams, TabToNextCellParams } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnController";
@@ -15,6 +15,10 @@ import { BaseExportParams, ProcessCellForExportParams } from "./exportParams";
 export declare class GridOptionsWrapper {
     private static MIN_COL_WIDTH;
     static PROP_HEADER_HEIGHT: string;
+    static PROP_PIVOT_HEADER_HEIGHT: string;
+    static PROP_GROUP_HEADER_HEIGHT: string;
+    static PROP_PIVOT_GROUP_HEADER_HEIGHT: string;
+    static PROP_FLOATING_FILTERS_HEIGHT: string;
     private gridOptions;
     private columnController;
     private eventService;
@@ -29,7 +33,8 @@ export declare class GridOptionsWrapper {
     private destroy();
     init(): void;
     private setupFrameworkComponents();
-    getDomDataKey(): string;
+    getDomData(element: Element, key: string): any;
+    setDomData(element: Element, key: string, value: any): any;
     getFullWidthCellRenderer(): {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
@@ -58,6 +63,7 @@ export declare class GridOptionsWrapper {
     isToolPanelSuppressPivots(): boolean;
     isToolPanelSuppressPivotMode(): boolean;
     isSuppressTouch(): boolean;
+    useAsyncEvents(): boolean;
     isEnableCellChangeFlash(): boolean;
     isGroupSelectsChildren(): boolean;
     isGroupSelectsFiltered(): boolean;
@@ -83,12 +89,14 @@ export declare class GridOptionsWrapper {
     isSuppressRowHoverClass(): boolean;
     isSuppressTabbing(): boolean;
     getQuickFilterText(): string;
+    isCacheQuickFilter(): boolean;
     isUnSortIcon(): boolean;
     isSuppressMenuHide(): boolean;
     getRowStyle(): any;
     getRowClass(): any;
     getRowStyleFunc(): Function;
     getRowClassFunc(): Function;
+    getPostProcessPopupFunc(): (params: PostProcessPopupParams) => void;
     getDoesDataFlowerFunc(): (data: any) => boolean;
     getIsFullWidthCellFunc(): (rowNode: RowNode) => boolean;
     getFullWidthCellRendererParams(): any;
@@ -104,11 +112,12 @@ export declare class GridOptionsWrapper {
     getGroupDefaultExpanded(): number;
     getAutoSizePadding(): number;
     getMaxConcurrentDatasourceRequests(): number;
-    getMaxPagesInCache(): number;
-    getPaginationOverflowSize(): number;
+    getMaxBlocksInCache(): number;
+    getCacheOverflowSize(): number;
     getPaginationPageSize(): number;
-    getInfiniteBlockSize(): number;
+    getCacheBlockSize(): number;
     getInfiniteInitialRowCount(): number;
+    isPurgeClosedRowNodes(): boolean;
     getPaginationStartPage(): number;
     isSuppressPaginationPanel(): boolean;
     getRowData(): any[];
@@ -147,6 +156,7 @@ export declare class GridOptionsWrapper {
     isSuppressMenuFilterPanel(): boolean;
     isSuppressUseColIdForGroups(): boolean;
     isSuppressAggFuncInHeader(): boolean;
+    isSuppressAggAtRootLevel(): boolean;
     isSuppressMenuMainPanel(): boolean;
     isEnableRangeSelection(): boolean;
     isPaginationAutoPageSize(): boolean;
@@ -190,6 +200,10 @@ export declare class GridOptionsWrapper {
     removeEventListener(key: string, listener: Function): void;
     executeProcessRowPostCreateFunc(params: ProcessRowParams): void;
     getHeaderHeight(): number;
+    getFloatingFiltersHeight(): number;
+    getGroupHeaderHeight(): number;
+    getPivotHeaderHeight(): number;
+    getPivotGroupHeaderHeight(): number;
     isExternalFilterPresent(): boolean;
     doesExternalFilterPass(node: RowNode): boolean;
     getDocument(): Document;

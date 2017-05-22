@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,10 +45,12 @@ var selectionController_1 = require("../selectionController");
 var csvCreator_1 = require("../csvCreator");
 var mouseEventService_1 = require("./mouseEventService");
 var focusedCellController_1 = require("../focusedCellController");
+var renderedRow_1 = require("../rendering/renderedRow");
 var scrollVisibleService_1 = require("./scrollVisibleService");
 var beanStub_1 = require("../context/beanStub");
 var rowContainerComponent_1 = require("../rendering/rowContainerComponent");
 var paginationProxy_1 = require("../rowModels/paginationProxy");
+var popupEditorWrapper_1 = require("../rendering/cellEditors/popupEditorWrapper");
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
 var gridHtml = '<div class="ag-root ag-font-style">' +
@@ -203,16 +205,15 @@ var GridPanel = (function (_super) {
                 // this is the element the focus is moving to
                 var elementWithFocus = event.relatedTarget;
                 // see if the element the focus is going to is part of the grid
-                var ourBodyFound = false;
+                var clickInsideGrid = false;
                 var pointer = elementWithFocus;
-                while (utils_1.Utils.exists(pointer)) {
+                while (utils_1.Utils.exists(pointer) && !clickInsideGrid) {
+                    var isPopup = !!_this.gridOptionsWrapper.getDomData(pointer, popupEditorWrapper_1.PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER);
+                    var isBody = _this.eBody == pointer;
+                    clickInsideGrid = isPopup || isBody;
                     pointer = pointer.parentNode;
-                    if (pointer === _this.eBody) {
-                        ourBodyFound = true;
-                    }
                 }
-                // if it is not part fo the grid, then we have lost focus
-                if (!ourBodyFound) {
+                if (!clickInsideGrid) {
                     _this.rowRenderer.stopEditing();
                 }
             });
@@ -257,6 +258,10 @@ var GridPanel = (function (_super) {
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_ITEMS_ADDED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_ITEMS_REMOVED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
     };
     GridPanel.prototype.addDragListeners = function () {
         var _this = this;
@@ -319,12 +324,11 @@ var GridPanel = (function (_super) {
         this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener);
     };
     GridPanel.prototype.getRowForEvent = function (event) {
-        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
         var sourceElement = utils_1.Utils.getTarget(event);
         while (sourceElement) {
-            var domData = sourceElement[domDataKey];
-            if (domData && domData.renderedRow) {
-                return domData.renderedRow;
+            var renderedRow = this.gridOptionsWrapper.getDomData(sourceElement, renderedRow_1.RenderedRow.DOM_DATA_KEY_RENDERED_ROW);
+            if (renderedRow) {
+                return renderedRow;
             }
             sourceElement = sourceElement.parentElement;
         }
@@ -1205,6 +1209,11 @@ var GridPanel = (function (_super) {
             return;
         }
         var changeDetected = false;
+        // if we are v scrolling, then one of these will have the scroll position.
+        // we us this inside the if(changedDetected), so we don't always use it, however
+        // it is changed when we make a pinned panel not visible, so we have to check it
+        // before we change display on the pinned panels
+        var scrollTop = Math.max(this.eBodyViewport.scrollTop, this.ePinnedLeftColsViewport.scrollTop, this.ePinnedRightColsViewport.scrollTop);
         var showLeftPinned = this.columnController.isPinningLeft();
         if (showLeftPinned !== this.pinningLeft) {
             this.pinningLeft = showLeftPinned;
@@ -1222,8 +1231,6 @@ var GridPanel = (function (_super) {
         if (changeDetected) {
             var bodyVScrollActive = this.isBodyVerticalScrollActive();
             this.eBodyViewport.style.overflowY = bodyVScrollActive ? 'auto' : 'hidden';
-            // if we are v scrolling, then one of these will have the scroll position
-            var scrollTop = Math.max(this.eBodyViewport.scrollTop, this.ePinnedLeftColsViewport.scrollTop, this.ePinnedRightColsViewport.scrollTop);
             // the body either uses it's scroll (when scrolling) or it's style.top
             // (when following the scroll of a pinned section), so we need to set it
             // back when changing from one to the other
@@ -1254,13 +1261,33 @@ var GridPanel = (function (_super) {
         if (!heightOfContainer) {
             return;
         }
-        var headerHeight = this.gridOptionsWrapper.getHeaderHeight();
-        var numberOfRowsInHeader = this.columnController.getHeaderRowCount();
-        var totalHeaderHeight = headerHeight * numberOfRowsInHeader;
-        var floatingFilterActive = this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode();
-        if (floatingFilterActive) {
-            totalHeaderHeight += 20;
+        var headerRowCount = this.columnController.getHeaderRowCount();
+        var totalHeaderHeight;
+        var numberOfFloating = 0;
+        var groupHeight;
+        var headerHeight;
+        if (!this.columnController.isPivotMode()) {
+            utils_1.Utils.removeCssClass(this.eHeader, 'ag-pivot-on');
+            utils_1.Utils.addCssClass(this.eHeader, 'ag-pivot-off');
+            if (this.gridOptionsWrapper.isFloatingFilter()) {
+                headerRowCount++;
+            }
+            numberOfFloating = (this.gridOptionsWrapper.isFloatingFilter()) ? 1 : 0;
+            groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
+            headerHeight = this.gridOptionsWrapper.getHeaderHeight();
         }
+        else {
+            utils_1.Utils.removeCssClass(this.eHeader, 'ag-pivot-off');
+            utils_1.Utils.addCssClass(this.eHeader, 'ag-pivot-on');
+            numberOfFloating = 0;
+            groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
+            headerHeight = this.gridOptionsWrapper.getPivotHeaderHeight();
+        }
+        var numberOfNonGroups = 1 + numberOfFloating;
+        var numberOfGroups = headerRowCount - numberOfNonGroups;
+        totalHeaderHeight = numberOfFloating * this.gridOptionsWrapper.getFloatingFiltersHeight();
+        totalHeaderHeight += numberOfGroups * groupHeight;
+        totalHeaderHeight += headerHeight;
         this.eHeader.style['height'] = totalHeaderHeight + 'px';
         // padding top covers the header and the floating rows on top
         var floatingTopHeight = this.floatingRowModel.getFloatingTopTotalHeight();

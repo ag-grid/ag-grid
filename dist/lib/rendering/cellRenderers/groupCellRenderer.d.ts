@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v9.1.0
+// Type definitions for ag-grid v10.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Component } from "../../widgets/component";
@@ -14,7 +14,6 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     private columnController;
     private eExpanded;
     private eContracted;
-    private eLoading;
     private eCheckbox;
     private eValue;
     private eChildCount;
@@ -24,7 +23,8 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     init(params: any): void;
     private setParams(params);
     private setupComponents();
-    private isFirstChildOfFirstChild(rowNode, groupField);
+    private isFirstChildOfFirstChild(rowNode, rowGroupColumn);
+    private getRowGroupColumn(params);
     private isGroupKeyMismatch();
     private embeddedRowMismatch();
     private addPadding();

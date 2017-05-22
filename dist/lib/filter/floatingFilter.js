@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -42,6 +42,10 @@ var InputTextFloatingFilterComp = (function (_super) {
         this.currentParentModel = params.currentParentModel;
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'input', this.syncUpWithParentFilter.bind(this));
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'keypress', this.checkApply.bind(this));
+        var columnDef = params.column.getDefinition();
+        if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange') {
+            this.eColumnFloatingFilter.readOnly = true;
+        }
     };
     InputTextFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
         this.eColumnFloatingFilter.value = this.asFloatingFilterText(parentModel);

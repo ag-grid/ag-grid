@@ -1,9 +1,11 @@
-// Type definitions for ag-grid v9.1.0
+// Type definitions for ag-grid v10.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColDef } from "./colDef";
 import { Column } from "./column";
-import { IEnterpriseCache } from "../interfaces/iEnterpriseCache";
+import { RowNodeCache, RowNodeCacheParams } from "../rowModels/cache/rowNodeCache";
+import { RowNodeBlock } from "../rowModels/cache/rowNodeBlock";
+import { IEventEmitter } from "../interfaces/iEventEmitter";
 export interface SetSelectedParams {
     newValue: boolean;
     clearSelection?: boolean;
@@ -11,17 +13,17 @@ export interface SetSelectedParams {
     rangeSelect?: boolean;
     groupSelectsFiltered?: boolean;
 }
-export declare class RowNode {
+export declare class RowNode implements IEventEmitter {
     static EVENT_ROW_SELECTED: string;
     static EVENT_DATA_CHANGED: string;
     static EVENT_CELL_CHANGED: string;
+    static EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED: string;
     static EVENT_MOUSE_ENTER: string;
     static EVENT_MOUSE_LEAVE: string;
     static EVENT_HEIGHT_CHANGED: string;
     static EVENT_TOP_CHANGED: string;
     static EVENT_ROW_INDEX_CHANGED: string;
     static EVENT_EXPANDED_CHANGED: string;
-    static EVENT_LOADING_CHANGED: string;
     private mainEventService;
     private gridOptionsWrapper;
     private selectionController;
@@ -67,10 +69,12 @@ export declare class RowNode {
     footer: boolean;
     /** Groups only - The field we are grouping on eg Country*/
     field: string;
+    /** Groups only - the row group column for this group */
+    rowGroupColumn: Column;
     /** Groups only - The key for the group eg Ireland, UK, USA */
     key: any;
-    /** True if rowNode is loading, used by Enterprise row model */
-    loading: boolean;
+    /** Used by enterprise row model, true if this row node is a stub */
+    stub: boolean;
     /** All user provided nodes */
     allLeafChildren: RowNode[];
     /** Groups only - Children of this group */
@@ -86,7 +90,7 @@ export declare class RowNode {
         [key: string]: any;
     };
     /** Enterprise Row Model Only - the children are in an infinite cache */
-    childrenCache: IEnterpriseCache;
+    childrenCache: RowNodeCache<RowNodeBlock, RowNodeCacheParams>;
     /** Groups only - True if group is expanded, otherwise false */
     expanded: boolean;
     /** Groups only - If doing footers, reference to the footer node for this group */
@@ -109,9 +113,9 @@ export declare class RowNode {
     private createDaemonNode();
     setDataAndId(data: any, id: string): void;
     setId(id: string): void;
-    setLoading(loading: boolean): void;
     clearRowTop(): void;
     setRowTop(rowTop: number): void;
+    setAllChildrenCount(allChildrenCount: number): void;
     setRowHeight(rowHeight: number): void;
     setRowIndex(rowIndex: number): void;
     setExpanded(expanded: boolean): void;

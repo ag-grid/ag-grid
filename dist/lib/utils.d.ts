@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v9.1.0
+// Type definitions for ag-grid v10.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -218,5 +218,7 @@ export declare class NumberSequence {
     private step;
     constructor(initValue?: number, step?: number);
     next(): number;
+    peek(): number;
+    skip(count: number): void;
 }
 export declare let _: typeof Utils;

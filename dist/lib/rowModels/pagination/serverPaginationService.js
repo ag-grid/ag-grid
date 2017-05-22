@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -128,7 +128,7 @@ var ServerPaginationService = (function (_super) {
     ServerPaginationService.prototype.checkForDeprecated = function () {
         var ds = this.datasource;
         if (utils_1.Utils.exists(ds.pageSize)) {
-            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property infinPageSize');
+            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property infinitePageSize');
         }
     };
     ServerPaginationService.prototype.setPageSize = function () {

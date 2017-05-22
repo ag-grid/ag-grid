@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50,6 +50,9 @@ var GridApi = (function () {
             case constants_1.Constants.ROW_MODEL_TYPE_INFINITE:
             case constants_1.Constants.ROW_MODEL_TYPE_VIRTUAL_DEPRECATED:
                 this.infinitePageRowModel = this.rowModel;
+                break;
+            case constants_1.Constants.ROW_MODEL_TYPE_ENTERPRISE:
+                this.enterpriseRowModel = this.rowModel;
                 break;
         }
         if (this.gridOptionsWrapper.isPagination()) {
@@ -419,6 +422,23 @@ var GridApi = (function () {
     };
     GridApi.prototype.setHeaderHeight = function (headerHeight) {
         this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_HEADER_HEIGHT, headerHeight);
+        this.doLayout();
+    };
+    GridApi.prototype.setGroupHeaderHeight = function (headerHeight) {
+        this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, headerHeight);
+        this.doLayout();
+    };
+    GridApi.prototype.setFloatingFiltersHeight = function (headerHeight) {
+        this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, headerHeight);
+        this.doLayout();
+    };
+    GridApi.prototype.setPivotGroupHeaderHeight = function (headerHeight) {
+        this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, headerHeight);
+        this.doLayout();
+    };
+    GridApi.prototype.setPivotHeaderHeight = function (headerHeight) {
+        this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, headerHeight);
+        this.doLayout();
     };
     GridApi.prototype.showToolPanel = function (show) {
         this.gridCore.showToolPanel(show);
@@ -452,10 +472,12 @@ var GridApi = (function () {
         }
     };
     GridApi.prototype.addEventListener = function (eventType, listener) {
-        this.eventService.addEventListener(eventType, listener);
+        var async = this.gridOptionsWrapper.useAsyncEvents();
+        this.eventService.addEventListener(eventType, listener, async);
     };
     GridApi.prototype.addGlobalListener = function (listener) {
-        this.eventService.addGlobalListener(listener);
+        var async = this.gridOptionsWrapper.useAsyncEvents();
+        this.eventService.addGlobalListener(listener, async);
     };
     GridApi.prototype.removeEventListener = function (eventType, listener) {
         this.eventService.removeEventListener(eventType, listener);
@@ -568,27 +590,43 @@ var GridApi = (function () {
         this.rowModel.addItems(items, skipRefresh);
     };
     GridApi.prototype.refreshVirtualPageCache = function () {
-        console.warn('ag-Grid: refreshVirtualPageCache() is now called refreshInfinitePageCache(), please call refreshInfinitePageCache() instead');
-        this.refreshInfinitePageCache();
+        console.warn('ag-Grid: refreshVirtualPageCache() is now called refreshInfiniteCache(), please call refreshInfiniteCache() instead');
+        this.refreshInfiniteCache();
     };
     GridApi.prototype.refreshInfinitePageCache = function () {
+        console.warn('ag-Grid: refreshInfinitePageCache() is now called refreshInfiniteCache(), please call refreshInfiniteCache() instead');
+        this.refreshInfiniteCache();
+    };
+    GridApi.prototype.refreshInfiniteCache = function () {
         if (this.infinitePageRowModel) {
             this.infinitePageRowModel.refreshCache();
         }
         else {
-            console.warn("ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.");
+            console.warn("ag-Grid: api.refreshInfiniteCache is only available when rowModelType='infinite'.");
         }
     };
     GridApi.prototype.purgeVirtualPageCache = function () {
-        console.warn('ag-Grid: purgeVirtualPageCache() is now called purgeInfinitePageCache(), please call purgeInfinitePageCache() instead');
+        console.warn('ag-Grid: purgeVirtualPageCache() is now called purgeInfiniteCache(), please call purgeInfiniteCache() instead');
         this.purgeInfinitePageCache();
     };
     GridApi.prototype.purgeInfinitePageCache = function () {
+        console.warn('ag-Grid: purgeInfinitePageCache() is now called purgeInfiniteCache(), please call purgeInfiniteCache() instead');
+        this.purgeInfiniteCache();
+    };
+    GridApi.prototype.purgeInfiniteCache = function () {
         if (this.infinitePageRowModel) {
             this.infinitePageRowModel.purgeCache();
         }
         else {
-            console.warn("ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.");
+            console.warn("ag-Grid: api.purgeInfiniteCache is only available when rowModelType='infinite'.");
+        }
+    };
+    GridApi.prototype.purgeEnterpriseCache = function (route) {
+        if (this.enterpriseRowModel) {
+            this.enterpriseRowModel.purgeCache(route);
+        }
+        else {
+            console.warn("ag-Grid: api.purgeEnterpriseCache is only available when rowModelType='enterprise'.");
         }
     };
     GridApi.prototype.getVirtualRowCount = function () {
@@ -624,15 +662,22 @@ var GridApi = (function () {
         }
     };
     GridApi.prototype.getVirtualPageState = function () {
-        console.warn('ag-Grid: getVirtualPageState() is now called getInfinitePageState(), please call getInfinitePageState() instead');
-        return this.getInfinitePageState();
+        console.warn('ag-Grid: getVirtualPageState() is now called getCacheBlockState(), please call getCacheBlockState() instead');
+        return this.getCacheBlockState();
     };
     GridApi.prototype.getInfinitePageState = function () {
+        console.warn('ag-Grid: getInfinitePageState() is now called getCacheBlockState(), please call getCacheBlockState() instead');
+        return this.getCacheBlockState();
+    };
+    GridApi.prototype.getCacheBlockState = function () {
         if (this.infinitePageRowModel) {
-            return this.infinitePageRowModel.getPageState();
+            return this.infinitePageRowModel.getBlockState();
+        }
+        else if (this.enterpriseRowModel) {
+            return this.enterpriseRowModel.getBlockState();
         }
         else {
-            console.warn("ag-Grid: api.getVirtualPageState is only available when rowModelType='virtual'.");
+            console.warn("ag-Grid: api.getCacheBlockState() is only available when rowModelType='infinite' or rowModelType='enterprise'.");
         }
     };
     GridApi.prototype.checkGridSize = function () {
