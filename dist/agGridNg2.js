@@ -178,6 +178,17 @@ var AgGridNg2 = (function () {
         this.pagination = undefined;
         this.stopEditingWhenGridLosesFocus = undefined;
         this.paginationAutoPageSize = undefined;
+        this.groupHeaderHeight = undefined;
+        this.floatingFiltersHeight = undefined;
+        this.pivotHeaderHeight = undefined;
+        this.pivotGroupHeaderHeight = undefined;
+        this.maxBlocksInCache = undefined;
+        this.cacheOverflowSize = undefined;
+        this.suppressAggAtRootLevel = undefined;
+        this.purgeClosedRowNodes = undefined;
+        this.postProcessPopup = undefined;
+        this.suppressAsyncEvents = undefined;
+        this.cacheQuickFilter = undefined;
         this._nativeElement = elementDef.nativeElement;
         // create all the events generically. this is done generically so that
         // if the list of grid events change, we don't need to change this code.
@@ -435,6 +446,17 @@ AgGridNg2.propDecorators = {
     'pagination': [{ type: core_1.Input },],
     'stopEditingWhenGridLosesFocus': [{ type: core_1.Input },],
     'paginationAutoPageSize': [{ type: core_1.Input },],
+    'groupHeaderHeight': [{ type: core_1.Input },],
+    'floatingFiltersHeight': [{ type: core_1.Input },],
+    'pivotHeaderHeight': [{ type: core_1.Input },],
+    'pivotGroupHeaderHeight': [{ type: core_1.Input },],
+    'maxBlocksInCache': [{ type: core_1.Input },],
+    'cacheOverflowSize': [{ type: core_1.Input },],
+    'suppressAggAtRootLevel': [{ type: core_1.Input },],
+    'purgeClosedRowNodes': [{ type: core_1.Input },],
+    'postProcessPopup': [{ type: core_1.Input },],
+    'suppressAsyncEvents': [{ type: core_1.Input },],
+    'cacheQuickFilter': [{ type: core_1.Input },],
     'gridReady': [{ type: core_1.Output },],
     'columnEverythingChanged': [{ type: core_1.Output },],
     'newColumnsLoaded': [{ type: core_1.Output },],
@@ -470,13 +492,9 @@ AgGridNg2.propDecorators = {
     'cellFocused': [{ type: core_1.Output },],
     'rowSelected': [{ type: core_1.Output },],
     'selectionChanged': [{ type: core_1.Output },],
-    'beforeFilterChanged': [{ type: core_1.Output },],
     'filterChanged': [{ type: core_1.Output },],
-    'afterFilterChanged': [{ type: core_1.Output },],
     'filterModified': [{ type: core_1.Output },],
-    'beforeSortChanged': [{ type: core_1.Output },],
     'sortChanged': [{ type: core_1.Output },],
-    'afterSortChanged': [{ type: core_1.Output },],
     'virtualRowRemoved': [{ type: core_1.Output },],
     'rowClicked': [{ type: core_1.Output },],
     'rowDoubleClicked': [{ type: core_1.Output },],
@@ -507,6 +525,10 @@ AgGridNg2.propDecorators = {
     'paginationChanged': [{ type: core_1.Output },],
     'bodyHeightChanged': [{ type: core_1.Output },],
     'componentStateChanged': [{ type: core_1.Output },],
+    'beforeFilterChanged': [{ type: core_1.Output },],
+    'afterFilterChanged': [{ type: core_1.Output },],
+    'beforeSortChanged': [{ type: core_1.Output },],
+    'afterSortChanged': [{ type: core_1.Output },],
 };
 exports.AgGridNg2 = AgGridNg2;
 //# sourceMappingURL=agGridNg2.js.map

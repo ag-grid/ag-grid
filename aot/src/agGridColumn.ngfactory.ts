@@ -21,12 +21,12 @@ export function View_AgGridColumn_0(l:any):import0.ɵViewDefinition {
 function View_AgGridColumn_Host_0(l:any):import0.ɵViewDefinition {
   return import0.ɵvid(0,[
     (l()(),import0.ɵeld(0,(null as any),(null as any),2,'ag-grid-column',([] as any[]),(null as any),(null as any),(null as any),View_AgGridColumn_0,RenderType_AgGridColumn)),
-      import0.ɵdid(24576,[[
+      import0.ɵdid(49152,[[
         1,
         4
       ]
     ],1,import1.AgGridColumn,([] as any[]),(null as any),(null as any)),
-    import0.ɵqud(301989888,1,{childColumns: 1})
+    import0.ɵqud(603979776,1,{childColumns: 1})
   ]
   ,(null as any),(null as any));
 }
@@ -108,4 +108,4 @@ export const AgGridColumnNgFactory:import0.ComponentFactory<import1.AgGridColumn
   headerComponentParams: 'headerComponentParams'
 }
 ,{},([] as any[]));
-//# sourceMappingURL=data:application/json;base64,eyJmaWxlIjoiL1VzZXJzL2FsYmVydG8vR29vZ2xlIERyaXZlL2FnLWdyaWQvcmVsZWFzZXMvOS4xLjAvYWctZ3JpZC1hbmd1bGFyL3NyYy9hZ0dyaWRDb2x1bW4ubmdmYWN0b3J5LnRzIiwidmVyc2lvbiI6Mywic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsibmc6Ly8vVXNlcnMvYWxiZXJ0by9Hb29nbGUgRHJpdmUvYWctZ3JpZC9yZWxlYXNlcy85LjEuMC9hZy1ncmlkLWFuZ3VsYXIvc3JjL2FnR3JpZENvbHVtbi50cyIsIm5nOi8vL1VzZXJzL2FsYmVydG8vR29vZ2xlIERyaXZlL2FnLWdyaWQvcmVsZWFzZXMvOS4xLjAvYWctZ3JpZC1hbmd1bGFyL3NyYy9hZ0dyaWRDb2x1bW4udHMuQWdHcmlkQ29sdW1uX0hvc3QuaHRtbCJdLCJzb3VyY2VzQ29udGVudCI6WyIgIiwiPGFnLWdyaWQtY29sdW1uPjwvYWctZ3JpZC1jb2x1bW4+Il0sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztJQ0FBO2tCQUFBO1FBQUE7UUFBQTtNQUFBO0lBQUE7Z0JBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OzsifQ==
+//# sourceMappingURL=data:application/json;base64,eyJmaWxlIjoiL1VzZXJzL2FsYmVydG8vdm9sYXRpbGUvcmVsZWFzZXMvMTAuMC4wL2FnLWdyaWQtYW5ndWxhci9zcmMvYWdHcmlkQ29sdW1uLm5nZmFjdG9yeS50cyIsInZlcnNpb24iOjMsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIm5nOi8vL1VzZXJzL2FsYmVydG8vdm9sYXRpbGUvcmVsZWFzZXMvMTAuMC4wL2FnLWdyaWQtYW5ndWxhci9zcmMvYWdHcmlkQ29sdW1uLnRzIiwibmc6Ly8vVXNlcnMvYWxiZXJ0by92b2xhdGlsZS9yZWxlYXNlcy8xMC4wLjAvYWctZ3JpZC1hbmd1bGFyL3NyYy9hZ0dyaWRDb2x1bW4udHMuQWdHcmlkQ29sdW1uX0hvc3QuaHRtbCJdLCJzb3VyY2VzQ29udGVudCI6WyIgIiwiPGFnLWdyaWQtY29sdW1uPjwvYWctZ3JpZC1jb2x1bW4+Il0sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztJQ0FBO2tCQUFBO1FBQUE7UUFBQTtNQUFBO0lBQUE7Z0JBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OzsifQ==
