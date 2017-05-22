@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -169,6 +169,9 @@ var ComponentProvider = (function () {
         var finalParams = {};
         utils_1._.mergeDeep(finalParams, agGridParams);
         utils_1._.mergeDeep(finalParams, customParams);
+        if (!finalParams.api) {
+            finalParams.api = this.gridOptions.api;
+        }
         return finalParams;
     };
     ComponentProvider.prototype.newDateComponent = function (params) {

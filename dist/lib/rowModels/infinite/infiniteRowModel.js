@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,23 +36,28 @@ var filterManager_1 = require("../../filter/filterManager");
 var constants_1 = require("../../constants");
 var infiniteCache_1 = require("./infiniteCache");
 var beanStub_1 = require("../../context/beanStub");
+var rowNodeCache_1 = require("../cache/rowNodeCache");
+var rowNodeBlockLoader_1 = require("../cache/rowNodeBlockLoader");
 var InfiniteRowModel = (function (_super) {
     __extends(InfiniteRowModel, _super);
     function InfiniteRowModel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     InfiniteRowModel.prototype.getRowBounds = function (index) {
-        if (utils_1.Utils.missing(this.infiniteCache)) {
-            return null;
-        }
-        return this.infiniteCache.getRowBounds(index);
+        return {
+            rowHeight: this.rowHeight,
+            rowTop: this.rowHeight * index
+        };
     };
     InfiniteRowModel.prototype.init = function () {
+        var _this = this;
         if (!this.gridOptionsWrapper.isRowModelInfinite()) {
             return;
         }
+        this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.addEventListeners();
         this.setDatasource(this.gridOptionsWrapper.getDatasource());
+        this.addDestroyFunc(function () { return _this.destroyCache(); });
     };
     InfiniteRowModel.prototype.isLastRowFound = function () {
         return this.infiniteCache ? this.infiniteCache.isMaxRowFound() : false;
@@ -97,7 +102,7 @@ var InfiniteRowModel = (function (_super) {
         if (utils_1.Utils.exists(ds.overflowSize)) {
             console.error('ag-Grid: since version 5.1.x, overflowSize is replaced with grid property paginationOverflowSize');
         }
-        if (utils_1.Utils.exists(ds.pageSize)) {
+        if (utils_1.Utils.exists(ds.blockSize)) {
             console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property infinitePageSize');
         }
     };
@@ -124,20 +129,28 @@ var InfiniteRowModel = (function (_super) {
         this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED);
     };
     InfiniteRowModel.prototype.resetCache = function () {
+        // if not first time creating a cache, need to destroy the old one
+        this.destroyCache();
+        var maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
+        // there is a bi-directional dependency between the loader and the cache,
+        // so we create loader here, and then pass dependencies in setDependencies() method later
+        this.rowNodeBlockLoader = new rowNodeBlockLoader_1.RowNodeBlockLoader(maxConcurrentRequests);
+        this.context.wireBean(this.rowNodeBlockLoader);
         var cacheSettings = {
             // the user provided datasource
             datasource: this.datasource,
             // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
             sortModel: this.sortController.getSortModel(),
+            rowNodeBlockLoader: this.rowNodeBlockLoader,
             // properties - this way we take a snapshot of them, so if user changes any, they will be
             // used next time we create a new cache, which is generally after a filter or sort change,
             // or a new datasource is set
-            maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
-            overflowSize: this.gridOptionsWrapper.getPaginationOverflowSize(),
+            maxConcurrentRequests: maxConcurrentRequests,
+            overflowSize: this.gridOptionsWrapper.getCacheOverflowSize(),
             initialRowCount: this.gridOptionsWrapper.getInfiniteInitialRowCount(),
-            maxBlocksInCache: this.gridOptionsWrapper.getMaxPagesInCache(),
-            pageSize: this.gridOptionsWrapper.getInfiniteBlockSize(),
+            maxBlocksInCache: this.gridOptionsWrapper.getMaxBlocksInCache(),
+            blockSize: this.gridOptionsWrapper.getCacheBlockSize(),
             rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
             // the cache could create this, however it is also used by the pages, so handy to create it
             // here as the settings are also passed to the pages
@@ -149,8 +162,8 @@ var InfiniteRowModel = (function (_super) {
         }
         // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
         // server for one page at a time. so the default if not specified is 100.
-        if (!(cacheSettings.pageSize >= 1)) {
-            cacheSettings.pageSize = 100;
+        if (!(cacheSettings.blockSize >= 1)) {
+            cacheSettings.blockSize = 100;
         }
         // if user doesn't give initial rows to display, we assume zero
         if (!(cacheSettings.initialRowCount >= 1)) {
@@ -161,35 +174,56 @@ var InfiniteRowModel = (function (_super) {
         if (!(cacheSettings.overflowSize >= 1)) {
             cacheSettings.overflowSize = 1;
         }
-        // if not first time creating a cache, need to destroy the old one
-        if (this.infiniteCache) {
-            this.infiniteCache.destroy();
-        }
         this.infiniteCache = new infiniteCache_1.InfiniteCache(cacheSettings);
         this.context.wireBean(this.infiniteCache);
+        this.infiniteCache.addEventListener(rowNodeCache_1.RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
+    };
+    InfiniteRowModel.prototype.destroyCache = function () {
+        if (this.infiniteCache) {
+            this.infiniteCache.destroy();
+            this.infiniteCache = null;
+        }
+        if (this.rowNodeBlockLoader) {
+            this.rowNodeBlockLoader.destroy();
+            this.rowNodeBlockLoader = null;
+        }
+    };
+    InfiniteRowModel.prototype.onCacheUpdated = function () {
+        this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED);
     };
     InfiniteRowModel.prototype.getRow = function (rowIndex) {
         return this.infiniteCache ? this.infiniteCache.getRow(rowIndex) : null;
     };
     InfiniteRowModel.prototype.forEachNode = function (callback) {
         if (this.infiniteCache) {
-            this.infiniteCache.forEachNode(callback);
+            this.infiniteCache.forEachNodeDeep(callback, new utils_1.NumberSequence());
         }
     };
     InfiniteRowModel.prototype.getCurrentPageHeight = function () {
-        return this.infiniteCache ? this.infiniteCache.getCurrentPageHeight() : 0;
+        return this.getRowCount() * this.rowHeight;
     };
     InfiniteRowModel.prototype.getRowIndexAtPixel = function (pixel) {
-        return this.infiniteCache ? this.infiniteCache.getRowIndexAtPixel(pixel) : -1;
+        if (this.rowHeight !== 0) {
+            var rowIndexForPixel = Math.floor(pixel / this.rowHeight);
+            if (rowIndexForPixel > this.getPageLastRow()) {
+                return this.getPageLastRow();
+            }
+            else {
+                return rowIndexForPixel;
+            }
+        }
+        else {
+            return 0;
+        }
     };
     InfiniteRowModel.prototype.getPageFirstRow = function () {
         return 0;
     };
     InfiniteRowModel.prototype.getPageLastRow = function () {
-        return this.infiniteCache ? this.infiniteCache.getRowCount() - 1 : 0;
+        return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() - 1 : 0;
     };
     InfiniteRowModel.prototype.getRowCount = function () {
-        return this.infiniteCache ? this.infiniteCache.getRowCount() : 0;
+        return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() : 0;
     };
     InfiniteRowModel.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {
         if (this.infiniteCache) {
@@ -236,9 +270,9 @@ var InfiniteRowModel = (function (_super) {
             this.infiniteCache.setVirtualRowCount(rowCount, maxRowFound);
         }
     };
-    InfiniteRowModel.prototype.getPageState = function () {
-        if (this.infiniteCache) {
-            return this.infiniteCache.getPageState();
+    InfiniteRowModel.prototype.getBlockState = function () {
+        if (this.rowNodeBlockLoader) {
+            return this.rowNodeBlockLoader.getBlockState();
         }
         else {
             return null;

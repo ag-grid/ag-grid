@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -150,23 +150,24 @@ var GridSerializer = (function () {
             gridSerializingSession.addCustomHeader(params.customHeader);
         }
         // first pass, put in the header names of the cols
-        if (!skipHeader || columnGroups) {
+        if (columnGroups) {
             var groupInstanceIdCreator = new groupInstanceIdCreator_1.GroupInstanceIdCreator();
             var displayedGroups = this.displayedGroupCreator.createDisplayedGroups(columnsToExport, this.columnController.getGridBalancedTree(), groupInstanceIdCreator);
-            if (columnGroups && displayedGroups.length > 0 && displayedGroups[0] instanceof columnGroup_1.ColumnGroup) {
+            if (displayedGroups.length > 0 && displayedGroups[0] instanceof columnGroup_1.ColumnGroup) {
                 var gridRowIterator_1 = gridSerializingSession.onNewHeaderGroupingRow();
                 var columnIndex_1 = 0;
-                displayedGroups.forEach(function (it) {
-                    var casted = it;
-                    gridRowIterator_1.onColumn(casted.getDefinition().headerName, columnIndex_1++, casted.getChildren().length - 1);
+                displayedGroups.forEach(function (columnGroupChild) {
+                    var columnGroup = columnGroupChild;
+                    var colDef = columnGroup.getDefinition();
+                    gridRowIterator_1.onColumn(colDef != null ? colDef.headerName : '', columnIndex_1++, columnGroup.getChildren().length - 1);
                 });
             }
-            if (!skipHeader) {
-                var gridRowIterator_2 = gridSerializingSession.onNewHeaderRow();
-                columnsToExport.forEach(function (column, index) {
-                    gridRowIterator_2.onColumn(column, index, null);
-                });
-            }
+        }
+        if (!skipHeader) {
+            var gridRowIterator_2 = gridSerializingSession.onNewHeaderRow();
+            columnsToExport.forEach(function (column, index) {
+                gridRowIterator_2.onColumn(column, index, null);
+            });
         }
         this.floatingRowModel.forEachFloatingTopRow(processRow);
         if (isPivotMode) {
