@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         If you are looking to export your data formatted for Excel use the ag-Grid Enterprise feature
-        <a href="/javascript-grid-excel/">Excel Export</a>.
+        <a href="../javascript-grid-excel/">Excel Export</a>.
     </note>
 
     <p>

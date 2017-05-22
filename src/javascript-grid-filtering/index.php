@@ -386,12 +386,12 @@ gridOptions = {
 
 <p>
     Some of the row models
-    (<a href="/javascript-grid-pagination/">pagination</a> and
-    <a href="/javascript-grid-virtual-paging/">infinite scrolling</a>)
+    (<a href="../javascript-grid-pagination/">pagination</a> and
+    <a href="../javascript-grid-virtual-paging/">infinite scrolling</a>)
     have further information on how to implement server side filtering.
     For details on this, see the the sections
-    <a href="/javascript-grid-pagination/">pagination</a> and
-    <a href="/javascript-grid-virtual-paging/">infinite scrolling</a>.
+    <a href="../javascript-grid-pagination/">pagination</a> and
+    <a href="../javascript-grid-virtual-paging/">infinite scrolling</a>.
 </p>
 </div>
 

@@ -16,25 +16,43 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 10.0.x</h2>
 
-    <h3>Version 10.0.1</h3>
+    <h3>Version 10.0.0 [22-MAY-2017]</h3>
 
     <h4>Enhancements:</h4>
     <ul>
         <li>
-            <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a>
+            New row model type <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a>.
         </li>
-        <li>
-            By default, quick filter no longer caches the values. This means quick filters work a bit
+        <LI>AG-471: All the <a href="../javascript-grid-events/">events</a> are now asynchronous</li>
+        <li>AG-461: By default, <a href="../javascript-grid-filter-quick">quick filter</a> no longer caches the values. This means quick filters work a bit
             slower, but are more dependable (cache does not go out of date). The cache can still be turned
-            on using the property <i>cacheQuickFilter=true</i>.
+            on using the property <i>cacheQuickFilter=true</i> if worried about performance.
         </li>
+        <LI>AG-104: The headers height now is dynamic and can be configured to support
+            <a href="/javascript-grid-column-header/"">vertical text orientation</a>.</li>
+        <LI>AG-462: Allow custom CSS classes in <a href="../javascript-grid-context-menu">context menu items</a> through the property <i>cssClasses</i></li>
+        <LI>AG-388: New <a href="../javascript-grid-properties">grid property</a> <i>suppressAggAtRootLevel</i> to allow the suppression of aggregation at the root Node level</li>
     </ul>
 
     <h4>Bug Fixes:</h4>
     <ul>
-        <li>
-            AG-377: Property restrictToOneGroup didn't work when field was missing in colDef (ie value getter used instead). Now works.
-        </li>
+        <LI>AG-449: Merging styles in Excel export would fail if mixing two partial styles in one cell</li>
+        <LI>AG-444: Removed the necessity to add a <i>defaultGroupComparator</i> to have groups sorting by default</li>
+        <LI>AG-444: Removing sort on a column will restore the sort to the sort provided from the user in all the cases.</li>
+        <LI>AG-372: <a href="../javascript-grid-cell-editing">Popup editors</a> when <i>stopEditingWhenGridLosesFocus</i>: true would disappear when the user will click on them</li>
+        <LI>AG-403: Fixing edge cases when <i>openGroupByDefault</i> and <i>removeParents</i> would case the grid to
+        show the wrong <a href="../javascript-grid-grouping">row aggregations</a></li>
+        <LI>AG-384: Fixing a bug when unpinning a column will cause empty rows shown on the main body area of the grid</li>
+        <LI>AG-377: Property <i>restrictToOneGroup</i> didn't work when field was missing in colDef (ie value getter used instead).</li>
+        <LI>AG-452: Using <i>groupColumnDef</i> would cause CSV/Excel export to fail</li>
+        <LI>AG-450: Fix bug when the only option specified for a filter is in range <i>filterOptions:['inRange']</i></li>
+        <LI>AG-445: Cell editors <i>destroy</i> method is not mandatory anymore</li>
+        <LI>AG-259: <i>sizeColsToFit</i> not working in frameworks when immediately invoked</li>
+        <LI>AG-335: <i>floatingFilterWrapperComponent</i> prints readable error messages when the custom implementations
+            are missing mandatory methods </li>
+        <LI>AG-457: Angular components prints readable error message when the method <i>agInit</i> is missing</li>
+        <LI>AG-464: The grid API is passed as parameter to all the components in the <i>init</i> method</li>
+        <LI>AG-328: Fixed <i>suppressSorting</i> for <a href="../javascript-grid-set-filtering">Set Filters</a>, it wasn't working properly</li>
     </ul>
 
     <h4>Breaking Changes:</h4>

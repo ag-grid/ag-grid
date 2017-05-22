@@ -172,8 +172,6 @@ export interface ColumnVO {
             the aggregation function via the column menu. The server just assumes if grouping,
             then these columns should be aggregated using a sum function.
         </li>
-        <li><b>Filtering:</b> The age, country and year columns have filters.
-            The filter state is passed to the server to allow executing the filter on the server side.</li>
         <li><b>Sorting:</b> The sorting, similar to filtering, is done on the server side.
             For example, sort by Athlete, then expand a group and you will
             see Athlete is sorted. </li>

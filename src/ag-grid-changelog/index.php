@@ -47,7 +47,7 @@ include '../includes/headerRow.php'; ?>
     <div class="row">
         <div class="col-md-12">
             <note>This page covers the full Changelog for all items for 8.x and above. For the Summary Changelog, or
-                the legacy changelog covering versions 7.x and above before go <a href="/change-log/changeLogIndex.php">here</a>.
+                the legacy changelog covering versions 7.x and above before go <a href="../change-log/changeLogIndex.php">here</a>.
             </note>
 
             <?php
