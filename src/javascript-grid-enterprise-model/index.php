@@ -13,36 +13,61 @@ include '../documentation-main/documentation_header.php';
 </h2>
 
 <p>
-    The default row model for ag-Grid, the <b>In Memory</b> row model, will do grouping and
-    aggregation for you if you give it all the data. If the data will not fit in the browser
-    because it is to large, then you can use either <b>Infinite Scrolling</b> row model or
-    <b>Viewport</b> row model. However these row models cannot do grouping or aggregation.
+    The Enterprise Row Model is arguably the most powerful of the row models in ag-Grid
+    and presents the ultimate 'big data' user experience, allowing the user to
+    navigate through very large data sets using a mixture of server side grouping and aggregation
+    while using infinite scrolling to bring the data back in blocks to the client.
+</p>
+
+<h3>Enterprise Row Model Features</h3>
+
+<p>
+    The best way to learn what the Enterprise Model does is to break it down into the core features.
+    You may benefit from the combination of all these
+    features or just be interested in a subset. The features of the
+    enterprise row model are:
 </p>
 
 <p>
-    The <b>Enterprise Row Model</b> presents the ability to have grouping and aggregation
-    on large datasets by delegating the aggregation to the server and lazy loading
-    the groups.
+    <ul>
+        <li>
+            <b>Lazy Loading of Groups:</b> The grid will load the top level rows only. Children
+            of groups are only loaded when the user expands the group. Some applications may use
+            the Enterprise Row Model for this one feature alone e.g. you might have a managers database table,
+            you can display a list of all managers, then click 'expand' on the manager and the grid
+            will then request to get the 'employees' for that manager.
+        </li>
+        <li>
+            <b>Server Side Grouping and Aggregation:</b> Because the data is coming back from the server one group
+            level at a time, this allows you to do aggregation on the server, returning back the aggregated
+            results for the top level parent rows. For example you could include 'employee count' as an attribute
+            on the returned manager record, to say how many employees a manager manages.
+        </li>
+        <li>
+            <b>Infinite Scrolling:</b> Rows are read back from the server in blocks to provide the experience
+            of infinite scrolling. This happens at each grouping level
+            (ie the top level rows are brought back in blocks, then when you expand a group, the children
+            of that group are also loaded in blocks). This allows viewing very large datasets in the browser by
+            only bringing back data one block at a time. This feature reuses the logic from the
+            <a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a> row model, so understanding
+            how that row model works will help you in understanding this part of the enterprise row model.
+        </li>
+        <li>
+            <b>Slice and Dice:</b> Assuming your server side can build the data query, you can allow the user
+            to use the ag-Grid UI to drag columns around to select what columns you want to group by and aggregate
+            on. What the user selects will then be forwarded to your datasource as part of the request. This feature
+            is advanced and will require some difficult server side coding from you, however if done correctly then
+            your users will have an experience of slicing and dicing large data in real time, something previously
+            only available in expensive reporting tools, now you can embed it into your JavaScript application.</li>
+    </ul>
 </p>
 
-<p>
-    Some users might simply see it as lazy loading group data from the server. Eg
-    if you have a managers database table, you can display a list of all managers,
-    then then click 'expand' on the manager and the grid will then request
-    to get the 'employees' for that manager.
-</p>
+<h3>Enterprise Datasource</h3>
 
 <p>
-    Or a more advanced use case would be to allow the user to slice and dice a large
-    dataset and have the backend generate SQL (or equivalent if not using a SQL
-    store) to create the result. This would be similar to how current data analysis
-    tools work, a mini-Business Intelligence experience.
-</p>
-
-<h3>How it Works</h3>
-
-<p>
-    You provide the grid with a datasource. The interface for the datasource is as follows:
+    Similar to the <a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a> and
+    <a href="../javascript-grid-viewport/">Viewport</a> row models, you provide the grid with a datasource.
+    The interface for the datasource is as follows:
 </p>
 
 <pre><span class="codeComment">// datasource for enterprise row model</span>
@@ -54,7 +79,10 @@ interface IEnterpriseDatasource {
 </pre>
 
 <p>
-    The getRows takes the following parameters:
+    Each time the grid requires more rows, it will call the <i>getRows()</i> method.
+    The method is passed a <i>params</i> object that contains two callbacks (one for
+    success and one for failure) and a request object with details what row the grid
+    is looking for. The interface for the <i>params</i> is as follows:
 </p>
 
 <pre>interface IEnterpriseGetRowsParams {
@@ -71,7 +99,9 @@ interface IEnterpriseDatasource {
 </pre>
 
 <p>
-    The request, with details about what the grid needs, has the following structure:
+    The request gives details on what the grid is looking for. The success and failure callbacks are not included
+    inside the request object to keep the request object simple data (ie simple data types, no functions). This
+    allows the request object to be serialised (eg via JSON) and sent to your server. The request has the following interface:
 </p>
 
 <pre>interface IEnterpriseGetRowsRequest {
@@ -93,7 +123,7 @@ interface IEnterpriseDatasource {
 }
 
 <span class="codeComment">// we pass a VO (Value Object) of the column and not the column itself,</span>
-<span class="codeComment">// so the data can be converted to JSON and passed to server side</span>
+<span class="codeComment">// so the data can be converted to a JSON string and passed to server side</span>
 export interface ColumnVO {
     id: string;
     displayName: string;
@@ -103,25 +133,28 @@ export interface ColumnVO {
 </pre>
 
 <p>
-    All the interfaces above is a lot to take in. The best thing to do is look at the examples below
-    and debug through them with teh web console and observed what is passed back as you interact
-    with the grid.
+    Studying the interfaces above alone probably won't describe the whole story in an understandable way. The best
+    thing to do is look at the examples below and debug through them with the web console and observe what is
+    passed back as you interact with the grid.
 </p>
 
 <h3>Example - Predefined Master Detail - Mocked Server</h3>
 
 <p>
-    Below shows an example of predefined master / detail using the olympic winners.
+    Below shows an example of predefined master / detail using the olympic winners dataset.
     It is pre-defined as we set the grid with a particular grouping, and then
     our datasource knows that the grid will either be asking for the top level
-    nodes OR the grid will be looking for the lower level nodes for a country.
+    nodes (country list) OR the grid will be looking for the leaf nodes (winners
+    for a particular country).
 </p>
 
 <p>
     In your application, your server side would know where to get the data based
-    on what the user is looking for, eg if using a relational database, it could go
-    to the 'countries' table to get the list of countries and then the 'winners'
-    table to get the details as the user expands the group.
+    on what the user is looking for, eg it could go to a relational database
+    table to get the list of countries and then a web service to get the winners
+    for the country as the user expands the group (a web service to get the winners
+    per country is improbable, however the example demonstrates you do not need to
+    go to the same datastore for the different levels in the grid).
 </p>
 
 <p>
@@ -135,13 +168,13 @@ export interface ColumnVO {
     <ul>
         <li><b>Grouping:</b> The data is grouped by country.</li>
         <li><b>Aggregation:</b> The server always sum's gold, silver and bronze.
-        The columns are not set as value columns, and hence the user cannot change
-        the aggregation function. The server just assumes if grouping, then these
+            The columns are not set as value columns, and hence the user cannot change
+            the aggregation function via the column menu. The server just assumes if grouping,
+            then these columns should be aggregated using a sum function.
         </li>
-        <li><b>Filtering:</b> The age, country and year columns have filters.
-            The filtering is done on the server side.</li>
-        <li><b>Sorting:</b> For example, sort by Athlete, then expand a group and you will
-            see Athlete is sorted. The sorting is done on the server side.</li>
+        <li><b>Sorting:</b> The sorting, similar to filtering, is done on the server side.
+            For example, sort by Athlete, then expand a group and you will
+            see Athlete is sorted. </li>
     </ul>
 </p>
 
@@ -186,16 +219,11 @@ export interface ColumnVO {
 <h3>Example - Slice and Dice - Real Server</h3>
 
 <p>
-    It is not possible to put up a full end to end example our the documentation
-    website, as we cannot host servers on our website, and even if we did, you would
-    not be able to run it locally. Instead we have put a full end to end example
-    in Github at <a href="https://github.com/ceolter/ag-grid-enterprise-mysql-sample/">
-    https://github.com/ceolter/ag-grid-enterprise-mysql-sample/</a> and you can also
-    see it working on our
-    <a href="https://www.youtube.com/watch?v=dRQtpULw6Hw">
-        <img src="../images/YouTubeSmall.png" style="position: relative; top: -2px;"/>
-        YouTube Movie
-    </a>.
+    It is not possible to put up a full end to end example of the Enterprise row model
+    on the documentation website, as we cannot host servers on our website.
+    Instead we have put a full end to end example
+    in Github at <a href="https://github.com/ceolter/ag-grid-enterprise-mysql-example/">
+    https://github.com/ceolter/ag-grid-enterprise-mysql-sample/</a>.
 </p>
 
 <p>
@@ -205,16 +233,52 @@ export interface ColumnVO {
     applications.
 </p>
 
-<h3 id="selection">Example - Selection with Enterprise Row Model</h3>
+<note>
+    The example is provided to show what logic you will need on the server side. It is
+    provided 'as is' and we hope you find it useful. It is not provided as part of the
+    ag-Grid Enterprise product, and as such it is not something we intend to enhance
+    and support. It is our intention for ag-Grid users to create their own server side
+    connectors to connect into their bespoke data stores. In the future, depending on
+    customer demand, we may provide connectors to server sides stores.
+</note>
+
+<h3 id="selection">Selection with Enterprise Row Model</h3>
 
 <p>
-    And this is how you do selection.
+    Selecting rows and groups in the enterprise row model is supported.
+    Just set the property <i>rowSelection</i> to either <i>single</i>
+    or <i>multiple</i> as with any other row model.
+</p>
+
+<h4 id="selection"><b>Selecting Group Nodes</b></h4>
+<p>
+    When you select a group, the children of that group may or may not be loaded
+    into the grid. For this reason the setting <i>groupSelectsChildren=true</i> (which
+    selects all the children of the group when you select a group) does not make
+    sense. When you select a group, the group row only will be marked as selected.
+</p>
+
+<h4 id="selection"><b>Providing Node ID's</b></h4>
+<p>
+    Providing node ID's is optional. If you provide your own node id's
+    (using the <i>getRowNodeId()</i> callback)
+    then you must make sure that the rows have unique ID's across your entire data
+    set. This means all the groups and all leaf level nodes must have unique
+    id's, even if the leafs are not part of the same group. This is because
+    the grid uses node id behind the scenes to identify selected rows.
 </p>
 
 <p>
-    If providing your own id's, the id's MUST be unique across the grid, for both
-    groups and rows. You must provide your own id's to keep selection when you sort
-    or filter.
+    If you do not provide node id's, the grid will provide the id's for you,
+    and will make sure they are unique.
+</p>
+
+<h3 id="selection">Example - Click Selection Selection</h3>
+
+<p>
+    The example below shows simple click selection. When you click on a leaf level
+    row, the row is selected. Standard click selection does not allow selecting groups,
+    as clicking on groups is reserved for opening and closing the groups.
 </p>
 
 <show-complex-example example="exampleEnterpriseSelection.html"
@@ -226,8 +290,21 @@ export interface ColumnVO {
                       exampleheight="500px">
 </show-complex-example>
 
+<h3 id="selection">Example - Checkbox Selection</h3>
+
 <p>
-    And checkbox selection
+    Below shows another example using checkbox selection. The example shows:
+    <ul>
+        <li>
+            Checkbox selection on the group column allowing selection of any row.
+        </li>
+        <li>
+            Checkbox selection on the group year column allowing selection on leaf
+            level rows only.
+        </li>
+    </ul>
+    The example shows checkboxes on two columns. This is for comparison in the example
+    only. Normal applications generally have the checkbox only on one column.
 </p>
 
 <show-complex-example example="exampleEnterpriseCheckboxSelection.html"
@@ -251,7 +328,7 @@ export interface ColumnVO {
         <th>Description</th>
     </tr>
     <tr id="api-purge-virtual-page-cache">
-        <th>purgeInfinitePageCache(route: string[])</th>
+        <th>purgeInfinitePageCache(route)</th>
         <td><p>Purges the cache. If you pass no parameters, then the top level cache is purged. To
                 purge a child cache, then pass in the string of keys to get to the child cache.
                 For example, to purge the cache two levels down under 'Canada' and then '2002', pass
@@ -295,7 +372,7 @@ export interface ColumnVO {
                       exampleheight="500px">
 </show-complex-example>
 
-<h3 id="pagination">Example - Pagination with Enterprise Row Model</h3>
+<h3 id="pagination">Pagination with Enterprise Row Model</h3>
 <p>
     To enable pagination when using the enterprise row model, all you have to do is turning pagination on with
     <i>pagination=true</i>. Find below an example.

@@ -180,24 +180,8 @@ export class RichGridComponent {
         console.log('selectionChanged');
     }
 
-    private onBeforeFilterChanged() {
-        console.log('beforeFilterChanged');
-    }
-
-    private onAfterFilterChanged() {
-        console.log('afterFilterChanged');
-    }
-
     private onFilterModified() {
         console.log('onFilterModified');
-    }
-
-    private onBeforeSortChanged() {
-        console.log('onBeforeSortChanged');
-    }
-
-    private onAfterSortChanged() {
-        console.log('onAfterSortChanged');
     }
 
     private onVirtualRowRemoved($event) {

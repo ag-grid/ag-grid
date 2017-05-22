@@ -11,7 +11,12 @@
         <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
         <link inline href="dist/bootstrap/css/bootstrap.css" rel="stylesheet" >
         <link inline href="style.css" rel="stylesheet" >
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <?php include 'includes/meta.php'; ?>
+
+        <style>
+
+        </style>
 
     </head>
 
@@ -23,11 +28,45 @@
             <div class="Hero-grid">
                 <div class="container">
                     <div class="row text-center">
-                        <h1 style="padding-bottom: 10px; padding-top: 10px;" class="big-logo">
-                            <?php include 'images/logo-dark-hacked.svg'; ?>
-                        </h1>
+                        <div class="col-md-4">
+                            <h1 style="" class="big-logo">
+                                <?php include 'images/logo-dark-hacked.svg'; ?>
+                            </h1>
+                        </div>
+                        <div class="col-md-8">
+                            <h1 style="padding-top: 113px;">The Best Grid In The World</h1>
+                        </div>
+                    </div>
+                </div>
+
+<!--
+                <div class="container">
+                    <div class="row text-center">
 
                         <h1 style="padding-bottom: 10px; padding-top: 10px;">The Best Grid In The World</h1>
+
+                    </div>
+                </div>
+-->
+                <div class="container">
+                    <div class="row text-center">
+                        <div class="col-md-4 info-item">
+                            Over <span class="info-item-big">700 Companies</span>
+                            use ag-Grid Enterprise in their applications.
+                        </div>
+                        <div class="col-md-4 info-item">
+                            Over <span class="info-item-big">40,000 Downloads</span>
+                            per month of ag-Grid Free.
+                        </div>
+                        <div class="col-md-4 info-item">
+                            Over <span class="info-item-big">15%</span> of the
+                            <span class="info-item-big">Fortune 500</span>
+                            companies use ag-Grid Enterprise.
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row text-center">
 
                         <h2>
                             <a class="btn btn-primary btn-large" href="/javascript-grid-getting-started/">
@@ -37,6 +76,11 @@
                                 Trial Enterprise Version
                             </a>
                         </h2>
+
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row text-center">
                         <div class="Hero-share">
                             <a class='share-link' href="https://www.facebook.com/sharer/sharer.php?u=www.ag-grid.com" alt="Share ag-Grid on Facebook" title="Share ag-Grid on Facebook">
                                 <?php include 'images/social-icons/facebook-logo-hacked.svg'; ?>
@@ -58,13 +102,11 @@
 
         <div class="HomeSectionParent">
 
-            <?php include 'home/intro.php'; ?>
+            <?php include 'home/frameworks.php'; ?>
 
             <?php include 'home/demo-1.php'; ?>
 
             <?php include 'home/intro2.php'; ?>
-
-            <?php include 'home/frameworks.php'; ?>
 
             <?php include 'home/demo-3.php'; ?>
 

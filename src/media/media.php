@@ -21,6 +21,31 @@ include('../includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
+        <a href="../ag-grid-big-data-small-browser/">
+            <img src="../images/agGridDaily.png" style="width: 225px;"/>
+        </a>
+    </div>
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="../ag-grid-big-data-small-browser/">
+                Big Data / Small Browser
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            19th May 2017
+        </div>
+    </div>
+    <div style="color: #767676">
+        Niall Crosby
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Big data doesn't fit in a browser, so here is the thinking behind ag-Grid's new Enterprise Model.
+    </div>
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="float: left; width: 240px;">
         <a href="../ag-grid-partners-with-webpack/">
             <img src="../images/ag_grid_and_webpack.png" style="width: 225px;"/>
         </a>

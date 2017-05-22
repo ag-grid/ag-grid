@@ -200,6 +200,11 @@ include '../documentation-main/documentation_header.php';
             <th>processSecondaryColGroupDef(colGroupDef)</th>
             <td>Callback to be used with pivoting, to allow changing the second column group definition.</td>
         </tr>
+        <tr>
+            <th>postProcessPopup(params)</th>
+            <td>Allows user to process popups after they are created. Applications can use this if they want to, for
+                example, reposition the popup.</td>
+        </tr>
     </table>
 </div>
 

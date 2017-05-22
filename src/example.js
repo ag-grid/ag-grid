@@ -103,6 +103,10 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
+    postProcessPopup: function(params) {
+        console.log(params);
+    },
+    // suppressAsyncEvents: true,
     suppressAggAtRootLevel: true,
     floatingFilter:true,
 //debug: true,

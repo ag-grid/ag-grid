@@ -11,6 +11,16 @@
 <div style="position: absolute; padding-top: 4px; padding-left: 8px; top: 0px; left: 0px;">
     <input placeholder="Filter..." type="text" oninput="onFilterChanged(this.value)"/>
     <button style="margin-left: 20px;" onclick="onPrintQuickFilterTexts(this.value)">Print Quick Filter Texts</button>
+    <span style="margin-left: 50px">
+        <label>
+            <input onchange="reset()" type="radio" id="cbNormal" name="cache" checked />
+            Normal Quick Filter
+        </label>
+        <label>
+            <input onchange="reset()" type="radio" id="cbCache" name="cache"/>
+            Cache Quick Filter
+        </label>
+    </span>
 </div>
 </body>
 </html>

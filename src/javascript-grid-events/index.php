@@ -13,8 +13,15 @@ include '../documentation-main/documentation_header.php';
 
 
     <p>
-        Below are listed all the events of the grid you can listen to.
+        Below are listed all the events of the grid you can listen to. The events are asynchronously so that the state
+        of the grid will be settled by the time your event callback gets invoked.
     <p>
+
+    <note>
+        Events in ag-Grid became asynchronous in version 10.0.0. Before this, events were not asynchronous and you
+        were not guaranteed the grid was finished before the event was fired. The new method of asynchronous events
+        makes the grid work much better with systems designed around state and events, eg React.
+    </note>
 
     <?php if (isFrameworkJavaScript()) { ?>
         <div>
@@ -221,21 +228,15 @@ include '../documentation-main/documentation_header.php';
     </tr>
 
     <tr>
-        <th>sortChanged<br/>beforeSortChanged<br/>afterSortChanged</th>
+        <th>sortChanged</th>
         <td>
-            sortChanged -> Sort has changed, grid also listens for this and updates the model.<br/>
-            beforeSortChanged -> Sort has changed, grid has not updated.<br/>
-            afterSortChanged -> Sort has changed, grid has updated.<br/>
+            Sort has changed, grid also listens for this and updates the model.<br/>
         </td>
     </tr>
     <tr>
-        <th>filterChanged</br>beforeFilterChanged<br/>afterFilterChanged<br/>filterModified</th>
+        <th>filterChanged</th>
         <td>
-            filterChanged -> Filter has changed, grid also listens for this and updates the model.<br/>
-            beforeFilterChanged -> Filter has changed, grid has not updated.<br/>
-            afterFilterChanged -> Filter has changed, grid has updated.<br/>
-            filterModified -> Gets called when filter has been modified, but grid not informed. Useful when
-            using an apply button inside the filter.<br/>
+            Filter has changed, grid also listens for this and updates the model.<br/>
         </td>
     </tr>
 

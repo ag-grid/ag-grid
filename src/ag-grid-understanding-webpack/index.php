@@ -30,7 +30,7 @@ include('../includes/mediaHeader.php');
             Webpack journey,
             all those months ago.</p>
 
-        <p>When I first started <a href="/ag-grid-jobs-board/" target="_blank">working at ag-Grid</a> (which is a great place to work!) I had to ramp up on many
+        <p>When I first started <a href="../ag-grid-jobs-board/" target="_blank">working at ag-Grid</a> (which is a great place to work!) I had to ramp up on many
             technologies
             and frameworks that I hadn't used before. One of these was <a href="https://webpack.js.org/" target="_blank">Webpack</a> - a powerful bundler used in many
             applications & frameworks.</p>

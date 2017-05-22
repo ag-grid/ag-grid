@@ -20,7 +20,7 @@ include('../includes/mediaHeader.php');
         <p>Here at ag-Grid, we are very excited to be able to offer support for Aurelia! Aurelia is a powerful and flexible framework that makes developing applications a breeze.</p>
 
         <p>In this post, I won't be documenting how to use Aurelia in ag-Grid but rather on how
-        we added support for Aurelia within the grid itself. For details on how to use Aurelia in ag-Grid, take a look at the <a href="/best-aurelia-data-grid">ag-Grid Aurelia</a> documentation.</p>
+        we added support for Aurelia within the grid itself. For details on how to use Aurelia in ag-Grid, take a look at the <a href="../best-aurelia-data-grid">ag-Grid Aurelia</a> documentation.</p>
 
         <h4>AgGridAurelia</h4>
         <p>

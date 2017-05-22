@@ -268,6 +268,22 @@ console.log('found column with id ' + sausageKingdomColumn.getId());
 
     <show-example example="examplePivotAdvancedColumns"></show-example>
 
+    <h2 id="hideOpenParents">Hide Open Parents</h2>
+
+    <p>
+        The example below shows mixing in different options for the row group column. For more info on these properties,
+        see <a href="../javascript-grid-grouping/">Grouping Rows</a>.
+        <ul>
+        <li><i>groupHideOpenParents=true: </i> So that when the row group is expanded, the parent row is not
+        shown.</li>
+        <li><i>groupMultiAutoColumn=true: </i> So that one group column is created for each
+        row group column (country and athlete)</li>
+        <li><i>groupDefaultExpanded=2: </i> So that all the groups are opened by default</li>
+        </ul>
+    </p>
+
+    <show-example example="examplePivotHideOpenParents"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

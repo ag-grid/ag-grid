@@ -1,7 +1,8 @@
 <section class="HomeSection HomeDemo hidden-xs">
 
     <div class="container">
-        <h4 class="text-center">Customise And Create Rich Applications</h4>
+        <h4 class="text-center">ag-Grid is a feature rich, fully customisable data grid that will put your
+        application on steroids</h4>
         <div class="row HomeDemo-main">
             <div class="col-md-12">
                 <div style="padding: 4px;">

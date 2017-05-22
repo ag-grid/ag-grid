@@ -75,6 +75,14 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleForPrintRtl"></show-example>
 
+    <h3 id="for-print-child-detail">For Print and Master Detail Grids</h3>
+
+    <p>
+        It is not possible to have one grid embedded inside another grid with the forPrint setting
+        different for each grid. So if doing master / detail, and have one grid INSIDE another grid,
+        then both grids must have either forPrint=true, or both must have forPrint=false.
+    </p>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -183,11 +183,6 @@ include '../documentation-main/documentation_header.php';
                 over the column header.</td>
         </tr>
         <tr>
-            <th>suppressMenuHide</th>
-            <td>Set to true to always show the column menu button, rather than only showing when the mouse is
-                over the column header.</td>
-        </tr>
-        <tr>
             <th>groupColumnDef</th>
             <td>Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping,
                 this column is not included.</td>
@@ -215,6 +210,10 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>quickFilterText</th>
             <td>Rows are filtered using this text as a 'quick filter'.</td>
+        </tr>
+        <tr>
+            <th>cacheQuickFilter</th>
+            <td>Set to true to turn on the quick filter cache, used for a performance gain.</td>
         </tr>
         <tr>
             <th>sortingOrder</th>
@@ -284,7 +283,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th colspan="2"><h2>Headers</h2></th>
         </tr>
-        <?php include '../javascript-grid-resizing/headerHeightProperties.php' ?>
+        <?php include '../javascript-grid-column-header/headerHeightProperties.php' ?>
         <?php printPropertiesRows($headerHeightProperties) ?>
         <!------------------->
         <!-- Row Grouping & Pivoting       -->
@@ -550,7 +549,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>excelStyles</th>
-            <td>The list of Excel styles to be used when <a href="/javascript-grid-excel/">exporting to Excel</a></td>
+            <td>The list of Excel styles to be used when <a href="../javascript-grid-excel/">exporting to Excel</a></td>
         </tr>
         <tr>
             <th>scrollbarWidth</th>
@@ -695,6 +694,12 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>suppressTouch</th>
             <td>Disables touch support (but does not remove the browsers efforts to simulate mouse events on touch).</td>
+        </tr>
+        <tr>
+            <th>suppressAsyncEvents</th>
+            <td>Disables the async nature of the events introduced in v10, and makes them syncrhonous. This property
+            is only introduced for the purpose of supporting legacy code which has a dependency to sync events. It is
+            strongly recommended that you don't change this property unless you have legacy issues</td>
         </tr>
     </table>
 </div>

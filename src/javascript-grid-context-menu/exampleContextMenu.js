@@ -26,7 +26,8 @@ function getContextMenuItems(params) {
     var result = [
         { // custom item
             name: 'Alert ' + params.value,
-            action: function () {window.alert('Alerting about ' + params.value); }
+            action: function () {window.alert('Alerting about ' + params.value); },
+            cssClasses: ['redFont', 'bold']
         },
         { // custom item
             name: 'Always Disabled',

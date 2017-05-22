@@ -68,6 +68,7 @@ include '../documentation-main/documentation_header.php';
     checked?: boolean, // set to true to provide a check beside the option
     icon?: HTMLElement|string, // the icon to display beside the icon, either a DOM element or HTML string
     subMenu?: MenuItemDef[] // if this menu is a sub menu, contains a list of sub menu item definitions
+    cssClasses?: string[]; //Additional CSS classes to be applied to the menu item
 }
 </pre>
     </p>

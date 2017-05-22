@@ -564,6 +564,15 @@ include '../documentation-main/documentation_header.php';
         <?php include '../javascript-grid-pagination/paginationProperties.php' ?>
         <?php printPropertiesRows($paginationApi) ?>
 
+        <!------------------->
+        <!-- Pagination -->
+        <!------------------->
+        <tr>
+            <th colspan="2"><h2>Headers</h2></th>
+        </tr>
+        <?php include '../javascript-grid-column-header/headerHeightProperties.php' ?>
+        <?php printPropertiesRows($headerHeightApi) ?>
+
 
         <!------------------->
         <!-- Miscellaneous -->
@@ -605,12 +614,6 @@ include '../documentation-main/documentation_header.php';
             <td>Gets the value for a column for a particular rowNode (row).
                 This is useful if you want the raw value of a cell eg implementing your own csv export.
             </td>
-        </tr>
-        <tr>
-            <th>setHeaderHeight(value)</th>
-            <td>To set the header height (in pixels) after the grid has initialised. Set to null or undefined
-                to use the default of 25px. If havling multiple rows in the header, due to column grouping,
-                this will be the height of each row.</td>
         </tr>
         <tr>
             <th>destroy()</th>

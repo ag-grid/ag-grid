@@ -1,35 +1,38 @@
 var columnDefs = [{
-    headerName: 'Group1',
-    children: [
-        {headerName: "Athlete", field: "athlete", width: 150},
-        {headerName: "Age", field: "age", width: 90, cellClass:'twoDecimalPlaces', cellClassRules:{
-            greenBackground: function(params) { return params.value < 23},
-            redFont: function(params) { return params.value < 20}
-        }},
-        {headerName: "Country", field: "country", width: 120, cellClassRules: {
-            redFont: function(params) { return params.value === 'United States' }
-        }},
-        {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 75, cellClassRules:{
-                boldBorders: function(params) { return params.value === 'U'}
+    headerName: 'Top Level Column Group',
+    children: [{
+        headerName: 'Group A',
+        children: [
+            {headerName: "Athlete", field: "athlete", width: 150},
+            {headerName: "Age", field: "age", width: 90, cellClass:'twoDecimalPlaces', cellClassRules:{
+                greenBackground: function(params) { return params.value < 23},
+                redFont: function(params) { return params.value < 20}
+            }},
+            {headerName: "Country", field: "country", width: 120, cellClassRules: {
+                redFont: function(params) { return params.value === 'United States' }
+            }},
+            {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 75, cellClassRules:{
+                    boldBorders: function(params) { return params.value === 'U'}
+                },
+                cellClass:['redFont', 'greenBackground']
             },
-            cellClass:['redFont', 'greenBackground']
-        },
-        {headerName: "Year", field: "year", width: 75, cellClassRules:{
-            notInExcel: function(params) { return true}
-        }}
-    ]
-}, {
-    headerName: 'Group2',
-    children: [
-        {headerName: "Date", field: "date", width: 110},
-        {headerName: "Sport", field: "sport", width: 110},
-        {headerName: "Gold", field: "gold", width: 100, cellClassRules:{
-            boldBorders: function(params) { return params.value > 2}
-        }},
-        {headerName: "Silver", field: "silver", width: 100, cellClass:'textFormat'},
-        {headerName: "Bronze", field: "bronze", width: 100},
-        {headerName: "Total", field: "total", width: 100}
-    ]
+            {headerName: "Year", field: "year", width: 75, cellClassRules:{
+                notInExcel: function(params) { return true}
+            }}
+        ]
+    }, {
+        headerName: 'Group B',
+        children: [
+            {headerName: "Date", field: "date", width: 110},
+            {headerName: "Sport", field: "sport", width: 110},
+            {headerName: "Gold", field: "gold", width: 100, cellClassRules:{
+                boldBorders: function(params) { return params.value > 2}
+            }},
+            {headerName: "Silver", field: "silver", width: 100, cellClass:'textFormat'},
+            {headerName: "Bronze", field: "bronze", width: 100},
+            {headerName: "Total", field: "total", width: 100}
+        ]
+    }]
 }];
 
 var floatingTopRow = { athlete: 'Floating Top Athlete', age: 999, country: 'Floating Top Country', year: 2020,

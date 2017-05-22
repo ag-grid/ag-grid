@@ -18,6 +18,45 @@
 </style>
 
 <div class="news-box">
+    <img style="float: left; margin-right: 10px;" src="../images/svg/docs/newspaper.svg" align="left" width="50" />
+    <div class="news-header">19th May 2017</div>
+    <div style="padding-top: 10px;">
+        <a href="../ag-grid-big-data-small-browser/">
+            JavaScript Big Server in a Small Browser - The Enterprise Row Model
+        </a>
+    </div>
+</div>
+
+<div class="news-box">
+    <div class="news-header">19th May 2017</div>
+    <div class="news-header">ag-Grid 10.0.0 Released</div>
+    <div>
+        ag-Grid v10 is here. Weeks of work, hours of sweat, three pounds of flesh!
+        Featuring:
+    </div>
+    <div>
+        <ul style="padding-left: 20px;">
+            <li>
+                <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-excel/#exportToXlsx">Excel XLSX Export</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-column-header/">Dynamic Header Sizes</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-events/">Async Events</a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        See the <a href="../change-log/changeLogIndex.php">Change Log</a>
+        for full release details.
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header" style="margin-bottom: 27px;">
         <img src="../images/liberty_statue.png" align="right" width="100"/>
         2nd May 2017
@@ -38,18 +77,6 @@
         We are also dropping by our clients so get in touch if you'd like to meet the team.
     </div>
 </div>
-
-<div class="news-box">
-    <div class="news-header">30th March 2017</div>
-    <div>
-        <img src="../images/YouTubeSmall.png" style="position: relative; top: -2px;"/>
-        Movie explaining the
-        <a href="https://www.youtube.com/watch?v=dRQtpULw6Hw">
-            Enterprise Row Model
-        </a>.
-    </div>
-</div>
-
 
 <div class="news-box">
     <div class="news-header">29th March 2017</div>
@@ -109,13 +136,6 @@
     <div style="padding-top: 10px;">
         We're excited to be speaking at <a href="https://www.meetup.com/AngularJSDublin/events/238342599/" target="_blank">AngularJS Dublin</a>
         on the 23rd March! Pop in and hear us - we'd love to meet you.
-    </div>
-</div>
-
-<div class="news-box">
-    <img src="../images/newsbar/jobs-board.png" style="width: 80px; float: left; margin-right: 10px;"/>
-    <div style="">
-        We are hiring, check the <a href="../ag-grid-jobs-board/">jobs board</a>.
     </div>
 </div>
 
