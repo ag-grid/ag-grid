@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.1.0
+// ag-grid-enterprise v10.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -37,6 +37,13 @@ var AggregationStage = (function () {
                 _this.recursivelyCreateAggData(child, measureColumns, pivotColumns);
             }
         });
+        //Optionally prevent the aggregation at the root Node
+        //https://ag-grid.atlassian.net/browse/AG-388
+        var notPivoting = !this.columnController.isPivotMode();
+        var suppressAggAtRootLevel = this.gridOptionsWrapper.isSuppressAggAtRootLevel();
+        var isRootNode = rowNode.level === -1;
+        if (isRootNode && suppressAggAtRootLevel && notPivoting)
+            return;
         this.aggregateRowNode(rowNode, measureColumns, pivotColumns);
     };
     AggregationStage.prototype.aggregateRowNode = function (rowNode, measureColumns, pivotColumns) {
@@ -44,13 +51,13 @@ var AggregationStage = (function () {
         var pivotColumnsMissing = pivotColumns.length === 0;
         var userProvidedGroupRowAggNodes = this.gridOptionsWrapper.getGroupRowAggNodesFunc();
         var aggResult;
-        if (userProvidedGroupRowAggNodes) {
+        if (rowNode.group && userProvidedGroupRowAggNodes) {
             aggResult = userProvidedGroupRowAggNodes(rowNode.childrenAfterFilter);
         }
         else if (measureColumnsMissing) {
             aggResult = null;
         }
-        else if (pivotColumnsMissing) {
+        else if (rowNode.group && pivotColumnsMissing) {
             aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, measureColumns);
         }
         else {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.1.0
+// ag-grid-enterprise v10.0.0
 "use strict";
 var main_1 = require("ag-grid/main");
 // we cannot have 'null' as a key in a JavaScript map,
@@ -164,7 +164,7 @@ var SetFilterModel = (function () {
         return this.displayedValues[index];
     };
     SetFilterModel.prototype.selectEverything = function () {
-        if (!this.filterParams.selectAllOnMiniFilter) {
+        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
             this.selectOn(this.allUniqueValues);
         }
         else {

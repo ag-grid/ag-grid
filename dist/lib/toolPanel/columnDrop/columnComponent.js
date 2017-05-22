@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.1.0
+// ag-grid-enterprise v10.0.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -91,7 +91,7 @@ var ColumnComponent = (function (_super) {
         }
         this.popupShowing = true;
         var virtualList = new virtualList_1.VirtualList();
-        var rows = this.aggFuncService.getFuncNames();
+        var rows = this.aggFuncService.getFuncNames(this.column);
         virtualList.setModel({
             getRow: function (index) { return rows[index]; },
             getRowCount: function () { return rows.length; }
@@ -110,9 +110,11 @@ var ColumnComponent = (function (_super) {
         var hidePopup = this.popupService.addAsModalPopup(ePopup, true, popupHiddenFunc);
         virtualList.setComponentCreator(this.createAggSelect.bind(this, hidePopup));
         this.popupService.positionPopupUnderComponent({
+            type: 'aggFuncSelect',
             eventSource: this.getGui(),
             ePopup: ePopup,
-            keepWithinBounds: true
+            keepWithinBounds: true,
+            column: this.column
         });
         virtualList.refresh();
     };
