@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.1.0
+// ag-grid-enterprise v10.0.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -68,6 +68,9 @@ var ContextMenuFactory = (function () {
         // is visible can we find out what the width of it is
         var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function () { return menu.destroy(); });
         this.popupService.positionPopupUnderMouseEvent({
+            column: column,
+            rowNode: node,
+            type: 'contextMenu',
             mouseEvent: mouseEvent,
             ePopup: eMenuGui
         });

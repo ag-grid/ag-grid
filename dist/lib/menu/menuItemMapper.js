@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.1.0
+// ag-grid-enterprise v10.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -143,7 +143,7 @@ var MenuItemMapper = (function () {
         var _this = this;
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var columnIsAlreadyAggValue = column.isValueActive();
-        var funcNames = this.aggFuncService.getFuncNames();
+        var funcNames = this.aggFuncService.getFuncNames(column);
         var columnToUse;
         if (column.isPrimary()) {
             columnToUse = column;

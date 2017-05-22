@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.1.0
+// ag-grid-enterprise v10.0.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -14,27 +14,30 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var ag_grid_1 = require("ag-grid");
+var enterpriseCache_1 = require("./enterpriseCache");
 var EnterpriseRowModel = (function (_super) {
     __extends(EnterpriseRowModel, _super);
     function EnterpriseRowModel() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        // each time the data changes we increment the instance version.
-        // that way we know to discard any daemon network calls, that are bringing
-        // back data for an old version.
-        _this.instanceVersion = 0;
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     EnterpriseRowModel.prototype.postConstruct = function () {
-        this.addEventListeners();
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        this.datasource = this.gridOptionsWrapper.getEnterpriseDatasource();
-        if (this.datasource) {
-            this.reset();
-        }
+        this.addEventListeners();
+    };
+    EnterpriseRowModel.prototype.setBeans = function (loggerFactory) {
+        this.logger = loggerFactory.create('EnterpriseRowModel');
     };
     EnterpriseRowModel.prototype.isLastRowFound = function () {
-        return true;
+        if (ag_grid_1._.exists(this.rootNode) && ag_grid_1._.exists(this.rootNode.childrenCache)) {
+            return this.rootNode.childrenCache.isMaxRowFound();
+        }
+        else {
+            return false;
+        }
     };
     EnterpriseRowModel.prototype.addEventListeners = function () {
         this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
@@ -57,68 +60,54 @@ var EnterpriseRowModel = (function (_super) {
     };
     EnterpriseRowModel.prototype.onRowGroupOpened = function (event) {
         var openedNode = event.node;
-        if (openedNode.expanded && ag_grid_1._.missing(openedNode.childrenAfterSort)) {
-            this.loadNode(openedNode);
+        if (openedNode.expanded) {
+            if (ag_grid_1._.missing(openedNode.childrenCache)) {
+                this.createNodeCache(openedNode);
+            }
         }
         else {
-            this.mapAndFireModelUpdated();
+            if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && ag_grid_1._.exists(openedNode.childrenCache)) {
+                openedNode.childrenCache.destroy();
+                openedNode.childrenCache = null;
+            }
         }
+        this.updateRowIndexes();
+        var modelUpdatedEvent = { animate: true, keepRenderedRows: true };
+        this.eventService.dispatchEvent(ag_grid_1.Events.EVENT_MODEL_UPDATED, modelUpdatedEvent);
     };
     EnterpriseRowModel.prototype.reset = function () {
-        this.nextId = 0;
-        this.rowsToDisplay = null;
-        this.instanceVersion++;
         this.rootNode = new ag_grid_1.RowNode();
         this.rootNode.group = true;
         this.rootNode.level = -1;
         this.context.wireBean(this.rootNode);
         if (this.datasource) {
-            this.loadNode(this.rootNode);
+            this.createNewRowNodeBlockLoader();
+            this.cacheParams = this.createCacheParams();
+            this.createNodeCache(this.rootNode);
+            this.updateRowIndexes();
         }
         // this event: 1) clears selection 2) updates filters 3) shows/hides 'no rows' overlay
         this.eventService.dispatchEvent(ag_grid_1.Events.EVENT_ROW_DATA_CHANGED);
-        // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start)
+        // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).
+        // important to NOT pass in an event with keepRenderedRows or animate, as we want the renderer
+        // to treat the rows as new rows, as it's all new data
         this.eventService.dispatchEvent(ag_grid_1.Events.EVENT_MODEL_UPDATED);
+    };
+    EnterpriseRowModel.prototype.createNewRowNodeBlockLoader = function () {
+        this.destroyRowNodeBlockLoader();
+        var maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
+        this.rowNodeBlockLoader = new ag_grid_1.RowNodeBlockLoader(maxConcurrentRequests);
+        this.context.wireBean(this.rowNodeBlockLoader);
+    };
+    EnterpriseRowModel.prototype.destroyRowNodeBlockLoader = function () {
+        if (this.rowNodeBlockLoader) {
+            this.rowNodeBlockLoader.destroy();
+            this.rowNodeBlockLoader = null;
+        }
     };
     EnterpriseRowModel.prototype.setDatasource = function (datasource) {
         this.datasource = datasource;
         this.reset();
-    };
-    EnterpriseRowModel.prototype.loadNode = function (rowNode) {
-        var _this = this;
-        var params = this.createLoadParams(rowNode);
-        rowNode.setLoading(true);
-        setTimeout(function () {
-            _this.datasource.getRows(params);
-        }, 0);
-    };
-    EnterpriseRowModel.prototype.createGroupKeys = function (groupNode) {
-        var keys = [];
-        var pointer = groupNode;
-        while (pointer.level >= 0) {
-            keys.push(pointer.key);
-            pointer = pointer.parent;
-        }
-        keys.reverse();
-        return keys;
-    };
-    EnterpriseRowModel.prototype.createLoadParams = function (rowNode) {
-        var groupKeys = this.createGroupKeys(rowNode);
-        var rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
-        var valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
-        var request = {
-            rowGroupCols: rowGroupColumnVos,
-            valueCols: valueColumnVos,
-            groupKeys: groupKeys,
-            filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.sortController.getSortModel()
-        };
-        var params = {
-            successCallback: this.successCallback.bind(this, this.instanceVersion, rowNode),
-            failCallback: this.failCallback.bind(this, this.instanceVersion, rowNode),
-            request: request
-        };
-        return params;
     };
     EnterpriseRowModel.prototype.toValueObjects = function (columns) {
         var _this = this;
@@ -129,49 +118,51 @@ var EnterpriseRowModel = (function (_super) {
             field: col.getColDef().field
         }); });
     };
-    EnterpriseRowModel.prototype.successCallback = function (instanceVersion, parentNode, dataItems) {
-        var _this = this;
-        var isDaemon = instanceVersion !== this.instanceVersion;
-        if (isDaemon) {
-            return;
+    EnterpriseRowModel.prototype.createCacheParams = function () {
+        var rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
+        var valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
+        var params = {
+            // the columns the user has grouped and aggregated by
+            valueCols: valueColumnVos,
+            rowGroupCols: rowGroupColumnVos,
+            // sort and filter model
+            filterModel: this.filterManager.getFilterModel(),
+            sortModel: this.sortController.getSortModel(),
+            rowNodeBlockLoader: this.rowNodeBlockLoader,
+            datasource: this.datasource,
+            lastAccessedSequence: new ag_grid_1.NumberSequence(),
+            overflowSize: 1,
+            initialRowCount: 1,
+            maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
+            maxBlocksInCache: this.gridOptionsWrapper.getMaxBlocksInCache(),
+            blockSize: this.gridOptionsWrapper.getCacheBlockSize(),
+            rowHeight: this.rowHeight
+        };
+        // set defaults
+        if (!(params.maxConcurrentRequests >= 1)) {
+            params.maxConcurrentRequests = 2;
         }
-        var groupCols = this.columnController.getRowGroupColumns();
-        var newNodesLevel = parentNode.level + 1;
-        var newNodesAreGroups = groupCols.length > newNodesLevel;
-        var field = newNodesAreGroups ? groupCols[newNodesLevel].getColDef().field : null;
-        parentNode.setLoading(false);
-        parentNode.childrenAfterSort = [];
-        if (dataItems) {
-            dataItems.forEach(function (dataItem) {
-                var childNode = new ag_grid_1.RowNode();
-                _this.context.wireBean(childNode);
-                childNode.group = newNodesAreGroups;
-                childNode.level = newNodesLevel;
-                childNode.parent = parentNode;
-                childNode.setDataAndId(dataItem, _this.nextId.toString());
-                if (newNodesAreGroups) {
-                    childNode.expanded = false;
-                    childNode.field = field;
-                    childNode.key = dataItem[field];
-                }
-                parentNode.childrenAfterSort.push(childNode);
-                _this.nextId++;
-            });
+        // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
+        // server for one page at a time. so the default if not specified is 100.
+        if (!(params.blockSize >= 1)) {
+            params.blockSize = 100;
         }
-        this.mapAndFireModelUpdated();
+        // if user doesn't give initial rows to display, we assume zero
+        if (!(params.initialRowCount >= 1)) {
+            params.initialRowCount = 0;
+        }
+        // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
+        // the current page and request first row of next page
+        if (!(params.overflowSize >= 1)) {
+            params.overflowSize = 1;
+        }
+        return params;
     };
-    EnterpriseRowModel.prototype.mapAndFireModelUpdated = function () {
-        this.doRowsToDisplay();
-        this.doSetRowTop();
-        var event = { animate: true, keepRenderedRows: true, newData: false, newPage: false };
-        this.eventService.dispatchEvent(ag_grid_1.Events.EVENT_MODEL_UPDATED, event);
-    };
-    EnterpriseRowModel.prototype.failCallback = function (instanceVersion, rowNode) {
-        var isDaemon = instanceVersion !== this.instanceVersion;
-        if (isDaemon) {
-            return;
-        }
-        rowNode.setLoading(false);
+    EnterpriseRowModel.prototype.createNodeCache = function (rowNode) {
+        var cache = new enterpriseCache_1.EnterpriseCache(this.cacheParams, rowNode);
+        this.context.wireBean(cache);
+        cache.addEventListener(ag_grid_1.RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
+        rowNode.childrenCache = cache;
     };
     EnterpriseRowModel.prototype.getRowBounds = function (index) {
         return {
@@ -179,50 +170,97 @@ var EnterpriseRowModel = (function (_super) {
             rowTop: this.rowHeight * index
         };
     };
-    EnterpriseRowModel.prototype.doSetRowTop = function () {
-        var accumulatedRowTop = 0;
-        this.rowsToDisplay.forEach(function (rowToDisplay) {
-            rowToDisplay.setRowTop(accumulatedRowTop);
-            accumulatedRowTop += rowToDisplay.rowHeight;
-        });
+    EnterpriseRowModel.prototype.onCacheUpdated = function () {
+        this.updateRowIndexes();
+        var modelUpdatedEvent = { animate: true, keepRenderedRows: true };
+        this.eventService.dispatchEvent(ag_grid_1.Events.EVENT_MODEL_UPDATED, modelUpdatedEvent);
+    };
+    EnterpriseRowModel.prototype.updateRowIndexes = function () {
+        var cacheExists = ag_grid_1._.exists(this.rootNode) && ag_grid_1._.exists(this.rootNode.childrenCache);
+        if (cacheExists) {
+            // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
+            var enterpriseCache = this.rootNode.childrenCache;
+            var numberSequence = new ag_grid_1.NumberSequence();
+            enterpriseCache.setDisplayIndexes(numberSequence);
+        }
     };
     EnterpriseRowModel.prototype.getRow = function (index) {
-        return this.rowsToDisplay[index];
+        var cacheExists = ag_grid_1._.exists(this.rootNode) && ag_grid_1._.exists(this.rootNode.childrenCache);
+        if (cacheExists) {
+            return this.rootNode.childrenCache.getRow(index);
+        }
+        else {
+            return null;
+        }
     };
     EnterpriseRowModel.prototype.getPageFirstRow = function () {
         return 0;
     };
     EnterpriseRowModel.prototype.getPageLastRow = function () {
-        return this.rowsToDisplay ? this.rowsToDisplay.length - 1 : 0;
+        var cacheExists = ag_grid_1._.exists(this.rootNode) && ag_grid_1._.exists(this.rootNode.childrenCache);
+        var lastRow;
+        if (cacheExists) {
+            // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
+            var enterpriseCache = this.rootNode.childrenCache;
+            lastRow = enterpriseCache.getLastDisplayedIndex();
+        }
+        else {
+            lastRow = 0;
+        }
+        return lastRow;
     };
     EnterpriseRowModel.prototype.getRowCount = function () {
-        return this.rowsToDisplay ? this.rowsToDisplay.length : 0;
+        return this.getPageLastRow() + 1;
     };
     EnterpriseRowModel.prototype.getRowIndexAtPixel = function (pixel) {
         if (this.rowHeight !== 0) {
-            return Math.floor(pixel / this.rowHeight);
+            var rowIndexForPixel = Math.floor(pixel / this.rowHeight);
+            if (rowIndexForPixel > this.getPageLastRow()) {
+                return this.getPageLastRow();
+            }
+            else {
+                return rowIndexForPixel;
+            }
         }
         else {
             return 0;
         }
     };
     EnterpriseRowModel.prototype.getCurrentPageHeight = function () {
-        return this.getPageLastRow() * this.rowHeight;
+        var pageHeight = this.rowHeight * this.getRowCount();
+        return pageHeight;
     };
     EnterpriseRowModel.prototype.isEmpty = function () {
-        return ag_grid_1._.missing(this.rootNode);
+        return false;
     };
     EnterpriseRowModel.prototype.isRowsToRender = function () {
-        return this.rowsToDisplay ? this.rowsToDisplay.length > 0 : false;
+        return this.getRowCount() > 0;
     };
     EnterpriseRowModel.prototype.getType = function () {
         return ag_grid_1.Constants.ROW_MODEL_TYPE_ENTERPRISE;
     };
-    EnterpriseRowModel.prototype.doRowsToDisplay = function () {
-        this.rowsToDisplay = this.flattenStage.execute({ rowNode: this.rootNode });
-    };
     EnterpriseRowModel.prototype.forEachNode = function (callback) {
-        console.log('forEachNode not supported in enterprise row model');
+        if (this.rootNode && this.rootNode.childrenCache) {
+            this.rootNode.childrenCache.forEachNodeDeep(callback, new ag_grid_1.NumberSequence());
+        }
+    };
+    EnterpriseRowModel.prototype.purgeCache = function (route) {
+        if (route === void 0) { route = []; }
+        if (this.rootNode && this.rootNode.childrenCache) {
+            var topLevelCache = this.rootNode.childrenCache;
+            var cacheToPurge = topLevelCache.getChildCache(route);
+            if (cacheToPurge) {
+                cacheToPurge.purgeCache();
+            }
+        }
+    };
+    EnterpriseRowModel.prototype.getBlockState = function () {
+        if (this.rowNodeBlockLoader) {
+            return this.rowNodeBlockLoader.getBlockState();
+        }
+        else {
+            return null;
+        }
     };
     EnterpriseRowModel.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {
         console.log('insertItemsAtIndex not supported in enterprise row model');
@@ -234,7 +272,6 @@ var EnterpriseRowModel = (function (_super) {
         console.log('addItems not supported in enterprise row model');
     };
     EnterpriseRowModel.prototype.isRowPresent = function (rowNode) {
-        console.log('isRowPresent not supported in enterprise row model');
         return false;
     };
     return EnterpriseRowModel;
@@ -251,10 +288,6 @@ __decorate([
     ag_grid_1.Autowired('context'),
     __metadata("design:type", ag_grid_1.Context)
 ], EnterpriseRowModel.prototype, "context", void 0);
-__decorate([
-    ag_grid_1.Autowired('flattenStage'),
-    __metadata("design:type", ag_grid_1.FlattenStage)
-], EnterpriseRowModel.prototype, "flattenStage", void 0);
 __decorate([
     ag_grid_1.Autowired('columnController'),
     __metadata("design:type", ag_grid_1.ColumnController)
@@ -273,6 +306,12 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], EnterpriseRowModel.prototype, "postConstruct", null);
+__decorate([
+    __param(0, ag_grid_1.Qualifier('loggerFactory')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [ag_grid_1.LoggerFactory]),
+    __metadata("design:returntype", void 0)
+], EnterpriseRowModel.prototype, "setBeans", null);
 EnterpriseRowModel = __decorate([
     ag_grid_1.Bean('rowModel')
 ], EnterpriseRowModel);

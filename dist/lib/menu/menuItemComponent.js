@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.1.0
+// ag-grid-enterprise v10.0.0
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -24,6 +24,7 @@ var MenuItemComponent = (function (_super) {
         return _this;
     }
     MenuItemComponent.prototype.init = function () {
+        var _this = this;
         if (this.params.checked) {
             this.queryForHtmlElement('#eIcon').innerHTML = '&#10004;';
         }
@@ -66,6 +67,9 @@ var MenuItemComponent = (function (_super) {
         }
         else {
             this.addGuiEventListener('click', this.onOptionSelected.bind(this));
+        }
+        if (this.params.cssClasses) {
+            this.params.cssClasses.forEach(function (it) { return ag_grid_1.Utils.addCssClass(_this.getGui(), it); });
         }
     };
     MenuItemComponent.prototype.onOptionSelected = function () {

@@ -1,20 +1,20 @@
-// ag-grid-enterprise v9.1.0
-import { IRowModel, RowNode, BeanStub, IEnterpriseDatasource } from "ag-grid";
-export declare class EnterpriseRowModel extends BeanStub implements IRowModel {
+// ag-grid-enterprise v10.0.0
+import { BeanStub, IEnterpriseDatasource, RowNode, IEnterpriseRowModel } from "ag-grid";
+export declare class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel {
     private gridOptionsWrapper;
     private eventService;
     private context;
-    private flattenStage;
     private columnController;
     private filterManager;
     private sortController;
     private rootNode;
     private datasource;
     private rowHeight;
-    private rowsToDisplay;
-    private nextId;
-    private instanceVersion;
+    private cacheParams;
+    private logger;
+    private rowNodeBlockLoader;
     private postConstruct();
+    private setBeans(loggerFactory);
     isLastRowFound(): boolean;
     private addEventListeners();
     private onFilterChanged();
@@ -23,19 +23,18 @@ export declare class EnterpriseRowModel extends BeanStub implements IRowModel {
     private onColumnRowGroupChanged();
     private onRowGroupOpened(event);
     private reset();
+    private createNewRowNodeBlockLoader();
+    private destroyRowNodeBlockLoader();
     setDatasource(datasource: IEnterpriseDatasource): void;
-    private loadNode(rowNode);
-    private createGroupKeys(groupNode);
-    private createLoadParams(rowNode);
     private toValueObjects(columns);
-    private successCallback(instanceVersion, parentNode, dataItems);
-    private mapAndFireModelUpdated();
-    private failCallback(instanceVersion, rowNode);
+    private createCacheParams();
+    private createNodeCache(rowNode);
     getRowBounds(index: number): {
         rowTop: number;
         rowHeight: number;
     };
-    doSetRowTop(): void;
+    private onCacheUpdated();
+    updateRowIndexes(): void;
     getRow(index: number): RowNode;
     getPageFirstRow(): number;
     getPageLastRow(): number;
@@ -45,8 +44,9 @@ export declare class EnterpriseRowModel extends BeanStub implements IRowModel {
     isEmpty(): boolean;
     isRowsToRender(): boolean;
     getType(): string;
-    private doRowsToDisplay();
     forEachNode(callback: (rowNode: RowNode) => void): void;
+    purgeCache(route?: string[]): void;
+    getBlockState(): any;
     insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void;
     removeItems(rowNodes: RowNode[], skipRefresh: boolean): void;
     addItems(item: any[], skipRefresh: boolean): void;

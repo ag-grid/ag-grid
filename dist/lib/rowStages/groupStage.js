@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.1.0
+// ag-grid-enterprise v10.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -139,6 +139,7 @@ var GroupStage = (function () {
         this.context.wireBean(nextGroup);
         nextGroup.group = true;
         nextGroup.field = groupColumn.getColDef().field;
+        nextGroup.rowGroupColumn = groupColumn;
         // we use negative number for the ids of the groups, this makes sure we don't clash with the
         // id's of the leaf nodes.
         nextGroup.id = (this.groupIdSequence.next() * -1).toString();
@@ -153,7 +154,7 @@ var GroupStage = (function () {
             nextGroup.expanded = this.isExpanded(expandByDefault, level);
         }
         nextGroup.allLeafChildren = [];
-        nextGroup.allChildrenCount = 0;
+        nextGroup.setAllChildrenCount(0);
         nextGroup.rowGroupIndex = level;
         nextGroup.parent = includeParents ? parent : null;
         return nextGroup;

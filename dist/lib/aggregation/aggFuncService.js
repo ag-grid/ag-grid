@@ -1,4 +1,4 @@
-// ag-grid-enterprise v9.1.0
+// ag-grid-enterprise v10.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -32,13 +32,17 @@ var AggFuncService = AggFuncService_1 = (function () {
         this.aggFuncsMap[AggFuncService_1.AGG_COUNT] = aggCount;
         this.aggFuncsMap[AggFuncService_1.AGG_AVG] = aggAvg;
     };
-    AggFuncService.prototype.getDefaultAggFunc = function () {
-        if (this.aggFuncsMap[AggFuncService_1.AGG_SUM]) {
-            // use 'sum' if it's still there (ie user has not removed it)
+    AggFuncService.prototype.getDefaultAggFunc = function (column) {
+        var allKeys = this.getFuncNames(column);
+        // use 'sum' if it's a) allowed for the column and b) still registered
+        // (ie not removed by user)
+        var sumInKeysList = allKeys.indexOf(AggFuncService_1.AGG_SUM) >= 0;
+        var sumInFuncs = main_1._.exists(this.aggFuncsMap[AggFuncService_1.AGG_SUM]);
+        var useSum = sumInKeysList && sumInFuncs;
+        if (useSum) {
             return AggFuncService_1.AGG_SUM;
         }
         else {
-            var allKeys = this.getFuncNames();
             if (main_1.Utils.existsAndNotEmpty(allKeys)) {
                 return allKeys[0];
             }
@@ -58,8 +62,14 @@ var AggFuncService = AggFuncService_1 = (function () {
         this.init();
         return this.aggFuncsMap[name];
     };
-    AggFuncService.prototype.getFuncNames = function () {
-        return Object.keys(this.aggFuncsMap).sort();
+    AggFuncService.prototype.getFuncNames = function (column) {
+        var userAllowedFuncs = column.getColDef().allowedAggFuncs;
+        if (main_1._.exists(userAllowedFuncs)) {
+            return userAllowedFuncs;
+        }
+        else {
+            return Object.keys(this.aggFuncsMap).sort();
+        }
     };
     AggFuncService.prototype.clear = function () {
         this.aggFuncsMap = {};
