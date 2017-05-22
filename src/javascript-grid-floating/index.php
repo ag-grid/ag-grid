@@ -44,8 +44,7 @@ include '../documentation-main/documentation_header.php';
     <h3 id="example">Example</h3>
 
     <p>
-        Example below shows floating rows. To mix things up a bit, the example also has pinned left and right
-        columns, to show the floating rows playing nicely with pinning.
+        Example below shows floating rows.
     </p>
 
     <show-example example="exampleFloating" example-height="450px"></show-example>
