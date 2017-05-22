@@ -36,8 +36,8 @@ include('../includes/jobsHeader.php');
 <div class="row">
     <div class="col-md-9">
         We have some people joining the ag-Grid team over the coming months, bringing our
-        team size from 5 to 9, almost doubling our side. We want to be careful in how we grow
-        to maintain the ag-Grid culture, which means not grow to fast. Will will open
+        team size from 5 to 9, almost doubling our size. We want to be careful in how we grow
+        to maintain the ag-Grid culture, which means not growing too fast. Will will open
         the hiring doors again when everyone is fully on-boarded.
     </div>
 </div>
