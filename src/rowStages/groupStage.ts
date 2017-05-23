@@ -12,7 +12,8 @@ import {
     RowNode,
     Column,
     Utils,
-    NumberSequence
+    NumberSequence,
+    _
 } from "ag-grid/main";
 
 @Bean('groupStage')
@@ -31,12 +32,19 @@ export class GroupStage implements IRowNodeStage {
     // with the other rows.
     private groupIdSequence = new NumberSequence(1);
 
+    // when grouping, these items are of note:
+    // rowNode.parent: RowNode: set to the parent
+    // rowNode.childrenAfterGroup: RowNode[] = the direct children of this group
+    // rowNode.childrenMapped: string=>RowNode = children mapped by group key (when groups) or an empty map if leaf group (this is then used by pivot)
+    // for leaf groups, rowNode.childrenAfterGroup = rowNode.allLeafChildren;
+
     public execute(params: StageExecuteParams): void {
         let rootNode = params.rowNode;
-        let newRowNodes = params.newRowNodes;
 
-        var groupedCols = this.columnController.getRowGroupColumns();
-        var expandByDefault: number;
+        // let newRowNodes = params.newRowNodes;
+
+        let groupedCols = this.columnController.getRowGroupColumns();
+        let expandByDefault: number;
 
         if (this.gridOptionsWrapper.isGroupSuppressRow()) {
             expandByDefault = -1;
@@ -51,19 +59,22 @@ export class GroupStage implements IRowNodeStage {
         // here to change leafGroup once.
         rootNode.leafGroup = groupedCols.length === 0;
 
-        if (newRowNodes) {
-            this.insertRowNodes(newRowNodes, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
-        } else {
-            this.recursivelyGroup(rootNode, groupedCols, 0, expandByDefault, includeParents, isPivot);
+        // we are going everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
+        rootNode.childrenAfterGroup = [];
+        rootNode.childrenMapped = {};
 
-            // remove single children only works when doing a new grouping, it is not compatible with
-            // inserting / removing rows, as the group which a new record may belong to may have already
-            // been snipped out.
-            if (this.gridOptionsWrapper.isGroupRemoveSingleChildren()) {
-                this.recursivelyDeptFirstRemoveSingleChildren(rootNode, includeParents);
-            }
+        this.insertRowNodesIntoGroups(rootNode.allLeafChildren, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
+
+        // remove single children only works when doing a new grouping, it is not compatible with
+        // inserting / removing rows, as the group which a new record may belong to may have already
+        // been snipped out.
+        // - note - should this be a concern for the map phase? as adding/removing nodes is not
+        //          supported otherwise.
+        if (this.gridOptionsWrapper.isGroupRemoveSingleChildren()) {
+            this.recursivelyDeptFirstRemoveSingleChildren(rootNode, includeParents);
         }
 
+        // this should be done while creating the groups, need to fix above 'removeSingleChildren' first
         this.recursivelySetLevelOnChildren(rootNode, 0);
     }
 
@@ -96,67 +107,41 @@ export class GroupStage implements IRowNodeStage {
         }
     }
 
-    private recursivelyGroup(rowNode: RowNode, groupColumns: Column[], level: number, expandByDefault: any, includeParents: boolean, isPivot: boolean): void {
-
-        var groupingThisLevel = level < groupColumns.length;
-
-        if (groupingThisLevel) {
-            var groupColumn = groupColumns[level];
-            this.bucketIntoChildrenAfterGroup(rowNode, groupColumn, expandByDefault, level, includeParents, groupColumns.length, isPivot);
-            rowNode.childrenAfterGroup.forEach( child => {
-                this.recursivelyGroup(child, groupColumns, level + 1, expandByDefault, includeParents, isPivot);
-            });
-        } else {
-            rowNode.childrenAfterGroup = rowNode.allLeafChildren;
-            rowNode.childrenAfterGroup.forEach( child => {
-                child.parent = rowNode;
-            });
-        }
-
-    }
-
-    private bucketIntoChildrenAfterGroup(rowNode: RowNode, groupColumn: Column, expandByDefault: any, level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): void {
-
-        rowNode.childrenAfterGroup = [];
-        rowNode.childrenMapped = {};
-
-        rowNode.allLeafChildren.forEach( child => {
-            this.placeNodeIntoNextGroup(rowNode, child, groupColumn, expandByDefault, level, includeParents, numberOfGroupColumns, isPivot);
-        });
-    }
-
-    private insertRowNodes(newRowNodes: RowNode[], rootNode: RowNode, groupColumns: Column[], expandByDefault: any, includeParents: boolean, isPivot: boolean): void {
+    private insertRowNodesIntoGroups(newRowNodes: RowNode[], rootNode: RowNode, groupColumns: Column[], expandByDefault: any, includeParents: boolean, isPivot: boolean): void {
 
         newRowNodes.forEach( rowNode => {
-            let nextGroup = rootNode;
+            let nextGroup: RowNode = rootNode;
             groupColumns.forEach( (groupColumn, level) => {
-                nextGroup = this.placeNodeIntoNextGroup(nextGroup, rowNode, groupColumn, expandByDefault, level, includeParents, groupColumns.length, isPivot);
+                nextGroup = this.getOrCreateNextGroup(nextGroup, rowNode, groupColumn, expandByDefault, level, includeParents, groupColumns.length, isPivot);
+                // node gets added to all group nodes.
+                // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes, not impacted by grouping
+                nextGroup.allLeafChildren.push(rowNode);
             });
             rowNode.parent = nextGroup;
+            nextGroup.childrenAfterGroup.push(rowNode);
         });
+
     }
 
+    private getOrCreateNextGroup(parentGroup: RowNode, nodeToPlace: RowNode, groupColumn: Column, expandByDefault: any,
+                                 level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
+        let groupKey: string = this.getKeyForNode(groupColumn, nodeToPlace);
 
-    private placeNodeIntoNextGroup(previousGroup: RowNode, nodeToPlace: RowNode, groupColumn: Column, expandByDefault: any,
-                                   level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
-        let groupKey = this.getKeyForNode(groupColumn, nodeToPlace);
-
-        let nextGroup = <RowNode> previousGroup.childrenMapped[groupKey];
+        let nextGroup = <RowNode> parentGroup.childrenMapped[groupKey];
         if (!nextGroup) {
-            nextGroup = this.createGroup(groupColumn, groupKey, previousGroup, expandByDefault, level, includeParents, numberOfGroupColumns, isPivot);
-            previousGroup.childrenMapped[groupKey] = nextGroup;
-            previousGroup.childrenAfterGroup.push(nextGroup);
+            nextGroup = this.createSubGroup(groupColumn, groupKey, parentGroup, expandByDefault, level, includeParents, numberOfGroupColumns, isPivot);
+            // attach the new group to the parent
+            parentGroup.childrenMapped[groupKey] = nextGroup;
+            parentGroup.childrenAfterGroup.push(nextGroup);
         }
-
-        nextGroup.allLeafChildren.push(nodeToPlace);
 
         return nextGroup;
     }
 
     private getKeyForNode(groupColumn: Column, rowNode: RowNode): any {
-        var value = this.valueService.getValue(groupColumn, rowNode);
-        var result: any;
-        var keyCreator = groupColumn.getColDef().keyCreator;
+        let value = this.valueService.getValue(groupColumn, rowNode);
+        let result: any;
+        let keyCreator = groupColumn.getColDef().keyCreator;
 
         if (keyCreator) {
             result = keyCreator({value: value});
@@ -167,35 +152,40 @@ export class GroupStage implements IRowNodeStage {
         return result;
     }
 
-    private createGroup(groupColumn: Column, groupKey: string, parent: RowNode, expandByDefault: any, level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
-        let nextGroup = new RowNode();
-        this.context.wireBean(nextGroup);
+    private createSubGroup(groupColumn: Column, groupKey: string, parent: RowNode, expandByDefault: any, level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
+        let newGroup = new RowNode();
+        this.context.wireBean(newGroup);
 
-        nextGroup.group = true;
-        nextGroup.field = groupColumn.getColDef().field;
-        nextGroup.rowGroupColumn = groupColumn;
+        newGroup.group = true;
+        newGroup.field = groupColumn.getColDef().field;
+        newGroup.rowGroupColumn = groupColumn;
         // we use negative number for the ids of the groups, this makes sure we don't clash with the
         // id's of the leaf nodes.
-        nextGroup.id = (this.groupIdSequence.next()*-1).toString();
-        nextGroup.key = groupKey;
+        newGroup.id = (this.groupIdSequence.next()*-1).toString();
+        newGroup.key = groupKey;
+
+        newGroup.leafGroup = level === (numberOfGroupColumns-1);
 
         // if doing pivoting, then the leaf group is never expanded,
         // as we do not show leaf rows
-        nextGroup.leafGroup = level === (numberOfGroupColumns-1);
-
-        if (isPivot && nextGroup.leafGroup) {
-            nextGroup.expanded = false;
+        if (isPivot && newGroup.leafGroup) {
+            newGroup.expanded = false;
         } else {
-            nextGroup.expanded = this.isExpanded(expandByDefault, level);
+            newGroup.expanded = this.isExpanded(expandByDefault, level);
         }
 
-        nextGroup.allLeafChildren = [];
-        nextGroup.setAllChildrenCount(0);
-        nextGroup.rowGroupIndex = level;
+        newGroup.allLeafChildren = [];
+        // why is this done here? we are not updating the children could as we go,
+        // i suspect this is updated in the filter stage
+        newGroup.setAllChildrenCount(0);
+        newGroup.rowGroupIndex = level;
 
-        nextGroup.parent = includeParents ? parent : null;
+        newGroup.childrenAfterGroup = [];
+        newGroup.childrenMapped = {};
 
-        return nextGroup;
+        newGroup.parent = includeParents ? parent : null;
+
+        return newGroup;
     }
 
     private isExpanded(expandByDefault: number, level: number) {
