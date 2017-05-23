@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -78,15 +78,6 @@ var RowNode = (function () {
             this.id = id;
         }
     };
-    RowNode.prototype.setLoading = function (loading) {
-        if (this.loading === loading) {
-            return;
-        }
-        this.loading = loading;
-        if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_LOADING_CHANGED);
-        }
-    };
     RowNode.prototype.clearRowTop = function () {
         this.oldRowTop = this.rowTop;
         this.setRowTop(null);
@@ -98,6 +89,15 @@ var RowNode = (function () {
         this.rowTop = rowTop;
         if (this.eventService) {
             this.eventService.dispatchEvent(RowNode.EVENT_TOP_CHANGED);
+        }
+    };
+    RowNode.prototype.setAllChildrenCount = function (allChildrenCount) {
+        if (this.allChildrenCount === allChildrenCount) {
+            return;
+        }
+        this.allChildrenCount = allChildrenCount;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED);
         }
     };
     RowNode.prototype.setRowHeight = function (rowHeight) {
@@ -417,13 +417,13 @@ var RowNode = (function () {
 RowNode.EVENT_ROW_SELECTED = 'rowSelected';
 RowNode.EVENT_DATA_CHANGED = 'dataChanged';
 RowNode.EVENT_CELL_CHANGED = 'cellChanged';
+RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED = 'allChildrenCountChanged';
 RowNode.EVENT_MOUSE_ENTER = 'mouseEnter';
 RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
 RowNode.EVENT_HEIGHT_CHANGED = 'heightChanged';
 RowNode.EVENT_TOP_CHANGED = 'topChanged';
 RowNode.EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
 RowNode.EVENT_EXPANDED_CHANGED = 'expandedChanged';
-RowNode.EVENT_LOADING_CHANGED = 'loadingChanged';
 __decorate([
     context_1.Autowired('eventService'),
     __metadata("design:type", eventService_1.EventService)

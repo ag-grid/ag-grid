@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v9.1.0
+// Type definitions for ag-grid v10.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 export interface ColumnVO {
@@ -8,6 +8,8 @@ export interface ColumnVO {
     aggFunc: string;
 }
 export interface IEnterpriseGetRowsRequest {
+    startRow: number;
+    endRow: number;
     rowGroupCols: ColumnVO[];
     valueCols: ColumnVO[];
     groupKeys: string[];

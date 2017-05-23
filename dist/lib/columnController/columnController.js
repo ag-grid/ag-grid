@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -526,7 +526,7 @@ var ColumnController = (function () {
         }
         column.setValueActive(active);
         if (active && !column.getAggFunc()) {
-            var defaultAggFunc = this.aggFuncService.getDefaultAggFunc();
+            var defaultAggFunc = this.aggFuncService.getDefaultAggFunc(column);
             column.setAggFunc(defaultAggFunc);
         }
     };

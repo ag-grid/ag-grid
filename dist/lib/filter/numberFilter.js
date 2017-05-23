@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,7 +51,6 @@ var NumberFilter = (function (_super) {
     };
     NumberFilter.prototype.initialiseFilterBodyUi = function () {
         this.filterNumber = null;
-        this.setFilterType(NumberFilter.EQUALS);
         this.eFilterTextField = this.getGui().querySelector("#filterText");
         this.addDestroyableEventListener(this.eFilterTextField, "input", this.onTextFieldsChanged.bind(this));
         this.addDestroyableEventListener(this.eFilterToTextField, "input", this.onTextFieldsChanged.bind(this));

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,6 +26,8 @@ var AutoGroupColService = AutoGroupColService_1 = (function () {
     AutoGroupColService.prototype.createAutoGroupColumns = function (rowGroupColumns) {
         var _this = this;
         var groupAutoColumns = [];
+        // if doing groupMultiAutoColumn, then we call the method multiple times, once
+        // for each column we are grouping by
         if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
             rowGroupColumns.forEach(function (rowGroupCol, index) {
                 groupAutoColumns.push(_this.createOneAutoGroupColumn(rowGroupCol, index));
@@ -36,6 +38,7 @@ var AutoGroupColService = AutoGroupColService_1 = (function () {
         }
         return groupAutoColumns;
     };
+    // rowGroupCol and index are missing if groupMultiAutoColumn=false
     AutoGroupColService.prototype.createOneAutoGroupColumn = function (rowGroupCol, index) {
         // if one provided by user, use it, otherwise create one
         var autoColDef = this.gridOptionsWrapper.getGroupColumnDef();
@@ -79,7 +82,14 @@ var AutoGroupColService = AutoGroupColService_1 = (function () {
             else {
                 autoColDef.cellRendererParams = utils_1._.cloneObject(autoColDef.cellRendererParams);
             }
+            // this is needed so we don't show the groups that are not relevant, otherwise
+            // the grid would have duplicate data. having multiple column groups only makes sense
+            // when this is true
             autoColDef.cellRendererParams.restrictToOneGroup = true;
+            // this is needed for logic in the group cellRenderer, so it knows what the original
+            // column was, so it can do the logic for restrictToOneGroup (it needs to know the grouping
+            // column for that)
+            autoColDef.cellRendererParams.originalRowGroupColumn = rowGroupCol;
             // if showing many cols, we don't want to show more than one with a checkbox for selection
             if (index > 0) {
                 autoColDef.headerCheckboxSelection = false;

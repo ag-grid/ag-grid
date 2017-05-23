@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -69,7 +69,7 @@ var FilterService = (function () {
                 allChildrenCount++;
             }
         });
-        rowNode.allChildrenCount = allChildrenCount;
+        rowNode.setAllChildrenCount(allChildrenCount);
     };
     return FilterService;
 }());

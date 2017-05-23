@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -331,12 +331,11 @@ var RenderedCell = (function (_super) {
         utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     };
     RenderedCell.prototype.addDomData = function () {
-        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
-        var gridCellNoType = this.eGridCell;
-        gridCellNoType[domDataKey] = {
-            renderedCell: this
-        };
-        this.addDestroyFunc(function () { return gridCellNoType[domDataKey] = null; });
+        var _this = this;
+        this.gridOptionsWrapper.setDomData(this.eGridCell, RenderedCell.DOM_DATA_KEY_RENDERED_CELL, this);
+        this.addDestroyFunc(function () {
+            return _this.gridOptionsWrapper.setDomData(_this.eGridCell, RenderedCell.DOM_DATA_KEY_RENDERED_CELL, null);
+        });
     };
     RenderedCell.prototype.onEnterKeyDown = function () {
         if (this.editingCell) {
@@ -561,6 +560,9 @@ var RenderedCell = (function (_super) {
             _this.onPopupEditorClosed();
         });
         this.popupService.positionPopupOverComponent({
+            column: this.column,
+            rowNode: this.node,
+            type: 'popupCellEditor',
             eventSource: this.eGridCell,
             ePopup: ePopupGui,
             keepWithinBounds: true
@@ -1019,6 +1021,7 @@ var RenderedCell = (function (_super) {
     return RenderedCell;
 }(component_1.Component));
 RenderedCell.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
+RenderedCell.DOM_DATA_KEY_RENDERED_CELL = 'renderedCell';
 __decorate([
     context_1.Autowired('context'),
     __metadata("design:type", context_1.Context)

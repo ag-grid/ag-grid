@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v9.1.0
+// Type definitions for ag-grid v10.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { MasterSlaveService } from "./masterSlaveService";
@@ -50,6 +50,7 @@ export declare class GridApi {
     private inMemoryRowModel;
     private infinitePageRowModel;
     private paginationService;
+    private enterpriseRowModel;
     private init();
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     __getMasterSlaveService(): MasterSlaveService;
@@ -137,6 +138,10 @@ export declare class GridApi {
     clearFocusedCell(): void;
     setFocusedCell(rowIndex: number, colKey: Column | ColDef | string, floating?: string): void;
     setHeaderHeight(headerHeight: number): void;
+    setGroupHeaderHeight(headerHeight: number): void;
+    setFloatingFiltersHeight(headerHeight: number): void;
+    setPivotGroupHeaderHeight(headerHeight: number): void;
+    setPivotHeaderHeight(headerHeight: number): void;
     showToolPanel(show: any): void;
     isToolPanelShowing(): boolean;
     doLayout(): void;
@@ -172,8 +177,11 @@ export declare class GridApi {
     addItems(items: any[], skipRefresh?: boolean): void;
     refreshVirtualPageCache(): void;
     refreshInfinitePageCache(): void;
+    refreshInfiniteCache(): void;
     purgeVirtualPageCache(): void;
     purgeInfinitePageCache(): void;
+    purgeInfiniteCache(): void;
+    purgeEnterpriseCache(route?: string[]): void;
     getVirtualRowCount(): number;
     getInfiniteRowCount(): number;
     isMaxRowFound(): boolean;
@@ -181,6 +189,7 @@ export declare class GridApi {
     setInfiniteRowCount(rowCount: number, maxRowFound?: boolean): void;
     getVirtualPageState(): any;
     getInfinitePageState(): any;
+    getCacheBlockState(): any;
     checkGridSize(): void;
     paginationIsLastPageFound(): boolean;
     paginationGetPageSize(): number;

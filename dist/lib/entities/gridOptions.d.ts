@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v9.1.0
+// Type definitions for ag-grid v10.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./rowNode";
@@ -71,6 +71,7 @@ export interface GridOptions {
     suppressUseColIdForGroups?: boolean;
     suppressCopyRowsToClipboard?: boolean;
     suppressAggFuncInHeader?: boolean;
+    suppressAggAtRootLevel?: boolean;
     suppressFocusAfterRefresh?: boolean;
     rowModelType?: string;
     pivotMode?: boolean;
@@ -88,6 +89,7 @@ export interface GridOptions {
     viewportRowModelBufferSize?: number;
     enableCellChangeFlash?: boolean;
     quickFilterText?: string;
+    cacheQuickFilter?: boolean;
     aggFuncs?: {
         [key: string]: IAggFunc;
     };
@@ -96,17 +98,19 @@ export interface GridOptions {
     functionsReadOnly?: boolean;
     functionsPassive?: boolean;
     maxConcurrentDatasourceRequests?: number;
-    maxPagesInCache?: number;
-    paginationOverflowSize?: number;
+    maxBlocksInCache?: number;
+    purgeClosedRowNodes?: boolean;
+    cacheOverflowSize?: number;
     infiniteInitialRowCount?: number;
     paginationPageSize?: number;
-    infiniteBlockSize?: number;
+    cacheBlockSize?: number;
     paginationAutoPageSize?: boolean;
     paginationStartPage?: number;
     suppressPaginationPanel?: boolean;
     pagination?: boolean;
     editType?: string;
     suppressTouch?: boolean;
+    suppressAsyncEvents?: boolean;
     embedFullWidthRows?: boolean;
     excelStyles?: any[];
     floatingFilter?: boolean;
@@ -160,9 +164,14 @@ export interface GridOptions {
     viewportDatasource?: IViewportDatasource;
     enterpriseDatasource?: IEnterpriseDatasource;
     headerHeight?: number;
+    pivotHeaderHeight?: number;
+    groupHeaderHeight?: number;
+    pivotGroupHeaderHeight?: number;
+    floatingFiltersHeight?: number;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
+    postProcessPopup?: (params: PostProcessPopupParams) => void;
     dateComponent?: {
         new (): IDateComp;
     };
@@ -305,6 +314,7 @@ export interface MenuItemDef {
     checked?: boolean;
     icon?: HTMLElement | string;
     subMenu?: (MenuItemDef | string)[];
+    cssClasses?: string[];
 }
 export interface GetMainMenuItemsParams {
     column: Column;
@@ -341,4 +351,12 @@ export interface TabToNextCellParams {
     editing: boolean;
     previousCellDef: GridCellDef;
     nextCellDef: GridCellDef;
+}
+export interface PostProcessPopupParams {
+    column?: Column;
+    rowNode?: RowNode;
+    ePopup: HTMLElement;
+    type: string;
+    eventSource?: HTMLElement;
+    mouseEvent?: MouseEvent | Touch;
 }

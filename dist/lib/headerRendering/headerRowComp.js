@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v9.1.0
+ * @version v10.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -81,9 +81,36 @@ var HeaderRowComp = (function (_super) {
         });
     };
     HeaderRowComp.prototype.onRowHeightChanged = function () {
-        var rowHeight = this.gridOptionsWrapper.getHeaderHeight();
-        this.getGui().style.top = (this.dept * rowHeight) + 'px';
-        this.getGui().style.height = rowHeight + 'px';
+        var headerRowCount = this.columnController.getHeaderRowCount();
+        var sizes = [];
+        var numberOfFloating = 0;
+        var groupHeight;
+        var headerHeight;
+        if (!this.columnController.isPivotMode()) {
+            if (this.gridOptionsWrapper.isFloatingFilter()) {
+                headerRowCount++;
+            }
+            numberOfFloating = (this.gridOptionsWrapper.isFloatingFilter()) ? 1 : 0;
+            groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
+            headerHeight = this.gridOptionsWrapper.getHeaderHeight();
+        }
+        else {
+            numberOfFloating = 0;
+            groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
+            headerHeight = this.gridOptionsWrapper.getPivotHeaderHeight();
+        }
+        var numberOfNonGroups = 1 + numberOfFloating;
+        var numberOfGroups = headerRowCount - numberOfNonGroups;
+        for (var i = 0; i < numberOfGroups; i++)
+            sizes.push(groupHeight);
+        sizes.push(headerHeight);
+        for (var i = 0; i < numberOfFloating; i++)
+            sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight());
+        var rowHeight = 0;
+        for (var i = 0; i < this.dept; i++)
+            rowHeight += sizes[i];
+        this.getGui().style.top = rowHeight + 'px';
+        this.getGui().style.height = sizes[this.dept] + 'px';
     };
     //noinspection JSUnusedLocalSymbols
     HeaderRowComp.prototype.init = function () {
@@ -91,6 +118,10 @@ var HeaderRowComp = (function (_super) {
         this.onVirtualColumnsChanged();
         this.setWidth();
         this.addDestroyableEventListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.onRowHeightChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
@@ -159,15 +190,9 @@ var HeaderRowComp = (function (_super) {
         switch (this.type) {
             case HeaderRowType.COLUMN:
                 if (this.isUsingOldHeaderRenderer(columnGroupChild)) {
-                    ////// DEPRECATED - TAKE THIS OUT IN V9
-                    if (!warningGiven) {
-                        console.warn('ag-Grid: since v8, custom headers are now done using components. Please refer to the documentation https://www.ag-grid.com/javascript-grid-header-rendering/. Support for the old way will be dropped in v9.');
-                        warningGiven = true;
-                    }
                     result = new renderedHeaderCell_1.RenderedHeaderCell(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
                 }
                 else {
-                    // the future!!!
                     result = new headerWrapperComp_1.HeaderWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
                 }
                 break;
@@ -205,6 +230,7 @@ var HeaderRowComp = (function (_super) {
          *let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
          */
         var baseParams = {
+            column: column,
             currentParentModel: function () {
                 var filterComponent = _this.filterManager.getFilterComponent(column);
                 return (filterComponent.getNullableModel) ?
@@ -266,5 +292,3 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], HeaderRowComp.prototype, "init", null);
 exports.HeaderRowComp = HeaderRowComp;
-// remove this in v9, when we take out support for the old headers
-var warningGiven = false;

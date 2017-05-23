@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v9.1.0
+// Type definitions for ag-grid v10.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./rowNode";
@@ -111,6 +111,9 @@ export interface ColDef extends AbstractColDef {
     floatingCellFormatter?: (params: any) => string;
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
     aggFunc?: string | IAggFunc;
+    /** Agg funcs allowed on this column. If missing, all installed agg funcs are allowed.
+     * Can be eg ['sum','avg']. This will restrict what the GUI allows to select only.*/
+    allowedAggFuncs?: string[];
     /** To group by this column by default, provide an index here. */
     rowGroupIndex?: number;
     /** To pivot by this column by default, provide an index here. */

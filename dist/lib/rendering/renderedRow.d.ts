@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v9.1.0
+// Type definitions for ag-grid v10.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RenderedCell } from "./renderedCell";
@@ -10,6 +10,7 @@ import { RowContainerComponent } from "./rowContainerComponent";
 import { ColDef } from "../entities/colDef";
 export declare class RenderedRow extends BeanStub {
     static EVENT_RENDERED_ROW_REMOVED: string;
+    static DOM_DATA_KEY_RENDERED_ROW: string;
     private gridOptionsWrapper;
     private columnController;
     private columnAnimationService;
@@ -55,6 +56,7 @@ export declare class RenderedRow extends BeanStub {
     private animateIn;
     private rowFocusedLastTime;
     constructor(parentScope: any, rowRenderer: RowRenderer, bodyContainerComp: RowContainerComponent, fullWidthContainerComp: RowContainerComponent, pinnedLeftContainerComp: RowContainerComponent, pinnedRightContainerComp: RowContainerComponent, node: RowNode, animateIn: boolean);
+    private setupRowStub(animateInRowTop);
     private setupRowContainers(animateInRowTop);
     getAndClearDelayedDestroyFunctions(): Function[];
     getAndClearNextVMTurnFunctions(): Function[];
@@ -70,7 +72,6 @@ export declare class RenderedRow extends BeanStub {
     stopEditing(cancel?: boolean): void;
     startRowEditing(keyPress?: number, charPress?: string, sourceRenderedCell?: RenderedCell): void;
     private setEditingRow(value);
-    private addDataChangedListener();
     private angular1Compile(element);
     private addColumnListener();
     private onDisplayedColumnsChanged();
