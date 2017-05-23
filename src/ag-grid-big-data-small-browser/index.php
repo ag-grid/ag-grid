@@ -104,11 +104,35 @@ include('../includes/mediaHeader.php');
             Now that the tool exists, I'm excited to see what applications ag-Grid users come up with.
         </p>
 
+        <div style="background-color: #eee; padding: 10px; display: inline-block;">
 
-        <div style="margin-top: 20px;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-angular-connect-2016/"
-               data-text="We're Gonna Need a Bigger Boat - ag-Grid Sponsors Angular Connect 2016" data-via="ceolter" data-size="large">Tweet</a>
-            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+            <div style="margin-bottom: 5px;">If you liked this article then please share</div>
+
+            <table style="background-color: #eee;">
+                <tr>
+                    <td>
+                        <script type="text/javascript" src="//www.redditstatic.com/button/button1.js"></script>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td>
+                        <a href="https://twitter.com/share" class="twitter-share-button"
+                           data-url="https://www.ag-grid.com/ag-grid-big-data-small-browser/"
+                           data-text="JavaScript Big Data in a Small Browser #javascript #angularjs #react" data-via="ceolter"
+                           data-size="large">Tweet</a>
+                        <script>!function (d, s, id) {
+                                var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+                                if (!d.getElementById(id)) {
+                                    js = d.createElement(s);
+                                    js.id = id;
+                                    js.src = p + '://platform.twitter.com/widgets.js';
+                                    fjs.parentNode.insertBefore(js, fjs);
+                                }
+                            }(document, 'script', 'twitter-wjs');</script>
+                    </td>
+                </tr>
+            </table>
         </div>
 
     </div>
