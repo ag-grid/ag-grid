@@ -3,7 +3,6 @@ import {Autowired, Bean} from "./context/context";
 import {ColumnController} from "./columnController/columnController";
 import {Constants} from "./constants";
 import {IRowModel} from "./interfaces/iRowModel";
-import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 import {FloatingRowModel} from "./rowModels/floatingRowModel";
 import {Utils as _} from "./utils";
 import {RowNode} from "./entities/rowNode";
@@ -23,6 +22,7 @@ import {GroupInstanceIdCreator} from "./columnController/groupInstanceIdCreator"
 import {ColumnGroupChild} from "./entities/columnGroupChild";
 import {ColumnGroup} from "./entities/columnGroup";
 import {GridApi} from "./gridApi";
+import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
 
 /**
  * This interface works in conjuction with the GridSerializer. When serializing a grid, an instance that implements this interface
@@ -221,7 +221,7 @@ export class GridSerializer {
             return '';
         }
 
-        let inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
+        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
 
         let columnsToExport: Column[];
         if (_.existsAndNotEmpty(columnKeys)) {

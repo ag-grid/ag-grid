@@ -9,7 +9,6 @@ import {Events, ModelUpdatedEvent} from "../../events";
 import {Bean, Context, Autowired, PostConstruct, Optional} from "../../context/context";
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
-import {IInMemoryRowModel} from "../../interfaces/iInMemoryRowModel";
 import {InMemoryNodeManager} from "./inMemoryNodeManager";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes};
@@ -36,7 +35,7 @@ export interface RefreshModelParams {
 }
 
 @Bean('rowModel')
-export class InMemoryRowModel implements IInMemoryRowModel {
+export class InMemoryRowModel {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @Autowired('columnController') private columnController: ColumnController;
@@ -445,6 +444,10 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         let result: any = {};
         _.traverseNodesWithKey(this.rootNode.childrenAfterGroup, (node: RowNode, key: string)=> result[key] = node.expanded );
         return result;
+    }
+
+    public getRowNode(id: string): RowNode {
+        return this.nodeManager.getRowNode(id);
     }
 
     // rows: the rows to put into the model

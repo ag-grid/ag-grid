@@ -162,7 +162,7 @@ export class GridOptionsWrapper {
     public isRowModelInfinite() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE; }
     public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
     public isRowModelEnterprise() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_ENTERPRISE; }
-    public isRowModelDefault() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_NORMAL; }
+    public isRowModelDefault() { return _.missing(this.gridOptions.rowModelType) || this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_NORMAL; }
 
     public isFullRowEdit() { return this.gridOptions.editType === 'fullRow'; }
     public isSuppressFocusAfterRefresh() { return isTrue(this.gridOptions.suppressFocusAfterRefresh); }

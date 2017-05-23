@@ -11,7 +11,6 @@ import {IRowModel} from "./interfaces/iRowModel";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {PostConstruct} from "./context/context";
 import {Constants} from "./constants";
-import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
 
 @Bean('selectionController')
@@ -88,7 +87,7 @@ export class SelectionController {
         if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
             console.warn('updateGroupsFromChildrenSelections not available when rowModel is not normal');
         }
-        var inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
+        var inMemoryRowModel = <InMemoryRowModel> this.rowModel;
         inMemoryRowModel.getTopLevelNodes().forEach( (rowNode: RowNode) => {
             rowNode.depthFirstSearch( (rowNode)=> {
                 if (rowNode.group) {
@@ -185,7 +184,7 @@ export class SelectionController {
             console.warn('getBestCostNodeSelection is only avilable when using normal row model');
         }
 
-        var inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
+        var inMemoryRowModel = <InMemoryRowModel> this.rowModel;
 
         var topLevelNodes = inMemoryRowModel.getTopLevelNodes();
 

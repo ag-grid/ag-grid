@@ -22,7 +22,6 @@ import {FocusedCellController} from "./focusedCellController";
 import {AddRangeSelectionParams, IRangeController, RangeSelection} from "./interfaces/iRangeController";
 import {GridCell, GridCellDef} from "./entities/gridCell";
 import {IClipboardService} from "./interfaces/iClipboardService";
-import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {IMenuFactory} from "./interfaces/iMenuFactory";
@@ -37,6 +36,7 @@ import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
 import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
+import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
 
 
 export interface StartEditingCellParams {
@@ -75,7 +75,7 @@ export class GridApi {
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
 
-    private inMemoryRowModel: IInMemoryRowModel;
+    private inMemoryRowModel: InMemoryRowModel;
     private infinitePageRowModel: InfiniteRowModel;
     private enterpriseRowModel: IEnterpriseRowModel;
 
@@ -83,7 +83,7 @@ export class GridApi {
     private init(): void {
         switch (this.rowModel.getType()) {
             case Constants.ROW_MODEL_TYPE_NORMAL:
-                this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
+                this.inMemoryRowModel = <InMemoryRowModel> this.rowModel;
                 break;
             case Constants.ROW_MODEL_TYPE_INFINITE:
                 this.infinitePageRowModel = <InfiniteRowModel> this.rowModel;
@@ -257,6 +257,11 @@ export class GridApi {
     public refreshInMemoryRowModel(): any {
         if (_.missing(this.inMemoryRowModel)) { console.log('cannot call refreshInMemoryRowModel unless using normal row model') }
         this.inMemoryRowModel.refreshModel({step: Constants.STEP_EVERYTHING});
+    }
+
+    public getRowNode(id: string): RowNode {
+        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call getRowNode unless using normal row model') }
+        return this.inMemoryRowModel.getRowNode(id);
     }
 
     public expandAll() {
