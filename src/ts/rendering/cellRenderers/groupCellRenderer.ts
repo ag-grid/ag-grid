@@ -18,7 +18,7 @@ import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import {QuerySelector, RefSelector} from "../../widgets/componentAnnotations";
 
-var svgFactory = SvgFactory.getInstance();
+let svgFactory = SvgFactory.getInstance();
 
 export class GroupCellRenderer extends Component implements ICellRenderer {
 
@@ -177,17 +177,18 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         // only do this if an indent - as this overwrites the padding that
         // the theme set, which will make things look 'not aligned' for the
         // first group level.
-        var node = params.node;
-        var suppressPadding = params.suppressPadding;
-        if (!suppressPadding && (node.footer || node.level > 0)) {
-            var paddingFactor: any;
+        let node: RowNode = params.node;
+        let suppressPadding = params.suppressPadding;
+
+        if (!suppressPadding && (node.footer || node.uiLevel > 0)) {
+            let paddingFactor: any;
             if (params.colDef && params.padding >= 0) {
                 paddingFactor = params.padding;
             } else {
                 paddingFactor = 10;
             }
-            var paddingPx = node.level * paddingFactor;
-            var reducedLeafNode = this.columnController.isPivotMode() && params.node.leafGroup;
+            let paddingPx = node.uiLevel * paddingFactor;
+            let reducedLeafNode = this.columnController.isPivotMode() && params.node.leafGroup;
             if (node.footer) {
                 paddingPx += 15;
             } else if (!node.isExpandable() || reducedLeafNode) {
@@ -313,7 +314,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let keyMap = this.params.keyMap;
         let rowNodeKey = this.params.node.key;
         if (keyMap && typeof keyMap === 'object') {
-            var valueFromMap = keyMap[rowNodeKey];
+            let valueFromMap = keyMap[rowNodeKey];
             if (valueFromMap) {
                 return valueFromMap;
             } else {
@@ -341,7 +342,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private addCheckboxIfNeeded(): void {
         let rowNode = this.params.node;
-        var checkboxNeeded = this.isUserWantsSelected()
+        let checkboxNeeded = this.isUserWantsSelected()
                 // footers cannot be selected
                 && !rowNode.footer
                 // floating rows cannot be selected
@@ -349,7 +350,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
                 // flowers cannot be selected
                 && !rowNode.flower;
         if (checkboxNeeded) {
-            var cbSelectionComponent = new CheckboxSelectionComponent();
+            let cbSelectionComponent = new CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent);
             cbSelectionComponent.init({rowNode: rowNode});
             this.eCheckbox.appendChild(cbSelectionComponent.getGui());

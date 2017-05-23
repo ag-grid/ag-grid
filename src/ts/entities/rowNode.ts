@@ -58,6 +58,8 @@ export class RowNode implements IEventEmitter {
     public parent: RowNode;
     /** How many levels this node is from the top */
     public level: number;
+    /** How many levels this node is from the top in the UI (different to the level when removing parents)*/
+    public uiLevel: number;
     /** If doing in memory grouping, this is the index of the group column this cell is for.
      * This will always be the same as the level, unless we are collapsing groups ie groupRemoveSingleChildren = true */
     public rowGroupIndex: number;
