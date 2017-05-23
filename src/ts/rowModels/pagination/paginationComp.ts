@@ -3,7 +3,6 @@ import {Component} from "../../widgets/component";
 import {Autowired, PostConstruct} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {RefSelector} from "../../widgets/componentAnnotations";
-import {ServerPaginationService, IPaginationService} from "./serverPaginationService";
 import {_} from "../../utils";
 import {EventService} from "../../eventService";
 import {Events} from "../../events";
@@ -14,7 +13,6 @@ export class PaginationComp extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('serverPaginationService') private serverPaginationService: ServerPaginationService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
@@ -29,8 +27,6 @@ export class PaginationComp extends Component {
     @RefSelector('eSummaryPanel') private eSummaryPanel: any;
     @RefSelector('lbCurrent') private lbCurrent: any;
     @RefSelector('lbTotal') private lbTotal: any;
-
-    private paginationService: IPaginationService;
 
     constructor() {
         super();
@@ -47,12 +43,6 @@ export class PaginationComp extends Component {
         this.addDestroyableEventListener(this.btNext, 'click', this.onBtNext.bind(this));
         this.addDestroyableEventListener(this.btPrevious, 'click', this.onBtPrevious.bind(this));
 
-        if (this.gridOptionsWrapper.isPagination()) {
-            this.paginationService = this.paginationProxy;
-        } else {
-            this.paginationService = this.serverPaginationService;
-        }
-
         this.onPaginationChanged();
     }
 
@@ -64,7 +54,7 @@ export class PaginationComp extends Component {
     }
 
     private setCurrentPageLabel(): void {
-        let currentPage = this.paginationService.getCurrentPage();
+        let currentPage = this.paginationProxy.getCurrentPage();
         this.lbCurrent.innerHTML = _.formatNumberCommas(currentPage + 1);
     }
 
@@ -95,25 +85,25 @@ export class PaginationComp extends Component {
     }
 
     private onBtNext() {
-        this.paginationService.goToNextPage();
+        this.paginationProxy.goToNextPage();
     }
 
     private onBtPrevious() {
-        this.paginationService.goToPreviousPage();
+        this.paginationProxy.goToPreviousPage();
     }
 
     private onBtFirst() {
-        this.paginationService.goToFirstPage();
+        this.paginationProxy.goToFirstPage();
     }
 
     private onBtLast() {
-        this.paginationService.goToLastPage();
+        this.paginationProxy.goToLastPage();
     }
 
     private enableOrDisableButtons() {
-        let currentPage = this.paginationService.getCurrentPage();
-        let maxRowFound = this.paginationService.isLastPageFound();
-        let totalPages = this.paginationService.getTotalPages();
+        let currentPage = this.paginationProxy.getCurrentPage();
+        let maxRowFound = this.paginationProxy.isLastPageFound();
+        let totalPages = this.paginationProxy.getTotalPages();
 
         let disablePreviousAndFirst = currentPage === 0;
         this.btPrevious.disabled = disablePreviousAndFirst;
@@ -130,11 +120,11 @@ export class PaginationComp extends Component {
     }
 
     private updateRowLabels() {
-        let currentPage = this.paginationService.getCurrentPage();
-        let pageSize = this.paginationService.getPageSize();
-        let maxRowFound = this.paginationService.isLastPageFound();
-        let rowCount = this.paginationService.isLastPageFound() ?
-            this.paginationService.getTotalRowCount() : null;
+        let currentPage = this.paginationProxy.getCurrentPage();
+        let pageSize = this.paginationProxy.getPageSize();
+        let maxRowFound = this.paginationProxy.isLastPageFound();
+        let rowCount = this.paginationProxy.isLastPageFound() ?
+            this.paginationProxy.getTotalRowCount() : null;
 
         var startRow: any;
         var endRow: any;
@@ -153,16 +143,16 @@ export class PaginationComp extends Component {
     }
 
     private isZeroPagesToDisplay() {
-        let maxRowFound = this.paginationService.isLastPageFound();
-        let totalPages = this.paginationService.getTotalPages();
+        let maxRowFound = this.paginationProxy.isLastPageFound();
+        let totalPages = this.paginationProxy.getTotalPages();
         return maxRowFound && totalPages === 0;
     }
 
     private setTotalLabels() {
-        let lastPageFound = this.paginationService.isLastPageFound();
-        let totalPages = this.paginationService.getTotalPages();
-        let rowCount = this.paginationService.isLastPageFound() ?
-            this.paginationService.getTotalRowCount() : null;
+        let lastPageFound = this.paginationProxy.isLastPageFound();
+        let totalPages = this.paginationProxy.getTotalPages();
+        let rowCount = this.paginationProxy.isLastPageFound() ?
+            this.paginationProxy.getTotalRowCount() : null;
 
         if (lastPageFound) {
             this.lbTotal.innerHTML = _.formatNumberCommas(totalPages);

@@ -174,8 +174,7 @@ export class GridCore {
         }
 
         var statusBarEnabled = this.statusBar && this.gridOptionsWrapper.isEnableStatusBar();
-        let isPaging = this.gridOptionsWrapper.isPagination() ||
-            this.gridOptionsWrapper.isRowModelServerPagination();
+        let isPaging = this.gridOptionsWrapper.isPagination();
         var paginationPanelEnabled = isPaging
             && !this.gridOptionsWrapper.isForPrint()
             && !this.gridOptionsWrapper.isSuppressPaginationPanel();

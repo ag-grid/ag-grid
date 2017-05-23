@@ -35,14 +35,14 @@ export class InMemoryNodeManager {
         this.rootNode.childrenAfterFilter = [];
     }
 
-    public setRowData(rowData: any[], firstId?: number): RowNode[] {
+    public setRowData(rowData: any[]): RowNode[] {
 
         this.rootNode.childrenAfterFilter = null;
         this.rootNode.childrenAfterGroup = null;
         this.rootNode.childrenAfterSort = null;
         this.rootNode.childrenMapped = null;
 
-        this.nextId = _.exists(firstId) ? firstId : 0;
+        this.nextId = 0;
 
         if (!rowData) {
             this.rootNode.allLeafChildren = [];

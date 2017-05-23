@@ -33,7 +33,6 @@ import {IAggFuncService} from "./interfaces/iAggFuncService";
 import {IFilterComp} from "./interfaces/iFilter";
 import {CsvExportParams} from "./exportParams";
 import {ExcelExportParams, IExcelCreator} from "./interfaces/iExcelCreator";
-import {IPaginationService, ServerPaginationService} from "./rowModels/pagination/serverPaginationService";
 import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
@@ -67,7 +66,6 @@ export class GridApi {
     @Autowired('context') private context: Context;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('serverPaginationService') private serverPaginationService: ServerPaginationService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('rangeController') private rangeController: IRangeController;
@@ -79,29 +77,20 @@ export class GridApi {
 
     private inMemoryRowModel: IInMemoryRowModel;
     private infinitePageRowModel: InfiniteRowModel;
-    private paginationService: IPaginationService;
     private enterpriseRowModel: IEnterpriseRowModel;
 
     @PostConstruct
     private init(): void {
         switch (this.rowModel.getType()) {
             case Constants.ROW_MODEL_TYPE_NORMAL:
-            case Constants.ROW_MODEL_TYPE_PAGINATION:
                 this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
                 break;
             case Constants.ROW_MODEL_TYPE_INFINITE:
-            case Constants.ROW_MODEL_TYPE_VIRTUAL_DEPRECATED:
                 this.infinitePageRowModel = <InfiniteRowModel> this.rowModel;
                 break;
             case Constants.ROW_MODEL_TYPE_ENTERPRISE:
                 this.enterpriseRowModel = <IEnterpriseRowModel> this.rowModel;
                 break;
-        }
-
-        if (this.gridOptionsWrapper.isPagination()) {
-            this.paginationService = this.paginationProxy;
-        } else {
-            this.paginationService = this.serverPaginationService;
         }
     }
 
@@ -146,9 +135,7 @@ export class GridApi {
     }
 
     public setDatasource(datasource: IDatasource) {
-        if (this.gridOptionsWrapper.isRowModelServerPagination()) {
-            this.serverPaginationService.setDatasource(datasource);
-        } else if (this.gridOptionsWrapper.isRowModelInfinite()) {
+        if (this.gridOptionsWrapper.isRowModelInfinite()) {
             (<InfiniteRowModel>this.rowModel).setDatasource(datasource);
         } else {
             console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_INFINITE}'`)
@@ -805,11 +792,11 @@ export class GridApi {
     }
 
     public paginationIsLastPageFound(): boolean {
-        return this.paginationService.isLastPageFound();
+        return this.paginationProxy.isLastPageFound();
     }
 
     public paginationGetPageSize(): number {
-        return this.paginationService.getPageSize();
+        return this.paginationProxy.getPageSize();
     }
 
     public paginationSetPageSize(size: number): void {
@@ -817,35 +804,35 @@ export class GridApi {
     }
 
     public paginationGetCurrentPage(): number {
-        return this.paginationService.getCurrentPage();
+        return this.paginationProxy.getCurrentPage();
     }
 
     public paginationGetTotalPages(): number {
-        return this.paginationService.getTotalPages();
+        return this.paginationProxy.getTotalPages();
     }
 
     public paginationGetRowCount(): number {
-        return this.paginationService.getTotalRowCount();
+        return this.paginationProxy.getTotalRowCount();
     }
 
     public paginationGoToNextPage(): void {
-        this.paginationService.goToNextPage();
+        this.paginationProxy.goToNextPage();
     }
 
     public paginationGoToPreviousPage(): void {
-        this.paginationService.goToPreviousPage();
+        this.paginationProxy.goToPreviousPage();
     }
 
     public paginationGoToFirstPage(): void {
-        this.paginationService.goToFirstPage();
+        this.paginationProxy.goToFirstPage();
     }
 
     public paginationGoToLastPage(): void {
-        this.paginationService.goToLastPage();
+        this.paginationProxy.goToLastPage();
     }
 
     public paginationGoToPage(page: number): void {
-        this.paginationService.goToPage(page);
+        this.paginationProxy.goToPage(page);
     }
 
     /*
