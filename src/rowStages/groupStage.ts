@@ -65,47 +65,18 @@ export class GroupStage implements IRowNodeStage {
 
         this.insertRowNodesIntoGroups(rootNode.allLeafChildren, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
 
-        // remove single children only works when doing a new grouping, it is not compatible with
-        // inserting / removing rows, as the group which a new record may belong to may have already
-        // been snipped out.
-        // - note - should this be a concern for the map phase? as adding/removing nodes is not
-        //          supported otherwise.
-        if (this.gridOptionsWrapper.isGroupRemoveSingleChildren()) {
-            this.recursivelyDeptFirstRemoveSingleChildren(rootNode, includeParents);
-        }
-
-        // this should be done while creating the groups, need to fix above 'removeSingleChildren' first
-        this.recursivelySetLevelOnChildren(rootNode, 0);
+        // this.recursivelySetLevelOnChildren(rootNode, 0);
     }
 
-    private recursivelySetLevelOnChildren(rowNode: RowNode, level: number): void {
-        for (let i = 0; i<rowNode.childrenAfterGroup.length; i++) {
-            let childNode = rowNode.childrenAfterGroup[i];
-            childNode.level = level;
-            if (childNode.group) {
-                this.recursivelySetLevelOnChildren(childNode, level+1);
-            }
-        }
-    }
-
-    private recursivelyDeptFirstRemoveSingleChildren(rowNode: RowNode, includeParents: boolean): void {
-        if (Utils.missingOrEmpty(rowNode.childrenAfterGroup)) { return; }
-
-        for (let i = 0; i<rowNode.childrenAfterGroup.length; i++) {
-            let childNode = rowNode.childrenAfterGroup[i];
-            if (childNode.group) {
-                this.recursivelyDeptFirstRemoveSingleChildren(childNode, includeParents);
-                if (childNode.childrenAfterGroup.length <=1) {
-                    let nodeToMove = childNode.childrenAfterGroup[0];
-                    rowNode.childrenAfterGroup[i] = nodeToMove;
-                    // we check if parent
-                    if (includeParents) {
-                        nodeToMove.parent = rowNode;
-                    }
-                }
-            }
-        }
-    }
+    // private recursivelySetLevelOnChildren(rowNode: RowNode, level: number): void {
+    //     for (let i = 0; i<rowNode.childrenAfterGroup.length; i++) {
+    //         let childNode = rowNode.childrenAfterGroup[i];
+    //         childNode.level = level;
+    //         if (childNode.group) {
+    //             this.recursivelySetLevelOnChildren(childNode, level+1);
+    //         }
+    //     }
+    // }
 
     private insertRowNodesIntoGroups(newRowNodes: RowNode[], rootNode: RowNode, groupColumns: Column[], expandByDefault: any, includeParents: boolean, isPivot: boolean): void {
 
@@ -118,6 +89,7 @@ export class GroupStage implements IRowNodeStage {
                 nextGroup.allLeafChildren.push(rowNode);
             });
             rowNode.parent = nextGroup;
+            rowNode.level = groupColumns.length;
             nextGroup.childrenAfterGroup.push(rowNode);
         });
 
@@ -164,6 +136,7 @@ export class GroupStage implements IRowNodeStage {
         newGroup.id = (this.groupIdSequence.next()*-1).toString();
         newGroup.key = groupKey;
 
+        newGroup.level = level;
         newGroup.leafGroup = level === (numberOfGroupColumns-1);
 
         // if doing pivoting, then the leaf group is never expanded,
