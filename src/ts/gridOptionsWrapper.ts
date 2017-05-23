@@ -57,6 +57,7 @@ export class GridOptionsWrapper {
     private static MIN_COL_WIDTH = 10;
 
     public static PROP_HEADER_HEIGHT = 'headerHeight';
+    public static PROP_GROUP_REMOVE_SINGLE_CHILDREN = 'groupRemoveSingleChildren';
     public static PROP_PIVOT_HEADER_HEIGHT = 'pivotHeaderHeight';
 
     public static PROP_GROUP_HEADER_HEIGHT = 'groupHeaderHeight';

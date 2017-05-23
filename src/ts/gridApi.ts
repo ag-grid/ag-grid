@@ -446,7 +446,7 @@ export class GridApi {
     }
 
     public getFilterInstance(key: string|Column|ColDef): IFilterComp {
-        var column = this.columnController.getPrimaryColumn(key);
+        let column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return this.filterManager.getFilterComponent(column);
         }
@@ -458,14 +458,14 @@ export class GridApi {
     }
 
     public destroyFilter(key: string|Column|ColDef) {
-        var column = this.columnController.getPrimaryColumn(key);
+        let column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return this.filterManager.destroyFilter(column);
         }
     }
 
     public getColumnDef(key: string|Column|ColDef) {
-        var column = this.columnController.getPrimaryColumn(key);
+        let column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
         } else {
@@ -552,6 +552,10 @@ export class GridApi {
         }
     }
 
+    public setGroupRemoveSingleChildren(value: boolean) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, value);
+    }
+
     public onRowHeightChanged() {
         if (_.exists(this.inMemoryRowModel)) {
             this.inMemoryRowModel.onRowHeightChanged();
@@ -559,7 +563,7 @@ export class GridApi {
     }
 
     public getValue(colKey: string|ColDef|Column, rowNode: RowNode): any {
-        var column = this.columnController.getPrimaryColumn(colKey);
+        let column = this.columnController.getPrimaryColumn(colKey);
         if (_.missing(column)) {
             column = this.columnController.getGridColumn(colKey);
         }
@@ -635,12 +639,12 @@ export class GridApi {
     }
 
     public showColumnMenuAfterButtonClick(colKey: string|Column|ColDef, buttonElement: HTMLElement): void {
-        var column = this.columnController.getPrimaryColumn(colKey);
+        let column = this.columnController.getPrimaryColumn(colKey);
         this.menuFactory.showMenuAfterButtonClick(column, buttonElement);
     }
 
     public showColumnMenuAfterMouseClick(colKey: string|Column|ColDef, mouseEvent: MouseEvent|Touch): void {
-        var column = this.columnController.getPrimaryColumn(colKey);
+        let column = this.columnController.getPrimaryColumn(colKey);
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     }
 
@@ -657,13 +661,13 @@ export class GridApi {
     }
 
     public startEditingCell(params: StartEditingCellParams): void {
-        var column = this.columnController.getGridColumn(params.colKey);
+        let column = this.columnController.getGridColumn(params.colKey);
         if (!column) {
             console.warn(`ag-Grid: no column found for ${params.colKey}`);
             return;
         }
         let gridCellDef = <GridCellDef> {rowIndex: params.rowIndex, floating: null, column: column};
-        var gridCell = new GridCell(gridCellDef);
+        let gridCell = new GridCell(gridCellDef);
         this.gridPanel.ensureIndexVisible(params.rowIndex);
         this.rowRenderer.startEditingCell(gridCell, params.keyPress, params.charPress);
     }

@@ -40,6 +40,7 @@ export class RowNode implements IEventEmitter {
     public static EVENT_TOP_CHANGED = 'topChanged';
     public static EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
+    public static EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
 
     @Autowired('eventService') private mainEventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -222,6 +223,15 @@ export class RowNode implements IEventEmitter {
         this.rowIndex = rowIndex;
         if (this.eventService) {
             this.eventService.dispatchEvent(RowNode.EVENT_ROW_INDEX_CHANGED);
+        }
+    }
+
+    public setUiLevel(uiLevel: number): void {
+        if (this.uiLevel === uiLevel) { return; }
+
+        this.uiLevel = uiLevel;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_UI_LEVEL_CHANGED);
         }
     }
 

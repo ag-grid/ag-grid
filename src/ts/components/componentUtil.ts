@@ -3,6 +3,7 @@ import {GridApi} from "../gridApi";
 import {Events} from "../events";
 import {Utils as _} from "../utils";
 import {ColumnApi} from "../columnController/columnController";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 export class ComponentUtil {
 
@@ -204,6 +205,10 @@ export class ComponentUtil {
 
         if (changes.pivotMode) {
             columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue));
+        }
+
+        if (changes.groupRemoveSingleChildren) {
+            api.setGroupRemoveSingleChildren(ComponentUtil.toBoolean(changes.groupRemoveSingleChildren.currentValue));
         }
 
         api.dispatchEvent(Events.EVENT_COMPONENT_STATE_CHANGED, changes);

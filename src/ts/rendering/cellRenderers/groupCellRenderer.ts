@@ -172,6 +172,36 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
+    private setPadding(): void {
+        let params = this.params;
+        let rowNode: RowNode = params.node;
+
+        let paddingPx: number;
+
+        // never any padding on top level nodes
+        if (rowNode.uiLevel<=0) {
+            paddingPx = 0;
+        } else {
+            let paddingFactor: number = (params.padding >= 0) ? params.padding : 10;
+            paddingPx = rowNode.uiLevel * paddingFactor;
+
+            let reducedLeafNode = this.columnController.isPivotMode() && params.node.leafGroup;
+            if (rowNode.footer) {
+                paddingPx += 15;
+            } else if (!rowNode.isExpandable() || reducedLeafNode) {
+                paddingPx += 10;
+            }
+        }
+
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            // if doing rtl, padding is on the right
+            this.getGui().style.paddingRight = paddingPx + 'px';
+        } else {
+            // otherwise it is on the left
+            this.getGui().style.paddingLeft = paddingPx + 'px';
+        }
+    }
+
     private addPadding(): void {
         let params = this.params;
         // only do this if an indent - as this overwrites the padding that
@@ -180,28 +210,9 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let node: RowNode = params.node;
         let suppressPadding = params.suppressPadding;
 
-        if (!suppressPadding && (node.footer || node.uiLevel > 0)) {
-            let paddingFactor: any;
-            if (params.colDef && params.padding >= 0) {
-                paddingFactor = params.padding;
-            } else {
-                paddingFactor = 10;
-            }
-            let paddingPx = node.uiLevel * paddingFactor;
-            let reducedLeafNode = this.columnController.isPivotMode() && params.node.leafGroup;
-            if (node.footer) {
-                paddingPx += 15;
-            } else if (!node.isExpandable() || reducedLeafNode) {
-                paddingPx += 10;
-            }
-
-            if (this.gridOptionsWrapper.isEnableRtl()) {
-                // if doing rtl, padding is on the right
-                this.getGui().style.paddingRight = paddingPx + 'px';
-            } else {
-                // otherwise it is on the left
-                this.getGui().style.paddingLeft = paddingPx + 'px';
-            }
+        if (!suppressPadding) {
+            this.addDestroyableEventListener(node, RowNode.EVENT_UI_LEVEL_CHANGED, this.setPadding.bind(this));
+            this.setPadding();
         }
     }
 
