@@ -130,6 +130,17 @@
 
 
     <div class="row" style="margin-top: 50px;">
+    
+        <div class="col-md-4">
+            <div>
+                <img src='images/rob.png'/>
+            </div>
+            <h3>Rob Clarke</h3>
+            <h4>Lead Developer - Enterprise Applications</h4>
+            <p>
+                Rob is a Software Architect and Developer who specialises in complex data-centric enterprise applications within Finance. He is expert in numerous server and client side programming languages and technologies which he uses to drive forward the core engine of ag-Grid.
+            </p>
+        </div>
 
         <div class="col-md-4">
             <div>
