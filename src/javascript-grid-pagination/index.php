@@ -11,29 +11,31 @@ include '../documentation-main/documentation_header.php';
 
     <h2 id="pagination">Pagination</h2>
 
+    <p>
+        To enable pagination in, set the grid property <i>pagination=true</i>.
+    </p>
 
     <note>
-        <p>In v9.0 ag-Grid pagination changed. See the <a href="index-deprecated.php">old pagination documentation</a>
-        for how it used to work.</p>
-
-        <p>If you were doing server side pagination, we recommend moving to
+        <p>
+            In v9.0 ag-Grid pagination changed from server side pagination to client side pagination.
+            Server side pagination was then removed in v10.1.
+        </p>
+        <p>
+            If you were doing server side pagination, we recommend moving to
             <a href="../javascript-grid-infinite-scrolling/#pagination">pagination with infinite scrolling</a>
-            as a way of migration to the new mechanism.</p>
-
-        <p>If you were slicing manually the data in your Datasource to mimic pagination done in the browser only, we recommend that
-            you use the default <a href="../javascript-grid-in-memory/">In Memory Row Model</a> and set the row data as normal
-            and then set grid property
-        <i>pagination=true</i>.</p>
-
+            as a way of migration to the new mechanism.
+        </p>
+        <p>
+            If you were slicing manually the data in your Datasource to mimic pagination done in the browser only,
+            we recommend that you use the default <a href="../javascript-grid-in-memory/">In Memory Row Model</a> and set the row data as normal
+            and then set grid property <i>pagination=true</i>.
+        </p>
     </note>
 
-    <h2 id="summary">Summary</h2>
-    <p>To enable pagination in, set the grid property <i>pagination=true</i>.
-
+    <p>
         The following properties further configure the pagination:
-</p>
+    </p>
 
-    <br>
     <h3 id="properties">Properties</h3>
     <?php include 'paginationProperties.php' ?>
     <?php printPropertiesTable($paginationProperties) ?>

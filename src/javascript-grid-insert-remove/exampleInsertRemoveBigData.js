@@ -42,28 +42,28 @@ var gridOptions;
 function createCols() {
     return [
         // these are the row groups, so they are all hidden (they are showd in the group column)
-        {headerName: 'Product', field: 'product', enableRowGroup: true},
-        {headerName: 'Portfolio', field: 'portfolio', enableRowGroup: true},
-        {headerName: 'Book', field: 'book', enableRowGroup: true},
+        {headerName: 'Product', field: 'product', enableRowGroup: true, enablePivot: true},
+        {headerName: 'Portfolio', field: 'portfolio', enableRowGroup: true, enablePivot: true},
+        {headerName: 'Book', field: 'book', enableRowGroup: true, enablePivot: true},
         {headerName: 'Trade', field: 'trade'},
 
         // some string values, that do not get aggregated
-        {headerName: 'Deal Type', field: 'dealType', enableRowGroup: true},
-        {headerName: 'Bid Flag', field: 'bidFlag', enableRowGroup: true},
+        {headerName: 'Deal Type', field: 'dealType', enableRowGroup: true, enablePivot: true},
+        {headerName: 'Bid Flag', field: 'bidFlag', enableRowGroup: true, enablePivot: true},
         {headerName: 'Comment', field: 'comment', editable: true},
 
         // all the other columns (visible and not grouped)
-        {headerName: 'Latest Batch', field: 'batch', cellClass: 'number', aggFunc: 'max'},
-        {headerName: 'Current', field: 'current', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Previous', field: 'previous', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Change', valueGetter: changeValueGetter, aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'PL 1', field: 'pl1', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'PL 2', field: 'pl2', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Gain-DX', field: 'gainDx', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'SX / PX', field: 'sxPx', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: '99 Out', field: '_99Out', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Submitter ID', field: 'submitterID', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Submitted Deal ID', field: 'submitterDealID', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter}
+        {headerName: 'Latest Batch', field: 'batch', width: 200, cellClass: 'number', aggFunc: 'max', enableValue: true},
+        {headerName: 'Current', field: 'current', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Previous', field: 'previous', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Change', valueGetter: changeValueGetter, width: 200,  aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'PL 1', field: 'pl1', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'PL 2', field: 'pl2', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Gain-DX', field: 'gainDx', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'SX / PX', field: 'sxPx', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: '99 Out', field: '_99Out', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Submitter ID', field: 'submitterID', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Submitted Deal ID', field: 'submitterDealID', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter}
     ];
 }
 
@@ -156,10 +156,13 @@ function createGridOptions() {
         enableRangeSelection: true,
         enableSorting: true,
         rowGroupPanelShow: 'always',
+        pivotPanelShow: 'always',
         suppressAggFuncInHeader: true,
         getRowNodeId: function(data) { return data.trade; },
         defaultColDef: {
-            width: 120
+            width: 120,
+            // cellRenderer: 'animateSlide'
+            cellRenderer: 'animateShowChange'
         }
     };
     console.log('rowData.length: ' + gridOptions.rowData.length);
@@ -217,7 +220,7 @@ function toggleFeed() {
         intervalId = null;
         document.querySelector('#toggleInterval').innerHTML = '&#9658; Start Feed';
     } else {
-        intervalId = setInterval(randomlyChangeData, 1000);
+        intervalId = setInterval(randomlyChangeData, 2000);
         document.querySelector('#toggleInterval').innerHTML = '&#9724; Stop Feed';
     }
 }
