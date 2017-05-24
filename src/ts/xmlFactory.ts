@@ -1,5 +1,5 @@
 import {Bean} from "./context/context";
-var LINE_SEPARATOR = '\r\n';
+let LINE_SEPARATOR = '\r\n';
 
 @Bean('xmlFactory')
 export class XmlFactory {

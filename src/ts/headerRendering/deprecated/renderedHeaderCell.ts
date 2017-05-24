@@ -71,7 +71,7 @@ export class RenderedHeaderCell extends Component {
         _.addCssClass(eGui, 'ag-header-cell');
 
         // label div
-        var eHeaderCellLabel = <HTMLElement> eGui.querySelector('#agHeaderCellLabel');
+        let eHeaderCellLabel = <HTMLElement> eGui.querySelector('#agHeaderCellLabel');
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
 
@@ -90,7 +90,7 @@ export class RenderedHeaderCell extends Component {
     }
 
     private setupTooltip(): void {
-        var colDef = this.column.getColDef();
+        let colDef = this.column.getColDef();
 
         // add tooltip if exists
         if (colDef.headerTooltip) {
@@ -99,16 +99,16 @@ export class RenderedHeaderCell extends Component {
     }
 
     private setupText(): void {
-        var colDef = this.column.getColDef();
+        let colDef = this.column.getColDef();
         // render the cell, use a renderer if one is provided
-        var headerCellRenderer: any;
+        let headerCellRenderer: any;
         if (colDef.headerCellRenderer) { // first look for a renderer in col def
             headerCellRenderer = colDef.headerCellRenderer;
         } else if (this.gridOptionsWrapper.getHeaderCellRenderer()) { // second look for one in grid options
             headerCellRenderer = this.gridOptionsWrapper.getHeaderCellRenderer();
         }
 
-        var eText = this.queryForHtmlElement('#agText');
+        let eText = this.queryForHtmlElement('#agText');
         if (eText) {
             if (headerCellRenderer) {
                 this.useRenderer(this.displayName, headerCellRenderer, eText);
@@ -134,7 +134,7 @@ export class RenderedHeaderCell extends Component {
     }
 
     private onFilterChanged(): void {
-        var filterPresent = this.column.isFilterActive();
+        let filterPresent = this.column.isFilterActive();
         _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
         _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !filterPresent);
     }
@@ -166,14 +166,14 @@ export class RenderedHeaderCell extends Component {
     }
 
     private setupMenu(): void {
-        var eMenu = this.queryForHtmlElement('#agMenu');
+        let eMenu = this.queryForHtmlElement('#agMenu');
 
         // if no menu provided in template, do nothing
         if (!eMenu) {
             return;
         }
 
-        var skipMenu = !this.menuFactory.isMenuEnabled(this.column) || this.column.getColDef().suppressMenu;
+        let skipMenu = !this.menuFactory.isMenuEnabled(this.column) || this.column.getColDef().suppressMenu;
 
         if (skipMenu) {
             _.removeFromParent(eMenu);
@@ -191,7 +191,7 @@ export class RenderedHeaderCell extends Component {
                 eMenu.style.opacity = '0';
             });
         }
-        var style = <any> eMenu.style;
+        let style = <any> eMenu.style;
         style['transition'] = 'opacity 0.2s, border 0.2s';
         style['-webkit-transition'] = 'opacity 0.2s, border 0.2s';
     }
@@ -217,14 +217,14 @@ export class RenderedHeaderCell extends Component {
     }
 
     private setupMove(eHeaderCellLabel: HTMLElement): void {
-        var suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
+        let suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
                             || this.column.getColDef().suppressMovable
                             || this.gridOptionsWrapper.isForPrint();
 
         if (suppressMove) { return; }
 
         if (eHeaderCellLabel) {
-            var dragSource: DragSource = {
+            let dragSource: DragSource = {
                 type: DragSourceType.HeaderCell,
                 eElement: eHeaderCellLabel,
                 dragItem: [this.column],
@@ -255,15 +255,15 @@ export class RenderedHeaderCell extends Component {
     }
 
     private setupResize(): void {
-        var colDef = this.column.getColDef();
-        var eResize = this.queryForHtmlElement('#agResizeBar');
+        let colDef = this.column.getColDef();
+        let eResize = this.queryForHtmlElement('#agResizeBar');
 
         // if no eResize in template, do nothing
         if (!eResize) {
             return;
         }
 
-        var weWantResize = this.gridOptionsWrapper.isEnableColResize() && !colDef.suppressResize;
+        let weWantResize = this.gridOptionsWrapper.isEnableColResize() && !colDef.suppressResize;
         if (!weWantResize) {
             _.removeFromParent(eResize);
             return;
@@ -278,7 +278,7 @@ export class RenderedHeaderCell extends Component {
             onDragging: this.onDragging.bind(this)
         });
 
-        var weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
+        let weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
         if (weWantAutoSize) {
             this.addDestroyableEventListener(eResize, 'dblclick', () => {
                 this.columnController.autoSizeColumn(this.column);
@@ -288,7 +288,7 @@ export class RenderedHeaderCell extends Component {
 
     private useRenderer(headerNameValue: string, headerCellRenderer: Function, eText: HTMLElement): void {
         // renderer provided, use it
-        var cellRendererParams = {
+        let cellRendererParams = {
             colDef: this.column.getColDef(),
             $scope: this.childScope,
             context: this.gridOptionsWrapper.getContext(),
@@ -296,20 +296,20 @@ export class RenderedHeaderCell extends Component {
             api: this.gridOptionsWrapper.getApi(),
             eHeaderCell: this.getGui()
         };
-        var cellRendererResult = headerCellRenderer(cellRendererParams);
-        var childToAppend: any;
+        let cellRendererResult = headerCellRenderer(cellRendererParams);
+        let childToAppend: any;
         if (_.isNodeOrElement(cellRendererResult)) {
             // a dom node or element was returned, so add child
             childToAppend = cellRendererResult;
         } else {
             // otherwise assume it was html, so just insert
-            var eTextSpan = document.createElement("span");
+            let eTextSpan = document.createElement("span");
             eTextSpan.innerHTML = cellRendererResult;
             childToAppend = eTextSpan;
         }
         // angular compile header if option is turned on
         if (this.gridOptionsWrapper.isAngularCompileHeaders()) {
-            var childToAppendCompiled = this.$compile(childToAppend)(this.childScope)[0];
+            let childToAppendCompiled = this.$compile(childToAppend)(this.childScope)[0];
             eText.appendChild(childToAppendCompiled);
         } else {
             eText.appendChild(childToAppend);
@@ -317,7 +317,7 @@ export class RenderedHeaderCell extends Component {
     }
 
     public setupSort(eHeaderCellLabel: HTMLElement): void {
-        var enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
+        let enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
         let eGui = this.getGui();
         if (!enableSorting) {
             _.removeFromParent(eGui.querySelector('#agSortAsc'));
@@ -360,7 +360,7 @@ export class RenderedHeaderCell extends Component {
         }
 
         if (this.eSortNone) {
-            var alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
+            let alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
             _.addOrRemoveCssClass(this.eSortNone, 'ag-hidden', alwaysHideNoSort || !this.column.isSortNone());
         }
     }

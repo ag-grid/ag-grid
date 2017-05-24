@@ -5,7 +5,7 @@ export class Downloader {
     download (fileName:string, content:string, mimeType:string){
         // for Excel, we need \ufeff at the start
         // http://stackoverflow.com/questions/17879198/adding-utf-8-bom-to-string-blob
-        var blobObject = new Blob(["\ufeff", content], {
+        let blobObject = new Blob(["\ufeff", content], {
             type: mimeType
         });
         // Internet Explorer
@@ -13,7 +13,7 @@ export class Downloader {
             window.navigator.msSaveOrOpenBlob(blobObject, fileName);
         } else {
             // Chrome
-            var downloadLink = document.createElement("a");
+            let downloadLink = document.createElement("a");
             downloadLink.href = (<any>window).URL.createObjectURL(blobObject);
             (<any>downloadLink).download = fileName;
 

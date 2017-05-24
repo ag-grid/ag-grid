@@ -33,13 +33,13 @@ export class BalancedColumnTreeBuilder {
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that cold be master/slave) with same column definitions,
         // then this ensures the two grids use identical id's.
-        var columnKeyCreator = new ColumnKeyCreator();
+        let columnKeyCreator = new ColumnKeyCreator();
 
         // create am unbalanced tree that maps the provided definitions
-        var unbalancedTree = this.recursivelyCreateColumns(abstractColDefs, 0, columnKeyCreator, primaryColumns);
-        var treeDept = this.findMaxDept(unbalancedTree, 0);
+        let unbalancedTree = this.recursivelyCreateColumns(abstractColDefs, 0, columnKeyCreator, primaryColumns);
+        let treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
-        var balancedTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
+        let balancedTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
 
         this.columnUtils.depthFirstOriginalTreeSearch(balancedTree, (child: OriginalColumnGroupChild)=> {
             if (child instanceof OriginalColumnGroup) {
@@ -56,23 +56,23 @@ export class BalancedColumnTreeBuilder {
     private balanceColumnTree(unbalancedTree: OriginalColumnGroupChild[], currentDept: number,
                               columnDept: number, columnKeyCreator: ColumnKeyCreator): OriginalColumnGroupChild[] {
 
-        var result: OriginalColumnGroupChild[] = [];
+        let result: OriginalColumnGroupChild[] = [];
 
         // go through each child, for groups, recurse a level deeper,
         // for columns we need to pad
         unbalancedTree.forEach( (child: OriginalColumnGroupChild)=> {
             if (child instanceof OriginalColumnGroup) {
-                var originalGroup = <OriginalColumnGroup> child;
-                var newChildren = this.balanceColumnTree(
+                let originalGroup = <OriginalColumnGroup> child;
+                let newChildren = this.balanceColumnTree(
                     originalGroup.getChildren(), currentDept + 1, columnDept, columnKeyCreator);
                 originalGroup.setChildren(newChildren);
                 result.push(originalGroup);
             } else {
-                var newChild = child;
-                for (var i = columnDept-1; i>=currentDept; i--) {
-                    var newColId = columnKeyCreator.getUniqueKey(null, null);
+                let newChild = child;
+                for (let i = columnDept-1; i>=currentDept; i--) {
+                    let newColId = columnKeyCreator.getUniqueKey(null, null);
                     let colGroupDefMerged = this.createMergedColGroupDef(null);
-                    var paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true);
+                    let paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true);
                     paddedGroup.setChildren([newChild]);
                     newChild = paddedGroup;
                 }
@@ -84,12 +84,12 @@ export class BalancedColumnTreeBuilder {
     }
 
     private findMaxDept(treeChildren: OriginalColumnGroupChild[], dept: number): number {
-        var maxDeptThisLevel = dept;
-        for (var i = 0; i<treeChildren.length; i++) {
-            var abstractColumn = treeChildren[i];
+        let maxDeptThisLevel = dept;
+        for (let i = 0; i<treeChildren.length; i++) {
+            let abstractColumn = treeChildren[i];
             if (abstractColumn instanceof OriginalColumnGroup) {
-                var originalGroup = <OriginalColumnGroup> abstractColumn;
-                var newDept = this.findMaxDept(originalGroup.getChildren(), dept+1);
+                let originalGroup = <OriginalColumnGroup> abstractColumn;
+                let newDept = this.findMaxDept(originalGroup.getChildren(), dept+1);
                 if (maxDeptThisLevel<newDept) {
                     maxDeptThisLevel = newDept;
                 }
@@ -101,7 +101,7 @@ export class BalancedColumnTreeBuilder {
     private recursivelyCreateColumns(abstractColDefs: (ColDef|ColGroupDef)[], level: number,
                                      columnKeyCreator: ColumnKeyCreator, primaryColumns: boolean): OriginalColumnGroupChild[] {
 
-        var result: OriginalColumnGroupChild[] = [];
+        let result: OriginalColumnGroupChild[] = [];
 
         if (!abstractColDefs) {
             return result;
@@ -124,9 +124,9 @@ export class BalancedColumnTreeBuilder {
 
         let colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
 
-        var groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
-        var originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false);
-        var children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, columnKeyCreator, primaryColumns);
+        let groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
+        let originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false);
+        let children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, columnKeyCreator, primaryColumns);
 
         originalGroup.setChildren(children);
 
@@ -134,7 +134,7 @@ export class BalancedColumnTreeBuilder {
     }
 
     private createMergedColGroupDef(colGroupDef: ColGroupDef): ColGroupDef {
-        var colGroupDefMerged: ColGroupDef = <ColGroupDef> {};
+        let colGroupDefMerged: ColGroupDef = <ColGroupDef> {};
         _.assign(colGroupDefMerged, this.gridOptionsWrapper.getDefaultColGroupDef());
         _.assign(colGroupDefMerged, colGroupDef);
         this.checkForDeprecatedItems(colGroupDefMerged);
@@ -142,14 +142,14 @@ export class BalancedColumnTreeBuilder {
     }
 
     private createColumn(columnKeyCreator: ColumnKeyCreator,  primaryColumns: boolean, colDef3: ColDef): Column {
-        var colDefMerged: ColDef = <ColDef> {};
+        let colDefMerged: ColDef = <ColDef> {};
         _.assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
         _.assign(colDefMerged, colDef3);
         this.checkForDeprecatedItems(colDefMerged);
 
-        var colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
+        let colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
 
-        var column = new Column(colDefMerged, colId, primaryColumns);
+        let column = new Column(colDefMerged, colId, primaryColumns);
         this.context.wireBean(column);
 
         return column;
@@ -157,7 +157,7 @@ export class BalancedColumnTreeBuilder {
 
     private checkForDeprecatedItems(colDef: AbstractColDef) {
         if (colDef) {
-            var colDefNoType = <any> colDef; // take out the type, so we can access attributes not defined in the type
+            let colDefNoType = <any> colDef; // take out the type, so we can access attributes not defined in the type
             if (colDefNoType.group !== undefined) {
                 console.warn('ag-grid: colDef.group is invalid, please check documentation on how to do grouping as it changed in version 3');
             }

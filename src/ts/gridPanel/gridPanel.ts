@@ -33,7 +33,7 @@ import {CellComp} from "../rendering/cellComp";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
-var gridHtml =
+let gridHtml =
     '<div class="ag-root ag-font-style">'+
         // header
         '<div class="ag-header">'+
@@ -81,7 +81,7 @@ var gridHtml =
         '</div>'+
     '</div>';
 
-var gridForPrintHtml =
+let gridForPrintHtml =
         '<div class="ag-root ag-font-style">'+
             // header
             '<div class="ag-header-container"></div>'+
@@ -95,13 +95,13 @@ var gridForPrintHtml =
 
 // wrapping in outer div, and wrapper, is needed to center the loading icon
 // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
-var mainOverlayTemplate =
+let mainOverlayTemplate =
     '<div class="ag-overlay-panel">'+
         '<div class="ag-overlay-wrapper ag-overlay-[OVERLAY_NAME]-wrapper">[OVERLAY_TEMPLATE]</div>'+
     '</div>';
 
-var defaultLoadingOverlayTemplate = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
-var defaultNoRowsOverlayTemplate = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
+let defaultLoadingOverlayTemplate = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
+let defaultNoRowsOverlayTemplate = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
 
 export interface RowContainerComponents {
     fullWidth: RowContainerComponent;
@@ -320,9 +320,9 @@ export class GridPanel extends BeanStub {
 
     private addAngularApplyCheck(): void {
         // this makes sure if we queue up requests, we only execute oe
-        var applyTriggered = false;
+        let applyTriggered = false;
 
-        var listener = ()=> {
+        let listener = ()=> {
             // only need to do one apply at a time
             if (applyTriggered) { return; }
             applyTriggered = true; // mark 'need apply' to true
@@ -375,11 +375,11 @@ export class GridPanel extends BeanStub {
             return;
         }
 
-        var containers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
+        let containers = [this.ePinnedLeftColsContainer, this.ePinnedRightColsContainer, this.eBodyContainer,
             this.eFloatingTop, this.eFloatingBottom];
 
         containers.forEach(container => {
-            var params = <DragListenerParams> {
+            let params = <DragListenerParams> {
                 dragStartPixels: 0,
                 eElement: container,
                 onDragStart: this.rangeController.onDragStart.bind(this.rangeController),
@@ -394,9 +394,9 @@ export class GridPanel extends BeanStub {
     }
 
     private addMouseEvents(): void {
-        var eventNames = ['click','mousedown','dblclick','contextmenu','mouseover','mouseout'];
+        let eventNames = ['click','mousedown','dblclick','contextmenu','mouseover','mouseout'];
         eventNames.forEach( eventName => {
-            var listener = this.processMouseEvent.bind(this, eventName);
+            let listener = this.processMouseEvent.bind(this, eventName);
             this.eAllCellContainers.forEach( container => {
                 container.addEventListener(eventName, listener);
                 this.addDestroyFunc( ()=> container.removeEventListener(eventName, listener) );
@@ -405,9 +405,9 @@ export class GridPanel extends BeanStub {
     }
 
     private addKeyboardEvents(): void {
-        var eventNames = ['keydown','keypress'];
+        let eventNames = ['keydown','keypress'];
         eventNames.forEach( eventName => {
-            var listener = this.processKeyboardEvent.bind(this, eventName);
+            let listener = this.processKeyboardEvent.bind(this, eventName);
             this.eAllCellContainers.forEach( container => {
                 this.addDestroyableEventListener(container, eventName, listener);
             });
@@ -420,8 +420,8 @@ export class GridPanel extends BeanStub {
 
         // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
         // the context menu if no rows are displayed, or user simply clicks outside of a cell
-        var listener = (mouseEvent: MouseEvent) => {
-            var target = _.getTarget(mouseEvent);
+        let listener = (mouseEvent: MouseEvent) => {
+            let target = _.getTarget(mouseEvent);
             if (target===this.eBodyViewport) {
                 // show it
                 this.onContextMenu(mouseEvent);
@@ -434,7 +434,7 @@ export class GridPanel extends BeanStub {
 
     private getRowForEvent(event: MouseEvent | KeyboardEvent): RowComp {
 
-        var sourceElement = _.getTarget(event);
+        let sourceElement = _.getTarget(event);
 
         while (sourceElement) {
 
@@ -687,12 +687,12 @@ export class GridPanel extends BeanStub {
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        var renderedCell = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
+        let renderedCell = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
         if (renderedCell) {
             renderedCell.onMouseEvent(eventName, mouseEvent);
         }
 
-        var renderedRow = this.getRowForEvent(mouseEvent);
+        let renderedRow = this.getRowForEvent(mouseEvent);
         if (renderedRow) {
             renderedRow.onMouseEvent(eventName, mouseEvent);
         }
@@ -753,9 +753,9 @@ export class GridPanel extends BeanStub {
 
     private onCtrlAndA(event: KeyboardEvent): boolean {
         if (this.rangeController && this.paginationProxy.isRowsToRender()) {
-            var rowEnd: number;
-            var floatingStart: string;
-            var floatingEnd: string;
+            let rowEnd: number;
+            let floatingStart: string;
+            let floatingEnd: string;
 
             if (this.floatingRowModel.isEmpty(Constants.FLOATING_TOP)) {
                 floatingStart = null;
@@ -771,7 +771,7 @@ export class GridPanel extends BeanStub {
                 rowEnd = this.floatingRowModel.getFloatingBottomRowData().length = 1;
             }
 
-            var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
+            let allDisplayedColumns = this.columnController.getAllDisplayedColumns();
             if (_.missingOrEmpty(allDisplayedColumns)) { return; }
             this.rangeController.setRange({
                 rowStart: 0,
@@ -789,7 +789,7 @@ export class GridPanel extends BeanStub {
     private onCtrlAndC(event: KeyboardEvent): boolean {
         if (!this.clipboardService) { return; }
 
-        var focusedCell = this.focusedCellController.getFocusedCell();
+        let focusedCell = this.focusedCellController.getFocusedCell();
 
         this.clipboardService.copyToClipboard();
         event.preventDefault();
@@ -820,7 +820,7 @@ export class GridPanel extends BeanStub {
 
     private createOverlayTemplate(name: string, defaultTemplate: string, userProvidedTemplate: string): string {
 
-        var template = mainOverlayTemplate
+        let template = mainOverlayTemplate
             .replace('[OVERLAY_NAME]', name);
 
         if (userProvidedTemplate) {
@@ -834,29 +834,29 @@ export class GridPanel extends BeanStub {
 
     private createLoadingOverlayTemplate(): string {
 
-        var userProvidedTemplate = this.gridOptionsWrapper.getOverlayLoadingTemplate();
+        let userProvidedTemplate = this.gridOptionsWrapper.getOverlayLoadingTemplate();
 
-        var templateNotLocalised = this.createOverlayTemplate(
+        let templateNotLocalised = this.createOverlayTemplate(
             'loading',
             defaultLoadingOverlayTemplate,
             userProvidedTemplate);
 
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var templateLocalised = templateNotLocalised.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        let templateLocalised = templateNotLocalised.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
 
         return templateLocalised;
     }
 
     private createNoRowsOverlayTemplate(): string {
-        var userProvidedTemplate = this.gridOptionsWrapper.getOverlayNoRowsTemplate();
+        let userProvidedTemplate = this.gridOptionsWrapper.getOverlayNoRowsTemplate();
 
-        var templateNotLocalised = this.createOverlayTemplate(
+        let templateNotLocalised = this.createOverlayTemplate(
             'no-rows',
             defaultNoRowsOverlayTemplate,
             userProvidedTemplate);
 
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var templateLocalised = templateNotLocalised.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        let templateLocalised = templateNotLocalised.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
 
         return templateLocalised;
     }
@@ -866,7 +866,7 @@ export class GridPanel extends BeanStub {
         if (this.gridOptionsWrapper.isForPrint()) { return; }
 
         this.logger.log('ensureIndexVisible: ' + index);
-        var rowCount = this.paginationProxy.getTotalRowCount();
+        let rowCount = this.paginationProxy.getTotalRowCount();
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
             return;
@@ -874,23 +874,23 @@ export class GridPanel extends BeanStub {
 
         this.paginationProxy.goToPageWithIndex(index);
 
-        var nodeAtIndex = this.paginationProxy.getRow(index);
+        let nodeAtIndex = this.paginationProxy.getRow(index);
         let pixelOffset = this.paginationProxy.getPixelOffset();
-        var rowTopPixel = nodeAtIndex.rowTop - pixelOffset;
-        var rowBottomPixel = rowTopPixel + nodeAtIndex.rowHeight;
+        let rowTopPixel = nodeAtIndex.rowTop - pixelOffset;
+        let rowBottomPixel = rowTopPixel + nodeAtIndex.rowHeight;
 
         let vRange = this.getVerticalPixelRange();
 
-        var vRangeTop = vRange.top;
-        var vRangeBottom = vRange.bottom;
+        let vRangeTop = vRange.top;
+        let vRangeBottom = vRange.bottom;
 
-        var scrollShowing = this.isHorizontalScrollShowing();
+        let scrollShowing = this.isHorizontalScrollShowing();
         if (scrollShowing) {
             vRangeBottom -= this.scrollWidth;
         }
 
-        var viewportScrolledPastRow = vRangeTop > rowTopPixel;
-        var viewportScrolledBeforeRow = vRangeBottom < rowBottomPixel;
+        let viewportScrolledPastRow = vRangeTop > rowTopPixel;
+        let viewportScrolledBeforeRow = vRangeBottom < rowBottomPixel;
 
         let eViewportToScroll = this.getPrimaryScrollViewport();
 
@@ -924,7 +924,7 @@ export class GridPanel extends BeanStub {
     }
 
     private isHorizontalScrollShowing(): boolean {
-        var result = _.isHorizontalScrollShowing(this.eBodyViewport);
+        let result = _.isHorizontalScrollShowing(this.eBodyViewport);
         return result;
     }
 
@@ -989,7 +989,7 @@ export class GridPanel extends BeanStub {
         if (this.forPrint) { return; }
 
         if (this.columnController.isPinningRight()) {
-            var bodyHorizontalScrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
+            let bodyHorizontalScrollShowing = this.eBodyViewport.clientWidth < this.eBodyViewport.scrollWidth;
             if (bodyHorizontalScrollShowing) {
                 this.ePinnedRightColsContainer.style.marginBottom = this.scrollWidth + 'px';
             } else {
@@ -1029,7 +1029,7 @@ export class GridPanel extends BeanStub {
         // if for print, everything is always visible
         if (this.gridOptionsWrapper.isForPrint()) { return; }
 
-        var column = this.columnController.getGridColumn(key);
+        let column = this.columnController.getGridColumn(key);
 
         if (!column) { return; }
 
@@ -1043,8 +1043,8 @@ export class GridPanel extends BeanStub {
             return;
         }
 
-        var colLeftPixel = column.getLeft();
-        var colRightPixel = colLeftPixel + column.getActualWidth();
+        let colLeftPixel = column.getLeft();
+        let colRightPixel = colLeftPixel + column.getActualWidth();
 
         let viewportWidth = this.eBodyViewport.clientWidth;
         let scrollPosition = this.getBodyViewportScrollLeft();
@@ -1064,8 +1064,8 @@ export class GridPanel extends BeanStub {
             viewportRightPixel = viewportWidth + scrollPosition;
         }
 
-        var viewportScrolledPastCol = viewportLeftPixel > colLeftPixel;
-        var viewportScrolledBeforeCol = viewportRightPixel < colRightPixel;
+        let viewportScrolledPastCol = viewportLeftPixel > colLeftPixel;
+        let viewportScrolledBeforeCol = viewportRightPixel < colRightPixel;
 
         if (viewportScrolledPastCol) {
             // if viewport's left side is after col's left side, scroll right to pull col into viewport at left
@@ -1112,11 +1112,11 @@ export class GridPanel extends BeanStub {
     }
 
     private getWidthForSizeColsToFit() {
-        var availableWidth = this.eBody.clientWidth;
+        let availableWidth = this.eBody.clientWidth;
         // if pinning right, then the scroll bar can show, however for some reason
         // it overlays the grid and doesn't take space. so we are only interested
         // in the body scroll showing.
-        var removeVerticalScrollWidth = this.isVerticalScrollShowing();
+        let removeVerticalScrollWidth = this.isVerticalScrollShowing();
         if (removeVerticalScrollWidth) {
             availableWidth -= this.scrollWidth;
         }
@@ -1126,7 +1126,7 @@ export class GridPanel extends BeanStub {
     // method will call itself if no available width. this covers if the grid
     // isn't visible, but is just about to be visible.
     public sizeColumnsToFit(nextTimeout?: number) {
-        var availableWidth = this.getWidthForSizeColsToFit();
+        let availableWidth = this.getWidthForSizeColsToFit();
         if (availableWidth>0) {
             this.columnController.sizeColumnsToFit(availableWidth);
         } else {
@@ -1203,12 +1203,12 @@ export class GridPanel extends BeanStub {
 
     private loadTemplate(): void {
         // the template we use is different when doing 'for print'
-        var template = this.forPrint ? gridForPrintHtml : gridHtml;
+        let template = this.forPrint ? gridForPrintHtml : gridHtml;
         this.eRoot = <HTMLElement> _.loadTemplate(template);
 
         // parts of the CSS need to know if we are in 'for print' mode or not,
         // so we add a class to allow applying CSS based on this.
-        var scrollClass = this.forPrint ? 'ag-no-scrolls' : 'ag-scrolls';
+        let scrollClass = this.forPrint ? 'ag-no-scrolls' : 'ag-scrolls';
         _.addCssClass(this.eRoot, scrollClass);
     }
 
@@ -1355,17 +1355,17 @@ export class GridPanel extends BeanStub {
     }
 
     private generalMouseWheelListener(event: any, targetPanel: HTMLElement): boolean {
-        var wheelEvent = _.normalizeWheel(event);
+        let wheelEvent = _.normalizeWheel(event);
 
         // we need to detect in which direction scroll is happening to allow trackpads scroll horizontally
         // horizontal scroll
         if (Math.abs(wheelEvent.pixelX) > Math.abs(wheelEvent.pixelY)) {
-            var newLeftPosition = this.eBodyViewport.scrollLeft + wheelEvent.pixelX;
+            let newLeftPosition = this.eBodyViewport.scrollLeft + wheelEvent.pixelX;
             this.eBodyViewport.scrollLeft = newLeftPosition;
         }
         // vertical scroll
         else {
-            var newTopPosition = targetPanel.scrollTop + wheelEvent.pixelY;
+            let newTopPosition = targetPanel.scrollTop + wheelEvent.pixelY;
             targetPanel.scrollTop = newTopPosition;
         }
 
@@ -1404,7 +1404,7 @@ export class GridPanel extends BeanStub {
     }
 
     private setWidthsOfContainers(): void {
-        var mainRowWidth = this.columnController.getBodyContainerWidth() + 'px';
+        let mainRowWidth = this.columnController.getBodyContainerWidth() + 'px';
         this.eBodyContainer.style.width = mainRowWidth;
 
         if (this.forPrint) {
@@ -1420,8 +1420,8 @@ export class GridPanel extends BeanStub {
     }
 
     private setPinnedLeftWidth(): void {
-        var pinnedLeftWidth = this.scrollVisibleService.getPinnedLeftWidth() + 'px';
-        var pinnedLeftWidthWithScroll = this.scrollVisibleService.getPinnedLeftWithScrollWidth() + 'px';
+        let pinnedLeftWidth = this.scrollVisibleService.getPinnedLeftWidth() + 'px';
+        let pinnedLeftWidthWithScroll = this.scrollVisibleService.getPinnedLeftWithScrollWidth() + 'px';
 
         this.ePinnedLeftColsViewport.style.width = pinnedLeftWidthWithScroll;
         this.eBodyViewportWrapper.style.marginLeft = pinnedLeftWidthWithScroll;
@@ -1433,8 +1433,8 @@ export class GridPanel extends BeanStub {
     }
 
     private setPinnedRightWidth(): void {
-        var pinnedRightWidth = this.scrollVisibleService.getPinnedRightWidth() + 'px';
-        var pinnedRightWidthWithScroll = this.scrollVisibleService.getPinnedRightWithScrollWidth() + 'px';
+        let pinnedRightWidth = this.scrollVisibleService.getPinnedRightWidth() + 'px';
+        let pinnedRightWidthWithScroll = this.scrollVisibleService.getPinnedRightWithScrollWidth() + 'px';
 
         this.ePinnedRightColsViewport.style.width = pinnedRightWidthWithScroll;
         this.eBodyViewportWrapper.style.marginRight = pinnedRightWidthWithScroll;
@@ -1511,7 +1511,7 @@ export class GridPanel extends BeanStub {
             return;
         }
 
-        var heightOfContainer = this.layout.getCentreHeight();
+        let heightOfContainer = this.layout.getCentreHeight();
         if (!heightOfContainer) {
             return;
         }
@@ -1548,11 +1548,11 @@ export class GridPanel extends BeanStub {
         this.eHeader.style['height'] = totalHeaderHeight + 'px';
 
         // padding top covers the header and the floating rows on top
-        var floatingTopHeight = this.floatingRowModel.getFloatingTopTotalHeight();
-        var paddingTop = totalHeaderHeight + floatingTopHeight;
+        let floatingTopHeight = this.floatingRowModel.getFloatingTopTotalHeight();
+        let paddingTop = totalHeaderHeight + floatingTopHeight;
         // bottom is just the bottom floating rows
-        var floatingBottomHeight = this.floatingRowModel.getFloatingBottomTotalHeight();
-        var floatingBottomTop = heightOfContainer - floatingBottomHeight;
+        let floatingBottomHeight = this.floatingRowModel.getFloatingBottomTotalHeight();
+        let floatingBottomTop = heightOfContainer - floatingBottomHeight;
 
         let bodyHeight = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
 
@@ -1585,9 +1585,9 @@ export class GridPanel extends BeanStub {
 
     // tries to scroll by pixels, but returns what the result actually was
     public scrollHorizontally(pixels: number): number {
-        var oldScrollPosition = this.eBodyViewport.scrollLeft;
+        let oldScrollPosition = this.eBodyViewport.scrollLeft;
         this.setHorizontalScrollPosition(oldScrollPosition + pixels);
-        var newScrollPosition = this.eBodyViewport.scrollLeft;
+        let newScrollPosition = this.eBodyViewport.scrollLeft;
         return newScrollPosition - oldScrollPosition;
     }
 
@@ -1605,7 +1605,7 @@ export class GridPanel extends BeanStub {
             }
         };
 
-        var bodyScrollListener = wrapWithDebounce(this.onBodyScroll.bind(this));
+        let bodyScrollListener = wrapWithDebounce(this.onBodyScroll.bind(this));
         this.addDestroyableEventListener(this.eBodyViewport, 'scroll', bodyScrollListener);
 
         // below we add two things:
@@ -1647,7 +1647,7 @@ export class GridPanel extends BeanStub {
     }
 
     private onBodyHorizontalScroll(): void {
-        var newLeftPosition = this.eBodyViewport.scrollLeft;
+        let newLeftPosition = this.eBodyViewport.scrollLeft;
         if (newLeftPosition !== this.lastLeftPosition) {
             this.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL, {direction: 'horizontal'});
             this.lastLeftPosition = newLeftPosition;
@@ -1666,7 +1666,7 @@ export class GridPanel extends BeanStub {
     }
 
     private onVerticalScroll(sourceElement: HTMLElement): void {
-        var newTopPosition = sourceElement.scrollTop;
+        let newTopPosition = sourceElement.scrollTop;
         if (newTopPosition !== this.lastTopPosition) {
             this.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL, {direction: 'vertical'});
             this.lastTopPosition = newTopPosition;
@@ -1690,7 +1690,7 @@ export class GridPanel extends BeanStub {
     // https://www.ag-grid.com/forum/showthread.php?tid=4303
     // it gets the left panel to reposition itself after a model change
     private addIEPinFix(onPinnedRightScroll: Function, onPinnedLeftScroll: Function): void {
-        var listener = () => {
+        let listener = () => {
             if (this.columnController.isPinningRight()) {
                 setTimeout( ()=> {
                     if (this.enableRtl) {
@@ -1743,7 +1743,7 @@ export class GridPanel extends BeanStub {
             }
         } else {
             this.scrollLagCounter++;
-            var scrollLagCounterCopy = this.scrollLagCounter;
+            let scrollLagCounterCopy = this.scrollLagCounter;
             setTimeout( ()=> {
                 if (this.scrollLagCounter === scrollLagCounterCopy) {
                     callback();

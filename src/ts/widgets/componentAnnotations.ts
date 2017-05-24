@@ -18,7 +18,7 @@ function querySelectorFunc(selector: string, classPrototype: any, methodOrAttrib
     }
 
     // it's an attribute on the class
-    var props = getOrCreateProps(classPrototype);
+    let props = getOrCreateProps(classPrototype);
     if (!props.querySelectors) {
         props.querySelectors = [];
     }
@@ -40,7 +40,7 @@ function listenerFunc(eventName: string, target: Object, methodName: string, des
     }
 
     // it's an attribute on the class
-    var props = getOrCreateProps(target);
+    let props = getOrCreateProps(target);
     if (!props.listenerMethods) {
         props.listenerMethods = [];
     }
@@ -52,7 +52,7 @@ function listenerFunc(eventName: string, target: Object, methodName: string, des
 
 function getOrCreateProps(target: any): any {
 
-    var props = target.__agComponentMetaData;
+    let props = target.__agComponentMetaData;
 
     if (!props) {
         props = {};

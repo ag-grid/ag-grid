@@ -4,7 +4,7 @@ import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {Column} from "../../entities/column";
 import {Bean, Autowired} from "../../context/context";
 
-var svgFactory = SvgFactory.getInstance();
+let svgFactory = SvgFactory.getInstance();
 
 @Bean('headerTemplateLoader')
 export class HeaderTemplateLoader {
@@ -26,7 +26,7 @@ export class HeaderTemplateLoader {
 
     public createHeaderElement(column: Column): HTMLElement {
 
-        var params = {
+        let params = {
             column: column,
             colDef: column.getColDef,
             context: this.gridOptionsWrapper.getContext(),
@@ -34,9 +34,9 @@ export class HeaderTemplateLoader {
         };
 
         // option 1 - see if user provided a template in colDef
-        var userProvidedTemplate = column.getColDef().headerCellTemplate;
+        let userProvidedTemplate = column.getColDef().headerCellTemplate;
         if (typeof userProvidedTemplate === 'function') { // and if they did, and it's a function, execute it
-            var colDefFunc = (<(params: any) => string> userProvidedTemplate);
+            let colDefFunc = (<(params: any) => string> userProvidedTemplate);
             userProvidedTemplate = colDefFunc(params);
         }
         // option 2 - check the gridOptions for cellTemplate
@@ -45,7 +45,7 @@ export class HeaderTemplateLoader {
         }
         // option 3 - check the gridOptions for templateFunction
         if (!userProvidedTemplate && this.gridOptionsWrapper.getHeaderCellTemplateFunc()) {
-            var gridOptionsFunc = this.gridOptionsWrapper.getHeaderCellTemplateFunc();
+            let gridOptionsFunc = this.gridOptionsWrapper.getHeaderCellTemplateFunc();
             userProvidedTemplate = gridOptionsFunc(params);
         }
         // finally, if still no template, use the default
@@ -54,7 +54,7 @@ export class HeaderTemplateLoader {
         }
 
         // template can be a string or a dom element, if string we need to convert to a dom element
-        var result: HTMLElement;
+        let result: HTMLElement;
         if (typeof userProvidedTemplate === 'string') {
             result = <HTMLElement> _.loadTemplate(userProvidedTemplate);
         } else if (_.isNodeOrElement(userProvidedTemplate)) {
@@ -68,7 +68,7 @@ export class HeaderTemplateLoader {
 
     public createDefaultHeaderElement(column: Column): HTMLElement {
 
-        var eTemplate = <HTMLElement> _.loadTemplate(HeaderTemplateLoader.HEADER_CELL_TEMPLATE);
+        let eTemplate = <HTMLElement> _.loadTemplate(HeaderTemplateLoader.HEADER_CELL_TEMPLATE);
 
         this.addInIcon(eTemplate, 'sortAscending', '#agSortAsc', column, svgFactory.createArrowUpSvg);
         this.addInIcon(eTemplate, 'sortDescending', '#agSortDesc', column, svgFactory.createArrowDownSvg);
@@ -80,7 +80,7 @@ export class HeaderTemplateLoader {
     }
 
     private addInIcon(eTemplate: HTMLElement, iconName: string, cssSelector: string, column: Column, defaultIconFactory: () => HTMLElement): void {
-        var eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
+        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
         eTemplate.querySelector(cssSelector).appendChild(eIcon);
     }
 }

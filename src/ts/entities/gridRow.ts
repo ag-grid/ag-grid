@@ -41,7 +41,7 @@ export class GridRow {
 
     // tests if this row selection is before the other row selection
     public before(otherSelection: GridRow): boolean {
-        var otherFloating = otherSelection.floating;
+        let otherFloating = otherSelection.floating;
         switch (this.floating) {
             case Constants.FLOATING_TOP:
                 // we we are floating top, and other isn't, then we are always before

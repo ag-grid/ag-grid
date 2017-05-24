@@ -21,7 +21,7 @@ export class SelectCellEditor extends Component implements ICellEditorComp {
             return;
         }
         params.values.forEach( (value: any)=> {
-            var option = document.createElement('option');
+            let option = document.createElement('option');
             option.value = value;
             option.text = value;
             if (params.value === value) {
@@ -33,7 +33,7 @@ export class SelectCellEditor extends Component implements ICellEditorComp {
         this.addDestroyableEventListener(this.eSelect, 'change', ()=> params.stopEditing() );
 
         this.addDestroyableEventListener(this.eSelect, 'keydown', (event: KeyboardEvent)=> {
-            var isNavigationKey = event.keyCode===Constants.KEY_UP || event.keyCode===Constants.KEY_DOWN;
+            let isNavigationKey = event.keyCode===Constants.KEY_UP || event.keyCode===Constants.KEY_DOWN;
             if (isNavigationKey) {
                 event.stopPropagation();
             }

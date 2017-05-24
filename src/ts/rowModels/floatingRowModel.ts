@@ -27,7 +27,7 @@ export class FloatingRowModel {
     }
 
     public isEmpty(floating: string): boolean {
-        var rows = floating===Constants.FLOATING_TOP ? this.floatingTopRows : this.floatingBottomRows;
+        let rows = floating===Constants.FLOATING_TOP ? this.floatingTopRows : this.floatingBottomRows;
         return _.missingOrEmpty(rows);
     }
 
@@ -36,13 +36,13 @@ export class FloatingRowModel {
     }
 
     public getRowAtPixel(pixel: number, floating: string): number {
-        var rows = floating===Constants.FLOATING_TOP ? this.floatingTopRows : this.floatingBottomRows;
+        let rows = floating===Constants.FLOATING_TOP ? this.floatingTopRows : this.floatingBottomRows;
         if (_.missingOrEmpty(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
         }
-        for (var i = 0; i<rows.length; i++) {
-            var rowNode = rows[i];
-            var rowTopPixel = rowNode.rowTop + rowNode.rowHeight - 1;
+        for (let i = 0; i<rows.length; i++) {
+            let rowNode = rows[i];
+            let rowTopPixel = rowNode.rowTop + rowNode.rowHeight - 1;
             // only need to range check against the top pixel, as we are going through the list
             // in order, first row to hit the pixel wins
             if (rowTopPixel >= pixel) {
@@ -63,11 +63,11 @@ export class FloatingRowModel {
     }
 
     private createNodesFromData(allData: any[], isTop: boolean): RowNode[] {
-        var rowNodes: RowNode[] = [];
+        let rowNodes: RowNode[] = [];
         if (allData) {
-            var nextRowTop = 0;
+            let nextRowTop = 0;
             allData.forEach( (dataItem: any, index: number) => {
-                var rowNode = new RowNode();
+                let rowNode = new RowNode();
                 this.context.wireBean(rowNode);
                 rowNode.data = dataItem;
                 rowNode.floating = isTop ? Constants.FLOATING_TOP : Constants.FLOATING_BOTTOM;
@@ -127,7 +127,7 @@ export class FloatingRowModel {
         if (!rowNodes || rowNodes.length === 0) {
             return 0;
         } else {
-            var lastNode = rowNodes[rowNodes.length - 1];
+            let lastNode = rowNodes[rowNodes.length - 1];
             return lastNode.rowTop + lastNode.rowHeight;
         }
     }

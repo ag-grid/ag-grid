@@ -2,8 +2,8 @@ import {ICellRenderer} from "./iCellRenderer";
 import {Utils as _} from "../../utils";
 import {Component} from "../../widgets/component";
 
-var ARROW_UP = '&#65514;';
-var ARROW_DOWN = '&#65516;';
+let ARROW_UP = '&#65514;';
+let ARROW_DOWN = '&#65516;';
 
 export class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
 
@@ -36,12 +36,12 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
 
     private showDelta(params: any, delta: number): void {
 
-        var absDelta = Math.abs(delta);
-        var valueFormatted = params.formatValue(absDelta);
+        let absDelta = Math.abs(delta);
+        let valueFormatted = params.formatValue(absDelta);
 
-        var valueToUse = _.exists(valueFormatted) ? valueFormatted : absDelta;
+        let valueToUse = _.exists(valueFormatted) ? valueFormatted : absDelta;
 
-        var deltaUp = (delta >= 0);
+        let deltaUp = (delta >= 0);
 
         if (deltaUp) {
             this.eDelta.innerHTML = ARROW_UP + valueToUse;
@@ -61,7 +61,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         // the below timer is waiting, then the below timer will realise it
         // is not the most recent and will not try to remove the delta value.
         this.refreshCount++;
-        var refreshCountCopy = this.refreshCount;
+        let refreshCountCopy = this.refreshCount;
         setTimeout( ()=> {
             if (refreshCountCopy === this.refreshCount) {
                 this.hideDeltaValue();
@@ -75,7 +75,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
     }
 
     public refresh(params: any): void {
-        var value = params.value;
+        let value = params.value;
 
         if (value === this.lastValue) {
             return;
@@ -90,7 +90,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         }
 
         if (typeof value === 'number' && typeof this.lastValue === 'number') {
-            var delta = value - this.lastValue;
+            let delta = value - this.lastValue;
             this.showDelta(params, delta);
         }
 

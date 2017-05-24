@@ -45,13 +45,13 @@ export class DragService {
     }
 
     private removeListener(dragSourceAndListener: DragSourceAndListener): void {
-        var element = dragSourceAndListener.dragSource.eElement;
-        var mouseDownListener = dragSourceAndListener.mouseDownListener;
+        let element = dragSourceAndListener.dragSource.eElement;
+        let mouseDownListener = dragSourceAndListener.mouseDownListener;
         element.removeEventListener('mousedown', mouseDownListener);
 
         // remove touch listener only if it exists
         if (dragSourceAndListener.touchEnabled) {
-            var touchStartListener = dragSourceAndListener.touchStartListener;
+            let touchStartListener = dragSourceAndListener.touchStartListener;
             element.removeEventListener('touchstart', touchStartListener);
         }
     }
@@ -75,7 +75,7 @@ export class DragService {
 
     public addDragSource(params: DragListenerParams, includeTouch: boolean = false): void {
 
-        var mouseListener = this.onMouseDown.bind(this, params);
+        let mouseListener = this.onMouseDown.bind(this, params);
         params.eElement.addEventListener('mousedown', mouseListener);
 
         let touchListener: (touchEvent: TouchEvent)=>void = null;
@@ -162,13 +162,13 @@ export class DragService {
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
     private isEventNearStartEvent(currentEvent: MouseEvent|Touch, startEvent: MouseEvent|Touch): boolean {
         // by default, we wait 4 pixels before starting the drag
-        var requiredPixelDiff = _.exists(this.currentDragParams.dragStartPixels) ? this.currentDragParams.dragStartPixels : 4;
+        let requiredPixelDiff = _.exists(this.currentDragParams.dragStartPixels) ? this.currentDragParams.dragStartPixels : 4;
         return _.areEventsNear(currentEvent, startEvent, requiredPixelDiff);
     }
 
     private getFirstActiveTouch(touchList: TouchList): Touch {
-        for (var i = 0; i<touchList.length; i++) {
-            var matches = touchList[i].identifier === this.touchStart.identifier;
+        for (let i = 0; i<touchList.length; i++) {
+            let matches = touchList[i].identifier === this.touchStart.identifier;
             if (matches) {
                 return touchList[i];
             }
@@ -181,7 +181,7 @@ export class DragService {
 
         if (!this.dragging) {
             // if mouse hasn't travelled from the start position enough, do nothing
-            var toEarlyToDrag = !this.dragging && this.isEventNearStartEvent(currentEvent, startEvent);
+            let toEarlyToDrag = !this.dragging && this.isEventNearStartEvent(currentEvent, startEvent);
             if (toEarlyToDrag) {
                 return;
             } else {
@@ -226,8 +226,8 @@ export class DragService {
 
         // if mouse was left up before we started to move, then this is a tap.
         // we check this before onUpCommon as onUpCommon resets the dragging
-        // var tap = !this.dragging;
-        // var tapTarget = this.currentDragParams.eElement;
+        // let tap = !this.dragging;
+        // let tapTarget = this.currentDragParams.eElement;
 
         this.onUpCommon(touch);
 

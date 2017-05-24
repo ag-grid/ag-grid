@@ -37,7 +37,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         case TextFilter.STARTS_WITH:
             return valueLowerCase.indexOf(filterTextLoweCase) === 0;
         case TextFilter.ENDS_WITH:
-            var index = valueLowerCase.lastIndexOf(filterTextLoweCase);
+            let index = valueLowerCase.lastIndexOf(filterTextLoweCase);
             return index >= 0 && index === (valueLowerCase.length - filterTextLoweCase.length);
         default:
             // should never happen
@@ -90,7 +90,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         if (!this.filterText) {
             return true;
         }
-        var value = this.filterParams.valueGetter(params.node);
+        let value = this.filterParams.valueGetter(params.node);
         if (!value) {
             if (this.filter === BaseFilter.NOT_EQUAL) {
                 // if there is no value, but the filter type was 'not equals',
@@ -107,7 +107,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     private onFilterTextFieldChanged() {
-        var filterText = _.makeNull(this.eFilterTextField.value);
+        let filterText = _.makeNull(this.eFilterTextField.value);
         if (filterText && filterText.trim() === '') {
             filterText = null;
         }

@@ -129,8 +129,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         this.setPinned(this.colDef.pinned);
 
-        var minColWidth = this.gridOptionsWrapper.getMinColWidth();
-        var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
+        let minColWidth = this.gridOptionsWrapper.getMinColWidth();
+        let maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
 
         if (this.colDef.minWidth) {
             this.minWidth = this.colDef.minWidth;
@@ -146,7 +146,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
 
-        var suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
+        let suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.')>=0 && !suppressDotNotation;
         this.tooltipFieldContainsDots = _.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.')>=0 && !suppressDotNotation;
 
@@ -230,8 +230,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         // if function, then call the function to find out
         if (typeof this.colDef.suppressNavigable === 'function') {
-            var params = this.createIsColumnFuncParams(rowNode);
-            var suppressNaviableFunc = <IsColumnFunc> this.colDef.suppressNavigable;
+            let params = this.createIsColumnFuncParams(rowNode);
+            let suppressNaviableFunc = <IsColumnFunc> this.colDef.suppressNavigable;
             return suppressNaviableFunc(params);
         }
 
@@ -246,8 +246,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         // if function, then call the function to find out
         if (typeof this.colDef.editable === 'function') {
-            var params = this.createIsColumnFuncParams(rowNode);
-            var editableFunc = <IsColumnFunc> this.colDef.editable;
+            let params = this.createIsColumnFuncParams(rowNode);
+            let editableFunc = <IsColumnFunc> this.colDef.editable;
             return editableFunc(params);
         }
 
@@ -395,7 +395,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public setVisible(visible: boolean): void {
-        var newValue = visible===true;
+        let newValue = visible===true;
         if (this.visible !== newValue) {
             this.visible = newValue;
             this.eventService.dispatchEvent(Column.EVENT_VISIBLE_CHANGED);

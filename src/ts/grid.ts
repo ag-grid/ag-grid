@@ -111,11 +111,11 @@ export class Grid {
             console.error('ag-Grid: no gridOptions provided to the grid');
         }
         
-        var rowModelClass = this.getRowModelClass(gridOptions);
+        let rowModelClass = this.getRowModelClass(gridOptions);
 
-        var enterprise = _.exists(Grid.enterpriseBeans);
+        let enterprise = _.exists(Grid.enterpriseBeans);
 
-        var frameworkFactory = params ? params.frameworkFactory : null;
+        let frameworkFactory = params ? params.frameworkFactory : null;
         if (_.missing(frameworkFactory)) {
             frameworkFactory = new BaseFrameworkFactory();
         }
@@ -165,8 +165,8 @@ export class Grid {
         let isLoggingFunc = ()=> contextParams.debug;
         this.context = new Context(contextParams, new Logger('Context', isLoggingFunc));
 
-        var eventService = this.context.getBean('eventService');
-        var readyEvent = {
+        let eventService = this.context.getBean('eventService');
+        let readyEvent = {
             api: gridOptions.api,
             columnApi: gridOptions.columnApi
         };
@@ -178,9 +178,9 @@ export class Grid {
     }
 
     private getRowModelClass(gridOptions: GridOptions): any {
-        var rowModelType = gridOptions.rowModelType;
+        let rowModelType = gridOptions.rowModelType;
         if (_.exists(rowModelType)) {
-            var rowModelClass = Grid.RowModelClasses[rowModelType];
+            let rowModelClass = Grid.RowModelClasses[rowModelType];
             if (_.exists(rowModelClass)) {
                 return rowModelClass;
             } else {

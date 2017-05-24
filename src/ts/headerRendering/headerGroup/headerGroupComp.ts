@@ -14,7 +14,7 @@ import {RefSelector, Listener} from "../../widgets/componentAnnotations";
 import {OriginalColumnGroup} from "../../entities/originalColumnGroup";
 import {GridApi} from "../../gridApi";
 
-var svgFactory = SvgFactory.getInstance();
+let svgFactory = SvgFactory.getInstance();
 
 export interface IHeaderGroupParams {
     columnGroup: ColumnGroup;
@@ -81,8 +81,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     }
 
     private addTouchAndClickListeners(eElement: HTMLElement): void {
-        var expandAction = ()=> {
-            var newExpandedValue = !this.params.columnGroup.isExpanded();
+        let expandAction = ()=> {
+            let newExpandedValue = !this.params.columnGroup.isExpanded();
             this.columnController.setColumnGroupOpened(this.params.columnGroup, newExpandedValue);
         };
 
@@ -105,7 +105,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     }
 
     private addInIcon(iconName: string, refName: string, defaultIconFactory: () => HTMLElement): void {
-        var eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, null, defaultIconFactory);
+        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, null, defaultIconFactory);
         this.getRefElement(refName).appendChild(eIcon);
     }
 
@@ -125,7 +125,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
                 this.getGui().style.display = 'table-cell';
             }
 
-            var eInnerText = this.getRefElement('agLabel');
+            let eInnerText = this.getRefElement('agLabel');
             eInnerText.innerHTML = this.params.displayName;
         }
     }

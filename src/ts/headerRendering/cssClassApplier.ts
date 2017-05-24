@@ -25,9 +25,9 @@ export class CssClassApplier {
                             column: Column,
                             columnGroup: ColumnGroup|OriginalColumnGroup) {
         if (_.missing(classesOrFunc)) { return; }
-        var classToUse: string | string[];
+        let classToUse: string | string[];
         if (typeof classesOrFunc === 'function') {
-            var params = {
+            let params = {
                 // bad naming, as colDef here can be a group or a column,
                 // however most people won't appreciate the difference,
                 // so keeping it as colDef to avoid confusion.
@@ -37,7 +37,7 @@ export class CssClassApplier {
                 context: gridOptionsWrapper.getContext(),
                 api: gridOptionsWrapper.getApi()
             };
-            var headerClassFunc = <(params: any) => string | string[]> classesOrFunc;
+            let headerClassFunc = <(params: any) => string | string[]> classesOrFunc;
             classToUse = headerClassFunc(params);
         } else {
             classToUse = <string | string[]> classesOrFunc;

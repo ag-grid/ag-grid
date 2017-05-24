@@ -35,13 +35,13 @@ export class AutoWidthCalculator {
             return -1; 
         }
 
-        var eDummyContainer = document.createElement('span');
+        let eDummyContainer = document.createElement('span');
         // position fixed, so it isn't restricted to the boundaries of the parent
         eDummyContainer.style.position = 'fixed';
 
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
-        var eBodyContainer = this.gridPanel.getBodyContainer();
+        let eBodyContainer = this.gridPanel.getBodyContainer();
         eBodyContainer.appendChild(eDummyContainer);
 
         // get all the cells that are currently displayed (this only brings back
@@ -56,13 +56,13 @@ export class AutoWidthCalculator {
 
         // at this point, all the clones are lined up vertically with natural widths. the dummy
         // container will have a width wide enough just to fit the largest.
-        var dummyContainerWidth = eDummyContainer.offsetWidth;
+        let dummyContainerWidth = eDummyContainer.offsetWidth;
 
         // we are finished with the dummy container, so get rid of it
         eBodyContainer.removeChild(eDummyContainer);
 
         // we add padding as I found without it, the gui still put '...' after some of the texts
-        var autoSizePadding = this.gridOptionsWrapper.getAutoSizePadding();
+        let autoSizePadding = this.gridOptionsWrapper.getAutoSizePadding();
         if (typeof autoSizePadding !== 'number' || autoSizePadding < 0) {
             autoSizePadding = 4;
         }
@@ -93,7 +93,7 @@ export class AutoWidthCalculator {
     
     private putRowCellsIntoDummyContainer(column: Column, eDummyContainer: HTMLElement): void {
 
-        var eOriginalCells = this.rowRenderer.getAllCellsForColumn(column);
+        let eOriginalCells = this.rowRenderer.getAllCellsForColumn(column);
 
         eOriginalCells.forEach( (eCell: HTMLElement, index: number) => {
             this.cloneItemIntoDummy(eCell, eDummyContainer);
@@ -102,7 +102,7 @@ export class AutoWidthCalculator {
 
     private cloneItemIntoDummy(eCell: HTMLElement, eDummyContainer: HTMLElement): void {
         // make a deep clone of the cell
-        var eCellClone: HTMLElement = <HTMLElement> eCell.cloneNode(true);
+        let eCellClone: HTMLElement = <HTMLElement> eCell.cloneNode(true);
         // the original has a fixed width, we remove this to allow the natural width based on content
         eCellClone.style.width = '';
         // the original has position = absolute, we need to remove this so it's positioned normally
@@ -111,7 +111,7 @@ export class AutoWidthCalculator {
         // we put the cell into a containing div, as otherwise the cells would just line up
         // on the same line, standard flow layout, by putting them into divs, they are laid
         // out one per line
-        var eCloneParent = document.createElement('div');
+        let eCloneParent = document.createElement('div');
         // table-row, so that each cell is on a row. i also tried display='block', but this
         // didn't work in IE
         eCloneParent.style.display = 'table-row';

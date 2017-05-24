@@ -51,11 +51,11 @@ export class MasterSlaveService {
         }
 
         // iterate through the slave grids, and pass each slave service to the callback
-        var slaveGrids = this.gridOptionsWrapper.getSlaveGrids();
+        let slaveGrids = this.gridOptionsWrapper.getSlaveGrids();
         if (slaveGrids) {
             slaveGrids.forEach( (slaveGridOptions: GridOptions) => {
                 if (slaveGridOptions.api) {
-                    var slaveService = slaveGridOptions.api.__getMasterSlaveService();
+                    let slaveService = slaveGridOptions.api.__getMasterSlaveService();
                     callback(slaveService);
                 }
             });
@@ -89,7 +89,7 @@ export class MasterSlaveService {
     }
 
     public getMasterColumns(event: ColumnChangeEvent): Column[] {
-        var result: Column[] = [];
+        let result: Column[] = [];
         if (event.getColumn()) {
             result.push(event.getColumn());
         }
@@ -102,7 +102,7 @@ export class MasterSlaveService {
     }
 
     public getColumnIds(event: ColumnChangeEvent): string[] {
-        var result: string[] = [];
+        let result: string[] = [];
         if (event.getColumn()) {
             result.push(event.getColumn().getColId());
         } else if (event.getColumns()) {
@@ -118,8 +118,8 @@ export class MasterSlaveService {
 
             // the column in the event is from the master grid. need to
             // look up the equivalent from this (slave) grid
-            var masterColumn = event.getColumn();
-            var slaveColumn: Column;
+            let masterColumn = event.getColumn();
+            let slaveColumn: Column;
             if (masterColumn) {
                 slaveColumn = this.columnController.getPrimaryColumn(masterColumn.getColId());
             }
@@ -128,19 +128,19 @@ export class MasterSlaveService {
             if (masterColumn && !slaveColumn) { return; }
 
             // likewise for column group
-            var masterColumnGroup = event.getColumnGroup();
-            var slaveColumnGroup: ColumnGroup;
+            let masterColumnGroup = event.getColumnGroup();
+            let slaveColumnGroup: ColumnGroup;
             if (masterColumnGroup) {
-                var colId = masterColumnGroup.getGroupId();
-                var instanceId = masterColumnGroup.getInstanceId();
+                let colId = masterColumnGroup.getGroupId();
+                let instanceId = masterColumnGroup.getInstanceId();
                 slaveColumnGroup = this.columnController.getColumnGroup(colId, instanceId);
             }
             if (masterColumnGroup && !slaveColumnGroup) { return; }
 
             // in time, all the methods below should use the column ids, it's a more generic way
             // of handling columns, and also allows for single or multi column events
-            var columnIds = this.getColumnIds(event);
-            var masterColumns = this.getMasterColumns(event);
+            let columnIds = this.getColumnIds(event);
+            let masterColumns = this.getMasterColumns(event);
 
             switch (event.getType()) {
                 case Events.EVENT_COLUMN_PIVOT_CHANGED:

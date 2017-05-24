@@ -25,9 +25,9 @@ import {GridCellDef} from "./entities/gridCell";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {BaseExportParams, ProcessCellForExportParams} from "./exportParams";
 
-var DEFAULT_ROW_HEIGHT = 25;
-var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
-var DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
+let DEFAULT_ROW_HEIGHT = 25;
+let DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
+let DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
 
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
@@ -329,8 +329,8 @@ export class GridOptionsWrapper {
     // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
 
     public setProperty(key: string, value: any): void {
-        var gridOptionsNoType = <any> this.gridOptions;
-        var previousValue = gridOptionsNoType[key];
+        let gridOptionsNoType = <any> this.gridOptions;
+        let previousValue = gridOptionsNoType[key];
 
         if (previousValue !== value) {
             gridOptionsNoType[key] = value;
@@ -481,7 +481,7 @@ export class GridOptionsWrapper {
     private checkForDeprecated() {
         // casting to generic object, so typescript compiles even though
         // we are looking for attributes that don't exist
-        var options: any = this.gridOptions;
+        let options: any = this.gridOptions;
         if (options.suppressUnSort) {
             console.warn('ag-grid: as of v1.12.4 suppressUnSort is not used. Please use sortOrder instead.');
         }
@@ -537,9 +537,9 @@ export class GridOptionsWrapper {
         if (this.gridOptions.localeTextFunc) {
             return this.gridOptions.localeTextFunc;
         }
-        var that = this;
+        let that = this;
         return function (key: any, defaultValue: any) {
-            var localeText = that.gridOptions.localeText;
+            let localeText = that.gridOptions.localeText;
             if (localeText && localeText[key]) {
                 return localeText[key];
             } else {
@@ -550,7 +550,7 @@ export class GridOptionsWrapper {
 
     // responsible for calling the onXXX functions on gridOptions
     public globalEventHandler(eventName: string, event?: any): void {
-        var callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
+        let callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
         if (typeof (<any>this.gridOptions)[callbackMethodName] === 'function') {
             (<any>this.gridOptions)[callbackMethodName](event);
         }
@@ -558,7 +558,7 @@ export class GridOptionsWrapper {
 
     // we don't allow dynamic row height for virtual paging
     public getRowHeightAsNumber(): number {
-        var rowHeight = this.gridOptions.rowHeight;
+        let rowHeight = this.gridOptions.rowHeight;
         if (_.missing(rowHeight)) {
             return DEFAULT_ROW_HEIGHT;
         } else if (this.isNumeric(this.gridOptions.rowHeight)) {
@@ -574,7 +574,7 @@ export class GridOptionsWrapper {
         // number, when using virtual pagination then function can be
         // used for floating rows and the number for the body rows.
         if (typeof this.gridOptions.getRowHeight === 'function') {
-            var params = {
+            let params = {
                 node: rowNode,
                 data: rowNode.data,
                 api: this.gridOptions.api,

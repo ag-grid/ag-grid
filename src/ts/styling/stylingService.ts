@@ -36,10 +36,10 @@ export class StylingService {
     public processStaticCellClasses (colDef:ColDef, params:any, onApplicableClass:(className:string)=>void){
         let cellClass = colDef.cellClass;
         if (cellClass) {
-            var classOrClasses: any;
+            let classOrClasses: any;
 
             if (typeof colDef.cellClass === 'function') {
-                var cellClassFunc = <(cellClassParams: any) => string|string[]> colDef.cellClass;
+                let cellClassFunc = <(cellClassParams: any) => string|string[]> colDef.cellClass;
                 classOrClasses = cellClassFunc(params);
             } else {
                 classOrClasses = colDef.cellClass;

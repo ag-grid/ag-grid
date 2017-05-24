@@ -37,7 +37,7 @@ export class CellEditorFactory {
     }
 
     // private registerEditorsFromGridOptions(): void {
-    //     var userProvidedCellEditors = this.gridOptionsWrapper.getCellEditors();
+    //     let userProvidedCellEditors = this.gridOptionsWrapper.getCellEditors();
     //     _.iterateObject(userProvidedCellEditors, (key: string, cellEditor: {new(): ICellEditor})=> {
     //         this.addCellEditor(key, cellEditor);
     //     });
@@ -45,7 +45,7 @@ export class CellEditorFactory {
 
     public createCellEditor(key: string|{new(): ICellEditorComp}, params: ICellEditorParams): ICellEditorComp {
 
-        var CellEditorClass: {new(): ICellEditorComp};
+        let CellEditorClass: {new(): ICellEditorComp};
 
         if (Utils.missing(key)) {
             CellEditorClass = this.cellEditorMap[CellEditorFactory.TEXT];
@@ -59,7 +59,7 @@ export class CellEditorFactory {
             CellEditorClass = <{new(): ICellEditorComp}> key;
         }
 
-        var cellEditor = new CellEditorClass();
+        let cellEditor = new CellEditorClass();
         this.context.wireBean(cellEditor);
 
         // we have to call init first, otherwise when using the frameworks, the wrapper

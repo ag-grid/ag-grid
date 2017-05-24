@@ -38,7 +38,7 @@ export class TabbedLayout {
     }
 
     public getMinWidth(): number {
-        var eDummyContainer = document.createElement('span');
+        let eDummyContainer = document.createElement('span');
         // position fixed, so it isn't restricted to the boundaries of the parent
         eDummyContainer.style.position = 'fixed';
 
@@ -46,12 +46,12 @@ export class TabbedLayout {
         // css styles that the real cells are inheriting
         this.eGui.appendChild(eDummyContainer);
 
-        var minWidth = 0;
+        let minWidth = 0;
 
         this.items.forEach( (itemWrapper: TabbedItemWrapper) => {
             _.removeAllChildren(eDummyContainer);
 
-            var eClone: HTMLElement = <HTMLElement> itemWrapper.tabbedItem.body.cloneNode(true);
+            let eClone: HTMLElement = <HTMLElement> itemWrapper.tabbedItem.body.cloneNode(true);
             eDummyContainer.appendChild(eClone);
 
             if (minWidth<eDummyContainer.offsetWidth) {
@@ -72,12 +72,12 @@ export class TabbedLayout {
 
     private addItem(item: TabbedItem): void {
 
-        var eHeaderButton = document.createElement('span');
+        let eHeaderButton = document.createElement('span');
         eHeaderButton.appendChild(item.title);
         _.addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
 
-        var wrapper: TabbedItemWrapper = {
+        let wrapper: TabbedItemWrapper = {
             tabbedItem: item,
             eHeaderButton: eHeaderButton
         };
@@ -87,7 +87,7 @@ export class TabbedLayout {
     }
 
     public showItem(tabbedItem: TabbedItem): void {
-        var itemWrapper = _.find(this.items, (itemWrapper)=> {
+        let itemWrapper = _.find(this.items, (itemWrapper)=> {
             return itemWrapper.tabbedItem === tabbedItem;
         });
         if (itemWrapper) {

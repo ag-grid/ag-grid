@@ -47,7 +47,7 @@ export class RowContainerComponent {
     }
 
     public appendRowElement(eRow: HTMLElement): void {
-        var eTarget = this.eDocumentFragment ? this.eDocumentFragment : this.eContainer;
+        let eTarget = this.eDocumentFragment ? this.eDocumentFragment : this.eContainer;
         eTarget.appendChild(eRow);
         this.childCount++;
         this.checkVisibility();

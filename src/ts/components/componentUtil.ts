@@ -93,7 +93,7 @@ export class ComponentUtil {
             gridOptions = <GridOptions> {};
         }
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
-        var pGridOptions = <any>gridOptions;
+        let pGridOptions = <any>gridOptions;
         // add in all the simple properties
         ComponentUtil.ARRAY_PROPERTIES
             .concat(ComponentUtil.STRING_PROPERTIES)
@@ -140,7 +140,7 @@ export class ComponentUtil {
         checkForDeprecated(changes);
 
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
-        var pGridOptions = <any> gridOptions;
+        let pGridOptions = <any> gridOptions;
 
         // check if any change for the simple types, and if so, then just copy in the new value
         ComponentUtil.ARRAY_PROPERTIES

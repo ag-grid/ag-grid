@@ -32,8 +32,8 @@ export class FocusService {
     
     @PostConstruct
     private init(): void {
-        var focusListener = this.onFocus.bind(this);
-        var eRootGui = this.gridCore.getRootGui();
+        let focusListener = this.onFocus.bind(this);
+        let eRootGui = this.gridCore.getRootGui();
         eRootGui.addEventListener('focus', focusListener, true);
         this.destroyMethods.push( () => {
             eRootGui.removeEventListener('focus', focusListener);
@@ -41,19 +41,19 @@ export class FocusService {
     }
 
     private onFocus(focusEvent: FocusEvent): void {
-        var gridCell = this.getCellForFocus(focusEvent);
+        let gridCell = this.getCellForFocus(focusEvent);
         if (gridCell) {
             this.informListeners({gridCell: gridCell});
         }
     }
 
     private getCellForFocus(focusEvent: FocusEvent): GridCell {
-        var column: Column = null;
-        var row: number  = null;
-        var floating: string = null;
-        var that = this;
+        let column: Column = null;
+        let row: number  = null;
+        let floating: string = null;
+        let that = this;
 
-        var eTarget = <Node> focusEvent.target;
+        let eTarget = <Node> focusEvent.target;
         while (eTarget) {
             checkRow(eTarget);
             checkColumn(eTarget);
@@ -61,7 +61,7 @@ export class FocusService {
         }
 
         if (_.exists(column) && _.exists(row)) {
-            var gridCell = new GridCell({rowIndex: row, floating: floating, column: column});
+            let gridCell = new GridCell({rowIndex: row, floating: floating, column: column});
             return gridCell;
         } else {
             return null;
@@ -69,7 +69,7 @@ export class FocusService {
 
         function checkRow(eTarget: Node): void {
             // match the column by checking a) it has a valid colId and b) it has the 'ag-cell' class
-            var rowId = _.getElementAttribute(eTarget, 'row');
+            let rowId = _.getElementAttribute(eTarget, 'row');
             if (_.exists(rowId) && _.containsClass(eTarget, 'ag-row')) {
                 if (rowId.indexOf('ft')===0) {
                     floating = Constants.FLOATING_TOP;
@@ -86,9 +86,9 @@ export class FocusService {
 
         function checkColumn(eTarget: Node): void {
             // match the column by checking a) it has a valid colId and b) it has the 'ag-cell' class
-            var colId = _.getElementAttribute(eTarget, 'colid');
+            let colId = _.getElementAttribute(eTarget, 'colid');
             if (_.exists(colId) && _.containsClass(eTarget, 'ag-cell')) {
-                var foundColumn = that.columnController.getGridColumn(colId);
+                let foundColumn = that.columnController.getGridColumn(colId);
                 if (foundColumn) {
                     column = foundColumn;
                 }

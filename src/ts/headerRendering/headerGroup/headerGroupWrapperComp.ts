@@ -106,7 +106,7 @@ export class HeaderGroupWrapperComp extends Component {
         if (this.isSuppressMoving()) { return; }
 
         if (eHeaderGroup) {
-            var dragSource: DragSource = {
+            let dragSource: DragSource = {
                 type: DragSourceType.HeaderCell,
                 eElement: eHeaderGroup,
                 dragItemName: displayName,
@@ -122,8 +122,8 @@ export class HeaderGroupWrapperComp extends Component {
     // when moving the columns, we want to move all the columns in this group in one go, and in the order they
     // are currently in the screen.
     public getAllColumnsInThisGroup(): Column[] {
-        var allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
-        var allColumnsCurrentOrder: Column[] = [];
+        let allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+        let allColumnsCurrentOrder: Column[] = [];
         this.columnController.getAllDisplayedColumns().forEach( column => {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
                 allColumnsCurrentOrder.push(column);
@@ -138,14 +138,14 @@ export class HeaderGroupWrapperComp extends Component {
 
     private isSuppressMoving(): boolean {
         // if any child is fixed, then don't allow moving
-        var childSuppressesMoving = false;
+        let childSuppressesMoving = false;
         this.columnGroup.getLeafColumns().forEach( (column: Column) => {
             if (column.getColDef().suppressMovable) {
                 childSuppressesMoving = true;
             }
         });
 
-        var result = childSuppressesMoving
+        let result = childSuppressesMoving
             || this.gridOptionsWrapper.isSuppressMovableColumns()
             || this.gridOptionsWrapper.isForPrint();
 
@@ -218,7 +218,7 @@ export class HeaderGroupWrapperComp extends Component {
         if (!this.gridOptionsWrapper.isSuppressAutoSize()) {
             this.eHeaderCellResize.addEventListener('dblclick', (event:MouseEvent) => {
                 // get list of all the column keys we are responsible for
-                var keys: string[] = [];
+                let keys: string[] = [];
                 this.columnGroup.getDisplayedLeafColumns().forEach( (column: Column)=>{
                     // not all cols in the group may be participating with auto-resize
                     if (!column.getColDef().suppressAutoSize) {
@@ -245,23 +245,23 @@ export class HeaderGroupWrapperComp extends Component {
         let dragChangeNormalised = this.normaliseDragChange(dragChange);
         let newWidth = this.groupWidthStart + dragChangeNormalised;
 
-        var minWidth = this.columnGroup.getMinWidth();
+        let minWidth = this.columnGroup.getMinWidth();
         if (newWidth < minWidth) {
             newWidth = minWidth;
         }
 
         // distribute the new width to the child headers
-        var changeRatio = newWidth / this.groupWidthStart;
+        let changeRatio = newWidth / this.groupWidthStart;
         // keep track of pixels used, and last column gets the remaining,
         // to cater for rounding errors, and min width adjustments
-        var pixelsToDistribute = newWidth;
-        var displayedColumns = this.columnGroup.getDisplayedLeafColumns();
+        let pixelsToDistribute = newWidth;
+        let displayedColumns = this.columnGroup.getDisplayedLeafColumns();
         displayedColumns.forEach( (column: Column, index: any) => {
-            var notLastCol = index !== (displayedColumns.length - 1);
-            var newChildSize: any;
+            let notLastCol = index !== (displayedColumns.length - 1);
+            let newChildSize: any;
             if (notLastCol) {
                 // if not the last col, calculate the column width as normal
-                var startChildSize = this.childrenWidthStarts[index];
+                let startChildSize = this.childrenWidthStarts[index];
                 newChildSize = startChildSize * changeRatio;
                 if (newChildSize < column.getMinWidth()) {
                     newChildSize = column.getMinWidth();

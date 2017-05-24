@@ -21,7 +21,7 @@ export class ColumnChangeEvent {
     }
 
     public toString(): string {
-        var result = 'ColumnChangeEvent {type: ' + this.type;
+        let result = 'ColumnChangeEvent {type: ' + this.type;
         if (this.column) { result += ', column: ' + this.column.getColId(); }
         if (this.columnGroup) { result += ', columnGroup: ' + this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : '(not defined]'; }
         if (this.toIndex) { result += ', toIndex: ' + this.toIndex; }

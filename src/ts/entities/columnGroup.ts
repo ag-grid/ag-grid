@@ -76,10 +76,10 @@ export class ColumnGroup implements ColumnGroupChild {
         if (this.displayedChildren.length > 0) {
             if (this.gridOptionsWrapper.isEnableRtl()) {
                 let lastChild = this.displayedChildren[this.displayedChildren.length-1];
-                var lastChildLeft = lastChild.getLeft();
+                let lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);
             } else {
-                var firstChildLeft = this.displayedChildren[0].getLeft();
+                let firstChildLeft = this.displayedChildren[0].getLeft();
                 this.setLeft(firstChildLeft);
             }
         } else {
@@ -130,7 +130,7 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     public isChildInThisGroupDeepSearch(wantedChild: ColumnGroupChild): boolean {
-        var result = false;
+        let result = false;
 
         this.children.forEach( (foundChild: ColumnGroupChild) => {
             if (wantedChild === foundChild) {
@@ -147,7 +147,7 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     public getActualWidth(): number {
-        var groupActualWidth = 0;
+        let groupActualWidth = 0;
         if (this.displayedChildren) {
             this.displayedChildren.forEach( (child: ColumnGroupChild)=> {
                 groupActualWidth += child.getActualWidth();
@@ -157,7 +157,7 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     public getMinWidth(): number {
-        var result = 0;
+        let result = 0;
         this.displayedChildren.forEach( (groupChild: ColumnGroupChild) => {
             result += groupChild.getMinWidth();
         });
@@ -176,13 +176,13 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     public getLeafColumns(): Column[] {
-        var result: Column[] = [];
+        let result: Column[] = [];
         this.addLeafColumns(result);
         return result;
     }
 
     public getDisplayedLeafColumns(): Column[] {
-        var result: Column[] = [];
+        let result: Column[] = [];
         this.addDisplayedLeafColumns(result);
         return result;
     }
@@ -253,7 +253,7 @@ export class ColumnGroup implements ColumnGroupChild {
         } else {
             // and calculate again
             this.children.forEach( abstractColumn => {
-                var headerGroupShow = abstractColumn.getColumnGroupShow();
+                let headerGroupShow = abstractColumn.getColumnGroupShow();
                 switch (headerGroupShow) {
                     case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
                         // when set to open, only show col if group is open

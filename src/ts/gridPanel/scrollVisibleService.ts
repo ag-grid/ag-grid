@@ -63,7 +63,7 @@ export class ScrollVisibleService {
     }
 
     public getPinnedLeftWithScrollWidth(): number {
-        var result = this.getPinnedLeftWidth();
+        let result = this.getPinnedLeftWidth();
         if (this.vPinnedLeft) {
             result += _.getScrollbarWidth();
         }
@@ -75,7 +75,7 @@ export class ScrollVisibleService {
     }
 
     public getPinnedRightWithScrollWidth(): number {
-        var result = this.getPinnedRightWidth();
+        let result = this.getPinnedRightWidth();
         if (this.vPinnedRight) {
             result += _.getScrollbarWidth();
         }

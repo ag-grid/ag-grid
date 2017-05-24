@@ -14,8 +14,8 @@ export class GroupInstanceIdCreator {
     private existingIds: any = {};
 
     public getInstanceIdForKey(key: string): number {
-        var lastResult = this.existingIds[key];
-        var result: number;
+        let lastResult = this.existingIds[key];
+        let result: number;
         if (typeof lastResult !== 'number') {
             // first time this key
             result = 0;

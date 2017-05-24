@@ -52,20 +52,20 @@ export class HeaderRowComp extends Component {
 
     public forEachHeaderElement(callback: (comp: IComponent<any>)=>void): void {
         Object.keys(this.headerElements).forEach( key => {
-            var headerElement = this.headerElements[key];
+            let headerElement = this.headerElements[key];
             callback(headerElement);
         });
     }
 
     public destroy(): void {
-        var idsOfAllChildren = Object.keys(this.headerElements);
+        let idsOfAllChildren = Object.keys(this.headerElements);
         this.removeAndDestroyChildComponents(idsOfAllChildren);
         super.destroy();
     }
 
     private removeAndDestroyChildComponents(idsToDestroy: string[]): void {
         idsToDestroy.forEach( id => {
-            var child = this.headerElements[id];
+            let child = this.headerElements[id];
             this.getGui().removeChild(child.getGui());
             if (child.destroy){
                 child.destroy();
@@ -134,7 +134,7 @@ export class HeaderRowComp extends Component {
     }
 
     private setWidth(): void {
-        var mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
+        let mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
         this.getGui().style.width = mainRowWidth;
     }
 
@@ -143,7 +143,7 @@ export class HeaderRowComp extends Component {
     }
 
     private removeAndDestroyAllChildComponents(): void {
-        var idsOfAllChildren = Object.keys(this.headerElements);
+        let idsOfAllChildren = Object.keys(this.headerElements);
         this.removeAndDestroyChildComponents(idsOfAllChildren);
     }
 
@@ -154,9 +154,9 @@ export class HeaderRowComp extends Component {
     
     private onVirtualColumnsChanged(): void {
 
-        var currentChildIds = Object.keys(this.headerElements);
+        let currentChildIds = Object.keys(this.headerElements);
 
-        var itemsAtDepth = this.columnController.getVirtualHeaderGroupRow(
+        let itemsAtDepth = this.columnController.getVirtualHeaderGroupRow(
             this.pinned,
             this.type == HeaderRowType.FLOATING_FILTER ?
                 this.dept -1 :
@@ -164,7 +164,7 @@ export class HeaderRowComp extends Component {
         );
 
         itemsAtDepth.forEach( (child: ColumnGroupChild) => {
-            var idOfChild = child.getUniqueId();
+            let idOfChild = child.getUniqueId();
 
             // if we already have this cell rendered, do nothing
             if (currentChildIds.indexOf(idOfChild) >= 0) {
@@ -180,7 +180,7 @@ export class HeaderRowComp extends Component {
                 return;
             }
 
-            var renderedHeaderElement = this.createHeaderElement(child);
+            let renderedHeaderElement = this.createHeaderElement(child);
             this.headerElements[idOfChild] = renderedHeaderElement;
             this.getGui().appendChild(renderedHeaderElement.getGui());
         });
@@ -206,7 +206,7 @@ export class HeaderRowComp extends Component {
     }
 
     private createHeaderElement(columnGroupChild:ColumnGroupChild): IComponent<any> {
-        var result: IComponent<any>;
+        let result: IComponent<any>;
 
         switch (this.type) {
             case HeaderRowType.COLUMN :

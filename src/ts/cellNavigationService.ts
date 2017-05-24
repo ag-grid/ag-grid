@@ -37,22 +37,22 @@ export class CellNavigationService {
     }
 
     private getCellToLeft(lastCell: GridCell): GridCell {
-        var colToLeft = this.columnController.getDisplayedColBefore(lastCell.column);
+        let colToLeft = this.columnController.getDisplayedColBefore(lastCell.column);
         if (!colToLeft) {
             return null;
         } else {
-            var gridCellDef = <GridCellDef> {rowIndex: lastCell.rowIndex, column: colToLeft, floating: lastCell.floating};
+            let gridCellDef = <GridCellDef> {rowIndex: lastCell.rowIndex, column: colToLeft, floating: lastCell.floating};
             return new GridCell(gridCellDef);
         }
     }
 
     private getCellToRight(lastCell: GridCell): GridCell {
-        var colToRight = this.columnController.getDisplayedColAfter(lastCell.column);
+        let colToRight = this.columnController.getDisplayedColAfter(lastCell.column);
         // if already on right, do nothing
         if (!colToRight) {
             return null;
         } else {
-            var gridCellDef = <GridCellDef> {rowIndex: lastCell.rowIndex, column: colToRight, floating: lastCell.floating};
+            let gridCellDef = <GridCellDef> {rowIndex: lastCell.rowIndex, column: colToRight, floating: lastCell.floating};
             return new GridCell(gridCellDef);
         }
     }
@@ -86,9 +86,9 @@ export class CellNavigationService {
     }
 
     private getCellBelow(lastCell: GridCell): GridCell {
-        var rowBelow = this.getRowBelow(lastCell.getGridRow());
+        let rowBelow = this.getRowBelow(lastCell.getGridRow());
         if (rowBelow) {
-            var gridCellDef = <GridCellDef> {rowIndex: rowBelow.rowIndex, column: lastCell.column, floating: rowBelow.floating};
+            let gridCellDef = <GridCellDef> {rowIndex: rowBelow.rowIndex, column: lastCell.column, floating: rowBelow.floating};
             return new GridCell(gridCellDef);
         } else {
             return null;
@@ -97,13 +97,13 @@ export class CellNavigationService {
 
     private isLastRowInContainer(gridRow: GridRow): boolean {
         if (gridRow.isFloatingTop()) {
-            var lastTopIndex = this.floatingRowModel.getFloatingTopRowData().length - 1;
+            let lastTopIndex = this.floatingRowModel.getFloatingTopRowData().length - 1;
             return lastTopIndex === gridRow.rowIndex;
         } else if (gridRow.isFloatingBottom()) {
-            var lastBottomIndex = this.floatingRowModel.getFloatingBottomRowData().length - 1;
+            let lastBottomIndex = this.floatingRowModel.getFloatingBottomRowData().length - 1;
             return lastBottomIndex === gridRow.rowIndex;
         } else {
-            var lastBodyIndex = this.rowModel.getPageLastRow();
+            let lastBodyIndex = this.rowModel.getPageLastRow();
             return lastBodyIndex === gridRow.rowIndex;
         }
     }
@@ -137,9 +137,9 @@ export class CellNavigationService {
     }
 
     private getCellAbove(lastCell: GridCell): GridCell {
-        var rowAbove = this.getRowAbove(lastCell.getGridRow());
+        let rowAbove = this.getRowAbove(lastCell.getGridRow());
         if (rowAbove) {
-            var gridCellDef = <GridCellDef> {rowIndex: rowAbove.rowIndex, column: lastCell.column, floating: rowAbove.floating};
+            let gridCellDef = <GridCellDef> {rowIndex: rowAbove.rowIndex, column: lastCell.column, floating: rowAbove.floating};
             return new GridCell(gridCellDef);
         } else {
             return null;
@@ -147,12 +147,12 @@ export class CellNavigationService {
     }
 
     private getLastBodyCell(): GridRow {
-        var lastBodyRow = this.rowModel.getPageLastRow();
+        let lastBodyRow = this.rowModel.getPageLastRow();
         return new GridRow(lastBodyRow, null);
     }
 
     private getLastFloatingTopRow(): GridRow {
-        var lastFloatingRow = this.floatingRowModel.getFloatingTopRowData().length - 1;
+        let lastFloatingRow = this.floatingRowModel.getFloatingTopRowData().length - 1;
         return new GridRow(lastFloatingRow, Constants.FLOATING_TOP);
     }
 
@@ -166,19 +166,19 @@ export class CellNavigationService {
     
     public getNextTabbedCellForwards(gridCell: GridCell): GridCell {
 
-        var displayedColumns = this.columnController.getAllDisplayedColumns();
+        let displayedColumns = this.columnController.getAllDisplayedColumns();
 
-        var newRowIndex = gridCell.rowIndex;
-        var newFloating = gridCell.floating;
+        let newRowIndex = gridCell.rowIndex;
+        let newFloating = gridCell.floating;
 
         // move along to the next cell
-        var newColumn = this.columnController.getDisplayedColAfter(gridCell.column);
+        let newColumn = this.columnController.getDisplayedColAfter(gridCell.column);
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
             newColumn = displayedColumns[0];
 
-            var rowBelow = this.getRowBelow(gridCell.getGridRow());
+            let rowBelow = this.getRowBelow(gridCell.getGridRow());
             if (_.missing(rowBelow)) {
                 return;
             }
@@ -186,25 +186,25 @@ export class CellNavigationService {
             newFloating = rowBelow.floating;
         }
 
-        var gridCellDef = <GridCellDef> {rowIndex: newRowIndex, column: newColumn, floating: newFloating};
+        let gridCellDef = <GridCellDef> {rowIndex: newRowIndex, column: newColumn, floating: newFloating};
         return new GridCell(gridCellDef);
     }
 
     public getNextTabbedCellBackwards(gridCell: GridCell): GridCell {
 
-        var displayedColumns = this.columnController.getAllDisplayedColumns();
+        let displayedColumns = this.columnController.getAllDisplayedColumns();
 
-        var newRowIndex = gridCell.rowIndex;
-        var newFloating = gridCell.floating;
+        let newRowIndex = gridCell.rowIndex;
+        let newFloating = gridCell.floating;
 
         // move along to the next cell
-        var newColumn = this.columnController.getDisplayedColBefore(gridCell.column);
+        let newColumn = this.columnController.getDisplayedColBefore(gridCell.column);
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
             newColumn = displayedColumns[displayedColumns.length - 1];
 
-            var rowAbove = this.getRowAbove(gridCell.getGridRow());
+            let rowAbove = this.getRowAbove(gridCell.getGridRow());
             if (_.missing(rowAbove)) {
                 return;
             }
@@ -212,7 +212,7 @@ export class CellNavigationService {
             newFloating = rowAbove.floating;
         }
 
-        var gridCellDef = <GridCellDef> {rowIndex: newRowIndex, column: newColumn, floating: newFloating};
+        let gridCellDef = <GridCellDef> {rowIndex: newRowIndex, column: newColumn, floating: newFloating};
         return new GridCell(gridCellDef);
     }
 

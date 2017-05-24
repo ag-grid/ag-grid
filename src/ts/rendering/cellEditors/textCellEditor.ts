@@ -16,15 +16,15 @@ export class TextCellEditor extends Component implements ICellEditorComp {
 
     public init(params: ICellEditorParams): void {
 
-        var eInput = <HTMLInputElement> this.getGui();
-        var startValue: string;
+        let eInput = <HTMLInputElement> this.getGui();
+        let startValue: string;
 
         // cellStartedEdit is only false if we are doing fullRow editing
         if (params.cellStartedEdit) {
 
             this.focusAfterAttached = true;
 
-            var keyPressBackspaceOrDelete =
+            let keyPressBackspaceOrDelete =
                 params.keyPress === Constants.KEY_BACKSPACE
                 || params.keyPress === Constants.KEY_DELETE;
 
@@ -49,7 +49,7 @@ export class TextCellEditor extends Component implements ICellEditorComp {
         }
 
         this.addDestroyableEventListener(eInput, 'keydown', (event: KeyboardEvent)=> {
-            var isNavigationKey = event.keyCode===Constants.KEY_LEFT || event.keyCode===Constants.KEY_RIGHT;
+            let isNavigationKey = event.keyCode===Constants.KEY_LEFT || event.keyCode===Constants.KEY_RIGHT;
             if (isNavigationKey) {
                 event.stopPropagation();
             }
@@ -59,7 +59,7 @@ export class TextCellEditor extends Component implements ICellEditorComp {
     public afterGuiAttached(): void {
         if (!this.focusAfterAttached) { return; }
 
-        var eInput = <HTMLInputElement> this.getGui();
+        let eInput = <HTMLInputElement> this.getGui();
         eInput.focus();
         if (this.highlightAllOnFocus) {
             eInput.select();
@@ -68,7 +68,7 @@ export class TextCellEditor extends Component implements ICellEditorComp {
             // this comes into play in two scenarios: a) when user hits F2 and b)
             // when user hits a printable character, then on IE (and only IE) the carot
             // was placed after the first character, thus 'apply' would end up as 'pplea'
-            var length = eInput.value ? eInput.value.length : 0;
+            let length = eInput.value ? eInput.value.length : 0;
             if (length > 0) {
                 eInput.setSelectionRange(length,length);
             }
@@ -77,13 +77,13 @@ export class TextCellEditor extends Component implements ICellEditorComp {
 
     // gets called when tabbing trough cells and in full row edit mode
     public focusIn(): void {
-        var eInput = <HTMLInputElement> this.getGui();
+        let eInput = <HTMLInputElement> this.getGui();
         eInput.focus();
         eInput.select();
     }
 
     public getValue(): any {
-        var eInput = <HTMLInputElement> this.getGui();
+        let eInput = <HTMLInputElement> this.getGui();
         return eInput.value;
     }
 }

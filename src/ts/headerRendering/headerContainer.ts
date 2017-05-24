@@ -108,8 +108,8 @@ export class HeaderContainer {
     }
     
     private setupDragAndDrop(): void {
-        var dropContainer = this.eViewport ? this.eViewport : this.eContainer;
-        var bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
+        let dropContainer = this.eViewport ? this.eViewport : this.eContainer;
+        let bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
         this.context.wireBean(bodyDropTarget );
     }
 
@@ -124,12 +124,12 @@ export class HeaderContainer {
     private createHeaderRowComps(): void {
         // if we are displaying header groups, then we have many rows here.
         // go through each row of the header, one by one.
-        var rowCount = this.columnController.getHeaderRowCount();
+        let rowCount = this.columnController.getHeaderRowCount();
         
-        for (var dept = 0; dept<rowCount; dept++) {
-            var groupRow = dept !== (rowCount - 1);
+        for (let dept = 0; dept<rowCount; dept++) {
+            let groupRow = dept !== (rowCount - 1);
             let type = groupRow ? HeaderRowType.COLUMN_GROUP : HeaderRowType.COLUMN;
-            var headerRowComp = new HeaderRowComp(dept, type, this.pinned, this.eRoot, this.dropTarget);
+            let headerRowComp = new HeaderRowComp(dept, type, this.pinned, this.eRoot, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             this.eContainer.appendChild(headerRowComp.getGui());
@@ -138,7 +138,7 @@ export class HeaderContainer {
         let includeFloatingFilterRow = this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode();
 
         if (includeFloatingFilterRow) {
-            var headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned, this.eRoot, this.dropTarget);
+            let headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned, this.eRoot, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             this.eContainer.appendChild(headerRowComp.getGui());

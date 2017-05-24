@@ -13,10 +13,10 @@ export class ColumnKeyCreator {
         // in case user passed in number for colId, convert to string
         colId = _.toStringOrNull(colId);
 
-        var count = 0;
+        let count = 0;
         while (true) {
 
-            var idToTry: string;
+            let idToTry: string;
             if (colId) {
                 idToTry = colId;
                 if (count!==0) {

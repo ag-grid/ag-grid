@@ -295,7 +295,7 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
     public customInit():void{}
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        var value:any = this.filterParams.valueGetter(params.node);
+        let value:any = this.filterParams.valueGetter(params.node);
         let comparator: Comparator<T> = this.comparator();
 
         let rawFilterValues : T[] | T= this.filterValues();

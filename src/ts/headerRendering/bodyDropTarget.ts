@@ -88,7 +88,7 @@ export class BodyDropTarget implements DropTarget {
         // we change visibility state and position.
 
         // if (this.columnController.isPivotMode()) {
-        var useBodyDropPivotTarget = this.isUseBodyDropPivotTarget(draggingEvent);
+        let useBodyDropPivotTarget = this.isUseBodyDropPivotTarget(draggingEvent);
         if (useBodyDropPivotTarget) {
             this.currentDropListener = this.bodyDropPivotTarget;
         } else {

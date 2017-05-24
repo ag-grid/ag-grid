@@ -69,7 +69,7 @@ export class BorderLayout {
 
         this.fullHeight = !params.north && !params.south;
 
-        var template: any;
+        let template: any;
         if (!params.dontFill) {
             if (this.fullHeight) {
                 template = BorderLayout.TEMPLATE_FULL_HEIGHT;
@@ -151,13 +151,13 @@ export class BorderLayout {
     // returns true if any item changed size, otherwise returns false
     public doLayout() {
 
-        var isVisible = _.isVisible(this.eGui);
+        let isVisible = _.isVisible(this.eGui);
         if (!isVisible) {
             this.visibleLastTime = false;
             return false;
         }
 
-        var atLeastOneChanged = false;
+        let atLeastOneChanged = false;
 
         if (this.visibleLastTime !== isVisible) {
             atLeastOneChanged = true;
@@ -165,23 +165,23 @@ export class BorderLayout {
 
         this.visibleLastTime = true;
 
-        var childLayouts = [this.eNorthChildLayout, this.eSouthChildLayout, this.eEastChildLayout, this.eWestChildLayout];
+        let childLayouts = [this.eNorthChildLayout, this.eSouthChildLayout, this.eEastChildLayout, this.eWestChildLayout];
         childLayouts.forEach(childLayout => {
-            var childChangedSize = this.layoutChild(childLayout);
+            let childChangedSize = this.layoutChild(childLayout);
             if (childChangedSize) {
                 atLeastOneChanged = true;
             }
         });
 
         if (this.layoutActive) {
-            var ourHeightChanged = this.layoutHeight();
-            var ourWidthChanged = this.layoutWidth();
+            let ourHeightChanged = this.layoutHeight();
+            let ourWidthChanged = this.layoutWidth();
             if (ourHeightChanged || ourWidthChanged) {
                 atLeastOneChanged = true;
             }
         }
 
-        var centerChanged = this.layoutChild(this.eCenterChildLayout);
+        let centerChanged = this.layoutChild(this.eCenterChildLayout);
         if (centerChanged) {
             atLeastOneChanged = true;
         }
@@ -212,7 +212,7 @@ export class BorderLayout {
     // full height never changes the height, because the center is always 100%,
     // however we do check for change, to inform the listeners
     private layoutHeightFullHeight(): boolean {
-        var centerHeight = _.offsetHeight(this.eGui);
+        let centerHeight = _.offsetHeight(this.eGui);
         if (centerHeight < 0) {
             centerHeight = 0;
         }
@@ -226,11 +226,11 @@ export class BorderLayout {
 
     private layoutHeightNormal(): boolean {
 
-        var totalHeight = _.offsetHeight(this.eGui);
-        var northHeight = _.offsetHeight(this.eNorthWrapper);
-        var southHeight = _.offsetHeight(this.eSouthWrapper);
+        let totalHeight = _.offsetHeight(this.eGui);
+        let northHeight = _.offsetHeight(this.eNorthWrapper);
+        let southHeight = _.offsetHeight(this.eSouthWrapper);
 
-        var centerHeight = totalHeight - northHeight - southHeight;
+        let centerHeight = totalHeight - northHeight - southHeight;
         if (centerHeight < 0) {
             centerHeight = 0;
         }
@@ -249,16 +249,16 @@ export class BorderLayout {
     }
 
     private layoutWidth(): boolean {
-        var totalWidth = _.offsetWidth(this.eGui);
-        var eastWidth = _.offsetWidth(this.eEastWrapper);
-        var westWidth = _.offsetWidth(this.eWestWrapper);
+        let totalWidth = _.offsetWidth(this.eGui);
+        let eastWidth = _.offsetWidth(this.eEastWrapper);
+        let westWidth = _.offsetWidth(this.eWestWrapper);
 
-        var centerWidth = totalWidth - eastWidth - westWidth;
+        let centerWidth = totalWidth - eastWidth - westWidth;
         if (centerWidth < 0) {
             centerWidth = 0;
         }
 
-        var atLeastOneChanged = false;
+        let atLeastOneChanged = false;
 
         if (this.centerLeftMarginLastTime !== westWidth) {
             this.centerLeftMarginLastTime = westWidth;
@@ -298,7 +298,7 @@ export class BorderLayout {
     }
 
     public showOverlay(key: string) {
-        var overlay = this.overlays ? this.overlays[key] : null;
+        let overlay = this.overlays ? this.overlays[key] : null;
         if (overlay) {
             _.removeAllChildren(this.eOverlayWrapper);
             this.eOverlayWrapper.style.display = '';

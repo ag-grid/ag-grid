@@ -61,7 +61,7 @@ export class ColumnAnimationService {
         // up the count, so we can tell if someone else has updated the count
         // by the time the 'wait' func executes
         this.animationThreadCount++;
-        var animationThreadCountCopy = this.animationThreadCount;
+        let animationThreadCountCopy = this.animationThreadCount;
         _.addCssClass(this.gridPanel.getRoot(), 'ag-column-moving');
 
         this.executeLaterFuncs.push(()=> {

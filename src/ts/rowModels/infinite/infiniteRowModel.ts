@@ -92,7 +92,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     }
 
     private checkForDeprecated(): void {
-        var ds = <any> this.datasource;
+        let ds = <any> this.datasource;
         // the number of concurrent loads we are allowed to the server
         if (_.exists(ds.maxConcurrentRequests)) {
             console.error('ag-Grid: since version 5.1.x, maxConcurrentRequests is replaced with grid property maxConcurrentDatasourceRequests');
@@ -129,7 +129,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         // if user is providing id's, then this means we can keep the selection between datsource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
-        var userGeneratingIds = _.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
+        let userGeneratingIds = _.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
         if (!userGeneratingIds) {
             this.selectionController.reset();
         }
@@ -231,7 +231,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
 
     public getRowIndexAtPixel(pixel: number): number {
         if (this.rowHeight !== 0) { // avoid divide by zero error
-            var rowIndexForPixel = Math.floor(pixel / this.rowHeight);
+            let rowIndexForPixel = Math.floor(pixel / this.rowHeight);
             if (rowIndexForPixel > this.getPageLastRow()) {
                 return this.getPageLastRow();
             } else {

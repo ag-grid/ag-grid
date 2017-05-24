@@ -35,7 +35,7 @@ export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
 
 }
 
-var svgFactory = SvgFactory.getInstance();
+let svgFactory = SvgFactory.getInstance();
 
 export class HeaderComp extends Component implements IHeaderComp {
 
@@ -99,7 +99,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column, defaultIconFactory: () => HTMLElement): void {
-        var eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
+        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
         eParent.appendChild(eIcon);
     }
 
@@ -149,7 +149,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.eMenu.style.opacity = '0';
             });
         }
-        var style = <any> this.eMenu.style;
+        let style = <any> this.eMenu.style;
         style['transition'] = 'opacity 0.2s, border 0.2s';
         style['-webkit-transition'] = 'opacity 0.2s, border 0.2s';
     }
@@ -159,7 +159,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     public setupSort(): void {
-        var enableSorting = this.params.enableSorting;
+        let enableSorting = this.params.enableSorting;
 
         if (!enableSorting) {
             _.removeFromParent(this.eSortAsc);
@@ -195,7 +195,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
 
         if (this.eSortNone) {
-            var alwaysHideNoSort = !this.params.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
+            let alwaysHideNoSort = !this.params.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
             _.addOrRemoveCssClass(this.eSortNone, 'ag-hidden', alwaysHideNoSort || !this.params.column.isSortNone());
         }
     }
@@ -235,7 +235,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private onFilterChanged(): void {
-        var filterPresent = this.params.column.isFilterActive();
+        let filterPresent = this.params.column.isFilterActive();
         _.addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
     }
 

@@ -49,7 +49,7 @@ export class LargeTextCellEditor extends Component implements ICellEditorComp {
     }
 
     private onKeyDown(event:KeyboardEvent): void {
-        var key = event.which || event.keyCode;
+        let key = event.which || event.keyCode;
         if (key == Constants.KEY_LEFT ||
             key == Constants.KEY_UP ||
             key == Constants.KEY_RIGHT ||

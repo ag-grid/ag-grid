@@ -11,7 +11,7 @@ import {EventService} from "../eventService";
 import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
 
-var svgFactory = SvgFactory.getInstance();
+let svgFactory = SvgFactory.getInstance();
 
 export class CheckboxSelectionComponent extends Component {
 
@@ -38,33 +38,33 @@ export class CheckboxSelectionComponent extends Component {
         this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedIcon);
         this.eIndeterminateIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateIcon);
 
-        var eGui = this.getGui();
+        let eGui = this.getGui();
         eGui.appendChild(this.eCheckedIcon);
         eGui.appendChild(this.eUncheckedIcon);
         eGui.appendChild(this.eIndeterminateIcon);
     }
 
     private onSelectionChanged(): void {
-        var state = this.rowNode.isSelected();
+        let state = this.rowNode.isSelected();
         _.setVisible(this.eCheckedIcon, state === true);
         _.setVisible(this.eUncheckedIcon, state === false);
         _.setVisible(this.eIndeterminateIcon, typeof state !== 'boolean');
     }
 
     private onCheckedClicked(): number {
-        var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        var updatedCount = this.rowNode.setSelectedParams({newValue: false, groupSelectsFiltered: groupSelectsFiltered});
+        let groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+        let updatedCount = this.rowNode.setSelectedParams({newValue: false, groupSelectsFiltered: groupSelectsFiltered});
         return updatedCount;
      }
 
     private onUncheckedClicked(event: MouseEvent): number {
-        var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        var updatedCount = this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered});
+        let groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+        let updatedCount = this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered});
         return updatedCount;
     }
 
     private onIndeterminateClicked(event: MouseEvent): void {
-        var result = this.onUncheckedClicked(event);
+        let result = this.onUncheckedClicked(event);
         if (result===0) {
             this.onCheckedClicked();
         }
@@ -105,7 +105,7 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private createParams(): any {
-        var params = {
+        let params = {
             node: this.rowNode,
             data: this.rowNode.data,
             column: this.column,

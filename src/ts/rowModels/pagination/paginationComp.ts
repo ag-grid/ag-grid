@@ -126,8 +126,8 @@ export class PaginationComp extends Component {
         let rowCount = this.paginationProxy.isLastPageFound() ?
             this.paginationProxy.getTotalRowCount() : null;
 
-        var startRow: any;
-        var endRow: any;
+        let startRow: any;
+        let endRow: any;
         if (this.isZeroPagesToDisplay()) {
             startRow = 0;
             endRow = 0;
@@ -158,7 +158,7 @@ export class PaginationComp extends Component {
             this.lbTotal.innerHTML = _.formatNumberCommas(totalPages);
             this.lbRecordCount.innerHTML = _.formatNumberCommas(rowCount);
         } else {
-            var moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
+            let moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
             this.lbTotal.innerHTML = moreText;
             this.lbRecordCount.innerHTML = moreText;
         }

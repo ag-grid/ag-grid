@@ -55,13 +55,13 @@ export class FocusedCellController {
             return null;
         }
         
-        var browserFocusedCell = this.getGridCellForDomElement(document.activeElement);
+        let browserFocusedCell = this.getGridCellForDomElement(document.activeElement);
         if (!browserFocusedCell) {
             return null;
         }
 
-        var gridFocusId = this.focusedCell.createId();
-        var browserFocusId = browserFocusedCell.createId();
+        let gridFocusId = this.focusedCell.createId();
+        let browserFocusId = browserFocusedCell.createId();
 
         if (gridFocusId === browserFocusId) {
             return this.focusedCell;
@@ -75,10 +75,10 @@ export class FocusedCellController {
             return null;
         }
 
-        var column: Column = null;
-        var row: number  = null;
-        var floating: string = null;
-        var that = this;
+        let column: Column = null;
+        let row: number  = null;
+        let floating: string = null;
+        let that = this;
 
         while (eBrowserCell) {
             checkRow(eBrowserCell);
@@ -87,7 +87,7 @@ export class FocusedCellController {
         }
 
         if (_.exists(column) && _.exists(row)) {
-            var gridCell = new GridCell({rowIndex: row, floating: floating, column: column});
+            let gridCell = new GridCell({rowIndex: row, floating: floating, column: column});
             return gridCell;
         } else {
             return null;
@@ -95,7 +95,7 @@ export class FocusedCellController {
 
         function checkRow(eTarget: Node): void {
             // match the column by checking a) it has a valid colId and b) it has the 'ag-cell' class
-            var rowId = _.getElementAttribute(eTarget, 'row');
+            let rowId = _.getElementAttribute(eTarget, 'row');
             if (_.exists(rowId) && _.containsClass(eTarget, 'ag-row')) {
                 if (rowId.indexOf('ft')===0) {
                     floating = Constants.FLOATING_TOP;
@@ -112,9 +112,9 @@ export class FocusedCellController {
 
         function checkColumn(eTarget: Node): void {
             // match the column by checking a) it has a valid colId and b) it has the 'ag-cell' class
-            var colId = _.getElementAttribute(eTarget, 'colid');
+            let colId = _.getElementAttribute(eTarget, 'colid');
             if (_.exists(colId) && _.containsClass(eTarget, 'ag-cell')) {
-                var foundColumn = that.columnController.getGridColumn(colId);
+                let foundColumn = that.columnController.getGridColumn(colId);
                 if (foundColumn) {
                     column = foundColumn;
                 }
@@ -127,7 +127,7 @@ export class FocusedCellController {
             return;
         }
 
-        var column = _.makeNull(this.columnController.getGridColumn(colKey));
+        let column = _.makeNull(this.columnController.getGridColumn(colKey));
         this.focusedCell = new GridCell({rowIndex: rowIndex,
                                         floating: _.makeNull(floating),
                                         column: column});
@@ -150,12 +150,12 @@ export class FocusedCellController {
 
     public isRowFocused(rowIndex: number, floating: string): boolean {
         if (_.missing(this.focusedCell)) { return false; }
-        var floatingOrNull = _.makeNull(floating);
+        let floatingOrNull = _.makeNull(floating);
         return this.focusedCell.rowIndex === rowIndex && this.focusedCell.floating === floatingOrNull;
     }
 
     private onCellFocused(forceBrowserFocus: boolean): void {
-        var event = {
+        let event = {
             rowIndex: <number> null,
             column: <Column> null,
             floating: <string> null,

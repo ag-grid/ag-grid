@@ -99,7 +99,7 @@ export class HeaderWrapperComp extends Component {
     }
 
     private onColumnHover(): void {
-        var isHovered = this.columnHoverService.isHovered(this.column);
+        let isHovered = this.columnHoverService.isHovered(this.column);
         _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered)
     }
 
@@ -111,7 +111,7 @@ export class HeaderWrapperComp extends Component {
     }
 
     private onFilterChanged(): void {
-        var filterPresent = this.column.isFilterActive();
+        let filterPresent = this.column.isFilterActive();
         _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
     }
 
@@ -153,14 +153,14 @@ export class HeaderWrapperComp extends Component {
     }
 
     private setupMove(eHeaderCellLabel: HTMLElement, displayName: string): void {
-        var suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
+        let suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
             || this.column.getColDef().suppressMovable
             || this.gridOptionsWrapper.isForPrint();
 
         if (suppressMove) { return; }
 
         if (eHeaderCellLabel) {
-            var dragSource: DragSource = {
+            let dragSource: DragSource = {
                 type: DragSourceType.HeaderCell,
                 eElement: eHeaderCellLabel,
                 dragItem: [this.column],
@@ -173,14 +173,14 @@ export class HeaderWrapperComp extends Component {
     }
 
     private setupResize(): void {
-        var colDef = this.column.getColDef();
+        let colDef = this.column.getColDef();
 
         // if no eResize in template, do nothing
         if (!this.eResize) {
             return;
         }
 
-        var weWantResize = this.gridOptionsWrapper.isEnableColResize() && !colDef.suppressResize;
+        let weWantResize = this.gridOptionsWrapper.isEnableColResize() && !colDef.suppressResize;
         if (!weWantResize) {
             _.removeFromParent(this.eResize);
             return;
@@ -195,7 +195,7 @@ export class HeaderWrapperComp extends Component {
             onDragging: this.onDragging.bind(this)
         });
 
-        var weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
+        let weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
         if (weWantAutoSize) {
             this.addDestroyableEventListener(this.eResize, 'dblclick', () => {
                 this.columnController.autoSizeColumn(this.column);
@@ -214,7 +214,7 @@ export class HeaderWrapperComp extends Component {
     }
 
     private setupTooltip(): void {
-        var colDef = this.column.getColDef();
+        let colDef = this.column.getColDef();
 
         // add tooltip if exists
         if (colDef.headerTooltip) {

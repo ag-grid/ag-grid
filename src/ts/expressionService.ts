@@ -15,8 +15,8 @@ export class ExpressionService {
     public evaluate(expression: string, params: any) {
 
         try {
-            var javaScriptFunction = this.createExpressionFunction(expression);
-            var result = javaScriptFunction(params.value, params.context, params.node,
+            let javaScriptFunction = this.createExpressionFunction(expression);
+            let result = javaScriptFunction(params.value, params.context, params.node,
                 params.data, params.colDef, params.rowIndex, params.api, params.getValue,
                 params.column, params.columnGroup);
             return result;
@@ -36,8 +36,8 @@ export class ExpressionService {
             return this.expressionToFunctionCache[expression];
         }
         // if not found in cache, return the function
-        var functionBody = this.createFunctionBody(expression);
-        var theFunction = new Function('x, ctx, node, data, colDef, rowIndex, api, getValue, column, columnGroup', functionBody);
+        let functionBody = this.createFunctionBody(expression);
+        let theFunction = new Function('x, ctx, node, data, colDef, rowIndex, api, getValue, column, columnGroup', functionBody);
 
         // store in cache
         this.expressionToFunctionCache[expression] = theFunction;

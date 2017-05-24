@@ -21,23 +21,23 @@ export class CellRendererService {
                             params: any
                         ): ICellRendererComp {
 
-        var cellRenderer = this.lookUpCellRenderer(cellRendererKey);
+        let cellRenderer = this.lookUpCellRenderer(cellRendererKey);
         if (_.missing(cellRenderer)) {
             // this is a bug in users config, they specified a cellRenderer that doesn't exist,
             // the factory already printed to console, so here we just skip
             return;
         }
 
-        var resultFromRenderer: HTMLElement | string;
-        var iCellRendererInstance: ICellRendererComp = null;
+        let resultFromRenderer: HTMLElement | string;
+        let iCellRendererInstance: ICellRendererComp = null;
 
         this.checkForDeprecatedItems(cellRenderer);
 
         // we check if the class has the 'getGui' method to know if it's a component
-        var rendererIsAComponent = this.doesImplementICellRenderer(cellRenderer);
+        let rendererIsAComponent = this.doesImplementICellRenderer(cellRenderer);
         // if it's a component, we create and initialise it
         if (rendererIsAComponent) {
-            var CellRendererClass = <{new(): ICellRendererComp}> cellRenderer;
+            let CellRendererClass = <{new(): ICellRendererComp}> cellRenderer;
             iCellRendererInstance = new CellRendererClass();
             this.context.wireBean(iCellRendererInstance);
 
@@ -48,7 +48,7 @@ export class CellRendererService {
             resultFromRenderer = iCellRendererInstance.getGui();
         } else {
             // otherwise it's a function, so we just use it
-            var cellRendererFunc = <ICellRendererFunc> cellRenderer;
+            let cellRendererFunc = <ICellRendererFunc> cellRenderer;
             resultFromRenderer = cellRendererFunc(params);
         }
 

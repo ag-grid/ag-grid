@@ -64,7 +64,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     }
 
     public getLeafColumns(): Column[] {
-        var result: Column[] = [];
+        let result: Column[] = [];
         this.addLeafColumns(result);
         return result;
     }
@@ -95,16 +95,16 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
 
     public calculateExpandable() {
         // want to make sure the group doesn't disappear when it's open
-        var atLeastOneShowingWhenOpen = false;
+        let atLeastOneShowingWhenOpen = false;
         // want to make sure the group doesn't disappear when it's closed
-        var atLeastOneShowingWhenClosed = false;
+        let atLeastOneShowingWhenClosed = false;
         // want to make sure the group has something to show / hide
-        var atLeastOneChangeable = false;
+        let atLeastOneChangeable = false;
 
-        for (var i = 0, j = this.children.length; i < j; i++) {
-            var abstractColumn = this.children[i];
+        for (let i = 0, j = this.children.length; i < j; i++) {
+            let abstractColumn = this.children[i];
             // if the abstractColumn is a grid generated group, there will be no colDef
-            var headerGroupShow = abstractColumn.getColumnGroupShow();
+            let headerGroupShow = abstractColumn.getColumnGroupShow();
             if (headerGroupShow === ColumnGroup.HEADER_GROUP_SHOW_OPEN) {
                 atLeastOneShowingWhenOpen = true;
                 atLeastOneChangeable = true;

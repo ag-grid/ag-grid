@@ -24,9 +24,9 @@ export class TouchListener implements IEventEmitter {
     constructor(eElement: HTMLElement) {
         this.eElement = eElement;
 
-        var startListener = this.onTouchStart.bind(this);
-        var moveListener = this.onTouchMove.bind(this);
-        var endListener = this.onTouchEnd.bind(this);
+        let startListener = this.onTouchStart.bind(this);
+        let moveListener = this.onTouchMove.bind(this);
+        let endListener = this.onTouchEnd.bind(this);
 
         this.eElement.addEventListener('touchstart', startListener);
         this.eElement.addEventListener('touchmove', moveListener);
@@ -40,8 +40,8 @@ export class TouchListener implements IEventEmitter {
     }
 
     private getActiveTouch(touchList: TouchList): Touch {
-        for (var i = 0; i<touchList.length; i++) {
-            var matches = touchList[i].identifier === this.touchStart.identifier;
+        for (let i = 0; i<touchList.length; i++) {
+            let matches = touchList[i].identifier === this.touchStart.identifier;
             if (matches) {
                 return touchList[i];
             }
@@ -83,12 +83,12 @@ export class TouchListener implements IEventEmitter {
     private onTouchMove(touchEvent: TouchEvent): void {
         if (!this.touching) { return; }
 
-        var touch = this.getActiveTouch(touchEvent.touches);
+        let touch = this.getActiveTouch(touchEvent.touches);
         if (!touch) {
             return;
         }
 
-        var eventIsFarAway = !_.areEventsNear(touch, this.touchStart, 4);
+        let eventIsFarAway = !_.areEventsNear(touch, this.touchStart, 4);
         if (eventIsFarAway) {
             this.moved = true;
         }

@@ -1,7 +1,7 @@
 import {Grid, GridParams} from "../grid";
 
 export function initialiseAgGridWithAngular1(angular: any) {
-    var angularModule = angular.module("agGrid", []);
+    let angularModule = angular.module("agGrid", []);
     angularModule.directive("agGrid", function() {
         return {
             restrict: "A",
@@ -12,10 +12,10 @@ export function initialiseAgGridWithAngular1(angular: any) {
 }
 
 function AngularDirectiveController($element: any, $scope: any, $compile: any, $attrs: any) {
-    var gridOptions: any;
-    var quickFilterOnScope: any;
+    let gridOptions: any;
+    let quickFilterOnScope: any;
 
-    var keyOfGridInScope = $attrs.agGrid;
+    let keyOfGridInScope = $attrs.agGrid;
     quickFilterOnScope = keyOfGridInScope + '.quickFilterText';
     gridOptions = $scope.$eval(keyOfGridInScope);
     if (!gridOptions) {
@@ -23,13 +23,13 @@ function AngularDirectiveController($element: any, $scope: any, $compile: any, $
         return;
     }
 
-    var eGridDiv = $element[0];
-    var gridParams: GridParams = {
+    let eGridDiv = $element[0];
+    let gridParams: GridParams = {
         $scope: $scope,
         $compile: $compile,
         quickFilterOnScope: quickFilterOnScope
     };
-    var grid = new Grid(eGridDiv, gridOptions, gridParams);
+    let grid = new Grid(eGridDiv, gridOptions, gridParams);
 
     $scope.$on("$destroy", function() {
         grid.destroy();

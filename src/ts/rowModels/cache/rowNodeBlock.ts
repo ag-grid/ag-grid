@@ -117,7 +117,7 @@ export abstract class RowNodeBlock extends BeanStub {
 
     public getRowUsingLocalIndex(rowIndex: number): RowNode {
         this.lastAccessed = this.rowNodeCacheParams.lastAccessedSequence.next();
-        var localIndex = rowIndex - this.startRow;
+        let localIndex = rowIndex - this.startRow;
         return this.rowNodes[localIndex];
     }
 
@@ -156,7 +156,7 @@ export abstract class RowNodeBlock extends BeanStub {
     }
 
     public setRowNode(rowIndex: number, rowNode: RowNode): void {
-        var localIndex = rowIndex - this.startRow;
+        let localIndex = rowIndex - this.startRow;
         this.rowNodes[localIndex] = rowNode;
     }
 
@@ -197,7 +197,7 @@ export abstract class RowNodeBlock extends BeanStub {
 
     protected pageLoadFailed() {
         this.state = RowNodeBlock.STATE_FAILED;
-        var event = {success: false, page: this};
+        let event = {success: false, page: this};
         this.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
     }
 
@@ -237,7 +237,7 @@ export abstract class RowNodeBlock extends BeanStub {
         lastRow = _.cleanNumber(lastRow);
 
         // check here if lastrow should be set
-        var event = {success: true, page: this, lastRow: lastRow};
+        let event = {success: true, page: this, lastRow: lastRow};
 
         this.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
     }

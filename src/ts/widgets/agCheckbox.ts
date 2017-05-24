@@ -6,7 +6,7 @@ import {PostConstruct, Autowired} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {SvgFactory} from "../svgFactory";
 
-var svgFactory = SvgFactory.getInstance();
+let svgFactory = SvgFactory.getInstance();
 
 export class AgCheckbox extends Component {
 
@@ -45,7 +45,7 @@ export class AgCheckbox extends Component {
 
     public attributesSet(): void {
         super.attributesSet();
-        var label = this.getAttribute('label');
+        let label = this.getAttribute('label');
         if (label) {
             this.eLabel.innerText = label;
         }
@@ -99,7 +99,7 @@ export class AgCheckbox extends Component {
     }
 
     public toggle(): void {
-        var nextValue = this.getNextValue();
+        let nextValue = this.getNextValue();
 
         if (this.passive) {
             this.dispatchEvent(AgCheckbox.EVENT_CHANGED, {selected: nextValue});

@@ -27,10 +27,10 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     private instantiateRecurse(parentNode: Element, context: Context): void {
-        var childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
-        for (var i = 0; i<childCount; i++) {
-            var childNode = parentNode.childNodes[i];
-            var newComponent = context.createComponent(<Element>childNode);
+        let childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
+        for (let i = 0; i<childCount; i++) {
+            let childNode = parentNode.childNodes[i];
+            let newComponent = context.createComponent(<Element>childNode);
             if (newComponent) {
                 this.swapComponentForNode(newComponent, parentNode, childNode);
             } else {
@@ -48,10 +48,10 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     private swapInComponentForQuerySelectors(newComponent: Component, childNode: Node): void {
-        var metaData = (<any>this).__agComponentMetaData;
+        let metaData = (<any>this).__agComponentMetaData;
         if (!metaData || !metaData.querySelectors) { return; }
 
-        var thisNoType = <any> this;
+        let thisNoType = <any> this;
         metaData.querySelectors.forEach( (querySelector: any) => {
             if (thisNoType[querySelector.attributeName]===childNode) {
                 thisNoType[querySelector.attributeName] = newComponent;
@@ -75,16 +75,16 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     private wireQuerySelectors(): void {
-        var metaData = (<any>this).__agComponentMetaData;
+        let metaData = (<any>this).__agComponentMetaData;
         if (!metaData || !metaData.querySelectors) { return; }
 
         if (!this.eGui) { return; }
 
-        var thisNoType = <any> this;
+        let thisNoType = <any> this;
         metaData.querySelectors.forEach( (querySelector: any) => {
-            var resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
+            let resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
             if (resultOfQuery) {
-                var backingComponent = (<any>resultOfQuery).__agComponent;
+                let backingComponent = (<any>resultOfQuery).__agComponent;
                 if (backingComponent) {
                     thisNoType[querySelector.attributeName] = backingComponent;
                 } else {
@@ -99,7 +99,7 @@ export class Component extends BeanStub implements IComponent<any> {
     private addAnnotatedEventListeners(): void {
         this.removeAnnotatedEventListeners();
 
-        var metaData = (<any>this).__agComponentMetaData;
+        let metaData = (<any>this).__agComponentMetaData;
         if (!metaData || !metaData.listenerMethods) { return; }
 
         if (!this.eGui) { return; }
@@ -109,7 +109,7 @@ export class Component extends BeanStub implements IComponent<any> {
         }
 
         metaData.listenerMethods.forEach( (eventListener: any) => {
-            var listener = (<any>this)[eventListener.methodName].bind(this);
+            let listener = (<any>this)[eventListener.methodName].bind(this);
             this.eGui.addEventListener(eventListener.eventName, listener);
             this.annotatedEventListeners.push({eventName: eventListener.eventName, listener: listener});
         });
@@ -146,7 +146,7 @@ export class Component extends BeanStub implements IComponent<any> {
         if (_.isNodeOrElement(newChild)) {
             this.eGui.appendChild(<Node>newChild);
         } else {
-            var childComponent = <IComponent<any>>newChild;
+            let childComponent = <IComponent<any>>newChild;
             this.eGui.appendChild(childComponent.getGui());
             this.childComponents.push(childComponent);
         }
@@ -197,7 +197,7 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     public getAttribute(key: string): string {
-        var eGui = this.getGui();
+        let eGui = this.getGui();
         if (eGui) {
             return eGui.getAttribute(key);
         } else {

@@ -3,11 +3,11 @@ import {Utils as _} from './utils';
 
 export function defaultGroupComparator(valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode): number {
 
-    var nodeAIsGroup = _.exists(nodeA) && nodeA.group;
-    var nodeBIsGroup = _.exists(nodeB) && nodeB.group;
+    let nodeAIsGroup = _.exists(nodeA) && nodeA.group;
+    let nodeBIsGroup = _.exists(nodeB) && nodeB.group;
 
-    var bothAreGroups = nodeAIsGroup && nodeBIsGroup;
-    var bothAreNormal = !nodeAIsGroup && !nodeBIsGroup;
+    let bothAreGroups = nodeAIsGroup && nodeBIsGroup;
+    let bothAreNormal = !nodeAIsGroup && !nodeBIsGroup;
 
     if (bothAreGroups) {
         return _.defaultComparator(nodeA.key, nodeB.key);

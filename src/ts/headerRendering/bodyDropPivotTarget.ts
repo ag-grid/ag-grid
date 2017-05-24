@@ -27,7 +27,7 @@ export class BodyDropPivotTarget {
         // in pivot mode, we don't accept any drops if functions are read only
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) { return; }
 
-        var dragColumns = draggingEvent.dragSource.dragItem;
+        let dragColumns = draggingEvent.dragSource.dragItem;
 
         dragColumns.forEach( column => {
             // we don't allow adding secondary columns
@@ -47,7 +47,7 @@ export class BodyDropPivotTarget {
     }
 
     public getIconName(): string {
-        var totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length + this.columnsToPivot.length;
+        let totalColumns = this.columnsToAggregate.length + this.columnsToGroup.length + this.columnsToPivot.length;
         if (totalColumns > 0) {
             return this.pinned ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE;
         } else {

@@ -1,8 +1,8 @@
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {Column} from "./entities/column";
 import {RowNode} from "./entities/rowNode";
-var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
+let FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+let FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 
 // util class, only used when debugging, for printing time to console
 export class Timer {
@@ -10,7 +10,7 @@ export class Timer {
     private timestamp = new Date().getTime();
     
     public print(msg: string) {
-        var duration = (new Date().getTime()) - this.timestamp;
+        let duration = (new Date().getTime()) - this.timestamp;
         console.log(`${msg} = ${duration}`);
         this.timestamp = new Date().getTime();
     }
@@ -48,8 +48,8 @@ export class Utils {
         if (pixelCount===0) {
             return false;
         }
-        var diffX = Math.abs(e1.clientX - e2.clientX);
-        var diffY = Math.abs(e1.clientY - e2.clientY);
+        let diffX = Math.abs(e1.clientX - e2.clientX);
+        let diffY = Math.abs(e1.clientY - e2.clientY);
 
         return Math.max(diffX, diffY) <= pixelCount;
     }
@@ -72,14 +72,14 @@ export class Utils {
     }
 
     static getNameOfClass(TheClass: any) {
-        var funcNameRegex = /function (.{1,})\(/;
-        var funcAsString = TheClass.toString();
-        var results  = (funcNameRegex).exec(funcAsString);
+        let funcNameRegex = /function (.{1,})\(/;
+        let funcAsString = TheClass.toString();
+        let results  = (funcNameRegex).exec(funcAsString);
         return (results && results.length > 1) ? results[1] : "";
     }
 
     static values<T>(object: {[key: string]: T}): T[] {
-        var result: T[] = [];
+        let result: T[] = [];
         this.iterateObject(object, (key: string, value: T)=> {
             result.push(value);
         });
@@ -95,9 +95,9 @@ export class Utils {
             return data[field];
         } else {
             // otherwise it is a deep value, so need to dig for it
-            var fields = field.split('.');
-            var currentObject = data;
-            for (var i = 0; i<fields.length; i++) {
+            let fields = field.split('.');
+            let currentObject = data;
+            for (let i = 0; i<fields.length; i++) {
                 currentObject = currentObject[fields[i]];
                 if (this.missing(currentObject)) {
                     return null;
@@ -108,7 +108,7 @@ export class Utils {
     }
 
     static getScrollLeft(element: HTMLElement, rtl: boolean): number {
-        var scrollLeft = element.scrollLeft;
+        let scrollLeft = element.scrollLeft;
         if (rtl) {
             // Absolute value - for FF that reports RTL scrolls in negative numbers
             scrollLeft = Math.abs(scrollLeft);
@@ -149,37 +149,37 @@ export class Utils {
 
     static iterateObject(object: any, callback: (key:string, value: any) => void) {
         if (this.missing(object)) { return; }
-        var keys = Object.keys(object);
-        for (var i = 0; i < keys.length; i++) {
-            var key = keys[i];
-            var value = object[key];
+        let keys = Object.keys(object);
+        for (let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            let value = object[key];
             callback(key, value);
         }
     }
 
     static cloneObject<T>(object: T): T {
-        var copy = <T>{};
-        var keys = Object.keys(object);
-        for (var i = 0; i < keys.length; i++) {
-            var key = keys[i];
-            var value = (<any>object)[key];
+        let copy = <T>{};
+        let keys = Object.keys(object);
+        for (let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            let value = (<any>object)[key];
             (<any>copy)[key] = value;
         }
         return copy;
     }
 
     static map<TItem, TResult>(array: TItem[], callback: (item: TItem) => TResult) {
-        var result: TResult[] = [];
-        for (var i = 0; i < array.length; i++) {
-            var item = array[i];
-            var mappedItem = callback(item);
+        let result: TResult[] = [];
+        for (let i = 0; i < array.length; i++) {
+            let item = array[i];
+            let mappedItem = callback(item);
             result.push(mappedItem);
         }
         return result;
     }
 
     static mapObject<TResult>(object: any, callback: (item: any) => TResult) {
-        var result: TResult[] = [];
+        let result: TResult[] = [];
         Utils.iterateObject(object, (key: string, value: any)=> {
             result.push(callback(value));
         });
@@ -191,14 +191,14 @@ export class Utils {
             return;
         }
 
-        for (var i = 0; i < array.length; i++) {
-            var value = array[i];
+        for (let i = 0; i < array.length; i++) {
+            let value = array[i];
             callback(value, i);
         }
     }
 
     static filter<T>(array: T[], callback: (item: T) => boolean): T[] {
-        var result: T[] = [];
+        let result: T[] = [];
         array.forEach(function (item: T) {
             if (callback(item)) {
                 result.push(item);
@@ -270,8 +270,8 @@ export class Utils {
     }
 
     static getFunctionParameters(func: any) {
-        var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
-        var result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);
+        let fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
+        let result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);
         if (result === null) {
             return [];
         } else {
@@ -291,16 +291,16 @@ export class Utils {
 
         let collectionAsArray = <T[]> collection;
 
-        var firstMatchingItem: T;
-        for (var i = 0; i < collectionAsArray.length; i++) {
-            var item: T = collectionAsArray[i];
+        let firstMatchingItem: T;
+        for (let i = 0; i < collectionAsArray.length; i++) {
+            let item: T = collectionAsArray[i];
             if (typeof predicate === 'string') {
                 if ((<any>item)[predicate] === value) {
                     firstMatchingItem = item;
                     break;
                 }
             } else {
-                var callback = <(item: T) => void> predicate;
+                let callback = <(item: T) => void> predicate;
                 if (callback(item)) {
                     firstMatchingItem = item;
                     break;
@@ -321,8 +321,8 @@ export class Utils {
     }
 
     static iterateArray<T>(array: T[], callback: (item: T, index: number) => void) {
-        for (var index = 0; index < array.length; index++) {
-            var value = array[index];
+        for (let index = 0; index < array.length; index++) {
+            let value = array[index];
             callback(value, index);
         }
     }
@@ -391,7 +391,7 @@ export class Utils {
 
     static anyExists(values: any[]): boolean {
         if (values) {
-            for (var i = 0; i<values.length; i++) {
+            for (let i = 0; i<values.length; i++) {
                 if (this.exists(values[i])) {
                     return true;
                 }
@@ -431,7 +431,7 @@ export class Utils {
      * the dom api to load html directly, eg we cannot do this: document.createElement(template)
      */
     static loadTemplate(template: string): HTMLElement {
-        var tempDiv = document.createElement("div");
+        let tempDiv = document.createElement("div");
         tempDiv.innerHTML = template;
         return <HTMLElement> tempDiv.firstChild;
     }
@@ -460,7 +460,7 @@ export class Utils {
             element.classList.add(className);
         } else {
             if (element.className && element.className.length > 0) {
-                var cssClasses = element.className.split(' ');
+                let cssClasses = element.className.split(' ');
                 if (cssClasses.indexOf(className) < 0) {
                     cssClasses.push(className);
                     element.className = cssClasses.join(' ');
@@ -478,13 +478,13 @@ export class Utils {
         } else if (element.className) {
             // for older browsers, check against the string of class names
             // if only one class, can check for exact match
-            var onlyClass = element.className === className;
+            let onlyClass = element.className === className;
             // if many classes, check for class name, we have to pad with ' ' to stop other
             // class names that are a substring of this class
-            var contains = element.className.indexOf(' ' + className + ' ') >= 0;
+            let contains = element.className.indexOf(' ' + className + ' ') >= 0;
             // the padding above then breaks when it's the first or last class names
-            var startsWithClass = element.className.indexOf(className + ' ')===0;
-            var endsWithClass = element.className.lastIndexOf(' ' + className) === (element.className.length - className.length -1);
+            let startsWithClass = element.className.indexOf(className + ' ')===0;
+            let endsWithClass = element.className.lastIndexOf(' ' + className) === (element.className.length - className.length -1);
             return onlyClass || contains || startsWithClass || endsWithClass;
         } else {
             // if item is not a node
@@ -495,7 +495,7 @@ export class Utils {
     static getElementAttribute(element: any, attributeName: string): string {
         if (element.attributes) {
             if (element.attributes[attributeName]) {
-                var attribute = element.attributes[attributeName];
+                let attribute = element.attributes[attributeName];
                 return attribute.value;
             } else {
                 return null;
@@ -515,8 +515,8 @@ export class Utils {
 
     static removeCssClass(element: HTMLElement, className: string) {
         if (element.className && element.className.length > 0) {
-            var cssClasses = element.className.split(' ');
-            var index = cssClasses.indexOf(className);
+            let cssClasses = element.className.split(' ');
+            let index = cssClasses.indexOf(className);
             if (index >= 0) {
                 cssClasses.splice(index, 1);
                 element.className = cssClasses.join(' ');
@@ -526,9 +526,9 @@ export class Utils {
 
     static removeRepeatsFromArray<T>(array: T[], object: T) {
         if (!array) { return; }
-        for (var index = array.length - 2; index >= 0; index--) {
-            var thisOneMatches = array[index]===object;
-            var nextOneMatches = array[index+1]===object;
+        for (let index = array.length - 2; index >= 0; index--) {
+            let thisOneMatches = array[index]===object;
+            let nextOneMatches = array[index+1]===object;
             if (thisOneMatches && nextOneMatches) {
                 array.splice(index+1, 1);
             }
@@ -558,7 +558,7 @@ export class Utils {
         if (this.missing(dest) || this.missing(src)) { return; }
         // put items in backwards, otherwise inserted items end up in reverse order
         for (let i = src.length - 1; i>=0; i--) {
-            var item = src[i];
+            let item = src[i];
             this.insertIntoArray(dest, item, toIndex);
         }
     }
@@ -577,8 +577,8 @@ export class Utils {
     }
     
     static defaultComparator(valueA: any, valueB: any): number {
-        var valueAMissing = valueA === null || valueA === undefined;
-        var valueBMissing = valueB === null || valueB === undefined;
+        let valueAMissing = valueA === null || valueA === undefined;
+        let valueBMissing = valueB === null || valueB === undefined;
         if (valueAMissing && valueBMissing) {
             return 0;
         }
@@ -618,7 +618,7 @@ export class Utils {
         if (array1.length !== array2.length) {
             return false;
         }
-        for (var i = 0; i<array1.length; i++) {
+        for (let i = 0; i<array1.length; i++) {
             if (array1[i]!==array2[i]) {
                 return false;
             }
@@ -679,13 +679,13 @@ export class Utils {
      * if not, then use the second parameter, which is the svgFactory function
      */
     static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
-        var eResult = document.createElement('span');
+        let eResult = document.createElement('span');
         eResult.appendChild(this.createIconNoSpan(iconName, gridOptionsWrapper, column, svgFactoryFunc));
         return eResult;
     }
 
     static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
-        var userProvidedIcon: Function | string;
+        let userProvidedIcon: Function | string;
         // check col for icon first
         if (column && column.getColDef().icons) {
             userProvidedIcon = column.getColDef().icons[iconName];
@@ -696,7 +696,7 @@ export class Utils {
         }
         // now if user provided, use it
         if (userProvidedIcon) {
-            var rendererResult: any;
+            let rendererResult: any;
             if (typeof userProvidedIcon === 'function') {
                 rendererResult = userProvidedIcon();
             } else if (typeof userProvidedIcon === 'string') {
@@ -737,23 +737,23 @@ export class Utils {
     }
 
     static getScrollbarWidth() {
-        var outer = document.createElement("div");
+        let outer = document.createElement("div");
         outer.style.visibility = "hidden";
         outer.style.width = "100px";
         outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
 
         document.body.appendChild(outer);
 
-        var widthNoScroll = outer.offsetWidth;
+        let widthNoScroll = outer.offsetWidth;
         // force scrollbars
         outer.style.overflow = "scroll";
 
         // add innerdiv
-        var inner = document.createElement("div");
+        let inner = document.createElement("div");
         inner.style.width = "100%";
         outer.appendChild(inner);
 
-        var widthWithScroll = inner.offsetWidth;
+        let widthWithScroll = inner.offsetWidth;
 
         // remove divs
         outer.parentNode.removeChild(outer);
@@ -762,7 +762,7 @@ export class Utils {
     }
 
     static isKeyPressed(event: KeyboardEvent, keyToCheck: number) {
-        var pressedKey = event.which || event.keyCode;
+        let pressedKey = event.which || event.keyCode;
         return pressedKey === keyToCheck;
     }
 
@@ -818,7 +818,7 @@ export class Utils {
     // srcElement is only available in IE. In all other browsers it is target
     // http://stackoverflow.com/questions/5301643/how-can-i-make-event-srcelement-work-in-firefox-and-what-does-it-mean
     static getTarget(event: Event): Element {
-        var eventNoType = <any> event;
+        let eventNoType = <any> event;
         return eventNoType.target || eventNoType.srcElement;
     }
 
@@ -868,7 +868,7 @@ export class Utils {
     }
 
     static traverseNodesWithKey(nodes: RowNode[], callback: (node: RowNode, key: string)=>void): void {
-        var keyParts: any[] = [];
+        let keyParts: any[] = [];
 
         recursiveSearchNodes(nodes);
 
@@ -876,7 +876,7 @@ export class Utils {
             nodes.forEach( (node: RowNode) => {
                 if (node.group) {
                     keyParts.push(node.key);
-                    var key = keyParts.join('|');
+                    let key = keyParts.join('|');
                     callback(node, key);
                     recursiveSearchNodes(node.childrenAfterGroup);
                     keyParts.pop();
@@ -1001,17 +1001,17 @@ export class Utils {
      *
      */
     static normalizeWheel(event:any): any {
-        var PIXEL_STEP  = 10;
-        var LINE_HEIGHT = 40;
-        var PAGE_HEIGHT = 800;
+        let PIXEL_STEP  = 10;
+        let LINE_HEIGHT = 40;
+        let PAGE_HEIGHT = 800;
 
         // spinX, spinY
-        var sX = 0;
-        var sY = 0;
+        let sX = 0;
+        let sY = 0;
 
         // pixelX, pixelY
-        var pX = 0;
-        var pY = 0;
+        let pX = 0;
+        let pY = 0;
 
         // Legacy
         if ('detail'      in event) { sY = event.detail; }
@@ -1063,7 +1063,7 @@ export class NumberSequence {
     }
 
     public next(): number {
-        var valToReturn = this.nextValue;
+        let valToReturn = this.nextValue;
         this.nextValue += this.step;
         return valToReturn;
     }

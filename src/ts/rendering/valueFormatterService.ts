@@ -14,17 +14,17 @@ export class ValueFormatterService {
                        $scope: any,
                        rowIndex: number,
                        value: any): string {
-        var formatter: (value:any)=>string;
-        var colDef = column.getColDef();
+        let formatter: (value:any)=>string;
+        let colDef = column.getColDef();
         // if floating, give preference to the floating formatter
         if (rowNode.floating) {
             formatter = colDef.floatingCellFormatter ? colDef.floatingCellFormatter : colDef.cellFormatter;
         } else {
             formatter = colDef.cellFormatter;
         }
-        var result: string = null;
+        let result: string = null;
         if (formatter) {
-            var params = {
+            let params = {
                 value: value,
                 node: rowNode,
                 column: column,

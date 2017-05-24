@@ -8,7 +8,7 @@ import {ValueService} from "./valueService";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exportParams";
 
-var LINE_SEPARATOR = '\r\n';
+let LINE_SEPARATOR = '\r\n';
 
 export class CsvSerializingSession extends BaseGridSerializingSession<string> {
     private result:string = '';
@@ -99,7 +99,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
             return '""';
         }
 
-        var stringValue: string;
+        let stringValue: string;
         if (typeof value === 'string') {
             stringValue = value;
         } else if (typeof value.toString === 'function') {
@@ -110,7 +110,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
         }
 
         // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
-        var valueEscaped = stringValue.replace(/"/g, "\"\"");
+        let valueEscaped = stringValue.replace(/"/g, "\"\"");
 
         return '"' + valueEscaped + '"';
     }
@@ -129,8 +129,8 @@ export class CsvCreator {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public exportDataAsCsv(params?: CsvExportParams): string {
-        var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
-        var fileName = fileNamePresent ? params.fileName : 'export.csv';
+        let fileNamePresent = params && params.fileName && params.fileName.length !== 0;
+        let fileName = fileNamePresent ? params.fileName : 'export.csv';
 
 
         let dataAsCsv = this.getDataAsCsv(params);

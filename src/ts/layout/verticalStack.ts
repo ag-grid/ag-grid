@@ -12,7 +12,7 @@ export class VerticalStack {
     }
 
     addPanel(panel: any, height: any) {
-        var component: any;
+        let component: any;
         if (panel.isLayoutPanel) {
             this.childPanels.push(panel);
             component = panel.getGui();
@@ -31,7 +31,7 @@ export class VerticalStack {
     }
 
     doLayout() {
-        for (var i = 0; i < this.childPanels.length; i++) {
+        for (let i = 0; i < this.childPanels.length; i++) {
             this.childPanels[i].doLayout();
         }
     }

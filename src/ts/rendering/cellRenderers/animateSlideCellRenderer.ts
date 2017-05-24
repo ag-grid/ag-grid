@@ -36,7 +36,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         // below we keep checking this, and stop working on the animation
         // if it no longer matches - this means another animation has started
         // and this one is stale.
-        var refreshCountCopy = this.refreshCount;
+        let refreshCountCopy = this.refreshCount;
 
         // if old animation, remove it
         if (this.ePrevious) {
@@ -64,7 +64,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
 
     public refresh(params: any): void {
 
-        var value = params.value;
+        let value = params.value;
 
         if (_.missing(value)) {
             value = '';

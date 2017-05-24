@@ -60,7 +60,7 @@ class DragInstance {
         this.eDragParent.addEventListener('mouseleave', this.mouseLeave);
 
         this.draggingStarted = false;
-        var startAfterPixelsExist = typeof params.startAfterPixels === 'number' && params.startAfterPixels>0;
+        let startAfterPixelsExist = typeof params.startAfterPixels === 'number' && params.startAfterPixels>0;
         if (!startAfterPixelsExist) {
             this.startDragging();
         }
@@ -86,11 +86,11 @@ class DragInstance {
     }
 
     private onMouseMove(moveEvent: MouseEvent): void {
-        var newX = moveEvent.clientX;
+        let newX = moveEvent.clientX;
         this.lastDelta = newX - this.dragStartX;
 
         if (!this.draggingStarted) {
-            var dragExceededStartAfterPixels = Math.abs(this.lastDelta) >= this.params.startAfterPixels;
+            let dragExceededStartAfterPixels = Math.abs(this.lastDelta) >= this.params.startAfterPixels;
             if (dragExceededStartAfterPixels) {
                 this.startDragging();
             }

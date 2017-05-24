@@ -20,7 +20,7 @@ export class FilterService {
         });
 
         // result of filter for this node
-        var filterResult: RowNode[];
+        let filterResult: RowNode[];
 
         if (filterActive) {
             filterResult = [];
@@ -51,7 +51,7 @@ export class FilterService {
     }
 
     private setAllChildrenCount(rowNode: RowNode) {
-        var allChildrenCount = 0;
+        let allChildrenCount = 0;
         rowNode.childrenAfterFilter.forEach( child => {
             if (child.group) {
                 allChildrenCount += child.allChildrenCount;

@@ -40,15 +40,15 @@ export class StandardMenuFactory implements IMenuFactory {
     }
 
     public showPopup(column: Column,  positionCallback: (eMenu: HTMLElement)=>void): void {
-        var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column);
+        let filterWrapper = this.filterManager.getOrCreateFilterWrapper(column);
 
-        var eMenu = document.createElement('div');
+        let eMenu = document.createElement('div');
         _.addCssClass(eMenu, 'ag-menu');
         eMenu.appendChild(filterWrapper.gui);
 
-        var hidePopup: (event?: any)=>void;
+        let hidePopup: (event?: any)=>void;
 
-        var bodyScrollListener = (event: any) => {
+        let bodyScrollListener = (event: any) => {
             // if h scroll, popup is no longer over the column
             if (event.direction==='horizontal') {
                 hidePopup();
@@ -56,7 +56,7 @@ export class StandardMenuFactory implements IMenuFactory {
         };
 
         this.eventService.addEventListener('bodyScroll', bodyScrollListener);
-        var closedCallback = ()=> {
+        let closedCallback = ()=> {
             this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
         };
 
@@ -66,7 +66,7 @@ export class StandardMenuFactory implements IMenuFactory {
         positionCallback(eMenu);
 
         if (filterWrapper.filter.afterGuiAttached) {
-            var params: IAfterGuiAttachedParams = {
+            let params: IAfterGuiAttachedParams = {
                 hidePopup: hidePopup
             };
             filterWrapper.filter.afterGuiAttached(params);

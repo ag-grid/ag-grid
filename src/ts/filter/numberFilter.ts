@@ -97,11 +97,11 @@ export class NumberFilter extends ScalarBaseFilter<number, IScalarFilterParams, 
 
 
     private stringToFloat(value:string) :number{
-        var filterText = _.makeNull(value);
+        let filterText = _.makeNull(value);
         if (filterText && filterText.trim() === '') {
             filterText = null;
         }
-        var newFilter: number;
+        let newFilter: number;
         if (filterText !== null && filterText !== undefined) {
             newFilter = parseFloat(filterText);
         } else {

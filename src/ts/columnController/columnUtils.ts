@@ -29,8 +29,8 @@ export class ColumnUtils {
     }
 
     public getOriginalPathForColumn(column: Column, originalBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroup[] {
-        var result: OriginalColumnGroup[] = [];
-        var found = false;
+        let result: OriginalColumnGroup[] = [];
+        let found = false;
 
         recursePath(originalBalancedTree, 0);
 
@@ -44,14 +44,14 @@ export class ColumnUtils {
 
         function recursePath(balancedColumnTree: OriginalColumnGroupChild[], dept: number): void {
 
-            for (var i = 0; i<balancedColumnTree.length; i++) {
+            for (let i = 0; i<balancedColumnTree.length; i++) {
                 if (found) {
                     // quit the search, so 'result' is kept with the found result
                     return;
                 }
-                var node = balancedColumnTree[i];
+                let node = balancedColumnTree[i];
                 if (node instanceof OriginalColumnGroup) {
-                    var nextNode = <OriginalColumnGroup> node;
+                    let nextNode = <OriginalColumnGroup> node;
                     recursePath(nextNode.getChildren(), dept+1);
                     result[dept] = node;
                 } else {
@@ -64,8 +64,8 @@ export class ColumnUtils {
     }
 
 /*    public getPathForColumn(column: Column, allDisplayedColumnGroups: ColumnGroupChild[]): ColumnGroup[] {
-        var result: ColumnGroup[] = [];
-        var found = false;
+        let result: ColumnGroup[] = [];
+        let found = false;
 
         recursePath(allDisplayedColumnGroups, 0);
 
@@ -79,14 +79,14 @@ export class ColumnUtils {
 
         function recursePath(balancedColumnTree: ColumnGroupChild[], dept: number): void {
 
-            for (var i = 0; i<balancedColumnTree.length; i++) {
+            for (let i = 0; i<balancedColumnTree.length; i++) {
                 if (found) {
                     // quit the search, so 'result' is kept with the found result
                     return;
                 }
-                var node = balancedColumnTree[i];
+                let node = balancedColumnTree[i];
                 if (node instanceof ColumnGroup) {
-                    var nextNode = <ColumnGroup> node;
+                    let nextNode = <ColumnGroup> node;
                     recursePath(nextNode.getChildren(), dept+1);
                     result[dept] = node;
                 } else {

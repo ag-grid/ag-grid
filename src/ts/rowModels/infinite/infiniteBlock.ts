@@ -71,7 +71,7 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         // is executing before the sort is set up, so server is not getting the sort
         // model. need to change with regards order - so the server side request is
         // AFTER thus it gets the right sort model.
-        var params: IGetRowsParams = {
+        let params: IGetRowsParams = {
             startRow: this.getStartRow(),
             endRow: this.getEndRow(),
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
@@ -87,7 +87,7 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         }
 
         // check if old version of datasource used
-        var getRowsParams = _.getFunctionParameters(this.cacheParams.datasource.getRows);
+        let getRowsParams = _.getFunctionParameters(this.cacheParams.datasource.getRows);
         if (getRowsParams.length > 1) {
             console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
             console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');

@@ -50,16 +50,16 @@ export class MoveColumnController {
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // we do dummy drag, so make sure column appears in the right location when first placed
-        var columns = draggingEvent.dragSource.dragItem;
+        let columns = draggingEvent.dragSource.dragItem;
         this.columnController.setColumnsVisible(columns, true);
         this.columnController.setColumnsPinned(columns, this.pinned);
         this.onDragging(draggingEvent, true);
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {
-        var hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns() && !draggingEvent.fromNudge;
+        let hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns() && !draggingEvent.fromNudge;
         if (hideColumnOnExit) {
-            var columns = draggingEvent.dragSource.dragItem;
+            let columns = draggingEvent.dragSource.dragItem;
             this.columnController.setColumnsVisible(columns, false);
         }
         this.ensureIntervalCleared();
@@ -99,8 +99,8 @@ export class MoveColumnController {
         if (this.centerContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
             // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-            var firstVisiblePixel = this.gridPanel.getBodyViewportScrollLeft();
-            var lastVisiblePixel = firstVisiblePixel + this.gridPanel.getCenterWidth();
+            let firstVisiblePixel = this.gridPanel.getBodyViewportScrollLeft();
+            let lastVisiblePixel = firstVisiblePixel + this.gridPanel.getCenterWidth();
 
             if (this.gridOptionsWrapper.isEnableRtl()) {
                 this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);
@@ -138,7 +138,7 @@ export class MoveColumnController {
 
         let hDirectionNormalised = this.normaliseDirection(draggingEvent.hDirection);
 
-        var columnsToMove = draggingEvent.dragSource.dragItem;
+        let columnsToMove = draggingEvent.dragSource.dragItem;
         this.attemptMoveColumns(columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
     }
 
@@ -155,14 +155,14 @@ export class MoveColumnController {
     }
 
     private attemptMoveColumns(allMovingColumns: Column[], hDirection: HDirection, xAdjusted: number, fromEnter: boolean): void {
-        var displayedColumns = this.columnController.getDisplayedColumns(this.pinned);
-        var gridColumns = this.columnController.getAllGridColumns();
+        let displayedColumns = this.columnController.getDisplayedColumns(this.pinned);
+        let gridColumns = this.columnController.getAllGridColumns();
 
-        var draggingLeft = hDirection === HDirection.Left;
-        var draggingRight = hDirection === HDirection.Right;
+        let draggingLeft = hDirection === HDirection.Left;
+        let draggingRight = hDirection === HDirection.Right;
 
-        var dragColumn: Column;
-        var displayedMovingColumns = _.filter(allMovingColumns, column => displayedColumns.indexOf(column) >= 0 );
+        let dragColumn: Column;
+        let displayedMovingColumns = _.filter(allMovingColumns, column => displayedColumns.indexOf(column) >= 0 );
         // if dragging left, we want to use the left most column, ie move the left most column to
         // under the mouse pointer
         if (draggingLeft) {
@@ -172,8 +172,8 @@ export class MoveColumnController {
             dragColumn = displayedMovingColumns[displayedMovingColumns.length-1];
         }
 
-        var newIndex = this.workOutNewIndex(displayedColumns, gridColumns, dragColumn, hDirection, xAdjusted);
-        var oldIndex = gridColumns.indexOf(dragColumn);
+        let newIndex = this.workOutNewIndex(displayedColumns, gridColumns, dragColumn, hDirection, xAdjusted);
+        let oldIndex = gridColumns.indexOf(dragColumn);
 
         // the two check below stop an error when the user grabs a group my a middle column, then
         // it is possible the mouse pointer is to the right of a column while been dragged left.
@@ -204,12 +204,12 @@ export class MoveColumnController {
     
     private getNewIndexForColMovingLeft(displayedColumns: Column[], allColumns: Column[], dragColumn: Column, x: number): number {
 
-        var usedX = 0;
-        var leftColumn: Column = null;
+        let usedX = 0;
+        let leftColumn: Column = null;
 
-        for (var i = 0; i < displayedColumns.length; i++) {
+        for (let i = 0; i < displayedColumns.length; i++) {
 
-            var currentColumn = displayedColumns[i];
+            let currentColumn = displayedColumns[i];
             if (currentColumn === dragColumn) { continue; }
             usedX += currentColumn.getActualWidth();
 
@@ -220,10 +220,10 @@ export class MoveColumnController {
             leftColumn = currentColumn;
         }
 
-        var newIndex: number;
+        let newIndex: number;
         if (leftColumn) {
             newIndex = allColumns.indexOf(leftColumn) + 1;
-            var oldIndex = allColumns.indexOf(dragColumn);
+            let oldIndex = allColumns.indexOf(dragColumn);
             if (oldIndex<newIndex) {
                 newIndex--;
             }
@@ -236,28 +236,28 @@ export class MoveColumnController {
 
     private getNewIndexForColMovingRight(displayedColumns: Column[], allColumns: Column[], dragColumnOrGroup: Column | ColumnGroup, x: number): number {
 
-        var dragColumn = <Column> dragColumnOrGroup;
+        let dragColumn = <Column> dragColumnOrGroup;
 
-        var usedX = dragColumn.getActualWidth();
-        var leftColumn: Column = null;
+        let usedX = dragColumn.getActualWidth();
+        let leftColumn: Column = null;
 
-        for (var i = 0; i < displayedColumns.length; i++) {
+        for (let i = 0; i < displayedColumns.length; i++) {
 
             if (usedX > x) {
                 break;
             }
 
-            var currentColumn = displayedColumns[i];
+            let currentColumn = displayedColumns[i];
             if (currentColumn === dragColumn) { continue; }
             usedX += currentColumn.getActualWidth();
 
             leftColumn = currentColumn;
         }
 
-        var newIndex: number;
+        let newIndex: number;
         if (leftColumn) {
             newIndex = allColumns.indexOf(leftColumn) + 1;
-            var oldIndex = allColumns.indexOf(dragColumn);
+            let oldIndex = allColumns.indexOf(dragColumn);
             if (oldIndex<newIndex) {
                 newIndex--;
             }
@@ -290,14 +290,14 @@ export class MoveColumnController {
     }
 
     private moveInterval(): void {
-        var pixelsToMove: number;
+        let pixelsToMove: number;
         this.intervalCount++;
         pixelsToMove = 10 + (this.intervalCount * 5);
         if (pixelsToMove > 100) {
             pixelsToMove = 100;
         }
 
-        var pixelsMoved: number;
+        let pixelsMoved: number;
         if (this.needToMoveLeft) {
             pixelsMoved = this.gridPanel.scrollHorizontally(-pixelsToMove);
         } else if (this.needToMoveRight) {
@@ -311,8 +311,8 @@ export class MoveColumnController {
             this.failedMoveAttempts++;
             this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
             if (this.failedMoveAttempts > 7) {
-                var columns = this.lastDraggingEvent.dragSource.dragItem;
-                var pinType = this.needToMoveLeft ? Column.PINNED_LEFT : Column.PINNED_RIGHT;
+                let columns = this.lastDraggingEvent.dragSource.dragItem;
+                let pinType = this.needToMoveLeft ? Column.PINNED_LEFT : Column.PINNED_RIGHT;
                 this.columnController.setColumnsPinned(columns, pinType);
                 this.dragAndDropService.nudge();
             }
