@@ -51,17 +51,17 @@
                 <div class="container">
                     <div class="row text-center">
                         <div class="col-md-4 info-item">
-                            Over <span class="info-item-big">700 Companies</span>
-                            use ag-Grid Enterprise in their applications.
-                        </div>
-                        <div class="col-md-4 info-item">
-                            Over <span class="info-item-big">40,000 Downloads</span>
-                            per month of ag-Grid Free.
+                            Over <span class="info-item-big">700 Companies</span><br/>
+                            use <b>ag-Grid Enterprise</b>.
                         </div>
                         <div class="col-md-4 info-item">
                             Over <span class="info-item-big">15%</span> of the
-                            <span class="info-item-big">Fortune 500</span>
-                            companies use ag-Grid Enterprise.
+                            <span class="info-item-big">Fortune 500</span><br/>
+                            use <b>ag-Grid Enterprise</b>.
+                        </div>
+                        <div class="col-md-4 info-item">
+                            Over <span class="info-item-big">40,000 Downloads</span>
+                            per month of <b>ag-Grid Free</b>.
                         </div>
                     </div>
                 </div>
