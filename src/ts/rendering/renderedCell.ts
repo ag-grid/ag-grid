@@ -871,7 +871,7 @@ export class RenderedCell extends Component {
             colDef.onCellClicked(agEvent);
         }
 
-        let editOnSingleClick = this.gridOptionsWrapper.isSingleClickEdit()
+        let editOnSingleClick = this.gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit
             && !this.gridOptionsWrapper.isSuppressClickEdit();
         if (editOnSingleClick) {
             this.startRowOrCellEdit();
