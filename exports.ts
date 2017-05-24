@@ -143,6 +143,7 @@ export {IEnterpriseRowModel} from "./dist/lib/interfaces/iEnterpriseRowModel";
 export {IEnterpriseCache} from "./dist/lib/interfaces/iEnterpriseCache";
 export {IEnterpriseDatasource, ColumnVO} from "./dist/lib/interfaces/iEnterpriseDatasource";
 export {RowNodeCache, RowNodeCacheParams} from "./dist/lib/rowModels/cache/rowNodeCache";
+export {IGetRowsParams, IDatasource} from "./dist/lib/rowModels/iDatasource";
 
 //styling
 export {StylingService} from "./dist/lib/styling/stylingService";
@@ -155,7 +156,7 @@ export {TouchListener} from "./dist/lib/widgets/touchListener";
 
 // range
 export {RangeSelection, AddRangeSelectionParams} from "./dist/lib/interfaces/iRangeController"
-export {IRangeController} from "./dist/lib/interfaces/IRangeController"
+export {IRangeController} from "./dist/lib/interfaces/iRangeController"
 
 // root
 export {BaseFrameworkFactory} from "./dist/lib/baseFrameworkFactory";
@@ -191,10 +192,10 @@ export {ModelUpdatedEvent} from "./dist/lib/events"
 
 // uncatalogued
 export {IRowModel} from "./dist/lib/interfaces/iRowModel"
-export {IAggFuncService} from "./dist/lib/interfaces/IAggFuncService"
-export {IClipboardService} from "./dist/lib/interfaces/IClipboardService"
-export {IExcelCreator} from "./dist/lib/interfaces/IExcelCreator"
-export {IMenuFactory} from "./dist/lib/interfaces/IMenuFactory"
+export {IAggFuncService} from "./dist/lib/interfaces/iAggFuncService"
+export {IClipboardService} from "./dist/lib/interfaces/iClipboardService"
+export {IExcelCreator} from "./dist/lib/interfaces/iExcelCreator"
+export {IMenuFactory} from "./dist/lib/interfaces/iMenuFactory"
 export {IAggFunc, ColGroupDef} from "./dist/lib/entities/colDef"
 export {GridCellDef} from "./dist/lib/entities/gridCell"
 export {ColDef} from "./dist/lib/entities/colDef"
@@ -206,10 +207,10 @@ export {
     MenuItemDef
 } from "./dist/lib/entities/gridOptions"
 export {OriginalColumnGroupChild} from "./dist/lib/entities/originalColumnGroupChild"
-export {IViewportDatasource} from "./dist/lib/interfaces/IViewportDatasource"
-export {IContextMenuFactory} from "./dist/lib/interfaces/IContextMenuFactory"
-export {ICompFactory} from "./dist/lib/interfaces/ICompFactory"
-export {IRowNodeStage, StageExecuteParams} from "./dist/lib/interfaces/IRowNodeStage"
+export {IViewportDatasource} from "./dist/lib/interfaces/iViewportDatasource"
+export {IContextMenuFactory} from "./dist/lib/interfaces/iContextMenuFactory"
+export {ICompFactory} from "./dist/lib/interfaces/iCompFactory"
+export {IRowNodeStage, StageExecuteParams} from "./dist/lib/interfaces/iRowNodeStage"
 export {IFilterParams, IDoesFilterPassParams} from "./dist/lib/interfaces/iFilter"
 export {ISetFilterParams} from "./dist/lib/interfaces/iSetFilterParams"
 export {IDateParams, IDate} from "./dist/lib/rendering/dateComponent";
