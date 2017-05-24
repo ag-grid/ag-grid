@@ -9,7 +9,7 @@ export class PivotCompFactory implements ICompFactory {
     
     public create(): Component {
         
-        var pivotComp = new PivotColumnsPanel(true);
+        let pivotComp = new PivotColumnsPanel(true);
         this.context.wireBean(pivotComp);
         
         return pivotComp;

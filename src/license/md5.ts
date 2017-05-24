@@ -10,7 +10,7 @@ export class MD5 {
     }
 
     private  md5cycle(x:any, k:any) {
-        var a:any = x[0], b:any = x[1], c:any = x[2], d:any = x[3];
+        let a:any = x[0], b:any = x[1], c:any = x[2], d:any = x[3];
 
         a = this.ff(a, b, c, d, k[0], 7, -680876936);
         d = this.ff(d, a, b, c, k[1], 12, -389564586);
@@ -108,13 +108,13 @@ export class MD5 {
     }
 
     private md51(s:any) {
-        var n:any = s.length,
+        let n:any = s.length,
             state:any = [1732584193, -271733879, -1732584194, 271733878], i:any;
         for (i = 64; i <= s.length; i += 64) {
             this.md5cycle(state, this.md5blk(s.substring(i - 64, i)));
         }
         s = s.substring(i - 64);
-        var tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         for (i = 0; i < s.length; i++)
             tail[i >> 2] |= s.charCodeAt(i) << ((i % 4) << 3);
         tail[i >> 2] |= 0x80 << ((i % 4) << 3);
@@ -136,7 +136,7 @@ export class MD5 {
      * providing access to strings as preformed UTF-8 8-bit unsigned value arrays.
      */
     private md5blk(s:any) { /* I figured global was faster.   */
-        var md5blks:any = [], i:any;
+        let md5blks:any = [], i:any;
         /* Andy King said do it this way. */
         for (i = 0; i < 64; i += 4) {
             md5blks[i >> 2] = s.charCodeAt(i)
@@ -148,8 +148,8 @@ export class MD5 {
     }
 
     private rhex(n:any) {
-        var hex_chr:any = '0123456789abcdef'.split('');
-        var s:string = '', j:any = 0;
+        let hex_chr:any = '0123456789abcdef'.split('');
+        let s:string = '', j:any = 0;
         for (; j < 4; j++)
             s += hex_chr[(n >> (j * 8 + 4)) & 0x0F]
                 + hex_chr[(n >> (j * 8)) & 0x0F];
@@ -157,7 +157,7 @@ export class MD5 {
     }
 
     private hex(x:any) {
-        for (var i:any = 0; i < x.length; i++)
+        for (let i:any = 0; i < x.length; i++)
             x[i] = this.rhex(x[i]);
         return x.join('');
     }
@@ -177,7 +177,7 @@ export class MD5 {
     }
 
     private add32Compat(x:any, y:any) {
-        var lsw = (x & 0xFFFF) + (y & 0xFFFF),
+        let lsw = (x & 0xFFFF) + (y & 0xFFFF),
             msw = (x >> 16) + (y >> 16) + (lsw >> 16);
         return (msw << 16) | (lsw & 0xFFFF);
     }

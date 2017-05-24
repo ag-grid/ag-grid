@@ -89,9 +89,9 @@ export class AggFuncService implements IAggFuncService {
 }
 
 function aggSum(input: any[]): any {
-    var result: number = null;
-    var length = input.length;
-    for (var i = 0; i<length; i++) {
+    let result: number = null;
+    let length = input.length;
+    for (let i = 0; i<length; i++) {
         if (typeof input[i] === 'number') {
             if (result === null) {
                 result = input[i];
@@ -120,9 +120,9 @@ function aggLast(input: any[]): any {
 }
 
 function aggMin(input: any[]): any {
-    var result: number = null;
-    var length = input.length;
-    for (var i = 0; i<length; i++) {
+    let result: number = null;
+    let length = input.length;
+    for (let i = 0; i<length; i++) {
         if (typeof input[i] === 'number') {
             if (result === null) {
                 result = input[i];
@@ -135,9 +135,9 @@ function aggMin(input: any[]): any {
 }
 
 function aggMax(input: any[]): any {
-    var result: number = null;
-    var length = input.length;
-    for (var i = 0; i<length; i++) {
+    let result: number = null;
+    let length = input.length;
+    for (let i = 0; i<length; i++) {
         if (typeof input[i] === 'number') {
             if (result === null) {
                 result = input[i];
@@ -150,14 +150,14 @@ function aggMax(input: any[]): any {
 }
 
 function aggCount(input: any[]): any {
-    var result = {
+    let result = {
         value: 0,
         toString: function() {
             return this.value.toString();
         }
     };
-    var length = input.length;
-    for (var i = 0; i<length; i++) {
+    let length = input.length;
+    for (let i = 0; i<length; i++) {
         let isGroupAgg = Utils.exists(input[i]) && typeof input[i].value === 'number';
         if (isGroupAgg) {
             result.value += input[i].value;
@@ -173,15 +173,15 @@ function aggCount(input: any[]): any {
 function aggAvg(input: any[]): any {
 
     // the average will be the sum / count
-    var sum = 0;
-    var count = 0;
+    let sum = 0;
+    let count = 0;
 
-    var length = input.length;
-    for (var i = 0; i<length; i++) {
+    let length = input.length;
+    for (let i = 0; i<length; i++) {
 
-        var currentItem = input[i];
+        let currentItem = input[i];
 
-        var itemIsGroupResult = Utils.exists(currentItem) && typeof currentItem.value === 'number' && typeof currentItem.count === 'number';
+        let itemIsGroupResult = Utils.exists(currentItem) && typeof currentItem.value === 'number' && typeof currentItem.count === 'number';
 
         // skip values that are not numbers (ie skip empty values)
         if (typeof currentItem === 'number') {
@@ -197,7 +197,7 @@ function aggAvg(input: any[]): any {
     }
 
     // avoid divide by zero error
-    var value: number = null;
+    let value: number = null;
     if (count!==0) {
         value = sum / count;
     }
@@ -205,7 +205,7 @@ function aggAvg(input: any[]): any {
     // the result will be an object. when this cell is rendered, only the avg is shown.
     // however when this cell is part of another aggregation, the count is also needed
     // to create a weighted average for the next level.
-    var result = {
+    let result = {
         count: count,
         value: value,
         // the grid by default uses toString to render values for an object, so this

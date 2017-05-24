@@ -1,6 +1,6 @@
 import {GridOptionsWrapper, PostConstruct, SvgFactory, MenuItemDef, Utils as _, Component, Autowired} from "ag-grid";
 
-var svgFactory = SvgFactory.getInstance();
+let svgFactory = SvgFactory.getInstance();
 
 export class MenuItemComponent extends Component {
 

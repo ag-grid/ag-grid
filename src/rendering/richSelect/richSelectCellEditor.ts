@@ -52,7 +52,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
             console.log('ag-Grid: richSelectCellEditor requires values for it to work');
             return;
         }
-        var values = params.values;
+        let values = params.values;
 
         this.virtualList.setModel( {
             getRowCount: function() { return values.length; },
@@ -66,7 +66,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        var key = event.which || event.keyCode;
+        let key = event.which || event.keyCode;
 
         switch (key) {
             case Constants.KEY_ENTER:
@@ -87,20 +87,20 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         // if we don't stop propagation, then the grids navigation kicks in
         event.stopPropagation();
 
-        var oldIndex = this.params.values.indexOf(this.selectedValue);
-        var newIndex = key===Constants.KEY_UP ? oldIndex - 1 : oldIndex + 1;
+        let oldIndex = this.params.values.indexOf(this.selectedValue);
+        let newIndex = key===Constants.KEY_UP ? oldIndex - 1 : oldIndex + 1;
 
         if (newIndex >= 0 && newIndex < this.params.values.length) {
-            var valueToSelect = this.params.values[newIndex];
+            let valueToSelect = this.params.values[newIndex];
             this.setSelectedValue(valueToSelect);
         }
     }
 
     private renderSelectedValue(): void {
-        var eValue = <HTMLElement> this.getGui().querySelector('.ag-rich-select-value');
+        let eValue = <HTMLElement> this.getGui().querySelector('.ag-rich-select-value');
 
         if (this.cellRenderer) {
-            var result = this.cellRendererService.useCellRenderer(this.cellRenderer, eValue, {value: this.selectedValue});
+            let result = this.cellRendererService.useCellRenderer(this.cellRenderer, eValue, {value: this.selectedValue});
             if (result && result.destroy) {
                 this.addDestroyFunc( ()=> result.destroy() );
             }
@@ -118,7 +118,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
             return;
         }
 
-        var index = this.params.values.indexOf(value);
+        let index = this.params.values.indexOf(value);
 
         if (index>=0) {
             this.selectedValue = value;
@@ -130,19 +130,19 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     }
 
     private createRowComponent(value: any): Component {
-        var row = new RichSelectRow(this.cellRenderer);
+        let row = new RichSelectRow(this.cellRenderer);
         this.context.wireBean(row);
         row.setState(value, value===this.selectedValue);
         return row;
     }
 
     private onMouseMove(mouseEvent: MouseEvent): void {
-        var rect = this.virtualList.getGui().getBoundingClientRect();
-        var scrollTop = this.virtualList.getScrollTop();
-        var mouseY = mouseEvent.clientY - rect.top + scrollTop;
+        let rect = this.virtualList.getGui().getBoundingClientRect();
+        let scrollTop = this.virtualList.getScrollTop();
+        let mouseY = mouseEvent.clientY - rect.top + scrollTop;
 
-        var row = Math.floor(mouseY / this.virtualList.getRowHeight());
-        var value = this.params.values[row];
+        let row = Math.floor(mouseY / this.virtualList.getRowHeight());
+        let value = this.params.values[row];
 
         // not using utils.exist() as want empty string test to pass
         if (value!==null && value!==undefined) {
@@ -158,7 +158,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     // virtual row logic needs info about the gui state
     public afterGuiAttached(): void  {
 
-        var selectedIndex = this.params.values.indexOf(this.selectedValue);
+        let selectedIndex = this.params.values.indexOf(this.selectedValue);
 
         // we have to call this here to get the list to have the right height, ie
         // otherwise it would not have scrolls yet and ensureIndeVisible would do nothing

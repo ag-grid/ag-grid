@@ -72,7 +72,7 @@ export class ClipboardService implements IClipboardService {
                 textArea.focus();
             },
             (element: HTMLTextAreaElement)=> {
-                var text = element.value;
+                let text = element.value;
                 this.finishPasteFromClipboard(text);
             }
         );
@@ -81,20 +81,20 @@ export class ClipboardService implements IClipboardService {
     public copyRangeDown(): void {
         if (this.rangeController.isEmpty()) { return; }
 
-        var cellsToFlash = <any>{};
-        var firstRowValues: any[] = null;
+        let cellsToFlash = <any>{};
+        let firstRowValues: any[] = null;
 
-        var updatedRowNodes: RowNode[] = [];
-        var updatedColumnIds: string[] = [];
+        let updatedRowNodes: RowNode[] = [];
+        let updatedColumnIds: string[] = [];
 
-        var rowCallback = (currentRow: GridRow, rowNode: RowNode, columns: Column[]) => {
+        let rowCallback = (currentRow: GridRow, rowNode: RowNode, columns: Column[]) => {
             // take reference of first row, this is the one we will be using to copy from
             if (!firstRowValues) {
                 firstRowValues = [];
                 // two reasons for looping through columns
                 columns.forEach( column => {
                     // reason 1 - to get the initial values to copy down
-                    var value = this.valueService.getValue(column, rowNode);
+                    let value = this.valueService.getValue(column, rowNode);
                     firstRowValues.push(value);
                     // reason 2 - to record the columnId for refreshing
                     updatedColumnIds.push(column.getId());
@@ -105,11 +105,11 @@ export class ClipboardService implements IClipboardService {
                 columns.forEach( (column: Column, index: number) => {
                     if (!column.isCellEditable(rowNode)) { return; }
 
-                    var firstRowValue = firstRowValues[index];
+                    let firstRowValue = firstRowValues[index];
                     this.valueService.setValue(rowNode, column, firstRowValue);
 
                     let gridCellDef = <GridCellDef> {rowIndex: currentRow.rowIndex, floating: currentRow.floating, column: column};
-                    var cellId = new GridCell(gridCellDef).createId();
+                    let cellId = new GridCell(gridCellDef).createId();
                     cellsToFlash[cellId] = true;
                 });
             }
@@ -126,25 +126,25 @@ export class ClipboardService implements IClipboardService {
     private finishPasteFromClipboard(data: string) {
         if (Utils.missingOrEmpty(data)) { return; }
 
-        var focusedCell = this.focusedCellController.getFocusedCell();
+        let focusedCell = this.focusedCellController.getFocusedCell();
         if (!focusedCell) { return; }
 
-        var parsedData: string[][] = this.dataToArray(data);
+        let parsedData: string[][] = this.dataToArray(data);
         if (!parsedData) {
             return;
         }
 
         // remove last row if empty, excel puts empty last row in
-        var lastLine = parsedData[parsedData.length - 1];
+        let lastLine = parsedData[parsedData.length - 1];
         if (lastLine.length===1 && lastLine[0]==='') {
             Utils.removeFromArray(parsedData, lastLine);
         }
 
-        var currentRow = new GridRow(focusedCell.rowIndex, focusedCell.floating);
-        var cellsToFlash = <any>{};
+        let currentRow = new GridRow(focusedCell.rowIndex, focusedCell.floating);
+        let cellsToFlash = <any>{};
 
-        var updatedRowNodes: RowNode[] = [];
-        var updatedColumnIds: string[] = [];
+        let updatedRowNodes: RowNode[] = [];
+        let updatedColumnIds: string[] = [];
 
         let columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
 
@@ -193,7 +193,7 @@ export class ClipboardService implements IClipboardService {
 
     private singleCellRange(parsedData: string[][], updatedRowNodes: RowNode[], currentRow: GridRow, cellsToFlash: any, updatedColumnIds: string[]) {
         let value = parsedData[0][0];
-        var rowCallback = (gridRow: GridRow, rowNode: RowNode, columns: Column[]) => {
+        let rowCallback = (gridRow: GridRow, rowNode: RowNode, columns: Column[]) => {
             updatedRowNodes.push(rowNode);
             columns.forEach((column) => {
                 this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds);
@@ -211,7 +211,7 @@ export class ClipboardService implements IClipboardService {
             floating: currentRow.floating,
             column: column
         };
-        var cellId = new GridCell(gridCellDef).createId();
+        let cellId = new GridCell(gridCellDef).createId();
         cellsToFlash[cellId] = true;
 
         if (updatedColumnIds.indexOf(column.getId()) < 0) {
@@ -247,7 +247,7 @@ export class ClipboardService implements IClipboardService {
     private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
         if (this.rangeController.isEmpty()) { return; }
 
-        var rangeSelections = this.rangeController.getCellRanges();
+        let rangeSelections = this.rangeController.getCellRanges();
 
         if (onlyFirst) {
             let range = rangeSelections[0];
@@ -259,13 +259,13 @@ export class ClipboardService implements IClipboardService {
 
     private iterateActiveRange(range: RangeSelection, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
         // get starting and ending row, remember rowEnd could be before rowStart
-        var startRow = range.start.getGridRow();
-        var endRow = range.end.getGridRow();
+        let startRow = range.start.getGridRow();
+        let endRow = range.end.getGridRow();
 
-        var startRowIsFirst = startRow.before(endRow);
+        let startRowIsFirst = startRow.before(endRow);
 
-        var currentRow = startRowIsFirst ? startRow : endRow;
-        var lastRow = startRowIsFirst ? endRow : startRow;
+        let currentRow = startRowIsFirst ? startRow : endRow;
+        let lastRow = startRowIsFirst ? endRow : startRow;
 
         if (Utils.exists(columnCallback)) {
             columnCallback(range.columns);
@@ -273,7 +273,7 @@ export class ClipboardService implements IClipboardService {
 
         while (true) {
 
-            var rowNode = this.getRowNode(currentRow);
+            let rowNode = this.getRowNode(currentRow);
             rowCallback(currentRow, rowNode, range.columns);
 
             if (currentRow.equals(lastRow)) {
@@ -287,15 +287,15 @@ export class ClipboardService implements IClipboardService {
     public copySelectedRangeToClipboard(includeHeaders = false): void {
         if (this.rangeController.isEmpty()) { return; }
 
-        var data = '';
-        var cellsToFlash = <any>{};
+        let data = '';
+        let cellsToFlash = <any>{};
 
         // adds columns to the data
-        var columnCallback = (columns: Column[]) => {
+        let columnCallback = (columns: Column[]) => {
             if (!includeHeaders) { return; }
 
             columns.forEach( (column, index) => {
-                var value = this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
+                let value = this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
                 if (index != 0) {
                     data += '\t';
                 }
@@ -307,9 +307,9 @@ export class ClipboardService implements IClipboardService {
         };
 
         // adds cell values to the data
-        var rowCallback = (currentRow: GridRow, rowNode: RowNode, columns: Column[]) => {
+        let rowCallback = (currentRow: GridRow, rowNode: RowNode, columns: Column[]) => {
             columns.forEach( (column, index) => {
-                var value = this.valueService.getValue(column, rowNode);
+                let value = this.valueService.getValue(column, rowNode);
 
                 let processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc());
 
@@ -320,7 +320,7 @@ export class ClipboardService implements IClipboardService {
                     data += processedValue;
                 }
                 let gridCellDef = <GridCellDef> {rowIndex: currentRow.rowIndex, floating: currentRow.floating, column: column};
-                var cellId = new GridCell(gridCellDef).createId();
+                let cellId = new GridCell(gridCellDef).createId();
                 cellsToFlash[cellId] = true;
             });
             data += '\r\n';
@@ -336,9 +336,9 @@ export class ClipboardService implements IClipboardService {
         if (Utils.missing(focusedCell)) { return; }
 
         let currentRow = focusedCell.getGridRow();
-        var rowNode = this.getRowNode(currentRow);
+        let rowNode = this.getRowNode(currentRow);
         let column = focusedCell.column;
-        var value = this.valueService.getValue(column, rowNode);
+        let value = this.valueService.getValue(column, rowNode);
 
         let processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc());
         if (Utils.exists(processedValue)) {
@@ -395,9 +395,9 @@ export class ClipboardService implements IClipboardService {
 
     public copySelectedRowsToClipboard(includeHeaders = false, columnKeys?: (string|Column|ColDef)[]): void {
 
-        var skipHeader = !includeHeaders;
+        let skipHeader = !includeHeaders;
 
-        var params: CsvExportParams = {
+        let params: CsvExportParams = {
             columnKeys: columnKeys,
             skipHeader: skipHeader,
             skipFooters: true,
@@ -431,7 +431,7 @@ export class ClipboardService implements IClipboardService {
         callbackNow: (element: HTMLTextAreaElement)=>void,
         callbackAfter?: (element: HTMLTextAreaElement)=>void): void {
 
-        var eTempInput = <HTMLTextAreaElement> document.createElement('textarea');
+        let eTempInput = <HTMLTextAreaElement> document.createElement('textarea');
         eTempInput.style.width = '1px';
         eTempInput.style.height = '1px';
         eTempInput.style.top = '0px';
@@ -439,12 +439,12 @@ export class ClipboardService implements IClipboardService {
         eTempInput.style.position = 'absolute';
         eTempInput.style.opacity = '0.0';
 
-        var guiRoot = this.gridCore.getRootGui();
+        let guiRoot = this.gridCore.getRootGui();
 
         guiRoot.appendChild(eTempInput);
 
         try {
-            var result = callbackNow(eTempInput);
+            let result = callbackNow(eTempInput);
             this.logger.log('Clipboard operation result: ' + result);
         } catch (err) {
             this.logger.log('Browser doesn\t support document.execComment(\'copy\') for clipboard operations');
@@ -466,10 +466,10 @@ export class ClipboardService implements IClipboardService {
     // arrays. The default delimiter is the comma, but this
     // can be overriden in the second argument.
     private dataToArray(strData: string): string[][] {
-        var strDelimiter = '\t';
+        let strDelimiter = '\t';
 
         // Create a regular expression to parse the CSV values.
-        var objPattern = new RegExp(
+        let objPattern = new RegExp(
             (
                 // Delimiters.
                 "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
@@ -483,18 +483,18 @@ export class ClipboardService implements IClipboardService {
 
         // Create an array to hold our data. Give the array
         // a default empty first row.
-        var arrData: string[][] = [[]];
+        let arrData: string[][] = [[]];
 
         // Create an array to hold our individual pattern
         // matching groups.
-        var arrMatches: string[] = null;
+        let arrMatches: string[] = null;
 
         // Keep looping over the regular expression matches
         // until we can no longer find a match.
         while (arrMatches = objPattern.exec( strData )){
 
             // Get the delimiter that was found.
-            var strMatchedDelimiter = arrMatches[ 1 ];
+            let strMatchedDelimiter = arrMatches[ 1 ];
 
             // Check to see if the given delimiter has a length
             // (is not the start of string) and if it matches
@@ -511,7 +511,7 @@ export class ClipboardService implements IClipboardService {
 
             }
 
-            var strMatchedValue: string;
+            let strMatchedValue: string;
 
             // Now that we have our delimiter out of the way,
             // let's check to see which kind of value we

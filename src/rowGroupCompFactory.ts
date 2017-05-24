@@ -8,7 +8,7 @@ export class RowGroupCompFactory implements ICompFactory {
     
     public create(): Component {
         
-        var rowGroupComp = new RowGroupColumnsPanel(true);
+        let rowGroupComp = new RowGroupColumnsPanel(true);
         this.context.wireBean(rowGroupComp);
         
         return rowGroupComp;

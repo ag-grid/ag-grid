@@ -40,7 +40,7 @@ export class StatusBar extends Component {
     }
 
     private createStatusItems(): void {
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.statusItemSum = new StatusItem(localeTextFunc('sum', 'Sum'));
         this.statusItemCount = new StatusItem(localeTextFunc('count', 'Count'));
@@ -63,41 +63,41 @@ export class StatusBar extends Component {
     }
 
     private onRangeSelectionChanged(): void {
-        var cellRanges = this.rangeController.getCellRanges();
+        let cellRanges = this.rangeController.getCellRanges();
 
-        var sum = 0;
-        var count = 0;
-        var numberCount = 0;
-        var min: number = null;
-        var max: number = null;
+        let sum = 0;
+        let count = 0;
+        let numberCount = 0;
+        let min: number = null;
+        let max: number = null;
 
-        var cellsSoFar: any = {};
+        let cellsSoFar: any = {};
 
         if (!Utils.missingOrEmpty(cellRanges)) {
 
             cellRanges.forEach( (cellRange)=> {
 
                 // get starting and ending row, remember rowEnd could be before rowStart
-                var startRow = cellRange.start.getGridRow();
-                var endRow = cellRange.end.getGridRow();
+                let startRow = cellRange.start.getGridRow();
+                let endRow = cellRange.end.getGridRow();
 
-                var startRowIsFirst = startRow.before(endRow);
+                let startRowIsFirst = startRow.before(endRow);
 
-                var currentRow = startRowIsFirst ? startRow : endRow;
-                var lastRow = startRowIsFirst ? endRow : startRow;
+                let currentRow = startRowIsFirst ? startRow : endRow;
+                let lastRow = startRowIsFirst ? endRow : startRow;
 
                 while (true) {
                     cellRange.columns.forEach( (column) => {
 
                         // we only want to include each cell once, in case a cell is in multiple ranges
-                        var cellId = currentRow.getGridCell(column).createId();
+                        let cellId = currentRow.getGridCell(column).createId();
                         if (cellsSoFar[cellId]) {
                             return;
                         }
                         cellsSoFar[cellId] = true;
 
-                        var rowNode = this.getRowNode(currentRow);
-                        var value = this.valueService.getValue(column, rowNode);
+                        let rowNode = this.getRowNode(currentRow);
+                        let value = this.valueService.getValue(column, rowNode);
 
                         // if empty cell, skip it, doesn't impact count or anything
                         if (Utils.missing(value) || value === '') {
@@ -142,8 +142,8 @@ export class StatusBar extends Component {
 
         }
 
-        var gotResult = count > 1;
-        var gotNumberResult = numberCount>0;
+        let gotResult = count > 1;
+        let gotNumberResult = numberCount>0;
 
         // we should count even if no numbers
         if (gotResult) {

@@ -36,29 +36,29 @@ export class VirtualList extends Component {
     }
 
     public ensureIndexVisible(index: number): void {
-        var lastRow = this.model.getRowCount();
+        let lastRow = this.model.getRowCount();
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
             return;
         }
 
-        // var nodeAtIndex = this.rowModel.getRow(index);
-        var rowTopPixel = index * this.rowHeight;
-        var rowBottomPixel = rowTopPixel + this.rowHeight;
+        // let nodeAtIndex = this.rowModel.getRow(index);
+        let rowTopPixel = index * this.rowHeight;
+        let rowBottomPixel = rowTopPixel + this.rowHeight;
 
-        var viewportTopPixel = this.getGui().scrollTop;
-        var viewportHeight = this.getGui().offsetHeight;
-        var viewportBottomPixel = viewportTopPixel + viewportHeight;
+        let viewportTopPixel = this.getGui().scrollTop;
+        let viewportHeight = this.getGui().offsetHeight;
+        let viewportBottomPixel = viewportTopPixel + viewportHeight;
 
-        var viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
-        var viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
+        let viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
+        let viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
 
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
             this.getGui().scrollTop = rowTopPixel;
         } else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
-            var newScrollPosition = rowBottomPixel - viewportHeight;
+            let newScrollPosition = rowBottomPixel - viewportHeight;
             this.getGui().scrollTop = newScrollPosition;
         }
     }
@@ -90,16 +90,16 @@ export class VirtualList extends Component {
     }
 
     private clearVirtualRows() {
-        var rowsToRemove = Object.keys(this.rowsInBodyContainer);
+        let rowsToRemove = Object.keys(this.rowsInBodyContainer);
         this.removeVirtualRows(rowsToRemove);
     }
 
     private drawVirtualRows() {
-        var topPixel = this.getGui().scrollTop;
-        var bottomPixel = topPixel + this.getGui().offsetHeight;
+        let topPixel = this.getGui().scrollTop;
+        let bottomPixel = topPixel + this.getGui().offsetHeight;
 
-        var firstRow = Math.floor(topPixel / this.rowHeight);
-        var lastRow = Math.floor(bottomPixel / this.rowHeight);
+        let firstRow = Math.floor(topPixel / this.rowHeight);
+        let lastRow = Math.floor(bottomPixel / this.rowHeight);
 
         this.ensureRowsRendered(firstRow, lastRow);
     }
@@ -107,10 +107,10 @@ export class VirtualList extends Component {
     private ensureRowsRendered(start: any, finish: any) {
 
         // at the end, this array will contain the items we need to remove
-        var rowsToRemove = Object.keys(this.rowsInBodyContainer);
+        let rowsToRemove = Object.keys(this.rowsInBodyContainer);
 
         // add in new rows
-        for (var rowIndex = start; rowIndex <= finish; rowIndex++) {
+        for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
             // see if item already there, and if yes, take it out of the 'to remove' array
             if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
                 rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
@@ -118,7 +118,7 @@ export class VirtualList extends Component {
             }
             // check this row actually exists (in case overflow buffer window exceeds real data)
             if (this.model.getRowCount() > rowIndex) {
-                var value = this.model.getRow(rowIndex);
+                let value = this.model.getRow(rowIndex);
                 this.insertRow(value, rowIndex);
             }
         }
@@ -130,7 +130,7 @@ export class VirtualList extends Component {
     // takes array of row id's
     private removeVirtualRows(rowsToRemove: any) {
         rowsToRemove.forEach( (index: number) => {
-            var component = this.rowsInBodyContainer[index];
+            let component = this.rowsInBodyContainer[index];
             this.eListContainer.removeChild(component.eDiv);
             if (component.rowComponent.destroy) {
                 component.rowComponent.destroy();
@@ -141,11 +141,11 @@ export class VirtualList extends Component {
 
     private insertRow(value: any, rowIndex: any) {
 
-        var eDiv = document.createElement('div');
+        let eDiv = document.createElement('div');
         Utils.addCssClass(eDiv, 'ag-virtual-list-item');
         eDiv.style.top = (this.rowHeight * rowIndex) + "px";
 
-        var rowComponent = this.componentCreator(value);
+        let rowComponent = this.componentCreator(value);
         eDiv.appendChild(rowComponent.getGui());
 
         this.eListContainer.appendChild(eDiv);

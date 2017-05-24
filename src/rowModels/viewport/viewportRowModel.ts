@@ -41,7 +41,7 @@ export class ViewportRowModel implements IRowModel {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.eventService.addEventListener(Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
 
-        var viewportEnabled = this.gridOptionsWrapper.isRowModelViewport();
+        let viewportEnabled = this.gridOptionsWrapper.isRowModelViewport();
 
         if (viewportEnabled && this.gridOptionsWrapper.getViewportDatasource()) {
             this.setViewportDatasource(this.gridOptionsWrapper.getViewportDatasource());
@@ -65,9 +65,9 @@ export class ViewportRowModel implements IRowModel {
     }
 
     private calculateFirstRow(firstRenderedRow: number): number {
-        var bufferSize = this.gridOptionsWrapper.getViewportRowModelBufferSize();
-        var pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize();
-        var afterBuffer = firstRenderedRow - bufferSize;
+        let bufferSize = this.gridOptionsWrapper.getViewportRowModelBufferSize();
+        let pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize();
+        let afterBuffer = firstRenderedRow - bufferSize;
 
         if (afterBuffer < 0) {
             return 0;
@@ -77,11 +77,11 @@ export class ViewportRowModel implements IRowModel {
     }
 
     private calculateLastRow(lastRenderedRow: number): number {
-        var bufferSize = this.gridOptionsWrapper.getViewportRowModelBufferSize();
-        var pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize();
-        var afterBuffer = lastRenderedRow + bufferSize;
+        let bufferSize = this.gridOptionsWrapper.getViewportRowModelBufferSize();
+        let pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize();
+        let afterBuffer = lastRenderedRow + bufferSize;
 
-        var result = Math.ceil(afterBuffer / pageSize) * pageSize;
+        let result = Math.ceil(afterBuffer / pageSize) * pageSize;
         if (result <= this.rowCount) {
             return result;
         } else {
@@ -90,8 +90,8 @@ export class ViewportRowModel implements IRowModel {
     }
 
     private onViewportChanged(event: any): void {
-        var newFirst = this.calculateFirstRow(event.firstRow);
-        var newLast = this.calculateLastRow(event.lastRow);
+        let newFirst = this.calculateFirstRow(event.firstRow);
+        let newLast = this.calculateLastRow(event.lastRow);
         if (this.firstRow !== newFirst || this.lastRow !== newLast) {
             this.firstRow = newFirst;
             this.lastRow = newLast;
@@ -104,7 +104,7 @@ export class ViewportRowModel implements IRowModel {
 
     public purgeRowsNotInViewport(): void {
         Object.keys(this.rowNodesByIndex).forEach(indexStr => {
-            var index = parseInt(indexStr);
+            let index = parseInt(indexStr);
             if (index < this.firstRow || index > this.lastRow) {
                 delete this.rowNodesByIndex[index];
             }
@@ -180,10 +180,10 @@ export class ViewportRowModel implements IRowModel {
     }
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
-        var callbackCount = 0;
+        let callbackCount = 0;
         Object.keys(this.rowNodesByIndex).forEach(indexStr => {
-            var index = parseInt(indexStr);
-            var rowNode: RowNode = this.rowNodesByIndex[index];
+            let index = parseInt(indexStr);
+            let rowNode: RowNode = this.rowNodesByIndex[index];
             callback(rowNode, callbackCount);
             callbackCount++;
         });
@@ -191,11 +191,11 @@ export class ViewportRowModel implements IRowModel {
 
     private setRowData(rowData: {[key: number]: any}): void {
         Utils.iterateObject(rowData, (indexStr: string, dataItem: any) => {
-            var index = parseInt(indexStr);
+            let index = parseInt(indexStr);
             // we should never keep rows that we didn't specifically ask for, this
             // guarantees the contract we have with the server.
             if (index >= this.firstRow && index <= this.lastRow) {
-                var rowNode = this.rowNodesByIndex[index];
+                let rowNode = this.rowNodesByIndex[index];
 
                 // the abnormal case is we requested a row even though the grid didn't need it
                 // as a result of the paging and buffer (ie the row is off screen), in which

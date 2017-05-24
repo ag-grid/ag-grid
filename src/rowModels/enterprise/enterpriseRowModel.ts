@@ -277,7 +277,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
 
     public getRowIndexAtPixel(pixel: number): number {
         if (this.rowHeight !== 0) { // avoid divide by zero error
-            var rowIndexForPixel = Math.floor(pixel / this.rowHeight);
+            let rowIndexForPixel = Math.floor(pixel / this.rowHeight);
             if (rowIndexForPixel > this.getPageLastRow()) {
                 return this.getPageLastRow();
             } else {

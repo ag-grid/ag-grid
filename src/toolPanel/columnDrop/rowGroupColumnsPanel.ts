@@ -14,7 +14,7 @@ import {
 } from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
-var svgFactory = SvgFactory.getInstance();
+let svgFactory = SvgFactory.getInstance();
 
 export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
 
@@ -40,9 +40,9 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
             dragAndDropService: this.dragAndDropService
         });
 
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
-        var title = localeTextFunc('groups', 'Row Groups');
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        let emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
+        let title = localeTextFunc('groups', 'Row Groups');
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_GROUP,
@@ -60,8 +60,8 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
         // we never allow grouping of secondary columns
         if (!column.isPrimary()) { return false; }
 
-        var columnGroupable = column.isAllowRowGroup();
-        var columnNotAlreadyGrouped = !column.isRowGroupActive();
+        let columnGroupable = column.isAllowRowGroup();
+        let columnNotAlreadyGrouped = !column.isRowGroupActive();
         return columnGroupable && columnNotAlreadyGrouped;
     }
 

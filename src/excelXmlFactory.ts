@@ -12,7 +12,7 @@ import {
     ExcelDataType
 } from 'ag-grid/main';
 
-var LINE_SEPARATOR = '\r\n';
+let LINE_SEPARATOR = '\r\n';
 
 /**
  * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx
@@ -23,15 +23,15 @@ export class ExcelXmlFactory {
     @Autowired('xmlFactory') private xmlFactory: XmlFactory;
 
     public createExcelXml(styles: ExcelStyle[], worksheets: ExcelWorksheet[]) :string{
-        var documentProperties: XmlElement = this.documentProperties();
-        var excelWorkbook = this.excelWorkbook();
+        let documentProperties: XmlElement = this.documentProperties();
+        let excelWorkbook = this.excelWorkbook();
 
         return this.excelXmlHeader() +
             this.xmlFactory.createXml(this.workbook(documentProperties, excelWorkbook, styles, worksheets), boolean=>boolean?"1":"0");
     }
 
     private workbook(documentProperties: XmlElement, excelWorkbook: XmlElement, styles: ExcelStyle[], worksheets: ExcelWorksheet[]) : XmlElement{
-        var children : XmlElement [] = [
+        let children : XmlElement [] = [
             documentProperties,
             excelWorkbook,
             this.stylesXmlElement(styles)
@@ -65,7 +65,7 @@ export class ExcelXmlFactory {
     private excelXmlHeader() : string{
         // need to take out the question mark, otherwise it bothers php when have < and ? beside each
         // other in a string, as php thinks it's a directive for php
-        var QUESTION_MARK = '?';
+        let QUESTION_MARK = '?';
         return '<'+QUESTION_MARK+'xml version="1.0"'+QUESTION_MARK+'>' + LINE_SEPARATOR +
             '<'+QUESTION_MARK+'mso-application progid="Excel.Sheet"'+QUESTION_MARK+'>' + LINE_SEPARATOR;
     }
@@ -80,7 +80,7 @@ export class ExcelXmlFactory {
     }
 
     private styleXmlElement (style:ExcelStyle):XmlElement{
-        var borders: XmlElement[] = [];
+        let borders: XmlElement[] = [];
         if (style.borders){
             [
                 style.borders.borderBottom,
@@ -88,7 +88,7 @@ export class ExcelXmlFactory {
                 style.borders.borderRight,
                 style.borders.borderTop
             ].forEach((it: ExcelBorder, index: number) => {
-                var current = index == 0 ? "Bottom" : index == 1 ? "Left" : index == 2 ? "Right" : "Top";
+                let current = index == 0 ? "Bottom" : index == 1 ? "Left" : index == 2 ? "Right" : "Top";
                 borders.push({
                     name: "Border",
                     properties: {
@@ -106,7 +106,7 @@ export class ExcelXmlFactory {
             });
         }
 
-        var children:XmlElement[] = [];
+        let children:XmlElement[] = [];
 
         if (style.alignment){
             children.push({
@@ -227,7 +227,7 @@ export class ExcelXmlFactory {
     }
 
     private worksheetXmlElement (worksheet:ExcelWorksheet):XmlElement{
-        var children:XmlElement[] = [];
+        let children:XmlElement[] = [];
         Utils.map(worksheet.table.columns, (it):XmlElement=>{
             return this.columnXmlElement (it);
         }).forEach((it)=>{

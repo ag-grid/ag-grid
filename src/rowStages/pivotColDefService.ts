@@ -13,20 +13,20 @@ export class PivotColDefService {
     public createPivotColumnDefs(uniqueValues: any): PivotColDefServiceResult {
 
         // this is passed to the columnController, to configure the columns and groups we show
-        var pivotColumnGroupDefs: (ColDef|ColGroupDef)[] = [];
+        let pivotColumnGroupDefs: (ColDef|ColGroupDef)[] = [];
         // this is used by the aggregation stage, to do the aggregation based on the pivot columns
-        var pivotColumnDefs: ColDef[] = [];
+        let pivotColumnDefs: ColDef[] = [];
 
-        var pivotColumns = this.columnController.getPivotColumns();
-        var levelsDeep = pivotColumns.length;
-        var columnIdSequence = new NumberSequence();
+        let pivotColumns = this.columnController.getPivotColumns();
+        let levelsDeep = pivotColumns.length;
+        let columnIdSequence = new NumberSequence();
 
         this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], columnIdSequence, levelsDeep, pivotColumns);
 
         // we clone, so the colDefs in pivotColumnsGroupDefs and pivotColumnDefs are not shared. this is so that
         // any changes the user makes (via processSecondaryColumnDefinitions) don't impact the internal aggregations,
         // as these use the col defs also
-        var pivotColumnDefsClone: ColDef[] = pivotColumnDefs.map(colDef => Utils.cloneObject(colDef) );
+        let pivotColumnDefsClone: ColDef[] = pivotColumnDefs.map(colDef => Utils.cloneObject(colDef) );
 
         return {
             pivotColumnGroupDefs: pivotColumnGroupDefs,
@@ -43,12 +43,12 @@ export class PivotColDefService {
 
         Utils.iterateObject(uniqueValues, (key: string, value: any)=> {
 
-            var newPivotKeys = pivotKeys.slice(0);
+            let newPivotKeys = pivotKeys.slice(0);
             newPivotKeys.push(key);
 
-            var createGroup = index !== levelsDeep;
+            let createGroup = index !== levelsDeep;
             if (createGroup) {
-                var groupDef: ColGroupDef = {
+                let groupDef: ColGroupDef = {
                     children: [],
                     headerName: key,
                     pivotKeys: newPivotKeys
@@ -57,8 +57,8 @@ export class PivotColDefService {
                 this.recursivelyAddGroup(groupDef.children, pivotColumnDefs, index+1, value, newPivotKeys, columnIdSequence, levelsDeep, primaryPivotColumns);
             } else {
 
-                var measureColumns = this.columnController.getValueColumns();
-                var valueGroup: ColGroupDef = {
+                let measureColumns = this.columnController.getValueColumns();
+                let valueGroup: ColGroupDef = {
                     children: [],
                     headerName: key,
                     pivotKeys: newPivotKeys
@@ -69,12 +69,12 @@ export class PivotColDefService {
                 // impression that the grid is broken
                 if (measureColumns.length===0) {
                     // this is the blank column, for when no value columns enabled.
-                    var colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence);
+                    let colDef = this.createColDef(null, '-', newPivotKeys, columnIdSequence);
                     valueGroup.children.push(colDef);
                     pivotColumnDefs.push(colDef);
                 } else {
                     measureColumns.forEach( measureColumn => {
-                        var colDef = this.createColDef(measureColumn, measureColumn.getColDef().headerName, newPivotKeys, columnIdSequence);
+                        let colDef = this.createColDef(measureColumn, measureColumn.getColDef().headerName, newPivotKeys, columnIdSequence);
                         valueGroup.children.push(colDef);
                         pivotColumnDefs.push(colDef);
                     });
@@ -82,18 +82,18 @@ export class PivotColDefService {
             }
         });
         // sort by either user provided comparator, or our own one
-        var colDef = primaryPivotColumns[index-1].getColDef();
-        var userComparator = colDef.pivotComparator;
-        var comparator = this.headerNameComparator.bind(this, userComparator);
+        let colDef = primaryPivotColumns[index-1].getColDef();
+        let userComparator = colDef.pivotComparator;
+        let comparator = this.headerNameComparator.bind(this, userComparator);
         parentChildren.sort(comparator);
     }
 
     private createColDef(valueColumn: Column, headerName: any, pivotKeys: string[], columnIdSequence: NumberSequence): ColDef {
 
-        var colDef: ColDef = {};
+        let colDef: ColDef = {};
 
         if (valueColumn) {
-            var colDefToCopy = valueColumn.getColDef();
+            let colDefToCopy = valueColumn.getColDef();
             Utils.assign(colDef, colDefToCopy);
             // even if original column was hidden, we always show the pivot value column, otherwise it would be
             // very confusing for people thinking the pivot is broken
