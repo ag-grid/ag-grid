@@ -18,6 +18,8 @@ export class InMemoryNodeManager {
 
     private nextId = 0;
 
+    private static ROOT_NODE_ID = 'ROOT_NODE_ID';
+
     private getNodeChildDetails: GetNodeChildDetails;
     private doesDataFlower: (data: any) => boolean;
     private suppressParentsInRowNodes: boolean;
@@ -33,6 +35,7 @@ export class InMemoryNodeManager {
 
         this.rootNode.group = true;
         this.rootNode.level = -1;
+        this.rootNode.id = InMemoryNodeManager.ROOT_NODE_ID;
         this.rootNode.allLeafChildren = [];
         this.rootNode.childrenAfterGroup = [];
         this.rootNode.childrenAfterSort = [];
