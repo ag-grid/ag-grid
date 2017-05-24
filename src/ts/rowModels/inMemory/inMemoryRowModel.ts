@@ -25,13 +25,23 @@ export interface RefreshModelParams {
     animate?: boolean;
     // if true, then rows we are editing will be kept
     keepEditingRows?: boolean;
-    // if doing delta updates, then we provide only the new data. this was experimental,
-    // was something niall was working on, so that if adding rows, we did delta changes
-    // rather than working out the whole grouping hierarchy again
-    newRowNodes?: RowNode[];
+    // if doing delta updates, this has the changes that were done
+    rowNodeTransaction?: RowNodeTransaction;
     // true user called setRowData() (or a new page in pagination). the grid scrolls
     // back to the top when this is true.
     newData?: boolean;
+}
+
+export interface RowDataTransaction {
+    add: any[];
+    remove: any[];
+    update: any[];
+}
+
+export interface RowNodeTransaction {
+    add: RowNode[];
+    remove: RowNode[];
+    update: RowNode[];
 }
 
 @Bean('rowModel')
@@ -157,7 +167,7 @@ export class InMemoryRowModel {
         switch (params.step) {
             case constants.STEP_EVERYTHING:
                 // start = new Date().getTime();
-                this.doRowGrouping(params.groupState, params.newRowNodes);
+                this.doRowGrouping(params.groupState, params.rowNodeTransaction);
                 // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants.STEP_FILTER:
                 // start = new Date().getTime();
@@ -387,7 +397,7 @@ export class InMemoryRowModel {
         this.sortStage.execute({rowNode: this.rootNode});
     }
 
-    private doRowGrouping(groupState: any, newRowNodes: RowNode[]) {
+    private doRowGrouping(groupState: any, rowNodeTransaction: RowNodeTransaction) {
 
         // grouping is enterprise only, so if service missing, skip the step
         let rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
@@ -395,8 +405,8 @@ export class InMemoryRowModel {
 
         if (this.groupStage) {
 
-            if (newRowNodes) {
-                this.groupStage.execute({rowNode: this.rootNode, newRowNodes: newRowNodes});
+            if (rowNodeTransaction) {
+                this.groupStage.execute({rowNode: this.rootNode, rowNodeTransaction: rowNodeTransaction});
             } else {
                 // groups are about to get disposed, so need to deselect any that are selected
                 this.selectionController.removeGroupsFromSelection();
@@ -471,6 +481,22 @@ export class InMemoryRowModel {
                 groupState: groupState,
                 newData: true});
         }
+    }
+
+    public updateRowData(rowDataTran: RowDataTransaction) {
+
+        let rowNodeTran = this.nodeManager.updateRowData(rowDataTran);
+
+        this.refreshModel({
+            step: Constants.STEP_EVERYTHING,
+            rowNodeTransaction: rowNodeTran,
+            keepRenderedRows: true,
+            animate: true,
+            keepEditingRows: true
+        });
+
+        // need to tell gridPanel to show/hide overlay
+        // this.eventService.dispatchEvent(eventName, {rowNodes: rowNodes})
     }
 
     private doRowsToDisplay() {

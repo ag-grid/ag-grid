@@ -74,7 +74,7 @@ export { FilterStage } from "./dist/lib/rowModels/inMemory/filterStage";
 export { FlattenStage } from "./dist/lib/rowModels/inMemory/flattenStage";
 export { SortStage } from "./dist/lib/rowModels/inMemory/sortStage";
 export { FloatingRowModel } from "./dist/lib/rowModels/floatingRowModel";
-export { InMemoryRowModel } from "./dist/lib/rowModels/inMemory/inMemoryRowModel";
+export { InMemoryRowModel, RowNodeTransaction } from "./dist/lib/rowModels/inMemory/inMemoryRowModel";
 export { InMemoryNodeManager } from "./dist/lib/rowModels/inMemory/inMemoryNodeManager";
 export { InfiniteRowModel } from "./dist/lib/rowModels/infinite/infiniteRowModel";
 export { IEnterpriseGetRowsParams } from "./dist/lib/interfaces/iEnterpriseDatasource";

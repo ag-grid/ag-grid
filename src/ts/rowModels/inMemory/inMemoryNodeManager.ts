@@ -5,6 +5,7 @@ import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {Context} from "../../context/context";
 import {GetNodeChildDetails} from "../../entities/gridOptions";
 import {EventService} from "../../eventService";
+import {RowDataTransaction, RowNodeTransaction} from "./inMemoryRowModel";
 
 export class InMemoryNodeManager {
 
@@ -74,6 +75,76 @@ export class InMemoryNodeManager {
         } else {
             this.rootNode.allLeafChildren = result;
         }
+    }
+
+    public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction {
+        if (this.isRowsAlreadyGrouped()) { return null; }
+
+        let {add, remove, update} = rowDataTran;
+
+        let rowNodeTransaction: RowNodeTransaction = {
+            remove: [],
+            update: [],
+            add: []
+        };
+
+        if (_.exists(add)) {
+            add.forEach( item => {
+                let newRowNode: RowNode = this.addRowNode_fromTransaction(item);
+                rowNodeTransaction.add.push(newRowNode);
+            });
+        }
+
+        if (_.exists(remove)) {
+            remove.forEach( item => {
+                let removedRowNode: RowNode = this.updatedRowNode_fromTransaction(item, false);
+                if (removedRowNode) {
+                    rowNodeTransaction.remove.push(removedRowNode);
+                }
+            });
+        }
+
+        if (_.exists(update)) {
+            update.forEach( item => {
+                let updatedRowNode: RowNode = this.updatedRowNode_fromTransaction(item, true);
+                if (updatedRowNode) {
+                    rowNodeTransaction.update.push(updatedRowNode);
+                }
+            });
+        }
+
+        return rowNodeTransaction;
+    }
+
+    private addRowNode_fromTransaction(data: any): RowNode {
+
+        let newNode = this.createNode(data, null, InMemoryNodeManager.TOP_LEVEL);
+        this.rootNode.allLeafChildren.push(newNode);
+
+        return newNode;
+    }
+
+    private updatedRowNode_fromTransaction(data: any, update: boolean): RowNode {
+        let rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
+
+        let id: string = rowNodeIdFunc(data);
+        let rowNode = this.allNodesMap[id];
+
+        if (!rowNode) {
+            console.error(`ag-Grid: could not modify row id=${id}, data item was not found`);
+            return null;
+        }
+
+        if (update) {
+            // do update
+            rowNode.setData(data);
+        } else {
+            // do delete
+            _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+            this.allNodesMap[id] = undefined;
+        }
+
+        return rowNode;
     }
 
     private recursiveFunction(rowData: any[], parent: RowNode, level: number): RowNode[] {

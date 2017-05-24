@@ -1,8 +1,9 @@
 import {RowNode} from "../entities/rowNode";
+import {RowNodeTransaction} from "../rowModels/inMemory/inMemoryRowModel";
 
 export interface StageExecuteParams {
     rowNode: RowNode;
-    newRowNodes?: RowNode[];
+    rowNodeTransaction?: RowNodeTransaction;
 }
 
 export interface IRowNodeStage {

@@ -36,7 +36,7 @@ import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
 import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
-import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
+import {InMemoryRowModel, RowDataTransaction} from "./rowModels/inMemory/inMemoryRowModel";
 
 
 export interface StartEditingCellParams {
@@ -680,6 +680,18 @@ export class GridApi {
         if (this.aggFuncService) {
             this.aggFuncService.clear();
         }
+    }
+
+    public updateRowData(rowDataTransaction: RowDataTransaction): void {
+        if (!this.inMemoryRowModel) {
+            console.error(`ag-grid: updateRowData is only available for InMemoryRowModel`);
+            return;
+        }
+        if (_.missing(this.gridOptionsWrapper.getRowNodeIdFunc())) {
+            console.error(`ag-grid: updateRowData only works if you provide your own row id\'s using callback getRowNodeId()`);
+            return;
+        }
+        this.inMemoryRowModel.updateRowData(rowDataTransaction);
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh = false): void {
