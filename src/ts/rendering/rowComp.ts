@@ -1,5 +1,5 @@
 import {Utils as _} from "../utils";
-import {RenderedCell} from "./renderedCell";
+import {CellComp} from "./cellComp";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
@@ -53,7 +53,7 @@ class TempStubCell extends Component {
     }
 }
 
-export class RenderedRow extends BeanStub {
+export class RowComp extends BeanStub {
 
     public static EVENT_RENDERED_ROW_REMOVED = 'renderedRowRemoved';
 
@@ -86,7 +86,7 @@ export class RenderedRow extends BeanStub {
     private fullWidthRowComponentLeft: ICellRendererComp;
     private fullWidthRowComponentRight: ICellRendererComp;
 
-    private renderedCells: {[key: string]: RenderedCell} = {};
+    private renderedCells: {[key: string]: CellComp} = {};
     private scope: any;
     private rowNode: RowNode;
 
@@ -198,10 +198,10 @@ export class RenderedRow extends BeanStub {
 
     private addDomData(eRowContainer: Element): void {
 
-        this.gridOptionsWrapper.setDomData(eRowContainer, RenderedRow.DOM_DATA_KEY_RENDERED_ROW, this);
+        this.gridOptionsWrapper.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, this);
 
         this.addDestroyFunc( ()=> {
-            this.gridOptionsWrapper.setDomData(eRowContainer, RenderedRow.DOM_DATA_KEY_RENDERED_ROW, null) }
+            this.gridOptionsWrapper.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, null) }
         );
     }
 
@@ -359,7 +359,7 @@ export class RenderedRow extends BeanStub {
         }
     }
 
-    public startRowEditing(keyPress: number = null, charPress: string = null, sourceRenderedCell: RenderedCell = null): void {
+    public startRowEditing(keyPress: number = null, charPress: string = null, sourceRenderedCell: CellComp = null): void {
         // don't do it if already editing
         if (this.editingRow) { return; }
 
@@ -431,7 +431,7 @@ export class RenderedRow extends BeanStub {
         this.removeRenderedCells(allRenderedCellIds);
     }
 
-    private isCellInWrongRow(renderedCell: RenderedCell): boolean {
+    private isCellInWrongRow(renderedCell: CellComp): boolean {
         let column = renderedCell.getColumn();
         let rowWeWant = this.getRowForColumn(column);
 
@@ -506,7 +506,7 @@ export class RenderedRow extends BeanStub {
         }
     }
 
-    private ensureCellInCorrectRow(renderedCell: RenderedCell): void {
+    private ensureCellInCorrectRow(renderedCell: CellComp): void {
         var eRowGui = renderedCell.getGui();
         var column = renderedCell.getColumn();
 
@@ -526,13 +526,13 @@ export class RenderedRow extends BeanStub {
         }
     }
 
-    private getOrCreateCell(column: Column): RenderedCell {
+    private getOrCreateCell(column: Column): CellComp {
 
         var colId = column.getColId();
         if (this.renderedCells[colId]) {
             return this.renderedCells[colId];
         } else {
-            var renderedCell = new RenderedCell(column, this.rowNode, this.scope, this);
+            var renderedCell = new CellComp(column, this.rowNode, this.scope, this);
             this.context.wireBean(renderedCell);
             this.renderedCells[colId] = renderedCell;
             this.angular1Compile(renderedCell.getGui());
@@ -616,8 +616,8 @@ export class RenderedRow extends BeanStub {
         this.onTopChanged();
     }
 
-    public forEachRenderedCell(callback: (renderedCell: RenderedCell)=>void): void {
-        _.iterateObject(this.renderedCells, (key: any, renderedCell: RenderedCell)=> {
+    public forEachRenderedCell(callback: (renderedCell: CellComp)=>void): void {
+        _.iterateObject(this.renderedCells, (key: any, renderedCell: CellComp)=> {
             if (renderedCell) {
                 callback(renderedCell);
             }
@@ -737,7 +737,7 @@ export class RenderedRow extends BeanStub {
         this.renderedRowEventService.removeEventListener(eventType, listener);
     }
 
-    public getRenderedCellForColumn(column: Column): RenderedCell {
+    public getRenderedCellForColumn(column: Column): CellComp {
         return this.renderedCells[column.getColId()];
     }
 
@@ -771,7 +771,7 @@ export class RenderedRow extends BeanStub {
         }
 
         if (this.renderedRowEventService) {
-            this.renderedRowEventService.dispatchEvent(RenderedRow.EVENT_RENDERED_ROW_REMOVED, {node: this.rowNode});
+            this.renderedRowEventService.dispatchEvent(RowComp.EVENT_RENDERED_ROW_REMOVED, {node: this.rowNode});
         }
 
         var event = {node: this.rowNode, rowIndex: this.rowNode.rowIndex};

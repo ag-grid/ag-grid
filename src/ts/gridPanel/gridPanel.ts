@@ -19,7 +19,7 @@ import {MouseEventService} from "./mouseEventService";
 import {IClipboardService} from "../interfaces/iClipboardService";
 import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
-import {RenderedRow} from "../rendering/renderedRow";
+import {RowComp} from "../rendering/rowComp";
 import {SetScrollsVisibleParams, ScrollVisibleService} from "./scrollVisibleService";
 import {BeanStub} from "../context/beanStub";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
@@ -29,7 +29,7 @@ import {GridCell} from "../entities/gridCell";
 import {RowNode} from "../entities/rowNode";
 import {PaginationProxy} from "../rowModels/paginationProxy";
 import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
-import {RenderedCell} from "../rendering/renderedCell";
+import {CellComp} from "../rendering/cellComp";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -432,13 +432,13 @@ export class GridPanel extends BeanStub {
         this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener)
     }
 
-    private getRowForEvent(event: MouseEvent | KeyboardEvent): RenderedRow {
+    private getRowForEvent(event: MouseEvent | KeyboardEvent): RowComp {
 
         var sourceElement = _.getTarget(event);
 
         while (sourceElement) {
 
-            let renderedRow = this.gridOptionsWrapper.getDomData(sourceElement, RenderedRow.DOM_DATA_KEY_RENDERED_ROW);
+            let renderedRow = this.gridOptionsWrapper.getDomData(sourceElement, RowComp.DOM_DATA_KEY_RENDERED_ROW);
             if (renderedRow) {
                 return renderedRow;
             }

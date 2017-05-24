@@ -10,7 +10,7 @@ import {ValueService} from "../valueService";
 import {EventService} from "../eventService";
 import {Constants} from "../constants";
 import {Events, CellEvent} from "../events";
-import {RenderedRow} from "./renderedRow";
+import {RowComp} from "./rowComp";
 import {Autowired, PostConstruct, Optional, Context} from "../context/context";
 import {GridApi} from "../gridApi";
 import {FocusedCellController} from "../focusedCellController";
@@ -22,7 +22,7 @@ import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {CellEditorFactory} from "./cellEditorFactory";
 import {Component} from "../widgets/component";
 import {PopupService} from "../widgets/popupService";
-import {ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
+import {ICellRendererFunc, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {CellRendererFactory} from "./cellRendererFactory";
 import {CellRendererService} from "./cellRendererService";
 import {ValueFormatterService} from "./valueFormatterService";
@@ -33,7 +33,7 @@ import {StylingService} from "../styling/stylingService";
 import {ColumnHoverService} from "./columnHoverService";
 import {ColumnAnimationService} from "./columnAnimationService";
 
-export class RenderedCell extends Component {
+export class CellComp extends Component {
 
     @Autowired('context') private context: Context;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -61,7 +61,7 @@ export class RenderedCell extends Component {
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
-    public static DOM_DATA_KEY_RENDERED_CELL = 'renderedCell';
+    public static DOM_DATA_KEY_CELL_COMP = 'cellComp';
 
     private eGridCell: HTMLElement; // the outer cell
     private eSpanWithValue: HTMLElement; // inner cell
@@ -89,12 +89,12 @@ export class RenderedCell extends Component {
 
     private value: any;
     private usingWrapper: boolean;
-    private renderedRow: RenderedRow;
+    private renderedRow: RowComp;
 
     private firstRightPinned = false;
     private lastLeftPinned = false;
 
-    constructor(column: Column, node: RowNode, scope: any, renderedRow: RenderedRow) {
+    constructor(column: Column, node: RowNode, scope: any, renderedRow: RowComp) {
         super('<div/>');
 
         // because we reference eGridCell everywhere in this class,
@@ -403,9 +403,9 @@ export class RenderedCell extends Component {
     }
 
     private addDomData(): void {
-        this.gridOptionsWrapper.setDomData(this.eGridCell, RenderedCell.DOM_DATA_KEY_RENDERED_CELL, this);
+        this.gridOptionsWrapper.setDomData(this.eGridCell, CellComp.DOM_DATA_KEY_CELL_COMP, this);
         this.addDestroyFunc( ()=>
-            this.gridOptionsWrapper.setDomData(this.eGridCell, RenderedCell.DOM_DATA_KEY_RENDERED_CELL, null)
+            this.gridOptionsWrapper.setDomData(this.eGridCell, CellComp.DOM_DATA_KEY_CELL_COMP, null)
         );
     }
 
@@ -496,7 +496,7 @@ export class RenderedCell extends Component {
             if (pressedChar === ' ') {
                 this.onSpaceKeyPressed(event);
             } else {
-                if (RenderedCell.PRINTABLE_CHARACTERS.indexOf(pressedChar)>=0) {
+                if (CellComp.PRINTABLE_CHARACTERS.indexOf(pressedChar)>=0) {
                     this.startRowOrCellEdit(null, pressedChar);
                     // if we don't prevent default, then the keypress also gets applied to the text field
                     // (at least when doing the default editor), but we need to allow the editor to decide
@@ -757,7 +757,7 @@ export class RenderedCell extends Component {
         return agEvent;
     }
 
-    public getRenderedRow(): RenderedRow {
+    public getRenderedRow(): RowComp {
         return this.renderedRow;
     }
 

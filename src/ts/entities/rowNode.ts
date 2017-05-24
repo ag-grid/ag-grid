@@ -137,10 +137,10 @@ export class RowNode implements IEventEmitter {
     private eventService: EventService;
 
     public setData(data: any): void {
-        var oldData = this.data;
+        let oldData = this.data;
         this.data = data;
 
-        var event = {oldData: oldData, newData: data};
+        let event = {oldData: oldData, newData: data};
         this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
     }
 
@@ -174,7 +174,7 @@ export class RowNode implements IEventEmitter {
 
     public setId(id: string): void {
         // see if user is providing the id's
-        var getRowNodeId = this.gridOptionsWrapper.getRowNodeIdFunc();
+        let getRowNodeId = this.gridOptionsWrapper.getRowNodeIdFunc();
         if (getRowNodeId) {
             // if user is providing the id's, then we set the id only after the data has been set.
             // this is important for virtual pagination and viewport, where empty rows exist.
@@ -243,7 +243,7 @@ export class RowNode implements IEventEmitter {
             this.eventService.dispatchEvent(RowNode.EVENT_EXPANDED_CHANGED);
         }
 
-        var event: any = {node: this};
+        let event: any = {node: this};
         this.mainEventService.dispatchEvent(Events.EVENT_ROW_GROUP_OPENED, event)
     }
 
@@ -259,7 +259,7 @@ export class RowNode implements IEventEmitter {
     // this method is for the client to call, so the cell listens for the change
     // event, and also flashes the cell when the change occurs.
     public setDataValue(colKey: string|ColDef|Column, newValue: any): void {
-        var column = this.columnController.getGridColumn(colKey);
+        let column = this.columnController.getGridColumn(colKey);
         this.valueService.setValue(this, column, newValue);
         this.dispatchCellChangedEvent(column, newValue);
     }
@@ -270,13 +270,16 @@ export class RowNode implements IEventEmitter {
         if (!this.data) { this.data = {}; }
         _.iterateObject(newAggData, (key: string, value: any) => {
             this.data[key] = value;
-            let column = this.columnController.getGridColumn(key);
-            this.dispatchCellChangedEvent(column, value);
+            // if no event service, nobody has registered for events, so no need fire event
+            if (this.eventService) {
+                let column = this.columnController.getGridColumn(key);
+                this.dispatchCellChangedEvent(column, value);
+            }
         });
     }
 
     private dispatchCellChangedEvent(column: Column, newValue: any): void {
-        var event = {column: column, newValue: newValue};
+        let event = {column: column, newValue: newValue};
         this.dispatchLocalEvent(RowNode.EVENT_CELL_CHANGED, event);
     }
 
@@ -306,14 +309,14 @@ export class RowNode implements IEventEmitter {
 
     // + rowController.updateGroupsInSelection()
     public calculateSelectedFromChildren(): void {
-        var atLeastOneSelected = false;
-        var atLeastOneDeSelected = false;
-        var atLeastOneMixed = false;
+        let atLeastOneSelected = false;
+        let atLeastOneDeSelected = false;
+        let atLeastOneMixed = false;
 
-        var newSelectedValue:boolean;
+        let newSelectedValue:boolean;
         if (this.childrenAfterGroup) {
-            for (var i = 0; i < this.childrenAfterGroup.length; i++) {
-                var childState = this.childrenAfterGroup[i].isSelected();
+            for (let i = 0; i < this.childrenAfterGroup.length; i++) {
+                let childState = this.childrenAfterGroup[i].isSelected();
                 switch (childState) {
                     case true:
                         atLeastOneSelected = true;
@@ -366,14 +369,14 @@ export class RowNode implements IEventEmitter {
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
     public setSelectedParams(params: SetSelectedParams): number {
 
-        var groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        let groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
 
-        var newValue = params.newValue === true;
-        var clearSelection = params.clearSelection === true;
-        var tailingNodeInSequence = params.tailingNodeInSequence === true;
-        var rangeSelect = params.rangeSelect === true;
+        let newValue = params.newValue === true;
+        let clearSelection = params.clearSelection === true;
+        let tailingNodeInSequence = params.tailingNodeInSequence === true;
+        let rangeSelect = params.rangeSelect === true;
         // groupSelectsFiltered only makes sense when group selects children
-        var groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
+        let groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
 
         if (this.id===undefined) {
             console.warn('ag-Grid: cannot select node until id for node is known');
@@ -393,9 +396,9 @@ export class RowNode implements IEventEmitter {
         }
 
         if (rangeSelect) {
-            var rowModelNormal = this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL;
-            var newRowClicked = this.selectionController.getLastSelectedNode() !== this;
-            var allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
+            let rowModelNormal = this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL;
+            let newRowClicked = this.selectionController.getLastSelectedNode() !== this;
+            let allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
             if (rowModelNormal && newRowClicked && allowMultiSelect) {
                 return this.doRowRangeSelection();
             }
@@ -409,7 +412,7 @@ export class RowNode implements IEventEmitter {
         // here, otherwise the updatedCount would include it.
         let skipThisNode = groupSelectsFiltered && this.group;
         if (!skipThisNode) {
-            var thisNodeWasSelected = this.selectThisNode(newValue);
+            let thisNodeWasSelected = this.selectThisNode(newValue);
             if (thisNodeWasSelected) { updatedCount++; }
         }
 
@@ -418,7 +421,7 @@ export class RowNode implements IEventEmitter {
         }
 
         // clear other nodes if not doing multi select
-        var actionWasOnThisNode = !tailingNodeInSequence;
+        let actionWasOnThisNode = !tailingNodeInSequence;
         if (actionWasOnThisNode) {
 
             if (newValue && (clearSelection || !this.gridOptionsWrapper.isRowSelectionMulti())) {
@@ -463,21 +466,21 @@ export class RowNode implements IEventEmitter {
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
     private doRowRangeSelection(): number {
-        var lastSelectedNode = this.selectionController.getLastSelectedNode();
+        let lastSelectedNode = this.selectionController.getLastSelectedNode();
 
         // if lastSelectedNode is missing, we start at the first row
-        var firstRowHit = !lastSelectedNode;
-        var lastRowHit = false;
-        var lastRow: RowNode;
+        let firstRowHit = !lastSelectedNode;
+        let lastRowHit = false;
+        let lastRow: RowNode;
 
-        var groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        let groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
 
         let updatedCount = 0;
 
-        var inMemoryRowModel = <InMemoryRowModel> this.rowModel;
+        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
         inMemoryRowModel.forEachNodeAfterFilterAndSort( (rowNode: RowNode) => {
 
-            var lookingForLastRow = firstRowHit && !lastRowHit;
+            let lookingForLastRow = firstRowHit && !lastRowHit;
 
             // check if we need to flip the select switch
             if (!firstRowHit) {
@@ -486,10 +489,10 @@ export class RowNode implements IEventEmitter {
                 }
             }
 
-            var skipThisGroupNode = rowNode.group && groupsSelectChildren;
+            let skipThisGroupNode = rowNode.group && groupsSelectChildren;
             if (!skipThisGroupNode) {
-                var inRange = firstRowHit && !lastRowHit;
-                var childOfLastRow = rowNode.isParentOfNode(lastRow);
+                let inRange = firstRowHit && !lastRowHit;
+                let childOfLastRow = rowNode.isParentOfNode(lastRow);
                 let nodeWasSelected = rowNode.selectThisNode(inRange || childOfLastRow);
                 if (nodeWasSelected) {
                     updatedCount++;
@@ -519,7 +522,7 @@ export class RowNode implements IEventEmitter {
     }
 
     private isParentOfNode(potentialParent: RowNode): boolean {
-        var parentNode = this.parent;
+        let parentNode = this.parent;
         while (parentNode) {
             if (parentNode === potentialParent) {
                 return true;
@@ -532,7 +535,7 @@ export class RowNode implements IEventEmitter {
     private calculatedSelectedForAllGroupNodes(): void {
         // we have to make sure we do this dept first, as parent nodes
         // will have dependencies on the children having correct values
-        var inMemoryRowModel = <InMemoryRowModel> this.rowModel;
+        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
         inMemoryRowModel.getTopLevelNodes().forEach( topLevelNode => {
             if (topLevelNode.group) {
                 topLevelNode.depthFirstSearch( childNode => {
@@ -554,17 +557,17 @@ export class RowNode implements IEventEmitter {
             this.dispatchLocalEvent(RowNode.EVENT_ROW_SELECTED);
         }
 
-        var event: any = {node: this};
+        let event: any = {node: this};
         this.mainEventService.dispatchEvent(Events.EVENT_ROW_SELECTED, event);
 
         return true;
     }
 
     private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean): number {
-        var children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
+        let children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
         let updatedCount = 0;
         if (_.missing(children)) { return; }
-        for (var i = 0; i<children.length; i++) {
+        for (let i = 0; i<children.length; i++) {
             updatedCount += children[i].setSelectedParams({
                 newValue: newValue,
                 clearSelection: false,
