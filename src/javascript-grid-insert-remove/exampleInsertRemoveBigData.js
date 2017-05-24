@@ -177,8 +177,12 @@ function add20PalmOilExistingBooks() {
         var book = books[Math.floor(Math.random()*books.length)];
         var trade = createTradeRecord('Palm Oil', portfolio, book, batch);
         newData.push(trade);
+        globalRowData.push(trade);
     }
-    gridOptions.api.addItems(newData);
+    gridOptions.api.updateRowData({
+        add: newData,
+        remove: null,
+        update: null});
 }
 
 function randomlyChangeData() {
