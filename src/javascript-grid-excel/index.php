@@ -415,7 +415,7 @@ var gridOptions = {
         Because of that when you open one of our exported files in a recent MS office version you might see this error:
     </p>
     <p>
-        <img src="/excel_error.png/">
+        <img src="/images/excel_error.png">
     </p>
     </p>
     If you want to export to xlsx, you can reuse the XML that we generate and pass it onto a third
