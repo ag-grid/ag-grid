@@ -1,17 +1,38 @@
-var valueGetterExecCount = 0;
+var PRODUCT_COUNT = 2;
+var PORTFOLIO_COUNT = 2;
 
-var products = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','Tin','Aluminium',
+var MIN_BOOK_COUNT = 2;
+var MAX_BOOK_COUNT = 4;
+
+var MIN_TRADE_COUNT = 2;
+var MAX_TRADE_COUNT = 4;
+
+// var PRODUCT_COUNT = null;
+// var PORTFOLIO_COUNT = null;
+//
+// var MIN_BOOK_COUNT = 10;
+// var MAX_BOOK_COUNT = 110;
+//
+// var MIN_TRADE_COUNT = 1;
+// var MAX_TRADE_COUNT = 10;
+
+var productsOriginalList = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','Tin','Aluminium',
     'Aluminium Alloy','Nickel','Cobalt','Molybdenum','Recycled Steel','Corn','Oats','Rough Rice',
     'Soybeans','Rapeseed','Soybean Meal','Soybean Oil','Wheat','Milk','Coca','Coffee C',
     'Cotton No.2','Sugar No.11','Sugar No.14'];
 
-var portfolios = ['Aggressive','Defensive','Income','Speculative','Hybrid'];
+var products = PRODUCT_COUNT ? productsOriginalList.slice(0, PRODUCT_COUNT) : productsOriginalList;
+
+var portfoliosOriginalList = ['Aggressive','Defensive','Income','Speculative','Hybrid'];
+
+var portfolios = PORTFOLIO_COUNT ? portfoliosOriginalList.slice(0, PORTFOLIO_COUNT) : portfoliosOriginalList;
 
 // as we create books, we remember what products they belong to, so we can
 // add to these books later when use clicks one of the buttons
 var productToPortfolioToBooks = {};
 
-var maxTradesPerBook = 10;
+// start the book id's and trade id's at some future random number,
+// looks more realistic than starting them at 0
 var nextBookId = 23472;
 var nextTradeId = 437629287;
 var nextBatchId = 1001;
@@ -20,15 +41,16 @@ var gridOptions;
 
 function createCols() {
     return [
-        // the group column
-        {headerName: 'Hierarchy', field: 'trade', cellRenderer: 'group', width: 200,
-            comparator: agGrid.defaultGroupComparator},
-
         // these are the row groups, so they are all hidden (they are showd in the group column)
-        {headerName: 'Product', field: 'product', rowGroupIndex: 0, hide: true},
-        {headerName: 'Portfolio', field: 'portfolio', rowGroupIndex: 1, hide: true},
-        {headerName: 'Book', field: 'book', rowGroupIndex: 2, hide: true},
-        {headerName: 'Trade', field: 'trade', hide: true},
+        {headerName: 'Product', field: 'product', enableRowGroup: true},
+        {headerName: 'Portfolio', field: 'portfolio', enableRowGroup: true},
+        {headerName: 'Book', field: 'book', enableRowGroup: true},
+        {headerName: 'Trade', field: 'trade'},
+
+        // some string values, that do not get aggregated
+        {headerName: 'Deal Type', field: 'dealType', enableRowGroup: true},
+        {headerName: 'Bid Flag', field: 'bidFlag', enableRowGroup: true},
+        {headerName: 'Comment', field: 'comment', editable: true},
 
         // all the other columns (visible and not grouped)
         {headerName: 'Latest Batch', field: 'batch', cellClass: 'number', aggFunc: 'max'},
@@ -41,16 +63,13 @@ function createCols() {
         {headerName: 'SX / PX', field: 'sxPx', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
         {headerName: '99 Out', field: '_99Out', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
         {headerName: 'Submitter ID', field: 'submitterID', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Submitted Deal ID', field: 'submitterDealID', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Deal Type', field: 'dealType', aggFunc: 'sum'},
-        {headerName: 'Bid Flag', field: 'bidFlag', aggFunc: 'sum'}
+        {headerName: 'Submitted Deal ID', field: 'submitterDealID', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter}
     ];
 }
 
 // simple value getter, however we can see how many times it gets called. this
 // gives us an indication to how many rows get recalculated when data changes
 function changeValueGetter(params) {
-    valueGetterExecCount++;
     return params.data.previous - params.data.current;
 }
 
@@ -64,11 +83,13 @@ function createRowData() {
         for (var j = 0; j<portfolios.length; j++) {
             var portfolio = portfolios[j];
             productToPortfolioToBooks[product][portfolio] = [];
-            var bookCount = Math.floor(Math.random()*100) + 10;
+
+            var bookCount = randomBetween(MAX_BOOK_COUNT, MIN_BOOK_COUNT);
+
             for (var k = 0; k<bookCount; k++) {
                 var book = createBookName();
                 productToPortfolioToBooks[product][portfolio].push(book);
-                var tradeCount = Math.floor(Math.random()*maxTradesPerBook) + 1;
+                var tradeCount = randomBetween(MAX_TRADE_COUNT, MIN_TRADE_COUNT);
                 for (var l = 0; l < tradeCount; l++) {
                     var trade = createTradeRecord(product, portfolio, book, thisBatch);
                     rowData.push(trade);
@@ -77,6 +98,11 @@ function createRowData() {
         }
     }
     return rowData;
+}
+
+// https://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range
+function randomBetween(min,max) {
+    return Math.floor(Math.random()*(max - min + 1)) + min;
 }
 
 function createTradeRecord(product, portfolio, book, batch) {
@@ -121,13 +147,12 @@ function createGridOptions() {
     gridOptions = {
         columnDefs: createCols(),
         rowData: createRowData(),
-        // because we are supplying our own group column,
-        // we don't use the grids default
-        groupSuppressAutoColumn: true,
+        rememberGroupStateWhenNewData: true,
         animateRows: true,
         enableColResize: true,
         enableRangeSelection: true,
         enableSorting: true,
+        rowGroupPanelShow: 'always',
         suppressAggFuncInHeader: true,
         defaultColDef: {
             width: 120
@@ -137,7 +162,6 @@ function createGridOptions() {
 }
 
 function add20PalmOilExistingBooks() {
-    valueGetterExecCount = 0;
     var newData = [];
     var batch = nextBatchId++;
     for (var i = 0; i<20; i++) {
@@ -148,7 +172,20 @@ function add20PalmOilExistingBooks() {
         newData.push(trade);
     }
     gridOptions.api.addItems(newData);
-    console.log('after insert valueGetterExecCount: ' + valueGetterExecCount);
+}
+
+function addToRandomProduct() {
+    var newData = [];
+    var batch = nextBatchId++;
+    for (var i = 0; i<5; i++) {
+        var portfolio = portfolios[Math.floor(Math.random()*portfolios.length)];
+        var books = productToPortfolioToBooks['Palm Oil'][portfolio];
+        var book = books[Math.floor(Math.random()*books.length)];
+        var product = products[Math.floor(Math.random()*products.length)];
+        var trade = createTradeRecord(product, portfolio, book, batch);
+        newData.push(trade);
+    }
+    gridOptions.api.addItems(newData);
 }
 
 var intervalId;
@@ -160,7 +197,7 @@ function toggleFeed() {
         intervalId = null;
         document.querySelector('#toggleInterval').innerHTML = '&#9658; Start Feed';
     } else {
-        intervalId = setInterval(add20PalmOilExistingBooks, 1000);
+        intervalId = setInterval(addToRandomProduct, 1000);
         document.querySelector('#toggleInterval').innerHTML = '&#9724; Stop Feed';
     }
 }
@@ -171,5 +208,4 @@ document.addEventListener("DOMContentLoaded", function() {
     var eGridDiv = document.querySelector('#myGrid');
     createGridOptions();
     new agGrid.Grid(eGridDiv, gridOptions);
-    console.log('initial valueGetterExecCount: ' + valueGetterExecCount);
 });

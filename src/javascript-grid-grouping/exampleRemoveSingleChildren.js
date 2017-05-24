@@ -19,6 +19,8 @@ var rowData = [
     { athlete: 'Mike NoMagic', country: 'Sweden', year: '2016', gold: 2, silver: 2, bronze: 2 }
 ];
 
+var groupRemoveSingleChildren = true;
+
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
@@ -27,7 +29,7 @@ var gridOptions = {
         cellRenderer: 'group',
         field: 'country'
     },
-    groupRemoveSingleChildren: true,
+    groupRemoveSingleChildren: groupRemoveSingleChildren,
     animateRows: true,
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true
@@ -40,12 +42,8 @@ function setupGrid() {
 }
 
 function toggleGrid() {
-    // destroy old grid if it is there
-    if (gridOptions.api) {
-        gridOptions.api.destroy();
-    }
-    gridOptions.groupRemoveSingleChildren = !gridOptions.groupRemoveSingleChildren;
-    setupGrid();
+    groupRemoveSingleChildren = !groupRemoveSingleChildren;
+    gridOptions.api.setGroupRemoveSingleChildren(groupRemoveSingleChildren);
 }
 
 // setup the grid after the page has finished loading
