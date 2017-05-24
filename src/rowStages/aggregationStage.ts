@@ -79,16 +79,9 @@ export class AggregationStage implements IRowNodeStage {
 
         rowNode.setAggData(aggResult);
 
-        // _.iterateObject(aggResult, (key: string, value: any) => {
-        //     rowNode.setDataValue(key, value);
-        // });
-
         // if we are grouping, then it's possible there is a sibling footer
         // to the group, so update the data here also if there is one
         if (rowNode.sibling) {
-            // _.iterateObject(aggResult, (key: string, value: any) => {
-            //     rowNode.setDataValue(key, value);
-            // });
             rowNode.sibling.setAggData(aggResult);
         }
     }
