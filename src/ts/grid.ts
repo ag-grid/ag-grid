@@ -54,9 +54,6 @@ import {StylingService} from "./styling/stylingService";
 import {ColumnHoverService} from "./rendering/columnHoverService";
 import {ColumnAnimationService} from "./rendering/columnAnimationService";
 import {ComponentProvider} from "./componentProvider";
-import {
-    ServerPaginationService
-} from "./rowModels/pagination/serverPaginationService";
 import {SortService} from "./rowNodes/sortService";
 import {FilterService} from "./rowNodes/filterService";
 import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
@@ -90,9 +87,7 @@ export class Grid {
     // the default is InMemoryRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
     private static RowModelClasses: any = {
-        virtual: InfiniteRowModel, // deprecated
         infinite: InfiniteRowModel,
-        pagination: InMemoryRowModel,
         normal: InMemoryRowModel
     };
 
@@ -160,7 +155,7 @@ export class Grid {
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService, FilterService, RowNodeFactory,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
-                ColumnHoverService, ColumnAnimationService, ServerPaginationService, SortService, AutoGroupColService],
+                ColumnHoverService, ColumnAnimationService, SortService, AutoGroupColService],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],

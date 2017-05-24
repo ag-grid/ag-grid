@@ -57,6 +57,7 @@ export class GridOptionsWrapper {
     private static MIN_COL_WIDTH = 10;
 
     public static PROP_HEADER_HEIGHT = 'headerHeight';
+    public static PROP_GROUP_REMOVE_SINGLE_CHILDREN = 'groupRemoveSingleChildren';
     public static PROP_PIVOT_HEADER_HEIGHT = 'pivotHeaderHeight';
 
     public static PROP_GROUP_HEADER_HEIGHT = 'groupHeaderHeight';
@@ -158,16 +159,10 @@ export class GridOptionsWrapper {
     public getContext() { return this.gridOptions.context; }
     public isPivotMode() { return isTrue(this.gridOptions.pivotMode); }
 
-    public isRowModelServerPagination() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_PAGINATION; }
-    public isRowModelInfinite() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL_DEPRECATED
-                                        || this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE; }
+    public isRowModelInfinite() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE; }
     public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
     public isRowModelEnterprise() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_ENTERPRISE; }
-    public isRowModelDefault() { return !(
-        this.isRowModelServerPagination() ||
-        this.isRowModelInfinite() ||
-        this.isRowModelViewport());
-    }
+    public isRowModelDefault() { return _.missing(this.gridOptions.rowModelType) || this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_NORMAL; }
 
     public isFullRowEdit() { return this.gridOptions.editType === 'fullRow'; }
     public isSuppressFocusAfterRefresh() { return isTrue(this.gridOptions.suppressFocusAfterRefresh); }
@@ -520,10 +515,6 @@ export class GridOptionsWrapper {
         if (options.checkboxSelection) {
             console.warn('ag-grid: since version 8.0.x checkboxSelection is not supported as a grid option. ' +
                 'If you want this on all columns, use defaultColDef instead and set it there');
-        }
-        if (this.gridOptions.rowModelType===Constants.ROW_MODEL_TYPE_VIRTUAL_DEPRECATED) {
-            console.warn('ag-grid: since version 8.3.x row model type "virtual" is now called "infinite", ' +
-                'the grid will still work, but please change the property to use "infinite"');
         }
         if (options.paginationInitialRowCount) {
             console.warn('ag-grid: since version 9.0.x paginationInitialRowCount is now called infiniteInitialRowCount');

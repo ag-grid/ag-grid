@@ -9,7 +9,6 @@ import {Events, ModelUpdatedEvent} from "../../events";
 import {Bean, Context, Autowired, PostConstruct, Optional} from "../../context/context";
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
-import {IInMemoryRowModel} from "../../interfaces/iInMemoryRowModel";
 import {InMemoryNodeManager} from "./inMemoryNodeManager";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes};
@@ -36,7 +35,7 @@ export interface RefreshModelParams {
 }
 
 @Bean('rowModel')
-export class InMemoryRowModel implements IInMemoryRowModel {
+export class InMemoryRowModel {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @Autowired('columnController') private columnController: ColumnController;
@@ -75,14 +74,14 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, {step: Constants.STEP_PIVOT} ));
 
+        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, this.refreshModel.bind(this, {step: Constants.STEP_MAP, keepRenderedRows: true, animate: true} ));
+
         this.rootNode = new RowNode();
         this.nodeManager = new InMemoryNodeManager(this.rootNode, this.gridOptionsWrapper, this.context, this.eventService);
 
         this.context.wireBean(this.rootNode);
 
-        if (this.gridOptionsWrapper.isRowModelDefault()) {
-            this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
-        }
+        this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
     }
 
     public isLastRowFound(): boolean {
@@ -116,7 +115,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private onFilterChanged(): void {
-        var animate = this.gridOptionsWrapper.isAnimateRows();
+        let animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({step: Constants.STEP_FILTER, keepRenderedRows: true, animate: animate});
     }
 
@@ -125,7 +124,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         // we ignore it if the sorting is happening on the server side.
         if (this.gridOptionsWrapper.isEnableServerSideSorting()) { return; }
 
-        var animate = this.gridOptionsWrapper.isAnimateRows();
+        let animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({step: Constants.STEP_SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true});
     }
 
@@ -152,7 +151,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         // fallthrough in below switch is on purpose,
         // eg if STEP_FILTER, then all steps below this
         // step get done
-        // var start: number;
+        // let start: number;
         // console.log('======= start =======');
 
         switch (params.step) {
@@ -195,16 +194,16 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     public isEmpty(): boolean {
-        var rowsMissing: boolean;
+        let rowsMissing: boolean;
 
-        var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        let rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (rowsAlreadyGrouped) {
             rowsMissing = _.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0
         } else {
             rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
         }
 
-        var empty = _.missing(this.rootNode) || rowsMissing  || !this.columnController.isReady();
+        let empty = _.missing(this.rootNode) || rowsMissing  || !this.columnController.isReady();
 
         return empty;
     }
@@ -257,23 +256,23 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
         // do binary search of tree
         // http://oli.me.uk/2013/06/08/searching-javascript-arrays-with-a-binary-search/
-        var bottomPointer = 0;
-        var topPointer = this.rowsToDisplay.length - 1;
+        let bottomPointer = 0;
+        let topPointer = this.rowsToDisplay.length - 1;
 
         // quick check, if the pixel is out of bounds, then return last row
         if (pixelToMatch<=0) {
             // if pixel is less than or equal zero, it's always the first row
             return 0;
         }
-        var lastNode = this.rowsToDisplay[this.rowsToDisplay.length-1];
+        let lastNode = this.rowsToDisplay[this.rowsToDisplay.length-1];
         if (lastNode.rowTop<=pixelToMatch) {
             return this.rowsToDisplay.length - 1;
         }
 
         while (true) {
 
-            var midPointer = Math.floor((bottomPointer + topPointer) / 2);
-            var currentRowNode = this.rowsToDisplay[midPointer];
+            let midPointer = Math.floor((bottomPointer + topPointer) / 2);
+            let currentRowNode = this.rowsToDisplay[midPointer];
 
             if (this.isRowInPixel(currentRowNode, pixelToMatch)) {
                 return midPointer;
@@ -287,16 +286,16 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     private isRowInPixel(rowNode: RowNode, pixelToMatch: number): boolean {
-        var topPixel = rowNode.rowTop;
-        var bottomPixel = rowNode.rowTop + rowNode.rowHeight;
-        var pixelInRow = topPixel <= pixelToMatch && bottomPixel > pixelToMatch;
+        let topPixel = rowNode.rowTop;
+        let bottomPixel = rowNode.rowTop + rowNode.rowHeight;
+        let pixelInRow = topPixel <= pixelToMatch && bottomPixel > pixelToMatch;
         return pixelInRow;
     }
 
     public getCurrentPageHeight(): number {
         if (this.rowsToDisplay && this.rowsToDisplay.length > 0) {
-            var lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
-            var lastPixel = lastRow.rowTop + lastRow.rowHeight;
+            let lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
+            let lastPixel = lastRow.rowTop + lastRow.rowHeight;
             return lastPixel;
         } else {
             return 0;
@@ -332,13 +331,13 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     // index - works similar to the index in forEach in javascripts array function
     private recursivelyWalkNodesAndCallback(nodes: RowNode[], callback: Function, recursionType: RecursionType, index: number) {
         if (nodes) {
-            for (var i = 0; i < nodes.length; i++) {
-                var node = nodes[i];
+            for (let i = 0; i < nodes.length; i++) {
+                let node = nodes[i];
                 callback(node, index++);
                 // go to the next level if it is a group
                 if (node.group) {
                     // depending on the recursion type, we pick a difference set of children
-                    var nodeChildren: RowNode[];
+                    let nodeChildren: RowNode[];
                     switch (recursionType) {
                         case RecursionType.Normal : nodeChildren = node.childrenAfterGroup; break;
                         case RecursionType.AfterFilter : nodeChildren = node.childrenAfterFilter; break;
@@ -391,7 +390,7 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     private doRowGrouping(groupState: any, newRowNodes: RowNode[]) {
 
         // grouping is enterprise only, so if service missing, skip the step
-        var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        let rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (rowsAlreadyGrouped) { return; }
 
         if (this.groupStage) {
@@ -442,19 +441,23 @@ export class InMemoryRowModel implements IInMemoryRowModel {
         if (!this.rootNode.childrenAfterGroup || !this.gridOptionsWrapper.isRememberGroupStateWhenNewData()) {
             return null;
         }
-        var result: any = {};
+        let result: any = {};
         _.traverseNodesWithKey(this.rootNode.childrenAfterGroup, (node: RowNode, key: string)=> result[key] = node.expanded );
         return result;
     }
 
+    public getRowNode(id: string): RowNode {
+        return this.nodeManager.getRowNode(id);
+    }
+
     // rows: the rows to put into the model
     // firstId: the first id to use, used for paging, where we are not on the first page
-    public setRowData(rowData: any[], refresh: boolean, firstId?: number) {
+    public setRowData(rowData: any[], refresh: boolean) {
 
         // remember group state, so we can expand groups that should be expanded
-        var groupState = this.getGroupState();
+        let groupState = this.getGroupState();
 
-        this.nodeManager.setRowData(rowData, firstId);
+        this.nodeManager.setRowData(rowData);
 
         // this event kicks off:
         // - clears selection
@@ -476,8 +479,8 @@ export class InMemoryRowModel implements IInMemoryRowModel {
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {
         // remember group state, so we can expand groups that should be expanded
-        var groupState = this.getGroupState();
-        var newNodes = this.nodeManager.insertItemsAtIndex(index, items);
+        let groupState = this.getGroupState();
+        let newNodes = this.nodeManager.insertItemsAtIndex(index, items);
         if (!skipRefresh) {
             this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes, groupState);
         }
@@ -493,16 +496,16 @@ export class InMemoryRowModel implements IInMemoryRowModel {
     }
 
     public removeItems(rowNodes: RowNode[], skipRefresh: boolean): void {
-        var groupState = this.getGroupState();
-        var removedNodes = this.nodeManager.removeItems(rowNodes);
+        let groupState = this.getGroupState();
+        let removedNodes = this.nodeManager.removeItems(rowNodes);
         if (!skipRefresh) {
             this.refreshAndFireEvent(Events.EVENT_ITEMS_REMOVED, removedNodes, groupState);
         }
     }
 
     public addItems(items: any[], skipRefresh: boolean): void {
-        var groupState = this.getGroupState();
-        var newNodes = this.nodeManager.addItems(items);
+        let groupState = this.getGroupState();
+        let newNodes = this.nodeManager.addItems(items);
 
         if (!skipRefresh) {
             this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes, groupState);

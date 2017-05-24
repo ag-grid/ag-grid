@@ -131,9 +131,9 @@ export class SelectAllFeature extends BeanStub {
 
     private checkRightRowModelType(): void {
         let rowModelType = this.rowModel.getType();
-        let rowModelMatches = rowModelType===Constants.ROW_MODEL_TYPE_NORMAL || Constants.ROW_MODEL_TYPE_PAGINATION;
+        let rowModelMatches = rowModelType===Constants.ROW_MODEL_TYPE_NORMAL;
         if (!rowModelMatches) {
-            console.log(`ag-Grid: selectAllCheckbox is only available if using normal or pagination row models, you are using ${rowModelType}`);
+            console.log(`ag-Grid: selectAllCheckbox is only available if using normal row model, you are using ${rowModelType}`);
         }
     }
 

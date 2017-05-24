@@ -21,24 +21,24 @@ export class FlattenStage implements IRowNodeStage {
 
         // even if not doing grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
-        var result: RowNode[] = [];
+        let result: RowNode[] = [];
 
         // putting value into a wrapper so it's passed by reference
-        var nextRowTop: NumberWrapper = {value: 0};
+        let nextRowTop: NumberWrapper = {value: 0};
 
-        var pivotMode = this.columnController.isPivotMode();
+        let skipLeafNodes = this.columnController.isPivotMode();
 
         // if we are reducing, and not grouping, then we want to show the root node, as that
         // is where the pivot values are
-        var showRootNode = pivotMode && rootNode.leafGroup;
-        var topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
+        let showRootNode = skipLeafNodes && rootNode.leafGroup;
+        let topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
 
         // set all row tops to null, then set row tops on all visible rows. if we don't
         // do this, then the algorithm below only sets row tops, old row tops from old rows
         // will still lie around
         this.resetRowTops(rootNode);
 
-        this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, pivotMode);
+        this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, skipLeafNodes, 0);
 
         return result;
     }
@@ -58,50 +58,61 @@ export class FlattenStage implements IRowNodeStage {
     }
 
     private recursivelyAddToRowsToDisplay(rowsToFlatten: RowNode[], result: RowNode[],
-                                          nextRowTop: NumberWrapper, reduce: boolean) {
+                                          nextRowTop: NumberWrapper, skipLeafNodes: boolean, uiLevel: number) {
         if (_.missingOrEmpty(rowsToFlatten)) { return; }
 
         let groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
         let hideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents();
+        let removeSingleChildrenGroups = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
 
         for (let i = 0; i < rowsToFlatten.length; i++) {
             let rowNode = rowsToFlatten[i];
 
-            let skipBecauseSuppressRow = groupSuppressRow && rowNode.group;
-            let skipBecauseReduce = reduce && !rowNode.group;
-            let skipBecauseOpen = hideOpenParents && rowNode.expanded;
-            let skipGroupNode = skipBecauseReduce || skipBecauseSuppressRow || skipBecauseOpen;
+            // check all these cases, for working out if this row should be included in the final mapped list
+            let isGroupSuppressedNode = groupSuppressRow && rowNode.group;
+            let isSkippedLeafNode = skipLeafNodes && !rowNode.group;
+            let isHiddenOpenParent = hideOpenParents && rowNode.expanded;
+            let isRemovedSingleChildrenGroup = removeSingleChildrenGroups && rowNode.group && rowNode.childrenAfterGroup.length === 1;
 
-            if (!skipGroupNode) {
-                this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop);
+            let thisRowShouldBeRendered = !isSkippedLeafNode && !isGroupSuppressedNode && !isHiddenOpenParent && !isRemovedSingleChildrenGroup;
+
+            if (thisRowShouldBeRendered) {
+                this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
             }
+
             if (rowNode.group) {
-                if (rowNode.expanded) {
-                    this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result, nextRowTop, reduce);
+                // we traverse the group if it is expended, however we always traverse if the parent node
+                // was removed (as the group will never be opened if it is not displayed, we show the children instead)
+                if (rowNode.expanded || isRemovedSingleChildrenGroup) {
+
+                    // if the parent was excluded, then ui level is that of the parent
+                    let uiLevelForChildren = isRemovedSingleChildrenGroup ? uiLevel : uiLevel + 1;
+                    this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result,
+                        nextRowTop, skipLeafNodes, uiLevelForChildren);
 
                     // put a footer in if user is looking for it
                     if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
                         this.ensureFooterNodeExists(rowNode);
-                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop);
+                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevel);
                     }
                 }
-            }
-            if (rowNode.canFlower && rowNode.expanded) {
+            } else if (rowNode.canFlower && rowNode.expanded) {
                 let flowerNode = this.createFlowerNode(rowNode);
-                this.addRowNodeToRowsToDisplay(flowerNode, result, nextRowTop);
+                this.addRowNodeToRowsToDisplay(flowerNode, result, nextRowTop, uiLevel);
             }
         }
     }
 
     // duplicated method, it's also in floatingRowModel
-    private addRowNodeToRowsToDisplay(rowNode: RowNode, result: RowNode[], nextRowTop: NumberWrapper): void {
+    private addRowNodeToRowsToDisplay(rowNode: RowNode, result: RowNode[], nextRowTop: NumberWrapper, uiLevel: number): void {
         result.push(rowNode);
         if (_.missing(rowNode.rowHeight)) {
-            var rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
+            let rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
             rowNode.setRowHeight(rowHeight);
         }
+        rowNode.setUiLevel(uiLevel);
         rowNode.setRowTop(nextRowTop.value);
-        rowNode.setRowIndex(result.length  - 1);
+        rowNode.setRowIndex(result.length - 1);
         nextRowTop.value += rowNode.rowHeight;
     }
 
@@ -110,7 +121,7 @@ export class FlattenStage implements IRowNodeStage {
         // the animate screws up with the daemons hanging around
         if (_.exists(groupNode.sibling)) { return; }
 
-        var footerNode = new RowNode();
+        let footerNode = new RowNode();
         this.context.wireBean(footerNode);
         Object.keys(groupNode).forEach(function (key) {
             (<any>footerNode)[key] = (<any>groupNode)[key];
@@ -133,7 +144,7 @@ export class FlattenStage implements IRowNodeStage {
         if (_.exists(parentNode.childFlower)) {
             return parentNode.childFlower;
         } else {
-            var flowerNode = new RowNode();
+            let flowerNode = new RowNode();
             this.context.wireBean(flowerNode);
             flowerNode.flower = true;
             flowerNode.parent = parentNode;

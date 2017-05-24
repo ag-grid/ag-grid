@@ -21,6 +21,9 @@ export class InMemoryNodeManager {
     private doesDataFlower: (data: any) => boolean;
     private suppressParentsInRowNodes: boolean;
 
+    // when user is provide the id's, we also keep a map of ids to row nodes for convenience
+    private allNodesMap: {[id:string]: RowNode} = {};
+
     constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService) {
         this.rootNode = rootNode;
         this.gridOptionsWrapper = gridOptionsWrapper;
@@ -35,14 +38,19 @@ export class InMemoryNodeManager {
         this.rootNode.childrenAfterFilter = [];
     }
 
-    public setRowData(rowData: any[], firstId?: number): RowNode[] {
+    public getRowNode(id: string): RowNode {
+        return this.allNodesMap[id];
+    }
+
+    public setRowData(rowData: any[]): RowNode[] {
 
         this.rootNode.childrenAfterFilter = null;
         this.rootNode.childrenAfterGroup = null;
         this.rootNode.childrenAfterSort = null;
         this.rootNode.childrenMapped = null;
 
-        this.nextId = _.exists(firstId) ? firstId : 0;
+        this.nextId = 0;
+        this.allNodesMap = {};
 
         if (!rowData) {
             this.rootNode.allLeafChildren = [];
@@ -55,10 +63,10 @@ export class InMemoryNodeManager {
         this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
 
-        var rowsAlreadyGrouped = _.exists(this.getNodeChildDetails);
+        let rowsAlreadyGrouped = _.exists(this.getNodeChildDetails);
 
         // kick off recursion
-        var result = this.recursiveFunction(rowData, null, InMemoryNodeManager.TOP_LEVEL);
+        let result = this.recursiveFunction(rowData, null, InMemoryNodeManager.TOP_LEVEL);
 
         if (rowsAlreadyGrouped) {
             this.rootNode.childrenAfterGroup = result;
@@ -76,11 +84,11 @@ export class InMemoryNodeManager {
             return;
         }
 
-        var rowNodes: RowNode[] = [];
+        let rowNodes: RowNode[] = [];
         rowData.forEach( (dataItem)=> {
-            var node = this.createNode(dataItem, parent, level);
+            let node = this.createNode(dataItem, parent, level);
 
-            var nodeChildDetails = this.getNodeChildDetails ? this.getNodeChildDetails(dataItem) : null;
+            let nodeChildDetails = this.getNodeChildDetails ? this.getNodeChildDetails(dataItem) : null;
             if (nodeChildDetails && nodeChildDetails.group) {
                 node.group = true;
                 node.childrenAfterGroup = this.recursiveFunction(nodeChildDetails.children, node, level + 1);
@@ -97,9 +105,9 @@ export class InMemoryNodeManager {
     }
 
     private createNode(dataItem: any, parent: RowNode, level: number): RowNode {
-        var node = new RowNode();
+        let node = new RowNode();
         this.context.wireBean(node);
-        var nodeChildDetails = this.getNodeChildDetails ? this.getNodeChildDetails(dataItem) : null;
+        let nodeChildDetails = this.getNodeChildDetails ? this.getNodeChildDetails(dataItem) : null;
         if (nodeChildDetails && nodeChildDetails.group) {
             node.group = true;
             node.childrenAfterGroup = this.recursiveFunction(nodeChildDetails.children, node, level + 1);
@@ -122,6 +130,8 @@ export class InMemoryNodeManager {
         }
         node.level = level;
         node.setDataAndId(dataItem, this.nextId.toString());
+
+        this.allNodesMap[node.id] = node;
 
         this.nextId++;
 
@@ -155,14 +165,14 @@ export class InMemoryNodeManager {
     public insertItemsAtIndex(index: number, rowData: any[]): RowNode[] {
         if (this.isRowsAlreadyGrouped()) { return null; }
 
-        var nodeList = this.rootNode.allLeafChildren;
+        let nodeList = this.rootNode.allLeafChildren;
 
         if (index > nodeList.length) {
             console.warn(`ag-Grid: invalid index ${index}, max index is ${nodeList.length}`);
             return;
         }
 
-        var newNodes: RowNode[] = [];
+        let newNodes: RowNode[] = [];
         // go through the items backwards, otherwise they get added in reverse order
         for (let i = rowData.length - 1; i >= 0; i--) {
             let data = rowData[i];
@@ -177,14 +187,15 @@ export class InMemoryNodeManager {
     public removeItems(rowNodes: RowNode[]): RowNode[] {
         if (this.isRowsAlreadyGrouped()) { return; }
 
-        var nodeList = this.rootNode.allLeafChildren;
+        let nodeList = this.rootNode.allLeafChildren;
 
-        var removedNodes: RowNode[] = [];
+        let removedNodes: RowNode[] = [];
         rowNodes.forEach( rowNode => {
-            var indexOfNode = nodeList.indexOf(rowNode);
+            let indexOfNode = nodeList.indexOf(rowNode);
             if (indexOfNode>=0) {
                 rowNode.setSelected(false);
                 nodeList.splice(indexOfNode, 1);
+                this.allNodesMap[rowNode.id] = undefined;
             }
             removedNodes.push(rowNode);
         });
@@ -193,12 +204,12 @@ export class InMemoryNodeManager {
     }
 
     public addItems(items: any): RowNode[] {
-        var nodeList = this.rootNode.allLeafChildren;
+        let nodeList = this.rootNode.allLeafChildren;
         return this.insertItemsAtIndex(nodeList.length, items);
     }
 
     public isRowsAlreadyGrouped(): boolean {
-        var rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        let rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (rowsAlreadyGrouped) {
             console.warn('ag-Grid: adding and removing rows is not supported when using nodeChildDetailsFunc, ie it is not ' +
                 'supported if providing groups');
