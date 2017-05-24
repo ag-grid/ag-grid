@@ -1357,22 +1357,26 @@ export class GridPanel extends BeanStub {
     private generalMouseWheelListener(event: any, targetPanel: HTMLElement): boolean {
         var wheelEvent = _.normalizeWheel(event);
 
+        var oldPos,
+            newPos;
         // we need to detect in which direction scroll is happening to allow trackpads scroll horizontally
         // horizontal scroll
         if (Math.abs(wheelEvent.pixelX) > Math.abs(wheelEvent.pixelY)) {
-            var newLeftPosition = this.eBodyViewport.scrollLeft + wheelEvent.pixelX;
+            var newLeftPosition = (oldPos = this.eBodyViewport.scrollLeft) + wheelEvent.pixelX;
             this.eBodyViewport.scrollLeft = newLeftPosition;
+            newPos = this.eBodyViewport.scrollLeft;
         }
         // vertical scroll
         else {
-            var newTopPosition = targetPanel.scrollTop + wheelEvent.pixelY;
+            var newTopPosition = (oldPos = targetPanel.scrollTop) + wheelEvent.pixelY;
             targetPanel.scrollTop = newTopPosition;
+            newPos = targetPanel.scrollTop;
         }
 
         // allow the option to pass mouse wheel events to the browser
         // https://github.com/ceolter/ag-grid/issues/800
         // in the future, this should be tied in with 'forPrint' option, or have an option 'no vertical scrolls'
-        if (!this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel()) {
+        if (oldPos !== newPos && !this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel()) {
             // if we don't prevent default, then the whole browser will scroll also as well as the grid
             event.preventDefault();
         }
