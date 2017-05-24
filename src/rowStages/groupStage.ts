@@ -11,8 +11,8 @@ import {
     StageExecuteParams,
     RowNode,
     Column,
-    Utils,
     NumberSequence,
+    RowNodeTransaction,
     _
 } from "ag-grid/main";
 
@@ -55,6 +55,55 @@ export class GroupStage implements IRowNodeStage {
         let includeParents = !this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         let isPivot = this.columnController.isPivotMode();
 
+        if (params.rowNodeTransaction) {
+            this.handleTransaction(params.rowNodeTransaction, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
+        } else {
+            this.shotgunResetEverything(rootNode, groupedCols, expandByDefault, includeParents, isPivot);
+        }
+    }
+
+    private handleTransaction(tran: RowNodeTransaction, rootNode: RowNode, groupedCols: Column[], expandByDefault: number, includeParents: boolean, isPivot: boolean): void {
+        if (tran.add) {
+            this.insertRowNodesIntoGroups(tran.add, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
+        }
+        if (tran.update) {
+            // todo
+        }
+        if (tran.remove) {
+            this.removeRowNodesFromGroups(tran.remove, rootNode);
+        }
+    }
+
+    private removeRowNodesFromGroups(leafRowNodes: RowNode[], rootNode: RowNode): void {
+
+        leafRowNodes.forEach( leafToRemove => {
+
+            // step 1 - remove leaf from direct parent
+            _.removeFromArray(leafToRemove.parent.childrenAfterGroup, leafToRemove);
+
+            // step 2 - go up the row group hierarchy and:
+            //  a) remove from allLeafChildren
+            //  b) remove empty groups
+            let groupPointer = leafToRemove.parent;
+            while (groupPointer !== rootNode) {
+                _.removeFromArray(groupPointer.allLeafChildren, leafToRemove);
+
+                let isEmptyGroup = groupPointer.allLeafChildren.length===0;
+                if (isEmptyGroup) {
+                    this.removeGroupFromParent(groupPointer);
+                }
+
+                groupPointer = groupPointer.parent;
+            }
+        });
+    }
+
+    private removeGroupFromParent(groupPointer: RowNode) {
+        _.removeFromArray(groupPointer.parent.childrenAfterGroup, groupPointer);
+        groupPointer.parent.childrenMapped[groupPointer.key] = undefined;
+    }
+
+    private shotgunResetEverything(rootNode: RowNode, groupedCols: Column[], expandByDefault: number, includeParents: boolean, isPivot: boolean): void {
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
         rootNode.leafGroup = groupedCols.length === 0;
@@ -64,19 +113,7 @@ export class GroupStage implements IRowNodeStage {
         rootNode.childrenMapped = {};
 
         this.insertRowNodesIntoGroups(rootNode.allLeafChildren, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
-
-        // this.recursivelySetLevelOnChildren(rootNode, 0);
     }
-
-    // private recursivelySetLevelOnChildren(rowNode: RowNode, level: number): void {
-    //     for (let i = 0; i<rowNode.childrenAfterGroup.length; i++) {
-    //         let childNode = rowNode.childrenAfterGroup[i];
-    //         childNode.level = level;
-    //         if (childNode.group) {
-    //             this.recursivelySetLevelOnChildren(childNode, level+1);
-    //         }
-    //     }
-    // }
 
     private insertRowNodesIntoGroups(newRowNodes: RowNode[], rootNode: RowNode, groupColumns: Column[], expandByDefault: any, includeParents: boolean, isPivot: boolean): void {
 
