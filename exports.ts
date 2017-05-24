@@ -119,8 +119,8 @@ export {CellEditorFactory} from "./dist/lib/rendering/cellEditorFactory";
 export {CellRendererFactory} from "./dist/lib/rendering/cellRendererFactory";
 export {CellRendererService} from "./dist/lib/rendering/cellRendererService";
 export {CheckboxSelectionComponent} from "./dist/lib/rendering/checkboxSelectionComponent";
-export {RenderedCell} from "./dist/lib/rendering/renderedCell";
-export {RenderedRow} from "./dist/lib/rendering/renderedRow";
+export {CellComp} from "./dist/lib/rendering/cellComp";
+export {RowComp} from "./dist/lib/rendering/rowComp";
 export {RowRenderer} from "./dist/lib/rendering/rowRenderer";
 export {ValueFormatterService} from "./dist/lib/rendering/valueFormatterService";
 
