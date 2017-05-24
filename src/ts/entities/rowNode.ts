@@ -261,6 +261,21 @@ export class RowNode implements IEventEmitter {
     public setDataValue(colKey: string|ColDef|Column, newValue: any): void {
         var column = this.columnController.getGridColumn(colKey);
         this.valueService.setValue(this, column, newValue);
+        this.dispatchCellChangedEvent(column, newValue);
+    }
+
+    // sets the data for an aggregation
+    public setAggData(newAggData: any): void {
+        // data object gets initialised on first time
+        if (!this.data) { this.data = {}; }
+        _.iterateObject(newAggData, (key: string, value: any) => {
+            this.data[key] = value;
+            let column = this.columnController.getGridColumn(key);
+            this.dispatchCellChangedEvent(column, value);
+        });
+    }
+
+    private dispatchCellChangedEvent(column: Column, newValue: any): void {
         var event = {column: column, newValue: newValue};
         this.dispatchLocalEvent(RowNode.EVENT_CELL_CHANGED, event);
     }

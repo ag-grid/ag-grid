@@ -85,7 +85,7 @@ export class ValueService {
         // the user should not be trying to paste into group rows
         var data = rowNode.data;
         if (_.missing(data)) {
-            return;
+            rowNode.data = {};
         }
 
         var field = column.getColDef().field;
