@@ -73,9 +73,11 @@ function changeValueGetter(params) {
     return params.data.previous - params.data.current;
 }
 
+var globalRowData;
+
 // build up the test data, creates approx 50,000 rows
 function createRowData() {
-    var rowData = [];
+    globalRowData = [];
     var thisBatch = nextBatchId++;
     for (var i = 0; i<products.length; i++) {
         var product = products[i];
@@ -92,12 +94,11 @@ function createRowData() {
                 var tradeCount = randomBetween(MAX_TRADE_COUNT, MIN_TRADE_COUNT);
                 for (var l = 0; l < tradeCount; l++) {
                     var trade = createTradeRecord(product, portfolio, book, thisBatch);
-                    rowData.push(trade);
+                    globalRowData.push(trade);
                 }
             }
         }
     }
-    return rowData;
 }
 
 // https://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range
@@ -144,9 +145,11 @@ function createTradeId() {
 }
 
 function createGridOptions() {
+    createRowData();
+
     gridOptions = {
         columnDefs: createCols(),
-        rowData: createRowData(),
+        rowData: globalRowData,
         rememberGroupStateWhenNewData: true,
         animateRows: true,
         enableColResize: true,
@@ -154,6 +157,7 @@ function createGridOptions() {
         enableSorting: true,
         rowGroupPanelShow: 'always',
         suppressAggFuncInHeader: true,
+        getRowNodeId: function(data) { return data.trade; },
         defaultColDef: {
             width: 120
         }
@@ -174,7 +178,18 @@ function add20PalmOilExistingBooks() {
     gridOptions.api.addItems(newData);
 }
 
-function addToRandomProduct() {
+function randomlyChangeData() {
+    // pick some data at random to remove
+    var itemsToRemove = [];
+    for (var i = 0; i<5; i++) {
+        if (globalRowData.length === 0) { continue; }
+        var indexToRemove = Math.floor(Math.random()*globalRowData.length);
+        var itemToRemove = globalRowData[indexToRemove];
+        globalRowData.splice(indexToRemove, 1);
+        itemsToRemove.push(itemToRemove);
+    }
+
+    // create new data
     var newData = [];
     var batch = nextBatchId++;
     for (var i = 0; i<5; i++) {
@@ -184,8 +199,13 @@ function addToRandomProduct() {
         var product = products[Math.floor(Math.random()*products.length)];
         var trade = createTradeRecord(product, portfolio, book, batch);
         newData.push(trade);
+        globalRowData.push(trade);
     }
-    gridOptions.api.addItems(newData);
+
+    gridOptions.api.updateRowData({
+            add: newData,
+            remove: itemsToRemove,
+            update: null});
 }
 
 var intervalId;
@@ -197,7 +217,7 @@ function toggleFeed() {
         intervalId = null;
         document.querySelector('#toggleInterval').innerHTML = '&#9658; Start Feed';
     } else {
-        intervalId = setInterval(addToRandomProduct, 1000);
+        intervalId = setInterval(randomlyChangeData, 1000);
         document.querySelector('#toggleInterval').innerHTML = '&#9724; Stop Feed';
     }
 }
