@@ -195,6 +195,8 @@ export class RowRenderer extends BeanStub {
 
         this.getLockOnRefresh();
 
+        // check here if the cell is in edit mode, and if it is, need to set focus back into the editing part
+        // (eg the text field), or maybe just don't reset the focus, will work 95% of the time
         let focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
 
         if (!this.gridOptionsWrapper.isForPrint()) {

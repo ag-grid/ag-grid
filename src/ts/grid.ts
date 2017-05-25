@@ -59,6 +59,7 @@ import {FilterService} from "./rowNodes/filterService";
 import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
 import {AutoGroupColService} from "./columnController/autoGroupColService";
 import {PaginationAutoPageSizeService, PaginationProxy} from "./rowModels/paginationProxy";
+import {ImmutableService} from "./rowModels/inMemory/immutableService";
 
 
 export interface GridParams {
@@ -155,7 +156,7 @@ export class Grid {
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService, FilterService, RowNodeFactory,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
-                ColumnHoverService, ColumnAnimationService, SortService, AutoGroupColService],
+                ColumnHoverService, ColumnAnimationService, SortService, AutoGroupColService, ImmutableService],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],

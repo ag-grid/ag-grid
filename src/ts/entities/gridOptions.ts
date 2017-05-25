@@ -21,6 +21,7 @@ export interface GridOptions {
      ****************************************************************/
 
     // set once in init, can never change
+    enableImmutableMode?: boolean;
     scrollbarWidth?: number;
     toolPanelSuppressRowGroups?: boolean;
     toolPanelSuppressValues?: boolean;

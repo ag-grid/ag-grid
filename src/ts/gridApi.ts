@@ -37,6 +37,7 @@ import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
 import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
 import {InMemoryRowModel, RowDataTransaction} from "./rowModels/inMemory/inMemoryRowModel";
+import {ImmutableService} from "./rowModels/inMemory/immutableService";
 
 
 export interface StartEditingCellParams {
@@ -49,6 +50,7 @@ export interface StartEditingCellParams {
 @Bean('gridApi')
 export class GridApi {
 
+    @Autowired('immutableService') private immutableService: ImmutableService;
     @Autowired('csvCreator') private csvCreator: CsvCreator;
     @Optional('excelCreator') private excelCreator: IExcelCreator;
     @Autowired('gridCore') private gridCore: GridCore;
@@ -155,8 +157,13 @@ export class GridApi {
 
     public setRowData(rowData: any[]) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            this.selectionController.reset();
-            this.inMemoryRowModel.setRowData(rowData, true);
+            if (this.gridOptionsWrapper.isEnableImmutableMode()) {
+                let transaction = this.immutableService.createTransactionForRowData(rowData);
+                this.inMemoryRowModel.updateRowData(transaction);
+            } else {
+                this.selectionController.reset();
+                this.inMemoryRowModel.setRowData(rowData, true);
+            }
         } else {
             console.log('cannot call setRowData unless using normal row model');
         }

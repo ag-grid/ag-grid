@@ -140,7 +140,20 @@ export class RowNode implements IEventEmitter {
         let oldData = this.data;
         this.data = data;
 
-        let event = {oldData: oldData, newData: data};
+        let event = {oldData: oldData, newData: data, update: false};
+        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+    }
+
+    // similar to setRowData, however it is expected that the data is the same data item. this
+    // is intended to be used with Redux type stores, where the whole data can be changed. we are
+    // guaranteed that the data is the same entity (so grid doesn't need to worry about the id of the
+    // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
+    // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
+    public updateData(data: any): void {
+        let oldData = this.data;
+        this.data = data;
+
+        let event = {oldData: oldData, newData: data, update: true};
         this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
     }
 

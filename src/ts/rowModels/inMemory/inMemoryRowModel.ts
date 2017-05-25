@@ -456,6 +456,10 @@ export class InMemoryRowModel {
         return result;
     }
 
+    public getCopyOfNodesMap(): {[id:string]: RowNode} {
+        return this.nodeManager.getCopyOfNodesMap();
+    }
+
     public getRowNode(id: string): RowNode {
         return this.nodeManager.getRowNode(id);
     }

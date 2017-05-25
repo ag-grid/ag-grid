@@ -624,23 +624,30 @@ export class RowComp extends BeanStub {
         });
     }
 
-    private addNodeDataChangedListener(): void {
-        let nodeDataChangedListener = () => {
-            let animate = false;
-            let newData = true;
-            this.forEachRenderedCell( renderedCell => renderedCell.refreshCell(animate, newData) );
-            // check for selected also, as this could be after lazy loading of the row data, in which case
-            // the id might of just gotten set inside the row and the row selected state may of changed
-            // as a result. this is what happens when selected rows are loaded in virtual pagination.
-            // - niall note - since moving to the stub component, this may no longer be true, as replacing
-            // the stub component now replaces the entire row
-            this.onRowSelected();
+    private onNodeDataChanged(event: any): void {
+        // if this is an update, we want to refresh, as this will allow the user to put in a transition
+        // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
+        // we will want to completely replace the cells
+        let animate = event.update;
+        let newData = !event.update;
+        this.forEachRenderedCell( cellComp =>
+            cellComp.refreshCell(animate, newData)
+        );
 
-            // as data has changed, then the style and class needs to be recomputed
-            this.addStyleFromRowStyleFunc();
-            this.addClassesFromRowClass();
-        };
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
+        // check for selected also, as this could be after lazy loading of the row data, in which case
+        // the id might of just gotten set inside the row and the row selected state may of changed
+        // as a result. this is what happens when selected rows are loaded in virtual pagination.
+        // - niall note - since moving to the stub component, this may no longer be true, as replacing
+        // the stub component now replaces the entire row
+        this.onRowSelected();
+
+        // as data has changed, then the style and class needs to be recomputed
+        this.addStyleFromRowStyleFunc();
+        this.addClassesFromRowClass();
+    }
+
+    private addNodeDataChangedListener(): void {
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onNodeDataChanged.bind(this));
     }
 
     private onTopChanged(): void {

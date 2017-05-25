@@ -42,6 +42,11 @@ export class InMemoryNodeManager {
         this.rootNode.childrenAfterFilter = [];
     }
 
+    public getCopyOfNodesMap(): {[id:string]: RowNode} {
+        let result: {[id:string]: RowNode} = _.cloneObject(this.allNodesMap);
+        return result;
+    }
+
     public getRowNode(id: string): RowNode {
         return this.allNodesMap[id];
     }
@@ -140,7 +145,7 @@ export class InMemoryNodeManager {
 
         if (update) {
             // do update
-            rowNode.setData(data);
+            rowNode.updateData(data);
         } else {
             // do delete
             _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
