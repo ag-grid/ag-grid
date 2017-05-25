@@ -1,20 +1,20 @@
-var PRODUCT_COUNT = 2;
-var PORTFOLIO_COUNT = 2;
-
-var MIN_BOOK_COUNT = 2;
-var MAX_BOOK_COUNT = 4;
-
-var MIN_TRADE_COUNT = 2;
-var MAX_TRADE_COUNT = 4;
-
-// var PRODUCT_COUNT = null;
-// var PORTFOLIO_COUNT = null;
+// var PRODUCT_COUNT = 2;
+// var PORTFOLIO_COUNT = 2;
 //
-// var MIN_BOOK_COUNT = 10;
-// var MAX_BOOK_COUNT = 110;
+// var MIN_BOOK_COUNT = 2;
+// var MAX_BOOK_COUNT = 4;
 //
-// var MIN_TRADE_COUNT = 1;
-// var MAX_TRADE_COUNT = 10;
+// var MIN_TRADE_COUNT = 2;
+// var MAX_TRADE_COUNT = 4;
+
+var PRODUCT_COUNT = null;
+var PORTFOLIO_COUNT = null;
+
+var MIN_BOOK_COUNT = 10;
+var MAX_BOOK_COUNT = 110;
+
+var MIN_TRADE_COUNT = 1;
+var MAX_TRADE_COUNT = 10;
 
 var productsOriginalList = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','Tin','Aluminium',
     'Aluminium Alloy','Nickel','Cobalt','Molybdenum','Recycled Steel','Corn','Oats','Rough Rice',
@@ -148,6 +148,7 @@ function createGridOptions() {
     createRowData();
 
     gridOptions = {
+        enableImmutableMode: true,
         columnDefs: createCols(),
         rowData: globalRowData,
         rememberGroupStateWhenNewData: true,
@@ -187,8 +188,12 @@ function add20PalmOilExistingBooks() {
 
 function randomlyChangeData() {
     // pick some data at random to remove
+    var removeCount = randomBetween(1,6);
+    var addCount = randomBetween(1,6);
+    var updateCount = randomBetween(1,6);
+
     var itemsToRemove = [];
-    for (var i = 0; i<5; i++) {
+    for (var i = 0; i<removeCount; i++) {
         if (globalRowData.length === 0) { continue; }
         var indexToRemove = Math.floor(Math.random()*globalRowData.length);
         var itemToRemove = globalRowData[indexToRemove];
@@ -197,36 +202,72 @@ function randomlyChangeData() {
     }
 
     // create new data
-    var newData = [];
+    var itemsToAdd = [];
     var batch = nextBatchId++;
-    for (var i = 0; i<5; i++) {
+    for (var j = 0; j<addCount; j++) {
         var portfolio = portfolios[Math.floor(Math.random()*portfolios.length)];
         var books = productToPortfolioToBooks['Palm Oil'][portfolio];
         var book = books[Math.floor(Math.random()*books.length)];
         var product = products[Math.floor(Math.random()*products.length)];
         var trade = createTradeRecord(product, portfolio, book, batch);
-        newData.push(trade);
+        itemsToAdd.push(trade);
         globalRowData.push(trade);
     }
 
-    gridOptions.api.updateRowData({
-            add: newData,
-            remove: itemsToRemove,
-            update: null});
+    // update some data
+    var itemsToUpdate = [];
+    for (var k = 0; k<updateCount; k++) {
+        if (globalRowData.length === 0) { continue; }
+        var indexToUpdate = Math.floor(Math.random()*globalRowData.length);
+        var itemToUpdate = globalRowData[indexToUpdate];
+
+        // make a copy of the item, and make some changes, so we are behaving
+        // similar to how the
+        var updatedItem = updateImmutableObject(itemToUpdate, {
+            previous: itemToUpdate.current,
+            current: itemToUpdate.current + randomBetween(0,1000) - 500
+        });
+        globalRowData[indexToUpdate] = updatedItem;
+
+        itemsToUpdate.push(updatedItem);
+    }
+
+    gridOptions.api.setRowData(globalRowData);
+
+    // gridOptions.api.updateRowData({
+    //         add: itemsToAdd,
+    //         remove: itemsToRemove,
+    //         update: itemsToUpdate});
 }
 
-var intervalId;
+// makes a copy of the original and merges in the new values
+function updateImmutableObject(original, newValues) {
+    var newObject = {};
+    Object.keys(original).forEach( function(key) {
+        newObject[key] = original[key];
+    });
+    Object.keys(newValues).forEach( function(key) {
+        newObject[key] = newValues[key];
+    });
+    return newObject;
+}
+
+var feedActive = false;
+doOneIterationOfFeed();
+
+function doOneIterationOfFeed() {
+    if (feedActive) {
+        randomlyChangeData();
+    }
+    // random mill is between 1000 and 4000
+    var millis = randomBetween(1000, 4000);
+    this.setTimeout(doOneIterationOfFeed, millis);
+}
 
 function toggleFeed() {
-    var intervalActive = !!intervalId;
-    if (intervalActive) {
-        clearInterval(intervalId);
-        intervalId = null;
-        document.querySelector('#toggleInterval').innerHTML = '&#9658; Start Feed';
-    } else {
-        intervalId = setInterval(randomlyChangeData, 2000);
-        document.querySelector('#toggleInterval').innerHTML = '&#9724; Stop Feed';
-    }
+    feedActive = !feedActive;
+    var buttonText = feedActive ? '&#9724; Stop Feed' : '&#9658; Start Feed';
+    document.querySelector('#toggleInterval').innerHTML = buttonText;
 }
 
 // wait for the document to be loaded, otherwise
