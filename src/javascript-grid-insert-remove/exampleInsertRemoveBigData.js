@@ -42,28 +42,28 @@ var gridOptions;
 function createCols() {
     return [
         // these are the row groups, so they are all hidden (they are showd in the group column)
-        {headerName: 'Product', field: 'product', enableRowGroup: true},
-        {headerName: 'Portfolio', field: 'portfolio', enableRowGroup: true},
-        {headerName: 'Book', field: 'book', enableRowGroup: true},
+        {headerName: 'Product', field: 'product', enableRowGroup: true, enablePivot: true},
+        {headerName: 'Portfolio', field: 'portfolio', enableRowGroup: true, enablePivot: true},
+        {headerName: 'Book', field: 'book', enableRowGroup: true, enablePivot: true},
         {headerName: 'Trade', field: 'trade'},
 
         // some string values, that do not get aggregated
-        {headerName: 'Deal Type', field: 'dealType', enableRowGroup: true},
-        {headerName: 'Bid Flag', field: 'bidFlag', enableRowGroup: true},
+        {headerName: 'Deal Type', field: 'dealType', enableRowGroup: true, enablePivot: true},
+        {headerName: 'Bid Flag', field: 'bidFlag', enableRowGroup: true, enablePivot: true},
         {headerName: 'Comment', field: 'comment', editable: true},
 
         // all the other columns (visible and not grouped)
-        {headerName: 'Latest Batch', field: 'batch', cellClass: 'number', aggFunc: 'max'},
-        {headerName: 'Current', field: 'current', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Previous', field: 'previous', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Change', valueGetter: changeValueGetter, aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'PL 1', field: 'pl1', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'PL 2', field: 'pl2', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Gain-DX', field: 'gainDx', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'SX / PX', field: 'sxPx', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: '99 Out', field: '_99Out', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Submitter ID', field: 'submitterID', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Submitted Deal ID', field: 'submitterDealID', aggFunc: 'sum', cellClass: 'number', cellFormatter: numberCellFormatter}
+        {headerName: 'Latest Batch', field: 'batch', width: 200, cellClass: 'number', aggFunc: 'max', enableValue: true},
+        {headerName: 'Current', field: 'current', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Previous', field: 'previous', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Change', valueGetter: changeValueGetter, width: 200,  aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'PL 1', field: 'pl1', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'PL 2', field: 'pl2', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Gain-DX', field: 'gainDx', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'SX / PX', field: 'sxPx', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: '99 Out', field: '_99Out', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Submitter ID', field: 'submitterID', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
+        {headerName: 'Submitted Deal ID', field: 'submitterDealID', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter}
     ];
 }
 
@@ -73,9 +73,11 @@ function changeValueGetter(params) {
     return params.data.previous - params.data.current;
 }
 
+var globalRowData;
+
 // build up the test data, creates approx 50,000 rows
 function createRowData() {
-    var rowData = [];
+    globalRowData = [];
     var thisBatch = nextBatchId++;
     for (var i = 0; i<products.length; i++) {
         var product = products[i];
@@ -92,12 +94,11 @@ function createRowData() {
                 var tradeCount = randomBetween(MAX_TRADE_COUNT, MIN_TRADE_COUNT);
                 for (var l = 0; l < tradeCount; l++) {
                     var trade = createTradeRecord(product, portfolio, book, thisBatch);
-                    rowData.push(trade);
+                    globalRowData.push(trade);
                 }
             }
         }
     }
-    return rowData;
 }
 
 // https://stackoverflow.com/questions/1527803/generating-random-whole-numbers-in-javascript-in-a-specific-range
@@ -144,18 +145,24 @@ function createTradeId() {
 }
 
 function createGridOptions() {
+    createRowData();
+
     gridOptions = {
         columnDefs: createCols(),
-        rowData: createRowData(),
+        rowData: globalRowData,
         rememberGroupStateWhenNewData: true,
         animateRows: true,
         enableColResize: true,
         enableRangeSelection: true,
         enableSorting: true,
         rowGroupPanelShow: 'always',
+        pivotPanelShow: 'always',
         suppressAggFuncInHeader: true,
+        getRowNodeId: function(data) { return data.trade; },
         defaultColDef: {
-            width: 120
+            width: 120,
+            // cellRenderer: 'animateSlide'
+            cellRenderer: 'animateShowChange'
         }
     };
     console.log('rowData.length: ' + gridOptions.rowData.length);
@@ -170,11 +177,26 @@ function add20PalmOilExistingBooks() {
         var book = books[Math.floor(Math.random()*books.length)];
         var trade = createTradeRecord('Palm Oil', portfolio, book, batch);
         newData.push(trade);
+        globalRowData.push(trade);
     }
-    gridOptions.api.addItems(newData);
+    gridOptions.api.updateRowData({
+        add: newData,
+        remove: null,
+        update: null});
 }
 
-function addToRandomProduct() {
+function randomlyChangeData() {
+    // pick some data at random to remove
+    var itemsToRemove = [];
+    for (var i = 0; i<5; i++) {
+        if (globalRowData.length === 0) { continue; }
+        var indexToRemove = Math.floor(Math.random()*globalRowData.length);
+        var itemToRemove = globalRowData[indexToRemove];
+        globalRowData.splice(indexToRemove, 1);
+        itemsToRemove.push(itemToRemove);
+    }
+
+    // create new data
     var newData = [];
     var batch = nextBatchId++;
     for (var i = 0; i<5; i++) {
@@ -184,8 +206,13 @@ function addToRandomProduct() {
         var product = products[Math.floor(Math.random()*products.length)];
         var trade = createTradeRecord(product, portfolio, book, batch);
         newData.push(trade);
+        globalRowData.push(trade);
     }
-    gridOptions.api.addItems(newData);
+
+    gridOptions.api.updateRowData({
+            add: newData,
+            remove: itemsToRemove,
+            update: null});
 }
 
 var intervalId;
@@ -197,7 +224,7 @@ function toggleFeed() {
         intervalId = null;
         document.querySelector('#toggleInterval').innerHTML = '&#9658; Start Feed';
     } else {
-        intervalId = setInterval(addToRandomProduct, 1000);
+        intervalId = setInterval(randomlyChangeData, 2000);
         document.querySelector('#toggleInterval').innerHTML = '&#9724; Stop Feed';
     }
 }
