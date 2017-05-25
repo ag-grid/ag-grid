@@ -41,6 +41,14 @@ export interface FrameworkComponentWrapper {
     wrap <A extends IComponent<any>> (frameworkComponent:{new(): any}, methodList:string[]):A
 }
 
+enum ComponentType {
+    AG_GRID, FRAMEWORK
+}
+
+interface ComponentToUse<A extends IComponent<any> & B, B> {
+    component:{new(): A}|{new(): B},
+    type:ComponentType
+}
 
 
 @Bean('componentProvider')
@@ -120,20 +128,25 @@ export class ComponentProvider {
                 mandatoryMethodList: [],
                 optionalMethodList: [],
                 defaultComponent: null
+            },
+            filterComponent:{
+                mandatoryMethodList: [],
+                optionalMethodList: [],
+                defaultComponent: null
             }
         }
     }
 
-    private newAgGridComponent<A extends IComponent<any> & B, B>
-    (holder:GridOptions | ColDef | ColGroupDef, componentName:string, defaultComponentName:string, mandatory:boolean = true): A{
-        let thisComponentConfig: ComponentConfig= this.allComponentConfig[defaultComponentName];
-        if (!thisComponentConfig){
-            if (mandatory){
-                throw Error(`Invalid component specified, there are no components of type : ${componentName} [${defaultComponentName}]`)
-            }
-            return null;
-        }
-
+    /**
+     * This method returns the underlying representation of the component to be created. ie for Javascript the
+     * underlying function where we should be calling new into. In case of the frameworks, the framework class
+     * object that represents the component to be created.
+     *
+     * This method is handy if you want to check if a component has a particular method implemented withougt
+     * having to create the method itself
+     */
+    private getComponentToUse<A extends IComponent<any> & B, B>
+    (holder:GridOptions | ColDef | ColGroupDef, componentName:string, thisComponentConfig: ComponentConfig, mandatory:boolean = true):ComponentToUse<A, B>{
         let DefaultComponent : {new(): A} = <{new(): A}>thisComponentConfig.defaultComponent;
         let CustomAgGridComponent : {new(): A} = holder ? (<any>holder)[componentName] : null;
         let FrameworkComponentRaw : {new(): B} = holder ? (<any>holder)[componentName + "Framework"] : null;
@@ -148,7 +161,7 @@ export class ComponentProvider {
 
 
         if (!FrameworkComponentRaw){
-            let ComponentToUse:{new(): IComponent<any>}= CustomAgGridComponent || DefaultComponent;
+            let ComponentToUse:{new(): A}= CustomAgGridComponent || DefaultComponent;
             if (!ComponentToUse){
                 if (mandatory){
                     throw Error ("Unexpected error loading default component for: " + componentName + " default component not found.");
@@ -156,12 +169,38 @@ export class ComponentProvider {
                     return null;
                 }
             }
-            return <A>new ComponentToUse ();
-
+            return {
+                type: ComponentType.AG_GRID,
+                component: ComponentToUse
+            }
         }
 
+        return {
+            type: ComponentType.FRAMEWORK,
+            component: FrameworkComponentRaw
+        }
+    }
+
+    private newAgGridComponent<A extends IComponent<any> & B, B>
+    (holder:GridOptions | ColDef | ColGroupDef, componentName:string, defaultComponentName:string, mandatory:boolean = true): A{
+        let thisComponentConfig: ComponentConfig= this.allComponentConfig[defaultComponentName];
+        if (!thisComponentConfig){
+            if (mandatory){
+                throw Error(`Invalid component specified, there are no components of type : ${componentName} [${defaultComponentName}]`)
+            }
+            return null;
+        }
+
+        let componentToUse:ComponentToUse<A,B> = <ComponentToUse<A,B>>this.getComponentToUse(holder, componentName, thisComponentConfig, mandatory);
+
+        if (!componentToUse) return null;
+
+        if (componentToUse.type === ComponentType.AG_GRID){
+            return <any>new componentToUse.component();
+        }
 
         //Using framework component
+        let FrameworkComponentRaw: {new(): B} = componentToUse.component;
         return <A>this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList);
     }
 
@@ -181,6 +220,9 @@ export class ComponentProvider {
         let finalParams: any = {};
         _.mergeDeep(finalParams, agGridParams);
         _.mergeDeep(finalParams, customParams);
+        if (!finalParams.api){
+            finalParams.api = this.gridOptions.api;
+        }
         return finalParams;
     }
 
@@ -201,7 +243,12 @@ export class ComponentProvider {
         return <IFloatingFilterComp<M, any, any>> this.createAgGridComponent(colDef, "floatingFilterComponent", floatingFilterToInstantiate, params, false);
     }
 
-    public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M, any>> (parent:IFilterComp, column:Column, params:IFloatingFilterParams<M, any>):IFloatingFilterWrapperComp<M, any, any, any>{
+    private getFilterComponentPrototype<A extends IComponent<any> & B, B>
+    (colDef: ColDef): ComponentToUse<A, B> {
+        return <ComponentToUse<A, B>>this.getComponentToUse(colDef, "filterComponent", this.allComponentConfig['filterComponent'], false);
+    }
+
+    public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M, any>> (column:Column, params:IFloatingFilterParams<M, any>):IFloatingFilterWrapperComp<M, any, any, any>{
         let colDef = column.getColDef();
 
         if (colDef.suppressFilter){
@@ -225,10 +272,13 @@ export class ComponentProvider {
             suppressFilterButton: this.getParams(colDef, 'floatingFilterComponent', params).suppressFilterButton
         };
 
-        if (!floatingFilter && !parent.getModelAsString){
-            return this.newEmptyFloatingFilterWrapperComponent(column);
-        }
-        if (!floatingFilter && parent.getModelAsString){
+        if (!floatingFilter){
+            let filterComponent:ComponentToUse<any, any> = this.getFilterComponentPrototype(colDef);
+
+            if (filterComponent && !filterComponent.component.prototype.getModelAsString){
+                return this.newEmptyFloatingFilterWrapperComponent(column);
+            }
+
             let rawModelFn = params.currentParentModel;
             params.currentParentModel = ():M=>{
                 let parent:IFilterComp = <any>this.filterManager.getFilterComponent(column);
@@ -236,6 +286,7 @@ export class ComponentProvider {
             };
             floatingFilterWrapperComponentParams.floatingFilterComp = this.newFloatingFilterComponent('readModelAsString', colDef, params);
         }
+
 
         return <IFloatingFilterWrapperComp<any, any, any, any>> this.createAgGridComponent(colDef, "floatingFilterWrapperComponent", "floatingFilterWrapperComponent", floatingFilterWrapperComponentParams);
     }

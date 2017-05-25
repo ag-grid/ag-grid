@@ -9,11 +9,13 @@ import {IDateComp, IDateParams} from "../rendering/dateComponent";
 import {ComponentProvider} from "../componentProvider";
 import {Component} from "../widgets/component";
 import {Constants} from "../constants";
+import {Column} from "../entities/column";
 
 export interface FloatingFilterChange{
 }
 
 export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
+    column:Column,
     onFloatingFilterChanged:(change:F|M)=>void;
     currentParentModel:()=>M;
     suppressFilterButton: boolean;
@@ -46,6 +48,10 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
         this.currentParentModel = params.currentParentModel;
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'input', this.syncUpWithParentFilter.bind(this));
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'keypress', this.checkApply.bind(this));
+        let columnDef = (<any>params.column.getDefinition());
+        if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange'){
+            this.eColumnFloatingFilter.readOnly = true;
+        }
     }
 
     abstract asParentModel ():M;
@@ -145,6 +151,8 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
 }
 
 export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<SerializedNumberFilter, IFloatingFilterParams<SerializedNumberFilter, BaseFloatingFilterChange<SerializedNumberFilter>>>{
+
+
     asFloatingFilterText(parentModel: SerializedNumberFilter): string {
         let rawParentModel = this.currentParentModel();
         if (!parentModel && !rawParentModel) return '';

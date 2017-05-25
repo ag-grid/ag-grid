@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "../../entities/rowNode";
@@ -30,6 +30,12 @@ export declare class InMemoryRowModel implements IInMemoryRowModel {
     private rowsToDisplay;
     private nodeManager;
     init(): void;
+    isLastRowFound(): boolean;
+    getRowCount(): number;
+    getRowBounds(index: number): {
+        rowTop: number;
+        rowHeight: number;
+    };
     private onRowGroupOpened();
     private onFilterChanged();
     private onSortChanged();
@@ -44,10 +50,11 @@ export declare class InMemoryRowModel implements IInMemoryRowModel {
     getRow(index: number): RowNode;
     isRowPresent(rowNode: RowNode): boolean;
     getVirtualRowCount(): number;
-    getRowCount(): number;
+    getPageFirstRow(): number;
+    getPageLastRow(): number;
     getRowIndexAtPixel(pixelToMatch: number): number;
     private isRowInPixel(rowNode, pixelToMatch);
-    getRowCombinedHeight(): number;
+    getCurrentPageHeight(): number;
     forEachLeafNode(callback: Function): void;
     forEachNode(callback: Function): void;
     forEachNodeAfterFilter(callback: Function): void;

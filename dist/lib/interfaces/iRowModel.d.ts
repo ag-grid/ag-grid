@@ -1,18 +1,26 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "../entities/rowNode";
 export interface IRowModel {
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode;
-    /** Returns the total row count. */
+    /** Returns the first and last rows to render. */
+    getPageFirstRow(): number;
+    getPageLastRow(): number;
+    /** This is legacy, not used by ag-Grid, but keeping for backward compatibility */
     getRowCount(): number;
     /** Returns the row index at the given pixel */
     getRowIndexAtPixel(pixel: number): number;
     /** Returns total height of all the rows - used to size the height of the grid div that contains the rows */
-    getRowCombinedHeight(): number;
+    getCurrentPageHeight(): number;
     /** Returns true if the provided rowNode is in the list of rows to render */
     isRowPresent(rowNode: RowNode): boolean;
+    /** Returns row top and bottom for a given row */
+    getRowBounds(index: number): {
+        rowTop: number;
+        rowHeight: number;
+    };
     /** Add an item at the specified location */
     insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void;
     /** Remove an item from the specified location */
@@ -32,4 +40,10 @@ export interface IRowModel {
     /** The base class returns the type. We use this instead of 'instanceof' as the client might provide
      * their own implementation of the models in the future. */
     getType(): string;
+    /**
+     * It tells us if this row model knows about the last row that it can produce. This is used by the
+     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is
+     * not shown. This is always true for InMemoryRowModel. It toggles for InfiniteRowModel.
+     */
+    isLastRowFound(): boolean;
 }

@@ -76,20 +76,20 @@ export class Events {
 
     public static EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
 
-    /** 3 events for filtering. The grid LISTENS for filterChanged, and does the filter here. The before and after
-     * are for the client, if it wants to do something before or after the filter getting applied. */
-    public static EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
+    /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */
     public static EVENT_FILTER_CHANGED = 'filterChanged';
-    public static EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
+    // See AG-471
+    public static DEPRECATED_EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
+    /** deprecated event */
+    public static DEPRECATED_EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
 
     /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
     public static EVENT_FILTER_MODIFIED = 'filterModified';
 
-    /** 3 events for sorting. The grid LISTENS for sortChanged, and does the filter here. The before and after
-     * are for the client, if it wants to do something before or after the sort getting applied. */
-    public static EVENT_BEFORE_SORT_CHANGED = 'beforeSortChanged';
     public static EVENT_SORT_CHANGED = 'sortChanged';
-    public static EVENT_AFTER_SORT_CHANGED = 'afterSortChanged';
+    /** deprecated events */
+    public static DEPRECATED_EVENT_BEFORE_SORT_CHANGED = 'beforeSortChanged';
+    public static DEPRECATED_EVENT_AFTER_SORT_CHANGED = 'afterSortChanged';
 
     /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */
     public static EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
@@ -128,9 +128,13 @@ export class Events {
 
     /** All the events from here down are experimental, should not be documented or used by ag-Grid customers */
 
-    public static EVENT_PAGINATION_RESET = 'paginationReset';
-    public static EVENT_PAGINATION_PAGE_LOADED = 'paginationPageLoaded';
-    public static EVENT_PAGINATION_PAGE_REQUESTED = 'paginationPageRequested';
+    public static EVENT_PAGINATION_CHANGED = 'paginationChanged';
+
+    public static EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
+
+    public static DEPRECATED_EVENT_PAGINATION_RESET = 'paginationReset';
+    public static DEPRECATED_EVENT_PAGINATION_PAGE_LOADED = 'paginationPageLoaded';
+    public static DEPRECATED_EVENT_PAGINATION_PAGE_REQUESTED = 'paginationPageRequested';
 
     // not documented, as it's experimental, don't want people with dependencies on this
     public static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
@@ -159,6 +163,8 @@ export interface ModelUpdatedEvent {
     /** If true, then this update was a result of setRowData() getting called. This
      * gets the grid to scroll to the top again. */
     newData: boolean;
+    /** True when pagination and a new page is navigated to. */
+    newPage: boolean;
 }
 
 export interface CellEvent {

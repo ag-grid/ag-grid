@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,7 +33,13 @@ var ValueService = (function () {
         this.initialised = true;
     };
     ValueService.prototype.getValue = function (column, node) {
-        return this.getValueUsingSpecificData(column, node.data, node);
+        var valueUsingSpecificData = this.getValueUsingSpecificData(column, node.data, node);
+        if (valueUsingSpecificData != null) {
+            return valueUsingSpecificData;
+        }
+        if (node.group && column.getColId() === node.field)
+            return node.key;
+        return null;
     };
     ValueService.prototype.getValueUsingSpecificData = function (column, data, node) {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.

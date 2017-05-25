@@ -1,14 +1,14 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { IFilterParams } from "../interfaces/iFilter";
-import { Comparator, ScalarBaseFilter } from "./baseFilter";
-export interface SerializedNumberFilter {
+import { SerializedFilter } from "../interfaces/iFilter";
+import { Comparator, IScalarFilterParams, ScalarBaseFilter } from "./baseFilter";
+export interface SerializedNumberFilter extends SerializedFilter {
     filter: number;
     filterTo: number;
     type: string;
 }
-export declare class NumberFilter extends ScalarBaseFilter<number, IFilterParams, SerializedNumberFilter> {
+export declare class NumberFilter extends ScalarBaseFilter<number, IScalarFilterParams, SerializedNumberFilter> {
     static EQUALS: string;
     static NOT_EQUAL: string;
     static LESS_THAN_OR_EQUAL: string;

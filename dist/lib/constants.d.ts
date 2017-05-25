@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 export declare class Constants {
@@ -8,6 +8,8 @@ export declare class Constants {
     static STEP_MAP: number;
     static STEP_AGGREGATE: number;
     static STEP_PIVOT: number;
+    static STEP_PAGINATE: number;
+    static STEP_SET_HEIGHTS: number;
     static ROW_BUFFER_SIZE: number;
     static LAYOUT_INTERVAL: number;
     static KEY_BACKSPACE: number;
@@ -39,7 +41,8 @@ export declare class Constants {
     static KEY_CTRL_RIGHT_NAME: string;
     static KEY_CTRL_DOWN_NAME: string;
     static ROW_MODEL_TYPE_PAGINATION: string;
-    static ROW_MODEL_TYPE_VIRTUAL: string;
+    static ROW_MODEL_TYPE_VIRTUAL_DEPRECATED: string;
+    static ROW_MODEL_TYPE_INFINITE: string;
     static ROW_MODEL_TYPE_VIEWPORT: string;
     static ROW_MODEL_TYPE_NORMAL: string;
     static ROW_MODEL_TYPE_ENTERPRISE: string;

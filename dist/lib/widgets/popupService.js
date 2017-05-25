@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -76,6 +76,7 @@ var PopupService = (function () {
             y: params.mouseEvent.clientY - parentRect.top,
             keepWithinBounds: true
         });
+        this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
     };
     PopupService.prototype.positionPopupUnderComponent = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
@@ -89,6 +90,21 @@ var PopupService = (function () {
             y: sourceRect.top - parentRect.top + sourceRect.height,
             keepWithinBounds: params.keepWithinBounds
         });
+        this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
+    };
+    PopupService.prototype.callPostProcessPopup = function (ePopup, eventSource, mouseEvent, type, column, rowNode) {
+        var callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
+        if (callback) {
+            var params = {
+                column: column,
+                rowNode: rowNode,
+                ePopup: ePopup,
+                type: type,
+                eventSource: eventSource,
+                mouseEvent: mouseEvent
+            };
+            callback(params);
+        }
     };
     PopupService.prototype.positionPopupOverComponent = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
@@ -102,6 +118,7 @@ var PopupService = (function () {
             y: sourceRect.top - parentRect.top,
             keepWithinBounds: params.keepWithinBounds
         });
+        this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
     };
     PopupService.prototype.positionPopup = function (params) {
         var x = params.x;
@@ -197,7 +214,7 @@ var PopupService = (function () {
             eChild.addEventListener('touchstart', consumeTouchClick);
             //eChild.addEventListener('mousedown', consumeClick);
         }, 0);
-        // var timeOfMouseEventOnChild = new Date().getTime();
+        // let timeOfMouseEventOnChild = new Date().getTime();
         var childMouseClick = null;
         var childTouch = null;
         function hidePopupOnEsc(event) {

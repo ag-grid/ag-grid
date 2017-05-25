@@ -11,6 +11,8 @@ import {SvgFactory} from "../../svgFactory";
 import {EventService} from "../../eventService";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {Events} from "../../events";
+import {ColumnApi} from "../../columnController/columnController";
+import {GridApi} from "../../gridApi";
 
 export interface IHeaderParams {
     column: Column;
@@ -20,7 +22,9 @@ export interface IHeaderParams {
     showColumnMenu: (source:HTMLElement)=>void;
     progressSort: (multiSort?: boolean)=>void;
     setSort: (sort: string, multiSort?: boolean)=>void;
-    eventService: EventService
+    columnApi: ColumnApi,
+    api: GridApi,
+    context: any
 }
 
 export interface IHeader {
@@ -36,7 +40,7 @@ var svgFactory = SvgFactory.getInstance();
 export class HeaderComp extends Component implements IHeaderComp {
 
     private static TEMPLATE =
-        '<div>' +
+        '<div class="ag-cell-label-container">' +
         '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
         '  <div ref="eLabel" class="ag-header-cell-label">' +
         '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +

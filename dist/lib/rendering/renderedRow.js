@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,37 @@ var cellRendererFactory_1 = require("./cellRendererFactory");
 var gridPanel_1 = require("../gridPanel/gridPanel");
 var beanStub_1 = require("../context/beanStub");
 var columnAnimationService_1 = require("./columnAnimationService");
+var paginationProxy_1 = require("../rowModels/paginationProxy");
+var component_1 = require("../widgets/component");
+var svgFactory_1 = require("../svgFactory");
+var componentAnnotations_1 = require("../widgets/componentAnnotations");
+var svgFactory = svgFactory_1.SvgFactory.getInstance();
+var TempStubCell = (function (_super) {
+    __extends(TempStubCell, _super);
+    function TempStubCell() {
+        return _super.call(this, TempStubCell.TEMPLATE) || this;
+    }
+    TempStubCell.prototype.init = function (params) {
+        var eLoadingIcon = utils_1.Utils.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null, svgFactory.createGroupLoadingIcon);
+        this.eLoadingIcon.appendChild(eLoadingIcon);
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
+    };
+    return TempStubCell;
+}(component_1.Component));
+TempStubCell.TEMPLATE = "<div class=\"ag-stub-cell\">\n            <span class=\"ag-loading-icon\" ref=\"eLoadingIcon\"></span>\n            <span class=\"ag-loading-text\" ref=\"eLoadingText\"></span>\n        </div>";
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], TempStubCell.prototype, "gridOptionsWrapper", void 0);
+__decorate([
+    componentAnnotations_1.RefSelector('eLoadingIcon'),
+    __metadata("design:type", HTMLElement)
+], TempStubCell.prototype, "eLoadingIcon", void 0);
+__decorate([
+    componentAnnotations_1.RefSelector('eLoadingText'),
+    __metadata("design:type", HTMLElement)
+], TempStubCell.prototype, "eLoadingText", void 0);
 var RenderedRow = (function (_super) {
     __extends(RenderedRow, _super);
     function RenderedRow(parentScope, rowRenderer, bodyContainerComp, fullWidthContainerComp, pinnedLeftContainerComp, pinnedRightContainerComp, node, animateIn) {
@@ -70,7 +101,20 @@ var RenderedRow = (function (_super) {
         _this.animateIn = animateIn;
         return _this;
     }
+    RenderedRow.prototype.setupRowStub = function (animateInRowTop) {
+        this.fullWidthRow = true;
+        this.fullWidthCellRenderer = TempStubCell;
+        if (utils_1.Utils.missing(this.fullWidthCellRenderer)) {
+            console.warn("ag-Grid: you need to provide a fullWidthCellRenderer if using isFullWidthCell()");
+        }
+        this.createFullWidthRow(animateInRowTop);
+    };
     RenderedRow.prototype.setupRowContainers = function (animateInRowTop) {
+        // fixme: hack - to get loading working for Enterprise Model
+        if (this.rowNode.stub) {
+            this.setupRowStub(animateInRowTop);
+            return;
+        }
         var isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
         var isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
         var isGroupSpanningRow = this.rowNode.group && this.gridOptionsWrapper.isGroupUseEntireRow();
@@ -97,12 +141,11 @@ var RenderedRow = (function (_super) {
         return result;
     };
     RenderedRow.prototype.addDomData = function (eRowContainer) {
-        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
-        var gridCellNoType = eRowContainer;
-        gridCellNoType[domDataKey] = {
-            renderedRow: this
-        };
-        this.addDestroyFunc(function () { gridCellNoType[domDataKey] = null; });
+        var _this = this;
+        this.gridOptionsWrapper.setDomData(eRowContainer, RenderedRow.DOM_DATA_KEY_RENDERED_ROW, this);
+        this.addDestroyFunc(function () {
+            _this.gridOptionsWrapper.setDomData(eRowContainer, RenderedRow.DOM_DATA_KEY_RENDERED_ROW, null);
+        });
     };
     RenderedRow.prototype.setupFullWidthContainers = function (animateInRowTop) {
         this.fullWidthRow = true;
@@ -195,7 +238,6 @@ var RenderedRow = (function (_super) {
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext()
         });
-        this.addDataChangedListener();
         this.initialised = true;
     };
     RenderedRow.prototype.stopRowEditing = function (cancel) {
@@ -255,16 +297,6 @@ var RenderedRow = (function (_super) {
         this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-editing', value); });
         var event = value ? events_1.Events.EVENT_ROW_EDITING_STARTED : events_1.Events.EVENT_ROW_EDITING_STOPPED;
         this.mainEventService.dispatchEvent(event, { node: this.rowNode });
-    };
-    // because data can change, especially in virtual pagination and viewport row models, need to allow setting
-    // styles and classes after the data has changed
-    RenderedRow.prototype.addDataChangedListener = function () {
-        var _this = this;
-        var dataChangedListener = function () {
-            _this.addStyleFromRowStyleFunc();
-            _this.addClassesFromRowClass();
-        };
-        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, dataChangedListener);
     };
     RenderedRow.prototype.angular1Compile = function (element) {
         if (this.scope) {
@@ -467,8 +499,14 @@ var RenderedRow = (function (_super) {
     };
     RenderedRow.prototype.addCellFocusedListener = function () {
         this.addDestroyableEventListener(this.mainEventService, events_1.Events.EVENT_CELL_FOCUSED, this.setRowFocusClasses.bind(this));
+        this.addDestroyableEventListener(this.mainEventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_ROW_INDEX_CHANGED, this.setRowFocusClasses.bind(this));
         this.setRowFocusClasses();
+    };
+    RenderedRow.prototype.onPaginationChanged = function () {
+        // it is possible this row is in the new page, but the page number has changed, which means
+        // it needs to reposition itself relative to the new page
+        this.onTopChanged();
     };
     RenderedRow.prototype.forEachRenderedCell = function (callback) {
         utils_1.Utils.iterateObject(this.renderedCells, function (key, renderedCell) {
@@ -483,14 +521,23 @@ var RenderedRow = (function (_super) {
             var animate = false;
             var newData = true;
             _this.forEachRenderedCell(function (renderedCell) { return renderedCell.refreshCell(animate, newData); });
-            // check for selected also, as this could be after lazy loading of the row data, in which csae
+            // check for selected also, as this could be after lazy loading of the row data, in which case
             // the id might of just gotten set inside the row and the row selected state may of changed
             // as a result. this is what happens when selected rows are loaded in virtual pagination.
+            // - niall note - since moving to the stub component, this may no longer be true, as replacing
+            // the stub component now replaces the entire row
             _this.onRowSelected();
+            // as data has changed, then the style and class needs to be recomputed
+            _this.addStyleFromRowStyleFunc();
+            _this.addClassesFromRowClass();
         };
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
     };
     RenderedRow.prototype.onTopChanged = function () {
+        // top is not used in forPrint, as the rows are just laid out naturally
+        if (this.gridOptionsWrapper.isForPrint()) {
+            return;
+        }
         // console.log(`top changed for ${this.rowNode.id} = ${this.rowNode.rowTop}`);
         this.setRowTop(this.rowNode.rowTop);
     };
@@ -498,7 +545,14 @@ var RenderedRow = (function (_super) {
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
         if (utils_1.Utils.exists(pixels)) {
-            var topPx = pixels + "px";
+            var pixelsWithOffset = void 0;
+            if (this.rowNode.isFloating()) {
+                pixelsWithOffset = pixels;
+            }
+            else {
+                pixelsWithOffset = pixels - this.paginationProxy.getPixelOffset();
+            }
+            var topPx = pixelsWithOffset + "px";
             this.eAllRowContainers.forEach(function (row) { return row.style.top = topPx; });
         }
     };
@@ -925,6 +979,9 @@ var RenderedRow = (function (_super) {
                 classes.push('ag-row-level-0');
             }
         }
+        if (this.rowNode.stub) {
+            classes.push('ag-row-stub');
+        }
         if (this.fullWidthRow) {
             classes.push('ag-full-width-row');
         }
@@ -972,6 +1029,7 @@ var RenderedRow = (function (_super) {
     return RenderedRow;
 }(beanStub_1.BeanStub));
 RenderedRow.EVENT_RENDERED_ROW_REMOVED = 'renderedRowRemoved';
+RenderedRow.DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
 __decorate([
     context_1.Autowired('gridOptionsWrapper'),
     __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
@@ -1008,6 +1066,10 @@ __decorate([
     context_1.Autowired('gridPanel'),
     __metadata("design:type", gridPanel_1.GridPanel)
 ], RenderedRow.prototype, "gridPanel", void 0);
+__decorate([
+    context_1.Autowired('paginationProxy'),
+    __metadata("design:type", paginationProxy_1.PaginationProxy)
+], RenderedRow.prototype, "paginationProxy", void 0);
 __decorate([
     context_1.PostConstruct,
     __metadata("design:type", Function),

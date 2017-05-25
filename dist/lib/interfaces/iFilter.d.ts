@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -46,6 +46,9 @@ export interface IFilter {
      */
     onFloatingFilterChanged?(change: any): void;
 }
+export interface SerializedFilter {
+    filterType: string;
+}
 export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
 }
 export interface IDoesFilterPassParams {
@@ -65,4 +68,5 @@ export interface IFilterParams {
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean;
     context: any;
     $scope: any;
+    filterOptions?: string[];
 }

@@ -4,7 +4,7 @@ import {IComponent} from "../../interfaces/iComponent";
 import {SvgFactory} from "../../svgFactory";
 import {Utils as _} from "../../utils";
 import {ColumnGroup} from "../../entities/columnGroup";
-import {ColumnController} from "../../columnController/columnController";
+import {ColumnApi, ColumnController} from "../../columnController/columnController";
 import {FilterManager} from "../../filter/filterManager";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {Autowired, PostConstruct} from "../../context/context";
@@ -12,13 +12,17 @@ import {DropTarget, DragAndDropService} from "../../dragAndDrop/dragAndDropServi
 import {TouchListener} from "../../widgets/touchListener";
 import {RefSelector, Listener} from "../../widgets/componentAnnotations";
 import {OriginalColumnGroup} from "../../entities/originalColumnGroup";
+import {GridApi} from "../../gridApi";
 
 var svgFactory = SvgFactory.getInstance();
 
 export interface IHeaderGroupParams {
     columnGroup: ColumnGroup;
     displayName: string;
-    setExpanded: (expanded:boolean)=>void
+    setExpanded: (expanded:boolean)=>void;
+    api: GridApi,
+    columnApi: ColumnApi,
+    context: any
 }
 
 export interface IHeaderGroup {

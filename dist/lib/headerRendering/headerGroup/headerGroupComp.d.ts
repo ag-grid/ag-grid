@@ -1,13 +1,18 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Component } from "../../widgets/component";
 import { IComponent } from "../../interfaces/iComponent";
 import { ColumnGroup } from "../../entities/columnGroup";
+import { ColumnApi } from "../../columnController/columnController";
+import { GridApi } from "../../gridApi";
 export interface IHeaderGroupParams {
     columnGroup: ColumnGroup;
     displayName: string;
     setExpanded: (expanded: boolean) => void;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
 }
 export interface IHeaderGroup {
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62,11 +62,13 @@ var FlattenStage = (function () {
             return;
         }
         var groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
+        var hideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents();
         for (var i = 0; i < rowsToFlatten.length; i++) {
             var rowNode = rowsToFlatten[i];
             var skipBecauseSuppressRow = groupSuppressRow && rowNode.group;
             var skipBecauseReduce = reduce && !rowNode.group;
-            var skipGroupNode = skipBecauseReduce || skipBecauseSuppressRow;
+            var skipBecauseOpen = hideOpenParents && rowNode.expanded;
+            var skipGroupNode = skipBecauseReduce || skipBecauseSuppressRow || skipBecauseOpen;
             if (!skipGroupNode) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop);
             }

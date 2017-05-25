@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,6 +34,7 @@ var events_1 = require("../../events");
 var eventService_1 = require("../../eventService");
 var constants_1 = require("../../constants");
 var selectionController_1 = require("../../selectionController");
+var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var SelectAllFeature = (function (_super) {
     __extends(SelectAllFeature, _super);
     function SelectAllFeature(cbSelectAll, column) {
@@ -148,20 +149,35 @@ var SelectAllFeature = (function (_super) {
         }
     };
     SelectAllFeature.prototype.isCheckboxSelection = function () {
-        var headerCheckboxSelection = this.column.getColDef().headerCheckboxSelection;
-        if (headerCheckboxSelection === true) {
-            return true;
-        }
-        if (typeof headerCheckboxSelection === 'function') {
-            var func = headerCheckboxSelection;
-            return func({
+        var result = this.column.getColDef().headerCheckboxSelection;
+        if (typeof result === 'function') {
+            var func = result;
+            result = func({
                 column: this.column,
                 colDef: this.column.getColDef(),
                 columnApi: this.columnApi,
                 api: this.gridApi
             });
         }
-        return false;
+        if (result) {
+            if (this.gridOptionsWrapper.isRowModelEnterprise()) {
+                console.warn('headerCheckboxSelection is not supported for Enterprise Row Model');
+                return false;
+            }
+            if (this.gridOptionsWrapper.isRowModelInfinite()) {
+                console.warn('headerCheckboxSelection is not supported for Infinite Row Model');
+                return false;
+            }
+            if (this.gridOptionsWrapper.isRowModelViewport()) {
+                console.warn('headerCheckboxSelection is not supported for Viewport Row Model');
+                return false;
+            }
+            // otherwise the row model is compatible, so return true
+            return true;
+        }
+        else {
+            return false;
+        }
     };
     return SelectAllFeature;
 }(beanStub_1.BeanStub));
@@ -185,6 +201,10 @@ __decorate([
     context_1.Autowired('selectionController'),
     __metadata("design:type", selectionController_1.SelectionController)
 ], SelectAllFeature.prototype, "selectionController", void 0);
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], SelectAllFeature.prototype, "gridOptionsWrapper", void 0);
 __decorate([
     context_1.PostConstruct,
     __metadata("design:type", Function),

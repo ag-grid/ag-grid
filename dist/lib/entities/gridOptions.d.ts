@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./rowNode";
@@ -11,7 +11,8 @@ import { IAggFunc, ColGroupDef, ColDef } from "./colDef";
 import { IDatasource } from "../rowModels/iDatasource";
 import { GridCellDef } from "./gridCell";
 import { IDateComp } from "../rendering/dateComponent";
-import { IEnterpriseDatasource } from "../rowModels/enterprise/enterpriseRowModel";
+import { IEnterpriseDatasource } from "../interfaces/iEnterpriseDatasource";
+import { CsvExportParams, ProcessCellForExportParams } from "../exportParams";
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
  ****************************************************************/
@@ -44,12 +45,14 @@ export interface GridOptions {
     enableGroupEdit?: boolean;
     suppressMiddleClickScrolls?: boolean;
     suppressPreventDefaultOnMouseWheel?: boolean;
+    suppressScrollOnNewData?: boolean;
     colWidth?: number;
     minColWidth?: number;
     maxColWidth?: number;
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
+    stopEditingWhenGridLosesFocus?: boolean;
     debug?: boolean;
     icons?: any;
     angularCompileRows?: boolean;
@@ -68,6 +71,7 @@ export interface GridOptions {
     suppressUseColIdForGroups?: boolean;
     suppressCopyRowsToClipboard?: boolean;
     suppressAggFuncInHeader?: boolean;
+    suppressAggAtRootLevel?: boolean;
     suppressFocusAfterRefresh?: boolean;
     rowModelType?: string;
     pivotMode?: boolean;
@@ -76,6 +80,7 @@ export interface GridOptions {
     rowGroupPanelShow?: string;
     pivotPanelShow?: string;
     suppressContextMenu?: boolean;
+    allowContextMenuWithControlKey?: boolean;
     suppressMenuFilterPanel?: boolean;
     suppressMenuMainPanel?: boolean;
     suppressMenuColumnPanel?: boolean;
@@ -84,6 +89,7 @@ export interface GridOptions {
     viewportRowModelBufferSize?: number;
     enableCellChangeFlash?: boolean;
     quickFilterText?: string;
+    cacheQuickFilter?: boolean;
     aggFuncs?: {
         [key: string]: IAggFunc;
     };
@@ -92,14 +98,19 @@ export interface GridOptions {
     functionsReadOnly?: boolean;
     functionsPassive?: boolean;
     maxConcurrentDatasourceRequests?: number;
-    maxPagesInCache?: number;
-    paginationOverflowSize?: number;
-    paginationInitialRowCount?: number;
+    maxBlocksInCache?: number;
+    purgeClosedRowNodes?: boolean;
+    cacheOverflowSize?: number;
+    infiniteInitialRowCount?: number;
     paginationPageSize?: number;
+    cacheBlockSize?: number;
+    paginationAutoPageSize?: boolean;
     paginationStartPage?: number;
     suppressPaginationPanel?: boolean;
+    pagination?: boolean;
     editType?: string;
     suppressTouch?: boolean;
+    suppressAsyncEvents?: boolean;
     embedFullWidthRows?: boolean;
     excelStyles?: any[];
     floatingFilter?: boolean;
@@ -111,6 +122,7 @@ export interface GridOptions {
     suppressScrollLag?: boolean;
     defaultColGroupDef?: ColGroupDef;
     defaultColDef?: ColDef;
+    defaultExportParams?: CsvExportParams;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. FOR FUCKS SAKE! *
      ****************************************************************/
@@ -121,6 +133,8 @@ export interface GridOptions {
     groupUseEntireRow?: boolean;
     groupRemoveSingleChildren?: boolean;
     groupSuppressRow?: boolean;
+    groupHideOpenParents?: boolean;
+    groupMultiAutoColumn?: boolean;
     groupSuppressBlankHeader?: boolean;
     forPrint?: boolean;
     groupColumnDef?: ColDef;
@@ -150,9 +164,14 @@ export interface GridOptions {
     viewportDatasource?: IViewportDatasource;
     enterpriseDatasource?: IEnterpriseDatasource;
     headerHeight?: number;
+    pivotHeaderHeight?: number;
+    groupHeaderHeight?: number;
+    pivotGroupHeaderHeight?: number;
+    floatingFiltersHeight?: number;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
+    postProcessPopup?: (params: PostProcessPopupParams) => void;
     dateComponent?: {
         new (): IDateComp;
     };
@@ -243,9 +262,9 @@ export interface GridOptions {
     onFilterChanged?(event?: any): void;
     onAfterFilterChanged?(event?: any): void;
     onFilterModified?(event?: any): void;
-    onBeforeSortChanged?(event?: any): void;
-    onSortChanged?(event?: any): void;
-    onAfterSortChanged?(event?: any): void;
+    onBeforeSortChanged?(): void;
+    onSortChanged?(): void;
+    onAfterSortChanged?(): void;
     onVirtualRowRemoved?(event?: any): void;
     onRowClicked?(event?: any): void;
     onRowDoubleClicked?(event?: any): void;
@@ -295,6 +314,7 @@ export interface MenuItemDef {
     checked?: boolean;
     icon?: HTMLElement | string;
     subMenu?: (MenuItemDef | string)[];
+    cssClasses?: string[];
 }
 export interface GetMainMenuItemsParams {
     column: Column;
@@ -320,20 +340,6 @@ export interface ProcessRowParams {
     addRenderedRowListener: (eventType: string, listener: Function) => void;
     context: any;
 }
-export interface ProcessCellForExportParams {
-    value: any;
-    node: RowNode;
-    column: Column;
-    api: GridApi;
-    columnApi: ColumnApi;
-    context: any;
-}
-export interface ProcessHeaderForExportParams {
-    column: Column;
-    api: GridApi;
-    columnApi: ColumnApi;
-    context: any;
-}
 export interface NavigateToNextCellParams {
     key: number;
     previousCellDef: GridCellDef;
@@ -345,4 +351,12 @@ export interface TabToNextCellParams {
     editing: boolean;
     previousCellDef: GridCellDef;
     nextCellDef: GridCellDef;
+}
+export interface PostProcessPopupParams {
+    column?: Column;
+    rowNode?: RowNode;
+    ePopup: HTMLElement;
+    type: string;
+    eventSource?: HTMLElement;
+    mouseEvent?: MouseEvent | Touch;
 }

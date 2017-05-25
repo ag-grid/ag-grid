@@ -4,7 +4,7 @@ import {Column} from "../../entities/column";
 import {Utils as _} from "../../utils";
 import {DropTarget, DragAndDropService, DragSource, DragSourceType} from "../../dragAndDrop/dragAndDropService";
 import {IHeaderParams, IHeaderComp} from "./headerComp";
-import {ColumnController} from "../../columnController/columnController";
+import {ColumnApi, ColumnController} from "../../columnController/columnController";
 import {HorizontalDragService} from "../horizontalDragService";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {CssClassApplier} from "../cssClassApplier";
@@ -37,6 +37,7 @@ export class HeaderWrapperComp extends Component {
     @Autowired('context') private context: Context;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('componentProvider') private componentProvider: ComponentProvider;
@@ -129,7 +130,9 @@ export class HeaderWrapperComp extends Component {
             setSort: (sort: string, multiSort?: boolean) => {
                 this.sortController.setSortForColumn(this.column, sort, !!multiSort);
             },
-            eventService: this.eventService
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            context: this.gridOptionsWrapper.getContext()
         };
         let headerComp: IHeaderComp = this.componentProvider.newHeaderComponent(params);
 

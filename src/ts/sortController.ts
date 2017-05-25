@@ -54,9 +54,7 @@ export class SortController {
     }
 
     private dispatchSortChangedEvents(): void {
-        this.eventService.dispatchEvent(Events.EVENT_BEFORE_SORT_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_SORT_CHANGED);
-        this.eventService.dispatchEvent(Events.EVENT_AFTER_SORT_CHANGED);
     }
 
     private clearSortBarThisColumn(columnToSkip: Column): void {

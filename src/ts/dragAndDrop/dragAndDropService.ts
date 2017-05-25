@@ -360,7 +360,7 @@ export class DragAndDropService {
         var eText = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-label');
         eText.innerHTML = this.dragSource.dragItemName;
 
-        this.eGhost.style.height = this.gridOptionsWrapper.getHeaderHeight() + 'px';
+        this.eGhost.style.height = '25px';
 
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';

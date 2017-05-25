@@ -1,10 +1,11 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
 import { IComponent } from "../../interfaces/iComponent";
-import { EventService } from "../../eventService";
+import { ColumnApi } from "../../columnController/columnController";
+import { GridApi } from "../../gridApi";
 export interface IHeaderParams {
     column: Column;
     displayName: string;
@@ -13,7 +14,9 @@ export interface IHeaderParams {
     showColumnMenu: (source: HTMLElement) => void;
     progressSort: (multiSort?: boolean) => void;
     setSort: (sort: string, multiSort?: boolean) => void;
-    eventService: EventService;
+    columnApi: ColumnApi;
+    api: GridApi;
+    context: any;
 }
 export interface IHeader {
 }

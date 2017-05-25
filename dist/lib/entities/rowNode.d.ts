@@ -1,8 +1,11 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColDef } from "./colDef";
 import { Column } from "./column";
+import { RowNodeCache, RowNodeCacheParams } from "../rowModels/cache/rowNodeCache";
+import { RowNodeBlock } from "../rowModels/cache/rowNodeBlock";
+import { IEventEmitter } from "../interfaces/iEventEmitter";
 export interface SetSelectedParams {
     newValue: boolean;
     clearSelection?: boolean;
@@ -10,10 +13,11 @@ export interface SetSelectedParams {
     rangeSelect?: boolean;
     groupSelectsFiltered?: boolean;
 }
-export declare class RowNode {
+export declare class RowNode implements IEventEmitter {
     static EVENT_ROW_SELECTED: string;
     static EVENT_DATA_CHANGED: string;
     static EVENT_CELL_CHANGED: string;
+    static EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED: string;
     static EVENT_MOUSE_ENTER: string;
     static EVENT_MOUSE_LEAVE: string;
     static EVENT_HEIGHT_CHANGED: string;
@@ -65,8 +69,12 @@ export declare class RowNode {
     footer: boolean;
     /** Groups only - The field we are grouping on eg Country*/
     field: string;
+    /** Groups only - the row group column for this group */
+    rowGroupColumn: Column;
     /** Groups only - The key for the group eg Ireland, UK, USA */
     key: any;
+    /** Used by enterprise row model, true if this row node is a stub */
+    stub: boolean;
     /** All user provided nodes */
     allLeafChildren: RowNode[];
     /** Groups only - Children of this group */
@@ -81,6 +89,8 @@ export declare class RowNode {
     childrenMapped: {
         [key: string]: any;
     };
+    /** Enterprise Row Model Only - the children are in an infinite cache */
+    childrenCache: RowNodeCache<RowNodeBlock, RowNodeCacheParams>;
     /** Groups only - True if group is expanded, otherwise false */
     expanded: boolean;
     /** Groups only - If doing footers, reference to the footer node for this group */
@@ -105,6 +115,7 @@ export declare class RowNode {
     setId(id: string): void;
     clearRowTop(): void;
     setRowTop(rowTop: number): void;
+    setAllChildrenCount(allChildrenCount: number): void;
     setRowHeight(rowHeight: number): void;
     setRowIndex(rowIndex: number): void;
     setExpanded(expanded: boolean): void;
@@ -118,6 +129,7 @@ export declare class RowNode {
     private calculateSelectedFromChildrenBubbleUp();
     setSelectedInitialValue(selected: boolean): void;
     setSelected(newValue: boolean, clearSelection?: boolean, tailingNodeInSequence?: boolean): void;
+    isFloating(): boolean;
     setSelectedParams(params: SetSelectedParams): number;
     private doRowRangeSelection();
     private isParentOfNode(potentialParent);

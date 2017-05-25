@@ -59,6 +59,6 @@ export class FilterService {
                 allChildrenCount++;
             }
         });
-        rowNode.allChildrenCount = allChildrenCount;
+        rowNode.setAllChildrenCount(allChildrenCount);
     }
 }

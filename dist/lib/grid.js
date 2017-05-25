@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -42,11 +42,10 @@ var utils_1 = require("./utils");
 var filterStage_1 = require("./rowModels/inMemory/filterStage");
 var sortStage_1 = require("./rowModels/inMemory/sortStage");
 var flattenStage_1 = require("./rowModels/inMemory/flattenStage");
-var enterpriseRowModel_1 = require("./rowModels/enterprise/enterpriseRowModel");
 var focusService_1 = require("./misc/focusService");
 var cellEditorFactory_1 = require("./rendering/cellEditorFactory");
 var events_1 = require("./events");
-var virtualPageRowModel_1 = require("./rowModels/infinateScrolling/virtualPageRowModel");
+var infiniteRowModel_1 = require("./rowModels/infinite/infiniteRowModel");
 var inMemoryRowModel_1 = require("./rowModels/inMemory/inMemoryRowModel");
 var cellRendererFactory_1 = require("./rendering/cellRendererFactory");
 var cellRendererService_1 = require("./rendering/cellRendererService");
@@ -61,7 +60,12 @@ var stylingService_1 = require("./styling/stylingService");
 var columnHoverService_1 = require("./rendering/columnHoverService");
 var columnAnimationService_1 = require("./rendering/columnAnimationService");
 var componentProvider_1 = require("./componentProvider");
-var paginationService_1 = require("./rowModels/pagination/paginationService");
+var serverPaginationService_1 = require("./rowModels/pagination/serverPaginationService");
+var sortService_1 = require("./rowNodes/sortService");
+var filterService_1 = require("./rowNodes/filterService");
+var rowNodeFactory_1 = require("./rowNodes/rowNodeFactory");
+var autoGroupColService_1 = require("./columnController/autoGroupColService");
+var paginationProxy_1 = require("./rowModels/paginationProxy");
 var Grid = (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -99,22 +103,23 @@ var Grid = (function () {
         var contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
-            beans: [rowModelClass, gridApi_1.GridApi, componentProvider_1.ComponentProvider, cellRendererFactory_1.CellRendererFactory, horizontalDragService_1.HorizontalDragService, headerTemplateLoader_1.HeaderTemplateLoader, floatingRowModel_1.FloatingRowModel, dragService_1.DragService,
+            beans: [rowModelClass, paginationProxy_1.PaginationAutoPageSizeService, gridApi_1.GridApi, componentProvider_1.ComponentProvider, cellRendererFactory_1.CellRendererFactory, horizontalDragService_1.HorizontalDragService, headerTemplateLoader_1.HeaderTemplateLoader, floatingRowModel_1.FloatingRowModel, dragService_1.DragService,
                 displayedGroupCreator_1.DisplayedGroupCreator, eventService_1.EventService, gridOptionsWrapper_1.GridOptionsWrapper, selectionController_1.SelectionController,
-                filterManager_1.FilterManager, columnController_1.ColumnController, rowRenderer_1.RowRenderer,
+                filterManager_1.FilterManager, columnController_1.ColumnController, paginationProxy_1.PaginationProxy, rowRenderer_1.RowRenderer,
                 headerRenderer_1.HeaderRenderer, expressionService_1.ExpressionService, balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder, csvCreator_1.CsvCreator, downloader_1.Downloader, xmlFactory_1.XmlFactory,
                 gridSerializer_1.GridSerializer, templateService_1.TemplateService, gridPanel_1.GridPanel, popupService_1.PopupService, valueService_1.ValueService, masterSlaveService_1.MasterSlaveService,
                 logger_1.LoggerFactory, columnUtils_1.ColumnUtils, autoWidthCalculator_1.AutoWidthCalculator, popupService_1.PopupService, gridCore_1.GridCore, standardMenu_1.StandardMenuFactory,
                 dragAndDropService_1.DragAndDropService, sortController_1.SortController, columnController_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService,
-                cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, focusService_1.FocusService,
+                cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, focusService_1.FocusService, filterService_1.FilterService, rowNodeFactory_1.RowNodeFactory,
                 cellEditorFactory_1.CellEditorFactory, cellRendererService_1.CellRendererService, valueFormatterService_1.ValueFormatterService, stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService,
-                columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService, paginationService_1.PaginationService],
+                columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService, serverPaginationService_1.ServerPaginationService, sortService_1.SortService, autoGroupColService_1.AutoGroupColService],
             components: [
                 { componentName: 'AgCheckbox', theClass: agCheckbox_1.AgCheckbox }
             ],
             debug: !!gridOptions.debug
         };
-        this.context = new context_1.Context(contextParams, new logger_1.Logger('Context', contextParams.debug));
+        var isLoggingFunc = function () { return contextParams.debug; };
+        this.context = new context_1.Context(contextParams, new logger_1.Logger('Context', isLoggingFunc));
         var eventService = this.context.getBean('eventService');
         var readyEvent = {
             api: gridOptions.api,
@@ -145,6 +150,9 @@ var Grid = (function () {
                 if (rowModelType === 'viewport') {
                     console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
                 }
+                if (rowModelType === 'enterprise') {
+                    console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
+                }
             }
         }
         return inMemoryRowModel_1.InMemoryRowModel;
@@ -158,9 +166,9 @@ var Grid = (function () {
 // the default is InMemoryRowModel, which is also used for pagination.
 // the enterprise adds viewport to this list.
 Grid.RowModelClasses = {
-    virtual: virtualPageRowModel_1.VirtualPageRowModel,
+    virtual: infiniteRowModel_1.InfiniteRowModel,
+    infinite: infiniteRowModel_1.InfiniteRowModel,
     pagination: inMemoryRowModel_1.InMemoryRowModel,
-    normal: inMemoryRowModel_1.InMemoryRowModel,
-    enterprise: enterpriseRowModel_1.EnterpriseRowModel
+    normal: inMemoryRowModel_1.InMemoryRowModel
 };
 exports.Grid = Grid;

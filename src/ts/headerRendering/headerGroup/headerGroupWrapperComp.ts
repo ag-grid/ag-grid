@@ -3,7 +3,7 @@ import {Component} from "../../widgets/component";
 import {Column} from "../../entities/column";
 import {Utils as _} from "../../utils";
 import {ColumnGroup} from "../../entities/columnGroup";
-import {ColumnController} from "../../columnController/columnController";
+import {ColumnApi, ColumnController} from "../../columnController/columnController";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {HorizontalDragService} from "../horizontalDragService";
 import {Autowired, PostConstruct, Context} from "../../context/context";
@@ -13,6 +13,7 @@ import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
 import {IHeaderGroupParams, IHeaderGroupComp} from "./headerGroupComp";
 import {IComponent} from "../../interfaces/iComponent";
 import {ComponentProvider} from "../../componentProvider";
+import {GridApi} from "../../gridApi";
 
 export class HeaderGroupWrapperComp extends Component {
 
@@ -27,6 +28,8 @@ export class HeaderGroupWrapperComp extends Component {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('context') private context: Context;
     @Autowired('componentProvider') private componentProvider:ComponentProvider;
+    @Autowired('gridApi') private gridApi:GridApi;
+    @Autowired('columnApi') private columnApi:ColumnApi;
 
     private columnGroup: ColumnGroup;
     private dragSourceDropTarget: DropTarget;
@@ -71,12 +74,15 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     private appendHeaderGroupComp(displayName: string): IHeaderGroupComp {
-        let params = <IHeaderGroupParams> {
+        let params: IHeaderGroupParams = {
             displayName: displayName,
             columnGroup: this.columnGroup,
             setExpanded: (expanded:boolean)=>{
                 this.columnController.setColumnGroupOpened(this.columnGroup, expanded);
-            }
+            },
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            context: this.gridOptionsWrapper.getContext()
         };
         let headerComp = this.componentProvider.newHeaderGroupComponent(params);
         this.appendChild(headerComp);

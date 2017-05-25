@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -81,6 +81,7 @@ export declare class Utils {
     static toStringOrNull(value: any): string;
     static formatWidth(width: number | string): string;
     static formatNumberTwoDecimalPlacesAndCommas(value: number): string;
+    static formatNumberCommas(value: number): string;
     static prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void;
     /**
      * If icon provided, use this (either a string, or a function callback).
@@ -105,6 +106,9 @@ export declare class Utils {
     static getBodyHeight(): number;
     static setCheckboxState(eCheckbox: any, state: any): void;
     static traverseNodesWithKey(nodes: RowNode[], callback: (node: RowNode, key: string) => void): void;
+    /**
+     * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
+     */
     static isNumeric(value: any): boolean;
     static escape(toEscape: string): string;
     /**
@@ -214,5 +218,7 @@ export declare class NumberSequence {
     private step;
     constructor(initValue?: number, step?: number);
     next(): number;
+    peek(): number;
+    skip(count: number): void;
 }
 export declare let _: typeof Utils;

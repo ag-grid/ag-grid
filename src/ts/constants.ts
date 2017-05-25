@@ -45,8 +45,8 @@ export class Constants {
     static KEY_CTRL_DOWN_NAME = 'ctrlDown';
 
     static ROW_MODEL_TYPE_PAGINATION = 'pagination';
-    static ROW_MODEL_CLIENT_TYPE_PAGINATION = 'clientPagination';
-    static ROW_MODEL_TYPE_VIRTUAL = 'virtual';
+    static ROW_MODEL_TYPE_VIRTUAL_DEPRECATED = 'virtual';
+    static ROW_MODEL_TYPE_INFINITE = 'infinite';
     static ROW_MODEL_TYPE_VIEWPORT = 'viewport';
     static ROW_MODEL_TYPE_NORMAL = 'normal';
     static ROW_MODEL_TYPE_ENTERPRISE = 'enterprise';

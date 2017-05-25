@@ -1,15 +1,24 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { IFilterParams, IDoesFilterPassParams } from "../interfaces/iFilter";
+import { IFilterParams, IDoesFilterPassParams, SerializedFilter } from "../interfaces/iFilter";
 import { ComparableBaseFilter } from "./baseFilter";
-export interface SerializedTextFilter {
+export interface SerializedTextFilter extends SerializedFilter {
     filter: string;
     type: string;
 }
-export declare class TextFilter extends ComparableBaseFilter<string, IFilterParams, SerializedTextFilter> {
+export interface TextComparator {
+    (filter: string, gridValue: any, filterText: string): boolean;
+}
+export interface ITextFilterParams extends IFilterParams {
+    textCustomComparator?: TextComparator;
+}
+export declare class TextFilter extends ComparableBaseFilter<string, ITextFilterParams, SerializedTextFilter> {
     private eFilterTextField;
     private filterText;
+    private comparator;
+    static DEFAULT_COMPARATOR: TextComparator;
+    customInit(): void;
     modelFromFloatingFilter(from: string): SerializedTextFilter;
     getApplicableFilterTypes(): string[];
     bodyTemplate(): string;

@@ -8,14 +8,14 @@ import {_} from "../../utils";
 import {EventService} from "../../eventService";
 import {Events} from "../../events";
 import {RowRenderer} from "../../rendering/rowRenderer";
-import {ClientPaginationProxy} from "../clientPaginationProxy";
+import {PaginationProxy} from "../paginationProxy";
 
 export class PaginationComp extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('serverPaginationService') private serverPaginationService: ServerPaginationService;
-    @Autowired('clientPaginationProxy') private clientPaginationProxy: ClientPaginationProxy;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     @RefSelector('btFirst') private btFirst: HTMLButtonElement;
@@ -40,48 +40,32 @@ export class PaginationComp extends Component {
     private postConstruct(): void {
         this.setTemplate(this.getTemplate());
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_RESET, this.onPaginationReset.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_PAGE_LOADED, this.onPageLoaded.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_PAGE_REQUESTED, this.onPageRequested.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
 
         this.addDestroyableEventListener(this.btFirst, 'click', this.onBtFirst.bind(this));
         this.addDestroyableEventListener(this.btLast, 'click', this.onBtLast.bind(this));
         this.addDestroyableEventListener(this.btNext, 'click', this.onBtNext.bind(this));
         this.addDestroyableEventListener(this.btPrevious, 'click', this.onBtPrevious.bind(this));
 
-        if (this.gridOptionsWrapper.isClientPagination()) {
-            this.paginationService = this.clientPaginationProxy;
+        if (this.gridOptionsWrapper.isPagination()) {
+            this.paginationService = this.paginationProxy;
         } else {
             this.paginationService = this.serverPaginationService;
         }
 
-        // this is a hack - need to fix, seriously!!!
-        this.onPaginationReset();
-        this.onPageRequested();
-        this.onPageLoaded();
+        this.onPaginationChanged();
     }
 
-    private onPaginationReset(): void {
-        this.showSummaryPanel(false);
+    private onPaginationChanged(): void{
+        this.enableOrDisableButtons();
+        this.updateRowLabels();
+        this.setCurrentPageLabel();
         this.setTotalLabels();
     }
 
-    private showSummaryPanel(show: boolean): void {
-        _.setHidden(this.eSummaryPanel, !show);
-    }
-
-    private onPageRequested(): void {
-        this.enableOrDisableButtons();
+    private setCurrentPageLabel(): void {
         let currentPage = this.paginationService.getCurrentPage();
-        this.lbCurrent.innerHTML = this.myToLocaleString(currentPage + 1);
-    }
-
-    private onPageLoaded(): void {
-        this.enableOrDisableButtons();
-        this.updateRowLabels();
-        if (this.paginationService.isLastPageFound()) {
-            this.setTotalLabels();
-        }
+        this.lbCurrent.innerHTML = _.formatNumberCommas(currentPage + 1);
     }
 
     private getTemplate(): string {
@@ -149,7 +133,8 @@ export class PaginationComp extends Component {
         let currentPage = this.paginationService.getCurrentPage();
         let pageSize = this.paginationService.getPageSize();
         let maxRowFound = this.paginationService.isLastPageFound();
-        let rowCount = this.paginationService.getTotalRowCount();
+        let rowCount = this.paginationService.isLastPageFound() ?
+            this.paginationService.getTotalRowCount() : null;
 
         var startRow: any;
         var endRow: any;
@@ -163,10 +148,8 @@ export class PaginationComp extends Component {
                 endRow = rowCount;
             }
         }
-        this.lbFirstRowOnPage.innerHTML = this.myToLocaleString(startRow);
-        this.lbLastRowOnPage.innerHTML = this.myToLocaleString(endRow);
-
-        this.showSummaryPanel(true);
+        this.lbFirstRowOnPage.innerHTML = _.formatNumberCommas(startRow);
+        this.lbLastRowOnPage.innerHTML = _.formatNumberCommas(endRow);
     }
 
     private isZeroPagesToDisplay() {
@@ -176,27 +159,18 @@ export class PaginationComp extends Component {
     }
 
     private setTotalLabels() {
-        let maxRowFound = this.paginationService.isLastPageFound();
+        let lastPageFound = this.paginationService.isLastPageFound();
         let totalPages = this.paginationService.getTotalPages();
-        let rowCount = this.paginationService.getTotalRowCount();
+        let rowCount = this.paginationService.isLastPageFound() ?
+            this.paginationService.getTotalRowCount() : null;
 
-        if (maxRowFound) {
-            this.lbTotal.innerHTML = this.myToLocaleString(totalPages);
-            this.lbRecordCount.innerHTML = this.myToLocaleString(rowCount);
+        if (lastPageFound) {
+            this.lbTotal.innerHTML = _.formatNumberCommas(totalPages);
+            this.lbRecordCount.innerHTML = _.formatNumberCommas(rowCount);
         } else {
             var moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
             this.lbTotal.innerHTML = moreText;
             this.lbRecordCount.innerHTML = moreText;
-        }
-    }
-
-    // the native method number.toLocaleString(undefined, {minimumFractionDigits: 0}) puts in decimal places in IE
-    private myToLocaleString(input: number): string {
-        if (typeof input !== 'number') {
-            return '';
-        } else {
-            // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
-            return input.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
         }
     }
 }

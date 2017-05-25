@@ -27,7 +27,9 @@ import {Column} from "../entities/column";
 import {RowContainerComponent} from "../rendering/rowContainerComponent";
 import {GridCell} from "../entities/gridCell";
 import {RowNode} from "../entities/rowNode";
-import {ClientPaginationProxy} from "../rowModels/clientPaginationProxy";
+import {PaginationProxy} from "../rowModels/paginationProxy";
+import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
+import {RenderedCell} from "../rendering/renderedCell";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -126,7 +128,7 @@ export class GridPanel extends BeanStub {
     @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Autowired('eventService') private eventService: EventService;
 
-    @Autowired('clientPaginationProxy') private clientPaginationProxy: ClientPaginationProxy;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('dragService') private dragService: DragService;
@@ -189,6 +191,7 @@ export class GridPanel extends BeanStub {
     private lastTopPosition = -1;
 
     private animationThreadCount = 0;
+    private bodyHeight: number;
 
     // properties we use a lot, so keep reference
     private useScrollLag: boolean;
@@ -231,7 +234,7 @@ export class GridPanel extends BeanStub {
     }
 
     private showOrHideOverlay(): void {
-        if (this.clientPaginationProxy.isEmpty() && !this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
+        if (this.paginationProxy.isEmpty() && !this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
             this.showNoRowsOverlay();
         } else {
             this.hideOverlay();
@@ -278,12 +281,41 @@ export class GridPanel extends BeanStub {
         this.addMouseEvents();
         this.addKeyboardEvents();
         this.addBodyViewportListener();
+        this.addStopEditingWhenGridLosesFocus();
 
         if (this.$scope) {
             this.addAngularApplyCheck();
         }
 
         this.onDisplayedColumnsWidthChanged();
+    }
+
+    private addStopEditingWhenGridLosesFocus(): void {
+        if (this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) {
+            this.addDestroyableEventListener(this.eBody, 'focusout', (event: FocusEvent)=> {
+
+                // this is the element the focus is moving to
+                let elementWithFocus = event.relatedTarget;
+
+                // see if the element the focus is going to is part of the grid
+                let clickInsideGrid = false;
+                let pointer: any = elementWithFocus;
+
+                while (_.exists(pointer) && !clickInsideGrid) {
+
+                    let isPopup = !!this.gridOptionsWrapper.getDomData(pointer, PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER);
+                    let isBody = this.eBody == pointer;
+
+                    clickInsideGrid = isPopup || isBody;
+
+                    pointer = pointer.parentNode;
+                }
+
+                if (!clickInsideGrid) {
+                    this.rowRenderer.stopEditing();
+                }
+            })
+        }
     }
 
     private addAngularApplyCheck(): void {
@@ -328,6 +360,12 @@ export class GridPanel extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ITEMS_REMOVED, this.onRowDataChanged.bind(this));
 
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
+
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
+
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
     }
 
     private addDragListeners(): void {
@@ -396,14 +434,15 @@ export class GridPanel extends BeanStub {
 
     private getRowForEvent(event: MouseEvent | KeyboardEvent): RenderedRow {
 
-        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
         var sourceElement = _.getTarget(event);
 
         while (sourceElement) {
-            var domData = (<any>sourceElement)[domDataKey];
-            if (domData && domData.renderedRow) {
-                return <RenderedRow> domData.renderedRow;
+
+            let renderedRow = this.gridOptionsWrapper.getDomData(sourceElement, RenderedRow.DOM_DATA_KEY_RENDERED_ROW);
+            if (renderedRow) {
+                return renderedRow;
             }
+
             sourceElement = sourceElement.parentElement;
         }
 
@@ -487,8 +526,8 @@ export class GridPanel extends BeanStub {
         //where to scroll to
         let rowIndexToScrollTo = pagingKey === Constants.KEY_PAGE_HOME_NAME ?
             0:
-            this.clientPaginationProxy.getPageLastRow();
-        let rowToScrollTo: RowNode = this.clientPaginationProxy.getRow(rowIndexToScrollTo);
+            this.paginationProxy.getPageLastRow();
+        let rowToScrollTo: RowNode = this.paginationProxy.getRow(rowIndexToScrollTo);
 
 
         //***************************************************************************
@@ -512,7 +551,7 @@ export class GridPanel extends BeanStub {
     private pageVertically (pagingKey:string): void{
         if (pagingKey === Constants.KEY_CTRL_UP_NAME){
             this.performScroll({
-                rowToScrollTo: this.clientPaginationProxy.getRow(0),
+                rowToScrollTo: this.paginationProxy.getRow(0),
                 focusedRowTopDelta: 0,
                 type: ScrollType.VERTICAL
             } as VerticalScroll);
@@ -521,7 +560,7 @@ export class GridPanel extends BeanStub {
 
         if (pagingKey === Constants.KEY_CTRL_DOWN_NAME){
             this.performScroll({
-                rowToScrollTo: this.clientPaginationProxy.getRow(this.clientPaginationProxy.getPageLastRow()),
+                rowToScrollTo: this.paginationProxy.getRow(this.paginationProxy.getPageLastRow()),
                 focusedRowTopDelta: this.getPrimaryScrollViewport().offsetHeight,
                 type: ScrollType.VERTICAL
             } as VerticalScroll);
@@ -538,9 +577,9 @@ export class GridPanel extends BeanStub {
         //      b) find what is the delta of that compared to the current scroll
 
         let focusedCell : GridCell = this.focusedCellController.getFocusedCell();
-        let focusedRowNode = this.clientPaginationProxy.getRow(focusedCell.rowIndex);
+        let focusedRowNode = this.paginationProxy.getRow(focusedCell.rowIndex);
         let focusedAbsoluteTop = focusedRowNode.rowTop;
-        let selectionTopDelta = focusedAbsoluteTop - this.getPrimaryScrollViewport().scrollTop;
+        let selectionTopDelta = (focusedAbsoluteTop - this.getPrimaryScrollViewport().scrollTop) - this.paginationProxy.getPixelOffset();
 
 
         //***************************************************************************
@@ -550,16 +589,19 @@ export class GridPanel extends BeanStub {
         //  c) then find what is the row that would appear the first one in the screen and adjust it to its top pos
         //      this will avoid having half printed rows at the top
 
-        let pageSize: number = this.getPrimaryScrollViewport().offsetHeight;
+        let currentPageTopmostPixel = this.getPrimaryScrollViewport().scrollTop;
+        let currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopmostPixel + this.paginationProxy.getPixelOffset());
+        let currentPageTopmostRow = this.paginationProxy.getRow(currentPageTopRow);
+        let viewportSize: number = this.getPrimaryScrollViewport().offsetHeight;
+        let maxPageSize: number = this.paginationProxy.getCurrentPageHeight();
+        let pageSize: number = maxPageSize < viewportSize ? maxPageSize : viewportSize;
 
-        let currentTopmostPixel = this.getPrimaryScrollViewport().scrollTop;
-        let currentTopmostRow = this.clientPaginationProxy.getRow(this.clientPaginationProxy.getRowIndexAtPixel(currentTopmostPixel));
-        let currentTopmostRowTop = currentTopmostRow.rowTop;
+        let currentTopmostRowBottom = currentPageTopmostRow.rowTop + currentPageTopmostRow.rowHeight;
         let toScrollUnadjusted = pagingKey == Constants.KEY_PAGE_DOWN_NAME ?
-            pageSize + currentTopmostRowTop :
-            currentTopmostRowTop - pageSize;
+            pageSize + currentTopmostRowBottom :
+            currentTopmostRowBottom - pageSize;
 
-        let nextScreenTopmostRow = this.clientPaginationProxy.getRow(this.clientPaginationProxy.getRowIndexAtPixel(toScrollUnadjusted));
+        let nextScreenTopmostRow = this.paginationProxy.getRow(this.paginationProxy.getRowIndexAtPixel(toScrollUnadjusted));
 
         let verticalScroll : VerticalScroll = {
             rowToScrollTo: nextScreenTopmostRow,
@@ -588,14 +630,19 @@ export class GridPanel extends BeanStub {
 
         //***************************************************************************
         // Scroll screen
+        let newScrollTop:number;
         switch (scroll.type){
             case ScrollType.VERTICAL:
                 verticalScroll = <VerticalScroll> scroll;
-                this.getPrimaryScrollViewport().scrollTop = verticalScroll.rowToScrollTo.rowTop;
+                this.ensureIndexVisible(verticalScroll.rowToScrollTo.rowIndex);
+                newScrollTop = verticalScroll.rowToScrollTo.rowTop - this.paginationProxy.getPixelOffset();
+                this.getPrimaryScrollViewport().scrollTop = newScrollTop;
                 break;
             case ScrollType.DIAGONAL:
                 diagonalScroll = <DiagonalScroll> scroll;
-                this.getPrimaryScrollViewport().scrollTop = diagonalScroll.rowToScrollTo.rowTop;
+                this.ensureIndexVisible(diagonalScroll.rowToScrollTo.rowIndex);
+                newScrollTop = diagonalScroll.rowToScrollTo.rowTop - this.paginationProxy.getPixelOffset();
+                this.getPrimaryScrollViewport().scrollTop = newScrollTop;
                 this.getPrimaryScrollViewport().scrollLeft = diagonalScroll.columnToScrollTo.getLeft();
                 break;
             case ScrollType.HORIZONTAL:
@@ -619,11 +666,11 @@ export class GridPanel extends BeanStub {
         let focusedColumn: Column;
         switch (scroll.type){
             case ScrollType.VERTICAL:
-                focusedRowIndex = this.clientPaginationProxy.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + verticalScroll.focusedRowTopDelta);
+                focusedRowIndex = this.paginationProxy.getRowIndexAtPixel(newScrollTop + this.paginationProxy.getPixelOffset() + verticalScroll.focusedRowTopDelta);
                 focusedColumn = focusedCellBeforeScrolling.column;
                 break;
             case ScrollType.DIAGONAL:
-                focusedRowIndex = this.clientPaginationProxy.getRowIndexAtPixel(this.getPrimaryScrollViewport().scrollTop + diagonalScroll.focusedRowTopDelta);
+                focusedRowIndex = this.paginationProxy.getRowIndexAtPixel(newScrollTop + this.paginationProxy.getPixelOffset() + diagonalScroll.focusedRowTopDelta);
                 focusedColumn = diagonalScroll.columnToScrollTo;
                 break;
             case ScrollType.HORIZONTAL:
@@ -705,7 +752,7 @@ export class GridPanel extends BeanStub {
     }
 
     private onCtrlAndA(event: KeyboardEvent): boolean {
-        if (this.rangeController && this.clientPaginationProxy.isRowsToRender()) {
+        if (this.rangeController && this.paginationProxy.isRowsToRender()) {
             var rowEnd: number;
             var floatingStart: string;
             var floatingEnd: string;
@@ -718,7 +765,7 @@ export class GridPanel extends BeanStub {
 
             if (this.floatingRowModel.isEmpty(Constants.FLOATING_BOTTOM)) {
                 floatingEnd = null;
-                rowEnd = this.clientPaginationProxy.getTotalRowCount() - 1;
+                rowEnd = this.paginationProxy.getTotalRowCount() - 1;
             } else {
                 floatingEnd = Constants.FLOATING_BOTTOM;
                 rowEnd = this.floatingRowModel.getFloatingBottomRowData().length = 1;
@@ -819,16 +866,16 @@ export class GridPanel extends BeanStub {
         if (this.gridOptionsWrapper.isForPrint()) { return; }
 
         this.logger.log('ensureIndexVisible: ' + index);
-        var rowCount = this.clientPaginationProxy.getTotalRowCount();
+        var rowCount = this.paginationProxy.getTotalRowCount();
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
             return;
         }
 
-        this.clientPaginationProxy.goToPageWithIndex(index);
+        this.paginationProxy.goToPageWithIndex(index);
 
-        var nodeAtIndex = this.clientPaginationProxy.getRow(index);
-        let pixelOffset = this.clientPaginationProxy.getPixelOffset();
+        var nodeAtIndex = this.paginationProxy.getRow(index);
+        let pixelOffset = this.paginationProxy.getPixelOffset();
         var rowTopPixel = nodeAtIndex.rowTop - pixelOffset;
         var rowBottomPixel = rowTopPixel + nodeAtIndex.rowHeight;
 
@@ -1406,6 +1453,15 @@ export class GridPanel extends BeanStub {
 
         let changeDetected = false;
 
+        // if we are v scrolling, then one of these will have the scroll position.
+        // we us this inside the if(changedDetected), so we don't always use it, however
+        // it is changed when we make a pinned panel not visible, so we have to check it
+        // before we change display on the pinned panels
+        let scrollTop = Math.max(
+            this.eBodyViewport.scrollTop,
+            this.ePinnedLeftColsViewport.scrollTop,
+            this.ePinnedRightColsViewport.scrollTop);
+
         let showLeftPinned = this.columnController.isPinningLeft();
         if (showLeftPinned !== this.pinningLeft) {
             this.pinningLeft = showLeftPinned;
@@ -1425,12 +1481,6 @@ export class GridPanel extends BeanStub {
         if (changeDetected) {
             let bodyVScrollActive = this.isBodyVerticalScrollActive();
             this.eBodyViewport.style.overflowY = bodyVScrollActive ? 'auto' : 'hidden';
-
-            // if we are v scrolling, then one of these will have the scroll position
-            let scrollTop = Math.max(
-                this.eBodyViewport.scrollTop,
-                this.ePinnedLeftColsViewport.scrollTop,
-                this.ePinnedRightColsViewport.scrollTop);
 
             // the body either uses it's scroll (when scrolling) or it's style.top
             // (when following the scroll of a pinned section), so we need to set it
@@ -1466,14 +1516,34 @@ export class GridPanel extends BeanStub {
             return;
         }
 
-        var headerHeight = this.gridOptionsWrapper.getHeaderHeight();
-        var numberOfRowsInHeader = this.columnController.getHeaderRowCount();
-        var totalHeaderHeight = headerHeight * numberOfRowsInHeader;
+        let headerRowCount = this.columnController.getHeaderRowCount();
 
-        let floatingFilterActive = this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode();
-        if (floatingFilterActive) {
-            totalHeaderHeight += 20;
+        let totalHeaderHeight: number;
+        let numberOfFloating = 0;
+        let groupHeight:number;
+        let headerHeight:number;
+        if (!this.columnController.isPivotMode()){
+            _.removeCssClass(this.eHeader, 'ag-pivot-on');
+            _.addCssClass(this.eHeader, 'ag-pivot-off');
+            if (this.gridOptionsWrapper.isFloatingFilter()){
+                headerRowCount ++;
+            }
+            numberOfFloating = (this.gridOptionsWrapper.isFloatingFilter()) ? 1 : 0;
+            groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
+            headerHeight = this.gridOptionsWrapper.getHeaderHeight();
+        }else{
+            _.removeCssClass(this.eHeader, 'ag-pivot-off');
+            _.addCssClass(this.eHeader, 'ag-pivot-on');
+            numberOfFloating = 0;
+            groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
+            headerHeight = this.gridOptionsWrapper.getPivotHeaderHeight();
         }
+        let numberOfNonGroups = 1 + numberOfFloating;
+        let numberOfGroups = headerRowCount - numberOfNonGroups;
+
+        totalHeaderHeight = numberOfFloating * this.gridOptionsWrapper.getFloatingFiltersHeight();
+        totalHeaderHeight += numberOfGroups * groupHeight;
+        totalHeaderHeight += headerHeight;
 
         this.eHeader.style['height'] = totalHeaderHeight + 'px';
 
@@ -1484,18 +1554,29 @@ export class GridPanel extends BeanStub {
         var floatingBottomHeight = this.floatingRowModel.getFloatingBottomTotalHeight();
         var floatingBottomTop = heightOfContainer - floatingBottomHeight;
 
-        var heightOfCentreRows = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
+        let bodyHeight = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
 
         this.eBody.style.top = paddingTop + 'px';
-        this.eBody.style.height = heightOfCentreRows + 'px';
+        this.eBody.style.height = bodyHeight + 'px';
 
         this.eFloatingTop.style.top = totalHeaderHeight + 'px';
         this.eFloatingTop.style.height = floatingTopHeight + 'px';
         this.eFloatingBottom.style.height = floatingBottomHeight + 'px';
         this.eFloatingBottom.style.top = floatingBottomTop + 'px';
 
-        this.ePinnedLeftColsViewport.style.height = heightOfCentreRows + 'px';
-        this.ePinnedRightColsViewport.style.height = heightOfCentreRows + 'px';
+        this.ePinnedLeftColsViewport.style.height = bodyHeight + 'px';
+        this.ePinnedRightColsViewport.style.height = bodyHeight + 'px';
+
+        // bodyHeight property is used by pagination service, that may change number of rows
+        // in this page based on the height of the grid
+        if (this.bodyHeight !== bodyHeight) {
+            this.bodyHeight = bodyHeight;
+            this.eventService.dispatchEvent(Events.EVENT_BODY_HEIGHT_CHANGED);
+        }
+    }
+
+    public getBodyHeight(): number {
+        return this.bodyHeight;
     }
 
     public setHorizontalScrollPosition(hScrollPosition: number): void {

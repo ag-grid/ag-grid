@@ -76,6 +76,7 @@ export class CellEditorFactory {
             }
 
             cellEditor = new PopupEditorWrapper(cellEditor);
+            this.context.wireBean(cellEditor);
             cellEditor.init(params);
         }
         

@@ -1,7 +1,7 @@
 import {Utils as _} from "../utils";
 import {IFilterParams, SerializedFilter} from "../interfaces/iFilter";
 import {QuerySelector} from "../widgets/componentAnnotations";
-import {BaseFilter, Comparator, ScalarBaseFilter} from "./baseFilter";
+import {BaseFilter, Comparator, IScalarFilterParams, ScalarBaseFilter} from "./baseFilter";
 
 export interface SerializedNumberFilter extends SerializedFilter {
     filter:number
@@ -9,7 +9,7 @@ export interface SerializedNumberFilter extends SerializedFilter {
     type:string
 }
 
-export class NumberFilter extends ScalarBaseFilter<number, IFilterParams, SerializedNumberFilter> {
+export class NumberFilter extends ScalarBaseFilter<number, IScalarFilterParams, SerializedNumberFilter> {
     public static EQUALS = 'equals';// 1;
 
     public static NOT_EQUAL = 'notEqual';//2;
@@ -57,7 +57,6 @@ export class NumberFilter extends ScalarBaseFilter<number, IFilterParams, Serial
 
     public initialiseFilterBodyUi() {
         this.filterNumber = null;
-        this.setFilterType(NumberFilter.EQUALS);
         this.eFilterTextField = <HTMLInputElement> this.getGui().querySelector("#filterText");
 
         this.addDestroyableEventListener(this.eFilterTextField, "input", this.onTextFieldsChanged.bind(this));

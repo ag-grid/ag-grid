@@ -1,27 +1,21 @@
 import {Component} from "../../widgets/component";
 import {ICellEditorComp, ICellEditorParams} from "./iCellEditor";
+import {Autowired} from "../../context/context";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 
 export class PopupEditorWrapper extends Component implements ICellEditorComp {
 
     private cellEditor: ICellEditorComp;
     private params: any;
     private getGuiCalledOnChild = false;
-    
-    constructor(cellEditor: ICellEditorComp) {
-        super('<div class="ag-popup-editor"/>');
-        
-        this.cellEditor = cellEditor;
-        
-        this.addDestroyFunc( ()=> cellEditor.destroy() );
 
-        this.addDestroyableEventListener(
-            // this needs to be 'super' and not 'this' as if we call 'this',
-            // it ends up called 'getGui()' on the child before 'init' was called,
-            // which is not good
-            super.getGui(),
-            'keydown',
-            this.onKeyDown.bind(this)
-        );
+    public static DOM_KEY_POPUP_EDITOR_WRAPPER = 'popupEditorWrapper';
+
+    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+
+    constructor(cellEditor: ICellEditorComp) {
+        super(`<div class="ag-popup-editor" tabindex="-1"/>`);
+        this.cellEditor = cellEditor;
     }
 
     private onKeyDown(event: KeyboardEvent): void {
@@ -42,6 +36,25 @@ export class PopupEditorWrapper extends Component implements ICellEditorComp {
     
     public init(params: ICellEditorParams): void {
         this.params = params;
+
+        this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
+
+        this.addDestroyFunc( ()=> {
+                if (this.cellEditor.destroy) {
+                    this.cellEditor.destroy();
+                }
+            }
+        );
+
+        this.addDestroyableEventListener(
+            // this needs to be 'super' and not 'this' as if we call 'this',
+            // it ends up called 'getGui()' on the child before 'init' was called,
+            // which is not good
+            super.getGui(),
+            'keydown',
+            this.onKeyDown.bind(this)
+        );
+
     }
 
     public afterGuiAttached(): void {

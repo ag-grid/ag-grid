@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -60,18 +60,18 @@ Events.EVENT_SELECTION_CHANGED = 'selectionChanged';
 Events.EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
 Events.EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
 Events.EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
-/** 3 events for filtering. The grid LISTENS for filterChanged, and does the filter here. The before and after
- * are for the client, if it wants to do something before or after the filter getting applied. */
-Events.EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
+/** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */
 Events.EVENT_FILTER_CHANGED = 'filterChanged';
-Events.EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
+// See AG-471
+Events.DEPRECATED_EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
+/** deprecated event */
+Events.DEPRECATED_EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
 /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
 Events.EVENT_FILTER_MODIFIED = 'filterModified';
-/** 3 events for sorting. The grid LISTENS for sortChanged, and does the filter here. The before and after
- * are for the client, if it wants to do something before or after the sort getting applied. */
-Events.EVENT_BEFORE_SORT_CHANGED = 'beforeSortChanged';
 Events.EVENT_SORT_CHANGED = 'sortChanged';
-Events.EVENT_AFTER_SORT_CHANGED = 'afterSortChanged';
+/** deprecated events */
+Events.DEPRECATED_EVENT_BEFORE_SORT_CHANGED = 'beforeSortChanged';
+Events.DEPRECATED_EVENT_AFTER_SORT_CHANGED = 'afterSortChanged';
 /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */
 Events.EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
 Events.EVENT_ROW_CLICKED = 'rowClicked';
@@ -100,12 +100,15 @@ Events.EVENT_BODY_SCROLL = 'bodyScroll';
 /** All items from here down are used internally by the grid, not intended for external use. */
 Events.EVENT_FLASH_CELLS = 'flashCells';
 /** All the events from here down are experimental, should not be documented or used by ag-Grid customers */
-Events.EVENT_PAGINATION_RESET = 'paginationReset';
-Events.EVENT_PAGINATION_PAGE_LOADED = 'paginationPageLoaded';
-Events.EVENT_PAGINATION_PAGE_REQUESTED = 'paginationPageRequested';
+Events.EVENT_PAGINATION_CHANGED = 'paginationChanged';
+Events.EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
+Events.DEPRECATED_EVENT_PAGINATION_RESET = 'paginationReset';
+Events.DEPRECATED_EVENT_PAGINATION_PAGE_LOADED = 'paginationPageLoaded';
+Events.DEPRECATED_EVENT_PAGINATION_PAGE_REQUESTED = 'paginationPageRequested';
 // not documented, as it's experimental, don't want people with dependencies on this
 Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
 Events.EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
+Events.EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
 // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
 // to design these better around server side functions and then release to general public when fully working with
 // all the row models.

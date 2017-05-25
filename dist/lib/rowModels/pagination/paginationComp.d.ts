@@ -1,11 +1,13 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Component } from "../../widgets/component";
 export declare class PaginationComp extends Component {
     private gridOptionsWrapper;
-    private paginationService;
     private eventService;
+    private serverPaginationService;
+    private paginationProxy;
+    private rowRenderer;
     private btFirst;
     private btPrevious;
     private btNext;
@@ -16,12 +18,11 @@ export declare class PaginationComp extends Component {
     private eSummaryPanel;
     private lbCurrent;
     private lbTotal;
+    private paginationService;
     constructor();
     private postConstruct();
-    private onPaginationReset();
-    private showSummaryPanel(show);
-    private onPageRequested();
-    private onPageLoaded();
+    private onPaginationChanged();
+    private setCurrentPageLabel();
     private getTemplate();
     private onBtNext();
     private onBtPrevious();
@@ -31,5 +32,4 @@ export declare class PaginationComp extends Component {
     private updateRowLabels();
     private isZeroPagesToDisplay();
     private setTotalLabels();
-    private myToLocaleString(input);
 }

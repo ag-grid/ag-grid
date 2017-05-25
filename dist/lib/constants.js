@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,6 +17,8 @@ Constants.STEP_SORT = 2;
 Constants.STEP_MAP = 3;
 Constants.STEP_AGGREGATE = 4;
 Constants.STEP_PIVOT = 5;
+Constants.STEP_PAGINATE = 6;
+Constants.STEP_SET_HEIGHTS = 7;
 Constants.ROW_BUFFER_SIZE = 10;
 Constants.LAYOUT_INTERVAL = 500;
 Constants.KEY_BACKSPACE = 8;
@@ -48,7 +50,8 @@ Constants.KEY_CTRL_LEFT_NAME = 'ctrlLeft';
 Constants.KEY_CTRL_RIGHT_NAME = 'ctrlRight';
 Constants.KEY_CTRL_DOWN_NAME = 'ctrlDown';
 Constants.ROW_MODEL_TYPE_PAGINATION = 'pagination';
-Constants.ROW_MODEL_TYPE_VIRTUAL = 'virtual';
+Constants.ROW_MODEL_TYPE_VIRTUAL_DEPRECATED = 'virtual';
+Constants.ROW_MODEL_TYPE_INFINITE = 'infinite';
 Constants.ROW_MODEL_TYPE_VIEWPORT = 'viewport';
 Constants.ROW_MODEL_TYPE_NORMAL = 'normal';
 Constants.ROW_MODEL_TYPE_ENTERPRISE = 'enterprise';

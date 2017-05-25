@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,6 +28,8 @@ var StandardMenuFactory = (function () {
         var _this = this;
         this.showPopup(column, function (eMenu) {
             _this.popupService.positionPopupUnderMouseEvent({
+                column: column,
+                type: 'columnMenu',
                 mouseEvent: mouseEvent,
                 ePopup: eMenu
             });
@@ -36,7 +38,8 @@ var StandardMenuFactory = (function () {
     StandardMenuFactory.prototype.showMenuAfterButtonClick = function (column, eventSource) {
         var _this = this;
         this.showPopup(column, function (eMenu) {
-            _this.popupService.positionPopupUnderComponent({ eventSource: eventSource, ePopup: eMenu, keepWithinBounds: true });
+            _this.popupService.positionPopupUnderComponent({ type: 'columnMenu', eventSource: eventSource,
+                ePopup: eMenu, keepWithinBounds: true, column: column });
         });
     };
     StandardMenuFactory.prototype.showPopup = function (column, positionCallback) {

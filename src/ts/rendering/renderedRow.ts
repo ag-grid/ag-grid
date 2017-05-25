@@ -13,17 +13,51 @@ import {FocusedCellController} from "../focusedCellController";
 import {Constants} from "../constants";
 import {CellRendererService} from "./cellRendererService";
 import {CellRendererFactory} from "./cellRendererFactory";
-import {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "./cellRenderers/iCellRenderer";
+import {ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {BeanStub} from "../context/beanStub";
 import {RowContainerComponent} from "./rowContainerComponent";
 import {ColumnAnimationService} from "./columnAnimationService";
 import {ColDef} from "../entities/colDef";
-import {ClientPaginationProxy} from "../rowModels/clientPaginationProxy";
+import {PaginationProxy} from "../rowModels/paginationProxy";
+import {Component} from "../widgets/component";
+import {SvgFactory} from "../svgFactory";
+import {RefSelector} from "../widgets/componentAnnotations";
+
+var svgFactory = SvgFactory.getInstance();
+
+class TempStubCell extends Component {
+
+    private static TEMPLATE =
+        `<div class="ag-stub-cell">
+            <span class="ag-loading-icon" ref="eLoadingIcon"></span>
+            <span class="ag-loading-text" ref="eLoadingText"></span>
+        </div>`;
+
+    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+
+    @RefSelector('eLoadingIcon') private eLoadingIcon: HTMLElement;
+    @RefSelector('eLoadingText') private eLoadingText: HTMLElement;
+
+    constructor() {
+        super(TempStubCell.TEMPLATE);
+    }
+
+    public init(params: ICellRendererParams): void {
+
+        let eLoadingIcon = _.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null, svgFactory.createGroupLoadingIcon);
+        this.eLoadingIcon.appendChild(eLoadingIcon);
+
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
+    }
+}
 
 export class RenderedRow extends BeanStub {
 
     public static EVENT_RENDERED_ROW_REMOVED = 'renderedRowRemoved';
+
+    public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
@@ -34,7 +68,7 @@ export class RenderedRow extends BeanStub {
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
     @Autowired('gridPanel') private gridPanel: GridPanel;
-    @Autowired('clientPaginationProxy') private clientPaginationProxy: ClientPaginationProxy;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     private ePinnedLeftRow: HTMLElement;
     private ePinnedRightRow: HTMLElement;
@@ -116,7 +150,24 @@ export class RenderedRow extends BeanStub {
         this.animateIn = animateIn;
     }
 
+    private setupRowStub(animateInRowTop: boolean): void {
+        this.fullWidthRow = true;
+        this.fullWidthCellRenderer = TempStubCell;
+
+        if (_.missing(this.fullWidthCellRenderer)) {
+            console.warn(`ag-Grid: you need to provide a fullWidthCellRenderer if using isFullWidthCell()`);
+        }
+
+        this.createFullWidthRow(animateInRowTop);
+    }
+
     private setupRowContainers(animateInRowTop: boolean): void {
+
+        // fixme: hack - to get loading working for Enterprise Model
+        if (this.rowNode.stub) {
+            this.setupRowStub(animateInRowTop);
+            return;
+        }
 
         let isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
         let isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
@@ -146,12 +197,12 @@ export class RenderedRow extends BeanStub {
     }
 
     private addDomData(eRowContainer: Element): void {
-        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
-        var gridCellNoType = <any> eRowContainer;
-        gridCellNoType[domDataKey] = {
-            renderedRow: this
-        };
-        this.addDestroyFunc( ()=> { gridCellNoType[domDataKey] = null; } );
+
+        this.gridOptionsWrapper.setDomData(eRowContainer, RenderedRow.DOM_DATA_KEY_RENDERED_ROW, this);
+
+        this.addDestroyFunc( ()=> {
+            this.gridOptionsWrapper.setDomData(eRowContainer, RenderedRow.DOM_DATA_KEY_RENDERED_ROW, null) }
+        );
     }
 
     private setupFullWidthContainers(animateInRowTop: boolean): void {
@@ -271,8 +322,6 @@ export class RenderedRow extends BeanStub {
             context: this.gridOptionsWrapper.getContext()
         });
 
-        this.addDataChangedListener();
-
         this.initialised = true;
     }
 
@@ -330,18 +379,6 @@ export class RenderedRow extends BeanStub {
         this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-editing', value) );
         let event = value ? Events.EVENT_ROW_EDITING_STARTED : Events.EVENT_ROW_EDITING_STOPPED;
         this.mainEventService.dispatchEvent(event, {node: this.rowNode});
-    }
-
-    // because data can change, especially in virtual pagination and viewport row models, need to allow setting
-    // styles and classes after the data has changed
-    private addDataChangedListener(): void {
-
-        var dataChangedListener = ()=> {
-            this.addStyleFromRowStyleFunc();
-            this.addClassesFromRowClass();
-        };
-
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, dataChangedListener);
     }
 
     private angular1Compile(element: Element): void {
@@ -568,12 +605,12 @@ export class RenderedRow extends BeanStub {
 
     private addCellFocusedListener(): void {
         this.addDestroyableEventListener(this.mainEventService, Events.EVENT_CELL_FOCUSED, this.setRowFocusClasses.bind(this));
-        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_PAGINATION_PAGE_LOADED, this.onPaginationPageLoaded.bind(this));
+        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.setRowFocusClasses.bind(this));
         this.setRowFocusClasses();
     }
 
-    private onPaginationPageLoaded(): void {
+    private onPaginationChanged(): void {
         // it is possible this row is in the new page, but the page number has changed, which means
         // it needs to reposition itself relative to the new page
         this.onTopChanged();
@@ -592,10 +629,16 @@ export class RenderedRow extends BeanStub {
             var animate = false;
             var newData = true;
             this.forEachRenderedCell( renderedCell => renderedCell.refreshCell(animate, newData) );
-            // check for selected also, as this could be after lazy loading of the row data, in which csae
+            // check for selected also, as this could be after lazy loading of the row data, in which case
             // the id might of just gotten set inside the row and the row selected state may of changed
             // as a result. this is what happens when selected rows are loaded in virtual pagination.
+            // - niall note - since moving to the stub component, this may no longer be true, as replacing
+            // the stub component now replaces the entire row
             this.onRowSelected();
+
+            // as data has changed, then the style and class needs to be recomputed
+            this.addStyleFromRowStyleFunc();
+            this.addClassesFromRowClass();
         };
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, nodeDataChangedListener);
     }
@@ -617,7 +660,7 @@ export class RenderedRow extends BeanStub {
             if (this.rowNode.isFloating()) {
                 pixelsWithOffset = pixels;
             } else {
-                pixelsWithOffset = pixels - this.clientPaginationProxy.getPixelOffset();
+                pixelsWithOffset = pixels - this.paginationProxy.getPixelOffset();
             }
 
             var topPx = pixelsWithOffset + "px";
@@ -1102,6 +1145,10 @@ export class RenderedRow extends BeanStub {
             } else {
                 classes.push('ag-row-level-0');
             }
+        }
+
+        if (this.rowNode.stub) {
+            classes.push('ag-row-stub');
         }
 
         if (this.fullWidthRow) {

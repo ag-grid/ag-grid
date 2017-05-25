@@ -32,7 +32,14 @@ export class ValueService {
     }
 
     public getValue(column: Column, node: RowNode): any {
-        return this.getValueUsingSpecificData(column, node.data, node);
+
+        let valueUsingSpecificData = this.getValueUsingSpecificData(column, node.data, node);
+        if (valueUsingSpecificData != null){
+            return valueUsingSpecificData;
+        }
+
+        if (node.group && column.getColId() === node.field) return node.key;
+        return null;
     }
 
     public getValueUsingSpecificData(column: Column, data: any, node: RowNode): any {

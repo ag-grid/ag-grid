@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -99,7 +99,12 @@ exports.BaseGridSerializingSession = BaseGridSerializingSession;
 var GridSerializer = (function () {
     function GridSerializer() {
     }
-    GridSerializer.prototype.serialize = function (gridSerializingSession, params) {
+    GridSerializer.prototype.serialize = function (gridSerializingSession, userParams) {
+        var baseParams = this.gridOptionsWrapper.getDefaultExportParams();
+        var params = {};
+        utils_1.Utils.assign(params, baseParams);
+        utils_1.Utils.assign(params, userParams);
+        var dontSkipRows = function () { return false; };
         var skipGroups = params && params.skipGroups;
         var skipHeader = params && params.skipHeader;
         var columnGroups = params && params.columnGroups;
@@ -112,6 +117,9 @@ var GridSerializer = (function () {
         var onlySelected = params && params.onlySelected;
         var columnKeys = params && params.columnKeys;
         var onlySelectedAllPages = params && params.onlySelectedAllPages;
+        var rowSkipper = (params && params.shouldRowBeSkipped) || dontSkipRows;
+        var api = this.gridOptionsWrapper.getApi();
+        var context = this.gridOptionsWrapper.getContext();
         // when in pivot mode, we always render cols on screen, never 'all columns'
         var isPivotMode = this.columnController.isPivotMode();
         var rowModelNormal = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL;
@@ -142,23 +150,24 @@ var GridSerializer = (function () {
             gridSerializingSession.addCustomHeader(params.customHeader);
         }
         // first pass, put in the header names of the cols
-        if (!skipHeader || columnGroups) {
+        if (columnGroups) {
             var groupInstanceIdCreator = new groupInstanceIdCreator_1.GroupInstanceIdCreator();
             var displayedGroups = this.displayedGroupCreator.createDisplayedGroups(columnsToExport, this.columnController.getGridBalancedTree(), groupInstanceIdCreator);
-            if (columnGroups && displayedGroups.length > 0 && displayedGroups[0] instanceof columnGroup_1.ColumnGroup) {
+            if (displayedGroups.length > 0 && displayedGroups[0] instanceof columnGroup_1.ColumnGroup) {
                 var gridRowIterator_1 = gridSerializingSession.onNewHeaderGroupingRow();
                 var columnIndex_1 = 0;
-                displayedGroups.forEach(function (it) {
-                    var casted = it;
-                    gridRowIterator_1.onColumn(casted.getDefinition().headerName, columnIndex_1++, casted.getChildren().length - 1);
+                displayedGroups.forEach(function (columnGroupChild) {
+                    var columnGroup = columnGroupChild;
+                    var colDef = columnGroup.getDefinition();
+                    gridRowIterator_1.onColumn(colDef != null ? colDef.headerName : '', columnIndex_1++, columnGroup.getChildren().length - 1);
                 });
             }
-            if (!skipHeader) {
-                var gridRowIterator_2 = gridSerializingSession.onNewHeaderRow();
-                columnsToExport.forEach(function (column, index) {
-                    gridRowIterator_2.onColumn(column, index, null);
-                });
-            }
+        }
+        if (!skipHeader) {
+            var gridRowIterator_2 = gridSerializingSession.onNewHeaderRow();
+            columnsToExport.forEach(function (column, index) {
+                gridRowIterator_2.onColumn(column, index, null);
+            });
         }
         this.floatingRowModel.forEachFloatingTopRow(processRow);
         if (isPivotMode) {
@@ -209,6 +218,13 @@ var GridSerializer = (function () {
             if (nodeIsRootNode && !node.leafGroup) {
                 return;
             }
+            var shouldRowBeSkipped = rowSkipper({
+                node: node,
+                api: api,
+                context: context
+            });
+            if (shouldRowBeSkipped)
+                return;
             var rowAccumulator = gridSerializingSession.onNewBodyRow();
             columnsToExport.forEach(function (column, index) {
                 rowAccumulator.onColumn(column, index, node);

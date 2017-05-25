@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -72,6 +72,7 @@ var CellEditorFactory = CellEditorFactory_1 = (function () {
                     '- either turn off fullRowEdit, or stop using popup editors.');
             }
             cellEditor = new popupEditorWrapper_1.PopupEditorWrapper(cellEditor);
+            this.context.wireBean(cellEditor);
             cellEditor.init(params);
         }
         return cellEditor;

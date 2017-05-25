@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,6 +47,7 @@ var focusedCellController_1 = require("../focusedCellController");
 var cellNavigationService_1 = require("../cellNavigationService");
 var gridCell_1 = require("../entities/gridCell");
 var beanStub_1 = require("../context/beanStub");
+var paginationProxy_1 = require("../rowModels/paginationProxy");
 var RowRenderer = (function (_super) {
     __extends(RowRenderer, _super);
     function RowRenderer() {
@@ -68,9 +69,13 @@ var RowRenderer = (function (_super) {
     };
     RowRenderer.prototype.init = function () {
         this.rowContainers = this.gridPanel.getRowContainers();
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
         this.refreshView();
+    };
+    RowRenderer.prototype.onPageLoaded = function (refreshEvent) {
+        if (refreshEvent === void 0) { refreshEvent = { animate: false, keepRenderedRows: false, newData: false, newPage: false }; }
+        this.onModelUpdated(refreshEvent);
     };
     RowRenderer.prototype.getAllCellsForColumn = function (column) {
         var eCells = [];
@@ -115,9 +120,11 @@ var RowRenderer = (function (_super) {
         var params = {
             keepRenderedRows: refreshEvent.keepRenderedRows,
             animate: refreshEvent.animate,
-            newData: refreshEvent.newData
+            newData: refreshEvent.newData,
+            newPage: refreshEvent.newPage
         };
         this.refreshView(params);
+        // this.eventService.dispatchEvent(Events.DEPRECATED_EVENT_PAGINATION_PAGE_LOADED);
     };
     // if the row nodes are not rendered, no index is returned
     RowRenderer.prototype.getRenderedIndexesForRowNodes = function (rowNodes) {
@@ -153,7 +160,7 @@ var RowRenderer = (function (_super) {
         this.getLockOnRefresh();
         var focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
         if (!this.gridOptionsWrapper.isForPrint()) {
-            var containerHeight = this.rowModel.getRowCombinedHeight();
+            var containerHeight = this.paginationProxy.getCurrentPageHeight();
             // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
             // we still want the scroll to be present, otherwise there would be no way to access the columns
             // on the RHS - and if that was where the filter was that cause no rows to be presented, there
@@ -166,7 +173,9 @@ var RowRenderer = (function (_super) {
             this.rowContainers.pinnedLeft.setHeight(containerHeight);
             this.rowContainers.pinnedRight.setHeight(containerHeight);
         }
-        if (params.newData) {
+        var scrollToTop = params.newData || params.newPage;
+        var suppressScrollToTop = this.gridOptionsWrapper.isSuppressScrollOnNewData();
+        if (scrollToTop && !suppressScrollToTop) {
             this.gridPanel.scrollToTop();
         }
         this.refreshAllVirtualRows(params.keepRenderedRows, params.animate);
@@ -250,6 +259,12 @@ var RowRenderer = (function (_super) {
         var _this = this;
         var rowsToRemove;
         var oldRowsByNodeId = {};
+        // never keep rendered rows if doing forPrint, as we do not use 'top' to
+        // position the rows in forPrint (use normal flow), so we have to remove
+        // all rows and insert them again from scratch
+        if (this.gridOptionsWrapper.isForPrint()) {
+            keepRenderedRows = false;
+        }
         if (keepRenderedRows) {
             rowsToRemove = [];
             utils_1.Utils.iterateObject(this.renderedRows, function (index, renderedRow) {
@@ -313,32 +328,34 @@ var RowRenderer = (function (_super) {
     RowRenderer.prototype.workOutFirstAndLastRowsToRender = function () {
         var newFirst;
         var newLast;
-        if (!this.rowModel.isRowsToRender()) {
+        if (!this.paginationProxy.isRowsToRender()) {
             newFirst = 0;
             newLast = -1; // setting to -1 means nothing in range
         }
         else {
-            var rowCount = this.rowModel.getRowCount();
+            var pageFirstRow = this.paginationProxy.getPageFirstRow();
+            var pageLastRow = this.paginationProxy.getPageLastRow();
             if (this.gridOptionsWrapper.isForPrint()) {
-                newFirst = 0;
-                newLast = rowCount;
+                newFirst = pageFirstRow;
+                newLast = pageLastRow;
             }
             else {
+                var pixelOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
                 var bodyVRange = this.gridPanel.getVerticalPixelRange();
                 var topPixel = bodyVRange.top;
                 var bottomPixel = bodyVRange.bottom;
-                var first = this.rowModel.getRowIndexAtPixel(topPixel);
-                var last = this.rowModel.getRowIndexAtPixel(bottomPixel);
+                var first = this.paginationProxy.getRowIndexAtPixel(topPixel + pixelOffset);
+                var last = this.paginationProxy.getRowIndexAtPixel(bottomPixel + pixelOffset);
                 //add in buffer
                 var buffer = this.gridOptionsWrapper.getRowBuffer();
                 first = first - buffer;
                 last = last + buffer;
                 // adjust, in case buffer extended actual size
-                if (first < 0) {
-                    first = 0;
+                if (first < pageFirstRow) {
+                    first = pageFirstRow;
                 }
-                if (last > rowCount - 1) {
-                    last = rowCount - 1;
+                if (last > pageLastRow) {
+                    last = pageLastRow;
                 }
                 newFirst = first;
                 newLast = last;
@@ -374,7 +391,7 @@ var RowRenderer = (function (_super) {
                 continue;
             }
             // check this row actually exists (in case overflow buffer window exceeds real data)
-            var node = this.rowModel.getRow(rowIndex);
+            var node = this.paginationProxy.getRow(rowIndex);
             if (node) {
                 var renderedRow = this.getOrCreateRenderedRow(node, oldRenderedRowsByNodeId, animate);
                 utils_1.Utils.pushAll(delayedCreateFunctions, renderedRow.getAndClearNextVMTurnFunctions());
@@ -407,7 +424,7 @@ var RowRenderer = (function (_super) {
             // editing row, only remove if it is no longer rendered, eg filtered out or new data set.
             // the reason we want to keep is if user is scrolling up and down, we don't want to loose
             // the context of the editing in process.
-            var rowNodePresent = _this.rowModel.isRowPresent(rowNode);
+            var rowNodePresent = _this.paginationProxy.isRowPresent(rowNode);
             return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
         });
         // at this point, everything in our 'rowsToRemove' is an old index that needs to be removed
@@ -466,7 +483,7 @@ var RowRenderer = (function (_super) {
             }
             var skipGroupRows = this.gridOptionsWrapper.isGroupUseEntireRow();
             if (skipGroupRows) {
-                var rowNode = this.rowModel.getRow(nextCell.rowIndex);
+                var rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
                 if (!rowNode.group) {
                     break;
                 }
@@ -514,7 +531,9 @@ var RowRenderer = (function (_super) {
     };
     RowRenderer.prototype.startEditingCell = function (gridCell, keyPress, charPress) {
         var cell = this.getComponentForCell(gridCell);
-        cell.startRowOrCellEdit(keyPress, charPress);
+        if (cell) {
+            cell.startRowOrCellEdit(keyPress, charPress);
+        }
     };
     RowRenderer.prototype.getComponentForCell = function (gridCell) {
         var rowComponent;
@@ -651,6 +670,11 @@ var RowRenderer = (function (_super) {
             // we have to call this after ensureColumnVisible - otherwise it could be a virtual column
             // or row that is not currently in view, hence the renderedCell would not exist
             var nextRenderedCell = this.getComponentForCell(nextCell);
+            // if next cell is fullWidth row, then no rendered cell,
+            // as fullWidth rows have no cells, so we skip it
+            if (utils_1.Utils.missing(nextRenderedCell)) {
+                continue;
+            }
             // if editing, but cell not editable, skip cell
             if (startEditing && !nextRenderedCell.isCellEditable()) {
                 continue;
@@ -671,6 +695,10 @@ var RowRenderer = (function (_super) {
     return RowRenderer;
 }(beanStub_1.BeanStub));
 __decorate([
+    context_1.Autowired('paginationProxy'),
+    __metadata("design:type", paginationProxy_1.PaginationProxy)
+], RowRenderer.prototype, "paginationProxy", void 0);
+__decorate([
     context_1.Autowired('columnController'),
     __metadata("design:type", columnController_1.ColumnController)
 ], RowRenderer.prototype, "columnController", void 0);
@@ -686,10 +714,6 @@ __decorate([
     context_1.Autowired('gridPanel'),
     __metadata("design:type", gridPanel_1.GridPanel)
 ], RowRenderer.prototype, "gridPanel", void 0);
-__decorate([
-    context_1.Autowired('$compile'),
-    __metadata("design:type", Object)
-], RowRenderer.prototype, "$compile", void 0);
 __decorate([
     context_1.Autowired('$scope'),
     __metadata("design:type", Object)
@@ -722,10 +746,6 @@ __decorate([
     context_1.Autowired('loggerFactory'),
     __metadata("design:type", logger_1.LoggerFactory)
 ], RowRenderer.prototype, "loggerFactory", void 0);
-__decorate([
-    context_1.Autowired('rowModel'),
-    __metadata("design:type", Object)
-], RowRenderer.prototype, "rowModel", void 0);
 __decorate([
     context_1.Autowired('focusedCellController'),
     __metadata("design:type", focusedCellController_1.FocusedCellController)

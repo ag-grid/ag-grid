@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -331,12 +331,11 @@ var RenderedCell = (function (_super) {
         utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     };
     RenderedCell.prototype.addDomData = function () {
-        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
-        var gridCellNoType = this.eGridCell;
-        gridCellNoType[domDataKey] = {
-            renderedCell: this
-        };
-        this.addDestroyFunc(function () { return gridCellNoType[domDataKey] = null; });
+        var _this = this;
+        this.gridOptionsWrapper.setDomData(this.eGridCell, RenderedCell.DOM_DATA_KEY_RENDERED_CELL, this);
+        this.addDestroyFunc(function () {
+            return _this.gridOptionsWrapper.setDomData(_this.eGridCell, RenderedCell.DOM_DATA_KEY_RENDERED_CELL, null);
+        });
     };
     RenderedCell.prototype.onEnterKeyDown = function () {
         if (this.editingCell) {
@@ -561,6 +560,9 @@ var RenderedCell = (function (_super) {
             _this.onPopupEditorClosed();
         });
         this.popupService.positionPopupOverComponent({
+            column: this.column,
+            rowNode: this.node,
+            type: 'popupCellEditor',
             eventSource: this.eGridCell,
             ePopup: ePopupGui,
             keepWithinBounds: true
@@ -691,10 +693,13 @@ var RenderedCell = (function (_super) {
         this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_MOUSE_OVER, agEvent);
     };
     RenderedCell.prototype.onContextMenu = function (mouseEvent) {
-        // to allow us to debug in chrome, we ignore the event if ctrl is pressed,
-        // thus the normal menu is displayed
-        if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
-            return;
+        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
+        // not everyone wants this, so first 'if' below allows to turn this hack off.
+        if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
+            // then do the check
+            if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
+                return;
+            }
         }
         var colDef = this.column.getColDef();
         var agEvent = this.createEvent(mouseEvent);
@@ -816,6 +821,7 @@ var RenderedCell = (function (_super) {
             node: this.node,
             colDef: this.column.getColDef(),
             rowIndex: this.gridCell.rowIndex,
+            $scope: this.scope,
             api: this.gridOptionsWrapper.getApi(),
             context: this.gridOptionsWrapper.getContext()
         }, function (className) {
@@ -1015,6 +1021,7 @@ var RenderedCell = (function (_super) {
     return RenderedCell;
 }(component_1.Component));
 RenderedCell.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
+RenderedCell.DOM_DATA_KEY_RENDERED_CELL = 'renderedCell';
 __decorate([
     context_1.Autowired('context'),
     __metadata("design:type", context_1.Context)

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -8,7 +8,8 @@ import { RowNode } from "./rowNode";
 import { ICellRendererFunc, ICellRendererComp } from "../rendering/cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "../rendering/cellEditors/iCellEditor";
 import { IFilter } from "../interfaces/iFilter";
-export declare class Column implements ColumnGroupChild, OriginalColumnGroupChild {
+import { IEventEmitter } from "../interfaces/iEventEmitter";
+export declare class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEventEmitter {
     static EVENT_MOVING_CHANGED: string;
     static EVENT_LEFT_CHANGED: string;
     static EVENT_WIDTH_CHANGED: string;

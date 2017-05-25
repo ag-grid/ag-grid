@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./rowNode";
@@ -92,25 +92,28 @@ export interface ColDef extends AbstractColDef {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     cellRendererFramework?: any;
-    cellRendererParams?: {};
+    cellRendererParams?: any;
     /** Cell editor */
     cellEditor?: {
         new (): ICellEditorComp;
     } | string;
     cellEditorFramework?: any;
-    cellEditorParams?: {};
+    cellEditorParams?: any;
     /** A function for rendering a floating cell. */
     floatingCellRenderer?: {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     floatingCellRendererFramework?: any;
-    floatingCellRendererParams?: {};
+    floatingCellRendererParams?: any;
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     cellFormatter?: (params: any) => string;
     /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     floatingCellFormatter?: (params: any) => string;
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
     aggFunc?: string | IAggFunc;
+    /** Agg funcs allowed on this column. If missing, all installed agg funcs are allowed.
+     * Can be eg ['sum','avg']. This will restrict what the GUI allows to select only.*/
+    allowedAggFuncs?: string[];
     /** To group by this column by default, provide an index here. */
     rowGroupIndex?: number;
     /** To pivot by this column by default, provide an index here. */

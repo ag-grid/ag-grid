@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -180,7 +180,7 @@ var HeaderComp = (function (_super) {
     };
     return HeaderComp;
 }(component_1.Component));
-HeaderComp.TEMPLATE = '<div>' +
+HeaderComp.TEMPLATE = '<div class="ag-cell-label-container">' +
     '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
     '  <div ref="eLabel" class="ag-header-cell-label">' +
     '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +

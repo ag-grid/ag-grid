@@ -10,6 +10,10 @@ export interface ColumnVO {
 
 export interface IEnterpriseGetRowsRequest {
     // columns that are currently row grouped
+    startRow: number;
+    // columns that are currently row grouped
+    endRow: number;
+    // columns that are currently row grouped
     rowGroupCols: ColumnVO[];
     // columns that have aggregations on them
     valueCols: ColumnVO[];

@@ -3,6 +3,9 @@ import {Constants} from "../constants";
 import {Bean, Autowired} from "../context/context";
 import {GridCore} from "../gridCore";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {PostProcessPopupParams} from "../entities/gridOptions";
+import {RowNode} from "../entities/rowNode";
+import {Column} from "../entities/column";
 
 @Bean('popupService')
 export class PopupService {
@@ -20,16 +23,16 @@ export class PopupService {
 
     public positionPopupForMenu(params: {eventSource: any, ePopup: HTMLElement}) {
 
-        var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        let sourceRect = params.eventSource.getBoundingClientRect();
+        let parentRect = this.getPopupParent().getBoundingClientRect();
 
-        var y = sourceRect.top - parentRect.top;
+        let y = sourceRect.top - parentRect.top;
 
         y = this.keepYWithinBounds(params, y);
 
-        var minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth: 200;
-        var widthOfParent = parentRect.right - parentRect.left;
-        var maxX = widthOfParent - minWidth;
+        let minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth: 200;
+        let widthOfParent = parentRect.right - parentRect.left;
+        let maxX = widthOfParent - minWidth;
 
         // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
         // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
@@ -67,10 +70,13 @@ export class PopupService {
     }
 
     public positionPopupUnderMouseEvent(params: {
+                            rowNode?: RowNode,
+                            column?: Column,
+                            type: string,
                             mouseEvent: MouseEvent|Touch,
                             ePopup: HTMLElement}): void {
 
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        let parentRect = this.getPopupParent().getBoundingClientRect();
 
         this.positionPopup({
             ePopup: params.ePopup,
@@ -78,18 +84,23 @@ export class PopupService {
             y: params.mouseEvent.clientY - parentRect.top,
             keepWithinBounds: true
         });
+
+        this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
     }
 
     public positionPopupUnderComponent(params: {
+                            type: string,
                             eventSource: HTMLElement,
                             ePopup: HTMLElement,
+                            column?: Column,
+                            rowNode?: RowNode,
                             minWidth?: number,
                             nudgeX?: number,
                             nudgeY?: number,
                             keepWithinBounds?: boolean}) {
 
-        var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        let sourceRect = params.eventSource.getBoundingClientRect();
+        let parentRect = this.getPopupParent().getBoundingClientRect();
 
         this.positionPopup({
             ePopup: params.ePopup,
@@ -100,18 +111,38 @@ export class PopupService {
             y: sourceRect.top - parentRect.top + sourceRect.height,
             keepWithinBounds: params.keepWithinBounds
         });
+
+        this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
+    }
+
+    private callPostProcessPopup(ePopup: HTMLElement, eventSource: HTMLElement, mouseEvent: MouseEvent|Touch, type:string, column: Column, rowNode: RowNode): void {
+        let callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
+        if (callback) {
+            let params: PostProcessPopupParams = {
+                column: column,
+                rowNode: rowNode,
+                ePopup: ePopup,
+                type: type,
+                eventSource: eventSource,
+                mouseEvent: mouseEvent
+            };
+            callback(params);
+        }
     }
 
     public positionPopupOverComponent(params: {
+        type: string,
         eventSource: HTMLElement,
         ePopup: HTMLElement,
+        column: Column,
+        rowNode: RowNode,
         minWidth?: number,
         nudgeX?: number,
         nudgeY?: number,
         keepWithinBounds?: boolean}) {
 
-        var sourceRect = params.eventSource.getBoundingClientRect();
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        let sourceRect = params.eventSource.getBoundingClientRect();
+        let parentRect = this.getPopupParent().getBoundingClientRect();
 
         this.positionPopup({
             ePopup: params.ePopup,
@@ -122,6 +153,8 @@ export class PopupService {
             y: sourceRect.top - parentRect.top,
             keepWithinBounds: params.keepWithinBounds
         });
+
+        this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
     }
     
     private positionPopup(params: {
@@ -133,8 +166,8 @@ export class PopupService {
                         y: number,
                         keepWithinBounds?: boolean}): void {
 
-        var x = params.x;
-        var y = params.y;
+        let x = params.x;
+        let y = params.y;
 
         if (params.nudgeX) {
             x += params.nudgeX;
@@ -155,17 +188,17 @@ export class PopupService {
     }
 
     private keepYWithinBounds(params: {ePopup: HTMLElement}, y: number): number {
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        let parentRect = this.getPopupParent().getBoundingClientRect();
 
-        var minHeight: number;
+        let minHeight: number;
         if (params.ePopup.clientHeight > 0) {
             minHeight = params.ePopup.clientHeight;
         } else {
             minHeight = 200;
         }
 
-        var heightOfParent = parentRect.bottom - parentRect.top;
-        var maxY = heightOfParent - minHeight - 5;
+        let heightOfParent = parentRect.bottom - parentRect.top;
+        let maxY = heightOfParent - minHeight - 5;
         if (y > maxY) { // move position left, back into view
             return maxY;
         } else if (y < 0) { // in case the popup has a negative value
@@ -177,9 +210,9 @@ export class PopupService {
     }
 
     private keepXWithinBounds(params: {minWidth?: number, ePopup: HTMLElement}, x: number): number {
-        var parentRect = this.getPopupParent().getBoundingClientRect();
+        let parentRect = this.getPopupParent().getBoundingClientRect();
 
-        var minWidth: number;
+        let minWidth: number;
         if (params.minWidth > 0) {
             minWidth = params.minWidth;
         } else if (params.ePopup.clientWidth>0) {
@@ -188,8 +221,8 @@ export class PopupService {
             minWidth = 200;
         }
 
-        var widthOfParent = parentRect.right - parentRect.left;
-        var maxX = widthOfParent - minWidth - 5;
+        let widthOfParent = parentRect.right - parentRect.left;
+        let maxX = widthOfParent - minWidth - 5;
         if (x > maxX) { // move position left, back into view
             return maxX;
         } else if (x < 0) { // in case the popup has a negative value
@@ -203,7 +236,7 @@ export class PopupService {
     //so that when the background is clicked, the child is removed again, giving
     //a model look to popups.
     public addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: ()=>void): (event?: any)=>void {
-        var eBody = document.body;
+        let eBody = document.body;
         if (!eBody) {
             console.warn('ag-grid: could not find the body of the document, document.body is empty');
             return;
@@ -212,16 +245,16 @@ export class PopupService {
         eChild.style.top = '0px';
         eChild.style.left = '0px';
 
-        var popupAlreadyShown = _.isVisible(eChild);
+        let popupAlreadyShown = _.isVisible(eChild);
         if (popupAlreadyShown) {
             return;
         }
 
         this.getPopupParent().appendChild(eChild);
 
-        var that = this;
+        let that = this;
 
-        var popupHidden = false;
+        let popupHidden = false;
 
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
@@ -238,12 +271,12 @@ export class PopupService {
             //eChild.addEventListener('mousedown', consumeClick);
         }, 0);
 
-        // var timeOfMouseEventOnChild = new Date().getTime();
-        var childMouseClick: MouseEvent = null;
-        var childTouch: TouchEvent = null;
+        // let timeOfMouseEventOnChild = new Date().getTime();
+        let childMouseClick: MouseEvent = null;
+        let childTouch: TouchEvent = null;
 
         function hidePopupOnEsc(event: any) {
-            var key = event.which || event.keyCode;
+            let key = event.which || event.keyCode;
             if (key === Constants.KEY_ESCAPE) {
                 hidePopup(null);
             }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,16 +19,15 @@ var context_1 = require("../context/context");
 var context_2 = require("../context/context");
 var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var renderedCell_1 = require("../rendering/renderedCell");
 var MouseEventService = (function () {
     function MouseEventService() {
     }
     MouseEventService.prototype.getRenderedCellForEvent = function (event) {
-        var domDataKey = this.gridOptionsWrapper.getDomDataKey();
         var sourceElement = utils_1.Utils.getTarget(event);
         while (sourceElement) {
-            var domData = sourceElement[domDataKey];
-            if (domData && domData.renderedCell) {
-                var renderedCell = domData.renderedCell;
+            var renderedCell = this.gridOptionsWrapper.getDomData(sourceElement, renderedCell_1.RenderedCell.DOM_DATA_KEY_RENDERED_CELL);
+            if (renderedCell) {
                 return renderedCell;
             }
             sourceElement = sourceElement.parentElement;

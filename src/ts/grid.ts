@@ -38,7 +38,7 @@ import {FlattenStage} from "./rowModels/inMemory/flattenStage";
 import {FocusService} from "./misc/focusService";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {Events} from "./events";
-import {VirtualPageRowModel} from "./rowModels/infinateScrolling/virtualPageRowModel";
+import {InfiniteRowModel} from "./rowModels/infinite/infiniteRowModel";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellRendererService} from "./rendering/cellRendererService";
@@ -61,7 +61,7 @@ import {SortService} from "./rowNodes/sortService";
 import {FilterService} from "./rowNodes/filterService";
 import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
 import {AutoGroupColService} from "./columnController/autoGroupColService";
-import {ClientPaginationProxy} from "./rowModels/clientPaginationProxy";
+import {PaginationAutoPageSizeService, PaginationProxy} from "./rowModels/paginationProxy";
 
 
 export interface GridParams {
@@ -90,7 +90,8 @@ export class Grid {
     // the default is InMemoryRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
     private static RowModelClasses: any = {
-        virtual: VirtualPageRowModel,
+        virtual: InfiniteRowModel, // deprecated
+        infinite: InfiniteRowModel,
         pagination: InMemoryRowModel,
         normal: InMemoryRowModel
     };
@@ -150,9 +151,9 @@ export class Grid {
         let contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
-            beans: [rowModelClass, GridApi, ComponentProvider, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
+            beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
-                FilterManager, ColumnController, ClientPaginationProxy, RowRenderer,
+                FilterManager, ColumnController, PaginationProxy, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory,
                 GridSerializer, TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
@@ -166,7 +167,8 @@ export class Grid {
             debug: !!gridOptions.debug
         };
 
-        this.context = new Context(contextParams, new Logger('Context', contextParams.debug));
+        let isLoggingFunc = ()=> contextParams.debug;
+        this.context = new Context(contextParams, new Logger('Context', isLoggingFunc));
 
         var eventService = this.context.getBean('eventService');
         var readyEvent = {
@@ -189,6 +191,9 @@ export class Grid {
             } else {
                 console.error('ag-Grid: count not find matching row model for rowModelType ' + rowModelType);
                 if (rowModelType==='viewport') {
+                    console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
+                }
+                if (rowModelType==='enterprise') {
                     console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
                 }
             }

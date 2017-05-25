@@ -1,18 +1,19 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { MasterSlaveService } from "./masterSlaveService";
-import { ColDef, IAggFunc, ColGroupDef } from "./entities/colDef";
+import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { IRowModel } from "./interfaces/iRowModel";
-import { RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeController";
+import { AddRangeSelectionParams, RangeSelection } from "./interfaces/iRangeController";
 import { GridCell } from "./entities/gridCell";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./exportParams";
+import { ExcelExportParams } from "./interfaces/iExcelCreator";
 import { IDatasource } from "./rowModels/iDatasource";
-import { IEnterpriseDatasource } from "./rowModels/enterprise/enterpriseRowModel";
+import { IEnterpriseDatasource } from "./interfaces/iEnterpriseDatasource";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column | ColDef;
@@ -37,7 +38,8 @@ export declare class GridApi {
     private context;
     private rowModel;
     private sortController;
-    private paginationService;
+    private serverPaginationService;
+    private paginationProxy;
     private focusedCellController;
     private rangeController;
     private clipboardService;
@@ -46,7 +48,9 @@ export declare class GridApi {
     private cellRendererFactory;
     private cellEditorFactory;
     private inMemoryRowModel;
-    private virtualPageRowModel;
+    private infinitePageRowModel;
+    private paginationService;
+    private enterpriseRowModel;
     private init();
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     __getMasterSlaveService(): MasterSlaveService;
@@ -54,8 +58,8 @@ export declare class GridApi {
     getLastRenderedRow(): number;
     getDataAsCsv(params?: CsvExportParams): string;
     exportDataAsCsv(params?: CsvExportParams): void;
-    getDataAsExcel(params?: CsvExportParams): string;
-    exportDataAsExcel(params?: CsvExportParams): void;
+    getDataAsExcel(params?: ExcelExportParams): string;
+    exportDataAsExcel(params?: ExcelExportParams): void;
     setEnterpriseDatasource(datasource: IEnterpriseDatasource): void;
     setDatasource(datasource: IDatasource): void;
     setViewportDatasource(viewportDatasource: IViewportDatasource): void;
@@ -67,6 +71,7 @@ export declare class GridApi {
     getFloatingTopRow(index: number): RowNode;
     getFloatingBottomRow(index: number): RowNode;
     setColumnDefs(colDefs: (ColDef | ColGroupDef)[]): void;
+    getVerticalPixelRange(): any;
     refreshRows(rowNodes: RowNode[]): void;
     refreshCells(rowNodes: RowNode[], cols: (string | ColDef | Column)[], animate?: boolean): void;
     rowDataChanged(rows: any): void;
@@ -133,6 +138,10 @@ export declare class GridApi {
     clearFocusedCell(): void;
     setFocusedCell(rowIndex: number, colKey: Column | ColDef | string, floating?: string): void;
     setHeaderHeight(headerHeight: number): void;
+    setGroupHeaderHeight(headerHeight: number): void;
+    setFloatingFiltersHeight(headerHeight: number): void;
+    setPivotGroupHeaderHeight(headerHeight: number): void;
+    setPivotHeaderHeight(headerHeight: number): void;
     showToolPanel(show: any): void;
     isToolPanelShowing(): boolean;
     doLayout(): void;
@@ -167,14 +176,24 @@ export declare class GridApi {
     removeItems(rowNodes: RowNode[], skipRefresh?: boolean): void;
     addItems(items: any[], skipRefresh?: boolean): void;
     refreshVirtualPageCache(): void;
+    refreshInfinitePageCache(): void;
+    refreshInfiniteCache(): void;
     purgeVirtualPageCache(): void;
+    purgeInfinitePageCache(): void;
+    purgeInfiniteCache(): void;
+    purgeEnterpriseCache(route?: string[]): void;
     getVirtualRowCount(): number;
+    getInfiniteRowCount(): number;
     isMaxRowFound(): boolean;
     setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void;
+    setInfiniteRowCount(rowCount: number, maxRowFound?: boolean): void;
     getVirtualPageState(): any;
+    getInfinitePageState(): any;
+    getCacheBlockState(): any;
     checkGridSize(): void;
     paginationIsLastPageFound(): boolean;
     paginationGetPageSize(): number;
+    paginationSetPageSize(size: number): void;
     paginationGetCurrentPage(): number;
     paginationGetTotalPages(): number;
     paginationGetRowCount(): number;

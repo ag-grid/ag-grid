@@ -1,7 +1,7 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { IFilterParams } from "../interfaces/iFilter";
+import { IFilterParams, SerializedFilter } from "../interfaces/iFilter";
 import { Component } from "../widgets/component";
 import { IDateParams, IDateComp } from "../rendering/dateComponent";
 import { Comparator, ScalarBaseFilter } from "./baseFilter";
@@ -11,7 +11,7 @@ export interface IDateFilterParams extends IFilterParams {
 export interface IDateComparatorFunc {
     (filterLocalDateAtMidnight: Date, cellValue: any): number;
 }
-export interface SerializedDateFilter {
+export interface SerializedDateFilter extends SerializedFilter {
     dateFrom: string;
     dateTo: string;
     type: string;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,10 @@ var LoggerFactory = (function () {
         this.logging = gridOptionsWrapper.isDebug();
     };
     LoggerFactory.prototype.create = function (name) {
-        return new Logger(name, this.logging);
+        return new Logger(name, this.isLogging.bind(this));
+    };
+    LoggerFactory.prototype.isLogging = function () {
+        return this.logging;
     };
     return LoggerFactory;
 }());
@@ -43,12 +46,15 @@ LoggerFactory = __decorate([
 ], LoggerFactory);
 exports.LoggerFactory = LoggerFactory;
 var Logger = (function () {
-    function Logger(name, logging) {
+    function Logger(name, isLoggingFunc) {
         this.name = name;
-        this.logging = logging;
+        this.isLoggingFunc = isLoggingFunc;
     }
+    Logger.prototype.isLogging = function () {
+        return this.isLoggingFunc();
+    };
     Logger.prototype.log = function (message) {
-        if (this.logging) {
+        if (this.isLoggingFunc()) {
             console.log('ag-Grid.' + this.name + ': ' + message);
         }
     };

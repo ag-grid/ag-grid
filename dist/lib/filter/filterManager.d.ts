@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -16,6 +16,7 @@ export declare class FilterManager {
     private enterprise;
     private context;
     private componentProvider;
+    static QUICK_FILTER_SEPARATOR: string;
     private allFilters;
     private quickFilter;
     private advancedFilterPresent;
@@ -37,12 +38,17 @@ export declare class FilterManager {
     onFilterChanged(): void;
     isQuickFilterPresent(): boolean;
     doesRowPassOtherFilters(filterToSkip: any, node: any): boolean;
+    private doesRowPassQuickFilterNoCache(node);
+    private doesRowPassQuickFilterCache(node);
+    private doesRowPassQuickFilter(node);
     doesRowPassFilter(node: any, filterToSkip?: any): boolean;
+    private getQuickFilterTextForColumn(column, rowNode);
     private aggregateRowForQuickFilter(node);
     private onNewRowsLoaded();
     private createValueGetter(column);
     getFilterComponent(column: Column): IFilterComp;
     getOrCreateFilterWrapper(column: Column): FilterWrapper;
+    cachedFilter(column: Column): FilterWrapper;
     private createFilterInstance(column);
     private checkFilterHasAllMandatoryMethods(filterInstance, column);
     private createParams(filterWrapper);

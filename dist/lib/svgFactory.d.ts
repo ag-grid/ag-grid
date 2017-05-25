@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 export declare class SvgFactory {
@@ -48,4 +48,5 @@ export declare class SvgFactory {
     createCheckboxIndeterminateReadOnlyIcon(): HTMLImageElement;
     createGroupExpandedIcon(): HTMLImageElement;
     createGroupContractedIcon(): HTMLImageElement;
+    createGroupLoadingIcon(): HTMLImageElement;
 }

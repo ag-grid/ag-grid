@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -56,10 +56,10 @@ var RenderedHeaderCell = (function (_super) {
     RenderedHeaderCell.prototype.init = function () {
         var eGui = this.headerTemplateLoader.createHeaderElement(this.column);
         this.setGui(eGui);
-        utils_1.Utils.addCssClass(eGui, 'ag-header-cell');
         this.createScope();
         this.addAttributes();
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), eGui, this.gridOptionsWrapper, this.column, null);
+        utils_1.Utils.addCssClass(eGui, 'ag-header-cell');
         // label div
         var eHeaderCellLabel = eGui.querySelector('#agHeaderCellLabel');
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);

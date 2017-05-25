@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -89,6 +89,15 @@ var RowNode = (function () {
         this.rowTop = rowTop;
         if (this.eventService) {
             this.eventService.dispatchEvent(RowNode.EVENT_TOP_CHANGED);
+        }
+    };
+    RowNode.prototype.setAllChildrenCount = function (allChildrenCount) {
+        if (this.allChildrenCount === allChildrenCount) {
+            return;
+        }
+        this.allChildrenCount = allChildrenCount;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED);
         }
     };
     RowNode.prototype.setRowHeight = function (rowHeight) {
@@ -203,6 +212,9 @@ var RowNode = (function () {
             tailingNodeInSequence: tailingNodeInSequence,
             rangeSelect: false
         });
+    };
+    RowNode.prototype.isFloating = function () {
+        return this.floating === constants_1.Constants.FLOATING_TOP || this.floating === constants_1.Constants.FLOATING_BOTTOM;
     };
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
     RowNode.prototype.setSelectedParams = function (params) {
@@ -405,6 +417,7 @@ var RowNode = (function () {
 RowNode.EVENT_ROW_SELECTED = 'rowSelected';
 RowNode.EVENT_DATA_CHANGED = 'dataChanged';
 RowNode.EVENT_CELL_CHANGED = 'cellChanged';
+RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED = 'allChildrenCountChanged';
 RowNode.EVENT_MOUSE_ENTER = 'mouseEnter';
 RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
 RowNode.EVENT_HEIGHT_CHANGED = 'heightChanged';

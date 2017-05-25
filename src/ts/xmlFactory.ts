@@ -22,11 +22,11 @@ export class XmlFactory {
         }
         let result: string = "<" + xmlElement.name + props;
 
-        if (!xmlElement.children && !xmlElement.textNode) {
+        if (!xmlElement.children && xmlElement.textNode == null) {
             return result + "/>" + LINE_SEPARATOR
         }
 
-        if (xmlElement.textNode){
+        if (xmlElement.textNode != null){
             return result + ">" + xmlElement.textNode + "</" + xmlElement.name + ">" + LINE_SEPARATOR
         }
 

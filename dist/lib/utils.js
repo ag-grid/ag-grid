@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -191,15 +191,16 @@ var Utils = (function () {
     };
     Utils.mergeDeep = function (object, source) {
         if (this.exists(source)) {
-            this.iterateObject(source, function (key, value) {
+            this.iterateObject(source, function (key, target) {
                 var currentValue = object[key];
-                var target = source[key];
                 if (currentValue == null) {
-                    object[key] = value;
+                    object[key] = target;
+                    return;
                 }
                 if (typeof currentValue === 'object') {
                     if (target) {
-                        Utils.mergeDeep(object[key], target);
+                        Utils.mergeDeep(currentValue, target);
+                        return;
                     }
                 }
                 if (target) {
@@ -597,13 +598,20 @@ var Utils = (function () {
         }
     };
     Utils.formatNumberTwoDecimalPlacesAndCommas = function (value) {
-        // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
-        if (typeof value === 'number') {
-            return (Math.round(value * 100) / 100).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-        }
-        else {
+        if (typeof value !== 'number') {
             return '';
         }
+        // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
+        return (Math.round(value * 100) / 100).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    };
+    // the native method number.toLocaleString(undefined, {minimumFractionDigits: 0}) puts in decimal places in IE,
+    // so we use this method instead
+    Utils.formatNumberCommas = function (value) {
+        if (typeof value !== 'number') {
+            return '';
+        }
+        // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
+        return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     };
     Utils.prependDC = function (parent, documentFragment) {
         if (this.exists(parent.firstChild)) {
@@ -807,6 +815,9 @@ var Utils = (function () {
             });
         }
     };
+    /**
+     * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
+     */
     Utils.isNumeric = function (value) {
         return !isNaN(parseFloat(value)) && isFinite(value);
     };
@@ -990,6 +1001,12 @@ var NumberSequence = (function () {
         var valToReturn = this.nextValue;
         this.nextValue += this.step;
         return valToReturn;
+    };
+    NumberSequence.prototype.peek = function () {
+        return this.nextValue;
+    };
+    NumberSequence.prototype.skip = function (count) {
+        this.nextValue += count;
     };
     return NumberSequence;
 }());

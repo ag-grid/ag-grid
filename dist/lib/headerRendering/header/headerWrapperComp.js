@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -111,7 +111,9 @@ var HeaderWrapperComp = (function (_super) {
             setSort: function (sort, multiSort) {
                 _this.sortController.setSortForColumn(_this.column, sort, !!multiSort);
             },
-            eventService: this.eventService
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            context: this.gridOptionsWrapper.getContext()
         };
         var headerComp = this.componentProvider.newHeaderComponent(params);
         this.appendChild(headerComp);
@@ -257,6 +259,10 @@ __decorate([
     context_1.Autowired('gridApi'),
     __metadata("design:type", gridApi_1.GridApi)
 ], HeaderWrapperComp.prototype, "gridApi", void 0);
+__decorate([
+    context_1.Autowired('columnApi'),
+    __metadata("design:type", columnController_1.ColumnApi)
+], HeaderWrapperComp.prototype, "columnApi", void 0);
 __decorate([
     context_1.Autowired('sortController'),
     __metadata("design:type", sortController_1.SortController)

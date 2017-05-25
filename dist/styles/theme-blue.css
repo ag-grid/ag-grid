@@ -209,6 +209,12 @@
 .ag-blue .ag-row-selected {
   background-color: #c7c7c7;
 }
+.ag-blue .ag-row-stub {
+  background-color: #f0f0f0;
+}
+.ag-blue .ag-stub-cell {
+  padding: 2px 2px 2px 10px;
+}
 .ag-blue .ag-floating-top .ag-row {
   background-color: #f0f0f0;
 }
@@ -252,6 +258,12 @@
   padding-right: 4px;
 }
 .ag-blue .ag-rtl .ag-group-contracted {
+  padding-left: 4px;
+}
+.ag-blue .ag-ltr .ag-group-loading {
+  padding-right: 4px;
+}
+.ag-blue .ag-rtl .ag-group-loading {
   padding-left: 4px;
 }
 .ag-blue .ag-ltr .ag-group-value {

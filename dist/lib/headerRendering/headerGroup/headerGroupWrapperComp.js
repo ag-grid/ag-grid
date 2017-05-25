@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,6 +37,7 @@ var cssClassApplier_1 = require("../cssClassApplier");
 var dragAndDropService_1 = require("../../dragAndDrop/dragAndDropService");
 var setLeftFeature_1 = require("../../rendering/features/setLeftFeature");
 var componentProvider_1 = require("../../componentProvider");
+var gridApi_1 = require("../../gridApi");
 var HeaderGroupWrapperComp = (function (_super) {
     __extends(HeaderGroupWrapperComp, _super);
     function HeaderGroupWrapperComp(columnGroup, eRoot, dragSourceDropTarget, pinned) {
@@ -70,7 +71,10 @@ var HeaderGroupWrapperComp = (function (_super) {
             columnGroup: this.columnGroup,
             setExpanded: function (expanded) {
                 _this.columnController.setColumnGroupOpened(_this.columnGroup, expanded);
-            }
+            },
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            context: this.gridOptionsWrapper.getContext()
         };
         var headerComp = this.componentProvider.newHeaderGroupComponent(params);
         this.appendChild(headerComp);
@@ -292,6 +296,14 @@ __decorate([
     context_1.Autowired('componentProvider'),
     __metadata("design:type", componentProvider_1.ComponentProvider)
 ], HeaderGroupWrapperComp.prototype, "componentProvider", void 0);
+__decorate([
+    context_1.Autowired('gridApi'),
+    __metadata("design:type", gridApi_1.GridApi)
+], HeaderGroupWrapperComp.prototype, "gridApi", void 0);
+__decorate([
+    context_1.Autowired('columnApi'),
+    __metadata("design:type", columnController_1.ColumnApi)
+], HeaderGroupWrapperComp.prototype, "columnApi", void 0);
 __decorate([
     context_1.PostConstruct,
     __metadata("design:type", Function),

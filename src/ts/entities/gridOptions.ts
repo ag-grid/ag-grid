@@ -9,6 +9,7 @@ import {IDatasource} from "../rowModels/iDatasource";
 import {GridCellDef} from "./gridCell";
 import {IDateComp} from "../rendering/dateComponent";
 import {IEnterpriseDatasource} from "../interfaces/iEnterpriseDatasource";
+import {CsvExportParams, ProcessCellForExportParams} from "../exportParams";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -45,12 +46,14 @@ export interface GridOptions {
     enableGroupEdit?: boolean;
     suppressMiddleClickScrolls?: boolean;
     suppressPreventDefaultOnMouseWheel?: boolean;
+    suppressScrollOnNewData?: boolean;
     colWidth?: number;
     minColWidth?: number;
     maxColWidth?: number;
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
+    stopEditingWhenGridLosesFocus?: boolean;
     debug?: boolean;
     icons?: any; // should be typed
     angularCompileRows?: boolean;
@@ -69,6 +72,7 @@ export interface GridOptions {
     suppressUseColIdForGroups?: boolean;
     suppressCopyRowsToClipboard?: boolean;
     suppressAggFuncInHeader?: boolean;
+    suppressAggAtRootLevel?: boolean;
     suppressFocusAfterRefresh?: boolean;
     rowModelType?: string;
     pivotMode?: boolean;
@@ -87,21 +91,28 @@ export interface GridOptions {
     viewportRowModelBufferSize?: number;
     enableCellChangeFlash?: boolean;
     quickFilterText?: string;
+    cacheQuickFilter?: boolean;
     aggFuncs?: {[key: string]: IAggFunc};
     suppressColumnVirtualisation?: boolean;
     layoutInterval?: number;
     functionsReadOnly?: boolean;
     functionsPassive?: boolean;
     maxConcurrentDatasourceRequests?: number;
-    maxPagesInCache?: number;
-    paginationOverflowSize?: number;
-    paginationInitialRowCount?: number;
+    maxBlocksInCache?: number;
+    purgeClosedRowNodes?: boolean;
+
+    cacheOverflowSize?: number;
+    infiniteInitialRowCount?: number;
     paginationPageSize?: number;
+    cacheBlockSize?: number;
+    paginationAutoPageSize?: boolean;
     paginationStartPage?: number;
     suppressPaginationPanel?: boolean;
-    clientPagination?: boolean;
+
+    pagination?: boolean;
     editType?: string;
     suppressTouch?: boolean;
+    suppressAsyncEvents?: boolean;
     embedFullWidthRows?: boolean;
     //This is an array of ExcelStyle, but because that class lives on the enterprise project is referenced as any from the client project
     excelStyles?: any[];
@@ -121,6 +132,7 @@ export interface GridOptions {
     // cellEditors?: {[key: string]: {new(): ICellEditor}};
     defaultColGroupDef?: ColGroupDef;
     defaultColDef?: ColDef;
+    defaultExportParams?: CsvExportParams;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. FOR FUCKS SAKE! *
@@ -171,12 +183,17 @@ export interface GridOptions {
     enterpriseDatasource?: IEnterpriseDatasource;
     // in properties
     headerHeight?: number;
+    pivotHeaderHeight?: number;
+    groupHeaderHeight?: number;
+    pivotGroupHeaderHeight?: number;
+    floatingFiltersHeight?: number;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
 
     // callbacks
+    postProcessPopup?:(params: PostProcessPopupParams)=>void;
     dateComponent?:{new(): IDateComp};
     dateComponentFramework?: any;
     groupRowRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
@@ -277,6 +294,10 @@ export interface GridOptions {
     onDragStopped?(event?: any): void;
     onItemsAdded?(event?: any): void;
     onItemsRemoved?(event?: any): void;
+
+
+
+
     onPaginationReset?(event?: any): void;
     onPaginationPageLoaded?(event?: any): void;
     onPaginationPageRequested?(event?: any): void;
@@ -324,6 +345,7 @@ export interface MenuItemDef {
     checked?: boolean;
     icon?: HTMLElement|string;
     subMenu?: (MenuItemDef|string)[];
+    cssClasses?: string[];
 }
 
 export interface GetMainMenuItemsParams {
@@ -354,22 +376,6 @@ export interface ProcessRowParams {
     context: any
 }
 
-export interface ProcessCellForExportParams {
-    value: any,
-    node: RowNode,
-    column: Column,
-    api: GridApi,
-    columnApi: ColumnApi,
-    context: any
-}
-
-export interface ProcessHeaderForExportParams {
-    column: Column,
-    api: GridApi,
-    columnApi: ColumnApi,
-    context: any
-}
-
 export interface NavigateToNextCellParams {
     key: number;
     previousCellDef: GridCellDef;
@@ -382,4 +388,19 @@ export interface TabToNextCellParams {
     editing: boolean;
     previousCellDef: GridCellDef;
     nextCellDef: GridCellDef;
+}
+
+export interface PostProcessPopupParams {
+    // if popup is for a column, this gives the Column
+    column?: Column,
+    // if popup is for a row, this gives the RowNode
+    rowNode?: RowNode,
+    // the popup we are showing
+    ePopup: HTMLElement;
+    // The different types are: 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor'
+    type: string;
+    // if the popup is as a result of a button click (eg menu button), this is the component that the user clicked
+    eventSource?: HTMLElement;
+    // if the popup is as a result of a click or touch, this is the event - eg user showing context menu
+    mouseEvent?: MouseEvent|Touch;
 }

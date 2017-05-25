@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -60,12 +60,17 @@ var DEFAULT_TRANSLATIONS = {
 var BaseFilter = (function (_super) {
     __extends(BaseFilter, _super);
     function BaseFilter() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.filter = 'equals';
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     BaseFilter.prototype.init = function (params) {
         this.filterParams = params;
+        this.defaultFilter = BaseFilter.EQUALS;
+        if (this.filterParams.filterOptions) {
+            if (this.filterParams.filterOptions.lastIndexOf(BaseFilter.EQUALS) < 0) {
+                this.defaultFilter = this.filterParams.filterOptions[0];
+            }
+        }
+        this.filter = this.defaultFilter;
         this.clearActive = params.clearButton === true;
         //Allowing for old param property apply, even though is not advertised through the interface
         this.applyActive = ((params.applyButton === true) || (params.apply === true));
@@ -84,6 +89,7 @@ var BaseFilter = (function (_super) {
         this.instantiate(this.context);
         this.initialiseFilterBodyUi();
         this.refreshFilterBodyUi();
+        this.customInit();
     };
     BaseFilter.prototype.onClearButton = function () {
         this.setModel(null);
@@ -141,8 +147,8 @@ var BaseFilter = (function (_super) {
     BaseFilter.prototype.onFloatingFilterChanged = function (change) {
         //It has to be of the type FloatingFilterWithApplyChange if it gets here
         var casted = change;
-        this.setModel(casted.model);
-        this.doOnFilterChanged(casted.apply);
+        this.setModel(casted ? casted.model : null);
+        this.doOnFilterChanged(casted ? casted.apply : false);
     };
     BaseFilter.prototype.generateFilterHeader = function () {
         return '';
@@ -204,13 +210,17 @@ var ComparableBaseFilter = (function (_super) {
     };
     ComparableBaseFilter.prototype.generateFilterHeader = function () {
         var _this = this;
-        var optionsHtml = this.getApplicableFilterTypes().map(function (filterType) {
+        var defaultFilterTypes = this.getApplicableFilterTypes();
+        var restrictedFilterTypes = this.filterParams.filterOptions;
+        var actualFilterTypes = restrictedFilterTypes ? restrictedFilterTypes : defaultFilterTypes;
+        var optionsHtml = actualFilterTypes.map(function (filterType) {
             var localeFilterName = _this.translate(filterType);
             return "<option value=\"" + filterType + "\">" + localeFilterName + "</option>";
         });
+        var readOnly = optionsHtml.length == 1 ? 'disabled' : '';
         return optionsHtml.length <= 0 ?
             '' :
-            "<div>\n                <select class=\"ag-filter-select\" id=\"filterType\">\n                    " + optionsHtml.join('') + "\n                </select>\n            </div>";
+            "<div>\n                <select class=\"ag-filter-select\" id=\"filterType\" " + readOnly + ">\n                    " + optionsHtml.join('') + "\n                </select>\n            </div>";
     };
     ComparableBaseFilter.prototype.onFilterTypeChanged = function () {
         this.filter = this.eTypeSelector.value;
@@ -247,12 +257,13 @@ var ScalarBaseFilter = (function (_super) {
     function ScalarBaseFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ScalarBaseFilter.prototype.customInit = function () { };
     ScalarBaseFilter.prototype.doesFilterPass = function (params) {
         var value = this.filterParams.valueGetter(params.node);
         var comparator = this.comparator();
         var rawFilterValues = this.filterValues();
         var from = Array.isArray(rawFilterValues) ? rawFilterValues[0] : rawFilterValues;
-        if (!from)
+        if (from == null)
             return true;
         var compareResult = comparator(from, value);
         if (this.filter === BaseFilter.EQUALS) {
@@ -274,9 +285,14 @@ var ScalarBaseFilter = (function (_super) {
             return compareResult != 0;
         }
         //From now on the type is a range and rawFilterValues must be an array!
-        var compareDateToResult = comparator(rawFilterValues[1], value);
+        var compareToResult = comparator(rawFilterValues[1], value);
         if (this.filter === BaseFilter.IN_RANGE) {
-            return compareResult > 0 && compareDateToResult < 0;
+            if (!this.filterParams.inRangeInclusive) {
+                return compareResult > 0 && compareToResult < 0;
+            }
+            else {
+                return compareResult >= 0 && compareToResult <= 0;
+            }
         }
         throw new Error('Unexpected type of date filter!: ' + this.filter);
     };

@@ -49,10 +49,13 @@ gulp.task('webpack', ['tsc','stylus'], webpackTask.bind(null, false, true));
 gulp.task('stylus-watch', ['stylus-no-clean'], stylusWatch);
 gulp.task('stylus-no-clean', stylusTask);
 
-gulp.task('tsc', ['cleanDist'], tscTask);
+gulp.task('tsc', ['tsc-src'], tscExportsTask);
+gulp.task('tsc-src', ['cleanDist'], tscTask);
+gulp.task('tsc-exports', ['cleanExports'], tscExportsTask);
 gulp.task('stylus', ['cleanDist'], stylusTask);
 
 gulp.task('cleanDist', cleanDist);
+gulp.task('cleanExports', cleanExports);
 
 function stylusWatch() {
     gulp.watch('./src/styles/!**/!*', ['stylus-no-clean']);
@@ -64,12 +67,17 @@ function cleanDist() {
         .pipe(clean());
 }
 
+function cleanExports() {
+    return gulp
+        .src(['./main.d.ts','main.js'], {read: false})
+        .pipe(clean());
+}
+
 function tscTask() {
     var project = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
 
     var tsResult = gulp
         .src('src/ts/**/*.ts')
-        //.pipe(sourcemaps.init())
         .pipe(gulpTypescript(project));
 
     return merge([
@@ -77,10 +85,27 @@ function tscTask() {
             .pipe(header(dtsHeaderTemplate, { pkg : pkg }))
             .pipe(gulp.dest('dist/lib')),
         tsResult.js
-            // .pipe(sourcemaps.init({loadMaps: true}))
-            // .pipe(sourcemaps.write('./'))
             .pipe(header(headerTemplate, { pkg : pkg }))
             .pipe(gulp.dest('dist/lib'))
+    ])
+}
+
+function tscExportsTask() {
+    var project = gulpTypescript.createProject('./tsconfig-exports.json', {typescript: typescript});
+
+    var tsResult = gulp
+        .src('./exports.ts')
+        .pipe(gulpTypescript(project));
+
+    return merge([
+        tsResult.dts
+            .pipe(header(dtsHeaderTemplate, { pkg : pkg }))
+            .pipe(rename("main.d.ts"))
+            .pipe(gulp.dest('./')),
+        tsResult.js
+            .pipe(header(headerTemplate, { pkg : pkg }))
+            .pipe(rename("main.js"))
+            .pipe(gulp.dest('./'))
     ])
 }
 

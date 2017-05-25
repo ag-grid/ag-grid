@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
@@ -56,18 +56,17 @@ export declare class Events {
     static EVENT_CELL_MOUSE_OVER: string;
     static EVENT_CELL_MOUSE_OUT: string;
     static EVENT_COLUMN_HOVER_CHANGED: string;
-    /** 3 events for filtering. The grid LISTENS for filterChanged, and does the filter here. The before and after
-     * are for the client, if it wants to do something before or after the filter getting applied. */
-    static EVENT_BEFORE_FILTER_CHANGED: string;
+    /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */
     static EVENT_FILTER_CHANGED: string;
-    static EVENT_AFTER_FILTER_CHANGED: string;
+    static DEPRECATED_EVENT_AFTER_FILTER_CHANGED: string;
+    /** deprecated event */
+    static DEPRECATED_EVENT_BEFORE_FILTER_CHANGED: string;
     /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
     static EVENT_FILTER_MODIFIED: string;
-    /** 3 events for sorting. The grid LISTENS for sortChanged, and does the filter here. The before and after
-     * are for the client, if it wants to do something before or after the sort getting applied. */
-    static EVENT_BEFORE_SORT_CHANGED: string;
     static EVENT_SORT_CHANGED: string;
-    static EVENT_AFTER_SORT_CHANGED: string;
+    /** deprecated events */
+    static DEPRECATED_EVENT_BEFORE_SORT_CHANGED: string;
+    static DEPRECATED_EVENT_AFTER_SORT_CHANGED: string;
     /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */
     static EVENT_VIRTUAL_ROW_REMOVED: string;
     static EVENT_ROW_CLICKED: string;
@@ -96,11 +95,14 @@ export declare class Events {
     /** All items from here down are used internally by the grid, not intended for external use. */
     static EVENT_FLASH_CELLS: string;
     /** All the events from here down are experimental, should not be documented or used by ag-Grid customers */
-    static EVENT_PAGINATION_RESET: string;
-    static EVENT_PAGINATION_PAGE_LOADED: string;
-    static EVENT_PAGINATION_PAGE_REQUESTED: string;
+    static EVENT_PAGINATION_CHANGED: string;
+    static EVENT_BODY_HEIGHT_CHANGED: string;
+    static DEPRECATED_EVENT_PAGINATION_RESET: string;
+    static DEPRECATED_EVENT_PAGINATION_PAGE_LOADED: string;
+    static DEPRECATED_EVENT_PAGINATION_PAGE_REQUESTED: string;
     static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED: string;
     static EVENT_SCROLL_VISIBILITY_CHANGED: string;
+    static EVENT_COMPONENT_STATE_CHANGED: string;
     static EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST: string;
     static EVENT_COLUMN_PIVOT_CHANGE_REQUEST: string;
     static EVENT_COLUMN_VALUE_CHANGE_REQUEST: string;
@@ -116,6 +118,8 @@ export interface ModelUpdatedEvent {
     /** If true, then this update was a result of setRowData() getting called. This
      * gets the grid to scroll to the top again. */
     newData: boolean;
+    /** True when pagination and a new page is navigated to. */
+    newPage: boolean;
 }
 export interface CellEvent {
     node: RowNode;

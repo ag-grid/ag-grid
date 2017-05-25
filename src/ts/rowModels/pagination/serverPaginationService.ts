@@ -42,11 +42,11 @@ export class ServerPaginationService extends BeanStub implements IPaginationServ
 
     private callVersion = 0;
     private datasource: IDatasource;
-    private pageSize: number;
-    private rowCount: number;
-    private lastPageFound: boolean;
-    private totalPages: number;
-    private currentPage: number;
+    private pageSize = 100;
+    private rowCount = 0;
+    private lastPageFound = false;
+    private totalPages = 0;
+    private currentPage = 0;
 
     public isLastPageFound(): boolean {
         return this.lastPageFound;
@@ -91,7 +91,7 @@ export class ServerPaginationService extends BeanStub implements IPaginationServ
             // min page is zero
             this.currentPage = 0;
         } else if (this.lastPageFound && page > this.totalPages) {
-            // max page is totalPages-1 IF we konw the last page
+            // max page is totalPages-1 IF we know the last page
             this.currentPage = this.totalPages - 1;
         } else {
             // otherwise take page as is
@@ -110,7 +110,14 @@ export class ServerPaginationService extends BeanStub implements IPaginationServ
             this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
         }
 
-        var paginationEnabled = this.gridOptionsWrapper.isRowModelServerPagination();
+        this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', () => {
+            this.reset(false);
+            this.setPageSize();
+        });
+
+        this.setPageSize();
+
+        let paginationEnabled = this.gridOptionsWrapper.isRowModelServerPagination();
         // if not doing pagination, then quite the setup
         if (!paginationEnabled) { return; }
 
@@ -143,7 +150,15 @@ export class ServerPaginationService extends BeanStub implements IPaginationServ
     private checkForDeprecated(): void {
         var ds = <any> this.datasource;
         if (_.exists(ds.pageSize)) {
-            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property paginationPageSize');
+            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property infinitePageSize');
+        }
+    }
+
+    private setPageSize(): void {
+        // copy pageSize, to guard against it changing the the datasource between calls
+        this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
+        if ( !(this.pageSize>=1) ) {
+            this.pageSize = 100;
         }
     }
 
@@ -163,11 +178,7 @@ export class ServerPaginationService extends BeanStub implements IPaginationServ
             this.selectionController.reset();
         }
 
-        // copy pageSize, to guard against it changing the the datasource between calls
-        this.pageSize = this.gridOptionsWrapper.getPaginationPageSize();
-        if ( !(this.pageSize>=1) ) {
-            this.pageSize = 100;
-        }
+        this.setPageSize();
 
         // see if we know the total number of pages, or if it's 'to be decided'
         if (typeof this.datasource.rowCount === 'number' && this.datasource.rowCount >= 0) {
@@ -177,12 +188,13 @@ export class ServerPaginationService extends BeanStub implements IPaginationServ
         } else {
             this.rowCount = 0;
             this.lastPageFound = false;
-            this.totalPages = null;
+            this.totalPages = 0;
         }
 
         this.resetCurrentPage();
 
-        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_RESET);
+        this.eventService.dispatchEvent(Events.DEPRECATED_EVENT_PAGINATION_RESET);
+        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_CHANGED);
 
         this.loadPage();
     }
@@ -217,7 +229,8 @@ export class ServerPaginationService extends BeanStub implements IPaginationServ
             }
         }
 
-        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_LOADED);
+        this.eventService.dispatchEvent(Events.DEPRECATED_EVENT_PAGINATION_PAGE_LOADED);
+        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_CHANGED);
     }
 
     private loadPage() {
@@ -261,7 +274,8 @@ export class ServerPaginationService extends BeanStub implements IPaginationServ
             this.datasource.getRows(params);
         }, 0);
 
-        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_PAGE_REQUESTED);
+        this.eventService.dispatchEvent(Events.DEPRECATED_EVENT_PAGINATION_PAGE_REQUESTED);
+        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_CHANGED);
 
         function successCallback(rows: any, lastRowIndex: any) {
             if (that.isCallDaemon(callVersionCopy)) {

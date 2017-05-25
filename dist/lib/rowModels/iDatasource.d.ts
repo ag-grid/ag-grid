@@ -1,7 +1,7 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-/** Datasource used by both PaginationController and VirtualPageRowModel */
+/** Datasource used by both PaginationController and InfiniteRowModel */
 export interface IDatasource {
     /** If you know up front how many rows are in the dataset, set it here. Otherwise leave blank.*/
     rowCount?: number;
@@ -15,7 +15,7 @@ export interface IGetRowsParams {
     /** The first row index to NOT get. */
     endRow: number;
     /** Callback to call for the result when successful. */
-    successCallback(rowsThisPage: any[], lastRow?: number): void;
+    successCallback(rowsThisBlock: any[], lastRow?: number): void;
     /** Callback to call for the result when successful. */
     failCallback(): void;
     /** If doing server side sorting, contains the sort model */

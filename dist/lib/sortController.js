@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58,9 +58,7 @@ var SortController = SortController_1 = (function () {
         this.dispatchSortChangedEvents();
     };
     SortController.prototype.dispatchSortChangedEvents = function () {
-        this.eventService.dispatchEvent(events_1.Events.EVENT_BEFORE_SORT_CHANGED);
         this.eventService.dispatchEvent(events_1.Events.EVENT_SORT_CHANGED);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_AFTER_SORT_CHANGED);
     };
     SortController.prototype.clearSortBarThisColumn = function (columnToSkip) {
         this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach(function (columnToClear) {

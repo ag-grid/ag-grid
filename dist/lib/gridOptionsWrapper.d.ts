@@ -1,19 +1,24 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
-import { GridOptions, NodeChildDetails, GetContextMenuItems, GetMainMenuItems, ProcessRowParams, ProcessCellForExportParams, GetRowNodeIdFunc, NavigateToNextCellParams, TabToNextCellParams } from "./entities/gridOptions";
+import { GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, NavigateToNextCellParams, NodeChildDetails, PostProcessPopupParams, ProcessRowParams, TabToNextCellParams } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
-import { ColDef, IAggFunc, ColGroupDef } from "./entities/colDef";
+import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnController";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
-import { ICellRendererFunc, ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
+import { ICellRendererComp, ICellRendererFunc } from "./rendering/cellRenderers/iCellRenderer";
 import { IDatasource } from "./rowModels/iDatasource";
 import { GridCellDef } from "./entities/gridCell";
-import { IEnterpriseDatasource } from "./rowModels/enterprise/enterpriseRowModel";
+import { IEnterpriseDatasource } from "./interfaces/iEnterpriseDatasource";
+import { BaseExportParams, ProcessCellForExportParams } from "./exportParams";
 export declare class GridOptionsWrapper {
     private static MIN_COL_WIDTH;
     static PROP_HEADER_HEIGHT: string;
+    static PROP_PIVOT_HEADER_HEIGHT: string;
+    static PROP_GROUP_HEADER_HEIGHT: string;
+    static PROP_PIVOT_GROUP_HEADER_HEIGHT: string;
+    static PROP_FLOATING_FILTERS_HEIGHT: string;
     private gridOptions;
     private columnController;
     private eventService;
@@ -28,7 +33,8 @@ export declare class GridOptionsWrapper {
     private destroy();
     init(): void;
     private setupFrameworkComponents();
-    getDomDataKey(): string;
+    getDomData(element: Element, key: string): any;
+    setDomData(element: Element, key: string, value: any): any;
     getFullWidthCellRenderer(): {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
@@ -44,8 +50,8 @@ export declare class GridOptionsWrapper {
     isRowSelectionMulti(): boolean;
     getContext(): any;
     isPivotMode(): boolean;
-    isRowModelPagination(): boolean;
-    isRowModelVirtual(): boolean;
+    isRowModelServerPagination(): boolean;
+    isRowModelInfinite(): boolean;
     isRowModelViewport(): boolean;
     isRowModelEnterprise(): boolean;
     isRowModelDefault(): boolean;
@@ -57,9 +63,12 @@ export declare class GridOptionsWrapper {
     isToolPanelSuppressPivots(): boolean;
     isToolPanelSuppressPivotMode(): boolean;
     isSuppressTouch(): boolean;
+    useAsyncEvents(): boolean;
     isEnableCellChangeFlash(): boolean;
     isGroupSelectsChildren(): boolean;
     isGroupSelectsFiltered(): boolean;
+    isGroupHideOpenParents(): boolean;
+    isGroupMultiAutoColumn(): boolean;
     isGroupRemoveSingleChildren(): boolean;
     isGroupIncludeFooter(): boolean;
     isGroupSuppressBlankHeader(): boolean;
@@ -68,6 +77,7 @@ export declare class GridOptionsWrapper {
     isSuppressMultiSort(): boolean;
     isGroupSuppressAutoColumn(): boolean;
     isSuppressDragLeaveHidesColumns(): boolean;
+    isSuppressScrollOnNewData(): boolean;
     isForPrint(): boolean;
     isSuppressHorizontalScroll(): boolean;
     isSuppressLoadingOverlay(): boolean;
@@ -79,12 +89,14 @@ export declare class GridOptionsWrapper {
     isSuppressRowHoverClass(): boolean;
     isSuppressTabbing(): boolean;
     getQuickFilterText(): string;
+    isCacheQuickFilter(): boolean;
     isUnSortIcon(): boolean;
     isSuppressMenuHide(): boolean;
     getRowStyle(): any;
     getRowClass(): any;
     getRowStyleFunc(): Function;
     getRowClassFunc(): Function;
+    getPostProcessPopupFunc(): (params: PostProcessPopupParams) => void;
     getDoesDataFlowerFunc(): (data: any) => boolean;
     getIsFullWidthCellFunc(): (rowNode: RowNode) => boolean;
     getFullWidthCellRendererParams(): any;
@@ -96,13 +108,16 @@ export declare class GridOptionsWrapper {
     isEnableColResize(): boolean;
     isSingleClickEdit(): boolean;
     isSuppressClickEdit(): boolean;
+    isStopEditingWhenGridLosesFocus(): boolean;
     getGroupDefaultExpanded(): number;
     getAutoSizePadding(): number;
     getMaxConcurrentDatasourceRequests(): number;
-    getMaxPagesInCache(): number;
-    getPaginationOverflowSize(): number;
+    getMaxBlocksInCache(): number;
+    getCacheOverflowSize(): number;
     getPaginationPageSize(): number;
-    getPaginationInitialRowCount(): number;
+    getCacheBlockSize(): number;
+    getInfiniteInitialRowCount(): number;
+    isPurgeClosedRowNodes(): boolean;
     getPaginationStartPage(): number;
     isSuppressPaginationPanel(): boolean;
     getRowData(): any[];
@@ -125,12 +140,14 @@ export declare class GridOptionsWrapper {
     isEnableGroupEdit(): boolean;
     isSuppressMiddleClickScrolls(): boolean;
     isSuppressPreventDefaultOnMouseWheel(): boolean;
-    isEnableServerSideSorting(): boolean;
     isSuppressColumnVirtualisation(): boolean;
     isSuppressContextMenu(): boolean;
+    isAllowContextMenuWithControlKey(): boolean;
     isSuppressCopyRowsToClipboard(): boolean;
     isEnableFilter(): boolean;
+    isPagination(): boolean;
     isEnableServerSideFilter(): boolean;
+    isEnableServerSideSorting(): boolean;
     isSuppressScrollLag(): boolean;
     isSuppressMovableColumns(): boolean;
     isAnimateRows(): boolean;
@@ -139,8 +156,10 @@ export declare class GridOptionsWrapper {
     isSuppressMenuFilterPanel(): boolean;
     isSuppressUseColIdForGroups(): boolean;
     isSuppressAggFuncInHeader(): boolean;
+    isSuppressAggAtRootLevel(): boolean;
     isSuppressMenuMainPanel(): boolean;
     isEnableRangeSelection(): boolean;
+    isPaginationAutoPageSize(): boolean;
     isRememberGroupStateWhenNewData(): boolean;
     getIcons(): any;
     getAggFuncs(): {
@@ -159,6 +178,7 @@ export declare class GridOptionsWrapper {
     isFloatingFilter(): boolean;
     getDefaultColDef(): ColDef;
     getDefaultColGroupDef(): ColGroupDef;
+    getDefaultExportParams(): BaseExportParams;
     getHeaderCellTemplate(): string;
     getHeaderCellTemplateFunc(): (params: any) => string | HTMLElement;
     getNodeChildDetailsFunc(): ((dataItem: any) => NodeChildDetails);
@@ -180,6 +200,10 @@ export declare class GridOptionsWrapper {
     removeEventListener(key: string, listener: Function): void;
     executeProcessRowPostCreateFunc(params: ProcessRowParams): void;
     getHeaderHeight(): number;
+    getFloatingFiltersHeight(): number;
+    getGroupHeaderHeight(): number;
+    getPivotHeaderHeight(): number;
+    getPivotGroupHeaderHeight(): number;
     isExternalFilterPresent(): boolean;
     doesExternalFilterPass(node: RowNode): boolean;
     getDocument(): Document;

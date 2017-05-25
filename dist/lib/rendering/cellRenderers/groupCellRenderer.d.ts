@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Component } from "../../widgets/component";
@@ -17,23 +17,28 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     private eCheckbox;
     private eValue;
     private eChildCount;
-    private rowNode;
-    private rowIndex;
-    private gridApi;
+    private params;
+    private nodeWasSwapped;
     constructor();
     init(params: any): void;
-    private isLeaveCellBlank(params);
-    private addPadding(params);
-    private addValueElement(params);
-    private createFromInnerRenderer(params);
-    private createFooterCell(params);
-    private createGroupCell(params);
-    private addChildCount(params);
-    private getGroupName(params);
-    private createLeafCell(params);
-    private isUserWantsSelected(params);
-    private addCheckboxIfNeeded(params);
-    private addExpandAndContract(eGroupCell);
+    private setParams(params);
+    private setupComponents();
+    private isFirstChildOfFirstChild(rowNode, rowGroupColumn);
+    private getRowGroupColumn(params);
+    private isGroupKeyMismatch();
+    private embeddedRowMismatch();
+    private addPadding();
+    private addValueElement();
+    private createFromInnerRenderer();
+    private createFooterCell();
+    private createGroupCell();
+    private addChildCount();
+    private updateChildCount();
+    private getGroupName();
+    private createLeafCell();
+    private isUserWantsSelected();
+    private addCheckboxIfNeeded();
+    private addExpandAndContract();
     private onKeyDown(event);
     onExpandOrContract(): void;
     private showExpandAndContractIcons();

@@ -62,7 +62,8 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
     filterParams: P;
     clearActive: boolean;
     applyActive: boolean;
-    filter:string = 'equals';
+    defaultFilter:string;
+    filter:string;
 
     @QuerySelector('#applyPanel')
     private eButtonsPanel: HTMLElement;
@@ -81,6 +82,13 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
 
     public init(params: P): void {
         this.filterParams = params;
+        this.defaultFilter = BaseFilter.EQUALS;
+        if (this.filterParams.filterOptions){
+            if (this.filterParams.filterOptions.lastIndexOf(BaseFilter.EQUALS)<0){
+                this.defaultFilter = this.filterParams.filterOptions[0];
+            }
+        }
+        this.filter = this.defaultFilter;
         this.clearActive = params.clearButton === true;
         //Allowing for old param property apply, even though is not advertised through the interface
         this.applyActive = ((params.applyButton === true) || ((<any>params).apply === true));
@@ -106,6 +114,7 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         this.instantiate(this.context);
         this.initialiseFilterBodyUi();
         this.refreshFilterBodyUi();
+        this.customInit();
 
     }
 
@@ -115,7 +124,7 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         this.onFilterChanged();
     }
 
-
+    public abstract customInit(): void;
     public abstract isFilterActive(): boolean;
     public abstract modelFromFloatingFilter(from:string): M;
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
@@ -184,8 +193,8 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
     public onFloatingFilterChanged (change:FloatingFilterChange):void{
         //It has to be of the type FloatingFilterWithApplyChange if it gets here
         let casted:BaseFloatingFilterChange<M> = <BaseFloatingFilterChange<M>>change;
-        this.setModel(casted.model);
-        this.doOnFilterChanged(casted.apply);
+        this.setModel(casted ? casted.model : null);
+        this.doOnFilterChanged(casted ? casted.apply : false);
     }
 
     public generateFilterHeader():string{
@@ -230,15 +239,21 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
     }
     
     public generateFilterHeader(): string {
-        let optionsHtml: string[] = this.getApplicableFilterTypes().map(filterType => {
+        let defaultFilterTypes = this.getApplicableFilterTypes();
+        let restrictedFilterTypes = this.filterParams.filterOptions;
+        let actualFilterTypes = restrictedFilterTypes ? restrictedFilterTypes : defaultFilterTypes;
+
+        let optionsHtml: string[] = actualFilterTypes.map(filterType => {
             let localeFilterName = this.translate(filterType);
             return `<option value="${filterType}">${localeFilterName}</option>`;
         });
 
+        let readOnly = optionsHtml.length == 1 ? 'disabled' : '';
+
         return optionsHtml.length <= 0 ?
             '' :
             `<div>
-                <select class="ag-filter-select" id="filterType">
+                <select class="ag-filter-select" id="filterType" ${readOnly}>
                     ${optionsHtml.join('')}
                 </select>
             </div>`;
@@ -277,13 +292,15 @@ export interface IScalarFilterParams extends IFilterParams{
 export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> extends ComparableBaseFilter<T, P, M>{
     public abstract comparator(): Comparator<T>;
 
+    public customInit():void{}
+
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
         var value:any = this.filterParams.valueGetter(params.node);
         let comparator: Comparator<T> = this.comparator();
 
         let rawFilterValues : T[] | T= this.filterValues();
         let from : T= Array.isArray(rawFilterValues) ? rawFilterValues[0]: rawFilterValues;
-        if (!from) return true;
+        if (from == null) return true;
 
         let compareResult = comparator(from, value);
 

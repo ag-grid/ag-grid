@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,6 +24,11 @@ var floatingFilter_1 = require("./filter/floatingFilter");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var floatingFilterWrapper_1 = require("./filter/floatingFilterWrapper");
 var filterManager_1 = require("./filter/filterManager");
+var ComponentType;
+(function (ComponentType) {
+    ComponentType[ComponentType["AG_GRID"] = 0] = "AG_GRID";
+    ComponentType[ComponentType["FRAMEWORK"] = 1] = "FRAMEWORK";
+})(ComponentType || (ComponentType = {}));
 var ComponentProvider = (function () {
     function ComponentProvider() {
     }
@@ -83,18 +88,24 @@ var ComponentProvider = (function () {
                 mandatoryMethodList: [],
                 optionalMethodList: [],
                 defaultComponent: null
+            },
+            filterComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: [],
+                defaultComponent: null
             }
         };
     };
-    ComponentProvider.prototype.newAgGridComponent = function (holder, componentName, defaultComponentName, mandatory) {
+    /**
+     * This method returns the underlying representation of the component to be created. ie for Javascript the
+     * underlying function where we should be calling new into. In case of the frameworks, the framework class
+     * object that represents the component to be created.
+     *
+     * This method is handy if you want to check if a component has a particular method implemented withougt
+     * having to create the method itself
+     */
+    ComponentProvider.prototype.getComponentToUse = function (holder, componentName, thisComponentConfig, mandatory) {
         if (mandatory === void 0) { mandatory = true; }
-        var thisComponentConfig = this.allComponentConfig[defaultComponentName];
-        if (!thisComponentConfig) {
-            if (mandatory) {
-                throw Error("Invalid component specified, there are no components of type : " + componentName + " [" + defaultComponentName + "]");
-            }
-            return null;
-        }
         var DefaultComponent = thisComponentConfig.defaultComponent;
         var CustomAgGridComponent = holder ? holder[componentName] : null;
         var FrameworkComponentRaw = holder ? holder[componentName + "Framework"] : null;
@@ -114,9 +125,33 @@ var ComponentProvider = (function () {
                     return null;
                 }
             }
-            return new ComponentToUse();
+            return {
+                type: ComponentType.AG_GRID,
+                component: ComponentToUse
+            };
+        }
+        return {
+            type: ComponentType.FRAMEWORK,
+            component: FrameworkComponentRaw
+        };
+    };
+    ComponentProvider.prototype.newAgGridComponent = function (holder, componentName, defaultComponentName, mandatory) {
+        if (mandatory === void 0) { mandatory = true; }
+        var thisComponentConfig = this.allComponentConfig[defaultComponentName];
+        if (!thisComponentConfig) {
+            if (mandatory) {
+                throw Error("Invalid component specified, there are no components of type : " + componentName + " [" + defaultComponentName + "]");
+            }
+            return null;
+        }
+        var componentToUse = this.getComponentToUse(holder, componentName, thisComponentConfig, mandatory);
+        if (!componentToUse)
+            return null;
+        if (componentToUse.type === ComponentType.AG_GRID) {
+            return new componentToUse.component();
         }
         //Using framework component
+        var FrameworkComponentRaw = componentToUse.component;
         return this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList);
     };
     ComponentProvider.prototype.createAgGridComponent = function (holder, componentName, defaultComponentName, agGridParams, mandatory) {
@@ -134,6 +169,9 @@ var ComponentProvider = (function () {
         var finalParams = {};
         utils_1._.mergeDeep(finalParams, agGridParams);
         utils_1._.mergeDeep(finalParams, customParams);
+        if (!finalParams.api) {
+            finalParams.api = this.gridOptions.api;
+        }
         return finalParams;
     };
     ComponentProvider.prototype.newDateComponent = function (params) {
@@ -149,7 +187,10 @@ var ComponentProvider = (function () {
         var floatingFilterToInstantiate = type === 'custom' ? 'floatingFilterComponent' : type + "FloatingFilterComponent";
         return this.createAgGridComponent(colDef, "floatingFilterComponent", floatingFilterToInstantiate, params, false);
     };
-    ComponentProvider.prototype.newFloatingFilterWrapperComponent = function (parent, column, params) {
+    ComponentProvider.prototype.getFilterComponentPrototype = function (colDef) {
+        return this.getComponentToUse(colDef, "filterComponent", this.allComponentConfig['filterComponent'], false);
+    };
+    ComponentProvider.prototype.newFloatingFilterWrapperComponent = function (column, params) {
         var _this = this;
         var colDef = column.getColDef();
         if (colDef.suppressFilter) {
@@ -171,10 +212,11 @@ var ComponentProvider = (function () {
             floatingFilterComp: floatingFilter,
             suppressFilterButton: this.getParams(colDef, 'floatingFilterComponent', params).suppressFilterButton
         };
-        if (!floatingFilter && !parent.getModelAsString) {
-            return this.newEmptyFloatingFilterWrapperComponent(column);
-        }
-        if (!floatingFilter && parent.getModelAsString) {
+        if (!floatingFilter) {
+            var filterComponent = this.getFilterComponentPrototype(colDef);
+            if (filterComponent && !filterComponent.component.prototype.getModelAsString) {
+                return this.newEmptyFloatingFilterWrapperComponent(column);
+            }
             var rawModelFn_1 = params.currentParentModel;
             params.currentParentModel = function () {
                 var parent = _this.filterManager.getFilterComponent(column);

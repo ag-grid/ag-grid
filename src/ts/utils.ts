@@ -210,17 +210,18 @@ export class Utils {
 
     static mergeDeep(object: any, source: any): void {
         if (this.exists(source)) {
-            this.iterateObject(source, function(key: string, value: any) {
+            this.iterateObject(source, function(key: string, target: any) {
                 let currentValue: any = object[key];
-                let target: any = source[key];
 
                 if (currentValue == null){
-                    object[key] = value;
+                    object[key] = target;
+                    return;
                 }
 
                 if (typeof currentValue === 'object'){
                     if (target){
-                        Utils.mergeDeep (object[key], target)
+                        Utils.mergeDeep (currentValue, target)
+                        return;
                     }
                 }
 
@@ -642,12 +643,19 @@ export class Utils {
     }
 
     static formatNumberTwoDecimalPlacesAndCommas(value: number): string {
+        if (typeof value !== 'number') { return ''; }
+
         // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
-        if (typeof value === 'number') {
-            return (Math.round(value * 100) / 100).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-        } else {
-            return '';
-        }
+        return (Math.round(value * 100) / 100).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    }
+
+    // the native method number.toLocaleString(undefined, {minimumFractionDigits: 0}) puts in decimal places in IE,
+    // so we use this method instead
+    static formatNumberCommas(value: number): string {
+        if (typeof value !== 'number') { return ''; }
+
+        // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
+        return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
 
     static prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void {
@@ -1054,10 +1062,18 @@ export class NumberSequence {
         this.step = step;
     }
 
-    public next() : number {
+    public next(): number {
         var valToReturn = this.nextValue;
         this.nextValue += this.step;
         return valToReturn;
+    }
+
+    public peek(): number {
+        return this.nextValue;
+    }
+
+    public skip(count: number): void {
+        this.nextValue += count;
     }
 }
 

@@ -129,6 +129,10 @@ export interface ColDef extends AbstractColDef {
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
     aggFunc?: string | IAggFunc;
 
+    /** Agg funcs allowed on this column. If missing, all installed agg funcs are allowed.
+     * Can be eg ['sum','avg']. This will restrict what the GUI allows to select only.*/
+    allowedAggFuncs?: string[];
+
     /** To group by this column by default, provide an index here. */
     rowGroupIndex?: number;
 

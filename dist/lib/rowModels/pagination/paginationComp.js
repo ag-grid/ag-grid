@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,10 +29,12 @@ var component_1 = require("../../widgets/component");
 var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
-var paginationService_1 = require("./paginationService");
+var serverPaginationService_1 = require("./serverPaginationService");
 var utils_1 = require("../../utils");
 var eventService_1 = require("../../eventService");
 var events_1 = require("../../events");
+var rowRenderer_1 = require("../../rendering/rowRenderer");
+var paginationProxy_1 = require("../paginationProxy");
 var PaginationComp = (function (_super) {
     __extends(PaginationComp, _super);
     function PaginationComp() {
@@ -40,32 +42,28 @@ var PaginationComp = (function (_super) {
     }
     PaginationComp.prototype.postConstruct = function () {
         this.setTemplate(this.getTemplate());
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_RESET, this.onPaginationReset.bind(this));
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_PAGE_LOADED, this.onPageLoaded.bind(this));
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_PAGE_REQUESTED, this.onPageRequested.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addDestroyableEventListener(this.btFirst, 'click', this.onBtFirst.bind(this));
         this.addDestroyableEventListener(this.btLast, 'click', this.onBtLast.bind(this));
         this.addDestroyableEventListener(this.btNext, 'click', this.onBtNext.bind(this));
         this.addDestroyableEventListener(this.btPrevious, 'click', this.onBtPrevious.bind(this));
+        if (this.gridOptionsWrapper.isPagination()) {
+            this.paginationService = this.paginationProxy;
+        }
+        else {
+            this.paginationService = this.serverPaginationService;
+        }
+        this.onPaginationChanged();
     };
-    PaginationComp.prototype.onPaginationReset = function () {
-        this.showSummaryPanel(false);
-        this.setTotalLabels();
-    };
-    PaginationComp.prototype.showSummaryPanel = function (show) {
-        utils_1._.setHidden(this.eSummaryPanel, !show);
-    };
-    PaginationComp.prototype.onPageRequested = function () {
-        this.enableOrDisableButtons();
-        var currentPage = this.paginationService.getCurrentPage();
-        this.lbCurrent.innerHTML = this.myToLocaleString(currentPage + 1);
-    };
-    PaginationComp.prototype.onPageLoaded = function () {
+    PaginationComp.prototype.onPaginationChanged = function () {
         this.enableOrDisableButtons();
         this.updateRowLabels();
-        if (this.paginationService.isLastPageFound()) {
-            this.setTotalLabels();
-        }
+        this.setCurrentPageLabel();
+        this.setTotalLabels();
+    };
+    PaginationComp.prototype.setCurrentPageLabel = function () {
+        var currentPage = this.paginationService.getCurrentPage();
+        this.lbCurrent.innerHTML = utils_1._.formatNumberCommas(currentPage + 1);
     };
     PaginationComp.prototype.getTemplate = function () {
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -108,7 +106,8 @@ var PaginationComp = (function (_super) {
         var currentPage = this.paginationService.getCurrentPage();
         var pageSize = this.paginationService.getPageSize();
         var maxRowFound = this.paginationService.isLastPageFound();
-        var rowCount = this.paginationService.getRowCount();
+        var rowCount = this.paginationService.isLastPageFound() ?
+            this.paginationService.getTotalRowCount() : null;
         var startRow;
         var endRow;
         if (this.isZeroPagesToDisplay()) {
@@ -122,9 +121,8 @@ var PaginationComp = (function (_super) {
                 endRow = rowCount;
             }
         }
-        this.lbFirstRowOnPage.innerHTML = this.myToLocaleString(startRow);
-        this.lbLastRowOnPage.innerHTML = this.myToLocaleString(endRow);
-        this.showSummaryPanel(true);
+        this.lbFirstRowOnPage.innerHTML = utils_1._.formatNumberCommas(startRow);
+        this.lbLastRowOnPage.innerHTML = utils_1._.formatNumberCommas(endRow);
     };
     PaginationComp.prototype.isZeroPagesToDisplay = function () {
         var maxRowFound = this.paginationService.isLastPageFound();
@@ -132,27 +130,18 @@ var PaginationComp = (function (_super) {
         return maxRowFound && totalPages === 0;
     };
     PaginationComp.prototype.setTotalLabels = function () {
-        var maxRowFound = this.paginationService.isLastPageFound();
+        var lastPageFound = this.paginationService.isLastPageFound();
         var totalPages = this.paginationService.getTotalPages();
-        var rowCount = this.paginationService.getRowCount();
-        if (maxRowFound) {
-            this.lbTotal.innerHTML = this.myToLocaleString(totalPages);
-            this.lbRecordCount.innerHTML = this.myToLocaleString(rowCount);
+        var rowCount = this.paginationService.isLastPageFound() ?
+            this.paginationService.getTotalRowCount() : null;
+        if (lastPageFound) {
+            this.lbTotal.innerHTML = utils_1._.formatNumberCommas(totalPages);
+            this.lbRecordCount.innerHTML = utils_1._.formatNumberCommas(rowCount);
         }
         else {
             var moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
             this.lbTotal.innerHTML = moreText;
             this.lbRecordCount.innerHTML = moreText;
-        }
-    };
-    // the native method number.toLocaleString(undefined, {minimumFractionDigits: 0}) puts in decimal places in IE
-    PaginationComp.prototype.myToLocaleString = function (input) {
-        if (typeof input !== 'number') {
-            return '';
-        }
-        else {
-            // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
-            return input.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
         }
     };
     return PaginationComp;
@@ -162,13 +151,21 @@ __decorate([
     __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
 ], PaginationComp.prototype, "gridOptionsWrapper", void 0);
 __decorate([
-    context_1.Autowired('paginationService'),
-    __metadata("design:type", paginationService_1.PaginationService)
-], PaginationComp.prototype, "paginationService", void 0);
-__decorate([
     context_1.Autowired('eventService'),
     __metadata("design:type", eventService_1.EventService)
 ], PaginationComp.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('serverPaginationService'),
+    __metadata("design:type", serverPaginationService_1.ServerPaginationService)
+], PaginationComp.prototype, "serverPaginationService", void 0);
+__decorate([
+    context_1.Autowired('paginationProxy'),
+    __metadata("design:type", paginationProxy_1.PaginationProxy)
+], PaginationComp.prototype, "paginationProxy", void 0);
+__decorate([
+    context_1.Autowired('rowRenderer'),
+    __metadata("design:type", rowRenderer_1.RowRenderer)
+], PaginationComp.prototype, "rowRenderer", void 0);
 __decorate([
     componentAnnotations_1.RefSelector('btFirst'),
     __metadata("design:type", HTMLButtonElement)

@@ -8,6 +8,9 @@ export interface IRowModel {
     getPageFirstRow(): number;
     getPageLastRow(): number;
 
+    /** This is legacy, not used by ag-Grid, but keeping for backward compatibility */
+    getRowCount(): number;
+
     /** Returns the row index at the given pixel */
     getRowIndexAtPixel(pixel: number): number;
     /** Returns total height of all the rows - used to size the height of the grid div that contains the rows */
@@ -39,4 +42,10 @@ export interface IRowModel {
     /** The base class returns the type. We use this instead of 'instanceof' as the client might provide
      * their own implementation of the models in the future. */
     getType(): string;
+    /**
+     * It tells us if this row model knows about the last row that it can produce. This is used by the
+     * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is
+     * not shown. This is always true for InMemoryRowModel. It toggles for InfiniteRowModel.
+     */
+    isLastRowFound(): boolean;
 }

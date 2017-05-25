@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,20 +15,25 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../widgets/component");
+var context_1 = require("../../context/context");
+var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var PopupEditorWrapper = (function (_super) {
     __extends(PopupEditorWrapper, _super);
     function PopupEditorWrapper(cellEditor) {
-        var _this = _super.call(this, '<div class="ag-popup-editor"/>') || this;
+        var _this = _super.call(this, "<div class=\"ag-popup-editor\" tabindex=\"-1\"/>") || this;
         _this.getGuiCalledOnChild = false;
         _this.cellEditor = cellEditor;
-        _this.addDestroyFunc(function () { return cellEditor.destroy(); });
-        _this.addDestroyableEventListener(
-        // this needs to be 'super' and not 'this' as if we call 'this',
-        // it ends up called 'getGui()' on the child before 'init' was called,
-        // which is not good
-        _super.prototype.getGui.call(_this), 'keydown', _this.onKeyDown.bind(_this));
         return _this;
     }
     PopupEditorWrapper.prototype.onKeyDown = function (event) {
@@ -44,7 +49,19 @@ var PopupEditorWrapper = (function (_super) {
         return _super.prototype.getGui.call(this);
     };
     PopupEditorWrapper.prototype.init = function (params) {
+        var _this = this;
         this.params = params;
+        this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
+        this.addDestroyFunc(function () {
+            if (_this.cellEditor.destroy) {
+                _this.cellEditor.destroy();
+            }
+        });
+        this.addDestroyableEventListener(
+        // this needs to be 'super' and not 'this' as if we call 'this',
+        // it ends up called 'getGui()' on the child before 'init' was called,
+        // which is not good
+        _super.prototype.getGui.call(this), 'keydown', this.onKeyDown.bind(this));
     };
     PopupEditorWrapper.prototype.afterGuiAttached = function () {
         if (this.cellEditor.afterGuiAttached) {
@@ -79,4 +96,9 @@ var PopupEditorWrapper = (function (_super) {
     };
     return PopupEditorWrapper;
 }(component_1.Component));
+PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER = 'popupEditorWrapper';
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], PopupEditorWrapper.prototype, "gridOptionsWrapper", void 0);
 exports.PopupEditorWrapper = PopupEditorWrapper;

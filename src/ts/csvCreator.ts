@@ -6,12 +6,11 @@ import {RowNode} from "./entities/rowNode";
 import {ColumnController} from "./columnController/columnController";
 import {ValueService} from "./valueService";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {ProcessCellForExportParams, ProcessHeaderForExportParams} from "./entities/gridOptions";
-import {CsvExportParams} from "./exportParams";
+import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exportParams";
 
 var LINE_SEPARATOR = '\r\n';
 
-export class CsvSerializingSession extends BaseGridSerializingSession {
+export class CsvSerializingSession extends BaseGridSerializingSession<string> {
     private result:string = '';
     private lineOpened:boolean = false;
 

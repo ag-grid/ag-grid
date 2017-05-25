@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v8.2.0
+// Type definitions for ag-grid v10.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -83,7 +83,6 @@ export declare class ColumnApi {
     getDisplayNameForCol(column: any): string;
 }
 export declare class ColumnController {
-    static GROUP_AUTO_COLUMN_ID: string;
     private gridOptionsWrapper;
     private expressionService;
     private balancedColumnTreeBuilder;
@@ -94,6 +93,7 @@ export declare class ColumnController {
     private gridPanel;
     private context;
     private columnAnimationService;
+    private autoGroupColService;
     private aggFuncService;
     private primaryBalancedTree;
     private primaryHeaderRowCount;
@@ -119,10 +119,10 @@ export declare class ColumnController {
     private rowGroupColumns;
     private valueColumns;
     private pivotColumns;
-    private groupAutoColumn;
-    private groupAutoColumnActive;
+    private groupAutoColumns;
     private ready;
     private logger;
+    private autoGroupsNeedBuilding;
     private pivotMode;
     private scrollWidth;
     private scrollPosition;
@@ -225,6 +225,8 @@ export declare class ColumnController {
     getPrimaryColumn(key: string | ColDef | Column): Column;
     getGridColumn(key: string | ColDef | Column): Column;
     private getColumn(key, columnList);
+    private getAutoColumn(key);
+    private columnsMatch(column, key);
     getDisplayNameForColumn(column: Column, location: string, includeAggFunc?: boolean): string;
     getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string;
     private getHeaderName(colDef, column, columnGroup, location);
@@ -260,8 +262,8 @@ export declare class ColumnController {
     sizeColumnsToFit(gridWidth: any): void;
     private buildDisplayedTrees(visibleColumns);
     private updateGroups();
-    private createGroupAutoColumn();
-    private createAutoGroupColumn();
+    getGroupAutoColumns(): Column[];
+    private createGroupAutoColumnsIfNeeded();
     private createValueColumns();
     private getWidthOfColsInList(columnList);
     getGridBalancedTree(): OriginalColumnGroupChild[];

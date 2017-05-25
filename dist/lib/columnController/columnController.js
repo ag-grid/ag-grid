@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,10 +33,10 @@ var events_1 = require("../events");
 var columnChangeEvent_1 = require("../columnChangeEvent");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var groupInstanceIdCreator_1 = require("./groupInstanceIdCreator");
-var functions_1 = require("../functions");
 var context_1 = require("../context/context");
 var gridPanel_1 = require("../gridPanel/gridPanel");
 var columnAnimationService_1 = require("../rendering/columnAnimationService");
+var autoGroupColService_1 = require("./autoGroupColService");
 var ColumnApi = (function () {
     function ColumnApi() {
     }
@@ -175,7 +175,7 @@ ColumnApi = __decorate([
     context_1.Bean('columnApi')
 ], ColumnApi);
 exports.ColumnApi = ColumnApi;
-var ColumnController = ColumnController_1 = (function () {
+var ColumnController = (function () {
     function ColumnController() {
         // header row count, based on user provided columns
         this.primaryHeaderRowCount = 0;
@@ -196,6 +196,7 @@ var ColumnController = ColumnController_1 = (function () {
         this.valueColumns = [];
         this.pivotColumns = [];
         this.ready = false;
+        this.autoGroupsNeedBuilding = false;
         this.pivotMode = false;
         this.bodyWidth = 0;
         this.leftWidth = 0;
@@ -455,6 +456,7 @@ var ColumnController = ColumnController_1 = (function () {
         this.eventService.dispatchEvent(event.getType(), event);
     };
     ColumnController.prototype.setRowGroupColumns = function (colKeys) {
+        this.autoGroupsNeedBuilding = true;
         this.setPrimaryColumnList(colKeys, this.rowGroupColumns, events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.setRowGroupActive.bind(this));
     };
     ColumnController.prototype.setRowGroupActive = function (active, column) {
@@ -470,9 +472,11 @@ var ColumnController = ColumnController_1 = (function () {
         this.addRowGroupColumns([key]);
     };
     ColumnController.prototype.addRowGroupColumns = function (keys) {
+        this.autoGroupsNeedBuilding = true;
         this.updatePrimaryColumnList(keys, this.rowGroupColumns, true, this.setRowGroupActive.bind(this, true), events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
     };
     ColumnController.prototype.removeRowGroupColumns = function (keys) {
+        this.autoGroupsNeedBuilding = true;
         this.updatePrimaryColumnList(keys, this.rowGroupColumns, false, this.setRowGroupActive.bind(this, false), events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
     };
     ColumnController.prototype.removeRowGroupColumn = function (key) {
@@ -522,7 +526,7 @@ var ColumnController = ColumnController_1 = (function () {
         }
         column.setValueActive(active);
         if (active && !column.getAggFunc()) {
-            var defaultAggFunc = this.aggFuncService.getDefaultAggFunc();
+            var defaultAggFunc = this.aggFuncService.getDefaultAggFunc(column);
             column.setAggFunc(defaultAggFunc);
         }
     };
@@ -576,8 +580,8 @@ var ColumnController = ColumnController_1 = (function () {
         // eg 1 pixel at a time, then each change will fire change events
         // in all the columns in the group, but only one with get the pixel.
         if (finished || widthChanged) {
-            var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
-            this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_RESIZED, event);
+            var event_1 = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
+            this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_RESIZED, event_1);
         }
     };
     ColumnController.prototype.setColumnAggFunc = function (column, aggFunc) {
@@ -849,8 +853,8 @@ var ColumnController = ColumnController_1 = (function () {
     };
     ColumnController.prototype.getPrimaryAndSecondaryAndAutoColumns = function () {
         var result = this.primaryColumns ? this.primaryColumns.slice(0) : [];
-        if (this.groupAutoColumnActive) {
-            result.push(this.groupAutoColumn);
+        if (utils_1.Utils.exists(this.groupAutoColumns)) {
+            this.groupAutoColumns.forEach(function (col) { return result.push(col); });
         }
         if (this.secondaryColumnsPresent) {
             this.secondaryColumns.forEach(function (column) { return result.push(column); });
@@ -914,6 +918,7 @@ var ColumnController = ColumnController_1 = (function () {
         if (utils_1.Utils.missingOrEmpty(this.primaryColumns)) {
             return false;
         }
+        this.autoGroupsNeedBuilding = true;
         // at the end below, this list will have all columns we got no state for
         var columnsWithNoState = this.primaryColumns.slice();
         this.rowGroupColumns = [];
@@ -1039,20 +1044,26 @@ var ColumnController = ColumnController_1 = (function () {
             return null;
         }
         for (var i = 0; i < columnList.length; i++) {
-            if (colMatches(columnList[i])) {
+            if (this.columnsMatch(columnList[i], key)) {
                 return columnList[i];
             }
         }
-        if (this.groupAutoColumnActive && colMatches(this.groupAutoColumn)) {
-            return this.groupAutoColumn;
+        return this.getAutoColumn(key);
+    };
+    ColumnController.prototype.getAutoColumn = function (key) {
+        var _this = this;
+        if (!utils_1.Utils.exists(this.groupAutoColumns) || utils_1.Utils.missing(this.groupAutoColumns)) {
+            return null;
         }
-        function colMatches(column) {
-            var columnMatches = column === key;
-            var colDefMatches = column.getColDef() === key;
-            var idMatches = column.getColId() == key;
-            return columnMatches || colDefMatches || idMatches;
-        }
-        return null;
+        return utils_1.Utils.find(this.groupAutoColumns, function (groupCol) {
+            return _this.columnsMatch(groupCol, key);
+        });
+    };
+    ColumnController.prototype.columnsMatch = function (column, key) {
+        var columnMatches = column === key;
+        var colDefMatches = column.getColDef() === key;
+        var idMatches = column.getColId() == key;
+        return columnMatches || colDefMatches || idMatches;
     };
     ColumnController.prototype.getDisplayNameForColumn = function (column, location, includeAggFunc) {
         if (includeAggFunc === void 0) { includeAggFunc = false; }
@@ -1104,11 +1115,11 @@ var ColumnController = ColumnController_1 = (function () {
     };
     /*
         private getHeaderGroupName(columnGroup: ColumnGroup): string {
-            var colGroupDef = columnGroup.getOriginalColumnGroup().getColGroupDef();
-            var headerValueGetter = colGroupDef.headerValueGetter;
+            let colGroupDef = columnGroup.getOriginalColumnGroup().getColGroupDef();
+            let headerValueGetter = colGroupDef.headerValueGetter;
 
             if (headerValueGetter) {
-                var params = {
+                let params = {
                     columnGroup: columnGroup,
                     colDef: colGroupDef,
                     api: this.gridOptionsWrapper.getApi(),
@@ -1178,7 +1189,7 @@ var ColumnController = ColumnController_1 = (function () {
         this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, function (child) {
             if (child instanceof columnGroup_1.ColumnGroup) {
                 var columnGroup = child;
-                var matched;
+                var matched = void 0;
                 if (checkInstanceId) {
                     matched = colId === columnGroup.getGroupId() && instanceId === columnGroup.getInstanceId();
                 }
@@ -1193,6 +1204,7 @@ var ColumnController = ColumnController_1 = (function () {
         return result;
     };
     ColumnController.prototype.setColumnDefs = function (columnDefs) {
+        this.autoGroupsNeedBuilding = true;
         var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(columnDefs, true);
         this.primaryBalancedTree = balancedTreeResult.balancedTree;
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
@@ -1297,9 +1309,9 @@ var ColumnController = ColumnController_1 = (function () {
             // or secondary columns, whatever the gridColumns are set to
             columnsForDisplay = utils_1.Utils.filter(this.gridColumns, function (column) { return column.isVisible(); });
         }
-        this.createGroupAutoColumn();
-        if (this.groupAutoColumnActive) {
-            columnsForDisplay.unshift(this.groupAutoColumn);
+        this.createGroupAutoColumnsIfNeeded();
+        if (utils_1.Utils.exists(this.groupAutoColumns)) {
+            columnsForDisplay = this.groupAutoColumns.concat(columnsForDisplay);
         }
         return columnsForDisplay;
     };
@@ -1549,7 +1561,7 @@ var ColumnController = ColumnController_1 = (function () {
             for (var i = 0; i < children.length; i++) {
                 // see if this item is within viewport
                 var child = children[i];
-                var addThisItem;
+                var addThisItem = void 0;
                 if (child instanceof column_1.Column) {
                     // for column, test if column is included
                     addThisItem = virtualColIds[child.getId()] === true;
@@ -1576,16 +1588,14 @@ var ColumnController = ColumnController_1 = (function () {
     };
     ColumnController.prototype.filterOutColumnsWithinViewport = function (columns) {
         var _this = this;
-        var result = utils_1.Utils.filter(columns, function (column) {
+        return utils_1.Utils.filter(columns, function (column) {
             // only out if both sides of columns are to the left or to the right of the boundary
             var columnLeft = column.getLeft();
             var columnRight = column.getLeft() + column.getActualWidth();
             var columnToMuchLeft = columnLeft < _this.viewportLeft && columnRight < _this.viewportLeft;
             var columnToMuchRight = columnLeft > _this.viewportRight && columnRight > _this.viewportRight;
-            var includeThisCol = !columnToMuchLeft && !columnToMuchRight;
-            return includeThisCol;
+            return !columnToMuchLeft && !columnToMuchRight;
         });
-        return result;
     };
     // called from api
     ColumnController.prototype.sizeColumnsToFit = function (gridWidth) {
@@ -1681,54 +1691,25 @@ var ColumnController = ColumnController_1 = (function () {
             }
         });
     };
-    ColumnController.prototype.createGroupAutoColumn = function () {
+    ColumnController.prototype.getGroupAutoColumns = function () {
+        return this.groupAutoColumns;
+    };
+    ColumnController.prototype.createGroupAutoColumnsIfNeeded = function () {
+        if (!this.autoGroupsNeedBuilding) {
+            return;
+        }
+        this.autoGroupsNeedBuilding = false;
         // see if we need to insert the default grouping column
-        var needAGroupColumn = this.rowGroupColumns.length > 0
+        var needAutoColumns = this.rowGroupColumns.length > 0
             && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
             && !this.gridOptionsWrapper.isGroupUseEntireRow()
             && !this.gridOptionsWrapper.isGroupSuppressRow();
-        this.groupAutoColumnActive = needAGroupColumn;
-        // lazy create group auto-column
-        if (needAGroupColumn && !this.groupAutoColumn) {
-            this.createAutoGroupColumn();
+        if (needAutoColumns) {
+            this.groupAutoColumns = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
         }
-        // if grouping was removed, clan up the auto group column
-        if (!needAGroupColumn && this.groupAutoColumn) {
-            if (!this.groupAutoColumn.isSortNone()) {
-                // this results in column firing a sort event, which only updates
-                // the column header. it doesn't get the row model to update (which
-                // is good).
-                this.groupAutoColumn.setSort(null);
-            }
+        else {
+            this.groupAutoColumns = null;
         }
-    };
-    ColumnController.prototype.createAutoGroupColumn = function () {
-        // if one provided by user, use it, otherwise create one
-        var autoColDef = this.gridOptionsWrapper.getGroupColumnDef();
-        if (!autoColDef) {
-            var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            autoColDef = {
-                headerName: localeTextFunc('group', 'Group'),
-                comparator: functions_1.defaultGroupComparator,
-                valueGetter: function (params) {
-                    if (params.node.group) {
-                        return params.node.key;
-                    }
-                    else if (params.data && params.colDef.field) {
-                        return params.data[params.colDef.field];
-                    }
-                    else {
-                        return null;
-                    }
-                },
-                cellRenderer: 'group'
-            };
-        }
-        // we never allow moving the group column
-        autoColDef.suppressMovable = true;
-        var colId = ColumnController_1.GROUP_AUTO_COLUMN_ID;
-        this.groupAutoColumn = new column_1.Column(autoColDef, colId, true);
-        this.context.wireBean(this.groupAutoColumn);
     };
     ColumnController.prototype.createValueColumns = function () {
         this.valueColumns.forEach(function (column) { return column.setValueActive(false); });
@@ -1755,7 +1736,6 @@ var ColumnController = ColumnController_1 = (function () {
     };
     return ColumnController;
 }());
-ColumnController.GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
 __decorate([
     context_1.Autowired('gridOptionsWrapper'),
     __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
@@ -1797,6 +1777,10 @@ __decorate([
     __metadata("design:type", columnAnimationService_1.ColumnAnimationService)
 ], ColumnController.prototype, "columnAnimationService", void 0);
 __decorate([
+    context_1.Autowired('autoGroupColService'),
+    __metadata("design:type", autoGroupColService_1.AutoGroupColService)
+], ColumnController.prototype, "autoGroupColService", void 0);
+__decorate([
     context_1.Optional('aggFuncService'),
     __metadata("design:type", Object)
 ], ColumnController.prototype, "aggFuncService", void 0);
@@ -1812,8 +1796,7 @@ __decorate([
     __metadata("design:paramtypes", [logger_1.LoggerFactory]),
     __metadata("design:returntype", void 0)
 ], ColumnController.prototype, "setBeans", null);
-ColumnController = ColumnController_1 = __decorate([
+ColumnController = __decorate([
     context_1.Bean('columnController')
 ], ColumnController);
 exports.ColumnController = ColumnController;
-var ColumnController_1;

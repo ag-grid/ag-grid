@@ -1,5 +1,5 @@
 
 export interface IEventEmitter {
-    addEventListener(eventType: string, listener: Function): void;
-    removeEventListener(eventType: string, listener: Function): void;
+    addEventListener(eventType: string, listener: Function, async?: boolean): void;
+    removeEventListener(eventType: string, listener: Function, async?: boolean): void;
 }

@@ -1,29 +1,29 @@
 import {RowNode} from "./entities/rowNode";
 import {
-    GridOptions,
-    NodeChildDetails,
     GetContextMenuItems,
     GetMainMenuItems,
-    ProcessRowParams,
-    ProcessCellForExportParams,
     GetRowNodeIdFunc,
+    GridOptions,
     NavigateToNextCellParams,
+    NodeChildDetails, PostProcessPopupParams,
+    ProcessRowParams,
     TabToNextCellParams
 } from "./entities/gridOptions";
 import {EventService} from "./eventService";
 import {Constants} from "./constants";
 import {ComponentUtil} from "./components/componentUtil";
 import {GridApi} from "./gridApi";
-import {ColDef, IAggFunc, ColGroupDef} from "./entities/colDef";
-import {Bean, Qualifier, Autowired, PostConstruct, PreDestroy} from "./context/context";
-import {ColumnController, ColumnApi} from "./columnController/columnController";
+import {ColDef, ColGroupDef, IAggFunc} from "./entities/colDef";
+import {Autowired, Bean, PostConstruct, PreDestroy, Qualifier} from "./context/context";
+import {ColumnApi, ColumnController} from "./columnController/columnController";
 import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
-import {ICellRendererFunc, ICellRenderer, ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererFunc} from "./rendering/cellRenderers/iCellRenderer";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
+import {BaseExportParams, ProcessCellForExportParams} from "./exportParams";
 
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -33,7 +33,16 @@ function isTrue(value: any): boolean {
     return value === true || value === 'true';
 }
 
-function positiveNumberOrZero(value: any, defaultValue: number): number {
+function zeroOrGreater(value: any, defaultValue: number): number {
+    if (value >= 0) {
+        return value;
+    } else {
+        // zero gets returned if number is missing or the wrong type
+        return defaultValue;
+    }
+}
+
+function oneOrGreater(value: any, defaultValue: number): number {
     if (value > 0) {
         return value;
     } else {
@@ -48,6 +57,12 @@ export class GridOptionsWrapper {
     private static MIN_COL_WIDTH = 10;
 
     public static PROP_HEADER_HEIGHT = 'headerHeight';
+    public static PROP_PIVOT_HEADER_HEIGHT = 'pivotHeaderHeight';
+
+    public static PROP_GROUP_HEADER_HEIGHT = 'groupHeaderHeight';
+    public static PROP_PIVOT_GROUP_HEADER_HEIGHT = 'pivotGroupHeaderHeight';
+
+    public static PROP_FLOATING_FILTERS_HEIGHT = 'floatingFiltersHeight';
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
@@ -80,7 +95,8 @@ export class GridOptionsWrapper {
 
     @PostConstruct
     public init(): void {
-        this.eventService.addGlobalListener(this.globalEventHandler.bind(this));
+        let async = this.useAsyncEvents();
+        this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
 
         this.setupFrameworkComponents();
 
@@ -88,8 +104,15 @@ export class GridOptionsWrapper {
             console.warn('ag-Grid: groupSelectsChildren does not work wth suppressParentsInRowNodes, this selection method needs the part in rowNode to work');
         }
 
-        if (this.isGroupSelectsChildren() && !this.isRowSelectionMulti()) {
-            console.warn('ag-Grid: rowSelectionMulti must be true for groupSelectsChildren to make sense');
+        if (this.isGroupSelectsChildren()) {
+            if (!this.isRowSelectionMulti()) {
+                console.warn('ag-Grid: rowSelectionMulti must be true for groupSelectsChildren to make sense');
+            }
+            if (this.isRowModelEnterprise()) {
+                console.warn('ag-Grid: group selects children is NOT support for Enterprise Row Model. ' +
+                    'This is because the rows are lazy loaded, so selecting a group is not possible as' +
+                    'the grid has no way of knowing what the children are.');
+            }
         }
 
         if (this.isGroupRemoveSingleChildren() && this.isGroupHideOpenParents()) {
@@ -103,8 +126,23 @@ export class GridOptionsWrapper {
         this.groupRowInnerRenderer = this.frameworkFactory.gridOptionsGroupRowInnerRenderer(this.gridOptions);
     }
 
-    public getDomDataKey(): string {
-        return this.domDataKey;
+    // returns the dom data, or undefined if not found
+    public getDomData(element: Element, key: string): any {
+        let domData = (<any>element)[this.domDataKey];
+        if (domData) {
+            return domData[key];
+        } else {
+            return undefined;
+        }
+    }
+
+    public setDomData(element: Element, key: string, value: any): any {
+        let domData = (<any>element)[this.domDataKey];
+        if (_.missing(domData)) {
+            domData = {};
+            (<any>element)[this.domDataKey] = domData;
+        }
+        domData[key] = value;
     }
 
     // the cellRenderers come from the instances for this class, not from gridOptions, which allows
@@ -120,15 +158,14 @@ export class GridOptionsWrapper {
     public getContext() { return this.gridOptions.context; }
     public isPivotMode() { return isTrue(this.gridOptions.pivotMode); }
 
-    public is() { return this.isClientPagination() || this.isRowModelServerPagination(); }
-
     public isRowModelServerPagination() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_PAGINATION; }
-    public isRowModelVirtual() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL; }
+    public isRowModelInfinite() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIRTUAL_DEPRECATED
+                                        || this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE; }
     public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
     public isRowModelEnterprise() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_ENTERPRISE; }
     public isRowModelDefault() { return !(
         this.isRowModelServerPagination() ||
-        this.isRowModelVirtual() ||
+        this.isRowModelInfinite() ||
         this.isRowModelViewport());
     }
 
@@ -150,6 +187,7 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.toolPanelSuppressPivotMode);
     }
     public isSuppressTouch() { return isTrue(this.gridOptions.suppressTouch); }
+    public useAsyncEvents() { return !isTrue(this.gridOptions.suppressAsyncEvents); }
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
     public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
     public isGroupSelectsFiltered() { return isTrue(this.gridOptions.groupSelectsFiltered); }
@@ -163,6 +201,7 @@ export class GridOptionsWrapper {
     public isSuppressMultiSort() { return isTrue(this.gridOptions.suppressMultiSort); }
     public isGroupSuppressAutoColumn() { return isTrue(this.gridOptions.groupSuppressAutoColumn); }
     public isSuppressDragLeaveHidesColumns() { return isTrue(this.gridOptions.suppressDragLeaveHidesColumns); }
+    public isSuppressScrollOnNewData() { return isTrue(this.gridOptions.suppressScrollOnNewData); }
     public isForPrint() { return isTrue(this.gridOptions.forPrint); }
     public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
     public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }
@@ -175,12 +214,14 @@ export class GridOptionsWrapper {
     public isSuppressTabbing() { return isTrue(this.gridOptions.suppressTabbing); }
 
     public getQuickFilterText(): string { return this.gridOptions.quickFilterText; }
+    public isCacheQuickFilter() { return isTrue(this.gridOptions.cacheQuickFilter); }
     public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
     public isSuppressMenuHide() { return isTrue(this.gridOptions.suppressMenuHide); }
     public getRowStyle() { return this.gridOptions.rowStyle; }
     public getRowClass() { return this.gridOptions.rowClass; }
     public getRowStyleFunc() { return this.gridOptions.getRowStyle; }
     public getRowClassFunc() { return this.gridOptions.getRowClass; }
+    public getPostProcessPopupFunc(): (params: PostProcessPopupParams)=>void { return this.gridOptions.postProcessPopup; }
     public getDoesDataFlowerFunc(): (data: any)=>boolean { return this.gridOptions.doesDataFlower; }
 
     public getIsFullWidthCellFunc(): (rowNode: RowNode)=> boolean { return this.gridOptions.isFullWidthCell; }
@@ -194,14 +235,17 @@ export class GridOptionsWrapper {
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
     public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }
+    public isStopEditingWhenGridLosesFocus() { return isTrue(this.gridOptions.stopEditingWhenGridLosesFocus); }
     public getGroupDefaultExpanded(): number { return this.gridOptions.groupDefaultExpanded; }
     public getAutoSizePadding(): number { return this.gridOptions.autoSizePadding; }
 
     public getMaxConcurrentDatasourceRequests(): number { return this.gridOptions.maxConcurrentDatasourceRequests; }
-    public getMaxPagesInCache(): number { return this.gridOptions.maxPagesInCache; }
-    public getPaginationOverflowSize(): number { return this.gridOptions.paginationOverflowSize; }
+    public getMaxBlocksInCache(): number { return this.gridOptions.maxBlocksInCache; }
+    public getCacheOverflowSize(): number { return this.gridOptions.cacheOverflowSize; }
     public getPaginationPageSize(): number { return this.gridOptions.paginationPageSize; }
-    public getPaginationInitialRowCount(): number { return this.gridOptions.paginationInitialRowCount; }
+    public getCacheBlockSize(): number { return this.gridOptions.cacheBlockSize; }
+    public getInfiniteInitialRowCount(): number { return this.gridOptions.infiniteInitialRowCount; }
+    public isPurgeClosedRowNodes() { return isTrue(this.gridOptions.purgeClosedRowNodes); }
     public getPaginationStartPage(): number { return this.gridOptions.paginationStartPage; }
     public isSuppressPaginationPanel() { return isTrue(this.gridOptions.suppressPaginationPanel); }
 
@@ -225,15 +269,17 @@ export class GridOptionsWrapper {
     public isEnableGroupEdit() { return isTrue(this.gridOptions.enableGroupEdit); }
     public isSuppressMiddleClickScrolls() { return isTrue(this.gridOptions.suppressMiddleClickScrolls); }
     public isSuppressPreventDefaultOnMouseWheel() { return isTrue(this.gridOptions.suppressPreventDefaultOnMouseWheel); }
-    public isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
     public isSuppressColumnVirtualisation() { return isTrue(this.gridOptions.suppressColumnVirtualisation); }
     public isSuppressContextMenu() { return isTrue(this.gridOptions.suppressContextMenu); }
     public isAllowContextMenuWithControlKey() { return isTrue(this.gridOptions.allowContextMenuWithControlKey); }
     public isSuppressCopyRowsToClipboard() { return isTrue(this.gridOptions.suppressCopyRowsToClipboard); }
     public isEnableFilter() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); }
-    public isClientPagination() { return isTrue(this.gridOptions.clientPagination); }
+    public isPagination() { return isTrue(this.gridOptions.pagination); }
 
+    // these are deprecated, should remove them when we take out server side pagination
     public isEnableServerSideFilter() { return this.gridOptions.enableServerSideFilter; }
+    public isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
+
     public isSuppressScrollLag() { return isTrue(this.gridOptions.suppressScrollLag); }
     public isSuppressMovableColumns() { return isTrue(this.gridOptions.suppressMovableColumns); }
     public isAnimateRows() { return isTrue(this.gridOptions.animateRows); }
@@ -242,8 +288,10 @@ export class GridOptionsWrapper {
     public isSuppressMenuFilterPanel() { return isTrue(this.gridOptions.suppressMenuFilterPanel); }
     public isSuppressUseColIdForGroups() { return isTrue(this.gridOptions.suppressUseColIdForGroups); }
     public isSuppressAggFuncInHeader() { return isTrue(this.gridOptions.suppressAggFuncInHeader); }
+    public isSuppressAggAtRootLevel() { return isTrue(this.gridOptions.suppressAggAtRootLevel); }
     public isSuppressMenuMainPanel() { return isTrue(this.gridOptions.suppressMenuMainPanel); }
     public isEnableRangeSelection(): boolean { return isTrue(this.gridOptions.enableRangeSelection); }
+    public isPaginationAutoPageSize(): boolean { return isTrue(this.gridOptions.paginationAutoPageSize); }
     public isRememberGroupStateWhenNewData(): boolean { return isTrue(this.gridOptions.rememberGroupStateWhenNewData); }
     public getIcons() { return this.gridOptions.icons; }
     public getAggFuncs(): {[key: string]: IAggFunc} { return this.gridOptions.aggFuncs; }
@@ -262,6 +310,7 @@ export class GridOptionsWrapper {
 
     public getDefaultColDef(): ColDef { return this.gridOptions.defaultColDef; }
     public getDefaultColGroupDef(): ColGroupDef { return this.gridOptions.defaultColGroupDef; }
+    public getDefaultExportParams(): BaseExportParams { return this.gridOptions.defaultExportParams; }
 
     public getHeaderCellTemplate() { return this.gridOptions.headerCellTemplate; }
     public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }
@@ -279,16 +328,19 @@ export class GridOptionsWrapper {
 
     public getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellForClipboard; }
     public getProcessCellFromClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellFromClipboard; }
-    public getViewportRowModelPageSize(): number { return positiveNumberOrZero(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE); }
-    public getViewportRowModelBufferSize(): number { return positiveNumberOrZero(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); }
+    public getViewportRowModelPageSize(): number { return oneOrGreater(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE); }
+    public getViewportRowModelBufferSize(): number { return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); }
     // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
     // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
 
     public setProperty(key: string, value: any): void {
         var gridOptionsNoType = <any> this.gridOptions;
         var previousValue = gridOptionsNoType[key];
-        gridOptionsNoType[key] = value;
-        this.propertyEventService.dispatchEvent(key, {currentValue: value, previousValue: previousValue});
+
+        if (previousValue !== value) {
+            gridOptionsNoType[key] = value;
+            this.propertyEventService.dispatchEvent(key, {currentValue: value, previousValue: previousValue});
+        }
     }
 
     public addEventListener(key: string, listener: Function): void {
@@ -313,6 +365,39 @@ export class GridOptionsWrapper {
             return 25;
         }
     }
+
+    public getFloatingFiltersHeight(): number {
+        if (typeof this.gridOptions.floatingFiltersHeight === 'number') {
+            return this.gridOptions.floatingFiltersHeight;
+        } else {
+            return 20;
+        }
+    }
+
+    public getGroupHeaderHeight(): number {
+        if (typeof this.gridOptions.groupHeaderHeight === 'number') {
+            return this.gridOptions.groupHeaderHeight;
+        } else {
+            return this.getHeaderHeight();
+        }
+    }
+
+    public getPivotHeaderHeight(): number {
+        if (typeof this.gridOptions.pivotHeaderHeight === 'number') {
+            return this.gridOptions.pivotHeaderHeight;
+        } else {
+            return this.getHeaderHeight();
+        }
+    }
+
+    public getPivotGroupHeaderHeight(): number {
+        if (typeof this.gridOptions.pivotGroupHeaderHeight === 'number') {
+            return this.gridOptions.pivotGroupHeaderHeight;
+        } else {
+            return this.getGroupHeaderHeight();
+        }
+    }
+
 
     public isExternalFilterPresent() {
         if (typeof this.gridOptions.isExternalFilterPresent === 'function') {
@@ -435,6 +520,25 @@ export class GridOptionsWrapper {
         if (options.checkboxSelection) {
             console.warn('ag-grid: since version 8.0.x checkboxSelection is not supported as a grid option. ' +
                 'If you want this on all columns, use defaultColDef instead and set it there');
+        }
+        if (this.gridOptions.rowModelType===Constants.ROW_MODEL_TYPE_VIRTUAL_DEPRECATED) {
+            console.warn('ag-grid: since version 8.3.x row model type "virtual" is now called "infinite", ' +
+                'the grid will still work, but please change the property to use "infinite"');
+        }
+        if (options.paginationInitialRowCount) {
+            console.warn('ag-grid: since version 9.0.x paginationInitialRowCount is now called infiniteInitialRowCount');
+        }
+        if (options.infinitePageSize) {
+            console.warn('ag-grid: since version 9.0.x infinitePageSize is now called cacheBlockSize');
+        }
+        if (options.infiniteBlockSize) {
+            console.warn('ag-grid: since version 10.0.x infinitePageSize is now called cacheBlockSize');
+        }
+        if (options.maxPagesInCache) {
+            console.warn('ag-grid: since version 10.0.x maxPagesInCache is now called maxBlocksInCache');
+        }
+        if (options.paginationOverflowSize) {
+            console.warn('ag-grid: since version 10.0.x paginationOverflowSize is now called cacheOverflowSize');
         }
     }
 

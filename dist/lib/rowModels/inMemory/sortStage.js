@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,69 +17,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
-var sortController_1 = require("../../sortController");
-var valueService_1 = require("../../valueService");
-var utils_1 = require("../../utils");
+var sortService_1 = require("../../rowNodes/sortService");
 var SortStage = (function () {
     function SortStage() {
     }
     SortStage.prototype.execute = function (params) {
-        var rowNode = params.rowNode;
-        var sortOptions;
         // if the sorting is already done by the server, then we should not do it here
-        if (!this.gridOptionsWrapper.isEnableServerSideSorting()) {
-            sortOptions = this.sortController.getSortForRowController();
+        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
+            this.sortService.sort(params.rowNode, null);
         }
-        this.sortRowNode(rowNode, sortOptions);
-    };
-    SortStage.prototype.sortRowNode = function (rowNode, sortOptions) {
-        var _this = this;
-        // sort any groups recursively
-        rowNode.childrenAfterFilter.forEach(function (child) {
-            if (child.group) {
-                _this.sortRowNode(child, sortOptions);
-            }
-        });
-        rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
-        var sortActive = utils_1.Utils.exists(sortOptions) && sortOptions.length > 0;
-        if (sortActive) {
-            rowNode.childrenAfterSort.sort(this.compareRowNodes.bind(this, sortOptions));
+        else {
+            this.sortService.sortAccordingToColumnsState(params.rowNode);
         }
-        this.updateChildIndexes(rowNode);
-    };
-    SortStage.prototype.compareRowNodes = function (sortOptions, nodeA, nodeB) {
-        // Iterate columns, return the first that doesn't match
-        for (var i = 0, len = sortOptions.length; i < len; i++) {
-            var sortOption = sortOptions[i];
-            // var compared = compare(nodeA, nodeB, sortOption.column, sortOption.inverter === -1);
-            var isInverted = sortOption.inverter === -1;
-            var valueA = this.valueService.getValue(sortOption.column, nodeA);
-            var valueB = this.valueService.getValue(sortOption.column, nodeB);
-            var comparatorResult;
-            if (sortOption.column.getColDef().comparator) {
-                //if comparator provided, use it
-                comparatorResult = sortOption.column.getColDef().comparator(valueA, valueB, nodeA, nodeB, isInverted);
-            }
-            else {
-                //otherwise do our own comparison
-                comparatorResult = utils_1.Utils.defaultComparator(valueA, valueB);
-            }
-            if (comparatorResult !== 0) {
-                return comparatorResult * sortOption.inverter;
-            }
-        }
-        // All matched, these are identical as far as the sort is concerned:
-        return 0;
-    };
-    SortStage.prototype.updateChildIndexes = function (rowNode) {
-        if (utils_1.Utils.missing(rowNode.childrenAfterSort)) {
-            return;
-        }
-        rowNode.childrenAfterSort.forEach(function (child, index) {
-            child.firstChild = index === 0;
-            child.lastChild = index === rowNode.childrenAfterSort.length - 1;
-            child.childIndex = index;
-        });
     };
     return SortStage;
 }());
@@ -88,13 +37,9 @@ __decorate([
     __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
 ], SortStage.prototype, "gridOptionsWrapper", void 0);
 __decorate([
-    context_1.Autowired('sortController'),
-    __metadata("design:type", sortController_1.SortController)
-], SortStage.prototype, "sortController", void 0);
-__decorate([
-    context_1.Autowired('valueService'),
-    __metadata("design:type", valueService_1.ValueService)
-], SortStage.prototype, "valueService", void 0);
+    context_1.Autowired('sortService'),
+    __metadata("design:type", sortService_1.SortService)
+], SortStage.prototype, "sortService", void 0);
 SortStage = __decorate([
     context_1.Bean('sortStage')
 ], SortStage);

@@ -10,33 +10,34 @@ import {ValueService} from "./valueService";
 import {MasterSlaveService} from "./masterSlaveService";
 import {EventService} from "./eventService";
 import {FloatingRowModel} from "./rowModels/floatingRowModel";
-import {ColDef, IAggFunc, ColGroupDef} from "./entities/colDef";
+import {ColDef, ColGroupDef, IAggFunc} from "./entities/colDef";
 import {RowNode} from "./entities/rowNode";
 import {Constants} from "./constants";
 import {Column} from "./entities/column";
-import {Bean, PostConstruct, Context, Autowired, Optional} from "./context/context";
+import {Autowired, Bean, Context, Optional, PostConstruct} from "./context/context";
 import {GridCore} from "./gridCore";
 import {IRowModel} from "./interfaces/iRowModel";
 import {SortController} from "./sortController";
 import {FocusedCellController} from "./focusedCellController";
-import {IRangeController, RangeSelection, AddRangeSelectionParams} from "./interfaces/iRangeController";
+import {AddRangeSelectionParams, IRangeController, RangeSelection} from "./interfaces/iRangeController";
 import {GridCell, GridCellDef} from "./entities/gridCell";
 import {IClipboardService} from "./interfaces/iClipboardService";
 import {IInMemoryRowModel} from "./interfaces/iInMemoryRowModel";
 import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {IMenuFactory} from "./interfaces/iMenuFactory";
-import {VirtualPageRowModel} from "./rowModels/infinateScrolling/virtualPageRowModel";
+import {InfiniteRowModel} from "./rowModels/infinite/infiniteRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {IAggFuncService} from "./interfaces/iAggFuncService";
-import {IFilter, IFilterComp} from "./interfaces/iFilter";
+import {IFilterComp} from "./interfaces/iFilter";
 import {CsvExportParams} from "./exportParams";
-import {IExcelCreator} from "./interfaces/iExcelCreator";
-import {ServerPaginationService, IPaginationService} from "./rowModels/pagination/serverPaginationService";
+import {ExcelExportParams, IExcelCreator} from "./interfaces/iExcelCreator";
+import {IPaginationService, ServerPaginationService} from "./rowModels/pagination/serverPaginationService";
 import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
-import {ClientPaginationProxy} from "./rowModels/clientPaginationProxy";
+import {PaginationProxy} from "./rowModels/paginationProxy";
+import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
 
 
 export interface StartEditingCellParams {
@@ -67,7 +68,7 @@ export class GridApi {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('serverPaginationService') private serverPaginationService: ServerPaginationService;
-    @Autowired('clientPaginationProxy') private clientPaginationProxy: ClientPaginationProxy;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('clipboardService') private clipboardService: IClipboardService;
@@ -77,8 +78,9 @@ export class GridApi {
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
 
     private inMemoryRowModel: IInMemoryRowModel;
-    private virtualPageRowModel: VirtualPageRowModel;
+    private infinitePageRowModel: InfiniteRowModel;
     private paginationService: IPaginationService;
+    private enterpriseRowModel: IEnterpriseRowModel;
 
     @PostConstruct
     private init(): void {
@@ -87,13 +89,17 @@ export class GridApi {
             case Constants.ROW_MODEL_TYPE_PAGINATION:
                 this.inMemoryRowModel = <IInMemoryRowModel> this.rowModel;
                 break;
-            case Constants.ROW_MODEL_TYPE_VIRTUAL:
-                this.virtualPageRowModel = <VirtualPageRowModel> this.rowModel;
+            case Constants.ROW_MODEL_TYPE_INFINITE:
+            case Constants.ROW_MODEL_TYPE_VIRTUAL_DEPRECATED:
+                this.infinitePageRowModel = <InfiniteRowModel> this.rowModel;
+                break;
+            case Constants.ROW_MODEL_TYPE_ENTERPRISE:
+                this.enterpriseRowModel = <IEnterpriseRowModel> this.rowModel;
                 break;
         }
 
-        if (this.gridOptionsWrapper.isClientPagination()) {
-            this.paginationService = this.clientPaginationProxy;
+        if (this.gridOptionsWrapper.isPagination()) {
+            this.paginationService = this.paginationProxy;
         } else {
             this.paginationService = this.serverPaginationService;
         }
@@ -120,12 +126,12 @@ export class GridApi {
         this.csvCreator.exportDataAsCsv(params)
     }
 
-    public getDataAsExcel(params?: CsvExportParams): string {
+    public getDataAsExcel(params?: ExcelExportParams): string {
         if (!this.excelCreator) { console.warn('ag-Grid: Excel export is only available in ag-Grid Enterprise'); }
         return this.excelCreator.getDataAsExcelXml(params);
     }
 
-    public exportDataAsExcel(params?: CsvExportParams): void {
+    public exportDataAsExcel(params?: ExcelExportParams): void {
         if (!this.excelCreator) { console.warn('ag-Grid: Excel export is only available in ag-Grid Enterprise'); }
         this.excelCreator.exportDataAsExcel(params)
     }
@@ -142,10 +148,10 @@ export class GridApi {
     public setDatasource(datasource: IDatasource) {
         if (this.gridOptionsWrapper.isRowModelServerPagination()) {
             this.serverPaginationService.setDatasource(datasource);
-        } else if (this.gridOptionsWrapper.isRowModelVirtual()) {
-            (<VirtualPageRowModel>this.rowModel).setDatasource(datasource);
+        } else if (this.gridOptionsWrapper.isRowModelInfinite()) {
+            (<InfiniteRowModel>this.rowModel).setDatasource(datasource);
         } else {
-            console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_VIRTUAL}' or '${Constants.ROW_MODEL_TYPE_PAGINATION}'`)
+            console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_INFINITE}'`)
         }
     }
 
@@ -195,6 +201,10 @@ export class GridApi {
 
     public setColumnDefs(colDefs: (ColDef|ColGroupDef)[]) {
         this.columnController.setColumnDefs(colDefs);
+    }
+
+    public getVerticalPixelRange(): any {
+        return this.gridPanel.getVerticalPixelRange();
     }
 
     public refreshRows(rowNodes: RowNode[]): void {
@@ -501,6 +511,27 @@ export class GridApi {
 
     public setHeaderHeight(headerHeight: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_HEADER_HEIGHT, headerHeight);
+        this.doLayout();
+    }
+
+    public setGroupHeaderHeight(headerHeight: number) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, headerHeight);
+        this.doLayout();
+    }
+
+    public setFloatingFiltersHeight(headerHeight: number) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, headerHeight);
+        this.doLayout();
+    }
+
+    public setPivotGroupHeaderHeight(headerHeight: number) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, headerHeight);
+        this.doLayout();
+    }
+
+    public setPivotHeaderHeight(headerHeight: number) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, headerHeight);
+        this.doLayout();
     }
 
     public showToolPanel(show:any) {
@@ -540,11 +571,13 @@ export class GridApi {
     }
 
     public addEventListener(eventType: string, listener: Function): void {
-        this.eventService.addEventListener(eventType, listener);
+        let async = this.gridOptionsWrapper.useAsyncEvents();
+        this.eventService.addEventListener(eventType, listener, async);
     }
 
     public addGlobalListener(listener: Function): void {
-        this.eventService.addGlobalListener(listener);
+        let async = this.gridOptionsWrapper.useAsyncEvents();
+        this.eventService.addGlobalListener(listener, async);
     }
 
     public removeEventListener(eventType: string, listener: Function): void {
@@ -666,50 +699,100 @@ export class GridApi {
     }
 
     public refreshVirtualPageCache(): void {
-        if (this.virtualPageRowModel) {
-            this.virtualPageRowModel.refreshVirtualPageCache();
+        console.warn('ag-Grid: refreshVirtualPageCache() is now called refreshInfiniteCache(), please call refreshInfiniteCache() instead');
+        this.refreshInfiniteCache();
+    }
+
+    public refreshInfinitePageCache(): void {
+        console.warn('ag-Grid: refreshInfinitePageCache() is now called refreshInfiniteCache(), please call refreshInfiniteCache() instead');
+        this.refreshInfiniteCache();
+    }
+
+    public refreshInfiniteCache(): void {
+        if (this.infinitePageRowModel) {
+            this.infinitePageRowModel.refreshCache();
         } else {
-            console.warn(`ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.`);
+            console.warn(`ag-Grid: api.refreshInfiniteCache is only available when rowModelType='infinite'.`);
         }
     }
 
     public purgeVirtualPageCache(): void {
-        if (this.virtualPageRowModel) {
-            this.virtualPageRowModel.purgeVirtualPageCache();
+        console.warn('ag-Grid: purgeVirtualPageCache() is now called purgeInfiniteCache(), please call purgeInfiniteCache() instead');
+        this.purgeInfinitePageCache();
+    }
+
+    public purgeInfinitePageCache(): void {
+        console.warn('ag-Grid: purgeInfinitePageCache() is now called purgeInfiniteCache(), please call purgeInfiniteCache() instead');
+        this.purgeInfiniteCache();
+    }
+
+    public purgeInfiniteCache(): void {
+        if (this.infinitePageRowModel) {
+            this.infinitePageRowModel.purgeCache();
         } else {
-            console.warn(`ag-Grid: api.refreshVirtualPageCache is only available when rowModelType='virtual'.`);
+            console.warn(`ag-Grid: api.purgeInfiniteCache is only available when rowModelType='infinite'.`);
+        }
+    }
+
+    public purgeEnterpriseCache(route?: string[]): void {
+        if (this.enterpriseRowModel) {
+            this.enterpriseRowModel.purgeCache(route);
+        } else {
+            console.warn(`ag-Grid: api.purgeEnterpriseCache is only available when rowModelType='enterprise'.`);
         }
     }
 
     public getVirtualRowCount(): number {
-        if (this.virtualPageRowModel) {
-            return this.virtualPageRowModel.getVirtualRowCount();
+        console.warn('ag-Grid: getVirtualRowCount() is now called getInfiniteRowCount(), please call getInfiniteRowCount() instead');
+        return this.getInfiniteRowCount();
+    }
+
+    public getInfiniteRowCount(): number {
+        if (this.infinitePageRowModel) {
+            return this.infinitePageRowModel.getVirtualRowCount();
         } else {
             console.warn(`ag-Grid: api.getVirtualRowCount is only available when rowModelType='virtual'.`);
         }
     }
 
     public isMaxRowFound(): boolean {
-        if (this.virtualPageRowModel) {
-            return this.virtualPageRowModel.isMaxRowFound();
+        if (this.infinitePageRowModel) {
+            return this.infinitePageRowModel.isMaxRowFound();
         } else {
             console.warn(`ag-Grid: api.isMaxRowFound is only available when rowModelType='virtual'.`);
         }
     }
 
     public setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void {
-        if (this.virtualPageRowModel) {
-            this.virtualPageRowModel.setVirtualRowCount(rowCount, maxRowFound);
+        console.warn('ag-Grid: setVirtualRowCount() is now called setInfiniteRowCount(), please call setInfiniteRowCount() instead');
+        this.setInfiniteRowCount(rowCount, maxRowFound);
+    }
+
+    public setInfiniteRowCount(rowCount: number, maxRowFound?: boolean): void {
+        if (this.infinitePageRowModel) {
+            this.infinitePageRowModel.setVirtualRowCount(rowCount, maxRowFound);
         } else {
             console.warn(`ag-Grid: api.setVirtualRowCount is only available when rowModelType='virtual'.`);
         }
     }
 
     public getVirtualPageState(): any {
-        if (this.virtualPageRowModel) {
-            return this.virtualPageRowModel.getVirtualPageState();
+        console.warn('ag-Grid: getVirtualPageState() is now called getCacheBlockState(), please call getCacheBlockState() instead');
+        return this.getCacheBlockState();
+    }
+
+    public getInfinitePageState(): any {
+        console.warn('ag-Grid: getInfinitePageState() is now called getCacheBlockState(), please call getCacheBlockState() instead');
+        return this.getCacheBlockState();
+    }
+
+    public getCacheBlockState(): any {
+        if (this.infinitePageRowModel) {
+            return this.infinitePageRowModel.getBlockState();
+        } else if (this.enterpriseRowModel) {
+            return this.enterpriseRowModel.getBlockState();
         } else {
-            console.warn(`ag-Grid: api.getVirtualPageState is only available when rowModelType='virtual'.`);
+            console.warn(`ag-Grid: api.getCacheBlockState() is only available when rowModelType='infinite' or rowModelType='enterprise'.`);
         }
     }
 
@@ -717,13 +800,16 @@ export class GridApi {
         this.gridPanel.setBodyAndHeaderHeights();
     }
 
-
     public paginationIsLastPageFound(): boolean {
         return this.paginationService.isLastPageFound();
     }
 
     public paginationGetPageSize(): number {
         return this.paginationService.getPageSize();
+    }
+
+    public paginationSetPageSize(size: number): void {
+        this.gridOptionsWrapper.setProperty('paginationPageSize', size);
     }
 
     public paginationGetCurrentPage(): number {

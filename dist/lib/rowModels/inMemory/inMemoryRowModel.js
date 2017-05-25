@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v8.2.0
+ * @version v10.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,6 +51,32 @@ var InMemoryRowModel = (function () {
         this.context.wireBean(this.rootNode);
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
+        }
+    };
+    InMemoryRowModel.prototype.isLastRowFound = function () {
+        return true;
+    };
+    InMemoryRowModel.prototype.getRowCount = function () {
+        if (this.rowsToDisplay) {
+            return this.rowsToDisplay.length;
+        }
+        else {
+            return 0;
+        }
+    };
+    InMemoryRowModel.prototype.getRowBounds = function (index) {
+        if (utils_1.Utils.missing(this.rowsToDisplay)) {
+            return null;
+        }
+        var rowNode = this.rowsToDisplay[index];
+        if (rowNode) {
+            return {
+                rowTop: rowNode.rowTop,
+                rowHeight: rowNode.rowHeight
+            };
+        }
+        else {
+            return null;
         }
     };
     InMemoryRowModel.prototype.onRowGroupOpened = function () {
@@ -119,7 +145,8 @@ var InMemoryRowModel = (function () {
         var event = {
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
-            newData: params.newData
+            newData: params.newData,
+            newPage: false
         };
         this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED, event);
         if (this.$scope) {
@@ -160,11 +187,14 @@ var InMemoryRowModel = (function () {
     };
     InMemoryRowModel.prototype.getVirtualRowCount = function () {
         console.warn('ag-Grid: rowModel.getVirtualRowCount() is not longer a function, use rowModel.getRowCount() instead');
-        return this.getRowCount();
+        return this.getPageLastRow();
     };
-    InMemoryRowModel.prototype.getRowCount = function () {
+    InMemoryRowModel.prototype.getPageFirstRow = function () {
+        return 0;
+    };
+    InMemoryRowModel.prototype.getPageLastRow = function () {
         if (this.rowsToDisplay) {
-            return this.rowsToDisplay.length;
+            return this.rowsToDisplay.length - 1;
         }
         else {
             return 0;
@@ -207,7 +237,7 @@ var InMemoryRowModel = (function () {
         var pixelInRow = topPixel <= pixelToMatch && bottomPixel > pixelToMatch;
         return pixelInRow;
     };
-    InMemoryRowModel.prototype.getRowCombinedHeight = function () {
+    InMemoryRowModel.prototype.getCurrentPageHeight = function () {
         if (this.rowsToDisplay && this.rowsToDisplay.length > 0) {
             var lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
             var lastPixel = lastRow.rowTop + lastRow.rowHeight;
