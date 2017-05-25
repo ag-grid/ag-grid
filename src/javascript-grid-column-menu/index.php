@@ -77,6 +77,7 @@ include '../documentation-main/documentation_header.php';
         <li><b>resetColumns</b>: Reset column details. Always shown.</li>
         <li><b>expandAll</b>: Expand all groups. Only shown if grouping by at least one column.</li>
         <li><b>contractAll</b>: Contract all groups. Only shown if grouping by at least one column.</li>
+        <li><b>toolPanel</b>: Show the tool panel.</li>
     </ul>
 
     <p>
