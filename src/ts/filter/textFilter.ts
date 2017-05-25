@@ -46,6 +46,10 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         }
     };
 
+    public getDefaultType(): string {
+        return BaseFilter.CONTAINS;
+    }
+
 
     public customInit(): void {
         this.comparator = this.filterParams.textCustomComparator ? this.filterParams.textCustomComparator : TextFilter.DEFAULT_COMPARATOR;
@@ -72,8 +76,8 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     }
 
     public initialiseFilterBodyUi() {
+        super.initialiseFilterBodyUi();
         this.addDestroyableEventListener(this.eFilterTextField, 'input', this.onFilterTextFieldChanged.bind(this));
-        this.setType(this.defaultFilter);
     }
 
     public refreshFilterBodyUi() {}

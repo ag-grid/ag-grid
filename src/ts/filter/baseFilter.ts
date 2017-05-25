@@ -82,7 +82,7 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
 
     public init(params: P): void {
         this.filterParams = params;
-        this.defaultFilter = BaseFilter.EQUALS;
+        this.defaultFilter = this.filterParams.defaultOption;
         if (this.filterParams.filterOptions){
             if (this.filterParams.filterOptions.lastIndexOf(BaseFilter.EQUALS)<0){
                 this.defaultFilter = this.filterParams.filterOptions[0];
@@ -259,6 +259,12 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
             </div>`;
     }
 
+    public initialiseFilterBodyUi() {
+        this.setFilterType(this.defaultFilter ? this.defaultFilter : this.getDefaultType());
+    }
+
+    public abstract getDefaultType ():string;
+
     private onFilterTypeChanged (): void{
         this.filter = this.eTypeSelector.value;
         this.refreshFilterBodyUi();
@@ -293,6 +299,10 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
     public abstract comparator(): Comparator<T>;
 
     public customInit():void{}
+
+    public getDefaultType(): string {
+        return BaseFilter.EQUALS;
+    }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
         let value:any = this.filterParams.valueGetter(params.node);

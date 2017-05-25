@@ -74,4 +74,5 @@ export interface IFilterParams {
     context: any;
     $scope: any;
     filterOptions?: string[];
+    defaultOption?: string;
 }
