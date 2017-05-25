@@ -250,12 +250,12 @@ var GroupCellRenderer = (function (_super) {
         var groupName = this.getGroupName();
         var valueFormatted = this.valueFormatterService.formatValue(columnOfGroupedCol, params.node, params.scope, params.rowIndex, groupName);
         var groupedColCellRenderer = columnOfGroupedCol.getCellRenderer();
+        var colDefOfGroupedCol = columnOfGroupedCol.getColDef();
         // reuse the params but change the value
         if (typeof groupedColCellRenderer === 'function') {
             // reuse the params but change the value
             params.value = groupName;
             params.valueFormatted = valueFormatted;
-            var colDefOfGroupedCol = columnOfGroupedCol.getColDef();
             var groupedColCellRendererParams = colDefOfGroupedCol ? colDefOfGroupedCol.cellRendererParams : null;
             // because we are talking about the different column to the original, any user provided params
             // are for the wrong column, so need to copy them in again.
@@ -263,6 +263,18 @@ var GroupCellRenderer = (function (_super) {
                 utils_1.Utils.assign(params, groupedColCellRenderer);
             }
             this.cellRendererService.useCellRenderer(colDefOfGroupedCol.cellRenderer, this.eValue, params);
+        }
+        else if (colDefOfGroupedCol && colDefOfGroupedCol.cellRendererFramework) {
+            var frameworkCellRenderer = this.frameworkFactory.colDefCellRenderer(colDefOfGroupedCol);
+            // reuse the params but change the value
+            params.value = groupName;
+            params.valueFormatted = valueFormatted;
+            // because we are talking about the different column to the original, any user provided params
+            // are for the wrong column, so need to copy them in again.
+            if (colDefOfGroupedCol.cellRendererParams) {
+                utils_1.Utils.assign(params, colDefOfGroupedCol.cellRendererParams);
+            }
+            this.cellRendererService.useCellRenderer(frameworkCellRenderer, this.eValue, params);
         }
         else {
             var valueToRender = utils_1.Utils.exists(valueFormatted) ? valueFormatted : groupName;
@@ -414,6 +426,10 @@ __decorate([
     context_1.Autowired('columnController'),
     __metadata("design:type", columnController_1.ColumnController)
 ], GroupCellRenderer.prototype, "columnController", void 0);
+__decorate([
+    context_1.Autowired('frameworkFactory'),
+    __metadata("design:type", Object)
+], GroupCellRenderer.prototype, "frameworkFactory", void 0);
 __decorate([
     componentAnnotations_1.RefSelector('eExpanded'),
     __metadata("design:type", HTMLElement)
