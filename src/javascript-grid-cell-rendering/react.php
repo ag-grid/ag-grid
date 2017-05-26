@@ -71,6 +71,22 @@ in the property of the same name excepting ending 'Framework'. As long as you ar
 the grid will know the framework to use is React.
 </p>
 
+<h3 id="example-rendering-using-react-components">Example: Rendering using React Components</h3>
+<p>
+    Using React Components in the Cell Renderers
+</p>
+
+<show-complex-example example="../react-examples/examples/?fromDocs&example=dynamic"
+                      sources="{
+                            [
+                                { root: '/react-examples/examples/src/dynamicComponentExample/', files: 'ChildMessageRenderer.jsx,CurrencyRenderer.jsx,ParamsRenderer.jsx,CubeRenderer.jsx,DynamicComponentsExample.jsx,SquareRenderer.jsx' }
+                            ]
+                          }"
+                      exampleHeight="525px">
+</show-complex-example>
+
+
+
 <h3 id="react-props"><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
 
 <p>
@@ -116,3 +132,18 @@ class NameCellRenderer extends React.Component {
     a new one if it tries to refresh the cell. If you do implement it, then it's up to your React
     components <i>refresh()</i> method to update the state of your component.
 </p>
+
+<h3 id="example-rendering-using-more-complex-react-components">Example: Rendering using more complex React
+    Components</h3>
+<p>
+    Using more complex React Components in the Cell Renderers
+</p>
+
+<show-complex-example example="../react-examples/examples/?fromDocs&example=rich-dynamic"
+                      sources="{
+                            [
+                                { root: '/react-examples/examples/src/richComponentExample/', files: 'ClickableRenderer.jsx,RatioRenderer.jsx,RichComponentsExample.jsx' }
+                            ]
+                          }"
+                      exampleHeight="525px">
+</show-complex-example>

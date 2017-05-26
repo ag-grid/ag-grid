@@ -21,6 +21,7 @@ include '../documentation-main/documentation_header.php';
     <div class="row">
         <div class="col-sm-6">
             <a href="../example-angular/" class="column-links column-items">Angular Examples</a>
+            <a href="../example-react/" class="column-links column-items">React Examples</a>
             <a href="../example-account-report/" class="column-links column-items">Styled Report</a>
             <a href="../example-file-browser/" class="column-links column-items">File Browser</a>
             <a href="../example-expressions-and-context/" class="column-links column-items">Expressions and Context</a>

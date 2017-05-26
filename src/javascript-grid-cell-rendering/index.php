@@ -409,10 +409,6 @@ colDef.cellRenderer = function(params) {
     <?php include './angular.php';?>
 <?php } ?>
 
-<?php if (isFrameworkAurelia()) { ?>
-    <?php include './aurelia.php';?>
-<?php } ?>
-
 <?php if (isFrameworkReact()) { ?>
     <?php include './react.php';?>
 <?php } ?>
@@ -420,6 +416,11 @@ colDef.cellRenderer = function(params) {
 <?php if (isFrameworkVue()) { ?>
     <?php include './vuejs.php';?>
 <?php } ?>
+
+<?php if (isFrameworkAurelia()) { ?>
+    <?php include './aurelia.php';?>
+<?php } ?>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
 

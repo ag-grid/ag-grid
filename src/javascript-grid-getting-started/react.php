@@ -35,117 +35,6 @@
     </ul>
     </p>
 
-        <style>
-            button {
-                margin-left: 4px;
-                margin-right: 4px;
-            }
-
-            .customHeaderMenuButton {
-                margin-top: 5px;
-                margin-left: 4px;
-                float: left;
-            }
-
-            .customHeaderLabel {
-                margin-left: 5px;
-                margin-top: 3px;
-                float: left;
-            }
-
-            .customSortDownLabel {
-                float: left;
-                margin-left: 10px;
-                margin-top: 5px;
-            }
-
-            .customSortUpLabel {
-                float: left;
-                margin-left: 3px;
-                margin-top: 4px;
-            }
-
-            .customSortRemoveLabel {
-                float: left;
-                font-size: 11px;
-                margin-left: 3px;
-                margin-top: 6px;
-            }
-
-            .active {
-                color: cornflowerblue;
-            }
-
-            .hidden {
-                display: none;
-            }
-
-            .customHeaderLabel {
-                margin-left: 5px;
-                margin-top: 3px;
-                float: left;
-            }
-
-            .customExpandButton {
-                float: right;
-                margin-top: 5px;
-                margin-left: 3px;
-            }
-
-            .expanded {
-                animation-name: toExpanded;
-                animation-duration: 1s;
-                -ms-transform: rotate(180deg); /* IE 9 */
-                -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
-                transform: rotate(180deg);
-            }
-
-            .collapsed {
-                color: cornflowerblue;
-                animation-name: toCollapsed;
-                animation-duration: 1s;
-                -ms-transform: rotate(0deg); /* IE 9 */
-                -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
-                transform: rotate(0deg);
-            }
-
-            @keyframes toExpanded {
-                from {
-                    color: cornflowerblue;
-                    -ms-transform: rotate(0deg); /* IE 9 */
-                    -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
-                    transform: rotate(0deg);
-                }
-                to {
-                    color: black;
-                    -ms-transform: rotate(180deg); /* IE 9 */
-                    -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
-                    transform: rotate(180deg);
-                }
-            }
-
-            @keyframes toCollapsed {
-                from {
-                    color: black;
-                    -ms-transform: rotate(180deg); /* IE 9 */
-                    -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
-                    transform: rotate(180deg);
-                }
-                to {
-                    color: cornflowerblue;
-                    -ms-transform: rotate(0deg); /* IE 9 */
-                    -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
-                    transform: rotate(0deg);
-                }
-            }
-
-            #myAppContainer > div {
-                width: 100% !important;
-                max-width: 100%;
-            }
-        </style>
-    <div id="myAppContainer"></div>
-
     <h2 id="ag-Grid-react-features">ag-Grid React Features</h2>
 
     <p>
@@ -259,8 +148,6 @@ somePointLater() {
     </p>
 
 </div>
-
-<script type="text/javascript" src="bundle-react.js" charset="utf-8"></script>
 
 <!-- Example uses font awesome icons -->
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">

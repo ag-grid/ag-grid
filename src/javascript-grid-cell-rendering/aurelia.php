@@ -51,25 +51,25 @@
 
 <p>The advantage of using Templates for your renderers is that you have the ability to use Aurelia's dynamic data binding facilties.</p>
 
-<h3 id="example-rendering-using-templates">Example: Rendering using Templates</h3>
-<p>
-    Using Templates in the Cell Renderers - here we're using a Template (<code>ag-cell-template</code>) to render the Mood column depending on the underlying value
-    of the "mood" field.
-</p>
-
-<show-example example="../aurelia-example/#/editor/true"
-              jsfile="../aurelia-example/components/editor-example/editor-example.ts"
-              html="../aurelia-example/components/editor-example/editor-example.html"></show-example>
-
-<h3 id="example-rendering-using-regular-cell-renderer-components">Example: Rendering using regular cellRenderer Components</h3>
-<p>
-    A Rich Grid leveraging regular Cell Renderer Components
-</p>
-
-<show-example example="../aurelia-example/#/richgrid-declarative/true"
-          jsfile="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"
-          html="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"
-          exampleHeight="525px"></show-example>
-
+<!--<h3 id="example-rendering-using-templates">Example: Rendering using Templates</h3>-->
+<!--<p>-->
+<!--    Using Templates in the Cell Renderers - here we're using a Template (<code>ag-cell-template</code>) to render the Mood column depending on the underlying value-->
+<!--    of the "mood" field.-->
+<!--</p>-->
+<!---->
+<!--<show-example example="../aurelia-example/#/editor/true"-->
+<!--              jsfile="../aurelia-example/components/editor-example/editor-example.ts"-->
+<!--              html="../aurelia-example/components/editor-example/editor-example.html"></show-example>-->
+<!---->
+<!--<h3 id="example-rendering-using-regular-cell-renderer-components">Example: Rendering using regular cellRenderer Components</h3>-->
+<!--<p>-->
+<!--    A Rich Grid leveraging regular Cell Renderer Components-->
+<!--</p>-->
+<!---->
+<!--<show-example example="../aurelia-example/#/richgrid-declarative/true"-->
+<!--          jsfile="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"-->
+<!--          html="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"-->
+<!--          exampleHeight="525px"></show-example>-->
+<!---->
 <br/>
 <note>The full <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers and filters.</note>

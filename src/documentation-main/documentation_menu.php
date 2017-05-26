@@ -307,6 +307,17 @@
         menuItem(2, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
         menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
     }
+    if (isFrameworkReact() || isFrameworkAll()) {
+        menuItemWithIcon('react_small.png', 1, 'React Examples', 'React Examples', 'example-react/', true);
+        menuItem(2, 'React Rich Grid', 'Rich Grid', 'example-react-rich-grid/');
+        menuItem(2, 'React Dynamic', 'Cell Renderers', 'example-react-dynamic/');
+//        menuItem(2, 'React Editor', 'Editor Component', 'example-react-editor/');
+//        menuItem(2, 'React Filter', 'Filter Component', 'example-react-filter/');
+//        menuItem(2, 'React Floating Row', 'Floating Rows', 'example-react-floating-row/');
+//        menuItem(2, 'React Full Width', 'Full Width Rows', 'example-react-full-width-rows/');
+//        menuItem(2, 'React Group Row', 'Group Rows', 'example-react-grouped-row/');
+//        menuItem(2, 'React MasterDetail', 'Master/Detail', 'example-react-master-detail/');
+    }
     menuItem(1, 'Styled Report', 'Styled Report', 'example-account-report/');
     menuItem(1, 'File Browser', 'File Browser', 'example-file-browser/');
     menuItem(1, 'Expressions and Context', 'Expressions', 'example-expressions-and-context/');
