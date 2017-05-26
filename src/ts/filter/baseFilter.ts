@@ -323,11 +323,11 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
         }
 
         if (this.filter === BaseFilter.GREATER_THAN_OR_EQUAL){
-            return compareResult >= 0;
+            return compareResult >= 0 && (value!=null);
         }
 
         if (this.filter === BaseFilter.LESS_THAN_OR_EQUAL){
-            return compareResult <= 0;
+            return compareResult <= 0 && (value!=null);
         }
 
         if (this.filter === BaseFilter.LESS_THAN){
