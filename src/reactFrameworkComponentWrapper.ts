@@ -25,7 +25,7 @@ export class ReactFrameworkComponentWrapper implements  FrameworkComponentWrappe
                     var componentRef = this.getFrameworkComponentInstance();
                     return wrapper.reactComponent.prototype[methodName].apply (componentRef, arguments)
                 } else {
-                    console.warn('ag-Grid: React dateComponent is missing the method ' + methodName + '()');
+                    console.warn('ag-Grid: React component is missing the method ' + methodName + '()');
                     return null;
                 }
             };
