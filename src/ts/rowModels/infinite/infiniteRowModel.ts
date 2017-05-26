@@ -107,7 +107,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         }
 
         if (_.exists(ds.blockSize)) {
-            console.error('ag-Grid: since version 5.1.x, pageSize is replaced with grid property infinitePageSize');
+            console.error('ag-Grid: since version 5.1.x, pageSize/blockSize is replaced with grid property infinitePageSize');
         }
     }
 
