@@ -26131,7 +26131,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if (childNode.group) {
 	                    // a group is included in the result if it has any children of it's own.
 	                    // by this stage, the child groups are already filtered
-	                    if (childNode.childrenAfterFilter.length > 0) {
+	                    // added "this.filterManager.doesRowPassFilter(childNode) ||" - so group rows will show if they themselfs pass filter - even if they don't have childrens that pass the filter
+	                    if (_this.filterManager.doesRowPassFilter(childNode) || childNode.childrenAfterFilter.length > 0) {
 	                        filterResult.push(childNode);
 	                    }
 	                }
