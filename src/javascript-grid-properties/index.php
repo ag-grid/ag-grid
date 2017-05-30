@@ -388,7 +388,11 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>rowData</th>
-            <td>Data to be displayed as rows in the table</td>
+            <td>InMemoryRowModel only - set the data to be displayed as rows in the grid.</td>
+        </tr>
+        <tr>
+            <th>enableImmutableMode</th>
+            <td>InMemoryRowModel only - enables immutable mode, for compatibility with immutable stores.</td>
         </tr>
         <tr>
             <th>floatingTopRowData</th>

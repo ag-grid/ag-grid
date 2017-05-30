@@ -121,6 +121,10 @@ include '../documentation-main/documentation_header.php';
             <td>Set new rows into the grid.</td>
         </tr>
         <tr>
+            <th>updateRowData(transaction)</th>
+            <td>Update row data into the grid. Pass a transaction object with lists for add, remove and update.</td>
+        </tr>
+        <tr>
             <th>setDatasource(datasource)</th>
             <td>Set new datasource into the grid. The grid will reset all paging
                 and load the first page. If you want to reset the paging but keep the

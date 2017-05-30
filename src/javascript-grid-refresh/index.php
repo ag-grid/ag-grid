@@ -152,6 +152,12 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="example2"></show-example>
 
+    <h3 id="immutable-store-and-transaction">Headers, Footers and Cell Refresh Example</h3>
+
+    <show-example example="exampleSimpleImmutableStore"></show-example>
+
+    <show-example example="exampleComplexImmutableStore"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

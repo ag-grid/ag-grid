@@ -1,0 +1,21 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused46"></script>
+    <script src="exampleSimpleImmutableStore.js"></script>
+</head>
+
+<body style="position: relative;">
+
+    <div style="height: 100%; padding-top: 25px; box-sizing: border-box;">
+        <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+    </div>
+
+    <div style="position: absolute; top: 0px; left: 0px;">
+        <button onclick="addFiveItems()">Add Five Items</button>
+        <button onclick="removeSelected()">Remove Selected</button>
+        <button onclick="updatePrices()">Update Prices</button>
+    </div>
+
+</body>
+</html>

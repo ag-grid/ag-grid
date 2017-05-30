@@ -2,7 +2,7 @@
 <head>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
     <script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused46"></script>
-    <script src="exampleInsertRemoveBigData.js"></script>
+    <script src="exampleComplexImmutableStore.js"></script>
 </head>
 <style>
     .number {
@@ -25,10 +25,9 @@
     </div>
 
     <div style="position: absolute; top: 0px; left: 0px;">
-        <button onclick="add20PalmOilExistingBooks()">Add 20 Palm Oil</button>
+        <button onclick="updateUsingTransaction()">Update Using Transaction</button>
+        <button onclick="updateUsingTransactionImmutableStore()">Update Using Immutable Store</button>
         <button onclick="toggleFeed()" id="toggleInterval">&#9658; Start Feed</button>
-        <!--<button onclick="two()">Two</button>-->
-        <!--<button onclick="three()">Three</button>-->
     </div>
 
 </body>
