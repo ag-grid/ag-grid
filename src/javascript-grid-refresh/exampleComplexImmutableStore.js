@@ -135,6 +135,7 @@ function createGridOptions() {
         enableImmutableMode: true,
         columnDefs: columnDefs,
         rowData: globalRowData,
+        enableStatusBar: true,
         animateRows: true,
         enableColResize: true,
         enableRangeSelection: true,
