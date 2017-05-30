@@ -1,6 +1,6 @@
-import {EventService, Component, Autowired, PostConstruct, Events, Utils, Column,
-    GridRow, RowNode, Constants, FloatingRowModel, IRowModel, ValueService,
-    CellNavigationService, Bean, Context, GridOptionsWrapper, GridCell} from 'ag-grid/main';
+import {EventService, Component, Autowired, PostConstruct, Events, Utils,
+    GridRow, RowNode, Constants, FloatingRowModel, IRowModel, ValueService, GridCore,
+    CellNavigationService, Bean, Context, GridOptionsWrapper} from 'ag-grid/main';
 import {StatusItem} from "./statusItem";
 import {RangeController} from "../rangeController";
 
@@ -19,6 +19,7 @@ export class StatusBar extends Component {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridCore') private gridCore: GridCore;
 
     private statusItemSum: StatusItem;
     private statusItemCount: StatusItem;
@@ -37,6 +38,7 @@ export class StatusBar extends Component {
     private init(): void {
         this.createStatusItems();
         this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
     }
 
     private createStatusItems(): void {
@@ -143,7 +145,7 @@ export class StatusBar extends Component {
         }
 
         let gotResult = count > 1;
-        let gotNumberResult = numberCount>0;
+        let gotNumberResult = numberCount > 1;
 
         // we should count even if no numbers
         if (gotResult) {
@@ -162,6 +164,11 @@ export class StatusBar extends Component {
         this.statusItemMin.setVisible(gotNumberResult);
         this.statusItemMax.setVisible(gotNumberResult);
         this.statusItemAvg.setVisible(gotNumberResult);
+
+        if (this.isVisible()!==gotResult) {
+            this.setVisible(gotResult);
+            this.gridCore.doLayout();
+        }
     }
 
     private getRowNode(gridRow: GridRow): RowNode {

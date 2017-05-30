@@ -56,7 +56,6 @@ export class RangeController implements IRangeController {
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearSelection.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearSelection.bind(this));
-        this.eventService.addEventListener(Events.EVENT_SORT_CHANGED, this.clearSelection.bind(this));
     }
 
     public setRangeToCell(cell: GridCell): void {
