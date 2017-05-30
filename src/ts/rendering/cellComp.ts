@@ -70,6 +70,9 @@ export class CellComp extends Component {
 
     private gridCell: GridCell; // this is a pojo, not a gui element
 
+    // how many ranges this cell is in, depends what color to mark this cell
+    private rangeCount = 0;
+
     // we do not use this in this class, however the renderedRow wants to konw this
     private eParentRow: HTMLElement;
 
@@ -106,8 +109,6 @@ export class CellComp extends Component {
         this.node = node;
         this.scope = scope;
         this.renderedRow = renderedRow;
-
-        this.setupGridCell();
     }
 
     private createGridCell(): void {
@@ -119,18 +120,18 @@ export class CellComp extends Component {
         this.gridCell = new GridCell(gridCellDef);
     }
 
-    private setupGridCell(): void {
-        let listener = () => {
-            // when index changes, this influences items that need the index, so we update the
-            // grid cell so they are working off the new index.
-            this.createGridCell();
-            // when the index of the row changes, ie means the cell may have lost of gained focus
-            this.checkCellFocused();
-        };
+    private addIndexChangeListener(): void {
+        this.addDestroyableEventListener(this.node, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
+    }
 
-        this.addDestroyableEventListener(this.node, RowNode.EVENT_ROW_INDEX_CHANGED, listener);
-
+    private onRowIndexChanged(): void {
+        // when index changes, this influences items that need the index, so we update the
+        // grid cell so they are working off the new index.
         this.createGridCell();
+        // when the index of the row changes, ie means the cell may have lost of gained focus
+        this.checkCellFocused();
+        // check range selection
+        this.onRangeSelectionChanged();
     }
 
     public getGridCell(): GridCell {
@@ -240,24 +241,20 @@ export class CellComp extends Component {
         if (!this.rangeController) {
             return;
         }
-        let rangeCountLastTime: number = 0;
-        let rangeSelectedListener = () => {
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this))
+        this.onRangeSelectionChanged();
+    }
 
-            let rangeCount = this.rangeController.getCellRangeCount(this.gridCell);
-            if (rangeCountLastTime !== rangeCount) {
-                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected', rangeCount!==0);
-                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-1', rangeCount===1);
-                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-2', rangeCount===2);
-                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-3', rangeCount===3);
-                _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-4', rangeCount>=4);
-                rangeCountLastTime = rangeCount;
-            }
-        };
-        this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, rangeSelectedListener);
-        this.addDestroyFunc( ()=> {
-            this.eventService.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, rangeSelectedListener);
-        });
-        rangeSelectedListener();
+    private onRangeSelectionChanged(): void {
+        let newRangeCount = this.rangeController.getCellRangeCount(this.gridCell);
+        if (this.rangeCount !== newRangeCount) {
+            _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected', newRangeCount!==0);
+            _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-1', newRangeCount===1);
+            _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-2', newRangeCount===2);
+            _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-3', newRangeCount===3);
+            _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-4', newRangeCount>=4);
+            this.rangeCount = newRangeCount;
+        }
     }
 
     private addHighlightListener(): void {
@@ -364,6 +361,9 @@ export class CellComp extends Component {
     @PostConstruct
     public init(): void {
         this.value = this.getValue();
+
+        this.createGridCell();
+        this.addIndexChangeListener();
 
         this.setupCheckboxSelection();
 
