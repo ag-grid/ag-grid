@@ -356,6 +356,7 @@ export class GridPanel extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ITEMS_ADDED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ITEMS_REMOVED, this.onRowDataChanged.bind(this));
 

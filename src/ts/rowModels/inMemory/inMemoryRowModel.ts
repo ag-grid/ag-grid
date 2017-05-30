@@ -499,8 +499,7 @@ export class InMemoryRowModel {
             keepEditingRows: true
         });
 
-        // need to tell gridPanel to show/hide overlay
-        // this.eventService.dispatchEvent(eventName, {rowNodes: rowNodes})
+        this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_UPDATED);
     }
 
     private doRowsToDisplay() {

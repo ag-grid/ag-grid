@@ -31,7 +31,7 @@ export class ImmutableService {
 
         let getRowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
         if (_.missing(getRowNodeIdFunc)) {
-            console.error('ag-Grid: ImmutableService requires getRowNodeIdFunc() callback to be implemented, your row data need IDs!');
+            console.error('ag-Grid: ImmutableService requires getRowNodeId() callback to be implemented, your row data need IDs!');
             return;
         }
 

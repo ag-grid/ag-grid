@@ -53,6 +53,9 @@ export class Events {
     /** The client has set new data into the grid */
     public static EVENT_ROW_DATA_CHANGED = 'rowDataChanged';
 
+    /** The client has set new data into the grid */
+    public static EVENT_ROW_DATA_UPDATED = 'rowDataUpdated';
+
     /** The client has set new floating data into the grid */
     public static EVENT_FLOATING_ROW_DATA_CHANGED = 'floatingRowDataChanged';
 
