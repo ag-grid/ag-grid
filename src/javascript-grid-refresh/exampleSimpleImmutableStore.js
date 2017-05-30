@@ -87,6 +87,7 @@ function createUniqueRandomSymbol() {
 
 var gridOptions = {
     enableImmutableMode: true,
+    enableStatusBar: true,
     columnDefs: columnDefs,
     animateRows: true,
     enableColResize: true,
