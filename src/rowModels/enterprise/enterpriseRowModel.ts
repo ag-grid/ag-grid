@@ -329,18 +329,6 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         }
     }
 
-    public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {
-        console.log('insertItemsAtIndex not supported in enterprise row model');
-    }
-
-    public removeItems(rowNodes: RowNode[], skipRefresh: boolean): void {
-        console.log('removeItems not supported in enterprise row model');
-    }
-
-    public addItems(item: any[], skipRefresh: boolean): void {
-        console.log('addItems not supported in enterprise row model');
-    }
-
     public isRowPresent(rowNode: RowNode): boolean {
         return false;
     }
