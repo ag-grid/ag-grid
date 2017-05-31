@@ -690,11 +690,13 @@ export class GridApi {
     }
 
     public updateRowData(rowDataTransaction: RowDataTransaction): void {
-        if (!this.inMemoryRowModel) {
-            console.error(`ag-grid: updateRowData is only available for InMemoryRowModel`);
-            return;
+        if (this.inMemoryRowModel) {
+            this.inMemoryRowModel.updateRowData(rowDataTransaction);
+        } else if (this.infinitePageRowModel) {
+            this.infinitePageRowModel.updateRowData(rowDataTransaction);
+        } else {
+            console.error('ag-Grid: updateRowData() only works with InMemoryRowModel and InfiniteRowModel.');
         }
-        this.inMemoryRowModel.updateRowData(rowDataTransaction);
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh = false): void {

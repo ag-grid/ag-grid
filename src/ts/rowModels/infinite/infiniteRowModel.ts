@@ -14,6 +14,7 @@ import {InfiniteCache, InfiniteCacheParams} from "./infiniteCache";
 import {BeanStub} from "../../context/beanStub";
 import {RowNodeCache} from "../cache/rowNodeCache";
 import {RowNodeBlockLoader} from "../cache/rowNodeBlockLoader";
+import {RowDataTransaction} from "../inMemory/inMemoryRowModel";
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IRowModel {
@@ -254,20 +255,18 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() : 0;
     }
 
-    public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {
-        if (this.infiniteCache) {
-            this.infiniteCache.insertItemsAtIndex(index, items);
+    public updateRowData(transaction: RowDataTransaction): void {
+        if (_.exists(transaction.remove) || _.exists(transaction.update) ) {
+            console.warn('ag-Grid: updateRowData for InfiniteRowModel does not support remove or update, only add');
+            return;
         }
-    }
-
-    public removeItems(rowNodes: RowNode[], skipRefresh: boolean): void {
-        console.log('ag-Grid: it is not possible to removeItems when using virtual pagination. Instead use the ' +
-            'API to refresh the cache');
-    }
-
-    public addItems(items: any[], skipRefresh: boolean): void {
-        console.log('ag-Grid: it is not possible to add items when using virtual pagination as the grid does not ' +
-            'know that last index of your data - instead either use insertItemsAtIndex OR refresh the cache.');
+        if (_.missing(transaction.addIndex)) {
+            console.warn('ag-Grid: updateRowData for InfiniteRowModel requires add and addIndex to be set');
+            return;
+        }
+        if (this.infiniteCache) {
+            this.infiniteCache.insertItemsAtIndex(transaction.addIndex, transaction.add);
+        }
     }
 
     public isRowPresent(rowNode: RowNode): boolean {

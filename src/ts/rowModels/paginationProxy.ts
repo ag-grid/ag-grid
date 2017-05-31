@@ -140,18 +140,6 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         return nodeIsInPage;
     }
 
-    public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {
-        return this.rowModel.insertItemsAtIndex(index, items, skipRefresh);
-    }
-
-    public removeItems(rowNodes: RowNode[], skipRefresh: boolean): void {
-        this.rowModel.removeItems(rowNodes, skipRefresh);
-    }
-
-    public addItems(items: any[], skipRefresh: boolean): void {
-        this.rowModel.addItems(items, skipRefresh);
-    }
-
     public isEmpty(): boolean {
         return this.rowModel.isEmpty();
     }

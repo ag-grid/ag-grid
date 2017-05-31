@@ -164,6 +164,7 @@ export class InMemoryNodeManager {
             rowNode.updateData(data);
         } else {
             // do delete
+            rowNode.setSelected(false);
             _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
             this.allNodesMap[rowNode.id] = undefined;
         }
