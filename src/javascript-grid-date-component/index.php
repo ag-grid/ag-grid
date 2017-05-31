@@ -39,11 +39,25 @@ gridOptions: {
 </p>
 
 <pre>interface IDate {
+    <span class="codeComment">// mandatory methods</span>
+
+    <span class="codeComment">// The init(params) method is called on the filter once. See below for details on the parameters.</span>
+    init(params: IFilterParams): void;
+
+    <span class="codeComment">// Returns the GUI for this filter. The GUI can be a) a string of html or b) a DOM element or node.</span>
+    getGui(): any;
+
     <span class="codeComment">/** Returns the current date represented by this editor */</span>
     getDate(): Date;
 
     <span class="codeComment">/** Sets the date represented by this component */</span>
     setDate(date:Date): void;
+
+    <span class="codeComment">// optional methods</span>
+
+    <span class="codeComment">// Gets called when the component is destroyed. If your custom component needs to do
+    // any resource cleaning up, do it here.</span>
+    destroy?(): void;
 }</pre>
 
 <h4>IDateParams</h4>

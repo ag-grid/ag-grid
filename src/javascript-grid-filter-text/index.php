@@ -48,6 +48,8 @@ include '../documentation-main/documentation_header.php';
     <li><b>filterOptions:</b> If specified, limits the amount of options presented in the filter UI, it must be
         a string array containing some of the following values {equals, notEqual, contains, notContains, startsWith,
         endsWith}</li>
+    <li><b>textFormatter:</b> If specified, formats the text before applying the filter compare logic, useful for
+        instance if substituting accentuated characters or if you want to do case sensitive filtering.</li>
     </ul>
 
 The parameters for the filter must be specified in the property filterParams inside the column definition
@@ -122,6 +124,49 @@ function myComparator (filter, value, filterText){
 }
 </pre>
 
+<h3 id="textFormatter">Text Formatter</h3>
+<p>
+    The grid compares the text filter with the values in a case insensite way, thus 'o' will match 'Olivia' and 'Salmon',
+    however it will not match against 'Bj&oslash;rk'. If you want to match in any other way (eg you want to makes against
+    accents), or you want to have case sensitive matches, then you should provide your own textFormatter.
+</p>
+<p>
+    The <i>textFormatter</i> is a function with the following signature
+<pre>
+(gridValue:string):string;
+</pre>
+<ul>
+    <li><b>gridValue:string</b> The value coming from the grid. This can be the valueGetter if there is any for the
+    column, or the value as originally provided in the rowData</li>
+    <li><b>returns:string</b> The string to be used for the purpose of filtering.</li>
+</ul>
+</p>
+<p>
+    If no <i>textFormatter</i> is provided the grid will convert the text to lower case. Is important to note that when
+    comparing to the text entered in the filter box, the text in the filter box is converted always to lower case.
+</p>
+<p>
+    The following is an example to remove accents and convert to lower case.
+</p>
+<pre>
+function(s){
+        var r=s.toLowerCase();
+        r = r.replace(new RegExp("\\s", 'g'),"");
+        r = r.replace(new RegExp("[àáâãäå]", 'g'),"a");
+        r = r.replace(new RegExp("æ", 'g'),"ae");
+        r = r.replace(new RegExp("ç", 'g'),"c");
+        r = r.replace(new RegExp("[èéêë]", 'g'),"e");
+        r = r.replace(new RegExp("[ìíîï]", 'g'),"i");
+        r = r.replace(new RegExp("ñ", 'g'),"n");
+        r = r.replace(new RegExp("[òóôõö]", 'g'),"o");
+        r = r.replace(new RegExp("œ", 'g'),"oe");
+        r = r.replace(new RegExp("[ùúûü]", 'g'),"u");
+        r = r.replace(new RegExp("[ýÿ]", 'g'),"y");
+        r = r.replace(new RegExp("\\W", 'g'),"");
+        return r;
+};
+</pre>
+
 <h2 id="model">Text Filter Model</h2>
 
 <p>
@@ -175,6 +220,8 @@ athleteFilterComponent.onFilterChanged()
 <p>
 <ul>
     <li>The athlete column has only two filter options: <i>filterOptions=['contains','notContains']</i></li>
+    <li>The athlete column has a text formatter so if you search for 'o' it will find &oslash; You can try this by
+        searching the string 'bjo'</i></li>
     <li>The country column has only one filter option: <i>filterOptions=['contains']</i></li>
     <li>The country column has a <i>textCustomComparator</i> so that there are aliases that can be entered in the filter
     ie: if you filter using the text 'usa' it will match United States or 'holland' will match 'Netherlands'</li>
