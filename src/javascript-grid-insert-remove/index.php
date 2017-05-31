@@ -11,6 +11,10 @@ include '../documentation-main/documentation_header.php';
 
     <h2 id="insert-remove">Insert & Remove</h2>
 
+
+    <show-example example="exampleGetRowNode"></show-example>
+
+
     <p>
         If you want to add and remove rows into the grid, you have two choices. One is to maintain the data yourself,
         add in the new data, then set it back into the grid. The other is to use the api methods for getting the grid
@@ -123,8 +127,10 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleInsertRemoveGroups"></show-example>
 
-<!--    <show-example example="exampleInsertRemoveBigData"></show-example>
--->
+    <show-example example="exampleSimpleImmutableStore"></show-example>
+
+    <show-example example="exampleComplexImmutableStore"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
