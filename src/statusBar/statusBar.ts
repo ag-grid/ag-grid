@@ -36,6 +36,9 @@ export class StatusBar extends Component {
 
     @PostConstruct
     private init(): void {
+        // we want to hide until the first aggregation comes in
+        this.setVisible(false);
+
         this.createStatusItems();
         this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
