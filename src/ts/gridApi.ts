@@ -694,23 +694,23 @@ export class GridApi {
             console.error(`ag-grid: updateRowData is only available for InMemoryRowModel`);
             return;
         }
-        if (_.missing(this.gridOptionsWrapper.getRowNodeIdFunc())) {
-            console.error(`ag-grid: updateRowData only works if you provide your own row id\'s using callback getRowNodeId()`);
-            return;
-        }
         this.inMemoryRowModel.updateRowData(rowDataTransaction);
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh = false): void {
-        this.rowModel.insertItemsAtIndex(index, items, skipRefresh);
+        console.warn('ag-Grid: insertItemsAtIndex() is deprecated, use updateRowData(transaction) instead.');
+        this.updateRowData({add: items, addIndex: index, update: null, remove: null});
     }
 
     public removeItems(rowNodes: RowNode[], skipRefresh = false): void {
-        this.rowModel.removeItems(rowNodes, skipRefresh);
+        console.warn('ag-Grid: insertItemsAtIndex() is deprecated, use updateRowData(transaction) instead.');
+        let dataToRemove: any[] = rowNodes.map(rowNode => rowNode.data);
+        this.updateRowData({add: null, addIndex: null, update: null, remove: dataToRemove});
     }
 
     public addItems(items: any[], skipRefresh = false): void {
-        this.rowModel.addItems(items, skipRefresh);
+        console.warn('ag-Grid: insertItemsAtIndex() is deprecated, use updateRowData(transaction) instead.');
+        this.updateRowData({add: items, addIndex: null, update: null, remove: null});
     }
 
     public refreshVirtualPageCache(): void {

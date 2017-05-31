@@ -246,6 +246,9 @@ export class CellComp extends Component {
     }
 
     private onRangeSelectionChanged(): void {
+        let usingAgGridFree = !this.rangeController;
+        if (usingAgGridFree) { return; }
+
         let newRangeCount = this.rangeController.getCellRangeCount(this.gridCell);
         if (this.rangeCount !== newRangeCount) {
             _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected', newRangeCount!==0);

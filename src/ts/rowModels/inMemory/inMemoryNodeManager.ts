@@ -88,17 +88,18 @@ export class InMemoryNodeManager {
     public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction {
         if (this.isRowsAlreadyGrouped()) { return null; }
 
-        let {add, remove, update} = rowDataTran;
+        let {add, addIndex, remove, update} = rowDataTran;
 
         let rowNodeTransaction: RowNodeTransaction = {
             remove: [],
             update: [],
-            add: []
+            add: [],
+            addIndex: null
         };
 
         if (_.exists(add)) {
             add.forEach( item => {
-                let newRowNode: RowNode = this.addRowNode_fromTransaction(item);
+                let newRowNode: RowNode = this.addRowNode_fromTransaction(item, addIndex);
                 rowNodeTransaction.add.push(newRowNode);
             });
         }
@@ -124,10 +125,15 @@ export class InMemoryNodeManager {
         return rowNodeTransaction;
     }
 
-    private addRowNode_fromTransaction(data: any): RowNode {
+    private addRowNode_fromTransaction(data: any, index: number): RowNode {
 
         let newNode = this.createNode(data, null, InMemoryNodeManager.TOP_LEVEL);
-        this.rootNode.allLeafChildren.push(newNode);
+
+        if (typeof index === 'number' && index >= 0) {
+            _.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
+        } else {
+            this.rootNode.allLeafChildren.push(newNode);
+        }
 
         return newNode;
     }
@@ -135,12 +141,22 @@ export class InMemoryNodeManager {
     private updatedRowNode_fromTransaction(data: any, update: boolean): RowNode {
         let rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
 
-        let id: string = rowNodeIdFunc(data);
-        let rowNode = this.allNodesMap[id];
-
-        if (!rowNode) {
-            console.error(`ag-Grid: could not modify row id=${id}, data item was not found`);
-            return null;
+        let rowNode: RowNode;
+        if (_.exists(rowNodeIdFunc)) {
+            // find rowNode us id
+            let id: string = rowNodeIdFunc(data);
+            rowNode = this.allNodesMap[id];
+            if (!rowNode) {
+                console.error(`ag-Grid: could not find row id=${id}, data item was not found for this id`);
+                return null;
+            }
+        } else {
+            // find rowNode using object references
+            rowNode = _.find(this.rootNode.allLeafChildren, rowNode => rowNode.data === data);
+            if (!rowNode) {
+                console.error(`ag-Grid: could not find data item as object was not found`, data);
+                return null;
+            }
         }
 
         if (update) {
@@ -149,7 +165,7 @@ export class InMemoryNodeManager {
         } else {
             // do delete
             _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
-            this.allNodesMap[id] = undefined;
+            this.allNodesMap[rowNode.id] = undefined;
         }
 
         return rowNode;

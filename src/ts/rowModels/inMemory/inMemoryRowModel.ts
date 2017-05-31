@@ -33,12 +33,14 @@ export interface RefreshModelParams {
 }
 
 export interface RowDataTransaction {
-    add: any[];
-    remove: any[];
-    update: any[];
+    addIndex?: number,
+    add?: any[];
+    remove?: any[];
+    update?: any[];
 }
 
 export interface RowNodeTransaction {
+    addIndex: number,
     add: RowNode[];
     remove: RowNode[];
     update: RowNode[];
