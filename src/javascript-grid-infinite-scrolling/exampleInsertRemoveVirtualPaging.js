@@ -42,8 +42,7 @@ function createRowData(id) {
 
 function liveInsertItemsAt2(count) {
     var newDataItems = insertItemsAt2(count);
-    // here we stick the data directly into the grid
-    gridOptions.api.insertItemsAtIndex(2, newDataItems);
+    gridOptions.api.updateRowData({addIndex: 2, add: newDataItems});
 }
 
 function insertItemsAt2AndRefresh(count) {
