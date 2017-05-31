@@ -9,10 +9,18 @@ include '../documentation-main/documentation_header.php';
 
 <div style="padding: 20px;">
 
-
     <note>
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
+
+    <h2>Version 10.1.x</h2>
+
+    <h4>Enhancements:</h4>
+    <ul>
+        <li>
+            Deprecated Methods: insertItemsAtIndex(), removeItems(), addItems(), use updateRowData() instead.
+        </li>
+    </ul>
 
     <h2>Version 10.0.x</h2>
 
