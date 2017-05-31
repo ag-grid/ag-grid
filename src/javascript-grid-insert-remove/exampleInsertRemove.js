@@ -14,6 +14,7 @@ var rowData = [
 ];
 
 var gridOptions = {
+    animateRows: true,
     columnDefs: columnDefs,
     rowData: rowData,
     rowSelection: 'multiple'
@@ -49,22 +50,36 @@ function clearData() {
 
 function onAddRow() {
     var newItem = createNewRowData();
-    gridOptions.api.addItems([newItem]);
+    gridOptions.api.updateRowData({add: [newItem]});
 }
 
 function addItems() {
     var newItems = [createNewRowData(), createNewRowData(), createNewRowData()];
-    gridOptions.api.addItems(newItems);
+    gridOptions.api.updateRowData({add: newItems});
+}
+
+function updateItems() {
+    // update the first 5 items
+    var itemsToUpdate = [];
+    gridOptions.api.forEachNodeAfterFilterAndSort( function(rowNode, index) {
+        // only do first 5
+        if (index>=5) { return; }
+
+        var data = rowNode.data;
+        data.price = Math.floor((Math.random()*20000) + 20000);
+        itemsToUpdate.push(data);
+    });
+    gridOptions.api.updateRowData({update: itemsToUpdate});
 }
 
 function onInsertRowAt2() {
     var newItem = createNewRowData();
-    gridOptions.api.insertItemsAtIndex(2, [newItem]);
+    gridOptions.api.updateRowData({add: [newItem], addIndex: 2});
 }
 
 function onRemoveSelected() {
-    var selectedNodes = gridOptions.api.getSelectedNodes();
-    gridOptions.api.removeItems(selectedNodes);
+    var selectedData = gridOptions.api.getSelectedRows();
+    gridOptions.api.updateRowData({remove: selectedData});
 }
 
 // wait for the document to be loaded, otherwise
