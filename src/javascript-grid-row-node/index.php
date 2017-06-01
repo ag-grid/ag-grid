@@ -100,14 +100,6 @@ include '../documentation-main/documentation_header.php';
 }</pre>
     </p>
 
-    <h2 id="example-api">Example API</h2>
-
-    <p>
-        The example below shows the difference between the three forEach api methods.
-    </p>
-
-    <show-example example="exampleRowModel"></show-example>
-
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

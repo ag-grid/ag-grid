@@ -183,6 +183,7 @@
     menuItem(0, 'Cell Editing', 'Cell Editing', 'javascript-grid-cell-editing/');
     menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
     menuItem(0, 'Context', 'Context', 'javascript-grid-context/');
+    menuItem(0, 'AccessingData', 'Accessing Data', 'javascript-grid-accessing-data/');
     menuItem(0, 'InsertRemove', 'Data Update', 'javascript-grid-insert-remove/');
     menuItem(0, 'Refresh', 'View Refresh', 'javascript-grid-refresh/');
     menuItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');

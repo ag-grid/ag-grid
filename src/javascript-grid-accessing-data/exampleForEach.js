@@ -1,7 +1,7 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150},
     {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120},
+    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
     {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 120},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
@@ -13,6 +13,7 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    groupDefaultExpanded: 1,
     columnDefs: columnDefs,
     enableFilter: true,
     enableSorting: true
@@ -33,11 +34,16 @@ function onBtForEachNodeAfterFilterAndSort() {
     gridOptions.api.forEachNodeAfterFilterAndSort(printNode);
 }
 
+function onBtForEachLeafNode() {
+    console.log('### api.forEachLeafNode() ###');
+    gridOptions.api.forEachLeafNode(printNode);
+}
+
 function printNode(node, index) {
-    if (node.data) {
-        console.log(index + ' -> data: ' + node.data.country + ', ' + node.data.athlete);
-    } else {
+    if (node.group) {
         console.log(index + ' -> group: ' + node.key);
+    } else {
+        console.log(index + ' -> data: ' + node.data.country + ', ' + node.data.athlete);
     }
 }
 
@@ -54,7 +60,8 @@ document.addEventListener('DOMContentLoaded', function() {
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
+            var shortResult = httpResult.slice(0,50);
+            gridOptions.api.setRowData(shortResult);
         }
     };
 });
