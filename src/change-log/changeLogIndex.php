@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
             New documentation page <a href="../javascript-grid-refresh/">Data Refresh</a>.
         </li>
         <li>
-            New documentation page <a href="../javascript-grid-insert-remove/">Accessing Data</a>.
+            New documentation page <a href="../javascript-grid-data-update/">Data Update</a>.
         </li>
     </ul>
 

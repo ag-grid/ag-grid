@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         If you want to change the data in the grid, the best way to do it is use the grid's
-        <a href="../javascript-grid-insert-remove/">data update</a> functions.
+        <a href="../javascript-grid-data-update/">data update</a> functions.
     </p>
 
     <p>
