@@ -151,9 +151,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>refreshInMemoryRowModel()</th>
+            <th>refreshInMemoryRowModel(params)</th>
             <td>
-                Does a complete refresh of the in memory row model. Shotgun approach for any row changes you have done.
+                Gets the In Memory Row Model to refresh, executing the grouping, filtering and sorting again.
             </td>
         </tr>
 

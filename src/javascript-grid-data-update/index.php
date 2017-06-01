@@ -46,6 +46,10 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
+        Updating via the rowNode methods is supported in all row models.
+    </p>
+
+    <p>
         Updating data via the rowNode methods will refresh the grid for the required
         rows if they are showing, however it will not update the grids sorting, filtering
         or grouping if the new data impacts such. For that, you should use an update
@@ -53,8 +57,23 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Updating via the rowNode methods is supported in all row models.
+        If you are using <a href="../javascript-grid-in-memory/">In Memory Row Model</a>
+        and you want to get the grid to update it's sort or filter etc after the update
+        is done, then you must call <code>api.refreshInMemoryRowModel(step)</code>
+        where step can be one of the following: <i>undefined</i>, filter, map, aggregate,
+        sort, pivot.
     </p>
+
+    <note>
+        The <a href="../javascript-grid-in-memory/">In Memory Row Model</a> has stages as follows:<br/>
+        <ul>
+            <li>
+                Group &rArr; Filter &rArr; Pivot &rArr; Aggregate &rArr; Sort &rArr; Map<br/>
+            </li>
+        </ul>
+        That means, if you call <i>api.refreshInMemoryRowModel('filter')</i>, it will
+        also execute pivot, aggregate, sort and map.
+   </note>
 
     <h3>Updating RowNodes Data Example</h3>
 
@@ -65,6 +84,10 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li><b>Set Price on Toyota:</b> The price value is updated on the Toyota row and the grid refreshes the cell.</li>
         <li><b>Set Data on Ford:</b> The entire data is set on the Ford row and the grid refreshes the entire row.</li>
+        <li><b>Sort:</b> Re-runs the sort in the In Memory Row Model - to see this in action, sort the data first, then
+        edit the data so the sort is broken, then hit this button to fix the sort.</li>
+        <li><b>Filter:</b> Re-runs the filter in the In Memory Row Model - to see this in action, filter the data first, then
+        edit the data so the filter is broken (ie a row is present that should not be present), then hit this button to fix the filter.</li>
     </ul>
 
     <show-complex-example example="exampleGetRowNode.html"
@@ -73,7 +96,7 @@ include '../documentation-main/documentation_header.php';
                                     { root: './', files: 'exampleGetRowNode.js,exampleGetRowNode.html' }
                                 ]
                               }"
-                          exampleheight="200px">
+                          exampleheight="250px">
     </show-complex-example>
 
 

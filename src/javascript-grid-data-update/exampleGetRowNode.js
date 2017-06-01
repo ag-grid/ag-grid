@@ -3,33 +3,51 @@
 var columnDefs = [
     {headerName: "Make", field: "make"},
     {headerName: "Model", field: "model"},
-    {headerName: "Price", field: "price"}
+    {headerName: "Price", field: "price", filter: 'number'}
 ];
 
 var rowData = [
-    {id: '1', make: "Toyota", model: "Celica", price: 35000},
-    {id: '2', make: "Ford", model: "Mondeo", price: 32000},
-    {id: '3', make: "Porsche", model: "Boxter", price: 72000}
+    {id: 'aa', make: "Toyota", model: "Celica", price: 35000},
+    {id: 'bb', make: "Ford", model: "Mondeo", price: 32000},
+    {id: 'cc', make: "Porsche", model: "Boxter", price: 72000},
+    {id: 'dd', make: "BMW", model: "5 Series", price: 59000},
+    {id: 'ee', make: "Dodge", model: "Challanger", price: 35000},
+    {id: 'ff', make: "Mazda", model: "MX5", price: 28000},
+    {id: 'gg', make: "Horse", model: "Outside", price: 99000}
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        editable: true
+    },
+    enableSorting: true,
+    enableFilter: true,
+    animateRows: true,
     getRowNodeId: function(data) { return data.id; },
     columnDefs: columnDefs,
     rowData: rowData
 };
 
+function updateSort() {
+    gridOptions.api.refreshInMemoryRowModel('sort');
+}
+
+function updateFilter() {
+    gridOptions.api.refreshInMemoryRowModel('filter');
+}
+
 function setPriceOnToyota() {
-    var rowNode = gridOptions.api.getRowNode('1');
+    var rowNode = gridOptions.api.getRowNode('aa');
     var newPrice = Math.floor(Math.random()*100000);
     rowNode.setDataValue('price', newPrice);
 }
 
 function setDataOnFord() {
-    var rowNode = gridOptions.api.getRowNode('2');
+    var rowNode = gridOptions.api.getRowNode('bb');
     var newPrice = Math.floor(Math.random()*100000);
     var newModel = 'T-' + Math.floor(Math.random()*1000);
     var newData = {
-        id: 2,
+        id: 'bb',
         make: 'Ford',
         model: newModel,
         price: newPrice
