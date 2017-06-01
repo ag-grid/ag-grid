@@ -6,14 +6,15 @@
 </head>
 <body>
 
-    <div style="padding-bottom: 4px;">
+    <div style="height: 100%; padding-top: 26px; box-sizing: border-box;">
+        <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+    </div>
+    <div style="position: absolute; top: 0px; left: 0px; padding: 8px;">
         <button onclick="onBtForEachNode()">For-Each Node</button>
         <button onclick="onBtForEachNodeAfterFilter()">For-Each Node After Filter</button>
         <button onclick="onBtForEachNodeAfterFilterAndSort()">For-Each Node After Filter and Sort</button>
         <button onclick="onBtForEachLeafNode()">For-Each Leaf Node</button>
     </div>
-
-    <div id="myGrid" style="height: 400px;" class="ag-fresh"></div>
 
 </body>
 </html>

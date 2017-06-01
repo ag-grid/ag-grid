@@ -107,7 +107,19 @@ api.forEachLeafNode( function(rowNode, index) {
     <h2 id="example-api">Example Using For-Each Methods</h2>
 
     <p>
-        The example below shows the different for-Each API methods.
+        The example below shows the different for-Each API methods as follows:
+    </p>
+
+    <ul>
+        <li><b>For-Each Node</b>: Prints out every row in the grid. It ignores filtering and sorting.</li>
+        <li><b>For-Each Node After Filter</b>: Prints out every row in the grid, except those filtered out.</li>
+        <li><b>For-Each Node After Filter and Sort</b>: Prints our every row in the grid, except those filtered,
+            and is the same order they appear in the screen if sorting is applied.</li>
+        <li><b>For-Each Leaf Node</b>: Prints out every row in the grid except group rows.</li>
+    </ul>
+
+    <p>
+        In the example, try applying some sorts and filters, and see how this impacts the different operations.
     </p>
 
     <show-example example="exampleForEach"></show-example>
