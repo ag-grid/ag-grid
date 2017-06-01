@@ -1,5 +1,5 @@
 var fruitValues = ['Apple','Banana','Orange','Pear'];
-var animalValues = ['Elephant','Monkey','Lion','Zebra','Mouse'];
+var animalValues = ['Elephant','Monkey','Lion','Zebra','Mouse', ''];
 var colorValues = ['Blue','Purple','Black','Green','Orange','Red','Pink','Yellow'];
 var locationValues = ['North','South','East','West'];
 

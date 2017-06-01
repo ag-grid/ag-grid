@@ -17,7 +17,6 @@ var gridOptions = {
     rowData: null,
     enableSorting: true,
     enableColResize: true,
-
     onGridReady: function() {
         gridOptions.api.addGlobalListener(function(type, event) {
             if (type.indexOf('column') >= 0) {

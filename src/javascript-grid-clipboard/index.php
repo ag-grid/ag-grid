@@ -94,6 +94,11 @@ include '../documentation-main/documentation_header.php';
     this in your application as it's confusing, it's done below just to demonstrate them side by side.
     </p>
 
+    <p>When row click selection and range selection are enabled the shortcut would copy the selected row, not the
+        selected range, if you wish to let the range take precedence, then you can add this to your gridOptions
+        <i>suppressCopyRowsToClipboard:true</i>
+    </p>
+
     <show-example example="exampleClipboard" example-height="450px"></show-example>
 
     <h3 id="sendToClipboard">Controlling Clipboard Copy</h3>
