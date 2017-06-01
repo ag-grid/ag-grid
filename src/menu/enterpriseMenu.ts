@@ -313,7 +313,7 @@ export class EnterpriseMenu {
         this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
-            title: svgFactory.createMenuSvg(),
+            title: Utils.createIconNoSpan('menu', this.gridOptionsWrapper, this.column, svgFactory.createMenuSvg),
             body: this.mainMenuList.getGui()
         };
     }
@@ -332,7 +332,7 @@ export class EnterpriseMenu {
         }
 
         this.tabItemFilter = {
-            title: svgFactory.createFilterSvg12(),
+            title: Utils.createIconNoSpan('filter', this.gridOptionsWrapper, this.column, svgFactory.createFilterSvg12),
             body: filterWrapper.gui,
             afterAttachedCallback: afterFilterAttachedCallback
         };
@@ -349,7 +349,7 @@ export class EnterpriseMenu {
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
 
         this.tabItemColumns = {
-            title: svgFactory.createColumnsSvg12(),//createColumnsIcon(),
+            title: Utils.createIconNoSpan('columns', this.gridOptionsWrapper, this.column, svgFactory.createColumnsSvg12),//createColumnsIcon(),
             body: eWrapperDiv
         };
     }
