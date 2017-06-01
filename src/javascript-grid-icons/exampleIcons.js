@@ -2,6 +2,9 @@ var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 180, rowGroupIndex: 1,
         // use font awesome for first col, with numbers for sort
         icons: {
+            menu:'<i class="fa fa-shower"/>',
+            filter:'<i class="fa fa-long-arrow-up"/>',
+            columns:'<i class="fa fa-snowflake-o"/>',
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
             sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
         },
@@ -46,8 +49,9 @@ var gridOptions = {
     // override all the defaults with font awesome
     icons: {
         // use font awesome for menu icons
-        menu: '<i class="fa fa-bars"/>',
-        filter: '<i class="fa fa-filter"/>',
+        menu: '<i class="fa fa-bath"/>',
+        filter: '<i class="fa fa-long-arrow-down"/>',
+        columns:'<i class="fa fa-handshake-o"/>',
         sortAscending: '<i class="fa fa-long-arrow-down"/>',
         sortDescending: '<i class="fa fa-long-arrow-up"/>',
         // use some strings from group
