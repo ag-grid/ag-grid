@@ -62,6 +62,10 @@ columnDefinition = {
             entries displayed in the filter .</li>
         <li><b>selectAllOnMiniFilter:</b> Set to false(default)/true so that the checkbox "select all" applies to:
             all the filters items/just the ones filtered by the mini filter . </li>
+        <li><b>textFormatter:</b> If specified, formats the text before applying the mini filter compare logic, useful for
+            instance if substituting accentuated characters or if you want to do case sensitive mini filtering. This
+            matches the <a href="../javascript-grid-filter-text/index.php#textFormatter">text formatter used for text filters</a></li>
+    </ul>
     </ul>
     </p>
 
@@ -122,7 +126,7 @@ columnDefinition = {
 
     <show-example example="exampleSetFilter"></show-example>
 
-    <h3 id="sortingSetFilter">Sorting Set Filter Values List</h3>
+    <h3 id="sortingSetFilter">Sorting And Formatting Set Filter Values List</h3>
 
     <p>
         Values inside a set filter will be sorted by their string value by default. If you want a different sort
@@ -133,6 +137,11 @@ columnDefinition = {
         The example below shows sorting on the age columns. The age column is repeated with one difference, the
         first instance has a comparator, the second has not. The second iteration has the numbers ordered by the
         default string ordering which is not correct (ie the sequence is 0,1,10,11,2 instead of 0,1,2,3...).
+    </p>
+
+    <p>
+        It also shows the athlete column using a text formatter so that 'o' will match 'Bj&oslash;rk' in the mini filter. You 
+        can check this by searching for 'bjo'in the mini-filter box.
     </p>
 
     <show-example example="exampleSetFilterComparator"></show-example>
