@@ -30,6 +30,7 @@ include '../documentation-main/documentation_header.php';
     <pre><span class="codeComment">// column header items</span>
 menu
 filter
+columns
 sortAscending
 sortDescending
 sortUnSort
