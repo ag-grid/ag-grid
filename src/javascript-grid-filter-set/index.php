@@ -215,6 +215,8 @@ countryFilterComponent.onFilterChanged()
         <li><b>isNothingSelected()</b>: Returns true if nothing is selected</li>
         <li><b>getUniqueValueCount()</b>: Returns number of unique values. Useful for iterating with getUniqueValue(index)</li>
         <li><b>getUniqueValue(index)</b>: Returns the unique value at the given index</li>
+        <li><b>setFilterValues(arrayOfStringOptions)</b>: Useful if you want to change on the fly the available options
+        <li><b>resetFilterValues()</b>: Useful if you want to rebuild the filter options based on the underlying data</li>
     </ul>
     </p>
 

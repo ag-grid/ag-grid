@@ -3,7 +3,12 @@ var columnDefs = [
         filterParams: { cellHeight: 20} },
     {headerName: "Age", field: "age", width: 90, filter: 'number'},
     {headerName: "Country", field: "country", width: 140,
-        cellRenderer: countryCellRenderer, keyCreator: countryKeyCreator},
+        cellRenderer: countryCellRenderer, keyCreator: countryKeyCreator,
+        filterParams:{
+            // values: ['England', 'France', 'Australia'],
+            newRowsAction: 'keep'
+        }
+    },
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},
@@ -65,6 +70,16 @@ function selectNothing(){
     var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
     athleteFilterComponent.selectNothing ();
     gridOptions.api.onFilterChanged();
+}
+
+function setCountriesToFranceAustralia(){
+    var countryFilterComponent = gridOptions.api.getFilterInstance('country');
+    countryFilterComponent.setFilterValues (['France', 'Australia'])
+}
+
+function setCountriesToAll(){
+    var countryFilterComponent = gridOptions.api.getFilterInstance('country');
+    countryFilterComponent.resetFilterValues ()
 }
 
 
