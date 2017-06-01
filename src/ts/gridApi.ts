@@ -817,6 +817,14 @@ export class GridApi {
         this.gridPanel.setBodyAndHeaderHeights();
     }
 
+    public getDisplayedRowAtIndex(index: number): RowNode {
+        return this.rowModel.getRow(index);
+    }
+
+    public getDisplayedRowCount(): number {
+        return this.rowModel.getRowCount();
+    }
+
     public paginationIsLastPageFound(): boolean {
         return this.paginationProxy.isLastPageFound();
     }
