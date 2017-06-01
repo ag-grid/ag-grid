@@ -326,7 +326,8 @@ export class SetFilterModel {
         if (model && !isSelectAll) {
             this.selectNothing();
             for (let i = 0; i < model.length; i++) {
-                let value = model[i];
+                let rawValue = model[i];
+                let value = this.keyToValue(rawValue);
                 if (this.allUniqueValues.indexOf(value) >= 0) {
                     this.selectValue(value);
                 }
