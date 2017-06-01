@@ -130,7 +130,7 @@ export class SortController {
                     let sortModelEntry = sortModel[j];
                     if (typeof sortModelEntry.colId === 'string'
                         && typeof column.getColId() === 'string'
-                        && sortModelEntry.colId === column.getColId()) {
+                        && this.compareColIds(sortModelEntry, column)) {
                         sortForCol = sortModelEntry.sort;
                         sortedAt = j;
                     }
@@ -147,6 +147,10 @@ export class SortController {
         });
 
         this.dispatchSortChangedEvents();
+    }
+
+    private compareColIds(sortModelEntry: any, column: Column) {
+        return sortModelEntry.colId === column.getColId();
     }
 
     public getColumnsWithSortingOrdered(): Column[] {

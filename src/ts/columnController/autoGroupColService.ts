@@ -22,7 +22,7 @@ export class AutoGroupColService {
                 groupAutoColumns.push(this.createOneAutoGroupColumn(rowGroupCol, index));
             });
         } else {
-            groupAutoColumns.push(this.createOneAutoGroupColumn());
+            groupAutoColumns.push(this.createOneAutoGroupColumn(null));
         }
 
         return groupAutoColumns;
@@ -90,9 +90,9 @@ export class AutoGroupColService {
                 autoColDef.cellRendererParams.checkbox = false;
             }
 
-            colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${Math.random()}-${rowGroupCol.getId()}`;
+            colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
         } else {
-            colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${Math.random()}`;
+            colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}_bundle`;
         }
 
         let newCol = new Column(autoColDef, colId, true);
