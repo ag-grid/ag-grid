@@ -69,6 +69,18 @@ export class SetFilterModel {
     //    unless selectAll chosen in which case will select all
     public refreshAfterNewRowsLoaded(keepSelection: any, isSelectAll: boolean) {
         this.createAllUniqueValues();
+        this.refreshSelection(keepSelection, isSelectAll);
+    }
+
+    // if keepSelection not set will always select all filters
+    // if keepSelection set will keep current state of selected filters
+    //    unless selectAll chosen in which case will select all
+    public refreshValues(valuesToUse:string[], keepSelection: any, isSelectAll: boolean) {
+        this.setValues(valuesToUse);
+        this.refreshSelection(keepSelection, isSelectAll);
+    }
+
+    private refreshSelection(keepSelection: any, isSelectAll: boolean) {
         this.createAvailableUniqueValues();
 
         let oldModel = Object.keys(this.selectedValuesMap);
@@ -91,16 +103,31 @@ export class SetFilterModel {
     }
 
     private createAllUniqueValues() {
-        if (this.usingProvidedSet) {
-            this.allUniqueValues = Utils.toStrings(this.filterParams.values);
-        } else {
-            let uniqueValuesAsAnyObjects = this.getUniqueValues(false);
-            this.allUniqueValues = Utils.toStrings(uniqueValuesAsAnyObjects);
-        }
+        let valuesToUse: string[] = this.extractValuesToUse();
+        this.setValues(valuesToUse);
+    }
 
+    public setUsingProvidedSet (value:boolean){
+        this.usingProvidedSet = value;
+    }
+
+    private setValues(valuesToUse: string[]) {
+        this.allUniqueValues = valuesToUse;
+        this.usingProvidedSet = true;
         if (!this.suppressSorting) {
             this.sortValues(this.allUniqueValues);
         }
+    }
+
+    private extractValuesToUse() {
+        let valuesToUse: string[];
+        if (this.usingProvidedSet) {
+            valuesToUse = Utils.toStrings(this.filterParams.values);
+        } else {
+            let uniqueValuesAsAnyObjects = this.getUniqueValues(false);
+            valuesToUse = Utils.toStrings(uniqueValuesAsAnyObjects);
+        }
+        return valuesToUse;
     }
 
     private createAvailableUniqueValues() {

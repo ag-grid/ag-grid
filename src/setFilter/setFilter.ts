@@ -29,12 +29,6 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         super();
     }
 
-    public customInit(){}
-
-    modelFromFloatingFilter(from: string): string[] {
-        return [from];
-    }
-
     public initialiseFilterBodyUi(): void {
         this.virtualList = new VirtualList();
         this.context.wireBean(this.virtualList);
@@ -56,6 +50,12 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         this.updateSelectAll();
         this.virtualList.refresh();
     }
+
+    modelFromFloatingFilter(from: string): string[] {
+        return [from];
+    }
+
+    public customInit(){}
 
     public refreshFilterBodyUi ():void{
 
@@ -122,6 +122,31 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         this.model.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
         this.updateSelectAll();
         this.virtualList.refresh();
+    }
+
+    //noinspection JSUnusedGlobalSymbols
+    /**
+     * Public method provided so the user can change the value of the filter once
+     * the filter has been already started
+     * @param options The options to use.
+     */
+    public setFilterValues (options:string[]): void{
+        let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
+        let isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
+
+        this.model.refreshValues(options, keepSelection, isSelectAll);
+        this.updateSelectAll();
+        this.virtualList.refresh();
+    }
+
+    //noinspection JSUnusedGlobalSymbols
+    /**
+     * Public method provided so the user can reset the values of the filter once that it has started
+     * @param options The options to use.
+     */
+    public resetFilterValues (): void{
+        this.model.setUsingProvidedSet (false);
+        this.onNewRowsLoaded();
     }
 
     public onAnyFilterChanged(): void {
