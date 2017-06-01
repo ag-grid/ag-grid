@@ -1,10 +1,10 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150},
     {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120},
+    {headerName: "Country", field: "country", width: 120, enableRowGroup: true},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
+    {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true},
     {headerName: "Gold", field: "gold", width: 100, hide: true},
     {headerName: "Silver", field: "silver", width: 100, hide: true},
     {headerName: "Bronze", field: "bronze", width: 100, hide: true},
@@ -17,6 +17,7 @@ var gridOptions = {
     rowData: null,
     enableSorting: true,
     enableColResize: true,
+
     onGridReady: function() {
         gridOptions.api.addGlobalListener(function(type, event) {
             if (type.indexOf('column') >= 0) {
@@ -28,6 +29,8 @@ var gridOptions = {
 
 
 var savedState;
+var sortState;
+var filterState;
 
 function printState() {
     var state = gridOptions.columnApi.getColumnState();
@@ -36,16 +39,22 @@ function printState() {
 
 function saveState() {
     savedState = gridOptions.columnApi.getColumnState();
+    sortState = gridOptions.api.getSortModel();
+    filterState = gridOptions.api.getFilterModel();
     console.log('column state saved');
 }
 
 function restoreState() {
     gridOptions.columnApi.setColumnState(savedState);
+    gridOptions.api.setSortModel(sortState);
+    gridOptions.api.setFilterModel(filterState);
     console.log('column state restored');
 }
 
 function resetState() {
     gridOptions.columnApi.resetColumnState();
+    gridOptions.api.setSortModel(null);
+    gridOptions.api.setFilterModel(null);
 }
 
 function showAthlete(show) {
