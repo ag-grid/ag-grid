@@ -48,6 +48,10 @@ include '../documentation-main/documentation_header.php';
     <li><b>filterOptions:</b> If specified, limits the amount of options presented in the filter UI, it must be
         a string array containing some of the following values {equals, notEqual, contains, notContains, startsWith,
         endsWith}</li>
+    <li><b>defaultOption:</b> If specified, changes the default filter option to one of {equals, notEqual, contains,
+        notContains, startsWith, endsWith}. If not specified the default type is {contains}, if {contains} is not
+        available because is removed using <i>filterOptions</i>, then the default
+        is the first item in the filterOptions</li>
     <li><b>textFormatter:</b> If specified, formats the text before applying the filter compare logic, useful for
         instance if substituting accentuated characters or if you want to do case sensitive filtering.</li>
     </ul>
@@ -225,6 +229,9 @@ athleteFilterComponent.onFilterChanged()
     <li>The country column has only one filter option: <i>filterOptions=['contains']</i></li>
     <li>The country column has a <i>textCustomComparator</i> so that there are aliases that can be entered in the filter
     ie: if you filter using the text 'usa' it will match United States or 'holland' will match 'Netherlands'</li>
+    <li>The year column has two one filter options <i>filterOptions=['inRange', 'greaterThan']. The default should be
+        'inRange' since is the first one of the list and default is not specified</i></li>
+    <li>The sports column has a different default option <i>defaultOption='startsWith'</i></li>
 </ul>
 </p>
 <show-example example="exampleFilter"></show-example>

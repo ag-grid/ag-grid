@@ -47,6 +47,10 @@ A date filter can take the following parameters:
     <li><b>filterOptions:</b> If specified, limits the amount of options presented in the filter UI, it must be
         a string array containing some of the following values  {equals, notEquals, lessThanOrEqual, greaterThan,
         greaterThanOrEqual, inRange}</li>
+    <li><b>defaultOption:</b> If specified, changes the default filter option to one of {equals, notEquals,
+        lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. If not specified the default type is {equals},
+        if {equals} is not available because is removed using <i>filterOptions</i>, then the default
+        is the first item in the filterOptions</li>
 </ul>
 
 

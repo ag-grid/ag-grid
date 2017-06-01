@@ -44,6 +44,9 @@ var columnDefs = [
     }},
     {headerName: "Year", field: "year", width: 90, filter:'number', filterParams:{
         filterOptions:['inRange']
+    }},
+    {headerName: "Sport", field: "sport", width: 90, filter:'text', filterParams:{
+        defaultOption:'startsWith'
     }}
 ];
 
