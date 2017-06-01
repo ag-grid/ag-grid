@@ -20,6 +20,15 @@ include '../documentation-main/documentation_header.php';
         <li>
             Deprecated Methods: insertItemsAtIndex(), removeItems(), addItems(), use updateRowData() instead.
         </li>
+        <li>
+            New documentation page <a href="../javascript-grid-accessing-data/">Accessing Data</a>.
+        </li>
+        <li>
+            New documentation page <a href="../javascript-grid-refresh/">Data Refresh</a>.
+        </li>
+        <li>
+            New documentation page <a href="../javascript-grid-insert-remove/">Accessing Data</a>.
+        </li>
     </ul>
 
     <h2>Version 10.0.x</h2>

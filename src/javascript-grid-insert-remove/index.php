@@ -9,7 +9,26 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="insert-remove">Insert & Remove</h2>
+    <h2 id="insert-remove">Data Update</h2>
+
+    <p>
+        Data can be updated in the grid in the following ways:
+        <ol>
+            <li>Using the grids <a href="../javascript-grid-cell-editing/">in-line editing</a> feature,
+                eg double clicking on a cell and editing the value.</li>
+            <li>Updating the data directly in your application - which the grid is not aware of the changes
+                and you need to tell the grid to <a href="../javascript-grid-refresh/">refresh the view</a>.</li>
+            <li>Updating the data using the grid's API - which the grid is in control of and refreshes accordingly.</li>
+        </ol>
+    </p>
+
+    <p>
+        This section of the documentation is regarding the last item above, updating the data
+        using the grid's API.
+    </p>
+
+    <h3>Setting Data on Nodes</h3>
+
 
 
     <show-complex-example example="exampleGetRowNode.html"
