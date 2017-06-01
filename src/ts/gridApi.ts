@@ -36,7 +36,7 @@ import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
 import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
-import {InMemoryRowModel, RowDataTransaction} from "./rowModels/inMemory/inMemoryRowModel";
+import {InMemoryRowModel, RefreshModelParams, RowDataTransaction} from "./rowModels/inMemory/inMemoryRowModel";
 import {ImmutableService} from "./rowModels/inMemory/immutableService";
 
 
@@ -261,9 +261,34 @@ export class GridApi {
         this.inMemoryRowModel.refreshModel({step: Constants.STEP_MAP});
     }
 
-    public refreshInMemoryRowModel(): any {
+    public refreshInMemoryRowModel(step?: string): any {
         if (_.missing(this.inMemoryRowModel)) { console.log('cannot call refreshInMemoryRowModel unless using normal row model') }
-        this.inMemoryRowModel.refreshModel({step: Constants.STEP_EVERYTHING});
+
+        let paramsStep = Constants.STEP_EVERYTHING;
+        let stepsMapped: any = {
+            filter: Constants.STEP_FILTER,
+            map: Constants.STEP_MAP,
+            aggregate: Constants.STEP_AGGREGATE,
+            sort: Constants.STEP_SORT,
+            pivot: Constants.STEP_PIVOT
+        };
+
+        if (_.exists(step)) {
+            paramsStep = stepsMapped[step];
+        }
+        if (_.missing(paramsStep)) {
+            console.error(`ag-Grid: invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}`);
+            return;
+        }
+
+        let modelParams: RefreshModelParams = {
+            step: paramsStep,
+            keepRenderedRows: true,
+            animate: true,
+            keepEditingRows: true
+        };
+
+        this.inMemoryRowModel.refreshModel(modelParams);
     }
 
     public getRowNode(id: string): RowNode {

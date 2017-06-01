@@ -6,8 +6,6 @@ export class Constants {
     static STEP_MAP = 3;
     static STEP_AGGREGATE = 4;
     static STEP_PIVOT = 5;
-    static STEP_PAGINATE = 6;
-    static STEP_SET_HEIGHTS = 7;
 
     static ROW_BUFFER_SIZE = 10;
     static LAYOUT_INTERVAL = 500;
