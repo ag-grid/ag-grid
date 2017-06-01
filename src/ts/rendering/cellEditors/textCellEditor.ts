@@ -49,9 +49,19 @@ export class TextCellEditor extends Component implements ICellEditorComp {
         }
 
         this.addDestroyableEventListener(eInput, 'keydown', (event: KeyboardEvent)=> {
-            let isNavigationKey = event.keyCode===Constants.KEY_LEFT || event.keyCode===Constants.KEY_RIGHT;
+            let isNavigationKey = event.keyCode===Constants.KEY_LEFT
+                || event.keyCode===Constants.KEY_RIGHT
+                || event.keyCode===Constants.KEY_UP
+                || event.keyCode===Constants.KEY_DOWN
+                || event.keyCode===Constants.KEY_PAGE_DOWN
+                || event.keyCode===Constants.KEY_PAGE_UP
+                || event.keyCode===Constants.KEY_PAGE_HOME
+                || event.keyCode===Constants.KEY_PAGE_END;
             if (isNavigationKey) {
                 event.stopPropagation();
+                if (!(event.keyCode===Constants.KEY_LEFT) && !(event.keyCode===Constants.KEY_RIGHT)){
+                    event.preventDefault();
+                }
             }
         });
     }
