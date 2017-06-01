@@ -424,23 +424,6 @@ include '../documentation-main/documentation_header.php';
 
         <show-example example="columnStateExample"></show-example>
 
-        <h2 id="saving-restoring-state-sort-and-filter">Saving / Restoring State, Sort and Filter</h2>
-
-        <p>
-            The above example shows how to store the state of the columns. This does not include filters or sorts.
-            To also store the filter and sort with the state, you will need to use all the following methods:
-        <pre><span class="codeComment">// get / set state</span>
-gridOptions.columnApi.getColumnState();
-gridOptions.columnApi.setColumnState(json);
-
-<span class="codeComment">// get / set sort</span>
-gridOptions.api.getSortModel();
-gridOptions.api.setSortModel(json);
-
-<span class="codeComment">// get / set filter</span>
-gridOptions.api.getFilterModel();
-gridOptions.api.setFilterModel(json);</pre>
-        </p>
     </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
