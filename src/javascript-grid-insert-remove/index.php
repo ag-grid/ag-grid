@@ -12,8 +12,14 @@ include '../documentation-main/documentation_header.php';
     <h2 id="insert-remove">Insert & Remove</h2>
 
 
-    <show-example example="exampleGetRowNode"></show-example>
-
+    <show-complex-example example="exampleGetRowNode.html"
+                          sources="{
+                            [
+                                { files: 'exampleGetRowNode.js,exampleGetRowNode.html' }
+                            ]
+                          }"
+                          exampleHeight="200px">
+    </show-complex-example>
 
     <p>
         If you want to add and remove rows into the grid, you have two choices. One is to maintain the data yourself,
