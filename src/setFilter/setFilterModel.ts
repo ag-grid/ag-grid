@@ -1,6 +1,8 @@
 import {Utils} from "ag-grid/main";
 import {ColDef} from "ag-grid/main";
 import {ISetFilterParams} from "ag-grid/main";
+import {TextFormatter} from "ag-grid/main";
+import {TextFilter} from "ag-grid/main";
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
@@ -21,6 +23,7 @@ export class SetFilterModel {
     private selectedValuesCount: any;
     private selectedValuesMap: any;
     private suppressSorting: boolean;
+    private formatter:TextFormatter;
 
     // to make code more readable, we work these out once, and
     // then refer to each time. both are derived from the filterParams
@@ -57,7 +60,9 @@ export class SetFilterModel {
         // the length of the array is thousands of records long
         this.selectedValuesMap = {};
         this.selectEverything();
+        this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : TextFilter.DEFAULT_FORMATTER;
     }
+
 
     // if keepSelection not set will always select all filters
     // if keepSelection set will keep current state of selected filters
@@ -192,11 +197,15 @@ export class SetFilterModel {
 
         // if filter present, we filter down the list
         this.displayedValues = [];
-        let miniFilterUpperCase = this.miniFilter.toUpperCase();
+        let miniFilterFormatted = this.formatter(this.miniFilter);
         for (let i = 0, l = this.availableUniqueValues.length; i < l; i++) {
             let filteredValue = this.availableUniqueValues[i];
-            if (filteredValue !== null && filteredValue.toString().toUpperCase().indexOf(miniFilterUpperCase) >= 0) {
-                this.displayedValues.push(filteredValue);
+            if (filteredValue){
+                let filteredValueFormatted = this.formatter(filteredValue.toString());
+                if (filteredValueFormatted !== null && filteredValueFormatted.indexOf(miniFilterFormatted) >= 0) {
+                    this.displayedValues.push(filteredValue);
+                }
+
             }
         }
     }
