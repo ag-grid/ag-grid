@@ -99,14 +99,14 @@ export class InMemoryNodeManager {
 
         if (_.exists(add)) {
             add.forEach( item => {
-                let newRowNode: RowNode = this.addRowNode_fromTransaction(item, addIndex);
+                let newRowNode: RowNode = this.addRowNode(item, addIndex);
                 rowNodeTransaction.add.push(newRowNode);
             });
         }
 
         if (_.exists(remove)) {
             remove.forEach( item => {
-                let removedRowNode: RowNode = this.updatedRowNode_fromTransaction(item, false);
+                let removedRowNode: RowNode = this.updatedRowNode(item, false);
                 if (removedRowNode) {
                     rowNodeTransaction.remove.push(removedRowNode);
                 }
@@ -115,7 +115,7 @@ export class InMemoryNodeManager {
 
         if (_.exists(update)) {
             update.forEach( item => {
-                let updatedRowNode: RowNode = this.updatedRowNode_fromTransaction(item, true);
+                let updatedRowNode: RowNode = this.updatedRowNode(item, true);
                 if (updatedRowNode) {
                     rowNodeTransaction.update.push(updatedRowNode);
                 }
@@ -125,7 +125,7 @@ export class InMemoryNodeManager {
         return rowNodeTransaction;
     }
 
-    private addRowNode_fromTransaction(data: any, index: number): RowNode {
+    private addRowNode(data: any, index: number): RowNode {
 
         let newNode = this.createNode(data, null, InMemoryNodeManager.TOP_LEVEL);
 
@@ -138,7 +138,7 @@ export class InMemoryNodeManager {
         return newNode;
     }
 
-    private updatedRowNode_fromTransaction(data: any, update: boolean): RowNode {
+    private updatedRowNode(data: any, update: boolean): RowNode {
         let rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
 
         let rowNode: RowNode;
