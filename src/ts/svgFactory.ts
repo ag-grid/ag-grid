@@ -15,7 +15,7 @@ export class SvgFactory {
         return this.theInstance;
     }
 
-    public createFilterSvg() {
+    public createFilterSvg(): HTMLElement  {
         let eSvg = createIconSvg();
 
         let eFunnel = document.createElementNS(SVG_NS, "polygon");
@@ -26,7 +26,7 @@ export class SvgFactory {
         return eSvg;
     }
 
-    public createFilterSvg12() {
+    public createFilterSvg12(): HTMLElement  {
         let eSvg = createIconSvg(12);
 
         let eFunnel = document.createElementNS(SVG_NS, "polygon");
@@ -55,7 +55,7 @@ export class SvgFactory {
         return eSvg;
     }
 
-    public createColumnsSvg12(): Element {
+    public createColumnsSvg12(): HTMLElement {
         let eSvg = createIconSvg(12);
 
         [0,4,8].forEach( (y)=> {
