@@ -250,15 +250,7 @@ export class GridSerializer {
                 this.columnController.getGridBalancedTree(),
                 groupInstanceIdCreator
             );
-            if (displayedGroups.length > 0 && displayedGroups[0] instanceof ColumnGroup) {
-                let gridRowIterator: RowSpanningAccumulator = gridSerializingSession.onNewHeaderGroupingRow();
-                let columnIndex: number = 0;
-                displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
-                    let columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
-                    let colDef = columnGroup.getDefinition();
-                    gridRowIterator.onColumn(colDef != null ? colDef.headerName : '', columnIndex++, columnGroup.getChildren().length - 1);
-                });
-            }
+            this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession);
         }
 
         if (!skipHeader){
@@ -342,6 +334,33 @@ export class GridSerializer {
         return gridSerializingSession.parse();
     }
 
+    recursivelyAddHeaderGroups<T> (displayedGroups:ColumnGroupChild[], gridSerializingSession:GridSerializingSession<T>):void{
+        let directChildrenHeaderGroups:ColumnGroupChild[];
+        displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
+            let columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
+            if (!columnGroup.getChildren) return;
+            directChildrenHeaderGroups = columnGroup.getChildren();
+        });
+
+        if (displayedGroups.length > 0 && displayedGroups[0] instanceof ColumnGroup) {
+            this.doAddHeaderHeader(gridSerializingSession, displayedGroups);
+        }
+
+        if (directChildrenHeaderGroups){
+            this.recursivelyAddHeaderGroups(directChildrenHeaderGroups, gridSerializingSession);
+        }
+    }
+
+    private doAddHeaderHeader<T>(gridSerializingSession: GridSerializingSession<T>, displayedGroups: ColumnGroupChild[]) {
+        let gridRowIterator: RowSpanningAccumulator = gridSerializingSession.onNewHeaderGroupingRow();
+        let columnIndex: number = 0;
+        displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
+            let columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
+            let colDef = columnGroup.getDefinition();
+
+            gridRowIterator.onColumn(colDef != null ? colDef.headerName : '', columnIndex++, columnGroup.getLeafColumns().length - 1);
+        });
+    }
 }
 
 export enum RowType {
