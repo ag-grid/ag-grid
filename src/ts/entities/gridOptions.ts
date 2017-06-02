@@ -150,6 +150,7 @@ export interface GridOptions {
     groupMultiAutoColumn?: boolean;
     groupSuppressBlankHeader?: boolean;
     forPrint?: boolean;
+    autoHeight?: boolean;
     groupColumnDef?: ColDef;
 
     /****************************************************************

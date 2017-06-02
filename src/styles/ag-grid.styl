@@ -33,17 +33,22 @@ ag-grid-ng2
     /* was getting some 'should be there' scrolls, this sorts it out */
     overflow hidden
 
+.ag-layout-normal .ag-root
+    height 100%
+
 .ag-font-style
     cursor default
     /* disable user mouse selection */
     user-select none
 
-.ag-no-scrolls
+.ag-layout-for-print
     white-space nowrap
     display inline-block
 
-.ag-scrolls
+.ag-layout-normal
     height 100%
+
+.ag-layout-auto-height {}
 
 .ag-popup-backdrop
     position fixed
@@ -53,13 +58,15 @@ ag-grid-ng2
     height 100%
 
 .ag-header
-    position absolute
-    top 0px
-    left 0px
     white-space nowrap
     box-sizing border-box
     overflow hidden
     width 100%
+
+.ag-layout-normal .ag-header
+    position absolute
+    top 0px
+    left 0px
 
 .ag-pinned-left-header
     float left
@@ -80,16 +87,25 @@ ag-grid-ng2
     overflow hidden
     height 100%
 
-.ag-scrolls .ag-header-row
+.ag-layout-normal .ag-header-row
     position absolute
 
-.ag-scrolls .ag-header-container
+.ag-layout-normal .ag-header-container
     box-sizing border-box
     position relative
     white-space nowrap
     height 100%
 
-.ag-no-scrolls .ag-header-container
+.ag-layout-auto-height .ag-header-row
+    position absolute
+
+.ag-layout-auto-height .ag-header-container
+    box-sizing border-box
+    position relative
+    white-space nowrap
+    height 100%
+
+.ag-layout-for-print .ag-header-container
     white-space nowrap
 
 .ag-header-overlay
@@ -241,13 +257,17 @@ ag-grid-ng2
     overflow auto
     position relative
 
+.ag-bl-west
+    float left
+
 .ag-bl-full-height-west
     height 100%
-    float left
+
+.ag-bl-east
+    float right
 
 .ag-bl-full-height-east
     height 100%
-    float right
 
 .ag-bl-full-height-center
     height 100%
@@ -275,14 +295,14 @@ ag-grid-ng2
     position relative
 
 .ag-body
-    height 100%
     width 100%
     box-sizing border-box
+
+.ag-layout-normal .ag-body
+    height 100%
     position absolute
 
 .ag-floating-top
-    position absolute
-    left 0px
     width 100%
     white-space nowrap
     box-sizing border-box
@@ -380,12 +400,14 @@ ag-grid-ng2
     display inline-block
     position relative
 
-.ag-body-viewport-wrapper
+.ag-layout-normal .ag-body-viewport-wrapper
     height 100%
 
 .ag-body-viewport
     overflow-x auto
     overflow-y auto // if we are pinning to the right, overflow y will be hidden
+
+.ag-layout-normal .ag-body-viewport
     height 100%
 
 .ag-full-width-viewport
@@ -435,7 +457,11 @@ ag-grid-ng2
     pointer-events all
     overflow hidden
 
-.ag-scrolls .ag-body-container
+.ag-layout-normal .ag-body-container
+    position relative
+    display inline-block
+
+.ag-layout-auto-height .ag-body-container
     position relative
     display inline-block
 
@@ -449,12 +475,17 @@ ag-grid-ng2
 .ag-row
     box-sizing border-box
 
-.ag-scrolls .ag-row
+.ag-layout-normal .ag-row
     white-space nowrap
     position absolute
     width 100%
 
-.ag-no-scrolls .ag-row
+.ag-layout-auto-height .ag-row
+    white-space nowrap
+    position absolute
+    width 100%
+
+.ag-layout-for-print .ag-row
 //    white-space: nowrap
     position relative // need at least some position for the cell height to work
 
@@ -646,18 +677,6 @@ ag-grid-ng2
 
 .ag-paging-panel {}
 
-.ag-no-vertical-scroll .ag-scrolls
-    height unset
-
-.ag-no-vertical-scroll .ag-body
-    height unset
-
-.ag-no-vertical-scroll .ag-body-viewport-wrapper
-    height unset
-
-.ag-no-vertical-scroll .ag-body-viewport
-    height unset
-
 .ag-list-selection
     user-select none
     cursor default
@@ -666,9 +685,11 @@ ag-grid-ng2
     width 200px
     user-select none
     cursor default
-    height 100%
     box-sizing border-box
     overflow auto
+
+.ag-layout-normal .ag-tool-panel
+    height 100%
 
 .ag-column-select-indent
     display inline-block
