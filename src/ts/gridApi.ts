@@ -157,7 +157,7 @@ export class GridApi {
 
     public setRowData(rowData: any[]) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            if (this.gridOptionsWrapper.isEnableImmutableMode()) {
+            if (this.gridOptionsWrapper.isDeltaRowDataMode()) {
                 let transaction = this.immutableService.createTransactionForRowData(rowData);
                 this.inMemoryRowModel.updateRowData(transaction);
             } else {

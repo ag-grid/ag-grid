@@ -227,7 +227,7 @@ export class GridOptionsWrapper {
     public getHeaderCellRenderer() { return this.gridOptions.headerCellRenderer; }
     public getApi(): GridApi { return this.gridOptions.api; }
     public getColumnApi(): ColumnApi { return this.gridOptions.columnApi; }
-    public isEnableImmutableMode() { return isTrue(this.gridOptions.enableImmutableMode); }
+    public isDeltaRowDataMode() { return isTrue(this.gridOptions.deltaRowDataMode); }
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
     public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }

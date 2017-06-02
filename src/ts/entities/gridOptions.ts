@@ -21,7 +21,7 @@ export interface GridOptions {
      ****************************************************************/
 
     // set once in init, can never change
-    enableImmutableMode?: boolean;
+    deltaRowDataMode?: boolean;
     scrollbarWidth?: number;
     toolPanelSuppressRowGroups?: boolean;
     toolPanelSuppressValues?: boolean;
@@ -174,9 +174,9 @@ export interface GridOptions {
      ****************************************************************/
 
     // changeable with impact
-    rowData?: any[]; // should this be immutable for ag2?
-    floatingTopRowData?: any[]; // should this be immutable ag2?
-    floatingBottomRowData?: any[]; // should this be immutable ag2?
+    rowData?: any[];
+    floatingTopRowData?: any[];
+    floatingBottomRowData?: any[];
     showToolPanel?: boolean;
     columnDefs?: (ColDef|ColGroupDef)[];
     datasource?: IDatasource;
