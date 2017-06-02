@@ -44,6 +44,11 @@ export class MenuItemComponent extends Component {
             // it out.
             this.queryForHtmlElement('#eIcon').innerHTML = '&nbsp;';
         }
+
+        if (this.params.tooltip){
+            this.getGui().setAttribute('title', this.params.tooltip)
+        }
+
         if (this.params.shortcut) {
             this.queryForHtmlElement('#eShortcut').innerHTML = this.params.shortcut;
         }
