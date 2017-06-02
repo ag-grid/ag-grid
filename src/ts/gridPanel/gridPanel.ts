@@ -9,7 +9,6 @@ import {Logger, LoggerFactory} from "../logger";
 import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy} from "../context/context";
 import {EventService} from "../eventService";
 import {Events} from "../events";
-import {IRowModel} from "../interfaces/iRowModel";
 import {DragService, DragListenerParams} from "../dragAndDrop/dragService";
 import {IRangeController} from "../interfaces/iRangeController";
 import {Constants, KeyboardBinding, KeyboardBindingGroup} from "../constants";
@@ -29,7 +28,6 @@ import {GridCell} from "../entities/gridCell";
 import {RowNode} from "../entities/rowNode";
 import {PaginationProxy} from "../rowModels/paginationProxy";
 import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
-import {CellComp} from "../rendering/cellComp";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -190,13 +188,13 @@ export class GridPanel extends BeanStub {
     private lastLeftPosition = -1;
     private lastTopPosition = -1;
 
-    private animationThreadCount = 0;
     private bodyHeight: number;
 
     // properties we use a lot, so keep reference
     private useScrollLag: boolean;
     private enableRtl: boolean;
     private forPrint: boolean;
+    private autoHeight: boolean;
     private scrollWidth: number;
 
     // used to track if pinned panels are showing, so we can turn them off if not
@@ -207,6 +205,7 @@ export class GridPanel extends BeanStub {
         this.logger = loggerFactory.create('GridPanel');
         // makes code below more readable if we pull 'forPrint' out
         this.forPrint = this.gridOptionsWrapper.isForPrint();
+        this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.useScrollLag = this.isUseScrollLag();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
@@ -258,6 +257,7 @@ export class GridPanel extends BeanStub {
             },
             center: this.eRoot,
             dontFill: this.forPrint,
+            fillHorizontalOnly: this.autoHeight,
             name: 'eGridPanel'
         });
 
@@ -1206,11 +1206,6 @@ export class GridPanel extends BeanStub {
         // the template we use is different when doing 'for print'
         let template = this.forPrint ? gridForPrintHtml : gridHtml;
         this.eRoot = <HTMLElement> _.loadTemplate(template);
-
-        // parts of the CSS need to know if we are in 'for print' mode or not,
-        // so we add a class to allow applying CSS based on this.
-        let scrollClass = this.forPrint ? 'ag-no-scrolls' : 'ag-scrolls';
-        _.addCssClass(this.eRoot, scrollClass);
     }
 
     private findElements() {

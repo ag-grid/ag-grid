@@ -119,6 +119,10 @@ export class GridOptionsWrapper {
         if (this.isGroupRemoveSingleChildren() && this.isGroupHideOpenParents()) {
             console.warn('ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don\'t ask us how to us these together on our support forum either you will get the same answer!');
         }
+
+        if (this.isForPrint() && this.isAutoHeight()) {
+            console.warn('ag-Grid: properties forPrint and autoHeight do not work with each other, please pick only one.')
+        }
     }
 
     private setupFrameworkComponents(): void {
@@ -198,6 +202,8 @@ export class GridOptionsWrapper {
     public isSuppressDragLeaveHidesColumns() { return isTrue(this.gridOptions.suppressDragLeaveHidesColumns); }
     public isSuppressScrollOnNewData() { return isTrue(this.gridOptions.suppressScrollOnNewData); }
     public isForPrint() { return isTrue(this.gridOptions.forPrint); }
+    public isAutoHeight() { return isTrue(this.gridOptions.autoHeight); }
+
     public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
     public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }
     public isSuppressNoRowsOverlay() { return isTrue(this.gridOptions.suppressNoRowsOverlay); }

@@ -88,8 +88,23 @@ export class GridCore {
             north: createTopPanelGui,
             south: eSouthPanel,
             dontFill: this.gridOptionsWrapper.isForPrint(),
+            fillHorizontalOnly: this.gridOptionsWrapper.isAutoHeight(),
             name: 'eRootPanel'
         });
+
+        // parts of the CSS need to know if we are in 'for print' mode or not,
+        // so we add a class to allow applying CSS based on this.
+        if (this.gridOptionsWrapper.isForPrint()) {
+            _.addCssClass(this.eRootPanel.getGui(), 'ag-layout-for-print');
+            // kept to limit breaking changes, ag-no-scrolls was renamed to ag-layout-for-print
+            _.addCssClass(this.eRootPanel.getGui(), 'ag-no-scrolls');
+        } else if (this.gridOptionsWrapper.isAutoHeight()) {
+            _.addCssClass(this.eRootPanel.getGui(), 'ag-layout-auto-height');
+        } else {
+            _.addCssClass(this.eRootPanel.getGui(), 'ag-layout-normal');
+            // kept to limit breaking changes, ag-scrolls was renamed to ag-layout-normal
+            _.addCssClass(this.eRootPanel.getGui(), 'ag-scrolls');
+        }
 
         // see what the grid options are for default of toolbar
         this.showToolPanel(this.gridOptionsWrapper.isShowToolPanel());

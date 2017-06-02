@@ -2,6 +2,7 @@ import {Utils as _} from '../utils';
 
 export class BorderLayout {
 
+    // this is used if there user has not specified any north or south parts
     private static TEMPLATE_FULL_HEIGHT =
         '<div class="ag-bl ag-bl-full-height">' +
         '  <div class="ag-bl-west ag-bl-full-height-west" id="west"></div>' +
@@ -25,10 +26,10 @@ export class BorderLayout {
     private static TEMPLATE_DONT_FILL =
         '<div class="ag-bl ag-bl-dont-fill">' +
         '  <div id="north"></div>' +
-        '  <div id="centerRow">' +
-        '    <div id="west"></div>' +
-        '    <div id="east"></div>' +
-        '    <div id="center"></div>' +
+        '  <div id="centerRow" class="ag-bl-center-row ag-bl-dont-fill-center-row">' +
+        '    <div id="west" class="ag-bl-west ag-bl-dont-fill-west"></div>' +
+        '    <div id="east" class="ag-bl-east ag-bl-dont-fill-east"></div>' +
+        '    <div id="center" class="ag-bl-center ag-bl-dont-fill-center"></div>' +
         '  </div>' +
         '  <div id="south"></div>' +
         '  <div class="ag-bl-overlay" id="overlay"></div>' +
@@ -50,7 +51,8 @@ export class BorderLayout {
 
     private isLayoutPanel: any;
     private fullHeight: any;
-    private layoutActive: any;
+    private horizontalLayoutActive: boolean;
+    private verticalLayoutActive: boolean;
 
     private eGui: HTMLElement;
     private id: string;
@@ -70,16 +72,22 @@ export class BorderLayout {
         this.fullHeight = !params.north && !params.south;
 
         let template: any;
-        if (!params.dontFill) {
+        if (params.dontFill) {
+            template = BorderLayout.TEMPLATE_DONT_FILL;
+            this.horizontalLayoutActive = false;
+            this.verticalLayoutActive = false;
+        } else if (params.fillHorizontalOnly) {
+            template = BorderLayout.TEMPLATE_DONT_FILL;
+            this.horizontalLayoutActive = true;
+            this.verticalLayoutActive = false;
+        } else {
             if (this.fullHeight) {
                 template = BorderLayout.TEMPLATE_FULL_HEIGHT;
             } else {
                 template = BorderLayout.TEMPLATE_NORMAL;
             }
-            this.layoutActive = true;
-        } else {
-            template = BorderLayout.TEMPLATE_DONT_FILL;
-            this.layoutActive = false;
+            this.horizontalLayoutActive = true;
+            this.verticalLayoutActive = true;
         }
 
         this.eGui = _.loadTemplate(template);
@@ -173,10 +181,16 @@ export class BorderLayout {
             }
         });
 
-        if (this.layoutActive) {
-            let ourHeightChanged = this.layoutHeight();
+        if (this.horizontalLayoutActive) {
             let ourWidthChanged = this.layoutWidth();
-            if (ourHeightChanged || ourWidthChanged) {
+            if (ourWidthChanged) {
+                atLeastOneChanged = true;
+            }
+        }
+
+        if (this.verticalLayoutActive) {
+            let ourHeightChanged = this.layoutHeight();
+            if (ourHeightChanged) {
                 atLeastOneChanged = true;
             }
         }
