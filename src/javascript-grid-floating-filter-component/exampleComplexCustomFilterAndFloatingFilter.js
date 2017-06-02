@@ -1,7 +1,11 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'text'},
-    {headerName: "Age", field: "age", width: 90, filter: 'number'},
+    {headerName: "Athlete", field: "athlete", width: 150, filter: 'text', floatingFilterComponentParams:{
+        debounceMs:2000
+    }},
+    {headerName: "Age", field: "age", width: 90, filter: 'number', floatingFilterComponentParams:{
+        debounceMs:0
+    }},
     {headerName: "Country", field: "country", width: 120},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 130, filter:'date', filterParams:{

@@ -54,6 +54,9 @@ include '../documentation-main/documentation_header.php';
         is the first item in the filterOptions</li>
     <li><b>textFormatter:</b> If specified, formats the text before applying the filter compare logic, useful for
         instance if substituting accentuated characters or if you want to do case sensitive filtering.</li>
+    <li><b>debounceMs:</b> If specified, the filter will wait this amount of ms after the user stops entering any characters in the
+        input box before is triggered. If not specified this value is 500ms, if the value specified is 0 the filter
+        will be immediately triggered</li>
     </ul>
 
 The parameters for the filter must be specified in the property filterParams inside the column definition
@@ -226,9 +229,13 @@ athleteFilterComponent.onFilterChanged()
     <li>The athlete column has only two filter options: <i>filterOptions=['contains','notContains']</i></li>
     <li>The athlete column has a text formatter so if you search for 'o' it will find &oslash; You can try this by
         searching the string 'bjo'</i></li>
+    <li>The athlete column has a debounce of 0ms <i>debounceMs:0</i> in the column filter menu. The floating filter
+    has the default 500ms</li>
     <li>The country column has only one filter option: <i>filterOptions=['contains']</i></li>
     <li>The country column has a <i>textCustomComparator</i> so that there are aliases that can be entered in the filter
     ie: if you filter using the text 'usa' it will match United States or 'holland' will match 'Netherlands'</li>
+    <li>The country column has a debounce of 2000ms <i>debounceMs:2000</i> in the column filter menu. The floating filter
+        has the default 500ms</li>
     <li>The year column has two one filter options <i>filterOptions=['inRange', 'greaterThan']. The default should be
         'inRange' since is the first one of the list and default is not specified</i></li>
     <li>The sports column has a different default option <i>defaultOption='startsWith'</i></li>
