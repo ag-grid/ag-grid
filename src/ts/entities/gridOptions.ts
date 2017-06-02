@@ -348,6 +348,7 @@ export interface MenuItemDef {
     icon?: HTMLElement|string;
     subMenu?: (MenuItemDef|string)[];
     cssClasses?: string[];
+    tooltip?: string;
 }
 
 export interface GetMainMenuItemsParams {
