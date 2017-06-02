@@ -57,6 +57,11 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleWidthAndHeight"></show-example>
 
+    <h2>Auto Height Grid</h2>
+
+    <show-example example="exampleAutoHeight"></show-example>
+
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

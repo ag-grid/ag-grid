@@ -1,0 +1,24 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused46"></script>
+    <script src="exampleAutoHeight.js"></script>
+</head>
+<body>
+
+<div style="padding: 5px;">
+    <button onclick="setRowData(0)">0 Rows</button>
+    <button onclick="setRowData(5)">5 Rows</button>
+    <button onclick="setRowData(20)">20 Rows</button>
+    <button onclick="setRowData(50)">50 Rows</button>
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    Current Row Count = <span id="currentRowCount"></span>
+</div>
+
+<!-- The grid DIV is not given any height, it is going to have not height specified so it fills -->
+<div id="myGrid" class="ag-fresh"></div>
+
+</body>
+</html>
