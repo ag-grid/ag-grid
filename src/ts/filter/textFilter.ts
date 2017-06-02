@@ -1,6 +1,6 @@
 import {Utils as _} from "../utils";
 import {IFilterParams, IDoesFilterPassParams, SerializedFilter} from "../interfaces/iFilter";
-import {ComparableBaseFilter, BaseFilter} from "./baseFilter";
+import {ComparableBaseFilter, BaseFilter, IScalarFilterParams} from "./baseFilter";
 import {QuerySelector} from "../widgets/componentAnnotations";
 
 export interface SerializedTextFilter extends SerializedFilter {
@@ -16,8 +16,13 @@ export interface TextFormatter {
     (from:string):string;
 }
 
+export interface INumberFilterParams extends IScalarFilterParams{
+    debounceMs?: number;
+}
+
 export interface ITextFilterParams extends IFilterParams{
-    textCustomComparator?:TextComparator
+    textCustomComparator?:TextComparator;
+    debounceMs?: number;
 }
 
 export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams, SerializedTextFilter> {
@@ -61,6 +66,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     public customInit(): void {
         this.comparator = this.filterParams.textCustomComparator ? this.filterParams.textCustomComparator : TextFilter.DEFAULT_COMPARATOR;
         this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : TextFilter.DEFAULT_FORMATTER;
+        super.customInit();
     }
 
     modelFromFloatingFilter(from: string): SerializedTextFilter {
@@ -85,7 +91,9 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
 
     public initialiseFilterBodyUi() {
         super.initialiseFilterBodyUi();
-        this.addDestroyableEventListener(this.eFilterTextField, 'input', this.onFilterTextFieldChanged.bind(this));
+        let debounceMs: number = this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 500;
+        let toDebounce:()=>void = _.debounce(this.onFilterTextFieldChanged.bind(this), debounceMs);
+        this.addDestroyableEventListener(this.eFilterTextField, 'input', toDebounce);
     }
 
     public refreshFilterBodyUi() {}
@@ -158,7 +166,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
 
     public serialize(): SerializedTextFilter{
         return {
-            type: this.filter,
+            type: this.filter ? this.filter : this.defaultFilter,
             filter: this.filterText,
             filterType: 'text'
         }

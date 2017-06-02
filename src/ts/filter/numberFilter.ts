@@ -2,6 +2,7 @@ import {Utils as _} from "../utils";
 import {IFilterParams, SerializedFilter} from "../interfaces/iFilter";
 import {QuerySelector} from "../widgets/componentAnnotations";
 import {BaseFilter, Comparator, IScalarFilterParams, ScalarBaseFilter} from "./baseFilter";
+import {INumberFilterParams} from "./textFilter";
 
 export interface SerializedNumberFilter extends SerializedFilter {
     filter:number
@@ -9,7 +10,7 @@ export interface SerializedNumberFilter extends SerializedFilter {
     type:string
 }
 
-export class NumberFilter extends ScalarBaseFilter<number, IScalarFilterParams, SerializedNumberFilter> {
+export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, SerializedNumberFilter> {
     public static EQUALS = 'equals';// 1;
 
     public static NOT_EQUAL = 'notEqual';//2;
@@ -59,8 +60,10 @@ export class NumberFilter extends ScalarBaseFilter<number, IScalarFilterParams, 
         this.filterNumber = null;
         this.eFilterTextField = <HTMLInputElement> this.getGui().querySelector("#filterText");
 
-        this.addDestroyableEventListener(this.eFilterTextField, "input", this.onTextFieldsChanged.bind(this));
-        this.addDestroyableEventListener(this.eFilterToTextField, "input", this.onTextFieldsChanged.bind(this));
+        let debounceMs: number = this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 500;
+        let toDebounce:()=>void = _.debounce(this.onTextFieldsChanged.bind(this), debounceMs);
+        this.addDestroyableEventListener(this.eFilterTextField, "input", toDebounce);
+        this.addDestroyableEventListener(this.eFilterToTextField, "input", toDebounce);
     }
 
     public afterGuiAttached() {
@@ -137,7 +140,7 @@ export class NumberFilter extends ScalarBaseFilter<number, IScalarFilterParams, 
 
     public serialize(): SerializedNumberFilter {
         return {
-            type: this.filter,
+            type: this.filter ? this.filter : this.defaultFilter,
             filter: this.filterNumber,
             filterTo: this.filterNumberTo,
             filterType: 'number'

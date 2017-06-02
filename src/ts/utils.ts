@@ -8,17 +8,17 @@ let FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 export class Timer {
 
     private timestamp = new Date().getTime();
-    
+
     public print(msg: string) {
         let duration = (new Date().getTime()) - this.timestamp;
         console.log(`${msg} = ${duration}`);
         this.timestamp = new Date().getTime();
     }
-    
+
 }
 
 /** HTML Escapes. */
-const HTML_ESCAPES :{[id:string]:string}= {
+const HTML_ESCAPES: { [id: string]: string } = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
@@ -43,9 +43,9 @@ export class Utils {
 
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
-    static areEventsNear(e1: MouseEvent|Touch, e2: MouseEvent|Touch, pixelCount: number): boolean {
+    static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean {
         // by default, we wait 4 pixels before starting the drag
-        if (pixelCount===0) {
+        if (pixelCount === 0) {
             return false;
         }
         let diffX = Math.abs(e1.clientX - e2.clientX);
@@ -56,14 +56,20 @@ export class Utils {
 
     static shallowCompare(arr1: any[], arr2: any[]): boolean {
         // if both are missing, then they are the same
-        if (this.missing(arr1) && this.missing(arr2)) { return true; }
+        if (this.missing(arr1) && this.missing(arr2)) {
+            return true;
+        }
         // if one is present, but other is missing, then then are different
-        if (this.missing(arr1) || this.missing(arr2)) { return false; }
+        if (this.missing(arr1) || this.missing(arr2)) {
+            return false;
+        }
 
-        if (arr1.length!==arr2.length) { return false; }
+        if (arr1.length !== arr2.length) {
+            return false;
+        }
 
-        for (let i = 0; i<arr1.length; i++) {
-            if (arr1[i]!==arr2[i]) {
+        for (let i = 0; i < arr1.length; i++) {
+            if (arr1[i] !== arr2[i]) {
                 return false;
             }
         }
@@ -74,13 +80,13 @@ export class Utils {
     static getNameOfClass(TheClass: any) {
         let funcNameRegex = /function (.{1,})\(/;
         let funcAsString = TheClass.toString();
-        let results  = (funcNameRegex).exec(funcAsString);
+        let results = (funcNameRegex).exec(funcAsString);
         return (results && results.length > 1) ? results[1] : "";
     }
 
-    static values<T>(object: {[key: string]: T}): T[] {
+    static values<T>(object: { [key: string]: T }): T[] {
         let result: T[] = [];
-        this.iterateObject(object, (key: string, value: T)=> {
+        this.iterateObject(object, (key: string, value: T) => {
             result.push(value);
         });
         return result;
@@ -97,7 +103,7 @@ export class Utils {
             // otherwise it is a deep value, so need to dig for it
             let fields = field.split('.');
             let currentObject = data;
-            for (let i = 0; i<fields.length; i++) {
+            for (let i = 0; i < fields.length; i++) {
                 currentObject = currentObject[fields[i]];
                 if (this.missing(currentObject)) {
                     return null;
@@ -147,8 +153,10 @@ export class Utils {
         element.scrollLeft = value;
     }
 
-    static iterateObject(object: any, callback: (key:string, value: any) => void) {
-        if (this.missing(object)) { return; }
+    static iterateObject(object: any, callback: (key: string, value: any) => void) {
+        if (this.missing(object)) {
+            return;
+        }
         let keys = Object.keys(object);
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i];
@@ -180,7 +188,7 @@ export class Utils {
 
     static mapObject<TResult>(object: any, callback: (item: any) => TResult) {
         let result: TResult[] = [];
-        Utils.iterateObject(object, (key: string, value: any)=> {
+        Utils.iterateObject(object, (key: string, value: any) => {
             result.push(callback(value));
         });
         return result;
@@ -209,9 +217,9 @@ export class Utils {
 
     static getAllKeysInObjects(objects: any[]): string[] {
         let allValues: any = {};
-        objects.forEach( obj => {
+        objects.forEach(obj => {
             if (obj) {
-                Object.keys(obj).forEach( key => allValues[key] = null );
+                Object.keys(obj).forEach(key => allValues[key] = null);
             }
         });
         return Object.keys(allValues);
@@ -219,22 +227,22 @@ export class Utils {
 
     static mergeDeep(object: any, source: any): void {
         if (this.exists(source)) {
-            this.iterateObject(source, function(key: string, target: any) {
+            this.iterateObject(source, function (key: string, target: any) {
                 let currentValue: any = object[key];
 
-                if (currentValue == null){
+                if (currentValue == null) {
                     object[key] = target;
                     return;
                 }
 
-                if (typeof currentValue === 'object'){
-                    if (target){
-                        Utils.mergeDeep (currentValue, target);
+                if (typeof currentValue === 'object') {
+                    if (target) {
+                        Utils.mergeDeep(currentValue, target);
                         return;
                     }
                 }
 
-                if (target){
+                if (target) {
                     object[key] = target;
                 }
             });
@@ -243,39 +251,41 @@ export class Utils {
 
     static assign(object: any, source: any): void {
         if (this.exists(source)) {
-            this.iterateObject(source, function(key: string, value: any) {
+            this.iterateObject(source, function (key: string, value: any) {
                 object[key] = value;
             });
         }
     }
 
-    static parseYyyyMmDdToDate (yyyyMmDd:string, separator:string):Date{
-        try{
+    static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date {
+        try {
             if (!yyyyMmDd) return null;
             if (yyyyMmDd.indexOf(separator) === -1) return null;
 
-            let fields:string[] = yyyyMmDd.split(separator);
+            let fields: string[] = yyyyMmDd.split(separator);
             if (fields.length != 3) return null;
-            return new Date (Number(fields[0]),Number(fields[1]) - 1,Number(fields[2]));
-        }catch (e){
+            return new Date(Number(fields[0]), Number(fields[1]) - 1, Number(fields[2]));
+        } catch (e) {
             return null;
         }
     }
 
-    static serializeDateToYyyyMmDd (date:Date, separator:string):string {
+    static serializeDateToYyyyMmDd(date: Date, separator: string): string {
         if (!date) return null;
         return date.getFullYear() + separator + Utils.pad(date.getMonth() + 1, 2) + separator + Utils.pad(date.getDate(), 2)
     }
 
-    static pad(num: number, totalStringSize:number) : string{
-        let asString:string = num + "";
+    static pad(num: number, totalStringSize: number): string {
+        let asString: string = num + "";
         while (asString.length < totalStringSize) asString = "0" + asString;
         return asString;
     }
 
     static pushAll(target: any[], source: any[]): void {
-        if (this.missing(source) || this.missing(target)) { return; }
-        source.forEach( func => target.push(func) );
+        if (this.missing(source) || this.missing(target)) {
+            return;
+        }
+        source.forEach(func => target.push(func));
     }
 
     static getFunctionParameters(func: any) {
@@ -288,7 +298,7 @@ export class Utils {
         }
     }
 
-    static find<T>(collection: T[]| {[id:string]:T}, predicate: string |((item: T) => void), value?: any): T {
+    static find<T>(collection: T[] | { [id: string]: T }, predicate: string | ((item: T) => void), value?: any): T {
         if (collection === null || collection === undefined) {
             return null;
         }
@@ -341,7 +351,7 @@ export class Utils {
     static isNode(o: any) {
         return (
             typeof Node === "function" ? o instanceof Node :
-            o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
+                o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
         );
     }
 
@@ -350,7 +360,7 @@ export class Utils {
     static isElement(o: any) {
         return (
             typeof HTMLElement === "function" ? o instanceof HTMLElement : //DOM2
-            o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
+                o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
         );
     }
 
@@ -382,7 +392,7 @@ export class Utils {
         return !this.exists(value);
     }
 
-    static missingOrEmpty(value: any[]|string): boolean {
+    static missingOrEmpty(value: any[] | string): boolean {
         return this.missing(value) || value.length === 0;
     }
 
@@ -391,7 +401,7 @@ export class Utils {
     }
 
     static exists(value: any): boolean {
-        if (value===null || value===undefined || value==='') {
+        if (value === null || value === undefined || value === '') {
             return false;
         } else {
             return true;
@@ -400,7 +410,7 @@ export class Utils {
 
     static anyExists(values: any[]): boolean {
         if (values) {
-            for (let i = 0; i<values.length; i++) {
+            for (let i = 0; i < values.length; i++) {
                 if (this.exists(values[i])) {
                     return true;
                 }
@@ -460,9 +470,11 @@ export class Utils {
     }
 
     static addCssClass(element: HTMLElement, className: string) {
-        if (!className || className.length===0) { return; }
+        if (!className || className.length === 0) {
+            return;
+        }
         if (className.indexOf(' ') >= 0) {
-            className.split(' ').forEach( value => this.addCssClass(element, value));
+            className.split(' ').forEach(value => this.addCssClass(element, value));
             return;
         }
         if (element.classList) {
@@ -492,8 +504,8 @@ export class Utils {
             // class names that are a substring of this class
             let contains = element.className.indexOf(' ' + className + ' ') >= 0;
             // the padding above then breaks when it's the first or last class names
-            let startsWithClass = element.className.indexOf(className + ' ')===0;
-            let endsWithClass = element.className.lastIndexOf(' ' + className) === (element.className.length - className.length -1);
+            let startsWithClass = element.className.indexOf(className + ' ') === 0;
+            let endsWithClass = element.className.lastIndexOf(' ' + className) === (element.className.length - className.length - 1);
             return onlyClass || contains || startsWithClass || endsWithClass;
         } else {
             // if item is not a node
@@ -513,7 +525,7 @@ export class Utils {
             return null;
         }
     }
-    
+
     static offsetHeight(element: HTMLElement) {
         return element && element.clientHeight ? element.clientHeight : 0;
     }
@@ -534,12 +546,14 @@ export class Utils {
     }
 
     static removeRepeatsFromArray<T>(array: T[], object: T) {
-        if (!array) { return; }
+        if (!array) {
+            return;
+        }
         for (let index = array.length - 2; index >= 0; index--) {
-            let thisOneMatches = array[index]===object;
-            let nextOneMatches = array[index+1]===object;
+            let thisOneMatches = array[index] === object;
+            let nextOneMatches = array[index + 1] === object;
             if (thisOneMatches && nextOneMatches) {
-                array.splice(index+1, 1);
+                array.splice(index + 1, 1);
             }
         }
 
@@ -552,7 +566,7 @@ export class Utils {
     }
 
     static removeAllFromArray<T>(array: T[], toRemove: T[]) {
-        toRemove.forEach( item => {
+        toRemove.forEach(item => {
             if (array.indexOf(item) >= 0) {
                 array.splice(array.indexOf(item), 1);
             }
@@ -564,9 +578,11 @@ export class Utils {
     }
 
     static insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
-        if (this.missing(dest) || this.missing(src)) { return; }
+        if (this.missing(dest) || this.missing(src)) {
+            return;
+        }
         // put items in backwards, otherwise inserted items end up in reverse order
-        for (let i = src.length - 1; i>=0; i--) {
+        for (let i = src.length - 1; i >= 0; i--) {
             let item = src[i];
             this.insertIntoArray(dest, item, toIndex);
         }
@@ -574,13 +590,13 @@ export class Utils {
 
     static moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number) {
         // first take out it items from the array
-        objectsToMove.forEach( (obj)=> {
+        objectsToMove.forEach((obj) => {
             this.removeFromArray(array, obj);
         });
 
         // now add the objects, in same order as provided to us, that means we start at the end
         // as the objects will be pushed to the right as they are inserted
-        objectsToMove.slice().reverse().forEach( (obj)=> {
+        objectsToMove.slice().reverse().forEach((obj) => {
             this.insertIntoArray(array, obj, toIndex);
         });
     }
@@ -627,8 +643,8 @@ export class Utils {
         if (array1.length !== array2.length) {
             return false;
         }
-        for (let i = 0; i<array1.length; i++) {
-            if (array1[i]!==array2[i]) {
+        for (let i = 0; i < array1.length; i++) {
+            if (array1[i] !== array2[i]) {
                 return false;
             }
         }
@@ -652,7 +668,9 @@ export class Utils {
     }
 
     static formatNumberTwoDecimalPlacesAndCommas(value: number): string {
-        if (typeof value !== 'number') { return ''; }
+        if (typeof value !== 'number') {
+            return '';
+        }
 
         // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
         return (Math.round(value * 100) / 100).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
@@ -661,7 +679,9 @@ export class Utils {
     // the native method number.toLocaleString(undefined, {minimumFractionDigits: 0}) puts in decimal places in IE,
     // so we use this method instead
     static formatNumberCommas(value: number): string {
-        if (typeof value !== 'number') { return ''; }
+        if (typeof value !== 'number') {
+            return '';
+        }
 
         // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
         return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
@@ -731,7 +751,9 @@ export class Utils {
     }
 
     static addStylesToElement(eElement: any, styles: any) {
-        if (!styles) { return; }
+        if (!styles) {
+            return;
+        }
         Object.keys(styles).forEach(function (key) {
             eElement.style[key] = styles[key];
         });
@@ -784,32 +806,34 @@ export class Utils {
     }
 
     static isBrowserIE(): boolean {
-        if (this.isIE===undefined) {
+        if (this.isIE === undefined) {
             this.isIE = /*@cc_on!@*/false || !!(<any>document).documentMode; // At least IE6
         }
         return this.isIE;
     }
 
     static isBrowserEdge(): boolean {
-        if (this.isEdge===undefined) {
+        if (this.isEdge === undefined) {
             this.isEdge = !this.isBrowserIE() && !!(<any>window).StyleMedia;
         }
         return this.isEdge;
     }
 
     static isBrowserSafari(): boolean {
-        if (this.isSafari===undefined) {
+        if (this.isSafari === undefined) {
             let anyWindow = <any> window;
             // taken from https://github.com/ceolter/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
-                || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })
+                || (function (p) {
+                    return p.toString() === "[object SafariRemoteNotification]";
+                })
                 (!anyWindow.safari || anyWindow.safari.pushNotification);
         }
         return this.isSafari;
     }
 
     static isBrowserChrome(): boolean {
-        if (this.isChrome===undefined) {
+        if (this.isChrome === undefined) {
             let anyWindow = <any> window;
             this.isChrome = !!anyWindow.chrome && !!anyWindow.chrome.webstore;
         }
@@ -817,9 +841,10 @@ export class Utils {
     }
 
     static isBrowserFirefox(): boolean {
-        if (this.isFirefox===undefined) {
+        if (this.isFirefox === undefined) {
             let anyWindow = <any> window;
-            this.isFirefox = typeof anyWindow.InstallTrigger !== 'undefined';;
+            this.isFirefox = typeof anyWindow.InstallTrigger !== 'undefined';
+            ;
         }
         return this.isFirefox;
     }
@@ -876,13 +901,13 @@ export class Utils {
         }
     }
 
-    static traverseNodesWithKey(nodes: RowNode[], callback: (node: RowNode, key: string)=>void): void {
+    static traverseNodesWithKey(nodes: RowNode[], callback: (node: RowNode, key: string) => void): void {
         let keyParts: any[] = [];
 
         recursiveSearchNodes(nodes);
 
         function recursiveSearchNodes(nodes: RowNode[]): void {
-            nodes.forEach( (node: RowNode) => {
+            nodes.forEach((node: RowNode) => {
                 if (node.group) {
                     keyParts.push(node.key);
                     let key = keyParts.join('|');
@@ -897,11 +922,11 @@ export class Utils {
     /**
      * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
      */
-    static isNumeric (value:any): boolean {
+    static isNumeric(value: any): boolean {
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
-    static escape (toEscape:string):string {
+    static escape(toEscape: string): string {
         if (toEscape === null) return null;
         if (!toEscape.replace) return toEscape;
 
@@ -1009,8 +1034,8 @@ export class Utils {
      *         Firefox v4/Win7  |     undefined    |       3
      *
      */
-    static normalizeWheel(event:any): any {
-        let PIXEL_STEP  = 10;
+    static normalizeWheel(event: any): any {
+        let PIXEL_STEP = 10;
         let LINE_HEIGHT = 40;
         let PAGE_HEIGHT = 800;
 
@@ -1023,13 +1048,21 @@ export class Utils {
         let pY = 0;
 
         // Legacy
-        if ('detail'      in event) { sY = event.detail; }
-        if ('wheelDelta'  in event) { sY = -event.wheelDelta / 120; }
-        if ('wheelDeltaY' in event) { sY = -event.wheelDeltaY / 120; }
-        if ('wheelDeltaX' in event) { sX = -event.wheelDeltaX / 120; }
+        if ('detail' in event) {
+            sY = event.detail;
+        }
+        if ('wheelDelta' in event) {
+            sY = -event.wheelDelta / 120;
+        }
+        if ('wheelDeltaY' in event) {
+            sY = -event.wheelDeltaY / 120;
+        }
+        if ('wheelDeltaX' in event) {
+            sX = -event.wheelDeltaX / 120;
+        }
 
         // side scrolling on FF with DOMMouseScroll
-        if ( 'axis' in event && event.axis === event.HORIZONTAL_AXIS ) {
+        if ('axis' in event && event.axis === event.HORIZONTAL_AXIS) {
             sX = sY;
             sY = 0;
         }
@@ -1037,8 +1070,12 @@ export class Utils {
         pX = sX * PIXEL_STEP;
         pY = sY * PIXEL_STEP;
 
-        if ('deltaY' in event) { pY = event.deltaY; }
-        if ('deltaX' in event) { pX = event.deltaX; }
+        if ('deltaY' in event) {
+            pY = event.deltaY;
+        }
+        if ('deltaX' in event) {
+            pX = event.deltaX;
+        }
 
         if ((pX || pY) && event.deltaMode) {
             if (event.deltaMode == 1) {          // delta in LINE units
@@ -1051,13 +1088,72 @@ export class Utils {
         }
 
         // Fall-back if spin cannot be determined
-        if (pX && !sX) { sX = (pX < 1) ? -1 : 1; }
-        if (pY && !sY) { sY = (pY < 1) ? -1 : 1; }
+        if (pX && !sX) {
+            sX = (pX < 1) ? -1 : 1;
+        }
+        if (pY && !sY) {
+            sY = (pY < 1) ? -1 : 1;
+        }
 
-        return { spinX  : sX,
-            spinY  : sY,
-            pixelX : pX,
-            pixelY : pY };
+        return {
+            spinX: sX,
+            spinY: sY,
+            pixelX: pX,
+            pixelY: pY
+        };
+    }
+
+    /**
+     * https://stackoverflow.com/questions/24004791/can-someone-explain-the-debounce-function-in-javascript
+     */
+    static debounce(func: () => void, wait: number, immediate: boolean = false) {
+        // 'private' variable for instance
+        // The returned function will be able to reference this due to closure.
+        // Each call to the returned function will share this common timer.
+        var timeout: any;
+
+        // Calling debounce returns a new anonymous function
+        return function () {
+            // reference the context and args for the setTimeout function
+            var context = this,
+                args = arguments;
+
+            // Should the function be called now? If immediate is true
+            //   and not already in a timeout then the answer is: Yes
+            var callNow = immediate && !timeout;
+
+            // This is the basic debounce behaviour where you can call this
+            //   function several times, but it will only execute once
+            //   [before or after imposing a delay].
+            //   Each time the returned function is called, the timer starts over.
+            clearTimeout(timeout);
+
+            // Set the new timeout
+            timeout = setTimeout(function () {
+
+                // Inside the timeout function, clear the timeout variable
+                // which will let the next execution run when in 'immediate' mode
+                timeout = null;
+
+                // Check if the function already ran with the immediate flag
+                if (!immediate) {
+                    // Call the original function with apply
+                    // apply lets you define the 'this' object as well as the arguments
+                    //    (both captured before setTimeout)
+                    func.apply(context, args);
+                }
+            }, wait);
+
+            // Immediate mode and no wait timer? Execute the function..
+            if (callNow) func.apply(context, args);
+        };
+    };
+
+    static referenceCompare (left:any, right:any):boolean{
+        if (!left && !right) return true;
+        if (!left && right) return false;
+        if (left && !right) return false;
+        return left === right;
     }
 }
 

@@ -75,5 +75,5 @@ export interface IFilterParams {
     $scope: any;
     filterOptions?: string[];
     defaultOption?: string;
-    textFormatter?: (from:string)=>string
+    textFormatter?: (from:string)=>string;
 }

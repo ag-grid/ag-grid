@@ -88,6 +88,7 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
                 this.defaultFilter = this.filterParams.filterOptions[0];
             }
         }
+        this.customInit();
         this.filter = this.defaultFilter;
         this.clearActive = params.clearButton === true;
         //Allowing for old param property apply, even though is not advertised through the interface
@@ -112,9 +113,9 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
 
 
         this.instantiate(this.context);
+
         this.initialiseFilterBodyUi();
         this.refreshFilterBodyUi();
-        this.customInit();
 
     }
 
@@ -237,6 +238,12 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
         super.init(params);
         this.addDestroyableEventListener(this.eTypeSelector, "change", this.onFilterTypeChanged.bind(this));
     }
+
+    public customInit (){
+        if (!this.defaultFilter){
+            this.defaultFilter = this.getDefaultType();
+        }
+    }
     
     public generateFilterHeader(): string {
         let defaultFilterTypes = this.getApplicableFilterTypes();
@@ -260,7 +267,7 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
     }
 
     public initialiseFilterBodyUi() {
-        this.setFilterType(this.defaultFilter ? this.defaultFilter : this.getDefaultType());
+        this.setFilterType(this.filter);
     }
 
     public abstract getDefaultType ():string;
@@ -298,7 +305,6 @@ export interface IScalarFilterParams extends IFilterParams{
 export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> extends ComparableBaseFilter<T, P, M>{
     public abstract comparator(): Comparator<T>;
 
-    public customInit():void{}
 
     public getDefaultType(): string {
         return BaseFilter.EQUALS;

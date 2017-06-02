@@ -110,7 +110,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         return {
             dateTo: Utils.serializeDateToYyyyMmDd(this.dateToComponent.getDate(), "-"),
             dateFrom: Utils.serializeDateToYyyyMmDd(this.dateFromComponent.getDate(), "-"),
-            type: this.filter,
+            type: this.filter ? this.filter : this.defaultFilter,
             filterType: 'date'
         }
     }
