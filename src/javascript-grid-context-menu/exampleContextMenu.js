@@ -31,7 +31,8 @@ function getContextMenuItems(params) {
         },
         { // custom item
             name: 'Always Disabled',
-            disabled: true
+            disabled: true,
+            tooltip: 'Very long tooltip, did I mention that I am very long, well I am! Long!  Very Long!'
         },
         {
             name: 'Country',

@@ -69,6 +69,7 @@ include '../documentation-main/documentation_header.php';
     icon?: HTMLElement|string, // the icon to display beside the icon, either a DOM element or HTML string
     subMenu?: MenuItemDef[] // if this menu is a sub menu, contains a list of sub menu item definitions
     cssClasses?: string[]; //Additional CSS classes to be applied to the menu item
+    tooltip?: string; //Optional tooltip for the menu item
 }
 </pre>
     </p>
@@ -122,7 +123,8 @@ include '../documentation-main/documentation_header.php';
         <li>A mix of built in items and custom items are used.</li>
         <li>The first item uses the contents of the cell to display it's value.</li>
         <li>Country and Person are sub menu's. The country sub menu contains icons.</li>
-        <li>Menu appears even when ctrl key is held down as <i>allowContextMenuWithControlKey=true</i>.</li>
+        <li>The menu item 'Always Disabled' has a tooltip.</li>
+        <li>.</li>
     </ul>
     </p>
 
