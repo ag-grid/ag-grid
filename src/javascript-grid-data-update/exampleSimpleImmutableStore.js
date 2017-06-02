@@ -129,7 +129,7 @@ function createUniqueRandomSymbol() {
 }
 
 var gridOptions = {
-    enableImmutableMode: true,
+    deltaRowDataMode: true,
     enableStatusBar: true,
     columnDefs: columnDefs,
     animateRows: true,

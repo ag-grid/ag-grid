@@ -132,7 +132,7 @@ function createGridOptions() {
     createRowData();
 
     gridOptions = {
-        enableImmutableMode: true,
+        deltaRowDataMode: true,
         columnDefs: columnDefs,
         rowData: globalRowData,
         enableStatusBar: true,

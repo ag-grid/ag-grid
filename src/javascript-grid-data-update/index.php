@@ -12,24 +12,27 @@ include '../documentation-main/documentation_header.php';
     <h2 id="insert-remove">Data Update</h2>
 
     <p>
-        Data can be updated in the grid in the following ways:
+        Data can up updated inside the grid using the grid's API.
+    </p>
+    <p>
+        The grid also allows updating data in the following other ways which are explained in other
+        sections of the documentation:
         <ol>
             <li>Using the grids <a href="../javascript-grid-cell-editing">in-line editing</a> feature,
                 eg double clicking on a cell and editing the value.</li>
             <li>Updating the data directly in your application - which the grid is not aware of the changes
                 and you need to tell the grid to <a href="../javascript-grid-refresh">refresh the view</a>.</li>
-            <li>Updating the data using the grid's API - which the grid is in control of and refreshes accordingly.</li>
         </ol>
     </p>
 
     <p>
-        This section of the documentation is regarding the last item above, updating the data
-        using the grid's API.
+        This section of the documentation is regarding using the grid's API to update data. The grid
+        will then be aware of the change and also update the relevant parts of the UI.
     </p>
 
     <p>
         If you are using an immutable data store, as is usual in a React application, then you will be
-        interested in the section below on updating using a transaction with immutable data.
+        interested in the section below <a href=".#delta-row-data">Bulk Method 3 - Delta Row Data</a>.
     </p>
 
     <h2>Updating RowNodes Data</h2>
@@ -55,6 +58,12 @@ include '../documentation-main/documentation_header.php';
         or grouping if the new data impacts such. For that, you should use an update
         transaction as explained below.
     </p>
+
+    <note>
+        Updating data using <i>rowNode.setData()</i> and <i>rowNode.setDataValue()</i> do
+        not update the sorting, filtering or grouping. Using an update transaction
+        (explained below) does update the sorting, filtering and grouping.
+    </note>
 
     <p>
         If you are using <a href="../javascript-grid-in-memory/">In Memory Row Model</a>
@@ -136,23 +145,23 @@ include '../documentation-main/documentation_header.php';
         around from the old dataset.
     </p>
 
-    <p><b>Method 3 - Row Data & Immutable Mode</b></p>
+    <p><b>Method 3 - Delta Row Data</b></p>
 
     <p>
         The final method is using the row data method above but having the property
-        <code>enableImmutableMode=true</code>.
+        <code>deltaRowDataMode=true</code>.
     </p>
 
     <p>
-        When immutable mode is on, the grid will compare the new row data with the current row
+        When deltaRowDataMode is on, the grid will compare the new row data with the current row
         data and create a transaction object for you. The grid then executes the change as an
         update transaction, keeping all of the grids selections, filters etc.
     </p>
 
     <p>
         Use this if you want to
-        manage the data outside of the grid (eg in a <b>Redux</b> store) and then let the grid work out what changes are
-        needed to keep the grid's version of the data up to date.
+        manage the data outside of the grid (eg in a <b>Redux</b> store) and then let the grid work out
+        what changes are needed to keep the grid's version of the data up to date.
     </p>
 
     <h2>Bulk Method 1 - Transaction</h2>
@@ -212,6 +221,11 @@ interface RowDataTransaction {
         Similar to removing, the grid will use node ID's if you are providing your own ID's,
         otherwise it will use object reference to identify rows.
     </p>
+
+    <note>
+        For adding and removing rows using a transaction, the grid will match rows based on
+        ID's if you are providing your own rowNode ID's. Otherwise it will use object references.
+    </note>
 
     <h3>Supported Row Models</h3>
 
@@ -302,23 +316,23 @@ interface RowDataTransaction {
         row models use a data source and hence it doesn't make sense.
     </p>
 
-    <h2>Bulk Method 3 - Row Data & Immutable Mode</h2>
+    <h2 id="delta-row-data">Bulk Method 3 - Delta Row Data</h2>
 
     <p>
-        If you turn immutable mode on (set the property <code>enableImmutableMode=true</code>),
+        If you turn on deltaRowDataMode (set the property <code>deltaRowDataMode=true</code>),
         then when you call <code>api.setRowData(rowData)</code> the grid will work out which
         items are to be added, removed and updated.
     </p>
 
     <note>
-        The immutable mode is named as such because it allows ag-Grid to work with immutable
+        The deltaRowDataMode is designed to allow ag-Grid work with immutable
         stores such as Redux. In an immutable store, a new list of rowData is created if any row within it
-        is added, removed or updated. If using React, consider using this property and bind
-        you Redux managed data to the rowData property.
+        is added, removed or updated. If using React and Redux, consider setting <i>deltaRowDataMode=true</i>
+        and bind your Redux managed data to the rowData property.
     </note>
 
     <p>
-        For the immutable mode to work, you must be providing ID's for the row nodes by
+        For the deltaRowDataMode to work, you must be providing ID's for the row nodes by
         implementing the <code>getRowNodeId()</code> callback.
     </p>
 
@@ -338,7 +352,7 @@ interface RowDataTransaction {
         The example below shows the immutable store in action. The example keeps a store of data
         locally. Each time the user does an update, the local store is replaced with a new store
         with the next data, and then <code>api.setRowData(store)</code> is called. This results
-        in the grid making delta changes.
+        in the grid making delta changes because we have set <code>deltaRowDataMode=true</code>.
     </p>
 
     <p>

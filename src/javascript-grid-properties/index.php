@@ -391,8 +391,8 @@ include '../documentation-main/documentation_header.php';
             <td>InMemoryRowModel only - set the data to be displayed as rows in the grid.</td>
         </tr>
         <tr>
-            <th>enableImmutableMode</th>
-            <td>InMemoryRowModel only - enables immutable mode, for compatibility with immutable stores.</td>
+            <th>deltaRowDataMode</th>
+            <td>InMemoryRowModel only - enables <a href="../javascript-grid-data-update/#delta-row-data">delta row data mode</a>, for compatibility with immutable stores.</td>
         </tr>
         <tr>
             <th>floatingTopRowData</th>
