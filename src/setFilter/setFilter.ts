@@ -24,9 +24,19 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     private eMiniFilter: HTMLInputElement;
 
     private virtualList: VirtualList;
+    private debounceFilterChanged:()=>void;
     
     constructor() {
         super();
+    }
+
+    public customInit ():void{
+        let changeFilter:()=>void= ()=>{
+            this.onFilterChanged();
+        };
+        let debounceMs: number = this.filterParams && this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 0;
+        this.debounceFilterChanged = _.debounce(changeFilter, debounceMs);
+
     }
 
     public initialiseFilterBodyUi(): void {
@@ -54,8 +64,6 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     modelFromFloatingFilter(from: string): string[] {
         return [from];
     }
-
-    public customInit(){}
 
     public refreshFilterBodyUi ():void{
 
@@ -199,7 +207,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
             this.model.selectNothing();
         }
         this.virtualList.refresh();
-        this.onFilterChanged();
+        this.debounceFilterChanged();
     }
 
     private onItemSelected(value: any, selected: boolean) {
@@ -211,7 +219,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
         this.updateSelectAll();
 
-        this.onFilterChanged();
+        this.debounceFilterChanged();
     }
 
     public setMiniFilter(newMiniFilter: any): void {
