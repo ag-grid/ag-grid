@@ -207,6 +207,15 @@ export class Utils {
         return result;
     }
 
+    static getAllKeysInObjects(objects: any[]): string[] {
+        let allValues: any = {};
+        objects.forEach( obj => {
+            if (obj) {
+                Object.keys(obj).forEach( key => allValues[key] = null );
+            }
+        });
+        return Object.keys(allValues);
+    }
 
     static mergeDeep(object: any, source: any): void {
         if (this.exists(source)) {
@@ -220,7 +229,7 @@ export class Utils {
 
                 if (typeof currentValue === 'object'){
                     if (target){
-                        Utils.mergeDeep (currentValue, target)
+                        Utils.mergeDeep (currentValue, target);
                         return;
                     }
                 }
@@ -575,7 +584,7 @@ export class Utils {
             this.insertIntoArray(array, obj, toIndex);
         });
     }
-    
+
     static defaultComparator(valueA: any, valueB: any): number {
         let valueAMissing = valueA === null || valueA === undefined;
         let valueBMissing = valueB === null || valueB === undefined;

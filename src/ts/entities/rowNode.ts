@@ -279,16 +279,19 @@ export class RowNode implements IEventEmitter {
 
     // sets the data for an aggregation
     public setAggData(newAggData: any): void {
-        // data object gets initialised on first time
-        if (!this.data) { this.data = {}; }
-        _.iterateObject(newAggData, (key: string, value: any) => {
-            this.data[key] = value;
-            // if no event service, nobody has registered for events, so no need fire event
-            if (this.eventService) {
-                let column = this.columnController.getGridColumn(key);
-                this.dispatchCellChangedEvent(column, value);
-            }
-        });
+
+        // find out all keys that could potentially change
+        let colIds = _.getAllKeysInObjects([this.data, newAggData]);
+
+        this.data = newAggData;
+
+        // if no event service, nobody has registered for events, so no need fire event
+        if (this.eventService) {
+            colIds.forEach( colId => {
+                let column = this.columnController.getGridColumn(colId);
+                this.dispatchCellChangedEvent(column, this.data[colId]);
+            });
+        }
     }
 
     private dispatchCellChangedEvent(column: Column, newValue: any): void {
