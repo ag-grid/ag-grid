@@ -88,3 +88,16 @@ colDef = {
         All of the other methods (<i>isPopup(), isCancelBeforeStart(), isCancelAfterEnd(), afterGuiAttached()</i> etc)
         should be put onto your React component and will work as normal.
     </p>
+
+    <h3 id="example-cell-editing-using-react-components">Example: Cell Editing using React Components</h3>
+    <p>
+        Using React Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
+    </p>
+    <show-complex-example example="../react-examples/examples/?fromDocs&example=editor"
+                          sources="{
+                            [
+                                { root: '/react-examples/examples/src/editorComponentExample/', files: 'EditorComponentsExample.jsx,MoodRenderer.jsx,MoodEditor.jsx,NumericEditor.jsx' }
+                            ]
+                          }"
+                          exampleHeight="525px">
+    </show-complex-example>

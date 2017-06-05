@@ -214,14 +214,14 @@
         and custom filtering.
     </p>
 
-    <h3 id="example-rich-grid-with-pure-javascript">Example: Rich Grid with Pure JavaScript</h3>
-    <p>
-        The example below shows a rich configuration of ag-Grid
-    </p>
-    <show-example example="../aurelia-example/#/rich-grid/true"
-                  jsfile="../aurelia-example/components/rich-grid-example/rich-grid-example.ts"
-                  html="../aurelia-example/components/rich-grid-example/rich-grid-example.html"
-                  exampleHeight="525px"></show-example>
+<!--    <h3 id="example-rich-grid-with-pure-javascript">Example: Rich Grid with Pure JavaScript</h3>-->
+<!--    <p>-->
+<!--        The example below shows a rich configuration of ag-Grid-->
+<!--    </p>-->
+<!--    <show-example example="../aurelia-example/#/rich-grid/true"-->
+<!--                  jsfile="../aurelia-example/components/rich-grid-example/rich-grid-example.ts"-->
+<!--                  html="../aurelia-example/components/rich-grid-example/rich-grid-example.html"-->
+<!--                  exampleHeight="525px"></show-example>-->
 
 </div>
 
