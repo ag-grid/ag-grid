@@ -106,10 +106,10 @@ getPartialMatchFilter() {
 &lt;ag-grid-column header-name="Filter Component" field="name" width.bind="198" filter.bind="getPartialMatchFilter()"></ag-grid-column>
 </pre>
 
-    <h3 id="example-filtering-in-an-aurelia-project"><img src="../images/aurelia.png" height="20px"/> Example: Filtering in an Aurelia Project</h3>
-    <p>
-        Using a Filter Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
-    </p>
-    <show-example example="../aurelia-example/#/filter/true"
-                  jsfile="../aurelia-example/components/filter-example/filter-example.ts"
-                  html="../aurelia-example/components/filter-example/filter-example.html"></show-example>
+<!--    <h3 id="example-filtering-in-an-aurelia-project"><img src="../images/aurelia.png" height="20px"/> Example: Filtering in an Aurelia Project</h3>-->
+<!--    <p>-->
+<!--        Using a Filter Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.-->
+<!--    </p>-->
+<!--    <show-example example="../aurelia-example/#/filter/true"-->
+<!--                  jsfile="../aurelia-example/components/filter-example/filter-example.ts"-->
+<!--                  html="../aurelia-example/components/filter-example/filter-example.html"></show-example>-->

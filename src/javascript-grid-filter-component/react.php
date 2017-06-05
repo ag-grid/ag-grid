@@ -136,4 +136,17 @@ laterOnInYourApplicationSomewhere() {
     <span class="codeComment">// now were sucking diesel!!!</span>
     reactFilterInstance.myMethod();
 }</pre>
-    </p>
+
+   <h3 id="example-filtering-using-react-components"><img src="../images/react_large.png" style="width: 20px;"/> Example: Filtering using React Components</h3>
+   <p>
+       Using React Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
+   </p>
+
+   <show-complex-example example="../react-examples/examples/?fromDocs&example=filter"
+                         sources="{
+                            [
+                                { root: '/react-examples/examples/src/filterComponentExample/', files: 'FilterComponentExample.jsx,PartialMatchFilter.jsx' }
+                            ]
+                          }"
+                         exampleHeight="525px">
+   </show-complex-example>

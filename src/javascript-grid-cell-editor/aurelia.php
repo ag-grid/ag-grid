@@ -105,11 +105,11 @@ export class NumericEditor extends BaseAureliaEditor {
         should be put onto your Aurelia component and will work as normal.
     </p>
 
-    <h3 id="example-cell-editing-using-aurelia-components">Example: Cell Editing using Aurelia Components</h3>
-    <p>
-        Using Aurelia Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
-    </p>
+<!--    <h3 id="example-cell-editing-using-aurelia-components">Example: Cell Editing using Aurelia Components</h3>-->
+<!--    <p>-->
+<!--        Using Aurelia Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.-->
+<!--    </p>-->
 
-    <show-example example="../aurelia-example/#/editor/true"
-                  jsfile="../aurelia-example/components/editor-example/editor-example.ts"
-                  html="../aurelia-example/components/editor-example/editor-example.html"></show-example>
+<!--    <show-example example="../aurelia-example/#/editor/true"-->
+<!--                  jsfile="../aurelia-example/components/editor-example/editor-example.ts"-->
+<!--                  html="../aurelia-example/components/editor-example/editor-example.html"></show-example>-->
