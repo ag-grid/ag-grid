@@ -36,17 +36,17 @@ var columnDefs = [
         {headerName: 'Comment', field: 'comment', editable: true},
 
         // all the other columns (visible and not grouped)
-        {headerName: 'Batch', field: 'batch', width: 100, cellClass: 'number', aggFunc: 'max', enableValue: true},
-        {headerName: 'Current', field: 'current', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Previous', field: 'previous', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Change', valueGetter: changeValueGetter, width: 150,  aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'PL 1', field: 'pl1', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'PL 2', field: 'pl2', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Gain-DX', field: 'gainDx', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'SX / PX', field: 'sxPx', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: '99 Out', field: '_99Out', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Submitter ID', field: 'submitterID', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter},
-        {headerName: 'Submitted Deal ID', field: 'submitterDealID', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter}
+        {headerName: 'Batch', field: 'batch', width: 100, cellClass: 'number', aggFunc: 'max', enableValue: true, cellRenderer: 'animateShowChange'},
+        {headerName: 'Current', field: 'current', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter, cellRenderer: 'animateShowChange'},
+        {headerName: 'Previous', field: 'previous', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter, cellRenderer: 'animateShowChange'},
+        {headerName: 'Change', valueGetter: changeValueGetter, width: 150,  aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter, cellRenderer: 'animateShowChange'},
+        {headerName: 'PL 1', field: 'pl1', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter, cellRenderer: 'animateShowChange'},
+        {headerName: 'PL 2', field: 'pl2', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter, cellRenderer: 'animateShowChange'},
+        {headerName: 'Gain-DX', field: 'gainDx', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter, cellRenderer: 'animateShowChange'},
+        {headerName: 'SX / PX', field: 'sxPx', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter, cellRenderer: 'animateShowChange'},
+        {headerName: '99 Out', field: '_99Out', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter, cellRenderer: 'animateShowChange'},
+        {headerName: 'Submitter ID', field: 'submitterID', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter, cellRenderer: 'animateShowChange'},
+        {headerName: 'Submitted Deal ID', field: 'submitterDealID', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', cellFormatter: numberCellFormatter, cellRenderer: 'animateShowChange'}
     ];
 
 // simple value getter, however we can see how many times it gets called. this
@@ -145,9 +145,7 @@ function createGridOptions() {
         suppressAggFuncInHeader: true,
         getRowNodeId: function(data) { return data.trade; },
         defaultColDef: {
-            width: 120,
-            // cellRenderer: 'animateSlide'
-            cellRenderer: 'animateShowChange'
+            width: 120
         }
     };
     console.log('Record count is ' + gridOptions.rowData.length);
