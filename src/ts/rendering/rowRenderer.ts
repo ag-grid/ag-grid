@@ -190,14 +190,35 @@ export class RowRenderer extends BeanStub {
         });
     }
 
+    private getCellToRestoreFocusToAfterRefresh(params: RefreshViewParams): GridCell {
+        let focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
+
+        if (_.missing(focusedCell)) {
+            return null;
+        }
+
+        // if the dom is not actually focused on a cell, then we don't try to refocus. the problem this
+        // solves is with editing - if the user is editing, eg focus is on a text field, and not on the
+        // cell itself, then the cell can be registered as having focus, however it's the text field that
+        // has the focus and not the cell div. therefore, when the refresh is finished, the grid will focus
+        // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
+        // the focus is lost from the text field. we do not want this.
+        let activeElement = document.activeElement;
+        let domData = this.gridOptionsWrapper.getDomData(activeElement, CellComp.DOM_DATA_KEY_CELL_COMP);
+        let elementIsNotACellDev = _.missing(domData);
+        if (elementIsNotACellDev) {
+            return null;
+        }
+
+        return focusedCell;
+    }
+
     public refreshView(params: RefreshViewParams = {}): void {
         this.logger.log('refreshView');
 
         this.getLockOnRefresh();
 
-        // check here if the cell is in edit mode, and if it is, need to set focus back into the editing part
-        // (eg the text field), or maybe just don't reset the focus, will work 95% of the time
-        let focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
+        let focusedCell: GridCell = this.getCellToRestoreFocusToAfterRefresh(params);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
             let containerHeight = this.paginationProxy.getCurrentPageHeight();
@@ -211,7 +232,6 @@ export class RowRenderer extends BeanStub {
             this.rowContainers.pinnedLeft.setHeight(containerHeight);
             this.rowContainers.pinnedRight.setHeight(containerHeight);
         }
-
 
         let scrollToTop = params.newData || params.newPage;
         let suppressScrollToTop = this.gridOptionsWrapper.isSuppressScrollOnNewData();
