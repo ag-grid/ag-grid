@@ -201,8 +201,9 @@ export class GridOptionsWrapper {
     public isGroupSuppressAutoColumn() { return isTrue(this.gridOptions.groupSuppressAutoColumn); }
     public isSuppressDragLeaveHidesColumns() { return isTrue(this.gridOptions.suppressDragLeaveHidesColumns); }
     public isSuppressScrollOnNewData() { return isTrue(this.gridOptions.suppressScrollOnNewData); }
-    public isForPrint() { return isTrue(this.gridOptions.forPrint); }
-    public isAutoHeight() { return isTrue(this.gridOptions.autoHeight); }
+
+    public isForPrint() { return this.gridOptions.domLayout === 'forPrint'; }
+    public isAutoHeight() { return this.gridOptions.domLayout === 'autoHeight'; }
 
     public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
     public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }
@@ -537,6 +538,9 @@ export class GridOptionsWrapper {
         }
         if (options.paginationOverflowSize) {
             console.warn('ag-grid: since version 10.0.x paginationOverflowSize is now called cacheOverflowSize');
+        }
+        if (options.forPrint) {
+            console.warn('ag-grid: since version 10.1.x, use property domLayout="forPrint" instead of forPrint=true');
         }
     }
 
