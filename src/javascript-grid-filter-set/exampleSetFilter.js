@@ -2,7 +2,7 @@ var irishAthletes = ['John Joe Nevin','Katie Taylor','Paddy Barnes','Kenny Egan'
 
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150, filter: 'set',
-        filterParams: { cellHeight: 20, values: irishAthletes} },
+        filterParams: { cellHeight: 20, values: irishAthletes, debounceMs:1000} },
     {headerName: "Age", field: "age", width: 90, filter: 'number'},
     {headerName: "Country", field: "country", width: 140,
         cellRenderer: countryCellRenderer, keyCreator: countryKeyCreator, filter: 'set', filterParams:{selectAllOnMiniFilter:true}},

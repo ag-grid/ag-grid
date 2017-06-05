@@ -36,8 +36,11 @@ columnDefinition = {
     </p>
 
     <ul>
-        <li><b>cellRenderer:</b> Same as cell renderer for grid (you can use the same one in both locations).
-            Setting it separatly here allows for the value to be rendered differently in the filter.</li>
+        <li><b>cellRenderer:</b> Similar to the cell renderer for the grid (you can use the same one in both locations).
+            Setting it separately here allows for the value to be rendered differently in the filter. Note that
+            the cellRenderer for the setFilter only receives the value as a parameter, as opposite to the cellRenderer
+            in the colDef that receives more information.
+        </li>
         <li><b>cellHeight:</b> The height of the cell.</li>
         <li><b>values:</b> The values to display in the filter. If this is not set, then the filter will
             takes it's values from what is loaded in the table. Setting it allows you to set values where a) the
@@ -65,6 +68,8 @@ columnDefinition = {
         <li><b>textFormatter:</b> If specified, formats the text before applying the mini filter compare logic, useful for
             instance if substituting accentuated characters or if you want to do case sensitive mini filtering. This
             matches the <a href="../javascript-grid-filter-text/index.php#textFormatter">text formatter used for text filters</a></li>
+        <li><b>debounceMs:</b> If specified, the filter will wait this amount of ms after the user stops selecting optoins in the
+            mini filter before is triggered. If not specified there won't be any debounce.</li>
     </ul>
     </ul>
     </p>
@@ -122,6 +127,10 @@ columnDefinition = {
     <p>
         The column country has the property <i>selectAllOnMiniFilter</i> set to true, you can see how the select all only
         applies to the items filtered by the mini filter search box.
+    </p>
+
+    <p>
+        The column athlete has a debounce of 1000ms before the selected options are filtered out
     </p>
 
     <show-example example="exampleSetFilter"></show-example>

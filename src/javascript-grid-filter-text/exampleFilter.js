@@ -2,6 +2,7 @@ var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150, filter: 'text', filterParams:{
         filterOptions:['contains', 'notContains'],
         textFormatter: function(s){
+            if (s==null) return null;
             var r=s.toLowerCase();
             r = r.replace(new RegExp("[àáâãäå]", 'g'),"a");
             r = r.replace(new RegExp("æ", 'g'),"ae");
@@ -13,9 +14,9 @@ var columnDefs = [
             r = r.replace(new RegExp("œ", 'g'),"oe");
             r = r.replace(new RegExp("[ùúûü]", 'g'),"u");
             r = r.replace(new RegExp("[ýÿ]", 'g'),"y");
-            r = r.replace(new RegExp("\\W", 'g'),"");
             return r;
-        }
+        },
+        debounceMs:0
     }},
     {headerName: "Country", field: "country", width: 120, filterParams:{
         filterOptions:['contains'],
@@ -40,7 +41,8 @@ var columnDefs = [
 
             var literalMatch = contains(valueLowerCase, filterTextLoweCase);
             return literalMatch || contains(valueLowerCase, aliases[filterTextLoweCase]);
-        }
+        },
+        debounceMs:2000
     }},
     {headerName: "Year", field: "year", width: 90, filter:'number', filterParams:{
         filterOptions:['inRange']
