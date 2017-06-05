@@ -12,4 +12,5 @@ export interface ISetFilterParams extends IFilterParams {
     suppressMiniFilter:boolean;
     selectAllOnMiniFilter:boolean;
     comparator?: (a: any, b: any) => number;
+    debounceMs?: number;
 }

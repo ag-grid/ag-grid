@@ -123,6 +123,7 @@ export {CellComp} from "./dist/lib/rendering/cellComp";
 export {RowComp} from "./dist/lib/rendering/rowComp";
 export {RowRenderer} from "./dist/lib/rendering/rowRenderer";
 export {ValueFormatterService} from "./dist/lib/rendering/valueFormatterService";
+export {TextFormatter} from "./dist/lib/filter/textFilter";
 
 // rowControllers/inMemory
 export {FilterStage} from "./dist/lib/rowModels/inMemory/filterStage";
