@@ -50,42 +50,42 @@ var ComponentProvider = (function () {
                 defaultComponent: headerGroupComp_1.HeaderGroupComp
             },
             setFloatingFilterComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: floatingFilter_1.SetFloatingFilterComp
             },
             textFloatingFilterComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: floatingFilter_1.TextFloatingFilterComp
             },
             numberFloatingFilterComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: floatingFilter_1.NumberFloatingFilterComp
             },
             dateFloatingFilterComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: floatingFilter_1.DateFloatingFilterComp
             },
             readModelAsStringFloatingFilterComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: floatingFilter_1.ReadModelAsStringFloatingFilterComp
             },
             floatingFilterWrapperComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: floatingFilterWrapper_1.FloatingFilterWrapperComp
             },
             emptyFloatingFilterWrapperComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: floatingFilterWrapper_1.EmptyFloatingFilterWrapperComp
             },
             floatingFilterComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: null
             },

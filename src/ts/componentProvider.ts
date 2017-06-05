@@ -90,42 +90,42 @@ export class ComponentProvider {
                 defaultComponent: HeaderGroupComp
             },
             setFloatingFilterComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: SetFloatingFilterComp
             },
             textFloatingFilterComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: TextFloatingFilterComp
             },
             numberFloatingFilterComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: NumberFloatingFilterComp
             },
             dateFloatingFilterComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: DateFloatingFilterComp
             },
             readModelAsStringFloatingFilterComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: ReadModelAsStringFloatingFilterComp
             },
             floatingFilterWrapperComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: FloatingFilterWrapperComp
             },
             emptyFloatingFilterWrapperComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: EmptyFloatingFilterWrapperComp
             },
             floatingFilterComponent: {
-                mandatoryMethodList: [],
+                mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: [],
                 defaultComponent: null
             },
