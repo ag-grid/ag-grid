@@ -17,12 +17,13 @@ include '../documentation-main/documentation_header.php';
         Each time you pass data to the grid, the grid wraps each data item
         with a <a href="../javascript-grid-row-node/">rowNode</a> object.
         For example if your data has 20 rows, then the grid creates 20 rowNode
-        objects.
+        objects, each rowNode wrapping one item of your data.
     </p>
 
     <p>
-        It is sometimes handy to access these rowNodes, for example you want
-        to select a subset of the row nodes using the API on the rowNode.
+        It is sometimes handy to access these rowNodes. One example where it is handy
+        is if you want to select a row, you can call <code>rowNode.setSelected(true)</code>
+        to select it.
         This section details the different ways a rowNode can be accessed.
     </p>
 
@@ -155,7 +156,7 @@ api.forEachLeafNode( function(rowNode, index) {
     <ul>
         <li><b>Get Displayed Row 0:</b> Returns back the first row in the grid. This is not impacted
         by what page you are one, eg if you navigate to the second page, this method will still
-        return the first row on teh first page. If you sort, the first row will be changed.</li>
+        return the first row on the first page. If you sort, the first row will be changed.</li>
         <li><b>Get Displayed Row Count:</b> Returns back the total number of rows across all pages. If
         you filter, this number will change accordingly.</li>
         <li><b>Print All Displayed Rows:</b> Demonstrates looping through all rows on the screen across

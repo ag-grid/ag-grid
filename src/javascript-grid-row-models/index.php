@@ -84,7 +84,7 @@ include '../documentation-main/documentation_header.php';
                 selected and the height of it.
             </li>
             <li>
-                When there is a change in state in the RowNodes, the RowModel fires a <b>modelUpdates</b>
+                When there is a change in state in the RowNodes, the RowModel fires a <b>modelUpdated</b>
                 event which gets the RowRenderer to refresh. This happens for many reasons, or example the
                 data is sorted, filtered, a group is opened, or the underlying data has changed.
             </li>
@@ -185,7 +185,7 @@ include '../documentation-main/documentation_header.php';
                 render what's visible on the screen (40 rows approx???) even if you have thousands of rows returned from your
                 server. You will not kill the grid with too much data - rather your browser will run out of memory before
                 the grid gets into problems. So if you are unsure, go with In Memory row model first and only change if you need another.
-                With In Memory, you get sorting, filtering, group, pivoting and aggregation all done for you by the grid.
+                With In Memory, you get sorting, filtering, grouping, pivoting and aggregation all done for you by the grid.
                 You can also provide your own filters, sorts and aggregation functions to customise these operations.
                 All of the examples in the documentation use the In Memory model unless specifically specified
                 otherwise.
@@ -198,7 +198,7 @@ include '../documentation-main/documentation_header.php';
             <li>
                 Use <b><a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a></b>
                 to bring back a list of data one block at a time from the server.
-                As the user scrolls down (or progresses the pages using pagination) the grid will ask for more rows.
+                As the user scrolls down the grid will ask for more rows.
                 This is the easiest way to present a large dataset to the user while only loading a subset from the
                 server at any given time.
             </li>

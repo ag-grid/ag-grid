@@ -12,9 +12,10 @@ include '../documentation-main/documentation_header.php';
     <h2 id="for-print">For Print</h2>
 
     <p>
-        'For Print' renders the table without using any scrollbars. The grid will flow outside the
+        The 'For Print' renders the table without using any scrollbars. The grid will flow outside the
         viewable area of the browser if it is large enough, leaving the user to have to scroll using
-        the browser to view the table data.
+        the browser to view the table data. To set 'For Print', set the property
+        <code>domLayout=forPrint</code>.
     </p>
 
     <p>
@@ -79,8 +80,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         It is not possible to have one grid embedded inside another grid with the forPrint setting
-        different for each grid. So if doing master / detail, and have one grid INSIDE another grid,
-        then both grids must have either forPrint=true, or both must have forPrint=false.
+        different for each grid. So if doing master / detail and have one grid INSIDE another grid,
+        then both grids must have either domLayout="forPrint" on or off.
     </p>
 
 </div>

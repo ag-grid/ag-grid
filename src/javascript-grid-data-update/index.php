@@ -69,7 +69,7 @@ include '../documentation-main/documentation_header.php';
         If you are using <a href="../javascript-grid-in-memory/">In Memory Row Model</a>
         and you want to get the grid to update it's sort or filter etc after the update
         is done, then you must call <code>api.refreshInMemoryRowModel(step)</code>
-        where step can be one of the following: <i>undefined</i>, filter, map, aggregate,
+        where step can be one of the following: group, filter, map, aggregate,
         sort, pivot.
     </p>
 
@@ -325,10 +325,17 @@ interface RowDataTransaction {
     </p>
 
     <note>
-        The deltaRowDataMode is designed to allow ag-Grid work with immutable
-        stores such as Redux. In an immutable store, a new list of rowData is created if any row within it
-        is added, removed or updated. If using React and Redux, consider setting <i>deltaRowDataMode=true</i>
-        and bind your Redux managed data to the rowData property.
+        <p>
+            The deltaRowDataMode is designed to allow ag-Grid work with immutable
+            stores such as Redux. In an immutable store, a new list of rowData is created if any row within it
+            is added, removed or updated. If using React and Redux, consider setting <i>deltaRowDataMode=true</i>
+            and bind your Redux managed data to the rowData property.
+        </p>
+        <p>
+            You can also use this technique in a non-Redux or immutable store based application (which is the
+            case in the examples on this page). As long as you understand what is happening, if it fits your
+            applications needs, then use it.
+        </p>
     </note>
 
     <p>
@@ -339,10 +346,19 @@ interface RowDataTransaction {
     <p>
         The grid works out the delta changes with the following rules:
         <ul>
-        <li><b>IF</b> the ID for the new item doesn't exist <b>THEN</b> it's an 'add'.</li>
-        <li><b>IF</b> the ID for the new does exist <b>THEN</b> compare the object references.
-        If the object references are different, it's an update, otherwise it's nothing (excluded form the transaction).</li>
-        <li><b>IF</b> the ID for the old item doesn't exist in the new items <b>THEN</b> it's a 'remove'.</li>
+            <li>
+                <b>IF</b> the ID for the new item doesn't have a corresponding item already in the grid
+                <b>THEN</b> it's an 'add'.
+            </li>
+            <li>
+                <b>IF</b> the ID for the new item does have a corresponding item in the grid
+                <b>THEN</b> compare the object references. If the object references are different,
+                it's an update, otherwise it's nothing (excluded from the transaction).
+            </li>
+            <li>
+                <b>IF</b> there are items in the grid for which there are no corresponding items in the new data,
+                <b>THEN</b> it's a 'remove'.
+            </li>
         </ul>
     </p>
 

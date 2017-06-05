@@ -595,9 +595,13 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to allow cells to contain expressions.</td>
         </tr>
         <tr>
-            <th>forPrint</th>
-            <td>Set to true or false. When true, scrollbars are not used. Intention is to print the grid. Do not do this
-                if you have many (more than 500??) rows as the browser will probably die.</td>
+            <th>domLayout</th>
+            <td>Set to 'forPrint' for 'autoHeight'. By default, grid will fit width and height of the provided
+                div. If more rows or columns, grid will provide scrolls. If you to 'autoHeight', then the grid
+                will autosize it's height to fit the rows but still provide horizontal scrolls. If set to
+                'forPrint', then the grid will have no scrolls (or pinned areas or tool panel) and every
+                cell will be rendered - use this if you want a printable version of the grid.
+            </td>
         </tr>
 
         <tr>
