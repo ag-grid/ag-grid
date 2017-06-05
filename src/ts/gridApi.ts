@@ -266,6 +266,7 @@ export class GridApi {
 
         let paramsStep = Constants.STEP_EVERYTHING;
         let stepsMapped: any = {
+            group: Constants.STEP_EVERYTHING,
             filter: Constants.STEP_FILTER,
             map: Constants.STEP_MAP,
             aggregate: Constants.STEP_AGGREGATE,

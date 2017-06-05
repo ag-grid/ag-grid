@@ -101,6 +101,7 @@ export interface GridOptions {
     maxConcurrentDatasourceRequests?: number;
     maxBlocksInCache?: number;
     purgeClosedRowNodes?: boolean;
+    domLayout?: string;
 
     cacheOverflowSize?: number;
     infiniteInitialRowCount?: number;
@@ -149,9 +150,9 @@ export interface GridOptions {
     groupHideOpenParents?: boolean;
     groupMultiAutoColumn?: boolean;
     groupSuppressBlankHeader?: boolean;
-    forPrint?: boolean;
-    autoHeight?: boolean;
     groupColumnDef?: ColDef;
+    // deprecated - should use domLayout
+    forPrint?: boolean;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. YOU'VE BEEN WARNED*

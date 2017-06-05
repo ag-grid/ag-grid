@@ -308,25 +308,35 @@ ag-grid-ng2
     box-sizing border-box
     overflow hidden
 
+.ag-layout-normal .ag-floating-top
+    position absolute
+    left 0px
+
 .ag-pinned-left-floating-top
     float left
     box-sizing border-box
     display inline-block
     overflow hidden
-    height 100%
     position relative // otherwise the % width of children is not relative to this element
+
+.ag-layout-normal .ag-pinned-left-floating-top
+    height 100%
 
 .ag-pinned-right-floating-top
     float right
     box-sizing border-box
     display inline-block
     overflow hidden
-    height 100%
     position relative // otherwise the % width of children is not relative to this element
+
+.ag-layout-normal .ag-pinned-right-floating-top
+    height 100%
 
 .ag-floating-top-viewport
     box-sizing border-box
     overflow hidden
+
+.ag-layout-normal .ag-floating-top-viewport
     height 100%
 
 .ag-floating-top-container
@@ -336,32 +346,40 @@ ag-grid-ng2
     //height: 100%
 
 .ag-floating-bottom
-    position absolute
-    left 0px
     width 100%
     white-space nowrap
     box-sizing border-box
     overflow hidden
+
+.ag-layout-normal .ag-floating-bottom
+    position absolute
+    left 0px
 
 .ag-pinned-left-floating-bottom
     float left
     box-sizing border-box
     display inline-block
     overflow hidden
-    height 100%
     position relative // otherwise the % width of children is not relative to this element
+
+.ag-layout-normal .ag-pinned-left-floating-bottom
+    height 100%
 
 .ag-pinned-right-floating-bottom
     float right
     box-sizing border-box
     display inline-block
     overflow hidden
-    height 100%
     position relative // otherwise the % width of children is not relative to this element
+
+.ag-layout-normal .ag-pinned-right-floating-bottom
+    height 100%
 
 .ag-floating-bottom-viewport
     box-sizing border-box
     overflow hidden
+
+.ag-layout-normal .ag-floating-bottom-viewport
     height 100%
 
 .ag-floating-bottom-container
@@ -482,7 +500,7 @@ ag-grid-ng2
 
 .ag-layout-auto-height .ag-row
     white-space nowrap
-    position absolute
+    position relative // height relative so that the cell takes the height when set to 100%
     width 100%
 
 .ag-layout-for-print .ag-row

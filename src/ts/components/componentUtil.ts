@@ -16,7 +16,7 @@ export class ComponentUtil {
     public static STRING_PROPERTIES = [
         'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
         'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType',
-        'editType'];
+        'editType', 'domLayout'];
 
     public static OBJECT_PROPERTIES = [
         'rowStyle','context','groupColumnDef','localeText','icons','datasource','enterpriseDatasource','viewportDatasource',
@@ -58,7 +58,7 @@ export class ComponentUtil {
         'enableGroupEdit', 'embedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter',
         'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus',
         'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
-        'deltaRowDataMode', 'autoHeight'
+        'deltaRowDataMode'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',

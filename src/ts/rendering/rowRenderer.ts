@@ -319,8 +319,9 @@ export class RowRenderer extends BeanStub {
         // never keep rendered rows if doing forPrint, as we do not use 'top' to
         // position the rows in forPrint (use normal flow), so we have to remove
         // all rows and insert them again from scratch
-        if (this.gridOptionsWrapper.isForPrint()) {
+        if (this.gridOptionsWrapper.isForPrint() || this.gridOptionsWrapper.isAutoHeight()) {
             keepRenderedRows = false;
+            animate = false;
         }
 
         if (keepRenderedRows) {

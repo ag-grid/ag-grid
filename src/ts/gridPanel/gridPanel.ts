@@ -31,55 +31,71 @@ import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
-let gridHtml =
-    '<div class="ag-root ag-font-style">'+
-        // header
-        '<div class="ag-header">'+
-            '<div class="ag-pinned-left-header"></div>' +
-            '<div class="ag-pinned-right-header"></div>' +
-            '<div class="ag-header-viewport">' +
-                '<div class="ag-header-container"></div>' +
-            '</div>'+
-            '<div class="ag-header-overlay"></div>' +
-        '</div>'+
-        // floating top
-        '<div class="ag-floating-top">'+
-            '<div class="ag-pinned-left-floating-top"></div>' +
-            '<div class="ag-pinned-right-floating-top"></div>' +
-            '<div class="ag-floating-top-viewport">' +
-                '<div class="ag-floating-top-container"></div>' +
-            '</div>'+
-            '<div class="ag-floating-top-full-width-container"></div>'+
-        '</div>'+
-        // floating bottom
-        '<div class="ag-floating-bottom">'+
-            '<div class="ag-pinned-left-floating-bottom"></div>' +
-            '<div class="ag-pinned-right-floating-bottom"></div>' +
-            '<div class="ag-floating-bottom-viewport">' +
-                '<div class="ag-floating-bottom-container"></div>' +
-            '</div>'+
-            '<div class="ag-floating-bottom-full-width-container"></div>'+
-        '</div>'+
-        // body
-        '<div class="ag-body">'+
-            '<div class="ag-pinned-left-cols-viewport">'+
-                '<div class="ag-pinned-left-cols-container"></div>'+
-            '</div>'+
-            '<div class="ag-pinned-right-cols-viewport">'+
-                '<div class="ag-pinned-right-cols-container"></div>'+
-            '</div>'+
-            '<div class="ag-body-viewport-wrapper">'+
-                '<div class="ag-body-viewport">'+
-                    '<div class="ag-body-container"></div>'+
-                '</div>'+
-            '</div>'+
-            '<div class="ag-full-width-viewport">'+
-                '<div class="ag-full-width-container"></div>'+
-            '</div>'+
-        '</div>'+
+
+const HEADER_SNIPPET =
+    '<div class="ag-header">'+
+      '<div class="ag-pinned-left-header"></div>' +
+      '<div class="ag-pinned-right-header"></div>' +
+      '<div class="ag-header-viewport">' +
+        '<div class="ag-header-container"></div>' +
+      '</div>'+
+      '<div class="ag-header-overlay"></div>' +
     '</div>';
 
-let gridForPrintHtml =
+const FLOATING_TOP_SNIPPET =
+    '<div class="ag-floating-top">'+
+      '<div class="ag-pinned-left-floating-top"></div>' +
+      '<div class="ag-pinned-right-floating-top"></div>' +
+      '<div class="ag-floating-top-viewport">' +
+        '<div class="ag-floating-top-container"></div>' +
+      '</div>'+
+      '<div class="ag-floating-top-full-width-container"></div>'+
+    '</div>';
+
+const FLOATING_BOTTOM_SNIPPET =
+    '<div class="ag-floating-bottom">'+
+      '<div class="ag-pinned-left-floating-bottom"></div>' +
+      '<div class="ag-pinned-right-floating-bottom"></div>' +
+      '<div class="ag-floating-bottom-viewport">' +
+        '<div class="ag-floating-bottom-container"></div>' +
+      '</div>'+
+      '<div class="ag-floating-bottom-full-width-container"></div>'+
+    '</div>';
+
+const BODY_SNIPPET =
+    '<div class="ag-body">'+
+      '<div class="ag-pinned-left-cols-viewport">'+
+        '<div class="ag-pinned-left-cols-container"></div>'+
+      '</div>'+
+      '<div class="ag-pinned-right-cols-viewport">'+
+        '<div class="ag-pinned-right-cols-container"></div>'+
+      '</div>'+
+      '<div class="ag-body-viewport-wrapper">'+
+        '<div class="ag-body-viewport">'+
+          '<div class="ag-body-container"></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="ag-full-width-viewport">'+
+        '<div class="ag-full-width-container"></div>'+
+      '</div>'+
+    '</div>';
+
+// the difference between the 'normal' and 'full height' template is the order of the floating and body,
+// for normal, the floating top and bottom go in first as they are fixed position,
+// for auto-height, the body is in the middle of the top and bottom as they are just normally laid out
+const GRID_PANEL_NORMAL_TEMPLATE =
+    '<div class="ag-root ag-font-style">'+
+        HEADER_SNIPPET + FLOATING_TOP_SNIPPET + FLOATING_BOTTOM_SNIPPET + BODY_SNIPPET +
+    '</div>';
+
+const GRID_PANEL_AUTO_HEIGHT_TEMPLATE =
+    '<div class="ag-root ag-font-style">'+
+        HEADER_SNIPPET + FLOATING_TOP_SNIPPET + BODY_SNIPPET + FLOATING_BOTTOM_SNIPPET +
+    '</div>';
+
+// the template for for-print is much easier than that others, as it doesn't have any pinned areas
+// or scrollable areas (so no viewports).
+const GRID_PANEL_FOR_PRINT_TEMPLATE =
         '<div class="ag-root ag-font-style">'+
             // header
             '<div class="ag-header-container"></div>'+
@@ -93,13 +109,13 @@ let gridForPrintHtml =
 
 // wrapping in outer div, and wrapper, is needed to center the loading icon
 // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
-let mainOverlayTemplate =
+const OVERLAY_TEMPLATE =
     '<div class="ag-overlay-panel">'+
         '<div class="ag-overlay-wrapper ag-overlay-[OVERLAY_NAME]-wrapper">[OVERLAY_TEMPLATE]</div>'+
     '</div>';
 
-let defaultLoadingOverlayTemplate = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
-let defaultNoRowsOverlayTemplate = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
+const LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
+const NO_ROWS_TO_SHOW_OVERLAY_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
 
 export interface RowContainerComponents {
     fullWidth: RowContainerComponent;
@@ -821,7 +837,7 @@ export class GridPanel extends BeanStub {
 
     private createOverlayTemplate(name: string, defaultTemplate: string, userProvidedTemplate: string): string {
 
-        let template = mainOverlayTemplate
+        let template = OVERLAY_TEMPLATE
             .replace('[OVERLAY_NAME]', name);
 
         if (userProvidedTemplate) {
@@ -839,7 +855,7 @@ export class GridPanel extends BeanStub {
 
         let templateNotLocalised = this.createOverlayTemplate(
             'loading',
-            defaultLoadingOverlayTemplate,
+            LOADING_OVERLAY_TEMPLATE,
             userProvidedTemplate);
 
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -853,7 +869,7 @@ export class GridPanel extends BeanStub {
 
         let templateNotLocalised = this.createOverlayTemplate(
             'no-rows',
-            defaultNoRowsOverlayTemplate,
+            NO_ROWS_TO_SHOW_OVERLAY_TEMPLATE,
             userProvidedTemplate);
 
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -1204,7 +1220,14 @@ export class GridPanel extends BeanStub {
 
     private loadTemplate(): void {
         // the template we use is different when doing 'for print'
-        let template = this.forPrint ? gridForPrintHtml : gridHtml;
+        let template: string;
+        if (this.forPrint) {
+            template = GRID_PANEL_FOR_PRINT_TEMPLATE;
+        } else if (this.autoHeight) {
+            template = GRID_PANEL_AUTO_HEIGHT_TEMPLATE;
+        } else {
+            template = GRID_PANEL_NORMAL_TEMPLATE;
+        }
         this.eRoot = <HTMLElement> _.loadTemplate(template);
     }
 
@@ -1502,8 +1525,8 @@ export class GridPanel extends BeanStub {
     // init, layoutChanged, floatingDataChanged, headerHeightChanged
     public setBodyAndHeaderHeights(): void {
         if (this.forPrint) {
-            // if doing 'for print', then the header and footers are laid
-            // out naturally by the browser. it whatever size that's needed to fit.
+            // if doing 'for print' or 'auto height', then the header and footers are laid
+            // out naturally by the browser. it's whatever height that's needed to fit.
             return;
         }
 
@@ -1527,7 +1550,7 @@ export class GridPanel extends BeanStub {
             numberOfFloating = (this.gridOptionsWrapper.isFloatingFilter()) ? 1 : 0;
             groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
             headerHeight = this.gridOptionsWrapper.getHeaderHeight();
-        }else{
+        } else {
             _.removeCssClass(this.eHeader, 'ag-pivot-off');
             _.addCssClass(this.eHeader, 'ag-pivot-on');
             numberOfFloating = 0;
@@ -1542,6 +1565,12 @@ export class GridPanel extends BeanStub {
         totalHeaderHeight += headerHeight;
 
         this.eHeader.style['height'] = totalHeaderHeight + 'px';
+
+        // if we are doing auto-height, we only size the header, we don't size the
+        // other parts as we use the normal browser layout for that
+        if (this.autoHeight) {
+            return;
+        }
 
         // padding top covers the header and the floating rows on top
         let floatingTopHeight = this.floatingRowModel.getFloatingTopTotalHeight();
