@@ -51,7 +51,7 @@ export class MenuList extends Component {
     }
 
     public addItem(menuItemDef: MenuItemDef): void {
-        var cMenuItem = new MenuItemComponent(menuItemDef);
+        let cMenuItem = new MenuItemComponent(menuItemDef);
         this.context.wireBean(cMenuItem);
         this.getGui().appendChild(cMenuItem.getGui());
 
@@ -98,10 +98,10 @@ export class MenuList extends Component {
     }
 
     private addHoverForChildPopup(menuItemDef: MenuItemDef, menuItemComp: MenuItemComponent): void {
-        var timerCountCopy = this.timerCount;
+        let timerCountCopy = this.timerCount;
         setTimeout( ()=> {
-            var shouldShow = timerCountCopy===this.timerCount;
-            var showingThisMenu = this.subMenuParentDef === menuItemDef;
+            let shouldShow = timerCountCopy===this.timerCount;
+            let showingThisMenu = this.subMenuParentDef === menuItemDef;
             if (shouldShow && !showingThisMenu) {
                 this.showChildMenu(menuItemDef, menuItemComp);
             }
@@ -119,10 +119,10 @@ export class MenuList extends Component {
         this.context.wireBean(childMenu);
         childMenu.addMenuItems(menuItemDef.subMenu);
 
-        var ePopup = _.loadTemplate('<div class="ag-menu"></div>');
+        let ePopup = _.loadTemplate('<div class="ag-menu"></div>');
         ePopup.appendChild(childMenu.getGui());
 
-        var hidePopupFunc = this.popupService.addAsModalPopup(
+        let hidePopupFunc = this.popupService.addAsModalPopup(
             ePopup,
             true
         );
@@ -134,7 +134,7 @@ export class MenuList extends Component {
 
         this.subMenuParentDef = menuItemDef;
 
-        var selectedListener = (event: any)=> {
+        let selectedListener = (event: any)=> {
             this.dispatchEvent(MenuItemComponent.EVENT_ITEM_SELECTED, event)
         };
         childMenu.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, selectedListener);

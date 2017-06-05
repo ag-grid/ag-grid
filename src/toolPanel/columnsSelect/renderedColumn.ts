@@ -119,9 +119,9 @@ export class RenderedColumn extends Component {
     }
 
     private actionUnCheckedPivotMode(): void {
-        var functionPassive = this.gridOptionsWrapper.isFunctionsPassive();
-        var column = this.column;
-        var columnController = this.columnController;
+        let functionPassive = this.gridOptionsWrapper.isFunctionsPassive();
+        let column = this.column;
+        let columnController = this.columnController;
 
         // remove pivot if column is pivoted
         if (column.isPivotActive()) {
@@ -191,7 +191,7 @@ export class RenderedColumn extends Component {
     }
 
     private addDragSource(): void {
-        var dragSource: DragSource = {
+        let dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.getGui(),
             dragItemName: this.displayName,
@@ -203,10 +203,10 @@ export class RenderedColumn extends Component {
 
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
-        var isPivotMode = this.columnController.isPivotMode();
+        let isPivotMode = this.columnController.isPivotMode();
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group
-            var anyFunctionActive = this.column.isAnyFunctionActive();
+            let anyFunctionActive = this.column.isAnyFunctionActive();
             this.cbSelect.setSelected(anyFunctionActive);
         } else {
             // if not reducing, the checkbox tells us if column is visible or not
@@ -214,7 +214,7 @@ export class RenderedColumn extends Component {
         }
 
         // read only in pivot mode if:
-        var checkboxReadOnly = isPivotMode
+        let checkboxReadOnly = isPivotMode
             // a) gui is not allowed make any changes or
             && (this.gridOptionsWrapper.isFunctionsReadOnly()
             // b) column is not allow any functions on it
@@ -222,7 +222,7 @@ export class RenderedColumn extends Component {
 
         this.cbSelect.setReadOnly(checkboxReadOnly);
 
-        var checkboxPassive = isPivotMode && this.gridOptionsWrapper.isFunctionsPassive();
+        let checkboxPassive = isPivotMode && this.gridOptionsWrapper.isFunctionsPassive();
         this.cbSelect.setPassive(checkboxPassive);
 
         this.processingColumnStateChange = false;

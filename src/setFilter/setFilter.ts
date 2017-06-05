@@ -24,15 +24,19 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     private eMiniFilter: HTMLInputElement;
 
     private virtualList: VirtualList;
+    private debounceFilterChanged:()=>void;
     
     constructor() {
         super();
     }
 
-    public customInit(){}
+    public customInit ():void{
+        let changeFilter:()=>void= ()=>{
+            this.onFilterChanged();
+        };
+        let debounceMs: number = this.filterParams && this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 0;
+        this.debounceFilterChanged = _.debounce(changeFilter, debounceMs);
 
-    modelFromFloatingFilter(from: string): string[] {
-        return [from];
     }
 
     public initialiseFilterBodyUi(): void {
@@ -57,14 +61,18 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         this.virtualList.refresh();
     }
 
+    modelFromFloatingFilter(from: string): string[] {
+        return [from];
+    }
+
     public refreshFilterBodyUi ():void{
 
     }
 
     private createSetListItem(value: any): Component {
-        var cellRenderer = this.filterParams.cellRenderer;
+        let cellRenderer = this.filterParams.cellRenderer;
 
-        var listItem = new SetFilterListItem(value, cellRenderer);
+        let listItem = new SetFilterListItem(value, cellRenderer);
         this.context.wireBean(listItem);
         listItem.setSelected(this.model.isValueSelected(value));
 
@@ -97,14 +105,14 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
             return false;
         }
 
-        var value = this.filterParams.valueGetter(params.node);
+        let value = this.filterParams.valueGetter(params.node);
         if (this.filterParams.colDef.keyCreator) {
             value = this.filterParams.colDef.keyCreator( {value: value} );
         }
         value = Utils.makeNull(value);
 
         if (Array.isArray(value)) {
-            for (var i = 0; i < value.length; i++) {
+            for (let i = 0; i < value.length; i++) {
                 if (this.model.isValueSelected(value[i])) {
                     return true
                 }
@@ -116,12 +124,37 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     }
 
     public onNewRowsLoaded(): void {
-        var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
-        var isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
+        let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
+        let isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
         // default is reset
         this.model.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
         this.updateSelectAll();
         this.virtualList.refresh();
+    }
+
+    //noinspection JSUnusedGlobalSymbols
+    /**
+     * Public method provided so the user can change the value of the filter once
+     * the filter has been already started
+     * @param options The options to use.
+     */
+    public setFilterValues (options:string[]): void{
+        let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
+        let isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
+
+        this.model.refreshValues(options, keepSelection, isSelectAll);
+        this.updateSelectAll();
+        this.virtualList.refresh();
+    }
+
+    //noinspection JSUnusedGlobalSymbols
+    /**
+     * Public method provided so the user can reset the values of the filter once that it has started
+     * @param options The options to use.
+     */
+    public resetFilterValues (): void{
+        this.model.setUsingProvidedSet (false);
+        this.onNewRowsLoaded();
     }
 
     public onAnyFilterChanged(): void {
@@ -159,7 +192,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     }
 
     private onMiniFilterChanged() {
-        var miniFilterChanged = this.model.setMiniFilter(this.eMiniFilter.value);
+        let miniFilterChanged = this.model.setMiniFilter(this.eMiniFilter.value);
         if (miniFilterChanged) {
             this.virtualList.refresh();
         }
@@ -167,14 +200,14 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     }
 
     private onSelectAll() {
-        var checked = this.eSelectAll.checked;
+        let checked = this.eSelectAll.checked;
         if (checked) {
             this.model.selectEverything();
         } else {
             this.model.selectNothing();
         }
         this.virtualList.refresh();
-        this.onFilterChanged();
+        this.debounceFilterChanged();
     }
 
     private onItemSelected(value: any, selected: boolean) {
@@ -186,7 +219,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
         this.updateSelectAll();
 
-        this.onFilterChanged();
+        this.debounceFilterChanged();
     }
 
     public setMiniFilter(newMiniFilter: any): void {

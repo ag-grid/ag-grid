@@ -1,6 +1,6 @@
 import {GridOptionsWrapper, PostConstruct, SvgFactory, MenuItemDef, Utils as _, Component, Autowired} from "ag-grid";
 
-var svgFactory = SvgFactory.getInstance();
+let svgFactory = SvgFactory.getInstance();
 
 export class MenuItemComponent extends Component {
 
@@ -44,6 +44,11 @@ export class MenuItemComponent extends Component {
             // it out.
             this.queryForHtmlElement('#eIcon').innerHTML = '&nbsp;';
         }
+
+        if (this.params.tooltip){
+            this.getGui().setAttribute('title', this.params.tooltip)
+        }
+
         if (this.params.shortcut) {
             this.queryForHtmlElement('#eShortcut').innerHTML = this.params.shortcut;
         }

@@ -22,7 +22,7 @@ import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuItemMapper} from "./menuItemMapper";
 
-var svgFactory = SvgFactory.getInstance();
+let svgFactory = SvgFactory.getInstance();
 
 @Bean('menuFactory')
 export class EnterpriseMenuFactory implements IMenuFactory {
@@ -71,14 +71,14 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     public showMenu(column: Column, positionCallback: (menu: EnterpriseMenu)=>void, defaultTab?:string): void {
 
-        var menu = new EnterpriseMenu(column, this.lastSelectedTab);
+        let menu = new EnterpriseMenu(column, this.lastSelectedTab);
         this.context.wireBean(menu);
 
-        var eMenuGui =  menu.getGui();
+        let eMenuGui =  menu.getGui();
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addAsModalPopup(
+        let hidePopup = this.popupService.addAsModalPopup(
             eMenuGui,
             true,
             ()=> menu.destroy()
@@ -101,9 +101,9 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     public isMenuEnabled(column: Column): boolean {
 
-        var showColumnPanel = !this.gridOptionsWrapper.isSuppressMenuColumnPanel();
-        var showMainPanel = !this.gridOptionsWrapper.isSuppressMenuMainPanel();
-        var showFilterPanel = !this.gridOptionsWrapper.isSuppressMenuFilterPanel() && column.isFilterAllowed();
+        let showColumnPanel = !this.gridOptionsWrapper.isSuppressMenuColumnPanel();
+        let showMainPanel = !this.gridOptionsWrapper.isSuppressMenuMainPanel();
+        let showFilterPanel = !this.gridOptionsWrapper.isSuppressMenuFilterPanel() && column.isFilterAllowed();
 
         return showColumnPanel || showMainPanel || showFilterPanel;
     }
@@ -158,7 +158,7 @@ export class EnterpriseMenu {
     @PostConstruct
     public init(): void {
 
-        var tabItems: TabbedItem[] = [];
+        let tabItems: TabbedItem[] = [];
         if (!this.gridOptionsWrapper.isSuppressMenuMainPanel()) {
             this.createMainPanel();
             tabItems.push(this.tabItemGeneral);
@@ -201,7 +201,7 @@ export class EnterpriseMenu {
     }
 
     private onTabItemClicked(event: any): void {
-        var key: string;
+        let key: string;
         switch (event.item) {
             case this.tabItemColumns: key = EnterpriseMenu.TAB_COLUMNS; break;
             case this.tabItemFilter: key = EnterpriseMenu.TAB_FILTER; break;
@@ -223,12 +223,12 @@ export class EnterpriseMenu {
     }
 
     private getMenuItems(): (string|MenuItemDef)[] {
-        var defaultMenuOptions = this.getDefaultMenuOptions();
-        var result: (string|MenuItemDef)[];
+        let defaultMenuOptions = this.getDefaultMenuOptions();
+        let result: (string|MenuItemDef)[];
 
-        var userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
+        let userFunc = this.gridOptionsWrapper.getMainMenuItemsFunc();
         if (userFunc) {
-            var userOptions = userFunc({
+            let userOptions = userFunc({
                 column: this.column,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
@@ -248,20 +248,20 @@ export class EnterpriseMenu {
     }
 
     private getDefaultMenuOptions(): string[] {
-        var result: string[] = [];
+        let result: string[] = [];
 
-        var rowGroupCount = this.columnController.getRowGroupColumns().length;
-        var doingGrouping = rowGroupCount > 0;
+        let rowGroupCount = this.columnController.getRowGroupColumns().length;
+        let doingGrouping = rowGroupCount > 0;
 
-        var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
-        var allowValue = this.column.isAllowValue();
-        var allowRowGroup = this.column.isAllowRowGroup();
-        var isPrimary = this.column.isPrimary();
-        var pivotModeOn = this.columnController.isPivotMode();
+        let groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
+        let allowValue = this.column.isAllowValue();
+        let allowRowGroup = this.column.isAllowRowGroup();
+        let isPrimary = this.column.isPrimary();
+        let pivotModeOn = this.columnController.isPivotMode();
 
         result.push('pinSubMenu');
 
-        var allowValueAgg =
+        let allowValueAgg =
             // if primary, then only allow aggValue if grouping and it's a value columns
             (isPrimary && doingGrouping && allowValue)
             // secondary columns can always have aggValue, as it means it's a pivot value column
@@ -292,7 +292,7 @@ export class EnterpriseMenu {
         // if pivoting, we only have expandable groups if grouping by 2 or more columns
         // as the lowest level group is not expandable while pivoting.
         // if not pivoting, then any active row group can be expanded.
-        var allowExpandAndContract = pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0;
+        let allowExpandAndContract = pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0;
         if (allowExpandAndContract) {
             result.push('expandAll');
             result.push('contractAll');
@@ -313,7 +313,7 @@ export class EnterpriseMenu {
         this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
-            title: svgFactory.createMenuSvg(),
+            title: Utils.createIconNoSpan('menu', this.gridOptionsWrapper, this.column, svgFactory.createMenuSvg),
             body: this.mainMenuList.getGui()
         };
     }
@@ -324,15 +324,15 @@ export class EnterpriseMenu {
 
     private createFilterPanel(): void {
 
-        var filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column);
+        let filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column);
 
-        var afterFilterAttachedCallback: Function;
+        let afterFilterAttachedCallback: Function;
         if (filterWrapper.filter.afterGuiAttached) {
             afterFilterAttachedCallback = filterWrapper.filter.afterGuiAttached.bind(filterWrapper.filter);
         }
 
         this.tabItemFilter = {
-            title: svgFactory.createFilterSvg12(),
+            title: Utils.createIconNoSpan('filter', this.gridOptionsWrapper, this.column, svgFactory.createFilterSvg12),
             body: filterWrapper.gui,
             afterAttachedCallback: afterFilterAttachedCallback
         };
@@ -340,7 +340,7 @@ export class EnterpriseMenu {
 
     private createColumnsPanel(): void {
 
-        var eWrapperDiv = document.createElement('div');
+        let eWrapperDiv = document.createElement('div');
         Utils.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
 
         this.columnSelectPanel = new ColumnSelectPanel(false);
@@ -349,7 +349,7 @@ export class EnterpriseMenu {
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
 
         this.tabItemColumns = {
-            title: svgFactory.createColumnsSvg12(),//createColumnsIcon(),
+            title: Utils.createIconNoSpan('columns', this.gridOptionsWrapper, this.column, svgFactory.createColumnsSvg12),//createColumnsIcon(),
             body: eWrapperDiv
         };
     }
@@ -359,7 +359,7 @@ export class EnterpriseMenu {
         this.hidePopupFunc = params.hidePopup;
 
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
-        var onBodyScroll = (event: any) => {
+        let onBodyScroll = (event: any) => {
             // if h scroll, popup is no longer over the column
             if (event.direction==='horizontal') {
                 params.hidePopup();

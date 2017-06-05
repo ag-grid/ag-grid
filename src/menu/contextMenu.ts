@@ -36,7 +36,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
     }
 
     private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef|string)[] {
-        var defaultMenuOptions: string[];
+        let defaultMenuOptions: string[];
         if (Utils.exists(node)) {
             // if user clicks a cell
             defaultMenuOptions = ['copy','copyWithHeaders','paste','separator','toolPanel'];
@@ -49,8 +49,8 @@ export class ContextMenuFactory implements IContextMenuFactory {
             defaultMenuOptions = ['toolPanel'];
         }
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
-            var userFunc: GetContextMenuItems = this.gridOptionsWrapper.getContextMenuItemsFunc();
-            var params: GetContextMenuItemsParams = {
+            let userFunc: GetContextMenuItems = this.gridOptionsWrapper.getContextMenuItemsFunc();
+            let params: GetContextMenuItemsParams = {
                 node: node,
                 column: column,
                 value: value,
@@ -59,7 +59,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext()
             };
-            var menuItemsFromUser = userFunc(params);
+            let menuItemsFromUser = userFunc(params);
             return menuItemsFromUser;
         } else {
             return defaultMenuOptions;
@@ -68,18 +68,18 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
     public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent): void {
 
-        var menuItems = this.getMenuItems(node, column, value);
+        let menuItems = this.getMenuItems(node, column, value);
 
         if (Utils.missingOrEmpty(menuItems)) { return; }
 
-        var menu = new ContextMenu(menuItems);
+        let menu = new ContextMenu(menuItems);
         this.context.wireBean(menu);
 
-        var eMenuGui =  menu.getGui();
+        let eMenuGui =  menu.getGui();
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addAsModalPopup(
+        let hidePopup = this.popupService.addAsModalPopup(
             eMenuGui,
             true,
             ()=> menu.destroy()

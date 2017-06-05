@@ -2,7 +2,7 @@ import {ColumnController, SvgFactory, MenuItemDef, Autowired, Utils, Bean, GridO
 import {ClipboardService} from "../clipboardService";
 import {AggFuncService} from "../aggregation/aggFuncService";
 
-var svgFactory = SvgFactory.getInstance();
+let svgFactory = SvgFactory.getInstance();
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
@@ -26,7 +26,7 @@ export class MenuItemMapper {
                 result = menuItemOrString;
             }
             if ((<any>result).subMenu) {
-                var resultDef = <MenuItemDef> result;
+                let resultDef = <MenuItemDef> result;
                 resultDef.subMenu = this.mapWithStockItems(resultDef.subMenu, column);
             }
 
@@ -38,7 +38,7 @@ export class MenuItemMapper {
 
     private getStockMenuItem(key: string, column: Column): MenuItemDef|string {
 
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
         switch (key) {
             case 'pinSubMenu': return {
@@ -141,18 +141,18 @@ export class MenuItemMapper {
 
     private createAggregationSubMenu(column: Column): MenuItemDef[] {
 
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var columnIsAlreadyAggValue = column.isValueActive();
-        var funcNames = this.aggFuncService.getFuncNames(column);
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        let columnIsAlreadyAggValue = column.isValueActive();
+        let funcNames = this.aggFuncService.getFuncNames(column);
 
-        var columnToUse: Column;
+        let columnToUse: Column;
         if (column.isPrimary()) {
             columnToUse = column;
         } else {
             columnToUse = column.getColDef().pivotValueColumn;
         }
 
-        var result: MenuItemDef[] = [];
+        let result: MenuItemDef[] = [];
 
         funcNames.forEach( (funcName)=> {
             result.push({

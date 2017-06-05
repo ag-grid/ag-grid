@@ -71,7 +71,7 @@ export class ColumnComponent extends Component {
     }
 
     private addDragSource(): void {
-        var dragSource: DragSource = {
+        let dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eText,
             dragItem: [this.column],
@@ -114,12 +114,12 @@ export class ColumnComponent extends Component {
     }
 
     private setTextValue(): void {
-        var displayValue: string;
+        let displayValue: string;
 
         if (this.valueColumn) {
-            var aggFunc = this.column.getAggFunc();
+            let aggFunc = this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
-            var aggFuncString = (typeof aggFunc === 'string') ? <string> aggFunc : 'agg';
+            let aggFuncString = (typeof aggFunc === 'string') ? <string> aggFunc : 'agg';
 
             displayValue = `${aggFuncString}(${this.displayName})`;
         } else {
@@ -135,9 +135,9 @@ export class ColumnComponent extends Component {
 
         this.popupShowing = true;
 
-        var virtualList = new VirtualList();
+        let virtualList = new VirtualList();
 
-        var rows = this.aggFuncService.getFuncNames(this.column);
+        let rows = this.aggFuncService.getFuncNames(this.column);
 
         virtualList.setModel({
             getRow: function(index: number) { return rows[index]; },
@@ -146,19 +146,19 @@ export class ColumnComponent extends Component {
 
         this.context.wireBean(virtualList);
 
-        var ePopup = Utils.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
+        let ePopup = Utils.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualList.getGui());
         ePopup.style.height = '100px';
         ePopup.style.width = this.getGui().clientWidth + 'px';
 
-        var popupHiddenFunc = () => {
+        let popupHiddenFunc = () => {
             virtualList.destroy();
             this.popupShowing = false;
         };
 
-        var hidePopup = this.popupService.addAsModalPopup(
+        let hidePopup = this.popupService.addAsModalPopup(
             ePopup,
             true,
             popupHiddenFunc
@@ -179,10 +179,10 @@ export class ColumnComponent extends Component {
 
     private createAggSelect(hidePopup: ()=>void, value: any): Component {
 
-        var itemSelected = ()=> {
+        let itemSelected = ()=> {
             hidePopup();
             if (this.gridOptionsWrapper.isFunctionsPassive()) {
-                var event = {
+                let event = {
                     columns: [this.column],
                     aggFunc: value
                 };
@@ -192,7 +192,7 @@ export class ColumnComponent extends Component {
             }
         };
 
-        var comp = new AggItemComp(itemSelected, value.toString());
+        let comp = new AggItemComp(itemSelected, value.toString());
         return comp;
     }
 }

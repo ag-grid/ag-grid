@@ -63,12 +63,12 @@ export class ColumnSelectPanel extends Component {
 
     private recursivelyRenderGroupComponent(columnGroup: OriginalColumnGroup, dept: number): void {
         // only render group if user provided the definition
-        var newDept: number;
+        let newDept: number;
 
         if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) { return; }
 
         if (!columnGroup.isPadding()) {
-            var renderedGroup = new RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
+            let renderedGroup = new RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
             this.context.wireBean(renderedGroup);
             this.appendChild(renderedGroup.getGui());
             // we want to indent on the gui for the children
@@ -86,7 +86,7 @@ export class ColumnSelectPanel extends Component {
     private recursivelyRenderColumnComponent(column: Column, dept: number): void {
         if (column.getColDef() && column.getColDef().suppressToolPanel) { return; }
 
-        var renderedColumn = new RenderedColumn(column, dept, this.allowDragging);
+        let renderedColumn = new RenderedColumn(column, dept, this.allowDragging);
         this.context.wireBean(renderedColumn);
         this.appendChild(renderedColumn.getGui());
 
@@ -107,23 +107,23 @@ export class ColumnSelectPanel extends Component {
 
         columnTree.forEach( child => {
 
-            var component = this.renderedItems[child.getId()];
+            let component = this.renderedItems[child.getId()];
             if (component) {
                 component.setVisible(visible);
             }
 
             if (child instanceof OriginalColumnGroup) {
-                var columnGroup = <OriginalColumnGroup> child;
+                let columnGroup = <OriginalColumnGroup> child;
 
-                var newVisible: boolean;
+                let newVisible: boolean;
                 if (component) {
-                    var expanded = (<RenderedGroup>component).isExpanded();
+                    let expanded = (<RenderedGroup>component).isExpanded();
                     newVisible = visible ? expanded : false;
                 } else {
                     newVisible = visible;
                 }
 
-                var newChildren = columnGroup.getChildren();
+                let newChildren = columnGroup.getChildren();
                 this.recursivelySetVisibility(newChildren, newVisible);
 
             }

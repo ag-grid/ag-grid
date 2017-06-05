@@ -14,7 +14,7 @@ import {
 } from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
-var svgFactory = SvgFactory.getInstance();
+let svgFactory = SvgFactory.getInstance();
 
 export class ValuesColumnPanel extends AbstractColumnDropPanel {
 
@@ -40,9 +40,9 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
             dragAndDropService: this.dragAndDropService
         });
 
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to aggregate');
-        var title = localeTextFunc('values', 'Values');
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        let emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to aggregate');
+        let title = localeTextFunc('values', 'Values');
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_AGGREGATE,
@@ -64,8 +64,8 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
         // we never allow grouping of secondary columns
         if (!column.isPrimary()) { return false; }
 
-        var columnValue = column.isAllowValue();
-        var columnNotValue= !column.isValueActive();
+        let columnValue = column.isAllowValue();
+        let columnNotValue= !column.isValueActive();
         return columnValue && columnNotValue;
     }
 

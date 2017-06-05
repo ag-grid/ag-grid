@@ -25,7 +25,7 @@ export class PivotModePanel extends Component {
     }
 
     private createTemplate(): string {
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         return `<div class="ag-pivot-mode">
                 <ag-checkbox class="ag-pivot-mode-select" label="${localeTextFunc('pivotMode', 'Pivot Mode')}"></ag-checkbox>
             </div>`;
@@ -44,7 +44,7 @@ export class PivotModePanel extends Component {
     }
     
     private onBtPivotMode(): void {
-        var newValue = this.cbPivotMode.isSelected();
+        let newValue = this.cbPivotMode.isSelected();
         if (newValue !== this.columnController.isPivotMode()) {
             this.columnController.setPivotMode(newValue);
             this.gridOptionsWrapper.getApi().refreshHeader();
@@ -52,7 +52,7 @@ export class PivotModePanel extends Component {
     }
     
     private onPivotModeChanged(): void {
-        var pivotModeActive = this.columnController.isPivotMode();
+        let pivotModeActive = this.columnController.isPivotMode();
         this.cbPivotMode.setSelected(pivotModeActive);
     }
 }

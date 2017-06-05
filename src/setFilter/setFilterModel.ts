@@ -1,6 +1,8 @@
 import {Utils} from "ag-grid/main";
 import {ColDef} from "ag-grid/main";
 import {ISetFilterParams} from "ag-grid/main";
+import {TextFormatter} from "ag-grid/main";
+import {TextFilter} from "ag-grid/main";
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
@@ -21,6 +23,7 @@ export class SetFilterModel {
     private selectedValuesCount: any;
     private selectedValuesMap: any;
     private suppressSorting: boolean;
+    private formatter:TextFormatter;
 
     // to make code more readable, we work these out once, and
     // then refer to each time. both are derived from the filterParams
@@ -57,16 +60,30 @@ export class SetFilterModel {
         // the length of the array is thousands of records long
         this.selectedValuesMap = {};
         this.selectEverything();
+        this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : TextFilter.DEFAULT_FORMATTER;
     }
+
 
     // if keepSelection not set will always select all filters
     // if keepSelection set will keep current state of selected filters
     //    unless selectAll chosen in which case will select all
     public refreshAfterNewRowsLoaded(keepSelection: any, isSelectAll: boolean) {
         this.createAllUniqueValues();
+        this.refreshSelection(keepSelection, isSelectAll);
+    }
+
+    // if keepSelection not set will always select all filters
+    // if keepSelection set will keep current state of selected filters
+    //    unless selectAll chosen in which case will select all
+    public refreshValues(valuesToUse:string[], keepSelection: any, isSelectAll: boolean) {
+        this.setValues(valuesToUse);
+        this.refreshSelection(keepSelection, isSelectAll);
+    }
+
+    private refreshSelection(keepSelection: any, isSelectAll: boolean) {
         this.createAvailableUniqueValues();
 
-        var oldModel = Object.keys(this.selectedValuesMap);
+        let oldModel = Object.keys(this.selectedValuesMap);
 
         this.selectedValuesMap = {};
         this.processMiniFilter();
@@ -86,26 +103,41 @@ export class SetFilterModel {
     }
 
     private createAllUniqueValues() {
-        if (this.usingProvidedSet) {
-            this.allUniqueValues = Utils.toStrings(this.filterParams.values);
-        } else {
-            var uniqueValuesAsAnyObjects = this.getUniqueValues(false);
-            this.allUniqueValues = Utils.toStrings(uniqueValuesAsAnyObjects);
-        }
+        let valuesToUse: string[] = this.extractValuesToUse();
+        this.setValues(valuesToUse);
+    }
 
+    public setUsingProvidedSet (value:boolean){
+        this.usingProvidedSet = value;
+    }
+
+    private setValues(valuesToUse: string[]) {
+        this.allUniqueValues = valuesToUse;
+        this.usingProvidedSet = true;
         if (!this.suppressSorting) {
             this.sortValues(this.allUniqueValues);
         }
     }
 
+    private extractValuesToUse() {
+        let valuesToUse: string[];
+        if (this.usingProvidedSet) {
+            valuesToUse = Utils.toStrings(this.filterParams.values);
+        } else {
+            let uniqueValuesAsAnyObjects = this.getUniqueValues(false);
+            valuesToUse = Utils.toStrings(uniqueValuesAsAnyObjects);
+        }
+        return valuesToUse;
+    }
+
     private createAvailableUniqueValues() {
-        var dontCheckAvailableValues = !this.showingAvailableOnly || this.usingProvidedSet;
+        let dontCheckAvailableValues = !this.showingAvailableOnly || this.usingProvidedSet;
         if (dontCheckAvailableValues) {
             this.availableUniqueValues = this.allUniqueValues;
             return;
         }
 
-        var uniqueValuesAsAnyObjects = this.getUniqueValues(true);
+        let uniqueValuesAsAnyObjects = this.getUniqueValues(true);
         this.availableUniqueValues = Utils.toStrings(uniqueValuesAsAnyObjects);
         this.sortValues(this.availableUniqueValues);
     }
@@ -121,8 +153,8 @@ export class SetFilterModel {
     }
 
     private getUniqueValues(filterOutNotAvailable: boolean): any[] {
-        var uniqueCheck = <any>{};
-        var result = <any>[];
+        let uniqueCheck = <any>{};
+        let result = <any>[];
 
         if (!this.rowModel.forEachLeafNode) {
             console.error('ag-Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
@@ -131,7 +163,7 @@ export class SetFilterModel {
 
         this.rowModel.forEachLeafNode( (node: any)=> {
             if (!node.group) {
-                var value = this.valueGetter(node);
+                let value = this.valueGetter(node);
 
                 if (this.colDef.keyCreator) {
                     value = this.colDef.keyCreator( {value: value} );
@@ -148,7 +180,7 @@ export class SetFilterModel {
                 }
 
                 if (value != null && Array.isArray(value)) {
-                    for (var j = 0; j < value.length; j++) {
+                    for (let j = 0; j < value.length; j++) {
                         addUniqueValueIfMissing(value[j])
                     }
                 } else {
@@ -192,11 +224,15 @@ export class SetFilterModel {
 
         // if filter present, we filter down the list
         this.displayedValues = [];
-        var miniFilterUpperCase = this.miniFilter.toUpperCase();
-        for (var i = 0, l = this.availableUniqueValues.length; i < l; i++) {
-            var filteredValue = this.availableUniqueValues[i];
-            if (filteredValue !== null && filteredValue.toString().toUpperCase().indexOf(miniFilterUpperCase) >= 0) {
-                this.displayedValues.push(filteredValue);
+        let miniFilterFormatted = this.formatter(this.miniFilter);
+        for (let i = 0, l = this.availableUniqueValues.length; i < l; i++) {
+            let filteredValue = this.availableUniqueValues[i];
+            if (filteredValue){
+                let filteredValueFormatted = this.formatter(filteredValue.toString());
+                if (filteredValueFormatted !== null && filteredValueFormatted.indexOf(miniFilterFormatted) >= 0) {
+                    this.displayedValues.push(filteredValue);
+                }
+
             }
         }
     }
@@ -218,9 +254,9 @@ export class SetFilterModel {
     }
 
     private selectOn(toSelectOn: any[]) {
-        var count = toSelectOn.length;
-        for (var i = 0; i < count; i++) {
-            var key = toSelectOn[i];
+        let count = toSelectOn.length;
+        for (let i = 0; i < count; i++) {
+            let key = toSelectOn[i];
             let safeKey = this.valueToKey(key);
             this.selectedValuesMap[safeKey] = null;
         }
@@ -317,7 +353,8 @@ export class SetFilterModel {
         if (model && !isSelectAll) {
             this.selectNothing();
             for (let i = 0; i < model.length; i++) {
-                let value = model[i];
+                let rawValue = model[i];
+                let value = this.keyToValue(rawValue);
                 if (this.allUniqueValues.indexOf(value) >= 0) {
                     this.selectValue(value);
                 }

@@ -132,7 +132,7 @@ export abstract class AbstractColumnDropPanel extends Component {
             return false;
         }
 
-        var changed = newIndex!==this.insertIndex;
+        let changed = newIndex!==this.insertIndex;
         if (changed) {
             this.insertIndex = newIndex;
         }
@@ -202,7 +202,7 @@ export abstract class AbstractColumnDropPanel extends Component {
     private onDragging(draggingEvent: DraggingEvent): void {
         this.checkDragStartedBySelf(draggingEvent);
 
-        var positionChanged = this.checkInsertIndex(draggingEvent);
+        let positionChanged = this.checkInsertIndex(draggingEvent);
         if (positionChanged) {
             this.refreshGui();
         }
@@ -211,13 +211,13 @@ export abstract class AbstractColumnDropPanel extends Component {
     private onDragEnter(draggingEvent: DraggingEvent): void {
 
         // this will contain all columns that are potential drops
-        var dragColumns = draggingEvent.dragSource.dragItem;
+        let dragColumns = draggingEvent.dragSource.dragItem;
         this.state = AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN;
 
         // take out columns that are not groupable
-        var goodDragColumns = Utils.filter(dragColumns, this.isColumnDroppable.bind(this) );
+        let goodDragColumns = Utils.filter(dragColumns, this.isColumnDroppable.bind(this) );
 
-        var weHaveColumnsToDrag = goodDragColumns.length > 0;
+        let weHaveColumnsToDrag = goodDragColumns.length > 0;
         if (weHaveColumnsToDrag) {
             this.potentialDndColumns = goodDragColumns;
             this.checkInsertIndex(draggingEvent);
@@ -234,7 +234,7 @@ export abstract class AbstractColumnDropPanel extends Component {
         // someplace else, then we don't, as it was only 'asking'
 
         if (this.state===AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS) {
-            var columns = draggingEvent.dragSource.dragItem;
+            let columns = draggingEvent.dragSource.dragItem;
             this.removeColumns(columns);
         }
 
@@ -276,21 +276,21 @@ export abstract class AbstractColumnDropPanel extends Component {
     }
 
     private removeColumns(columnsToRemove: Column[]): void {
-        var newColumnList = this.getExistingColumns().slice();
+        let newColumnList = this.getExistingColumns().slice();
         columnsToRemove.forEach( column => Utils.removeFromArray(newColumnList, column) );
         this.updateColumns(newColumnList);
     }
 
     private addColumns(columnsToAdd: Column[]): void {
-        var newColumnList = this.getExistingColumns().slice();
+        let newColumnList = this.getExistingColumns().slice();
         Utils.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
         this.updateColumns(newColumnList);
     }
 
     private rearrangeColumns(columnsToAdd: Column[]): boolean {
-        var newColumnList = this.getNonGhostColumns().slice();
+        let newColumnList = this.getNonGhostColumns().slice();
         Utils.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
-        var noChangeDetected = Utils.shallowCompare(newColumnList, this.getExistingColumns());
+        let noChangeDetected = Utils.shallowCompare(newColumnList, this.getExistingColumns());
         if (noChangeDetected) {
             return false;
         } else {
@@ -308,8 +308,8 @@ export abstract class AbstractColumnDropPanel extends Component {
     }
 
     private getNonGhostColumns(): Column[] {
-        var existingColumns = this.getExistingColumns();
-        var nonGhostColumns: Column[];
+        let existingColumns = this.getExistingColumns();
+        let nonGhostColumns: Column[];
         if (Utils.exists(this.potentialDndColumns)) {
             nonGhostColumns = Utils.filter(existingColumns, column => this.potentialDndColumns.indexOf(column) < 0 );
         } else {
@@ -321,9 +321,9 @@ export abstract class AbstractColumnDropPanel extends Component {
     private addColumnsToGui(): void {
         let nonGhostColumns = this.getNonGhostColumns();
 
-        var itemsToAddToGui: ColumnComponent[] = [];
+        let itemsToAddToGui: ColumnComponent[] = [];
 
-        var addingGhosts = Utils.exists(this.potentialDndColumns);
+        let addingGhosts = Utils.exists(this.potentialDndColumns);
 
         nonGhostColumns.forEach( (column: Column, index: number) => {
             if (addingGhosts && index >= this.insertIndex) { return; }
@@ -355,7 +355,7 @@ export abstract class AbstractColumnDropPanel extends Component {
     }
 
     private createColumnComponent(column: Column, ghost: boolean): ColumnComponent {
-        var columnComponent = new ColumnComponent(column, this.dropTarget, ghost, this.valueColumn);
+        let columnComponent = new ColumnComponent(column, this.dropTarget, ghost, this.valueColumn);
         columnComponent.addEventListener(ColumnComponent.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
         this.beans.context.wireBean(columnComponent);
         this.guiDestroyFunctions.push( ()=> columnComponent.destroy() );
@@ -368,16 +368,16 @@ export abstract class AbstractColumnDropPanel extends Component {
     }
 
     private addIconAndTitleToGui(): void {
-        var iconFaded = this.horizontal && this.isExistingColumnsEmpty();
+        let iconFaded = this.horizontal && this.isExistingColumnsEmpty();
 
-        var eGroupIcon = this.params.icon;
+        let eGroupIcon = this.params.icon;
         
         Utils.addCssClass(eGroupIcon, 'ag-column-drop-icon');
         Utils.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
         this.getGui().appendChild(eGroupIcon);
 
         if (!this.horizontal) {
-            var eTitle = document.createElement('span');
+            let eTitle = document.createElement('span');
             eTitle.innerHTML = this.params.title;
             Utils.addCssClass(eTitle, 'ag-column-drop-title');
             Utils.addOrRemoveCssClass(eTitle, 'ag-faded', iconFaded);
@@ -391,10 +391,10 @@ export abstract class AbstractColumnDropPanel extends Component {
     }
 
     private addEmptyMessageToGui(): void {
-        var showEmptyMessage = this.isExistingColumnsEmpty() && !this.potentialDndColumns;
+        let showEmptyMessage = this.isExistingColumnsEmpty() && !this.potentialDndColumns;
         if (!showEmptyMessage) { return; }
 
-        var eMessage = document.createElement('span');
+        let eMessage = document.createElement('span');
         eMessage.innerHTML = this.params.emptyMessage;
         Utils.addCssClass(eMessage, 'ag-column-drop-empty-message');
         this.getGui().appendChild(eMessage);
@@ -407,7 +407,7 @@ export abstract class AbstractColumnDropPanel extends Component {
             let enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
             let charCode = enableRtl ?
                 AbstractColumnDropPanel.CHAR_LEFT_ARROW : AbstractColumnDropPanel.CHAR_RIGHT_ARROW;
-            var eArrow = document.createElement('span');
+            let eArrow = document.createElement('span');
             eArrow.innerHTML = charCode;
             this.getGui().appendChild(eArrow);
         }

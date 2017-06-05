@@ -277,7 +277,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
 
     public getRowIndexAtPixel(pixel: number): number {
         if (this.rowHeight !== 0) { // avoid divide by zero error
-            var rowIndexForPixel = Math.floor(pixel / this.rowHeight);
+            let rowIndexForPixel = Math.floor(pixel / this.rowHeight);
             if (rowIndexForPixel > this.getPageLastRow()) {
                 return this.getPageLastRow();
             } else {
@@ -327,18 +327,6 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         } else {
             return null;
         }
-    }
-
-    public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {
-        console.log('insertItemsAtIndex not supported in enterprise row model');
-    }
-
-    public removeItems(rowNodes: RowNode[], skipRefresh: boolean): void {
-        console.log('removeItems not supported in enterprise row model');
-    }
-
-    public addItems(item: any[], skipRefresh: boolean): void {
-        console.log('addItems not supported in enterprise row model');
     }
 
     public isRowPresent(rowNode: RowNode): boolean {

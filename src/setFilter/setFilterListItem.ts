@@ -51,19 +51,19 @@ export class SetFilterListItem extends Component {
 
     public render(): void {
 
-        var valueElement = this.queryForHtmlElement(".ag-filter-value");
+        let valueElement = this.queryForHtmlElement(".ag-filter-value");
 
-        // var valueElement = eFilterValue.querySelector(".ag-filter-value");
+        // let valueElement = eFilterValue.querySelector(".ag-filter-value");
         if (this.cellRenderer) {
-            var component = this.cellRendererService.useCellRenderer(this.cellRenderer, valueElement, {value: this.value});
+            let component = this.cellRendererService.useCellRenderer(this.cellRenderer, valueElement, {value: this.value});
             if (component && component.destroy) {
                 this.addDestroyFunc( component.destroy.bind(component) );
             }
         } else {
             // otherwise display as a string
-            var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            var blanksText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
-            var displayNameOfValue = this.value === null ? blanksText : this.value;
+            let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            let blanksText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
+            let displayNameOfValue = this.value === null ? blanksText : this.value;
             valueElement.innerHTML = displayNameOfValue;
         }
 

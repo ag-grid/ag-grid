@@ -33,7 +33,7 @@ export class RichSelectRow extends Component {
     }
 
     private populateWithRenderer(value:any) {
-        var childComponent = this.cellRendererService.useCellRenderer(this.cellRenderer, this.getGui(), {value: value});
+        let childComponent = this.cellRendererService.useCellRenderer(this.cellRenderer, this.getGui(), {value: value});
         if (childComponent && childComponent.destroy) {
             this.addDestroyFunc(childComponent.destroy.bind(childComponent));
         }

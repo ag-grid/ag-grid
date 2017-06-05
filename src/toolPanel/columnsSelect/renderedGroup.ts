@@ -21,7 +21,7 @@ import {
     AgCheckbox
 } from "ag-grid/main";
 
-var svgFactory = SvgFactory.getInstance();
+let svgFactory = SvgFactory.getInstance();
 
 export class RenderedGroup extends Component {
 
@@ -76,7 +76,7 @@ export class RenderedGroup extends Component {
 
         this.instantiate(this.context);
 
-        var eText = this.queryForHtmlElement('#eText');
+        let eText = this.queryForHtmlElement('#eText');
 
         this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
         if (Utils.missing(this.displayName)) {
@@ -86,7 +86,7 @@ export class RenderedGroup extends Component {
         eText.innerHTML = this.displayName;
         this.setupExpandContract();
 
-        var eIndent = this.queryForHtmlElement('#eIndent');
+        let eIndent = this.queryForHtmlElement('#eIndent');
         eIndent.style.width = (this.columnDept * 10) + 'px';
 
         this.addDestroyableEventListener(eText, 'click', this.onClick.bind(this) );
@@ -120,7 +120,7 @@ export class RenderedGroup extends Component {
     }
 
     private addDragSource(): void {
-        var dragSource: DragSource = {
+        let dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.getGui(),
             dragItemName: this.displayName,
@@ -153,8 +153,8 @@ export class RenderedGroup extends Component {
     private onCheckboxChanged(): void {
         if (this.processingColumnStateChange) { return; }
 
-        var childColumns = this.columnGroup.getLeafColumns();
-        var selected = this.cbSelect.isSelected();
+        let childColumns = this.columnGroup.getLeafColumns();
+        let selected = this.cbSelect.isSelected();
 
         if (this.columnController.isPivotMode()) {
             if (selected) {
@@ -169,9 +169,9 @@ export class RenderedGroup extends Component {
 
     private actionUnCheckedReduce(columns: Column[]): void {
 
-        var columnsToUnPivot: Column[] = [];
-        var columnsToUnValue: Column[] = [];
-        var columnsToUnGroup: Column[] = [];
+        let columnsToUnPivot: Column[] = [];
+        let columnsToUnValue: Column[] = [];
+        let columnsToUnGroup: Column[] = [];
 
         columns.forEach( column => {
             if (column.isPivotActive()) {
@@ -198,9 +198,9 @@ export class RenderedGroup extends Component {
 
     private actionCheckedReduce(columns: Column[]): void {
 
-        var columnsToAggregate: Column[] = [];
-        var columnsToGroup: Column[] = [];
-        var columnsToPivot: Column[] = [];
+        let columnsToAggregate: Column[] = [];
+        let columnsToGroup: Column[] = [];
+        let columnsToPivot: Column[] = [];
 
         columns.forEach( column => {
             // don't change any column that's already got a function active
@@ -229,10 +229,10 @@ export class RenderedGroup extends Component {
     }
 
     private onColumnStateChanged(): void {
-        var columnsReduced = this.columnController.isPivotMode();
+        let columnsReduced = this.columnController.isPivotMode();
 
-        var visibleChildCount = 0;
-        var hiddenChildCount = 0;
+        let visibleChildCount = 0;
+        let hiddenChildCount = 0;
 
         this.columnGroup.getLeafColumns().forEach( (column: Column) => {
             if (this.isColumnVisible(column, columnsReduced)) {
@@ -242,7 +242,7 @@ export class RenderedGroup extends Component {
             }
         });
 
-        var selectedValue: boolean;
+        let selectedValue: boolean;
         if (visibleChildCount>0 && hiddenChildCount>0) {
             selectedValue = null;
         } else if (visibleChildCount > 0) {
@@ -258,9 +258,9 @@ export class RenderedGroup extends Component {
 
     private isColumnVisible(column: Column, columnsReduced: boolean): boolean {
         if (columnsReduced) {
-            var pivoted = column.isPivotActive();
-            var grouped = column.isRowGroupActive();
-            var aggregated = column.isValueActive();
+            let pivoted = column.isPivotActive();
+            let grouped = column.isRowGroupActive();
+            let aggregated = column.isValueActive();
             return pivoted || grouped || aggregated;
         } else {
             return column.isVisible();
@@ -274,7 +274,7 @@ export class RenderedGroup extends Component {
     }
 
     private setOpenClosedIcons(): void {
-        var folderOpen = this.expanded;
+        let folderOpen = this.expanded;
         Utils.setVisible(this.eGroupClosedIcon, !folderOpen);
         Utils.setVisible(this.eGroupOpenedIcon, folderOpen);
     }

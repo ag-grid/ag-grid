@@ -1,6 +1,6 @@
-import {EventService, Component, Autowired, PostConstruct, Events, Utils, Column,
-    GridRow, RowNode, Constants, FloatingRowModel, IRowModel, ValueService,
-    CellNavigationService, Bean, Context, GridOptionsWrapper, GridCell} from 'ag-grid/main';
+import {EventService, Component, Autowired, PostConstruct, Events, _,
+    GridRow, RowNode, Constants, FloatingRowModel, IRowModel, ValueService, GridCore,
+    CellNavigationService, Bean, Context, GridOptionsWrapper} from 'ag-grid/main';
 import {StatusItem} from "./statusItem";
 import {RangeController} from "../rangeController";
 
@@ -19,6 +19,7 @@ export class StatusBar extends Component {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridCore') private gridCore: GridCore;
 
     private statusItemSum: StatusItem;
     private statusItemCount: StatusItem;
@@ -35,12 +36,16 @@ export class StatusBar extends Component {
 
     @PostConstruct
     private init(): void {
+        // we want to hide until the first aggregation comes in
+        this.setVisible(false);
+
         this.createStatusItems();
         this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
+        this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
     }
 
     private createStatusItems(): void {
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.statusItemSum = new StatusItem(localeTextFunc('sum', 'Sum'));
         this.statusItemCount = new StatusItem(localeTextFunc('count', 'Count'));
@@ -63,44 +68,46 @@ export class StatusBar extends Component {
     }
 
     private onRangeSelectionChanged(): void {
-        var cellRanges = this.rangeController.getCellRanges();
+        let cellRanges = this.rangeController.getCellRanges();
 
-        var sum = 0;
-        var count = 0;
-        var numberCount = 0;
-        var min: number = null;
-        var max: number = null;
+        let sum = 0;
+        let count = 0;
+        let numberCount = 0;
+        let min: number = null;
+        let max: number = null;
 
-        var cellsSoFar: any = {};
+        let cellsSoFar: any = {};
 
-        if (!Utils.missingOrEmpty(cellRanges)) {
+        if (!_.missingOrEmpty(cellRanges)) {
 
             cellRanges.forEach( (cellRange)=> {
 
                 // get starting and ending row, remember rowEnd could be before rowStart
-                var startRow = cellRange.start.getGridRow();
-                var endRow = cellRange.end.getGridRow();
+                let startRow = cellRange.start.getGridRow();
+                let endRow = cellRange.end.getGridRow();
 
-                var startRowIsFirst = startRow.before(endRow);
+                let startRowIsFirst = startRow.before(endRow);
 
-                var currentRow = startRowIsFirst ? startRow : endRow;
-                var lastRow = startRowIsFirst ? endRow : startRow;
+                let currentRow = startRowIsFirst ? startRow : endRow;
+                let lastRow = startRowIsFirst ? endRow : startRow;
 
                 while (true) {
                     cellRange.columns.forEach( (column) => {
 
                         // we only want to include each cell once, in case a cell is in multiple ranges
-                        var cellId = currentRow.getGridCell(column).createId();
+                        let cellId = currentRow.getGridCell(column).createId();
                         if (cellsSoFar[cellId]) {
                             return;
                         }
                         cellsSoFar[cellId] = true;
 
-                        var rowNode = this.getRowNode(currentRow);
-                        var value = this.valueService.getValue(column, rowNode);
+                        let rowNode = this.getRowNode(currentRow);
+                        if (_.missing(rowNode)) { return; }
+
+                        let value = this.valueService.getValue(column, rowNode);
 
                         // if empty cell, skip it, doesn't impact count or anything
-                        if (Utils.missing(value) || value === '') {
+                        if (_.missing(value) || value === '') {
                             return;
                         }
 
@@ -142,8 +149,8 @@ export class StatusBar extends Component {
 
         }
 
-        var gotResult = count > 1;
-        var gotNumberResult = numberCount>0;
+        let gotResult = count > 1;
+        let gotNumberResult = numberCount > 1;
 
         // we should count even if no numbers
         if (gotResult) {
@@ -162,6 +169,11 @@ export class StatusBar extends Component {
         this.statusItemMin.setVisible(gotNumberResult);
         this.statusItemMax.setVisible(gotNumberResult);
         this.statusItemAvg.setVisible(gotNumberResult);
+
+        if (this.isVisible()!==gotResult) {
+            this.setVisible(gotResult);
+            this.gridCore.doLayout();
+        }
     }
 
     private getRowNode(gridRow: GridRow): RowNode {
