@@ -29,7 +29,7 @@ var gridOptions = {
     enableSorting: true, //one of [true, false]
     enableFilter: true, //one of [true, false]
     rowSelection: "single",
-    forPrint: true
+    domLayout: "forPrint"
 };
 
 // setup the grid after the page has finished loading

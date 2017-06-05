@@ -83,7 +83,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Pagination does not reduce the feature set of the grid, as long as the underlying row model supports it.
-        any feature of the grid. In other words, if you are paging over the in memory row model, all features of
+        In other words, if you are paging over the in memory row model, all features of
         the in memory row model (grouping, filtering etc) are still available. Likewise for the other row models,
         if the row model supports it, it's available through pagination and that row model.
     </p>

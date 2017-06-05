@@ -40,7 +40,7 @@ LETTERS_IN_ALPHABET.forEach( function(letter) {
 });
 
 var gridOptions = {
-    forPrint: true,
+    domLayout: "forPrint",
     columnDefs: columnDefs,
     rowData: mainRowData,
     floatingTopRowData: floatingTopRowData,

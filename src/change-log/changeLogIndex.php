@@ -31,6 +31,11 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
+    <h4>Breaking Changes</h4>
+    <ul>
+        <li>Property 'forPrint' replaced with 'domLayout', if using forPrint, then set domLayout="forPrint" instead.</li>
+    </ul>
+
     <h2>Version 10.0.x</h2>
 
     <h3>Version 10.0.0 [22-MAY-2017]</h3>

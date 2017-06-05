@@ -42,7 +42,7 @@ LETTERS_IN_ALPHABET.forEach( function(letter) {
 var gridOptions = {
     // this is the only difference between this example and the previous one
     enableRtl: true,
-    forPrint: true,
+    domLayout: "forPrint",
     columnDefs: columnDefs,
     rowData: mainRowData,
     floatingTopRowData: floatingTopRowData,
