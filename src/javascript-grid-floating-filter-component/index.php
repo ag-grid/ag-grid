@@ -213,4 +213,8 @@ Note that:
 <show-example example="exampleComplexCustomFilterAndFloatingFilter"></show-example>
 
 
+<?php if (isFrameworkAngular2()) { ?>
+    <?php include './angular.php';?>
+<?php } ?>
+
 <?php include '../documentation-main/documentation_footer.php';?>
