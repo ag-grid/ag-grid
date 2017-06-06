@@ -336,8 +336,8 @@ export class RowRenderer extends BeanStub {
         let rowsToRemove: string[];
         let oldRowsByNodeId: {[key: string]: RowComp} = {};
 
-        // never keep rendered rows if doing forPrint, as we do not use 'top' to
-        // position the rows in forPrint (use normal flow), so we have to remove
+        // never keep rendered rows if doing forPrint or autoHeight, as we do not use 'top' to
+        // position the rows (it uses normal flow), so we have to remove
         // all rows and insert them again from scratch
         if (this.gridOptionsWrapper.isForPrint() || this.gridOptionsWrapper.isAutoHeight()) {
             keepRenderedRows = false;
@@ -479,6 +479,7 @@ export class RowRenderer extends BeanStub {
 
         // add in new rows
         let delayedCreateFunctions: Function[] = [];
+
         for (let rowIndex = this.firstRenderedRow; rowIndex <= this.lastRenderedRow; rowIndex++) {
             // see if item already there, and if yes, take it out of the 'to remove' array
             if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
@@ -548,6 +549,12 @@ export class RowRenderer extends BeanStub {
             this.rowContainers.pinnedLeft.flushDocumentFragment();
             this.rowContainers.pinnedRight.flushDocumentFragment();
         }
+
+        _.iterateObject(this.rowContainers, (key: string, rowContainerComp: RowContainerComponent) => {
+            if (rowContainerComp) {
+                rowContainerComp.sortDomByRowNodeIndex();
+            }
+        });
 
         // if we are doing angular compiling, then do digest the scope here
         if (this.gridOptionsWrapper.isAngularCompileRows()) {

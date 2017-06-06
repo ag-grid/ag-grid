@@ -6,7 +6,7 @@ import {RowRenderer, RefreshViewParams} from "../rendering/rowRenderer";
 import {FloatingRowModel} from "../rowModels/floatingRowModel";
 import {BorderLayout} from "../layout/borderLayout";
 import {Logger, LoggerFactory} from "../logger";
-import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy} from "../context/context";
+import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy, Context} from "../context/context";
 import {EventService} from "../eventService";
 import {Events} from "../events";
 import {DragService, DragListenerParams} from "../dragAndDrop/dragService";
@@ -141,6 +141,7 @@ export class GridPanel extends BeanStub {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('context') private context: Context;
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
@@ -1321,6 +1322,12 @@ export class GridPanel extends BeanStub {
 
             this.addMouseWheelEventListeners();
         }
+
+        _.iterateObject(this.rowContainerComponents, (key: string, container: RowContainerComponent)=> {
+            if (container) {
+                this.context.wireBean(container);
+            }
+        });
     }
 
     public getRowContainers(): RowContainerComponents {

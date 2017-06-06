@@ -21,6 +21,7 @@ export interface GridOptions {
      ****************************************************************/
 
     // set once in init, can never change
+    enforceRowDomOrder?: boolean;
     deltaRowDataMode?: boolean;
     scrollbarWidth?: number;
     toolPanelSuppressRowGroups?: boolean;

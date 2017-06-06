@@ -238,6 +238,7 @@ export class GridOptionsWrapper {
     public getApi(): GridApi { return this.gridOptions.api; }
     public getColumnApi(): ColumnApi { return this.gridOptions.columnApi; }
     public isDeltaRowDataMode() { return isTrue(this.gridOptions.deltaRowDataMode); }
+    public isEnforceRowDomOrder() { return isTrue(this.gridOptions.enforceRowDomOrder); }
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
     public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }
@@ -288,7 +289,11 @@ export class GridOptionsWrapper {
 
     public isSuppressScrollLag() { return isTrue(this.gridOptions.suppressScrollLag); }
     public isSuppressMovableColumns() { return isTrue(this.gridOptions.suppressMovableColumns); }
-    public isAnimateRows() { return isTrue(this.gridOptions.animateRows); }
+    public isAnimateRows() {
+        // never allow animating if enforcing the row order
+        if (this.isEnforceRowDomOrder()) { return false; }
+        return isTrue(this.gridOptions.animateRows);
+    }
     public isSuppressColumnMoveAnimation() { return isTrue(this.gridOptions.suppressColumnMoveAnimation); }
     public isSuppressMenuColumnPanel() { return isTrue(this.gridOptions.suppressMenuColumnPanel); }
     public isSuppressMenuFilterPanel() { return isTrue(this.gridOptions.suppressMenuFilterPanel); }
