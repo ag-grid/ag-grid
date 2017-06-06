@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 current_dir=$(pwd)
 
+dist-just-module.sh ag-grid-angular
+
 cd ag-grid-angular-example/systemjs_aot
 
 npm i
