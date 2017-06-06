@@ -923,6 +923,7 @@ export class Utils {
      * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
      */
     static isNumeric(value: any): boolean {
+        if (value === '') return false;
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
@@ -1150,9 +1151,9 @@ export class Utils {
     };
 
     static referenceCompare (left:any, right:any):boolean{
-        if (!left && !right) return true;
-        if (!left && right) return false;
-        if (left && !right) return false;
+        if (left == null && right==null) return true;
+        if (left == null && right) return false;
+        if (left && right == null) return false;
         return left === right;
     }
 }

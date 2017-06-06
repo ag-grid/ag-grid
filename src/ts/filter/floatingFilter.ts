@@ -176,14 +176,14 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
 
     asFloatingFilterText(parentModel: SerializedNumberFilter): string {
         let rawParentModel = this.currentParentModel();
-        if (!parentModel && !rawParentModel) return '';
-        if (!parentModel && rawParentModel && rawParentModel.type !== 'inRange') {
+        if (parentModel == null && rawParentModel==null) return '';
+        if (parentModel == null && rawParentModel != null && rawParentModel.type !== 'inRange') {
             this.eColumnFloatingFilter.readOnly = false;
             return '';
         }
 
 
-        if (rawParentModel && rawParentModel.type === 'inRange'){
+        if (rawParentModel != null && rawParentModel.type === 'inRange'){
             this.eColumnFloatingFilter.readOnly = true;
             let number:number = this.asNumber(rawParentModel.filter);
             let numberTo:number = this.asNumber(rawParentModel.filterTo);
@@ -195,7 +195,7 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
 
         let number:number = this.asNumber(parentModel.filter);
         this.eColumnFloatingFilter.readOnly = false;
-        return number ? number + '' : '';
+        return number != null ? number + '' : '';
 
     }
 
@@ -205,9 +205,9 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
         let filterValueText:string = this.eColumnFloatingFilter.value;
 
         let modelFilterValue: number = null;
-        if (!filterValueNumber && filterValueText === '') {
+        if (filterValueNumber == null && filterValueText === '') {
             modelFilterValue = null;
-        } else if (!filterValueNumber){
+        } else if (filterValueNumber == null){
             modelFilterValue = currentParentModel.filter;
         } else {
             modelFilterValue = filterValueNumber;
@@ -222,8 +222,12 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
     }
 
     private asNumber(value: any):number {
-        let invalidNumber = !value || (!_.isNumeric(Number(value)));
-        return invalidNumber ? null : Number(value);
+        if (value == null) return null;
+        if (value === '') return null;
+
+        let asNumber = Number(value);
+        let invalidNumber = !_.isNumeric(asNumber);
+        return invalidNumber ? null : asNumber;
     }
 }
 
