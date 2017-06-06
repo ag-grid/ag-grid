@@ -17,7 +17,7 @@ export class Ng2FrameworkComponentWrapper implements FrameworkComponentWrapper {
         this.componentFactoryResolver = componentFactoryResolver;
     }
 
-    wrap <A extends IComponent<any>>(Ng2Component: {new (): any}, methodList: string[]): A {
+    wrap <A extends IComponent<any>>(Ng2Component: {new (): any}, mandatoryMethodList: string[], optionalMethodList?: string[]): A {
         let that = this;
         class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> {
             init(params: any): void {
@@ -32,26 +32,37 @@ export class Ng2FrameworkComponentWrapper implements FrameworkComponentWrapper {
 
         }
 
-        let wrapper: DynamicAgNg2Component = new DynamicAgNg2Component();
-        methodList.forEach((methodName => {
+        function addMethod(wrapper: DynamicAgNg2Component, methodName:string, mandatory:boolean) {
             let methodProxy: Function = function () {
                 if (wrapper.getFrameworkComponentInstance()[methodName]) {
                     var componentRef = this.getFrameworkComponentInstance();
                     return wrapper.getFrameworkComponentInstance()[methodName].apply(componentRef, arguments)
                 } else {
-                    console.warn('ag-Grid: Angular component is missing the method ' + methodName + '()');
+                    if (mandatory){
+                        console.warn('ag-Grid: Angular component is missing the method ' + methodName + '()');
+                    }
                     return null;
                 }
             };
 
             wrapper[methodName] = methodProxy
-
+        }
+        let wrapper: DynamicAgNg2Component = new DynamicAgNg2Component();
+        mandatoryMethodList.forEach((methodName => {
+            addMethod(wrapper, methodName, true);
         }));
+
+        if (optionalMethodList){
+            optionalMethodList.forEach((methodName => {
+                addMethod(wrapper, methodName, false);
+            }));
+        }
 
 
         return <A><any>wrapper;
 
     }
+
 
     public createComponent<T>(componentType: {new(...args: any[]): T;},
                               viewContainerRef: ViewContainerRef): ComponentRef<T> {
