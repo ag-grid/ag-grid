@@ -25,11 +25,14 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <h2 id="creating-a-angular-project-with-ag-grid">Creating a Angular Project with ag-Grid</h2>
+
+<note>You can either create the project by hand, or check it out from our Angular Seed Repo in <a href="https://github.com/ceolter/ag-grid-angular-seed">GitHub.</a></note>
+
 <p>
-    First we'll create a new project - lets call it <code>ag-grid-test</code>:
+    First we'll create a new project - lets call it <code>ag-grid-cli</code>:
 </p>
-<pre>ng new ag-grid-test
-cd ag-grid-test</pre>
+<pre>ng new ag-grid-cli
+cd ag-grid-cli</pre>
 
 <p>Let's update our dependencies - first let's install <code>ag-grid</code> and <code>ag-grid-angular</code>:</p>
 <pre>
@@ -69,7 +72,8 @@ export class RedComponentComponent {
         this.params = params;
     }
 }
-
+</pre>
+<pre ng-non-bindable>
 <span class="codeComment">// src/app/red-component/red-component.component.html</span>
 &lt;span style="color: red"&gt;{{ params.value }}&lt;/span&gt;
 </pre>
@@ -89,7 +93,7 @@ export class MyGridApplicationComponent {
     private gridOptions: GridOptions;
 
     constructor() {
-        this.gridOptions = <GridOptions>{};
+        this.gridOptions = &lt;GridOptions&gt;{};
         this.gridOptions.columnDefs = [
             {
                 headerName: "ID",
@@ -111,7 +115,8 @@ export class MyGridApplicationComponent {
         ]
     }
 }
-
+</pre>
+<pre ng-non-bindable>
 <span class="codeComment">// src/app/my-grid-application/my-grid-application.component.html</span>
 &lt;div style="width: 200px;"&gt;
     &lt;ag-grid-angular #agGrid style="width: 100%; height: 200px;" class="ag-fresh"
@@ -123,6 +128,7 @@ export class MyGridApplicationComponent {
 <p>Now we need to let Angular know about our new components, as well as the ag-Grid Module:</p>
 
 <pre>
+<span class="codeComment">// src/app/app.module.ts</span>
 import {BrowserModule} from "@angular/platform-browser";
 import {NgModule} from "@angular/core";
 import {AgGridModule} from "ag-grid-angular/main";
@@ -149,9 +155,9 @@ export class AppModule {
 }
 </pre>
 
-
 <p>And finally, we need to update angular-cli.json to include the ag-Grid styles we want to include:</p>
 <pre>
+<span class="codeComment">// .angular-cli.json</span>
 "styles": [
     "../node_modules/ag-grid/dist/styles/ag-grid.css",
     "../node_modules/ag-grid/dist/styles/theme-fresh.css"
