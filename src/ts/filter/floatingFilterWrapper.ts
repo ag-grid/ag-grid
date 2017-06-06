@@ -85,7 +85,9 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
                     <button ref="eButtonShowMainFilter">...</button>            
             </div>`));
         }
-
+        if (this.floatingFilterComp.afterGuiAttached){
+            this.floatingFilterComp.afterGuiAttached();
+        }
     }
 
     onParentModelChanged(parentModel:M):void{
