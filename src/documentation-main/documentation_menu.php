@@ -388,6 +388,22 @@
     </div>
 </div>
 
+
+<div style="border: 1px solid #e8e8e8; border-radius: 3px; padding: 10px; margin-top: 10px;">
+
+    <a href="../ag-grid-partners-with-webpack/">
+        <img src="../images/ag_grid_and_webpack_small.png"/>
+    </a>
+
+
+    <div>
+        Read about <a href="../ag-grid-partners-with-webpack/">ag-Grid's Partnership
+        with webpack</a>.
+    </div>
+
+</div>
+
+
 <div style="border: 1px solid #e8e8e8; border-radius: 3px; padding: 10px; margin-top: 10px;">
 
     <div style="float: left; margin-right: 12px; margin-top: 5px;">
