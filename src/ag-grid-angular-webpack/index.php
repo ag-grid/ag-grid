@@ -29,6 +29,7 @@ include '../documentation-main/documentation_header.php';
 
 <pre>
 mkdir ag-grid-webpack
+cd ag-grid-webpack
 npm init
 <span class="codeComment">// accept defaults</span>
 </pre>
@@ -47,10 +48,32 @@ npm i --save ag-grid-enterprise
 
     <h3>Create Application</h3>
 
-    <p>Our application will be a very simple one, consisting of a single Module, a single Component and a bootstrap file, as well a few utility files for vendor & polyfills:</p>
+    <p>Our application will be a very simple one, consisting of a single Module, a single Component and a bootstrap file, as well a few utility files for vendor & polyfills.</p>
+    
+    <note>You can either create the project by hand, or check it out from our Angular Seed Repo in <a href="https://github.com/ceolter/ag-grid-angular-seed">GitHub.</a></note>
+
+    <p>The resulting project structure will look like this:</p>
+<pre>
+└── ag-grid-webpack
+    ├── app
+    │   ├── app.component.html
+    │   ├── app.component.ts
+    │   ├── app.module.ts
+    │   ├── boot.ts
+    │   ├── polyfills.ts
+    │   └── vendor.ts
+    ├── config
+    │   ├── helpers.js
+    │   ├── index.html
+    │   ├── webpack.dev.js
+    │   └── webpack.prod.js
+    ├── node_modules
+    ├── package.json
+    └── tsconfig.json
+</pre>
 
 <pre ng-non-bindable>
-<span class="codeComment">// app.module.ts </span>
+<span class="codeComment">// app/app.module.ts </span>
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 // ag-grid
@@ -71,7 +94,8 @@ import {AppComponent} from "./app.component";
 })
 export class AppModule {
 }
-
+</pre>
+<pre ng-non-bindable>
 <span class="codeComment">// app/app.component.ts </span>
 import {Component} from "@angular/core";
 
@@ -105,14 +129,16 @@ export class AppComponent {
         ];
     }
 }
-
+</pre>
+<pre ng-non-bindable>
 <span class="codeComment">// app/app.component.html </span>
 &lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-fresh"
                  [gridOptions]="gridOptions"
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"&gt;
 &lt;/ag-grid-angular&gt;
-        
+</pre>
+<pre ng-non-bindable>
 <span class="codeComment">// app/boot.ts </span>
 import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
 import {AppModule} from "./app.module";
@@ -122,7 +148,8 @@ import {AppModule} from "./app.module";
 // LicenseManager.setLicenseKey("your license key");
 
 platformBrowserDynamic().bootstrapModule(AppModule);
-
+</pre>
+<pre ng-non-bindable>
 <span class="codeComment">// app/polyfills.ts </span>
 import "core-js/es6";
 import "core-js/es7/reflect";
@@ -134,7 +161,8 @@ if (process.env.ENV === 'production') {
     Error['stackTraceLimit'] = Infinity;
     require('zone.js/dist/long-stack-trace-zone');
 }
-
+</pre>
+<pre ng-non-bindable>
 <span class="codeComment">// app/vendor.ts </span>
 // Angular
 import '@angular/platform-browser';
@@ -150,12 +178,35 @@ import 'ag-grid/dist/styles/ag-grid.css';
 import 'ag-grid/dist/styles/theme-fresh.css';
 
 import 'ag-grid-angular/main'
-
+</pre>
+<pre ng-non-bindable>
 <span class="codeComment">// for ag-grid-enterprise users only </span>
 //import 'ag-grid-enterprise/main';
 </pre>
 
+<h2>tsconfig.json</h2>
+    <p>We use this to let the TypeScript compiler know what our target is (es5), what libraries we depend on (dom and es2015) and so on:</p>
 
+<pre>
+<span class="codeComment">// tsconfig.json</span>
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": false,
+    "lib": ["dom","es2015"]
+  },
+  "compileOnSave": true,
+  "exclude": [
+    "node_modules/*"
+  ]
+}
+</pre>
 
     <h2>Webpack Configuration</h2>
 
@@ -171,8 +222,9 @@ function root(args) {
     return path.join.apply(path, [_root].concat(args));
 }
 exports.root = root;
-
-<span class="codeComment">// config/index.html</span>
+</pre>
+<pre ng-non-bindable>
+<span class="codeComment">&lt;!-- config/index.html --></span>
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;

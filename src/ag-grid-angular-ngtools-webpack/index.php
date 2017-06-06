@@ -28,7 +28,8 @@ include '../documentation-main/documentation_header.php';
         <h3>Initialise Project</h3>
 
         <pre>
-mkdir ag-grid-webpack
+mkdir ag-grid-ngtools
+cd ag-grid-ngtools
 npm init
 <span class="codeComment">// accept defaults</span>
 </pre>
@@ -47,10 +48,35 @@ npm i --save ag-grid-enterprise
 
         <h3>Create Application</h3>
 
-        <p>Our application will be a very simple one, consisting of a single Module, a single Component and a bootstrap file, as well a few utility files for vendor & polyfills:</p>
+        <p>Our application will be a very simple one, consisting of a single Module, a single Component and a bootstrap file, as well a few utility files for vendor & polyfills.</p>
 
-        <pre ng-non-bindable>
-<span class="codeComment">// app.module.ts </span>
+    <note>You can either create the project by hand, or check it out from our Angular Seed Repo in <a href="https://github.com/ceolter/ag-grid-angular-seed">GitHub.</a></note>
+
+    <p>The resulting project structure will look like this:</p>
+    <pre>
+ag-grid-ngtools
+├── app
+│   ├── app.component.html
+│   ├── app.component.ts
+│   ├── app.module.ts
+│   ├── boot-aot.ts
+│   ├── boot.ts
+│   ├── polyfills.ts
+│   ├── vendor-aot.ts
+│   └── vendor.ts
+├── config
+│   ├── helpers.js
+│   ├── index.html
+│   ├── webpack.dev.js
+│   └── webpack.prod.js
+├── dist
+├── node_modules
+├── package.json
+├── tsconfig.aot.json
+└── tsconfig.json</pre>
+
+<pre ng-non-bindable>
+<span class="codeComment">// app/app.module.ts </span>
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 // ag-grid
@@ -71,7 +97,7 @@ import {AppComponent} from "./app.component";
 })
 export class AppModule {
 }
-
+</pre><pre ng-non-bindable>
 <span class="codeComment">// app/app.component.ts </span>
 import {Component} from "@angular/core";
 
@@ -82,9 +108,9 @@ import {GridOptions} from "ag-grid/main";
     templateUrl: 'app.component.html'
 })
 export class AppComponent {
-    private gridOptions:GridOptions;
+    public gridOptions:GridOptions;
     public rowData:any[];
-    private columnDefs:any[];
+    public columnDefs:any[];
 
     constructor() {
         // we pass an empty gridOptions in, so we can grab the api out
@@ -105,14 +131,14 @@ export class AppComponent {
         ];
     }
 }
-
+</pre><pre ng-non-bindable>
 <span class="codeComment">// app/app.component.html </span>
 &lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-fresh"
                  [gridOptions]="gridOptions"
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"&gt;
 &lt;/ag-grid-angular&gt;
-
+</pre><pre ng-non-bindable>
 <span class="codeComment">// app/boot.ts </span>
 import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
 import {AppModule} from "./app.module";
@@ -122,7 +148,7 @@ import {AppModule} from "./app.module";
 // LicenseManager.setLicenseKey("your license key");
 
 platformBrowserDynamic().bootstrapModule(AppModule);
-
+</pre><pre ng-non-bindable>
 <span class="codeComment">// app/polyfills.ts </span>
 import "core-js/es6";
 import "core-js/es7/reflect";
@@ -151,8 +177,8 @@ function root(args) {
     return path.join.apply(path, [_root].concat(args));
 }
 exports.root = root;
-
-<span class="codeComment">// config/index.html</span>
+</pre><pre ng-non-bindable>
+<span class="codeComment">&lt;!-- config/index.html --></span>
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
@@ -210,7 +236,7 @@ exports.root = root;
         but can be dropped for production/AOT builds (see later for more on this).</p>
 
     <pre>
-<span class="codeComment">// vendor.ts </span>
+<span class="codeComment">// app/vendor.ts </span>
 // Angular
 import '@angular/platform-browser';
 import '@angular/platform-browser-dynamic';
@@ -407,9 +433,7 @@ module.exports = {
 import '@angular/platform-browser';
 import '@angular/core';
 import '@angular/common';
-import '@angular/http';
 import '@angular/router';
-import '@angular/forms';
 
 // RxJS
 import 'rxjs';
