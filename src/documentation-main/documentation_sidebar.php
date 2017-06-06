@@ -18,6 +18,15 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">6th Jun 2017</div>
+    <div style="padding-top: 10px;">
+        <a href="../weekly-update/">
+            Weekly News Update
+        </a>
+    </div>
+</div>
+
+<div class="news-box">
     <img style="float: left; margin-right: 10px;" src="../images/svg/docs/newspaper.svg" align="left" width="50" />
     <div class="news-header">19th May 2017</div>
     <div style="padding-top: 10px;">
