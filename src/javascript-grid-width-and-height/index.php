@@ -122,6 +122,14 @@ include '../documentation-main/documentation_header.php';
         using top pixel location - which is needed for the animations to work.
     </p>
 
+    <h4>Full Width and Auto Height</h4>
+
+    <p>
+        The <a href="../javascript-grid-full-width-rows/">fullWidth</a> feature, when used with autoHeight,
+        will always <a href="../javascript-grid-full-width-rows/#embeddedFullWidth">embed the full width rows</a>.
+        This means if using fullWidth, the fullWidth rows will scroll horizontally with the other rows and if
+        pinning, the fullWidth row will be split into the pinned sections.
+    </p>
 
 </div>
 

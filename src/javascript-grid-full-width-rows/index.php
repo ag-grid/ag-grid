@@ -186,5 +186,27 @@ include '../documentation-main/documentation_header.php';
 
 <show-example example="exampleFullWidthComponent"></show-example>
 
+<h3 id="embeddedFullWidth">Embedded Full Width vs Normal Full Width</h3>
+
+<p>
+    The grid uses a trick of placing the fullWidth rows in another div, outside of the main rows and cells.
+    This is what allows the fullWidth rows to span across the pinned areas. One downside of this approach
+    is speed in slower browsers (eg Internet Explorer) where vertical scrolling results in a lag, where
+    the fullWidth rows scroll after the main rows scroll.
+</p>
+
+<p>
+    If you want to embed the fullWith rows with the rest of the rows, and not be impacted by the scrolling
+    performance issue, then set <code>embedFullWidthRows=true</code>. The example below demonstrates as follows:
+</p>
+
+<ul>
+    <li>The fullWidth rows are embedded with the main rows.</li>
+    <li>Each fullWidth row is split into the pinned areas.</li>
+    <li>Each fullWidth row horizontally scrolls with the main grid.</li>
+</ul>
+
+<show-example example="exampleFullWidthEmbedded"></show-example>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
