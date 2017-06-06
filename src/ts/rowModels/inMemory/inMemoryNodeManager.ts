@@ -183,18 +183,6 @@ export class InMemoryNodeManager {
         let rowNodes: RowNode[] = [];
         rowData.forEach( (dataItem)=> {
             let node = this.createNode(dataItem, parent, level);
-
-            let nodeChildDetails = this.getNodeChildDetails ? this.getNodeChildDetails(dataItem) : null;
-            if (nodeChildDetails && nodeChildDetails.group) {
-                node.group = true;
-                node.childrenAfterGroup = this.recursiveFunction(nodeChildDetails.children, node, level + 1);
-                node.expanded = nodeChildDetails.expanded === true;
-                node.field = nodeChildDetails.field;
-                node.key = nodeChildDetails.key;
-                // pull out all the leaf children and add to our node
-                this.setLeafChildren(node);
-            }
-
             rowNodes.push(node);
         });
         return rowNodes;
