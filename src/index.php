@@ -60,7 +60,7 @@
                             use <b>ag-Grid Enterprise</b>.
                         </div>
                         <div class="col-md-4 info-item">
-                            Over <span class="info-item-big">40,000 Downloads</span>
+                            Over <span class="info-item-big">50,000 Downloads</span>
                             per month of <b>ag-Grid Free</b>.
                         </div>
                     </div>
