@@ -38,7 +38,7 @@ export interface ComponentConfig {
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
 export interface FrameworkComponentWrapper {
-    wrap <A extends IComponent<any>> (frameworkComponent:{new(): any}, methodList:string[]):A
+    wrap <A extends IComponent<any>> (frameworkComponent:{new(): any}, methodList:string[], optionalMethodList?: string[]):A
 }
 
 enum ComponentType {
@@ -91,27 +91,27 @@ export class ComponentProvider {
             },
             setFloatingFilterComponent: {
                 mandatoryMethodList: ['onParentModelChanged'],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 defaultComponent: SetFloatingFilterComp
             },
             textFloatingFilterComponent: {
                 mandatoryMethodList: ['onParentModelChanged'],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 defaultComponent: TextFloatingFilterComp
             },
             numberFloatingFilterComponent: {
                 mandatoryMethodList: ['onParentModelChanged'],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 defaultComponent: NumberFloatingFilterComp
             },
             dateFloatingFilterComponent: {
                 mandatoryMethodList: ['onParentModelChanged'],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 defaultComponent: DateFloatingFilterComp
             },
             readModelAsStringFloatingFilterComponent: {
                 mandatoryMethodList: ['onParentModelChanged'],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 defaultComponent: ReadModelAsStringFloatingFilterComp
             },
             floatingFilterWrapperComponent: {
@@ -121,12 +121,12 @@ export class ComponentProvider {
             },
             emptyFloatingFilterWrapperComponent: {
                 mandatoryMethodList: ['onParentModelChanged'],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 defaultComponent: EmptyFloatingFilterWrapperComp
             },
             floatingFilterComponent: {
                 mandatoryMethodList: ['onParentModelChanged'],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 defaultComponent: null
             },
             filterComponent:{
@@ -201,7 +201,7 @@ export class ComponentProvider {
 
         //Using framework component
         let FrameworkComponentRaw: {new(): B} = componentToUse.component;
-        return <A>this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList);
+        return <A>this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList);
     }
 
     public createAgGridComponent<A extends IComponent<any>> (holder:GridOptions | ColDef | ColGroupDef, componentName:string, defaultComponentName:string, agGridParams:any, mandatory:boolean = true): A{

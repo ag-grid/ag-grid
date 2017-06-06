@@ -263,13 +263,13 @@ export class HeaderRowComp extends Component {
                     filterComponent.getNullableModel() :
                     filterComponent.getModel();
             },
-            onFloatingFilterChanged: (change: F|M): void => {
+            onFloatingFilterChanged: (change: F|M): boolean => {
                 let filterComponent: BaseFilter<any, any, M> = <any>this.filterManager.getFilterComponent(column);
                 if (filterComponent.onFloatingFilterChanged){
                     //If going through this branch of code the user MUST
                     //be passing an object of type change that contains
                     //a model propery inside and some other stuff
-                    filterComponent.onFloatingFilterChanged(<F>change);
+                    return filterComponent.onFloatingFilterChanged(<F>change);
                 } else {
                     //If going through this branch of code the user MUST
                     //be passing the plain model and delegating to ag-Grid
@@ -277,6 +277,7 @@ export class HeaderRowComp extends Component {
                     //the filters
                     filterComponent.setModel(<M>change);
                     this.filterManager.onFilterChanged();
+                    return true;
                 }
             },
             //This one might be overriden from the colDef

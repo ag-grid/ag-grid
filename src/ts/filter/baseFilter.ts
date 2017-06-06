@@ -175,7 +175,7 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         this.refreshFilterBodyUi();
     }
 
-    private doOnFilterChanged (applyNow:boolean = false):void{
+    private doOnFilterChanged (applyNow:boolean = false):boolean{
         this.filterParams.filterModifiedCallback();
         let requiresApplyAndIsApplying: boolean = this.applyActive && applyNow;
         let notRequiresApply: boolean = !this.applyActive;
@@ -185,17 +185,18 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
             this.filterParams.filterChangedCallback();
         }
         this.refreshFilterBodyUi();
+        return shouldFilter;
     }
 
     public onFilterChanged ():void{
         this.doOnFilterChanged();
     }
 
-    public onFloatingFilterChanged (change:FloatingFilterChange):void{
+    public onFloatingFilterChanged (change:FloatingFilterChange):boolean{
         //It has to be of the type FloatingFilterWithApplyChange if it gets here
         let casted:BaseFloatingFilterChange<M> = <BaseFloatingFilterChange<M>>change;
         this.setModel(casted ? casted.model : null);
-        this.doOnFilterChanged(casted ? casted.apply : false);
+        return this.doOnFilterChanged(casted ? casted.apply : false);
     }
 
     public generateFilterHeader():string{

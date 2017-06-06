@@ -16,7 +16,7 @@ export interface FloatingFilterChange{
 
 export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
     column:Column,
-    onFloatingFilterChanged:(change:F|M)=>void;
+    onFloatingFilterChanged:(change:F|M)=>boolean;
     currentParentModel:()=>M;
     suppressFilterButton: boolean;
     debounceMs?:number;
@@ -37,7 +37,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
     @RefSelector('eColumnFloatingFilter')
     eColumnFloatingFilter: HTMLInputElement;
 
-    onFloatingFilterChanged:(change:BaseFloatingFilterChange<M>)=>void;
+    onFloatingFilterChanged:(change:BaseFloatingFilterChange<M>)=>boolean;
     currentParentModel:()=>M;
     lastKnownModel:M = null;
 
@@ -52,6 +52,7 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
         let toDebounce:()=>void = _.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'input', toDebounce);
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'keypress', toDebounce);
+        this.addDestroyableEventListener(this.eColumnFloatingFilter, 'keydown', toDebounce);
         let columnDef = (<any>params.column.getDefinition());
         if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange'){
             this.eColumnFloatingFilter.readOnly = true;
@@ -63,25 +64,32 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
 
     onParentModelChanged(parentModel:M):void{
         if (this.equalModels(this.lastKnownModel, parentModel)) return;
-        this.eColumnFloatingFilter.value = this.asFloatingFilterText (parentModel);
         this.lastKnownModel = parentModel;
+        let incomingTextValue = this.asFloatingFilterText (parentModel);
+        if (incomingTextValue === this.eColumnFloatingFilter.value) return;
+
+        this.eColumnFloatingFilter.value = incomingTextValue;
     }
 
     syncUpWithParentFilter (e:KeyboardEvent):void{
         let model = this.asParentModel();
         if (this.equalModels(this.lastKnownModel, model)) return;
 
-        this.lastKnownModel = model;
+        let modelUpdated:boolean = null;
         if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
-            this.onFloatingFilterChanged({
+            modelUpdated = this.onFloatingFilterChanged({
                 model: model,
                 apply: true
             });
         } else {
-            this.onFloatingFilterChanged({
+            modelUpdated = this.onFloatingFilterChanged({
                 model: model,
                 apply: false
             });
+        }
+
+        if (modelUpdated){
+            this.lastKnownModel = model;
         }
     }
 
