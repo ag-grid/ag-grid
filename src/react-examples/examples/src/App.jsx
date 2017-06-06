@@ -1,36 +1,17 @@
 import React, {Component} from "react";
-import {hashHistory, Redirect, Route, Switch} from "react-router-dom";
-
-import NavItem from "./NavItem";
 
 import "url-search-params-polyfill";
 
 import DynamicComponentsExample from "./dynamicComponentExample/DynamicComponentsExample";
+import RichGridExample from "./richGridExample/RichGridExample";
 import RichComponentsExample from "./richComponentExample/RichComponentsExample";
 import EditorComponentsExample from "./editorComponentExample/EditorComponentsExample";
 import FloatingRowComponentExample from "./floatingRowExample/FloatingRowComponentExample";
 import FullWidthComponentExample from "./fullWidthExample/FullWidthComponentExample";
 import GroupedRowInnerRendererComponentExample from "./groupedRowInnerRendererExample/GroupedRowInnerRendererComponentExample";
 import FilterComponentExample from "./filterComponentExample/FilterComponentExample";
-import RichGridExample from "./richGridExample/RichGridExample";
 import MasterDetailExample from "./masterDetailExample/MasterDetailExample";
-
-const Header = () => (
-    <header>
-        <ul className="nav nav-pills">
-            <NavItem to='/rich-grid'>Rich Grid Example</NavItem>
-            <NavItem to='/dynamic'>Dynamic React Component Example</NavItem>
-            <NavItem to='/rich-dynamic'>Dynamic React Components - Richer Example</NavItem>
-            <NavItem to='/editor'>Cell Editor Component Example</NavItem>
-            <NavItem to='/floating-row'>Floating Row Renderer Example</NavItem>
-            <NavItem to='/full-width'>Full Width Renderer Example</NavItem>
-            <NavItem to='/group-row'>Grouped Row Inner Renderer Example</NavItem>
-            <NavItem to='/filter'>Filters Component Example</NavItem>
-            <NavItem to='/master-detail'>Master Detail Example</NavItem>
-        </ul>
-    </header>
-);
-
+import SimpleReduxExample from "./simpleReduxExample/SimpleReduxExample";
 
 class App extends Component {
     constructor(props) {
@@ -38,49 +19,80 @@ class App extends Component {
 
         let searchParams = new URLSearchParams(window.location.search);
         let fromDocs = searchParams.has("fromDocs");
-
-        let root = window.location.pathname === "/";
-        let example = searchParams.has("example");
+        let example = searchParams.has("example") ? searchParams.get("example") : 'rich-grid';
 
         this.state = {
-            redirectTo: example && root ? searchParams.get("example") : null,
-            fromDocs: fromDocs
+            example,
+            fromDocs
         };
+
+        this.setExample = this.setExample.bind(this);
     }
 
-    componentWillReceiveProps(nextProps, nextState) {
-        let searchParams = new URLSearchParams(window.location.search);
-        let root = window.location.pathname === "/";
-        let example = searchParams.has("example");
-
+    setExample(example) {
+        console.log(example);
         this.setState({
-            redirectTo: example && root ? searchParams.get("example") : null
-        });
+            example
+        })
     }
 
     render() {
-        if (this.state.redirectTo) {
-            return <Redirect from="/" exact to={this.state.redirectTo}/>
-        } else {
-            let header = this.state.fromDocs ? null : <Header/>;
-            return (
-                <div>
-                    {header}
-                    <Switch>
-                        <Redirect from="/" exact to="/rich-grid"/>
-                        <Route exact path='/rich-grid' component={RichGridExample}/>
-                        <Route exact path='/dynamic' component={DynamicComponentsExample}/>
-                        <Route exact path='/rich-dynamic' component={RichComponentsExample}/>
-                        <Route exact path='/editor' component={EditorComponentsExample}/>
-                        <Route exact path='/floating-row' component={FloatingRowComponentExample}/>
-                        <Route exact path='/full-width' component={FullWidthComponentExample}/>
-                        <Route exact path='/group-row' component={GroupedRowInnerRendererComponentExample}/>
-                        <Route exact path='/filter' component={FilterComponentExample}/>
-                        <Route exact path='/master-detail' component={MasterDetailExample}/>
-                    </Switch>
-                </div>
-            )
+        let header = null;
+        if (!this.state.fromDocs) {
+            header = (
+                <ul className="nav nav-pills">
+                    <li role="presentation" className={this.state.example === 'rich-grid' ? 'active' : null} onClick={() => this.setExample("rich-grid")}><a href="#">Rich Grid Example</a></li>
+                    <li role="presentation" className={this.state.example === 'dynamic' ? 'active' : null} onClick={() => this.setExample("dynamic")}><a href="#">Dynamic React Component Example</a></li>
+                    <li role="presentation" className={this.state.example === 'rich-dynamic' ? 'active' : null} onClick={() => this.setExample("rich-dynamic")}><a href="#">Dynamic React Components - Richer Example</a></li>
+                    <li role="presentation" className={this.state.example === 'editor' ? 'active' : null} onClick={() => this.setExample("editor")}><a href="#">Cell Editor Component Example</a></li>
+                    <li role="presentation" className={this.state.example === 'floating-row' ? 'active' : null} onClick={() => this.setExample("floating-row")}><a href="#">Floating Row Renderer Example</a></li>
+                    <li role="presentation" className={this.state.example === 'full-width' ? 'active' : null} onClick={() => this.setExample("full-width")}><a href="#">Full Width Renderer Example</a></li>
+                    <li role="presentation" className={this.state.example === 'group-row' ? 'active' : null} onClick={() => this.setExample("group-row")}><a href="#">Grouped Row Inner Renderer Example</a></li>
+                    <li role="presentation" className={this.state.example === 'filter' ? 'active' : null} onClick={() => this.setExample("filter")}><a href="#">Filters Component Example</a></li>
+                    <li role="presentation" className={this.state.example === 'master-detail' ? 'active' : null} onClick={() => this.setExample("master-detail")}><a href="#">Master Detail Example</a></li>
+                    <li role="presentation" className={this.state.example === 'simple-redux' ? 'active' : null} onClick={() => this.setExample("simple-redux")}><a href="#">Simple Redux Example</a></li>
+                </ul>)
         }
+
+        let example = null;
+        switch (this.state.example) {
+            case 'dynamic':
+                example = <DynamicComponentsExample/>;
+                break;
+            case 'rich-dynamic':
+                example = <RichComponentsExample/>;
+                break;
+            case 'editor':
+                example = <EditorComponentsExample/>;
+                break;
+            case 'floating-row':
+                example = <FloatingRowComponentExample/>;
+                break;
+            case 'full-width':
+                example = <FullWidthComponentExample/>;
+                break;
+            case 'group-row':
+                example = <GroupedRowInnerRendererComponentExample/>;
+                break;
+            case 'filter':
+                example = <FilterComponentExample/>;
+                break;
+            case 'master-detail':
+                example = <MasterDetailExample/>;
+                break;
+            case 'simple-redux':
+                example = <SimpleReduxExample/>;
+                break;
+            default:
+                example = <RichGridExample/>;
+        }
+
+        return (
+            <div>
+                {header}
+                {example}
+            </div>
+        )
     }
 }
 

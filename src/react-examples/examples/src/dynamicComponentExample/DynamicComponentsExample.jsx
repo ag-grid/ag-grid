@@ -104,7 +104,7 @@ export default class DynamicComponentsExample extends Component {
     }
     render() {
         return (
-            <div style={{width: 800, height: 400}}
+            <div style={{height: 400, width: 945}}
                  className="ag-fresh">
                 <h1>Dynamic React Component Example</h1>
                 <button onClick={this.refreshRowData}>Refresh Data</button>

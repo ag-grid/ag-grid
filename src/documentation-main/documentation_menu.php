@@ -305,6 +305,7 @@
         menuItem(2, 'React Full Width', 'Full Width Rows', 'example-react-full-width-rows/');
         menuItem(2, 'React Group Row', 'Group Rows', 'example-react-grouped-row/');
         menuItem(2, 'React MasterDetail', 'Master/Detail', 'example-react-master-detail/');
+        menuItem(2, 'React Redux', 'Redux Examples', 'example-react-redux/');
     }
     if (isFrameworkAngular2() || isFrameworkAll()) {
         menuItemWithIcon('angular2_small.png', 1, 'Angular Examples', 'Angular Examples', 'example-angular/', true);

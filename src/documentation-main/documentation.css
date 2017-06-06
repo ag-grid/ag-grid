@@ -96,8 +96,6 @@
     //transition: all .3s ease-in-out;
 }
 
-
-
 .docsMenu-header h4 {
     margin: 0;
     font-size: 14px;
@@ -134,7 +132,7 @@
     margin: 5px 0 10px;
 }
 .docsMenu-header.active + div, .docsMenu-header.toggleActive + div{
-    max-height: 500px;
+    max-height: 1000px;
 }
 .docsMenu-header.docsMenu-header_feature.active + div, .docsMenu-header.docsMenu-header_feature.toggleActive + div {
     max-height: 2000px;

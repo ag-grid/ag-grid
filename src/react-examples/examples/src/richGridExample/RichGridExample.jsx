@@ -179,7 +179,7 @@ export default class RichGridExample extends Component {
                 </div>
             );
             gridTemplate = (
-                <div style={{height: 400}} className="ag-fresh">
+                <div style={{height: 400, width: 945}} className="ag-fresh">
                     <AgGridReact
                         // gridOptions is optional - it's possible to provide
                         // all values as React props
@@ -214,7 +214,7 @@ export default class RichGridExample extends Component {
             );
         }
 
-        return <div style={{width: '1024px'}}>
+        return <div style={{width: '950px'}}>
             <div style={{padding: '4px'}}>
                 {topHeaderTemplate}
                 {bottomHeaderTemplate}

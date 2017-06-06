@@ -68,7 +68,7 @@ export default class FullWidthComponentExample extends Component {
 
     render() {
         return (
-            <div style={{width: 800, height: 400}}
+            <div style={{height: 400, width: 945}}
                  className="ag-fresh">
                 <h1>Full Width Renderer Example</h1>
                 <AgGridReact
