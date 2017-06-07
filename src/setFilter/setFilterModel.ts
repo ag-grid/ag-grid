@@ -113,7 +113,6 @@ export class SetFilterModel {
 
     private setValues(valuesToUse: string[]) {
         this.allUniqueValues = valuesToUse;
-        this.usingProvidedSet = true;
         if (!this.suppressSorting) {
             this.sortValues(this.allUniqueValues);
         }

@@ -142,6 +142,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
         let isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
 
+        this.model.setUsingProvidedSet(true);
         this.model.refreshValues(options, keepSelection, isSelectAll);
         this.updateSelectAll();
         this.virtualList.refresh();
