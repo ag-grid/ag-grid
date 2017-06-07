@@ -52,8 +52,9 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         Example below shows the following:
         <ul>
             <li>Default sorting on the Athlete column.</li>
-            <li>No sort icon on the Year column.</li>
-            <li>Custom sorting on the Date column.</li>
+            <li>When the year column is not sorted, it shows a custom icon, (up/down arrow).</li>
+            <li>The date column has strings as the row data, there is custom comparator so that when you sort this column
+            it sorts it as dates, not as strings.</li>
         </ul>
     </p>
 

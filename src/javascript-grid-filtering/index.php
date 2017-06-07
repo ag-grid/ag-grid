@@ -160,19 +160,7 @@ columnDefinition = {
             <tr>
                 <th>filterChanged</th>
                 <td>
-                    Filter has changed, grid also listens for this and updates the model.
-                </td>
-            </tr>
-            <tr>
-                <th>beforeFilterChanged</th>
-                <td>
-                    Filter has changed, grid has not updated.
-                </td>
-            </tr>
-            <tr>
-                <th>afterFilterChanged</th>
-                <td>
-                    Filter has changed, grid has updated.
+                    Filter has changed.
                 </td>
             </tr>
             <tr>
@@ -194,8 +182,7 @@ columnDefinition = {
         The example below also demonstrates using the apply button and filter events as follows:
         <ul>
             <li>onFilterModified gets called when the filter changes regardless of the apply button.</li>
-            <li>onBeforeFilterChanged gets called before a new filter is applied.</li>
-            <li>onAfterFilterChanged gets called after a new filter is applied.</li>
+            <li>onFilterChanged gets called after a new filter is applied.</li>
         </ul>
     </p>
 
