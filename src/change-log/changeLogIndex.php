@@ -960,7 +960,7 @@ params = {
 
     <li>rowNode is now a class object with methods (previously it only have properties, a simple data object).
         Methods now include: setSelected(), isSelected(), addEventListener(), removeEventListener(),
-        resetQuickFilterAggregateText(), deptFirstSearch(callback).
+        resetQuickFilterAggregateText(), depthFirstSearch(callback).
     </li>
 
     <li>RowNode now has method 'setSelected'. This should now be used for row selection over the gridApi.selectXXXX() methods.</li>
