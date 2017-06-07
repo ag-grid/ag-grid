@@ -413,8 +413,8 @@ interface RowDataTransaction {
             with some rows to add, remove and update.
         </li>
         <li>
-            <b>Update Using Immutable Store</b>: Same impact as the above, except it uses the
-            immutable store approach with the grid. Thus it demonstrates both methods working
+            <b>Update Using Delta updates</b>: Same impact as the above, except it uses the
+            delta updates with the grid. Thus it demonstrates both methods working
             side by side.
         </li>
         <li>
