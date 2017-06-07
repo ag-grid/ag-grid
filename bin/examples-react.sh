@@ -48,7 +48,9 @@ echo ===========================================================================
 echo =============================================================================================
 echo "REACT manual testing -- COPY AND PASTE THIS!!"
 echo "cd ag-grid-react-example"
-echo "npm run standard"
+echo "npm run trader"
+echo "Navigate to http://localhost:8080 and test - ctrl-c when done"
+echo "npm run examples"
 echo "Navigate to http://localhost:8080 and test - ctrl-c when done"
 echo "npm run large"
 echo "Navigate to http://localhost:8080 and test - ctrl-c when done"

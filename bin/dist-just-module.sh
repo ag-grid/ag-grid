@@ -35,7 +35,7 @@ do
             gulp release
             ;;
         "ag-grid-react-example")
-            npm run build-standard
+            npm run build-all
             ;;
         "ag-grid-vue-example")
             npm run build

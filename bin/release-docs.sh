@@ -35,7 +35,8 @@ do
             ;;
 
         "ag-grid-react-example")
-            cp dist/bundle.js ../ag-grid-docs/src/javascript-grid-getting-started/bundle-react.js
+            npm run copy-to-docs
+            ;;
     esac
     if [ $? -ne 0 ]
     then
