@@ -22,11 +22,14 @@ do
 
     cd $module
     current_branch=$(git rev-parse --abbrev-ref HEAD)
+    git stash
     git checkout $1
     git pull
     git checkout $current_branch
     git pull
     git merge $1
+    git stash apply
     cd ..
+
 
 done
