@@ -24,6 +24,9 @@
     "angularjs",
     "reactjs"
   ],
+  "jspm": {
+    "main":"jspm-main"
+  },
   "author": "Niall Crosby <niall.crosby@ag-grid.com>",
   "license": "MIT",
   "bugs": {
