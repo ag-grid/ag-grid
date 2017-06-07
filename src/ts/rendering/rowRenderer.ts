@@ -550,11 +550,13 @@ export class RowRenderer extends BeanStub {
             this.rowContainers.pinnedRight.flushDocumentFragment();
         }
 
-        _.iterateObject(this.rowContainers, (key: string, rowContainerComp: RowContainerComponent) => {
-            if (rowContainerComp) {
-                rowContainerComp.sortDomByRowNodeIndex();
-            }
-        });
+        if (this.gridOptionsWrapper.isEnforceRowDomOrder()) {
+            _.iterateObject(this.rowContainers, (key: string, rowContainerComp: RowContainerComponent) => {
+                if (rowContainerComp) {
+                    rowContainerComp.sortDomByRowNodeIndex();
+                }
+            });
+        }
 
         // if we are doing angular compiling, then do digest the scope here
         if (this.gridOptionsWrapper.isAngularCompileRows()) {

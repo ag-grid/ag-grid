@@ -73,7 +73,14 @@ export class RowContainerComponent {
         }
     }
 
+    // WARNING - this method is very hard on the DOM, the shuffles the DOM rows even if they don't need
+    // shuffling, hence a huge performance hit. really the order should be worked out as the rows are getting
+    // inserted (which is not possible when using the Document Fragment) - so we should do this right (insert
+    // at correct index) and not use Document Fragment when this is the case).
     public sortDomByRowNodeIndex(): void {
+        // if a cell is focused, it will loose focus after this rearrange
+        let originalFocusedElement: HTMLElement = <HTMLElement> document.activeElement;
+
         let eChildren: HTMLElement[] = [];
         for (let i = 0; i<this.eContainer.children.length; i++) {
             let eChild = <HTMLElement>this.eContainer.children[i];
@@ -95,6 +102,12 @@ export class RowContainerComponent {
             let eCurrent = eChildren[i];
             let eNext = eChildren[i+1];
             this.eContainer.insertBefore(eCurrent, eNext);
+        }
+
+        // if focus was lost, reset it. if the focus was not a cell,
+        // then the focus would not of gotten impacted.
+        if (originalFocusedElement !== document.activeElement) {
+            originalFocusedElement.focus();
         }
     }
 
