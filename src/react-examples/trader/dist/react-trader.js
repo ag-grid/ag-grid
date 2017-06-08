@@ -24230,8 +24230,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../../../react/ag-grid-react-example/node_modules/css-loader/index.js!./ag-grid.css", function() {
-				var newContent = require("!!../../../../../react/ag-grid-react-example/node_modules/css-loader/index.js!./ag-grid.css");
+			module.hot.accept("!!../../../css-loader/index.js!./ag-grid.css", function() {
+				var newContent = require("!!../../../css-loader/index.js!./ag-grid.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -24249,7 +24249,7 @@
 
 
 	// module
-	exports.push([module.id, "ag-grid-angular {\n  display: inline-block;\n}\nag-grid-ng2 {\n  display: inline-block;\n}\n.ag-rtl {\n  direction: rtl;\n}\n.ag-ltr {\n  direction: ltr;\n}\n.ag-select-agg-func-popup {\n  position: absolute;\n}\n.ag-body-no-select {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-root {\n/* set to relative, so absolute popups appear relative to this */\n  position: relative;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n/* was getting some 'should be there' scrolls, this sorts it out */\n  overflow: hidden;\n}\n.ag-layout-normal .ag-root {\n  height: 100%;\n}\n.ag-font-style {\n  cursor: default;\n/* disable user mouse selection */\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-layout-for-print {\n  white-space: nowrap;\n  display: inline-block;\n}\n.ag-layout-normal {\n  height: 100%;\n}\n.ag-popup-backdrop {\n  position: fixed;\n  left: 0px;\n  top: 0px;\n  width: 100%;\n  height: 100%;\n}\n.ag-header {\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  width: 100%;\n}\n.ag-layout-normal .ag-header {\n  position: absolute;\n  top: 0px;\n  left: 0px;\n}\n.ag-pinned-left-header {\n  float: left;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-pinned-right-header {\n  float: right;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-header-viewport {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-layout-normal .ag-header-row {\n  position: absolute;\n}\n.ag-layout-normal .ag-header-container {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n  height: 100%;\n}\n.ag-layout-auto-height .ag-header-row {\n  position: absolute;\n}\n.ag-layout-auto-height .ag-header-container {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n  height: 100%;\n}\n.ag-layout-for-print .ag-header-container {\n  white-space: nowrap;\n}\n.ag-header-overlay {\n  display: block;\n  position: absolute;\n}\n.ag-header-cell {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  vertical-align: bottom;\n  text-align: center;\n  display: inline-block;\n  height: 100%;\n  position: absolute;\n}\n.ag-floating-filter {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: absolute;\n  display: inline-block;\n}\n.ag-floating-filter-body {\n  margin-right: 25px;\n  height: 20px;\n}\n.ag-floating-filter-full-body {\n  width: 100%;\n  height: 20px;\n}\n.ag-floating-filter-button {\n  width: 25px;\n  height: 20px;\n  float: right;\n  margin-top: -20px;\n}\n.ag-floating-filter-button button {\n  width: 25px;\n  height: 19px;\n  padding: 0;\n}\n.ag-floating-filter-input {\n  width: 100%;\n}\n.ag-floating-filter-input:read-only {\n  background-color: #eee;\n}\n.ag-floating-filter-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-dnd-ghost {\n  font-size: 14px;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  position: absolute;\n  background: #e5e5e5;\n  border: 1px solid #000;\n  cursor: move;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  padding: 3px;\n  line-height: 1.4;\n}\n.ag-dnd-ghost-icon {\n  display: inline-block;\n  float: left;\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-dnd-ghost-label {\n  display: inline-block;\n}\n.ag-header-group-cell {\n  height: 100%;\n  display: inline-block;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  position: absolute;\n}\n.ag-header-group-cell-label {\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-header-cell-label {\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-header-cell-resize {\n  height: 100%;\n  width: 4px;\n  cursor: col-resize;\n}\n.ag-ltr .ag-header-cell-resize {\n  float: right;\n}\n.ag-ltr .ag-pinned-right-header .ag-header-cell-resize {\n  float: left;\n}\n.ag-rtl .ag-header-cell-resize {\n  float: left;\n}\n.ag-rtl .ag-pinned-left-header .ag-header-cell-resize {\n  float: right;\n}\n.ag-ltr .ag-header-select-all {\n  float: left;\n}\n.ag-rtl .ag-header-select-all {\n  float: right;\n}\n.ag-header-expand-icon {\n  padding-left: 4px;\n}\n.ag-header-cell-menu-button {\n  float: right;\n}\n.ag-overlay-panel {\n  display: table;\n  width: 100%;\n  height: 100%;\n  pointer-events: none;\n}\n.ag-overlay-wrapper {\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.ag-bl-overlay {\n  pointer-events: none;\n  position: absolute;\n  height: 100%;\n  width: 100%;\n  top: 0px;\n  left: 0px;\n}\n.ag-bl-full-height {\n  height: 100%;\n  overflow: auto;\n  position: relative;\n}\n.ag-bl-west {\n  float: left;\n}\n.ag-bl-full-height-west {\n  height: 100%;\n}\n.ag-bl-east {\n  float: right;\n}\n.ag-bl-full-height-east {\n  height: 100%;\n}\n.ag-bl-full-height-center {\n  height: 100%;\n}\n.ag-bl-normal {\n  height: 100%;\n  position: relative;\n}\n.ag-bl-normal-center-row {\n  height: 100%;\n  overflow: hidden;\n}\n.ag-bl-normal-west {\n  height: 100%;\n  float: left;\n}\n.ag-bl-normal-east {\n  height: 100%;\n  float: right;\n}\n.ag-bl-normal-center {\n  height: 100%;\n}\n.ag-bl-dont-fill {\n  position: relative;\n}\n.ag-body {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n.ag-layout-normal .ag-body {\n  height: 100%;\n  position: absolute;\n}\n.ag-floating-top {\n  width: 100%;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n}\n.ag-pinned-left-floating-top {\n  float: left;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n  position: relative;\n}\n.ag-pinned-right-floating-top {\n  float: right;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n  position: relative;\n}\n.ag-floating-top-viewport {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-floating-top-container {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n}\n.ag-floating-bottom {\n  position: absolute;\n  left: 0px;\n  width: 100%;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n}\n.ag-pinned-left-floating-bottom {\n  float: left;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n  position: relative;\n}\n.ag-pinned-right-floating-bottom {\n  float: right;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n  position: relative;\n}\n.ag-floating-bottom-viewport {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-floating-bottom-container {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n}\n.ag-pinned-left-cols-viewport {\n  float: left;\n}\n.ag-pinned-left-cols-container {\n  display: inline-block;\n  position: relative;\n}\n.ag-pinned-right-cols-viewport {\n  float: right;\n}\n.ag-ltr .ag-pinned-right-cols-viewport {\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n.ag-ltr .ag-pinned-left-cols-viewport {\n  overflow: hidden;\n}\n.ag-rtl .ag-pinned-right-cols-viewport {\n  overflow: hidden;\n}\n.ag-rtl .ag-pinned-left-cols-viewport {\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n.ag-pinned-right-cols-container {\n  display: inline-block;\n  position: relative;\n}\n.ag-layout-normal .ag-body-viewport-wrapper {\n  height: 100%;\n}\n.ag-body-viewport {\n  overflow-x: auto;\n  overflow-y: auto;\n}\n.ag-layout-normal .ag-body-viewport {\n  height: 100%;\n}\n.ag-full-width-viewport {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  display: inline;\n  pointer-events: none;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n}\n.ag-full-width-container {\n  overflow: hidden;\n  position: relative;\n  width: 100%;\n}\n.ag-floating-bottom-full-width-container {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  pointer-events: none;\n  overflow: hidden;\n  display: inline;\n}\n.ag-floating-top-full-width-container {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  pointer-events: none;\n  overflow: hidden;\n  display: inline;\n}\n.ag-full-width-row {\n  pointer-events: all;\n  overflow: hidden;\n}\n.ag-layout-normal .ag-body-container {\n  position: relative;\n  display: inline-block;\n}\n.ag-layout-auto-height .ag-body-container {\n  position: relative;\n  display: inline-block;\n}\n.ag-row-animation {\n  -webkit-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  -moz-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  -o-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  -ms-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n}\n.ag-row-no-animation {\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-row {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n.ag-layout-normal .ag-row {\n  white-space: nowrap;\n  position: absolute;\n  width: 100%;\n}\n.ag-layout-auto-height .ag-row {\n  white-space: nowrap;\n  position: absolute;\n  width: 100%;\n}\n.ag-layout-for-print .ag-row {\n  position: relative;\n}\n.ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s, width 0.2s;\n  -moz-transition: left 0.2s, width 0.2s;\n  -o-transition: left 0.2s, width 0.2s;\n  -ms-transition: left 0.2s, width 0.2s;\n  transition: left 0.2s, width 0.2s;\n}\n.ag-column-drop {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n.ag-column-drop-vertical .ag-column-drop-cell {\n  display: block;\n}\n.ag-column-drop-vertical .ag-column-drop-empty-message {\n  display: block;\n}\n.ag-column-drop-vertical .ag-column-drop-cell-button {\n  line-height: 16px;\n}\n.ag-ltr .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: right;\n}\n.ag-rtl .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: left;\n}\n.ag-column-drop-horizontal {\n  white-space: nowrap;\n}\n.ag-column-drop-horizontal .ag-column-drop-cell {\n  display: inline-block;\n}\n.ag-column-drop-horizontal .ag-column-drop-empty-message {\n  display: inline-block;\n}\n.ag-cell {\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  position: absolute;\n}\n.ag-value-slide-out {\n  opacity: 1;\n  -ms-filter: none;\n  filter: none;\n  margin-right: 5px;\n  -webkit-transition: opacity 3s, margin-right 3s;\n  -moz-transition: opacity 3s, margin-right 3s;\n  -o-transition: opacity 3s, margin-right 3s;\n  -ms-transition: opacity 3s, margin-right 3s;\n  transition: opacity 3s, margin-right 3s;\n  -webkit-transition-timing-function: linear;\n  -moz-transition-timing-function: linear;\n  -o-transition-timing-function: linear;\n  -ms-transition-timing-function: linear;\n  transition-timing-function: linear;\n}\n.ag-value-slide-out-end {\n  opacity: 0;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)\";\n  filter: alpha(opacity=0);\n  margin-right: 10px;\n}\n.ag-opacity-zero {\n  opacity: 0;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)\";\n  filter: alpha(opacity=0);\n}\n.ag-cell-edit-input {\n  width: 100%;\n  height: 100%;\n}\n.ag-group-cell-entire-row {\n  width: 100%;\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-footer-cell-entire-row {\n  width: 100%;\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-large .ag-root {\n  font-size: 20px;\n}\n.ag-popup-editor {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-menu-column-select-wrapper {\n  width: 200px;\n  height: 300px;\n  overflow: auto;\n}\n.ag-menu-list {\n  display: table;\n  border-collapse: collapse;\n}\n.ag-menu-option {\n  display: table-row;\n}\n.ag-menu-option-text {\n  display: table-cell;\n}\n.ag-menu-option-shortcut {\n  display: table-cell;\n}\n.ag-menu-option-icon {\n  display: table-cell;\n}\n.ag-menu-option-popup-pointer {\n  display: table-cell;\n}\n.ag-menu-separator {\n  display: table-row;\n}\n.ag-menu-separator-cell {\n  display: table-cell;\n}\n.ag-virtual-list-viewport {\n  overflow-x: auto;\n  height: 100%;\n  width: 100%;\n}\n.ag-virtual-list-container {\n  position: relative;\n  overflow: hidden;\n}\n.ag-rich-select {\n  outline: none;\n}\n.ag-rich-select-row {\n  white-space: nowrap;\n}\n.ag-rich-select-list {\n  width: 200px;\n  height: 200px;\n}\n.ag-set-filter-list {\n  width: 200px;\n  height: 200px;\n}\n.ag-set-filter-item {\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  white-space: nowrap;\n}\n.ag-virtual-list-item {\n  position: absolute;\n  width: 100%;\n}\n.ag-filter-filter {\n  width: 170px;\n  margin: 4px;\n}\n.ag-floating-filter-body input {\n  width: 100%;\n  margin: 0;\n  height: 19px;\n}\n.ag-floating-filter-full-body input {\n  width: 100%;\n  margin: 0;\n  height: 19px;\n}\n.ag-filter-select {\n  width: 110px;\n  margin: 4px 4px 0px 4px;\n}\n.ag-list-selection {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default;\n}\n.ag-tool-panel {\n  width: 200px;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: auto;\n}\n.ag-layout-normal .ag-tool-panel {\n  height: 100%;\n}\n.ag-column-select-indent {\n  display: inline-block;\n}\n.ag-column-select-column {\n  white-space: nowrap;\n}\n.ag-ltr .ag-column-select-column {\n  margin-left: 14px;\n}\n.ag-rtl .ag-column-select-column {\n  margin-right: 14px;\n}\n.ag-column-select-column-group {\n  white-space: nowrap;\n}\n.ag-hidden {\n  display: none !important;\n}\n.ag-visibility-hidden {\n  visibility: hidden !important;\n}\n.ag-faded {\n  opacity: 0.3;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)\";\n  filter: alpha(opacity=30);\n}\n.ag-width-half {\n  width: 50%;\n  display: inline-block;\n}\n.ag-shake-left-to-right {\n  -webkit-animation-name: ag-shake-left-to-right;\n  -moz-animation-name: ag-shake-left-to-right;\n  -o-animation-name: ag-shake-left-to-right;\n  -ms-animation-name: ag-shake-left-to-right;\n  animation-name: ag-shake-left-to-right;\n  -webkit-animation-duration: 0.2s;\n  -moz-animation-duration: 0.2s;\n  -o-animation-duration: 0.2s;\n  -ms-animation-duration: 0.2s;\n  animation-duration: 0.2s;\n  -webkit-animation-iteration-count: infinite;\n  -moz-animation-iteration-count: infinite;\n  -o-animation-iteration-count: infinite;\n  -ms-animation-iteration-count: infinite;\n  animation-iteration-count: infinite;\n  -webkit-animation-direction: alternate;\n  -moz-animation-direction: alternate;\n  -o-animation-direction: alternate;\n  -ms-animation-direction: alternate;\n  animation-direction: alternate;\n}\n@-moz-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n@-webkit-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n@-o-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n@keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n", ""]);
+	exports.push([module.id, "ag-grid-angular {\n  display: inline-block;\n}\nag-grid-ng2 {\n  display: inline-block;\n}\n.ag-rtl {\n  direction: rtl;\n}\n.ag-ltr {\n  direction: ltr;\n}\n.ag-select-agg-func-popup {\n  position: absolute;\n}\n.ag-body-no-select {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-root {\n/* set to relative, so absolute popups appear relative to this */\n  position: relative;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n/* was getting some 'should be there' scrolls, this sorts it out */\n  overflow: hidden;\n}\n.ag-layout-normal .ag-root {\n  height: 100%;\n}\n.ag-font-style {\n  cursor: default;\n/* disable user mouse selection */\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-layout-for-print {\n  white-space: nowrap;\n  display: inline-block;\n}\n.ag-layout-normal {\n  height: 100%;\n}\n.ag-popup-backdrop {\n  position: fixed;\n  left: 0px;\n  top: 0px;\n  width: 100%;\n  height: 100%;\n}\n.ag-header {\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  width: 100%;\n}\n.ag-layout-normal .ag-header {\n  position: absolute;\n  top: 0px;\n  left: 0px;\n}\n.ag-pinned-left-header {\n  float: left;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-pinned-right-header {\n  float: right;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-header-viewport {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  height: 100%;\n}\n.ag-layout-normal .ag-header-row {\n  position: absolute;\n}\n.ag-layout-normal .ag-header-container {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n  height: 100%;\n}\n.ag-layout-auto-height .ag-header-row {\n  position: absolute;\n}\n.ag-layout-auto-height .ag-header-container {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n  height: 100%;\n}\n.ag-layout-for-print .ag-header-container {\n  white-space: nowrap;\n}\n.ag-header-overlay {\n  display: block;\n  position: absolute;\n}\n.ag-header-cell {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  vertical-align: bottom;\n  text-align: center;\n  display: inline-block;\n  height: 100%;\n  position: absolute;\n}\n.ag-floating-filter {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: absolute;\n  display: inline-block;\n}\n.ag-floating-filter-body {\n  margin-right: 25px;\n  height: 20px;\n}\n.ag-floating-filter-full-body {\n  width: 100%;\n  height: 20px;\n}\n.ag-floating-filter-button {\n  width: 25px;\n  height: 20px;\n  float: right;\n  margin-top: -20px;\n}\n.ag-floating-filter-button button {\n  width: 25px;\n  height: 19px;\n  padding: 0;\n}\n.ag-floating-filter-input {\n  width: 100%;\n}\n.ag-floating-filter-input:read-only {\n  background-color: #eee;\n}\n.ag-floating-filter-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-dnd-ghost {\n  font-size: 14px;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  position: absolute;\n  background: #e5e5e5;\n  border: 1px solid #000;\n  cursor: move;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  padding: 3px;\n  line-height: 1.4;\n}\n.ag-dnd-ghost-icon {\n  display: inline-block;\n  float: left;\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-dnd-ghost-label {\n  display: inline-block;\n}\n.ag-header-group-cell {\n  height: 100%;\n  display: inline-block;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  position: absolute;\n}\n.ag-header-group-cell-label {\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-header-cell-label {\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-header-cell-resize {\n  height: 100%;\n  width: 4px;\n  cursor: col-resize;\n}\n.ag-ltr .ag-header-cell-resize {\n  float: right;\n}\n.ag-ltr .ag-pinned-right-header .ag-header-cell-resize {\n  float: left;\n}\n.ag-rtl .ag-header-cell-resize {\n  float: left;\n}\n.ag-rtl .ag-pinned-left-header .ag-header-cell-resize {\n  float: right;\n}\n.ag-ltr .ag-header-select-all {\n  float: left;\n}\n.ag-rtl .ag-header-select-all {\n  float: right;\n}\n.ag-header-expand-icon {\n  padding-left: 4px;\n}\n.ag-header-cell-menu-button {\n  float: right;\n}\n.ag-overlay-panel {\n  display: table;\n  width: 100%;\n  height: 100%;\n  pointer-events: none;\n}\n.ag-overlay-wrapper {\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center;\n}\n.ag-bl-overlay {\n  pointer-events: none;\n  position: absolute;\n  height: 100%;\n  width: 100%;\n  top: 0px;\n  left: 0px;\n}\n.ag-bl-full-height {\n  height: 100%;\n  overflow: auto;\n  position: relative;\n}\n.ag-bl-west {\n  float: left;\n}\n.ag-bl-full-height-west {\n  height: 100%;\n}\n.ag-bl-east {\n  float: right;\n}\n.ag-bl-full-height-east {\n  height: 100%;\n}\n.ag-bl-full-height-center {\n  height: 100%;\n}\n.ag-bl-normal {\n  height: 100%;\n  position: relative;\n}\n.ag-bl-normal-center-row {\n  height: 100%;\n  overflow: hidden;\n}\n.ag-bl-normal-west {\n  height: 100%;\n  float: left;\n}\n.ag-bl-normal-east {\n  height: 100%;\n  float: right;\n}\n.ag-bl-normal-center {\n  height: 100%;\n}\n.ag-bl-dont-fill {\n  position: relative;\n}\n.ag-body {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n.ag-layout-normal .ag-body {\n  height: 100%;\n  position: absolute;\n}\n.ag-floating-top {\n  width: 100%;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n}\n.ag-layout-normal .ag-floating-top {\n  position: absolute;\n  left: 0px;\n}\n.ag-pinned-left-floating-top {\n  float: left;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative;\n}\n.ag-layout-normal .ag-pinned-left-floating-top {\n  height: 100%;\n}\n.ag-pinned-right-floating-top {\n  float: right;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative;\n}\n.ag-layout-normal .ag-pinned-right-floating-top {\n  height: 100%;\n}\n.ag-floating-top-viewport {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n}\n.ag-layout-normal .ag-floating-top-viewport {\n  height: 100%;\n}\n.ag-floating-top-container {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n}\n.ag-floating-bottom {\n  width: 100%;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n}\n.ag-layout-normal .ag-floating-bottom {\n  position: absolute;\n  left: 0px;\n}\n.ag-pinned-left-floating-bottom {\n  float: left;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative;\n}\n.ag-layout-normal .ag-pinned-left-floating-bottom {\n  height: 100%;\n}\n.ag-pinned-right-floating-bottom {\n  float: right;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative;\n}\n.ag-layout-normal .ag-pinned-right-floating-bottom {\n  height: 100%;\n}\n.ag-floating-bottom-viewport {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n}\n.ag-layout-normal .ag-floating-bottom-viewport {\n  height: 100%;\n}\n.ag-floating-bottom-container {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n}\n.ag-pinned-left-cols-viewport {\n  float: left;\n}\n.ag-pinned-left-cols-container {\n  display: inline-block;\n  position: relative;\n}\n.ag-pinned-right-cols-viewport {\n  float: right;\n}\n.ag-ltr .ag-pinned-right-cols-viewport {\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n.ag-ltr .ag-pinned-left-cols-viewport {\n  overflow: hidden;\n}\n.ag-rtl .ag-pinned-right-cols-viewport {\n  overflow: hidden;\n}\n.ag-rtl .ag-pinned-left-cols-viewport {\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n.ag-pinned-right-cols-container {\n  display: inline-block;\n  position: relative;\n}\n.ag-layout-normal .ag-body-viewport-wrapper {\n  height: 100%;\n}\n.ag-body-viewport {\n  overflow-x: auto;\n  overflow-y: auto;\n}\n.ag-layout-normal .ag-body-viewport {\n  height: 100%;\n}\n.ag-full-width-viewport {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  display: inline;\n  pointer-events: none;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n}\n.ag-full-width-container {\n  overflow: hidden;\n  position: relative;\n  width: 100%;\n}\n.ag-floating-bottom-full-width-container {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  pointer-events: none;\n  overflow: hidden;\n  display: inline;\n}\n.ag-floating-top-full-width-container {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  pointer-events: none;\n  overflow: hidden;\n  display: inline;\n}\n.ag-full-width-row {\n  pointer-events: all;\n  overflow: hidden;\n}\n.ag-layout-normal .ag-body-container {\n  position: relative;\n  display: inline-block;\n}\n.ag-layout-auto-height .ag-body-container {\n  position: relative;\n  display: inline-block;\n}\n.ag-row-animation {\n  -webkit-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  -moz-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  -o-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  -ms-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n}\n.ag-row-no-animation {\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-row {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n.ag-layout-normal .ag-row {\n  white-space: nowrap;\n  position: absolute;\n  width: 100%;\n}\n.ag-layout-auto-height .ag-row {\n  white-space: nowrap;\n  position: relative;\n  width: 100%;\n}\n.ag-layout-for-print .ag-row {\n  position: relative;\n}\n.ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  -moz-transition: left 0.2s;\n  -o-transition: left 0.2s;\n  -ms-transition: left 0.2s;\n  transition: left 0.2s;\n}\n.ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s, width 0.2s;\n  -moz-transition: left 0.2s, width 0.2s;\n  -o-transition: left 0.2s, width 0.2s;\n  -ms-transition: left 0.2s, width 0.2s;\n  transition: left 0.2s, width 0.2s;\n}\n.ag-column-drop {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n}\n.ag-column-drop-vertical .ag-column-drop-cell {\n  display: block;\n}\n.ag-column-drop-vertical .ag-column-drop-empty-message {\n  display: block;\n}\n.ag-column-drop-vertical .ag-column-drop-cell-button {\n  line-height: 16px;\n}\n.ag-ltr .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: right;\n}\n.ag-rtl .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: left;\n}\n.ag-column-drop-horizontal {\n  white-space: nowrap;\n}\n.ag-column-drop-horizontal .ag-column-drop-cell {\n  display: inline-block;\n}\n.ag-column-drop-horizontal .ag-column-drop-empty-message {\n  display: inline-block;\n}\n.ag-cell {\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  position: absolute;\n}\n.ag-value-slide-out {\n  opacity: 1;\n  -ms-filter: none;\n  filter: none;\n  margin-right: 5px;\n  -webkit-transition: opacity 3s, margin-right 3s;\n  -moz-transition: opacity 3s, margin-right 3s;\n  -o-transition: opacity 3s, margin-right 3s;\n  -ms-transition: opacity 3s, margin-right 3s;\n  transition: opacity 3s, margin-right 3s;\n  -webkit-transition-timing-function: linear;\n  -moz-transition-timing-function: linear;\n  -o-transition-timing-function: linear;\n  -ms-transition-timing-function: linear;\n  transition-timing-function: linear;\n}\n.ag-value-slide-out-end {\n  opacity: 0;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)\";\n  filter: alpha(opacity=0);\n  margin-right: 10px;\n}\n.ag-opacity-zero {\n  opacity: 0;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)\";\n  filter: alpha(opacity=0);\n}\n.ag-cell-edit-input {\n  width: 100%;\n  height: 100%;\n}\n.ag-group-cell-entire-row {\n  width: 100%;\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-footer-cell-entire-row {\n  width: 100%;\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n}\n.ag-large .ag-root {\n  font-size: 20px;\n}\n.ag-popup-editor {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.ag-menu-column-select-wrapper {\n  width: 200px;\n  height: 300px;\n  overflow: auto;\n}\n.ag-menu-list {\n  display: table;\n  border-collapse: collapse;\n}\n.ag-menu-option {\n  display: table-row;\n}\n.ag-menu-option-text {\n  display: table-cell;\n}\n.ag-menu-option-shortcut {\n  display: table-cell;\n}\n.ag-menu-option-icon {\n  display: table-cell;\n}\n.ag-menu-option-popup-pointer {\n  display: table-cell;\n}\n.ag-menu-separator {\n  display: table-row;\n}\n.ag-menu-separator-cell {\n  display: table-cell;\n}\n.ag-virtual-list-viewport {\n  overflow-x: auto;\n  height: 100%;\n  width: 100%;\n}\n.ag-virtual-list-container {\n  position: relative;\n  overflow: hidden;\n}\n.ag-rich-select {\n  outline: none;\n}\n.ag-rich-select-row {\n  white-space: nowrap;\n}\n.ag-rich-select-list {\n  width: 200px;\n  height: 200px;\n}\n.ag-set-filter-list {\n  width: 200px;\n  height: 200px;\n}\n.ag-set-filter-item {\n  -o-text-overflow: ellipsis;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  white-space: nowrap;\n}\n.ag-virtual-list-item {\n  position: absolute;\n  width: 100%;\n}\n.ag-filter-filter {\n  width: 170px;\n  margin: 4px;\n}\n.ag-floating-filter-body input {\n  width: 100%;\n  margin: 0;\n  height: 19px;\n}\n.ag-floating-filter-full-body input {\n  width: 100%;\n  margin: 0;\n  height: 19px;\n}\n.ag-filter-select {\n  width: 110px;\n  margin: 4px 4px 0px 4px;\n}\n.ag-list-selection {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default;\n}\n.ag-tool-panel {\n  width: 200px;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: auto;\n}\n.ag-layout-normal .ag-tool-panel {\n  height: 100%;\n}\n.ag-column-select-indent {\n  display: inline-block;\n}\n.ag-column-select-column {\n  white-space: nowrap;\n}\n.ag-ltr .ag-column-select-column {\n  margin-left: 14px;\n}\n.ag-rtl .ag-column-select-column {\n  margin-right: 14px;\n}\n.ag-column-select-column-group {\n  white-space: nowrap;\n}\n.ag-hidden {\n  display: none !important;\n}\n.ag-visibility-hidden {\n  visibility: hidden !important;\n}\n.ag-faded {\n  opacity: 0.3;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)\";\n  filter: alpha(opacity=30);\n}\n.ag-width-half {\n  width: 50%;\n  display: inline-block;\n}\n.ag-shake-left-to-right {\n  -webkit-animation-name: ag-shake-left-to-right;\n  -moz-animation-name: ag-shake-left-to-right;\n  -o-animation-name: ag-shake-left-to-right;\n  -ms-animation-name: ag-shake-left-to-right;\n  animation-name: ag-shake-left-to-right;\n  -webkit-animation-duration: 0.2s;\n  -moz-animation-duration: 0.2s;\n  -o-animation-duration: 0.2s;\n  -ms-animation-duration: 0.2s;\n  animation-duration: 0.2s;\n  -webkit-animation-iteration-count: infinite;\n  -moz-animation-iteration-count: infinite;\n  -o-animation-iteration-count: infinite;\n  -ms-animation-iteration-count: infinite;\n  animation-iteration-count: infinite;\n  -webkit-animation-direction: alternate;\n  -moz-animation-direction: alternate;\n  -o-animation-direction: alternate;\n  -ms-animation-direction: alternate;\n  animation-direction: alternate;\n}\n@-moz-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n@-webkit-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n@-o-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n@keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px;\n  }\n  to {\n    padding-left: 2px;\n    padding-right: 6px;\n  }\n}\n", ""]);
 
 	// exports
 
@@ -24578,8 +24578,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../../../react/ag-grid-react-example/node_modules/css-loader/index.js!./theme-fresh.css", function() {
-				var newContent = require("!!../../../../../react/ag-grid-react-example/node_modules/css-loader/index.js!./theme-fresh.css");
+			module.hot.accept("!!../../../css-loader/index.js!./theme-fresh.css", function() {
+				var newContent = require("!!../../../css-loader/index.js!./theme-fresh.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -30199,7 +30199,7 @@
 /* 377 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v10.0.0
+	// ag-grid-react v10.1.0
 	/// <reference path="../typings/tsd"/>
 	"use strict";
 	var reactFrameworkFactory_1 = __webpack_require__(378);
@@ -30290,7 +30290,7 @@
 /* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v10.0.0
+	// ag-grid-react v10.1.0
 	"use strict";
 	var ag_grid_1 = __webpack_require__(379);
 	var reactCellRendererFactory_1 = __webpack_require__(504);
@@ -30371,7 +30371,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -30629,7 +30629,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -30831,7 +30831,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -30996,8 +30996,8 @@
 	    GridOptionsWrapper.prototype.isGroupSuppressAutoColumn = function () { return isTrue(this.gridOptions.groupSuppressAutoColumn); };
 	    GridOptionsWrapper.prototype.isSuppressDragLeaveHidesColumns = function () { return isTrue(this.gridOptions.suppressDragLeaveHidesColumns); };
 	    GridOptionsWrapper.prototype.isSuppressScrollOnNewData = function () { return isTrue(this.gridOptions.suppressScrollOnNewData); };
-	    GridOptionsWrapper.prototype.isForPrint = function () { return isTrue(this.gridOptions.forPrint); };
-	    GridOptionsWrapper.prototype.isAutoHeight = function () { return isTrue(this.gridOptions.autoHeight); };
+	    GridOptionsWrapper.prototype.isForPrint = function () { return this.gridOptions.domLayout === 'forPrint'; };
+	    GridOptionsWrapper.prototype.isAutoHeight = function () { return this.gridOptions.domLayout === 'autoHeight'; };
 	    GridOptionsWrapper.prototype.isSuppressHorizontalScroll = function () { return isTrue(this.gridOptions.suppressHorizontalScroll); };
 	    GridOptionsWrapper.prototype.isSuppressLoadingOverlay = function () { return isTrue(this.gridOptions.suppressLoadingOverlay); };
 	    GridOptionsWrapper.prototype.isSuppressNoRowsOverlay = function () { return isTrue(this.gridOptions.suppressNoRowsOverlay); };
@@ -31019,7 +31019,10 @@
 	    GridOptionsWrapper.prototype.getDoesDataFlowerFunc = function () { return this.gridOptions.doesDataFlower; };
 	    GridOptionsWrapper.prototype.getIsFullWidthCellFunc = function () { return this.gridOptions.isFullWidthCell; };
 	    GridOptionsWrapper.prototype.getFullWidthCellRendererParams = function () { return this.gridOptions.fullWidthCellRendererParams; };
-	    GridOptionsWrapper.prototype.isEmbedFullWidthRows = function () { return isTrue(this.gridOptions.embedFullWidthRows); };
+	    GridOptionsWrapper.prototype.isEmbedFullWidthRows = function () {
+	        // if autoHeight, we always embed fullWidth rows, otherwise we let the user decide
+	        return this.isAutoHeight() || isTrue(this.gridOptions.embedFullWidthRows);
+	    };
 	    GridOptionsWrapper.prototype.getBusinessKeyForNodeFunc = function () { return this.gridOptions.getBusinessKeyForNode; };
 	    GridOptionsWrapper.prototype.getHeaderCellRenderer = function () { return this.gridOptions.headerCellRenderer; };
 	    GridOptionsWrapper.prototype.getApi = function () { return this.gridOptions.api; };
@@ -31313,6 +31316,9 @@
 	        if (options.paginationOverflowSize) {
 	            console.warn('ag-grid: since version 10.0.x paginationOverflowSize is now called cacheOverflowSize');
 	        }
+	        if (options.forPrint) {
+	            console.warn('ag-grid: since version 10.1.x, use property domLayout="forPrint" instead of forPrint=true');
+	        }
 	    };
 	    GridOptionsWrapper.prototype.getLocaleTextFunc = function () {
 	        if (this.gridOptions.localeTextFunc) {
@@ -31433,7 +31439,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31646,7 +31652,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31715,7 +31721,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -32056,7 +32062,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -32886,6 +32892,8 @@
 	     * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
 	     */
 	    Utils.isNumeric = function (value) {
+	        if (value === '')
+	            return false;
 	        return !isNaN(parseFloat(value)) && isFinite(value);
 	    };
 	    Utils.escape = function (toEscape) {
@@ -33097,11 +33105,11 @@
 	    };
 	    ;
 	    Utils.referenceCompare = function (left, right) {
-	        if (!left && !right)
+	        if (left == null && right == null)
 	            return true;
-	        if (!left && right)
+	        if (left == null && right)
 	            return false;
-	        if (left && !right)
+	        if (left && right == null)
 	            return false;
 	        return left === right;
 	    };
@@ -33138,7 +33146,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -33265,7 +33273,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -33384,7 +33392,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -33547,7 +33555,7 @@
 	ComponentUtil.STRING_PROPERTIES = [
 	    'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
 	    'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType',
-	    'editType'
+	    'editType', 'domLayout'
 	];
 	ComponentUtil.OBJECT_PROPERTIES = [
 	    'rowStyle', 'context', 'groupColumnDef', 'localeText', 'icons', 'datasource', 'enterpriseDatasource', 'viewportDatasource',
@@ -33586,7 +33594,7 @@
 	    'enableGroupEdit', 'embedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter',
 	    'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus',
 	    'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
-	    'deltaRowDataMode', 'autoHeight'
+	    'deltaRowDataMode'
 	];
 	ComponentUtil.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
 	    'dateComponent', 'dateComponentFramework', 'groupRowRenderer', 'groupRowRendererFramework', 'isScrollLag', 'isExternalFilterPresent',
@@ -33622,7 +33630,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -33829,6 +33837,7 @@
 	        }
 	        var paramsStep = constants_1.Constants.STEP_EVERYTHING;
 	        var stepsMapped = {
+	            group: constants_1.Constants.STEP_EVERYTHING,
 	            filter: constants_1.Constants.STEP_FILTER,
 	            map: constants_1.Constants.STEP_MAP,
 	            aggregate: constants_1.Constants.STEP_AGGREGATE,
@@ -34508,7 +34517,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -34682,7 +34691,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -34978,7 +34987,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -36786,7 +36795,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -37041,7 +37050,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -37458,7 +37467,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -37616,7 +37625,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -37734,7 +37743,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -37819,7 +37828,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -38014,7 +38023,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -38154,7 +38163,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -38193,6 +38202,7 @@
 	var rowComp_1 = __webpack_require__(456);
 	var events_1 = __webpack_require__(386);
 	var constants_1 = __webpack_require__(387);
+	var cellComp_1 = __webpack_require__(410);
 	var context_1 = __webpack_require__(384);
 	var gridCore_1 = __webpack_require__(416);
 	var columnController_1 = __webpack_require__(392);
@@ -38308,13 +38318,30 @@
 	            keepRenderedRows: true
 	        });
 	    };
+	    RowRenderer.prototype.getCellToRestoreFocusToAfterRefresh = function (params) {
+	        var focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
+	        if (utils_1.Utils.missing(focusedCell)) {
+	            return null;
+	        }
+	        // if the dom is not actually focused on a cell, then we don't try to refocus. the problem this
+	        // solves is with editing - if the user is editing, eg focus is on a text field, and not on the
+	        // cell itself, then the cell can be registered as having focus, however it's the text field that
+	        // has the focus and not the cell div. therefore, when the refresh is finished, the grid will focus
+	        // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
+	        // the focus is lost from the text field. we do not want this.
+	        var activeElement = document.activeElement;
+	        var domData = this.gridOptionsWrapper.getDomData(activeElement, cellComp_1.CellComp.DOM_DATA_KEY_CELL_COMP);
+	        var elementIsNotACellDev = utils_1.Utils.missing(domData);
+	        if (elementIsNotACellDev) {
+	            return null;
+	        }
+	        return focusedCell;
+	    };
 	    RowRenderer.prototype.refreshView = function (params) {
 	        if (params === void 0) { params = {}; }
 	        this.logger.log('refreshView');
 	        this.getLockOnRefresh();
-	        // check here if the cell is in edit mode, and if it is, need to set focus back into the editing part
-	        // (eg the text field), or maybe just don't reset the focus, will work 95% of the time
-	        var focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
+	        var focusedCell = this.getCellToRestoreFocusToAfterRefresh(params);
 	        if (!this.gridOptionsWrapper.isForPrint()) {
 	            var containerHeight = this.paginationProxy.getCurrentPageHeight();
 	            // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
@@ -38418,8 +38445,9 @@
 	        // never keep rendered rows if doing forPrint, as we do not use 'top' to
 	        // position the rows in forPrint (use normal flow), so we have to remove
 	        // all rows and insert them again from scratch
-	        if (this.gridOptionsWrapper.isForPrint()) {
+	        if (this.gridOptionsWrapper.isForPrint() || this.gridOptionsWrapper.isAutoHeight()) {
 	            keepRenderedRows = false;
+	            animate = false;
 	        }
 	        if (keepRenderedRows) {
 	            rowsToRemove = [];
@@ -38944,7 +38972,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -38997,36 +39025,31 @@
 	var popupEditorWrapper_1 = __webpack_require__(442);
 	// in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 	// it won't render correctly in safari, as safari renders white space as a gap
-	var gridHtml = '<div class="ag-root ag-font-style">' +
-	    // header
-	    '<div class="ag-header">' +
+	var HEADER_SNIPPET = '<div class="ag-header">' +
 	    '<div class="ag-pinned-left-header"></div>' +
 	    '<div class="ag-pinned-right-header"></div>' +
 	    '<div class="ag-header-viewport">' +
 	    '<div class="ag-header-container"></div>' +
 	    '</div>' +
 	    '<div class="ag-header-overlay"></div>' +
-	    '</div>' +
-	    // floating top
-	    '<div class="ag-floating-top">' +
+	    '</div>';
+	var FLOATING_TOP_SNIPPET = '<div class="ag-floating-top">' +
 	    '<div class="ag-pinned-left-floating-top"></div>' +
 	    '<div class="ag-pinned-right-floating-top"></div>' +
 	    '<div class="ag-floating-top-viewport">' +
 	    '<div class="ag-floating-top-container"></div>' +
 	    '</div>' +
 	    '<div class="ag-floating-top-full-width-container"></div>' +
-	    '</div>' +
-	    // floating bottom
-	    '<div class="ag-floating-bottom">' +
+	    '</div>';
+	var FLOATING_BOTTOM_SNIPPET = '<div class="ag-floating-bottom">' +
 	    '<div class="ag-pinned-left-floating-bottom"></div>' +
 	    '<div class="ag-pinned-right-floating-bottom"></div>' +
 	    '<div class="ag-floating-bottom-viewport">' +
 	    '<div class="ag-floating-bottom-container"></div>' +
 	    '</div>' +
 	    '<div class="ag-floating-bottom-full-width-container"></div>' +
-	    '</div>' +
-	    // body
-	    '<div class="ag-body">' +
+	    '</div>';
+	var BODY_SNIPPET = '<div class="ag-body">' +
 	    '<div class="ag-pinned-left-cols-viewport">' +
 	    '<div class="ag-pinned-left-cols-container"></div>' +
 	    '</div>' +
@@ -39041,9 +39064,19 @@
 	    '<div class="ag-full-width-viewport">' +
 	    '<div class="ag-full-width-container"></div>' +
 	    '</div>' +
-	    '</div>' +
 	    '</div>';
-	var gridForPrintHtml = '<div class="ag-root ag-font-style">' +
+	// the difference between the 'normal' and 'full height' template is the order of the floating and body,
+	// for normal, the floating top and bottom go in first as they are fixed position,
+	// for auto-height, the body is in the middle of the top and bottom as they are just normally laid out
+	var GRID_PANEL_NORMAL_TEMPLATE = '<div class="ag-root ag-font-style">' +
+	    HEADER_SNIPPET + FLOATING_TOP_SNIPPET + FLOATING_BOTTOM_SNIPPET + BODY_SNIPPET +
+	    '</div>';
+	var GRID_PANEL_AUTO_HEIGHT_TEMPLATE = '<div class="ag-root ag-font-style">' +
+	    HEADER_SNIPPET + FLOATING_TOP_SNIPPET + BODY_SNIPPET + FLOATING_BOTTOM_SNIPPET +
+	    '</div>';
+	// the template for for-print is much easier than that others, as it doesn't have any pinned areas
+	// or scrollable areas (so no viewports).
+	var GRID_PANEL_FOR_PRINT_TEMPLATE = '<div class="ag-root ag-font-style">' +
 	    // header
 	    '<div class="ag-header-container"></div>' +
 	    // floating
@@ -39055,11 +39088,11 @@
 	    '</div>';
 	// wrapping in outer div, and wrapper, is needed to center the loading icon
 	// The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
-	var mainOverlayTemplate = '<div class="ag-overlay-panel">' +
+	var OVERLAY_TEMPLATE = '<div class="ag-overlay-panel">' +
 	    '<div class="ag-overlay-wrapper ag-overlay-[OVERLAY_NAME]-wrapper">[OVERLAY_TEMPLATE]</div>' +
 	    '</div>';
-	var defaultLoadingOverlayTemplate = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
-	var defaultNoRowsOverlayTemplate = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
+	var LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
+	var NO_ROWS_TO_SHOW_OVERLAY_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
 	var GridPanel = (function (_super) {
 	    __extends(GridPanel, _super);
 	    function GridPanel() {
@@ -39600,7 +39633,7 @@
 	        return false;
 	    };
 	    GridPanel.prototype.createOverlayTemplate = function (name, defaultTemplate, userProvidedTemplate) {
-	        var template = mainOverlayTemplate
+	        var template = OVERLAY_TEMPLATE
 	            .replace('[OVERLAY_NAME]', name);
 	        if (userProvidedTemplate) {
 	            template = template.replace('[OVERLAY_TEMPLATE]', userProvidedTemplate);
@@ -39612,14 +39645,14 @@
 	    };
 	    GridPanel.prototype.createLoadingOverlayTemplate = function () {
 	        var userProvidedTemplate = this.gridOptionsWrapper.getOverlayLoadingTemplate();
-	        var templateNotLocalised = this.createOverlayTemplate('loading', defaultLoadingOverlayTemplate, userProvidedTemplate);
+	        var templateNotLocalised = this.createOverlayTemplate('loading', LOADING_OVERLAY_TEMPLATE, userProvidedTemplate);
 	        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 	        var templateLocalised = templateNotLocalised.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
 	        return templateLocalised;
 	    };
 	    GridPanel.prototype.createNoRowsOverlayTemplate = function () {
 	        var userProvidedTemplate = this.gridOptionsWrapper.getOverlayNoRowsTemplate();
-	        var templateNotLocalised = this.createOverlayTemplate('no-rows', defaultNoRowsOverlayTemplate, userProvidedTemplate);
+	        var templateNotLocalised = this.createOverlayTemplate('no-rows', NO_ROWS_TO_SHOW_OVERLAY_TEMPLATE, userProvidedTemplate);
 	        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 	        var templateLocalised = templateNotLocalised.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
 	        return templateLocalised;
@@ -39951,7 +39984,16 @@
 	    };
 	    GridPanel.prototype.loadTemplate = function () {
 	        // the template we use is different when doing 'for print'
-	        var template = this.forPrint ? gridForPrintHtml : gridHtml;
+	        var template;
+	        if (this.forPrint) {
+	            template = GRID_PANEL_FOR_PRINT_TEMPLATE;
+	        }
+	        else if (this.autoHeight) {
+	            template = GRID_PANEL_AUTO_HEIGHT_TEMPLATE;
+	        }
+	        else {
+	            template = GRID_PANEL_NORMAL_TEMPLATE;
+	        }
 	        this.eRoot = utils_1.Utils.loadTemplate(template);
 	    };
 	    GridPanel.prototype.findElements = function () {
@@ -40195,8 +40237,8 @@
 	    // init, layoutChanged, floatingDataChanged, headerHeightChanged
 	    GridPanel.prototype.setBodyAndHeaderHeights = function () {
 	        if (this.forPrint) {
-	            // if doing 'for print', then the header and footers are laid
-	            // out naturally by the browser. it whatever size that's needed to fit.
+	            // if doing 'for print' or 'auto height', then the header and footers are laid
+	            // out naturally by the browser. it's whatever height that's needed to fit.
 	            return;
 	        }
 	        var heightOfContainer = this.layout.getCentreHeight();
@@ -40231,6 +40273,11 @@
 	        totalHeaderHeight += numberOfGroups * groupHeight;
 	        totalHeaderHeight += headerHeight;
 	        this.eHeader.style['height'] = totalHeaderHeight + 'px';
+	        // if we are doing auto-height, we only size the header, we don't size the
+	        // other parts as we use the normal browser layout for that
+	        if (this.autoHeight) {
+	            return;
+	        }
 	        // padding top covers the header and the floating rows on top
 	        var floatingTopHeight = this.floatingRowModel.getFloatingTopTotalHeight();
 	        var paddingTop = totalHeaderHeight + floatingTopHeight;
@@ -40597,7 +40644,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -40811,7 +40858,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -40969,7 +41016,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -41469,7 +41516,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -41773,7 +41820,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -41971,7 +42018,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -42247,7 +42294,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -42501,7 +42548,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -42557,7 +42604,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -43688,7 +43735,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -43780,7 +43827,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -43974,7 +44021,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -44015,7 +44062,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -44092,7 +44139,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -44228,7 +44275,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -44607,7 +44654,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45140,7 +45187,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45421,7 +45468,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45598,7 +45645,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45738,6 +45785,7 @@
 	            this.filterParams.filterChangedCallback();
 	        }
 	        this.refreshFilterBodyUi();
+	        return shouldFilter;
 	    };
 	    BaseFilter.prototype.onFilterChanged = function () {
 	        this.doOnFilterChanged();
@@ -45746,7 +45794,7 @@
 	        //It has to be of the type FloatingFilterWithApplyChange if it gets here
 	        var casted = change;
 	        this.setModel(casted ? casted.model : null);
-	        this.doOnFilterChanged(casted ? casted.apply : false);
+	        return this.doOnFilterChanged(casted ? casted.apply : false);
 	    };
 	    BaseFilter.prototype.generateFilterHeader = function () {
 	        return '';
@@ -45915,7 +45963,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46134,7 +46182,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46206,7 +46254,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46274,7 +46322,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46421,12 +46469,6 @@
 	    };
 	    return NumberFilter;
 	}(baseFilter_1.ScalarBaseFilter));
-	NumberFilter.EQUALS = 'equals'; // 1;
-	NumberFilter.NOT_EQUAL = 'notEqual'; //2;
-	NumberFilter.LESS_THAN_OR_EQUAL = 'lessThanOrEqual'; //4;
-	NumberFilter.GREATER_THAN = 'greaterThan'; //5;
-	NumberFilter.GREATER_THAN_OR_EQUAL = 'greaterThan'; //6;
-	NumberFilter.IN_RANGE = 'inRange';
 	NumberFilter.LESS_THAN = 'lessThan'; //3;
 	__decorate([
 	    componentAnnotations_1.QuerySelector('#filterNumberToPanel'),
@@ -46445,7 +46487,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46629,7 +46671,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46679,28 +46721,28 @@
 	                defaultComponent: headerGroupComp_1.HeaderGroupComp
 	            },
 	            setFloatingFilterComponent: {
-	                mandatoryMethodList: [],
-	                optionalMethodList: [],
+	                mandatoryMethodList: ['onParentModelChanged'],
+	                optionalMethodList: ['afterGuiAttached'],
 	                defaultComponent: floatingFilter_1.SetFloatingFilterComp
 	            },
 	            textFloatingFilterComponent: {
-	                mandatoryMethodList: [],
-	                optionalMethodList: [],
+	                mandatoryMethodList: ['onParentModelChanged'],
+	                optionalMethodList: ['afterGuiAttached'],
 	                defaultComponent: floatingFilter_1.TextFloatingFilterComp
 	            },
 	            numberFloatingFilterComponent: {
-	                mandatoryMethodList: [],
-	                optionalMethodList: [],
+	                mandatoryMethodList: ['onParentModelChanged'],
+	                optionalMethodList: ['afterGuiAttached'],
 	                defaultComponent: floatingFilter_1.NumberFloatingFilterComp
 	            },
 	            dateFloatingFilterComponent: {
-	                mandatoryMethodList: [],
-	                optionalMethodList: [],
+	                mandatoryMethodList: ['onParentModelChanged'],
+	                optionalMethodList: ['afterGuiAttached'],
 	                defaultComponent: floatingFilter_1.DateFloatingFilterComp
 	            },
 	            readModelAsStringFloatingFilterComponent: {
-	                mandatoryMethodList: [],
-	                optionalMethodList: [],
+	                mandatoryMethodList: ['onParentModelChanged'],
+	                optionalMethodList: ['afterGuiAttached'],
 	                defaultComponent: floatingFilter_1.ReadModelAsStringFloatingFilterComp
 	            },
 	            floatingFilterWrapperComponent: {
@@ -46709,18 +46751,18 @@
 	                defaultComponent: floatingFilterWrapper_1.FloatingFilterWrapperComp
 	            },
 	            emptyFloatingFilterWrapperComponent: {
-	                mandatoryMethodList: [],
-	                optionalMethodList: [],
+	                mandatoryMethodList: ['onParentModelChanged'],
+	                optionalMethodList: ['afterGuiAttached'],
 	                defaultComponent: floatingFilterWrapper_1.EmptyFloatingFilterWrapperComp
 	            },
 	            floatingFilterComponent: {
-	                mandatoryMethodList: [],
-	                optionalMethodList: [],
+	                mandatoryMethodList: ['onParentModelChanged'],
+	                optionalMethodList: ['afterGuiAttached'],
 	                defaultComponent: null
 	            },
 	            filterComponent: {
-	                mandatoryMethodList: [],
-	                optionalMethodList: [],
+	                mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
+	                optionalMethodList: ['afterGuiAttached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged'],
 	                defaultComponent: null
 	            }
 	        };
@@ -46781,7 +46823,7 @@
 	        }
 	        //Using framework component
 	        var FrameworkComponentRaw = componentToUse.component;
-	        return this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList);
+	        return this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList);
 	    };
 	    ComponentProvider.prototype.createAgGridComponent = function (holder, componentName, defaultComponentName, agGridParams, mandatory) {
 	        if (mandatory === void 0) { mandatory = true; }
@@ -46902,7 +46944,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -47034,7 +47076,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -47340,7 +47382,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -47439,7 +47481,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -47687,7 +47729,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -47881,7 +47923,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -47927,6 +47969,7 @@
 	        var toDebounce = utils_1._.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
 	        this.addDestroyableEventListener(this.eColumnFloatingFilter, 'input', toDebounce);
 	        this.addDestroyableEventListener(this.eColumnFloatingFilter, 'keypress', toDebounce);
+	        this.addDestroyableEventListener(this.eColumnFloatingFilter, 'keydown', toDebounce);
 	        var columnDef = params.column.getDefinition();
 	        if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange') {
 	            this.eColumnFloatingFilter.readOnly = true;
@@ -47935,25 +47978,31 @@
 	    InputTextFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
 	        if (this.equalModels(this.lastKnownModel, parentModel))
 	            return;
-	        this.eColumnFloatingFilter.value = this.asFloatingFilterText(parentModel);
 	        this.lastKnownModel = parentModel;
+	        var incomingTextValue = this.asFloatingFilterText(parentModel);
+	        if (incomingTextValue === this.eColumnFloatingFilter.value)
+	            return;
+	        this.eColumnFloatingFilter.value = incomingTextValue;
 	    };
 	    InputTextFloatingFilterComp.prototype.syncUpWithParentFilter = function (e) {
 	        var model = this.asParentModel();
 	        if (this.equalModels(this.lastKnownModel, model))
 	            return;
-	        this.lastKnownModel = model;
+	        var modelUpdated = null;
 	        if (utils_1._.isKeyPressed(e, constants_1.Constants.KEY_ENTER)) {
-	            this.onFloatingFilterChanged({
+	            modelUpdated = this.onFloatingFilterChanged({
 	                model: model,
 	                apply: true
 	            });
 	        }
 	        else {
-	            this.onFloatingFilterChanged({
+	            modelUpdated = this.onFloatingFilterChanged({
 	                model: model,
 	                apply: false
 	            });
+	        }
+	        if (modelUpdated) {
+	            this.lastKnownModel = model;
 	        }
 	    };
 	    InputTextFloatingFilterComp.prototype.equalModels = function (left, right) {
@@ -48056,13 +48105,13 @@
 	    }
 	    NumberFloatingFilterComp.prototype.asFloatingFilterText = function (parentModel) {
 	        var rawParentModel = this.currentParentModel();
-	        if (!parentModel && !rawParentModel)
+	        if (parentModel == null && rawParentModel == null)
 	            return '';
-	        if (!parentModel && rawParentModel && rawParentModel.type !== 'inRange') {
+	        if (parentModel == null && rawParentModel != null && rawParentModel.type !== 'inRange') {
 	            this.eColumnFloatingFilter.readOnly = false;
 	            return '';
 	        }
-	        if (rawParentModel && rawParentModel.type === 'inRange') {
+	        if (rawParentModel != null && rawParentModel.type === 'inRange') {
 	            this.eColumnFloatingFilter.readOnly = true;
 	            var number_1 = this.asNumber(rawParentModel.filter);
 	            var numberTo = this.asNumber(rawParentModel.filterTo);
@@ -48072,17 +48121,17 @@
 	        }
 	        var number = this.asNumber(parentModel.filter);
 	        this.eColumnFloatingFilter.readOnly = false;
-	        return number ? number + '' : '';
+	        return number != null ? number + '' : '';
 	    };
 	    NumberFloatingFilterComp.prototype.asParentModel = function () {
 	        var currentParentModel = this.currentParentModel();
 	        var filterValueNumber = this.asNumber(this.eColumnFloatingFilter.value);
 	        var filterValueText = this.eColumnFloatingFilter.value;
 	        var modelFilterValue = null;
-	        if (!filterValueNumber && filterValueText === '') {
+	        if (filterValueNumber == null && filterValueText === '') {
 	            modelFilterValue = null;
 	        }
-	        else if (!filterValueNumber) {
+	        else if (filterValueNumber == null) {
 	            modelFilterValue = currentParentModel.filter;
 	        }
 	        else {
@@ -48096,8 +48145,13 @@
 	        };
 	    };
 	    NumberFloatingFilterComp.prototype.asNumber = function (value) {
-	        var invalidNumber = !value || (!utils_1._.isNumeric(Number(value)));
-	        return invalidNumber ? null : Number(value);
+	        if (value == null)
+	            return null;
+	        if (value === '')
+	            return null;
+	        var asNumber = Number(value);
+	        var invalidNumber = !utils_1._.isNumeric(asNumber);
+	        return invalidNumber ? null : asNumber;
 	    };
 	    return NumberFloatingFilterComp;
 	}(InputTextFloatingFilterComp));
@@ -48154,7 +48208,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -48236,6 +48290,9 @@
 	            floatingFilterBody.appendChild(this.floatingFilterComp.getGui());
 	            body.appendChild(utils_1._.loadTemplate("<div class=\"ag-floating-filter-button\">\n                    <button ref=\"eButtonShowMainFilter\">...</button>            \n            </div>"));
 	        }
+	        if (this.floatingFilterComp.afterGuiAttached) {
+	            this.floatingFilterComp.afterGuiAttached();
+	        }
 	    };
 	    FloatingFilterWrapperComp.prototype.onParentModelChanged = function (parentModel) {
 	        this.floatingFilterComp.onParentModelChanged(parentModel);
@@ -48274,7 +48331,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -48383,7 +48440,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -48498,7 +48555,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -48708,7 +48765,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49008,7 +49065,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49098,7 +49155,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49209,7 +49266,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49320,7 +49377,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49395,7 +49452,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49505,7 +49562,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49541,7 +49598,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49577,7 +49634,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49651,7 +49708,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49737,7 +49794,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49832,7 +49889,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49940,7 +49997,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50392,7 +50449,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50501,7 +50558,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50564,7 +50621,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50700,7 +50757,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50720,7 +50777,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50806,7 +50863,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50879,7 +50936,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -51418,7 +51475,8 @@
 	    };
 	    RowComp.prototype.onTopChanged = function () {
 	        // top is not used in forPrint, as the rows are just laid out naturally
-	        if (this.gridOptionsWrapper.isForPrint()) {
+	        var doNotSetRowTop = this.gridOptionsWrapper.isForPrint() || this.gridOptionsWrapper.isAutoHeight();
+	        if (doNotSetRowTop) {
 	            return;
 	        }
 	        // console.log(`top changed for ${this.rowNode.id} = ${this.rowNode.rowTop}`);
@@ -51968,7 +52026,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52040,7 +52098,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52287,7 +52345,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52429,7 +52487,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52600,7 +52658,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52973,7 +53031,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53216,7 +53274,7 @@
 	                    //If going through this branch of code the user MUST
 	                    //be passing an object of type change that contains
 	                    //a model propery inside and some other stuff
-	                    filterComponent.onFloatingFilterChanged(change);
+	                    return filterComponent.onFloatingFilterChanged(change);
 	                }
 	                else {
 	                    //If going through this branch of code the user MUST
@@ -53225,6 +53283,7 @@
 	                    //the filters
 	                    filterComponent.setModel(change);
 	                    _this.filterManager.onFilterChanged();
+	                    return true;
 	                }
 	            },
 	            //This one might be overriden from the colDef
@@ -53273,7 +53332,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53683,7 +53742,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53788,7 +53847,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53903,7 +53962,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53967,7 +54026,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54269,7 +54328,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54443,7 +54502,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54663,7 +54722,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54982,7 +55041,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55103,7 +55162,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55413,7 +55472,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55520,7 +55579,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55616,7 +55675,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55661,7 +55720,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55789,7 +55848,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55823,7 +55882,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55873,7 +55932,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55976,7 +56035,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56030,7 +56089,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56077,7 +56136,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56255,7 +56314,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56359,7 +56418,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56411,7 +56470,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56500,7 +56559,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56552,7 +56611,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56658,7 +56717,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56840,7 +56899,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -57168,7 +57227,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -57335,7 +57394,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -57468,7 +57527,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -57665,7 +57724,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -57892,7 +57951,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58003,7 +58062,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58536,7 +58595,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58683,16 +58742,6 @@
 	        var rowNodes = [];
 	        rowData.forEach(function (dataItem) {
 	            var node = _this.createNode(dataItem, parent, level);
-	            var nodeChildDetails = _this.getNodeChildDetails ? _this.getNodeChildDetails(dataItem) : null;
-	            if (nodeChildDetails && nodeChildDetails.group) {
-	                node.group = true;
-	                node.childrenAfterGroup = _this.recursiveFunction(nodeChildDetails.children, node, level + 1);
-	                node.expanded = nodeChildDetails.expanded === true;
-	                node.field = nodeChildDetails.field;
-	                node.key = nodeChildDetails.key;
-	                // pull out all the leaf children and add to our node
-	                _this.setLeafChildren(node);
-	            }
 	            rowNodes.push(node);
 	        });
 	        return rowNodes;
@@ -58816,7 +58865,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58864,7 +58913,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58938,7 +58987,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58994,7 +59043,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -59115,7 +59164,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -59220,7 +59269,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -59266,7 +59315,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.0.1
+	 * @version v10.1.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -59306,7 +59355,7 @@
 /* 504 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v10.0.0
+	// ag-grid-react v10.1.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -59346,7 +59395,7 @@
 /* 505 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v10.0.0
+	// ag-grid-react v10.1.0
 	"use strict";
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(36);
@@ -59388,7 +59437,7 @@
 /* 506 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v10.0.0
+	// ag-grid-react v10.1.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -59473,7 +59522,7 @@
 /* 507 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v10.0.0
+	// ag-grid-react v10.1.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -59560,7 +59609,7 @@
 /* 508 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v10.0.0
+	// ag-grid-react v10.1.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -59602,7 +59651,7 @@
 	                    return wrapper.reactComponent.prototype[methodName].apply(componentRef, arguments);
 	                }
 	                else {
-	                    console.warn('ag-Grid: React dateComponent is missing the method ' + methodName + '()');
+	                    console.warn('ag-Grid: React component is missing the method ' + methodName + '()');
 	                    return null;
 	                }
 	            };

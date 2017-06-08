@@ -8,7 +8,7 @@ import {ICellRendererAngularComp} from "ag-grid-angular/main";
         <img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/{{flag}}.png">{{flag}}
     `
 })
-export class CountryRendererComponent implements ICellRendererAngularComp {
+export class CountryRendererComponent implements ICellRendererAngularComp{
     private params: any;
     public flag: string;
 

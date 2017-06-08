@@ -28,6 +28,9 @@ ag-grid-ng2 {
 /* was getting some 'should be there' scrolls, this sorts it out */
   overflow: hidden;
 }
+.ag-layout-normal .ag-root {
+  height: 100%;
+}
 .ag-font-style {
   cursor: default;
 /* disable user mouse selection */
@@ -36,11 +39,11 @@ ag-grid-ng2 {
   -ms-user-select: none;
   user-select: none;
 }
-.ag-no-scrolls {
+.ag-layout-for-print {
   white-space: nowrap;
   display: inline-block;
 }
-.ag-scrolls {
+.ag-layout-normal {
   height: 100%;
 }
 .ag-popup-backdrop {
@@ -51,15 +54,17 @@ ag-grid-ng2 {
   height: 100%;
 }
 .ag-header {
-  position: absolute;
-  top: 0px;
-  left: 0px;
   white-space: nowrap;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
   width: 100%;
+}
+.ag-layout-normal .ag-header {
+  position: absolute;
+  top: 0px;
+  left: 0px;
 }
 .ag-pinned-left-header {
   float: left;
@@ -86,10 +91,10 @@ ag-grid-ng2 {
   overflow: hidden;
   height: 100%;
 }
-.ag-scrolls .ag-header-row {
+.ag-layout-normal .ag-header-row {
   position: absolute;
 }
-.ag-scrolls .ag-header-container {
+.ag-layout-normal .ag-header-container {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -97,7 +102,18 @@ ag-grid-ng2 {
   white-space: nowrap;
   height: 100%;
 }
-.ag-no-scrolls .ag-header-container {
+.ag-layout-auto-height .ag-header-row {
+  position: absolute;
+}
+.ag-layout-auto-height .ag-header-container {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  position: relative;
+  white-space: nowrap;
+  height: 100%;
+}
+.ag-layout-for-print .ag-header-container {
   white-space: nowrap;
 }
 .ag-header-overlay {
@@ -256,13 +272,17 @@ ag-grid-ng2 {
   overflow: auto;
   position: relative;
 }
+.ag-bl-west {
+  float: left;
+}
 .ag-bl-full-height-west {
   height: 100%;
-  float: left;
+}
+.ag-bl-east {
+  float: right;
 }
 .ag-bl-full-height-east {
   height: 100%;
-  float: right;
 }
 .ag-bl-full-height-center {
   height: 100%;
@@ -290,22 +310,26 @@ ag-grid-ng2 {
   position: relative;
 }
 .ag-body {
-  height: 100%;
   width: 100%;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+.ag-layout-normal .ag-body {
+  height: 100%;
   position: absolute;
 }
 .ag-floating-top {
-  position: absolute;
-  left: 0px;
   width: 100%;
   white-space: nowrap;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
+}
+.ag-layout-normal .ag-floating-top {
+  position: absolute;
+  left: 0px;
 }
 .ag-pinned-left-floating-top {
   float: left;
@@ -314,8 +338,10 @@ ag-grid-ng2 {
   box-sizing: border-box;
   display: inline-block;
   overflow: hidden;
-  height: 100%;
   position: relative;
+}
+.ag-layout-normal .ag-pinned-left-floating-top {
+  height: 100%;
 }
 .ag-pinned-right-floating-top {
   float: right;
@@ -324,14 +350,18 @@ ag-grid-ng2 {
   box-sizing: border-box;
   display: inline-block;
   overflow: hidden;
-  height: 100%;
   position: relative;
+}
+.ag-layout-normal .ag-pinned-right-floating-top {
+  height: 100%;
 }
 .ag-floating-top-viewport {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
+}
+.ag-layout-normal .ag-floating-top-viewport {
   height: 100%;
 }
 .ag-floating-top-container {
@@ -342,14 +372,16 @@ ag-grid-ng2 {
   white-space: nowrap;
 }
 .ag-floating-bottom {
-  position: absolute;
-  left: 0px;
   width: 100%;
   white-space: nowrap;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
+}
+.ag-layout-normal .ag-floating-bottom {
+  position: absolute;
+  left: 0px;
 }
 .ag-pinned-left-floating-bottom {
   float: left;
@@ -358,8 +390,10 @@ ag-grid-ng2 {
   box-sizing: border-box;
   display: inline-block;
   overflow: hidden;
-  height: 100%;
   position: relative;
+}
+.ag-layout-normal .ag-pinned-left-floating-bottom {
+  height: 100%;
 }
 .ag-pinned-right-floating-bottom {
   float: right;
@@ -368,14 +402,18 @@ ag-grid-ng2 {
   box-sizing: border-box;
   display: inline-block;
   overflow: hidden;
-  height: 100%;
   position: relative;
+}
+.ag-layout-normal .ag-pinned-right-floating-bottom {
+  height: 100%;
 }
 .ag-floating-bottom-viewport {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
+}
+.ag-layout-normal .ag-floating-bottom-viewport {
   height: 100%;
 }
 .ag-floating-bottom-container {
@@ -413,12 +451,14 @@ ag-grid-ng2 {
   display: inline-block;
   position: relative;
 }
-.ag-body-viewport-wrapper {
+.ag-layout-normal .ag-body-viewport-wrapper {
   height: 100%;
 }
 .ag-body-viewport {
   overflow-x: auto;
   overflow-y: auto;
+}
+.ag-layout-normal .ag-body-viewport {
   height: 100%;
 }
 .ag-full-width-viewport {
@@ -463,7 +503,11 @@ ag-grid-ng2 {
   pointer-events: all;
   overflow: hidden;
 }
-.ag-scrolls .ag-body-container {
+.ag-layout-normal .ag-body-container {
+  position: relative;
+  display: inline-block;
+}
+.ag-layout-auto-height .ag-body-container {
   position: relative;
   display: inline-block;
 }
@@ -486,12 +530,17 @@ ag-grid-ng2 {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.ag-scrolls .ag-row {
+.ag-layout-normal .ag-row {
   white-space: nowrap;
   position: absolute;
   width: 100%;
 }
-.ag-no-scrolls .ag-row {
+.ag-layout-auto-height .ag-row {
+  white-space: nowrap;
+  position: relative;
+  width: 100%;
+}
+.ag-layout-for-print .ag-row {
   position: relative;
 }
 .ag-column-moving .ag-cell {
@@ -710,18 +759,6 @@ ag-grid-ng2 {
   width: 110px;
   margin: 4px 4px 0px 4px;
 }
-.ag-no-vertical-scroll .ag-scrolls {
-  height: unset;
-}
-.ag-no-vertical-scroll .ag-body {
-  height: unset;
-}
-.ag-no-vertical-scroll .ag-body-viewport-wrapper {
-  height: unset;
-}
-.ag-no-vertical-scroll .ag-body-viewport {
-  height: unset;
-}
 .ag-list-selection {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -736,11 +773,13 @@ ag-grid-ng2 {
   -ms-user-select: none;
   user-select: none;
   cursor: default;
-  height: 100%;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: auto;
+}
+.ag-layout-normal .ag-tool-panel {
+  height: 100%;
 }
 .ag-column-select-indent {
   display: inline-block;
