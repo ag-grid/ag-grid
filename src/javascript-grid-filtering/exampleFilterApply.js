@@ -42,8 +42,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     enableFilter: true,
-    onBeforeFilterChanged: function() {console.log('onBeforeFilterChanged');},
-    onAfterFilterChanged: function() {console.log('onAfterFilterChanged');},
+    onFilterChanged: function() {console.log('onFilterChanged');},
     onFilterModified: function() {console.log('onFilterModified');}
 };
 

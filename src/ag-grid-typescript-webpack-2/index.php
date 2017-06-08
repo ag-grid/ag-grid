@@ -13,8 +13,12 @@ include '../documentation-main/documentation_header.php';
     <h1 id="typescript-building-with-webpack"><img src="../images/typescript.png" height="50px"/>
         <img src="../images/webpack_large.png" height="50px"/> TypeScript - Building with Webpack 2</h1>
 
-    <p>We walk through the main steps required when using ag-Grid, TypeScript and Webpack below, but for more information about
-    either TypeScript or Webpack please refer to those sites for more in depth information around these tools.</p>
+    <p>We walk through the main steps required when using ag-Grid, TypeScript and Webpack below, but for more
+        information about
+        either TypeScript or Webpack please refer to those sites for more in depth information around these tools.</p>
+
+    <note>You can either create the project by hand, or check it out from our QuickStart/Seed Repo in <a
+                href="https://github.com/ceolter/ag-grid-seed">GitHub.</a></note>
 
     <h3>Initialise Project</h3>
 
@@ -51,7 +55,7 @@ import "ag-grid/dist/styles/ag-grid.css";
 import "ag-grid/dist/styles/theme-fresh.css";
 
 class SimpleGrid {
-    private gridOptions: GridOptions = <GridOptions>{};
+    private gridOptions: GridOptions = &lt;GridOptions&gt;{};
 
     constructor() {
         this.gridOptions = {
@@ -59,7 +63,7 @@ class SimpleGrid {
             rowData: this.createRowData()
         };
 
-        let eGridDiv:HTMLElement = <HTMLElement>document.querySelector('#myGrid');
+        let eGridDiv:HTMLElement = &lt;HTMLElement&gt;document.querySelector('#myGrid');
         new Grid(eGridDiv, this.gridOptions);
     }
 
@@ -84,13 +88,23 @@ class SimpleGrid {
 
 new SimpleGrid();
 </pre>
-
-
+<pre>
+<span class="codeComment">// config/index.html </span>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id="myGrid" style="height: 150px;width: 600px" class="ag-fresh"&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
     <h2>TypeScript Configuration</h2>
 
     <p>Our <code>tsconfig.json</code> is very simple in this example:</p>
 
-<pre>
+    <pre>
+<span class="codeComment">// tsconfig.json</span>
 {
   "compilerOptions": {
     "sourceMap":  true
@@ -100,8 +114,10 @@ new SimpleGrid();
 
     <h2>Webpack Configuration</h2>
 
-    <p>We have 2 Webpack Configurations in the example project - a dev configuration and a production configuration. In both
-        of these configurations we make use of an html file where our generated bundle(s) will be inserted and will serve as our application
+    <p>We have 2 Webpack Configurations in the example project - a dev configuration and a production configuration. In
+        both
+        of these configurations we make use of an html file where our generated bundle(s) will be inserted and will
+        serve as our application
         starting point, as well as a helper file for within use of the webpack configurations:</p>
 
     <h3 id="webpack-dev-configuration">Webpack Development Configuration</h3>
@@ -164,13 +180,15 @@ module.exports = {
     <p>
         <code>resolve</code>
     </p>
-    <p>As our imports done specify what file extension to use, we need to specify what file types we want to match on - in this case
+    <p>As our imports done specify what file extension to use, we need to specify what file types we want to match on -
+        in this case
         we're looking at TypeScript and JavaScript files, but you could also add CSS & HTML files too.</p>
 
     <p>
         <code>module.loaders</code>
     </p>
-    <p>Loaders tell Webpack how & what to do with certain types of file - we have specified a few here to deal with Typescript, HTML, CSS and Images:</p>
+    <p>Loaders tell Webpack how & what to do with certain types of file - we have specified a few here to deal with
+        Typescript, HTML, CSS and Images:</p>
     <ul>
         <li>ts-loader: transpile Typescript to ES5</li>
         <li>html</li>
@@ -181,11 +199,13 @@ module.exports = {
         <code>plugins</code>
     </p>
     <ul>
-        <li>ExtractTextPlugin: processes and  extracts the imported CSS</li>
-        <li>HtmlWebpackPlugin: takes our supplied template index.html and inserts the generates JS & CSS files for us</li>
+        <li>ExtractTextPlugin: processes and extracts the imported CSS</li>
+        <li>HtmlWebpackPlugin: takes our supplied template index.html and inserts the generates JS & CSS files for us
+        </li>
     </ul>
 
-    <p>The dev configuration doesn't generate any files - it keeps all bundles in memory, so you won't find any artifacts in the dist directory (from this configuration).</p>
+    <p>The dev configuration doesn't generate any files - it keeps all bundles in memory, so you won't find any
+        artifacts in the dist directory (from this configuration).</p>
 
     <h3 id="webpack-production-configuration">Webpack Production Configuration</h3>
     <pre><span class="codeComment">// config/webpack.prod.js</span>
@@ -242,7 +262,8 @@ module.exports = {
     ]
 };
 </pre>
-    <p>We don't use a development server with this configuration - we generate the final artifacts in the dist/ folder and expect this to be deploy to a server.</p>
+    <p>We don't use a development server with this configuration - we generate the final artifacts in the dist/ folder
+        and expect this to be deploy to a server.</p>
     <p>We use the plugins to remove duplicates and minify and extract the CSS into cache busting hash named files.</p>
 
     <p>With all this in place, we can now add the following npm scripts to our package.json:</p>
@@ -254,7 +275,8 @@ module.exports = {
 },
     </pre>
 
-    <p>Now we can either run <code>npm start</code> to run the development setup, or <code>npm run build</code> for the production build.
+    <p>Now we can either run <code>npm start</code> to run the development setup, or <code>npm run build</code> for the
+        production build.
         In the case of the production build the generated files will be under the <code>dist/</code> folder.</p>
 
     <p>If we now run our application with the above code we will see this:</p>

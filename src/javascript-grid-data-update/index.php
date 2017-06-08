@@ -65,7 +65,7 @@ include '../documentation-main/documentation_header.php';
         (explained below) does update the sorting, filtering and grouping.
     </note>
 
-    <p>
+    <p id="refreshInMemoryRowModel">
         If you are using <a href="../javascript-grid-in-memory/">In Memory Row Model</a>
         and you want to get the grid to update it's sort or filter etc after the update
         is done, then you must call <code>api.refreshInMemoryRowModel(step)</code>
@@ -413,8 +413,8 @@ interface RowDataTransaction {
             with some rows to add, remove and update.
         </li>
         <li>
-            <b>Update Using Immutable Store</b>: Same impact as the above, except it uses the
-            immutable store approach with the grid. Thus it demonstrates both methods working
+            <b>Update Using Delta updates</b>: Same impact as the above, except it uses the
+            delta updates with the grid. Thus it demonstrates both methods working
             side by side.
         </li>
         <li>

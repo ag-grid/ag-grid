@@ -68,7 +68,7 @@ include '../documentation-main/documentation_header.php';
             hitting each column separately. When you edit, using grid editing, this string gets cleared down.
             However if you edit without using grid editing, you will need to clear this string down for the
             row to be updated with the new values. Otherwise new values will not work with the quickFilter.</li>
-        <li><b>deptFirstSearch(callback):</b> Do a tree search dept first search of this node and it's children.</li>
+        <li><b>depthFirstSearch(callback):</b> Do a tree search dept first search of this node and it's children.</li>
         <li><b>setRowHeight(height):</b> Sets the row height. Call if you want to change the height initially
             assigned to the row. After calling, you must call api.onRowHeightChanged() so the grid knows it
             needs to work out the placement of the rows.</li>

@@ -132,7 +132,7 @@
   stroke: none;
   fill: #000;
 }
-.ag-fresh .ag-no-scrolls .ag-header-container {
+.ag-fresh .ag-layout-for-print .ag-header-container {
   background: -webkit-linear-gradient(#fff, #d3d3d3);
   background: -moz-linear-gradient(#fff, #d3d3d3);
   background: -o-linear-gradient(#fff, #d3d3d3);

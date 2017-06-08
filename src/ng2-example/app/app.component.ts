@@ -21,7 +21,8 @@ export class AppComponent {
         {key: 'group-row', title: "Grouped Row Inner Renderer Example"},
         {key: 'filter', title: "Filters Component Example"},
         {key: 'master-detail', title: "Master Detail Example"},
-        {key: 'grouped-data', title: "Grouped Data Example"}
+        {key: 'grouped-data', title: "Grouped Data Example"},
+        {key: 'floating-filter', title: "Floating Filters"}
     ];
 
     constructor() {

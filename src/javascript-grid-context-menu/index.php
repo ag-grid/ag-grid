@@ -124,7 +124,8 @@ include '../documentation-main/documentation_header.php';
         <li>The first item uses the contents of the cell to display it's value.</li>
         <li>Country and Person are sub menu's. The country sub menu contains icons.</li>
         <li>The menu item 'Always Disabled' has a tooltip.</li>
-        <li>.</li>
+        <li>The menu item has css classes applied to it.</li>
+        <li>The second menu item ('Always Disabled') has a tooltip.</li>
     </ul>
     </p>
 

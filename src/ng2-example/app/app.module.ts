@@ -48,7 +48,10 @@ import {MasterComponent} from "./master-detail-example/masterdetail-master.compo
 import {DetailPanelComponent} from "./master-detail-example/detail-panel.component";
 import {GroupedDataComponent} from "./grouped-data-example/grouped-data.component";
 import {CountryRendererComponent} from "./grouped-data-example/country-renderer.component";
+import {FloatingFilterComponent} from "./floating-filter-example/floating-filter.component";
+import {SliderFloatingFilter} from "./floating-filter-example/slider-floating-filter-component";
 // grouped data
+
 
 @NgModule({
     imports: [
@@ -74,7 +77,9 @@ import {CountryRendererComponent} from "./grouped-data-example/country-renderer.
                 DateComponent,
                 HeaderComponent,
                 HeaderGroupComponent,
-                CountryRendererComponent
+                CountryRendererComponent,
+                FloatingFilterComponent,
+                SliderFloatingFilter
             ]),
         RatioModule,
         ClickableModule
@@ -108,7 +113,9 @@ import {CountryRendererComponent} from "./grouped-data-example/country-renderer.
         MasterComponent,
         DetailPanelComponent,
         GroupedDataComponent,
-        CountryRendererComponent
+        CountryRendererComponent,
+        FloatingFilterComponent,
+        SliderFloatingFilter
     ],
     bootstrap: [AppComponent]
 })
