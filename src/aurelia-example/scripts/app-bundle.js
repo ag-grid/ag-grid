@@ -812,14 +812,6 @@ define('headerComponent/headerGroupComponent',["require", "exports"], function (
     exports.default = HeaderGroupComponent;
 });
 
-define('resources/index',["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function configure(config) {
-    }
-    exports.configure = configure;
-});
-
 define('renderers/MedalRenderer',["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -858,6 +850,14 @@ define('renderers/NameAndAgeRenderer',["require", "exports"], function (require,
         return NameAndAgeRenderer;
     }());
     exports.default = NameAndAgeRenderer;
+});
+
+define('resources/index',["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function configure(config) {
+    }
+    exports.configure = configure;
 });
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
