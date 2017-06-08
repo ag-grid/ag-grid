@@ -23,6 +23,9 @@ do
             rm -rf dist
             ;;
         "ag-grid-angular")
+            git checkout fb3ab3cdb0135f958d78680c30839fa61931659d .gitignore
+            rm -rf aot
+            rm -rf dist
             ;;
         "ag-grid-react")
             ;;
