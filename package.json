@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react",
-  "version": "10.0.0",
+  "version": "10.1.0",
   "description": "ag-Grid React Component",
   "main": "main.js",
   "typings": "./main.d.ts",
@@ -38,6 +38,6 @@
     "react": "0.14.6"
   },
   "peerDependencies": {
-    "ag-grid": "10.0.x"
+    "ag-grid": "10.1.x"
   }
 }
