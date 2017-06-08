@@ -142,7 +142,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         Currently ag-Grid has no way to extending this limit to allow viewing more rows simultaneously. However
         this is not a problem 99.99% of the time (the only people who this appears to be a problem with is
-        testers!!).
+        system testers!!).
     </p>
     <p>
         The reason this is not a problem is that normal human users don't scroll through tens of thousands
