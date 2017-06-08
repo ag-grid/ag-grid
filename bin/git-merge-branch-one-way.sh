@@ -1,25 +1,24 @@
 #!/usr/bin/env bash
 
 
-if [ "$#" -ne 1 ]
+if [ "$#" -lt 2 ]
   then
-    echo "You must supply as 1st parameter the origin branch"
+    echo "You must supply as 1st parameter the origin branch and least one module to merge"
     exit 1
 fi
 
 
 
-echo "Merging $current_branch into $1"
 
 ## for all the modules
-declare -a modules=("ag-grid" "ag-grid-enterprise" "ag-grid-docs" "ag-grid-dev" "ag-grid-angular" "ag-grid-angular-example" "ag-grid-react" "ag-grid-react-example" "ag-grid-aurelia" "ag-grid-aurelia-example" "ag-grid-vue" "ag-grid-vue-example")
-
-for module in "${modules[@]}"
+IFS=' ' read -ra ADDR <<< "${@:2}"
+for module in "${ADDR[@]}"
 do
     echo =============================================================================================
     echo "MODULE  $module"
     echo =============================================================================================
 
+    echo "Merging $current_branch into $1"
     cd $module
     current_branch=$(git rev-parse --abbrev-ref HEAD)
     git stash
