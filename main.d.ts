@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.0.1
+// Type definitions for ag-grid v10.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 export { BalancedColumnTreeBuilder } from "./dist/lib/columnController/balancedColumnTreeBuilder";
@@ -26,7 +26,7 @@ export { BaseFilter } from "./dist/lib/filter/baseFilter";
 export { DateFilter } from "./dist/lib/filter/dateFilter";
 export { FilterManager } from "./dist/lib/filter/filterManager";
 export { NumberFilter } from "./dist/lib/filter/numberFilter";
-export { TextFilter, TextFormatter } from "./dist/lib/filter/textFilter";
+export { TextFilter } from "./dist/lib/filter/textFilter";
 export { IFloatingFilter, IFloatingFilterParams } from "./dist/lib/filter/floatingFilter";
 export { GridPanel } from "./dist/lib/gridPanel/gridPanel";
 export { ScrollVisibleService } from "./dist/lib/gridPanel/scrollVisibleService";
@@ -70,6 +70,7 @@ export { CellComp } from "./dist/lib/rendering/cellComp";
 export { RowComp } from "./dist/lib/rendering/rowComp";
 export { RowRenderer } from "./dist/lib/rendering/rowRenderer";
 export { ValueFormatterService } from "./dist/lib/rendering/valueFormatterService";
+export { TextFormatter } from "./dist/lib/filter/textFilter";
 export { FilterStage } from "./dist/lib/rowModels/inMemory/filterStage";
 export { FlattenStage } from "./dist/lib/rowModels/inMemory/flattenStage";
 export { SortStage } from "./dist/lib/rowModels/inMemory/sortStage";
@@ -154,4 +155,4 @@ export { IHeader } from "./dist/lib/headerRendering/header/headerComp";
 export { ICellRendererParams } from "./dist/lib/rendering/cellRenderers/iCellRenderer";
 export { FrameworkComponentWrapper } from "./dist/lib/componentProvider";
 export { IFrameworkFactory } from "./dist/lib/interfaces/iFrameworkFactory";
-export {SerializedNumberFilter} from "./dist/lib/filter/numberFilter";
+export { SerializedNumberFilter } from "./dist/lib/filter/numberFilter";
