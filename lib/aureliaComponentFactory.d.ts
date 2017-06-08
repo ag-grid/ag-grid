@@ -1,4 +1,4 @@
-// ag-grid-aurelia v10.0.0
+// ag-grid-aurelia v10.1.0
 import { Container, ViewFactory, TaskQueue } from "aurelia-framework";
 import { ICellRendererComp, ICellEditorComp } from "ag-grid/main";
 export declare class AureliaComponentFactory {
