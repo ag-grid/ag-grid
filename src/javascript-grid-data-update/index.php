@@ -65,7 +65,7 @@ include '../documentation-main/documentation_header.php';
         (explained below) does update the sorting, filtering and grouping.
     </note>
 
-    <p>
+    <p id="refreshInMemoryRowModel">
         If you are using <a href="../javascript-grid-in-memory/">In Memory Row Model</a>
         and you want to get the grid to update it's sort or filter etc after the update
         is done, then you must call <code>api.refreshInMemoryRowModel(step)</code>

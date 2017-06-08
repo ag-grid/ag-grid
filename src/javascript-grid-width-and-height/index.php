@@ -79,7 +79,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <h2>Auto Height Grid</h2>
+    <h2 id="autoHeight">Auto Height Grid</h2>
 
     <p>
         Most applications will give the grid a fixed height and then the grid will provide vertical scrolls
@@ -110,6 +110,10 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
+    <note>
+        The following test is best viewed if you open it in a new tab, so it is obvious that there are no scroll bars.
+        Note that if you use the example inlined the scroll bars shown are for the containing iframe, not the grid.
+    </note>
     <show-example example="exampleAutoHeight"></show-example>
 
     <h3>Animation with Auto Height</h3>

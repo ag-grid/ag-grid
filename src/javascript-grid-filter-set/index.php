@@ -208,7 +208,7 @@ countryFilterComponent.onFilterChanged()
         to be selected from the set:
     </p>
 
-    <h2>Set Filter API</h2>
+    <h2 id="setFilterApi">Set Filter API</h2>
     <p>
         The set filter has on top of the getModel and setModel methods common to all the filters the following API:
     <ul>

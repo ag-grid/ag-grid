@@ -13,13 +13,12 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h2>Version 10.1.x</h2>
+    <h2>Version 10.0.x</h2>
 
-    <h4>Enhancements:</h4>
+
+    <h3>Version 10.1.0 [08-JUN-2017]</h3>
+    <h4>Documentation:</h4>
     <ul>
-        <li>
-            Deprecated Methods: insertItemsAtIndex(), removeItems(), addItems(), use updateRowData() instead.
-        </li>
         <li>
             New documentation page <a href="../javascript-grid-accessing-data/">Accessing Data</a>.
         </li>
@@ -31,12 +30,58 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
+    <h4>Enhancements:</h4>
+    <ul>
+        <LI>AG-483: <a href="../javascript-grid-data-update/">Delta updates</a> - now you can add / update / remove
+        rows without having to call 'setRowData(rowData)' with new data each time. Means you can keep the grids
+        <li>AG-420: Support for <a href="../example-react-redux/?framework=react">Redux Style Immutable Stores</a>,
+            to work better with React applications.</li>
+        state (seelction, grouping etc) while new rows are set.</li>
+        <LI>AG-114: <a href="../javascript-grid-width-and-height/#autoHeight">Auto height grid</a>: Allow the grid to
+        resize it's height to the number of rows so that there is no vertical scrolls.</li>
+        <LI>AG-392: Number floating filters now can be any number, previously it was only possible to filter by
+            positive non decimal numbers. This can be seen in our <a href="../example.php">main demo page</a> </li>
+        <LI>AG-453: Added  optional debounce configuration to the keyboard input in the filter box and the column filter.
+        This is configured by the property <i>debounceMs</i> and applies to the
+        <a href="../javascript-grid-filter-text">text</a>, <a href="../javascript-grid-filter-number">number</a> and
+            <a href="../javascript-grid-filter-set">set</a> filter.</li>
+        <LI>AG-506: Added an API call <code>api.refreshInMemoryRowModel(step)</code> to easily
+            <a href="../javascript-grid-data-update/index.php#refreshInMemoryRowModel">request the grid to be
+            filtered, sorted, grouped …</a></li>
+        <LI>AG-505: Added new API methods to <a href="../javascript-grid-data-update/">get nodes based on the displayed
+                index</a> or the node id <code>getRowNode(id)</code></li>
+        <LI>AG-512: Improved the performance of the tree data.</li>
+        <LI>AG-501: Allow <a href="../javascript-grid-context-menu/">tooltips</a> in the context menu</li>
+        <LI>AG-451: Allow the user to dynamically <a href="../javascript-grid-filter-set/#setFilterApi">change the
+                values of the set filter on the fly</a>.</li>
+    </ul>
+
+    <h4>Bug fixes</h4>
+    <ul>
+        <LI>AG-508: Fixing bug where it would be not possible to filter by 0 in a number floating filter</li>
+        <LI>AG-493: Fixing a bug where if using auto group columns and restoring their state to be sorted would not sort the auto-group column</li>
+        <LI>AG-468: New callback to allow modifying any popup shown by ag-grid just before they are about to be displayed</li>
+        <LI>AG-323: Fixed bug where floating filters wouldn't work in the frameworks</li>
+        <LI>AG-442: Fixing bug where suppressing a filter would not prevent the filter from initialising, hence potentially causing a performance problem</li>
+        <LI>AG-428: Fixing bug where more than two levels of grouped headers don’t get exported.</li>
+        <LI>AG-488: Fixing bug where set filters with newRowsAction='keep' wouldn’t work if one of the values selected in the mini filter is blank</li>
+        <LI>AG-495: Fixing a bug where navigation keys would cause the cell editing to stop (ie, Home, End, Page Up, Page Down)</li>
+    </ul>
+
     <h4>Breaking Changes</h4>
     <ul>
+        <li>
+            Deprecated Methods: insertItemsAtIndex(), removeItems(), addItems(), use updateRowData() instead.
+        </li>
         <li>Property 'forPrint' replaced with 'domLayout', if using forPrint, then set domLayout="forPrint" instead.</li>
     </ul>
 
-    <h2>Version 10.0.x</h2>
+    <h3>Version 10.0.1 [24-MAY-2017]</h3>
+    <ul>
+        <li>
+            AG-475: There were missing exports causing compilation problems in typescript
+        </li>
+    </ul>
 
     <h3>Version 10.0.0 [22-MAY-2017]</h3>
 

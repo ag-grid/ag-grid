@@ -18,6 +18,48 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">8th Jun 2017</div>
+    <div class="news-header">ag-Grid 10.1.0 Released</div>
+    <div>
+        Featuring:
+    </div>
+    <div>
+        <ul style="padding-left: 20px;">
+            <li>
+                <a href="../javascript-grid-data-update/">Delta updates</a>
+            </li>
+            <li>
+                <a href="../example-react-redux/?framework=react">Redux integration</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-width-and-height/#autoHeight">Auto height grid</a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        New documentation:
+    </div>
+    <div>
+        <ul style="padding-left: 20px;">
+            <li>
+                <a href="../javascript-grid-accessing-data/">Accessing Data</a>.
+            </li>
+            <li>
+                <a href="../javascript-grid-refresh/">Data Refresh</a>.
+            </li>
+            <li>
+                <a href="../javascript-grid-data-update/">Data Update</a>.
+            </li>
+        </ul>
+    </div>
+    <div>
+        See the <a href="../change-log/changeLogIndex.php">Change Log</a>
+        for full release details.
+    </div>
+</div>
+
+
+<div class="news-box">
     <div class="news-header">6th Jun 2017</div>
     <div style="padding-top: 10px;">
         <a href="../weekly-update/">
