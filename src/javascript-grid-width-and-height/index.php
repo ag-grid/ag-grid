@@ -131,6 +131,24 @@ include '../documentation-main/documentation_header.php';
         pinning, the fullWidth row will be split into the pinned sections.
     </p>
 
+    <h2>Max Rows in Grid</h2>
+
+    <p>
+        Browsers have a <a href="https://stackoverflow.com/questions/7719273/determine-maximum-possible-div-height">
+        maximum height on divs</a> that puts a hard limit on the number of rows that can be displayed.
+        In Internet Explorer, this limit can be observed limiting the rows to 65,000 rows when on the
+        <a href="../example.php">main demo</a>.
+    </p>
+    <p>
+        Currently ag-Grid has no way to extending this limit to allow viewing more rows simultaneously. However
+        this is not a problem 99.99% of the time (the only people who this appears to be a problem with is
+        testers!!).
+    </p>
+    <p>
+        The reason this is not a problem is that normal human users don't scroll through tens of thousands
+        of rows. Instead the grid will happily take the rows and then the user will use
+        group / filter / sort to get to the data that they want.
+    </p>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
