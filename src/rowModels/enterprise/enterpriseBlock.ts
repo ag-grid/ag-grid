@@ -179,6 +179,7 @@ export class EnterpriseBlock extends RowNodeBlock {
 
         rowNode.group = this.groupLevel;
         rowNode.level = this.level;
+        rowNode.uiLevel = this.level;
         rowNode.parent = this.parentRowNode;
 
         // stub gets set to true here, and then false when this rowNode gets it's data
