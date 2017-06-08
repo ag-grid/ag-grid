@@ -306,6 +306,9 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public postProcessPopup: any = undefined;
     @Input() public suppressAsyncEvents: any = undefined;
     @Input() public cacheQuickFilter: any = undefined;
+    @Input() public domLayout: any = undefined;
+    @Input() public deltaRowDataMode: any = undefined;
+    @Input() public rowDataUpdated: any = undefined;
     /**
      * Outputs
      */

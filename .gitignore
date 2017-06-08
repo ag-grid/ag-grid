@@ -8,5 +8,3 @@ npm-debug.log
 # other
 update_from_source.sh
 .DS_Store
-/aot/
-/dist/
