@@ -274,7 +274,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>stopEditingWhenGridLosesFocus</th>
             <td>Set this to true to stop cell editing when focus leaves the grid. The default is the grid stays editing
-            until focus goes onto another cell.</td>
+            until focus goes onto another cell. For inline (non-popup) editors only.</td>
         </tr>
 
         <!------------------->
