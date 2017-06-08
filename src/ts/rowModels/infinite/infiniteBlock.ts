@@ -24,6 +24,9 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
 
     protected createBlankRowNode(rowIndex: number): RowNode {
         let rowNode = super.createBlankRowNode(rowIndex);
+
+        rowNode.uiLevel = 0;
+
         this.setIndexAndTopOnRowNode(rowNode, rowIndex);
         return rowNode;
     }

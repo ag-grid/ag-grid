@@ -227,3 +227,4 @@ export {IHeader} from "./dist/lib/headerRendering/header/headerComp";
 export {ICellRendererParams} from "./dist/lib/rendering/cellRenderers/iCellRenderer";
 export {FrameworkComponentWrapper} from "./dist/lib/componentProvider";
 export {IFrameworkFactory} from "./dist/lib/interfaces/iFrameworkFactory";
+export {SerializedNumberFilter} from "./dist/lib/filter/numberFilter";
