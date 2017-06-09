@@ -83,11 +83,9 @@
         menuItem(2, 'More Detail React', 'More Details', 'react-more-details/');
     }
 
-
-
     // to be removed when all docs are in the new pattern
     // add framework fitting the new pattern here
-    if (!isFrameworkReact()) {
+    if ($GLOBALS[framework] !== 'react') {
         menuItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
         if (isFrameworkJavaScript()) {
             menuItem(1, 'Getting Started Javascript', 'Javascript', 'best-javascript-data-grid/');
