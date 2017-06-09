@@ -287,6 +287,8 @@ export class ClipboardService implements IClipboardService {
     public copySelectedRangeToClipboard(includeHeaders = false): void {
         if (this.rangeController.isEmpty()) { return; }
 
+        let deliminator = this.gridOptionsWrapper.getClipboardDeliminator();
+
         let data = '';
         let cellsToFlash = <any>{};
 
@@ -297,7 +299,7 @@ export class ClipboardService implements IClipboardService {
             columns.forEach( (column, index) => {
                 let value = this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
                 if (index != 0) {
-                    data += '\t';
+                    data += deliminator;
                 }
                 if (Utils.exists(value)) {
                     data += value;
@@ -314,7 +316,7 @@ export class ClipboardService implements IClipboardService {
                 let processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc());
 
                 if (index != 0) {
-                    data += '\t';
+                    data += deliminator;
                 }
                 if (Utils.exists(processedValue)) {
                     data += processedValue;
@@ -396,13 +398,14 @@ export class ClipboardService implements IClipboardService {
     public copySelectedRowsToClipboard(includeHeaders = false, columnKeys?: (string|Column|ColDef)[]): void {
 
         let skipHeader = !includeHeaders;
+        let deliminator = this.gridOptionsWrapper.getClipboardDeliminator();
 
         let params: CsvExportParams = {
             columnKeys: columnKeys,
             skipHeader: skipHeader,
             skipFooters: true,
             suppressQuotes: true,
-            columnSeparator: '\t',
+            columnSeparator: deliminator,
             onlySelected: true,
             processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc()
         };
@@ -466,17 +469,17 @@ export class ClipboardService implements IClipboardService {
     // arrays. The default delimiter is the comma, but this
     // can be overriden in the second argument.
     private dataToArray(strData: string): string[][] {
-        let strDelimiter = '\t';
+        let delimiter = this.gridOptionsWrapper.getClipboardDeliminator();
 
         // Create a regular expression to parse the CSV values.
         let objPattern = new RegExp(
             (
                 // Delimiters.
-                "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+                "(\\" + delimiter + "|\\r?\\n|\\r|^)" +
                 // Quoted fields.
                 "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
                 // Standard fields.
-                "([^\"\\" + strDelimiter + "\\r\\n]*))"
+                "([^\"\\" + delimiter + "\\r\\n]*))"
             ),
             "gi"
         );
@@ -502,7 +505,7 @@ export class ClipboardService implements IClipboardService {
             // that this delimiter is a row delimiter.
             if (
                 strMatchedDelimiter.length &&
-                strMatchedDelimiter !== strDelimiter
+                strMatchedDelimiter !== delimiter
             ) {
 
                 // Since we have reached a new row of data,
