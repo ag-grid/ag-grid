@@ -17,8 +17,11 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        You cannot use variable row height when doing <a href="../javascript-grid-virtual-paging/">virtual paging</a>
-        or <a href="../javascript-grid-viewport/">viewport</a>.
+        Changing the row height is only supported in the <a href="../javascript-grid-in-memory/">in memory</a>
+        row model. You cannot use variable row height when using
+        <a href="../javascript-grid-virtual-paging/">virtual paging</a>,
+        <a href="../javascript-grid-viewport/">viewport</a> or
+        <a href="../javascript-grid-enterprise-model/">enterprise</a> row models.
         This is because these row models need to work out the position of rows that are not loaded and hence need to
         assume the row height is fixed.
     </note>
