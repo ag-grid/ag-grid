@@ -45,7 +45,7 @@ include('../includes/mediaHeader.php');
 
             <h3>Our Application</h3>
 
-            <note>The completed code for this blog can be found <a href="xxxx">here.</a> TODOTODOTODO</note>
+            <note>The completed code for this blog can be found <a href="https://github.com/seanlandsman/ag-grid-react-redux-blog">here.</a></note>
 
             <p>In order to focus on the concepts being discussed our application is deliberately simple.</p>
 
