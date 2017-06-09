@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
 
     <pre><code>import {AgGridReact} from 'ag-grid-react';</code></pre>
 
-    <h3>Downloading the ag-Grid React Enterprise Dependency</h3>
+    <h3><img src="../images/enterprise_50.png" style="height: 22px;margin-right: 5px"/>Downloading the ag-Grid React Enterprise Dependency</h3>
 
     <p>If you're using the ag-Grid Enteprise features, then in addition to the ag-Grid React dependency above, you also require
     the ag-Grid React Enterprise dependency:</p>
