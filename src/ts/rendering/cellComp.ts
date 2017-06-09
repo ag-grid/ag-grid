@@ -98,7 +98,7 @@ export class CellComp extends Component {
     private lastLeftPinned = false;
 
     constructor(column: Column, node: RowNode, scope: any, renderedRow: RowComp) {
-        super('<div/>');
+        super('<div role="gridcell"/>');
 
         // because we reference eGridCell everywhere in this class,
         // we keep a local reference

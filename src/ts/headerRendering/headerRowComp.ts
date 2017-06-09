@@ -42,7 +42,7 @@ export class HeaderRowComp extends Component {
     private type: HeaderRowType;
 
     constructor(dept: number, type: HeaderRowType, pinned: string, eRoot: HTMLElement, dropTarget: DropTarget) {
-        super(`<div class="ag-header-row"/>`);
+        super(`<div class="ag-header-row" role="rowgroup"/>`);
         this.dept = dept;
         this.type = type;
         this.pinned = pinned;
