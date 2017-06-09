@@ -203,6 +203,8 @@ export class ClipboardService implements IClipboardService {
     }
 
     private updateCellValue(rowNode: RowNode, column:Column, value: string, currentRow: GridRow, cellsToFlash: any, updatedColumnIds: string[]) {
+        if (column.isSuppressPaste(rowNode)) { return; }
+
         let processedValue = this.processRangeCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc());
         this.valueService.setValue(rowNode, column, processedValue);
 
