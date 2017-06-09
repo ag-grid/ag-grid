@@ -13,8 +13,13 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h2>Version 10.0.x</h2>
 
+    <h3>NEXT</h3>
+
+    <li>AG-182 - New property <a href="../javascript-grid-clipboard/#deliminator">clipboardDeliminator</a> to specify deliminator to use while copying to clipboard.</li>
+    <li>AG-398 - New property <a href="../javascript-grid-clipboard/#suppressPaste">colDef.suppressPaste</a> to suppress pasting from clipboard for certain cells.</li>
+
+    <h2>Version 10.1.x</h2>
 
     <h3>Version 10.1.0 [08-JUN-2017]</h3>
     <h4>Documentation:</h4>
@@ -75,6 +80,8 @@ include '../documentation-main/documentation_header.php';
         </li>
         <li>Property 'forPrint' replaced with 'domLayout', if using forPrint, then set domLayout="forPrint" instead.</li>
     </ul>
+
+    <h2>Version 10.0.x</h2>
 
     <h3>Version 10.0.1 [24-MAY-2017]</h3>
     <ul>

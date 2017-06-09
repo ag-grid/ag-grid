@@ -35,6 +35,7 @@ var gridOptions = {
     groupSuppressAutoColumn: true,
     groupHideOpenParents: true,
     animateRows: true,
+    enableSorting: true,
     onGridReady: function(params) {
         // params.api.sizeColumnsToFit();
     }
