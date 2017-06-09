@@ -652,6 +652,10 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to only have range selection, and not row selection, copied to clipboard.</td>
         </tr>
         <tr>
+            <th>clipboardDeliminator</th>
+            <td>To specify deliminator to use while copying to clipboard.</td>
+        </tr>
+        <tr>
             <th>suppressFocusAfterRefresh</th>
             <td>Set to true to not set focus back on the grid after a refresh. This can avoid issues where you
                 want to keep the focus on another part of the browser.</td>

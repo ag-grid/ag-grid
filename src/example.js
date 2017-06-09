@@ -178,6 +178,7 @@ rowBuffer: 0,
 //     groupHideOpenParents: true,
 
 //suppressMenuFilterPanel: true,
+//     clipboardDeliminator: ',',
 //suppressMenuMainPanel: true,
 //suppressMenuColumnPanel: true,
 //forPrint: true,

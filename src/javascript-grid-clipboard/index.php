@@ -117,6 +117,21 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleClipboardCustom" example-height="450px"></show-example>
 
+    <h3 id="deliminator">Changing the Deliminator</h3>
+
+    <p>
+        By default, the grid will use '\t' (tab) as the field deliminator. This is to keep the
+        copy / paste compatible with Excel. If you want another deliminator then use the
+        property <code>clipboardDeliminator</code>.
+    </p>
+
+    <p>
+        The example below uses CSV by setting <code>clipboardDeliminator=','</code>. To test,
+        copy to clipboard, then paste into a text editor.
+    </p>
+
+    <show-example example="exampleClipboardExtra"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
