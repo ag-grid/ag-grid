@@ -38,7 +38,7 @@ include '../documentation-main/documentation_header.php';
                 <h4 class="list-group-item-heading">More Details</h4>
                 <p class="list-group-item-text">
                     Dive deeper in how to use ag-Grid with React, including referencing dependencies,
-                    an overview on interfacing, redux and performance and more.
+                    an overview on interfacing, integrating with redux, performance and more.
                 </p>
             </div>
         </a>
