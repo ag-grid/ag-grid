@@ -239,15 +239,23 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isCellEditable(rowNode: RowNode): boolean {
+        return this.isColumnFunc(rowNode, this.colDef.editable);
+    }
+
+    public isSuppressPaste(rowNode: RowNode): boolean {
+        return this.isColumnFunc(rowNode, this.colDef ? this.colDef.suppressPaste : null);
+    }
+
+    private isColumnFunc(rowNode: RowNode, value: boolean | IsColumnFunc): boolean {
         // if boolean set, then just use it
-        if (typeof this.colDef.editable === 'boolean') {
-            return <boolean> this.colDef.editable;
+        if (typeof value === 'boolean') {
+            return <boolean> value;
         }
 
         // if function, then call the function to find out
-        if (typeof this.colDef.editable === 'function') {
+        if (typeof value === 'function') {
             let params = this.createIsColumnFuncParams(rowNode);
-            let editableFunc = <IsColumnFunc> this.colDef.editable;
+            let editableFunc = <IsColumnFunc> value;
             return editableFunc(params);
         }
 
