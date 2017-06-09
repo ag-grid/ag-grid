@@ -20,7 +20,7 @@ do
     echo "MODULE  $module"
     echo =============================================================================================
 
-    git clone https://github.com/ceolter/$module.git & > /dev/null
+    git clone https://github.com/ceolter/$module.git
 
     echo =============================================================================================
     echo "CHECKING OUT IN PROCESS.."

@@ -15,3 +15,8 @@ rm -rf ag-grid-angular/node_modules/ag-grid-enterprise
 ln -s "$current_dir/ag-grid" ag-grid-angular/node_modules/ag-grid
 ln -s "$current_dir/ag-grid-enterprise" ag-grid-angular/node_modules/ag-grid-enterprise
 
+rm -rf ag-grid-react/node_modules/ag-grid
+rm -rf ag-grid-react/node_modules/ag-grid-enterprise
+ln -s "$current_dir/ag-grid" ag-grid-react/node_modules/ag-grid
+ln -s "$current_dir/ag-grid-enterprise" ag-grid-react/node_modules/ag-grid-enterprise
+
