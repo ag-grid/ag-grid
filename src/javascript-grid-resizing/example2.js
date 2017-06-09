@@ -14,7 +14,10 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    enableColResize: true
+    enableColResize: true,
+    onColumnResized: function(params) {
+        console.log(params);
+    }
 };
 
 function sizeToFit() {
