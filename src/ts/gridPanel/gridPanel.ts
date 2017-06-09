@@ -84,12 +84,12 @@ const BODY_SNIPPET =
 // for normal, the floating top and bottom go in first as they are fixed position,
 // for auto-height, the body is in the middle of the top and bottom as they are just normally laid out
 const GRID_PANEL_NORMAL_TEMPLATE =
-    '<div class="ag-root ag-font-style">'+
+    '<div class="ag-root ag-font-style" role="grid">'+
         HEADER_SNIPPET + FLOATING_TOP_SNIPPET + FLOATING_BOTTOM_SNIPPET + BODY_SNIPPET +
     '</div>';
 
 const GRID_PANEL_AUTO_HEIGHT_TEMPLATE =
-    '<div class="ag-root ag-font-style">'+
+    '<div class="ag-root ag-font-style" role="grid">'+
         HEADER_SNIPPET + FLOATING_TOP_SNIPPET + BODY_SNIPPET + FLOATING_BOTTOM_SNIPPET +
     '</div>';
 

@@ -961,6 +961,7 @@ export class RowComp extends BeanStub {
 
     private createRowContainer(rowContainerComp: RowContainerComponent, slideRowIn: boolean): HTMLElement {
         let eRow = document.createElement('div');
+        eRow.setAttribute('role', 'row');
 
         this.addDomData(eRow);
 
