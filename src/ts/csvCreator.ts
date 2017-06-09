@@ -7,6 +7,7 @@ import {ColumnController} from "./columnController/columnController";
 import {ValueService} from "./valueService";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exportParams";
+import {Constants} from "./constants";
 
 let LINE_SEPARATOR = '\r\n';
 
@@ -87,7 +88,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        this.result += this.putInQuotes(this.extractRowCellValue(column, index, node), this.suppressQuotes);
+        this.result += this.putInQuotes(this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_CSV, node), this.suppressQuotes);
         this.lineOpened = true;
     }
 

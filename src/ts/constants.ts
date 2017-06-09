@@ -10,6 +10,12 @@ export class Constants {
     static ROW_BUFFER_SIZE = 10;
     static LAYOUT_INTERVAL = 500;
 
+
+    static EXPORT_TYPE_DRAG_COPY:string = 'dragCopy';
+    static EXPORT_TYPE_CLIPBOARD:string = 'clipboard';
+    static EXPORT_TYPE_EXCEL:string = 'excel';
+    static EXPORT_TYPE_CSV:string = 'csv';
+
     static KEY_BACKSPACE = 8;
     static KEY_TAB = 9;
     static KEY_ENTER = 13;

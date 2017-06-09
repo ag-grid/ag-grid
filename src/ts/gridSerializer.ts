@@ -115,7 +115,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return this.cellAndHeaderEscaper? this.cellAndHeaderEscaper(nameForCol) : nameForCol;
     }
 
-    public extractRowCellValue (column: Column, index: number, node?:RowNode){
+    public extractRowCellValue (column: Column, index: number, type: string, node?:RowNode){
         let isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
 
         let valueForCell: any;
@@ -124,7 +124,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         } else {
             valueForCell =  this.valueService.getValue(column, node);
         }
-        valueForCell = this.processCell(node, column, valueForCell, this.processCellCallback);
+        valueForCell = this.processCell(node, column, valueForCell, this.processCellCallback, type);
         if (valueForCell === null || valueForCell === undefined) {
             valueForCell = '';
         }
@@ -155,7 +155,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return keys.reverse().join(' -> ');
     }
 
-    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback:(params: ProcessCellForExportParams)=>string): any {
+    private processCell(rowNode: RowNode, column: Column, value: any, processCellCallback:(params: ProcessCellForExportParams)=>string, type: string): any {
         if (processCellCallback) {
             return processCellCallback({
                 column: column,
@@ -163,7 +163,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 value: value,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext()
+                context: this.gridOptionsWrapper.getContext(),
+                type: type
             });
         } else {
             return value;
