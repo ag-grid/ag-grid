@@ -74,22 +74,6 @@ include '../documentation-main/documentation_header.php';
             </div>
         <?php } ?>
 
-        <?php if (isFrameworkReact()) { ?>
-            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
-
-                <?php if (isFrameworkAll()) { ?>
-                    <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/react_small.png" height="20px"/> Next Steps - ReactJS</h4>
-                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                    </div>
-                <?php } ?>
-
-                <div>
-                    <?php include './react.php'; ?>
-                </div>
-            </div>
-        <?php } ?>
-
         <?php if (isFrameworkAurelia()) { ?>
             <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
 

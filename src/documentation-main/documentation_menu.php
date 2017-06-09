@@ -77,13 +77,19 @@
 <div class="docsMenu-content">
 
     <?php
+    if (isFrameworkReact()) {
+        menuItem(1, 'Overview React', 'ReactJS', 'best-react-data-grid/');
+        menuItem(2, 'Getting Started React', 'Getting Started', 'react-getting-started/');
+        menuItem(2, 'More Detail React', 'More Details', 'react-more-details/');
+    }
+
+
+
+
+
     menuItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
     if (isFrameworkJavaScript()) {
         menuItem(1, 'Getting Started Javascript', 'Javascript', 'best-javascript-data-grid/');
-    }
-
-    if (isFrameworkReact()) {
-        menuItem(1, 'Getting Started React', 'ReactJS', 'best-react-data-grid/');
     }
 
     if (isFrameworkAngular2()) {
