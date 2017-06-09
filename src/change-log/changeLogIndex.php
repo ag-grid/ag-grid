@@ -18,6 +18,8 @@ include '../documentation-main/documentation_header.php';
     <li>AG-182 - New property <a href="../javascript-grid-clipboard/#deliminator">clipboardDeliminator</a> to specify deliminator to use while copying to clipboard.</li>
     <li>AG-398 / AG-371 - New property <a href="../javascript-grid-clipboard/#suppressPaste">colDef.suppressPaste</a> to suppress pasting from clipboard for certain cells.</li>
     <li>AG-348 - Callbacks processCellForClipboard() and processCellFromClipboard() now get invoked with doing Ctrl + D (copy range down)</li>
+    <li>AG-199 - <a href="../javascript-grid-resizing/">sizeColumnsToFit</a> now fires an event with parameter 'finished=true'.</li>
+    <li>AG-199 - <a href="../javascript-grid-resizing/">autoSizeColumns</a> now fires just one event, previously it was firing two events unnecessarily.</li>
 
     <h2>Version 10.1.x</h2>
 
