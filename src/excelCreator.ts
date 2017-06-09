@@ -24,7 +24,8 @@ import {
     RowType,
     StylingService,
     Utils,
-    ValueService
+    ValueService,
+    Constants
 } from "ag-grid/main";
 
 import {ExcelXmlFactory} from "./excelXmlFactory";
@@ -152,7 +153,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
     onNewBodyColumn (rowIndex:number, currentCells:ExcelCell[]): (column: Column, index: number, node?:RowNode)=>void {
         let that = this;
         return (column: Column, index: number, node?:RowNode) => {
-            let valueForCell = this.extractRowCellValue(column, index, node);
+            let valueForCell = this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_EXCEL, node);
             let styleIds:string[] = that.styleLinker(RowType.BODY, rowIndex, index, valueForCell, column, node);
             let excelStyleId: string = null;
             if (styleIds && styleIds.length == 1){
