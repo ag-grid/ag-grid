@@ -16,7 +16,7 @@ export class ComponentUtil {
     public static STRING_PROPERTIES = [
         'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
         'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType',
-        'editType', 'domLayout'];
+        'editType', 'domLayout', 'clipboardDeliminator'];
 
     public static OBJECT_PROPERTIES = [
         'rowStyle','context','groupColumnDef','localeText','icons','datasource','enterpriseDatasource','viewportDatasource',

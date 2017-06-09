@@ -344,6 +344,10 @@ export class GridOptionsWrapper {
     // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
     // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
 
+    public getClipboardDeliminator() {
+        return _.exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
+    }
+
     public setProperty(key: string, value: any): void {
         let gridOptionsNoType = <any> this.gridOptions;
         let previousValue = gridOptionsNoType[key];
