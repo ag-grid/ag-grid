@@ -12,6 +12,9 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    defaultColDef: {
+        editable: true
+    },
     columnDefs: columnDefs,
     enableRangeSelection: true,
     sendToClipboard: function(params) {

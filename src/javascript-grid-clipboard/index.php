@@ -87,11 +87,12 @@ include '../documentation-main/documentation_header.php';
     <p>
         Below you can:
         <ul>
-        <li>Copy and Paste with the Context Menu.</li>
+        <li>Copy with the Context Menu or 'Ctrl & C'.</li>
+        <li>Paste with 'Ctrl & V'.</li>
         <li>Copy with the provided buttons.</li>
     </ul>
         The example has both row click selection and range selection enabled. You probably won't do
-    this in your application as it's confusing, it's done below just to demonstrate them side by side.
+        this in your application as it's confusing, it's done below just to demonstrate them side by side.
     </p>
 
     <p>When row click selection and range selection are enabled the shortcut would copy the selected row, not the
@@ -125,9 +126,28 @@ include '../documentation-main/documentation_header.php';
         property <code>clipboardDeliminator</code>.
     </p>
 
+    <h3 id="suppressPaste">Suppress Paste</h3>
+
     <p>
-        The example below uses CSV by setting <code>clipboardDeliminator=','</code>. To test,
-        copy to clipboard, then paste into a text editor.
+        The colDef has a property <a>suppressPaste</a> where you can specify to not allowing
+        clipboard paste for a particular cell. This can be a boolean or a function (use a function
+        to specify for a particular cell, or boolean for the whole column).
+    </p>
+
+    <h3>More Complex Example</h3>
+
+    <p>
+        The example below demonstrates:
+        <ul>
+            <li>
+                Uses CSV by setting <code>clipboardDeliminator=','</code>. To test,
+                copy to clipboard, then paste into a text editor.
+            </li>
+            <li>
+                Does not allow paste into the 'silver' column by setting
+                <code>colDef.suppressPaste=true</code>.
+            </li>
+        </ul>
     </p>
 
     <show-example example="exampleClipboardExtra"></show-example>
