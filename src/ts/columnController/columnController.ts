@@ -403,9 +403,15 @@ export class ColumnController {
                     changesThisTimeAround++;
                 }
                 return true;
-            }, ()=> {
-                return new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withFinished(true);
             });
+        }
+
+        if (columnsAutosized.length > 0) {
+            let event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withFinished(true).withColumns(columnsAutosized);
+            if (columnsAutosized.length===1) {
+                event.withColumn(columnsAutosized[0]);
+            }
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_RESIZED, event);
         }
     }
 
@@ -963,7 +969,7 @@ export class ColumnController {
                             // and won't be included in the event
                             action: (column:Column) => boolean,
                             // should return back a column event of the right type
-                            createEvent: ()=>ColumnChangeEvent): void {
+                            createEvent?: ()=>ColumnChangeEvent): void {
 
         if (_.missingOrEmpty(keys)) { return; }
 
@@ -983,14 +989,18 @@ export class ColumnController {
         if (updatedColumns.length===0) { return; }
 
         this.updateDisplayedColumns();
-        let event = createEvent();
 
-        event.withColumns(updatedColumns);
-        if (updatedColumns.length===1) {
-            event.withColumn(updatedColumns[0]);
+        if (_.exists(createEvent)) {
+
+            let event = createEvent();
+
+            event.withColumns(updatedColumns);
+            if (updatedColumns.length===1) {
+                event.withColumn(updatedColumns[0]);
+            }
+
+            this.eventService.dispatchEvent(event.getType(), event);
         }
-
-        this.eventService.dispatchEvent(event.getType(), event);
     }
 
     public getDisplayedColBefore(col: Column): Column {
@@ -1918,9 +1928,8 @@ export class ColumnController {
         this.setLeftValues();
         this.updateBodyWidths();
 
-        // widths set, refresh the gui
         colsToFireEventFor.forEach( (column: Column) => {
-            let event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withColumn(column);
+            let event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(true);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_RESIZED, event);
         });
 
