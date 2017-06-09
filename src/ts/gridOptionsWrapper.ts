@@ -238,6 +238,7 @@ export class GridOptionsWrapper {
     public getApi(): GridApi { return this.gridOptions.api; }
     public getColumnApi(): ColumnApi { return this.gridOptions.columnApi; }
     public isDeltaRowDataMode() { return isTrue(this.gridOptions.deltaRowDataMode); }
+    public isEnforceRowDomOrder() { return isTrue(this.gridOptions.enforceRowDomOrder); }
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
     public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }
@@ -288,7 +289,11 @@ export class GridOptionsWrapper {
 
     public isSuppressScrollLag() { return isTrue(this.gridOptions.suppressScrollLag); }
     public isSuppressMovableColumns() { return isTrue(this.gridOptions.suppressMovableColumns); }
-    public isAnimateRows() { return isTrue(this.gridOptions.animateRows); }
+    public isAnimateRows() {
+        // never allow animating if enforcing the row order
+        if (this.isEnforceRowDomOrder()) { return false; }
+        return isTrue(this.gridOptions.animateRows);
+    }
     public isSuppressColumnMoveAnimation() { return isTrue(this.gridOptions.suppressColumnMoveAnimation); }
     public isSuppressMenuColumnPanel() { return isTrue(this.gridOptions.suppressMenuColumnPanel); }
     public isSuppressMenuFilterPanel() { return isTrue(this.gridOptions.suppressMenuFilterPanel); }
@@ -338,6 +343,10 @@ export class GridOptionsWrapper {
     public getViewportRowModelBufferSize(): number { return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); }
     // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
     // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
+
+    public getClipboardDeliminator() {
+        return _.exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
+    }
 
     public setProperty(key: string, value: any): void {
         let gridOptionsNoType = <any> this.gridOptions;

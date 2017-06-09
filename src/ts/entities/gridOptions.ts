@@ -21,6 +21,7 @@ export interface GridOptions {
      ****************************************************************/
 
     // set once in init, can never change
+    enforceRowDomOrder?: boolean;
     deltaRowDataMode?: boolean;
     scrollbarWidth?: number;
     toolPanelSuppressRowGroups?: boolean;
@@ -72,6 +73,7 @@ export interface GridOptions {
     suppressFieldDotNotation?: boolean;
     suppressUseColIdForGroups?: boolean;
     suppressCopyRowsToClipboard?: boolean;
+    clipboardDeliminator?: string;
     suppressAggFuncInHeader?: boolean;
     suppressAggAtRootLevel?: boolean;
     suppressFocusAfterRefresh?: boolean;

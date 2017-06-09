@@ -190,6 +190,9 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
     editable?: boolean | IsColumnFunc;
 
+    /** Set to true if this col should not be allowed take new values from teh clipboard . */
+    suppressPaste?: boolean | IsColumnFunc;
+
     /** Set to tru if this col should not be navigable with the tab key. Can also be a function to have different rows editable. */
     suppressNavigable?: boolean | IsColumnFunc;
 

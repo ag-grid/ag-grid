@@ -1075,7 +1075,7 @@ export class RowComp extends BeanStub {
         }
     }
 
-    public getRowNode(): any {
+    public getRowNode(): RowNode {
         return this.rowNode;
     }
 

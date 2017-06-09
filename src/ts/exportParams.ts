@@ -43,7 +43,8 @@ export interface ProcessCellForExportParams {
     column: Column,
     api: GridApi,
     columnApi: ColumnApi,
-    context: any
+    context: any,
+    type: string // clipboard, dragCopy (ctrl+D), export
 }
 
 export interface ProcessHeaderForExportParams {
