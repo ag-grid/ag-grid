@@ -8,7 +8,11 @@ var columnDefs = [
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
             sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
         },
-        cellRenderer: 'group'
+        cellRenderer: 'group',
+        cellRendererParams: {
+            checkbox: true
+        },
+        headerCheckboxSelection: true
     },
     {headerName: "Age", field: "age", width: 90, enableValue: true,
         icons: {
@@ -72,8 +76,12 @@ var gridOptions = {
         menuAddRowGroup: 'A',
         menuRemoveRowGroup: 'R',
         clipboardCopy: '>>',
-        clipboardPaste: '>>'
-    }
+        clipboardPaste: '>>',
+        checkboxChecked: '<i class="fa fa-arrow-left"/>',
+        checkboxUnchecked: '<i class="fa fa-arrow-right"/>',
+        checkboxIndeterminate: '<i class="fa fa-arrow-up"/>'
+    },
+    rowSelection: 'multiple'
 };
 
 // setup the grid after the page has finished loading
