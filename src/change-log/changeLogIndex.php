@@ -99,7 +99,8 @@ include '../documentation-main/documentation_header.php';
         <li>
             New row model type <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a>.
         </li>
-        <LI>AG-471: All the <a href="../javascript-grid-events/">events</a> are now asynchronous</li>
+        <li>AG-471: All the <a href="../javascript-grid-events/">events</a> are now asynchronous. afterFilterChanged
+            event dropped.</li>
         <li>AG-461: By default, <a href="../javascript-grid-filter-quick">quick filter</a> no longer caches the values. This means quick filters work a bit
             slower, but are more dependable (cache does not go out of date). The cache can still be turned
             on using the property <i>cacheQuickFilter=true</i> if worried about performance.
