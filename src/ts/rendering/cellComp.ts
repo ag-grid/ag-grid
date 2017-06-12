@@ -32,6 +32,7 @@ import {MethodNotImplementedException} from "../misc/methodNotImplementedExcepti
 import {StylingService} from "../styling/stylingService";
 import {ColumnHoverService} from "./columnHoverService";
 import {ColumnAnimationService} from "./columnAnimationService";
+import {GroupCellRenderer} from "./cellRenderers/groupCellRenderer";
 
 export class CellComp extends Component {
 
@@ -1054,6 +1055,19 @@ export class CellComp extends Component {
             // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
             if (that.gridOptionsWrapper.isAngularCompileRows()) {
                 that.$compile(that.eGridCell)(that.scope);
+            }
+        }
+
+        if (this.gridOptionsWrapper.isGroupHideOpenParents()){
+            //We need to trigger the refresh of the params of the group cell renderers
+            //this causes the node swap to be recalculated and it is necessary since
+            //after a sort we might need to swap nodes again is we are hiding the group
+            //leafs
+            let casted:GroupCellRenderer = <GroupCellRenderer>this.cellRenderer;
+            //Check that this is actually a group cell renderer
+            if (casted.setParams){
+                //This triggers the node swapping if necessary
+                casted.setParams(casted.getOriginalParams())
             }
         }
     }

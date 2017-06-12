@@ -45,6 +45,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     @RefSelector('eValue') private eValue: HTMLElement;
     @RefSelector('eChildCount') private eChildCount: HTMLElement;
 
+    private originalParams: any;
     private params: any;
     private nodeWasSwapped: boolean;
 
@@ -63,7 +64,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.setupComponents();
     }
 
-    private setParams(params: any): void {
+    public setParams(params: any): void {
         if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
             let rowGroupColumn = this.getRowGroupColumn(params);
             let nodeToSwapIn = this.isFirstChildOfFirstChild(params.node, rowGroupColumn);
@@ -80,6 +81,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             this.nodeWasSwapped = false;
             this.params = params;
         }
+        this.originalParams = this.params;
     }
 
     private setupComponents(): void {
@@ -426,5 +428,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             _.setVisible(this.eExpanded, false);
             _.setVisible(this.eContracted, false);
         }
+    }
+
+
+    public getOriginalParams(): any {
+        return this.originalParams;
     }
 }
