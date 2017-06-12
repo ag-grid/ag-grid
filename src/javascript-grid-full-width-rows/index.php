@@ -61,7 +61,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Sorting and Filtering are NOT impacted by fullWidth. fullWidth is a rendering time feature. The sorting
-    and filtering applied to the data is done before rending and is not impacted.
+    and filtering applied to the data is done before rendering and is not impacted.
 </p>
 
 <h3 id="basic-fullwidth-example">Basic fullWidth Example</h3>
