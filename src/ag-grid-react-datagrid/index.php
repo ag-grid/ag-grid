@@ -43,7 +43,7 @@ include('../includes/mediaHeader.php');
 
             <p>
                 <a href="https://www.ag-grid.com">ag-Grid</a> is not written in
-                <a href="http://redux.js.org/docs/introduction/">Redux</a> - this makes
+                <a href="https://facebook.github.io/react/">React</a> - this makes
                 <a href="https://www.ag-grid.com">ag-Grid</a> both powerful and flexible in that we can support all
                 major frameworks. <a href="https://www.ag-grid.com">ag-Grid</a> can also work with immutable stores,
                 so although <a href="https://www.ag-grid.com">ag-Grid</a> doesn't use
