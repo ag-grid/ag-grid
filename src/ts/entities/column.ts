@@ -246,6 +246,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.isColumnFunc(rowNode, this.colDef ? this.colDef.suppressPaste : null);
     }
 
+    public isResizable(): boolean {
+        let enableColResize = this.gridOptionsWrapper.isEnableColResize();
+        let suppressResize = this.colDef && this.colDef.suppressResize;
+        return enableColResize && !suppressResize;
+    }
+
     private isColumnFunc(rowNode: RowNode, value: boolean | IsColumnFunc): boolean {
         // if boolean set, then just use it
         if (typeof value === 'boolean') {

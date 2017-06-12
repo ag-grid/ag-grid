@@ -180,8 +180,7 @@ export class HeaderWrapperComp extends Component {
             return;
         }
 
-        let weWantResize = this.gridOptionsWrapper.isEnableColResize() && !colDef.suppressResize;
-        if (!weWantResize) {
+        if (!this.column.isResizable()) {
             _.removeFromParent(this.eResize);
             return;
         }

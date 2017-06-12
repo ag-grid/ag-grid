@@ -201,7 +201,7 @@ export class HeaderGroupWrapperComp extends Component {
     private setupResize(): void {
         this.eHeaderCellResize = this.getRefElement('agResize');
 
-        if (!this.gridOptionsWrapper.isEnableColResize()) {
+        if (!this.columnGroup.isResizable()) {
             _.removeFromParent(this.eHeaderCellResize);
             return;
         }
@@ -242,22 +242,42 @@ export class HeaderGroupWrapperComp extends Component {
 
     public onDragging(dragChange: any, finished: boolean): void {
 
-        let dragChangeNormalised = this.normaliseDragChange(dragChange);
-        let newWidth = this.groupWidthStart + dragChangeNormalised;
+        // this will be the width we have to distribute to the resizable columns
+        let widthForResizableCols: number;
+        // this is all the displayed cols in the group less those that we cannot resize
+        let resizableCols: Column[];
 
-        let minWidth = this.columnGroup.getMinWidth();
-        if (newWidth < minWidth) {
-            newWidth = minWidth;
+        // a lot of variables defined for the first set of maths, but putting
+        // braces in, we localise the variables to this bit of the method
+        {
+            let dragChangeNormalised = this.normaliseDragChange(dragChange);
+            let totalGroupWidth = this.groupWidthStart + dragChangeNormalised;
+
+            let displayedColumns = this.columnGroup.getDisplayedLeafColumns();
+            resizableCols = _.filter(displayedColumns, col => col.isResizable());
+            let nonResizableCols = _.filter(displayedColumns, col => !col.isResizable());
+
+            let nonResizableColsWidth = 0;
+            nonResizableCols.forEach( col => nonResizableColsWidth += col.getActualWidth() );
+
+            widthForResizableCols = totalGroupWidth - nonResizableColsWidth;
+
+            let minWidth = 0;
+            resizableCols.forEach( col => minWidth += col.getMinWidth() );
+
+            if (widthForResizableCols < minWidth) {
+                widthForResizableCols = minWidth;
+            }
         }
 
         // distribute the new width to the child headers
-        let changeRatio = newWidth / this.groupWidthStart;
+        let changeRatio = widthForResizableCols / this.groupWidthStart;
         // keep track of pixels used, and last column gets the remaining,
         // to cater for rounding errors, and min width adjustments
-        let pixelsToDistribute = newWidth;
-        let displayedColumns = this.columnGroup.getDisplayedLeafColumns();
-        displayedColumns.forEach( (column: Column, index: any) => {
-            let notLastCol = index !== (displayedColumns.length - 1);
+        let pixelsToDistribute = widthForResizableCols;
+
+        resizableCols.forEach( (column: Column, index: any) => {
+            let notLastCol = index !== (resizableCols.length - 1);
             let newChildSize: any;
             if (notLastCol) {
                 // if not the last col, calculate the column width as normal

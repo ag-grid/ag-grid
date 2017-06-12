@@ -12,5 +12,6 @@ export interface ColumnGroupChild extends IEventEmitter {
     getDefinition(): AbstractColDef;
     getColumnGroupShow(): string;
     getParent(): ColumnGroupChild;
+    isResizable(): boolean;
     setParent(parent: ColumnGroupChild): void;
 }
