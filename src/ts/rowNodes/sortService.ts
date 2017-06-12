@@ -4,6 +4,7 @@ import {Autowired, Bean} from "../context/context";
 import {SortController} from "../sortController";
 import {_} from "../utils";
 import {ValueService} from "../valueService";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 export interface SortOption {
     inverter:number,
@@ -19,6 +20,7 @@ export interface SortedRowNode {
 export class SortService {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     sortAccordingToColumnsState (rowNode: RowNode){
         let sortOptions: SortOption[] = this.sortController.getSortForRowController();
@@ -69,7 +71,7 @@ export class SortService {
                 comparatorResult = sortOption.column.getColDef().comparator(valueA, valueB, nodeA, nodeB, isInverted);
             } else {
                 //otherwise do our own comparison
-                comparatorResult = _.defaultComparator(valueA, valueB);
+                comparatorResult = _.defaultComparator(valueA, valueB, this.gridOptionsWrapper.isAccentedSort());
             }
 
             if (comparatorResult !== 0) {

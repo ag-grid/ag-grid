@@ -601,7 +601,7 @@ export class Utils {
         });
     }
 
-    static defaultComparator(valueA: any, valueB: any): number {
+    static defaultComparator(valueA: any, valueB: any, accentedCompare: boolean = false): number {
         let valueAMissing = valueA === null || valueA === undefined;
         let valueBMissing = valueB === null || valueB === undefined;
         if (valueAMissing && valueBMissing) {
@@ -615,13 +615,19 @@ export class Utils {
         }
 
         if (typeof valueA === "string") {
-            try {
-                // using local compare also allows chinese comparisons
-                return valueA.localeCompare(valueB);
-            } catch (e) {
-                // if something wrong with localeCompare, eg not supported
-                // by browser, then just continue without using it
+            if (! accentedCompare) {
+                return doQuickCompare(valueA, valueB);
+            } else {
+                try {
+                    // using local compare also allows chinese comparisons
+                    return valueA.localeCompare(valueB);
+                } catch (e) {
+                    // if something wrong with localeCompare, eg not supported
+                    // by browser, then just continue with the quick one
+                    return doQuickCompare(valueA, valueB);
+                }
             }
+
         }
 
         if (valueA < valueB) {
@@ -630,6 +636,11 @@ export class Utils {
             return 1;
         } else {
             return 0;
+        }
+
+
+        function doQuickCompare (a:string, b:string): number{
+            return (a > b ? 1 : (a < b ? -1 : 0));
         }
     }
 
@@ -1150,8 +1161,8 @@ export class Utils {
         };
     };
 
-    static referenceCompare (left:any, right:any):boolean{
-        if (left == null && right==null) return true;
+    static referenceCompare(left: any, right: any): boolean {
+        if (left == null && right == null) return true;
         if (left == null && right) return false;
         if (left && right == null) return false;
         return left === right;

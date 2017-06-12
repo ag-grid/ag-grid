@@ -33,6 +33,7 @@ export interface GridOptions {
     suppressRowHoverClass?: boolean;
     sortingOrder?: string[];
     suppressMultiSort?: boolean;
+    accentedSort?: boolean;
     suppressHorizontalScroll?: boolean;
     suppressTabbing?: boolean;
     unSortIcon?: boolean;

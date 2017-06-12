@@ -1,7 +1,7 @@
 import {RowNode} from "./entities/rowNode";
 import {Utils as _} from './utils';
 
-export function defaultGroupComparator(valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode): number {
+export function defaultGroupComparator(valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, accentedCompare: boolean = false): number {
 
     let nodeAIsGroup = _.exists(nodeA) && nodeA.group;
     let nodeBIsGroup = _.exists(nodeB) && nodeB.group;
@@ -10,9 +10,9 @@ export function defaultGroupComparator(valueA: any, valueB: any, nodeA: RowNode,
     let bothAreNormal = !nodeAIsGroup && !nodeBIsGroup;
 
     if (bothAreGroups) {
-        return _.defaultComparator(nodeA.key, nodeB.key);
+        return _.defaultComparator(nodeA.key, nodeB.key, accentedCompare);
     } else if (bothAreNormal) {
-        return _.defaultComparator(valueA, valueB);
+        return _.defaultComparator(valueA, valueB, accentedCompare);
     } else if (nodeAIsGroup) {
         return 1;
     } else {
