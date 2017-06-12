@@ -117,6 +117,22 @@ include '../documentation-main/documentation_header.php';
     </p>
     <show-example example="exampleDivNotInDom"></show-example>
 
+    <h3 id="resizing-groups">Resizing Groups</h3>
+
+    <p>
+        When you resize a group, it will distribute the extra room to all columns in the group equally.
+        The example below the groups can be resizes as follows:
+        <ul>
+            <li>The group 'Everything Resizes' will resize all columns.</li>
+            <li>The group 'Only Year Resizes' will resize only year, because the other columns
+                have <code>suppressResize=true</code>.</li>
+            <li>The group 'Nothing Resizes' cannot be resized at all because all the columns
+                in the groups have <code>suppressResize=true</code>.</li>
+        </ul>
+    </p>
+
+    <show-example example="exampleResizeGroups"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

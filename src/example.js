@@ -104,6 +104,9 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        minWidth: 50
+    },
     // postProcessPopup: function(params) {
     //     console.log(params);
     // },

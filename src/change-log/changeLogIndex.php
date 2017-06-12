@@ -22,6 +22,7 @@ include '../documentation-main/documentation_header.php';
     <li>AG-348 - Callbacks processCellForClipboard() and processCellFromClipboard() now get invoked with doing Ctrl + D (copy range down)</li>
     <li>AG-199 - <a href="../javascript-grid-resizing/">sizeColumnsToFit</a> now fires an event with parameter 'finished=true'.</li>
     <li>AG-199 - <a href="../javascript-grid-resizing/">autoSizeColumns</a> now fires just one event, previously it was firing two events unnecessarily.</li>
+    <li>AG-82 - <a href="../javascript-grid-resizing/#resizing-groups">Resizing groups</a> now respects any children columns that are not resizable.</li>
 
     <h2>Version 10.1.x</h2>
 
