@@ -1,8 +1,8 @@
 <?php
 
-$pageTitle = "Using React and Redux with ag-Grid";
-$pageDescription = "Using React and Redux with ag-Grid - Immutable Data in the Grid";
-$pageKeyboards = "ag-grid react redux immutable";
+$pageTitle = "React datagrid";
+$pageDescription = "Bulding a React DataGrid Redux and ag-Grid";
+$pageKeyboards = "react datagrid redux";
 
 include('../includes/mediaHeader.php');
 ?>
@@ -10,16 +10,14 @@ include('../includes/mediaHeader.php');
 <link rel="stylesheet" href="../documentation-main/documentation.css">
 <script src="../documentation-main/documentation.js"></script>
 
-
 <div class="row">
-    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <div style="display: inline-block;">
-            <img style="vertical-align: baseline" src="../images/react_large.png"/>
-            <div style="display: inline-block;vertical-align: top;">
-                <h1 style="margin-top: 0">Using React and Redux with ag-Grid</h1>
-                <h2 style="margin-top: 0">A Perfect Combination</h2>
-            </div>
-        </div>
+    <div class="col-md-4" style="padding-top: 20px;">
+        <img style="vertical-align: baseline" src="../images/react_large.png"/>
+        <img style="vertical-align: baseline" src="../images/logo/SVG_ag_grid_bright-bg.svg" width="200px"/>
+    </div>
+    <div class="col-md-8" style="padding-top: 40px;">
+        <h1 style="margin-top: 0">Building a React Datagrid</h1>
+        <h2 style="margin-top: 0">Using Redux and ag-Grid</h2>
     </div>
 
     <div class="row" ng-app="documentation">
@@ -27,21 +25,33 @@ include('../includes/mediaHeader.php');
 
             <h2>Motivation</h2>
 
-            <p style="margin-bottom: 0">ag-Grid is <span style="font-style: italic">The Best Grid</span> in the world.</p>
-            <p style="margin-bottom: 0">React is one of the best frameworks in the world.</p>
-            <p >Redux and React were made for each other.</p>
-            <p>Let's use them altogether for a brilliant developer experience!</p>
+            <p>
+                <a href="https://www.ag-grid.com">ag-Grid</a> is <span style="font-style: italic">The Best Grid in the world!</span>
+                <a href="https://facebook.github.io/react/">React</a> is one of the best frameworks in the world!
+                <a href="http://redux.js.org/docs/introduction/">Redux</a> and <a href="https://facebook.github.io/react/">React</a> were made for each other.
+                This blog goes through how to use all three of these frameworks together for a brilliant developer experience!
+            </p>
 
             <note>A live working example of ag-Grid with React and Redux can be found <a
                         href="https://www.ag-grid.com/example-react-redux">here.</a></note>
 
             <h2>Introduction</h2>
 
-            <p>React is a great framework offering a powerful but simple way to write your applications. Redux offers a
+            <p><a href="https://facebook.github.io/react/">React</a> is a great framework offering a powerful but simple way to write your applications.
+                <a href="http://redux.js.org/docs/introduction/">Redux</a> offers a
                 great way to decouple your Component state while making it easier to keep your data immutable.</p>
 
-            <p>ag-Grid is not written in React - this make ag-Grid both powerful and flexible in that we can support all
-            major frameworks, but does require you to use your data in a certain way to achieve the best of both worlds.</p>
+            <p>
+                <a href="https://www.ag-grid.com">ag-Grid</a> is not written in
+                <a href="https://facebook.github.io/react/">React</a> - this makes
+                <a href="https://www.ag-grid.com">ag-Grid</a> both powerful and flexible in that we can support all
+                major frameworks. <a href="https://www.ag-grid.com">ag-Grid</a> can also work with immutable stores,
+                so although <a href="https://www.ag-grid.com">ag-Grid</a> doesn't use
+                <a href="http://redux.js.org/docs/introduction/">Redux</a> internally, it is fully able to work
+                with your <a href="https://facebook.github.io/react/">React</a> /
+                <a href="http://redux.js.org/docs/introduction/">Redux</a> application seamlessly.
+                Let me show you how...
+            </p>
 
             <h3>Our Application</h3>
 
@@ -55,7 +65,7 @@ include('../includes/mediaHeader.php');
 
             <img src="../images/react-redux.png" style="width: 100%">
 
-            <p>We'll start off with our ag-Grid React Seed project to get us up and running with a simple skeleton application:</p>
+            <p>We'll start off with our <a href="https://github.com/ceolter/ag-grid-react-seed">ag-Grid React</a> Seed project to get us up and running with a simple skeleton application:</p>
 
 <pre>
 git clone https://github.com/ceolter/ag-grid-react-seed.git
@@ -114,7 +124,7 @@ export default class GridDataService {
 }
 </pre>
 
-            <p>The service manages the data - it has the current data and makes it available via Redux. In this example
+            <p>The service manages the data - it has the current data and makes it available via <a href="http://redux.js.org/docs/introduction/">Redux</a>. In this example
             we have 3 rows of data (one each for Apple, Google and Microsoft) which the service periodically updates to
             simulate live price changes.</p>
 
@@ -263,8 +273,8 @@ export default connect(
 )(SimpleGridExample);
 </pre>
 
-            <p>With a fairly small number of changes to the seed project we now have a React application using both
-                Redux and ag-Grid - fantastic!</p>
+            <p>With a fairly small number of changes to the seed project we now have a <a href="https://facebook.github.io/react/">React</a> application using both
+                <a href="http://redux.js.org/docs/introduction/">Redux</a> and <a href="https://www.ag-grid.com">ag-Grid</a> - fantastic!</p>
 
             <img src="../images/react-redux-blog-app.png" style="width: 100%">
 
@@ -274,11 +284,11 @@ export default connect(
 
             <h3>The Secret Sauce</h3>
 
-            <p>By making use of the new <code>deltaRowDataMode</code> in ag-Grid, we can ensure that we only re-render the data
+            <p>By making use of the new <code>deltaRowDataMode</code> in <a href="https://www.ag-grid.com">ag-Grid</a>, we can ensure that we only re-render the data
             that has actually changed.</p>
 
             <p>To do this all we need to do is specify that we want to make use of <code>deltaRowDataMode</code>, and
-            provide a unique key to ag-Grid so that it can determine what has changed, if anything. We do this by providing
+            provide a unique key to <a href="https://www.ag-grid.com">ag-Grid</a> so that it can determine what has changed, if anything. We do this by providing
             the <code>getRowNodeId</code> callback. In our case, each row can be uniquely identified by it's <code>symbol</code>:</p>
 
 <pre>
@@ -368,7 +378,7 @@ export default connect(
 
                 <div>
                     <br/>
-                    <a href="https://www.linkedin.com/in/sean-landsman-9780092"><img src="/images/linked-in.png"/></a>
+                    <a href="https://www.linkedin.com/in/sean-landsman-9780092"><img src="../images/linked-in.png"/></a>
                     <br/>
                     <br/>
                     <a href="https://twitter.com/seanlandsman" class="twitter-follow-button" data-show-count="false"
@@ -415,6 +425,6 @@ export default connect(
         © ag-Grid Ltd. 2015-2017
     </footer>
 
-    <?php
-    include('../includes/mediaFooter.php');
-    ?>
+<?php
+include('../includes/mediaFooter.php');
+?>
