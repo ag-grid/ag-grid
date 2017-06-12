@@ -220,6 +220,11 @@ include '../documentation-main/documentation_header.php';
             <td>Array defining the order in which sorting occurs (if sorting is enabled). Values can be <code>asc</code>,
                 <code>desc</code> or <code>null</code>. For example: <code>sortingOrder: ['asc', 'desc']</code>.</td>
         </tr>
+        <tr>
+            <th>accentedSort</th>
+            <td>Set to true to specify that the sort
+                should take into account accented characters, if this feature is turned on the sort will perform slower.</td>
+        </tr>
 
 
         <!------------------->

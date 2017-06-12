@@ -15,7 +15,9 @@ include '../documentation-main/documentation_header.php';
 
     <h3>NEXT</h3>
 
-    <li>AG-182 - New property <a href="../javascript-grid-clipboard/#deliminator">clipboardDeliminator</a> to specify deliminator to use while copying to clipboard.</li>
+    <li>AG-515 - New property <a href="../javascript-grid-clipboard/#deliminator">clipboardDeliminator</a> to specify deliminator to use while copying to clipboard.</li>
+    <li>AG-515 - New property <a href="../javascript-grid-sorting/#accentedSort">gridOptions.accentedSort</a> Set to true to specify that the sort
+        should take into account accented characters, if this feature is turned on the sort will perform slower.</li>
     <li>AG-398 / AG-371 - New property <a href="../javascript-grid-clipboard/#suppressPaste">colDef.suppressPaste</a> to suppress pasting from clipboard for certain cells.</li>
     <li>AG-348 - Callbacks processCellForClipboard() and processCellFromClipboard() now get invoked with doing Ctrl + D (copy range down)</li>
     <li>AG-199 - <a href="../javascript-grid-resizing/">sizeColumnsToFit</a> now fires an event with parameter 'finished=true'.</li>
