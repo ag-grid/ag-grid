@@ -7,14 +7,14 @@ $pageKeyboards = "react datagrid redux";
 include('../includes/mediaHeader.php');
 ?>
 
-<link rel="stylesheet" href="../documentation-main/documentation.css">
-<script src="../documentation-main/documentation.js"></script>
+<link rel="stylesheet" href="../../src/documentation-main/documentation.css">
+<script src="../../src/documentation-main/documentation.js"></script>
 
 
 <div class="row">
     <div class="col-md-4" style="padding-top: 20px;">
-        <img style="vertical-align: baseline" src="../images/react_large.png"/>
-        <img style="vertical-align: baseline" src="../images/logo/SVG_ag_grid_bright-bg.svg" width="200px"/>
+        <img style="vertical-align: baseline" src="../../src/images/react_large.png"/>
+        <img style="vertical-align: baseline" src="../../src/images/logo/SVG_ag_grid_bright-bg.svg" width="200px"/>
     </div>
     <div class="col-md-8" style="padding-top: 40px;">
         <h1 style="margin-top: 0">Building a React Datagrid</h1>
@@ -64,7 +64,7 @@ include('../includes/mediaHeader.php');
                 and a simple <code>Grid</code> that will display the resulting data. In between the two we'll have a Redux
                 <code>store</code> to act as a bridge between <code>Service</code> and <code>Grid</code>.</p>
 
-            <img src="../images/react-redux.png" style="width: 100%">
+            <img src="../../src/images/react-redux.png" style="width: 100%">
 
             <p>We'll start off with our <a href="https://github.com/ceolter/ag-grid-react-seed">ag-Grid React</a> Seed project to get us up and running with a simple skeleton application:</p>
 
@@ -75,7 +75,7 @@ npm install
 </pre>
             <p>If we now run <code>npm start</code> we'll be presented with a simple Grid:</p>
 
-            <img src="../images/react-seed.png" style="width: 100%;margin-bottom: 15px">
+            <img src="../../src/images/react-seed.png" style="width: 100%;margin-bottom: 15px">
 
             <p>With this in place, let's install the Redux dependencies:</p>
 
@@ -277,7 +277,7 @@ export default connect(
             <p>With a fairly small number of changes to the seed project we now have a <a href="https://facebook.github.io/react/">React</a> application using both
                 <a href="http://redux.js.org/docs/introduction/">Redux</a> and <a href="https://www.ag-grid.com">ag-Grid</a> - fantastic!</p>
 
-            <img src="../images/react-redux-blog-app.png" style="width: 100%">
+            <img src="../../src/images/react-redux-blog-app.png" style="width: 100%">
 
             <p>With this running you'll see the prices updating - this looks great. There is one catch here though...the entire
             grid row data will be re-rendered if we leave the application like this, even though only a single row will be updated
@@ -362,7 +362,7 @@ export default connect(
 
             <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
 
-                <p><img src="../images/sean.png"/></p>
+                <p><img src="../../src/images/sean.png"/></p>
                 <p style="font-weight: bold;">
                     Sean Landsman
                 </p>
