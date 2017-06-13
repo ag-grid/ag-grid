@@ -15,7 +15,8 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     animateRows: true,
-    groupUseEntireRow: true
+    groupUseEntireRow: true,
+    enableSorting:true
 };
 
 function onToggleZimbabwe() {

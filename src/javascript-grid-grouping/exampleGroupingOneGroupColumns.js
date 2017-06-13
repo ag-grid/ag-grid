@@ -21,7 +21,8 @@ var gridOptions = {
     groupSuppressAutoColumn: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
-    }
+    },
+    enableSorting:true
 };
 
 // setup the grid after the page has finished loading
