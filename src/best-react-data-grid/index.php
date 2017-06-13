@@ -30,7 +30,7 @@ include '../documentation-main/documentation_header.php';
                 </p>
             </div>
         </a>
-        <a href="/javascript-grid-interfacing-overview/" class="list-group-item">
+        <a href="/react-more-details/" class="list-group-item">
             <div class="float-parent">
                 <div class="section-icon-container">
                     <img src="../images/svg/docs/more-details2.svg" width="50" />
