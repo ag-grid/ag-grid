@@ -38,10 +38,9 @@ export class ValueService {
             return valueUsingSpecificData;
         }
 
-        //We might be asking for the value of a grouped row, if that is the case
-        //the value is not going to be in the data, but is handily stored in the
-        //key property as part of the grouping stage, so effectively the value
-        //for the node.key is the value for this node + column
+        //We might be asking for the key of a grouped row, if that is the case
+        //the key is not going to be in the data, but it is stored in the
+        //rowNode.key property as part of the grouping stage.
         if (node.group){
             let groupColumn:Column = node.rowGroupColumn;
             if (groupColumn && column.getColId() === groupColumn.getColId()) return node.key;

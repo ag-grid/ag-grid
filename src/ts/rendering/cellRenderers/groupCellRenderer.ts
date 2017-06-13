@@ -1,22 +1,20 @@
-
 import {SvgFactory} from "../../svgFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {ExpressionService} from "../../expressionService";
 import {EventService} from "../../eventService";
 import {Constants} from "../../constants";
 import {Utils as _} from "../../utils";
-import {Events} from "../../events";
 import {Autowired, Context} from "../../context/context";
 import {Component} from "../../widgets/component";
 import {ICellRenderer} from "./iCellRenderer";
 import {RowNode} from "../../entities/rowNode";
-import {GridApi} from "../../gridApi";
 import {CellRendererService} from "../cellRendererService";
 import {ValueFormatterService} from "../valueFormatterService";
 import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
-import {QuerySelector, RefSelector} from "../../widgets/componentAnnotations";
+import {RefSelector} from "../../widgets/componentAnnotations";
+import {GroupValueService} from "../../groupValueService";
 
 let svgFactory = SvgFactory.getInstance();
 
@@ -244,7 +242,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private createFooterCell(): void {
         let footerValue: string;
-        let groupName = this.getGroupName();
+        let groupName = GroupValueService.getGroupName(this.params.keyMap, this.params.node.key);
         let footerValueGetter = this.params.footerValueGetter;
         if (footerValueGetter) {
             // params is same as we were given, except we set the value as the item to display
@@ -277,7 +275,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             columnOfGroupedCol = params.column;
         }
 
-        let groupName = this.getGroupName();
+        let groupName = GroupValueService.getGroupName(this.params.keyMap, this.params.node.key);
         let valueFormatted = this.valueFormatterService.formatValue(columnOfGroupedCol, params.node, params.scope, params.rowIndex, groupName);
 
         let groupedColCellRenderer = columnOfGroupedCol.getCellRenderer();
@@ -321,21 +319,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let allChildrenCount = this.params.node.allChildrenCount;
         let text = allChildrenCount >= 0 ? `(${allChildrenCount})` : '';
         this.eChildCount.innerHTML = text;
-    }
-
-    private getGroupName(): string {
-        let keyMap = this.params.keyMap;
-        let rowNodeKey = this.params.node.key;
-        if (keyMap && typeof keyMap === 'object') {
-            let valueFromMap = keyMap[rowNodeKey];
-            if (valueFromMap) {
-                return valueFromMap;
-            } else {
-                return rowNodeKey;
-            }
-        } else {
-            return rowNodeKey;
-        }
     }
 
     private createLeafCell(): void {
