@@ -25,17 +25,17 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "vinyl-buffer": "1.0.0",
-    "merge2": "0.3.6",
-    "gulp": "3.9.0",
-    "gulp-uglify": "1.5.1",
-    "gulp-rename": "1.2.2",
-    "gulp-typescript": "2.10.0",
-    "typescript": "2.2.0",
-    "gulp-header": "1.7.0",
-    "gulp-tsd": "0.0.4",
-    "react-dom": "0.14.6",
-    "react": "0.14.6"
+    "@types/ag-grid": "^2.1.31",
+    "@types/react": "^15.0.24",
+    "@types/react-dom": "^15.5.0",
+    "gulp": "3.9.x",
+    "gulp-header": "1.8.x",
+    "gulp-typescript": "3.1.x",
+    "merge2": "1.0.x",
+    "prop-types": "15.5.x",
+    "react": "15.5.x",
+    "react-dom": "15.5.x",
+    "typescript": "2.3.x"
   },
   "peerDependencies": {
     "ag-grid": "10.1.x"

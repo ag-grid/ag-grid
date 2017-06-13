@@ -1,2 +1,21 @@
 // ag-grid-react v10.1.0
-export declare var AgGridReact: any;
+/// <reference types="react" />
+import { Component } from 'react';
+import * as React from 'react';
+import * as AgGrid from 'ag-grid';
+export declare class AgGridReact extends Component<any, any> {
+    props: any;
+    state: any;
+    static propTypes: any;
+    gridOptions: AgGrid.GridOptions;
+    api: AgGrid.GridApi;
+    columnApi: AgGrid.ColumnApi;
+    protected eGridDiv: HTMLElement;
+    constructor(props: any, state: any);
+    render(): React.DOMElement<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+    createStyleForDiv(): any;
+    componentDidMount(): void;
+    shouldComponentUpdate(): boolean;
+    componentWillReceiveProps(nextProps: any): void;
+    componentWillUnmount(): void;
+}

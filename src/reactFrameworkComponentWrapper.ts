@@ -1,9 +1,7 @@
-import {Bean}  from 'ag-grid';
-import {IComponent}  from 'ag-grid';
-import {FrameworkComponentWrapper}  from 'ag-grid';
-import {AgReactComponent} from "./agReactComponent";
+import {Bean, IComponent, FrameworkComponentWrapper}  from 'ag-grid';
+import {AgReactComponent} from './agReactComponent';
 
-@Bean ("frameworkComponentWrapper")
+@Bean ('frameworkComponentWrapper')
 export class ReactFrameworkComponentWrapper implements  FrameworkComponentWrapper {
     wrap <A extends IComponent<any>>(ReactComponent: { new (): any}, methodList: string[]): A{
         class DynamicAgReactComponent extends AgReactComponent implements IComponent<any> {
@@ -18,11 +16,11 @@ export class ReactFrameworkComponentWrapper implements  FrameworkComponentWrappe
 
         }
 
-        let wrapper : DynamicAgReactComponent= new DynamicAgReactComponent ();
+        const wrapper : DynamicAgReactComponent= new DynamicAgReactComponent ();
         methodList.forEach((methodName=>{
-            let methodProxy: Function = function (){
+            const methodProxy: Function = function (){
                 if (wrapper.reactComponent.prototype[methodName]) {
-                    var componentRef = this.getFrameworkComponentInstance();
+                    const componentRef = this.getFrameworkComponentInstance();
                     return wrapper.reactComponent.prototype[methodName].apply (componentRef, arguments)
                 } else {
                     console.warn('ag-Grid: React component is missing the method ' + methodName + '()');

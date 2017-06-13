@@ -1,7 +1,7 @@
 import {AgReactFrameworkComponent} from "./interfaces";
-var React = require('react');
-var ReactDOM = require('react-dom');
-var AgGrid = require('ag-grid');
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import * as AgGrid from 'ag-grid';
 
 export class AgReactComponent implements AgReactFrameworkComponent<any>{
 
@@ -28,7 +28,7 @@ export class AgReactComponent implements AgReactFrameworkComponent<any>{
         // to add css class or style
         params.reactContainer = this.eParentElement;
 
-        var ReactComponent = React.createElement(this.reactComponent, params);
+        const ReactComponent = React.createElement(this.reactComponent, params);
         if (!this.parentComponent) {
             this.componentRef = ReactDOM.render(ReactComponent, this.eParentElement);
         } else {

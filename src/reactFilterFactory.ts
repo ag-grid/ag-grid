@@ -1,6 +1,5 @@
 import {AgReactComponent} from "./agReactComponent";
 import {IFilterComp, IFilter, IFilterParams} from "ag-grid";
-var React = require('react');
 
 // wraps the provided React filter component
 export function reactFilterFactory(reactComponent: any, parentComponent?: any): {new(): IFilterComp} {
@@ -16,7 +15,7 @@ export function reactFilterFactory(reactComponent: any, parentComponent?: any): 
         }
 
         public isFilterActive(): boolean {
-            var componentRef = this.getFrameworkComponentInstance();
+            const componentRef = this.getFrameworkComponentInstance();
             if (componentRef.isFilterActive) {
                 return componentRef.isFilterActive();
             } else {
@@ -26,7 +25,7 @@ export function reactFilterFactory(reactComponent: any, parentComponent?: any): 
         }
 
         public doesFilterPass(params: any): boolean {
-            var componentRef = this.getFrameworkComponentInstance();
+            const componentRef = this.getFrameworkComponentInstance();
             if (componentRef.doesFilterPass) {
                 return componentRef.doesFilterPass(params);
             } else {
@@ -36,7 +35,7 @@ export function reactFilterFactory(reactComponent: any, parentComponent?: any): 
         }
 
         public getModel(): any {
-            var componentRef = this.getFrameworkComponentInstance();
+            const componentRef = this.getFrameworkComponentInstance();
             if (componentRef.getModel) {
                 return componentRef.getModel();
             } else {
@@ -47,7 +46,7 @@ export function reactFilterFactory(reactComponent: any, parentComponent?: any): 
 
         /** Restores the filter state. */
         public setModel(model: any): void {
-            var componentRef = this.getFrameworkComponentInstance();
+            const componentRef = this.getFrameworkComponentInstance();
             if (componentRef.setModel) {
                 componentRef.setModel(model);
             } else {
@@ -56,14 +55,14 @@ export function reactFilterFactory(reactComponent: any, parentComponent?: any): 
         }
 
         public afterGuiAttached(params: {hidePopup?: ()=>void}): void {
-            var componentRef = this.getFrameworkComponentInstance();
+            const componentRef = this.getFrameworkComponentInstance();
             if (componentRef.afterGuiAttached) {
                 componentRef.afterGuiAttached(params);
             }
         }
 
         public onNewRowsLoaded(): void {
-            var componentRef = this.getFrameworkComponentInstance();
+            const componentRef = this.getFrameworkComponentInstance();
             if (componentRef.onNewRowsLoaded) {
                 componentRef.onNewRowsLoaded();
             }

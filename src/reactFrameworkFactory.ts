@@ -1,7 +1,19 @@
-import {BaseFrameworkFactory, IFrameworkFactory, IFilter, ColDef, ICellRendererComp, ICellRendererFunc, Utils, IFilterComp, GridOptions, ICellEditorComp} from 'ag-grid';
-import {reactCellRendererFactory} from "../lib/reactCellRendererFactory";
-import {reactCellEditorFactory} from "./reactCellEditorFactory";
-import {reactFilterFactory} from "./reactFilterFactory";
+import {
+    BaseFrameworkFactory,
+    IFrameworkFactory,
+    IFilter,
+    ColDef,
+    ICellRendererComp,
+    ICellRendererFunc,
+    Utils,
+    IFilterComp,
+    GridOptions,
+    ICellEditorComp
+} from 'ag-grid';
+
+import {reactCellRendererFactory} from '../lib/reactCellRendererFactory';
+import {reactCellEditorFactory} from './reactCellEditorFactory';
+import {reactFilterFactory} from './reactFilterFactory';
 
 
 export class ReactFrameworkFactory implements IFrameworkFactory {

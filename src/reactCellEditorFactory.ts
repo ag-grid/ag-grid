@@ -10,7 +10,7 @@ export function reactCellEditorFactory(reactComponent:any, parentComponent?:any)
         }
 
         public getValue():any {
-            var componentRef = this.getFrameworkComponentInstance();
+            const componentRef = this.getFrameworkComponentInstance();
             if (componentRef.getValue) {
                 return componentRef.getValue();
             } else {
@@ -20,14 +20,14 @@ export function reactCellEditorFactory(reactComponent:any, parentComponent?:any)
         }
 
         public afterGuiAttached():void {
-            var componentRef = this.getFrameworkComponentInstance();
+            const componentRef = this.getFrameworkComponentInstance();
             if (componentRef.afterGuiAttached) {
                 componentRef.afterGuiAttached();
             }
         }
 
         public isPopup():boolean {
-            var componentRef = this.getFrameworkComponentInstance();
+            const componentRef = this.getFrameworkComponentInstance();
             if (componentRef.isPopup) {
                 return componentRef.isPopup();
             } else {
@@ -36,7 +36,7 @@ export function reactCellEditorFactory(reactComponent:any, parentComponent?:any)
         }
 
         public isCancelBeforeStart():boolean {
-            var componentRef = this.getFrameworkComponentInstance();
+            const componentRef = this.getFrameworkComponentInstance();
             if (componentRef.isCancelBeforeStart) {
                 return componentRef.isCancelBeforeStart();
             } else {
@@ -45,7 +45,7 @@ export function reactCellEditorFactory(reactComponent:any, parentComponent?:any)
         }
 
         public isCancelAfterEnd():boolean {
-            var componentRef = this.getFrameworkComponentInstance();
+            const componentRef = this.getFrameworkComponentInstance();
             if (componentRef.isCancelAfterEnd) {
                 return componentRef.isCancelAfterEnd();
             } else {
@@ -54,14 +54,14 @@ export function reactCellEditorFactory(reactComponent:any, parentComponent?:any)
         }
 
         public focusIn():void {
-            var componentRef = this.getFrameworkComponentInstance();
+            const componentRef = this.getFrameworkComponentInstance();
             if (componentRef.focusIn) {
                 componentRef.focusIn();
             }
         }
 
         public focusOut():void {
-            var componentRef = this.getFrameworkComponentInstance();
+            const componentRef = this.getFrameworkComponentInstance();
             if (componentRef.focusOut) {
                 componentRef.focusOut();
             }
