@@ -56,7 +56,7 @@ export class GroupValueService {
         );
     }
 
-    private getGroupColumn(rowGroupIndex: number, column:Column) {
+    public getGroupColumn(rowGroupIndex: number, column:Column) {
         // pull out the column that the grouping is on
         let rowGroupColumns = this.columnApi.getRowGroupColumns();
 

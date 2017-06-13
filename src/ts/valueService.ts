@@ -55,7 +55,16 @@ export class ValueService {
             if (autoGroupColumnDef.mappedColumn.getColId() === column.getColId()) {
                 return data[column.getColId()]
             }
+        }
 
+        // If this node is a group node and we are here its because this column is not
+        // autogroup, we need to check now if this is a manually selected column for
+        // grouping
+        if (node.group){
+            let groupColumn : Column= this.groupValueService.getGroupColumn(node.rowGroupIndex, column);
+            if (groupColumn && data[groupColumn.getColId()] && column.getCellRenderer() == 'group'){
+                return data[groupColumn.getColId()]
+            }
         }
 
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
