@@ -8,6 +8,7 @@ import {defaultGroupComparator} from "../functions";
 export class AutoGroupColService {
 
     public static GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
+    public static GROUP_AUTO_COLUMN_BUNDLE_ID = AutoGroupColService.GROUP_AUTO_COLUMN_ID +  '_bundle';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
@@ -92,7 +93,7 @@ export class AutoGroupColService {
 
             colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
         } else {
-            colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}_bundle`;
+            colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
         }
 
         let newCol = new Column(autoColDef, colId, true);

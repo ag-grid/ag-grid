@@ -5,31 +5,34 @@ import {SortController} from "../sortController";
 import {_} from "../utils";
 import {ValueService} from "../valueService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {GroupNameInfoParams, GroupValueService} from "../groupValueService";
+import {AutoGroupColService} from "../columnController/autoGroupColService";
 
 export interface SortOption {
-    inverter:number,
-    column:Column
+    inverter: number,
+    column: Column
 }
 
 export interface SortedRowNode {
-    currentPos:number,
-    rowNode:RowNode
+    currentPos: number,
+    rowNode: RowNode
 }
 
 @Bean('sortService')
 export class SortService {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('groupValueService') private groupValueService: GroupValueService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    sortAccordingToColumnsState (rowNode: RowNode){
+    sortAccordingToColumnsState(rowNode: RowNode) {
         let sortOptions: SortOption[] = this.sortController.getSortForRowController();
         this.sort(rowNode, sortOptions);
     }
 
-    sort (rowNode: RowNode, sortOptions: SortOption[]){
+    sort(rowNode: RowNode, sortOptions: SortOption[]) {
         // sort any groups recursively
-        rowNode.childrenAfterFilter.forEach( child => {
+        rowNode.childrenAfterFilter.forEach(child => {
             if (child.group) {
                 this.sort(child, sortOptions);
             }
@@ -44,9 +47,11 @@ export class SortService {
             //ie Comparator always returns 0, so if you want to ensure the array keeps its
             //order, then you need to add an additional sorting condition manually, in this
             //case we are going to inspect the original array position
-            let sortedRowNodes:SortedRowNode[] = rowNode.childrenAfterSort.map((it, pos)=>{return {currentPos:pos, rowNode:it}});
+            let sortedRowNodes: SortedRowNode[] = rowNode.childrenAfterSort.map((it, pos) => {
+                return {currentPos: pos, rowNode: it}
+            });
             sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
-            rowNode.childrenAfterSort = sortedRowNodes.map (sorted=>sorted.rowNode);
+            rowNode.childrenAfterSort = sortedRowNodes.map(sorted => sorted.rowNode);
         }
 
         this.updateChildIndexes(rowNode);
@@ -54,8 +59,8 @@ export class SortService {
 
 
     private compareRowNodes(sortOptions: any, sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode) {
-        let nodeA:RowNode = sortedNodeA.rowNode;
-        let nodeB:RowNode = sortedNodeB.rowNode;
+        let nodeA: RowNode = sortedNodeA.rowNode;
+        let nodeB: RowNode = sortedNodeB.rowNode;
 
         // Iterate columns, return the first that doesn't match
         for (let i = 0, len = sortOptions.length; i < len; i++) {
@@ -63,8 +68,8 @@ export class SortService {
             // let compared = compare(nodeA, nodeB, sortOption.column, sortOption.inverter === -1);
 
             let isInverted = sortOption.inverter === -1;
-            let valueA = this.valueService.getValue(sortOption.column, nodeA);
-            let valueB = this.valueService.getValue(sortOption.column, nodeB);
+            let valueA: any = this.getValue(nodeA, sortOption.column);
+            let valueB: any = this.getValue(nodeB, sortOption.column);
             let comparatorResult: number;
             if (sortOption.column.getColDef().comparator) {
                 //if comparator provided, use it
@@ -82,10 +87,16 @@ export class SortService {
         return sortedNodeA.currentPos - sortedNodeB.currentPos;
     }
 
-    private updateChildIndexes(rowNode: RowNode) {
-        if (_.missing(rowNode.childrenAfterSort)) { return; }
+    private getValue(nodeA: RowNode, column: Column): string {
+        return this.valueService.getValue(column, nodeA);
+    }
 
-        rowNode.childrenAfterSort.forEach( (child: RowNode, index: number) => {
+    private updateChildIndexes(rowNode: RowNode) {
+        if (_.missing(rowNode.childrenAfterSort)) {
+            return;
+        }
+
+        rowNode.childrenAfterSort.forEach((child: RowNode, index: number) => {
             child.firstChild = index === 0;
             child.lastChild = index === rowNode.childrenAfterSort.length - 1;
             child.childIndex = index;

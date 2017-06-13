@@ -4,15 +4,17 @@ import {Column} from "./entities/column";
 import {RowNode} from "./entities/rowNode";
 import {_} from "./utils";
 import {ColumnApi} from "./columnController/columnController";
+import {GroupCellRendererParams} from "./rendering/cellRenderers/groupCellRenderer";
 
 
-export interface FormatGroupNameParams {
+export interface GroupNameInfoParams {
     rowGroupIndex:number,
     column:Column,
-    node:RowNode
     scope:any
     rowIndex:number
+    keyMap:{[id:string]:string}
 }
+
 
 export interface GroupNameInfo {
     mappedGroupName:string,
@@ -25,7 +27,7 @@ export class GroupValueService {
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('columnApi') private columnApi: ColumnApi;
 
-    public mapGroupName(rowNodeKey:string, keyMap?:{[id:string]:string}): string {
+    private mapGroupName(rowNodeKey:string, keyMap?:{[id:string]:string}): string {
         if (keyMap && typeof keyMap === 'object') {
             let valueFromMap = keyMap[rowNodeKey];
             if (valueFromMap) {
@@ -38,19 +40,19 @@ export class GroupValueService {
         }
     }
 
-    public formatGroupName (unformatted:string, formattedParams:FormatGroupNameParams):string{
+    private formatGroupName (unformatted:string, node:RowNode, formattedParams:GroupNameInfoParams):string{
         let columnOfGroupedCol = this.getGroupColumn(formattedParams.rowGroupIndex, formattedParams.column);
 
         return this.valueFormatterService.formatValue(
             columnOfGroupedCol,
-            formattedParams.node,
+            node,
             formattedParams.scope,
             formattedParams.rowIndex,
             unformatted
         );
     }
 
-    public getGroupColumn(rowGroupIndex: number, column:Column) {
+    getGroupColumn(rowGroupIndex: number, column:Column) {
         // pull out the column that the grouping is on
         let rowGroupColumns = this.columnApi.getRowGroupColumns();
 
@@ -64,9 +66,10 @@ export class GroupValueService {
         return columnOfGroupedCol;
     }
 
-    public getGroupNameInfo (node:RowNode, formattedParams:FormatGroupNameParams, keyMap?:{[id:string]:string}):GroupNameInfo{
-        let mappedGroupName: string = this.mapGroupName(node.key, keyMap);
-        let valueFormatted: string = this.formatGroupName(mappedGroupName, formattedParams);
+
+    public getGroupNameInfo (node:RowNode, params: GroupNameInfoParams):GroupNameInfo {
+        let mappedGroupName: string = this.mapGroupName(node.key, params.keyMap);
+        let valueFormatted: string = this.formatGroupName(mappedGroupName, node, params);
         let actualValue = _.exists(valueFormatted) ? valueFormatted : mappedGroupName;
         return {
             mappedGroupName:mappedGroupName,
@@ -74,4 +77,18 @@ export class GroupValueService {
             actualValue:actualValue
         }
     }
+
+    public assignToParams<T extends GroupCellRendererParams> (receiver:T, node:RowNode, params: GroupNameInfoParams): T{
+        let groupNameInfo = this.getGroupNameInfo(node, params);
+        receiver.value = groupNameInfo.mappedGroupName;
+        receiver.valueFormatted  = groupNameInfo.valueFormatted;
+        receiver.actualValue  = groupNameInfo.actualValue;
+
+        return receiver;
+    }
+
+
+    // public getGroupNameInfoByNodeAndColumn ():GroupNameInfo{
+    //
+    // }
 }

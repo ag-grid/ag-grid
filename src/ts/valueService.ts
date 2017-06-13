@@ -8,6 +8,8 @@ import {Column} from "./entities/column";
 import {Utils as _} from "./utils";
 import {Events} from "./events";
 import {EventService} from "./eventService";
+import {GroupNameInfoParams, GroupValueService} from "./groupValueService";
+import {AutoGroupColService} from "./columnController/autoGroupColService";
 
 @Bean('valueService')
 export class ValueService {
@@ -16,6 +18,7 @@ export class ValueService {
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('groupValueService') private groupValueService: GroupValueService;
 
     private cellExpressions: boolean;
     private userProvidedTheGroups: boolean;
@@ -38,12 +41,24 @@ export class ValueService {
             return valueUsingSpecificData;
         }
 
-        //We might be asking for the key of a grouped row, if that is the case
-        //the key is not going to be in the data, but it is stored in the
-        //rowNode.key property as part of the grouping stage.
-        if (node.group){
-            let groupColumn:Column = node.rowGroupColumn;
-            if (groupColumn && column.getColId() === groupColumn.getColId()) return node.key;
+        if (node.group) {
+            let params: GroupNameInfoParams = {
+                rowGroupIndex: node.rowGroupIndex,
+                column: column,
+                rowIndex: node.rowIndex,
+                scope: null,
+                keyMap: {}
+            };
+
+            let groupColumn:Column = this.groupValueService.getGroupColumn(params.rowGroupIndex, column);
+            if (groupColumn.getColId() === column.getColId()){
+                return this.groupValueService.getGroupNameInfo(node, params).actualValue;
+            } else if (column.getColId() === AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID){
+                return this.groupValueService.getGroupNameInfo(node, params).actualValue;
+            } else if (column.getColId() === AutoGroupColService.GROUP_AUTO_COLUMN_ID + '_' + column.getColId()){
+                return this.groupValueService.getGroupNameInfo(node, params).actualValue;
+            }
+            return null;
         }
 
         //We give up
