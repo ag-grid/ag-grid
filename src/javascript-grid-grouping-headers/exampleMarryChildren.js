@@ -7,8 +7,10 @@ var columnDefs = [
             {headerName: "Country", field: "country", width: 120}
         ]
     },
+    {headerName: "Age", field: "age", width: 90, filter: 'number', hide: true},
     {
         headerName: "Sports Results",
+        marryChildren: true,
         children: [
             {headerName: "Sport", field: "sport", width: 110},
             {headerName: "Total", columnGroupShow: 'closed', field: "total", width: 100, filter: 'number'},
@@ -16,7 +18,11 @@ var columnDefs = [
             {headerName: "Silver", columnGroupShow: 'open', field: "silver", width: 100, filter: 'number'},
             {headerName: "Bronze", columnGroupShow: 'open', field: "bronze", width: 100, filter: 'number'}
         ]
-    }
+    },
+    {headerName: "Extra 1", field: '1', width: 100, hide: true},
+    {headerName: "Extra 2", field: '2', width: 100},
+    {headerName: "Extra 3", field: '3', width: 100},
+    {headerName: "Extra 4", field: '4', width: 100}
 ];
 
 var gridOptions = {
