@@ -41,6 +41,8 @@ export class Utils {
     private static isChrome: boolean;
     private static isFirefox: boolean;
 
+    private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
+
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean {
@@ -366,6 +368,20 @@ export class Utils {
 
     static isNodeOrElement(o: any) {
         return this.isNode(o) || this.isElement(o);
+    }
+
+    static isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
+        let pressedChar = String.fromCharCode(event.charCode);
+        let printableCharacter: boolean;
+        if (_.exists(event.key)) {
+            // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
+            // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
+            return event.key.length===1;
+        } else {
+            // otherwise, for older browsers, we test against a list of characters, which doesn't include
+            // accents for non-English, but don't care much, as most users are on modern browsers
+            return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar)>=0
+        }
     }
 
     //adds all type of change listeners to an element, intended to be a text field

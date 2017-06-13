@@ -60,8 +60,6 @@ export class CellComp extends Component {
     @Autowired('stylingService') private stylingService: StylingService;
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
 
-    private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
-
     public static DOM_DATA_KEY_CELL_COMP = 'cellComp';
 
     private eGridCell: HTMLElement; // the outer cell
@@ -500,7 +498,7 @@ export class CellComp extends Component {
             if (pressedChar === ' ') {
                 this.onSpaceKeyPressed(event);
             } else {
-                if (CellComp.PRINTABLE_CHARACTERS.indexOf(pressedChar)>=0) {
+                if (_.isEventFromPrintableCharacter(event)) {
                     this.startRowOrCellEdit(null, pressedChar);
                     // if we don't prevent default, then the keypress also gets applied to the text field
                     // (at least when doing the default editor), but we need to allow the editor to decide
