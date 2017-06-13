@@ -5,6 +5,7 @@ import {RowNode} from "./entities/rowNode";
 import {_} from "./utils";
 import {ColumnApi} from "./columnController/columnController";
 import {GroupCellRendererParams} from "./rendering/cellRenderers/groupCellRenderer";
+import {AutoGroupColService} from "./columnController/autoGroupColService";
 
 
 export interface GroupNameInfoParams {
@@ -88,7 +89,23 @@ export class GroupValueService {
     }
 
 
-    // public getGroupNameInfoByNodeAndColumn ():GroupNameInfo{
-    //
-    // }
+    public getGroupNameInfoByNodeAndColumn (column: Column, node: RowNode):GroupNameInfo{
+        let params: GroupNameInfoParams = {
+            rowGroupIndex: node.rowGroupIndex,
+            column: column,
+            rowIndex: node.rowIndex,
+            scope: null,
+            keyMap: {}
+        };
+
+        let groupColumn:Column = this.getGroupColumn(params.rowGroupIndex, column);
+        if (groupColumn.getColId() === column.getColId()){
+            return this.getGroupNameInfo(node, params);
+        } else if (column.getColId() === AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID){
+            return this.getGroupNameInfo(node, params);
+        } else if (column.getColId() === AutoGroupColService.GROUP_AUTO_COLUMN_ID + '_' + column.getColId()){
+            return this.getGroupNameInfo(node, params);
+        }
+        return null;
+    }
 }

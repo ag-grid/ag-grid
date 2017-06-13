@@ -42,23 +42,8 @@ export class ValueService {
         }
 
         if (node.group) {
-            let params: GroupNameInfoParams = {
-                rowGroupIndex: node.rowGroupIndex,
-                column: column,
-                rowIndex: node.rowIndex,
-                scope: null,
-                keyMap: {}
-            };
-
-            let groupColumn:Column = this.groupValueService.getGroupColumn(params.rowGroupIndex, column);
-            if (groupColumn.getColId() === column.getColId()){
-                return this.groupValueService.getGroupNameInfo(node, params).actualValue;
-            } else if (column.getColId() === AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID){
-                return this.groupValueService.getGroupNameInfo(node, params).actualValue;
-            } else if (column.getColId() === AutoGroupColService.GROUP_AUTO_COLUMN_ID + '_' + column.getColId()){
-                return this.groupValueService.getGroupNameInfo(node, params).actualValue;
-            }
-            return null;
+            let groupNameInfo = this.groupValueService.getGroupNameInfoByNodeAndColumn(column, node);
+            return groupNameInfo ? groupNameInfo.actualValue : null;
         }
 
         //We give up
