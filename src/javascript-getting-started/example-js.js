@@ -15,7 +15,10 @@ var rowData = [
 // let the grid know which columns and what data to use
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: rowData
+    rowData: rowData,
+    onGridReady: function () {
+        gridOptions.api.sizeColumnsToFit();
+    }
 };
 
 // wait for the document to be loaded, otherwise

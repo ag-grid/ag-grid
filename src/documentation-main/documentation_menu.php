@@ -77,50 +77,45 @@
 <div class="docsMenu-content">
 
     <?php
+    if (isFrameworkJavaScript()) {
+        menuItem(1, 'Overview JavaScript', 'Javascript', 'best-javascript-data-grid/');
+        menuItem(2, 'Getting Started Javascript', 'Getting Started', 'javascript-getting-started');
+        menuItem(2, 'More Detail Javascript', 'More Details', 'javascript-more-details/');
+    }
     if (isFrameworkReact()) {
         menuItem(1, 'Overview React', 'ReactJS', 'best-react-data-grid/');
         menuItem(2, 'Getting Started React', 'Getting Started', 'react-getting-started/');
         menuItem(2, 'More Detail React', 'More Details', 'react-more-details/');
     }
+    if (isFrameworkAngular2()) {
+        menuItem(1, 'Overview Angular', 'Angular 2.x/4.x', 'best-angular-2-data-grid/');
+        menuItem(2, 'Getting Started Angular', 'Getting Started', 'angular-getting-started/');
+        menuItem(2, 'More Detail Angular', 'More Details', 'angular-more-details/');
+        menuItemCollapsibleParent(2, 'Angular Building', 'Building', 'angular-building', 'angularParent');
+        menuItemCollapsibleChild(3, 'Angular CLI', 'Angular CLI', 'ag-grid-angular-angularcli/', 'angularParent', 'angularChild', 'start');
+        menuItemCollapsibleChild(3, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/', 'angularParent', 'angularChild');
+        menuItemCollapsibleChild(3, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/', 'angularParent', 'angularChild');
+        menuItemCollapsibleChild(3, 'Angular ngtools Webpack', '@ngtools', 'ag-grid-angular-ngtools-webpack/', 'angularParent', 'angularChild');
+        menuItemCollapsibleChild(3, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/', 'angularParent', 'angularChild', 'end');
+    }
+    if (isFrameworkAngular1()) {
+        menuItem(1, 'Getting Started ng1', 'AngularJS 1.x', 'best-angularjs-data-grid/');
+    }
 
-    // to be removed when all docs are in the new pattern
-    // add framework fitting the new pattern here
-    if ($GLOBALS[framework] !== 'react') {
-        menuItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
-        if (isFrameworkJavaScript()) {
-            menuItem(1, 'Getting Started Javascript', 'Javascript', 'best-javascript-data-grid/');
-        }
+    if (isFrameworkVue()) {
+        menuItem(1, 'Getting Started VueJS', 'VueJS', 'best-vuejs-data-grid/');
+    }
 
-        if (isFrameworkAngular2()) {
-            menuItemCollapsibleParent(1, 'Getting Started ng2', 'Angular 2.x/4.x', 'best-angular-2-data-grid/', 'angularParent');
-            menuItemCollapsibleChild(2, 'Angular CLI', 'Angular CLI', 'ag-grid-angular-angularcli/', 'angularParent', 'angularChild', 'start');
-            menuItemCollapsibleChild(2, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/', 'angularParent', 'angularChild');
-            menuItemCollapsibleChild(2, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/', 'angularParent', 'angularChild');
-            menuItemCollapsibleChild(2, 'Angular ngtools Webpack', 'ngtools/webpack', 'ag-grid-angular-ngtools-webpack/', 'angularParent', 'angularChild');
-            menuItemCollapsibleChild(2, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/', 'angularParent', 'angularChild', 'end');
-        }
+    if (isFrameworkAurelia()) {
+        menuItem(1, 'Getting Started Aurelia', 'Aurelia', 'best-aurelia-data-grid/');
+    }
 
-        if (isFrameworkAngular1()) {
-            menuItem(1, 'Getting Started ng1', 'AngularJS 1.x', 'best-angularjs-data-grid/');
-        }
+    if (isFrameworkWebComponents()) {
+        menuItem(1, 'Getting Started Web Components', 'Web Components', 'best-web-component-data-grid/');
+    }
 
-        if (isFrameworkVue()) {
-            menuItem(1, 'Getting Started VueJS', 'VueJS', 'best-vuejs-data-grid/');
-        }
-
-        if (isFrameworkAurelia()) {
-            menuItem(1, 'Getting Started Aurelia', 'Aurelia', 'best-aurelia-data-grid/');
-        }
-
-        if (isFrameworkWebComponents()) {
-            menuItem(1, 'Getting Started Web Components', 'Web Components', 'best-web-component-data-grid/');
-        }
-
-        if (isFrameworkAll()) {
-            menuItem(1, 'Getting Started TypeScript & Webpack 2', 'TypeScript', 'ag-grid-typescript-webpack-2/');
-        }
-
-        menuItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');
+    if (isFrameworkAll()) {
+        menuItem(1, 'Getting Started TypeScript & Webpack 2', 'TypeScript', 'ag-grid-typescript-webpack-2/');
     }
     ?>
 
@@ -404,7 +399,7 @@
 
     <div>
         Read about <a href="../ag-grid-partners-with-webpack/">ag-Grid's Partnership
-        with webpack</a>.
+            with webpack</a>.
     </div>
 
 </div>

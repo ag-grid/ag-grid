@@ -1,8 +1,8 @@
 <?php
-$key = "Getting Started React";
-$pageTitle = "Best React Datagrid";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with React to deliver filtering, grouping, aggregation, pivoting and much more.";
-$pageKeyboards = "React Grid";
+$key = "Getting Started Angular";
+$pageTitle = "Best Angular Datagrid";
+$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with Angular to deliver filtering, grouping, aggregation, pivoting and much more.";
+$pageKeyboards = "Angular Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
@@ -11,13 +11,13 @@ include '../documentation-main/documentation_header.php';
 
     <h2>
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
-        <img style="vertical-align: middle" src="/images/react_small.png" height="25px"/>
+        <img style="vertical-align: middle" src="/images/angular2_small.png" height="25px"/>
         Getting Started
     </h2>
 
-    <p>This section documents how to get started with ag-Grid and React as quickly as possible. You will start off with
+    <p>This section documents how to get started with ag-Grid and Angular as quickly as possible. You will start off with
         a simple application and section by section add Grid features to the application ending up with a fully fledged
-        application, with ag-Grid and React at the heart of it.</p>
+        application, with ag-Grid and Angular at the heart of it.</p>
 
     <h2>Prerequisites</h2>
 
@@ -35,9 +35,9 @@ include '../documentation-main/documentation_header.php';
         repo, install the dependencies and start it up:</p>
 
     <pre>
-<span class="codeComment">// clone the ag-Grid React seed project</span>
-git clone https://github.com/ceolter/ag-grid-react-seed
-cd ag-grid-react-seed
+<span class="codeComment">// clone the ag-Grid Angular seed project</span>
+git clone https://github.com/ceolter/ag-grid-angular-seed
+cd ag-grid-angular-seed/angular-cli
 
 <span class="codeComment">// install the project dependencies</span>
 npm i
@@ -48,7 +48,7 @@ npm start
 
     <p>With those 3 commands you should now see the following application:</p>
 
-    <img src="../images/react-seed.png" style="display: block;margin: auto;height: 200px;">
+    <img src="../images/angular-seed.png" style="display: block;margin: auto;height: 200px;">
 
     <p>Great! A working Grid application in no time at all. Let's break down the application into it's main parts:</p>
 
@@ -79,7 +79,7 @@ npm start
 <span class="codeComment">// column definitions</span>
 [
     {headerName: "Make", field: "make"},
-    {headerName: "Model", field: "model"},
+    {headerName: "Model", field: "model", cellRendererFramework: RedComponentComponent},
     {headerName: "Price", field: "price"}
 ]
 </pre>
@@ -88,89 +88,63 @@ npm start
         - the data item to read off of from the row data. Here we're defining 3 columns, <code>Make</code>,
         <code>Model</code>
         and <code>Price</code>, each of which correspond to their lowercase equivalent in the row data above.</p>
+    
+    <p>In the case of the <code>model</code> column definition we've also defined a <code>cellRendererFramework</code> - this allows 
+    us to use an Angular Component to render the data for that cell. This is entirely optional, but does allow you to leverage
+    the full power of Angular while still gaining the peformance and functionality offered by ag-Grid.</p>
 
     <h3>Grid Definition</h3>
 
     <p>Ok, so now we know how to define our row and column data - how do we define our actual Grid?</p>
 
-    <p>For a React application, you need to pull in the <code>AgGridReact</code> Component and include it in your <code>render</code>
-        function:</p>
+    <p>For a Angular application, you need to pull in the <code>ag-grid-angular</code> Component and include it in your <code>template</code>:</p>
 
     <pre>
-<span class="codeComment">// A simple Grid definition</span>
-&lt;AgGridReact
-    // properties
-    columnDefs={this.state.columnDefs}
-    rowData={this.state.rowData}
-&lt;/AgGridReact>
+<span class="codeComment">// src/app/my-grid-application/my-grid-application.component.html</span>
+&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-fresh"
+                 [rowData]="rowData"
+                 [columnDefs]="columnDefs"&gt;
+&lt;/ag-grid-angular&gt;
 </pre>
 
-    <p>Here we're telling the Grid to read the row & column definitions off the Components <code>state</code>. For a
-        very simple Grid,
-        this is all you need to do display tabular data.</p>
+    <p>Here we're telling the Grid to read the row & column definitions off the application Component itself, in fields
+        called <code>rowData</code> and <code>columnDefs</code>. For a very simple Grid, this is all you need to do display tabular data.</p>
 
     <p>Of course there is much more we can do - in the following sections we will build on this starting point. For our
         seed application here is the complete Component:</p>
 
     <pre>
-<span class="codeComment">// SimpleGridComponent.jsx </span>
-import React, {Component} from "react";
-import {AgGridReact} from "ag-grid-react";
+<span class="codeComment">// src/app/my-grid-application/my-grid-application.component.ts</span>
+import {Component} from "@angular/core";
+import {RedComponentComponent} from "../red-component/red-component.component";
 
-export default class extends Component {
-    constructor(props) {
-        super(props);
+@Component({
+    selector: 'app-my-grid-application',
+    templateUrl: './my-grid-application.component.html'
+})
+export class MyGridApplicationComponent {
+    columnDefs;
+    rowData;
 
-        this.state = {
-            columnDefs: this.createColumnDefs(),
-            rowData: this.createRowData()
-        }
-    }
-
-    onGridReady(params) {
-        this.gridApi = params.api;
-        this.columnApi = params.columnApi;
-
-        this.gridApi.sizeColumnsToFit();
-    }
-
-    createColumnDefs() {
-        return [
+    constructor() {
+        this.columnDefs = [
             {headerName: "Make", field: "make"},
-            {headerName: "Model", field: "model"},
+            {headerName: "Model", field: "model", cellRendererFramework: RedComponentComponent},
             {headerName: "Price", field: "price"}
         ];
-    }
 
-    createRowData() {
-        return [
+        this.rowData = [
             {make: "Toyota", model: "Celica", price: 35000},
             {make: "Ford", model: "Mondeo", price: 32000},
             {make: "Porsche", model: "Boxter", price: 72000}
-        ];
+        ]
     }
 
-    render() {
-        let containerStyle = {
-            height: 115,
-            width: 500
-        };
-
-        return (
-            &lt;div style={containerStyle} className="ag-fresh">
-                &lt;h1>Simple ag-Grid React Example&lt;/h1>
-                &lt;AgGridReact
-                    // properties
-                    columnDefs={this.state.columnDefs}
-                    rowData={this.state.rowData}
-
-                    // events
-                    onGridReady={this.onGridReady}>
-                &lt;/AgGridReact>
-            &lt;/div>
-        )
+    onGridReady(params) {
+        params.api.sizeColumnsToFit();
     }
-};
+}
+
 </pre>
 
     <h3>Adding Features</h3>
@@ -185,22 +159,19 @@ export default class extends Component {
 
     <pre>
 <span class="codeComment">// Grid Definition </span>
-&lt;AgGridReact
-    // properties
-    columnDefs={this.state.columnDefs}
-    rowData={this.state.rowData}
+&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-fresh"
+                 [rowData]="rowData"
+                 [columnDefs]="columnDefs"&gt;
 
-    <span class="codeComment">// enable sorting</span>
-    enableSorting   <span class="codeComment">// shorthand for enableSorting="true"</span>
-
-&lt;/AgGridReact>
-</pre>
+                 enableSort <span class="codeComment">// shorthand for [enableSort]="true"</span>
+&lt;/ag-grid-angular&gt;
+    </pre>
 
     <p>With a single property change we are now able to sort any column by clicking the column header (you can keep
         clicking and it will cycle through ascending, descending and no sort). Note that in this example we're sorting
         by <code>Price</code> in ascending order (indicated by the up arrow):</p>
 
-    <img src="../images/react-gs-sorting.png" style="display: block;margin: auto;height: 200px;">
+    <img src="../images/angular-gs-sorting.png" style="display: block;margin: auto;height: 200px;">
 
     <h4>Filtering</h4>
 
@@ -214,17 +185,12 @@ export default class extends Component {
 
     <pre>
 <span class="codeComment">// Grid Definition </span>
-&lt;AgGridReact
-    // properties
-    columnDefs={this.state.columnDefs}
-    rowData={this.state.rowData}
+&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-fresh"
+                 [rowData]="rowData"
+                 [columnDefs]="columnDefs"&gt;
 
-    enableSorting
-
-    <span class="codeComment">// enable filtering</span>
-    enableFilter   <span class="codeComment">// shorthand for enableFilter="true"</span>
-
-&lt;/AgGridReact>
+                 enableFilter <span class="codeComment">// shorthand for [enableFilter]="true"</span>
+&lt;/ag-grid-angular&gt;
 </pre>
 
     <p>With the <code>enableFilter</code> property set we are now able to filter any column by clicking the column
@@ -233,7 +199,7 @@ export default class extends Component {
         <code>Model</code>
         column by the text <code>Celica</code> - only the row with <code>Celica</code> is shown now.</p>
 
-    <img src="../images/react-gs-filtering.png" style="display: block;margin: auto;height: 200px;">
+    <img src="../images/angular-gs-filtering.png" style="display: block;margin: auto;height: 200px;">
 
     <h3>Summary</h3>
 
@@ -241,23 +207,29 @@ export default class extends Component {
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-    <show-complex-example example="../react-examples/examples/?fromDocs&example=rich-grid"
+    <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=rich-grid"
                           sources="{
                             [
-                                { root: '/react-examples/examples/src/richGridExample/', files: 'ColDefFactory.jsx,NameCellEditor.jsx,RichGridExample.css,SkillsFilter.jsx,MyReactDateComponent.jsx,ProficiencyCellRenderer.jsx,RichGridExample.jsx,MyReactHeaderComponent.jsx,ProficiencyFilter.jsx,RowDataFactory.js,MyReactHeaderGroupComponent.jsx,RefData.js,SkillsCellRenderer.jsx' }
+                                { root: '/ng2-example/app/rich-grid-example/', files: 'rich-grid.component.ts,rich-grid.component.html,proficiency-renderer.css,rich-grid.css' },
+                                { root: '/ng2-example/app/header-group-component/', files: 'header-group.component.ts,header-group.component.html,header-group.component.css' },
+                                { root: '/ng2-example/app/header-component/', files: 'header.component.ts,header.component.html,header.component.css' },
+                                { root: '/ng2-example/app/filters/', files: 'skillFilter.ts,proficiencyFilter.ts' },
+                                { root: '/ng2-example/app/date-component/', files: 'date.component.ts,date.component.html,date.component.css' },
+                                { root: '/ng2-example/app/', files: 'app.module.ts' }
                             ]
                           }"
+                          plunker="https://embed.plnkr.co/EINfsm/"
                           exampleHeight="525px">
     </show-complex-example>
 
     <p>This example makes use of custom <code>cellRenderers</code> to show data in a visually friendly way, demonstrates
-        <code>column grouping</code> as well as using <code>React Components</code> in the header. And even this rich
+        <code>column grouping</code> as well as using <code>Angular Components</code> in the header. And even this rich
         example is only
         scratching the surface - we've only just gotten started with with ag-Grid can do!</p>
 
-    <p>Please read the <a href="../react-more-details">More Details</a> section next to get a deeper understanding of
+    <p>Please read the <a href="../angular-more-details">More Details</a> section next to get a deeper understanding of
         how to
-        use ag-Grid and React, as well as the options in installing dependencies and accessing the <code>Enterprise
+        use ag-Grid and Angular, as well as the options in installing dependencies and accessing the <code>Enterprise
             Features</code>.</p>
 
     <?php include '../documentation-main/documentation_footer.php'; ?>
