@@ -1,3 +1,10 @@
+<?php
+// if the user has not set a root folder, set it to the default
+if (!isset($rootFolder)) {
+    $rootFolder = '..';
+}
+?>
+
 <header class="Header navbar navbar-inverse navbar-logo navbar-hiddenxs">
     <div class="container">
         <div class="row">
@@ -8,7 +15,7 @@
             <?php if ($navKey !== 'home') { ?>
             <div class="navbar-header col-md-2 col-sm-3 col-xs-6">
                 <a class="Header-logo" href="/">
-                    <img src="../images/logo.png" style="width: 70px;"/>
+                    <img src="<?php $rootFolder ?>/images/logo.png" style="width: 70px;"/>
                 </a>
             </div>
             <?php } ?>
