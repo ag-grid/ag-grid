@@ -9,12 +9,11 @@ import {Component} from "../../widgets/component";
 import {ICellRenderer} from "./iCellRenderer";
 import {RowNode} from "../../entities/rowNode";
 import {CellRendererService} from "../cellRendererService";
-import {ValueFormatterService} from "../valueFormatterService";
 import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import {RefSelector} from "../../widgets/componentAnnotations";
-import {GroupValueService} from "../../groupValueService";
+import {FormatGroupNameParams, GroupNameInfo, GroupValueService} from "../../groupValueService";
 
 let svgFactory = SvgFactory.getInstance();
 
@@ -33,9 +32,9 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('groupValueService') private groupValueService: GroupValueService;
 
     @RefSelector('eExpanded') private eExpanded: HTMLElement;
     @RefSelector('eContracted') private eContracted: HTMLElement;
@@ -46,6 +45,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private originalParams: any;
     private params: any;
     private nodeWasSwapped: boolean;
+    private groupNameInfo: GroupNameInfo;
 
     constructor() {
         super(GroupCellRenderer.TEMPLATE);
@@ -63,6 +63,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     public setParams(params: any): void {
+        this.updateGroupNameInfo(params);
+
         if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
             let rowGroupColumn = this.getRowGroupColumn(params);
             let nodeToSwapIn = this.isFirstChildOfFirstChild(params.node, rowGroupColumn);
@@ -80,6 +82,18 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             this.params = params;
         }
         this.originalParams = this.params;
+    }
+
+    private updateGroupNameInfo(params: any) {
+        let formattedGroupNameParams: FormatGroupNameParams = {
+            column: params.column,
+            rowGroupIndex: params.rowIndex,
+            node: params.node,
+            scope: params.scope,
+            rowIndex: params.rowIndex
+        };
+
+        this.groupNameInfo = this.groupValueService.getGroupNameInfo(params.node, formattedGroupNameParams, params.keyMap);
     }
 
     private setupComponents(): void {
@@ -242,7 +256,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private createFooterCell(): void {
         let footerValue: string;
-        let groupName = GroupValueService.getGroupName(this.params.keyMap, this.params.node.key);
+        let groupName = this.groupNameInfo.mappedGroupName;
         let footerValueGetter = this.params.footerValueGetter;
         if (footerValueGetter) {
             // params is same as we were given, except we set the value as the item to display
@@ -275,16 +289,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             columnOfGroupedCol = params.column;
         }
 
-        let groupName = GroupValueService.getGroupName(this.params.keyMap, this.params.node.key);
-        let valueFormatted = this.valueFormatterService.formatValue(columnOfGroupedCol, params.node, params.scope, params.rowIndex, groupName);
-
         let groupedColCellRenderer = columnOfGroupedCol.getCellRenderer();
 
         // reuse the params but change the value
         if (typeof groupedColCellRenderer === 'function') {
             // reuse the params but change the value
-            params.value = groupName;
-            params.valueFormatted = valueFormatted;
 
             let colDefOfGroupedCol = columnOfGroupedCol.getColDef();
             let groupedColCellRendererParams = colDefOfGroupedCol ? colDefOfGroupedCol.cellRendererParams : null;
@@ -296,9 +305,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             }
             this.cellRendererService.useCellRenderer(colDefOfGroupedCol.cellRenderer, this.eValue, params);
         } else {
-            let valueToRender = _.exists(valueFormatted) ? valueFormatted : groupName;
-            if (_.exists(valueToRender) && valueToRender !== '') {
-                this.eValue.appendChild(document.createTextNode(valueToRender));
+            if (_.exists(this.groupNameInfo.actualValue) && this.groupNameInfo.actualValue !== '') {
+                this.eValue.appendChild(document.createTextNode(this.groupNameInfo.actualValue));
             }
         }
     }
