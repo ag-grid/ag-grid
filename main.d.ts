@@ -120,6 +120,7 @@ export { Utils, NumberSequence, _ } from "./dist/lib/utils";
 export { ValueService } from "./dist/lib/valueService";
 export { GroupValueService } from "./dist/lib/groupValueService";
 export { GroupNameInfoParams } from "./dist/lib/groupValueService";
+export { GroupNameInfo } from "./dist/lib/groupValueService";
 export { XmlFactory } from "./dist/lib/xmlFactory";
 export { GridSerializer, BaseGridSerializingSession, RowType } from "./dist/lib/gridSerializer";
 export { CsvExportParams, ExportParams } from "./dist/lib/exportParams";

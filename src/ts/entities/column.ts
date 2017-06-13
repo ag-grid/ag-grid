@@ -19,6 +19,12 @@ import {IFilter} from "../interfaces/iFilter";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
 
+export interface AutoGroupColumnDef {
+    isAutoGroupColumn:boolean;
+    groupsAll: boolean;
+    mappedColumn:Column;
+}
+
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
 // This class implements both interfaces ColumnGroupChild and OriginalColumnGroupChild as the class can
@@ -99,6 +105,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private floatingCellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
     private cellEditor: {new(): ICellEditorComp} | string;
     private filter: {new(): IFilter} | string;
+    private autoGroupColumnDef:AutoGroupColumnDef;
 
     private parent: ColumnGroupChild;
 
@@ -522,5 +529,13 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public isAllowRowGroup(): boolean {
         return this.colDef.enableRowGroup === true;
+    }
+
+    public setAutoGroupColumnDef (autoGroupColumnDef:AutoGroupColumnDef): void{
+        this.autoGroupColumnDef = autoGroupColumnDef;
+    }
+
+    public getAutoGroupColumnDef (): AutoGroupColumnDef {
+        return this.autoGroupColumnDef;
     }
 }

@@ -4,7 +4,7 @@ import {ColumnController} from "./columnController/columnController";
 import {ColDef} from "./entities/colDef";
 import {Bean, Autowired, PostConstruct} from "./context/context";
 import {RowNode} from "./entities/rowNode";
-import {Column} from "./entities/column";
+import {AutoGroupColumnDef, Column} from "./entities/column";
 import {Utils as _} from "./utils";
 import {Events} from "./events";
 import {EventService} from "./eventService";
@@ -35,22 +35,28 @@ export class ValueService {
     }
 
     public getValue(column: Column, node: RowNode): any {
-
-        let valueUsingSpecificData = this.getValueUsingSpecificData(column, node.data, node);
-        if (valueUsingSpecificData != null){
-            return valueUsingSpecificData;
-        }
-
-        if (node.group) {
-            let groupNameInfo = this.groupValueService.getGroupNameInfoByNodeAndColumn(column, node);
-            return groupNameInfo ? groupNameInfo.actualValue : null;
-        }
-
-        //We give up
-        return null;
+        return this.getValueUsingSpecificData(column, node.data, node);
     }
 
     public getValueUsingSpecificData(column: Column, data: any, node: RowNode): any {
+        // If it is autogroup, is tricky, because even though we are adding to the
+        // data the key for the group, we need to figure out what is this autogroup
+        // showing
+        let autoGroupColumnDef: AutoGroupColumnDef = column.getAutoGroupColumnDef();
+        if (autoGroupColumnDef && node.group){
+            // If this is an autogroup column used to group everything, then
+            // then value is the key
+            if (autoGroupColumnDef.groupsAll) {
+                return node.key;
+            }
+            // If this is an autogroup column used to map a particular column, we can
+            // check if we are trying to retrieve the value for that particular column,
+            // if we are, the value will be in the data.
+            if (autoGroupColumnDef.mappedColumn.getColId() === column.getColId()) {
+                return data[column.getColId()]
+            }
+
+        }
 
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
@@ -85,7 +91,7 @@ export class ValueService {
 
     public setValue(rowNode: RowNode, colKey: string|ColDef|Column, newValue: any): void {
         let column = this.columnController.getPrimaryColumn(colKey);
-        
+
         if (!rowNode || !column) {
             return;
         }

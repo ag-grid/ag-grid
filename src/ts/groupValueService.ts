@@ -1,6 +1,6 @@
 import {Autowired, Bean} from "./context/context";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
-import {Column} from "./entities/column";
+import {AutoGroupColumnDef, Column} from "./entities/column";
 import {RowNode} from "./entities/rowNode";
 import {_} from "./utils";
 import {ColumnApi} from "./columnController/columnController";
@@ -16,11 +16,14 @@ export interface GroupNameInfoParams {
     keyMap:{[id:string]:string}
 }
 
-
-export interface GroupNameInfo {
+export interface GroupNameValues {
     mappedGroupName:string,
     valueFormatted:string,
     actualValue:string
+}
+
+export interface GroupNameInfo extends GroupNameValues{
+    column:Column
 }
 
 @Bean('groupValueService')
@@ -41,7 +44,7 @@ export class GroupValueService {
         }
     }
 
-    private formatGroupName (unformatted:string, node:RowNode, formattedParams:GroupNameInfoParams):string{
+    private formatGroupName (unformatted:string, formattedParams:GroupNameInfoParams, node: RowNode):string{
         let columnOfGroupedCol = this.getGroupColumn(formattedParams.rowGroupIndex, formattedParams.column);
 
         return this.valueFormatterService.formatValue(
@@ -53,7 +56,7 @@ export class GroupValueService {
         );
     }
 
-    getGroupColumn(rowGroupIndex: number, column:Column) {
+    private getGroupColumn(rowGroupIndex: number, column:Column) {
         // pull out the column that the grouping is on
         let rowGroupColumns = this.columnApi.getRowGroupColumns();
 
@@ -68,9 +71,20 @@ export class GroupValueService {
     }
 
 
-    public getGroupNameInfo (node:RowNode, params: GroupNameInfoParams):GroupNameInfo {
-        let mappedGroupName: string = this.mapGroupName(node.key, params.keyMap);
-        let valueFormatted: string = this.formatGroupName(mappedGroupName, node, params);
+    public getGroupNameValuesByRawValue (rawValue:string, params: GroupNameInfoParams):GroupNameValues {
+        return this.getGroupNameValues(rawValue, params, null);
+    }
+
+    public getGroupNameValuesByNode (params: GroupNameInfoParams, node:RowNode):GroupNameValues {
+        return this.getGroupNameValues(node.key, params, node);
+    }
+
+    private getGroupNameValues (rawValue:string, params: GroupNameInfoParams, node?:RowNode):GroupNameValues {
+        let mappedGroupName: string = this.mapGroupName(rawValue, params.keyMap);
+        let valueFormatted: string = null;
+        if (node){
+            valueFormatted = this.formatGroupName(mappedGroupName, params, node);
+        }
         let actualValue = _.exists(valueFormatted) ? valueFormatted : mappedGroupName;
         return {
             mappedGroupName:mappedGroupName,
@@ -79,8 +93,8 @@ export class GroupValueService {
         }
     }
 
-    public assignToParams<T extends GroupCellRendererParams> (receiver:T, node:RowNode, params: GroupNameInfoParams): T{
-        let groupNameInfo = this.getGroupNameInfo(node, params);
+    public assignToParams<T extends GroupCellRendererParams> (receiver:T, params: GroupNameInfoParams, node:RowNode): T{
+        let groupNameInfo = this.getGroupNameValuesByNode(params, node);
         receiver.value = groupNameInfo.mappedGroupName;
         receiver.valueFormatted  = groupNameInfo.valueFormatted;
         receiver.actualValue  = groupNameInfo.actualValue;
@@ -89,23 +103,36 @@ export class GroupValueService {
     }
 
 
-    public getGroupNameInfoByNodeAndColumn (column: Column, node: RowNode):GroupNameInfo{
+    public getGroupNameInfo (column: Column, rowGroupIndex: number, rowIndex: number, rawValue:string):GroupNameInfo{
         let params: GroupNameInfoParams = {
-            rowGroupIndex: node.rowGroupIndex,
+            rowGroupIndex: rowGroupIndex,
             column: column,
-            rowIndex: node.rowIndex,
+            rowIndex: rowIndex,
             scope: null,
             keyMap: {}
         };
 
         let groupColumn:Column = this.getGroupColumn(params.rowGroupIndex, column);
         if (groupColumn.getColId() === column.getColId()){
-            return this.getGroupNameInfo(node, params);
+            return this.extractInfo(rawValue, params, column);
         } else if (column.getColId() === AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID){
-            return this.getGroupNameInfo(node, params);
+            return this.extractInfo(rawValue, params, column);
         } else if (column.getColId() === AutoGroupColService.GROUP_AUTO_COLUMN_ID + '_' + column.getColId()){
-            return this.getGroupNameInfo(node, params);
+            return this.extractInfo(rawValue, params, column);
         }
         return null;
+    }
+
+    private extractInfo(rawValue:string, params: GroupNameInfoParams, column: Column):GroupNameInfo {
+        return this.enrich(this.getGroupNameValuesByRawValue(rawValue, params), column);
+    }
+
+    public enrich (values:GroupNameValues, column: Column): GroupNameInfo {
+        return {
+            actualValue: values.actualValue,
+            column: column,
+            valueFormatted: values.valueFormatted,
+            mappedGroupName: values.mappedGroupName
+        }
     }
 }

@@ -1,5 +1,5 @@
 import {Bean, Autowired, Context} from "../context/context";
-import {Column} from "../entities/column";
+import {AutoGroupColumnDef, Column} from "../entities/column";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {_} from "../utils";
 import {defaultGroupComparator} from "../functions";
@@ -55,6 +55,7 @@ export class AutoGroupColService {
 
         // if doing multi, set the field
         let colId: string;
+        let autoGroupColumnDef:AutoGroupColumnDef = null;
 
         if (rowGroupCol) {
 
@@ -92,12 +93,24 @@ export class AutoGroupColService {
             }
 
             colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
+            autoGroupColumnDef = {
+                isAutoGroupColumn:true,
+                mappedColumn: rowGroupCol,
+                groupsAll: false
+            }
         } else {
             colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
+            autoGroupColumnDef = {
+                isAutoGroupColumn:true,
+                mappedColumn: null,
+                groupsAll: true
+            }
         }
 
         let newCol = new Column(autoColDef, colId, true);
+        newCol.setAutoGroupColumnDef(autoGroupColumnDef);
         this.context.wireBean(newCol);
+
 
         return newCol;
     }

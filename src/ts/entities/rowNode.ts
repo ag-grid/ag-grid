@@ -284,6 +284,12 @@ export class RowNode implements IEventEmitter {
         let colIds = _.getAllKeysInObjects([this.data, newAggData]);
 
         this.data = newAggData;
+        if (this.rowGroupColumn){
+            if (!this.data) {
+                this.data = {};
+            }
+            this.data [this.rowGroupColumn.getColId()] = this.key;
+        }
 
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {

@@ -103,7 +103,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             scope: null,
             keyMap: {}
         };
-        this.groupValueService.assignToParams(this.params, node, groupNameParams);
+        this.groupValueService.assignToParams(this.params, groupNameParams, node);
     }
 
     private setupComponents(): void {
