@@ -91,7 +91,7 @@
         menuItem(1, 'Overview Angular', 'Angular 2.x/4.x', 'best-angular-2-data-grid/');
         menuItem(2, 'Getting Started Angular', 'Getting Started', 'angular-getting-started/');
         menuItem(2, 'More Detail Angular', 'More Details', 'angular-more-details/');
-        menuItemCollapsibleParent(2, 'Angular Building', 'Building', 'angular-building', 'angularParent');
+        menuItemCollapsibleParent(2, 'Angular Building', 'Building', 'angular-building/', 'angularParent');
         menuItemCollapsibleChild(3, 'Angular CLI', 'Angular CLI', 'ag-grid-angular-angularcli/', 'angularParent', 'angularChild', 'start');
         menuItemCollapsibleChild(3, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/', 'angularParent', 'angularChild');
         menuItemCollapsibleChild(3, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/', 'angularParent', 'angularChild');
