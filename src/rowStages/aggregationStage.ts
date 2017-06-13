@@ -9,7 +9,8 @@ import {
     RowNode,
     Column,
     StageExecuteParams,
-    IAggFunc
+    IAggFunc,
+    GroupValueService
 } from "ag-grid/main";
 import {PivotStage} from "./pivotStage";
 import {AggFuncService} from "../aggregation/aggFuncService";
@@ -20,6 +21,7 @@ export class AggregationStage implements IRowNodeStage {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('groupValueService') private groupValueService: GroupValueService;
     @Autowired('pivotStage') private pivotStage: PivotStage;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
 

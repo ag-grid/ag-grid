@@ -13,8 +13,11 @@ import {
     Column,
     NumberSequence,
     RowNodeTransaction,
+    GroupValueService,
+    GroupNameInfo,
     _
 } from "ag-grid/main";
+
 
 @Bean('groupStage')
 export class GroupStage implements IRowNodeStage {
@@ -23,6 +26,7 @@ export class GroupStage implements IRowNodeStage {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('groupValueService') private groupValueService: GroupValueService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
@@ -162,13 +166,14 @@ export class GroupStage implements IRowNodeStage {
 
     private getOrCreateNextGroup(parentGroup: RowNode, nodeToPlace: RowNode, groupColumn: Column, expandByDefault: any,
                                  level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
-        let groupKey: string = this.getKeyForNode(groupColumn, nodeToPlace);
+        // let groupKey: string = this.getKeyForNode(groupColumn, nodeToPlace);
+        let groupNameInfo : GroupNameInfo = this.groupValueService.getGroupNameInfo(groupColumn, level, null, this.getKeyForNode(groupColumn, nodeToPlace));
 
-        let nextGroup = <RowNode> parentGroup.childrenMapped[groupKey];
+        let nextGroup = <RowNode> parentGroup.childrenMapped[groupNameInfo.actualValue];
         if (!nextGroup) {
-            nextGroup = this.createSubGroup(groupColumn, groupKey, parentGroup, expandByDefault, level, includeParents, numberOfGroupColumns, isPivot);
+            nextGroup = this.createSubGroup(groupNameInfo, parentGroup, expandByDefault, level, includeParents, numberOfGroupColumns, isPivot);
             // attach the new group to the parent
-            parentGroup.childrenMapped[groupKey] = nextGroup;
+            parentGroup.childrenMapped[groupNameInfo.actualValue] = nextGroup;
             parentGroup.childrenAfterGroup.push(nextGroup);
         }
 
@@ -189,17 +194,17 @@ export class GroupStage implements IRowNodeStage {
         return result;
     }
 
-    private createSubGroup(groupColumn: Column, groupKey: string, parent: RowNode, expandByDefault: any, level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
+    private createSubGroup(groupNameInfo: GroupNameInfo, parent: RowNode, expandByDefault: any, level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
         let newGroup = new RowNode();
         this.context.wireBean(newGroup);
 
         newGroup.group = true;
-        newGroup.field = groupColumn.getColDef().field;
-        newGroup.rowGroupColumn = groupColumn;
+        newGroup.field = groupNameInfo.column.getColDef().field;
+        newGroup.rowGroupColumn = groupNameInfo.column;
         // we use negative number for the ids of the groups, this makes sure we don't clash with the
         // id's of the leaf nodes.
         newGroup.id = (this.groupIdSequence.next()*-1).toString();
-        newGroup.key = groupKey;
+        newGroup.key = groupNameInfo.actualValue;
 
         newGroup.level = level;
         newGroup.leafGroup = level === (numberOfGroupColumns-1);
@@ -215,6 +220,7 @@ export class GroupStage implements IRowNodeStage {
         newGroup.allLeafChildren = [];
         // why is this done here? we are not updating the children could as we go,
         // i suspect this is updated in the filter stage
+
         newGroup.setAllChildrenCount(0);
         newGroup.rowGroupIndex = level;
 
