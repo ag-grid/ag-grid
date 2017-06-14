@@ -199,8 +199,11 @@ export interface ColDef extends AbstractColDef {
     /** To create the quick filter text for this column, if toString is not good enough on the value. */
     getQuickFilterText?: (params: GetQuickFilterTextParams) => string;
 
-    /** Callbacks for editing.See editing section for further details. */
-    newValueHandler?: Function;
+    /** Callbacks for editing. See editing section for further details.
+     * Return true if the update was successful, or false if not.
+     * If false, then skips the UI refresh and no events are emitted.
+     * Return false if the values are the same (ie no update). */
+    newValueHandler?: (params: any)=>boolean;
 
     /** If true, this cell gets refreshed when api.softRefreshView() gets called. */
     volatile?: boolean;

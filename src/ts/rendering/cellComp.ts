@@ -991,14 +991,6 @@ export class CellComp extends Component {
         return this.column.getColDef().volatile;
     }
 
-    private valuesSimpleAndSame(val1: any, val2: any): boolean {
-        if (typeof val1 === 'string' || typeof val1 === 'number' || typeof val1 === 'boolean') {
-            return val1 === val2;
-        } else {
-            return false;
-        }
-    }
-
     public attemptCellRendererRefresh(): boolean {
         if (_.missing(this.cellRenderer) || _.missing(this.cellRenderer.refresh)) {
             return false;
@@ -1037,7 +1029,7 @@ export class CellComp extends Component {
         // for simple values only (not pojo's), see if the value is the same, and if it is, skip the refresh.
         // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
         // if was before the edit.
-        let allowSkippingRefreshIfDataSame = !afterEditingStopped && this.valuesSimpleAndSame(oldValue, this.value);
+        let allowSkippingRefreshIfDataSame = !afterEditingStopped && _.valuesSimpleAndSame(oldValue, this.value);
         if (allowSkippingRefreshIfDataSame) {
             return;
         }
