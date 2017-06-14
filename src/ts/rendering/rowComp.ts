@@ -628,10 +628,11 @@ export class RowComp extends BeanStub {
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells
-        let animate = event.update;
-        let newData = !event.update;
         this.forEachRenderedCell( cellComp =>
-            cellComp.refreshCell(animate, newData)
+            cellComp.refreshCell({
+                animate: event.update,
+                newData: !event.update
+            })
         );
 
         // check for selected also, as this could be after lazy loading of the row data, in which case

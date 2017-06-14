@@ -732,7 +732,7 @@ export class CellComp extends Component {
 
         this.setInlineEditingClass();
 
-        this.refreshCell();
+        this.refreshCell({afterEditingStopped: true});
 
         this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STOPPED, this.createParams());
     }
@@ -1025,16 +1025,21 @@ export class CellComp extends Component {
         return true;
     }
 
-    public refreshCell(animate = false, newData = false) {
+    public refreshCell(params?: {animate?: boolean, newData?: boolean, afterEditingStopped?: boolean}) {
+
+        let newData = params ? params.newData === true : false;
+        let animate = params ? params.animate === true : false;
+        let afterEditingStopped = params ? params.afterEditingStopped === true : false;
 
         let oldValue = this.value;
         this.value = this.getValue();
 
-        // for simple values only (not pojo's), see if the value is the same,
-        // and if it is, skip the refresh
-        if (this.valuesSimpleAndSame(oldValue, this.value)) {
-            // console.log('skippingRefresh ' + Math.random());
-            // return;
+        // for simple values only (not pojo's), see if the value is the same, and if it is, skip the refresh.
+        // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
+        // if was before the edit.
+        let allowSkippingRefreshIfDataSame = !afterEditingStopped && this.valuesSimpleAndSame(oldValue, this.value);
+        if (allowSkippingRefreshIfDataSame) {
+            return;
         }
 
         let cellRendererRefreshed: boolean;
