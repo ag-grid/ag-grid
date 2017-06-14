@@ -239,6 +239,27 @@ somePointLater() {
         is explained in the section on each.
     </p>
 
+    <h2>Override React Components Container Style</h2>
+
+    <p>When you provide a React Component to ag-Grid for use within the grid it will create a <code>div</code> for the component
+    to live in. If you wish to override the style of this div you can do so via the <code>reactContainer</code> property
+    made available via <code>props</code>:</p>
+
+<pre>
+constructor(props) {
+    super(props);
+
+    <span class="codeComment">// change the containing div to be inline-block (instead of the default block for a div)</span>
+    this.props.reactContainer.style.display = "inline-block";
+    <span class="codeComment">// change the background color of the containing div to be red</span>
+    this.props.reactContainer.style.backgroundColor = "red";
+}
+</pre>
+
+    <p>You can see an example of this in the
+        <a href="https://github.com/ceolter/ag-grid-react-example/blob/master/src/groupedRowInnerRendererExample/MedalRenderer.jsx">Grouped Row Example</a>
+    where we change the display of the <code>groupRowInnerRendererFramework</code> to <code>inline-block</code> so that the +/- and label are inline.</p>
+
     <h2 id="react-redux">Using ag-Grid, React and Redux</h2>
 
     <p>
