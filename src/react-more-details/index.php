@@ -93,7 +93,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
     </table>
 
-    <p>The Enteprise dependency has to be made available before any Grid related component, so we suggest importing it in your
+    <p>The Enterprise dependency has to be made available before any Grid related component, so we suggest importing it in your
     React bootstrap file (typically named index.js) before kicking off the actual application - for example:</p>
 
 <pre>
@@ -406,6 +406,13 @@ class TopMoversGrid extends Component {
 
     <p>As above, this call will result in ag-Grid believing that the rowData has changed each time the component renders as the filtering
         operation will return a new array each time. Again to alleviate this behaviour extract data that isn't likely to change and pre-process it only once.</p>
+
+    <h2 id="next-steps">Next Steps...</h2>
+
+    <p>
+        Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>
+        to learn about accessing all the features of the grid.
+    </p>
 
 </div>
 
