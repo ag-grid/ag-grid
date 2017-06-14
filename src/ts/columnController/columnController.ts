@@ -763,52 +763,45 @@ export class ColumnController {
         this.columnAnimationService.finish();
     }
 
-    private doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
+    public doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
 
         let allColumnsCopy = this.gridColumns.slice();
 
         _.moveInArray(allColumnsCopy, columnsToMove, toIndex);
 
-        // look for broken groups, ie stray columns from groups that should be married
-        for (let index = 0; index < (allColumnsCopy.length-1); index++) {
-            let thisColumn = allColumnsCopy[index];
-            let nextColumn = allColumnsCopy[index + 1];
+        let rulesPass = true;
 
-            // skip hidden columns
-            if (!nextColumn.isVisible()) {
-                continue;
+        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, child => {
+            if (!(child instanceof OriginalColumnGroup)) { return; }
+
+            let columnGroup = <OriginalColumnGroup> child;
+
+            let marryChildren = columnGroup.getColGroupDef() && columnGroup.getColGroupDef().marryChildren;
+            if (!marryChildren) { return; }
+
+            let newIndexes: number[] = [];
+            columnGroup.getLeafColumns().forEach( col => {
+                let newColIndex = allColumnsCopy.indexOf(col);
+                newIndexes.push(newColIndex);
+            } );
+
+            let maxIndex = Math.max.apply(Math, newIndexes);
+            let minIndex = Math.min.apply(Math, newIndexes);
+
+            // width is how far the first column in this group is away from the last column
+            let spread = maxIndex - minIndex;
+            let maxSpread = columnGroup.getLeafColumns().length - 1;
+
+            // if the columns
+            if (spread > maxSpread) {
+                rulesPass = false;
             }
 
-            let thisPath = this.columnUtils.getOriginalPathForColumn(thisColumn, this.gridBalancedTree);
-            let nextPath = this.columnUtils.getOriginalPathForColumn(nextColumn, this.gridBalancedTree);
+            // console.log(`maxIndex = ${maxIndex}, minIndex = ${minIndex}, spread = ${spread}, maxSpread = ${maxSpread}, fail = ${spread > (count-1)}`)
+            // console.log(allColumnsCopy.map( col => col.getColDef().field).join(','));
+        });
 
-            if (!nextPath || !thisPath) {
-                console.log('next path is missing');
-            }
-
-            // start at the top of the path and work down
-            for (let dept = 0; dept<thisPath.length; dept++) {
-                let thisOriginalGroup = thisPath[dept];
-                let nextOriginalGroup = nextPath[dept];
-                let lastColInGroup = thisOriginalGroup!==nextOriginalGroup;
-                // a runaway is a column from this group that left the group, and the group has it's children marked as married
-                let colGroupDef = thisOriginalGroup.getColGroupDef();
-                let marryChildren = colGroupDef && colGroupDef.marryChildren;
-                let needToCheckForRunaways = lastColInGroup && marryChildren;
-                if (needToCheckForRunaways) {
-                    for (let tailIndex = index+1; tailIndex < allColumnsCopy.length; tailIndex++) {
-                        let tailColumn = allColumnsCopy[tailIndex];
-                        let tailPath = this.columnUtils.getOriginalPathForColumn(tailColumn, this.gridBalancedTree);
-                        let tailOriginalGroup = tailPath[dept];
-                        if (tailOriginalGroup===thisOriginalGroup) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-
-        return true;
+        return rulesPass;
     }
 
     public moveColumn(key: string|Column|ColDef, toIndex: number) {
