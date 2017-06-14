@@ -102,8 +102,8 @@ include('../../includes/mediaHeader.php');
     <div class="weekly-news-paragraph-title">Improved Getting Started</div>
 
     <div class="weekly-news-paragraph">
-        Sean is busy on the frameworks and documentation side, making sure new uses to the grid get introduced
-        to ag-Grid in as easiest way as possible. Our next release will have revamped 'Getting Started' sections,
+        Sean is busy on the frameworks and documentation side, making sure new users get introduced
+        to ag-Grid in the easiest way possible. Our next release will have revamped 'Getting Started' sections,
         with particular attention given to React and Angular (2+).
     </div>
 
