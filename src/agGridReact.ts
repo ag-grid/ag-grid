@@ -1,10 +1,10 @@
-import {ReactFrameworkFactory} from './reactFrameworkFactory';
-import {ReactFrameworkComponentWrapper} from './reactFrameworkComponentWrapper';
+import {ReactFrameworkFactory} from "./reactFrameworkFactory";
+import {ReactFrameworkComponentWrapper} from "./reactFrameworkComponentWrapper";
 
-import {Component} from 'react';
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
-import * as AgGrid from 'ag-grid';
+import * as React from "react";
+import {Component} from "react";
+import * as PropTypes from "prop-types";
+import * as AgGrid from "ag-grid";
 
 export class AgGridReact extends Component<any, any> {
 
@@ -23,7 +23,9 @@ export class AgGridReact extends Component<any, any> {
     render() {
         return React.DOM.div({
             style: this.createStyleForDiv(),
-            ref: e => {this.eGridDiv = e;}
+            ref: e => {
+                this.eGridDiv = e;
+            }
         });
     }
 
@@ -32,9 +34,8 @@ export class AgGridReact extends Component<any, any> {
         // allow user to override styles
         const containerStyle = this.props.containerStyle;
         if (containerStyle) {
-            Object.keys(containerStyle).forEach( key => {
-                const value = containerStyle[key];
-                style[key] = value;
+            Object.keys(containerStyle).forEach(key => {
+                style[key] = containerStyle[key];
             });
         }
         return style;
@@ -47,7 +48,8 @@ export class AgGridReact extends Component<any, any> {
         this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(this.props.gridOptions, this.props);
         AgGrid.Grid.setFrameworkBeans([ReactFrameworkComponentWrapper]);
 
-        const grid = new AgGrid.Grid(this.eGridDiv, this.gridOptions, gridParams);
+        // don't need the return value
+        new AgGrid.Grid(this.eGridDiv, this.gridOptions, gridParams);
 
         this.api = this.gridOptions.api;
         this.columnApi = this.gridOptions.columnApi;
@@ -61,20 +63,28 @@ export class AgGridReact extends Component<any, any> {
     }
 
     componentWillReceiveProps(nextProps: any) {
+        let debugLogging = !!nextProps.debug;
+
         // keeping consistent with web components, put changing
         // values in currentValue and previousValue pairs and
         // not include items that have not changed.
         const changes = <any>{};
-        AgGrid.ComponentUtil.ALL_PROPERTIES.forEach( (propKey: string)=> {
-            if (this.props[propKey]!==nextProps[propKey]) {
+        AgGrid.ComponentUtil.ALL_PROPERTIES.forEach((propKey: string) => {
+            if (!this.areEquivalent(this.props[propKey], nextProps[propKey])) {
+                if (debugLogging) {
+                    console.log(`agGridReact: [${propKey}] property changed`);
+                }
                 changes[propKey] = {
                     previousValue: this.props[propKey],
                     currentValue: nextProps[propKey]
                 };
             }
         });
-        AgGrid.ComponentUtil.getEventCallbacks().forEach( (funcName: string)=> {
-            if (this.props[funcName]!==nextProps[funcName]) {
+        AgGrid.ComponentUtil.getEventCallbacks().forEach((funcName: string) => {
+            if (this.props[funcName] !== nextProps[funcName]) {
+                if (debugLogging) {
+                    console.log(`agGridReact: [${funcName}] event callback changed`);
+                }
                 changes[funcName] = {
                     previousValue: this.props[funcName],
                     currentValue: nextProps[funcName]
@@ -88,7 +98,63 @@ export class AgGridReact extends Component<any, any> {
     componentWillUnmount() {
         this.api.destroy();
     }
-};
+
+
+    /*
+     * deeper object comparison - taken from https://stackoverflow.com/questions/1068834/object-comparison-in-javascript
+     */
+    static unwrapStringOrNumber(obj) {
+        return (obj instanceof Number || obj instanceof String
+            ? obj.valueOf()
+            : obj);
+    }
+
+    areEquivalent(a, b) {
+        a = AgGridReact.unwrapStringOrNumber(a);
+        b = AgGridReact.unwrapStringOrNumber(b);
+        if (a === b) return true; //e.g. a and b both null
+        if (a === null || b === null || typeof (a) !== typeof (b)) return false;
+        if (a instanceof Date)
+            return b instanceof Date && a.valueOf() === b.valueOf();
+        if (typeof (a) !== "object")
+            return a == b; //for boolean, number, string, xml
+
+        const newA = (a.areEquivalent_Eq_91_2_34 === undefined),
+            newB = (b.areEquivalent_Eq_91_2_34 === undefined);
+        try {
+            let prop;
+            if (newA) a.areEquivalent_Eq_91_2_34 = [];
+            else if (a.areEquivalent_Eq_91_2_34.some(
+                    function (other) {
+                        return other === b;
+                    })) return true;
+            if (newB) b.areEquivalent_Eq_91_2_34 = [];
+            else if (b.areEquivalent_Eq_91_2_34.some(
+                    function (other) {
+                        return other === a;
+                    })) return true;
+            a.areEquivalent_Eq_91_2_34.push(b);
+            b.areEquivalent_Eq_91_2_34.push(a);
+
+            const tmp = {};
+            for (prop in a)
+                if (prop != "areEquivalent_Eq_91_2_34")
+                    tmp[prop] = null;
+            for (prop in b)
+                if (prop != "areEquivalent_Eq_91_2_34")
+                    tmp[prop] = null;
+
+            for (prop in tmp)
+                if (!this.areEquivalent(a[prop], b[prop]))
+                    return false;
+            return true;
+        } finally {
+            if (newA) delete a.areEquivalent_Eq_91_2_34;
+            if (newB) delete b.areEquivalent_Eq_91_2_34;
+        }
+    }
+}
+
 
 AgGridReact.propTypes = {
     gridOptions: PropTypes.object,
@@ -103,7 +169,7 @@ addProperties(AgGrid.ComponentUtil.NUMBER_PROPERTIES, PropTypes.number);
 addProperties(AgGrid.ComponentUtil.FUNCTION_PROPERTIES, PropTypes.func);
 
 function addProperties(listOfProps: string[], propType: any) {
-    listOfProps.forEach( (propKey: string)=> {
+    listOfProps.forEach((propKey: string) => {
         AgGridReact[propKey] = propType;
     });
 }
