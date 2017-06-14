@@ -108,7 +108,7 @@ DetailPanelCellRenderer.prototype.setupDetailGrid = function(callRecords) {
         enableSorting: true,
         enableFilter: true,
         enableColResize: true,
-        rowData: callRecords,
+        rowData: callRecords.records,
         columnDefs: detailColumnDefs,
         onGridReady: function(params) {
             setTimeout( function() { params.api.sizeColumnsToFit(); }, 0);
@@ -194,6 +194,8 @@ var masterGridOptions = {
     rowData: rowData,
     enableSorting: true,
     enableColResize: true,
+    floatingFilter: true,
+    enableFilter: true,
     // we cannot filter on the groups, as filters work on the child nodes, and in this example
     // the child nodes are not aggregations of the parent.
     suppressMenuFilterPanel: true,
@@ -217,7 +219,7 @@ var masterGridOptions = {
                 // the key is used by the default group cellRenderer
                 key: record.name,
                 // provide ag-Grid with the children of this group
-                children: [record.callRecords],
+                children: [{records: record.callRecords, name: 'niall'}],
                 // for demo, expand the third row by default
                 expanded: record.account === 177005
             };
