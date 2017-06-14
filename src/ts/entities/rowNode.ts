@@ -38,6 +38,9 @@ export class RowNode implements IEventEmitter {
     public static EVENT_MOUSE_LEAVE = 'mouseLeave';
     public static EVENT_HEIGHT_CHANGED = 'heightChanged';
     public static EVENT_TOP_CHANGED = 'topChanged';
+    public static EVENT_FIRST_CHILD_CHANGED = 'firstChildChanged';
+    public static EVENT_LAST_CHILD_CHANGED = 'lastChildChanged';
+    public static EVENT_CHILD_INDEX_CHANGED = 'childIndexChanged';
     public static EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
     public static EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
@@ -207,6 +210,30 @@ export class RowNode implements IEventEmitter {
     public clearRowTop(): void {
         this.oldRowTop = this.rowTop;
         this.setRowTop(null);
+    }
+
+    public setFirstChild(firstChild: boolean): void {
+        if (this.firstChild === firstChild) { return; }
+        this.firstChild = firstChild;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_FIRST_CHILD_CHANGED);
+        }
+    }
+
+    public setLastChild(lastChild: boolean): void {
+        if (this.lastChild === lastChild) { return; }
+        this.lastChild = lastChild;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_LAST_CHILD_CHANGED);
+        }
+    }
+
+    public setChildIndex(childIndex: number): void {
+        if (this.childIndex === childIndex) { return; }
+        this.childIndex = childIndex;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_CHILD_INDEX_CHANGED);
+        }
     }
 
     public setRowTop(rowTop: number): void {

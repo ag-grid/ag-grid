@@ -45,7 +45,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     @RefSelector('eValue') private eValue: HTMLElement;
     @RefSelector('eChildCount') private eChildCount: HTMLElement;
 
-    private originalParams: any;
     private params: any;
     private nodeWasSwapped: boolean;
 
@@ -55,7 +54,12 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     public init(params: any): void {
 
-        this.setParams(params);
+        if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
+            this.setupForGroupHideOpenParents(params);
+        } else {
+            this.nodeWasSwapped = false;
+            this.params = params;
+        }
 
         let groupKeyMismatch = this.isGroupKeyMismatch();
         let embeddedRowMismatch = this.embeddedRowMismatch();
@@ -64,24 +68,32 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.setupComponents();
     }
 
-    public setParams(params: any): void {
-        if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
-            let rowGroupColumn = this.getRowGroupColumn(params);
-            let nodeToSwapIn = this.isFirstChildOfFirstChild(params.node, rowGroupColumn);
-            this.nodeWasSwapped = _.exists(nodeToSwapIn);
-            if (this.nodeWasSwapped) {
-                let newParams = <any> {};
-                _.assign(newParams, params);
-                newParams.node = nodeToSwapIn;
-                this.params = newParams;
-            } else {
-                this.params = params;
-            }
+    private setupForGroupHideOpenParents(originalParams: any): void {
+        let rowGroupColumn = this.getRowGroupColumn(originalParams);
+        let nodeToSwapIn = this.isFirstChildOfFirstChild(originalParams.node, rowGroupColumn);
+        this.nodeWasSwapped = _.exists(nodeToSwapIn);
+        if (this.nodeWasSwapped) {
+            let newParams = <any> {};
+            _.assign(newParams, originalParams);
+            newParams.node = nodeToSwapIn;
+            this.params = newParams;
         } else {
-            this.nodeWasSwapped = false;
-            this.params = params;
+            this.params = originalParams;
         }
-        this.originalParams = this.params;
+
+        // if firstChild changes, on this node, or any parent node (all the way to the top)
+        // then we need to recalculate whether we drag the parent down or not
+        let rowNodePointer = originalParams.node;
+        while (_.exists(rowNodePointer)) {
+            this.addDestroyableEventListener(rowNodePointer, RowNode.EVENT_FIRST_CHILD_CHANGED, () => {
+                // we put this into a timeout, as we want all the row node tree to be stabilised
+                // before we calculated the first child logic, otherwise the logic isn't computed correctly
+                setTimeout(()=> {
+                    originalParams.refreshCell();
+                }, 0);
+            });
+            rowNodePointer = rowNodePointer.parent;
+        }
     }
 
     private setupComponents(): void {
@@ -104,7 +116,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         while (isCandidate && !foundFirstChildPath) {
 
             let parentRowNode = currentRowNode.parent;
-            let firstChild = _.exists(parentRowNode) && currentRowNode.childIndex === 0;
+            let firstChild = _.exists(parentRowNode) && currentRowNode.firstChild;
 
             if (firstChild) {
                 if (parentRowNode.rowGroupColumn === rowGroupColumn) {
@@ -430,8 +442,4 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
-
-    public getOriginalParams(): any {
-        return this.originalParams;
-    }
 }
