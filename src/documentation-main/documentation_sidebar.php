@@ -18,6 +18,20 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">14th Jun 2017</div>
+    <div>
+        <a href="../weekly-update/20170613/">
+            <img src="../weekly-update/20170613/images/NewJoiners_200.png" width="100%"/>
+        </a>
+    </div>
+    <div style="padding-top: 10px;">
+        <a href="../weekly-update/20170613/">
+            New Weekly Update!!
+        </a>
+    </div>
+</div>
+
+<div class="news-box">
     <table>
         <tr>
             <td>
