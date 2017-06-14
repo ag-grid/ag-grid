@@ -50,6 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     agGrid.simpleHttpRequest({url: '../olympicWinners.json'})
         .then( function(rows) {
-            gridOptions.api.setRowData(rows);
+            gridOptions.api.setRowData(rows.slice(0,4));
         });
 });
