@@ -17,6 +17,7 @@ var gridOptions = {
     // behaviour is one column, set this property to true to get column
     // per group
     groupMultiAutoColumn: true,
+    enableSorting:true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }

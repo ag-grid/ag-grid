@@ -1,11 +1,11 @@
 var columnDefs = [
 
     // the first group column
-    {headerName: "Country", cellRenderer: 'group', field: "country", rowGroupIndex: 0,
+    {headerName: "Country", cellRenderer: 'group', field:'country', rowGroupIndex: 0,
         cellRendererParams: {
             // this tells the grid to only show 'country' groups in this column,
             restrictToOneGroup: true
-        }
+        }, rowGroupsDisplayed: ['country']
     },
 
     // and second group column
@@ -13,7 +13,7 @@ var columnDefs = [
         cellRendererParams: {
             // this tells the grid to only show 'year' groups in this column,
             restrictToOneGroup: true
-        }
+        }, rowGroupsDisplayed: ['year']
     },
 
     {headerName: "Athlete", field: "athlete"},
@@ -28,6 +28,7 @@ var gridOptions = {
     // we are defining the group columns, so tell the grid we don't
     // want it to auto-generate group columns for us
     groupSuppressAutoColumn: true,
+    enableSorting:true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }

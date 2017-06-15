@@ -1,7 +1,7 @@
 var columnDefs = [
 
     // one column for showing the groups
-    {headerName: "Group", cellRenderer: 'group'},
+    {headerName: "Group", cellRenderer: 'group', rowGroupsDisplayed: ['country','year']},
 
     // the first group column
     {headerName: "Country", field: "country", rowGroupIndex: 0, hide: true},

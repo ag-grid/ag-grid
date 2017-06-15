@@ -7,7 +7,8 @@ var columnDefs = [
         rowGroupIndex: 0,
         cellRendererParams: {
             restrictToOneGroup: true
-        }
+        },
+        rowGroupsDisplayed: ['country']
     },
 
     // and second group column
@@ -19,7 +20,9 @@ var columnDefs = [
         rowGroupIndex: 1, width: 130,
         cellRendererParams: {
             restrictToOneGroup: true
-        }
+        },
+        field:'year',
+        rowGroupsDisplayed: ['year']
     },
 
     {headerName: "Athlete", field: "athlete", width: 150},

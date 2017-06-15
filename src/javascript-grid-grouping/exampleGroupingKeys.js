@@ -13,7 +13,8 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: null
+    rowData: null,
+    enableSorting:true
 };
 
 function countryKeyCreator(params) {
