@@ -732,7 +732,7 @@ export class CellComp extends Component {
 
         this.setInlineEditingClass();
 
-        this.refreshCell();
+        this.refreshCell({afterEditingStopped: true});
 
         this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STOPPED, this.createParams());
     }
@@ -991,35 +991,65 @@ export class CellComp extends Component {
         return this.column.getColDef().volatile;
     }
 
-    public refreshCell(animate = false, newData = false) {
+    public attemptCellRendererRefresh(): boolean {
+        if (_.missing(this.cellRenderer) || _.missing(this.cellRenderer.refresh)) {
+            return false;
+        }
 
+        try {
+            // if the cell renderer has a refresh method, we call this instead of doing a refresh
+            // note: should pass in params here instead of value?? so that client has formattedValue
+            let valueFormatted = this.formatValue(this.value);
+            let cellRendererParams = this.column.getColDef().cellRendererParams;
+            let params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
+            this.cellRenderer.refresh(params);
+        } catch (e) {
+            // this exception gets thrown by the frameworks, as our framework wrapper will implement
+            // refresh(), but the wrapped component may not, and then the wrapper throws MethodNotImplementedException.
+            if (e instanceof MethodNotImplementedException) {
+                return false;
+            } else {
+                throw e;
+            }
+        }
+
+        // got this far, we were able to refresh using the user provided cellRenderer
+        return true;
+    }
+
+    public refreshCell(params?: {animate?: boolean, newData?: boolean, afterEditingStopped?: boolean}) {
+
+        let newData = params ? params.newData === true : false;
+        let animate = params ? params.animate === true : false;
+        let afterEditingStopped = params ? params.afterEditingStopped === true : false;
+
+        let oldValue = this.value;
         this.value = this.getValue();
 
-        let refreshFailed = false;
-        let that = this;
+        // for simple values only (not pojo's), see if the value is the same, and if it is, skip the refresh.
+        // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
+        // if was before the edit.
+        let allowSkippingRefreshIfDataSame = !afterEditingStopped && _.valuesSimpleAndSame(oldValue, this.value);
+        if (allowSkippingRefreshIfDataSame) {
+            return;
+        }
+
+        let cellRendererRefreshed: boolean;
 
         // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
         // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
         // then we are not showing a movement in the stock price, rather we are showing different stock.
-        let attemptRefresh = !newData && this.cellRenderer && this.cellRenderer.refresh;
-
-        if (attemptRefresh) {
-            try {
-                doRefresh();
-            } catch (e) {
-                if (e instanceof MethodNotImplementedException) {
-                    refreshFailed = true;
-                } else {
-                    throw e;
-                }
-            }
+        if (newData) {
+            cellRendererRefreshed = false;
+        } else {
+            cellRendererRefreshed = this.attemptCellRendererRefresh();
         }
 
         // we do the replace if not doing refresh, or if refresh was unsuccessful.
         // the refresh can be unsuccessful if we are using a framework (eg ng2 or react) and the framework
         // wrapper has the refresh method, but the underlying component doesn't
-        if (!attemptRefresh || refreshFailed) {
-            doReplace();
+        if (!cellRendererRefreshed) {
+            this.replaceCellContent();
         }
 
         if (animate) {
@@ -1028,45 +1058,23 @@ export class CellComp extends Component {
 
         // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
         this.addClassesFromRules();
+    }
 
-        function doRefresh(): void {
-            // if the cell renderer has a refresh method, we call this instead of doing a refresh
-            // note: should pass in params here instead of value?? so that client has formattedValue
-            let valueFormatted = that.formatValue(that.value);
-            let cellRendererParams = that.column.getColDef().cellRendererParams;
-            let params = that.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
-            that.cellRenderer.refresh(params);
+    private replaceCellContent(): void {
+        // otherwise we rip out the cell and replace it
+        _.removeAllChildren(this.eParentOfValue);
+
+        // remove old renderer component if it exists
+        if (this.cellRenderer && this.cellRenderer.destroy) {
+            this.cellRenderer.destroy();
         }
+        this.cellRenderer = null;
 
-        function doReplace(): void {
-            // otherwise we rip out the cell and replace it
-            _.removeAllChildren(that.eParentOfValue);
+        this.populateCell();
 
-            // remove old renderer component if it exists
-            if (that.cellRenderer && that.cellRenderer.destroy) {
-                that.cellRenderer.destroy();
-            }
-            that.cellRenderer = null;
-
-            that.populateCell();
-
-            // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
-            if (that.gridOptionsWrapper.isAngularCompileRows()) {
-                that.$compile(that.eGridCell)(that.scope);
-            }
-        }
-
-        if (this.gridOptionsWrapper.isGroupHideOpenParents()){
-            //We need to trigger the refresh of the params of the group cell renderers
-            //this causes the node swap to be recalculated and it is necessary since
-            //after a sort we might need to swap nodes again is we are hiding the group
-            //leafs
-            let casted:GroupCellRenderer = <GroupCellRenderer>this.cellRenderer;
-            //Check that this is actually a group cell renderer
-            if (casted.setParams){
-                //This triggers the node swapping if necessary
-                casted.setParams(casted.getOriginalParams())
-            }
+        // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
+        if (this.gridOptionsWrapper.isAngularCompileRows()) {
+            this.$compile(this.eGridCell)(this.scope);
         }
     }
 

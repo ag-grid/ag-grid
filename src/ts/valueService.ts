@@ -130,11 +130,22 @@ export class ValueService {
             context: this.gridOptionsWrapper.getContext()
         };
 
+        let valueWasDifferent: boolean;
         if (newValueHandler) {
-            newValueHandler(paramsForCallbacks);
+            valueWasDifferent = newValueHandler(paramsForCallbacks);
+            // in case use is implementing an old version, we default
+            // the return value to true, so we always refresh.
+            if (valueWasDifferent === undefined) {
+                valueWasDifferent = true;
+            }
         } else {
-            this.setValueUsingField(data, field, newValue, column.isFieldContainsDots());
+            valueWasDifferent = this.setValueUsingField(data, field, newValue, column.isFieldContainsDots());
         }
+
+        // if no change to the value, then no need to do the updating, or notifying via events.
+        // otherwise the user could be tabbing around the grid, and cellValueChange would get called
+        // all the time.
+        if (!valueWasDifferent) { return; }
 
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
@@ -147,10 +158,14 @@ export class ValueService {
         this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
     }
 
-    private setValueUsingField(data: any, field: string, newValue: any, isFieldContainsDots: boolean): void {
+    private setValueUsingField(data: any, field: string, newValue: any, isFieldContainsDots: boolean): boolean {
         // if no '.', then it's not a deep value
+        let valuesAreSame: boolean;
         if (!isFieldContainsDots) {
-            data[field] = newValue;
+            valuesAreSame = _.valuesSimpleAndSame(data[field], newValue);
+            if (!valuesAreSame) {
+                data[field] = newValue;
+            }
         } else {
             // otherwise it is a deep value, so need to dig for it
             let fieldPieces = field.split('.');
@@ -158,12 +173,16 @@ export class ValueService {
             while (fieldPieces.length > 0 && currentObject) {
                 let fieldPiece = fieldPieces.shift();
                 if (fieldPieces.length === 0) {
-                    currentObject[fieldPiece] = newValue;
+                    valuesAreSame = _.valuesSimpleAndSame(currentObject[fieldPiece], newValue);
+                    if (!valuesAreSame) {
+                        currentObject[fieldPiece] = newValue;
+                    }
                 } else {
                     currentObject = currentObject[fieldPiece];
                 }
             }
         }
+        return !valuesAreSame;
     }
 
     private executeValueGetter(valueGetter: any, data: any, column: Column, node: RowNode): any {

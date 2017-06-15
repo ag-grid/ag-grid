@@ -97,9 +97,9 @@ export class SortService {
         }
 
         rowNode.childrenAfterSort.forEach((child: RowNode, index: number) => {
-            child.firstChild = index === 0;
-            child.lastChild = index === rowNode.childrenAfterSort.length - 1;
-            child.childIndex = index;
+            child.setFirstChild(index === 0);
+            child.setLastChild(index === rowNode.childrenAfterSort.length - 1);
+            child.setChildIndex(index);
         });
     }
 }

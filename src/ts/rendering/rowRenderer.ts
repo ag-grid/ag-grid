@@ -575,9 +575,6 @@ export class RowRenderer extends BeanStub {
         if (_.exists(oldRowsByNodeId) && oldRowsByNodeId[rowNode.id]) {
 
             renderedRow = oldRowsByNodeId[rowNode.id];
-            if (this.gridOptionsWrapper.isGroupHideOpenParents()){
-                renderedRow.refreshCells(this.columnController.getRowGroupColumns(), animate);
-            }
             delete oldRowsByNodeId[rowNode.id];
 
         } else {
