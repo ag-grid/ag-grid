@@ -23,8 +23,10 @@ function createRowData() {
 
         var totalDuration = 0;
 
-        var callRecords = [];
+        var callRecords = {};
+        callRecords.records =[];
         // call count is random number between 20 and 120
+        var account = i + 177000;
         var callCount = Math.floor(Math.random() * 100) + 20;
         for (var j = 0; j<callCount; j++) {
             // duration is random number between 20 and 120
@@ -38,13 +40,15 @@ function createRowData() {
                 // made up number
                 number:  '(0' + Math.floor(Math.random() * 10) + ') ' + Math.floor(Math.random() * 100000000)
             };
-            callRecords.push(callRecord);
+            callRecords.records.push(callRecord);
             totalDuration += callDuration;
+            callRecords.name = firstName + ' ' + lastName;
+            callRecords.account = account;
         }
 
         var record = {
             name: firstName + ' ' + lastName,
-            account: i + 177000,
+            account: account,
             totalCalls: callCount,
             image: image,
             // convert from seconds to minutes
@@ -76,8 +80,8 @@ var masterColumnDefs = [
         cellRendererParams: { suppressCount: true }
     },
     {headerName: 'Account', field: 'account'},
-    {headerName: 'Calls', field: 'totalCalls'},
-    {headerName: 'Minutes', field: 'totalMinutes', cellFormatter: minuteCellFormatter}
+    {headerName: 'Calls', field: 'totalCalls', suppressFilter:true},
+    {headerName: 'Minutes', field: 'totalMinutes', cellFormatter: minuteCellFormatter, suppressFilter:true}
 ];
 
 var detailColumnDefs = [
@@ -219,7 +223,7 @@ var masterGridOptions = {
                 // the key is used by the default group cellRenderer
                 key: record.name,
                 // provide ag-Grid with the children of this group
-                children: [{records: record.callRecords, name: 'niall'}],
+                children: [record.callRecords],
                 // for demo, expand the third row by default
                 expanded: record.account === 177005
             };
