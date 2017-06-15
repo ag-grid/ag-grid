@@ -1,17 +1,25 @@
 <?php
 $key = "Getting Started ng1";
-$pageTitle = "AngularJS 1.x Datagrid";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with Angular 1.x to deliver filtering, grouping, aggregation, pivoting and much more.";
-$pageKeyboards = "Best AngularJS 1.x Grid Datagrid";
+$pageTitle = "Angular Grid";
+$pageDescription = "ag-Grid can be used as a data grid inside your Angular application. This page details how to get started using ag-Grid inside an Angular application.";
+$pageKeyboards = "Angular Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h2 id="implementing-the-angularjs-datagrid">
-        <img src="../images/svg/docs/getting_started.svg" width="50" />
-        <img style="vertical-align: middle" src="/images/angularjs.png" height="25px"/>
-        Getting Started
-    </h2>
+<div>
+
+    <h1 id="implementing-the-angularjs-datagrid">
+        <img src="../images/svg/docs/getting_started.svg" width="50" alt="Getting Started"/>
+        <img style="vertical-align: middle" src="/images/angularjs.png" height="25px" alt="Angular"/>
+        Angular Grid
+    </h1>
+
+</div>
+
+<p>
+    This page details how to set up ag-Grid inside and Angular 1.x application.
+</p>
 
 <?php include '../javascript-grid-getting-started/ag-grid-dependency.php' ?>
 

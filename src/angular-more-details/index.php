@@ -1,19 +1,20 @@
 <?php
 $key = "More Detail Angular";
-$pageTitle = "Best Angular Datagrid - More Details";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with Angular to deliver filtering, grouping, aggregation, pivoting and much more.";
-$pageKeyboards = "Angular Grid";
+$pageTitle = "Angular 2 Grid";
+$pageDescription = "ag-Grid can be used as a data grid inside your Angular 2 application. This page details how to get started using ag-Grid inside an Angular 2 application.";
+$pageKeyboards = "Angular 2 Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h2>
+    <h1>
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
         <img style="vertical-align: middle" src="/images/angular2_small.png" height="25px"/>
-        More Details
-    </h2>
+        Angular 2 Grid
+    </h1>
+    <h2>More Details</h2>
 
     <note>Full working examples of ag-Grid and Angular can be found in <a href="https://github.com/ceolter/ag-grid-angular-example">Github</a>, illustrating
         (amongst others) Rich Grids, Filtering with Angular Components, Master/Detail Grid and so on.</note>

@@ -1,19 +1,20 @@
 <?php
 $key = "Getting Started Angular";
-$pageTitle = "Best Angular Datagrid";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with Angular to deliver filtering, grouping, aggregation, pivoting and much more.";
-$pageKeyboards = "Angular Grid";
+$pageTitle = "Angular 2 Grid";
+$pageDescription = "ag-Grid can be used as a data grid inside your Angular 2 application. This page details how to get started using ag-Grid inside an Angular 2 application.";
+$pageKeyboards = "Angular 2 Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h2>
+    <h1>
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
         <img style="vertical-align: middle" src="/images/angular2_small.png" height="25px"/>
-        Getting Started
-    </h2>
+        Angular 2 Grid
+    </h1>
+    <h2>Getting Started</h2>
 
     <p>This section documents how to get started with ag-Grid and Angular as quickly as possible. You will start off with
         a simple application and section by section add Grid features to the application ending up with a fully fledged

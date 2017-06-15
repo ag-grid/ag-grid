@@ -1,20 +1,23 @@
 <?php
 $key = "Overview Angular";
-$pageTitle = "Best Angular Datagrid Overview";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with React to deliver filtering, grouping, aggregation, pivoting and much more.";
-$pageKeyboards = "Angular Grid";
+$pageTitle = "Angular 2 Grid";
+$pageDescription = "ag-Grid can be used as a data grid inside your Angular 2 application. This page details how to get started using ag-Grid inside an Angular 2 application.";
+$pageKeyboards = "Angular 2 Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h2>
+    <h1>
         <img style="vertical-align: middle" src="/images/angular2_large.png" height="50px"/>
-        Overview
-    </h2>
+        Angular 2 Grid
+    </h1>
 
-    <p>The JavaScript documentation is broken down into the following two sections:</p>
+    <p>
+        Here we explain how to use ag-Grid inside an Angular 2 application.
+        It is broken down into the following sections:
+    </p>
 
     <div class="list-group">
         <a href="/angular-getting-started/" class="list-group-item">

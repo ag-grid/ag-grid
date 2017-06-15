@@ -12,8 +12,12 @@ include('../includes/mediaHeader.php');
 
 
 <div class="row">
-    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h1><img src="../images/vue_large.png"/> Using VueJS Components in ag-Grid</h1>
+    <div class="col-md-2" style="padding-top: 20px; padding-bottom: 20px;">
+        <img src="../images/vue_large.png" style="position: relative; top: 15px; left: 40px;"/>
+    </div>
+    <div class="col-md-10" style="padding-top: 20px; padding-bottom: 20px;">
+        <h1>VueJS Grid</h1>
+        <h3>Using ag-Grid inside a VueJS application</h3>
     </div>
 </div>
 

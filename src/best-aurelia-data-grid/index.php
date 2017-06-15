@@ -1,7 +1,7 @@
 <?php
 $key = "Getting Started Aurelia";
-$pageTitle = "Aurelia Datagrid";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with Aurelia to deliver filtering, grouping, aggregation, pivoting and much more.";
+$pageTitle = "Aurelia Grid";
+$pageDescription = "ag-Grid can be used as a data grid inside your Aurelia application. This page details how to get started.";
 $pageKeyboards = "Aurelia Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
@@ -9,11 +9,13 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="implementing-the-aurelia-datagrid">
+    <h1 id="implementing-the-aurelia-datagrid">
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
         <img style="vertical-align: middle" src="../images/aurelia_small.png" height="25px"/>
-        Getting Started
-    </h2>
+        Aurelia Grid
+    </h1>
+
+    <p>This page shows you how to get started with ag-Grid and Aurelia.</p>
 
     <?php
     $frameworkChild = 'aurelia';

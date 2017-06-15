@@ -1,16 +1,18 @@
 <?php
 $key = "Angular Building";
-$pageTitle = "Building ag-Grid applications with Angular 2.x/4.x";
-$pageDescription = "Building ag-Grid applications with Angular 2.x/4.x";
-$pageKeyboards = "ag-grid angular build building";
+$pageTitle = "Building Angular 2";
+$pageDescription = "Building ag-Grid with Angular 2 and different build tools";
+$pageKeyboards = "Building Angular 2";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
     <div>
-        <h2>
+        <h1>
             <img style="vertical-align: middle" src="/images/angular2_large.png" height="50px"/>
-            Building
-        </h2>
+            Building Angular 2
+        </h1>
+
+        <h2>Building ag-Grid with Angular 2</h2>
 
         <p>This section documents options on how to build and distribute your ag-Grid / Angular application, using the
             following build tools:</p>

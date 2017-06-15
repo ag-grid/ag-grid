@@ -1,6 +1,6 @@
 <?php
 $key = "More Detail Javascript";
-$pageTitle = "Best JavaScript Datagrid - More Details";
+$pageTitle = "JavaScript Grid";
 $pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with React to deliver filtering, grouping, aggregation, pivoting and much more.";
 $pageKeyboards = "JavaScript Grid";
 $pageGroup = "basics";
@@ -9,11 +9,11 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>
+    <h1>
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
         <img style="vertical-align: middle" src="/images/javascript.png" height="25px"/>
-        More Details
-    </h2>
+        JavaScript Grid
+    </h1>
 
     <h3>Downloading ag-Grid</h3>
 

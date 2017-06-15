@@ -1,20 +1,23 @@
 <?php
 $key = "Getting Started Web Components";
-$pageTitle = "Web Component Datagrid";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with Web Components to deliver filtering, grouping, aggregation, pivoting and much more.";
-$pageKeyboards = "Best Javascript Web Component Datagrid";
+$pageTitle = "Web Component Grid";
+$pageDescription = "ag-Grid can be used as a Web Component grid inside your application. This page details how to get started.";
+$pageKeyboards = "Web Component Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-        <h2 id="implementing-the-web-components-datagrid">
-            <img src="../images/svg/docs/getting_started.svg" width="50" />
-            <img style="vertical-align: middle" src="../images/webComponents.png" height="25px"/>
-            Getting Started
-        </h2>
+    <h1 id="implementing-the-web-components-datagrid">
+        <img src="../images/svg/docs/getting_started.svg" width="50" />
+        <img style="vertical-align: middle" src="../images/webComponents.png" height="25px"/>
+        Web Component Grid
+    </h1>
 
+    <p>
+        ag-Grid can be used as a Web Component grid inside your application. This page details how to get started.
+    </p>
     <?php include '../javascript-grid-getting-started/ag-grid-dependency.php' ?>
 
 
