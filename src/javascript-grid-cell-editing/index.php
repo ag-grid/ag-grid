@@ -182,7 +182,9 @@ colDef.cellEditorParams = {
 
     <p>
         A newValueHandler is the inverse of a valueGetter. If you want to set the value into the data yourself
-        and not use the field, then use the newValueHandler. Use a newValueHandler if:
+        and not use the field, then use the newValueHandler. Return true if the update was successful, to inform
+        the grid to refresh the cell and fire updates. Return false if no update was done (cell doesn't refresh
+        and no updates). Use a newValueHandler if:
         <ol>
             <li>
                 A field value alone cannot be used, eg you want to place the new value into an array at a
@@ -196,19 +198,35 @@ colDef.cellEditorParams = {
     <pre><span class="codeComment">// this does exactly what a field does, no difference,</span>
 <span class="codeComment">// but provided to demonstrate the equivalent of just using field</span>
 colDef.newValueHandler = function(params) {
+
     var field = params.colDef.field;
     var data = params.data;
     var value = params.newValue;
-    data[field] = value;
+
+    <span class="codeComment">// see if values are different first</span>
+    if (data[field] === value) {
+        <span class="codeComment">// tell grid, no changes</span>
+        return false;
+    } else {
+        <span class="codeComment">// update and tell grid the change was made</span>
+        data[field] = value;
+        return true;
+    }
 }
 
 <span class="codeComment">// this one does some formatting first, and doesn't use the field</span>
 colDef.newValueHandler = function(params) {
+
     var data = params.data;
     var value = params.newValue;
+
     <span class="codeComment">// change the value, maybe we want it in upper case</span>
     var value = formatTheValueSomehow(value);
     data.iAmNotUsingTheField = value;
+
+    <span class="codeComment">// we can always return true if not sure, this way the grid</span>
+    <span class="codeComment">// will always update the cell and fire change events</span>
+    return true;
 }
 </pre>
 

@@ -226,6 +226,9 @@ rowBuffer: 0,
     onCellClicked: function (params) {
         // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
+    onCellValueChanged: function (params) {
+        console.log("Callback onCellValueChanged:", params);
+    },
     onRowDataChanged: function (params) {
         console.log('Callback onRowDataChanged: ');
     },
@@ -741,7 +744,11 @@ function numberNewValueHandler(params) {
     }
     var field = params.colDef.field;
     var data = params.data;
-    data[field] = valueAsNumber;
+    var valueChanged = data[field] !== valueAsNumber;
+    if (valueChanged) {
+        data[field] = valueAsNumber;
+    }
+    return valueChanged;
 }
 
 function PersonFilter() {

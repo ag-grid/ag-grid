@@ -72,8 +72,8 @@ include('../../includes/mediaHeader.php');
     <div class="weekly-news-paragraph-title">New Joiners</div>
 
     <div class="weekly-news-paragraph">
-        Welcome Bas Rahman and Dimple Unalkat to the team, bringing out teams size now to seven! Bas and
-        Dimple will be helping John out on the customer side, helping build out the best customer experience
+        Welcome Bas Rahman and Dimple Unalkat to the team, bringing our teams size now to seven! Bas and
+        Dimple will be helping John out on the customer side, building out the best customer experience
         we can, while allowing the developers to focus on developing as much possible.
     </div>
 
@@ -87,7 +87,7 @@ include('../../includes/mediaHeader.php');
     <div class="weekly-news-paragraph-title">Hammering Through JIRA's</div>
 
     <div class="weekly-news-paragraph">
-        Last week we completed a JIRA triage and have market 167 for development. We are now 10 down
+        Last week we completed a JIRA triage and have marked 167 for development. We are now 10 down
         with 157 to go. Alberto and I are fixing all the critical issues and some high priority 'quick wins' first.
         In time, we will get through them all. Give us a few weeks!
     </div>
@@ -102,8 +102,8 @@ include('../../includes/mediaHeader.php');
     <div class="weekly-news-paragraph-title">Improved Getting Started</div>
 
     <div class="weekly-news-paragraph">
-        Sean is busy on the frameworks and documentation side, making sure new uses to the grid get introduced
-        to ag-Grid in as easiest way as possible. Our next release will have revamped 'Getting Started' sections,
+        Sean is busy on the frameworks and documentation side, making sure new users get introduced
+        to ag-Grid in the easiest way possible. Our next release will have revamped 'Getting Started' sections,
         with particular attention given to React and Angular (2+).
     </div>
 
@@ -112,9 +112,6 @@ include('../../includes/mediaHeader.php');
     <div class="weekly-news-paragraph">
         We are planning a release 23rd June with all the above.
     </div>
-
-
-
 
 </div>
 
