@@ -237,7 +237,7 @@ export class HeaderRowComp extends Component {
             column,
             <null>floatingFilterParams
         );
-        column.addEventListener(Column.EVENT_FILTER_CHANGED, () => {
+        this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, () => {
             let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
             floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
         });

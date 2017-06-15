@@ -105,7 +105,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private floatingCellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
     private cellEditor: {new(): ICellEditorComp} | string;
     private filter: {new(): IFilter} | string;
-    private autoGroupColumnDef:AutoGroupColumnDef;
 
     private parent: ColumnGroupChild;
 
@@ -529,13 +528,5 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public isAllowRowGroup(): boolean {
         return this.colDef.enableRowGroup === true;
-    }
-
-    public setAutoGroupColumnDef (autoGroupColumnDef:AutoGroupColumnDef): void{
-        this.autoGroupColumnDef = autoGroupColumnDef;
-    }
-
-    public getAutoGroupColumnDef (): AutoGroupColumnDef {
-        return this.autoGroupColumnDef;
     }
 }

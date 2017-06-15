@@ -1,24 +1,35 @@
-
 import {SvgFactory} from "../../svgFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {ExpressionService} from "../../expressionService";
 import {EventService} from "../../eventService";
 import {Constants} from "../../constants";
 import {Utils as _} from "../../utils";
-import {Events} from "../../events";
 import {Autowired, Context} from "../../context/context";
 import {Component} from "../../widgets/component";
-import {ICellRenderer} from "./iCellRenderer";
+import {ICellRenderer, ICellRendererParams} from "./iCellRenderer";
 import {RowNode} from "../../entities/rowNode";
-import {GridApi} from "../../gridApi";
 import {CellRendererService} from "../cellRendererService";
 import {ValueFormatterService} from "../valueFormatterService";
 import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
-import {QuerySelector, RefSelector} from "../../widgets/componentAnnotations";
+import {RefSelector} from "../../widgets/componentAnnotations";
 
 let svgFactory = SvgFactory.getInstance();
+
+export interface GroupCellRendererParams extends ICellRendererParams{
+    restrictToOneGroup: boolean,
+    pinned:string,
+    padding:number,
+    suppressPadding:boolean,
+    innerRenderer:any,
+    footerValueGetter:any,
+    suppressCount:boolean,
+    checkbox:any,
+    keyMap:{[id:string]:string},
+    scope:any,
+    actualValue:string
+}
 
 export class GroupCellRenderer extends Component implements ICellRenderer {
 
@@ -45,14 +56,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     @RefSelector('eValue') private eValue: HTMLElement;
     @RefSelector('eChildCount') private eChildCount: HTMLElement;
 
-    private params: any;
+    private params: GroupCellRendererParams;
     private nodeWasSwapped: boolean;
 
     constructor() {
         super(GroupCellRenderer.TEMPLATE);
     }
 
-    public init(params: any): void {
+    public init(params: GroupCellRendererParams): void {
 
         if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
             this.setupForGroupHideOpenParents(params);
@@ -408,10 +419,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private onKeyDown(event: KeyboardEvent): void {
         if (_.isKeyPressed(event, Constants.KEY_ENTER)) {
-            if (! this.params.node.isCellEditable()){
-                this.onExpandOrContract();
-                event.preventDefault();
-            }
+            // if (! this.params.node.isCellEditable()){
+            //     event.preventDefault();
+            //     this.onExpandOrContract();
+            // }
         }
     }
 

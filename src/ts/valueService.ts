@@ -2,14 +2,13 @@ import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {ExpressionService} from "./expressionService";
 import {ColumnController} from "./columnController/columnController";
 import {ColDef} from "./entities/colDef";
-import {Bean, Autowired, PostConstruct} from "./context/context";
+import {Autowired, Bean, PostConstruct} from "./context/context";
 import {RowNode} from "./entities/rowNode";
 import {AutoGroupColumnDef, Column} from "./entities/column";
 import {Utils as _} from "./utils";
 import {Events} from "./events";
 import {EventService} from "./eventService";
-import {GroupNameInfoParams, GroupValueService} from "./groupValueService";
-import {AutoGroupColService} from "./columnController/autoGroupColService";
+import {GroupValueService} from "./groupValueService";
 
 @Bean('valueService')
 export class ValueService {
@@ -39,31 +38,10 @@ export class ValueService {
     }
 
     public getValueUsingSpecificData(column: Column, data: any, node: RowNode): any {
-        // If it is autogroup, is tricky, because even though we are adding to the
-        // data the key for the group, we need to figure out what is this autogroup
-        // showing
-        let autoGroupColumnDef: AutoGroupColumnDef = column.getAutoGroupColumnDef();
-        if (autoGroupColumnDef && node.group){
-            // If this is an autogroup column used to group everything, then
-            // then value is the key
-            if (autoGroupColumnDef.groupsAll) {
-                return node.key;
-            }
-            // If this is an autogroup column used to map a particular column, we can
-            // check if we are trying to retrieve the value for that particular column,
-            // if we are, the value will be in the data.
-            if (autoGroupColumnDef.mappedColumn.getColId() === column.getColId()) {
-                return data[column.getColId()]
-            }
-        }
-
-        // If this node is a group node and we are here its because this column is not
-        // autogroup, we need to check now if this is a manually selected column for
-        // grouping
         if (node.group){
-            let groupColumn : Column= this.groupValueService.getGroupColumn(node.rowGroupIndex, column);
-            if (groupColumn && data[groupColumn.getColId()] && column.getCellRenderer() == 'group'){
-                return data[groupColumn.getColId()]
+            let groupData = node.groupData [column.getColId()];
+            if (groupData){
+                return groupData;
             }
         }
 

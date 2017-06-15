@@ -1,8 +1,9 @@
-import {Bean, Autowired, Context} from "../context/context";
+import {Autowired, Bean, Context} from "../context/context";
 import {AutoGroupColumnDef, Column} from "../entities/column";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {_} from "../utils";
 import {defaultGroupComparator} from "../functions";
+import {ColDef} from "../entities/colDef";
 
 @Bean('autoGroupColService')
 export class AutoGroupColService {
@@ -32,7 +33,7 @@ export class AutoGroupColService {
     // rowGroupCol and index are missing if groupMultiAutoColumn=false
     private createOneAutoGroupColumn(rowGroupCol?: Column, index?: number): Column {
         // if one provided by user, use it, otherwise create one
-        let autoColDef = this.gridOptionsWrapper.getGroupColumnDef();
+        let autoColDef: ColDef = this.gridOptionsWrapper.getGroupColumnDef();
         if (!autoColDef) {
             let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             autoColDef = {
@@ -55,7 +56,6 @@ export class AutoGroupColService {
 
         // if doing multi, set the field
         let colId: string;
-        let autoGroupColumnDef:AutoGroupColumnDef = null;
 
         if (rowGroupCol) {
 
@@ -93,22 +93,13 @@ export class AutoGroupColService {
             }
 
             colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
-            autoGroupColumnDef = {
-                isAutoGroupColumn:true,
-                mappedColumn: rowGroupCol,
-                groupsAll: false
-            }
+            autoColDef.rowGroupsDisplayed = [rowGroupCol.getColId()];
         } else {
             colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
-            autoGroupColumnDef = {
-                isAutoGroupColumn:true,
-                mappedColumn: null,
-                groupsAll: true
-            }
+            autoColDef.rowGroupsDisplayed = '*';
         }
 
         let newCol = new Column(autoColDef, colId, true);
-        newCol.setAutoGroupColumnDef(autoGroupColumnDef);
         this.context.wireBean(newCol);
 
 

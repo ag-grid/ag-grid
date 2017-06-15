@@ -1,11 +1,10 @@
 import {RowNode} from "./rowNode";
 import {ICellEditorComp} from "../rendering/cellEditors/iCellEditor";
-import {ICellRendererFunc, ICellRenderer, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
 import {Column} from "./column";
 import {IFilterComp} from "../interfaces/iFilter";
 import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
-import {IHeaderComp, IHeader} from "../headerRendering/header/headerComp";
 import {IHeaderGroupComp} from "../headerRendering/headerGroup/headerGroupComp";
 import {IFloatingFilterComp} from "../filter/floatingFilter";
 
@@ -177,6 +176,9 @@ export interface ColDef extends AbstractColDef {
 
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
+
+    /** What we are row grouping by can be an array of colIds, one colId or '*' */
+    rowGroupsDisplayed?:string[] | string;
 
     /** If true, GUI will allow adding this columns as a row group */
     enableRowGroup?: boolean;
