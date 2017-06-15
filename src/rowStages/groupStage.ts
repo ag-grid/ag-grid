@@ -1,21 +1,22 @@
 import {
-    Bean,
-    Context,
-    IRowNodeStage,
+    _,
     Autowired,
-    SelectionController,
-    GridOptionsWrapper,
-    ColumnController,
-    ValueService,
-    EventService,
-    StageExecuteParams,
-    RowNode,
+    Bean,
+    ColDef,
     Column,
-    NumberSequence,
-    RowNodeTransaction,
-    GroupValueService,
+    ColumnController,
+    Context,
+    EventService,
+    GridOptionsWrapper,
     GroupNameInfo,
-    _
+    GroupValueService,
+    IRowNodeStage,
+    NumberSequence,
+    RowNode,
+    RowNodeTransaction,
+    SelectionController,
+    StageExecuteParams,
+    ValueService
 } from "ag-grid/main";
 
 
@@ -201,6 +202,46 @@ export class GroupStage implements IRowNodeStage {
         newGroup.group = true;
         newGroup.field = groupNameInfo.column.getColDef().field;
         newGroup.rowGroupColumn = groupNameInfo.column;
+        newGroup.groupData = {};
+
+
+        let allCandidateColumns: Column[] = [];
+
+        let groupAutoColumns = this.columnController.getGroupAutoColumns();
+        if (groupAutoColumns) groupAutoColumns.forEach(it=>allCandidateColumns.push(it));
+
+        this.columnController.getAllGridColumns().forEach(it=>allCandidateColumns.push(it));
+
+
+        allCandidateColumns.forEach(candidateColToShowGrouping=>{
+            let candidateColDefToShowGrouping: ColDef = candidateColToShowGrouping.getColDef();
+            let rawRowGroupsDisplayed:string[]|string = candidateColDefToShowGrouping.rowGroupsDisplayed;
+            if (rawRowGroupsDisplayed == null) return;
+
+
+            // From here this column is used to display a group so there is a chance this node its used
+            // to display the group info in this columns, if that is the case add into the map node.groupData
+            let rowGroupsDisplayed:string[] = [];
+            if (!Array.isArray(rawRowGroupsDisplayed)){
+                if (rawRowGroupsDisplayed === '*'){
+                    //If showing * means that shows all the groups
+                    newGroup.groupData[candidateColToShowGrouping.getColId()] = groupNameInfo.actualValue;
+                    return;
+                }
+
+                //It shows just one group
+                rowGroupsDisplayed = [rawRowGroupsDisplayed];
+            } else {
+                //It shows just many groups
+                rowGroupsDisplayed = rawRowGroupsDisplayed;
+            }
+
+
+            if (rowGroupsDisplayed.indexOf(newGroup.rowGroupColumn.getColId()) > -1 ){
+                newGroup.groupData[candidateColToShowGrouping.getColId()] = groupNameInfo.actualValue;
+            }
+        });
+
         // we use negative number for the ids of the groups, this makes sure we don't clash with the
         // id's of the leaf nodes.
         newGroup.id = (this.groupIdSequence.next()*-1).toString();
