@@ -250,10 +250,12 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
         let defaultFilterTypes = this.getApplicableFilterTypes();
         let restrictedFilterTypes = this.filterParams.filterOptions;
         let actualFilterTypes = restrictedFilterTypes ? restrictedFilterTypes : defaultFilterTypes;
+        const defaultFilterIndex = actualFilterTypes.indexOf(this.defaultFilter);
 
-        let optionsHtml: string[] = actualFilterTypes.map(filterType => {
+        let optionsHtml:string[] = actualFilterTypes.map((filterType, idx) => {
             let localeFilterName = this.translate(filterType);
-            return `<option value="${filterType}">${localeFilterName}</option>`;
+            const selected = (idx >= 0 && idx === defaultFilterIndex) ? 'selected' : '';
+            return `<option value="${filterType}" ${selected}>${localeFilterName}</option>`;
         });
 
         let readOnly = optionsHtml.length == 1 ? 'disabled' : '';
