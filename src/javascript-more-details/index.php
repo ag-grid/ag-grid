@@ -190,6 +190,37 @@ import 'ag-grid-enterprise/main';
     But all you need is this:<br/>
     <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js"></pre>
 
+    <h2 id="aggrid-javascript-testing">Testing ag-Grid Applications with Jasmine</h2>
+
+    <p>In our <a href="https://github.com/ceolter/ag-grid-seed">Javascript Seed Repo</a> we provide working
+        examples of how to test your project with Jasmine (under the <code>javascript</code> project).</p>
+
+    <p>In order to test your application you need to ensure that the Grid API is available - the best way to do this
+    is to set a flag when the Grid's <code>gridReady</code> event fires, but this requires an application code change.</p>
+
+    <p>An alternative is to use a utility function that polls until the API has been set on the <code>GridOptions</code>:</p>
+
+    <pre>
+function waitForGridApiToBeAvailable(gridOptions, success) {
+    // recursive without a terminating condition, but jasmines default test timeout will kill it (asmine.DEFAULT_TIMEOUT_INTERVAL)
+    if(gridOptions.api) {
+        success()
+    } else {
+        setTimeout(function () {
+            waitForGridApiToBeAvailable(gridOptions, success);
+        }, 500);
+    }
+}   </pre>
+
+    <p>Once the API is ready, we can then invoke Grid <code>API</code> and <code>ColumnApi</code> methods:</p>
+
+    <pre>
+it('select all button selects all rows', () => {
+    selectAllRows();                    <span class="codeComment">// selectAllRows is a global function created in the application code </span>
+    expect(gridOptionsUnderTest.api.getSelectedNodes().length).toEqual(3);
+});
+    </pre>
+
     <h2 id="next-steps">Next Steps...</h2>
 
     <p>

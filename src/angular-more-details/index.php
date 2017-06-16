@@ -438,14 +438,36 @@ private getCountryFilterParams():any {
         Although it is possible to use Angular for your customisations of ag-Grid, it is not necessary. The grid
         will happily work with both Angular and non-Angular portions (eg cellRenderers in Angular or normal
         JavaScript).
-        If you do use Angular, be aware that you are adding an extra layer of indirection into ag-Grid.
-        ag-Grid's
-        internal framework is already highly tuned to work incredibly fast and does not require Angular or
-        anything
-        else to make it faster. If you are looking for a lightning fast grid, even if you are using Angular and
-        the ag-grid-angular component, consider using plain ag-Grid Components (as explained on the pages for
-        rendering etc) inside ag-Grid instead of creating Angular counterparts.
     </p>
+
+    <h2 id="aggrid-angular-testing">Testing ag-Grid Angular Applications with Karma & Jasmine</h2>
+
+    <p>In our <a href="https://github.com/ceolter/ag-grid-angular-seed">Angular Seed Repo</a> we provide working
+        examples of how to test your Angular project with Karma & Jasmine.</p>
+
+    <p>As with your actual application, you need to ensure you <code>import</code> the <code>AgGridModule</code> when
+        specifying your tests:</p>
+
+    <pre>
+TestBed.configureTestingModule({
+    imports: [
+        AgGridModule.withComponents([...optional Angular Components...]
+    ]
+    ...rest of module definition
+</pre>
+
+    <p>You also need to aware that the Grid <code>API</code> and <code>ColumnAPI</code> will only be available after your
+        fixtures <code>detectChanges</code> has been invoked:</p>
+    <pre>
+it('grid API is not available until  `detectChanges`', () => {
+    expect(component.gridOptions.api).not.toBeTruthy();
+});
+
+it('grid API is available after `detectChanges`', () => {
+    fixture.detectChanges();
+    expect(component.gridOptions.api).toBeTruthy();
+});
+</pre>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
