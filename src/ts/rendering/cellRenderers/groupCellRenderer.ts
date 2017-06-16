@@ -50,7 +50,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('groupValueService') private groupValueService: GroupValueService;
 
     @RefSelector('eExpanded') private eExpanded: HTMLElement;
     @RefSelector('eContracted') private eContracted: HTMLElement;
@@ -79,19 +78,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         if (groupKeyMismatch || embeddedRowMismatch) { return; }
 
         this.setupComponents();
-        this.setValuesInParams(this.params);
-    }
-
-    private setValuesInParams(toSetIn: GroupCellRendererParams) {
-        let node:RowNode = toSetIn.node.group ? toSetIn.node : toSetIn.node.parent;
-        let groupNameParams: GroupNameInfoParams = {
-            rowGroupIndex: node.rowGroupIndex,
-            column: toSetIn.column,
-            rowIndex: node.rowIndex,
-            scope: null,
-            keyMap: {}
-        };
-        this.groupValueService.assignToParams(this.params, groupNameParams, node);
     }
 
     private setupForGroupHideOpenParents(originalParams: any): void {
@@ -315,10 +301,17 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             columnOfGroupedCol = params.column;
         }
 
+        let groupName = this.getGroupName();
+        let valueFormatted = this.valueFormatterService.formatValue(columnOfGroupedCol, params.node, params.scope, params.rowIndex, groupName);
+
         let groupedColCellRenderer = columnOfGroupedCol.getCellRenderer();
 
         // reuse the params but change the value
         if (typeof groupedColCellRenderer === 'function') {
+            // reuse the params but change the value
+            params.value = groupName;
+            params.valueFormatted = valueFormatted;
+
             let colDefOfGroupedCol = columnOfGroupedCol.getColDef();
             let groupedColCellRendererParams = colDefOfGroupedCol ? colDefOfGroupedCol.cellRendererParams : null;
 
@@ -327,15 +320,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             if (groupedColCellRendererParams) {
                 _.assign(params, groupedColCellRenderer);
             }
-
-            params.value = this.params.value;
-            params.valueFormatted = this.params.valueFormatted;
-            params.actualValue = this.params.actualValue;
-
             this.cellRendererService.useCellRenderer(colDefOfGroupedCol.cellRenderer, this.eValue, params);
         } else {
-            if (_.exists(this.params.actualValue) && this.params.actualValue !== '') {
-                this.eValue.appendChild(document.createTextNode(this.params.actualValue));
+            let valueToRender = _.exists(valueFormatted) ? valueFormatted : groupName;
+            if (_.exists(valueToRender) && valueToRender !== '') {
+                this.eValue.appendChild(document.createTextNode(valueToRender));
             }
         }
     }
