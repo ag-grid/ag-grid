@@ -254,7 +254,7 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
 
         let optionsHtml:string[] = actualFilterTypes.map((filterType, idx) => {
             let localeFilterName = this.translate(filterType);
-            const selected = (idx >= 0 && idx === defaultFilterIndex) ? 'selected' : '';
+            const selected = (defaultFilterIndex >= 0 && idx === defaultFilterIndex) ? 'selected' : '';
             return `<option value="${filterType}" ${selected}>${localeFilterName}</option>`;
         });
 
