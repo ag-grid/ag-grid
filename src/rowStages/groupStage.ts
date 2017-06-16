@@ -193,32 +193,6 @@ export class GroupStage implements IRowNodeStage {
         return result;
     }
 
-    private isColumnDisplayingGroup (column:Column, groupColumn:Column):boolean {
-        let candidateColDefToShowGrouping: ColDef = column.getColDef();
-        let rawRowGroupsDisplayed:string[]|string = candidateColDefToShowGrouping.rowGroupsDisplayed;
-        if (rawRowGroupsDisplayed == null) return false;
-
-
-        // From here this column is used to display a group so there is a chance this node its used
-        // to display the group info in this columns, if that is the case add into the map node.groupData
-        let rowGroupsDisplayed:string[] = [];
-        if (!Array.isArray(rawRowGroupsDisplayed)){
-            if (rawRowGroupsDisplayed === '*'){
-                return true;
-            }
-
-            //It shows just one group
-            rowGroupsDisplayed = [rawRowGroupsDisplayed];
-        } else {
-            //It shows just many groups
-            rowGroupsDisplayed = rawRowGroupsDisplayed;
-        }
-
-
-        return rowGroupsDisplayed.indexOf(groupColumn.getColId()) > -1 ;
-    }
-
-
     private createSubGroup(groupKey: string, groupColumn: Column, parent: RowNode, expandByDefault: any, level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
         let newGroup = new RowNode();
         this.context.wireBean(newGroup);
@@ -228,15 +202,10 @@ export class GroupStage implements IRowNodeStage {
         newGroup.rowGroupColumn = groupColumn;
         newGroup.groupData = {};
 
+        let gridAndAutoColumns: Column[] = this.columnController.getGroupDisplayColumns();
 
-        let gridAndAutoColumns: Column[] = [];
-
-        let groupAutoColumns = this.columnController.getGroupAutoColumns();
-        if (groupAutoColumns) groupAutoColumns.forEach(it=>gridAndAutoColumns.push(it));
-        this.columnController.getAllGridColumns().forEach(it=>gridAndAutoColumns.push(it));
-
-        gridAndAutoColumns.forEach(col=>{
-            if (this.isColumnDisplayingGroup(col, newGroup.rowGroupColumn) ){
+        gridAndAutoColumns.forEach(col => {
+            if (col.isRowGroupDisplayed(newGroup.rowGroupColumn.getId())){
                 newGroup.groupData[col.getColId()] = groupKey;
             }
         });
