@@ -60,8 +60,6 @@ export class RowNode implements IEventEmitter {
     public groupData: any;
     /** The user provided data */
     public data: any;
-    /** If aggregated by, shows the columns it aggregates by */
-    public aggregatedBy: any;
     /** The parent node to this node, or empty if top level */
     public parent: RowNode;
     /** How many levels this node is from the top */
@@ -315,10 +313,6 @@ export class RowNode implements IEventEmitter {
         let colIds = _.getAllKeysInObjects([this.data, newAggData]);
 
         this.data = newAggData;
-
-        if (newAggData != null){
-            this.aggregatedBy = Object.keys(newAggData);
-        }
 
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {

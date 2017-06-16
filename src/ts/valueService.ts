@@ -4,7 +4,7 @@ import {ColumnController} from "./columnController/columnController";
 import {ColDef} from "./entities/colDef";
 import {Autowired, Bean, PostConstruct} from "./context/context";
 import {RowNode} from "./entities/rowNode";
-import {AutoGroupColumnDef, Column} from "./entities/column";
+import {Column} from "./entities/column";
 import {Utils as _} from "./utils";
 import {Events} from "./events";
 import {EventService} from "./eventService";
@@ -38,7 +38,7 @@ export class ValueService {
     }
 
     public getValueUsingSpecificData(column: Column, data: any, node: RowNode): any {
-        if (node.group){
+        if (node.group && node.groupData){
             let groupData = node.groupData [column.getColId()];
             if (groupData){
                 return groupData;

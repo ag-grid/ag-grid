@@ -19,11 +19,6 @@ import {IFilter} from "../interfaces/iFilter";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
 
-export interface AutoGroupColumnDef {
-    isAutoGroupColumn:boolean;
-    groupsAll: boolean;
-    mappedColumn:Column;
-}
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).

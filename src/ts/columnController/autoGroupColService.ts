@@ -1,5 +1,5 @@
 import {Autowired, Bean, Context} from "../context/context";
-import {AutoGroupColumnDef, Column} from "../entities/column";
+import {Column} from "../entities/column";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {_} from "../utils";
 import {defaultGroupComparator} from "../functions";

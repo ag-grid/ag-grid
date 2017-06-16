@@ -1,6 +1,6 @@
 import {Autowired, Bean} from "./context/context";
 import {ValueFormatterService} from "./rendering/valueFormatterService";
-import {AutoGroupColumnDef, Column} from "./entities/column";
+import {Column} from "./entities/column";
 import {RowNode} from "./entities/rowNode";
 import {_} from "./utils";
 import {ColumnApi} from "./columnController/columnController";
