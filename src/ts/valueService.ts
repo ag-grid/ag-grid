@@ -38,11 +38,19 @@ export class ValueService {
     }
 
     public getValueUsingSpecificData(column: Column, data: any, node: RowNode): any {
-        if (node.group && node.groupData){
-            let groupData = node.groupData [column.getColId()];
-            if (groupData){
-                return groupData;
+        if (node.group){
+            // If we are getting the value for a column that is displaying a group this
+            // node is grouping by
+            if (node.groupData){
+                let groupData = node.groupData [column.getColId()];
+                if (groupData){
+                    return groupData;
+                }
             }
+
+            // Otherwise unless there is an aggregation on this column, which will be populated
+            // in the data property, we return null for groups
+            return node.data ? node.data[column.getId()] : null;
         }
 
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
@@ -57,9 +65,7 @@ export class ValueService {
         // if there is a value getter, this gets precedence over a field
         // - need to revisit this, we check 'data' as this is the way for the grid to
         //   not render when on the footer row
-        if (data && node.group && !this.userProvidedTheGroups && !this.suppressUseColIdForGroups) {
-            result = node.data ? node.data[column.getId()] : undefined;
-        } else if (colDef.valueGetter) {
+        if (colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, node);
         } else if (field && data) {
             result = _.getValueUsingField(data, field, column.isFieldContainsDots());

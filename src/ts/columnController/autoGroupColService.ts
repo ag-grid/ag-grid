@@ -38,7 +38,6 @@ export class AutoGroupColService {
             let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             autoColDef = {
                 headerName: localeTextFunc('group', 'Group'),
-                comparator: defaultGroupComparator,
                 valueGetter: (params: any) => {
                     if (params.node.group) {
                         return params.node.key;
