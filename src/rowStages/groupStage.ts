@@ -195,6 +195,32 @@ export class GroupStage implements IRowNodeStage {
         return result;
     }
 
+    private isColumnDisplayingGroup (column:Column, groupColumn:Column):boolean {
+        let candidateColDefToShowGrouping: ColDef = column.getColDef();
+        let rawRowGroupsDisplayed:string[]|string = candidateColDefToShowGrouping.rowGroupsDisplayed;
+        if (rawRowGroupsDisplayed == null) return false;
+
+
+        // From here this column is used to display a group so there is a chance this node its used
+        // to display the group info in this columns, if that is the case add into the map node.groupData
+        let rowGroupsDisplayed:string[] = [];
+        if (!Array.isArray(rawRowGroupsDisplayed)){
+            if (rawRowGroupsDisplayed === '*'){
+                return true;
+            }
+
+            //It shows just one group
+            rowGroupsDisplayed = [rawRowGroupsDisplayed];
+        } else {
+            //It shows just many groups
+            rowGroupsDisplayed = rawRowGroupsDisplayed;
+        }
+
+
+        return rowGroupsDisplayed.indexOf(groupColumn.getColId()) > -1 ;
+    }
+
+
     private createSubGroup(groupNameInfo: GroupNameInfo, parent: RowNode, expandByDefault: any, level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
         let newGroup = new RowNode();
         this.context.wireBean(newGroup);
@@ -205,40 +231,15 @@ export class GroupStage implements IRowNodeStage {
         newGroup.groupData = {};
 
 
-        let allCandidateColumns: Column[] = [];
+        let gridAndAutoColumns: Column[] = [];
 
         let groupAutoColumns = this.columnController.getGroupAutoColumns();
-        if (groupAutoColumns) groupAutoColumns.forEach(it=>allCandidateColumns.push(it));
+        if (groupAutoColumns) groupAutoColumns.forEach(it=>gridAndAutoColumns.push(it));
+        this.columnController.getAllGridColumns().forEach(it=>gridAndAutoColumns.push(it));
 
-        this.columnController.getAllGridColumns().forEach(it=>allCandidateColumns.push(it));
-
-
-        allCandidateColumns.forEach(candidateColToShowGrouping=>{
-            let candidateColDefToShowGrouping: ColDef = candidateColToShowGrouping.getColDef();
-            let rawRowGroupsDisplayed:string[]|string = candidateColDefToShowGrouping.rowGroupsDisplayed;
-            if (rawRowGroupsDisplayed == null) return;
-
-
-            // From here this column is used to display a group so there is a chance this node its used
-            // to display the group info in this columns, if that is the case add into the map node.groupData
-            let rowGroupsDisplayed:string[] = [];
-            if (!Array.isArray(rawRowGroupsDisplayed)){
-                if (rawRowGroupsDisplayed === '*'){
-                    //If showing * means that shows all the groups
-                    newGroup.groupData[candidateColToShowGrouping.getColId()] = groupNameInfo.actualValue;
-                    return;
-                }
-
-                //It shows just one group
-                rowGroupsDisplayed = [rawRowGroupsDisplayed];
-            } else {
-                //It shows just many groups
-                rowGroupsDisplayed = rawRowGroupsDisplayed;
-            }
-
-
-            if (rowGroupsDisplayed.indexOf(newGroup.rowGroupColumn.getColId()) > -1 ){
-                newGroup.groupData[candidateColToShowGrouping.getColId()] = groupNameInfo.actualValue;
+        gridAndAutoColumns.forEach(col=>{
+            if (this.isColumnDisplayingGroup(col, newGroup.rowGroupColumn) ){
+                newGroup.groupData[col.getColId()] = groupNameInfo.actualValue;
             }
         });
 
