@@ -136,7 +136,7 @@ export { ColDef } from "./dist/lib/entities/colDef";
 export { ProcessCellForExportParams, ProcessHeaderForExportParams } from "./dist/lib/exportParams";
 export { GridOptions, GetContextMenuItemsParams, GetContextMenuItems, MenuItemDef } from "./dist/lib/entities/gridOptions";
 export { OriginalColumnGroupChild } from "./dist/lib/entities/originalColumnGroupChild";
-export { IViewportDatasource } from "./dist/lib/interfaces/iViewportDatasource";
+export { IViewportDatasource, IViewportDatasourceParams } from "./dist/lib/interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./dist/lib/interfaces/iContextMenuFactory";
 export { ICompFactory } from "./dist/lib/interfaces/iCompFactory";
 export { IRowNodeStage, StageExecuteParams } from "./dist/lib/interfaces/iRowNodeStage";
