@@ -1089,7 +1089,7 @@ export class RowComp extends BeanStub {
         this.forEachRenderedCell( renderedCell => {
             let colForCel = renderedCell.getColumn();
             if (columnsToRefresh.indexOf(colForCel)>=0) {
-                renderedCell.refreshCell(animate);
+                renderedCell.refreshCell({animate: animate});
             }
         });
     }

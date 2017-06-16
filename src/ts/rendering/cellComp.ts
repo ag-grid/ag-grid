@@ -732,7 +732,7 @@ export class CellComp extends Component {
 
         this.setInlineEditingClass();
 
-        this.refreshCell({afterEditingStopped: true});
+        this.refreshCell({dontSkipRefresh: true});
 
         this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STOPPED, this.createParams());
     }
@@ -1017,11 +1017,11 @@ export class CellComp extends Component {
         return true;
     }
 
-    public refreshCell(params?: {animate?: boolean, newData?: boolean, afterEditingStopped?: boolean}) {
+    public refreshCell(params?: {animate?: boolean, newData?: boolean, dontSkipRefresh?: boolean}) {
 
         let newData = params ? params.newData === true : false;
         let animate = params ? params.animate === true : false;
-        let afterEditingStopped = params ? params.afterEditingStopped === true : false;
+        let dontSkipRefresh = params ? params.dontSkipRefresh === true : false;
 
         let oldValue = this.value;
         this.value = this.getValue();
@@ -1029,9 +1029,9 @@ export class CellComp extends Component {
         // for simple values only (not pojo's), see if the value is the same, and if it is, skip the refresh.
         // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
         // if was before the edit.
-        let allowSkippingRefreshIfDataSame = !afterEditingStopped && _.valuesSimpleAndSame(oldValue, this.value);
+        let allowSkippingRefreshIfDataSame = !dontSkipRefresh && _.valuesSimpleAndSame(oldValue, this.value);
         if (allowSkippingRefreshIfDataSame) {
-            return;
+            // return;
         }
 
         let cellRendererRefreshed: boolean;
@@ -1167,7 +1167,9 @@ export class CellComp extends Component {
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
-            refreshCell: this.refreshCell.bind(this),
+            // we set dontSkipRefresh so that 'drag group down' works, as the cell index
+            // can change, so cells that were previously empty may not have the parent group
+            refreshCell: this.refreshCell.bind(this, {dontSkipRefresh: true}),
             eGridCell: this.eGridCell,
             eParentOfValue: this.eParentOfValue,
             addRenderedRowListener: this.renderedRow.addEventListener.bind(this.renderedRow)
