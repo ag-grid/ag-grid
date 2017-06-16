@@ -33,6 +33,7 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    enableRangeSelection: true,
     columnDefs: columnDefs,
     rowData: null,
     groupSuppressAutoColumn: true,
