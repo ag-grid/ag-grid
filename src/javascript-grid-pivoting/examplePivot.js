@@ -13,7 +13,8 @@ var gridOptions = {
     pivotMode: true,
     enableColResize: true,
     columnDefs: columnDefs,
-    floatingFilter:true
+    floatingFilter:true,
+    enableSorting:true
 };
 
 // setup the grid after the page has finished loading

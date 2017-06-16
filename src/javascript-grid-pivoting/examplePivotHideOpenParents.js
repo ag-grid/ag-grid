@@ -40,6 +40,7 @@ var gridOptions = {
     groupHideOpenParents: true,
     groupMultiAutoColumn: true,
     animateRows: true,
+    enableSorting: true,
     onGridReady: function(params) {
         // params.api.sizeColumnsToFit();
     }
