@@ -14,6 +14,7 @@ import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import {RefSelector} from "../../widgets/componentAnnotations";
+import {GroupNameInfoParams, GroupValueService} from "../../groupValueService";
 
 let svgFactory = SvgFactory.getInstance();
 
@@ -49,6 +50,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('groupValueService') private groupValueService: GroupValueService;
 
     @RefSelector('eExpanded') private eExpanded: HTMLElement;
     @RefSelector('eContracted') private eContracted: HTMLElement;
@@ -77,6 +79,19 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         if (groupKeyMismatch || embeddedRowMismatch) { return; }
 
         this.setupComponents();
+        this.setValuesInParams(this.params);
+    }
+
+    private setValuesInParams(toSetIn: GroupCellRendererParams) {
+        let node:RowNode = toSetIn.node.group ? toSetIn.node : toSetIn.node.parent;
+        let groupNameParams: GroupNameInfoParams = {
+            rowGroupIndex: node.rowGroupIndex,
+            column: toSetIn.column,
+            rowIndex: node.rowIndex,
+            scope: null,
+            keyMap: {}
+        };
+        this.groupValueService.assignToParams(this.params, groupNameParams, node);
     }
 
     private setupForGroupHideOpenParents(originalParams: any): void {
