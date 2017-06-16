@@ -166,7 +166,6 @@ export class GroupStage implements IRowNodeStage {
 
     private getOrCreateNextGroup(parentGroup: RowNode, nodeToPlace: RowNode, groupColumn: Column, expandByDefault: any,
                                  level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
-        // let groupKey: string = this.getKeyForNode(groupColumn, nodeToPlace);
         let groupKey : string = this.getKeyForNode(groupColumn, nodeToPlace);
 
         let nextGroup = <RowNode> parentGroup.childrenMapped[groupKey];
