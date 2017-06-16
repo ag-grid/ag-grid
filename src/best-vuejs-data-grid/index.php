@@ -1,18 +1,22 @@
 <?php
 $key = "Getting Started VueJS";
-$pageTitle = "VueJS Datagrid";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with VueJS to deliver filtering, grouping, aggregation, pivoting and much more.";
+$pageTitle = "VueJS Grid";
+$pageDescription = "ag-Grid can be used as a data grid inside your VueJS application. This page details how to get started using ag-Grid inside an VueJS application.";
 $pageKeyboards = "VueJS Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-    <h2 id="implementing-the-vuejs-datagrid">
+    <h1 id="implementing-the-vuejs-datagrid">
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
         <img style="vertical-align: middle" src="/images/vue_small.png" height="25px"/>
-        Getting Started
-    </h2>
+        VueJS Grid
+    </h1>
+
+    <p>
+        This page details how to set up ag-Grid inside a VueJS application.
+    </p>
 
     <?php
     $frameworkChild = 'vue';

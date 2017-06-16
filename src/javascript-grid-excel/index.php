@@ -1,15 +1,16 @@
 <?php
 $key = "Excel Export";
-$pageTitle = "Javascript Excel Export";
+$pageTitle = "Javascript Grid Excel";
 $pageDescription = "We are now supporting JavaScript Export to Excel. This page explains how to use this new feature to Export to Excel along with properties you can set to get the configure the exports.";
-$pageKeyboards = "JavaScript Export to Excel";
+$pageKeyboards = "JavaScript Grid Excel";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <p>
 
-    <h1><img src="../images/enterprise_50.png" title="Enterprise Feature"/> JavaScript Excel Export in ag-Grid</h1>
+    <h1><img src="../images/enterprise_50.png" title="Enterprise Feature"/> JavaScript Grid Excel</h1>
+    <h2>Exporting ag-Grid Data to Excel</h2>
 
     <p>
         Excel Export allows exporting ag-Grid data to Excel using Excel's own XML format. Using this format

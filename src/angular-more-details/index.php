@@ -1,19 +1,20 @@
 <?php
 $key = "More Detail Angular";
-$pageTitle = "Best Angular Datagrid - More Details";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with Angular to deliver filtering, grouping, aggregation, pivoting and much more.";
-$pageKeyboards = "Angular Grid";
+$pageTitle = "Angular 2 Grid";
+$pageDescription = "ag-Grid can be used as a data grid inside your Angular 2 application. This page details how to get started using ag-Grid inside an Angular 2 application.";
+$pageKeyboards = "Angular 2 Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h2>
+    <h1>
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
         <img style="vertical-align: middle" src="/images/angular2_small.png" height="25px"/>
-        More Details
-    </h2>
+        Angular 2 Grid
+    </h1>
+    <h2>More Details</h2>
 
     <note>Full working examples of ag-Grid and Angular can be found in <a href="https://github.com/ceolter/ag-grid-angular-example">Github</a>, illustrating
         (amongst others) Rich Grids, Filtering with Angular Components, Master/Detail Grid and so on.</note>
@@ -74,7 +75,7 @@ include '../documentation-main/documentation_header.php';
     <pre>@NgModule({
     imports: [
         BrowserModule,
-        AgGridModule.withComponents([...optional Angular Components to be used in the grid....]]),
+        AgGridModule.withComponents([...optional Angular Components to be used in the grid....]),
         ...
 })</pre>
 
@@ -437,14 +438,36 @@ private getCountryFilterParams():any {
         Although it is possible to use Angular for your customisations of ag-Grid, it is not necessary. The grid
         will happily work with both Angular and non-Angular portions (eg cellRenderers in Angular or normal
         JavaScript).
-        If you do use Angular, be aware that you are adding an extra layer of indirection into ag-Grid.
-        ag-Grid's
-        internal framework is already highly tuned to work incredibly fast and does not require Angular or
-        anything
-        else to make it faster. If you are looking for a lightning fast grid, even if you are using Angular and
-        the ag-grid-angular component, consider using plain ag-Grid Components (as explained on the pages for
-        rendering etc) inside ag-Grid instead of creating Angular counterparts.
     </p>
+
+    <h2 id="aggrid-angular-testing">Testing ag-Grid Angular Applications with Karma & Jasmine</h2>
+
+    <p>In our <a href="https://github.com/ceolter/ag-grid-angular-seed">Angular Seed Repo</a> we provide working
+        examples of how to test your Angular project with Karma & Jasmine.</p>
+
+    <p>As with your actual application, you need to ensure you <code>import</code> the <code>AgGridModule</code> when
+        specifying your tests:</p>
+
+    <pre>
+TestBed.configureTestingModule({
+    imports: [
+        AgGridModule.withComponents([...optional Angular Components...]
+    ]
+    ...rest of module definition
+</pre>
+
+    <p>You also need to aware that the Grid <code>API</code> and <code>ColumnAPI</code> will only be available after your
+        fixtures <code>detectChanges</code> has been invoked:</p>
+    <pre>
+it('grid API is not available until  `detectChanges`', () => {
+    expect(component.gridOptions.api).not.toBeTruthy();
+});
+
+it('grid API is available after `detectChanges`', () => {
+    fixture.detectChanges();
+    expect(component.gridOptions.api).toBeTruthy();
+});
+</pre>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

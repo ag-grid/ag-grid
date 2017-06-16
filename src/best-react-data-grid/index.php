@@ -1,7 +1,7 @@
 <?php
 $key = "Overview React";
-$pageTitle = "Best React Datagrid Overview";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with React to deliver filtering, grouping, aggregation, pivoting and much more.";
+$pageTitle = "React Grid";
+$pageDescription = "ag-Grid can be used as a data grid inside your React application. This page details how to get started.";
 $pageKeyboards = "React Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
@@ -9,12 +9,15 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>
+    <h1>
         <img style="vertical-align: middle" src="/images/react_large.png" height="50px"/>
-        Overview
-    </h2>
+        React Grid
+    </h1>
 
-    <p>The React documentation is broken down into the following two sections:</p>
+    <p>
+        Here you will find details on how to create a React Grid using ag-Grid.
+        It is broken down in the following sections:
+    </p>
 
     <div class="list-group">
         <a href="/react-getting-started/" class="list-group-item">

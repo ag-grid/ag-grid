@@ -1,8 +1,8 @@
 <?php
 $key = "Getting Started";
-$pageTitle = "Getting Started";
-$pageDescription = "Getting Started ag-Grid and ag-Grid Enterprise";
-$pageKeyboards = "Getting Started ag-Grid Enterprise";
+$pageTitle = "JavaScript Grid";
+$pageDescription = "JavaScript Grid";
+$pageKeyboards = "JavaScript Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
@@ -38,7 +38,9 @@ $linkHref = "<a href='" . $link . "'>here</a>";
 ?>
 <div>
 
-    <h3><img src="../images/svg/docs/getting_started.svg" width="50" /> ag-Grid - Getting Started</h3>
+    <h1><img src="../images/svg/docs/getting_started.svg" width="50" /> JavaScript Grid</h1>
+
+    <h3>Getting started with ag-Grid</h3>
 
     <p>Learn how to get a simple
         application working using ag-Grid with your preferred framework.

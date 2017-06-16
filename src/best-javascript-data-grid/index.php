@@ -1,7 +1,7 @@
 <?php
 $key = "Overview JavaScript";
-$pageTitle = "Best JavaScript Datagrid Overview";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with React to deliver filtering, grouping, aggregation, pivoting and much more.";
+$pageTitle = "JavaScript Grid";
+$pageDescription = "ag-Grid can be used as a data grid inside your plain JavaScript application. This page details how to get started.";
 $pageKeyboards = "JavaScript Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
@@ -9,12 +9,15 @@ include '../documentation-main/documentation_header.php';
 
     <div>
 
-        <h2>
+        <h1>
             <img style="vertical-align: middle" src="/images/javascript_large.png" height="50px"/>
-            Overview
-        </h2>
+            JavaScript Grid
+        </h1>
 
-        <p>The JavaScript documentation is broken down into the following two sections:</p>
+        <p>
+            Here we describe how to get ag-Grid up an running inside a plain JavaScript application.
+            The section is broken down into the following:
+        </p>
 
         <div class="list-group">
             <a href="/javascript-getting-started/" class="list-group-item">

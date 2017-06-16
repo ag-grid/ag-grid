@@ -1,7 +1,7 @@
 <?php
 $key = "More Detail React";
-$pageTitle = "Best React Datagrid - More Details";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with React to deliver filtering, grouping, aggregation, pivoting and much more.";
+$pageTitle = "React Grid";
+$pageDescription = "ag-Grid can be used as a data grid inside your React application. This page details how to get started.";
 $pageKeyboards = "React Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
@@ -9,11 +9,12 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>
+    <h1>
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
         <img style="vertical-align: middle" src="/images/react_small.png" height="25px"/>
-        More Details
-    </h2>
+        React Grid
+    </h1>
+    <h2>More Details</h2>
 
     <note>Full working examples of ag-Grid and React can be found in <a href="https://github.com/ceolter/ag-grid-react-example">Github</a>, illustrating
         (amongst others) Rich Grids, Filtering with React Components, Master/Detail Grid and so on.</note>

@@ -25,6 +25,8 @@ include '../documentation-main/documentation_header.php';
     <li>AG-82 - <a href="../javascript-grid-resizing/#resizing-groups">Resizing groups</a> now respects any children columns that are not resizable.</li>
     <li>AG-207 - (bug) MarryChildren was not working when columns were hidden, now works.</li>
     <li>AG-154 - Typing non-latin letters on focused cell now starts cell editing.</li>
+    <li>AG-73 - Now when editing or updating data, if value is not different, data is not updated, cell is not refreshed and no 'valueChangedEvent' fired. Also impacts when tabbing while editing, previously no change was still an edit, no now change is no change.</li>
+    <li>AG-543 - Bugfix - Regression/Breaking Change - rows are inserted in reverse order</li>
 
     <h2>Version 10.1.x</h2>
 

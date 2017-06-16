@@ -1,8 +1,8 @@
 <?php
 $key = "Angular Webpack 2";
-$pageTitle = "Angular Datagrid using Webpack 2";
-$pageDescription = "Demonstrate the best Angular datagrid using Webpack 2.";
-$pageKeyboards = "Angular Grid Webpack 2";
+$pageTitle = "Angular Webpack 2";
+$pageDescription = "How to build ag-Grid using Angular and Webpack 2.";
+$pageKeyboards = "Angular Webpack 2";
 $pageGroup = "basics";
 $angularParent = "checked";
 
@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 id="angular-building-with-webpack">Angular - Building with Webpack 2</h1>
+    <h1 id="angular-building-with-webpack">Angular Webpack 2</h1>
 
     <p>We walk through the main steps required when using ag-Grid, Angular and Webpack 2 below, but please refer to
         <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>

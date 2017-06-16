@@ -1,18 +1,21 @@
 <?php
 $key = "Getting Started Javascript";
-$pageTitle = "Getting Started: Javascript Datagrid";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with JavaScript to deliver filtering, grouping, aggregation, pivoting and much more.";
-$pageKeyboards = "Best Javascript Datagrid";
+$pageTitle = "JavaScript Grid";
+$pageDescription = "ag-Grid can be used as a data grid inside your plain JavaScript application. This page details how to get started.";
+$pageKeyboards = "Javascript Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h2>
+    <h1>
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
         <img style="vertical-align: middle" src="../images/javascript.png" height="25px"/>
-        Getting Started
-    </h2>
+        JavaScript Grid
+    </h1>
 
+    <h3>
+        Getting started with ag-Grid and plain JavaScript.
+    </h3>
 
     <p>This section documents how to get started with ag-Grid and JavaScript as quickly as possible. You will start off
         with
