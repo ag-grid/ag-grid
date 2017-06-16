@@ -8,7 +8,6 @@ import {
     Context,
     EventService,
     GridOptionsWrapper,
-    GroupNameInfo,
     GroupValueService,
     IRowNodeStage,
     NumberSequence,
@@ -168,13 +167,13 @@ export class GroupStage implements IRowNodeStage {
     private getOrCreateNextGroup(parentGroup: RowNode, nodeToPlace: RowNode, groupColumn: Column, expandByDefault: any,
                                  level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
         // let groupKey: string = this.getKeyForNode(groupColumn, nodeToPlace);
-        let groupNameInfo : GroupNameInfo = this.groupValueService.getGroupNameInfo(groupColumn, level, null, this.getKeyForNode(groupColumn, nodeToPlace));
+        let groupKey : string = this.getKeyForNode(groupColumn, nodeToPlace);
 
-        let nextGroup = <RowNode> parentGroup.childrenMapped[groupNameInfo.actualValue];
+        let nextGroup = <RowNode> parentGroup.childrenMapped[groupKey];
         if (!nextGroup) {
-            nextGroup = this.createSubGroup(groupNameInfo, parentGroup, expandByDefault, level, includeParents, numberOfGroupColumns, isPivot);
+            nextGroup = this.createSubGroup(groupKey, groupColumn, parentGroup, expandByDefault, level, includeParents, numberOfGroupColumns, isPivot);
             // attach the new group to the parent
-            parentGroup.childrenMapped[groupNameInfo.actualValue] = nextGroup;
+            parentGroup.childrenMapped[groupKey] = nextGroup;
             parentGroup.childrenAfterGroup.push(nextGroup);
         }
 
@@ -221,13 +220,13 @@ export class GroupStage implements IRowNodeStage {
     }
 
 
-    private createSubGroup(groupNameInfo: GroupNameInfo, parent: RowNode, expandByDefault: any, level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
+    private createSubGroup(groupKey: string, groupColumn: Column, parent: RowNode, expandByDefault: any, level: number, includeParents: boolean, numberOfGroupColumns: number, isPivot: boolean): RowNode {
         let newGroup = new RowNode();
         this.context.wireBean(newGroup);
 
         newGroup.group = true;
-        newGroup.field = groupNameInfo.column.getColDef().field;
-        newGroup.rowGroupColumn = groupNameInfo.column;
+        newGroup.field = groupColumn.getColDef().field;
+        newGroup.rowGroupColumn = groupColumn;
         newGroup.groupData = {};
 
 
@@ -239,14 +238,14 @@ export class GroupStage implements IRowNodeStage {
 
         gridAndAutoColumns.forEach(col=>{
             if (this.isColumnDisplayingGroup(col, newGroup.rowGroupColumn) ){
-                newGroup.groupData[col.getColId()] = groupNameInfo.actualValue;
+                newGroup.groupData[col.getColId()] = groupKey;
             }
         });
 
         // we use negative number for the ids of the groups, this makes sure we don't clash with the
         // id's of the leaf nodes.
         newGroup.id = (this.groupIdSequence.next()*-1).toString();
-        newGroup.key = groupNameInfo.actualValue;
+        newGroup.key = groupKey;
 
         newGroup.level = level;
         newGroup.leafGroup = level === (numberOfGroupColumns-1);
