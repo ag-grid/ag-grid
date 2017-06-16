@@ -267,6 +267,9 @@ interface RowDataTransaction {
         <li>
             <b>Add Items</b>: Adds three items.
         </li>
+        <li>
+            <b>Add Items</b>: Adds three items at position 2.
+        </li>
     </ul>
 
     <show-example example="exampleInsertRemove"></show-example>
