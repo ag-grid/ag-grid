@@ -7,6 +7,7 @@ import {ValueService} from "../valueService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {GroupNameInfoParams, GroupValueService} from "../groupValueService";
 import {AutoGroupColService} from "../columnController/autoGroupColService";
+import {ColumnController} from "../columnController/columnController";
 
 export interface SortOption {
     inverter: number,
@@ -20,24 +21,19 @@ export interface SortedRowNode {
 
 @Bean('sortService')
 export class SortService {
+
     @Autowired('sortController') private sortController: SortController;
+    @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('groupValueService') private groupValueService: GroupValueService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    sortAccordingToColumnsState(rowNode: RowNode) {
+    public sortAccordingToColumnsState(rowNode: RowNode) {
         let sortOptions: SortOption[] = this.sortController.getSortForRowController();
         this.sort(rowNode, sortOptions);
     }
 
-    sort(rowNode: RowNode, sortOptions: SortOption[]) {
-        // sort any groups recursively
-        rowNode.childrenAfterFilter.forEach(child => {
-            if (child.group) {
-                this.sort(child, sortOptions);
-            }
-        });
-
+    public sort(rowNode: RowNode, sortOptions: SortOption[]) {
         rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
 
         let sortActive = _.exists(sortOptions) && sortOptions.length > 0;
@@ -55,8 +51,15 @@ export class SortService {
         }
 
         this.updateChildIndexes(rowNode);
-    }
+        this.pullDownDataForHideOpenParents(rowNode);
 
+        // sort any groups recursively
+        rowNode.childrenAfterFilter.forEach(child => {
+            if (child.group) {
+                this.sort(child, sortOptions);
+            }
+        });
+    }
 
     private compareRowNodes(sortOptions: any, sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode) {
         let nodeA: RowNode = sortedNodeA.rowNode;
@@ -97,9 +100,39 @@ export class SortService {
         }
 
         rowNode.childrenAfterSort.forEach((child: RowNode, index: number) => {
-            child.setFirstChild(index === 0);
-            child.setLastChild(index === rowNode.childrenAfterSort.length - 1);
+            let firstChild = index === 0;
+            let lastChild = index === rowNode.childrenAfterSort.length - 1;
+            child.setFirstChild(firstChild);
+            child.setLastChild(lastChild);
             child.setChildIndex(index);
+        });
+    }
+
+    private pullDownDataForHideOpenParents(rowNode: RowNode) {
+        if (_.missing(rowNode.childrenAfterSort)) {
+            return;
+        }
+
+        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
+            return;
+        }
+
+        rowNode.childrenAfterSort.forEach( child => {
+
+            let groupDisplayCols = this.columnController.getGroupDisplayColumns();
+            groupDisplayCols.forEach( groupDisplayCol => {
+
+                let thisRowNodeMatches = groupDisplayCol.getId() === child.field;
+                if (thisRowNodeMatches) { return; }
+
+                let parentToStealFrom = child.getFirstChildOfFirstChild(groupDisplayCol);
+                if (parentToStealFrom) {
+                    // console.log(`id =${child.id}, setting ${groupDisplayCol.getId()} to ${parentToStealFrom.key}`);
+                    child.setGroupValue(groupDisplayCol.getId(), parentToStealFrom.key);
+                } else {
+                    child.setGroupValue(groupDisplayCol.getId(), null);
+                }
+            });
         });
     }
 }

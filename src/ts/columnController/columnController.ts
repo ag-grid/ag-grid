@@ -236,6 +236,8 @@ export class ColumnController {
 
     private groupAutoColumns: Column[];
 
+    private groupDisplayColumns: Column[];
+
     private ready = false;
     private logger: Logger;
 
@@ -1541,6 +1543,24 @@ export class ColumnController {
         return columnsForDisplay;
     }
 
+    private calculateColumnsForGroupDisplay(): void {
+        this.groupDisplayColumns = [];
+        let checkFunc = (col: Column) => {
+            if (col.getColDef() && _.exists(col.getColDef().rowGroupsDisplayed)) {
+                this.groupDisplayColumns.push(col);
+            }
+        };
+
+        this.gridColumns.forEach(checkFunc);
+        if (this.groupAutoColumns) {
+            this.groupAutoColumns.forEach(checkFunc);
+        }
+    }
+
+    public getGroupDisplayColumns(): Column[] {
+        return this.groupDisplayColumns;
+    }
+
     private createColumnsToDisplayFromValueColumns(): Column [] {
         // make a copy of the value columns, so we have to side effects
         let result = this.valueColumns.slice();
@@ -1563,6 +1583,8 @@ export class ColumnController {
 
         // restore opened / closed state
         this.setColumnGroupState(oldGroupState);
+
+        this.calculateColumnsForGroupDisplay();
 
         // this is also called when a group is opened or closed
         this.updateGroupsAndDisplayedColumns();

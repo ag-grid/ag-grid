@@ -154,6 +154,18 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.validate();
     }
 
+    public isRowGroupDisplayed(colId: string): boolean {
+        if (_.missing(this.colDef) || _.missing(this.colDef.rowGroupsDisplayed)) { return false; }
+
+        let rowGroupsDisplayed: string | string[] = this.colDef.rowGroupsDisplayed;
+
+        if (!Array.isArray(rowGroupsDisplayed)){
+            return rowGroupsDisplayed === '*' || rowGroupsDisplayed === colId;
+        } else {
+            return rowGroupsDisplayed.indexOf(colId) >= 0;
+        }
+    }
+
     public getCellRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string {
         return this.cellRenderer;
     }

@@ -1167,9 +1167,7 @@ export class CellComp extends Component {
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
-            // we set dontSkipRefresh so that 'drag group down' works, as the cell index
-            // can change, so cells that were previously empty may not have the parent group
-            refreshCell: this.refreshCell.bind(this, {dontSkipRefresh: true}),
+            refreshCell: this.refreshCell.bind(this),
             eGridCell: this.eGridCell,
             eParentOfValue: this.eParentOfValue,
             addRenderedRowListener: this.renderedRow.addEventListener.bind(this.renderedRow)

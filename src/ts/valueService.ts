@@ -38,12 +38,13 @@ export class ValueService {
     }
 
     public getValueUsingSpecificData(column: Column, data: any, node: RowNode): any {
+/*
         if (node.group){
             // If we are getting the value for a column that is displaying a group this
             // node is grouping by
             if (node.groupData){
                 let groupData = node.groupData [column.getColId()];
-                if (groupData){
+                if (_.exists(groupData)){
                     return groupData;
                 }
             }
@@ -52,6 +53,7 @@ export class ValueService {
             // in the data property, we return null for groups
             return node.data ? node.data[column.getId()] : null;
         }
+*/
 
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
@@ -59,13 +61,16 @@ export class ValueService {
 
         let colDef = column.getColDef();
         let field = colDef.field;
+        let colId = column.getId();
 
         let result: any;
 
         // if there is a value getter, this gets precedence over a field
         // - need to revisit this, we check 'data' as this is the way for the grid to
         //   not render when on the footer row
-        if (colDef.valueGetter) {
+        if (node.groupData && node.groupData[colId] !== undefined ) {
+            result = node.groupData[colId];
+        } else if (colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, node);
         } else if (field && data) {
             result = _.getValueUsingField(data, field, column.isFieldContainsDots());
@@ -81,6 +86,20 @@ export class ValueService {
 
         return result;
     }
+
+/*    private setupForGroupHideOpenParents(originalParams: any): void {
+        let rowGroupColumn = this.getRowGroupColumn(originalParams);
+        let nodeToSwapIn = this.isFirstChildOfFirstChild(originalParams.node, rowGroupColumn);
+        this.nodeWasSwapped = _.exists(nodeToSwapIn);
+        if (this.nodeWasSwapped) {
+            let newParams = <any> {};
+            _.assign(newParams, originalParams);
+            newParams.node = nodeToSwapIn;
+            this.params = newParams;
+        } else {
+            this.params = originalParams;
+        }
+    }*/
 
     public setValue(rowNode: RowNode, colKey: string|ColDef|Column, newValue: any): void {
         let column = this.columnController.getPrimaryColumn(colKey);

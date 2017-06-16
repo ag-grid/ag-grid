@@ -306,6 +306,17 @@ export class RowNode implements IEventEmitter {
         this.dispatchCellChangedEvent(column, newValue);
     }
 
+    public setGroupValue(colKey: string|ColDef|Column, newValue: any): void {
+        let column = this.columnController.getGridColumn(colKey);
+
+        if (_.missing(this.groupData)) {
+            this.groupData = {};
+        }
+
+        this.groupData[column.getColId()] = newValue;
+        this.dispatchCellChangedEvent(column, newValue);
+    }
+
     // sets the data for an aggregation
     public setAggData(newAggData: any): void {
 
@@ -639,4 +650,35 @@ export class RowNode implements IEventEmitter {
     public onMouseLeave(): void {
         this.dispatchLocalEvent(RowNode.EVENT_MOUSE_LEAVE);
     }
+
+    public getFirstChildOfFirstChild(rowGroupColumn: Column): RowNode {
+        let currentRowNode: RowNode = this;
+
+        // if we are hiding groups, then if we are the first child, of the first child,
+        // all the way up to the column we are interested in, then we show the group cell.
+
+        let isCandidate = true;
+        let foundFirstChildPath = false;
+        let nodeToSwapIn: RowNode;
+
+        while (isCandidate && !foundFirstChildPath) {
+
+            let parentRowNode = currentRowNode.parent;
+            let firstChild = _.exists(parentRowNode) && currentRowNode.firstChild;
+
+            if (firstChild) {
+                if (parentRowNode.rowGroupColumn === rowGroupColumn) {
+                    foundFirstChildPath = true;
+                    nodeToSwapIn = parentRowNode;
+                }
+            } else {
+                isCandidate = false;
+            }
+
+            currentRowNode = parentRowNode;
+        }
+
+        return foundFirstChildPath ? nodeToSwapIn : null;
+    }
+
 }
