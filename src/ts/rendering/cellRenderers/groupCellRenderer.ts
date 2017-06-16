@@ -300,17 +300,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             columnOfGroupedCol = params.column;
         }
 
-        let groupName = this.getGroupName();
-        let valueFormatted = this.valueFormatterService.formatValue(columnOfGroupedCol, params.node, params.scope, params.rowIndex, groupName);
-
         let groupedColCellRenderer = columnOfGroupedCol.getCellRenderer();
 
         // reuse the params but change the value
         if (typeof groupedColCellRenderer === 'function') {
-            // reuse the params but change the value
-            params.value = groupName;
-            params.valueFormatted = valueFormatted;
-
             let colDefOfGroupedCol = columnOfGroupedCol.getColDef();
             let groupedColCellRendererParams = colDefOfGroupedCol ? colDefOfGroupedCol.cellRendererParams : null;
 
@@ -319,11 +312,15 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             if (groupedColCellRendererParams) {
                 _.assign(params, groupedColCellRenderer);
             }
+
+            params.value = this.params.value;
+            params.valueFormatted = this.params.valueFormatted;
+            params.actualValue = this.params.actualValue;
+
             this.cellRendererService.useCellRenderer(colDefOfGroupedCol.cellRenderer, this.eValue, params);
         } else {
-            let valueToRender = _.exists(valueFormatted) ? valueFormatted : groupName;
-            if (_.exists(valueToRender) && valueToRender !== '') {
-                this.eValue.appendChild(document.createTextNode(valueToRender));
+            if (_.exists(this.params.actualValue) && this.params.actualValue !== '') {
+                this.eValue.appendChild(document.createTextNode(this.params.actualValue));
             }
         }
     }
