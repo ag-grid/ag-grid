@@ -6,8 +6,8 @@ var columnDefs = [
     {headerName: "Gold*pie", field: "goldPie", width: 100},
     {headerName: "Silver*pie", field: "silverPie", width: 100},
     {headerName: "Bronze*pie", field: "bronzePie", width: 100},
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0, hide: true},
-    {headerName: "Year", field: "year", width: 90, rowGroupIndex: 1, hide: true}
+    {headerName: "Country", field: "country", width: 120, rowGroup: true, hide: true},
+    {headerName: "Year", field: "year", width: 90, rowGroup: true, hide: true}
 ];
 
 var gridOptions = {

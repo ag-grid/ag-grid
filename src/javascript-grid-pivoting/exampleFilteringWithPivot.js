@@ -1,5 +1,5 @@
 var columnDefs = [
-    {headerName: "Country", field: "country", width: 120, pivotIndex: 0},
+    {headerName: "Country", field: "country", width: 120, pivot: true},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},

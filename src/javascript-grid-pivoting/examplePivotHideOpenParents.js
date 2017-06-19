@@ -1,8 +1,8 @@
 var columnDefs = [
 
     // row group columns
-    {headerName: "Country", field: 'country', rowGroupIndex: 0},
-    {headerName: "Athlete", field: "athlete", rowGroupIndex: 1},
+    {headerName: "Country", field: 'country', rowGroup: true},
+    {headerName: "Athlete", field: "athlete", rowGroup: true},
 
     // pivot column
     {headerName: "Year",
@@ -11,7 +11,7 @@ var columnDefs = [
         // this demonstrates that groupHideOpenParents and restrictToOneGroup works
         // with value getters also.
         valueGetter: 'data.year',
-        pivotIndex: 1
+        pivot: true
     },
 
     // aggregation columns

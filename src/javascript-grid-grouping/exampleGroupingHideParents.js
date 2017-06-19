@@ -7,8 +7,8 @@ var columnDefs = [
     // to mix it up a bit, here we are using a valueGetter for the year column.
     // this demonstrates that groupHideOpenParents and restrictToOneGroup works
     // with value getters also.
-    {colId: 'country', field: 'country', rowGroupIndex: 0, hide: true},
-    {colId: 'year', field: 'year', valueGetter: 'data.year', rowGroupIndex: 1, hide: true},
+    {colId: 'country', field: 'country', rowGroup: true, hide: true},
+    {colId: 'year', field: 'year', valueGetter: 'data.year', rowGroup: true, hide: true},
 
     {headerName: "Athlete", field: "athlete", width: 180},
     {headerName: "Gold", field: "gold", aggFunc: 'sum', width: 100},

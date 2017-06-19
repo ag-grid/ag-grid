@@ -10,8 +10,8 @@ var columnDefs = [
     // and these two use the built in sum func
     {headerName: "abc(silver)", field: "silver", width: 100, aggFunc: '123', enableValue: true},
     {headerName: "xyz(bronze)", field: "bronze", width: 100, aggFunc: 'xyz', enableValue: true},
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0, hide: true},
-    {headerName: "Year", field: "year", width: 90, rowGroupIndex: 1, hide: true}
+    {headerName: "Country", field: "country", width: 120, rowGroup: true, hide: true},
+    {headerName: "Year", field: "year", width: 90, rowGroup: true, hide: true}
 ];
 
 var gridOptions = {

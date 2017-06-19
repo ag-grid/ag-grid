@@ -4,8 +4,8 @@ var columnDefs = [
     {headerName: "Group", cellRenderer: 'group', rowGroupsDisplayed: '*'},
 
     // the first group column
-    {headerName: "Country", field: "country", rowGroupIndex: 0, hide: true},
-    {headerName: "Year", field: "year", rowGroupIndex: 1, hide: true},
+    {headerName: "Country", field: "country", rowGroup: true, hide: true},
+    {headerName: "Year", field: "year", rowGroup: true, hide: true},
 
     {headerName: "Athlete", field: "athlete"},
     {headerName: "Gold", field: "gold"},

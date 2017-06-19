@@ -11,8 +11,8 @@ var columnDefs = [
 
     // these are the two columns we use to group by. we also hide them, so there
     // is no duplication with the values above
-    {field:'country', rowGroupIndex: 0, hide: true},
-    {field:'year', rowGroupIndex: 1, hide: true},
+    {field: 'country', rowGroup: true, hide: true},
+    {field: 'year', rowGroup: true, hide: true},
 
     {headerName: "Athlete", field: "athlete"},
     {headerName: "Gold", field: "gold"},
