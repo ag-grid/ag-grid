@@ -4,7 +4,8 @@ import {IFloatingFilter} from "ag-grid/main";
 import {SerializedNumberFilter} from "ag-grid/main";
 import {IFloatingFilterParams} from "ag-grid/main";
 import {AgFrameworkComponent} from "ag-grid-angular/main";
-declare var $;
+import * as $ from "jquery";
+import * as slider from "jquery-ui";
 
 
 export interface SliderFloatingFilterChange {
@@ -22,10 +23,34 @@ export interface SliderFloatingFilterParams extends IFloatingFilterParams<Serial
 export class SliderFloatingFilter implements IFloatingFilter <SerializedNumberFilter, SliderFloatingFilterChange, SliderFloatingFilterParams>, AgFrameworkComponent<SliderFloatingFilterParams> {
     private params: SliderFloatingFilterParams;
     private currentValue: number;
+    //Dealing with AOT wiring Jquery differently this will contain the usual $ jquery function
+    _$:(from:any)=>any;
+    //Dealing with AOT wiring Jquery differently this will contain the usual $ jquery function
+    _slider:(from:any, into:any)=>any;
 
     @ViewChild('slider') eSlider;
 
     constructor() {
+        //https://stackoverflow.com/questions/5999998/how-can-i-check-if-a-javascript-variable-is-function-type
+        function isFunction(functionToCheck) {
+            var getType = {};
+            return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+        }
+
+        function extractJQueryFn (from):()=>any {
+            if (isFunction(from)){
+                return from;
+            } else if (isFunction(from.default)){
+                return from.default
+            } else {
+                throw Error ("Can't find jquery!")
+            }
+
+        }
+
+        //Dealing with AOT wiring Jquery differently this will contain the usual $ jquery function
+        this._$ = extractJQueryFn($);
+        this._slider = extractJQueryFn(slider);
     }
 
     agInit(params: SliderFloatingFilterParams): void {
@@ -34,8 +59,8 @@ export class SliderFloatingFilter implements IFloatingFilter <SerializedNumberFi
 
     afterGuiAttached(): void {
         var that:SliderFloatingFilter = this;
-        this.eSlider = $(this.eSlider.nativeElement);
-        this.eSlider.slider({
+        this.eSlider = this._$(this.eSlider.nativeElement);
+        this._slider({
             min: 0,
             max: this.params.maxValue,
             change: (e, ui) => {
@@ -52,7 +77,7 @@ export class SliderFloatingFilter implements IFloatingFilter <SerializedNumberFi
                 }
                 that.params.onFloatingFilterChanged(change)
             }
-        });
+        }, this.eSlider);
     }
 
     onParentModelChanged(parentModel: SerializedNumberFilter): void {

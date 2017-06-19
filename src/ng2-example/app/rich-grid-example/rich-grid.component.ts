@@ -29,6 +29,13 @@ export class RichGridComponent {
     public dateComponentFramework:DateComponent;
     public HeaderGroupComponent = HeaderGroupComponent;
 
+    dobFilter() {
+        // spl todo - remove any cast once AG-546 done
+        let dateFilterComponent = <any>this.gridOptions.api.getFilterInstance('dob');
+        dateFilterComponent.setFilterType('equals');
+        dateFilterComponent.setDateFrom('2000-01-01');
+        this.gridOptions.api.onFilterChanged();
+    }
 
     constructor() {
         // we pass an empty gridOptions in, so we can grab the api out
