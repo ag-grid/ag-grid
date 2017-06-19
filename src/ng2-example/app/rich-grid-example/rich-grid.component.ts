@@ -43,6 +43,19 @@ export class RichGridComponent {
                 menuIcon: 'fa-bars'
             }
         }
+        this.gridOptions.getContextMenuItems = this.getContextMenuItems.bind(this);
+        this.gridOptions.floatingFilter = true;
+    }
+
+    private getContextMenuItems(params:any):any{
+
+        var result :any = [
+            { // custom item
+                name: 'Alert ' ,
+                action: function () {window.alert('Alerting about '); },
+                cssClasses: ['redFont', 'bold']
+            }]
+        return result;
     }
 
     private createRowData() {

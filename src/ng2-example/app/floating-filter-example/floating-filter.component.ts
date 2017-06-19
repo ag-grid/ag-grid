@@ -1,7 +1,7 @@
 import {Component} from "@angular/core";
 
 import {GridOptions} from "ag-grid/main";
-import {SliderFloatingFilter} from "./slider-floating-filter-component";
+import {SliderFloatingFilter} from "./slider-floating-filter.component";
 
 @Component({
     moduleId: module.id,
