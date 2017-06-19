@@ -152,7 +152,7 @@ export class AggregationStage implements IRowNodeStage {
     private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
         let values: any[] = [];
         rowNode.childrenAfterFilter.forEach( rowNode => {
-            let value = rowNode.data[colId];
+            let value = rowNode.aggData[colId];
             values.push(value);
         });
         return values;
@@ -191,9 +191,9 @@ export class AggregationStage implements IRowNodeStage {
                 // if the row is a group, then it will only have an agg result value,
                 // which means valueGetter is never used.
                 if (childNode.group) {
-                    value = childNode.data[valueColumn.getId()];
+                    value = childNode.aggData[valueColumn.getId()];
                 } else {
-                    value = this.valueService.getValueUsingSpecificData(valueColumn, childNode.data, childNode);
+                    value = this.valueService.getValue(valueColumn, childNode);
                 }
                 values[j].push(value);
             }
