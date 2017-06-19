@@ -1,7 +1,7 @@
 var columnDefs = [
 
     // one column for showing the groups
-    {headerName: "Group", cellRenderer: 'group', rowGroupsDisplayed: ['country','year']},
+    {headerName: "Group", cellRenderer: 'group', rowGroupsDisplayed: '*'},
 
     // the first group column
     {headerName: "Country", field: "country", rowGroupIndex: 0, hide: true},
@@ -15,14 +15,15 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: null,
+    animateRows: true,
+    enableSorting: true,
+    enableRangeSelection: true,
     // we are defining the group columns, so tell the grid we don't
     // want it to auto-generate group columns for us
     groupSuppressAutoColumn: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
-    },
-    enableSorting:true
+    }
 };
 
 // setup the grid after the page has finished loading

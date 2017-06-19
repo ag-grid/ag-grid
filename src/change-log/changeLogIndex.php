@@ -28,6 +28,8 @@ include '../documentation-main/documentation_header.php';
     <li>AG-73 - Now when editing or updating data, if value is not different, data is not updated, cell is not refreshed and no 'valueChangedEvent' fired. Also impacts when tabbing while editing, previously no change was still an edit, no now change is no change.</li>
     <li>AG-543 - Bugfix - Regression/Breaking Change - rows are inserted in reverse order</li>
 
+    <li>Big Breaking Change: aggregation data and group data are no longer stored in rowNode.data, instead they are stored in rowNode.groupData and rowNode.aggData</li>
+
     <h2>Version 10.1.x</h2>
 
     <h3>Version 10.1.0 [08-JUN-2017]</h3>

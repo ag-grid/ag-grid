@@ -12,12 +12,13 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: null,
+    animateRows: true,
+    enableRangeSelection: true,
     // by default the grid will create auto columns, however the default
     // behaviour is one column, set this property to true to get column
     // per group
     groupMultiAutoColumn: true,
-    enableSorting:true,
+    enableSorting: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }

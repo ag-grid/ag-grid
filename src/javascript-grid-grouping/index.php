@@ -570,7 +570,7 @@ gridOptions.groupRowRendererParams: {
         then using the entire row to give a summary.
     </p>
 
-    <show-example example="example5"></show-example>
+    <show-example example="exampleGroupRowRendering"></show-example>
 
     <h3 id="removeSingleChildren">Removing Single Children</h3>
 

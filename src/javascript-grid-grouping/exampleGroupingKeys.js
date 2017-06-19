@@ -13,6 +13,8 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
+    animateRows: true,
+    enableRangeSelection: true,
     rowData: null,
     enableSorting:true
 };

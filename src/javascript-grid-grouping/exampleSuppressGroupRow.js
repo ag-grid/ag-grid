@@ -33,7 +33,6 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: null,
     groupSuppressRow: true,
     enableSorting: true
 };

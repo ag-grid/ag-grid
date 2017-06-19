@@ -1,25 +1,29 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 200,
-        comparator: agGrid.defaultGroupComparator,
+    {headerName: 'Athlete', width: 200,
+        // although we are showing the groups in this column, we still
+        // want to show a field (which we are not grouping by) in the leaf level
+        field: 'athlete',
+        rowGroupsDisplayed: '*',
         cellRenderer: 'group'
     },
+
+    {field: "country", rowGroupIndex: 0, hide: true},
+    {field: "year", rowGroupIndex: 1, hide: true},
+
     {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
     {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
     {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'},
     {headerName: "Total", field: "total", width: 100, aggFunc: 'sum'},
     {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
-    {headerName: "Year", field: "year", width: 90, rowGroupIndex: 1},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110}
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: null,
+    enableRangeSelection: true,
     enableSorting: true,
     groupSuppressAutoColumn: true,
-    groupUseEntireRow: false,
     groupIncludeFooter: true,
     animateRows: true
 };
@@ -31,13 +35,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', '../olympicWinners.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({url: '../olympicWinners.json'})
+        .then( function(rows) {
+            gridOptions.api.setRowData(rows);
+        });
 });
