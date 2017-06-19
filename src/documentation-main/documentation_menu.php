@@ -320,7 +320,7 @@
         menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
         menuItem(2, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
         menuItem(2, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
-        menuItem(2, 'Angular RxJS', 'Angular RxJS', 'example-angular-rxjs/');
+        menuItem(2, 'Angular RxJS', 'RxJS', 'example-angular-rxjs/');
         menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
     }
     menuItem(1, 'Styled Report', 'Styled Report', 'example-account-report/');
