@@ -352,6 +352,20 @@ var colDefs = {
         for the different group levels.
     </p>
 
+    <h3>Example Hide Open Parents with Explicit Group Columns</h3>
+
+    <p>
+        The example below demonstrates hiding open parents using auto group columns.
+    </p>
+
+    <show-example example="exampleGroupingHideParentsAutoCol"></show-example>
+
+    <h3>Example Hide Open Parents with Auto Group Columns</h3>
+
+    <p>
+        The example below demonstrates hiding open parents using explicit group columns.
+    </p>
+
     <show-example example="exampleGroupingHideParents"></show-example>
 
     <h3>Grouping API</h3>
@@ -614,7 +628,7 @@ gridOptions.groupRowRendererParams: {
         Sorting, for example, will sort by group.
     </p>
 
-    <show-example example="example6"></show-example>
+    <show-example example="exampleSuppressGroupRow"></show-example>
 
     <h3>Custom Expand / Contract Icons</h3>
 
