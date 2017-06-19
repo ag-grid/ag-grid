@@ -14,18 +14,31 @@ include '../documentation-main/documentation_header.php';
     <h3>Showing the Column Menu</h3>
 
     <p>
-        The menu will be displayed by default and will be made up of three panels. You have the following
-        grid properties to suppress showing an individual panel or not showing the menu at all:
+        The menu will be displayed by default and will be made up of three panels. If you want to change the order or
+        what panels are shown, or hide them, you can specify the property <i>menuTabs</i> in the <i>colDef</i>
+    </p>
+    <p>
+        The property <i>menuTabs</i> is an array of strings. The valid values are: 'filterMenuTab', 'generalMenuTab' and
+        'columnsMenuTab'
         <ul>
-        <li><b>suppressMenuFilterPanel</b>: Set to true to not show filter panel.</li>
-        <li><b>suppressMenuMainPanel</b>: Set to true to not show main panel.</li>
-        <li><b>suppressMenuColumnPanel</b>: Set to true to not show column selection panel.</li>
+        <li><b>generalMenuTab</b>: Include in the <i>menuTabs</i> array to show the main panel.</li>
+        <li><b>filterMenuTab</b>: Include in the <i>menuTabs</i> array to show the filter panel.</li>
+        <li><b>columnsMenuTab</b>: Include in the <i>menuTabs</i> array to show the column selection panel.</li>
     </ul>
-        To not show the menu at all, set all three above to <i>true</i>. In addition, you can set the
+        To not show the menu at all, set this property to an empty array<i>[]</i>. In addition, you can set the
     attribute <i>suppressMenu=true</i> to the column definition to not show the menu for a particular column.
     </p>
 
-    <h3>Customising the Menu</h3>
+    <p>
+        The order of the menu tabs shown in the menu will match the order you specify in this array
+    </p>
+
+    <p>
+        If you don't specify a <i>menuTabs</i> for a <i>colDef</i> the default is: <code>['generalMenuTab',
+            'filterMenuTab','columnsMenuTab']</code>
+    </p>
+
+    <h3>Customising the General Menu Tab</h3>
 
     <p>
         The main menu panel, by default, will show a set of items. You can adjust which of these items get display, or you
@@ -63,7 +76,7 @@ include '../documentation-main/documentation_header.php';
 }
 </pre>
 
-    <h3>Built In Menu Items</h3>
+    <h4>Built In Menu Items</h4>
 
     <p>The following is a list of all the default built in menu items with the rules about when they are shown.</p>
 
@@ -93,7 +106,7 @@ include '../documentation-main/documentation_header.php';
         if you want to.
     </p>
 
-    <h3>Menu Item Separators</h3>
+    <h4>Menu Item Separators</h4>
     <p>You can add menu item separators as follows:</p>
     <pre>menuItems.push('separator')</pre>
 
@@ -116,6 +129,13 @@ include '../documentation-main/documentation_header.php';
         <li>Athlete column contains a sub menu.</li>
         <li>Age column provides custom items and adds one built in default item.</li>
         <li>Country column trims down the default items by removing values.</li>
+        <li>Date column changes the order of the tabs to <code>['filterMenuTab','generalMenuTab','columnsMenuTab']</code></li>
+        <li>Sport column changes the order of the tabs to <code>['filterMenuTab','columnsMenuTab']</code>. Note that the
+        'generalMenuTab' is suppressed.
+        <li>Gold column changes the order of the tabs to <code>['generalMenuTab','gibberishMenuTab']</code>. Note that
+        the mainTab and columnsTab are suppressed. Also there is a warning on the console letting the user know that
+        'gibberishMenuTab' is an invalid option and it is ignored</li>
+        <li>Silver column hides the menu by suppressing all the menuTabs that can be shown: <code>[]</code>.</li>
         <li>All other columns return the default list.</li>
         <li><code>postProcessPopup</code> is used on the Gold column to reposition the menu 25px lower.</li>
     </ul>

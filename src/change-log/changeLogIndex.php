@@ -13,20 +13,36 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h3>NEXT</h3>
+    <h3>11.0.0</h3>
+    <h4>Breaking Changes</h4>
+    <ul>
+        <li>
+            Deprecated gridOptions properties: suppressMenuFilterPanel suppressMenuMainPanel and suppressMenuColumnPanel,
+            use colDef.menuTabs instead. See AG-401 for more details
+        </li>
+    </ul>
 
-    <li>AG-515 - New property <a href="../javascript-grid-clipboard/#deliminator">clipboardDeliminator</a> to specify deliminator to use while copying to clipboard.</li>
-    <li>AG-515 - New property <a href="../javascript-grid-sorting/#accentedSort">gridOptions.accentedSort</a> Set to true to specify that the sort
-        should take into account accented characters, if this feature is turned on the sort will perform slower.</li>
-    <li>AG-398 / AG-371 - New property <a href="../javascript-grid-clipboard/#suppressPaste">colDef.suppressPaste</a> to suppress pasting from clipboard for certain cells.</li>
-    <li>AG-348 - Callbacks processCellForClipboard() and processCellFromClipboard() now get invoked with doing Ctrl + D (copy range down)</li>
-    <li>AG-199 - <a href="../javascript-grid-resizing/">sizeColumnsToFit</a> now fires an event with parameter 'finished=true'.</li>
-    <li>AG-199 - <a href="../javascript-grid-resizing/">autoSizeColumns</a> now fires just one event, previously it was firing two events unnecessarily.</li>
-    <li>AG-82 - <a href="../javascript-grid-resizing/#resizing-groups">Resizing groups</a> now respects any children columns that are not resizable.</li>
-    <li>AG-207 - (bug) MarryChildren was not working when columns were hidden, now works.</li>
-    <li>AG-154 - Typing non-latin letters on focused cell now starts cell editing.</li>
-    <li>AG-73 - Now when editing or updating data, if value is not different, data is not updated, cell is not refreshed and no 'valueChangedEvent' fired. Also impacts when tabbing while editing, previously no change was still an edit, no now change is no change.</li>
-    <li>AG-543 - Bugfix - Regression/Breaking Change - rows are inserted in reverse order</li>
+    <h4>Enhancements</h4>
+    <ul>
+        <li>AG-401 - New property <a href="../javascript-grid-column-menu/">menuTabs</a> to specify which column menu tabs to show and in which order.</li>
+    </ul>
+
+    <h4>TBD</h4>
+    <ul>
+        <li>AG-515 - New property <a href="../javascript-grid-clipboard/#deliminator">clipboardDeliminator</a> to specify deliminator to use while copying to clipboard.</li>
+        <li>AG-515 - New property <a href="../javascript-grid-sorting/#accentedSort">gridOptions.accentedSort</a> Set to true to specify that the sort
+            should take into account accented characters, if this feature is turned on the sort will perform slower.</li>
+        <li>AG-398 / AG-371 - New property <a href="../javascript-grid-clipboard/#suppressPaste">colDef.suppressPaste</a> to suppress pasting from clipboard for certain cells.</li>
+        <li>AG-348 - Callbacks processCellForClipboard() and processCellFromClipboard() now get invoked with doing Ctrl + D (copy range down)</li>
+        <li>AG-199 - <a href="../javascript-grid-resizing/">sizeColumnsToFit</a> now fires an event with parameter 'finished=true'.</li>
+        <li>AG-199 - <a href="../javascript-grid-resizing/">autoSizeColumns</a> now fires just one event, previously it was firing two events unnecessarily.</li>
+        <li>AG-82 - <a href="../javascript-grid-resizing/#resizing-groups">Resizing groups</a> now respects any children columns that are not resizable.</li>
+        <li>AG-207 - (bug) MarryChildren was not working when columns were hidden, now works.</li>
+        <li>AG-154 - Typing non-latin letters on focused cell now starts cell editing.</li>
+        <li>AG-73 - Now when editing or updating data, if value is not different, data is not updated, cell is not refreshed and no 'valueChangedEvent' fired. Also impacts when tabbing while editing, previously no change was still an edit, no now change is no change.</li>
+        <li>AG-543 - Bugfix - Regression/Breaking Change - rows are inserted in reverse order</li>
+    </ul>
+
 
     <h2>Version 10.1.x</h2>
 
