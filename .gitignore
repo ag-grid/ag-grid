@@ -1,5 +1,7 @@
 dist/
 node_modules/
+!src/ng2-example/**/*.js*
+!src/ng2-example/**/*.ts
 !src/ng2-example/node_modules
 !src/dist
 !src/vue-examples/dist
