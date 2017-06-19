@@ -70,7 +70,6 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     }
 
     public showMenu(column: Column, positionCallback: (menu: EnterpriseMenu)=>void, defaultTab?:string): void {
-
         let menu = new EnterpriseMenu(column, this.lastSelectedTab);
         this.context.wireBean(menu);
 
@@ -100,12 +99,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     }
 
     public isMenuEnabled(column: Column): boolean {
-
-        let showColumnPanel = !this.gridOptionsWrapper.isSuppressMenuColumnPanel();
-        let showMainPanel = !this.gridOptionsWrapper.isSuppressMenuMainPanel();
-        let showFilterPanel = !this.gridOptionsWrapper.isSuppressMenuFilterPanel() && column.isFilterAllowed();
-
-        return showColumnPanel || showMainPanel || showFilterPanel;
+        return column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT).length > 0;
     }
 }
 
@@ -113,9 +107,12 @@ export class EnterpriseMenu {
 
     public static EVENT_TAB_SELECTED = 'tabSelected';
 
-    public static TAB_FILTER = 'filter';
-    public static TAB_GENERAL = 'general';
-    public static TAB_COLUMNS = 'columns';
+
+    public static TAB_FILTER = 'filterMenuTab';
+    public static TAB_GENERAL = 'generalMenuTab';
+    public static TAB_COLUMNS = 'columnsMenuTab';
+
+    public static TABS_DEFAULT = [EnterpriseMenu.TAB_GENERAL, EnterpriseMenu.TAB_FILTER, EnterpriseMenu.TAB_COLUMNS];
 
     public static MENU_ITEM_SEPARATOR = 'separator';
 
@@ -141,10 +138,15 @@ export class EnterpriseMenu {
 
     private initialSelection: string;
     private destroyFunctions: Function[] = [];
+    private tabFactories:{[p:string]:()=>TabbedItem} = {};
+
 
     constructor(column: Column, initialSelection: string) {
         this.column = column;
         this.initialSelection = initialSelection;
+        this.tabFactories[EnterpriseMenu.TAB_GENERAL] = this.createMainPanel.bind(this);
+        this.tabFactories[EnterpriseMenu.TAB_FILTER] = this.createFilterPanel.bind(this);
+        this.tabFactories[EnterpriseMenu.TAB_COLUMNS] = this.createColumnsPanel.bind(this);
     }
 
     public addEventListener(event: string, listener: Function): void {
@@ -157,28 +159,33 @@ export class EnterpriseMenu {
 
     @PostConstruct
     public init(): void {
-
-        let tabItems: TabbedItem[] = [];
-        if (!this.gridOptionsWrapper.isSuppressMenuMainPanel()) {
-            this.createMainPanel();
-            tabItems.push(this.tabItemGeneral);
-        }
-        if (!this.gridOptionsWrapper.isSuppressMenuFilterPanel() && this.column.isFilterAllowed()) {
-            this.createFilterPanel();
-            tabItems.push(this.tabItemFilter);
-        }
-        if (!this.gridOptionsWrapper.isSuppressMenuColumnPanel()) {
-            this.createColumnsPanel();
-            tabItems.push(this.tabItemColumns);
-        }
-
+        let items:TabbedItem[] = this.column.getMenuTabs (EnterpriseMenu.TABS_DEFAULT)
+            .filter(name=>
+                this.isValidMenuTabItem(name)
+            ).map(name=>
+                this.createTab(name)
+            );
         this.tabbedLayout = new TabbedLayout({
-            items: tabItems,
+            items: items,
             cssClass: 'ag-menu',
             onActiveItemClicked: this.onHidePopup.bind(this),
             onItemClicked: this.onTabItemClicked.bind(this)
         });
     }
+
+    private isValidMenuTabItem (name:string):boolean{
+        let isValid:boolean = EnterpriseMenu.TABS_DEFAULT.indexOf(name)> -1;
+
+        if (!isValid) console.warn(`Trying to render an invalid menu item '${name}'. Check that your 'menuTabs' contains one of [${EnterpriseMenu.TABS_DEFAULT}]`);
+
+        return isValid;
+    }
+
+    private createTab (name:string):TabbedItem{
+        return this.tabFactories[name]();
+    }
+
+
 
     public showTabBasedOnPreviousSelection(): void {
         // show the tab the user was on last time they had a menu open
@@ -301,7 +308,7 @@ export class EnterpriseMenu {
         return result;
     }
 
-    private createMainPanel(): void {
+    private createMainPanel(): TabbedItem {
 
         this.mainMenuList = new MenuList();
         this.context.wireBean(this.mainMenuList);
@@ -314,15 +321,18 @@ export class EnterpriseMenu {
 
         this.tabItemGeneral = {
             title: Utils.createIconNoSpan('menu', this.gridOptionsWrapper, this.column, svgFactory.createMenuSvg),
-            body: this.mainMenuList.getGui()
+            body: this.mainMenuList.getGui(),
+            name: EnterpriseMenu.TAB_GENERAL
         };
+
+        return this.tabItemGeneral;
     }
 
     private onHidePopup(): void {
         this.hidePopupFunc();
     }
 
-    private createFilterPanel(): void {
+    private createFilterPanel(): TabbedItem {
 
         let filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column);
 
@@ -334,11 +344,14 @@ export class EnterpriseMenu {
         this.tabItemFilter = {
             title: Utils.createIconNoSpan('filter', this.gridOptionsWrapper, this.column, svgFactory.createFilterSvg12),
             body: filterWrapper.gui,
-            afterAttachedCallback: afterFilterAttachedCallback
+            afterAttachedCallback: afterFilterAttachedCallback,
+            name: EnterpriseMenu.TAB_FILTER
         };
+
+        return this.tabItemFilter;
     }
 
-    private createColumnsPanel(): void {
+    private createColumnsPanel(): TabbedItem {
 
         let eWrapperDiv = document.createElement('div');
         Utils.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
@@ -350,8 +363,11 @@ export class EnterpriseMenu {
 
         this.tabItemColumns = {
             title: Utils.createIconNoSpan('columns', this.gridOptionsWrapper, this.column, svgFactory.createColumnsSvg12),//createColumnsIcon(),
-            body: eWrapperDiv
+            body: eWrapperDiv,
+            name: EnterpriseMenu.TAB_COLUMNS
         };
+
+        return this.tabItemColumns;
     }
 
     public afterGuiAttached(params: any): void {
