@@ -23,7 +23,7 @@ export class AppComponent {
         {key: 'master-detail', title: "Master Detail Example"},
         {key: 'grouped-data', title: "Grouped Data Example"},
         {key: 'floating-filter', title: "Floating Filters"},
-        {key: 'cd a', title: "RxJs - Single Row Update Example"},
+        {key: 'rxjs-by-row', title: "RxJs - Single Row Update Example"},
         {key: 'rxjs-by-dataset', title: "RxJs - Full DataSet Update Example"}
     ];
 
