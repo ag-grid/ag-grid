@@ -30,6 +30,7 @@ include '../documentation-main/documentation_header.php';
         </div>
         <div class="col-sm-6">
             <a href="../example-angular-filter/" class="column-links column-items">Filter Component</a>
+            <a href="../javascript-grid-floating-filter-component/#ng2Angular" class="column-links column-items">Floating Filter Component</a>
             <a href="../example-angular-floating-row/" class="column-links column-items">Floating Row Renderer</a>
             <a href="../example-angular-full-width-rows/" class="column-links column-items">Full Width Renderer</a>
             <a href="../example-angular-grouped-row/" class="column-links column-items">Group Row Inner Renderer</a>

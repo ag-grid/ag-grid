@@ -315,6 +315,7 @@
         menuItem(2, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
         menuItem(2, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
         menuItem(2, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
+        menuItem(2, 'Angular Floating Filter', 'Floating Filter', 'javascript-grid-floating-filter-component/#ng2Angular');
         menuItem(2, 'Angular Floating Row', 'Floating Rows', 'example-angular-floating-row/');
         menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
         menuItem(2, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');

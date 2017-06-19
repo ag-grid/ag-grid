@@ -1,5 +1,5 @@
 <!-- Angular from here -->
-<h2 id="ng2CellRendering">
+<h2 id="ng2Angular">
     <img src="../images/angular2_large.png" style="width: 60px;"/>
     Angular Floating Filters
 </h2>
@@ -18,11 +18,12 @@
 <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=floating-filter"
                       sources="{
                             [
-                                { root: '/ng2-example/app/rich-dynamic-component-example/', files: 'rich.component.ts,rich.component.html,ratio.module.ts,ratio.parent.component.ts,ratio.component.ts,clickable.module.ts,clickable.parent.component.ts,clickable.component.ts' },
+                                { root: '/ng2-example/app/floating-filter-example/', files:
+                                    'floating-filter.component.ts,floating-filter.component.html,slider-floating-filter.component.ts,slider-floating-filter.component.html'
+                                },
                                 { root: '/ng2-example/app/', files: 'app.module.ts' }
                             ]
-                          }"
-                      plunker="https://embed.plnkr.co/qmgvkW/">
+                          }">
 </show-complex-example>
 
 <note>The full <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> repo shows many
