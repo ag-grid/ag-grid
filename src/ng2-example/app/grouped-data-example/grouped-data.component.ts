@@ -30,7 +30,6 @@ export class GroupedDataComponent {
             // group by these cols, and hide them, and let grid sort out the grouping columns
             {headerName: "Country", field: "country", rowGroupIndex: 0, hide: true, cellRendererFramework: CountryRendererComponent},
             {headerName: "Language", field: "language", rowGroupIndex: 1, hide: true},
-
             {headerName: "Name", field: "name"},
             {headerName: "Gold", field: "gold"},
             {headerName: "Silver", field: "silver"},
@@ -78,6 +77,7 @@ export class GroupedDataComponent {
             {country: "Brazil", language: "Brazillian", name: "Bob", gold: 1, silver: 0, bronze: 1},
             {country: "Brazil", language: "Brazillian", name: "Jack", gold: 1, silver: 0, bronze: 1},
             {country: "Brazil", language: "Brazillian", name: "Mary", gold: 1, silver: 0, bronze: 1},
-            {country: "Brazil", language: "Brazillian", name: "John", gold: 1, silver: 0, bronze: 1}];
+            {country: "Brazil", language: "Brazillian", name: "John", gold: 1, silver: 0, bronze: 1}
+          ];
     }
 }
