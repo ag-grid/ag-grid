@@ -159,11 +159,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         let rowGroupsDisplayed: string | string[] = this.colDef.rowGroupsDisplayed;
 
-        if (!Array.isArray(rowGroupsDisplayed)){
-            return rowGroupsDisplayed === '*' || rowGroupsDisplayed === colId;
-        } else {
-            return rowGroupsDisplayed.indexOf(colId) >= 0;
-        }
+        return rowGroupsDisplayed === '*' || rowGroupsDisplayed === colId;
     }
 
     public getCellRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string {

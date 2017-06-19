@@ -132,11 +132,13 @@ export interface ColDef extends AbstractColDef {
      * Can be eg ['sum','avg']. This will restrict what the GUI allows to select only.*/
     allowedAggFuncs?: string[];
 
-    /** To group by this column by default, provide an index here. */
+    /** To group by this column by default, either provide an index (eg rowGroupIndex=1), or set rowGroup=true. */
     rowGroupIndex?: number;
+    rowGroup?: boolean;
 
-    /** To pivot by this column by default, provide an index here. */
+    /** To pivot by this column by default, either provide an index (eg pivotIndex=1), or set pivot=true. */
     pivotIndex?: number;
+    pivot?: boolean;
 
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA?: RowNode, nodeB?: RowNode, isInverted?: boolean) => number;
@@ -182,7 +184,7 @@ export interface ColDef extends AbstractColDef {
     suppressAutoSize?: boolean;
 
     /** What we are row grouping by can be an array of colIds, one colId or '*' */
-    rowGroupsDisplayed?:string[] | string;
+    rowGroupsDisplayed?: string;
 
     /** If true, GUI will allow adding this columns as a row group */
     enableRowGroup?: boolean;

@@ -881,6 +881,7 @@ export class RowComp extends BeanStub {
         let params = {
             data: this.rowNode.data,
             node: this.rowNode,
+            value: this.rowNode.key,
             $scope: this.scope,
             rowIndex: this.rowNode.rowIndex,
             api: this.gridOptionsWrapper.getApi(),

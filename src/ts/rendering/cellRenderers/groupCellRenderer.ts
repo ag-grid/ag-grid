@@ -66,19 +66,9 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     public init(params: GroupCellRendererParams): void {
 
-        // if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
-        //     this.setupForGroupHideOpenParents(params);
-        // }
-        // } else {
-        //     this.nodeWasSwapped = false;
-        //     this.params = params;
-        // }
-
         this.params = params;
 
-        // let groupKeyMismatch = this.isGroupKeyMismatch();
         let embeddedRowMismatch = this.embeddedRowMismatch();
-        // if (groupKeyMismatch || embeddedRowMismatch) { return; }
         if (embeddedRowMismatch) { return; }
 
         if (_.missing(params.value)) {
@@ -93,55 +83,12 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.setupComponents();
     }
 
-/*    private setupForGroupHideOpenParents(params: any): void {
-        // if firstChild changes, on this node, or any parent node (all the way to the top)
-        // then we need to recalculate whether we drag the parent down or not
-        let rowNodePointer = params.node;
-        while (_.exists(rowNodePointer)) {
-            this.addDestroyableEventListener(rowNodePointer, RowNode.EVENT_FIRST_CHILD_CHANGED, () => {
-                // we put this into a timeout, as we want all the row node tree to be stabilised
-                // before we calculated the first child logic, otherwise the logic isn't computed correctly
-                setTimeout(()=> {
-                    params.refreshCell();
-                }, 0);
-            });
-            rowNodePointer = rowNodePointer.parent;
-        }
-    }*/
-
     private setupComponents(): void {
         this.addExpandAndContract();
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.addPadding();
     }
-
-/*
-    private getRowGroupColumn(params: any): Column {
-        // if we are using the auto-group, then the auto-group passes the
-        // original rowGroupColumn
-        if (params.originalRowGroupColumn) {
-            return params.originalRowGroupColumn;
-        } else {
-            return params.column;
-        }
-    }
-*/
-
-/*    private isGroupKeyMismatch(): boolean {
-        // if the user only wants to show details for one group in this column,
-        // then the group key here says which column we are interested in.
-
-        let restrictToOneGroup = this.params.restrictToOneGroup;
-
-        let skipCheck = this.nodeWasSwapped || !restrictToOneGroup;
-        if (skipCheck) { return false; }
-
-        let columnGroup = this.getRowGroupColumn(this.params);
-        let rowGroup = this.params.node.rowGroupColumn;
-
-        return columnGroup !== rowGroup;
-    }*/
 
     // if we are doing embedded full width rows, we only show the renderer when
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
@@ -205,12 +152,12 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private addPadding(): void {
-        let params = this.params;
+
         // only do this if an indent - as this overwrites the padding that
         // the theme set, which will make things look 'not aligned' for the
         // first group level.
-        let node: RowNode = params.node;
-        let suppressPadding = params.suppressPadding;
+        let node: RowNode = this.params.node;
+        let suppressPadding = this.params.suppressPadding;
 
         if (!suppressPadding) {
             this.addDestroyableEventListener(node, RowNode.EVENT_UI_LEVEL_CHANGED, this.setPadding.bind(this));
@@ -244,7 +191,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private createFooterCell(): void {
         let footerValue: string;
-        let groupName = this.params.value;
+        let groupName = this.getGroupName();
         let footerValueGetter = this.params.footerValueGetter;
         if (footerValueGetter) {
             // params is same as we were given, except we set the value as the item to display
@@ -266,21 +213,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private createGroupCell(): void {
         let params = this.params;
-        // pull out the column that the grouping is on
-        let rowGroupColumns = this.params.columnApi.getRowGroupColumns();
 
-        // if we are using in memory grid grouping, then we try to look up the column that
-        // we did the grouping on. however if it is not possible (happens when user provides
-        // the data already grouped) then we just the current col, ie use cellRenderer of current col
-        let columnOfGroupedCol = rowGroupColumns[params.node.rowGroupIndex];
-        if (_.missing(columnOfGroupedCol)) {
-            columnOfGroupedCol = params.column;
-        }
+        // we try and use the cellRenderer of the column used for the grouping if we can
+        let columnToUse: Column = params.node.rowGroupColumn ? params.node.rowGroupColumn : params.column;
 
-        let groupName = params.value;
-        let valueFormatted = this.valueFormatterService.formatValue(columnOfGroupedCol, params.node, params.scope, params.rowIndex, groupName);
+        let groupName = this.getGroupName();
+        let valueFormatted = this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, params.rowIndex, groupName);
 
-        let groupedColCellRenderer = columnOfGroupedCol.getCellRenderer();
+        let groupedColCellRenderer = columnToUse.getCellRenderer();
 
         // reuse the params but change the value
         if (typeof groupedColCellRenderer === 'function') {
@@ -288,7 +228,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             params.value = groupName;
             params.valueFormatted = valueFormatted;
 
-            let colDefOfGroupedCol = columnOfGroupedCol.getColDef();
+            let colDefOfGroupedCol = columnToUse.getColDef();
             let groupedColCellRendererParams = colDefOfGroupedCol ? colDefOfGroupedCol.cellRendererParams : null;
 
             // because we are talking about the different column to the original, any user provided params
@@ -323,13 +263,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.eChildCount.innerHTML = text;
     }
 
-/*
     private getGroupName(): string {
         let keyMap = this.params.keyMap;
-        let rowNodeKey = this.params.node.key;
+        let rowNodeKey = this.params.value;
         if (keyMap && typeof keyMap === 'object') {
             let valueFromMap = keyMap[rowNodeKey];
-            if (valueFromMap) {
+            // check for undefined, so null and 'empty string' are allowed,
+            // which can be users way of saying 'show blank' if they want
+            if (valueFromMap!==undefined) {
                 return valueFromMap;
             } else {
                 return rowNodeKey;
@@ -338,7 +279,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             return rowNodeKey;
         }
     }
-*/
 
     private createLeafCell(): void {
         if (_.exists(this.params.value)) {
@@ -406,9 +346,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     public onExpandOrContract(): void {
-
-        // if we were dragged down, then it's the parent we toggle
-        // let rowNode: RowNode = this.draggedFromHideOpenParents ? this.params.node.parent : this.params.node;
 
         let rowNode: RowNode = this.params.node;
 

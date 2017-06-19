@@ -1445,8 +1445,8 @@ export class ColumnController {
     private extractRowGroupColumns(): void {
         this.rowGroupColumns.forEach( column => column.setRowGroupActive(false) );
         this.rowGroupColumns = [];
-        // pull out the columns
-        this.primaryColumns.forEach( (column: Column) => {
+        // pull out items with rowGroupIndex
+        this.primaryColumns.forEach( column => {
             if (typeof column.getColDef().rowGroupIndex === 'number') {
                 this.rowGroupColumns.push(column);
                 column.setRowGroupActive(true);
@@ -1456,12 +1456,23 @@ export class ColumnController {
         this.rowGroupColumns.sort(function (colA: Column, colB: Column): number {
             return colA.getColDef().rowGroupIndex - colB.getColDef().rowGroupIndex;
         });
+        // now just pull out items rowGroup, they will be added at the end
+        // after the indexed ones, but in the order the columns appear
+        this.primaryColumns.forEach( column => {
+            if (column.getColDef().rowGroup) {
+                // if user already specified rowGroupIndex then we skip it as this col already included
+                if (this.rowGroupColumns.indexOf(column)>=0) { return; }
+
+                this.rowGroupColumns.push(column);
+                column.setRowGroupActive(true);
+            }
+        });
     }
 
     private extractPivotColumns(): void {
         this.pivotColumns.forEach( column => column.setPivotActive(false) );
         this.pivotColumns = [];
-        // pull out the columns
+        // pull out items with pivotIndex
         this.primaryColumns.forEach( (column: Column) => {
             if (typeof column.getColDef().pivotIndex === 'number') {
                 this.pivotColumns.push(column);
@@ -1471,6 +1482,16 @@ export class ColumnController {
         // then sort them
         this.pivotColumns.sort(function (colA: Column, colB: Column): number {
             return colA.getColDef().pivotIndex - colB.getColDef().pivotIndex;
+        });
+        // now check the boolean equivalent
+        this.primaryColumns.forEach( (column: Column) => {
+            if (column.getColDef().pivot) {
+                // if user already specified pivotIndex then we skip it as this col already included
+                if (this.pivotColumns.indexOf(column)>=0) { return; }
+
+                this.pivotColumns.push(column);
+                column.setPivotActive(true);
+            }
         });
     }
 

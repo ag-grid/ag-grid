@@ -95,6 +95,8 @@ export class FlattenStage implements IRowNodeStage {
                         this.ensureFooterNodeExists(rowNode);
                         this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevel);
                     }
+                } else {
+
                 }
             } else if (rowNode.canFlower && rowNode.expanded) {
                 let flowerNode = this.createFlowerNode(rowNode);
