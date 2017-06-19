@@ -110,8 +110,6 @@ export class AggregationStage implements IRowNodeStage {
 
         });
 
-        this.putInValueForGroupNode(result, rowNode);
-
         return result;
     }
 
@@ -124,29 +122,7 @@ export class AggregationStage implements IRowNodeStage {
             result[valueColumn.getId()] = this.aggregateValues(values2d[index], valueColumn.getAggFunc());
         });
 
-        this.putInValueForGroupNode(result, rowNode);
-
         return result;
-    }
-
-    // when doing copy to clipboard, the valueService is used to get the value for the cell.
-    // the problem is that the valueService is wired to get the values directly from the data
-    // using column ID's (rather than, eg, valueGetters), so we need to have the value of the
-    // group key in the data, so when copy to clipboard is executed, the value is picked up correctly.
-    private putInValueForGroupNode(result: any, rowNode: RowNode): void {
-        let autoCols = this.columnController.getGroupAutoColumns();
-        if (!autoCols) { return; }
-        autoCols.forEach( autoCol => {
-            let rendererParams = autoCol.getColDef().cellRendererParams;
-            let groupKeyExists = _.exists(rendererParams) && _.exists(rendererParams.groupKey);
-            if (groupKeyExists) {
-                if (rendererParams.groupKey === rowNode.field) {
-                    result[autoCol.getColId()] = rowNode.key;
-                }
-            } else {
-                result[autoCol.getColId()] = rowNode.key;
-            }
-        });
     }
 
     private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
