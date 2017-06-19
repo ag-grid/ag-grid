@@ -156,6 +156,10 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if no menu should be shown for this column header. */
     suppressMenu?: boolean;
 
+    /** The menu tabs to show, and in which order, the valid values for this property are:
+     * filterMenuTab, generalMenuTab, columnsMenuTab **/
+    menuTabs?:string[]
+
     /** Set to true if no sorting should be done for this column. */
     suppressSorting?: boolean;
 

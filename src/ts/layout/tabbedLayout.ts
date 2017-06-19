@@ -134,6 +134,7 @@ export interface TabbedLayoutParams {
 export interface TabbedItem {
     title: Element,
     body: HTMLElement,
+    name: string,
     afterAttachedCallback?: Function
 }
 

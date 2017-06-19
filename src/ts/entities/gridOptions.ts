@@ -87,9 +87,6 @@ export interface GridOptions {
     pivotPanelShow?: string;
     suppressContextMenu?: boolean;
     allowContextMenuWithControlKey?: boolean;
-    suppressMenuFilterPanel?: boolean;
-    suppressMenuMainPanel?: boolean;
-    suppressMenuColumnPanel?: boolean;
     rememberGroupStateWhenNewData?: boolean;
     viewportRowModelPageSize?: number;
     viewportRowModelBufferSize?: number;

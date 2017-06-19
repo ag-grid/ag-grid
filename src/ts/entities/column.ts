@@ -536,4 +536,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public isAllowRowGroup(): boolean {
         return this.colDef.enableRowGroup === true;
     }
+
+    public getMenuTabs(defaultValues:string[]):string [] {
+        let menuTabs: string[] = this.getColDef().menuTabs;
+        if (menuTabs == null) {
+            menuTabs = defaultValues;
+        };
+        return menuTabs;
+    }
 }
