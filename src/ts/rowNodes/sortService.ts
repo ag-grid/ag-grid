@@ -117,20 +117,22 @@ export class SortService {
             return;
         }
 
-        rowNode.childrenAfterSort.forEach( child => {
+        rowNode.childrenAfterSort.forEach( childRowNode => {
 
             let groupDisplayCols = this.columnController.getGroupDisplayColumns();
             groupDisplayCols.forEach( groupDisplayCol => {
 
-                let thisRowNodeMatches = groupDisplayCol.getId() === child.field;
+                let displayingGroupKey: string = groupDisplayCol.getColDef().rowGroupsDisplayed;
+                let rowGroupColumn = this.columnController.getPrimaryColumn(displayingGroupKey);
+
+                let thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
                 if (thisRowNodeMatches) { return; }
 
-                let parentToStealFrom = child.getFirstChildOfFirstChild(groupDisplayCol);
+                let parentToStealFrom = childRowNode.getFirstChildOfFirstChild(rowGroupColumn);
                 if (parentToStealFrom) {
-                    // console.log(`id =${child.id}, setting ${groupDisplayCol.getId()} to ${parentToStealFrom.key}`);
-                    child.setGroupValue(groupDisplayCol.getId(), parentToStealFrom.key);
+                    childRowNode.setGroupValue(groupDisplayCol.getId(), parentToStealFrom.key);
                 } else {
-                    child.setGroupValue(groupDisplayCol.getId(), null);
+                    childRowNode.setGroupValue(groupDisplayCol.getId(), null);
                 }
             });
         });

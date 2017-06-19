@@ -20,16 +20,17 @@ export class ValueService {
     @Autowired('groupValueService') private groupValueService: GroupValueService;
 
     private cellExpressions: boolean;
-    private userProvidedTheGroups: boolean;
-    private suppressUseColIdForGroups: boolean;
+
+    // private userProvidedTheGroups: boolean;
+    // private suppressUseColIdForGroups: boolean;
 
     private initialised = false;
 
     @PostConstruct
     public init(): void {
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
-        this.userProvidedTheGroups = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        this.suppressUseColIdForGroups = this.gridOptionsWrapper.isSuppressUseColIdForGroups();
+        // this.userProvidedTheGroups = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        // this.suppressUseColIdForGroups = this.gridOptionsWrapper.isSuppressUseColIdForGroups();
         this.initialised = true;
     }
 
@@ -70,20 +71,6 @@ export class ValueService {
 
         return result;
     }
-
-/*    private setupForGroupHideOpenParents(originalParams: any): void {
-        let rowGroupColumn = this.getRowGroupColumn(originalParams);
-        let nodeToSwapIn = this.isFirstChildOfFirstChild(originalParams.node, rowGroupColumn);
-        this.nodeWasSwapped = _.exists(nodeToSwapIn);
-        if (this.nodeWasSwapped) {
-            let newParams = <any> {};
-            _.assign(newParams, originalParams);
-            newParams.node = nodeToSwapIn;
-            this.params = newParams;
-        } else {
-            this.params = originalParams;
-        }
-    }*/
 
     public setValue(rowNode: RowNode, colKey: string|ColDef|Column, newValue: any): void {
         let column = this.columnController.getPrimaryColumn(colKey);

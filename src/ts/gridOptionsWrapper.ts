@@ -191,7 +191,8 @@ export class GridOptionsWrapper {
     public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
     public isGroupSelectsFiltered() { return isTrue(this.gridOptions.groupSelectsFiltered); }
     public isGroupHideOpenParents() { return isTrue(this.gridOptions.groupHideOpenParents); }
-    public isGroupMultiAutoColumn() { return isTrue(this.gridOptions.groupMultiAutoColumn); }
+    // if we are doing hideOpenParents, then we always have groupMultiAutoColumn, otherwise hideOpenParents would not work
+    public isGroupMultiAutoColumn() { return isTrue(this.gridOptions.groupMultiAutoColumn) || isTrue(this.gridOptions.groupHideOpenParents); }
     public isGroupRemoveSingleChildren() { return isTrue(this.gridOptions.groupRemoveSingleChildren); }
     public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }
     public isGroupSuppressBlankHeader() { return isTrue(this.gridOptions.groupSuppressBlankHeader); }

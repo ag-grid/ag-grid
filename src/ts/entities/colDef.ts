@@ -178,7 +178,7 @@ export interface ColDef extends AbstractColDef {
     suppressAutoSize?: boolean;
 
     /** What we are row grouping by can be an array of colIds, one colId or '*' */
-    rowGroupsDisplayed?:string[] | string;
+    rowGroupsDisplayed?: string;
 
     /** If true, GUI will allow adding this columns as a row group */
     enableRowGroup?: boolean;
