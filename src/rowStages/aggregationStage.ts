@@ -110,8 +110,6 @@ export class AggregationStage implements IRowNodeStage {
 
         });
 
-        this.putInValueForGroupNode(result, rowNode);
-
         return result;
     }
 
@@ -124,35 +122,13 @@ export class AggregationStage implements IRowNodeStage {
             result[valueColumn.getId()] = this.aggregateValues(values2d[index], valueColumn.getAggFunc());
         });
 
-        this.putInValueForGroupNode(result, rowNode);
-
         return result;
-    }
-
-    // when doing copy to clipboard, the valueService is used to get the value for the cell.
-    // the problem is that the valueService is wired to get the values directly from the data
-    // using column ID's (rather than, eg, valueGetters), so we need to have the value of the
-    // group key in the data, so when copy to clipboard is executed, the value is picked up correctly.
-    private putInValueForGroupNode(result: any, rowNode: RowNode): void {
-        let autoCols = this.columnController.getGroupAutoColumns();
-        if (!autoCols) { return; }
-        autoCols.forEach( autoCol => {
-            let rendererParams = autoCol.getColDef().cellRendererParams;
-            let groupKeyExists = _.exists(rendererParams) && _.exists(rendererParams.groupKey);
-            if (groupKeyExists) {
-                if (rendererParams.groupKey === rowNode.field) {
-                    result[autoCol.getColId()] = rowNode.key;
-                }
-            } else {
-                result[autoCol.getColId()] = rowNode.key;
-            }
-        });
     }
 
     private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
         let values: any[] = [];
         rowNode.childrenAfterFilter.forEach( rowNode => {
-            let value = rowNode.data[colId];
+            let value = rowNode.aggData[colId];
             values.push(value);
         });
         return values;
@@ -191,9 +167,9 @@ export class AggregationStage implements IRowNodeStage {
                 // if the row is a group, then it will only have an agg result value,
                 // which means valueGetter is never used.
                 if (childNode.group) {
-                    value = childNode.data[valueColumn.getId()];
+                    value = childNode.aggData[valueColumn.getId()];
                 } else {
-                    value = this.valueService.getValueUsingSpecificData(valueColumn, childNode.data, childNode);
+                    value = this.valueService.getValue(valueColumn, childNode);
                 }
                 values[j].push(value);
             }
