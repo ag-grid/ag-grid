@@ -20,14 +20,15 @@ MockServer.prototype.initialLoad = function () {
 
                 // the sample data has just name and code, we need to add in dummy figures
                 this.rowData = this.backfillData(reducedDataSet);
-                resolve(this.rowData);
+                resolve(_.cloneDeep(this.rowData));
             }
         };
     }));
 };
 
 // provides randomised data updates to some of the rows
-MockServer.prototype.updates = function () {
+// only returns the changed data rows
+MockServer.prototype.byRowupdates = function () {
     return Rx.Observable.create((observer) => {
         const interval = setInterval(() => {
             let changes = [];
@@ -41,6 +42,27 @@ MockServer.prototype.updates = function () {
         return () => clearInterval(interval);
     });
 };
+
+// provides randomised data updates to some of the rows
+// only all the row data (with some rows changed)
+MockServer.prototype.allDataUpdates = function () {
+    return Observable.create((observer) => {
+        const interval = setInterval(() => {
+            let changes = [];
+
+            // make some mock changes to the data
+            this.makeSomePriceChanges(changes);
+            this.makeSomeVolumeChanges(changes);
+
+            // this time we don't care about the delta changes only
+            // this time we return the full data set which has changed rows within it
+            observer.next(_.cloneDeep(this.rowData));
+        }, 1000);
+
+        return () => clearInterval(interval);
+    });
+}
+
 
 /*
  * The rest of the code exists to create or modify mock data

@@ -14,10 +14,6 @@
     <div style="clear: both;"></div>
 
     <div *ngIf="showGrid">
-
-        <!-- Because we are using the Angular ID (ie #ag-grid marker), we have to have all the items that use
-             that marker inside the same ng-if as the grid -->
-
         <div style="padding: 4px;" class="toolbar">
             <span>
                 Grid API:
@@ -28,6 +24,7 @@
                 Column API:
                 <button (click)="gridOptions.columnApi.setColumnVisible('country', false)">Hide Country Column</button>
                 <button (click)="gridOptions.columnApi.setColumnVisible('country', true)">Show Country Column</button>
+                <button (click)="gridOptions.api.sizeColumnsToFit()">Size to Fit</button>
             </span>
         </div>
         <div style="clear: both;"></div>
@@ -55,10 +52,10 @@
                      rowHeight="22"
                      rowSelection="multiple"
                     >
-            <ag-grid-column headerName="Employee" [headerGroupComponentFramework]="components.headerGroupComponent">
-                <ag-grid-column headerName="#" [width]="30" [checkboxSelection]="true" [suppressSorting]="true" [suppressMenu]="true" [pinned]="true"></ag-grid-column>
+<ag-grid-column headerName="Employee" [headerGroupComponentFramework]="components.headerGroupComponent">
+    <ag-grid-column headerName="#" [width]="30" [checkboxSelection]="true" [suppressSorting]="true" [suppressMenu]="true" [pinned]="true"></ag-grid-column>
                 <ag-grid-column headerName="Name" field="name" [width]="150" [pinned]="true" ></ag-grid-column>
-                <ag-grid-column headerName="Country" field="country" [width]="150" [cellRenderer]="countryCellRenderer" [pinned]="true" [filterParams]="getCountryFilterParams()" [columnGroupShow]="'open'"></ag-grid-column>
+            <ag-grid-column headerName="Country" field="country" [width]="150" [cellRenderer]="countryCellRenderer" [pinned]="true" [filterParams]="getCountryFilterParams()" [columnGroupShow]="'open'"></ag-grid-column>
                 <ag-grid-column headerName="DOB" field="dob" [width]="120" [pinned]="true" [columnGroupShow]="'open'" [cellRenderer]="parseDate" [filter]="'date'"></ag-grid-column>
             </ag-grid-column>
             <ag-grid-column headerName="IT Skills">

@@ -40,11 +40,14 @@
         enableRangeSelection: true,
         enableColResize: true,
         columnDefs: columnDefs,
+
+        deltaRowDataMode: true,
         // implement this so that we can do selection
         getRowNodeId: function (data) {
             // the code is unique, so perfect for the id
             return data.code;
         },
+
         onGridReady: () => {
             initialLoad$.subscribe(
                 rowData => {
@@ -53,9 +56,9 @@
                     gridOptions.api.setRowData(rowData);
 
                     // now listen for updates
-                    // we process the updates with a transaction - this ensures that only the changes
-                    // rows will get re-rendered, improving performance
-                    updates$.subscribe((updates) => gridOptions.api.updateRowData({update: updates}));
+                    // we're using deltaRowDataMode this time, so although we're setting the entire
+                    // data set here, the grid will only re-render changed rows, improving performance
+                    updates$.subscribe((newRowData) => gridOptions.api.setRowData(newRowData));
                 }
             );
             gridOptions.api.sizeColumnsToFit();
@@ -64,7 +67,7 @@
 
     let mockServer = new MockServer();
     const initialLoad$ = mockServer.initialLoad();
-    const updates$ = mockServer.updates();
+    const updates$ = mockServer.byRowupdates();
 
     document.addEventListener('DOMContentLoaded', function () {
         const gridDiv = document.querySelector('#liveStreamExample');
