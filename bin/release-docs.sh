@@ -35,12 +35,8 @@ do
             ;;
 
         "ag-grid-react-example")
-<<<<<<< Updated upstream
-            npm run copy-to-docs
-            ;;
-=======
             npm run build-to-docs
->>>>>>> Stashed changes
+            ;;
     esac
     if [ $? -ne 0 ]
     then
