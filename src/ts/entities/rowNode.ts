@@ -56,8 +56,10 @@ export class RowNode implements IEventEmitter {
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
     public id: string;
-    /** The ugroup data */
+    /** The group data */
     public groupData: any;
+    /** The aggregated data */
+    public aggData: any;
     /** The user provided data */
     public data: any;
     /** The parent node to this node, or empty if top level */
@@ -321,9 +323,9 @@ export class RowNode implements IEventEmitter {
     public setAggData(newAggData: any): void {
 
         // find out all keys that could potentially change
-        let colIds = _.getAllKeysInObjects([this.data, newAggData]);
+        let colIds = _.getAllKeysInObjects([this.aggData, newAggData]);
 
-        this.data = newAggData;
+        this.aggData = newAggData;
 
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {

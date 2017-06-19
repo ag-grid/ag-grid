@@ -213,10 +213,17 @@ export class CellComp extends Component {
     }
 
     private getValue(): any {
-        let data = this.getDataForRow();
-        return this.valueService.getValueUsingSpecificData(this.column, data, this.node);
+        let isOpenGroup = this.node.group && this.node.expanded && !this.node.footer;
+        if (isOpenGroup && this.gridOptionsWrapper.isGroupIncludeFooter()) {
+            // if doing grouping and footers, we don't want to include the agg value
+            // in the header when the group is open
+            return this.valueService.getValue(this.column, this.node, true);
+        } else {
+            return this.valueService.getValue(this.column, this.node);
+        }
     }
 
+/*
     private getDataForRow() {
         if (this.node.footer) {
             // if footer, we always show the data
@@ -235,6 +242,7 @@ export class CellComp extends Component {
             return this.node.data;
         }
     }
+*/
 
     private addRangeSelectedListener(): void {
         if (!this.rangeController) {
@@ -1138,11 +1146,11 @@ export class CellComp extends Component {
             }
         }
         if (colDef.tooltipField) {
-            let data = this.getDataForRow();
+            let data = this.node.data;
             if (_.exists(data)) {
                 let tooltip = _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
                 if (_.exists(tooltip)) {
-                        this.eParentOfValue.setAttribute('title', tooltip);
+                    this.eParentOfValue.setAttribute('title', tooltip);
                 }
             }
         }

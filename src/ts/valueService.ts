@@ -33,45 +33,29 @@ export class ValueService {
         this.initialised = true;
     }
 
-    public getValue(column: Column, node: RowNode): any {
-        return this.getValueUsingSpecificData(column, node.data, node);
-    }
-
-    public getValueUsingSpecificData(column: Column, data: any, node: RowNode): any {
-/*
-        if (node.group){
-            // If we are getting the value for a column that is displaying a group this
-            // node is grouping by
-            if (node.groupData){
-                let groupData = node.groupData [column.getColId()];
-                if (_.exists(groupData)){
-                    return groupData;
-                }
-            }
-
-            // Otherwise unless there is an aggregation on this column, which will be populated
-            // in the data property, we return null for groups
-            return node.data ? node.data[column.getId()] : null;
-        }
-*/
+    public getValue(column: Column, rowNode: RowNode, ignoreAggData = false): any {
 
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
         if (!this.initialised) { this.init(); }
 
+        // pull these out to make code below easier to read
         let colDef = column.getColDef();
         let field = colDef.field;
         let colId = column.getId();
+        let data = rowNode.data;
 
         let result: any;
 
         // if there is a value getter, this gets precedence over a field
-        // - need to revisit this, we check 'data' as this is the way for the grid to
-        //   not render when on the footer row
-        if (node.groupData && node.groupData[colId] !== undefined ) {
-            result = node.groupData[colId];
+        let groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
+        let aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
+        if (groupDataExists) {
+            result = rowNode.groupData[colId];
+        } else if (aggDataExists) {
+            result = rowNode.aggData[colId];
         } else if (colDef.valueGetter) {
-            result = this.executeValueGetter(colDef.valueGetter, data, column, node);
+            result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         } else if (field && data) {
             result = _.getValueUsingField(data, field, column.isFieldContainsDots());
         } else {
@@ -81,7 +65,7 @@ export class ValueService {
         // the result could be an expression itself, if we are allowing cell values to be expressions
         if (this.cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
             let cellValueGetter = result.substring(1);
-            result = this.executeValueGetter(cellValueGetter, data, column, node);
+            result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
         }
 
         return result;
@@ -199,7 +183,7 @@ export class ValueService {
             colDef: column.getColDef(),
             api: api,
             context: context,
-            getValue: this.getValueCallback.bind(this, data, node)
+            getValue: this.getValueCallback.bind(this, node)
         };
 
         if (typeof valueGetter === 'function') {
@@ -211,10 +195,10 @@ export class ValueService {
         }
     }
 
-    private getValueCallback(data: any, node: RowNode, field: string): any {
+    private getValueCallback(node: RowNode, field: string): any {
         let otherColumn = this.columnController.getPrimaryColumn(field);
         if (otherColumn) {
-            return this.getValueUsingSpecificData(otherColumn, data, node);
+            return this.getValue(otherColumn, node);
         } else {
             return null;
         }

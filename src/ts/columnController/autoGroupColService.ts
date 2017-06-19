@@ -2,7 +2,6 @@ import {Autowired, Bean, Context} from "../context/context";
 import {Column} from "../entities/column";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {_} from "../utils";
-import {defaultGroupComparator} from "../functions";
 import {ColDef} from "../entities/colDef";
 
 @Bean('autoGroupColService')
@@ -38,15 +37,6 @@ export class AutoGroupColService {
             let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             autoColDef = {
                 headerName: localeTextFunc('group', 'Group'),
-                valueGetter: (params: any) => {
-                    if (params.node.group) {
-                        return params.node.key;
-                    } else if (params.data && params.colDef.field) {
-                        return params.data[params.colDef.field];
-                    } else {
-                        return null;
-                    }
-                },
                 cellRenderer: 'group'
             };
         }
@@ -66,8 +56,7 @@ export class AutoGroupColService {
             _.assign(autoColDef, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
                 headerName: rowGroupColDef.headerName,
-                headerValueGetter: rowGroupColDef.headerValueGetter,
-                field: rowGroupColDef.field
+                headerValueGetter: rowGroupColDef.headerValueGetter
             });
 
             if (_.missing(autoColDef.cellRendererParams)) {
@@ -75,15 +64,6 @@ export class AutoGroupColService {
             } else {
                 autoColDef.cellRendererParams = _.cloneObject(autoColDef.cellRendererParams);
             }
-            // this is needed so we don't show the groups that are not relevant, otherwise
-            // the grid would have duplicate data. having multiple column groups only makes sense
-            // when this is true
-            autoColDef.cellRendererParams.restrictToOneGroup = true;
-            // this is needed for logic in the group cellRenderer, so it knows what the original
-            // column was, so it can do the logic for restrictToOneGroup (it needs to know the grouping
-            // column for that)
-            autoColDef.cellRendererParams.originalRowGroupColumn = rowGroupCol;
-
 
             // if showing many cols, we don't want to show more than one with a checkbox for selection
             if (index>0) {
@@ -92,7 +72,7 @@ export class AutoGroupColService {
             }
 
             colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
-            autoColDef.rowGroupsDisplayed = [rowGroupCol.getColId()];
+            autoColDef.rowGroupsDisplayed = rowGroupCol.getColId();
         } else {
             colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
             autoColDef.rowGroupsDisplayed = '*';
@@ -100,7 +80,6 @@ export class AutoGroupColService {
 
         let newCol = new Column(autoColDef, colId, true);
         this.context.wireBean(newCol);
-
 
         return newCol;
     }
