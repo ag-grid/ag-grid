@@ -1,31 +1,16 @@
 var columnDefs = [
 
-    // the first group column
-    {headerName: "Country", cellRenderer: 'group',
-        field: 'country',
-        // valueGetter: 'data.country',
-        rowGroupIndex: 0,
-        cellRendererParams: {
-            restrictToOneGroup: true
-        },
-        rowGroupsDisplayed: ['country']
-    },
+    // the columns displaying the groups
+    {headerName: "Country", cellRenderer: 'group', width: 200, showRowGroup: 'country'},
+    {headerName: "Year", cellRenderer: 'group', width: 130, showRowGroup: 'year'},
 
-    // and second group column
-    {headerName: "Year", cellRenderer: 'group',
-        // to mix it up a bit, here we are using a valueGetter for the year column.
-        // this demonstrates that groupHideOpenParents and restrictToOneGroup works
-        // with value getters also.
-        valueGetter: 'data.year',
-        rowGroupIndex: 1, width: 130,
-        cellRendererParams: {
-            restrictToOneGroup: true
-        },
-        field:'year',
-        rowGroupsDisplayed: ['year']
-    },
+    // to mix it up a bit, here we are using a valueGetter for the year column.
+    // this demonstrates that groupHideOpenParents and restrictToOneGroup works
+    // with value getters also.
+    {colId: 'country', field: 'country', rowGroup: true, hide: true},
+    {colId: 'year', field: 'year', valueGetter: 'data.year', rowGroup: true, hide: true},
 
-    {headerName: "Athlete", field: "athlete", width: 150},
+    {headerName: "Athlete", field: "athlete", width: 180},
     {headerName: "Gold", field: "gold", aggFunc: 'sum', width: 100},
     {headerName: "Silver", field: "silver", aggFunc: 'sum', width: 100},
     {headerName: "Bronze", field: "bronze", aggFunc: 'sum', width: 100},
@@ -39,6 +24,7 @@ var gridOptions = {
     groupSuppressAutoColumn: true,
     groupHideOpenParents: true,
     animateRows: true,
+    enableColResize: true,
     enableSorting: true,
     onGridReady: function(params) {
         // params.api.sizeColumnsToFit();

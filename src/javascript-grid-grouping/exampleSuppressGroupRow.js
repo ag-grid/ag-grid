@@ -7,14 +7,14 @@ var classRules = {
 };
 
 var columnDefs = [
-    {headerName: "Country", field: "country", width: 120, cellClassRules: classRules, rowGroupIndex: 0,
+    {headerName: "Country", field: "country", width: 120, cellClassRules: classRules, rowGroup: true,
         cellStyle: function(params) {
         // color red for the first group
         if (params.node.parent.parent.firstChild) {
             return {color: "red"};
         }
     }},
-    {headerName: "Sport", field: "sport", width: 110, cellClassRules: classRules, rowGroupIndex: 1,
+    {headerName: "Sport", field: "sport", width: 110, cellClassRules: classRules, rowGroup: true,
         cellStyle: function(params) {
         // color blue for the first in the current sub group
         if (params.node.firstChild) {

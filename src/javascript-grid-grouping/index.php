@@ -290,7 +290,7 @@ colDef.cellRendererParams = {
 
     <show-example example="exampleGroupingAutoManyGroupColumns"></show-example>
 
-    <h3 id="replacingChildren">Replacing Groups with Children When Open</h3>
+    <h3 id="replacingChildren">Hide Open Parents</h3>
 
     <p>
         Depending on your preference, you may wish to hide parent rows when they are open.
@@ -350,6 +350,20 @@ var colDefs = {
     <p>
         To help demonstrate this, the grid is configured to shade the rows different colors
         for the different group levels.
+    </p>
+
+    <h3>Example Hide Open Parents with Explicit Group Columns</h3>
+
+    <p>
+        The example below demonstrates hiding open parents using auto group columns.
+    </p>
+
+    <show-example example="exampleGroupingHideParentsAutoCol"></show-example>
+
+    <h3>Example Hide Open Parents with Auto Group Columns</h3>
+
+    <p>
+        The example below demonstrates hiding open parents using explicit group columns.
     </p>
 
     <show-example example="exampleGroupingHideParents"></show-example>
@@ -614,7 +628,7 @@ gridOptions.groupRowRendererParams: {
         Sorting, for example, will sort by group.
     </p>
 
-    <show-example example="example6"></show-example>
+    <show-example example="exampleSuppressGroupRow"></show-example>
 
     <h3>Custom Expand / Contract Icons</h3>
 

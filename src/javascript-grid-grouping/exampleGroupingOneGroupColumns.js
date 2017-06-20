@@ -1,11 +1,11 @@
 var columnDefs = [
 
     // one column for showing the groups
-    {headerName: "Group", cellRenderer: 'group', rowGroupsDisplayed: '*'},
+    {headerName: "Group", cellRenderer: 'group', showRowGroup: true},
 
     // the first group column
-    {headerName: "Country", field: "country", rowGroupIndex: 0, hide: true},
-    {headerName: "Year", field: "year", rowGroupIndex: 1, hide: true},
+    {headerName: "Country", field: "country", rowGroup: true, hide: true},
+    {headerName: "Year", field: "year", rowGroup: true, hide: true},
 
     {headerName: "Athlete", field: "athlete"},
     {headerName: "Gold", field: "gold"},

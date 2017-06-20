@@ -6,11 +6,12 @@ $pageKeyboards = "ag-Grid javascript datagrid aurelia framework";
 
 include('../includes/mediaHeader.php');
 ?>
-<link rel="stylesheet" href="../documentation-main/documentation.css">
+
+<!-- <link rel="stylesheet" href="../documentation-main/documentation.css"> -->
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2><img src="/images/aurelia_large.png"/> ag-Grid - The Enterprise Datagrid For Aurelia</h2>
+        <h1><img src="/images/aurelia_large.png"/> ag-Grid - The Enterprise Datagrid For Aurelia</h2>
     </div>
 </div>
 

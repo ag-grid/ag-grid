@@ -3,12 +3,12 @@ var columnDefs = [
         // although we are showing the groups in this column, we still
         // want to show a field (which we are not grouping by) in the leaf level
         field: 'athlete',
-        rowGroupsDisplayed: '*',
+        showRowGroup: true,
         cellRenderer: 'group'
     },
 
-    {field: "country", rowGroupIndex: 0, hide: true},
-    {field: "year", rowGroupIndex: 1, hide: true},
+    {field: "country", rowGroup: true, hide: true},
+    {field: "year", rowGroup: true, hide: true},
 
     {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
     {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},

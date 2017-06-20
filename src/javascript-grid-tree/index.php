@@ -47,13 +47,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleTree"></show-example>
 
-    <h2 id="tree-data-vertical-scroll-location">Tree Data &amp; Vertical Scroll Location</h2>
-    <p>
-    <p>Depending on your scroll position the last item's group data may not be visible when clicking on the expand icon.</p>
-    <p>You can resolve this by using the function <strong>api.ensureIndexVisible()</strong>. This ensures the index is visible, scrolling the table if needed.</p>
-    <h3 id="example-ensure-index-visible">Example - api.ensureIndexVisible()</h3>
 
-    <show-example example="exampleTreeScroll"></show-example>
 
 </div>
 
