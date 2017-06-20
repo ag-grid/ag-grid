@@ -206,6 +206,15 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             if (_.exists(this.colDef.rowGroupIndex)) {
                 console.warn('ag-Grid: rowGroupIndex is only valid in ag-Grid-Enterprise');
             }
+            if (_.exists(this.colDef.rowGroup)) {
+                console.warn('ag-Grid: rowGroup is only valid in ag-Grid-Enterprise');
+            }
+            if (_.exists(this.colDef.pivotIndex)) {
+                console.warn('ag-Grid: pivotIndex is only valid in ag-Grid-Enterprise');
+            }
+            if (_.exists(this.colDef.pivot)) {
+                console.warn('ag-Grid: pivot is only valid in ag-Grid-Enterprise');
+            }
         }
         if (_.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             console.warn('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width);
