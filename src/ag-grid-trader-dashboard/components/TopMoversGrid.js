@@ -66,7 +66,6 @@ TopMoversGrid.prototype.update = function (newRowData) {
 };
 
 TopMoversGrid.prototype.render = function (id) {
-    console.log("here");
     // lookup the container we want the Grid to use
     let eGridDiv = document.querySelector(`#${id}`);
 

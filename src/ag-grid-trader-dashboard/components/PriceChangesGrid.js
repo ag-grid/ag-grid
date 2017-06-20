@@ -82,10 +82,6 @@ PriceChangesGrid.prototype.onSelectionChanged = function () {
     this.stockDetailPanel.update(this.selectedExchange, selectedNode.data.symbol)
 };
 
-// componentWillUnmount() {
-//     this.exchangeService.removeSubscribers();
-// }
-
 PriceChangesGrid.prototype.updateData = function (nextProps) {
     if (nextProps.selectedExchange.supportedStocks !== this.selectedExchange.supportedStocks) {
         if (!this.gridApi) {

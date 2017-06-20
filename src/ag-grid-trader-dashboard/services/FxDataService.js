@@ -27,14 +27,14 @@ FxDataService.prototype.addFxTopMoverSubscriber = function (subscriber) {
 FxDataService.prototype.updateFxDataSubscribers = function () {
     let self = this;
     this.fxDataSubscribers.forEach(function (subscriber) {
-        subscriber.update(self.fxData)
+        subscriber.update(_.cloneDeep(self.fxData));
     })
 };
 
 FxDataService.prototype.updateFxTopMoversSubscribers = function () {
     let self = this;
     this.fxTopMoversSubscribers.forEach(function (subscriber) {
-        subscriber.update(self.fxTopMovers)
+        subscriber.update(_.cloneDeep(self.fxTopMovers));
     })
 };
 
