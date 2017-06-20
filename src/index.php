@@ -132,7 +132,6 @@ include 'includes/navbar.php'; ?>
 </div>
 <script>
 //    $(function () {
-        alert('ere')
         $('[data-toggle="popover"]').popover({
             trigger: 'focus'
         })
