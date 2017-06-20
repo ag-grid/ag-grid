@@ -217,12 +217,23 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
                 console.warn('ag-Grid: pivot is only valid in ag-Grid-Enterprise');
             }
         }
+
         if (_.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             console.warn('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width);
         }
 
         if (_.get(this, 'colDef.cellRendererParams.restrictToOneGroup', null)) {
             console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.originalRowGroupColumn is deprecated. You should use showRowGroup');
+        }
+
+        if (_.exists(this.colDef.cellFormatter)) {
+            console.warn('ag-Grid: colDef.cellFormatter was renamed to colDef.valueFormatter, please rename in your code as we will be dropping cellFormatter');
+            this.colDef.valueFormatter = this.colDef.cellFormatter;
+        }
+
+        if (_.exists(this.colDef.floatingCellFormatter)) {
+            console.warn('ag-Grid: colDef.floatingCellFormatter was renamed to colDef.floatingValueFormatter, please rename in your code as we will be dropping floatingCellFormatter');
+            this.colDef.floatingValueFormatter = this.colDef.floatingCellFormatter;
         }
 
     }

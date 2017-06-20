@@ -18,9 +18,9 @@ export class ValueFormatterService {
         let colDef = column.getColDef();
         // if floating, give preference to the floating formatter
         if (rowNode.floating) {
-            formatter = colDef.floatingCellFormatter ? colDef.floatingCellFormatter : colDef.cellFormatter;
+            formatter = colDef.floatingValueFormatter ? colDef.floatingValueFormatter : colDef.valueFormatter;
         } else {
-            formatter = colDef.cellFormatter;
+            formatter = colDef.valueFormatter;
         }
         let result: string = null;
         if (formatter) {
