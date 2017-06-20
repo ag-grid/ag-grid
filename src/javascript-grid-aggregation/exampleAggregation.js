@@ -23,7 +23,6 @@ var gridOptions = {
     groupColumnDef: {headerName: "Athlete",
         field: "athlete",
         width: 200,
-        comparator: agGrid.defaultGroupComparator,
         cellRenderer: 'group',
         cellRendererParams: {
             footerValueGetter: '"Total (" + x + ")"',

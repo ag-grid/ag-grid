@@ -33,7 +33,6 @@ var groupColumn = {
     },
     headerCheckboxSelection: true,
     // headerCheckboxSelectionFilteredOnly: true,
-    comparator: agGrid.defaultGroupComparator,
     cellRenderer: 'group',
     cellRendererParams: {
         checkbox: true

@@ -70,7 +70,6 @@ var groupColumn = {
             return params.data[params.colDef.field];
         }
     },
-    comparator: agGrid.defaultGroupComparator,
     cellRenderer: 'group',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
