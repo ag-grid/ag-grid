@@ -37,17 +37,24 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <h2 id="tree-data-example">Tree Data Example</h2>
+    <h2 id="tree-data-example">Simple Tree Data Example</h2>
 
-    <p>Below shows a simple example of providing already structured data. Notice that you can also provide
-    data to the group level nodes (Sausage, Spaceman and Winklepicker) - this is where you would put aggregation
-    values or group titles if needed.</p>
-
-    <p>Also take a look at the <a href="../example-file-browser/">File Browser</a> example for a full example.</p>
+    <p>
+        Below shows a simple example of providing already structured data. Notice that you can also provide
+        data to the group level nodes ('Mix of Names', '2000..2012' and 'Group Country') - this is where you
+        would put aggregation values or group titles if needed.
+    </p>
 
     <show-example example="exampleTree"></show-example>
 
+    <h2 id="file-explorer-example">Example - File Explorer</h2>
 
+    <p>
+        Below is a more interesting example, real world example. The example also includes
+        some additional formatting to make it look like Microsoft Windows file explorer.
+    </p>
+
+    <show-example example="../example-file-browser/fileBrowser"></show-example>
 
 </div>
 
