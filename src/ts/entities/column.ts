@@ -155,11 +155,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isRowGroupDisplayed(colId: string): boolean {
-        if (_.missing(this.colDef) || _.missing(this.colDef.rowGroupsDisplayed)) { return false; }
+        if (_.missing(this.colDef) || _.missing(this.colDef.showRowGroup)) { return false; }
 
-        let rowGroupsDisplayed: string | string[] = this.colDef.rowGroupsDisplayed;
+        let showingAllGroups = this.colDef.showRowGroup === true;
+        let showingThisGroup = this.colDef.showRowGroup === colId;
 
-        return rowGroupsDisplayed === '*' || rowGroupsDisplayed === colId;
+        return showingAllGroups || showingThisGroup;
     }
 
     public getCellRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string {
