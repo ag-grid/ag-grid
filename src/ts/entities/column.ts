@@ -155,11 +155,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isRowGroupDisplayed(colId: string): boolean {
-        if (_.missing(this.colDef) || _.missing(this.colDef.rowGroupsDisplayed)) { return false; }
+        if (_.missing(this.colDef) || _.missing(this.colDef.showRowGroup)) { return false; }
 
-        let rowGroupsDisplayed: string | string[] = this.colDef.rowGroupsDisplayed;
+        let showingAllGroups = this.colDef.showRowGroup === true;
+        let showingThisGroup = this.colDef.showRowGroup === colId;
 
-        return rowGroupsDisplayed === '*' || rowGroupsDisplayed === colId;
+        return showingAllGroups || showingThisGroup;
     }
 
     public getCellRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string {
@@ -205,6 +206,15 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             }
             if (_.exists(this.colDef.rowGroupIndex)) {
                 console.warn('ag-Grid: rowGroupIndex is only valid in ag-Grid-Enterprise');
+            }
+            if (_.exists(this.colDef.rowGroup)) {
+                console.warn('ag-Grid: rowGroup is only valid in ag-Grid-Enterprise');
+            }
+            if (_.exists(this.colDef.pivotIndex)) {
+                console.warn('ag-Grid: pivotIndex is only valid in ag-Grid-Enterprise');
+            }
+            if (_.exists(this.colDef.pivot)) {
+                console.warn('ag-Grid: pivot is only valid in ag-Grid-Enterprise');
             }
         }
         if (_.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {

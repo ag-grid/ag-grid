@@ -136,6 +136,9 @@ export interface ColDef extends AbstractColDef {
     rowGroupIndex?: number;
     rowGroup?: boolean;
 
+    /** Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group. */
+    showRowGroup?: string | boolean;
+
     /** To pivot by this column by default, either provide an index (eg pivotIndex=1), or set pivot=true. */
     pivotIndex?: number;
     pivot?: boolean;
@@ -182,9 +185,6 @@ export interface ColDef extends AbstractColDef {
 
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
-
-    /** What we are row grouping by can be an array of colIds, one colId or '*' */
-    rowGroupsDisplayed?: string;
 
     /** If true, GUI will allow adding this columns as a row group */
     enableRowGroup?: boolean;

@@ -1567,7 +1567,8 @@ export class ColumnController {
     private calculateColumnsForGroupDisplay(): void {
         this.groupDisplayColumns = [];
         let checkFunc = (col: Column) => {
-            if (col.getColDef() && _.exists(col.getColDef().rowGroupsDisplayed)) {
+            let colDef = col.getColDef();
+            if (colDef && _.exists(colDef.showRowGroup)) {
                 this.groupDisplayColumns.push(col);
             }
         };
