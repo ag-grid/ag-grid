@@ -290,7 +290,7 @@ colDef.cellRendererParams = {
 
     <show-example example="exampleGroupingAutoManyGroupColumns"></show-example>
 
-    <h3 id="replacingChildren">Replacing Groups with Children When Open</h3>
+    <h3 id="replacingChildren">Hide Open Parents</h3>
 
     <p>
         Depending on your preference, you may wish to hide parent rows when they are open.
