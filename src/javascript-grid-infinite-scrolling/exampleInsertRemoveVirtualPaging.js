@@ -10,7 +10,7 @@ var columnDefs = [
     },
     {headerName: "Make", field: "make"},
     {headerName: "Model", field: "model"},
-    {headerName: "Price", field: "price", cellFormatter: function(params) {
+    {headerName: "Price", field: "price", valueFormatter: function(params) {
         if (typeof params.value === 'number') {
             return '£' + params.value.toLocaleString();
         } else {

@@ -38,7 +38,7 @@ TopMoversGrid.prototype.init = function (fxDataService) {
                 cellRenderer: 'animateShowChange',
                 cellClass: 'align-right',
                 sort: 'desc',
-                cellFormatter(params) {
+                valueFormatter(params) {
                     return params.value.toFixed(2)
                 }
             },

@@ -479,7 +479,7 @@ var defaultCols = [
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
-        editable: true, newValueHandler: numberNewValueHandler, width: 150,
+        editable: true, valueParser: numberParser, width: 150,
         // aggFunc: 'sum',
         enableValue: true,
         cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
@@ -506,7 +506,7 @@ months.forEach(function (month) {
             'good-score': 'typeof x === "number" && x > 50000',
             'bad-score': 'typeof x === "number" && x < 10000'
         },
-        newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer,
+        valueParser: numberParser, cellRenderer: currencyRenderer,
         filterCellRenderer: currencyRenderer,
         filterParams:{
             clearButton: true
@@ -734,7 +734,7 @@ var COUNTRY_CODES = {
     Uruguay: "uy"
 };
 
-function numberNewValueHandler(params) {
+function numberParser(params) {
     var newValue = params.newValue;
     var valueAsNumber;
     if (newValue === null || newValue === undefined || newValue === '') {
@@ -742,13 +742,7 @@ function numberNewValueHandler(params) {
     } else {
         valueAsNumber = parseFloat(params.newValue);
     }
-    var field = params.colDef.field;
-    var data = params.data;
-    var valueChanged = data[field] !== valueAsNumber;
-    if (valueChanged) {
-        data[field] = valueAsNumber;
-    }
-    return valueChanged;
+    return valueAsNumber;
 }
 
 function PersonFilter() {
