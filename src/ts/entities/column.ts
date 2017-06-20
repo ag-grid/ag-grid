@@ -258,6 +258,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isCellEditable(rowNode: RowNode): boolean {
+
+        // only allow editing of groups if the user has this option enabled
+        if (rowNode.group && !this.gridOptionsWrapper.isEnableGroupEdit()) {
+            return false;
+        }
+
         return this.isColumnFunc(rowNode, this.colDef.editable);
     }
 

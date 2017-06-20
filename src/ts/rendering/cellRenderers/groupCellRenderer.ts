@@ -338,10 +338,12 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private onKeyDown(event: KeyboardEvent): void {
         if (_.isKeyPressed(event, Constants.KEY_ENTER)) {
-            // if (! this.params.node.isCellEditable()){
-            //     event.preventDefault();
-            //     this.onExpandOrContract();
-            // }
+            let cellEditable = this.params.column.isCellEditable(this.params.node);
+            if (cellEditable) {
+                return;
+            }
+            event.preventDefault();
+            this.onExpandOrContract();
         }
     }
 
