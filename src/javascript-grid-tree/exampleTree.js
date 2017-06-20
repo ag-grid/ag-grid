@@ -1,5 +1,5 @@
 var columnDefs = [
-    {headerName: "Group", cellRenderer: 'group'},
+    {headerName: "Group", field: 'group', cellRenderer: 'group'},
     {headerName: "Athlete", field: "athlete"},
     {headerName: "Year", field: "year"},
     {headerName: "Country", field: "country"}
@@ -12,7 +12,7 @@ var rowData = [
         {athlete: 'Michael Phelps', year: '2008', country: 'United States'},
         {athlete: 'Michael Phelps', year: '2008', country: 'United States'}
     ]},
-    {group: 'Group B', athlete: 'Sausage', year: 'Spaceman', country: 'Winklepicker',
+    {group: 'Group B', athlete: 'Mix of Names', year: '2000..2012', country: 'Group Country',
         participants: [
         {athlete: 'Natalie Coughlin', year: '2008', country: 'United States'},
         {athlete: 'Missy Franklin ', year: '2012', country: 'United States'},
@@ -45,11 +45,6 @@ function getNodeChildDetails(rowItem) {
             expanded: rowItem.group === 'Group C',
             // provide ag-Grid with the children of this group
             children: rowItem.participants,
-            // this is not used, however it is available to the cellRenderers,
-            // if you provide a custom cellRenderer, you might use it. it's more
-            // relavent if you are doing multi levels of groupings, not just one
-            // as in this example.
-            field: 'group',
             // the key is used by the default group cellRenderer
             key: rowItem.group
         };
