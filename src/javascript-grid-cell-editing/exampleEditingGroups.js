@@ -2,9 +2,11 @@ var columnDefs = [
     {headerName: "Group", field: 'group', cellRenderer: 'group',
         // we don't allow editing on the first column when it's a group
         // row, as this cell's value is taken from the group key, not the data
-        editable: function(params) {
-            return !params.node.group;
-        }},
+        // editable: function(params) {
+        //     return !params.node.group;
+        // }
+        editable: true
+        },
     {headerName: "Athlete", field: "athlete", editable: true},
     {headerName: "Year", field: "year", editable: true},
     {headerName: "Country", field: "country", editable: true}
@@ -37,6 +39,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
     debug: true,
+    enableSorting: true,
     getNodeChildDetails: getNodeChildDetails,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
