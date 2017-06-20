@@ -1,7 +1,7 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150, pinned: 'left'},
     {headerName: "Year", field: "year", width: 90, pinned: 'left'},
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
+    {headerName: "Country", field: "country", width: 120, rowGroup: true},
     {headerName: "Age", field: "age", width: 90, pinned: 'right'},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},

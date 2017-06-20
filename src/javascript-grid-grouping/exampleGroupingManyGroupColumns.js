@@ -1,20 +1,18 @@
 var columnDefs = [
 
-    // the first group column
-    {headerName: "Country", cellRenderer: 'group', field:'country', rowGroupIndex: 0,
-        cellRendererParams: {
-            // this tells the grid to only show 'country' groups in this column,
-            restrictToOneGroup: true
-        }, rowGroupsDisplayed: ['country']
+    // the first two columns are for displaying groups
+    {headerName: "Country",
+        // this tells the grid what values to put into the cell
+        showRowGroup: 'country',
+        // this tells the grid what to use to render the cell
+        cellRenderer: 'group'
     },
+    {headerName: "Year", showRowGroup: 'year', cellRenderer: 'group'},
 
-    // and second group column
-    {headerName: "Year", cellRenderer: 'group', field: "year", rowGroupIndex: 1,
-        cellRendererParams: {
-            // this tells the grid to only show 'year' groups in this column,
-            restrictToOneGroup: true
-        }, rowGroupsDisplayed: ['year']
-    },
+    // these are the two columns we use to group by. we also hide them, so there
+    // is no duplication with the values above
+    {field: 'country', rowGroup: true, hide: true},
+    {field: 'year', rowGroup: true, hide: true},
 
     {headerName: "Athlete", field: "athlete"},
     {headerName: "Gold", field: "gold"},
@@ -24,7 +22,8 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: null,
+    animateRows: true,
+    enableRangeSelection: true,
     // we are defining the group columns, so tell the grid we don't
     // want it to auto-generate group columns for us
     groupSuppressAutoColumn: true,

@@ -44,6 +44,9 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
 
+    <li>Big Breaking Change: aggregation data and group data are no longer stored in rowNode.data, instead they are stored in rowNode.groupData and rowNode.aggData</li>
+    <li>Removed property suppressUseColIdForGroups, because of new way of storing grouped data in the rowNode, it is not needed.</li>
+
     <h2>Version 10.1.x</h2>
 
     <h3>Version 10.1.0 [08-JUN-2017]</h3>

@@ -20,7 +20,7 @@ var columnDefs = [
     {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
     {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'},
     {headerName: "Total", field: "total", width: 100, aggFunc: 'sum'},
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
+    {headerName: "Country", field: "country", width: 120, rowGroup: true},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110}
@@ -41,10 +41,13 @@ function groupRowInnerRendererFunc(params) {
         html += '<img class="flag" border="0" width="20" height="15" src="https://flags.fmcdn.net/data/flags/mini/'+flagCode+'.png">'
     }
 
-    html += '<span class="groupTitle"> COUNTRY_NAME</span>'.replace('COUNTRY_NAME', params.node.key);
-    html += '<span class="medal gold"> Gold: GOLD_COUNT</span>'.replace('GOLD_COUNT', params.data.gold);
-    html += '<span class="medal silver"> Silver: SILVER_COUNT</span>'.replace('SILVER_COUNT', params.data.silver);
-    html += '<span class="medal bronze"> Bronze: BRONZE_COUNT</span>'.replace('BRONZE_COUNT', params.data.bronze);
+    var node = params.node;
+    var aggData = node.aggData;
+
+    html += '<span class="groupTitle"> COUNTRY_NAME</span>'.replace('COUNTRY_NAME', node.key);
+    html += '<span class="medal gold"> Gold: GOLD_COUNT</span>'.replace('GOLD_COUNT', aggData.gold);
+    html += '<span class="medal silver"> Silver: SILVER_COUNT</span>'.replace('SILVER_COUNT', aggData.silver);
+    html += '<span class="medal bronze"> Bronze: BRONZE_COUNT</span>'.replace('BRONZE_COUNT', aggData.bronze);
 
     return html;
 }
