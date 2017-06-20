@@ -9,7 +9,7 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2>JavaScript Big Data in a Small Browser</h2>
+        <h1>JavaScript Big Data in a Small Browser</h2>
     </div>
 </div>
 

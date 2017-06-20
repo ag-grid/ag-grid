@@ -18,6 +18,21 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">20th Jun 2017</div>
+    <div>
+        <a href="../weekly-update/20170620/">
+            <img src="../weekly-update/20170620/images/DevTeam.png" width="100%"/>
+        </a>
+    </div>
+    <div style="padding-top: 10px;">
+        <a href="../weekly-update/20170620/">
+            This Week's Update
+        </a>
+    </div>
+</div>
+
+
+<div class="news-box">
     <div class="news-header">14th Jun 2017</div>
     <div>
         <a href="../weekly-update/20170613/">

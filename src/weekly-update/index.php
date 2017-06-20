@@ -55,6 +55,26 @@ include('../includes/mediaHeader.php');
 
 <div class="weekly-news-section">
 
+    <a href="./20170620/">
+        <div class="weekly-news-title">
+            Preparing for Next Release, New Team Members Settling In
+        </div>
+        <div class="weekly-news-sub-title">
+            Niall Crosby, 20th June 2017
+        </div>
+    </a>
+
+    <div style="clear: both;"></div>
+
+    <div class="weekly-news-paragraph">
+        A welcome to our newest joiner Robert Clarke plus news on current development and our new office.
+    </div>
+
+</div>
+
+
+<div class="weekly-news-section">
+
     <a href="./20170613/">
         <div class="weekly-news-title">
             More New Joiners, JIRA's Countdown, More New Dev
