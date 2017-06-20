@@ -220,6 +220,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         if (_.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             console.warn('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width);
         }
+
+        if (_.get(this, 'colDef.cellRendererParams.restrictToOneGroup', null)) {
+            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.originalRowGroupColumn is deprecated. You should use showRowGroup');
+        }
+
     }
     
     public addEventListener(eventType: string, listener: Function): void {
