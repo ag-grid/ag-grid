@@ -3,11 +3,11 @@ var columnDefs = [
     // the first two columns are for displaying groups
     {headerName: "Country",
         // this tells the grid what values to put into the cell
-        rowGroupsDisplayed: 'country',
+        showRowGroup: 'country',
         // this tells the grid what to use to render the cell
         cellRenderer: 'group'
     },
-    {headerName: "Year", rowGroupsDisplayed: 'year', cellRenderer: 'group'},
+    {headerName: "Year", showRowGroup: 'year', cellRenderer: 'group'},
 
     // these are the two columns we use to group by. we also hide them, so there
     // is no duplication with the values above
