@@ -1191,6 +1191,25 @@ export class Utils {
         if (left && right == null) return false;
         return left === right;
     }
+
+
+    static get(source:{[p:string]:any}, expression:string, defaultValue:any): any{
+        if (source == null) return defaultValue;
+
+        if (expression.indexOf('.') > -1){
+            let fields:string[] = expression.split('.');
+            let thisKey:string = fields[0];
+            let nextValue: any = source[thisKey];
+            if (nextValue != null) {
+                return Utils.get(nextValue, fields.slice(1, fields.length).join('.'), defaultValue);
+            }else {
+                return defaultValue;
+            }
+        } else {
+            let nextValue: any = source[expression];
+            return nextValue != null ? nextValue : defaultValue;
+        }
+    }
 }
 
 export class NumberSequence {

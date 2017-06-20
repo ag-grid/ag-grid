@@ -14,12 +14,10 @@ import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import {RefSelector} from "../../widgets/componentAnnotations";
-import {GroupNameInfoParams, GroupValueService} from "../../groupValueService";
 
 let svgFactory = SvgFactory.getInstance();
 
 export interface GroupCellRendererParams extends ICellRendererParams{
-    restrictToOneGroup: boolean,
     pinned:string,
     padding:number,
     suppressPadding:boolean,
