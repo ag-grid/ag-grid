@@ -96,7 +96,8 @@ include('../../includes/mediaHeader.php');
     <div class="weekly-news-paragraph-title">New Feature: Pivot Total Columns</div>
 
     <div class="weekly-news-paragraph">
-        Robert has been working hard on his first new feature which is Pivot Total Columns. This feature
+        Robert has been working hard on his first new feature which is Pivot Total Columns. This feature allows collapsing and expanding 
+        of pivot column groups to reveal a 'total value' that corresponds to the group level and aggregation function supplied.
     </div>
 
 

@@ -67,7 +67,7 @@ include('../includes/mediaHeader.php');
     <div style="clear: both;"></div>
 
     <div class="weekly-news-paragraph">
-        A welcome to our newest joiner Robert Clarke plus news on current development and our new office.
+        This week we are finalising the next release while our new joiners are settling in nicely.
     </div>
 
 </div>
@@ -106,7 +106,7 @@ include('../includes/mediaHeader.php');
     <div style="clear: both;"></div>
 
     <div class="weekly-news-paragraph">
-        What do we say here?
+        The first of our updates, we describe what the team is working on and the latest news in the company.
     </div>
 
 </div>
