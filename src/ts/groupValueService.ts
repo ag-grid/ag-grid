@@ -51,7 +51,6 @@ export class GroupValueService {
             columnOfGroupedCol,
             node,
             formattedParams.scope,
-            formattedParams.rowIndex,
             unformatted
         );
     }

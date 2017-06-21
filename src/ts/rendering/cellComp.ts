@@ -1087,7 +1087,7 @@ export class CellComp extends Component {
         let cellRenderer = this.column.getCellRenderer();
         let floatingCellRenderer = this.column.getFloatingCellRenderer();
 
-        let valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.gridCell.rowIndex, this.value);
+        let valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.value);
 
         if (colDef.template) {
             // template is really only used for angular 1 - as people using ng1 are used to providing templates with
@@ -1130,7 +1130,7 @@ export class CellComp extends Component {
     }
 
     private formatValue(value: any): any {
-        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.gridCell.rowIndex, value);
+        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, value);
     }
 
     private createRendererAndRefreshParams(valueFormatted: string, cellRendererParams: {}): ICellRendererParams {

@@ -216,7 +216,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let columnToUse: Column = params.node.rowGroupColumn ? params.node.rowGroupColumn : params.column;
 
         let groupName = this.getGroupName();
-        let valueFormatted = this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, params.rowIndex, groupName);
+        let valueFormatted = this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName);
 
         let groupedColCellRenderer = columnToUse.getCellRenderer();
 
