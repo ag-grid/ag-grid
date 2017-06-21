@@ -755,12 +755,6 @@ export class CellComp extends Component {
     }
 
     public isCellEditable() {
-
-        // only allow editing of groups if the user has this option enabled
-        if (this.node.group && !this.gridOptionsWrapper.isEnableGroupEdit()) {
-            return false;
-        }
-
         return this.column.isCellEditable(this.node);
     }
 

@@ -14,12 +14,10 @@ import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import {RefSelector} from "../../widgets/componentAnnotations";
-import {GroupNameInfoParams, GroupValueService} from "../../groupValueService";
 
 let svgFactory = SvgFactory.getInstance();
 
 export interface GroupCellRendererParams extends ICellRendererParams{
-    restrictToOneGroup: boolean,
     pinned:string,
     padding:number,
     suppressPadding:boolean,
@@ -338,10 +336,12 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private onKeyDown(event: KeyboardEvent): void {
         if (_.isKeyPressed(event, Constants.KEY_ENTER)) {
-            // if (! this.params.node.isCellEditable()){
-            //     event.preventDefault();
-            //     this.onExpandOrContract();
-            // }
+            let cellEditable = this.params.column.isCellEditable(this.params.node);
+            if (cellEditable) {
+                return;
+            }
+            event.preventDefault();
+            this.onExpandOrContract();
         }
     }
 

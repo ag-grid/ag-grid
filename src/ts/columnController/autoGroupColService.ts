@@ -8,7 +8,7 @@ import {ColDef} from "../entities/colDef";
 export class AutoGroupColService {
 
     public static GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
-    public static GROUP_AUTO_COLUMN_BUNDLE_ID = AutoGroupColService.GROUP_AUTO_COLUMN_ID +  '_bundle';
+    public static GROUP_AUTO_COLUMN_BUNDLE_ID = AutoGroupColService.GROUP_AUTO_COLUMN_ID;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
@@ -72,10 +72,10 @@ export class AutoGroupColService {
             }
 
             colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
-            autoColDef.rowGroupsDisplayed = rowGroupCol.getColId();
+            autoColDef.showRowGroup = rowGroupCol.getColId();
         } else {
             colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
-            autoColDef.rowGroupsDisplayed = '*';
+            autoColDef.showRowGroup = true;
         }
 
         let newCol = new Column(autoColDef, colId, true);

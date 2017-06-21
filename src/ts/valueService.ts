@@ -85,16 +85,16 @@ export class ValueService {
             rowNode.data = {};
         }
 
-        let field = column.getColDef().field;
-        let newValueHandler = column.getColDef().newValueHandler;
+        let {field, newValueHandler, valueSetter, valueParser} = column.getColDef();
 
         // need either a field or a newValueHandler for this to work
-        if (_.missing(field) && _.missing(newValueHandler)) {
-            console.warn(`ag-Grid: you need either field or newValueHandler set on colDef for editing to work`);
+        if (_.missing(field) && _.missing(newValueHandler) && _.missing(valueSetter)) {
+            // we don't tell user about newValueHandler, as that is deprecated
+            console.warn(`ag-Grid: you need either field or valueSetter set on colDef for editing to work`);
             return;
         }
 
-        let paramsForCallbacks = {
+        let params = {
             node: rowNode,
             data: rowNode.data,
             oldValue: this.getValue(column, rowNode),
@@ -104,16 +104,23 @@ export class ValueService {
             context: this.gridOptionsWrapper.getContext()
         };
 
+        let parsedValue = _.exists(valueParser) ? valueParser(params) : newValue;
+        params.newValue = parsedValue;
+
         let valueWasDifferent: boolean;
-        if (newValueHandler) {
-            valueWasDifferent = newValueHandler(paramsForCallbacks);
-            // in case use is implementing an old version, we default
-            // the return value to true, so we always refresh.
-            if (valueWasDifferent === undefined) {
-                valueWasDifferent = true;
-            }
+        if (_.exists(newValueHandler)) {
+            valueWasDifferent = newValueHandler(params);
+        } else if (_.exists(valueSetter)) {
+            valueWasDifferent = valueSetter(params);
         } else {
-            valueWasDifferent = this.setValueUsingField(data, field, newValue, column.isFieldContainsDots());
+            valueWasDifferent = this.setValueUsingField(data, field, parsedValue, column.isFieldContainsDots());
+        }
+
+        // in case user forgot to return something (possible if they are not using TypeScript
+        // and just forgot, or using an old newValueHandler we didn't always expect a return
+        // value here), we default the return value to true, so we always refresh.
+        if (valueWasDifferent === undefined) {
+            valueWasDifferent = true;
         }
 
         // if no change to the value, then no need to do the updating, or notifying via events.
@@ -124,12 +131,12 @@ export class ValueService {
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
 
-        paramsForCallbacks.newValue = this.getValue(column, rowNode);
+        params.newValue = this.getValue(column, rowNode);
 
         if (typeof column.getColDef().onCellValueChanged === 'function') {
-            column.getColDef().onCellValueChanged(paramsForCallbacks);
+            column.getColDef().onCellValueChanged(params);
         }
-        this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
+        this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, params);
     }
 
     private setValueUsingField(data: any, field: string, newValue: any, isFieldContainsDots: boolean): boolean {

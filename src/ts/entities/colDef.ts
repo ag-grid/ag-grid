@@ -80,6 +80,9 @@ export interface ColDef extends AbstractColDef {
     /** Expression or function to get the cells value. */
     valueGetter?: string | Function;
 
+    /** If not using a field, then this puts the value into the cell */
+    valueSetter?: (params: any) => boolean;
+
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field. */
     keyCreator?: Function;
@@ -120,10 +123,18 @@ export interface ColDef extends AbstractColDef {
     floatingCellRendererFramework?: any;
     floatingCellRendererParams?: any;
 
-    /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    /** DEPRECATED - A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     cellFormatter?: (params: any) => string;
-    /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    /** DEPRECATED - A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     floatingCellFormatter?: (params: any) => string;
+
+    /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    valueFormatter?: (params: any) => string;
+    /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    floatingValueFormatter?: (params: any) => string;
+
+    /** Gets called after editing, converts the value in the cell. */
+    valueParser?: (params: any) => any;
 
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
     aggFunc?: string | IAggFunc;
@@ -135,6 +146,9 @@ export interface ColDef extends AbstractColDef {
     /** To group by this column by default, either provide an index (eg rowGroupIndex=1), or set rowGroup=true. */
     rowGroupIndex?: number;
     rowGroup?: boolean;
+
+    /** Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group. */
+    showRowGroup?: string | boolean;
 
     /** To pivot by this column by default, either provide an index (eg pivotIndex=1), or set pivot=true. */
     pivotIndex?: number;
@@ -158,6 +172,10 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if no menu should be shown for this column header. */
     suppressMenu?: boolean;
 
+    /** The menu tabs to show, and in which order, the valid values for this property are:
+     * filterMenuTab, generalMenuTab, columnsMenuTab **/
+    menuTabs?:string[]
+
     /** Set to true if no sorting should be done for this column. */
     suppressSorting?: boolean;
 
@@ -178,9 +196,6 @@ export interface ColDef extends AbstractColDef {
 
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
-
-    /** What we are row grouping by can be an array of colIds, one colId or '*' */
-    rowGroupsDisplayed?: string;
 
     /** If true, GUI will allow adding this columns as a row group */
     enableRowGroup?: boolean;

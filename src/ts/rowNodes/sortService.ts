@@ -122,7 +122,13 @@ export class SortService {
             let groupDisplayCols = this.columnController.getGroupDisplayColumns();
             groupDisplayCols.forEach( groupDisplayCol => {
 
-                let displayingGroupKey: string = groupDisplayCol.getColDef().rowGroupsDisplayed;
+                let showRowGroup = groupDisplayCol.getColDef().showRowGroup;
+                if (typeof showRowGroup !== 'string') {
+                    console.error('ag-Grid: groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup')
+                    return;
+                }
+                let displayingGroupKey: string = <string> showRowGroup;
+
                 let rowGroupColumn = this.columnController.getPrimaryColumn(displayingGroupKey);
 
                 let thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
