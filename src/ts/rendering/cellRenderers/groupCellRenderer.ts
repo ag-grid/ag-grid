@@ -14,7 +14,7 @@ import {GridApi} from "../../gridApi";
 import {CellRendererService} from "../cellRendererService";
 import {ValueFormatterService} from "../valueFormatterService";
 import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
-import {ColumnController} from "../../columnController/columnController";
+import { ColumnController, ColumnApi } from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import { QuerySelector, RefSelector } from "../../widgets/componentAnnotations";
 import { IFrameworkFactory } from "../../interfaces/iFrameworkFactory";
@@ -344,6 +344,29 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private createLeafCell(): void {
         if (_.exists(this.params.value)) {
+
+            if(this.params.column.colDef.cellRendererParams
+            && _.exists(this.params.column.colDef.cellRendererParams.childRowCellRendererColIndex))
+            {
+                let columnAPI: ColumnApi = this.params.columnApi;
+                let colDefForChildRowsOfGroup = columnAPI.getAllColumns()[this.params.column.colDef.cellRendererParams.childRowCellRendererColIndex].getColDef();
+
+                if(colDefForChildRowsOfGroup && colDefForChildRowsOfGroup.cellRendererFramework)
+                {
+                    let frameworkCellRenderer = this.frameworkFactory.colDefCellRenderer(colDefForChildRowsOfGroup);
+            
+                    let params = this.params;
+                     // because we are talking about the different column to the original, any user provided params
+                    // are for the wrong column, so need to copy them in again.
+                    if (colDefForChildRowsOfGroup.cellRendererParams) {
+                        _.assign(params, colDefForChildRowsOfGroup.cellRendererParams);
+                    }
+                    this.cellRendererService.useCellRenderer(frameworkCellRenderer, this.eValue, params);
+                    return;
+                }
+            }
+            
+
             this.eValue.innerHTML = this.params.value;
         }
     }

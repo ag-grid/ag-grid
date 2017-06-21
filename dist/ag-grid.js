@@ -20034,6 +20034,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    GroupCellRenderer.prototype.createLeafCell = function () {
 	        if (utils_1.Utils.exists(this.params.value)) {
+	            if (this.params.column.colDef.cellRendererParams
+	                && utils_1.Utils.exists(this.params.column.colDef.cellRendererParams.childRowCellRendererColIndex)) {
+	                var columnAPI = this.params.columnApi;
+	                var colDefForChildRowsOfGroup = columnAPI.getAllColumns()[this.params.column.colDef.cellRendererParams.childRowCellRendererColIndex].getColDef();
+	                if (colDefForChildRowsOfGroup && colDefForChildRowsOfGroup.cellRendererFramework) {
+	                    var frameworkCellRenderer = this.frameworkFactory.colDefCellRenderer(colDefForChildRowsOfGroup);
+	                    var params = this.params;
+	                    // because we are talking about the different column to the original, any user provided params
+	                    // are for the wrong column, so need to copy them in again.
+	                    if (colDefForChildRowsOfGroup.cellRendererParams) {
+	                        utils_1.Utils.assign(params, colDefForChildRowsOfGroup.cellRendererParams);
+	                    }
+	                    this.cellRendererService.useCellRenderer(frameworkCellRenderer, this.eValue, params);
+	                    return;
+	                }
+	            }
 	            this.eValue.innerHTML = this.params.value;
 	        }
 	    };
