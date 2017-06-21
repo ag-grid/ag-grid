@@ -15,6 +15,7 @@ PriceChangesGrid.prototype.init = function (exchangeService,
         onSelectionChanged: this.onSelectionChanged.bind(this),
         getRowNodeId: this.getRowNodeId,
         enableSorting: true,
+        enableRangeSelection: true,
         rowSelection: 'single',
         columnDefs: [
             {

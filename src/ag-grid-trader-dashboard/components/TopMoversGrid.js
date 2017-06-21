@@ -10,6 +10,7 @@ TopMoversGrid.prototype.init = function (fxDataService) {
         enableFilter:false,
         enableSorting:true,
         animateRows:true,
+        enableRangeSelection: true,
         deltaRowDataMode:true,
         rowData: fxDataService.getCurrentFxTopMovers(),
         columnDefs: [

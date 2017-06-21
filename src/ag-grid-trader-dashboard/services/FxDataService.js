@@ -170,7 +170,7 @@ const FX_DELTA_HEADERS = [
     return {
         field: symbol,
         headerName: symbol,
-        width: 67,
+        width: 87,
         cellClass: 'align-right',
         cellRenderer: 'animateShowChange',
         cellClassRules: {

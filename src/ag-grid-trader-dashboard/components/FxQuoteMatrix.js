@@ -6,7 +6,8 @@ FxQuoteMatrix.prototype.init = function (fxDataService) {
     this.gridOptions = {
         onGridReady: this.onGridReady.bind(this),
         getRowNodeId: this.getRowNodeId,
-        columnDefs: fxDataService.getFxMatrixHeaderNames()
+        columnDefs: fxDataService.getFxMatrixHeaderNames(),
+        enableRangeSelection: true
     };
 };
 
