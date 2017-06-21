@@ -6,19 +6,19 @@
         {
             headerName: "Bid", field: "bid", width: 100,
             cellClass: 'cell-number',
-            cellFormatter: numberFormatter,
+            valueFormatter: numberFormatter,
             cellRenderer: 'animateShowChange'
         },
         {
             headerName: "Mid", field: "mid", width: 100,
             cellClass: 'cell-number',
-            cellFormatter: numberFormatter,
+            valueFormatter: numberFormatter,
             cellRenderer: 'animateShowChange'
         },
         {
             headerName: "Ask", field: "ask", width: 100,
             cellClass: 'cell-number',
-            cellFormatter: numberFormatter,
+            valueFormatter: numberFormatter,
             cellRenderer: 'animateShowChange'
         },
         {

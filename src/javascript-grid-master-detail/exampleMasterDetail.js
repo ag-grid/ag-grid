@@ -81,14 +81,14 @@ var masterColumnDefs = [
     },
     {headerName: 'Account', field: 'account'},
     {headerName: 'Calls', field: 'totalCalls', suppressFilter:true},
-    {headerName: 'Minutes', field: 'totalMinutes', cellFormatter: minuteCellFormatter, suppressFilter:true}
+    {headerName: 'Minutes', field: 'totalMinutes', valueFormatter: minuteCellFormatter, suppressFilter:true}
 ];
 
 var detailColumnDefs = [
     {headerName: 'Call ID', field: 'callId', cellClass: 'call-record-cell'},
     {headerName: 'Direction', field: 'direction', cellClass: 'call-record-cell'},
     {headerName: 'Number', field: 'number', cellClass: 'call-record-cell'},
-    {headerName: 'Duration', field: 'duration', cellClass: 'call-record-cell', cellFormatter: secondCellFormatter},
+    {headerName: 'Duration', field: 'duration', cellClass: 'call-record-cell', valueFormatter: secondCellFormatter},
     {headerName: 'Switch', field: 'switchCode', cellClass: 'call-record-cell'}
 ];
 

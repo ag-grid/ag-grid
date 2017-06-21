@@ -257,6 +257,11 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to get grid to flash the cell when it's refreshed.</td>
         </tr>
         <tr>
+            <th>menuTabs</th>
+            <td>Set to an array containing zero, one or many of the following options 'filterMenuTab', 'generalMenuTab'
+                and 'columnsMenuTab'. This is used to figure out which menu tabs and in which order the tabs are shown</td>
+        </tr>
+        <tr>
             <th>suppressMenu</th>
             <td>Set to true if no menu should be shown for this column header.</td>
         </tr>

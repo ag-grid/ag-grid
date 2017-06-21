@@ -34,14 +34,34 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
+
     <show-complex-example example="exampleAutoHeightFullWidth.html"
                           sources="{
-                                [
-                                    { root: './', files: 'exampleAutoHeightFullWidth.html,exampleAutoHeightFullWidth.js' }
-                                ]
-                              }"
+                        [
+                            { root: './', files: 'exampleAutoHeightFullWidth.html,exampleAutoHeightFullWidth.js' }
+                        ]
+                      }"
                           exampleheight="500px">
     </show-complex-example>
+
+    <hr/>
+
+    <h2 id="tree-data-vertical-scroll-location">Expanding Groups &amp; Vertical Scroll Location</h2>
+
+    <p>
+        Depending on your scroll position the last item's group data may not be visible when
+        clicking on the expand icon.
+    </p>
+    <p>
+        You can resolve this by using the function <strong>api.ensureIndexVisible()</strong>.
+        This ensures the index is visible, scrolling the table if needed.
+    </p>
+    <p>
+        In the example below, if you expand a group at the bottom, the grid will scroll so all the
+        children of the group are visible.
+    </p>
+
+    <show-example example="exampleTreeScroll"></show-example>
 
 </div>
 

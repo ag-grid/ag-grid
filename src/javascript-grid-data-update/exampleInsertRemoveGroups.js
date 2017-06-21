@@ -1,6 +1,6 @@
 var columnDefs = [
     {headerName: "Category", field: "category", rowGroupIndex: 1, hide: true},
-    {headerName: "Price", field: "price", aggFunc: 'sum', cellFormatter: poundFormatter},
+    {headerName: "Price", field: "price", aggFunc: 'sum', valueFormatter: poundFormatter},
     {headerName: "Zombies", field: "zombies"},
     {headerName: "Style", field: "style"},
     {headerName: "Clothes", field: "clothes"},

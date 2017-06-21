@@ -1,5 +1,5 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 200, cellRenderer: 'group', rowGroupsDisplayed: '*'},
+    {headerName: "Athlete", field: "athlete", width: 200, cellRenderer: 'group', showRowGroup: true},
     // this column uses min and max func
     {headerName: "minMax(age)", field: "age", width: 90, aggFunc: minAndMaxAggFunction},
     // here we use an average func and specify the function directly

@@ -3,7 +3,7 @@ var columnDefs = [
         // although we are showing the groups in this column, we still
         // want to show a field (which we are not grouping by) in the leaf level
         field: 'athlete',
-        rowGroupsDisplayed: '*',
+        showRowGroup: true,
         cellRenderer: 'group'
     },
 

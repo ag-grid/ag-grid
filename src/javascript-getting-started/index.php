@@ -236,7 +236,7 @@ var gridOptions = {
 
     <img src="../images/js-gs-filtering.png" style="display: block;margin: auto;height: 200px;">
 
-    <h3>Summary</h3>
+    <h3 id="summary">Summary</h3>
 
     <p>We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
         the left
