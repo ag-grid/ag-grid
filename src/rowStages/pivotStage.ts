@@ -31,6 +31,7 @@ export class PivotStage implements IRowNodeStage {
     private pivotColumnDefs: ColDef[];
 
     private aggregationColumnsHashLastTime: string;
+    private aggregationFuncsHashLastTime: string;
 
     public execute(params: StageExecuteParams): void {
         let rootNode = params.rowNode;
@@ -54,11 +55,14 @@ export class PivotStage implements IRowNodeStage {
 
         let aggregationColumns = this.columnController.getValueColumns();
         let aggregationColumnsHash = aggregationColumns.map( (column)=> column.getId() ).join('#');
+        let aggregationFuncsHash = aggregationColumns.map( (column)=> column.getAggFunc().toString() ).join('#');
 
         let aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
+        let aggregationFuncsChanged = this.aggregationColumnsHashLastTime !== aggregationFuncsHash;
         this.aggregationColumnsHashLastTime = aggregationColumnsHash;
+        this.aggregationFuncsHashLastTime = aggregationFuncsHash;
 
-        if (uniqueValuesChanged || aggregationColumnsChanged) {
+        if (uniqueValuesChanged || aggregationColumnsChanged || aggregationFuncsChanged) {
             let result = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnGroupDefs = result.pivotColumnGroupDefs;
             this.pivotColumnDefs = result.pivotColumnDefs;
