@@ -1,7 +1,3 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 
 <style>
     html, body {
@@ -94,13 +90,14 @@
                 <div>
                     <div style="float: left; margin-right: 25px">
                         <div style="width: 700px;">
+                            Click on a row to view historical trends.
                             <a tabindex="0"
                                style="float: right"
                                data-toggle="popover"
                                data-trigger="focus"
                                data-html="true"
                                title="Subscription Based Updates"
-                               data-content="Utilises a mechanism whereby a service is passed a callback per row, which is fired when that row's data changes. The Grid updates the row data with the Transaction API.<br/><br/>Only changed rows are re-rendered for improved performance.<br/><br/>Click on a row to view historical trends."><i
+                               data-content="Utilises a mechanism whereby a service is passed a callback per row, which is fired when that row's data changes. The Grid updates the row data with the Transaction API.<br/><br/>Only changed rows are re-rendered for improved performance."><i
                                         class="fa fa-question-circle-o" aria-hidden="true"></i></a>
                         </div>
                         <div id="priceChangesGrid" style="clear:both;height: 410px; width: 700px"
