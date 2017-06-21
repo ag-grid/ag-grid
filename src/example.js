@@ -108,7 +108,7 @@ var gridOptions = {
     //     return data.name;
     // },
     // suppressAsyncEvents: true,
-    suppressAggAtRootLevel: true,
+    // suppressAggAtRootLevel: true,
     floatingFilter:true,
 //debug: true,
 //     editType: 'fullRow',
@@ -116,6 +116,7 @@ suppressEnterprise: true,
 //     debug: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
+    pivotTotals: true,
 //minColWidth: 50,
 //maxColWidth: 300,
 rowBuffer: 0,

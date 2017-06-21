@@ -5,7 +5,7 @@ if (!isset($rootFolder)) {
 }
 ?>
 
-<header class="Header navbar navbar-inverse navbar-logo navbar-hiddenxs">
+<header class="Header navbar navbar-inverse navbar-logo navbar-hiddenxs" style="margin-bottom: 0">
     <div class="container">
         <div class="row">
             <a class="visible-xs navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" id="nav-toggle" href="javascript:void(0);">
