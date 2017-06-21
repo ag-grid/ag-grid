@@ -78,10 +78,10 @@ export interface ColDef extends AbstractColDef {
     headerTooltip?: string;
 
     /** Expression or function to get the cells value. */
-    valueGetter?: string | Function;
+    valueGetter?: (params: ValueGetterParams) => any | string;
 
     /** If not using a field, then this puts the value into the cell */
-    valueSetter?: (params: any) => boolean;
+    valueSetter?: (params: ValueSetterParams) => boolean | string;
 
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field. */
@@ -129,12 +129,12 @@ export interface ColDef extends AbstractColDef {
     floatingCellFormatter?: (params: any) => string;
 
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    valueFormatter?: (params: any) => string;
+    valueFormatter?: (params: ValueFormatterParams) => string | string;
     /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    floatingValueFormatter?: (params: any) => string;
+    floatingValueFormatter?: (params: ValueFormatterParams) => string | string;
 
     /** Gets called after editing, converts the value in the cell. */
-    valueParser?: (params: any) => any;
+    valueParser?: (params: ValueParserParams) => any | string;
 
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
     aggFunc?: string | IAggFunc;
@@ -300,4 +300,31 @@ export interface GetQuickFilterTextParams {
     data: any;
     column: Column;
     colDef: ColDef;
+}
+
+export interface BaseColDefParams {
+    node: any,
+    data: RowNode,
+    colDef: ColDef,
+    column: Column,
+    api: GridApi,
+    columnApi: ColumnApi,
+    context: any
+}
+
+export interface ValueGetterParams extends BaseColDefParams {
+    getValue: (field: string) => any
+}
+
+export interface NewValueParams extends BaseColDefParams {
+    oldValue: any,
+    newValue: any
+}
+
+export interface ValueSetterParams extends NewValueParams {}
+
+export interface ValueParserParams extends NewValueParams {}
+
+export interface ValueFormatterParams extends BaseColDefParams {
+    value: any;
 }

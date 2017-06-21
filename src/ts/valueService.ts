@@ -1,7 +1,7 @@
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {ExpressionService} from "./expressionService";
 import {ColumnController} from "./columnController/columnController";
-import {ColDef} from "./entities/colDef";
+import {ColDef, NewValueParams, ValueGetterParams} from "./entities/colDef";
 import {Autowired, Bean, PostConstruct} from "./context/context";
 import {RowNode} from "./entities/rowNode";
 import {Column} from "./entities/column";
@@ -94,24 +94,26 @@ export class ValueService {
             return;
         }
 
-        let params = {
+        let params: NewValueParams = {
             node: rowNode,
             data: rowNode.data,
             oldValue: this.getValue(column, rowNode),
             newValue: newValue,
             colDef: column.getColDef(),
+            column: column,
             api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext()
         };
 
-        let parsedValue = _.exists(valueParser) ? valueParser(params) : newValue;
+        let parsedValue = _.exists(valueParser) ? this.expressionService.evaluate(valueParser, params) : newValue;
         params.newValue = parsedValue;
 
         let valueWasDifferent: boolean;
         if (_.exists(newValueHandler)) {
             valueWasDifferent = newValueHandler(params);
         } else if (_.exists(valueSetter)) {
-            valueWasDifferent = valueSetter(params);
+            valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
         } else {
             valueWasDifferent = this.setValueUsingField(data, field, parsedValue, column.isFieldContainsDots());
         }
@@ -166,27 +168,20 @@ export class ValueService {
         return !valuesAreSame;
     }
 
-    private executeValueGetter(valueGetter: any, data: any, column: Column, node: RowNode): any {
+    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, node: RowNode): any {
 
-        let context = this.gridOptionsWrapper.getContext();
-        let api = this.gridOptionsWrapper.getApi();
-
-        let params = {
+        let params: ValueGetterParams = {
             data: data,
             node: node,
+            column: column,
             colDef: column.getColDef(),
-            api: api,
-            context: context,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            context: this.gridOptionsWrapper.getContext(),
             getValue: this.getValueCallback.bind(this, node)
         };
 
-        if (typeof valueGetter === 'function') {
-            // valueGetter is a function, so just call it
-            return valueGetter(params);
-        } else if (typeof valueGetter === 'string') {
-            // valueGetter is an expression, so execute the expression
-            return this.expressionService.evaluate(valueGetter, params);
-        }
+        return this.expressionService.evaluate(valueGetter, params);
     }
 
     private getValueCallback(node: RowNode, field: string): any {
