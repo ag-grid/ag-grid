@@ -250,6 +250,9 @@ export interface ColDef extends AbstractColDef {
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotValueColumn?: Column;
 
+    /** Never set this, it is used internally by grid when doing in-grid pivoting */
+    pivotTotalColumnIds?: string[];
+
     /** The custom header component to be used for rendering the component header. If none specified the default ag-Grid is used**/
     headerComponent?:{new(): any}
     /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/

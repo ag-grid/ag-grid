@@ -162,6 +162,7 @@ export class GridOptionsWrapper {
     public isRowSelectionMulti() { return this.gridOptions.rowSelection === 'multiple'; }
     public getContext() { return this.gridOptions.context; }
     public isPivotMode() { return isTrue(this.gridOptions.pivotMode); }
+    public isPivotTotals() { return isTrue(this.gridOptions.pivotTotals); }
 
     public isRowModelInfinite() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE; }
     public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }

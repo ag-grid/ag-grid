@@ -80,6 +80,7 @@ export interface GridOptions {
     suppressFocusAfterRefresh?: boolean;
     rowModelType?: string;
     pivotMode?: boolean;
+    pivotTotals?: boolean;
     enableRangeSelection?: boolean;
     suppressEnterprise?: boolean;
     // enterprise only
