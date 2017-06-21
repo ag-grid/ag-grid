@@ -41,6 +41,9 @@ include '../documentation-main/documentation_header.php';
         <li>AG-154 - Typing non-latin letters on focused cell now starts cell editing.</li>
         <li>AG-73 - Now when editing or updating data, if value is not different, data is not updated, cell is not refreshed and no 'valueChangedEvent' fired. Also impacts when tabbing while editing, previously no change was still an edit, no now change is no change.</li>
         <li>AG-543 - Bugfix - Regression/Breaking Change - rows are inserted in reverse order</li>
+        <li>AG-517 - Review of valueGetters and valueFormatters and introduced valueSetters and valueParsers.
+            See new documentation page <a href="../javascript-grid-value-getters/">value getters, setters, parsers and formatters</a>
+            for details.</li>
     </ul>
 
 
