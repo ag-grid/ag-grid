@@ -154,8 +154,8 @@ include '../documentation-main/documentation_header.php';
                 to have different rows editable.</td>
         </tr>
         <tr>
-            <th>newValueHandler(params)<br/>onCellValueChanged(params)</th>
-            <td>Callbacks for editing. See editing section for further details.</td>
+            <th>onCellValueChanged(params)</th>
+            <td>Callback for after the value of a cell has changed, due to editing or the application calling api.setValue().</td>
         </tr>
         <tr>
             <th>volatile</th>
@@ -174,23 +174,12 @@ include '../documentation-main/documentation_header.php';
             <th>cellEditor<br/>cellEditorFramework</th>
             <td>cellEditor to use for this column.</td>
         </tr>
-        <tr>
-            <th>cellFormatter</th>
-            <td>A function for formatting a cell.</td>
-        </tr>
-        <tr>
-            <th>floatingCellFormatter</th>
-            <td>A function for formatting a floating cell. Floating cells will use floatingCellRenderer if available,
-                if not then cellFormatter.</td>
-        </tr>
-        <tr>
-            <th>valueGetter(params)</th>
-            <td>Expression or function to get the cells value.</td>
-        </tr>
-        <tr>
-            <th>headerValueGetter(params)</th>
-            <td>Expression or function to get the cells value.</td>
-        </tr>
+
+        <?php include '../javascript-grid-value-getters/valuesAndFormattersProperties.php' ?>
+        <?php printPropertiesRows($valuesAndFormattersProperties) ?>
+
+        <?php printPropertiesRows($valuesAndFormattersMoreProperties) ?>
+
         <tr>
             <th>keyCreator(params)</th>
             <td>Function to return the key for a value - use this if the value is an object (not a primitive type) and you

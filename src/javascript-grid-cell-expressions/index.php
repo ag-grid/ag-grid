@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2 id="cell-expressions">Cell Expressions</h2>
 
     <p>
-        In the section on <a href="../javascript-grid-value-getters/">value getters</a>
+        In the section on <a href="../javascript-grid-value-getters/#value-getter-expressions">value getters</a>
         you will have seen how you can use expressions when defining how to get the value for
         a cell. However a shortcoming of this approach, is that the expression belongs to
         the column and cannot be defined as part of the data.
