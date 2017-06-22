@@ -42,10 +42,9 @@ include '../documentation-main/documentation_header.php';
         <li>AG-73 - Now when editing or updating data, if value is not different, data is not updated, cell is not refreshed and no 'valueChangedEvent' fired. Also impacts when tabbing while editing, previously no change was still an edit, no now change is no change.</li>
         <li>AG-543 - Bugfix - Regression/Breaking Change - rows are inserted in reverse order</li>
         <li>AG-517 - Review of valueGetters and valueFormatters and introduced valueSetters and valueParsers.
-            See new documentation page <a href="../javascript-grid-value-getters/">value getters, setters, parsers and formatters</a>
-            for details.</li>
+            See new documentation pages <a href="../javascript-grid-value-getters/">Values and Expressions</a>
+            and <a href="../javascript-grid-cell-expressions/">Cell Expressions</a> for details.</li>
     </ul>
-
 
     <li>Big Breaking Change: aggregation data and group data are no longer stored in rowNode.data, instead they are stored in rowNode.groupData and rowNode.aggData</li>
     <li>Removed property suppressUseColIdForGroups, because of new way of storing grouped data in the rowNode, it is not needed.</li>

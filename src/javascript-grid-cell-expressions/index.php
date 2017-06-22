@@ -62,6 +62,35 @@ colDef = {
 
     <show-example example="exampleValuesAndFormattersExpressions"></show-example>
 
+    <h2>Variables to Expressions</h2>
+
+    <p>
+        The following variables are available to the expression with the following params mapping:
+    </p>
+
+    <ul>
+        <li><b>x</b> => Mapped from params.value</li>
+        <li><b>value</b> => Mapped from params.value</li>
+        <li><b>oldValue</b> => Mapped from params.oldValue</li>
+        <li><b>newValue</b> => Mapped from params.newValue</li>
+        <li><b>node</b> => Mapped from params.node</li>
+        <li><b>data</b> => Mapped from params.data</li>
+        <li><b>colDef</b> => Mapped from params.colDef</li>
+        <li><b>column</b> => Mapped from params.column</li>
+        <li><b>columnGroup</b> => Mapped from params.columnGroup</li>
+        <li><b>getValue</b> => Mapped from params.getValue</li>
+        <li><b>api</b> => Mapped from params.api</li>
+        <li><b>columnApi</b> => Mapped from params.columnApi</li>
+        <li><b>ctx</b> => Mapped from params.context</li>
+    </ul>
+
+    <p>
+        For example, for <code>valueFormatter</code>'s, you can access to the value via
+        the 'x' and 'value' attributes. However in <code>valueGetter</code>'s, the 'x'
+        and 'value' will be undefined as these are not part of the <code>valueGetter</code>
+        params.
+    </p>
+
     <h2>Column Definition Expressions vs Functions</h2>
 
     <p>
@@ -80,38 +109,6 @@ colDef = {
             makes them candidates for saving in offline storage (eg storing a report definition in a database).</li>
         <li>They make the definitions more compact, thus may make your code more maintainable.</li>
     </ul>
-    </p>
-
-    <h2>How Expressions Work</h2>
-
-    <p>
-        When you provide and expression to the grid, the grid converts the expression into a function
-        for you and then executes the function. Consider the example below, the example provides
-        <span class="codeHighlight">data.firstName</span> as the expression. This snippet of code
-        then gets wrapped into a function with all the params attributes as function attributes.
-    </p>
-
-    <pre><span class="codeComment">// this is a simple expression on the column definition</span>
-colDef.valueGetter = '<span class="codeHighlight">data.firstName</span>';
-
-<span class="codeComment">// the grid will then compile the above to this:</span>
-___compiledValueGetter = function(node, data, colDef, column, api, columnApi, context, getValue) {
-    return <span class="codeHighlight">data.firstName</span>;
-}</pre>
-
-    <p>
-        If your expression has the word <code>return</code> in it, then the grid will assume it is a multi line
-        expression and will not wrap it.
-    </p>
-
-    <p>
-        If your valueGetter does not have the word 'return' in it, then the grid will insert the
-        'return' statement and the ';' for you.
-    </p>
-
-    <p>
-        If your expression has many lines, then you will need to provide the ';' at the end of each
-        line and also provide the 'return' statement.
     </p>
 
     <h2 id="cell-expressions">Cell Expressions</h2>
@@ -171,6 +168,39 @@ ___compiledValueGetter = function(node, data, colDef, column, api, columnApi, co
     </ul>
 
     <show-example example="exampleCellExpressions"></show-example>
+
+    <h2>How Expressions Work</h2>
+
+    <p>
+        When you provide and expression to the grid, the grid converts the expression into a function
+        for you and then executes the function. Consider the example below, the example provides
+        <span class="codeHighlight">data.firstName</span> as the expression. This snippet of code
+        then gets wrapped into a function with all the params attributes as function attributes.
+    </p>
+
+    <pre><span class="codeComment">// this is a simple expression on the column definition</span>
+colDef.valueGetter = '<span class="codeHighlight">data.firstName</span>';
+
+<span class="codeComment">// the grid will then compile the above to this:</span>
+___compiledValueGetter = function(node, data, colDef, column, api, columnApi, context, getValue) {
+    return <span class="codeHighlight">data.firstName</span>;
+}</pre>
+
+    <p>
+        If your expression has the word <code>return</code> in it, then the grid will assume it is a multi line
+        expression and will not wrap it.
+    </p>
+
+    <p>
+        If your valueGetter does not have the word 'return' in it, then the grid will insert the
+        'return' statement and the ';' for you.
+    </p>
+
+    <p>
+        If your expression has many lines, then you will need to provide the ';' at the end of each
+        line and also provide the 'return' statement.
+    </p>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

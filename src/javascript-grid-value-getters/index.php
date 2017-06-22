@@ -82,11 +82,21 @@ var countryColDef = {
 
     <show-example example="exampleValuesAndFormatters"></show-example>
 
+    <h2>Value Getter Flow</h2>
+
     <p>
-        Below we will look at each of <code>valueGetter</code>, <code>valueSetter</code>,
-        <code>valueFormatter</code> and <code>valueParser</code> in turn. Each is discussed
-        assuming you are using functions. After this, expressions are introduced.
+        The flow diagram below shows the flow of the value getter.
     </p>
+
+    <img src="valueGetterFlow.svg"/>
+
+    <h2>Value Setter Flow</h2>
+
+    <p>
+        The flow diagram below shows the flow of the value setter.
+    </p>
+
+    <img src="valueSetterFlow.svg"/>
 
     <h2>Value Getter</h2>
 
