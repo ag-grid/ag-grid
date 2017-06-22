@@ -227,13 +227,13 @@ export class Utils {
         return Object.keys(allValues);
     }
 
-    static mergeDeep(object: any, source: any): void {
+    static mergeDeep(into: any, source: any): void {
         if (this.exists(source)) {
             this.iterateObject(source, function (key: string, target: any) {
-                let currentValue: any = object[key];
+                let currentValue: any = into[key];
 
                 if (currentValue == null) {
-                    object[key] = target;
+                    into[key] = target;
                     return;
                 }
 
@@ -245,7 +245,7 @@ export class Utils {
                 }
 
                 if (target) {
-                    object[key] = target;
+                    into[key] = target;
                 }
             });
         }

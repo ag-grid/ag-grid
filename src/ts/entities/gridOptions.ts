@@ -72,7 +72,6 @@ export interface GridOptions {
     suppressDragLeaveHidesColumns?: boolean;
     suppressParentsInRowNodes?: boolean;
     suppressFieldDotNotation?: boolean;
-    suppressUseColIdForGroups?: boolean;
     suppressCopyRowsToClipboard?: boolean;
     clipboardDeliminator?: string;
     suppressAggFuncInHeader?: boolean;

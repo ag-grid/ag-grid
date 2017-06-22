@@ -223,7 +223,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         }
 
         if (_.get(this, 'colDef.cellRendererParams.restrictToOneGroup', null)) {
-            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.originalRowGroupColumn is deprecated. You should use showRowGroup');
+            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.restrictToOneGroup is deprecated. You should use showRowGroup');
+        }
+
+        if (_.get(this, 'colDef.cellRendererParams.keyMap', null)) {
+            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
         }
 
         if (_.exists(this.colDef.cellFormatter)) {

@@ -25,7 +25,6 @@ export interface GroupCellRendererParams extends ICellRendererParams{
     footerValueGetter:any,
     suppressCount:boolean,
     checkbox:any,
-    keyMap:{[id:string]:string},
     scope:any,
     actualValue:string
 }
@@ -189,12 +188,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private createFooterCell(): void {
         let footerValue: string;
-        let groupName = this.getGroupName();
         let footerValueGetter = this.params.footerValueGetter;
         if (footerValueGetter) {
             // params is same as we were given, except we set the value as the item to display
             let paramsClone: any = _.cloneObject(this.params);
-            paramsClone.value = groupName;
+            paramsClone.value = this.params.value;
             if (typeof footerValueGetter === 'function') {
                 footerValue = footerValueGetter(paramsClone);
             } else if (typeof footerValueGetter === 'string') {
@@ -203,7 +201,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
                 console.warn('ag-Grid: footerValueGetter should be either a function or a string (expression)');
             }
         } else {
-            footerValue = 'Total ' + groupName;
+            footerValue = 'Total ' + this.params.value;
         }
 
         this.eValue.innerHTML = footerValue;
@@ -215,7 +213,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         // we try and use the cellRenderer of the column used for the grouping if we can
         let columnToUse: Column = params.node.rowGroupColumn ? params.node.rowGroupColumn : params.column;
 
-        let groupName = this.getGroupName();
+        let groupName = this.params.value;
         let valueFormatted = this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName);
 
         let groupedColCellRenderer = columnToUse.getCellRenderer();
@@ -259,23 +257,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let allChildrenCount = this.params.node.allChildrenCount;
         let text = allChildrenCount >= 0 ? `(${allChildrenCount})` : '';
         this.eChildCount.innerHTML = text;
-    }
-
-    private getGroupName(): string {
-        let keyMap = this.params.keyMap;
-        let rowNodeKey = this.params.value;
-        if (keyMap && typeof keyMap === 'object') {
-            let valueFromMap = keyMap[rowNodeKey];
-            // check for undefined, so null and 'empty string' are allowed,
-            // which can be users way of saying 'show blank' if they want
-            if (valueFromMap!==undefined) {
-                return valueFromMap;
-            } else {
-                return rowNodeKey;
-            }
-        } else {
-            return rowNodeKey;
-        }
     }
 
     private createLeafCell(): void {

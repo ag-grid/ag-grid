@@ -32,56 +32,61 @@ export class AutoGroupColService {
     // rowGroupCol and index are missing if groupMultiAutoColumn=false
     private createOneAutoGroupColumn(rowGroupCol?: Column, index?: number): Column {
         // if one provided by user, use it, otherwise create one
-        let autoColDef: ColDef = this.gridOptionsWrapper.getGroupColumnDef();
-        if (!autoColDef) {
-            let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            autoColDef = {
-                headerName: localeTextFunc('group', 'Group'),
-                cellRenderer: 'group'
-            };
-        }
-        // we never allow moving the group column
-        autoColDef.suppressMovable = true;
+        let defaultAutoColDef: ColDef = this.generateDefaultColDef(rowGroupCol, index);
+        let userAutoColDef: ColDef = this.gridOptionsWrapper.getGroupColumnDef();
+
+
 
         // if doing multi, set the field
         let colId: string;
 
         if (rowGroupCol) {
+            colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
+        } else {
+            colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
+        }
 
-            // because we are going to be making changes, we need to make a copy,
-            // otherwise we are overwriting the same colDef for each column.
-            autoColDef = _.cloneObject(autoColDef);
+        _.mergeDeep(defaultAutoColDef, userAutoColDef);
+        defaultAutoColDef.colId = colId;
+        let newCol = new Column(defaultAutoColDef, colId, true);
+        this.context.wireBean(newCol);
 
+        return newCol;
+    }
+
+    private generateDefaultColDef (rowGroupCol?: Column, index?: number):ColDef{
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        let defaultAutoColDef: ColDef = {
+            headerName: localeTextFunc('group', 'Group'),
+            cellRenderer: 'group'
+        };
+
+        // we never allow moving the group column
+        defaultAutoColDef.suppressMovable = true;
+
+        if (rowGroupCol) {
             let rowGroupColDef = rowGroupCol.getColDef();
-            _.assign(autoColDef, {
+            _.assign(defaultAutoColDef, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
                 headerName: rowGroupColDef.headerName,
                 headerValueGetter: rowGroupColDef.headerValueGetter
             });
 
-            if (_.missing(autoColDef.cellRendererParams)) {
-                autoColDef.cellRendererParams = {};
-            } else {
-                autoColDef.cellRendererParams = _.cloneObject(autoColDef.cellRendererParams);
-            }
-
             // if showing many cols, we don't want to show more than one with a checkbox for selection
             if (index>0) {
-                autoColDef.headerCheckboxSelection = false;
-                autoColDef.cellRendererParams.checkbox = false;
+                defaultAutoColDef.headerCheckboxSelection = false;
+                defaultAutoColDef.cellRendererParams= {
+                    checkbox: false
+                };
             }
 
-            colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
-            autoColDef.showRowGroup = rowGroupCol.getColId();
+            defaultAutoColDef.showRowGroup = rowGroupCol.getColId();
         } else {
-            colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
-            autoColDef.showRowGroup = true;
+            defaultAutoColDef.showRowGroup = true;
         }
 
-        let newCol = new Column(autoColDef, colId, true);
-        this.context.wireBean(newCol);
-
-        return newCol;
+        return defaultAutoColDef;
     }
 
 }
