@@ -139,6 +139,7 @@ export class EnterpriseMenu {
     private initialSelection: string;
     private destroyFunctions: Function[] = [];
     private tabFactories:{[p:string]:()=>TabbedItem} = {};
+    private includeChecks:{[p:string]:()=>boolean} = {};
 
 
     constructor(column: Column, initialSelection: string) {
@@ -147,6 +148,10 @@ export class EnterpriseMenu {
         this.tabFactories[EnterpriseMenu.TAB_GENERAL] = this.createMainPanel.bind(this);
         this.tabFactories[EnterpriseMenu.TAB_FILTER] = this.createFilterPanel.bind(this);
         this.tabFactories[EnterpriseMenu.TAB_COLUMNS] = this.createColumnsPanel.bind(this);
+
+        this.includeChecks[EnterpriseMenu.TAB_GENERAL] = ()=> true;
+        this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => this.gridOptionsWrapper.isEnableFilter() && !this.column.getColDef().suppressFilter;
+        this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = ()=> true;
     }
 
     public addEventListener(event: string, listener: Function): void {
@@ -160,10 +165,14 @@ export class EnterpriseMenu {
     @PostConstruct
     public init(): void {
         let items:TabbedItem[] = this.column.getMenuTabs (EnterpriseMenu.TABS_DEFAULT)
-            .filter(name=>
-                this.isValidMenuTabItem(name)
-            ).map(name=>
-                this.createTab(name)
+            .filter(menuTabName=>
+                this.isValidMenuTabItem(menuTabName)
+            )
+            .filter(menuTabName=>
+                this.isNotSuppressed(menuTabName)
+            )
+            .map(menuTabName=>
+                this.createTab(menuTabName)
             );
         this.tabbedLayout = new TabbedLayout({
             items: items,
@@ -173,12 +182,16 @@ export class EnterpriseMenu {
         });
     }
 
-    private isValidMenuTabItem (name:string):boolean{
-        let isValid:boolean = EnterpriseMenu.TABS_DEFAULT.indexOf(name)> -1;
+    private isValidMenuTabItem (menuTabName:string):boolean{
+        let isValid:boolean = EnterpriseMenu.TABS_DEFAULT.indexOf(menuTabName)> -1;
 
-        if (!isValid) console.warn(`Trying to render an invalid menu item '${name}'. Check that your 'menuTabs' contains one of [${EnterpriseMenu.TABS_DEFAULT}]`);
+        if (!isValid) console.warn(`Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${EnterpriseMenu.TABS_DEFAULT}]`);
 
         return isValid;
+    }
+
+    private isNotSuppressed (menuTabName:string):boolean{
+        return this.includeChecks[menuTabName]();
     }
 
     private createTab (name:string):TabbedItem{
