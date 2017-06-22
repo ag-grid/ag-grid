@@ -386,7 +386,7 @@ this.columnDefs = [
 </pre>
 
     <p>Please see the relevant sections on <a
-                href="../javascript-grid-cell-rendering/#vueCellRendering">cellRenderers</a>,
+                href="../javascript-grid-cell-rendering-components/#vueCellRendering">cellRenderers</a>,
         <a href="../javascript-grid-cell-editing/#vueCellEditing">cellEditors</a> and
         <a href="../javascript-grid-filtering/#vueFiltering">filters</a> for configuring and using VueJS Components in
         ag-Grid.</p>
@@ -476,7 +476,7 @@ this.params.context.componentParent
 
 <p>
     It is possible to build
-    <a href="../javascript-grid-cell-rendering/#vue2CellRendering">cellRenderers</a>,
+    <a href="../javascript-grid-cell-rendering-components/#vue2CellRendering">cellRenderers</a>,
     <a href="../javascript-grid-cell-editing/#vue2CellEditing">cellEditors</a> and
     <a href="../javascript-grid-filtering/#vue2Filtering">filters</a> using VueJS. Doing each of these
     is explained in the section on each.

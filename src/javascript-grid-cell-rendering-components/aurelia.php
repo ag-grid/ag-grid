@@ -7,7 +7,7 @@
 <div class="note" style="margin-bottom: 20px">
     <img align="left" src="../images/note.png" style="margin-right: 10px;" />
     <p>This section explains how to utilise ag-Grid cellRenders using Aurelia. You should read about how
-    <a href="../javascript-grid-cell-rendering/">Cell Rendering works in ag-Grid</a> first before trying to
+    <a href="/">Cell Rendering works in ag-Grid</a> first before trying to
     understand this section.</p>
 </div>
 

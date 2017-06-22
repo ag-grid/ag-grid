@@ -76,7 +76,7 @@ include '../documentation-main/documentation_header.php';
         your groups are displayed.
     </p>
     <p>
-        Check the <a href="../javascript-grid-cell-rendering-components/">cell rendering docs</a> to see all the available
+        Check the <a href="../javascript-grid-cell-rendering/">cell rendering docs</a> to see all the available
         parameters available to configure the group cell renderer.
     </p>
 
@@ -154,7 +154,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         If you use the default group cell renderer provided by ag-grid, there are many parameters that can be passed
         to configure its behaviour, they are all explained in the
-        <a href="../javascript-grid-cell-rendering-components">Group Cell Renderer</a> documentation. Please have a look
+        <a href="../javascript-grid-cell-rendering">Group Cell Renderer</a> documentation. Please have a look
         at this docs if you are interested in finding our how to change the contents that are displayed in each grouped
         cell.
     </p>
@@ -563,7 +563,7 @@ cellRendererParams: {
     <p>
         If you do specify <i>coldef.showRowGroup</i> you are going to also tell this column how to display the contents
         of this group, the easiest way to do this is by using the out of the box
-        <a href="../javascript-grid-cell-rendering-components">group cell renderer</a> <code>cellRenderer: 'group'</code>
+        <a href="../javascript-grid-cell-rendering">group cell renderer</a> <code>cellRenderer: 'group'</code>
     </p>
 
     <p>

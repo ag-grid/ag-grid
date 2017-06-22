@@ -18,10 +18,10 @@ var columnDefs = [
             filterOptions: ['equals','lessThan','greaterThan'],
             newRowsAction: 'keep'}
     },
-    {headerName: "Country", field: "country", enableRowGroup: true, rowGroupIndex: 0, filter: 'set',
+    {headerName: "Country", field: "country", enableRowGroup: true, rowGroup: true, hide: true, filter: 'set',
         filterParams: {values: listOfCountries, newRowsAction: 'keep'}
     },
-    {headerName: "Year", field: "year", enableRowGroup: true, rowGroupIndex: 1, filter: 'set',
+    {headerName: "Year", field: "year", enableRowGroup: true, rowGroup: true, hide: true, filter: 'set',
         filterParams: {values: ['2000','2004','2008','2012'], newRowsAction: 'keep'}
     },
     {headerName: "Sport", field: "sport", enableRowGroup: true, suppressFilter: true},

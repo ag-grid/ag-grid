@@ -148,7 +148,7 @@ let colDefs = [
 ]
 </pre>
     <p>Please see the relevant sections on <a
-                href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenderers</a>,
+                href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cellRenderers</a>,
         <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
         <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> for configuring and using Angular
         Components in
@@ -374,7 +374,7 @@ private getCountryFilterParams():any {
 
     <p>
         It is possible to build
-        <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenderers</a>,
+        <a href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cellRenderers</a>,
         <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
         <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular. Doing each of these
         is explained in the section on each.
@@ -408,7 +408,7 @@ import "ag-grid-enterprise";
         to learn about accessing all the features of the grid, or take a look at more detailed documentation
         around
         specifics
-        like <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenderers</a>,
+        like <a href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cellRenderers</a>,
         <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
         <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular.
     </p>

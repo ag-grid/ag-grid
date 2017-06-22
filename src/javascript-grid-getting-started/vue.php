@@ -313,7 +313,7 @@ this.columnDefs = [
     }
 </pre>
 
-    <p>Please see the relevant sections on <a href="../javascript-grid-cell-rendering/#vueCellRendering">cellRenderers</a>,
+    <p>Please see the relevant sections on <a href="../javascript-grid-cell-rendering-components/#vueCellRendering">cellRenderers</a>,
         <a href="../javascript-grid-cell-editing/#vueCellEditing">cellEditors</a> and
         <a href="../javascript-grid-filtering/#vueFiltering">filters</a> for configuring and using VueJS Components in ag-Grid.</p>
 
