@@ -4,8 +4,7 @@ var classRules =  {
 };
 
 var columnDefs = [
-    {headerName: "Person", field: 'name', width: 400, cellRenderer: 'group'},
-    {field: 'nationality', rowGroupIndex: 0, hide: true},
+    {field: 'nationality', rowGroup: true, hide: true},
     {
         headerName: 'Weekly Editable Values',
         children: [
@@ -81,11 +80,15 @@ var gridOptions = {
     suppressAggFuncInHeader: true,
     groupIncludeFooter: true,
     groupDefaultExpanded: 1,
-    groupSuppressAutoColumn: true,
     columnDefs: columnDefs,
     rowData: data,
     rowSelection: 'single',
     enableSorting: true,
+    groupColumnDef: {
+        field: 'name',
+        width: 400,
+        headerName: 'Person'
+    },
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }

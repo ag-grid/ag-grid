@@ -1,12 +1,8 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", enableRowGroup: true},
     {headerName: "Age", field: "age", enableRowGroup: true},
-    {headerName: "Country", field: "country", enableRowGroup: true,
-        rowGroupIndex: 0
-    },
-    {headerName: "Year", field: "year", enableRowGroup: true,
-        rowGroupIndex: 1
-    },
+    {headerName: "Country", field: "country", enableRowGroup: true, rowGroup: true},
+    {headerName: "Year", field: "year", enableRowGroup: true, rowGroup: true},
     {headerName: "Sport", field: "sport", enableRowGroup: true,
         checkboxSelection: function(params) {
             return !params.node.group;
@@ -41,9 +37,7 @@ var gridOptions = {
     purgeClosedRowNodes: true,
     autoGroupColumnDef: {
         field: 'athlete',
-        headerName: "Group",
         width: 200,
-        cellRenderer: 'group',
         // headerCheckboxSelection: true, // not supported for Enterprise Model
         cellRendererParams: {
             checkbox: true
