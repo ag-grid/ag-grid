@@ -248,11 +248,12 @@ include '../documentation-main/documentation_header.php';
         say about the group.
     </p>
 
-    <div style="background-color: #00FF00; color: darkred; font-weight: bold; size: 20px;">
-        Alberto - we need a simple example here showing fullWidth. Otherwise we are going straight
-        into complicated details and examples. Maybe the very first eample we used to have on
-        this page (you can see the one I mean on ag-grid.com).
-    </div>
+    <p>
+        The following example shows the first example in this page, the Auto Column Group example, using full width rows.
+        Note that all that is necessary to achieve this it to add <code>groupUseEntireRow:true</code> to your gridOptions
+    </p>
+
+    <show-example example="exampleSimpleRowGroupFW"></show-example>
 
 
     <h3>Full Width Groups Rendering</h3>
