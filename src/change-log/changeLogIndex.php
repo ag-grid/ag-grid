@@ -973,7 +973,7 @@ params = {
     <h3>Version 4.1.x</h3>
 
     <b>Big changes</b>
-    <li>Vamped up Cell Editing and Rendering. See new documentation pages for <a href="../javascript-grid-cell-editing">Cell Editing</a> and <a href="../javascript-grid-cell-rendering">Cell Rendering</a></li>
+    <li>Vamped up Cell Editing and Rendering. See new documentation pages for <a href="../javascript-grid-cell-editing">Cell Editing</a> and <a href="../javascript-grid-cell-rendering-components">Cell Rendering</a></li>
     <li>New row model called <a href="../javascript-grid-viewport/">Viewport</a>. Designed for views over large data and pushing out updates from server to client.</li>
 
     <b>Breaking Change</b>

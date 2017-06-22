@@ -318,7 +318,7 @@ interface IGetRowsParams {
     }
 }</pre>
 
-    <p>Refer to section <a href="../javascript-grid-cell-rendering">Cell Rendering</a> for how to build
+    <p>Refer to section <a href="../javascript-grid-cell-rendering-components">Cell Rendering</a> for how to build
     cell renderers.</p>
 
     <h3 id="more-control-via-properties-and-api">More Control via Properties and API</h3>
