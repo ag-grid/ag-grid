@@ -44,7 +44,7 @@ function setData(rowData) {
     // initilise the floating rows
     onFloatingTopCount(1);
     onFloatingBottomCount(1);
-    // if this timeout is missing, we size to fix before the scrollbar shows,
+    // if this timeout is missing, we size to fit before the scrollbar shows,
     // which doesn't fit the columns very well
     setTimeout( function() {
         gridOptions.api.sizeColumnsToFit();

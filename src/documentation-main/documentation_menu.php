@@ -181,6 +181,7 @@
     menuItem(0, 'Getters and Formatters', 'Getters & Formatters', 'javascript-grid-value-getters/');
     menuItem(0, 'Cell Expressions', 'Expressions', 'javascript-grid-cell-expressions/');
     menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
+    menuItem(0, 'Cell Renderer', 'Cell Rendering', 'javascript-grid-cell-rendering-components/');
     menuItem(0, 'Cell Editing', 'Cell Editing', 'javascript-grid-cell-editing/');
     menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
     menuItem(0, 'Context', 'Context', 'javascript-grid-context/');
@@ -273,12 +274,12 @@
 <div class="docsMenu-content">
     <?php
     menuItem(0, 'Components', 'Overview', 'javascript-grid-components/');
-    menuItem(0, 'Date Component', 'Date Component', 'javascript-grid-date-component/');
     menuItem(0, 'Cell Rendering', 'Cell Renderer', 'javascript-grid-cell-rendering/');
     menuItem(0, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/');
     menuItem(0, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component/');
     menuItem(0, 'Floating Filter Component', 'Floating Filter Component', 'javascript-grid-floating-filter-component/');
     menuItem(0, 'Header Rendering', 'Header Component', 'javascript-grid-header-rendering/');
+    menuItem(0, 'Date Component', 'Date Component', 'javascript-grid-date-component/');
     ?>
 </div>
 

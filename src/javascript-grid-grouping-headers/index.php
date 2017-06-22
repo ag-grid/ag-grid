@@ -93,7 +93,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        If a group has a 'incompatible' set of children, then the group opening / closing will
+        If a group has an 'incompatible' set of children, then the group opening / closing will
         not be activated. An incompatible set is one which will have no columns visible
         at some point (ie all are set to 'open' or 'closed').
     </p>

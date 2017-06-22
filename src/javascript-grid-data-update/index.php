@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2 id="insert-remove">Data Update</h2>
 
     <p>
-        Data can up updated inside the grid using the grid's API.
+        Data can be updated inside the grid using the grid's API.
     </p>
     <p>
         The grid also allows updating data in the following other ways which are explained in other
@@ -167,7 +167,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Bulk Method 1 - Transaction</h2>
 
     <p>
-        The <code>api.updateData(transaction)</code> method takes a transaction as a paramter.
+        The <code>api.updateData(transaction)</code> method takes a transaction as a parameter.
         The transaction has the following interface:
     </p>
 

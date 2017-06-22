@@ -17,6 +17,13 @@ include '../documentation-main/documentation_header.php';
     <h4>Breaking Changes</h4>
     <ul>
         <li>
+            gridOptions.enableFilter now needs to be specifically switched on to get the filter menu in the columns.
+        </li>
+        <li>
+            Deprecated cellRendererParams properties: restrictToOneGroup, keyMap and suppressUseColIdForGroups,
+            The way row grouping has been simplified. See AG-513 for more details
+        </li>
+        <li>
             Deprecated gridOptions properties: suppressMenuFilterPanel suppressMenuMainPanel and suppressMenuColumnPanel,
             use colDef.menuTabs instead. See AG-401 for more details
         </li>
