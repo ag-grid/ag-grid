@@ -7,10 +7,6 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<style>
-    .codeHighlight { background-color: #bde2e5}
-</style>
-
 <div>
 
     <h1 class="first-h1" id="expressions">Expressions</h1>

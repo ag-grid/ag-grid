@@ -88,6 +88,10 @@
     color: darkgreen;
 }
 
+.codeHighlight {
+    background-color: #bde2e5;
+}
+
 /* collapsable sidebar items */
 .docsMenu-header{
     cursor: pointer;
