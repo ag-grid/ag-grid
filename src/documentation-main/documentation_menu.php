@@ -179,7 +179,7 @@
     menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
     menuItem(0, 'Floating', 'Floating Rows', 'javascript-grid-floating/');
     menuItem(0, 'Getters and Formatters', 'Getters & Formatters', 'javascript-grid-value-getters/');
-    menuItem(0, 'Cell Expressions', 'Cell Expressions', 'javascript-grid-cell-expressions/');
+    menuItem(0, 'Cell Expressions', 'Expressions', 'javascript-grid-cell-expressions/');
     menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
     menuItem(0, 'Cell Renderer', 'Cell Rendering', 'javascript-grid-cell-rendering-components/');
     menuItem(0, 'Cell Editing', 'Cell Editing', 'javascript-grid-cell-editing/');
