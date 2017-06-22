@@ -181,7 +181,7 @@
     menuItem(0, 'Getters and Formatters', 'Getters & Formatters', 'javascript-grid-value-getters/');
     menuItem(0, 'Cell Expressions', 'Expressions', 'javascript-grid-cell-expressions/');
     menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
-    menuItem(0, 'Cell Renderer', 'Cell Rendering', 'javascript-grid-cell-rendering/');
+    menuItem(0, 'Cell Renderer', 'Cell Renderer', 'javascript-grid-cell-rendering/');
     menuItem(0, 'Cell Editing', 'Cell Editing', 'javascript-grid-cell-editing/');
     menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
     menuItem(0, 'Context', 'Context', 'javascript-grid-context/');

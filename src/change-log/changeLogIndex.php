@@ -54,6 +54,7 @@ include '../documentation-main/documentation_header.php';
         <li>AG-517 - Review of valueGetters and valueFormatters and introduced valueSetters and valueParsers.
             See new documentation pages <a href="../javascript-grid-value-getters/">Values and Expressions</a>
             and <a href="../javascript-grid-cell-expressions/">Cell Expressions</a> for details.</li>
+        <li>New documentation page for <a href="../javascript-grid-cell-rendering/">grid cellRender's</a>.</li>
     </ul>
 
     <li>Big Breaking Change: aggregation data and group data are no longer stored in rowNode.data, instead they are stored in rowNode.groupData and rowNode.aggData</li>

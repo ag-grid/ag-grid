@@ -7,31 +7,159 @@ $pageGroup = "features";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2 id="cell-editors">Cell Rendering</h2>
+<h1 class="first-h1" id="cell-editors">Cell Renderer's</h1>
 
 <p>
+    By default, the grid will place the values of your data into the cells as simple strings.
+    If you want something other than simple strings, then you use a cell renderer.
+    So for rendering your values, you have the following three options:
+    <ol>
+        <li>Do nothing, simple strings get used to display the data.</li>
+        <li>Use one of the grid provided renderer's.</li>
+        <li>Build your own cell renderer.</li>
+    </ol>
+
+<pre><span class="codeComment">// 1 - do nothing, simple text is used by the grid</span>
+var colDef1 = {
+    cellRenderer: null,
+    ...
+}
+
+<span class="codeComment">// 2 - use one of the grids provided renderers, reference it by name</span>
+var colDef2 = {
+    cellRenderer: 'group',
+    ...
+}
+
+<span class="codeComment">// 3 - provide your own cell renderer</span>
+var colDef3 = {
+    cellRenderer: MyCustomCellRendererClass,
+    ...
+}</pre>
+
+    This section of the documentation explains the first tow items above, how to use no cell
+    renderer and how to use the grid provided cell renderer's. To build your own cell renderer,
+    see the section <a href="../javascript-grid-cell-rendering-components/">Cell Rendering Components</a>.
 </p>
 
-<h3>Group Cell Renderer</h3>
+<p>
+    This section of the documentation also lists how to use all the grids provided renderer's.
+</p>
+
+<h2>Cell Rendering Flow</h2>
 
 <p>
-    If grouping, you will need to dedicate a column to displaying the group, as described above.
-    To have the column behave appropriate, you need to provide it with an appropriate cell renderer.
-    You can either a) use the built in provided group cell renderer or b) bake your own grouping
-    cell renderer. The provided cell renderer is selected by providing the string 'group' for
-    the cellRenderer. You also provide params with options as follows:
-<pre>colDef.cellRenderer = 'group';
-colDef.cellRendererParams = {
-        keyMap: {from: 'to'},
-        suppressCount: false,
-        checkbox: true,
-        padding: 10,
-        innerRenderer: myInnerRenderer,
-        footerValueGetter: myFooterValueGetter
+    The diagram below (which is taken from the section <a href="../javascript-grid-value-getters/">Getters & Formatters</a>)
+    summarises the steps the grid takes while working out what to render and how to render.
+</p>
+
+<p>
+    In short, a value is prepared. The value comes using either the <code>colDef.field</code> or the
+    <code>colDef.valueGetter</code>. The value is also optionally passed through a <code>colDef.formatter</code>
+    if it exists. Then the value is finally placed into the DOM, either directly, or by using the chosen
+    <code>colDef.cellRenderer</code>.
+</p>
+
+<img src="../javascript-grid-value-getters/valueGetterFlow.svg"/>
+
+<h2>Choosing No Cell Renderer</h2>
+
+<p>
+    If you have no requirements for custom cells, then you should use no cell renderer.
+    By using cell renderers, you are complicating the DOM which may impact performance.
+    If you just want to do simple formatting of the data (eg currency or date formatting)
+    then you can use <code>colDef.valueFormatter</code>.
+</p>
+
+<h2>Grid Provided Renderer's</h2>
+
+<p>
+    The grid comes with three build in renderer's which are:
+    <ul>
+        <li><b>group</b>: For displaying group values with expand / collapse functionality.</li>
+        <li><b>animateShowChange</b> and <b>animateSlide</b>: For animating changes in data.</li>
+    </ul>
+    The following sections goes through each one in detail.
+</p>
+
+<h2>Grid Renderer's - animateShowChange and animateSlide</h2>
+
+<p>
+    The grid provides two cellRenderer's for animating changes to data. They are:
+<ul>
+    <li>
+        <b>animateShowChange:</b> The previous value is temporarily shown beside the old value
+        with a directional arrow showing increase or decrease in value. The old value is then faded out.
+    </li>
+    <li>
+        <b>animateSlide:</b> The previous value shown in a faded fashion and slides, giving a ghosting effect
+        as the old value fades adn slides away.
+    </li>
+</ul>
+</p>
+
+<p>
+    The example below shows both types of animation cell renders in action. To test, try the following:
+<ul>
+    <li>
+        Columns A, B and C are editable.
+    </li>
+    <li>
+        Columns D and E are updated via clicking the button.
+    </li>
+    <li>
+        Changes to any of the first 5 columns results in animations in the Total and Average column.
+    </li>
+    <li>
+        Changes to D and E also result in animations.
+    </li>
+</ul>
+</p>
+
+<show-example example="exampleAnimationRenderers"></show-example>
+
+<note>
+    We hope you like the animation cellRenderer's. However you can also take inspiration from them,
+    and create your own animations in your own cellRenderer's. Check out our source code on Github on
+    how we implemented these cellRenderer's for inspiration.
+</note>
+
+<note>
+    Most of the ag-Grid users love the animateShowChange cell renderer for showing changes in values.
+    Not many people like the animateSlide one. So if you are trying to impress someone, probably best
+    show them the animateShowChange :)
+</note>
+
+<h2>Grid Renderer - Group</h2>
+
+<p>
+    If you are grouping in the grid, then you will need to provide a group cell renderer
+    as the group cell renderer is what provides the user with the expand and collapse functionality.
+</p>
+
+<p>
+    The gird's group cellRenderer takes many parameters to configure it. Here is an example
+    of a column and it's configuration:
+</p>
+
+<pre>colDef = {
+    <span class="codeComment">// tell the grid we want to show group values in this column</span>
+    showRowGroup: true,
+    <span class="codeComment">// set the cell renderer to 'group'</span>
+    cellRenderer: 'group',
+    <span class="codeComment">// provide extra params to the cellRenderer</span>
+    cellRendererParams: {
+        suppressCount: false, <span class="codeComment">// turn off the row count</span>
+        checkbox: true, <span class="codeComment">// enable checkbox selection</span>
+        padding: 10, <span class="codeComment">// set padding to 10px</span>
+        innerRenderer: myInnerRenderer, <span class="codeComment">// provide an inner renderer</span>
+        footerValueGetter: myFooterValueGetter <span class="codeComment">// provide a footer value getter</span>
+    }
+    ...
 };</pre>
 
 <p>
-    The parameters are:
+    The set of parameters for the group cellRenderer are:
 <ul>
     <li><b>suppressCount:</b> One of [true, false], if true, count is not displayed beside the name.</li>
     <li><b>checkbox:</b> One of [true,false], if true, a selection checkbox is included.</li>
@@ -42,5 +170,65 @@ colDef.cellRendererParams = {
 </ul>
 </p>
 
+<h3>Example Group cellRenderer</h3>
+
+<p>
+    Below shows an example of configuring a group cellRenderer. The example setup is not realistic as it
+    has many columns configured for the showing the groups. The reason for this is to demonstrate different
+    group column configurations side by side. In your application, you will typically have one column
+    for showing the groups.
+</p>
+
+<p>
+    The example is built up as follows:
+    <ul>
+        <li>
+            The data is grouped by two columns: <b>Type</b> (one of 'Fiction' or 'Non-Fiction') and <b>Country</b>
+            (a country name, eg Ireland or United Kingdom).
+        </li>
+        <li>
+            The column <b>'Country Group - No Renderer'</b> configures the grid to put the 'Country' group data
+            only into this column by setting <code>showRowGroup='country'</code>. All rows that are not this
+            group are blank. There is no cellRenderer configured, so the grid just places the text for the group
+            into the cell, there is not expand / collapse functionality.
+        </li>
+        <li>
+            The column <b>'All Groups - no Renderer'</b> builds on before, but adds all groups by setting
+            <code>showRowGroup=true</code>. This gets the column to display all groups, but again no cellRenderer
+            so not expand / collapse functionality.
+        </li>
+        <li>
+            The column <b>Group Renderer A</b> builds on before, but adds the group cell renderer with
+            <code>cellRenderer='group'</code>. The values are exactly as per the previous column, except now
+            we have expand and collapse functionality.
+        </li>
+        <li>
+            The column <b>Group Renderer B</b> builds on before, but adds <code>field=city</code> so that
+            the city is displayed in the leave nodes in the group column.
+        </li>
+        <li>
+            The column <b>Group Renderer C</b> builds on before, but adds the following <code>cellRendererParams</code>:
+            <ul>
+                <li><code>suppressCount=true</code>: Suppresses the row count.</li>
+                <li><code>checkbox=true</code>: Adds a selection checkbox.</li>
+                <li><code>padding=20</code>: Changes the padding (indentation) of the levels.</li>
+                <li><code>innerRenderer=SimpleCellRenderer</code>: Puts custom rendering for displaying the value.
+                The group cellRenderer will take care of all the expand / collapse, selection etc, but then allow
+                you to customise the display of the value. In this example we add a border when the value is a group,
+                and we add the Ireland
+                <img src="https://flags.fmcdn.net/data/flags/mini/ie.png" style="width: 20px; position: relative; top: -2px;"/>
+                flag (because Niall Crosby is from Ireland) to the leaf levels.</li>
+            </ul>
+        </li>
+    </ul>
+</p>
+
+<show-example example="exampleGroupRenderer"></show-example>
+
+<note>
+    If you don't like the grid provided group cellRenderer, you can build your own cellRenderer and provide
+    the grouping functionality. If you do this, then take a look at the grids source code and see how we
+    implemented the ag-Grid group cellRenderer.
+</note>
 
 <?php include '../documentation-main/documentation_footer.php';?>
