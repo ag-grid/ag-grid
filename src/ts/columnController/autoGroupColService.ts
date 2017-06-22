@@ -33,7 +33,7 @@ export class AutoGroupColService {
     private createOneAutoGroupColumn(rowGroupCol?: Column, index?: number): Column {
         // if one provided by user, use it, otherwise create one
         let defaultAutoColDef: ColDef = this.generateDefaultColDef(rowGroupCol, index);
-        let userAutoColDef: ColDef = this.gridOptionsWrapper.getGroupColumnDef();
+        let userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
 
 
 

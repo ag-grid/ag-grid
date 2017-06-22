@@ -261,7 +261,7 @@ export class GridOptionsWrapper {
     public getRowData(): any[] { return this.gridOptions.rowData; }
     public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
     public isEnableRtl() { return isTrue(this.gridOptions.enableRtl); }
-    public getGroupColumnDef(): ColDef { return this.gridOptions.groupColumnDef; }
+    public getAutoGroupColumnDef(): ColDef { return this.gridOptions.autoGroupColumnDef; }
     public isGroupSuppressRow() { return isTrue(this.gridOptions.groupSuppressRow); }
     public getRowGroupPanelShow() { return this.gridOptions.rowGroupPanelShow; }
     public getPivotPanelShow() { return this.gridOptions.pivotPanelShow; }
@@ -563,7 +563,10 @@ export class GridOptionsWrapper {
             console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['columnsMenuTab'] instead of suppressMenuColumnPanel=true`);
         }
         if (options.suppressUseColIdForGroups) {
-            console.warn(`ag-grid: since version 11.0.x, this is not in use anymore. You should be able to remove it from your definition`);
+            console.warn(`ag-grid: since version 11.0.x suppressUseColIdForGroups is not in use anymore. You should be able to remove it from your definition`);
+        }
+        if (options.groupColumnDef) {
+            console.warn(`ag-grid: since version 11.0.x, groupColumnDef has been renamed, this property is now called autoColumnGroupDef. Please change your configuration accordingly`);
         }
     }
 

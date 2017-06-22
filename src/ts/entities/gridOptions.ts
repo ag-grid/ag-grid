@@ -150,7 +150,9 @@ export interface GridOptions {
     groupHideOpenParents?: boolean;
     groupMultiAutoColumn?: boolean;
     groupSuppressBlankHeader?: boolean;
+    //Deprecated in v11.0 substituted by autoGroupColumnDef
     groupColumnDef?: ColDef;
+    autoGroupColumnDef?: ColDef;
     // deprecated - should use domLayout
     forPrint?: boolean;
 

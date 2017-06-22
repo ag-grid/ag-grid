@@ -65,8 +65,6 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
     private menuFactory: IMenuFactory;
     @Autowired('gridOptionsWrapper')
     private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('svgFactory')
-    private svgFactory: SvgFactory;
 
     floatingFilterComp:IFloatingFilterComp<M, F, PC>;
     suppressFilterButton:boolean;
