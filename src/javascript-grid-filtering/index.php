@@ -47,9 +47,9 @@ gridOptions = {
     <span class="codeComment">// turn on filtering</span>
     enableFilter: true,
     ...
-    columnDefs = [
-        {headerName: "Athlete", field: "athlete", filter: 'text'}, <span class="codeComment">// text filter</span>
-        {headerName: "Age",     field: "age",     filter: 'number'}, <span class="codeComment">// number filter</span>
+    columnDefs: [
+        {headerName: "Athlete", field: "athlete", filter: "text"}, <span class="codeComment">// text filter</span>
+        {headerName: "Age",     field: "age",     filter: "number"}, <span class="codeComment">// number filter</span>
         {headerName: "Sport",   field: "sport",   suppressFilter: true} <span class="codeComment">// NO filter</span>
     ]
 }</pre>

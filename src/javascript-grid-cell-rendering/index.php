@@ -193,7 +193,7 @@ the component will be destroyed and replaced.
         All other api refresh methods (<i>refreshRows, refreshView</i> etc).
     </li>
 </ul>
-All of the above will result in the component getting destrotyed and recreated.
+All of the above will result in the component getting destroyed and recreated.
 </p>
 
 <h3 id="cell-renderer-component-lifecycle">
