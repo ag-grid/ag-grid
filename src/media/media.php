@@ -46,6 +46,32 @@ include('../includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
+        <a href="../ag-grid-big-data-small-browser/">
+            <img src="../images/react.png" style="width: 200px;"/>
+        </a>
+    </div>
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="../ag-grid-react-datagrid/">
+                Using React and Redux with ag-Grid
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            13th May 2017
+        </div>
+    </div>
+    <div style="color: #767676">
+        Sean Landsman
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        Learn how to combine ag-Grid, React and Redux, getting the best from all three great libraries.
+    </div>
+</div>
+
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="float: left; width: 240px;">
         <a href="../ag-grid-partners-with-webpack/">
             <img src="../images/ag_grid_and_webpack.png" style="width: 225px;"/>
         </a>

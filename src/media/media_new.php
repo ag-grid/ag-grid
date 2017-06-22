@@ -43,6 +43,14 @@ include('../includes/mediaHeader.php');
                     <p><a href="../ag-grid-big-data-small-browser/" class="btn-blog btn-primary-blog ">Read More</a></p>
                 </div>
             </div>
+            <div class="fh5co-portfolio-item ">
+                <div class="fh5co-portfolio-figure animate-box" style="background-image: url(images/react.svg);"></div>
+                <div class="fh5co-portfolio-description">
+                    <h2>Using React and Redux with ag-Grid</h2>
+                    <p>Learn how to combine ag-Grid, React and Redux, getting the best from all three great libraries.</p>
+                    <p><a href="../ag-grid-react-datagrid/" class="btn-blog btn-primary-blog ">Read More</a></p>
+                </div>
+            </div>
             <div class="fh5co-portfolio-item fh5co-img-right">
                 <div class="fh5co-portfolio-figure animate-box" style="background-image: url(images/handshake.jpg);"></div>
                 <div class="fh5co-portfolio-description">
