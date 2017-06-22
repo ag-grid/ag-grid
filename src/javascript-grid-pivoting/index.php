@@ -7,8 +7,6 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<>
-
     <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Pivoting</h2>
 
     <p>
