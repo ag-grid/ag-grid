@@ -202,9 +202,9 @@ export class GroupStage implements IRowNodeStage {
         newGroup.rowGroupColumn = groupColumn;
         newGroup.groupData = {};
 
-        let gridAndAutoColumns: Column[] = this.columnController.getGroupDisplayColumns();
+        let groupDisplayCols: Column[] = this.columnController.getGroupDisplayColumns();
 
-        gridAndAutoColumns.forEach(col => {
+        groupDisplayCols.forEach(col => {
             if (col.isRowGroupDisplayed(newGroup.rowGroupColumn.getId())){
                 newGroup.groupData[col.getColId()] = groupKey;
             }

@@ -2,19 +2,19 @@ import {
     _,
     Autowired,
     Context,
-    Events,
-    EventService,
     RowRenderer,
     IEnterpriseGetRowsParams,
     IEnterpriseGetRowsRequest,
-    InfiniteCacheParams,
     Logger,
     NumberSequence,
     PostConstruct,
     RowNodeBlock,
     LoggerFactory,
     Qualifier,
-    RowNode
+    RowNode,
+    Column,
+    ColumnController,
+    ValueService
 } from "ag-grid";
 
 import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
@@ -23,6 +23,8 @@ export class EnterpriseBlock extends RowNodeBlock {
 
     @Autowired('context') private context: Context;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('valueService') private valueService: ValueService;
 
     private logger: Logger;
 
@@ -36,6 +38,7 @@ export class EnterpriseBlock extends RowNodeBlock {
     private level: number;
     private groupLevel: boolean;
     private groupField: string;
+    private rowGroupColumn: Column;
     private nodeIdPrefix: string;
 
     constructor(pageNumber: number, parentRowNode: RowNode, params: EnterpriseCacheParams, parentCache: EnterpriseCache) {
@@ -46,11 +49,6 @@ export class EnterpriseBlock extends RowNodeBlock {
 
         this.level = parentRowNode.level + 1;
         this.groupLevel = this.level < params.rowGroupCols.length;
-        if (this.groupLevel) {
-            this.groupField = params.rowGroupCols[this.level].field;
-        }
-
-        this.createNodeIdPrefix();
     }
 
     private createNodeIdPrefix(): void {
@@ -135,6 +133,15 @@ export class EnterpriseBlock extends RowNodeBlock {
 
     @PostConstruct
     protected init(): void {
+
+        if (this.groupLevel) {
+            let groupColVo = this.params.rowGroupCols[this.level];
+            this.groupField = groupColVo.field;
+            this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
+        }
+
+        this.createNodeIdPrefix();
+
         super.init({
             context: this.context,
             rowRenderer: this.rowRenderer
@@ -165,6 +172,21 @@ export class EnterpriseBlock extends RowNodeBlock {
             rowNode.setDataAndId(undefined, undefined);
             rowNode.key = null;
         }
+
+        if (this.groupLevel) {
+            let groupDisplayCols: Column[] = this.columnController.getGroupDisplayColumns();
+
+            groupDisplayCols.forEach(col => {
+                if (col.isRowGroupDisplayed(this.rowGroupColumn.getId())) {
+                    let groupValue = this.valueService.getValue(this.rowGroupColumn, rowNode);
+                    if (_.missing(rowNode.groupData)) {
+                        rowNode.groupData = {};
+                    }
+                    rowNode.groupData[col.getColId()] = groupValue;
+                }
+            });
+        }
+
     }
 
     protected loadFromDatasource(): void {
