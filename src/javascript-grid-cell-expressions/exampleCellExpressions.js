@@ -8,7 +8,7 @@ var columnDefsLeft = [
 var rowDataLeft = [
     {function: 'Number Squared', value: '=ctx.theNumber * ctx.theNumber'},
     {function: 'Number x 2', value: '=ctx.theNumber * 2'},
-    {function: 'Todays Date', value: '=new Date().toLocaleDateString()'},
+    {function: 'Today\'s Date', value: '=new Date().toLocaleDateString()'},
     {function: 'Sum A', value: '=ctx.sum("a")'},
     {function: 'Sum B', value: '=ctx.sum("b")'}
 ];

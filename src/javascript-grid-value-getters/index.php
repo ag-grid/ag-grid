@@ -29,23 +29,30 @@ var countryColDef = {
         display the data 'as is'. For these reasons, the grid provides the following additional methods:
     </p>
 
-    <h3>Column Definition Properties for Values and Formatters</h3>
+    <h3>Column Definition Properties for Getters, Setters, Formatters & Parsers</h3>
 
     <table class="table">
         <?php include './valuesAndFormattersProperties.php' ?>
         <?php printPropertiesRows($valuesAndFormattersProperties) ?>
+        <?php printPropertiesRows($valuesAndFormattersMoreProperties) ?>
     </table>
 
-
-    <h2>Example - Getters, Setters, Formatters, Parsers</h2>
+    <h2 id="example-value-getter">Example - Getters, Setters, Formatters, Parsers</h2>
 
     <p>
         The example below demonstrates <code>valueGetter</code>, <code>valueSetter</code>,
         <code>valueFormatter</code> and <code>valueParser</code> all
-        using functions (expressions is demonstrated further down this page). Some of the
-        columns are editable. When you finish editing, the row data is printed to the console so you can take
+        using functions (<a href="../javascript-grid-cell-expressions/">expressions</a> are explained in the next section).
+        Some of the columns are editable. When you finish editing, the row data is printed to the console so you can take
         a look at the impact of the edits. The following should be noted from the demo:
     </p>
+
+    <note>
+        You can provide all getters, setters, formatters and parsers as functions OR
+        <a href="../javascript-grid-cell-expressions/">expressions</a>. Both achieve the same
+        when added to the column definitions.
+        <a href="../javascript-grid-cell-expressions/">Expressions</a> are explained in the next section.
+    </note>
 
     <ul>
         <li>
@@ -227,18 +234,7 @@ colDef.valueParser = function(params) {
 }</pre>
 
 
-    <h2>Some More Properties</h2>
-
-    <p>
-        There are also the following functions, that are very similar to the similarly names
-        functions above:
-    </p>
-
-    <table class="table">
-        <?php printPropertiesRows($valuesAndFormattersMoreProperties) ?>
-    </table>
-
-    <h3>Header Value Getters</h3>
+    <h2>Header Value Getters</h2>
 
     <p>
         Use <code>headerValueGetter</code> instead of <code>colDef.headerName</code> to allow dynamic header names.
@@ -257,83 +253,22 @@ colDef.valueParser = function(params) {
     </ul>
 
     <p>
-        See the <a href="../javascript-grid-tool-panel/#toolPanelExample">Tool Panel Example</a> for an example of <i>headerValueGetter</i>.
+        See the <a href="../javascript-grid-tool-panel/#toolPanelExample">Tool Panel Example</a> for an example of <i>headerValueGetter</i>
+        used in different locations, where you can change the header name depending on where the name appears.
     </p>
 
-    <h3>Floating Cell Formatter</h3>
+    <h2>Floating Cell Formatter</h2>
 
     <p>
         Use <b>floatingCellFormatter</b> instead of <code>colDef.cellFormatter</code> to allow different formatting
-        for floating rows. However this method is redundant as you have access to the <code>rowNode</code> in the
-        standard <code>cellFormatter</code>, where you can check if the row is floating or not.
+        for floating rows. If you don't specify a <code>colDef.floatingCellFormatter</code>, then <code>cellFormatter</code>
+        will get used instead if it is present.
     </p>
 
-    <h2 id="value-getter-expressions">Providing Expressions</h2>
-
-    <p>
-        The easiest way to understand the above is to use functions. However once understood, you may wish to
-        use expressions instead of functions. The expressions can do exactly what the functions can do,
-        except you define everything in a string expression rather than a function.
-    </p>
-
-    <style>
-        .codeHighlight { background-color: #bde2e5}
-    </style>
-
-    <p>
-        When you provide and expression to the grid, the grid converts the expression into a function
-        for you and then executes the function. Consider the example below, the example provides
-        <span class="codeHighlight">data.firstName</span> as the expression. This snippet of code
-        then gets wrapped into a function with all the params attributes as function attributes.
-    </p>
-
-    <pre><span class="codeComment">// this is a simple expression on the column definition</span>
-colDef.valueGetter = '<span class="codeHighlight">data.firstName</span>';
-
-<span class="codeComment">// the grid will then compile the above to this:</span>
-___compiledValueGetter = function(node, data, colDef, column, api, columnApi, context, getValue) {
-    return <span class="codeHighlight">data.firstName</span>;
-}</pre>
-
-    <p>
-        If your valueGetter only has one line in it, then the expression should not end with ';'
-        and should not return. The grid will insert the 'return' statement and the ';' for you.
-    </p>
-
-    <p>
-        If your expression has many lines, then you will need to provide the ';' at the end of each
-        line and also provide the 'return' statement.
-    </p>
-
-    <h3>Example Using Expressions</h3>
-
-    <p>
-        Below is the exact same example as above, except expressions are used instead of functions.
-        Notice the definitions of the columns now all have strings (expressions) instead of functions
-        for the value getters / setters / formatters / parsers.
-    </p>
-
-    <show-example example="exampleValuesAndFormattersExpressions"></show-example>
-
-    <h2>Expressions vs Functions</h2>
-
-    <p>
-        Expressions and functions are two ways of achieving identical results. So why have two methods?
-    </p>
-
-    <p>
-        The advantage of functions is that they are easier to work with for you. Functions will be treated
-        by your IDE as functions and thus benefit from compile time checks, debugging detc.
-    </p>
-
-    <p>
-        The advantage of value getters are:
-        <ul>
-            <li>They keep your column definitions as simple JSON objects (just strings, no functions) which
-                makes them candidates for saving in offline storage (eg storing a report definition in a database).</li>
-            <li>They make the definitions more compact, thus may make your code more maintainable.</li>
-        </ul>
-    </p>
+    <note>
+        You can use the same formatter for floating rows and normal rows and check the row type.
+        You can check if the row is floating by checking params.node.floating property.
+    </note>
 
 </div>
 
