@@ -7,7 +7,7 @@ $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2 id="cell-rendering">Cell Rendering</h2>
+<h2 id="cell-rendering">Cell Renderers</h2>
 
 <p>
     Cell Rendering - this is a very powerful feature in ag-Grid. With this, you can put whatever
