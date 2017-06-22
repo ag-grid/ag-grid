@@ -166,7 +166,7 @@ export class EnterpriseMenu {
 
     @PostConstruct
     public init(): void {
-        let items:TabbedItem[] = this.column.getMenuTabs (EnterpriseMenu.TABS_DEFAULT)
+        let items:TabbedItem[] = this.column.getMenuTabs (this.restrictTo ? this.restrictTo : EnterpriseMenu.TABS_DEFAULT)
             .filter(menuTabName=>
                 this.isValidMenuTabItem(menuTabName)
             )
@@ -185,10 +185,9 @@ export class EnterpriseMenu {
     }
 
     private isValidMenuTabItem (menuTabName:string):boolean{
-        let choices:string[] = this.restrictTo ? this.restrictTo : EnterpriseMenu.TABS_DEFAULT;
-        let isValid:boolean = choices.indexOf(menuTabName)> -1;
+        let isValid:boolean = EnterpriseMenu.TABS_DEFAULT.indexOf(menuTabName)> -1;
 
-        if (!isValid) console.warn(`Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${choices}]`);
+        if (!isValid) console.warn(`Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${EnterpriseMenu.TABS_DEFAULT}]`);
 
         return isValid;
     }
