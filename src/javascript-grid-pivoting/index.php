@@ -7,8 +7,6 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<>
-
     <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Pivoting</h2>
 
     <p>
@@ -206,12 +204,16 @@ console.log('found column with id ' + sausageKingdomColumn.getId());
 
     <h2 id="totalPivotColumns">Total Pivot Columns</h2>
     <p>
-        When in pivot mode you can also add total pivot columns. These total columns will total using the provided
-        aggregation function on the value columns and will 'roll-up' each group level below the top most pivot group.
+        When in pivot mode you can also include automatically calculated total pivot columns. These total columns will use the provided
+        aggregation function on the value columns to 'roll-up' each group level.
+    </p>
+    <p>
+        Pivot column groups that contain more than one child will have a total column included. Expanding this group will reveal
+        the columns that make up this total value.
     </p>
 
     <note>
-         <p>All value functions must use the same aggregation function otherwise the calculated total wouldn't make sense.</p>
+         <p>All value columns must use the same aggregation function otherwise the calculated total wouldn't make sense.</p>
     </note>
 
      <p>
