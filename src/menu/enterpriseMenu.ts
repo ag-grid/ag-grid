@@ -49,7 +49,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     }
 
-    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?:string): void {
+    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?:string, restrictToTabs?:string[]): void {
 
         this.showMenu(column, (menu: EnterpriseMenu)=> {
             this.popupService.positionPopupUnderComponent({
@@ -65,12 +65,12 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             if (defaultTab){
                 menu.showTab(defaultTab);
             }
-        }, defaultTab);
+        }, defaultTab, restrictToTabs);
 
     }
 
-    public showMenu(column: Column, positionCallback: (menu: EnterpriseMenu)=>void, defaultTab?:string): void {
-        let menu = new EnterpriseMenu(column, this.lastSelectedTab);
+    public showMenu(column: Column, positionCallback: (menu: EnterpriseMenu)=>void, defaultTab?:string, restrictToTabs?:string[]): void {
+        let menu = new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs);
         this.context.wireBean(menu);
 
         let eMenuGui =  menu.getGui();
@@ -140,9 +140,10 @@ export class EnterpriseMenu {
     private destroyFunctions: Function[] = [];
     private tabFactories:{[p:string]:()=>TabbedItem} = {};
     private includeChecks:{[p:string]:()=>boolean} = {};
+    private restrictTo ?: string[];
 
 
-    constructor(column: Column, initialSelection: string) {
+    constructor(column: Column, initialSelection: string, restrictTo ?: string[]) {
         this.column = column;
         this.initialSelection = initialSelection;
         this.tabFactories[EnterpriseMenu.TAB_GENERAL] = this.createMainPanel.bind(this);
@@ -152,6 +153,7 @@ export class EnterpriseMenu {
         this.includeChecks[EnterpriseMenu.TAB_GENERAL] = ()=> true;
         this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => this.gridOptionsWrapper.isEnableFilter() && !this.column.getColDef().suppressFilter;
         this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = ()=> true;
+        this.restrictTo = restrictTo;
     }
 
     public addEventListener(event: string, listener: Function): void {
@@ -183,9 +185,10 @@ export class EnterpriseMenu {
     }
 
     private isValidMenuTabItem (menuTabName:string):boolean{
-        let isValid:boolean = EnterpriseMenu.TABS_DEFAULT.indexOf(menuTabName)> -1;
+        let choices:string[] = this.restrictTo ? this.restrictTo : EnterpriseMenu.TABS_DEFAULT;
+        let isValid:boolean = choices.indexOf(menuTabName)> -1;
 
-        if (!isValid) console.warn(`Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${EnterpriseMenu.TABS_DEFAULT}]`);
+        if (!isValid) console.warn(`Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${choices}]`);
 
         return isValid;
     }
