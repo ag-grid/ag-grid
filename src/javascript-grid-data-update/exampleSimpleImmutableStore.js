@@ -136,7 +136,7 @@ var gridOptions = {
     enableColResize: true,
     rowSelection: 'multiple',
     enableRangeSelection: true,
-    groupColumnDef: {
+    autoGroupColumnDef: {
         headerName: 'Symbol',
         cellRenderer: 'group',
         field: 'symbol'

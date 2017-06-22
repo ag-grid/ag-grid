@@ -52,7 +52,7 @@ var gridOptions = {
     enableRangeSelection: true,
     columnDefs: columnDefs,
     pagination: true,
-    groupColumnDef: groupColumn,
+    autoGroupColumnDef: groupColumn,
     defaultColDef:{
         editable: true,
         enableRowGroup:true,

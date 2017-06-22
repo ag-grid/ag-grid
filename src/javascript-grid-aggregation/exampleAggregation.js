@@ -20,7 +20,7 @@ var gridOptions = {
     showToolPanel: true,
     toolPanelSuppressPivots: true,
     toolPanelSuppressPivotMode: true,
-    groupColumnDef: {headerName: "Athlete",
+    autoGroupColumnDef: {headerName: "Athlete",
         field: "athlete",
         width: 200,
         cellRenderer: 'group',

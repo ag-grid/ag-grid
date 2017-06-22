@@ -24,7 +24,7 @@ var groupRemoveSingleChildren = true;
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
-    groupColumnDef: {
+    autoGroupColumnDef: {
         headerName: 'Country',
         cellRenderer: 'group',
         field: 'country'

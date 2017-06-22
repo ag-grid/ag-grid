@@ -183,7 +183,7 @@ include '../documentation-main/documentation_header.php';
                 over the column header.</td>
         </tr>
         <tr>
-            <th>groupColumnDef</th>
+            <th>autoGroupColumnDef</th>
             <td>Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping,
                 this column is not included.</td>
         </tr>

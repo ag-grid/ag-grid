@@ -17,7 +17,7 @@ var gridOptions = {
     enableRangeSelection: true,
     rowData: null,
     enableSorting:true,
-    groupColumnDef:{
+    autoGroupColumnDef:{
         headerName:'CUSTOM!',
         cellRendererParams:{
             suppressCount: true,

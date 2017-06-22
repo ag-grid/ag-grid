@@ -39,7 +39,7 @@ var gridOptions = {
     cacheBlockSize: 100,
     maxBlocksInCache: 2,
     purgeClosedRowNodes: true,
-    groupColumnDef: {
+    autoGroupColumnDef: {
         field: 'athlete',
         headerName: "Group",
         width: 200,

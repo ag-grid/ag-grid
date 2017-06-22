@@ -54,7 +54,7 @@ var gridOptions = {
     pagination: true,
     paginationPageSize:10,
     paginationStartPage:4,
-    groupColumnDef: groupColumn,
+    autoGroupColumnDef: groupColumn,
     defaultColDef:{
         editable: true,
         enableRowGroup:true,

@@ -124,7 +124,7 @@ include '../documentation-main/documentation_header.php';
         The example below is similar to the previous example except it does not put checkboxes
         on the leaf level nodes, only allowing entire groups to be selected. This is achieved
         by providing functions for
-        <i>colDef.checkboxSelection</i> and <i>groupColumnDef.cellRendererParams.checkbox</i>.
+        <i>colDef.checkboxSelection</i> and <i>autoGroupColumnDef.cellRendererParams.checkbox</i>.
     </p>
 
     <show-example example="exampleSelectionCheckbox" example-height="450px"></show-example>

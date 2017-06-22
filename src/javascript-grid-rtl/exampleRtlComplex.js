@@ -95,7 +95,7 @@ var gridOptions = {
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
-    groupColumnDef: groupColumn,
+    autoGroupColumnDef: groupColumn,
     showToolPanel: true,
     checkboxSelection: function (params) {
         // we show checkbox selection in the first column, unless we are grouping,

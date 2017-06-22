@@ -63,7 +63,7 @@ var gridOptions = {
             return null;
         }
     },
-    groupColumnDef: {headerName: "Group", field: "model", rowGroupIndex: 1, cellRenderer: 'group',
+    autoGroupColumnDef: {headerName: "Group", field: "model", rowGroupIndex: 1, cellRenderer: 'group',
         cellRendererParams: {
             checkbox: true
         }},

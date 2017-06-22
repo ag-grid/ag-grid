@@ -17,6 +17,9 @@ include '../documentation-main/documentation_header.php';
     <h4>Breaking Changes</h4>
     <ul>
         <li>
+            gridOptions.groupColumnDef has been renamed to autoGroupColumnDef.
+        </li>
+        <li>
             gridOptions.enableFilter now needs to be specifically switched on to get the filter menu in the columns.
         </li>
         <li>
