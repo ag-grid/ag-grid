@@ -37,7 +37,7 @@ var colDef3 = {
     ...
 }</pre>
 
-    This section of the documentation explains the first tow items above, how to use no cell
+    This section of the documentation explains the first two items above, how to use no cell
     renderer and how to use the grid provided cell renderer's. To build your own cell renderer,
     see the section <a href="../javascript-grid-cell-rendering-components/">Cell Rendering Components</a>.
 </p>

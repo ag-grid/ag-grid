@@ -43,7 +43,12 @@ var lastNames = ["Beckham", "Black", "Braxton", "Brennan"];
 var gridOptions = {
     groupSelectsChildren: true,
     groupDefaultExpanded: -1,
-    groupSuppressAutoColumn: true,
+    autoGroupColumnDef:{
+        headerName: 'Name',
+        field: 'name',
+        width: 250,
+        editable: true
+    },
     defaultColDef: {
         checkboxSelection: function (params) {
             var isGrouping = gridOptions.columnApi.getRowGroupColumns().length > 0;
@@ -62,12 +67,8 @@ var defaultCols = [
         headerName: 'Name',
         field: 'name',
         width: 250,
-        editable: true,
-        rowGroupIndex: 0,
-        cellRenderer: 'group',
-        cellRendererParams: {
-            checkbox: true
-        }
+        rowGroup: true,
+        hide:true
     },
     {
         headerName: "Game Name", field: "game.name", width: 267, editable: true, filter: 'set',
