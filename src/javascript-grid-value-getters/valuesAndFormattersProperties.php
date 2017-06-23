@@ -5,7 +5,7 @@ $valuesAndFormattersProperties = [
         'Function or expression. Gets the value from your data for display.'
     ],
     ['valueSetter(params)',
-        'Function or expression. Sets the value into your data for saving. Return true if the data changed (and gui refresh is needed)'
+        'Function or expression. Sets the value into your data for saving. Return true if the data changed.'
     ],
     ['valueFormatter(params)',
         'Function or expression. Formats the value for display.'
