@@ -1010,6 +1010,8 @@ export class CellComp extends Component {
         // for simple values only (not pojo's), see if the value is the same, and if it is, skip the refresh.
         // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
         // if was before the edit.
+        // Niall Note - taking this out for now - it's effectively change detection. i think how the refresh is done
+        // needs to be overhauled and redone in a properly planned way.
         let allowSkippingRefreshIfDataSame = !dontSkipRefresh && _.valuesSimpleAndSame(oldValue, this.value);
         if (allowSkippingRefreshIfDataSame) {
             // return;

@@ -21,16 +21,11 @@ export class ValueService {
 
     private cellExpressions: boolean;
 
-    // private userProvidedTheGroups: boolean;
-    // private suppressUseColIdForGroups: boolean;
-
     private initialised = false;
 
     @PostConstruct
     public init(): void {
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
-        // this.userProvidedTheGroups = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        // this.suppressUseColIdForGroups = this.gridOptionsWrapper.isSuppressUseColIdForGroups();
         this.initialised = true;
     }
 
