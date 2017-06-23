@@ -29,7 +29,7 @@ StockDetailPanel.prototype.init = function (exchangeService, stockHistoricalChar
 };
 
 StockDetailPanel.prototype.numberFormatter = function (input) {
-    return input ? input.toFixed(2) : null;
+    return input ? parseFloat(input).toFixed(2) : null;
 };
 
 StockDetailPanel.prototype.update = function (selectedExchange, selectedSymbol) {
@@ -48,18 +48,26 @@ StockDetailPanel.prototype.update = function (selectedExchange, selectedSymbol) 
 };
 
 StockDetailPanel.prototype.updateGui = function () {
-    let negativeSwingStyle = 'color: #d14836; margin-right: 5px';
+    let negativeSwingStyle = 'color: #; margin-right: 5px';
     let positiveSwingStyle = 'color: #093; margin-right: 5px';
-    let swingStyle = this.delta >= 0 ? positiveSwingStyle : negativeSwingStyle;
+    let swingPositive = this.delta >= 0;
 
     // delta panel
     this.deltaPanelPriceTarget.innerText = this.numberFormatter(this.pricingDelta.currentPrice);
 
     this.deltaPanelSwingTarget.innerText = this.numberFormatter(this.delta);
-    this.deltaPanelSwingTarget.style = swingStyle;
+
+    // painful...ie11 you suck
+    if(swingPositive) {
+        this.deltaPanelSwingTarget.style.color = '#093';
+    } else {
+        this.deltaPanelSwingTarget.style.color = '#d14836';
+    }
+    this.deltaPanelSwingTarget.style.marginRight = '5px';
+
 
     this.deltaPctPanelSwingTarget.innerText = "(" + this.numberFormatter(this.deltaPercentage) + "%)";
-    this.deltaPctPanelSwingTarget.style = swingStyle;
+    // this.deltaPctPanelSwingTarget.style = swingStyle;
 
     // timestamp
     this.timestampTarget.innerText = this.stockDetail.timestamp;

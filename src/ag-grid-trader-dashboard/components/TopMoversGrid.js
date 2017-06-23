@@ -39,7 +39,7 @@ TopMoversGrid.prototype.init = function (fxDataService) {
                 cellRenderer: 'animateShowChange',
                 cellClass: 'align-right',
                 sort: 'desc',
-                valueFormatter(params) {
+                valueFormatter: function(params) {
                     return params.value.toFixed(2)
                 }
             },
@@ -68,7 +68,7 @@ TopMoversGrid.prototype.update = function (newRowData) {
 
 TopMoversGrid.prototype.render = function (id) {
     // lookup the container we want the Grid to use
-    let eGridDiv = document.querySelector(`#${id}`);
+    let eGridDiv = document.querySelector('#'+id);
 
     // create the grid passing in the div to use together with the columns & data we want to use
     new agGrid.Grid(eGridDiv, this.gridOptions);
