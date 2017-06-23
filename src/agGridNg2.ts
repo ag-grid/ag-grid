@@ -309,6 +309,11 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public domLayout: any = undefined;
     @Input() public deltaRowDataMode: any = undefined;
     @Input() public rowDataUpdated: any = undefined;
+    @Input() public autoGroupColumnDef: any = undefined;
+    @Input() public clipboardDeliminator: any = undefined;
+    @Input() public enforceRowDomOrder: any = undefined;
+    @Input() public accentedSort: any = undefined;
+    @Input() public pivotTotals: any = undefined;
     /**
      * Outputs
      */
