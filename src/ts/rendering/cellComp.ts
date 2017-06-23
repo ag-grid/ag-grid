@@ -91,7 +91,7 @@ export class CellComp extends Component {
 
     private value: any;
     private usingWrapper: boolean;
-    private renderedRow: RowComp;
+    private rowComp: RowComp;
 
     private firstRightPinned = false;
     private lastLeftPinned = false;
@@ -107,7 +107,7 @@ export class CellComp extends Component {
 
         this.node = node;
         this.scope = scope;
-        this.renderedRow = renderedRow;
+        this.rowComp = renderedRow;
     }
 
     private createGridCell(): void {
@@ -572,7 +572,7 @@ export class CellComp extends Component {
     // called by rowRenderer when user navigates via tab key
     public startRowOrCellEdit(keyPress?: number, charPress?: string): void {
         if (this.gridOptionsWrapper.isFullRowEdit()) {
-            this.renderedRow.startRowEditing(keyPress, charPress, this);
+            this.rowComp.startRowEditing(keyPress, charPress, this);
         } else {
             this.startEditingIfEnabled(keyPress, charPress, true);
         }
@@ -669,7 +669,7 @@ export class CellComp extends Component {
     // pass in 'true' to cancel the editing.
     public stopRowOrCellEdit(cancel: boolean = false) {
         if (this.gridOptionsWrapper.isFullRowEdit()) {
-            this.renderedRow.stopRowEditing(cancel);
+            this.rowComp.stopRowEditing(cancel);
         } else {
             this.stopEditing(cancel);
         }
@@ -747,7 +747,7 @@ export class CellComp extends Component {
     }
 
     public getRenderedRow(): RowComp {
-        return this.renderedRow;
+        return this.rowComp;
     }
 
     public isSuppressNavigable(): boolean {
@@ -1134,6 +1134,7 @@ export class CellComp extends Component {
     }
 
     private createRendererAndRefreshParams(valueFormatted: string, cellRendererParams: {}): ICellRendererParams {
+        let that = this;
         let params = <ICellRendererParams> {
             value: this.value,
             valueFormatted: valueFormatted,
@@ -1151,7 +1152,17 @@ export class CellComp extends Component {
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.eGridCell,
             eParentOfValue: this.eParentOfValue,
-            addRenderedRowListener: this.renderedRow.addEventListener.bind(this.renderedRow)
+
+            // these bits are not documented anywhere, so we could drop them?
+            // it was in the olden days to allow user to register for when rendered
+            // row was removed (the row comp was removed), however now that the user
+            // can provide components for cells, the destroy method gets call when this
+            // happens so no longer need to fire event.
+            addRowCompListener: this.rowComp.addEventListener.bind(this.rowComp),
+            addRenderedRowListener: function(eventType: string, listener: Function) {
+                console.warn('ag-Grid: since ag-Grid .v11, params.addRenderedRowListener() is now params.addRowCompListener()');
+                that.rowComp.addEventListener(eventType, listener);
+            }
         };
 
         if (cellRendererParams) {
