@@ -16,6 +16,8 @@ include '../documentation-main/documentation_header.php';
     <h3>11.0.0</h3>
     <h4>Breaking Changes</h4>
     <ul>
+        <li>rowNode.data Doesn't carry anymore the aggregated data, now this is available in a different property aggData</li>
+        <li>colDef.showRowGroup: true Now it's mandatory in the column showing groups if you have groupSuppressAutoColumn: true</li>
         <li>
             gridOptions.groupColumnDef has been renamed to autoGroupColumnDef.
         </li>

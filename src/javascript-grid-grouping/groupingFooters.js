@@ -1,29 +1,23 @@
 var columnDefs = [
-    {headerName: 'Athlete', width: 200,
-        // although we are showing the groups in this column, we still
-        // want to show a field (which we are not grouping by) in the leaf level
-        field: 'athlete',
-        showRowGroup: true,
-        cellRenderer: 'group'
-    },
-
-    {field: "country", rowGroup: true, hide: true},
-    {field: "year", rowGroup: true, hide: true},
-
     {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
     {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
     {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'},
     {headerName: "Total", field: "total", width: 100, aggFunc: 'sum'},
     {headerName: "Age", field: "age", width: 90},
     {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110}
+    {headerName: "Sport", field: "sport", width: 110},
+
+    {field: "country", rowGroup: true, hide: true},
+    {field: "year", rowGroup: true, hide: true}
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
     enableRangeSelection: true,
     enableSorting: true,
-    groupSuppressAutoColumn: true,
+    autoGroupColumnDef: {
+        headerName: "Athlete", width: 200, field:'athlete'
+    },
     groupIncludeFooter: true,
     animateRows: true
 };

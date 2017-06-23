@@ -1,37 +1,30 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 180, rowGroupIndex: 1,
-        // use font awesome for first col, with numbers for sort
-        icons: {
-            menu:'<i class="fa fa-shower"/>',
-            filter:'<i class="fa fa-long-arrow-up"/>',
-            columns:'<i class="fa fa-snowflake-o"/>',
-            sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-            sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-        },
-        cellRenderer: 'group',
-        cellRendererParams: {
-            checkbox: true
-        },
-        headerCheckboxSelection: true
-    },
-    {headerName: "Age", field: "age", width: 90, enableValue: true,
+    { headerName: "Athlete", field: "athlete", rowGroupIndex: 1, hide: true },
+    {
+        headerName: "Age", field: "age", width: 90, enableValue: true,
         icons: {
             // not very useful, but demonstrates you can just have strings
             sortAscending: 'U',
             sortDescending: 'D'
         }
     },
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0, enableRowGroup: true,
+    {
+        headerName: "Country", field: "country", width: 120, rowGroupIndex: 0,
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
             sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
         }
     },
-    {headerName: "Year", field: "year", width: 90, enableRowGroup: true,
+    {
+        headerName: "Year", field: "year", width: 90, enableRowGroup: true,
         // mix it up a bit, use a function to return back the icon
         icons: {
-            sortAscending: function () { return 'ASC'; },
-            sortDescending: function () { return 'DESC'; }
+            sortAscending: function () {
+                return 'ASC';
+            },
+            sortDescending: function () {
+                return 'DESC';
+            }
         }
     },
     {headerName: "Date", field: "date", width: 110},
@@ -49,13 +42,27 @@ var gridOptions = {
     enableSorting: true,
     enableFilter: true,
     enableColResize: true,
-    groupSuppressAutoColumn: true,
+    autoGroupColumnDef: {
+        headerName: "Athlete", field: "athlete", width: 180,
+        // use font awesome for first col, with numbers for sort
+        icons: {
+            menu: '<i class="fa fa-shower"/>',
+            filter: '<i class="fa fa-long-arrow-up"/>',
+            columns: '<i class="fa fa-snowflake-o"/>',
+            sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
+            sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
+        },
+        cellRendererParams: {
+            checkbox: true
+        },
+        headerCheckboxSelection: true
+    },
     // override all the defaults with font awesome
     icons: {
         // use font awesome for menu icons
         menu: '<i class="fa fa-bath"/>',
         filter: '<i class="fa fa-long-arrow-down"/>',
-        columns:'<i class="fa fa-handshake-o"/>',
+        columns: '<i class="fa fa-handshake-o"/>',
         sortAscending: '<i class="fa fa-long-arrow-down"/>',
         sortDescending: '<i class="fa fa-long-arrow-up"/>',
         // use some strings from group
@@ -85,7 +92,7 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
@@ -94,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', '../olympicWinners.json');
     httpRequest.send();
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
