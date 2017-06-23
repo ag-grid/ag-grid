@@ -77,7 +77,7 @@ include('../includes/mediaHeader.php');
             AngularJS 1.x developers will have wider choice when selecting components for their application, not
             being restricted with ‘only AngularJS 1.x’ components. The binding between application technology choice
             and component technology choice will dissolve. The AngularJS 1.x components that came into existence
-            as a result of it's dependency shortcoming will disappear.
+            as a result of its dependency shortcoming will disappear.
         </p>
 
         <p>

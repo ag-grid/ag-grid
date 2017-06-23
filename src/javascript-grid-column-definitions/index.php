@@ -272,7 +272,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>suppressResize</th>
-            <td>Set to true if you do not want this column to be resizable by dragging it's edge.</td>
+            <td>Set to true if you do not want this column to be resizable by dragging its edge.</td>
         </tr>
         <tr>
             <th>suppressNavigable</th>

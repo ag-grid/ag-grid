@@ -560,7 +560,7 @@ include '../documentation-main/documentation_header.php';
             <td>
                 To tell grid how wide the scrollbar is which gets used in calculations on grid width calculations. Set
                 only if using non-standard browser provided scrollbars, so the grid can use the non-standard size in
-                it's calculations.
+                its calculations.
             </td>
         </tr>
         <!------------------->
@@ -624,7 +624,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>slaveGrids</th>
-            <td>A list of grids to treat as slaves. If a grid is a slave, it's columns and horizontal scrolling
+            <td>A list of grids to treat as slaves. If a grid is a slave, its columns and horizontal scrolling
                 will try to mirror the columns of the master.</td>
         </tr>
         <tr>
@@ -663,7 +663,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>layoutInterval</th>
-            <td>The grid will check it's size 500ms and lay itself out again if the size changes - such as your browser
+            <td>The grid will check its size 500ms and lay itself out again if the size changes - such as your browser
                 changes size, or your application changes the size of the div the grid live inside. If you want something
                 other than 500ms, set this to a number of milliseconds. To stop the periodic layout, set it to -1.</td>
         </tr>

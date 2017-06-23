@@ -58,7 +58,7 @@ include '../documentation-main/documentation_header.php';
     // you want to hide the popup after it is pressed.</span>
     afterGuiAttached?(params?: {hidePopup?: Function}): void;
 
-    <span class="codeComment">// Gets called when new rows are inserted into the grid. If the filter needs to change it's state
+    <span class="codeComment">// Gets called when new rows are inserted into the grid. If the filter needs to change its state
     // after rows are loaded, it can do it here. For example the set filters uses this to update the list of
     // available values to select from (eg 'Ireland', 'UK' etc for Country filter).</span>
     onNewRowsLoaded?(): void;

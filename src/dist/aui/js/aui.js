@@ -3583,7 +3583,7 @@
         }
   
         // When <object> tag is used to expose NPAPI api to js may have different behaviour then other
-        // tags. One of those differences is that it's childNodes can be undefined.
+        // tags. One of those differences is that its childNodes can be undefined.
         var elementChildNodes = element.childNodes || [];
         var elementChildNodesLen = elementChildNodes.length;
   
@@ -4877,7 +4877,7 @@
             // 1. If no reference node is supplied, appendChild handles it.
             // 2. If a reference node is supplied, there already is content.
             // 3. If a reference node is invalid, an exception is thrown, but also
-            //    it's state would not change even if it wasn't.
+            //    its state would not change even if it wasn't.
             mainLoop:
             for (var b = 0; b < contentNodesLen; b++) {
               var contentNode = contentNodes[b];
@@ -12081,7 +12081,7 @@
       };
   
       /**
-       * Returns whether the dialog has been resized to it's maximum height (has been capped by the viewport height and vertical buffer).
+       * Returns whether the dialog has been resized to its maximum height (has been capped by the viewport height and vertical buffer).
        *
        * @method isMaximised
        */

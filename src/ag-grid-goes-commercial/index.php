@@ -1,7 +1,7 @@
 <?php
 
 $pageTitle = "ag-Grid Goes Commercial";
-$pageDescription = "A discussion on the release of ag-Grid and it's commercial plans.";
+$pageDescription = "A discussion on the release of ag-Grid and its commercial plans.";
 $pageKeyboards = "ag-Grid javascritp script ag-grid-enterprise Commercial";
 
 include('../includes/mediaHeader.php');
@@ -40,7 +40,7 @@ include('../includes/mediaHeader.php');
             In 2016 I had to choose between my personal life, my job and ag-Grid, so I quite my job to focus on ag-Grid
             full time and get back my life. So far during this time I have taken
             a step back from the code and implemented large changes to keep the codebase healthy. For example one
-            of the major changes is ag-Grid now has it's
+            of the major changes is ag-Grid now has its
             own IoC container and Component library - the frameworks out there in my opinion are not suitable for
             a complex widget like ag-Grid. My full time commitment allows this technical ownership and what is
             allowing ag-Grid excel over other grids. Grids are complex systems,

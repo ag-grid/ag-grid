@@ -447,7 +447,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix: rowIndex was missing from cellEditor params</li>
     <li>Bugfix: CSS class ag-row-focus class was not getting applied to right row when rows were ordered or filtered</li>
     <li>Bugfix: event selectionChanged was not getting fired when you had more than one row selected, then just clicked one row (all other rows get deselected).</li>
-    <li>Bugfix: api.sizeColumnsToFit() was incorrectly working out the vertical scroll value - meant it was out by the scroll width sometimes in it's calculations.</li>
+    <li>Bugfix: api.sizeColumnsToFit() was incorrectly working out the vertical scroll value - meant it was out by the scroll width sometimes in its calculations.</li>
 
     <h2>Version 7.1.x</h2>
 
@@ -561,7 +561,7 @@ include '../documentation-main/documentation_header.php';
         <li>ag-grid-react - container for react cells now has css class ag-react-container, to allow CSS selection for styling</li>
         <li>clipboard - added callback processCellFromClipboard(), to allow you to change data as it's been copied from the clipboard.</li>
         <li>scrolls - new property 'scrollbarWidth', so you can tell grid how much padding to use for scrollbar. Handy if providing non-standard scrolbars to grid and need to provide alterlative padding to use.</li>
-        <li>grid size - added api.checkGridSize(), so you can force grid to check it's size. Handy if you create the grid OUT of the dom, then insert it, then you want to tell grid to work out what rows and columns to render.</li>
+        <li>grid size - added api.checkGridSize(), so you can force grid to check its size. Handy if you create the grid OUT of the dom, then insert it, then you want to tell grid to work out what rows and columns to render.</li>
         <li>icons - added customisation of the following icons: menuPin, menuValue, menuAddRowGroup, menuRemoveRowGroup, rowGroupPanel, pivotPanel, valuePanel</li>
         <li>suppress touch - added property <i>suppressTouch</i> to turn off touch support, if you don't want it.</li>
     </ul>
@@ -1122,7 +1122,7 @@ params = {
     Took out virtual dom. This was an implementation detail, no change in how you interface with the grid.
     It only made an improvement on IE, and now that we are using delayed scrolling, IE is
     working fast enough now. In addition, I have now tested with Windows 10 and Edge (the IE replacement) and
-    it's work very fast. So the virtual DOM was giving very little benefit and was 'getting in the way' of a clean
+    it's working very fast. So the virtual DOM was giving very little benefit and was 'getting in the way' of a clean
     design. So I've favored a clean design rather than a more complex design just to get it faster in IE. If
     you want to see how little difference a virtual DOM made, see the Angular Connect 2015 talk I gave.
 

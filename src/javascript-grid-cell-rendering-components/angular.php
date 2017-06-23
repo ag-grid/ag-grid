@@ -70,7 +70,7 @@ colDef = {
 
 <p>
     By using <i>colDef.cellRendererFramework</i> (instead of <i>colDef.cellRenderer</i>) the grid
-    will know it's a Angular component, based on the fact that you are using the Angular version of
+    will know it's an Angular component, based on the fact that you are using the Angular version of
     ag-Grid.
 </p>
 

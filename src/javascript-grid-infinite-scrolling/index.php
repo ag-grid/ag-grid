@@ -304,7 +304,7 @@ interface IGetRowsParams {
     <h3 id="loading-spinner">Loading Spinner</h3>
 
     <p>
-        The examples on this page use a loading spinner to show if the row is waiting for it's data to be loaded. The
+        The examples on this page use a loading spinner to show if the row is waiting for its data to be loaded. The
         grid does not provide this, rather it is a simple rendering technique used in the examples. If the data
         is loading, then the rowNode will be missing data, and hence all values passed to cellRenderers will be
         undefined. You can check for this and provide your own loading effect.

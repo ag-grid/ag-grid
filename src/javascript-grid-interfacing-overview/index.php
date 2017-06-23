@@ -86,7 +86,7 @@ include '../documentation-main/documentation_header.php';
     <pre><code><span class="codeComment">// get the grid to refresh</span>
 gridOptions.api.refreshView();
 
-<span class="codeComment">// get the grid to space out it's columns</span>
+<span class="codeComment">// get the grid to space out its columns</span>
 gridOptions.columnApi.sizeColumnsToFit();
 </code></pre>
 
@@ -454,7 +454,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
                     the following locations:<br/>
                     a) The 'quickFilter' on the top right updates the quick filter of
                     the grid.
-                    b) The 'Show Tool Panel' checkbox has it's value bound to the 'showToolPanel'
+                    b) The 'Show Tool Panel' checkbox has its value bound to the 'showToolPanel'
                     property of the grid.
                     c) The 'Refresh Data' generates new data for the grid and updates the
                     <i>rowData</i> property.

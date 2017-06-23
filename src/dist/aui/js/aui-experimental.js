@@ -15229,7 +15229,7 @@
           },
           set checked(value) {
               // Need to explicitly set the property on the checkbox because the
-              // checkbox's property doesn't change with it's attribute after it
+              // checkbox's property doesn't change with its attribute after it
               // is clicked.
               this._input.checked = value;
               return (0, _attributes.setBooleanAttribute)(this, 'checked', value);

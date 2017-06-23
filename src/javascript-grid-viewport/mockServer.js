@@ -152,7 +152,7 @@ MockServer.prototype.setViewportRange = function(connectionId, firstRow, lastRow
     connection.firstRow = firstRow;
     connection.lastRow = lastRow;
 
-    // because the client has moved it's viewport, it will have disregarded rows outside the range
+    // because the client has moved its viewport, it will have disregarded rows outside the range
     this.purgeFromClientRows(connection.rowsInClient, firstRow, lastRow);
     // send rows newly in the range
     this.sendResultsToClient(connectionId, firstRow, lastRow);

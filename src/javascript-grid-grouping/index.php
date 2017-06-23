@@ -222,7 +222,7 @@ include '../documentation-main/documentation_header.php';
         <a href="../javascript-grid-aggregation/">aggregated values</a> which are explained in
         a documentation page of their own. When the group
         is closed, the group row shows the aggregated result. When the group is open,
-        the group row is removed and in it's place the child rows are displayed.
+        the group row is removed and in its place the child rows are displayed.
         To allow closing the group again, the group column knows to display the parent
         group in the group column only (so you can click on the icon to close the group).
     </p>
@@ -645,7 +645,7 @@ coldefs:[
         </tr>
         <tr>
             <th>groupMultiAutoColumn</th>
-            <td>If using auto column, set to true to have each group in it's own column separate column, eg
+            <td>If using auto column, set to true to have each group in its own column separate column, eg
                 if group by Country then Year, two auto columns will be created, one for country and one for year.</td>
         </tr>
         <tr>

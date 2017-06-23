@@ -92,7 +92,7 @@ include '../documentation-main/documentation_header.php';
 
 
     <p>
-        This example is pagination in it's simplest form. The only property set is turning pagination on with <i>pagination=true</i>.
+        This example is pagination in its simplest form. The only property set is turning pagination on with <i>pagination=true</i>.
     </p>
 
 

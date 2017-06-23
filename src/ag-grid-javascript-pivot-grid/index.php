@@ -37,7 +37,7 @@ include('../includes/mediaHeader.php');
         <h3>How it's Possible</h3>
 
         <p>
-            Under the hood, ag-Grid uses it's own special purpose framework to manage the complex challenge
+            Under the hood, ag-Grid uses its own special purpose framework to manage the complex challenge
             of building a datagrid. The framework uses the latest ECMA 7 (via TypeScript) strongly typed
             object oriented design mixed with ag-Grid's own IoC (Inversion of Control) container, with
             auto-wired services and ag-Grid's GUI component for data binding. This custom built library
