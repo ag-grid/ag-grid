@@ -16,7 +16,7 @@ do
 
     if [ "$module" != "ag-grid" ]
     then
-        npm install "$current_dir/ag-grid/module.tgz" --no-save
+        npm install "$current_dir/ag-grid/module.tgz"
     fi
 
     cd "$current_dir"
