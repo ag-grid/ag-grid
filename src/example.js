@@ -99,6 +99,7 @@ var gridOptions = {
     defaultColDef: {
         minWidth: 50
     },
+    // enableCellChangeFlash: true,
     // postProcessPopup: function(params) {
     //     console.log(params);
     // },

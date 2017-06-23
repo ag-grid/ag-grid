@@ -82,7 +82,7 @@ var colDef3 = {
     The following sections goes through each one in detail.
 </p>
 
-<h2>Grid Renderer's - animateShowChange and animateSlide</h2>
+<h2 id="animate-renderer">Grid Renderer's - animateShowChange and animateSlide</h2>
 
 <p>
     The grid provides two cellRenderer's for animating changes to data. They are:

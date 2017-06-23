@@ -57,6 +57,7 @@ include '../documentation-main/documentation_header.php';
             See new documentation pages <a href="../javascript-grid-value-getters/">Values and Expressions</a>
             and <a href="../javascript-grid-cell-expressions/">Cell Expressions</a> for details.</li>
         <li>New documentation page for <a href="../javascript-grid-cell-rendering/">grid cellRender's</a>.</li>
+        <li>Introduced <a href="../javascript-grid-refresh/#flashing">cell flashing</a>.</li>
     </ul>
 
     <li>Big Breaking Change: aggregation data and group data are no longer stored in rowNode.data, instead they are stored in rowNode.groupData and rowNode.aggData</li>
