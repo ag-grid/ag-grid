@@ -11,7 +11,7 @@ current_dir=$(pwd)
 echo =============================================================================================
 echo =============================================================================================
 echo =============================================================================================
-echo "Preparing examples for angular"
+echo "Preparing examples for angular current dir=$current_dir"
 
 ## for all the package.json containers replace version number
 declare -a subfolders=("ag-grid-angular-example/systemjs_aot" "ag-grid-angular-example/webpack" "ag-grid-angular-example/angular-cli")
@@ -24,9 +24,11 @@ do
 
     cd "$subfolder"
 
-
+    echo "About to install $current_dir/ag-grid/module.tgz"
     npm install "$current_dir/ag-grid/module.tgz"
+    echo "About to install $current_dir/ag-grid-enterprise/module.tgz"
     npm install "$current_dir/ag-grid-enterprise/module.tgz"
+    echo "About to install $current_dir/ag-grid-angular/module.tgz"
     npm install "$current_dir/ag-grid-angular/module.tgz"
 
     npm-install-peers
