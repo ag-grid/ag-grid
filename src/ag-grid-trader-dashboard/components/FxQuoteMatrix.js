@@ -33,8 +33,9 @@ FxQuoteMatrix.prototype.update = function (newRowData) {
         let newRow = newRowData[i];
         let currentRowNode = this.gridApi.getRowNode(newRow.symbol);
 
-        const {data} = currentRowNode;
-        for (const def of this.gridOptions.columnDefs) {
+        const data = currentRowNode.data;
+        for (let j = 0; j < this.gridOptions.columnDefs.length; j++) {
+            let def = this.gridOptions.columnDefs[j];
             if (data[def.field] !== newRow[def.field]) {
                 updatedRows.push(newRow);
                 break;
@@ -47,7 +48,7 @@ FxQuoteMatrix.prototype.update = function (newRowData) {
 
 FxQuoteMatrix.prototype.render = function (id) {
     // lookup the container we want the Grid to use
-    let eGridDiv = document.querySelector(`#${id}`);
+    let eGridDiv = document.querySelector('#'+id);
 
     // create the grid passing in the div to use together with the columns & data we want to use
     new agGrid.Grid(eGridDiv, this.gridOptions);

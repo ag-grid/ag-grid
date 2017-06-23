@@ -38,7 +38,7 @@ ExchangeService.prototype.getExchanges = function () {
 };
 
 ExchangeService.prototype.getExchangeInformation = function (exchangeName) {
-    return _.find(EXCHANGES, (exchange) => {
+    return _.find(EXCHANGES, function(exchange) {
         return exchange.symbol === exchangeName;
     })
 };
@@ -55,16 +55,17 @@ ExchangeService.prototype.initialiseTickerData = function () {
     this.tickerData = {};
 
     const allSymbols = _.uniq(_.concat(NASDAQ_SYMBOLS, LSE_SYMBOLS, JSE_SYMBOLS, DE_SYMBOLS));
-    allSymbols.forEach((symbol) => {
-        this.tickerData[symbol] = this.generateTickerRow(symbol);
+    let self = this;
+    allSymbols.forEach(function(symbol) {
+        self.tickerData[symbol] = self.generateTickerRow(symbol);
     });
 };
 
 ExchangeService.prototype.generateTickerRow = function (symbol) {
     let price = this.random(10, 600);
     return {
-        symbol,
-        price,
+        symbol:symbol,
+        price:price,
         bid: price - this.random(1, 3),
         ask: price + this.random(1, 3),
         recommendation: ['Buy', 'Hold', 'Sell'][Math.floor(this.random(0, 2))]
@@ -82,26 +83,31 @@ ExchangeService.prototype.applyDeltasToTickerData = function () {
     let symbolsToAlter = _.sampleSize(symbols, symbols.length / 4);
     let propertyToAlter = _.sampleSize(properties, 1);
 
-    symbolsToAlter.forEach((symbol) => {
-        this.tickerData[symbol] = {
-            symbol,
-            price: this.tickerData[symbol].price,
-            bid: this.tickerData[symbol].bid,
-            ask: this.tickerData[symbol].ask
+    let self = this;
+    symbolsToAlter.forEach(function(symbol) {
+        self.tickerData[symbol] = {
+            symbol:symbol,
+            price: self.tickerData[symbol].price,
+            bid: self.tickerData[symbol].bid,
+            ask: self.tickerData[symbol].ask
         };
 
-        this.tickerData[symbol][propertyToAlter] = +this.tickerData[symbol][propertyToAlter] + this.random(-2, 2);
+        if(isNaN(self.tickerData[symbol].price)) {
+            debugger
+        }
+
+        self.tickerData[symbol][propertyToAlter] = +self.tickerData[symbol][propertyToAlter] + self.random(-2, 2);
     });
 
-    symbols.forEach((symbol) => {
-        this.subscribers[symbol].forEach((subscriber) => {
-            subscriber(this.tickerData[symbol]);
+    symbols.forEach(function(symbol) {
+        self.subscribers[symbol].forEach(function(subscriber) {
+            subscriber(self.tickerData[symbol]);
         });
     });
 };
 
 ExchangeService.prototype.formatNumber = function (input) {
-    return input.toFixed(2);
+    return parseFloat(input).toFixed(2);
 };
 
 ExchangeService.prototype.formatWithDecimalPlaces = function (x) {
@@ -117,49 +123,49 @@ ExchangeService.prototype.createTickerDetail = function (symbol) {
     let twentiethOfCurrentPrice = currentPrice / 20;
     let yearAgoPrice = this.random(-twentiethOfCurrentPrice, twentiethOfCurrentPrice);
 
-    let range = `${this.formatNumber(previousPrice)} - ${this.formatNumber(currentPrice)}`;
-    let fiftyTwoWeek = `${this.formatNumber(yearAgoPrice)} - ${this.formatNumber(currentPrice)}`;
+    let range = this.formatNumber(previousPrice) + ' - ' + this.formatNumber(currentPrice);
+    let fiftyTwoWeek = this.formatNumber(yearAgoPrice) + ' - ' + this.formatNumber(currentPrice);
 
     let open = this.formatNumber(ticker.bid); // not the same, but will do for demo purposes
 
     let vol = this.formatWithDecimalPlaces(this.random(5000, 20000).toFixed(2));
-    let avg = `${this.formatNumber(this.random(10, 30))}M`;
+    let avg = this.formatNumber(this.random(10, 30)) + 'M';
 
     let dividend = this.random(0, 1).toFixed(2);
     let yld = this.random(1, 2).toFixed(2);
 
     let eps = this.random(5, 10).toFixed(2);
 
-    let shares = `${this.random(3000, 10000).toFixed(2)}M`;
+    let shares = this.random(3000, 10000).toFixed(2) + 'M';
 
-    let marketCap = `${this.random(100000, 900000).toFixed(2)}M`;
+    let marketCap = this.random(100000, 900000).toFixed(2) + 'M';
 
     let historicalData = this.generateHistoricalData(100, this.timestamp, currentPrice);
 
     return {
         pricingDelta: {
-            currentPrice,
-            previousPrice
+            currentPrice:currentPrice,
+            previousPrice:previousPrice
         },
         timestamp: this.timestamp.toDateString(),
         tickerSummary: {
-            range,
-            fiftyTwoWeek,
-            open,
-            vol,
-            avg,
-            dividend,
-            yld,
-            eps,
-            shares,
-            marketCap
+            range:range,
+            fiftyTwoWeek:fiftyTwoWeek,
+            open:open,
+            vol:vol,
+            avg:avg,
+            dividend:dividend,
+            yld:yld,
+            eps:eps,
+            shares:shares,
+            marketCap:marketCap
         },
-        historicalData
+        historicalData:historicalData
     }
 };
 
 ExchangeService.prototype.formatDate = function (date) {
-    return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+    return date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
 };
 
 ExchangeService.prototype.generateHistoricalData = function (numberOfPoints, endDate, endPrice) {
