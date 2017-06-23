@@ -24,9 +24,9 @@ import {ColumnHoverService} from "../../rendering/columnHoverService";
 export class HeaderWrapperComp extends Component {
 
     private static TEMPLATE =
-        '<div class="ag-header-cell">' +
+        '<div class="ag-header-cell" role="presentation" >' +
           '<div ref="eResize" class="ag-header-cell-resize"></div>' +
-          '<ag-checkbox ref="cbSelectAll" class="ag-header-select-all"></ag-checkbox>' +
+          '<ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>' +
             // <inner component goes here>
         '</div>';
 

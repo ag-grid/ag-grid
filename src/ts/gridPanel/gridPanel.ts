@@ -33,50 +33,50 @@ import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
 // it won't render correctly in safari, as safari renders white space as a gap
 
 const HEADER_SNIPPET =
-    '<div class="ag-header">'+
-      '<div class="ag-pinned-left-header"></div>' +
-      '<div class="ag-pinned-right-header"></div>' +
-      '<div class="ag-header-viewport">' +
-        '<div class="ag-header-container"></div>' +
+    '<div class="ag-header" role="row">'+
+      '<div class="ag-pinned-left-header" role="presentation"></div>' +
+      '<div class="ag-pinned-right-header" role="presentation"></div>' +
+      '<div class="ag-header-viewport" role="presentation">' +
+        '<div class="ag-header-container" role="presentation"></div>' +
       '</div>'+
-      '<div class="ag-header-overlay"></div>' +
+      '<div class="ag-header-overlay" role="presentation"></div>' +
     '</div>';
 
 const FLOATING_TOP_SNIPPET =
-    '<div class="ag-floating-top">'+
-      '<div class="ag-pinned-left-floating-top"></div>' +
-      '<div class="ag-pinned-right-floating-top"></div>' +
-      '<div class="ag-floating-top-viewport">' +
-        '<div class="ag-floating-top-container"></div>' +
+    '<div class="ag-floating-top" role="presentation">'+
+      '<div class="ag-pinned-left-floating-top" role="presentation"></div>' +
+      '<div class="ag-pinned-right-floating-top" role="presentation"></div>' +
+      '<div class="ag-floating-top-viewport" role="presentation">' +
+        '<div class="ag-floating-top-container" role="presentation"></div>' +
       '</div>'+
-      '<div class="ag-floating-top-full-width-container"></div>'+
+      '<div class="ag-floating-top-full-width-container" role="presentation"></div>'+
     '</div>';
 
 const FLOATING_BOTTOM_SNIPPET =
-    '<div class="ag-floating-bottom">'+
-      '<div class="ag-pinned-left-floating-bottom"></div>' +
-      '<div class="ag-pinned-right-floating-bottom"></div>' +
-      '<div class="ag-floating-bottom-viewport">' +
-        '<div class="ag-floating-bottom-container"></div>' +
+    '<div class="ag-floating-bottom" role="presentation">'+
+      '<div class="ag-pinned-left-floating-bottom" role="presentation"></div>' +
+      '<div class="ag-pinned-right-floating-bottom" role="presentation"></div>' +
+      '<div class="ag-floating-bottom-viewport" role="presentation">' +
+        '<div class="ag-floating-bottom-container" role="presentation"></div>' +
       '</div>'+
-      '<div class="ag-floating-bottom-full-width-container"></div>'+
+      '<div class="ag-floating-bottom-full-width-container" role="presentation"></div>'+
     '</div>';
 
 const BODY_SNIPPET =
-    '<div class="ag-body">'+
-      '<div class="ag-pinned-left-cols-viewport">'+
-        '<div class="ag-pinned-left-cols-container"></div>'+
+    '<div class="ag-body" role="presentation">'+
+      '<div class="ag-pinned-left-cols-viewport" role="presentation">'+
+        '<div class="ag-pinned-left-cols-container" role="presentation"></div>'+
       '</div>'+
-      '<div class="ag-pinned-right-cols-viewport">'+
-        '<div class="ag-pinned-right-cols-container"></div>'+
+      '<div class="ag-pinned-right-cols-viewport" role="presentation">'+
+        '<div class="ag-pinned-right-cols-container" role="presentation"></div>'+
       '</div>'+
-      '<div class="ag-body-viewport-wrapper">'+
-        '<div class="ag-body-viewport">'+
-          '<div class="ag-body-container"></div>'+
+      '<div class="ag-body-viewport-wrapper" role="presentation">'+
+        '<div class="ag-body-viewport" role="presentation">'+
+          '<div class="ag-body-container" role="presentation"></div>'+
         '</div>'+
       '</div>'+
-      '<div class="ag-full-width-viewport">'+
-        '<div class="ag-full-width-container"></div>'+
+      '<div class="ag-full-width-viewport" role="presentation">'+
+        '<div class="ag-full-width-container" role="presentation"></div>'+
       '</div>'+
     '</div>';
 
@@ -110,7 +110,7 @@ const GRID_PANEL_FOR_PRINT_TEMPLATE =
 // wrapping in outer div, and wrapper, is needed to center the loading icon
 // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
 const OVERLAY_TEMPLATE =
-    '<div class="ag-overlay-panel">'+
+    '<div class="ag-overlay-panel" role="presentation">'+
         '<div class="ag-overlay-wrapper ag-overlay-[OVERLAY_NAME]-wrapper">[OVERLAY_TEMPLATE]</div>'+
     '</div>';
 

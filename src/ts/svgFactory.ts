@@ -140,6 +140,7 @@ export class SvgFactory {
         let eCachedImg: HTMLImageElement = this.imageCache[key];
         if (!eCachedImg) {
             eCachedImg = document.createElement('img');
+            eCachedImg.setAttribute('role', 'presentation');
             eCachedImg.src = data;
             this.imageCache[key] = eCachedImg;
         }
