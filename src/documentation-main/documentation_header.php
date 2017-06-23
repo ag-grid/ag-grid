@@ -72,6 +72,7 @@ function menuItemCollapsibleParent($indent, $localKey, $name, $url, $parentId) {
 function menuItemCollapsibleChild($indent, $localKey, $name, $url, $parentId, $childId, $position = 'middle') {
     $padding = ($indent == 1) ? '&nbsp;&nbsp;' : '';
     $padding = ($indent == 2) ? '&nbsp;&nbsp;&nbsp;&nbsp;' : $padding;
+    $padding = ($indent == 3) ? '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' : $padding;
     $indentClass = 'sidebarLink-indent'.$indent;
 
     if($position == 'start') {

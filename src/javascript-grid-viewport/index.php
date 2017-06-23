@@ -108,7 +108,7 @@ interface IViewportDatasourceParams {
             The grid responds by sizing the vertical scroll to fit 1,000 rows.
         </li>
         <li>
-            The grid, due to it's physical size on the screen, works out it can display 20 rows at any given time.
+            The grid, due to its physical size on the screen, works out it can display 20 rows at any given time.
             Given the scroll position is at the start, it calls <i>datasource.setViewportRange(0,19)</i> informing
             the datasource what data it needs. The grid will display blank rows for the moment.
         </li>
@@ -186,7 +186,7 @@ interface IViewportDatasourceParams {
 
     <p>
         Selection works with viewport. It is recommended that you implement <i>getRowNodeId()</i> to give a unique
-        key to each row. That way, should the same row appear again but in a different location, it will keep it's
+        key to each row. That way, should the same row appear again but in a different location, it will keep its
         selection value. See the example below for setting up <i>getRowNodeId()</i>.
     </p>
 

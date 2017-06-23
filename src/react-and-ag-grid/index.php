@@ -19,7 +19,7 @@ include('../includes/mediaHeader.php');
 
         <p>
             ag-Grid is an enterprise JavaScript data grid with zero library dependencies,
-            including no dependency for it's rendering. You can build an application
+            including no dependency for its rendering. You can build an application
             using just JavaScript and ag-Grid alone. The 'ag' stands for framework AGnostic.
         </p>
 
@@ -64,7 +64,7 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>
-            ag-Grid's future is bright. It's ability to integrate with the different
+            ag-Grid's future is bright. Its ability to integrate with the different
             frameworks makes it strongly positioned to be the enterprise level
             data grid everyone was waiting for. You won't need to throw away your
             grid next time you want to move to a different framework.

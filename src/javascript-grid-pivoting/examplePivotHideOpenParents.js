@@ -1,48 +1,34 @@
 var columnDefs = [
 
-    // the first group column
-    {headerName: "Country",
-        // cellRenderer: 'group',
-        field: 'country',
-        rowGroupIndex: 0,
-        cellRendererParams: {
-            restrictToOneGroup: true
-        }
-    },
+    // row group columns
+    {headerName: "Country", field: 'country', rowGroup: true},
+    {headerName: "Athlete", field: "athlete", rowGroup: true},
 
-    // and second group column
+    // pivot column
     {headerName: "Year",
         // cellRenderer: 'group',
         // to mix it up a bit, here we are using a valueGetter for the year column.
         // this demonstrates that groupHideOpenParents and restrictToOneGroup works
         // with value getters also.
         valueGetter: 'data.year',
-        pivotIndex: 1,
-        width: 130,
-        cellRendererParams: {
-            restrictToOneGroup: true
-        }
+        pivot: true
     },
 
-    {headerName: "Athlete", field: "athlete", width: 150, rowGroupIndex: 1},
-    {headerName: "Gold", field: "gold", aggFunc: 'sum', width: 100},
-    {headerName: "Silver", field: "silver", aggFunc: 'sum', width: 100},
-    {headerName: "Bronze", field: "bronze", aggFunc: 'sum', width: 100},
-    {headerName: "Total", field: "total", aggFunc: 'sum', width: 100}
+    // aggregation columns
+    {headerName: "Gold", field: "gold", aggFunc: 'sum'},
+    {headerName: "Silver", field: "silver", aggFunc: 'sum'},
+    {headerName: "Bronze", field: "bronze", aggFunc: 'sum'},
+    {headerName: "Total", field: "total", aggFunc: 'sum'}
 ];
 
 var gridOptions = {
-    pivotMode:true,
+    pivotMode: true,
     groupDefaultExpanded: 9,
     columnDefs: columnDefs,
-    rowData: null,
-    // groupSuppressAutoColumn: true,
     groupHideOpenParents: true,
     groupMultiAutoColumn: true,
     animateRows: true,
-    onGridReady: function(params) {
-        // params.api.sizeColumnsToFit();
-    }
+    enableSorting: true
 };
 
 // setup the grid after the page has finished loading

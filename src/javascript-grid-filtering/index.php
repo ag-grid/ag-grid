@@ -47,9 +47,9 @@ gridOptions = {
     <span class="codeComment">// turn on filtering</span>
     enableFilter: true,
     ...
-    columnDefs = [
-        {headerName: "Athlete", field: "athlete", filter: 'text'}, <span class="codeComment">// text filter</span>
-        {headerName: "Age",     field: "age",     filter: 'number'}, <span class="codeComment">// number filter</span>
+    columnDefs: [
+        {headerName: "Athlete", field: "athlete", filter: "text"}, <span class="codeComment">// text filter</span>
+        {headerName: "Age",     field: "age",     filter: "number"}, <span class="codeComment">// number filter</span>
         {headerName: "Sport",   field: "sport",   suppressFilter: true} <span class="codeComment">// NO filter</span>
     ]
 }</pre>
@@ -247,7 +247,7 @@ var nameFilterInstance = api.getFilterInstance('name');</pre>
 
     <h4 id="reset_filters">Reset Individual Filters</h4>
 
-    <p>You can reset a filter to it's original state by getting the filter instance and then performing the action that makes sense for the filter type.</p>
+    <p>You can reset a filter to its original state by getting the filter instance and then performing the action that makes sense for the filter type.</p>
 
     <p>For all the filter types the sequence would be:</p>
     <ul>

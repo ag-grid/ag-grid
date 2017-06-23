@@ -104,7 +104,7 @@ MyCellEditor.prototype.isPopup = function() {
 </h3>
 
 <p>
-    The cellEditor component takes parameters in it's init() method and contain the following:
+    The cellEditor component takes parameters in its init() method and contain the following:
 </p>
 
 <table class="table">

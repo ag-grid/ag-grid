@@ -82,7 +82,7 @@ private getCountryFilterParams():any {
 
 <p>
     It is possible to build
-    <a href="../javascript-grid-cell-rendering/#aureliaCellRendering">cellRenderers</a>,
+    <a href="../javascript-grid-cell-rendering-components/#aureliaCellRendering">cellRenderers</a>,
     <a href="../javascript-grid-cell-editing/#aureliaCellEditing">cellEditors</a> and
     <a href="../javascript-grid-filtering/#aureliaFiltering">filters</a> using Aurelia. Doing each of these
     is explained in the section on each.

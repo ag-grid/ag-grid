@@ -1,11 +1,7 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 200,
-        comparator: agGrid.defaultGroupComparator,
-        cellRenderer: 'group'
-    },
     // this column uses min and max func
-    {headerName: "minMax(age)", field: "age", width: 90, cellRenderer: ageRenderer, aggFunc: minAndMaxAggFunction},
-    // here we use an average func and specify the fucntion directly
+    {headerName: "minMax(age)", field: "age", width: 90, aggFunc: minAndMaxAggFunction},
+    // here we use an average func and specify the function directly
     {headerName: "avg(age)", field: "age", width: 90, aggFunc: avgAggFunction},
     // here we use a custom sum function that was registered with the grid,
     // which overrides the built in sum function
@@ -13,8 +9,9 @@ var columnDefs = [
     // and these two use the built in sum func
     {headerName: "abc(silver)", field: "silver", width: 100, aggFunc: '123', enableValue: true},
     {headerName: "xyz(bronze)", field: "bronze", width: 100, aggFunc: 'xyz', enableValue: true},
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0, hide: true},
-    {headerName: "Year", field: "year", width: 90, rowGroupIndex: 1, hide: true}
+
+    { field: "country", rowGroup: true, hide: true},
+    { field: "year", rowGroup: true, hide: true}
 ];
 
 var gridOptions = {
@@ -23,7 +20,10 @@ var gridOptions = {
     groupUseEntireRow: false,
     enableSorting: true,
     enableColResize: true,
-    groupSuppressAutoColumn: true,
+    enableRangeSelection: true,
+    autoGroupColumnDef: {
+        headerName: "Athlete", field: "athlete", width: 200
+    },
     suppressAggFuncInHeader: true,
     aggFuncs: {
         // this overrides the grids built in sum function
@@ -57,15 +57,6 @@ function xyzFunc(nodes) {
     return 'xyz';
 }
 
-// age renderer prints min and max when a group, or just the value when a leaf node
-function ageRenderer(params) {
-    if (params.node.group) {
-        return '(' + params.data.age.min + '..' + params.data.age.max + ')';
-    } else {
-        return params.value;
-    }
-}
-
 // sum function has no advantage over the built in sum function.
 // it's shown here as it's the simplest form of aggregation and
 // showing it can be good as a starting point for understanding
@@ -87,7 +78,14 @@ function minAndMaxAggFunction(values) {
     // this is what we will return
     var result = {
         min: null,
-        max: null
+        max: null,
+        // because we are returning back an object, this would get rendered as [Object,Object]
+        // in the browser. we could get around this by providing a cellFormatter, OR we could
+        // get around it in a customer cellRenderer, however this is a trick that will also work
+        // with clipboard.
+        toString: function() {
+            return '(' + this.min + '..'+ this.max + ')';
+        }
     };
     // update the result based on each value
     values.forEach( function(value) {
@@ -198,13 +196,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', '../olympicWinners.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({url: '../olympicWinners.json'})
+        .then( function(rows) {
+            gridOptions.api.setRowData(rows);
+        });
 });

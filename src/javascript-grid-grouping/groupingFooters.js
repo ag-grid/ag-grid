@@ -1,25 +1,23 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 200,
-        comparator: agGrid.defaultGroupComparator,
-        cellRenderer: 'group'
-    },
     {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
     {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
     {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'},
     {headerName: "Total", field: "total", width: 100, aggFunc: 'sum'},
     {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
-    {headerName: "Year", field: "year", width: 90, rowGroupIndex: 1},
     {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110}
+    {headerName: "Sport", field: "sport", width: 110},
+
+    {field: "country", rowGroup: true, hide: true},
+    {field: "year", rowGroup: true, hide: true}
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: null,
+    enableRangeSelection: true,
     enableSorting: true,
-    groupSuppressAutoColumn: true,
-    groupUseEntireRow: false,
+    autoGroupColumnDef: {
+        headerName: "Athlete", width: 200, field:'athlete'
+    },
     groupIncludeFooter: true,
     animateRows: true
 };
@@ -31,13 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', '../olympicWinners.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({url: '../olympicWinners.json'})
+        .then( function(rows) {
+            gridOptions.api.setRowData(rows);
+        });
 });

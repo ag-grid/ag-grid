@@ -1,0 +1,28 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid/ag-grid.js?ignore=notused47"></script>
+    <script src="exampleResizeGroups.js"></script>
+</head>
+<style>
+    .fixed-size-header {
+        background-color: #ffdddd;
+    }
+    .resizable-header {
+        background-color: #ddffdd;
+    }
+    .legend-box {
+        border: 1px solid #aaa;
+    }
+</style>
+<body>
+    <div style="height: 100%; padding-top: 26px; box-sizing: border-box;">
+        <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+    </div>
+    <div style="position: absolute; top: 0px; left: 0px; padding-top: 7px; padding-left: 8px;">
+        <span class="legend-box resizable-header">&nbsp;&nbsp;&nbsp;&nbsp;</span> Resizable Column
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <span class="legend-box fixed-size-header">&nbsp;&nbsp;&nbsp;&nbsp;</span> Fixed Width Column
+    </div>
+</body>
+</html>

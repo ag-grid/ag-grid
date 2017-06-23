@@ -74,22 +74,6 @@ include '../documentation-main/documentation_header.php';
             </div>
         <?php } ?>
 
-        <?php if (isFrameworkReact()) { ?>
-            <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
-
-                <?php if (isFrameworkAll()) { ?>
-                    <div class="collapsableDocs-header" onclick="this.classList.toggle('active');">
-                        <h4><img style="vertical-align: middle" src="/images/react_small.png" height="20px"/> Next Steps - ReactJS</h4>
-                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                    </div>
-                <?php } ?>
-
-                <div>
-                    <?php include './react.php'; ?>
-                </div>
-            </div>
-        <?php } ?>
-
         <?php if (isFrameworkAurelia()) { ?>
             <div class="<?= isFrameworkAll() ? 'collapsableDocs' : '' ?>">
 
@@ -302,7 +286,7 @@ include '../documentation-main/documentation_header.php';
                 Also in the examples, ag-Grid is loaded with an additional parameter <i>"ignore=notused"</i>. If you
                 are
                 using
-                the self contained bundle <b>you do not need to include this extra parameter</b>. It's purpose is as
+                the self contained bundle <b>you do not need to include this extra parameter</b>. Its purpose is as
                 a dummy
                 parameter, which the documentation
                 changes every time there is a grid release, to trick the browser in getting the latest version

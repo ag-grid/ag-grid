@@ -183,7 +183,7 @@ include '../documentation-main/documentation_header.php';
                 over the column header.</td>
         </tr>
         <tr>
-            <th>groupColumnDef</th>
+            <th>autoGroupColumnDef</th>
             <td>Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping,
                 this column is not included.</td>
         </tr>
@@ -219,6 +219,11 @@ include '../documentation-main/documentation_header.php';
             <th>sortingOrder</th>
             <td>Array defining the order in which sorting occurs (if sorting is enabled). Values can be <code>asc</code>,
                 <code>desc</code> or <code>null</code>. For example: <code>sortingOrder: ['asc', 'desc']</code>.</td>
+        </tr>
+        <tr>
+            <th>accentedSort</th>
+            <td>Set to true to specify that the sort
+                should take into account accented characters, if this feature is turned on the sort will perform slower.</td>
         </tr>
 
 
@@ -274,7 +279,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>stopEditingWhenGridLosesFocus</th>
             <td>Set this to true to stop cell editing when focus leaves the grid. The default is the grid stays editing
-            until focus goes onto another cell.</td>
+            until focus goes onto another cell. For inline (non-popup) editors only.</td>
         </tr>
 
         <!------------------->
@@ -333,11 +338,6 @@ include '../documentation-main/documentation_header.php';
             <td>When to show the 'pivot panel' (where you drag rows to pivot) at the top. Default
                 is never. Set to either 'always' or 'onlyWhenPivoting'. Note that the pivot panel
                 will never show if pivotMode is off.</td>
-        </tr>
-        <tr>
-            <th>suppressMenuColumnPanel<br/>suppressMenuFilterPanel<br/>suppressMenuMainPanel</th>
-            <td>By default the enterprise menu has three panels. Set these properties to true
-                to suppress one or more of these panels.</td>
         </tr>
         <tr>
             <th>rememberGroupStateWhenNewData</th>
@@ -560,7 +560,7 @@ include '../documentation-main/documentation_header.php';
             <td>
                 To tell grid how wide the scrollbar is which gets used in calculations on grid width calculations. Set
                 only if using non-standard browser provided scrollbars, so the grid can use the non-standard size in
-                it's calculations.
+                its calculations.
             </td>
         </tr>
         <!------------------->
@@ -624,7 +624,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>slaveGrids</th>
-            <td>A list of grids to treat as slaves. If a grid is a slave, it's columns and horizontal scrolling
+            <td>A list of grids to treat as slaves. If a grid is a slave, its columns and horizontal scrolling
                 will try to mirror the columns of the master.</td>
         </tr>
         <tr>
@@ -652,6 +652,10 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to only have range selection, and not row selection, copied to clipboard.</td>
         </tr>
         <tr>
+            <th>clipboardDeliminator</th>
+            <td>To specify deliminator to use while copying to clipboard.</td>
+        </tr>
+        <tr>
             <th>suppressFocusAfterRefresh</th>
             <td>Set to true to not set focus back on the grid after a refresh. This can avoid issues where you
                 want to keep the focus on another part of the browser.</td>
@@ -659,7 +663,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>layoutInterval</th>
-            <td>The grid will check it's size 500ms and lay itself out again if the size changes - such as your browser
+            <td>The grid will check its size 500ms and lay itself out again if the size changes - such as your browser
                 changes size, or your application changes the size of the div the grid live inside. If you want something
                 other than 500ms, set this to a number of milliseconds. To stop the periodic layout, set it to -1.</td>
         </tr>

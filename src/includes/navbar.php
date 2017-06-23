@@ -1,4 +1,11 @@
-<header class="Header navbar navbar-inverse navbar-logo navbar-hiddenxs">
+<?php
+// if the user has not set a root folder, set it to the default
+if (!isset($rootFolder)) {
+    $rootFolder = '..';
+}
+?>
+
+<header class="Header navbar navbar-inverse navbar-logo navbar-hiddenxs" style="margin-bottom: 0">
     <div class="container">
         <div class="row">
             <a class="visible-xs navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" id="nav-toggle" href="javascript:void(0);">
@@ -8,7 +15,7 @@
             <?php if ($navKey !== 'home') { ?>
             <div class="navbar-header col-md-2 col-sm-3 col-xs-6">
                 <a class="Header-logo" href="/">
-                    <img src="../images/logo.png" style="width: 70px;"/>
+                    <img src="<?php $rootFolder ?>/images/logo.png" style="width: 70px;"/>
                 </a>
             </div>
             <?php } ?>

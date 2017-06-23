@@ -54,7 +54,7 @@ var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oc
 var dataSize = '.1x22';
 
 var size = 'fill'; // model for size select
-var width = '100%'; // the div gets it's width and height from here
+var width = '100%'; // the div gets its width and height from here
 var height = '100%';
 
 var rowSelection = 'checkbox';
@@ -70,7 +70,6 @@ var groupColumn = {
             return params.data[params.colDef.field];
         }
     },
-    comparator: agGrid.defaultGroupComparator,
     cellRenderer: 'group',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
@@ -96,7 +95,7 @@ var gridOptions = {
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
-    groupColumnDef: groupColumn,
+    autoGroupColumnDef: groupColumn,
     showToolPanel: true,
     checkboxSelection: function (params) {
         // we show checkbox selection in the first column, unless we are grouping,

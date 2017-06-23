@@ -170,6 +170,24 @@ var groupColumn = {
 };
     </pre>
 
+    <h3 id="accentedSort">Accented sort</h3>
+
+    <p>
+        By default sorting doesn't take into consideration locale specific characters, if you need to make your sort locale
+        specific you can configure this by setting the property <code>gridOptions.accentedSort = true</code>
+    </p>
+
+    <p>
+        Using this feature is more expensive, if you need to sort a very large amount of data, you might find that this
+        causes the sort to be noticeably slower.
+    </p>
+
+    <p>
+        The following example is configured to use this feature.
+    </p>
+
+
+    <show-example example="exampleSortingAccented"></show-example>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

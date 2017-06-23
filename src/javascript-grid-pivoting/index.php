@@ -1,13 +1,11 @@
 <?php
 $key = "Pivoting";
 $pageTitle = "Angular | Javascript | React Pivot Table";
-$pageDescription = "One of the most powerful features of ag-Grid is it's ability to pivot data. Learn how to pivot using ag-Grid";
+$pageDescription = "One of the most powerful features of ag-Grid is its ability to pivot data. Learn how to pivot using ag-Grid";
 $pageKeyboards = "ag-Grid JavaScritp Grid Pivot";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
-
-<div>
 
     <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Pivoting</h2>
 
@@ -202,6 +200,33 @@ console.log('found column with id ' + sausageKingdomColumn.getId());
     </p>
     
     <show-example example="exampleSortingWithPivot"></show-example>
+
+
+    <h2 id="totalPivotColumns">Total Pivot Columns</h2>
+    <p>
+        When in pivot mode you can also include automatically calculated total pivot columns. These total columns will use the provided
+        aggregation function on the value columns to 'roll-up' each group level.
+    </p>
+    <p>
+        Pivot column groups that contain more than one child will have a total column included. Expanding this group will reveal
+        the columns that make up this total value.
+    </p>
+
+    <note>
+         <p>All value columns must use the same aggregation function otherwise the calculated total wouldn't make sense.</p>
+    </note>
+
+     <p>
+        The example below demonstrates pivot totals enabled via the Grid Options property <i>pivotTotals</i> set to true</p>
+
+        <ul>
+            <li>pivots on ['sport', 'year'] and groups by ['country']</li>
+            <li>pivoting and grouping can be controlled via the provided buttons</li>
+        </ul>
+    </p>
+
+    <show-example example="pivotTotalColumns"></show-example>
+
 
     <h2>Saving & Restoring Column State with Pivot</h2>
 

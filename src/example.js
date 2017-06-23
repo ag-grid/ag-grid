@@ -54,7 +54,7 @@ var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oc
 var dataSize = '.1x22';
 
 var size = 'fill'; // model for size select
-var width = '100%'; // the div gets it's width and height from here
+var width = '100%'; // the div gets its width and height from here
 var height = '100%';
 
 var rowSelection = 'checkbox';
@@ -63,14 +63,6 @@ var groupColumn = {
     headerName: "Group",
     width: 200,
     field: 'name',
-    valueGetter: function(params) {
-        if (params.node.group) {
-            return params.node.key;
-        } else {
-            return params.data[params.colDef.field];
-        }
-    },
-    comparator: agGrid.defaultGroupComparator,
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
     cellRenderer: 'group',
@@ -104,15 +96,20 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
-    postProcessPopup: function(params) {
-        console.log(params);
+    defaultColDef: {
+        minWidth: 50
     },
+    // enableCellChangeFlash: true,
+    // postProcessPopup: function(params) {
+    //     console.log(params);
+    // },
+    // enforceRowDomOrder: true,
     // need to be careful here inside the normal demo, as names are not unique if big data sets
     // getRowNodeId: function(data) {
     //     return data.name;
     // },
     // suppressAsyncEvents: true,
-    suppressAggAtRootLevel: true,
+    // suppressAggAtRootLevel: true,
     floatingFilter:true,
 //debug: true,
 //     editType: 'fullRow',
@@ -120,6 +117,7 @@ suppressEnterprise: true,
 //     debug: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
+    pivotTotals: true,
 //minColWidth: 50,
 //maxColWidth: 300,
 rowBuffer: 0,
@@ -164,7 +162,7 @@ rowBuffer: 0,
     // suppressColumnVirtualisation: true,
 //suppressContextMenu: true,
 //suppressFieldDotNotation: true,
-    groupColumnDef: groupColumn,
+    autoGroupColumnDef: groupColumn,
 //suppressCellSelection: true,
 //suppressMultiSort: true,
     showToolPanel: true,//window.innerWidth > 1000,
@@ -177,6 +175,7 @@ rowBuffer: 0,
 //     groupHideOpenParents: true,
 
 //suppressMenuFilterPanel: true,
+//     clipboardDeliminator: ',',
 //suppressMenuMainPanel: true,
 //suppressMenuColumnPanel: true,
 //forPrint: true,
@@ -228,6 +227,9 @@ rowBuffer: 0,
 // callback when cell clicked
     onCellClicked: function (params) {
         // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
+    },
+    onCellValueChanged: function (params) {
+        console.log("Callback onCellValueChanged:", params);
     },
     onRowDataChanged: function (params) {
         console.log('Callback onRowDataChanged: ');
@@ -479,7 +481,7 @@ var defaultCols = [
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
-        editable: true, newValueHandler: numberNewValueHandler, width: 150,
+        editable: true, valueParser: numberParser, width: 150,
         // aggFunc: 'sum',
         enableValue: true,
         cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
@@ -506,7 +508,7 @@ months.forEach(function (month) {
             'good-score': 'typeof x === "number" && x > 50000',
             'bad-score': 'typeof x === "number" && x < 10000'
         },
-        newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer,
+        valueParser: numberParser, cellRenderer: currencyRenderer,
         filterCellRenderer: currencyRenderer,
         filterParams:{
             clearButton: true
@@ -734,7 +736,7 @@ var COUNTRY_CODES = {
     Uruguay: "uy"
 };
 
-function numberNewValueHandler(params) {
+function numberParser(params) {
     var newValue = params.newValue;
     var valueAsNumber;
     if (newValue === null || newValue === undefined || newValue === '') {
@@ -742,9 +744,7 @@ function numberNewValueHandler(params) {
     } else {
         valueAsNumber = parseFloat(params.newValue);
     }
-    var field = params.colDef.field;
-    var data = params.data;
-    data[field] = valueAsNumber;
+    return valueAsNumber;
 }
 
 function PersonFilter() {

@@ -13,8 +13,57 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h2>Version 10.0.x</h2>
+    <h3>11.0.0</h3>
+    <h4>Breaking Changes</h4>
+    <ul>
+        <li>rowNode.data Doesn't carry anymore the aggregated data, now this is available in a different property aggData</li>
+        <li>colDef.showRowGroup: true Now it's mandatory in the column showing groups if you have groupSuppressAutoColumn: true</li>
+        <li>
+            gridOptions.groupColumnDef has been renamed to autoGroupColumnDef.
+        </li>
+        <li>
+            gridOptions.enableFilter now needs to be specifically switched on to get the filter menu in the columns.
+        </li>
+        <li>
+            Deprecated cellRendererParams properties: restrictToOneGroup, keyMap and suppressUseColIdForGroups,
+            The way row grouping has been simplified. See AG-513 for more details
+        </li>
+        <li>
+            Deprecated gridOptions properties: suppressMenuFilterPanel suppressMenuMainPanel and suppressMenuColumnPanel,
+            use colDef.menuTabs instead. See AG-401 for more details
+        </li>
+    </ul>
 
+    <h4>Enhancements</h4>
+    <ul>
+        <li>AG-401 - New property <a href="../javascript-grid-column-menu/">menuTabs</a> to specify which column menu tabs to show and in which order.</li>
+    </ul>
+
+    <h4>TBD</h4>
+    <ul>
+        <li>AG-515 - New property <a href="../javascript-grid-clipboard/#deliminator">clipboardDeliminator</a> to specify deliminator to use while copying to clipboard.</li>
+        <li>AG-515 - New property <a href="../javascript-grid-sorting/#accentedSort">gridOptions.accentedSort</a> Set to true to specify that the sort
+            should take into account accented characters, if this feature is turned on the sort will perform slower.</li>
+        <li>AG-398 / AG-371 - New property <a href="../javascript-grid-clipboard/#suppressPaste">colDef.suppressPaste</a> to suppress pasting from clipboard for certain cells.</li>
+        <li>AG-348 - Callbacks processCellForClipboard() and processCellFromClipboard() now get invoked with doing Ctrl + D (copy range down)</li>
+        <li>AG-199 - <a href="../javascript-grid-resizing/">sizeColumnsToFit</a> now fires an event with parameter 'finished=true'.</li>
+        <li>AG-199 - <a href="../javascript-grid-resizing/">autoSizeColumns</a> now fires just one event, previously it was firing two events unnecessarily.</li>
+        <li>AG-82 - <a href="../javascript-grid-resizing/#resizing-groups">Resizing groups</a> now respects any children columns that are not resizable.</li>
+        <li>AG-207 - (bug) MarryChildren was not working when columns were hidden, now works.</li>
+        <li>AG-154 - Typing non-latin letters on focused cell now starts cell editing.</li>
+        <li>AG-73 - Now when editing or updating data, if value is not different, data is not updated, cell is not refreshed and no 'valueChangedEvent' fired. Also impacts when tabbing while editing, previously no change was still an edit, no now change is no change.</li>
+        <li>AG-543 - Bugfix - Regression/Breaking Change - rows are inserted in reverse order</li>
+        <li>AG-517 - Review of valueGetters and valueFormatters and introduced valueSetters and valueParsers.
+            See new documentation pages <a href="../javascript-grid-value-getters/">Values and Expressions</a>
+            and <a href="../javascript-grid-cell-expressions/">Cell Expressions</a> for details.</li>
+        <li>New documentation page for <a href="../javascript-grid-cell-rendering/">grid cellRender's</a>.</li>
+        <li>Introduced <a href="../javascript-grid-refresh/#flashing">cell flashing</a>.</li>
+    </ul>
+
+    <li>Big Breaking Change: aggregation data and group data are no longer stored in rowNode.data, instead they are stored in rowNode.groupData and rowNode.aggData</li>
+    <li>Removed property suppressUseColIdForGroups, because of new way of storing grouped data in the rowNode, it is not needed.</li>
+
+    <h2>Version 10.1.x</h2>
 
     <h3>Version 10.1.0 [08-JUN-2017]</h3>
     <h4>Documentation:</h4>
@@ -76,6 +125,8 @@ include '../documentation-main/documentation_header.php';
         <li>Property 'forPrint' replaced with 'domLayout', if using forPrint, then set domLayout="forPrint" instead.</li>
     </ul>
 
+    <h2>Version 10.0.x</h2>
+
     <h3>Version 10.0.1 [24-MAY-2017]</h3>
     <ul>
         <li>
@@ -90,7 +141,8 @@ include '../documentation-main/documentation_header.php';
         <li>
             New row model type <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a>.
         </li>
-        <LI>AG-471: All the <a href="../javascript-grid-events/">events</a> are now asynchronous</li>
+        <li>AG-471: All the <a href="../javascript-grid-events/">events</a> are now asynchronous. afterFilterChanged
+            event dropped.</li>
         <li>AG-461: By default, <a href="../javascript-grid-filter-quick">quick filter</a> no longer caches the values. This means quick filters work a bit
             slower, but are more dependable (cache does not go out of date). The cache can still be turned
             on using the property <i>cacheQuickFilter=true</i> if worried about performance.
@@ -398,7 +450,7 @@ include '../documentation-main/documentation_header.php';
     <li>Bugfix: rowIndex was missing from cellEditor params</li>
     <li>Bugfix: CSS class ag-row-focus class was not getting applied to right row when rows were ordered or filtered</li>
     <li>Bugfix: event selectionChanged was not getting fired when you had more than one row selected, then just clicked one row (all other rows get deselected).</li>
-    <li>Bugfix: api.sizeColumnsToFit() was incorrectly working out the vertical scroll value - meant it was out by the scroll width sometimes in it's calculations.</li>
+    <li>Bugfix: api.sizeColumnsToFit() was incorrectly working out the vertical scroll value - meant it was out by the scroll width sometimes in its calculations.</li>
 
     <h2>Version 7.1.x</h2>
 
@@ -512,7 +564,7 @@ include '../documentation-main/documentation_header.php';
         <li>ag-grid-react - container for react cells now has css class ag-react-container, to allow CSS selection for styling</li>
         <li>clipboard - added callback processCellFromClipboard(), to allow you to change data as it's been copied from the clipboard.</li>
         <li>scrolls - new property 'scrollbarWidth', so you can tell grid how much padding to use for scrollbar. Handy if providing non-standard scrolbars to grid and need to provide alterlative padding to use.</li>
-        <li>grid size - added api.checkGridSize(), so you can force grid to check it's size. Handy if you create the grid OUT of the dom, then insert it, then you want to tell grid to work out what rows and columns to render.</li>
+        <li>grid size - added api.checkGridSize(), so you can force grid to check its size. Handy if you create the grid OUT of the dom, then insert it, then you want to tell grid to work out what rows and columns to render.</li>
         <li>icons - added customisation of the following icons: menuPin, menuValue, menuAddRowGroup, menuRemoveRowGroup, rowGroupPanel, pivotPanel, valuePanel</li>
         <li>suppress touch - added property <i>suppressTouch</i> to turn off touch support, if you don't want it.</li>
     </ul>
@@ -925,7 +977,7 @@ params = {
     <h3>Version 4.1.x</h3>
 
     <b>Big changes</b>
-    <li>Vamped up Cell Editing and Rendering. See new documentation pages for <a href="../javascript-grid-cell-editing">Cell Editing</a> and <a href="../javascript-grid-cell-rendering">Cell Rendering</a></li>
+    <li>Vamped up Cell Editing and Rendering. See new documentation pages for <a href="../javascript-grid-cell-editing">Cell Editing</a> and <a href="../javascript-grid-cell-rendering-components">Cell Rendering</a></li>
     <li>New row model called <a href="../javascript-grid-viewport/">Viewport</a>. Designed for views over large data and pushing out updates from server to client.</li>
 
     <b>Breaking Change</b>
@@ -1073,7 +1125,7 @@ params = {
     Took out virtual dom. This was an implementation detail, no change in how you interface with the grid.
     It only made an improvement on IE, and now that we are using delayed scrolling, IE is
     working fast enough now. In addition, I have now tested with Windows 10 and Edge (the IE replacement) and
-    it's work very fast. So the virtual DOM was giving very little benefit and was 'getting in the way' of a clean
+    it's working very fast. So the virtual DOM was giving very little benefit and was 'getting in the way' of a clean
     design. So I've favored a clean design rather than a more complex design just to get it faster in IE. If
     you want to see how little difference a virtual DOM made, see the Angular Connect 2015 talk I gave.
 

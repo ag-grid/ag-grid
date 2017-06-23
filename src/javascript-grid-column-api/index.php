@@ -38,7 +38,7 @@ include '../documentation-main/documentation_header.php';
             representation for a column. When you pass a list of colDefs to the grid (via gridOptions.colDefs)
             the grid wraps each of these colDefs in a Column object. It is the Column object that
             contains the run-time information about the column. For example, if the column width changes,
-            the actual column width is updated in the Column object, the colDef never has it's details changed.
+            the actual column width is updated in the Column object, the colDef never has its details changed.
             The fact that the colDef is never changed allows you to use the same colDef across many grids
             (probably only useful to a select few of you).
         </p>
@@ -243,7 +243,7 @@ include '../documentation-main/documentation_header.php';
             </tr>
             <tr>
                 <th>autoSizeColumn(colKey)</th>
-                <td>Auto-sizes a column based on it's contents.</td>
+                <td>Auto-sizes a column based on its contents.</td>
             </tr>
             <tr>
                 <th>autoSizeColumns(colKeys)</th>

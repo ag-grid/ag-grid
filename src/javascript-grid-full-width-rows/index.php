@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    The <i>cellRenderer</i> can be any ag-Grid cellRenderer. Refer to <a href="../javascript-grid-cell-rendering/">
+    The <i>cellRenderer</i> can be any ag-Grid cellRenderer. Refer to <a href="../javascript-grid-cell-rendering-components/">
         Cell Rendering</a> on how to build cellRenderers. The cellRenderer for fullWidth has
     one difference to normal cellRenderers, that is the parameters passed are missing the value and column information
     as the cellRenderer, by definition, is not tied to a particular column. Instead you should work off the data
@@ -61,7 +61,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Sorting and Filtering are NOT impacted by fullWidth. fullWidth is a rendering time feature. The sorting
-    and filtering applied to the data is done before rending and is not impacted.
+    and filtering applied to the data is done before rendering and is not impacted.
 </p>
 
 <h3 id="basic-fullwidth-example">Basic fullWidth Example</h3>
@@ -145,7 +145,7 @@ include '../documentation-main/documentation_header.php';
     A row that 'can flower' is expandable. The child row is called the 'flower row'.
     The 'flower row':
 <ul>
-    <li>will share the same data item as it's parent.</li>
+    <li>will share the same data item as its parent.</li>
     <li>does not participate in filtering - it will show if parent is shown.</li>
     <li>does not participate in sorting - it will always display below the parent.</li>
 </ul>

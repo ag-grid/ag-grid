@@ -33,7 +33,6 @@ var groupColumn = {
     },
     headerCheckboxSelection: true,
     // headerCheckboxSelectionFilteredOnly: true,
-    comparator: agGrid.defaultGroupComparator,
     cellRenderer: 'group',
     cellRendererParams: {
         checkbox: true
@@ -55,7 +54,7 @@ var gridOptions = {
     pagination: true,
     paginationPageSize:10,
     paginationStartPage:4,
-    groupColumnDef: groupColumn,
+    autoGroupColumnDef: groupColumn,
     defaultColDef:{
         editable: true,
         enableRowGroup:true,

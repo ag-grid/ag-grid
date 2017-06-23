@@ -51,7 +51,7 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    groupColumnDef: {headerName : "Location", field: "city", width: 200,
+    autoGroupColumnDef: {headerName : "Location", field: "city", width: 200,
         cellRenderer: 'group',
         cellRendererParams: {
             checkbox: true

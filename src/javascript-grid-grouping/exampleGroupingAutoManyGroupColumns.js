@@ -1,8 +1,8 @@
 var columnDefs = [
 
     // group by these cols, and hide them, and let grid sort out the grouping columns
-    {headerName: "Country", field: "country", rowGroupIndex: 0, hide: true},
-    {headerName: "Year", field: "year", rowGroupIndex: 1, hide: true},
+    {headerName: "Country", field: "country", rowGroup: true, hide: true},
+    {headerName: "Year", field: "year", rowGroup: true, hide: true},
 
     {headerName: "Athlete", field: "athlete"},
     {headerName: "Gold", field: "gold"},
@@ -12,11 +12,13 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: null,
+    animateRows: true,
+    enableRangeSelection: true,
     // by default the grid will create auto columns, however the default
     // behaviour is one column, set this property to true to get column
     // per group
     groupMultiAutoColumn: true,
+    enableSorting: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }

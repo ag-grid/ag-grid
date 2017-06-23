@@ -52,7 +52,7 @@ include('../includes/mediaHeader.php');
             including C# and C++. This means I respect more their 'design on things' than I would open source
             community driven projects. Personally I learnt a lot by observing the different options of the Typescript
             compiler and how they changed the resulting JavaScript code.</li>
-            <li><b>Angular 2</b> is pushing the boundaries of ECMA 6 and Typescript. This may be it's achilles heel,
+            <li><b>Angular 2</b> is pushing the boundaries of ECMA 6 and Typescript. This may be its achilles heel,
                 in that it's using cutting edge technologies, but it is forcing these technologies into the main
             stream and ironing them out. A lot can be learnt of the future by looking at what Angular 2 is doing
             and I pay respect to the Angular 2 team for taking the brave steps.</li>
@@ -267,7 +267,7 @@ import {Grid} from 'ag-grid/main';</pre>
 
         <p>The above CommonJS works great when the client is using CommonJS. It is probable that the client,
         assuming it's browser based, will use Browserify or WebPack to bundle up the client application
-        and it's dependencies (including your module) into a single Self Contained Javascript Bundle file.</p>
+        and its dependencies (including your module) into a single Self Contained Javascript Bundle file.</p>
 
         <p>The problem with the above is it assumes your client will be using a module loading system. That is where
         WebPack is to the rescue. It takes a CommonJS module and generates a bundle that exposes
@@ -304,7 +304,7 @@ import {Grid} from 'ag-grid/main';</pre>
         </ul>
         </p>
 
-        <p>This technique, btw, is what Angular 2 uses to create it's UMD version of Angular 2.0.</p>
+        <p>This technique, btw, is what Angular 2 uses to create its UMD version of Angular 2.0.</p>
 
         <h3>CSS Styles</h3>
 

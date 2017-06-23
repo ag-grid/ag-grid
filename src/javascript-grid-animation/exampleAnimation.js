@@ -24,7 +24,7 @@
         enableFilter: true,
         animateRows: true,
         suppressAggFuncInHeader: true, // so we don't see sum() in gold, silver and bronze headers
-        groupColumnDef: { // to get 'athlete' showing in the leaf level in this column
+        autoGroupColumnDef: { // to get 'athlete' showing in the leaf level in this column
             cellRenderer: 'group',
             headerName: 'Athlete',
             field: 'athlete'

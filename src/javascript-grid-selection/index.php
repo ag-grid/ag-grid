@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
         <li><b>rowDeselection</b>: Set to true or false. If true, then rows will be deselected if
             you hold down ctrl + click the row. Normal behaviour with the grid disallows deselection
             of nodes (ie once a node is selected, it remains selected until another row is selected
-            in it's place).</li>
+            in its place).</li>
         <li><b>suppressRowClickSelection</b>: If true, rows won't be selected when clicked. Use, for
             example, when you want checkbox selection, and don't want to also select when the row
             is clicked.</li>
@@ -87,7 +87,7 @@ include '../documentation-main/documentation_header.php';
         the two properties <i>groupSelectsChildren</i> and <i>groupSelectsFiltered</i>.
     <ul>
         <li><b>groupSelectsChildren</b>: When <b>true</b>, selecting a group will have the impact of
-            selecting all it's children. The group will then display 'selected' when all children
+            selecting all its children. The group will then display 'selected' when all children
             are selected, 'unselected' when none are selected and 'intermediate' when children have
             a mix of selected and unselected. When the node is selecting children, it will never appear
             in the selected set when calling <i>api.getSelectedNodes()</i>.
@@ -124,7 +124,7 @@ include '../documentation-main/documentation_header.php';
         The example below is similar to the previous example except it does not put checkboxes
         on the leaf level nodes, only allowing entire groups to be selected. This is achieved
         by providing functions for
-        <i>colDef.checkboxSelection</i> and <i>groupColumnDef.cellRendererParams.checkbox</i>.
+        <i>colDef.checkboxSelection</i> and <i>autoGroupColumnDef.cellRendererParams.checkbox</i>.
     </p>
 
     <show-example example="exampleSelectionCheckbox" example-height="450px"></show-example>
@@ -142,8 +142,8 @@ include '../documentation-main/documentation_header.php';
         <li>Filter on swimming</li>
         <li>Select a country</li>
         <li>Notice that all filtered records get selected. If you remove the filter, the non filtered are not selected.</li>
-        <li>Notice that the group becomes intermediate while all it's filtered children get selected. This is because
-        the selected state of the group node is independent to the filter - so it becomes intermediate as not all of it's
+        <li>Notice that the group becomes intermediate while all its filtered children get selected. This is because
+        the selected state of the group node is independent to the filter - so it becomes intermediate as not all of its
         children are selected.</li>
     </ol>
     </p>
@@ -189,10 +189,10 @@ colDef = {
         <ul>
             <li><b>colDef.headerCheckboxSelectionFilteredOnly=false</b>: The checkbox
             will select all rows when checked, and un-select all rows when unchecked.
-            The checkbox will update it's state based on all rows.</li>
+            The checkbox will update its state based on all rows.</li>
             <li><b>colDef.headerCheckboxSelectionFilteredOnly=true</b>: The checkbox
             will select only filtered rows when checked and un-select only filtered
-            rows when unchecked. The checkbox will update it's state base on only
+            rows when unchecked. The checkbox will update its state base on only
             filtered rows.</li>
         </ul>
         The examples below demonstrate both of these options.

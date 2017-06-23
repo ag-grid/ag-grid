@@ -151,7 +151,7 @@ import "ag-grid-enterprise/main";
             the following locations in the "feature rich grid example' above:<br/>
             a) The 'quickFilter' on the top right updates the quick filter of
             the grid.
-            b) The 'Show Tool Panel' checkbox has it's value bound to the 'showToolPanel'
+            b) The 'Show Tool Panel' checkbox has its value bound to the 'showToolPanel'
             property of the grid.
             c) The 'Refresh Data' generates new data for the grid and updates the
             <i>rowData</i> property.
@@ -159,7 +159,7 @@ import "ag-grid-enterprise/main";
     </ul>
 
     <p>
-        Notice that the grid has it's properties marked as <b>immutable</b>. Hence for
+        Notice that the grid has its properties marked as <b>immutable</b>. Hence for
         object properties, the object reference must change for the grid to take impact.
         For example, <i>rowData</i> must be a new list of data for the grid to be
         informed to redraw.
@@ -313,7 +313,7 @@ this.columnDefs = [
     }
 </pre>
 
-    <p>Please see the relevant sections on <a href="../javascript-grid-cell-rendering/#vueCellRendering">cellRenderers</a>,
+    <p>Please see the relevant sections on <a href="../javascript-grid-cell-rendering-components/#vueCellRendering">cellRenderers</a>,
         <a href="../javascript-grid-cell-editing/#vueCellEditing">cellEditors</a> and
         <a href="../javascript-grid-filtering/#vueFiltering">filters</a> for configuring and using VueJS Components in ag-Grid.</p>
 

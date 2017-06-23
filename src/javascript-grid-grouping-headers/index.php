@@ -93,7 +93,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        If a group has a 'incompatible' set of children, then the group opening / closing will
+        If a group has an 'incompatible' set of children, then the group opening / closing will
         not be activated. An incompatible set is one which will have no columns visible
         at some point (ie all are set to 'open' or 'closed').
     </p>
@@ -142,15 +142,34 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="example1"></show-example>
 
-    <h3 id="grouping-example-with-marrychildren-set">Grouping Example - with marryChildren set</h3>
+    <h3 id="grouping-example-with-marrychildren-set">Marry Children</h3>
 
     <p>
-        As above, here is a basic example of grouping in action, but this time we have
-        <pre>marryChildren: true</pre>
-        which will prevent any children of Athlete Details being moved to another grouping
+        Sometimes you want columns of the group to always stick together. To achieve this,
+        set the column group property <code>marryChildren=true</code>. The example below
+        demonstrates the following:
     </p>
 
-    <show-example example="example2"></show-example>
+    <ul>
+        <li>
+            Both 'Athlete Details' and 'Sports Results' have <code>marryChildren=true</code>.
+        </li>
+        <li>
+            If you move columns inside these groups, you will not be able to move the column out of
+            the group. For example, if you drag 'Athlete', it is not possible to drag it out of the
+            'Athlete Details' group.
+        </li>
+        <li>
+            If you move a non group column, eg 'Extra 3', it will not be possible to place it in the
+            middle of a group and hence impossible to break the group apart.
+        </li>
+        <li>
+            It is possible to place a column between groups (eg you can place 'Extra 3' between
+            the 'Athlete Details' and 'Sports Results').
+        </li>
+    </ul>
+
+    <show-example example="exampleMarryChildren"></show-example>
 
     <h3 id="advanced-grouping-example">Advanced Grouping Example</h3>
 

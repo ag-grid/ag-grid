@@ -41000,15 +41000,15 @@
 	        this.eColumnFloatingFilter.readOnly = true;
 	    };
 	    SetFloatingFilterComp.prototype.asFloatingFilterText = function (parentModel) {
-	        if (!parentModel)
+	        if (!parentModel || parentModel.length === 0)
 	            return '';
 	        var arrayToDisplay = parentModel.length > 10 ? parentModel.slice(0, 10).concat(['...']) : parentModel;
 	        return "(" + parentModel.length + ") " + arrayToDisplay.join(",");
 	    };
 	    SetFloatingFilterComp.prototype.asParentModel = function () {
-	        return this.eColumnFloatingFilter.value ?
-	            this.eColumnFloatingFilter.value.split(",") :
-	            [];
+	        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '')
+	            return null;
+	        return this.eColumnFloatingFilter.value.split(",");
 	    };
 	    return SetFloatingFilterComp;
 	}(InputTextFloatingFilterComp));
@@ -50267,6 +50267,7 @@
 	    }
 	    InfiniteBlock.prototype.createBlankRowNode = function (rowIndex) {
 	        var rowNode = _super.prototype.createBlankRowNode.call(this, rowIndex);
+	        rowNode.uiLevel = 0;
 	        this.setIndexAndTopOnRowNode(rowNode, rowIndex);
 	        return rowNode;
 	    };
@@ -57941,6 +57942,7 @@
 	    SetFilter.prototype.setFilterValues = function (options) {
 	        var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
 	        var isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
+	        this.model.setUsingProvidedSet(true);
 	        this.model.refreshValues(options, keepSelection, isSelectAll);
 	        this.updateSelectAll();
 	        this.virtualList.refresh();
@@ -58164,7 +58166,6 @@
 	    };
 	    SetFilterModel.prototype.setValues = function (valuesToUse) {
 	        this.allUniqueValues = valuesToUse;
-	        this.usingProvidedSet = true;
 	        if (!this.suppressSorting) {
 	            this.sortValues(this.allUniqueValues);
 	        }
@@ -59013,7 +59014,7 @@
 	    };
 	    return LicenseManager;
 	}());
-	LicenseManager.RELEASE_INFORMATION = 'MTQ5NTQ0Mzc3ODEzNg==';
+	LicenseManager.RELEASE_INFORMATION = 'MTQ5Njg0OTgzMTM3Ng==';
 	__decorate([
 	    main_1.Autowired('md5'),
 	    __metadata("design:type", md5_1.MD5)
@@ -62264,6 +62265,7 @@
 	        var rowNode = _super.prototype.createBlankRowNode.call(this, rowIndex);
 	        rowNode.group = this.groupLevel;
 	        rowNode.level = this.level;
+	        rowNode.uiLevel = this.level;
 	        rowNode.parent = this.parentRowNode;
 	        // stub gets set to true here, and then false when this rowNode gets it's data
 	        rowNode.stub = true;

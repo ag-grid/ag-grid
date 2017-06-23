@@ -1,3 +1,7 @@
+.first-h1 {
+    margin-top: 0px;
+}
+
 .documentationContainer {
     margin-top: 20px;
     position: relative;
@@ -82,6 +86,10 @@
 
 .codeComment {
     color: darkgreen;
+}
+
+.codeHighlight {
+    background-color: #bde2e5;
 }
 
 /* collapsable sidebar items */
@@ -239,6 +247,7 @@ label[collapsible]::before {
     background: radial-gradient(ellipse at center, #CCC 50%, transparent 50%);
 }
 
+/* Getting Started Section - Start */
 #angularChild {
     height: 0;
     overflow: hidden;
@@ -253,6 +262,98 @@ label[collapsible]::before {
 #angularParent:checked ~ label[collapsible]::before {
     content: "-";
 }
+
+#reactChild {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #FFF;
+}
+
+#reactParent:checked ~ #reactChild {
+    height: 50px;
+}
+
+#reactParent:checked ~ label[collapsible]::before {
+    content: "-";
+}
+
+#jsChild {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #FFF;
+}
+
+#jsParent:checked ~ #jsChild {
+    height: 50px;
+}
+
+#jsParent:checked ~ label[collapsible]::before {
+    content: "-";
+}
+
+#vueChild {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #FFF;
+}
+
+#vueParent:checked ~ #vueChild {
+    height: 50px;
+}
+
+#vueParent:checked ~ label[collapsible]::before {
+    content: "-";
+}
+
+#aureliaChild {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #FFF;
+}
+
+#aureliaParent:checked ~ #aureliaChild {
+    height: 50px;
+}
+
+#aureliaParent:checked ~ label[collapsible]::before {
+    content: "-";
+}
+
+#angularJsChild {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #FFF;
+}
+
+#angularJsParent:checked ~ #angularJsChild {
+    height: 50px;
+}
+
+#angularJsParent:checked ~ label[collapsible]::before {
+    content: "-";
+}
+
+#wcChild {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #FFF;
+}
+
+#wcParent:checked ~ #wcChild {
+    height: 50px;
+}
+
+#wcParent:checked ~ label[collapsible]::before {
+    content: "-";
+}
+
+/* Getting Started Section - End */
 
 /*
 * === Google Custom search in docs ===

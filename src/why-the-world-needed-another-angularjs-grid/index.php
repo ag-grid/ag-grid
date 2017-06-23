@@ -1,52 +1,11 @@
+<?php
 
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title>Why the world needed another AngularJS 1.x grid</title>
-    <meta name="description" content="A discussion on why I built ag-Grid after experience with ui-grid, ng-grid, jqxGrid and Slickgrid">
-    <meta name="keywords" content="angularjs ag-grid grid ui-grid ng-grid jqxgrid slickgrid"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+$pageTitle = "Why The World Needed Another AngularJS Grid";
+$pageDescription = "A discussion on why I built ag-Grid after experience with ui-grid, ng-grid, jqxGrid and Slickgrid";
+$pageKeyboards = "angularjs ag-grid grid ui-grid ng-grid jqxgrid slickgrid";
 
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-
-    <link rel="stylesheet" type="text/css" href="/style.css">
-
-    <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
-
-</head>
-
-<body ng-app="index" class="big-text">
-
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 top-header big-text">
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/"> <i class="fa fa-home"></i> Home</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/example.php"> <i class="fa fa-bicycle"></i> Test</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/documentation.php">  <i class="fa fa-book"></i> Docs</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button-selected" href="/media/media.php"> <i class="fa fa-road"></i> Blog</a>
-                        </span>
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="/support.php"> <i class="fa fa-users"></i> Support</a>
-                        </span>
-            </div>
-        </div>
-    </div>
-</nav>
+include('../includes/mediaHeader.php');
+?>
 
 <div class="container" style="margin-top: 50px;">
 
@@ -63,7 +22,7 @@
                 We released a new system into production with 'usability issues'
                 due to our choice of grid component. Every time we started a new project
                 the question 'which grid should we use' came up and each time
-                there was debate. Each grid had it's merits, no grid fit
+                there was debate. Each grid had its merits, no grid fit
                 well. We were on our third project in three years to be using
                 <a href="https://angularjs.org/">AngularJS 1.x</a>, having tested 5 different grids that 'worked' with
                 <a href="https://angularjs.org/">AngularJS 1.x</a>.
@@ -462,15 +421,8 @@
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 
     <hr/>
+    </div>
 
-    <footer class="license">
-        © ag-Grid Ltd. 2015-2017
-    </footer>
-
-</div>
-
-</body>
-
-<?php include_once("../analytics.php"); ?>
-
-</html>
+<?php
+include('../includes/mediaFooter.php');
+?>

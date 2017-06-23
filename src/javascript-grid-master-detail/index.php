@@ -46,6 +46,8 @@ include '../documentation-main/documentation_header.php';
         demonstrates filtering and sorting in the detail grid.</li>
         <li>The grids work independently of each other, for example selection in one grid does not impact
         selection in any other grid.</li>
+        <li>In order to allow for filtering by name and account, we add to all the lear rows their parent
+            name and parent account values.</li>
     </ul>
     </p>
 

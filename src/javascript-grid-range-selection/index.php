@@ -133,7 +133,14 @@ GridCell {
     </p>
 
     <p>
-        The callback params has the following attributes: value, node, column, api, columnApi, context.
+        The callback params has the following attributes: value, node, column, api, columnApi, context, type.
+    </p>
+
+    <h3>Copy Range Down</h3>
+
+    <p>
+        When you have more than one row selected in a range, pressing keys Ctrl & D will copy
+        the range down.
     </p>
 
     <h3>Range Selection Example</h3>

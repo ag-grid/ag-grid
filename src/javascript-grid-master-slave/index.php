@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
     <h4 id="configuration">Configuration</h4>
 
     <p>
-        To have on grid act as a slave to another, place it's grid options in the 'slaves' array of the first.
+        To have on grid act as a slave to another, place its grid options in the 'slaves' array of the first.
     </p>
     <pre><code>gridOptionsSlave = {
     // some grid options here

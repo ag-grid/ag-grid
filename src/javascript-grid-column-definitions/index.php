@@ -154,8 +154,8 @@ include '../documentation-main/documentation_header.php';
                 to have different rows editable.</td>
         </tr>
         <tr>
-            <th>newValueHandler(params)<br/>onCellValueChanged(params)</th>
-            <td>Callbacks for editing. See editing section for further details.</td>
+            <th>onCellValueChanged(params)</th>
+            <td>Callback for after the value of a cell has changed, due to editing or the application calling api.setValue().</td>
         </tr>
         <tr>
             <th>volatile</th>
@@ -174,23 +174,12 @@ include '../documentation-main/documentation_header.php';
             <th>cellEditor<br/>cellEditorFramework</th>
             <td>cellEditor to use for this column.</td>
         </tr>
-        <tr>
-            <th>cellFormatter</th>
-            <td>A function for formatting a cell.</td>
-        </tr>
-        <tr>
-            <th>floatingCellFormatter</th>
-            <td>A function for formatting a floating cell. Floating cells will use floatingCellRenderer if available,
-                if not then cellFormatter.</td>
-        </tr>
-        <tr>
-            <th>valueGetter(params)</th>
-            <td>Expression or function to get the cells value.</td>
-        </tr>
-        <tr>
-            <th>headerValueGetter(params)</th>
-            <td>Expression or function to get the cells value.</td>
-        </tr>
+
+        <?php include '../javascript-grid-value-getters/valuesAndFormattersProperties.php' ?>
+        <?php printPropertiesRows($valuesAndFormattersProperties) ?>
+
+        <?php printPropertiesRows($valuesAndFormattersMoreProperties) ?>
+
         <tr>
             <th>keyCreator(params)</th>
             <td>Function to return the key for a value - use this if the value is an object (not a primitive type) and you
@@ -257,6 +246,11 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to get grid to flash the cell when it's refreshed.</td>
         </tr>
         <tr>
+            <th>menuTabs</th>
+            <td>Set to an array containing zero, one or many of the following options 'filterMenuTab', 'generalMenuTab'
+                and 'columnsMenuTab'. This is used to figure out which menu tabs and in which order the tabs are shown</td>
+        </tr>
+        <tr>
             <th>suppressMenu</th>
             <td>Set to true if no menu should be shown for this column header.</td>
         </tr>
@@ -278,7 +272,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>suppressResize</th>
-            <td>Set to true if you do not want this column to be resizable by dragging it's edge.</td>
+            <td>Set to true if you do not want this column to be resizable by dragging its edge.</td>
         </tr>
         <tr>
             <th>suppressNavigable</th>

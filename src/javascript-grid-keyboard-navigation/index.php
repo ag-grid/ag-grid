@@ -133,7 +133,7 @@ include '../documentation-main/documentation_header.php';
     <h4 id="grid-cell-def">GridCellDef</h4>
 
     <p>
-        Both functions above use GridCellDef. This is an object that represents a cell in the grid. It's
+        Both functions above use GridCellDef. This is an object that represents a cell in the grid. Its
         interface is as follows:
     </p>
 

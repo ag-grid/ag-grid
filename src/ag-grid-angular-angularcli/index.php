@@ -1,15 +1,17 @@
 <?php
 $key = "Angular CLI";
-$pageTitle = "Angular Datagrid";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with Angular 2.x to deliver filtering, grouping, aggregation, pivoting and much more.";
-$pageKeyboards = "Angular Grid";
+$pageTitle = "Angular CLI";
+$pageDescription = "How to build ag-Grid using Angular CLI.";
+$pageKeyboards = "Angular CLI";
 $pageGroup = "basics";
 $angularParent = "checked";
 
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 id="angular-building-with-webpack">Angular - Building with Angular CLI</h1>
+<h1 id="angular-building-with-webpack">Angular CLI</h1>
+
+<h2>Building an ag-Grid Application with Angular CLI</h2>
 
 <p>We walk through the main steps required when using ag-Grid, Angular and Angular CLI below, but please refer to
     <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>
@@ -56,7 +58,7 @@ npm i ag-grid-angular --save</pre>
 <span class="codeComment">// src/app/app.component.html</span>
 &lt;app-my-grid-application&gt;&lt;/app-my-grid-application&gt;</pre>
 
-<p>Our grid component is going to be a simple renderer that styles it's contents red:</p>
+<p>Our grid component is going to be a simple renderer that styles its contents red:</p>
 <pre ng-non-bindable>
 <span class="codeComment">// src/app/red-component/red-component.component.ts</span>
 import {Component} from "@angular/core";

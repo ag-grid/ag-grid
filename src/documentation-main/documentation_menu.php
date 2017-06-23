@@ -77,24 +77,27 @@
 <div class="docsMenu-content">
 
     <?php
-    menuItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
     if (isFrameworkJavaScript()) {
-        menuItem(1, 'Getting Started Javascript', 'Javascript', 'best-javascript-data-grid/');
+        menuItem(1, 'Overview JavaScript', 'Javascript', 'best-javascript-data-grid/');
+        menuItem(2, 'Getting Started Javascript', 'Getting Started', 'javascript-getting-started');
+        menuItem(2, 'More Detail Javascript', 'More Details', 'javascript-more-details/');
     }
-
     if (isFrameworkReact()) {
-        menuItem(1, 'Getting Started React', 'ReactJS', 'best-react-data-grid/');
+        menuItem(1, 'Overview React', 'ReactJS', 'best-react-data-grid/');
+        menuItem(2, 'Getting Started React', 'Getting Started', 'react-getting-started/');
+        menuItem(2, 'More Detail React', 'More Details', 'react-more-details/');
     }
-
     if (isFrameworkAngular2()) {
-        menuItemCollapsibleParent(1, 'Getting Started ng2', 'Angular 2.x/4.x', 'best-angular-2-data-grid/', 'angularParent');
-        menuItemCollapsibleChild(2, 'Angular CLI', 'Angular CLI', 'ag-grid-angular-angularcli/', 'angularParent', 'angularChild', 'start');
-        menuItemCollapsibleChild(2, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/', 'angularParent', 'angularChild');
-        menuItemCollapsibleChild(2, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/', 'angularParent', 'angularChild');
-        menuItemCollapsibleChild(2, 'Angular ngtools Webpack', 'ngtools/webpack', 'ag-grid-angular-ngtools-webpack/', 'angularParent', 'angularChild');
-        menuItemCollapsibleChild(2, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/', 'angularParent', 'angularChild', 'end');
+        menuItem(1, 'Overview Angular', 'Angular 2.x/4.x', 'best-angular-2-data-grid/');
+        menuItem(2, 'Getting Started Angular', 'Getting Started', 'angular-getting-started/');
+        menuItem(2, 'More Detail Angular', 'More Details', 'angular-more-details/');
+        menuItemCollapsibleParent(2, 'Angular Building', 'Building', 'angular-building/', 'angularParent');
+        menuItemCollapsibleChild(3, 'Angular CLI', 'Angular CLI', 'ag-grid-angular-angularcli/', 'angularParent', 'angularChild', 'start');
+        menuItemCollapsibleChild(3, 'Angular Webpack', 'Webpack', 'ag-grid-angular-webpack/', 'angularParent', 'angularChild');
+        menuItemCollapsibleChild(3, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/', 'angularParent', 'angularChild');
+        menuItemCollapsibleChild(3, 'Angular ngtools Webpack', '@ngtools', 'ag-grid-angular-ngtools-webpack/', 'angularParent', 'angularChild');
+        menuItemCollapsibleChild(3, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/', 'angularParent', 'angularChild', 'end');
     }
-
     if (isFrameworkAngular1()) {
         menuItem(1, 'Getting Started ng1', 'AngularJS 1.x', 'best-angularjs-data-grid/');
     }
@@ -114,8 +117,6 @@
     if (isFrameworkAll()) {
         menuItem(1, 'Getting Started TypeScript & Webpack 2', 'TypeScript', 'ag-grid-typescript-webpack-2/');
     }
-
-    menuItem(0, 'Next Steps', 'Next Steps', 'ag-grid-next-steps/');
     ?>
 
 </div>
@@ -177,9 +178,10 @@
     menuItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
     menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
     menuItem(0, 'Floating', 'Floating Rows', 'javascript-grid-floating/');
-    menuItem(0, 'Value Getters', 'Value Getters', 'javascript-grid-value-getters/');
-    menuItem(0, 'Cell Expressions', 'Cell Expressions', 'javascript-grid-cell-expressions/');
+    menuItem(0, 'Getters and Formatters', 'Getters & Formatters', 'javascript-grid-value-getters/');
+    menuItem(0, 'Cell Expressions', 'Expressions', 'javascript-grid-cell-expressions/');
     menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
+    menuItem(0, 'Cell Renderer', 'Cell Renderer', 'javascript-grid-cell-rendering/');
     menuItem(0, 'Cell Editing', 'Cell Editing', 'javascript-grid-cell-editing/');
     menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
     menuItem(0, 'Context', 'Context', 'javascript-grid-context/');
@@ -272,12 +274,12 @@
 <div class="docsMenu-content">
     <?php
     menuItem(0, 'Components', 'Overview', 'javascript-grid-components/');
-    menuItem(0, 'Date Component', 'Date Component', 'javascript-grid-date-component/');
-    menuItem(0, 'Cell Rendering', 'Cell Renderer', 'javascript-grid-cell-rendering/');
+    menuItem(0, 'Cell Rendering', 'Cell Renderer', 'javascript-grid-cell-rendering-components/');
     menuItem(0, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/');
     menuItem(0, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component/');
     menuItem(0, 'Floating Filter Component', 'Floating Filter Component', 'javascript-grid-floating-filter-component/');
     menuItem(0, 'Header Rendering', 'Header Component', 'javascript-grid-header-rendering/');
+    menuItem(0, 'Date Component', 'Date Component', 'javascript-grid-date-component/');
     ?>
 </div>
 
@@ -314,10 +316,12 @@
         menuItem(2, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
         menuItem(2, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
         menuItem(2, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
+        menuItem(2, 'Angular Floating Filter', 'Floating Filter', 'javascript-grid-floating-filter-component/#ng2Angular');
         menuItem(2, 'Angular Floating Row', 'Floating Rows', 'example-angular-floating-row/');
         menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
         menuItem(2, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
         menuItem(2, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
+        menuItem(2, 'Angular RxJS', 'RxJS', 'example-angular-rxjs/');
         menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
     }
     menuItem(1, 'Styled Report', 'Styled Report', 'example-account-report/');
@@ -360,6 +364,7 @@
         menuItem(0, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials/');
         menuItem(0, 'Responsiveness', 'Responsive Design', 'javascript-grid-responsiveness/');
         menuItem(0, 'Testing', 'Testing', 'javascript-grid-testing/');
+        menuItem(0, 'RxJS', 'RxJS', 'javascript-grid-rxjs/');
         ?>
         <a class="sidebarLink" href="/archive/">Archive Docs</a>
     </div>
@@ -398,7 +403,7 @@
 
     <div>
         Read about <a href="../ag-grid-partners-with-webpack/">ag-Grid's Partnership
-        with webpack</a>.
+            with webpack</a>.
     </div>
 
 </div>

@@ -84,7 +84,7 @@
                         I got this error, why?
                     </td>
                     <td>
-                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a> or <a href="https://www.ag-grid.com/forum/">Free Forum</a>
+                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a>
                     </td>
                     <td>
                         <a href="https://www.ag-grid.com/forum/">Members Forum</a>
@@ -95,7 +95,7 @@
                         Please look at my code?
                     </td>
                     <td>
-                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a> or <a href="https://www.ag-grid.com/forum/">Free Forum</a>
+                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a>
                     </td>
                     <td>
                         <a href="https://www.ag-grid.com/forum/">Members Forum</a>
@@ -189,11 +189,11 @@
                 <a href="http://stackoverflow.com/questions/tagged/ag-grid">ag-Grid</a>
             </p>
 
-            <h2>Free vs Members Forum</h2>
+            <h2>Members Forum</h2>
 
             <p>
-                The free forum can be posted into by anyone and is not monitored by ag-Grid team. It is left
-                open to support the free community of users who help themselves.
+                Only customers of ag-Grid Enterprise can post in the members forum. However anyone can
+                view the forum, it's free to browse.
             </p>
 
             <h2>Raising Bugs</h2>

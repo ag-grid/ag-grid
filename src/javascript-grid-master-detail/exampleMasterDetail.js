@@ -23,8 +23,10 @@ function createRowData() {
 
         var totalDuration = 0;
 
-        var callRecords = [];
+        var callRecords = {};
+        callRecords.records =[];
         // call count is random number between 20 and 120
+        var account = i + 177000;
         var callCount = Math.floor(Math.random() * 100) + 20;
         for (var j = 0; j<callCount; j++) {
             // duration is random number between 20 and 120
@@ -38,13 +40,15 @@ function createRowData() {
                 // made up number
                 number:  '(0' + Math.floor(Math.random() * 10) + ') ' + Math.floor(Math.random() * 100000000)
             };
-            callRecords.push(callRecord);
+            callRecords.records.push(callRecord);
             totalDuration += callDuration;
+            callRecords.name = firstName + ' ' + lastName;
+            callRecords.account = account;
         }
 
         var record = {
             name: firstName + ' ' + lastName,
-            account: i + 177000,
+            account: account,
             totalCalls: callCount,
             image: image,
             // convert from seconds to minutes
@@ -76,15 +80,15 @@ var masterColumnDefs = [
         cellRendererParams: { suppressCount: true }
     },
     {headerName: 'Account', field: 'account'},
-    {headerName: 'Calls', field: 'totalCalls'},
-    {headerName: 'Minutes', field: 'totalMinutes', cellFormatter: minuteCellFormatter}
+    {headerName: 'Calls', field: 'totalCalls', suppressFilter:true},
+    {headerName: 'Minutes', field: 'totalMinutes', valueFormatter: minuteCellFormatter, suppressFilter:true}
 ];
 
 var detailColumnDefs = [
     {headerName: 'Call ID', field: 'callId', cellClass: 'call-record-cell'},
     {headerName: 'Direction', field: 'direction', cellClass: 'call-record-cell'},
     {headerName: 'Number', field: 'number', cellClass: 'call-record-cell'},
-    {headerName: 'Duration', field: 'duration', cellClass: 'call-record-cell', cellFormatter: secondCellFormatter},
+    {headerName: 'Duration', field: 'duration', cellClass: 'call-record-cell', valueFormatter: secondCellFormatter},
     {headerName: 'Switch', field: 'switchCode', cellClass: 'call-record-cell'}
 ];
 
@@ -108,7 +112,7 @@ DetailPanelCellRenderer.prototype.setupDetailGrid = function(callRecords) {
         enableSorting: true,
         enableFilter: true,
         enableColResize: true,
-        rowData: callRecords,
+        rowData: callRecords.records,
         columnDefs: detailColumnDefs,
         onGridReady: function(params) {
             setTimeout( function() { params.api.sizeColumnsToFit(); }, 0);
@@ -125,11 +129,7 @@ DetailPanelCellRenderer.prototype.getTemplate = function(params) {
 
     var template =
         '<div class="full-width-panel">' +
-        '  <div class="full-width-details">' +
-        '    <div class="full-width-detail"><img width="120px" src="../images/'+parentRecord.image+'.png"/></div>' +
-        '    <div class="full-width-detail"><b>Name: </b>'+parentRecord.name+'</div>' +
-        '    <div class="full-width-detail"><b>Account: </b>'+parentRecord.account+'</div>' +
-        '  </div>'+
+
         '  <div class="full-width-grid"></div>' +
         '  <div class="full-width-grid-toolbar">' +
         '       <img class="full-width-phone-icon" src="../images/phone.png"/>' +
@@ -194,6 +194,8 @@ var masterGridOptions = {
     rowData: rowData,
     enableSorting: true,
     enableColResize: true,
+    floatingFilter: true,
+    enableFilter: true,
     // we cannot filter on the groups, as filters work on the child nodes, and in this example
     // the child nodes are not aggregations of the parent.
     suppressMenuFilterPanel: true,

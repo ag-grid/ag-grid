@@ -48166,15 +48166,15 @@
 	        this.eColumnFloatingFilter.readOnly = true;
 	    };
 	    SetFloatingFilterComp.prototype.asFloatingFilterText = function (parentModel) {
-	        if (!parentModel)
+	        if (!parentModel || parentModel.length === 0)
 	            return '';
 	        var arrayToDisplay = parentModel.length > 10 ? parentModel.slice(0, 10).concat(['...']) : parentModel;
 	        return "(" + parentModel.length + ") " + arrayToDisplay.join(",");
 	    };
 	    SetFloatingFilterComp.prototype.asParentModel = function () {
-	        return this.eColumnFloatingFilter.value ?
-	            this.eColumnFloatingFilter.value.split(",") :
-	            [];
+	        if (this.eColumnFloatingFilter.value == null || this.eColumnFloatingFilter.value === '')
+	            return null;
+	        return this.eColumnFloatingFilter.value.split(",");
 	    };
 	    return SetFloatingFilterComp;
 	}(InputTextFloatingFilterComp));
@@ -57433,6 +57433,7 @@
 	    }
 	    InfiniteBlock.prototype.createBlankRowNode = function (rowIndex) {
 	        var rowNode = _super.prototype.createBlankRowNode.call(this, rowIndex);
+	        rowNode.uiLevel = 0;
 	        this.setIndexAndTopOnRowNode(rowNode, rowIndex);
 	        return rowNode;
 	    };

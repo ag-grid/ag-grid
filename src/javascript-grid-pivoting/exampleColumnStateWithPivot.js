@@ -4,7 +4,7 @@ var columnDefs = [
     {headerName: "Country", field: "country", width: 120, enableRowGroup: true, enablePivot: true},
     {headerName: "Year", field: "year", width: 90, enableRowGroup: true, enablePivot: true},
     {headerName: "Date", field: "date", width: 110, enableRowGroup: true, enablePivot: true},
-    {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true, enablePivot: true, pivotIndex: 1},
+    {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true, enablePivot: true, pivot: true},
     {headerName: "Gold", field: "gold", width: 100, enableValue: true},
     {headerName: "Silver", field: "silver", width: 100, enableValue: true},
     {headerName: "Bronze", field: "bronze", width: 100, enableValue: true},

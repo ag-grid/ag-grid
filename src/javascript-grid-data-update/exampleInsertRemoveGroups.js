@@ -1,6 +1,6 @@
 var columnDefs = [
     {headerName: "Category", field: "category", rowGroupIndex: 1, hide: true},
-    {headerName: "Price", field: "price", aggFunc: 'sum', cellFormatter: poundFormatter},
+    {headerName: "Price", field: "price", aggFunc: 'sum', valueFormatter: poundFormatter},
     {headerName: "Zombies", field: "zombies"},
     {headerName: "Style", field: "style"},
     {headerName: "Clothes", field: "clothes"},
@@ -63,7 +63,7 @@ var gridOptions = {
             return null;
         }
     },
-    groupColumnDef: {headerName: "Group", field: "model", rowGroupIndex: 1, cellRenderer: 'group',
+    autoGroupColumnDef: {headerName: "Group", field: "model", rowGroupIndex: 1, cellRenderer: 'group',
         cellRendererParams: {
             checkbox: true
         }},

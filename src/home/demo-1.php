@@ -17,7 +17,7 @@
                 </div>
             </div>
             <div class="col-md-12">
-                <span style="float: right;"><a href="./best-javascript-data-grid/">(view code)</a></span>
+                <span style="float: right;"><a href="/javascript-getting-started#summary">(view code)</a></span>
             </div>
         </div>
 

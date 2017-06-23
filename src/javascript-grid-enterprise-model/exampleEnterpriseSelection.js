@@ -1,8 +1,8 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", enableRowGroup: true},
     {headerName: "Age", field: "age", enableRowGroup: true},
-    {headerName: "Country", field: "country", enableRowGroup: true, rowGroupIndex: 0},
-    {headerName: "Year", field: "year", enableRowGroup: true, rowGroupIndex: 1},
+    {headerName: "Country", field: "country", enableRowGroup: true, rowGroup: true},
+    {headerName: "Year", field: "year", enableRowGroup: true, rowGroup: true},
     {headerName: "Sport", field: "sport", enableRowGroup: true},
     {headerName: "Gold", field: "gold", aggFunc: 'sum'},
     {headerName: "Silver", field: "silver", aggFunc: 'sum'},

@@ -68,7 +68,7 @@ colDef = {
     <h3 id="react-props"><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
 
     <p>
-        The React component will get the 'filter Params' as described above as it's React Props.
+        The React component will get the 'filter Params' as described above as its React Props.
         Therefore you can access all the parameters as React Props.
 
     <pre><span class="codeComment">// React filter Component</span>

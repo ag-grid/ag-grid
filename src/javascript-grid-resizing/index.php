@@ -81,11 +81,11 @@ include '../documentation-main/documentation_header.php';
         The example below shows resizing in action. Things to note are as follows:
         <ul>
         <li>Each column can be resized by dragging (or double clicking or auto resize) the
-            right side of it's header.</li>
+            right side of its header.</li>
         <li>The button 'Size to Fit' calls api.sizeColumnsToFit()</li>
         <li>The button 'Auto-Size All' calls columnApi.autoSizeColumns()</li>
         <li>The first column is fixed with (ie suppressSizeToFit = true),
-            which means it's size does not change when sizeColumnsToFit is called.</li>
+            which means its size does not change when sizeColumnsToFit is called.</li>
         <li>The 'age' column has both a min and max size set, so resizing the column
             will be restricted by these, regardless of dragging the header or using on
             of the API buttons.</li>
@@ -116,6 +116,22 @@ include '../documentation-main/documentation_header.php';
         for some frameworks (eg Angular) as DOM objects are used before getting attached.
     </p>
     <show-example example="exampleDivNotInDom"></show-example>
+
+    <h3 id="resizing-groups">Resizing Groups</h3>
+
+    <p>
+        When you resize a group, it will distribute the extra room to all columns in the group equally.
+        The example below the groups can be resizes as follows:
+        <ul>
+            <li>The group 'Everything Resizes' will resize all columns.</li>
+            <li>The group 'Only Year Resizes' will resize only year, because the other columns
+                have <code>suppressResize=true</code>.</li>
+            <li>The group 'Nothing Resizes' cannot be resized at all because all the columns
+                in the groups have <code>suppressResize=true</code>.</li>
+        </ul>
+    </p>
+
+    <show-example example="exampleResizeGroups"></show-example>
 
 </div>
 

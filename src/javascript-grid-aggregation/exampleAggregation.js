@@ -6,7 +6,7 @@ var columnDefs = [
     {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'max', enableValue: true},
     {headerName: "Total", field: "total", width: 100, aggFunc: 'avg', enableValue: true},
     {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
+    {headerName: "Country", field: "country", width: 120, rowGroup: true},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110}
@@ -20,10 +20,9 @@ var gridOptions = {
     showToolPanel: true,
     toolPanelSuppressPivots: true,
     toolPanelSuppressPivotMode: true,
-    groupColumnDef: {headerName: "Athlete",
+    autoGroupColumnDef: {headerName: "Athlete",
         field: "athlete",
         width: 200,
-        comparator: agGrid.defaultGroupComparator,
         cellRenderer: 'group',
         cellRendererParams: {
             footerValueGetter: '"Total (" + x + ")"',

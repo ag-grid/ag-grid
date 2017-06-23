@@ -49,7 +49,7 @@
     <pre>@NgModule({
     imports: [
         BrowserModule,
-        AgGridModule.withComponents([...optional Angular Components to be used in the grid....]]),
+        AgGridModule.withComponents([...optional Angular Components to be used in the grid....]),
         ...
 })</pre>
 
@@ -93,7 +93,7 @@
             the following locations in the "feature rich grid example" above:<br/>
             a) The 'quickFilter' on the top right updates the quick filter of
             the grid.
-            b) The 'Show Tool Panel' checkbox has it's value bound to the 'showToolPanel'
+            b) The 'Show Tool Panel' checkbox has its value bound to the 'showToolPanel'
             property of the grid.
             c) The 'Refresh Data' generates new data for the grid and updates the
             <i>rowData</i> property.
@@ -101,7 +101,7 @@
     </ul>
 
     <p>
-        Notice that the grid has it's properties marked as <b>immutable</b>. Hence for
+        Notice that the grid has its properties marked as <b>immutable</b>. Hence for
         object properties, the object reference must change for the grid to take impact.
         For example, <i>rowData</i> must be a new list of data for the grid to be
         informed to redraw.
@@ -148,7 +148,7 @@ let colDefs = [
 ]
 </pre>
     <p>Please see the relevant sections on <a
-                href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenderers</a>,
+                href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cellRenderers</a>,
         <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
         <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> for configuring and using Angular
         Components in
@@ -374,7 +374,7 @@ private getCountryFilterParams():any {
 
     <p>
         It is possible to build
-        <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenderers</a>,
+        <a href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cellRenderers</a>,
         <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
         <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular. Doing each of these
         is explained in the section on each.
@@ -408,7 +408,7 @@ import "ag-grid-enterprise";
         to learn about accessing all the features of the grid, or take a look at more detailed documentation
         around
         specifics
-        like <a href="../javascript-grid-cell-rendering/#ng2CellRendering">cellRenderers</a>,
+        like <a href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cellRenderers</a>,
         <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
         <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular.
     </p>

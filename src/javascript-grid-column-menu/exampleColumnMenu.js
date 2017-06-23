@@ -3,10 +3,10 @@ var columnDefs = [
     {headerName: "Age", field: "age", width: 90},
     {headerName: "Country", field: "country", width: 120},
     {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
+    {headerName: "Date", field: "date", width: 110, menuTabs:['filterMenuTab','generalMenuTab','columnsMenuTab']},
+    {headerName: "Sport", field: "sport", width: 110, menuTabs:['filterMenuTab','columnsMenuTab']},
+    {headerName: "Gold", field: "gold", width: 100, menuTabs:['generalMenuTab','gibberishMenuTab']},
+    {headerName: "Silver", field: "silver", width: 100, menuTabs:[]},
     {headerName: "Bronze", field: "bronze", width: 100},
     {headerName: "Total", field: "total", width: 100}
 ];
@@ -31,7 +31,10 @@ var gridOptions = {
 
             ePopup.style.top = newTop + 'px';
         }
-    }
+    },
+    suppressMenuFilterPanel:true,
+    suppressMenuMainPanel:true,
+    suppressMenuColumnPanel:true
 };
 
 function getMainMenuItems(params) {

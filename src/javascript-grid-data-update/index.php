@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2 id="insert-remove">Data Update</h2>
 
     <p>
-        Data can up updated inside the grid using the grid's API.
+        Data can be updated inside the grid using the grid's API.
     </p>
     <p>
         The grid also allows updating data in the following other ways which are explained in other
@@ -167,7 +167,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Bulk Method 1 - Transaction</h2>
 
     <p>
-        The <code>api.updateData(transaction)</code> method takes a transaction as a paramter.
+        The <code>api.updateData(transaction)</code> method takes a transaction as a parameter.
         The transaction has the following interface:
     </p>
 
@@ -213,7 +213,7 @@ interface RowDataTransaction {
     <h3>Updating Rows</h3>
 
     <p>
-        The grid will update one row for each item in the <code>transaction.remove</code> array.
+        The grid will update one row for each item in the <code>transaction.update</code> array.
         Behind the scenes, the grid will call <code>rowNode.setRowData(newData)</code>.
     </p>
 
@@ -266,6 +266,9 @@ interface RowDataTransaction {
         </li>
         <li>
             <b>Add Items</b>: Adds three items.
+        </li>
+        <li>
+            <b>Add Items</b>: Adds three items at position 2.
         </li>
     </ul>
 

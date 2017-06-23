@@ -18,6 +18,55 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">20th Jun 2017</div>
+    <div>
+        <a href="../weekly-update/20170620/">
+            <img src="../weekly-update/20170620/images/DevTeam.png" width="100%"/>
+        </a>
+    </div>
+    <div style="padding-top: 10px;">
+        <a href="../weekly-update/20170620/">
+            This Week's Update
+        </a>
+    </div>
+</div>
+
+
+<div class="news-box">
+    <div class="news-header">14th Jun 2017</div>
+    <div>
+        <a href="../weekly-update/20170613/">
+            <img src="../weekly-update/20170613/images/NewJoiners_200.png" width="100%"/>
+        </a>
+    </div>
+    <div style="padding-top: 10px;">
+        <a href="../weekly-update/20170613/">
+            New Weekly Update!!
+        </a>
+    </div>
+</div>
+
+<div class="news-box">
+    <table>
+        <tr>
+            <td>
+                <img src="../images/svg/docs/newspaper.svg" align="left" width="50" />
+                <br/>
+                <img src="../images/react.png" align="left" width="50" />
+            </td>
+            <td>
+                <div class="news-header">13th May 2017</div>
+                <div style="margin: 10px;">
+                    <a href="../ag-grid-react-datagrid/">
+                        New Blog: Using React and Redux with ag-Grid
+                    </a>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="news-box">
     <div class="news-header">8th Jun 2017</div>
     <div class="news-header">ag-Grid 10.1.0 Released</div>
     <div>

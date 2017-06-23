@@ -1,6 +1,6 @@
 var columnDefs = [
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 1},
-    {headerName: "Year", field: "year", width: 90, pivotIndex: 1},
+    {headerName: "Country", field: "country", width: 120, rowGroup: true},
+    {headerName: "Year", field: "year", width: 90, pivot: true},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
@@ -13,7 +13,8 @@ var gridOptions = {
     pivotMode: true,
     enableColResize: true,
     columnDefs: columnDefs,
-    floatingFilter:true
+    floatingFilter:true,
+    enableSorting:true
 };
 
 // setup the grid after the page has finished loading

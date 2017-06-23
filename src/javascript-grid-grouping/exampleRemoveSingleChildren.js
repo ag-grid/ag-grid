@@ -1,6 +1,6 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
+    {headerName: "Country", field: "country", width: 120, rowGroup: true},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
     {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
@@ -24,7 +24,7 @@ var groupRemoveSingleChildren = true;
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
-    groupColumnDef: {
+    autoGroupColumnDef: {
         headerName: 'Country',
         cellRenderer: 'group',
         field: 'country'

@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The context object is passed to most of the callbacks used in ag-Grid, such as the cell renderers.
         ag-Grid does not place anything into the context, it is not used at all internally by ag-Grid.
-        It's purpose is to allow the client application to pass details to custom callbacks.
+        Its purpose is to allow the client application to pass details to custom callbacks.
     </p>
 
     <h4 id="example">Example</h4>

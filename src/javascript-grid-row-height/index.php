@@ -17,8 +17,11 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        You cannot use variable row height when doing <a href="../javascript-grid-virtual-paging/">virtual paging</a>
-        or <a href="../javascript-grid-viewport/">viewport</a>.
+        Changing the row height is only supported in the <a href="../javascript-grid-in-memory/">in memory</a>
+        row model. You cannot use variable row height when using
+        <a href="../javascript-grid-virtual-paging/">virtual paging</a>,
+        <a href="../javascript-grid-viewport/">viewport</a> or
+        <a href="../javascript-grid-enterprise-model/">enterprise</a> row models.
         This is because these row models need to work out the position of rows that are not loaded and hence need to
         assume the row height is fixed.
     </note>
@@ -76,7 +79,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         Below shows a more complex example, where the row height is changed based on contents of
         the 'Latin Text' column. The column definition has CSS style so that the cell does not have
-        it's contents clipped. The algorithm used to work out how tall the row should be is far
+        its contents clipped. The algorithm used to work out how tall the row should be is far
         from perfect, however it demonstrates that you can change your row height based on
         the contents of the cell.
     </p>
@@ -104,7 +107,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         You can call <i>rowNode.setRowHeight(height)</i> directly
-        on the rowNode to set it's height. The grid will resize the row but will NOT
+        on the rowNode to set its height. The grid will resize the row but will NOT
         reposition the rows (ie if you make a row shorter, a space will appear between
         it and the next row, the next rows will not be moved up). When you have set the
         row height (potentially on many rows) you need to call <i>api.onRowHeightChanged()</i>

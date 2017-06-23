@@ -58,6 +58,11 @@ function addItems() {
     gridOptions.api.updateRowData({add: newItems});
 }
 
+function addItemsAtIndex() {
+    var newItems = [createNewRowData(), createNewRowData(), createNewRowData()];
+    gridOptions.api.updateRowData({add: newItems, addIndex: 2});
+}
+
 function updateItems() {
     // update the first 5 items
     var itemsToUpdate = [];
