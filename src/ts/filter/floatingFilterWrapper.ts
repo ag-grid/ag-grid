@@ -33,7 +33,7 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
         this.column = params.column;
 
 
-        let base:HTMLElement = _.loadTemplate(`<div class="ag-header-cell"><div class="ag-floating-filter-body"></div></div>`);
+        let base:HTMLElement = _.loadTemplate(`<div class="ag-header-cell" aria-hidden="true"><div class="ag-floating-filter-body" aria-hidden="true"></div></div>`);
         this.enrichBody(base);
 
         this.setTemplateFromElement(base);
@@ -88,7 +88,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
         } else {
             // let icon:HTMLElement = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column, svgFactory.createFilterSvg12);
             floatingFilterBody.appendChild(this.floatingFilterComp.getGui());
-            body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button">
+            body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button" aria-hidden="true">
                     <button ref="eButtonShowMainFilter">...</button>            
             </div>`));
             // body.querySelector('button').appendChild(icon);
