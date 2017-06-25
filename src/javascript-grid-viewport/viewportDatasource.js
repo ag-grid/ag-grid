@@ -1,5 +1,5 @@
 // client code (ie your code) will call this constructor, pass in whatever you need for the
-// viewport to do it's job
+// viewport to do its job
 function ViewportDatasource(mockServer) {
     this.mockServer = mockServer;
     this.connectionId = this.mockServer.connect(this.eventListener.bind(this));

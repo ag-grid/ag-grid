@@ -120,10 +120,10 @@ interface IGetRowsParams {
     <span class="codeComment">// The grid context object</span>
     context: any;
 
-    <span class="codeComment">// Callback to call for the result when successful.</span>
+    <span class="codeComment">// Callback to call when the request is successful.</span>
     successCallback(rowsThisBlock: any[], lastRow?: number): void;
 
-    <span class="codeComment">// Callback to call for the result when successful.</span>
+    <span class="codeComment">// Callback to call when the request fails.</span>
     failCallback(): void;
 }</pre>
 
@@ -135,11 +135,11 @@ interface IGetRowsParams {
         <ul>
             <li>
                 The <b>startRow</b> and <b>endRow</b> define the range expected for the call. For example, if block
-                size is 100, the getRows function will be called with start = 0 and end = 100 and the
-                grid will expect a result with 100 rows, that's rows 0..99.
+                size is 100, the getRows function will be called with `startRow: 0` and `endRow: 100` and the grid will
+                expect a result with 100 rows (that's rows 0 to 99).
             </li>
             <li>
-                The <b>successCallback(rowsThisBlock, lastRowIndex)</b> should be called when you successfully receive data
+                The <b>successCallback(rowsThisBlock, lastRow)</b> should be called when you successfully receive data
                 from the server. The callback has the following parameters:
                 <ul>
                     <li><b>rowsThisBlock</b> should be the rows you have received for the current block.</li>
@@ -304,7 +304,7 @@ interface IGetRowsParams {
     <h3 id="loading-spinner">Loading Spinner</h3>
 
     <p>
-        The examples on this page use a loading spinner to show if the row is waiting for it's data to be loaded. The
+        The examples on this page use a loading spinner to show if the row is waiting for its data to be loaded. The
         grid does not provide this, rather it is a simple rendering technique used in the examples. If the data
         is loading, then the rowNode will be missing data, and hence all values passed to cellRenderers will be
         undefined. You can check for this and provide your own loading effect.

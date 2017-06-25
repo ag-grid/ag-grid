@@ -54,7 +54,7 @@ var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oc
 var dataSize = '.1x22';
 
 var size = 'fill'; // model for size select
-var width = '100%'; // the div gets it's width and height from here
+var width = '100%'; // the div gets its width and height from here
 var height = '100%';
 
 var rowSelection = 'checkbox';
@@ -99,6 +99,7 @@ var gridOptions = {
     defaultColDef: {
         minWidth: 50
     },
+    // enableCellChangeFlash: true,
     // postProcessPopup: function(params) {
     //     console.log(params);
     // },

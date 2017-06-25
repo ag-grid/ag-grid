@@ -93,7 +93,7 @@
             the following locations in the "feature rich grid example" above:<br/>
             a) The 'quickFilter' on the top right updates the quick filter of
             the grid.
-            b) The 'Show Tool Panel' checkbox has it's value bound to the 'showToolPanel'
+            b) The 'Show Tool Panel' checkbox has its value bound to the 'showToolPanel'
             property of the grid.
             c) The 'Refresh Data' generates new data for the grid and updates the
             <i>rowData</i> property.
@@ -101,7 +101,7 @@
     </ul>
 
     <p>
-        Notice that the grid has it's properties marked as <b>immutable</b>. Hence for
+        Notice that the grid has its properties marked as <b>immutable</b>. Hence for
         object properties, the object reference must change for the grid to take impact.
         For example, <i>rowData</i> must be a new list of data for the grid to be
         informed to redraw.

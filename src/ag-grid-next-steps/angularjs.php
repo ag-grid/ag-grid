@@ -36,7 +36,7 @@
 <p>
     Each cell within the row does not get a new child scope. So if placing item inside the
     child scope for the row, be aware that it is shared across all cells for that row.
-    If you want a cell to have it's own private scope, consider using a directive
+    If you want a cell to have its own private scope, consider using a directive
     for the renderer that will introduce a new scope.
 </p>
 

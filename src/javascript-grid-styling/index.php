@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     </h2>
 
     <p>
-        ag-Grid is designed to have it's look and feel derived from a theme.
+        ag-Grid is designed to have its look and feel derived from a theme.
     </p>
 
     <p>
@@ -93,7 +93,7 @@ include '../documentation-main/documentation_header.php';
     <h2 id="structure-example">Structure Example</h2>
 
     <p>
-        The exact structure of the DOM within ag-Grid is dependent on it's configuration and what data is present.
+        The exact structure of the DOM within ag-Grid is dependent on its configuration and what data is present.
         This page takes the below basic example grid, with one pinned column, as an example to demonstrate the DOM structure.
         The reader is encouraged to inspect the DOM (using your browsers developer tools) to dig deeper.
     </p>

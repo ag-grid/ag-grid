@@ -129,11 +129,7 @@ DetailPanelCellRenderer.prototype.getTemplate = function(params) {
 
     var template =
         '<div class="full-width-panel">' +
-        '  <div class="full-width-details">' +
-        '    <div class="full-width-detail"><img width="120px" src="../images/'+parentRecord.image+'.png"/></div>' +
-        '    <div class="full-width-detail"><b>Name: </b>'+parentRecord.name+'</div>' +
-        '    <div class="full-width-detail"><b>Account: </b>'+parentRecord.account+'</div>' +
-        '  </div>'+
+
         '  <div class="full-width-grid"></div>' +
         '  <div class="full-width-grid-toolbar">' +
         '       <img class="full-width-phone-icon" src="../images/phone.png"/>' +

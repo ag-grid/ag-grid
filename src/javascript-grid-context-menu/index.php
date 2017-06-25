@@ -105,7 +105,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         One drawback of using the ag-Grid context menu is that you may want to show the browsers context
         menu when debugging, for example in order to access your browsers dev tools. If you want the grid
-        to do nothing (and hence allow the browser to display it's context menu) then hold down the ctrl
+        to do nothing (and hence allow the browser to display its context menu) then hold down the ctrl
         key while clicking for the context menu.
     </p>
 
@@ -121,7 +121,7 @@ include '../documentation-main/documentation_header.php';
         of custom items. You should notice the following:
         <ul>
         <li>A mix of built in items and custom items are used.</li>
-        <li>The first item uses the contents of the cell to display it's value.</li>
+        <li>The first item uses the contents of the cell to display its value.</li>
         <li>Country and Person are sub menu's. The country sub menu contains icons.</li>
         <li>The menu item 'Always Disabled' has a tooltip.</li>
         <li>The menu item has css classes applied to it.</li>

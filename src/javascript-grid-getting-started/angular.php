@@ -55,7 +55,7 @@ npm i ag-grid-angular --save</pre>
 <span class="codeComment">// src/app/app.component.html</span>
 &lt;app-my-grid-application&gt;&lt;/app-my-grid-application&gt;</pre>
 
-<p>Our grid component is going to be a simple renderer that styles it's contents red:</p>
+<p>Our grid component is going to be a simple renderer that styles its contents red:</p>
 <pre ng-non-bindable>
 <span class="codeComment">// src/app/red-component/red-component.component.ts</span>
 import {Component} from "@angular/core";

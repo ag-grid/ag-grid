@@ -213,7 +213,7 @@ interface RowDataTransaction {
     <h3>Updating Rows</h3>
 
     <p>
-        The grid will update one row for each item in the <code>transaction.remove</code> array.
+        The grid will update one row for each item in the <code>transaction.update</code> array.
         Behind the scenes, the grid will call <code>rowNode.setRowData(newData)</code>.
     </p>
 

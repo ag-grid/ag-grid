@@ -1,5 +1,4 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 200, cellRenderer: 'group', showRowGroup: true},
     {headerName: "Gold", field: "gold", width: 100},
     {headerName: "Silver", field: "silver", width: 100},
     {headerName: "Bronze", field: "bronze", width: 100},
@@ -17,7 +16,11 @@ var gridOptions = {
     enableSorting: true,
     enableRangeSelection: true,
     groupRowAggNodes: groupRowAggNodes,
-    groupSuppressAutoColumn: true
+    autoGroupColumnDef:{
+        headerName: "Athlete",
+        field: "athlete",
+        width: 200
+    }
 };
 
 function groupRowAggNodes(nodes) {

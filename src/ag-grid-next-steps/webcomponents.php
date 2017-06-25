@@ -29,7 +29,7 @@
     <li><b>Properties:</b> The more complex properties (eg row and column data)
         are attached directly to the grid DOM element.
     </li>
-    <li><b>Grid API:</b> The grid can be interfaced with through it's API. The following
+    <li><b>Grid API:</b> The grid can be interfaced with through its API. The following
         interact via the API:<br/>
         a) The quickFilter text.<br/>
         b) The Grid API and Column API buttons<br/>
@@ -38,7 +38,7 @@
     <li><b>Changing Attributes & Properties:</b> When an attribute or property changes value,
         the grid, if appropriate, acts on this change. This is done in the example in the following locations:
         <br/>
-        a) The 'Show Tool Panel' checkbox has it's value bound to the 'showToolPanel'
+        a) The 'Show Tool Panel' checkbox has its value bound to the 'showToolPanel'
         property of the grid.
         <br/>
         b) The 'Refresh Data via Element' generates new data for the grid by attaching

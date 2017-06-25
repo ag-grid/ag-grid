@@ -47,7 +47,7 @@ include('../includes/mediaHeader.php');
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
         <a href="../ag-grid-big-data-small-browser/">
-            <img src="../images/react.png" style="width: 200px;"/>
+            <img src="../images/react.png" style="width: 100px;"/>
         </a>
     </div>
 

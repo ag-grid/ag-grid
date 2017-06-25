@@ -22,7 +22,7 @@ include('../includes/mediaHeader.php');
                 We released a new system into production with 'usability issues'
                 due to our choice of grid component. Every time we started a new project
                 the question 'which grid should we use' came up and each time
-                there was debate. Each grid had it's merits, no grid fit
+                there was debate. Each grid had its merits, no grid fit
                 well. We were on our third project in three years to be using
                 <a href="https://angularjs.org/">AngularJS 1.x</a>, having tested 5 different grids that 'worked' with
                 <a href="https://angularjs.org/">AngularJS 1.x</a>.

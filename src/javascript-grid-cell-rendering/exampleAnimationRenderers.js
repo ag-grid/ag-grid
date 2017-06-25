@@ -56,7 +56,6 @@ function onUpdateSomeValues() {
     for (var i = 0; i<10; i++) {
         var row = Math.floor(Math.random() * rowCount);
         var rowNode = gridOptions.api.getDisplayedRowAtIndex(row);
-        // randomly pick a, b or c
         rowNode.setDataValue('d', Math.floor(Math.random() * 10000));
         rowNode.setDataValue('e', Math.floor(Math.random() * 10000));
     }

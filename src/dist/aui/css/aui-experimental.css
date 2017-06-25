@@ -1319,7 +1319,7 @@ disabled look for disabled choices in the results dropdown
 }
 /* Set the default text color to inherit.
    NOTE: this class is only marked as !important because Select2 marks the same
-   selector as !important in it's styles. */
+   selector as !important in its styles. */
 .aui-select2-container .select2-input {
   color: inherit !important;
 }

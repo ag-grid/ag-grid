@@ -30,7 +30,7 @@ include('../includes/mediaHeader.php');
             We here at ag-Grid are proud to be able to announce support for VueJS, offering native support of VueJS components
         within the grid itself.</p>
 
-        <p>We'll walk through creating a simple VueJS application with ag-Grid at it's core, using VueJS components to add dynamic
+        <p>We'll walk through creating a simple VueJS application with ag-Grid at its core, using VueJS components to add dynamic
         functionality to the experience, making good use of what both VueJS and ag-Grid offers us.</p>
 
         <h2>Munros?</h2>

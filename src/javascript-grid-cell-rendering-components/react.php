@@ -90,7 +90,7 @@ the grid will know the framework to use is React.
 <h3 id="react-props"><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
 
 <p>
-    The React component will get the 'cellRenderer Params' as described above as it's React Props.
+    The React component will get the 'cellRenderer Params' as described above as its React Props.
     Therefore you can access all the parameters as React Props.
 
 <pre><span class="codeComment">// React cellRenderer Component</span>

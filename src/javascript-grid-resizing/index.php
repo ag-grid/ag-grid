@@ -81,11 +81,11 @@ include '../documentation-main/documentation_header.php';
         The example below shows resizing in action. Things to note are as follows:
         <ul>
         <li>Each column can be resized by dragging (or double clicking or auto resize) the
-            right side of it's header.</li>
+            right side of its header.</li>
         <li>The button 'Size to Fit' calls api.sizeColumnsToFit()</li>
         <li>The button 'Auto-Size All' calls columnApi.autoSizeColumns()</li>
         <li>The first column is fixed with (ie suppressSizeToFit = true),
-            which means it's size does not change when sizeColumnsToFit is called.</li>
+            which means its size does not change when sizeColumnsToFit is called.</li>
         <li>The 'age' column has both a min and max size set, so resizing the column
             will be restricted by these, regardless of dragging the header or using on
             of the API buttons.</li>

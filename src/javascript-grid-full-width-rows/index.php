@@ -145,7 +145,7 @@ include '../documentation-main/documentation_header.php';
     A row that 'can flower' is expandable. The child row is called the 'flower row'.
     The 'flower row':
 <ul>
-    <li>will share the same data item as it's parent.</li>
+    <li>will share the same data item as its parent.</li>
     <li>does not participate in filtering - it will show if parent is shown.</li>
     <li>does not participate in sorting - it will always display below the parent.</li>
 </ul>

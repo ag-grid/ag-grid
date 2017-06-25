@@ -1,0 +1,25 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused47"></script>
+    <script src="exampleFlashingCells.js"></script>
+</head>
+
+<style>
+    .align-right {
+        text-align: right;
+    }
+</style>
+
+<body>
+
+    <div style="height: 100%; padding-top: 20px; box-sizing: border-box;">
+        <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+    </div>
+    <div style="position: absolute; padding-top: 4px; padding-left: 8px; top: 0px; left: 0px;">
+        <button onclick="onUpdateSomeValues()">Update Some Data</button>
+    </div>
+
+</body>
+
+</html>

@@ -129,7 +129,7 @@ colDef.valueGetter = function(params) {
     <h2>Value Setter</h2>
 
     <p>
-        A <code>valueSetter</code> is the invers of a <code>valueGetter</code>, it allows you to put
+        A <code>valueSetter</code> is the inverse of a <code>valueGetter</code>, it allows you to put
         values into your data in a way other than using the standard <code>colDef.field</code>.
         The interface for <code>valueSetter</code> is as follows:
     </p>

@@ -1,5 +1,4 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 200, cellRenderer: 'group', showRowGroup: true},
     // this column uses min and max func
     {headerName: "minMax(age)", field: "age", width: 90, aggFunc: minAndMaxAggFunction},
     // here we use an average func and specify the function directly
@@ -10,8 +9,9 @@ var columnDefs = [
     // and these two use the built in sum func
     {headerName: "abc(silver)", field: "silver", width: 100, aggFunc: '123', enableValue: true},
     {headerName: "xyz(bronze)", field: "bronze", width: 100, aggFunc: 'xyz', enableValue: true},
-    {headerName: "Country", field: "country", width: 120, rowGroup: true, hide: true},
-    {headerName: "Year", field: "year", width: 90, rowGroup: true, hide: true}
+
+    { field: "country", rowGroup: true, hide: true},
+    { field: "year", rowGroup: true, hide: true}
 ];
 
 var gridOptions = {
@@ -21,7 +21,9 @@ var gridOptions = {
     enableSorting: true,
     enableColResize: true,
     enableRangeSelection: true,
-    groupSuppressAutoColumn: true,
+    autoGroupColumnDef: {
+        headerName: "Athlete", field: "athlete", width: 200
+    },
     suppressAggFuncInHeader: true,
     aggFuncs: {
         // this overrides the grids built in sum function

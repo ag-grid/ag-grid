@@ -200,7 +200,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>getBestCostNodeSelection()</th>
             <td>Returns a list of all selected nodes at 'best cost' - a feature to be used
-                with groups / trees. If a group has all it's children selected,
+                with groups / trees. If a group has all its children selected,
                 then the group appears in the result, but not the children.
                 Designed for use with 'children' as the group selection type,
                 where groups don't actually appear in the selection normally.</td>
@@ -586,7 +586,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>doLayout()</th>
-            <td>Force the grid to lay out it's components. The grid, by default, resizes to fit
+            <td>Force the grid to lay out its components. The grid, by default, resizes to fit
                 the div the grid lives in. This is done a) on initialisation b) window resize
                 and c) every 500ms. You should call this if something happens in your application
                 where the grid size has changed and you want to lay the grid out without waiting
@@ -613,8 +613,8 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>checkGridSize()</th>
-            <td>Gets the grid to check it's size again. This is useful if you do not have the grid in the DOM
-                when you create it, call this method after the grid is in the dom to get it to check it's width
+            <td>Gets the grid to check its size again. This is useful if you do not have the grid in the DOM
+                when you create it, call this method after the grid is in the dom to get it to check its width
                 and height again (which decides what columns and rows to render).</td>
         </tr>
         <tr>

@@ -42,7 +42,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         There is no JavaScript event for when an element changes size (there is a window resized
-        event, but no element resized) so the grid checks it's size every 500ms. If your application
+        event, but no element resized) so the grid checks its size every 500ms. If your application
         changes the size of the grid, you can get the grid to resize immediatly (rather than wait
         for the next 500ms check) by calling <i>api.doLayout()</i>.
     </p>
