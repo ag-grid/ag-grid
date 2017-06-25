@@ -55,7 +55,7 @@ class TempStubCell extends Component {
 
 export class RowComp extends BeanStub {
 
-    public static EVENT_RENDERED_ROW_REMOVED = 'renderedRowRemoved';
+    public static EVENT_ROW_REMOVED = 'rowRemoved';
 
     public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
 
@@ -738,11 +738,19 @@ export class RowComp extends BeanStub {
     }
 
     public addEventListener(eventType: string, listener: Function): void {
+        if (eventType==='renderedRowRemoved') {
+            eventType = RowComp.EVENT_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+        }
         if (!this.renderedRowEventService) { this.renderedRowEventService = new EventService(); }
         this.renderedRowEventService.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: Function): void {
+        if (eventType==='renderedRowRemoved') {
+            eventType = RowComp.EVENT_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+        }
         this.renderedRowEventService.removeEventListener(eventType, listener);
     }
 
@@ -780,7 +788,7 @@ export class RowComp extends BeanStub {
         }
 
         if (this.renderedRowEventService) {
-            this.renderedRowEventService.dispatchEvent(RowComp.EVENT_RENDERED_ROW_REMOVED, {node: this.rowNode});
+            this.renderedRowEventService.dispatchEvent(RowComp.EVENT_ROW_REMOVED, {node: this.rowNode});
         }
 
         let event = {node: this.rowNode, rowIndex: this.rowNode.rowIndex};
