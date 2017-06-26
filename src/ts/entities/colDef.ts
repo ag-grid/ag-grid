@@ -209,6 +209,8 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
     editable?: boolean | IsColumnFunc;
 
+    colSpan?: (params: ColSpanParams) => number;
+
     /** Set to true if this col should not be allowed take new values from teh clipboard . */
     suppressPaste?: boolean | IsColumnFunc;
 
@@ -303,13 +305,17 @@ export interface GetQuickFilterTextParams {
 }
 
 export interface BaseColDefParams {
-    node: any,
-    data: RowNode,
-    colDef: ColDef,
-    column: Column,
-    api: GridApi,
-    columnApi: ColumnApi,
-    context: any
+    node: any;
+    data: RowNode;
+    colDef: ColDef;
+    column: Column;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
+}
+
+export interface BaseWithValueColDefParams extends BaseColDefParams {
+    value: any;
 }
 
 export interface ValueGetterParams extends BaseColDefParams {
@@ -325,6 +331,6 @@ export interface ValueSetterParams extends NewValueParams {}
 
 export interface ValueParserParams extends NewValueParams {}
 
-export interface ValueFormatterParams extends BaseColDefParams {
-    value: any;
-}
+export interface ValueFormatterParams extends BaseWithValueColDefParams {}
+
+export interface ColSpanParams extends BaseColDefParams {}

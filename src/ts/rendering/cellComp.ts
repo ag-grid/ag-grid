@@ -33,6 +33,7 @@ import {StylingService} from "../styling/stylingService";
 import {ColumnHoverService} from "./columnHoverService";
 import {ColumnAnimationService} from "./columnAnimationService";
 import {GroupCellRenderer} from "./cellRenderers/groupCellRenderer";
+import {BaseWithValueColDefParams, ColDef} from "../entities/colDef";
 
 export class CellComp extends Component {
 
@@ -95,6 +96,9 @@ export class CellComp extends Component {
 
     private firstRightPinned = false;
     private lastLeftPinned = false;
+
+    private colsSpanning: Column[];
+    private setLeftFeature: SetLeftFeature;
 
     constructor(column: Column, node: RowNode, scope: any, renderedRow: RowComp) {
         super('<div role="gridcell"/>');
@@ -334,9 +338,19 @@ export class CellComp extends Component {
         }
     }
 
+    private getCellWidth(): number {
+        if (this.colsSpanning) {
+            let result = 0;
+            this.colsSpanning.forEach( col => result += col.getActualWidth() );
+            return result;
+        } else {
+            return this.column.getActualWidth();
+        }
+    }
+
     private setWidthOnCell(): void {
         let widthChangedListener = () => {
-            this.eGridCell.style.width = this.column.getActualWidth() + "px";
+            this.eGridCell.style.width = this.getCellWidth() + "px";
         };
 
         this.column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
@@ -351,6 +365,7 @@ export class CellComp extends Component {
     public init(): void {
         this.value = this.getValue();
 
+        this.setupColSpan();
         this.createGridCell();
         this.addIndexChangeListener();
 
@@ -366,8 +381,10 @@ export class CellComp extends Component {
 
         this.addDomData();
 
+        this.setLeftFeature = new SetLeftFeature(this.column, this.eGridCell, this.colsSpanning);
+        this.addFeature(this.context, this.setLeftFeature);
+
         // this.addSuppressShortcutKeyListenersWhileEditing();
-        this.addFeature(this.context, new SetLeftFeature(this.column, this.eGridCell));
 
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
@@ -379,6 +396,59 @@ export class CellComp extends Component {
         this.setInlineEditingClass();
         this.createParentOfValue();
         this.populateCell();
+    }
+
+    private setupColSpan(): void {
+        // if no cols span is active, then we don't set it up, as it would be wasteful of CPU
+        if (_.missing(this.column.getColDef().colSpan)) {
+            return;
+        }
+
+        // because we are col spanning, a reorder of the cols can change what cols we are spanning over
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.checkColSpan.bind(this));
+        // because we are spanning over multiple cols, we check for width any time any cols width changes.
+        // this is expensive - really we should be explicitly checking only the cols we are spanning over
+        // instead of every col, however it would be tricky code to track the cols we are spanning over, so
+        // because hardly anyone will be using colSpan, am favoring this easier way for more maintainable code.
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.setWidthOnCell.bind(this));
+
+        this.checkColSpan();
+    }
+
+    private checkColSpan(): void {
+        let colSpan = this.column.getColSpan(this.node);
+        let colsSpanning: Column[] = [];
+
+        // if just one col, the col span is just the column we are in
+        if (colSpan===1) {
+            colsSpanning.push(this.column);
+        } else {
+            let pointer = this.column;
+            let pinned = this.column.getPinned();
+            for (let i = 0; i<colSpan; i++) {
+                colsSpanning.push(pointer);
+                pointer = this.columnController.getDisplayedColAfter(pointer);
+                if (_.missing(pointer)) {
+                    break;
+                }
+                // we do not allow col spanning to span outside of pinned areas
+                if (pinned !== pointer.getPinned()) {
+                    break;
+                }
+            }
+        }
+
+        this.setColsSpanning(colsSpanning);
+    }
+
+    private setColsSpanning(colsSpanning: Column[]): void {
+        if (!_.compareArrays(this.colsSpanning, colsSpanning)) {
+            this.colsSpanning = colsSpanning;
+            this.setWidthOnCell();
+            if (this.setLeftFeature) {
+                this.setLeftFeature.setColsSpanning(colsSpanning);
+            }
+        }
     }
 
     private addColumnHoverListener(): void {
@@ -622,7 +692,7 @@ export class CellComp extends Component {
             cellEditor.afterGuiAttached();
         }
 
-        this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STARTED, this.createParams());
+        this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STARTED, this.createParamsWithValue());
 
         return true;
     }
@@ -721,27 +791,26 @@ export class CellComp extends Component {
 
         this.refreshCell({dontSkipRefresh: true});
 
-        this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STOPPED, this.createParams());
+        this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STOPPED, this.createParamsWithValue());
     }
 
-    private createParams(): any {
-        let params = {
+    private createParamsWithValue(): any {
+        let params: BaseWithValueColDefParams = {
             node: this.node,
             data: this.node.data,
             value: this.value,
-            rowIndex: this.gridCell.rowIndex,
             column: this.column,
             colDef: this.column.getColDef(),
-            $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),
             api: this.gridApi,
             columnApi: this.columnApi
         };
+        (<any>params).$scope = this.scope;
         return params;
     }
 
     private createEvent(event: any): CellEvent {
-        let agEvent = this.createParams();
+        let agEvent = this.createParamsWithValue();
         agEvent.event = event;
         return agEvent;
     }

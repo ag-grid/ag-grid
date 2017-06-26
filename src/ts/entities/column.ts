@@ -5,7 +5,7 @@ import {
     AbstractColDef,
     IAggFunc,
     IsColumnFunc,
-    IsColumnFuncParams
+    IsColumnFuncParams, ColSpanParams
 } from "./colDef";
 import {EventService} from "../eventService";
 import {Utils as _} from "../utils";
@@ -487,6 +487,29 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public getActualWidth(): number {
         return this.actualWidth;
+    }
+
+    public getColSpan(rowNode: RowNode): number {
+        if (_.missing(this.colDef.colSpan)) {
+            return 1;
+        } else {
+            let params: ColSpanParams = {
+                node: rowNode,
+                data: rowNode.data,
+                colDef: this.colDef,
+                column: this,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
+            };
+            let colSpan = this.colDef.colSpan(params);
+            // colSpan must be number equal to or greater than 1
+            if (colSpan > 1) {
+                return colSpan;
+            } else {
+                return 1;
+            }
+        }
     }
 
     public setActualWidth(actualWidth: number): void {

@@ -1,7 +1,7 @@
 import {Utils as _} from "../utils";
 import {ColumnGroup} from "../entities/columnGroup";
 import {Column} from "../entities/column";
-import {ColDef, AbstractColDef, ColGroupDef, IAggFunc} from "../entities/colDef";
+import {ColDef, AbstractColDef, ColGroupDef, IAggFunc, ColSpanParams} from "../entities/colDef";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ExpressionService} from "../expressionService";
@@ -21,6 +21,7 @@ import {GridPanel} from "../gridPanel/gridPanel";
 import {IAggFuncService} from "../interfaces/iAggFuncService";
 import {ColumnAnimationService} from "../rendering/columnAnimationService";
 import {AutoGroupColService} from "./autoGroupColService";
+import {RowNode} from "../entities/rowNode";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -229,6 +230,9 @@ export class ColumnController {
     private allDisplayedColumns: Column[] = [];
     // same as above, except trimmed down to only columns within the viewport
     private allDisplayedVirtualColumns: Column[] = [];
+    private allDisplayedCenterVirtualColumns: Column[] = [];
+
+    private colSpanActive: boolean;
 
     private rowGroupColumns: Column[] = [];
     private valueColumns: Column[] = [];
@@ -494,9 +498,85 @@ export class ColumnController {
         return this.allDisplayedColumns;
     }
 
-    // + rowRenderer
     public getAllDisplayedVirtualColumns(): Column[] {
         return this.allDisplayedVirtualColumns;
+    }
+
+    public getDisplayedLeftColumnsForRow(rowNode: RowNode): Column[] {
+        if (!this.colSpanActive) {
+            return this.displayedLeftColumns;
+        } else {
+            return this.getDisplayedColumnsForRow(rowNode, this.displayedLeftColumns);
+        }
+    }
+
+    public getDisplayedRightColumnsForRow(rowNode: RowNode): Column[] {
+        if (!this.colSpanActive) {
+            return this.displayedRightColumns;
+        } else {
+            return this.getDisplayedColumnsForRow(rowNode, this.displayedRightColumns);
+        }
+    }
+
+    private getDisplayedColumnsForRow(rowNode: RowNode, displayedColumns: Column[],
+                                        filterCallback?: (column: Column)=>boolean,
+                                        gapBeforeCallback?: (column: Column)=>boolean): Column[] {
+
+        let result: Column[] = [];
+        let lastConsideredCol: Column = null;
+
+        for (let i = 0; i<displayedColumns.length; i++) {
+
+            let col = displayedColumns[i];
+
+            let colSpan = col.getColSpan(rowNode);
+            if (colSpan > 1) {
+                let colsToRemove = colSpan - 1;
+                i += colsToRemove;
+            }
+
+            let filterPasses = filterCallback ? filterCallback(col) : true;
+
+            if (filterPasses) {
+
+                let gapBeforeColumn = gapBeforeCallback ? gapBeforeCallback(col) : false;
+                let addInPreviousColumn = result.length===0 && gapBeforeColumn && lastConsideredCol;
+                if (addInPreviousColumn) {
+                    result.push(lastConsideredCol);
+                }
+
+                result.push(col);
+            }
+
+            lastConsideredCol = col;
+        }
+
+        return result;
+    }
+
+    // + rowRenderer
+    // if we are not column spanning, this just returns back the virtual centre columns,
+    // however if we are column spanning, then different rows can have different virtual
+    // columns, so we have to work out the list for each individual row.
+    public getAllDisplayedCenterVirtualColumnsForRow(rowNode: RowNode): Column[] {
+
+        if (!this.colSpanActive) {
+            return this.allDisplayedCenterVirtualColumns;
+        }
+
+        let gapBeforeCallback = (col: Column) => col.getLeft() > this.viewportLeft;
+
+        return this.getDisplayedColumnsForRow(rowNode, this.displayedCenterColumns,
+            this.isColumnInViewport.bind(this), gapBeforeCallback);
+    }
+
+    private isColumnInViewport(col: Column): boolean {
+        let columnLeft = col.getLeft();
+        let columnRight = col.getLeft() + col.getActualWidth();
+        let columnToMuchLeft = columnLeft < this.viewportLeft && columnRight < this.viewportLeft;
+        let columnToMuchRight = columnLeft > this.viewportRight && columnRight > this.viewportRight;
+
+        return !columnToMuchLeft && !columnToMuchRight;
     }
 
     // used by:
@@ -875,14 +955,14 @@ export class ColumnController {
 
     // + rowController -> while inserting rows
     public getDisplayedCenterColumns(): Column[] {
-        return this.displayedCenterColumns.slice(0);
+        return this.displayedCenterColumns;
     }
     // + rowController -> while inserting rows
     public getDisplayedLeftColumns(): Column[] {
-        return this.displayedLeftColumns.slice(0);
+        return this.displayedLeftColumns;
     }
     public getDisplayedRightColumns(): Column[] {
-        return this.displayedRightColumns.slice(0);
+        return this.displayedRightColumns;
     }
 
     public getDisplayedColumns(type: string): Column[] {
@@ -1564,6 +1644,16 @@ export class ColumnController {
         return columnsForDisplay;
     }
 
+    private checkColSpanActiveInCols(columns: Column[]): boolean {
+        let result = false;
+        columns.forEach( col => {
+            if (_.exists(col.getColDef().colSpan)) {
+                result = true;
+            }
+        });
+        return result;
+    }
+
     private calculateColumnsForGroupDisplay(): void {
         this.groupDisplayColumns = [];
         let checkFunc = (col: Column) => {
@@ -1684,6 +1774,8 @@ export class ColumnController {
 
         this.clearDisplayedColumns();
 
+        this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
+
         let event = new ColumnChangeEvent(Events.EVENT_GRID_COLUMNS_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_GRID_COLUMNS_CHANGED, event);
     }
@@ -1801,19 +1893,18 @@ export class ColumnController {
         });
     }
 
-    private updateDisplayedCenterVirtualColumns(): any {
-        let filteredCenterColumns: Column[];
+    private updateDisplayedCenterVirtualColumns(): {[key: string]: boolean} {
 
         let skipVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation() || this.gridOptionsWrapper.isForPrint();
         if (skipVirtualisation) {
             // no virtualisation, so don't filter
-            filteredCenterColumns = this.displayedCenterColumns;
+            this.allDisplayedCenterVirtualColumns = this.displayedCenterColumns;
         } else {
             // filter out what should be visible
-            filteredCenterColumns = this.filterOutColumnsWithinViewport(this.displayedCenterColumns);
+            this.allDisplayedCenterVirtualColumns = this.filterOutColumnsWithinViewport();
         }
 
-        this.allDisplayedVirtualColumns = filteredCenterColumns
+        this.allDisplayedVirtualColumns = this.allDisplayedCenterVirtualColumns
             .concat(this.displayedLeftColumns)
             .concat(this.displayedRightColumns);
 
@@ -1892,16 +1983,8 @@ export class ColumnController {
         this.updateDisplayedVirtualGroups(virtualColIds);
     }
 
-    private filterOutColumnsWithinViewport(columns: Column[]): Column[] {
-        return _.filter(columns, column => {
-            // only out if both sides of columns are to the left or to the right of the boundary
-            let columnLeft = column.getLeft();
-            let columnRight = column.getLeft() + column.getActualWidth();
-            let columnToMuchLeft = columnLeft < this.viewportLeft && columnRight < this.viewportLeft;
-            let columnToMuchRight = columnLeft > this.viewportRight && columnRight > this.viewportRight;
-
-            return !columnToMuchLeft && !columnToMuchRight;
-        });
+    private filterOutColumnsWithinViewport(): Column[] {
+        return _.filter(this.displayedCenterColumns, this.isColumnInViewport.bind(this));
     }
 
     // called from api

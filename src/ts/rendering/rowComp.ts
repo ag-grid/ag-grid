@@ -18,7 +18,7 @@ import {GridPanel} from "../gridPanel/gridPanel";
 import {BeanStub} from "../context/beanStub";
 import {RowContainerComponent} from "./rowContainerComponent";
 import {ColumnAnimationService} from "./columnAnimationService";
-import {ColDef} from "../entities/colDef";
+import {ColDef, ColSpanParams} from "../entities/colDef";
 import {PaginationProxy} from "../rowModels/paginationProxy";
 import {Component} from "../widgets/component";
 import {SvgFactory} from "../svgFactory";
@@ -445,16 +445,23 @@ export class RowComp extends BeanStub {
     // container (ie into pinned)
     private refreshCellsIntoRow() {
 
-        let displayedVirtualColumns = this.columnController.getAllDisplayedVirtualColumns();
         let displayedColumns = this.columnController.getAllDisplayedColumns();
+
+        let centerCols = this.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
+        let leftColumns = this.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
+        let rightCols = this.columnController.getDisplayedRightColumnsForRow(this.rowNode);
 
         let cellsToRemove = Object.keys(this.renderedCells);
 
-        displayedVirtualColumns.forEach( (column: Column) => {
+        let addColFunc = (column: Column) => {
             let renderedCell = this.getOrCreateCell(column);
             this.ensureCellInCorrectRow(renderedCell);
             _.removeFromArray(cellsToRemove, column.getColId());
-        });
+        };
+
+        centerCols.forEach(addColFunc);
+        leftColumns.forEach(addColFunc);
+        rightCols.forEach(addColFunc);
 
         // we never remove rendered ones, as this would cause the cells to loose their values while editing
         // as the grid is scrolling horizontally
