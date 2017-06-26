@@ -17,6 +17,58 @@
     }
 </style>
 
+
+<div class="news-box">
+    <div class="news-header">8th Jun 2017</div>
+    <div style="background-color: black; padding: 10px; position: relative;">
+        <span style="font-weight: bold; color: white; font-size: 25px; position: absolute; top: 70px; left: 110px;">
+            v11.0
+        </span>
+        <img src="../images/logo-dark-hacked.svg"
+             style="width: 100%;"/>
+    </div>
+    <br/>
+    <div>
+        Featuring:
+    </div>
+    <div>
+        <ul style="padding-left: 20px;">
+            <li>
+                <a href="../javascript-grid-pivoting/#totalPivotColumns">Pivot Totals</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-accessibility/">Accessibility</a>.
+            </li>
+            <li>
+                <a href="../javascript-grid-refresh/#flashing">Cell Flashing</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-grouping/">Simpler Row Grouping</a>.
+            </li>
+        </ul>
+    </div>
+    <div>
+        New documentation:
+    </div>
+    <div>
+        <ul style="padding-left: 20px;">
+            <li>
+                <a href="../javascript-grid-value-getters/">Getters & Setters</a>.
+            </li>
+            <li>
+                <a href="../javascript-grid-cell-rendering/">Cell Renderer's</a>.
+            </li>
+            <li>
+                <a href="../example-angular-rxjs/">RXJS</a>.
+            </li>
+        </ul>
+    </div>
+    <div>
+        See the <a href="../change-log/changeLogIndex.php">Change Log</a>
+        for full release details.
+    </div>
+</div>
+
 <div class="news-box">
     <div class="news-header">20th Jun 2017</div>
     <div>

@@ -118,7 +118,7 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <LI>AG-483: <a href="../javascript-grid-data-update/">Delta updates</a> - now you can add / update / remove
         rows without having to call 'setRowData(rowData)' with new data each time. Means you can keep the grids
-        <li>AG-420: Support for <a href="../example-react-redux/?framework=react">Redux Style Immutable Stores</a>,
+        <li>AG-420: Support for <a href="../example-react-redux/">Redux Style Immutable Stores</a>,
             to work better with React applications.</li>
         state (seelction, grouping etc) while new rows are set.</li>
         <LI>AG-114: <a href="../javascript-grid-width-and-height/#autoHeight">Auto height grid</a>: Allow the grid to

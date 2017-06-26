@@ -55,7 +55,10 @@ interface ColSpanParams {
     <h2>Column Spanning Simple Example</h2>
 
     <p>
-        Below shows a simple example using column spanning. The following can be noted:
+        Below shows a simple example using column spanning. The example doesn't make much sense,
+        it just arbitrarily sets column span on some cells for demonstrations purposes, however
+        we though it easier to show column spanning with the familiar olympic winners data
+        before going a bit deeper into it's usages. The following can be noted:
     </p>
 
     <ul>
@@ -82,6 +85,26 @@ interface ColSpanParams {
     </ul>
 
     <show-example example="exampleColumnSpanning"></show-example>
+
+    <h2>Column Spanning Complex Example</h2>
+
+    <p>
+        Column spanning will typically be used for creating reports with ag-Grid. Below
+        is something that would be more typical of the column spanning feature. The following
+        can be noted from the example:
+    </p>
+
+    <ul>
+        <li>
+            The data is formatted in a certain way, it is not intended for the user to sort this
+            data or reorder teh columns.
+        </li>
+        <li>
+            The dataset has meta-data inside it, the <code>data.section</code> attribute. This
+            meta-data, provided by the application, is used in the grid configuration in order
+            to set the column spans and the backgrond colors.
+        </li>
+    </ul>
 
     <show-example example="exampleColumnSpanningComplex"></show-example>
 
