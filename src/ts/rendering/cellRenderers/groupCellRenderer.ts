@@ -365,6 +365,4 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
-    public refresh(params: any) : void {
-    }
 }
