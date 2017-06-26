@@ -13,7 +13,9 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h3>11.0.0</h3>
+    <h2>Version 11.0.x</h2>
+
+
     <h4>Breaking Changes</h4>
     <ul>
         <li>rowNode.data Doesn't carry anymore the aggregated data, now this is available in a different property aggData</li>

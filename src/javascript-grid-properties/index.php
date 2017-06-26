@@ -320,11 +320,6 @@ include '../documentation-main/documentation_header.php';
                 the rows, but not add parent group row to each group.</td>
         </tr>
         <tr>
-            <th>suppressUseColIdForGroups</th>
-            <td>When true, the col id's are not used for values in the groups. To be used in conjunction
-                with groupRowAggNodes() callback.</td>
-        </tr>
-        <tr>
             <th>rowGroupPanelShow</th>
             <td>When to show the 'row group panel' (where you drag rows to group)  at the top. Default
                 is never. Set to either 'always' or 'onlyWhenGrouping'.</td>
