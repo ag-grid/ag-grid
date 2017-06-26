@@ -14,11 +14,57 @@ include '../documentation-main/documentation_header.php';
     </note>
 
     <h2>Version 11.0.x</h2>
+    <h3>Version 11.0.0 [26-JUN-2017]</h3>
+
+
+    <h4>Documentation</h4>
+    <ul>
+        <li><a href="../javascript-grid-grouping">Row grouping docs</a> rewritten to highlight auto group columns as the preferred solution for row grouping</li>
+        <li>New documentation page for <a href="../javascript-grid-cell-rendering/">grid cellRender's</a>.</li>
+        <li>New documentation page for <a href="../javascript-grid-accessibility/">accessibility</a>.</li>
+        <li>Introduced <a href="../javascript-grid-refresh/#flashing">cell flashing</a>.</li>
+        <li>New documentation pages <a href="../javascript-grid-value-getters/">Values and Expressions</a>
+            and <a href="../javascript-grid-cell-expressions/">Cell Expressions</a> for details.</li></li>
+    </ul>
+
+    <h4>Enhancements</h4>
+    <ul>
+        <li>AG-513 - Improved <a href="../javascript-grid-grouping">row grouping</a>. The preferred way to do row grouping now
+        is using auto group columns. All the examples in the docs have been updated to use when possible auto group columns.
+        The new row grouping makes group sorting work out of the box and fixes some bugs related with sorting and row grouping</li>
+        <li>AG-401 - New property <a href="../javascript-grid-column-menu/">menuTabs</a> to specify which column menu tabs to show and in which order.</li>
+        <li>AG-38 - New <a href="../javascript-grid-accessibility/">accessibility</a> features and documentation. </li>
+        <li>AG-517 - Review of valueGetters and valueFormatters and introduced valueSetters and valueParsers.
+            See new documentation pages <a href="../javascript-grid-value-getters/">Values and Expressions</a>
+            and <a href="../javascript-grid-cell-expressions/">Cell Expressions</a> for details.</li>
+        <li>AG-551 - Added <a href="../javascript-grid-pivoting/#totalPivotColumns">Pivot Total Columns</a> - allows expanding / collapsing of pivot columns into totals</li>
+        <li>AG-515 - New property <a href="../javascript-grid-sorting/#accentedSort">gridOptions.accentedSort</a> Set to true to specify that the sort
+            should take into account accented characters, if this feature is turned on the sort will perform slower.</li>
+        <li>AG-182 - New property <a href="../javascript-grid-clipboard/#deliminator">clipboardDeliminator</a> to specify deliminator to use while copying to clipboard.</li>
+        <li>AG-398 / AG-371 - New property <a href="../javascript-grid-clipboard/#suppressPaste">colDef.suppressPaste</a> to suppress pasting from clipboard for certain cells.</li>
+        <li>AG-73 - Now when editing or updating data, if value is not different, data is not updated, cell is not refreshed and no 'valueChangedEvent' fired. Also impacts when tabbing while editing, previously no change was still an edit, no now change is no change.</li>
+        <li>AG-524 - <a href="../javascript-grid-refresh">Delta changes</a> won't update the cell when a new delta change is provided unless the actual data received
+            is different from the curret data displayed. This works with strings and numbers.</li>
+    </ul>
+
+    <h4>Bug fixes</h4>
+    <ul>
+        <li>AG-347 - Fixed issue where in some cases groupSuppressAutoColumn : true Makes copy not work on the group column</li>
+        <li>AG-481 - Fixed issue where multi column sort wouldn't work when sorting many columns once, including row group columns</li>
+        <li>AG-348 - Callbacks processCellForClipboard() and processCellFromClipboard() now get invoked with doing Ctrl + D (copy range down)</li>
+        <li>AG-199 - <a href="../javascript-grid-resizing/">sizeColumnsToFit</a> now fires an event with parameter 'finished=true'.</li>
+        <li>AG-199 - <a href="../javascript-grid-resizing/">autoSizeColumns</a> now fires just one event, previously it was firing two events unnecessarily.</li>
+        <li>AG-82 - <a href="../javascript-grid-resizing/#resizing-groups">Resizing groups</a> now respects any children columns that are not resizable.</li>
+        <li>AG-207 - MarryChildren was not working when columns were hidden, now works.</li>
+        <li>AG-154 - Typing non-latin letters on focused cell now starts cell editing.</li>
+        <li>AG-543 - Bugfix - Regression/Breaking Change - rows are inserted in reverse order</li>
+    </ul>
 
 
     <h4>Breaking Changes</h4>
     <ul>
-        <li>rowNode.data Doesn't carry anymore the aggregated data, now this is available in a different property aggData</li>
+        <li>Aggregation data and group data are no longer stored in rowNode.data, instead they are stored in rowNode.groupData and rowNode.aggData</li>
+        <li>Removed property suppressUseColIdForGroups, because of new way of storing grouped data in the rowNode, it is not needed.</li>
         <li>colDef.showRowGroup: true Now it's mandatory in the column showing groups if you have groupSuppressAutoColumn: true</li>
         <li>
             gridOptions.groupColumnDef has been renamed to autoGroupColumnDef.
@@ -27,45 +73,13 @@ include '../documentation-main/documentation_header.php';
             gridOptions.enableFilter now needs to be specifically switched on to get the filter menu in the columns.
         </li>
         <li>
-            Deprecated cellRendererParams properties: restrictToOneGroup, keyMap and suppressUseColIdForGroups,
-            The way row grouping has been simplified. See AG-513 for more details
+            Deprecated cellRendererParams properties: restrictToOneGroup, keyMap The way row grouping has been simplified. See AG-513 for more details
         </li>
         <li>
             Deprecated gridOptions properties: suppressMenuFilterPanel suppressMenuMainPanel and suppressMenuColumnPanel,
             use colDef.menuTabs instead. See AG-401 for more details
         </li>
     </ul>
-
-    <h4>Enhancements</h4>
-    <ul>
-        <li>AG-401 - New property <a href="../javascript-grid-column-menu/">menuTabs</a> to specify which column menu tabs to show and in which order.</li>
-    </ul>
-
-    <h4>TBD</h4>
-    <ul>
-        <li>AG-515 - New property <a href="../javascript-grid-clipboard/#deliminator">clipboardDeliminator</a> to specify deliminator to use while copying to clipboard.</li>
-        <li>AG-515 - New property <a href="../javascript-grid-sorting/#accentedSort">gridOptions.accentedSort</a> Set to true to specify that the sort
-            should take into account accented characters, if this feature is turned on the sort will perform slower.</li>
-        <li>AG-398 / AG-371 - New property <a href="../javascript-grid-clipboard/#suppressPaste">colDef.suppressPaste</a> to suppress pasting from clipboard for certain cells.</li>
-        <li>AG-348 - Callbacks processCellForClipboard() and processCellFromClipboard() now get invoked with doing Ctrl + D (copy range down)</li>
-        <li>AG-199 - <a href="../javascript-grid-resizing/">sizeColumnsToFit</a> now fires an event with parameter 'finished=true'.</li>
-        <li>AG-199 - <a href="../javascript-grid-resizing/">autoSizeColumns</a> now fires just one event, previously it was firing two events unnecessarily.</li>
-        <li>AG-82 - <a href="../javascript-grid-resizing/#resizing-groups">Resizing groups</a> now respects any children columns that are not resizable.</li>
-        <li>AG-207 - (bug) MarryChildren was not working when columns were hidden, now works.</li>
-        <li>AG-154 - Typing non-latin letters on focused cell now starts cell editing.</li>
-        <li>AG-73 - Now when editing or updating data, if value is not different, data is not updated, cell is not refreshed and no 'valueChangedEvent' fired. Also impacts when tabbing while editing, previously no change was still an edit, no now change is no change.</li>
-        <li>AG-543 - Bugfix - Regression/Breaking Change - rows are inserted in reverse order</li>
-        <li>AG-38 - <a href="../javascript-grid-accessibility/">ARIA roles</a> for Screen Readers to interpret the columns and rows in the grid.</li>
-        <li>AG-551 - Added <a href="../javascript-grid-pivoting/#totalPivotColumns">Pivot Total Columns</a> - allows expanding / collapsing of pivot columns into totals</li>
-        <li>AG-517 - Review of valueGetters and valueFormatters and introduced valueSetters and valueParsers.
-            See new documentation pages <a href="../javascript-grid-value-getters/">Values and Expressions</a>
-            and <a href="../javascript-grid-cell-expressions/">Cell Expressions</a> for details.</li>
-        <li>New documentation page for <a href="../javascript-grid-cell-rendering/">grid cellRender's</a>.</li>
-        <li>Introduced <a href="../javascript-grid-refresh/#flashing">cell flashing</a>.</li>
-    </ul>
-
-    <li>Big Breaking Change: aggregation data and group data are no longer stored in rowNode.data, instead they are stored in rowNode.groupData and rowNode.aggData</li>
-    <li>Removed property suppressUseColIdForGroups, because of new way of storing grouped data in the rowNode, it is not needed.</li>
 
     <h2>Version 10.1.x</h2>
 
