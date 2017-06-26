@@ -212,21 +212,24 @@ console.log('found column with id ' + sausageKingdomColumn.getId());
         the columns that make up this total value.
     </p>
 
+    <p>
+        To turn total columns on for pivoting, set property <code>gridOption.pivotTotals=true</code>.
+    </p>
+
     <note>
-         <p>All value columns must use the same aggregation function otherwise the calculated total wouldn't make sense.</p>
+        All value columns must use the same aggregation function for the total column to make sense, otherwise the
+        total column will not be included.
     </note>
 
-     <p>
-        The example below demonstrates pivot totals enabled via the Grid Options property <i>pivotTotals</i> set to true</p>
-
-        <ul>
-            <li>pivots on ['sport', 'year'] and groups by ['country']</li>
-            <li>pivoting and grouping can be controlled via the provided buttons</li>
-        </ul>
+    <p>
+       The example below demonstrates pivot totals as follows:
+       <ul>
+           <li>Pivot totals added on ['sport', 'year'] columns.</li>
+           <li>Expanding pivot groups reveals columns that make up totals.</li>
+       </ul>
     </p>
 
     <show-example example="pivotTotalColumns"></show-example>
-
 
     <h2>Saving & Restoring Column State with Pivot</h2>
 

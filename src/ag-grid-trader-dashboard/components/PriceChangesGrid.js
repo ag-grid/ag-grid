@@ -61,14 +61,17 @@ PriceChangesGrid.prototype.onGridReady = function (params) {
     this.columnApi = params.columnApi;
 
     // make realistic - call in a batch
-    let rowData = _.map(this.selectedExchange.supportedStocks, symbol => this.exchangeService.getTicker(symbol));
+    let self = this;
+    let rowData = _.map(this.selectedExchange.supportedStocks, function (symbol) {
+        return self.exchangeService.getTicker(symbol);
+    });
     this.gridApi.updateRowData({add: rowData});
 
     // select the first symbol to show the chart
     this.gridApi.getModel().getRow(0).setSelected(true);
 
-    this.selectedExchange.supportedStocks.forEach(symbol => {
-        this.exchangeService.addSubscriber(this.updateSymbol.bind(this), symbol);
+    this.selectedExchange.supportedStocks.forEach(function (symbol) {
+        self.exchangeService.addSubscriber(self.updateSymbol.bind(self), symbol);
     });
 
     this.gridApi.sizeColumnsToFit();
@@ -94,15 +97,16 @@ PriceChangesGrid.prototype.updateData = function (nextProps) {
         const nextSymbols = nextProps.selectedExchange.supportedStocks;
 
         // Unsubscribe to current ones that will be removed
+        let self = this;
         const symbolsRemoved = _.difference(currentSymbols, nextSymbols);
-        _.forEach(symbolsRemoved, symbol => {
-            this.exchangeService.removeSubscriber(this.updateSymbol, symbol);
+        _.forEach(symbolsRemoved, function (symbol) {
+            self.exchangeService.removeSubscriber(self.updateSymbol, symbol);
         });
 
         // Remove ag-grid nodes as necessary
         const rowsToRemove = [];
-        this.gridApi.forEachNode(node => {
-            const {data} = node;
+        this.gridApi.forEachNode(function (node) {
+            data = node.dat;
             if (includes(symbolsRemoved, data.symbol)) {
                 rowsToRemove.push(data);
             }
@@ -111,12 +115,14 @@ PriceChangesGrid.prototype.updateData = function (nextProps) {
 
         // Subscribe to new ones that need to be added
         const symbolsAdded = _.difference(nextSymbols, currentSymbols);
-        _.forEach(symbolsAdded, symbol => {
-            this.exchangeService.addSubscriber(this.updateSymbol, symbol);
+        _.forEach(symbolsAdded, function (symbol) {
+            self.exchangeService.addSubscriber(self.updateSymbol, symbol);
         });
 
         // Insert new ag-grid nodes as necessary
-        let rowData = _.map(symbolsAdded, symbol => this.exchangeService.getTicker(symbol));
+        let rowData = _.map(symbolsAdded, function (symbol) {
+            return self.exchangeService.getTicker(symbol)
+        });
         this.gridApi.updateRowData({add: rowData});
 
         // select the first symbol to show the chart
@@ -135,7 +141,7 @@ PriceChangesGrid.prototype.updateSymbol = function (symbol) {
 
 PriceChangesGrid.prototype.render = function (id) {
     // lookup the container we want the Grid to use
-    let eGridDiv = document.querySelector(`#${id}`);
+    let eGridDiv = document.querySelector('#' + id);
 
     // create the grid passing in the div to use together with the columns & data we want to use
     new agGrid.Grid(eGridDiv, this.gridOptions);

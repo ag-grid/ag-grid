@@ -163,15 +163,15 @@ include './includes/footer.php'; ?>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
-<script inline src="ag-grid-trader-dashboard/components/renderers/HorizontalBarComponent.js" charset="utf-8"></script>
-<script inline src="ag-grid-trader-dashboard/services/ExchangeService.js" charset="utf-8"></script>
-<script inline src="ag-grid-trader-dashboard/services/FxDataService.js" charset="utf-8"></script>
-<script inline src="ag-grid-trader-dashboard/components/StockHistoricalChart.js" charset="utf-8"></script>
-<script inline src="ag-grid-trader-dashboard/components/StockDetailPanel.js" charset="utf-8"></script>
-<script inline src="ag-grid-trader-dashboard/components/PriceChangesGrid.js" charset="utf-8"></script>
-<script inline src="ag-grid-trader-dashboard/components/FxQuoteMatrix.js" charset="utf-8"></script>
-<script inline src="ag-grid-trader-dashboard/components/TopMoversGrid.js" charset="utf-8"></script>
-<script inline src="ag-grid-trader-dashboard/dashboard.js" charset="utf-8"></script>
+<script src="ag-grid-trader-dashboard/components/renderers/HorizontalBarComponent.js" ></script>
+<script src="ag-grid-trader-dashboard/services/ExchangeService.js" ></script>
+<script src="ag-grid-trader-dashboard/services/FxDataService.js" ></script>
+<script src="ag-grid-trader-dashboard/components/StockHistoricalChart.js" ></script>
+<script src="ag-grid-trader-dashboard/components/StockDetailPanel.js" ></script>
+<script src="ag-grid-trader-dashboard/components/PriceChangesGrid.js" ></script>
+<script src="ag-grid-trader-dashboard/components/FxQuoteMatrix.js" ></script>
+<script src="ag-grid-trader-dashboard/components/TopMoversGrid.js" ></script>
+<script src="ag-grid-trader-dashboard/dashboard.js" ></script>
 
 <?php include_once("includes/analytics.php"); ?>
 

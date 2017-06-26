@@ -44,12 +44,12 @@ FxDataService.prototype.kickOffPeriodicUpdates = function () {
     let calculateTopMovers = this.calculateTopMovers.bind(this);
     let updateFxTopMoversSubscribers = this.updateFxTopMoversSubscribers.bind(this);
 
-    setInterval(() => {
+    setInterval(function () {
         applyDeltasToFxData();
         updateFxDataSubscribers();
     }, 1500);
 
-    setInterval(() => {
+    setInterval(function () {
         calculateTopMovers();
         updateFxTopMoversSubscribers()
     }, 2500);
@@ -69,7 +69,7 @@ FxDataService.prototype.getCurrentFxTopMovers = function () {
  */
 FxDataService.prototype.calculateTopMovers = function () {
     let fxData = _.cloneDeep(this.fxData);
-    fxData.sort((a, b) => {
+    fxData.sort(function (a, b) {
         return Math.abs(b.pct_net_change) - Math.abs(a.pct_net_change);
     });
 
@@ -90,7 +90,8 @@ FxDataService.prototype.applyDeltasToFxData = function () {
         let multiplier = ((Math.random() * 10) > 5) ? -1 : 1;
         row['pct_net_change'] = multiplier * (this.random(30, 100) / 100).toFixed(2);
 
-        for (let symbolToUpdate of fxSymbolsToUpdate) {
+        for (let j = 0; j < fxSymbolsToUpdate.length; j++) {
+            let symbolToUpdate = fxSymbolsToUpdate[j];
             if (row[symbolToUpdate] === null) {
                 continue;
             }
@@ -165,7 +166,7 @@ const FX_DELTA_HEADERS = [
         cellRenderer: HorizontalBarComponent,
         width: 85
     },
-].concat(FX_CURRENCY_SYMBOLS.map((symbol) => {
+].concat(FX_CURRENCY_SYMBOLS.map(function (symbol) {
     "use strict";
     return {
         field: symbol,
@@ -182,7 +183,7 @@ const FX_DELTA_HEADERS = [
 }));
 
 const FX_CURRENCY_MATRIX = [
-    ["symbol", ...FX_CURRENCY_SYMBOLS],
+    ["symbol", "USDGBP", "USDEUR", "USDAED", "USDJPY", "USDCAD", "USDCHF", "GBPUSD", "GBPEUR", "GBPAED", "GBPJPY", "GBPCAD", "GBPCHF", "EURUSD", "EURGBP", "EURAED", "EURJPY", "EURCAD", "EURCHF", "AEDUSD", "AEDGBP", "AEDEUR", "AEDJPY", "AEDCAD", "AEDCHF", "JPYUSD", "JPYGBP", "JPYEUR", "JPYAED", "JPYCAD", "JPYCHF", "CADUSD", "CADGBP", "CADEUR", "CADAED", "CADJPY", "CADCHF", "CHFUSD", "CHFGBP", "CHFEUR", "CHFAED", "CHFJPY", "CHFCAD"],
     ["USDGBP", null, "0.89", "-0.01", "0.29", "0.28", "-0.04", "0.47", "0.17", "0.20", "0.11", "0.97", "0.07", "-0.20", "0.57", "0.54", "0.26", "0.33", "0.86", "0.95", "0.39", "0.21", "-0.49", "0.63", "-0.13", "-0.86", "0.18", "-0.84", "-0.89", "0.05", "-0.29", "0.34", "0.93", "0.41", "0.13", "-0.17", "0.70", "-0.17", "0.60", "0.00", "0.09", "-0.15", "0.10"],
     ["USDEUR", "0.89", null, "0.25", "0.29", "0.86", "-0.93", "0.09", "0.63", "0.76", "0.10", "0.51", "-0.31", "-0.51", "0.20", "0.48", "-0.42", "0.73", "0.57", "0.65", "0.40", "0.12", "0.24", "0.42", "0.75", "0.13", "0.75", "0.42", "-0.80", "-0.26", "0.68", "0.68", "0.98", "0.87", "0.48", "0.52", "0.23", "0.61", "0.71", "-0.61", "0.40", "-0.80", "-0.89"],
     ["USDAED", "0.90", "0.95", null, "0.71", "0.49", "0.50", "0.51", "0.07", "0.80", "-0.74", "0.54", "0.46", "-0.90", "-0.33", "0.75", "0.91", "0.84", "0.86", "0.89", "0.68", "0.71", "0.74", "0.58", "-0.24", "0.31", "0.85", "0.28", "0.44", "0.51", "-0.19", "0.71", "0.81", "0.85", "0.23", "0.09", "0.65", "-0.48", "0.43", "0.97", "0.11", "-0.81", "-0.69"],
