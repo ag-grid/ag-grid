@@ -524,7 +524,7 @@ cellRendererParams: {
 
     <show-example example="exampleSuppressGroupRow"></show-example>
 
-    <h3>Creating Your Own Group Display Columns</h3>
+    <h3 id="showRowGroup">Creating Your Own Group Display Columns</h3>
 
     <p>
         In all the previous examples the grid is in charge of generating the column's that display the groups, these columns

@@ -174,7 +174,8 @@
     menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
     menuItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
     menuItem(0, 'Column Header', 'Column Header', 'javascript-grid-column-header/');
-    menuItem(0, 'Grouping Columns', 'Grouping Columns', 'javascript-grid-grouping-headers/');
+    menuItem(0, 'Grouping Columns', 'Column Grouping', 'javascript-grid-grouping-headers/');
+    menuItem(0, 'Column Spanning', 'Column Spanning', 'javascript-grid-column-spanning/');
     menuItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
     menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
     menuItem(0, 'Floating', 'Floating Rows', 'javascript-grid-floating/');
