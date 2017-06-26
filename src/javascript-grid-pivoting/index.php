@@ -216,13 +216,15 @@ console.log('found column with id ' + sausageKingdomColumn.getId());
          <p>All value columns must use the same aggregation function otherwise the calculated total wouldn't make sense.</p>
     </note>
 
-     <p>
-        The example below demonstrates pivot totals enabled via the Grid Options property <i>pivotTotals</i> set to true</p>
+    <p>
+       The example below demonstrates pivot totals enabled via the Grid Options property <i>pivotTotals</i> set to true</p>
 
-        <ul>
-            <li>pivots on ['sport', 'year'] and groups by ['country']</li>
-            <li>pivoting and grouping can be controlled via the provided buttons</li>
-        </ul>
+       <ul>
+           <li>pivot totals added on ['sport', 'year']</li>
+           <li>expanding pivot groups reveals columns that make up totals</li>
+           <li>changing a value column function via column menu removes total columns (re-introduced when all value columns
+                have the same function applied)</li>
+       </ul>
     </p>
 
     <show-example example="pivotTotalColumns"></show-example>

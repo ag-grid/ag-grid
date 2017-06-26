@@ -12,7 +12,6 @@ var gridOptions = {
     ],
 
     enableColResize: true,
-    floatingFilter: true,
     enforceRowDomOrder: true,
     suppressColumnVirtualisation: true
 };

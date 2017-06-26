@@ -111,21 +111,22 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <p>These attributes will enable screen readers to interpret and navigate the columns and rows of the grid.</p>
+    <p>These attributes will enable screen readers to interpret and navigate the columns and rows of the grid. Grids with
+       simple layouts, i.e. without column groups and pivots, will have best results.</p>
 
     <note>
-        Grids without complex layouts containing column groups and pivots will have best results.
+        Next steps include adding ARIA attributes for grid interaction, i.e. sorting / filtering etc...
     </note>
 
     <h4>Forcing Row and Column Order</h4>
 
     <p>By default rows and columns can appear out of order in the DOM. This can result in inconsistent results when parsed by
-       screen readers. As a workaround, while we work on a more permanent solution, you can enable to the following properties:
+       screen readers. As a workaround you can enable the following properties:
     </p>
 
     <pre>
         gridOptions = {
-            <span class="codeComment">//force row and column ordering</span>
+            <span class="codeComment">//force row and column order</span>
             enforceRowDomOrder: true,
             suppressColumnVirtualisation: true,
             ...
