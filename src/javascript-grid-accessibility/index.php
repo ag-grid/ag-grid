@@ -118,27 +118,18 @@ include '../documentation-main/documentation_header.php';
         Next steps include adding ARIA attributes for grid interaction, i.e. sorting / filtering etc...
     </note>
 
-    <h4>Forcing Row and Column Order</h4>
+    <h4>Forcing Column Order</h4>
 
-    <p>By default rows and columns can appear out of order in the DOM. This can result in inconsistent results when parsed by
-       screen readers. As a workaround you can enable the following properties:
+    <p>By default columns can appear out of order in the DOM. This can result in inconsistent results when parsed by
+       screen readers. As a workaround you can set <code>gridOption.suppressColumnVirtualisation=true</code>.
     </p>
 
-    <pre>gridOptions = {
-    <span class="codeComment">// force row and column order</span>
-    enforceRowDomOrder: true,
-    suppressColumnVirtualisation: true,
-    ...
-    animateRows: false <span class="codeComment">// false by default</span>
-}</pre>
+    <note>
+        Note that a permanent solution to set column and row order will be released shortly.
+    </note>
 
     <p>
-        Animations currently won't work properly when row and column order is forced. However we are currently working on
-        a more permanent solution that will also work with row animation enabled.
-    </p>
-
-    <p>
-        The example below presents a simple grid layout with these properties enabled.
+        The example below presents a simple grid layout with <i>suppressColumnVirtualisation</i> enabled.
     </p>
 
     <show-example example="accessibilityExample"></show-example>
