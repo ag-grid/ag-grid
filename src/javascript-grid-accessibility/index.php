@@ -119,7 +119,7 @@ include '../documentation-main/documentation_header.php';
         Next steps include adding ARIA attributes for grid interaction, i.e. sorting / filtering etc...
     </note>
 
-    <h2>Forcing Row and Column Order</h2>
+    <h2>Row and Column Order</h2>
 
     <p>
         By default in ag-Grid, rows and columns can appear out of order in the DOM. This is due to how ag-Grid
