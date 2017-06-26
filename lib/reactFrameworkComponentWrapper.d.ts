@@ -1,4 +1,4 @@
-// ag-grid-react v10.1.0
+// ag-grid-react v11.0.0
 import { IComponent, FrameworkComponentWrapper } from 'ag-grid';
 export declare class ReactFrameworkComponentWrapper implements FrameworkComponentWrapper {
     wrap<A extends IComponent<any>>(ReactComponent: {

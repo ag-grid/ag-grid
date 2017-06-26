@@ -1,8 +1,8 @@
-// ag-grid-react v10.1.0
+// ag-grid-react v11.0.0
 /// <reference types="react" />
-import { Component } from 'react';
-import * as React from 'react';
-import * as AgGrid from 'ag-grid';
+import * as React from "react";
+import { Component } from "react";
+import * as AgGrid from "ag-grid";
 export declare class AgGridReact extends Component<any, any> {
     props: any;
     state: any;
@@ -18,4 +18,6 @@ export declare class AgGridReact extends Component<any, any> {
     shouldComponentUpdate(): boolean;
     componentWillReceiveProps(nextProps: any): void;
     componentWillUnmount(): void;
+    static unwrapStringOrNumber(obj: any): any;
+    areEquivalent(a: any, b: any): boolean;
 }
