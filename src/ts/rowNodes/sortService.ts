@@ -36,6 +36,9 @@ export class SortService {
     public sort(rowNode: RowNode, sortOptions: SortOption[]) {
         rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
 
+        // we clear out the 'pull down open parents' first, as the values mix up the sorting
+        this.pullDownDataForHideOpenParents(rowNode, true);
+
         let sortActive = _.exists(sortOptions) && sortOptions.length > 0;
         if (sortActive) {
             // RE https://ag-grid.atlassian.net/browse/AG-444
@@ -51,7 +54,7 @@ export class SortService {
         }
 
         this.updateChildIndexes(rowNode);
-        this.pullDownDataForHideOpenParents(rowNode);
+        this.pullDownDataForHideOpenParents(rowNode, false);
 
         // sort any groups recursively
         rowNode.childrenAfterFilter.forEach(child => {
@@ -108,7 +111,7 @@ export class SortService {
         });
     }
 
-    private pullDownDataForHideOpenParents(rowNode: RowNode) {
+    private pullDownDataForHideOpenParents(rowNode: RowNode, clearOperation: boolean) {
         if (_.missing(rowNode.childrenAfterSort)) {
             return;
         }
@@ -134,13 +137,18 @@ export class SortService {
                 let thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
                 if (thisRowNodeMatches) { return; }
 
-                let parentToStealFrom = childRowNode.getFirstChildOfFirstChild(rowGroupColumn);
-                if (parentToStealFrom) {
-                    childRowNode.setGroupValue(groupDisplayCol.getId(), parentToStealFrom.key);
-                } else {
+                if (clearOperation) {
+                    // if doing a clear operation, we clear down the value for every possible group column
                     childRowNode.setGroupValue(groupDisplayCol.getId(), null);
+                } else {
+                    // if doing a set operation, we set only where the pull down is to occur
+                    let parentToStealFrom = childRowNode.getFirstChildOfFirstChild(rowGroupColumn);
+                    if (parentToStealFrom) {
+                        childRowNode.setGroupValue(groupDisplayCol.getId(), parentToStealFrom.key);
+                    }
                 }
             });
         });
     }
+
 }
