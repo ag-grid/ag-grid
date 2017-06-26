@@ -127,7 +127,7 @@ include '../documentation-main/documentation_header.php';
         This 'incorrect order' can result in inconsistent results when parsed by screen readers.
     </p>
     <p>
-        As a workaround for column orders you can set <code>gridOption.suppressColumnVirtualisation=true</code>.
+        As a workaround for column order, set <code>gridOption.suppressColumnVirtualisation=true</code>.
     </p>
 
     <note>
