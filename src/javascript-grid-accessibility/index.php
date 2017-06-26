@@ -8,10 +8,15 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <p>
-    <h2 id="accessibility">
+    <h1 class="first-h1" id="accessibility">
         <img src="../images/svg/docs/accessibility.svg" width="50"/>
         Accessibility
-    </h2>
+    </h1>
+
+<p>
+    This provides guidance on how to address accessibility concerns in your grid implementations,
+    as well as sharing our current progress as we roll out more accessibility features in the upcoming releases.
+</p>
 
     <div class="note">
         <table>
@@ -32,13 +37,7 @@ include '../documentation-main/documentation_header.php';
             </tbody></table>
     </div>
 
-    <br/>
-    <p>
-        This page aims to provides some guidance on how to address accessibility concerns in your grid implementations,
-        as well as sharing our current progress as we roll out more accessibility features in the upcoming releases.
-    </p>
-
-    <h3>Web Conformance Guidelines</h3>
+    <h2>Web Conformance Guidelines</h2>
     <p>
         Even if you are not mandated to conform to any particular accessibility standard, it can be helpful to understand the
         guidelines outlined as they are generally good practices worth incorporating into your web based applications.
@@ -61,7 +60,7 @@ include '../documentation-main/documentation_header.php';
         How you design your grid is key to how accessible it will be. For instance the use of colours, images and complex layouts should be carefully considered.
     </note>
 
-    <h3>High Contrast Theme</h3>
+    <h2>High Contrast Theme</h2>
     <p>
         For users that are visually impaired due to colour deficiencies, care should be taken when using colours to provide information.
     </p>
@@ -73,13 +72,12 @@ include '../documentation-main/documentation_header.php';
         <img style="border: 1px solid lightgrey" src="accessibility-colour-contrast.png"/>
     </p>
     <p>
-        To create a high contrast theme please check out the <a href="../javascript-grid-styling/">Themes</a> documentation for details.
-    </p>
-    <p>
-        Note that a new high contrast theme is also in our backlog and should be prioritised for development soon.
+        To create a high contrast theme please check out the <a href="../javascript-grid-styling/">Themes</a>
+        documentation for details.
+        A new high contrast theme is in the ag-Grid backlog and will be scheduled for development soon.
     </p>
 
-    <h3>Screen Readers</h3>
+    <h2>Screen Readers</h2>
     <p>
         Users who are blind or visually impaired will typically require the assistance of a screen reader to interpret and
         interact with grid based application.
@@ -87,16 +85,16 @@ include '../documentation-main/documentation_header.php';
 
     <p>There are numerous screen readers available, however right now the most popular screen reader for Windows is
        <a href="https://www.freedomscientific.com/Downloads/JAWS">JAWS</a> and for MAC users it is the embedded
-       <a href="http://help.apple.com/voiceover/info/guide">VoiceOver</a> software. Our testing has focused on these
+       <a href="http://help.apple.com/voiceover/info/guide">VoiceOver</a> software. ag-Grid testing is focused on these
         screen readers.
     </p>
 
-    <h4>ARIA Attributes</h4>
+    <h2>ARIA Attributes</h2>
     <p>
         In order to give screen readers the contextual information they require to interpret and interact with ag-Grid,
-        we have added <a href="https://www.w3.org/TR/wai-aria/">ARIA</a> attributes to the grid DOM elements. These
+        <a href="https://www.w3.org/TR/wai-aria/">ARIA</a> attributes are added to the grid DOM elements. These
         attributes are particularity useful when plain HTML elements such <i>div</i> and <i>span</i> are used to create
-        complex web components, which is the case with ag-Grid.
+        complex DOM structures, which is the case with ag-Grid.
     </p>
 
     <p>
@@ -111,24 +109,34 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <p>These attributes will enable screen readers to interpret and navigate the columns and rows of the grid. Grids with
-       simple layouts, i.e. without column groups and pivots, will have best results.</p>
+    <p>
+        These attributes will enable screen readers to interpret and navigate the columns and rows of the grid.
+        Grids with simple layouts (e.g. without <a href="../javascript-grid-grouping-headers/">column groups</a> or
+        <a href="../javascript-grid-pivoting/"></a> pivots) will have best results.
+    </p>
 
     <note>
         Next steps include adding ARIA attributes for grid interaction, i.e. sorting / filtering etc...
     </note>
 
-    <h4>Forcing Row and Column Order</h4>
+    <h2>Forcing Row and Column Order</h2>
 
-    <p>By default rows and columns can appear out of order in the DOM. This can result in inconsistent results when parsed by
-       screen readers. As a workaround you can enable the following properties:
+    <p>
+        By default in ag-Grid rows and columns can appear out of order in the DOM. This is due to how ag-Grid
+        virtualises columns and rows, a technique whereby the grid draws columsn and rows as the user scrolls.
+        This 'incorrect order' can result in inconsistent results when parsed by screen readers.
+        As a workaround you can enable the following properties to force the order of columns and rows:
     </p>
 
     <pre>gridOptions = {
-    <span class="codeComment">// force row and column order</span>
+
+    <span class="codeComment">// flag that will get the grid to re-order it's rows every time new rows are drawn</span>
     enforceRowDomOrder: true,
+
+    <span class="codeComment">// turns off columns virtualisation, so that columns are always drawn in correct order</span>
     suppressColumnVirtualisation: true,
     ...
+    <span class="codeComment">// because of the re-ordering of rows, this impacts how rows are animated</span>
     animateRows: false <span class="codeComment">// false by default</span>
 }</pre>
 
@@ -147,7 +155,7 @@ include '../documentation-main/documentation_header.php';
         Tested on Windows using JAWS (version 18) and Mac using VoiceOver (Sierra 10.12.4)
     </note>
 
-    <h3>Keyboard navigation</h3>
+    <h2>Keyboard navigation</h2>
 
     <p>Users who have motor disabilities, as well as visually impaired users, often rely on keyboards for navigation.</p>
 
@@ -155,7 +163,7 @@ include '../documentation-main/documentation_header.php';
        <a href="../javascript-grid-keyboard-navigation/">Keyboard Navigation</a> documentation. Note that it is possible
        to provide custom navigation which could come in useful for some accessibility requirements.</p>
 
-    <h4>Skip Navigation</h4>
+    <h2>Skip Navigation</h2>
     <p>It may also be worth considering providing a "skip link" to easily navigate to the grid. For example you could
        provide a hyperlink to the grid class attribute, i.e. href='#myGrid'.</p>
 
