@@ -124,14 +124,13 @@ include '../documentation-main/documentation_header.php';
        screen readers. As a workaround you can enable the following properties:
     </p>
 
-    <pre>
-        gridOptions = {
-            <span class="codeComment">//force row and column order</span>
-            enforceRowDomOrder: true,
-            suppressColumnVirtualisation: true,
-            ...
-            animateRows: false <span class="codeComment">//false by default</span>
-        }</pre>
+    <pre>gridOptions = {
+    <span class="codeComment">// force row and column order</span>
+    enforceRowDomOrder: true,
+    suppressColumnVirtualisation: true,
+    ...
+    animateRows: false <span class="codeComment">// false by default</span>
+}</pre>
 
     <p>
         Animations currently won't work properly when row and column order is forced. However we are currently working on
@@ -162,14 +161,13 @@ include '../documentation-main/documentation_header.php';
 
     <p>The following css snippet shows how you could also hide this link by default and then reveal it when tabbed into:</p>
 
-    <pre>
-          .skip-link {
-              left: -100%;
-              position: absolute;
-          }
-          .skip-link:focus {
-              left: 50%;
-          }</pre>
+    <pre>.skip-link {
+  left: -100%;
+  position: absolute;
+}
+.skip-link:focus {
+  left: 50%;
+}</pre>
 
 
 <h3>Feedback</h3>

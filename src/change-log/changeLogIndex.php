@@ -53,8 +53,8 @@ include '../documentation-main/documentation_header.php';
         <li>AG-154 - Typing non-latin letters on focused cell now starts cell editing.</li>
         <li>AG-73 - Now when editing or updating data, if value is not different, data is not updated, cell is not refreshed and no 'valueChangedEvent' fired. Also impacts when tabbing while editing, previously no change was still an edit, no now change is no change.</li>
         <li>AG-543 - Bugfix - Regression/Breaking Change - rows are inserted in reverse order</li>
-        <li>AG-38 - ARIA roles for Screen Readers to interpret the columns and rows in the grid.</li>
-        <li>AG-551 - Add Pivot Total Columns - allows expanding / collapsing of pivot columns into totals</li>
+        <li>AG-38 - <a href="../javascript-grid-accessibility/">ARIA roles</a> for Screen Readers to interpret the columns and rows in the grid.</li>
+        <li>AG-551 - Added <a href="../javascript-grid-pivoting/#totalPivotColumns">Pivot Total Columns</a> - allows expanding / collapsing of pivot columns into totals</li>
         <li>AG-517 - Review of valueGetters and valueFormatters and introduced valueSetters and valueParsers.
             See new documentation pages <a href="../javascript-grid-value-getters/">Values and Expressions</a>
             and <a href="../javascript-grid-cell-expressions/">Cell Expressions</a> for details.</li>
