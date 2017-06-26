@@ -151,7 +151,14 @@ export class EnterpriseMenu {
         this.tabFactories[EnterpriseMenu.TAB_COLUMNS] = this.createColumnsPanel.bind(this);
 
         this.includeChecks[EnterpriseMenu.TAB_GENERAL] = ()=> true;
-        this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => this.gridOptionsWrapper.isEnableFilter() && !this.column.getColDef().suppressFilter;
+        this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => {
+            let isFilterEnabled = this.gridOptionsWrapper.isEnableFilter();
+            let isFloatingFiltersEnabled = this.gridOptionsWrapper.isFloatingFilter;
+            let isAnyFilteringEnabled = isFilterEnabled || isFloatingFiltersEnabled;
+
+            let suppressFilterForThisColumn = this.column.getColDef().suppressFilter;
+            return isAnyFilteringEnabled && !suppressFilterForThisColumn;
+        };
         this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = ()=> true;
         this.restrictTo = restrictTo;
     }
@@ -185,9 +192,10 @@ export class EnterpriseMenu {
     }
 
     private isValidMenuTabItem (menuTabName:string):boolean{
-        let isValid:boolean = EnterpriseMenu.TABS_DEFAULT.indexOf(menuTabName)> -1;
+        let allItems:string[] = this.column.getMenuTabs (this.restrictTo ? this.restrictTo : EnterpriseMenu.TABS_DEFAULT);
+        let isValid:boolean = allItems.indexOf(menuTabName)> -1;
 
-        if (!isValid) console.warn(`Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${EnterpriseMenu.TABS_DEFAULT}]`);
+        if (!isValid) console.warn(`Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${allItems}]`);
 
         return isValid;
     }
