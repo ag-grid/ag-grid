@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
     </h1>
 
 <p>
-    This provides guidance on how to address accessibility concerns in your grid implementations,
+    This page provides some guidance on how to address accessibility concerns in your grid implementations,
     as well as sharing our current progress as we roll out more accessibility features in the upcoming releases.
 </p>
 
@@ -122,31 +122,20 @@ include '../documentation-main/documentation_header.php';
     <h2>Forcing Row and Column Order</h2>
 
     <p>
-        By default in ag-Grid rows and columns can appear out of order in the DOM. This is due to how ag-Grid
-        virtualises columns and rows, a technique whereby the grid draws columsn and rows as the user scrolls.
+        By default in ag-Grid, rows and columns can appear out of order in the DOM. This is due to how ag-Grid
+        virtualises columns and rows, a technique whereby the grid draws columns and rows as the user scrolls.
         This 'incorrect order' can result in inconsistent results when parsed by screen readers.
-        As a workaround you can enable the following properties to force the order of columns and rows:
+    </p>
+    <p>
+        As a workaround for column orders you can set <code>gridOption.suppressColumnVirtualisation=true</code>.
     </p>
 
-    <pre>gridOptions = {
-
-    <span class="codeComment">// flag that will get the grid to re-order it's rows every time new rows are drawn</span>
-    enforceRowDomOrder: true,
-
-    <span class="codeComment">// turns off columns virtualisation, so that columns are always drawn in correct order</span>
-    suppressColumnVirtualisation: true,
-    ...
-    <span class="codeComment">// because of the re-ordering of rows, this impacts how rows are animated</span>
-    animateRows: false <span class="codeComment">// false by default</span>
-}</pre>
+    <note>
+        Note that a permanent solution to set column and row order will be released shortly.
+    </note>
 
     <p>
-        Animations currently won't work properly when row and column order is forced. However we are currently working on
-        a more permanent solution that will also work with row animation enabled.
-    </p>
-
-    <p>
-        The example below presents a simple grid layout with these properties enabled.
+        The example below presents a simple grid layout with <i>suppressColumnVirtualisation</i> enabled.
     </p>
 
     <show-example example="accessibilityExample"></show-example>
