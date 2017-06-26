@@ -3,14 +3,18 @@ var columnDefs = [
     // to mix it up a bit, here we are using a valueGetter for the year column.
     // this demonstrates that groupHideOpenParents and restrictToOneGroup works
     // with value getters also.
-    {headerName: "Country", colId: 'country', field: 'country', rowGroup: true, showRowGroup: 'country', cellRenderer: 'group'},
-    {headerName: "Year", colId: 'year', field: 'year', valueGetter: 'data.year', rowGroup: true, showRowGroup: 'year', cellRenderer: 'group'},
+    {headerName: "Country", showRowGroup: 'country', cellRenderer: 'group'},
+    {headerName: "Year", valueGetter: 'data.year', showRowGroup: 'year', cellRenderer: 'group'},
 
     {headerName: "Athlete", field: "athlete", width: 180},
     {headerName: "Gold", field: "gold", aggFunc: 'sum', width: 100},
     {headerName: "Silver", field: "silver", aggFunc: 'sum', width: 100},
     {headerName: "Bronze", field: "bronze", aggFunc: 'sum', width: 100},
-    {headerName: "Total", field: "total", aggFunc: 'sum', width: 100}
+    {headerName: "Total", field: "total", aggFunc: 'sum', width: 100},
+
+
+    {field: 'country', rowGroup: true, hide: true},
+    {field: 'year', rowGroup: true, hide: true}
 ];
 
 var gridOptions = {
