@@ -2,21 +2,18 @@ var gridOptions = {
     columnDefs: [
         {headerName: "Athlete", field: "athlete",  minWidth: 150},
         {headerName: "Age", field: "age", minWidth: 50, filter: 'number'},
-        {headerName: "Country", field: "country", width: 120, rowGroup: true},
-        {headerName: "Sport", field: "sport", width: 110, pivot: true},
-        {headerName: "Year", field: "year", width: 90, pivot: true},
+        {headerName: "Country", field: "country", width: 120},
+        {headerName: "Year", field: "year", width: 90},
         {headerName: "Date", field: "date", width: 110},
-        {headerName: "Gold", field: "gold", width: 150, aggFunc: 'sum'},
-        {headerName: "Silver", field: "silver", width: 150, aggFunc: 'sum'},
-        {headerName: "Bronze", field: "bronze", width: 150, aggFunc: 'sum'}
+        {headerName: "Sport", field: "sport", width: 110},
+        {headerName: "Gold", field: "gold", width: 110, aggFunc: 'sum'},
+        {headerName: "Silver", field: "silver", width: 110, aggFunc: 'sum'},
+        {headerName: "Bronze", field: "bronze", width: 110, aggFunc: 'sum'}
     ],
 
     enableColResize: true,
-    pivotMode: true,
-    pivotTotals: true,
-    sizeColumnsToFit: true
+    suppressColumnVirtualisation: true
 };
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

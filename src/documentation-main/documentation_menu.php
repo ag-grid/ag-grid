@@ -191,6 +191,7 @@
     menuItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
     menuItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
     menuItem(0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/');
+    menuItemWithIcon('lab.png', 0, 'Accessibility', 'Accessibility', 'javascript-grid-accessibility/');
     menuItem(0, 'Full Width Rows', 'Full Width Rows', 'javascript-grid-full-width-rows/');
     menuItem(0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');
     menuItem(0, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave/');

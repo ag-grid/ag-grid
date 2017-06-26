@@ -259,13 +259,6 @@ colDef = {
 
     <show-example example="exampleGroupRowAggNodes"></show-example>
 
-    <h4>suppressUseColIdForGroups</h4>
-
-    <p>
-        If you wish the grid to get the values as normal from the groups (ie fields and valueGetters) and not depend
-        on the colId then you can override this behaviour by setting the grid property
-        <i>suppressUseColIdForGroups=true</i>.
-    </p>
 
     <h3>Recomputing Aggregates</h3>
 
