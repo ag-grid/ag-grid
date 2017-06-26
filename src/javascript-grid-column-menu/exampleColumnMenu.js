@@ -32,9 +32,7 @@ var gridOptions = {
             ePopup.style.top = newTop + 'px';
         }
     },
-    suppressMenuFilterPanel:true,
-    suppressMenuMainPanel:true,
-    suppressMenuColumnPanel:true
+    enableFilter: true
 };
 
 function getMainMenuItems(params) {
