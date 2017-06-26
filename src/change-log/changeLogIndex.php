@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
         <li>AG-513 - Improved <a href="../javascript-grid-grouping">row grouping</a>. The preferred way to do row grouping now
         is using auto group columns. All the examples in the docs have been updated to use when possible auto group columns.
         The new row grouping makes group sorting work out of the box and fixes some bugs related with sorting and row grouping</li>
-        <li>AG-529 - Improved the way gri property changes are handled in React.</li>
+        <li>AG-529 - Improved the way grid property changes are handled in React.</li>
         <li>AG-401 - New property <a href="../javascript-grid-column-menu/">menuTabs</a> to specify which column menu tabs to show and in which order.</li>
         <li>AG-38 - New <a href="../javascript-grid-accessibility/">accessibility</a> features and documentation. </li>
         <li>AG-517 - Review of valueGetters and valueFormatters and introduced valueSetters and valueParsers.
