@@ -20,7 +20,9 @@ include '../documentation-main/documentation_header.php';
     <h4>Documentation</h4>
     <ul>
         <li><a href="../javascript-grid-grouping">Row grouping docs</a> rewritten to highlight auto group columns as the preferred solution for row grouping</li>
-        <li>New documentation page for <a href="../javascript-grid-cell-rendering/">grid cellRender's</a>.</li>
+        <li>New documentation page to <a href="../javascript-grid-testing">test with Jasmine or Karma</a>.</li>
+        <li>New documentation page to <a href="../javascript-grid-rxjs">integrate RxJs</a>.</li>
+        <li>New documentation page for <a href="../javascript-grid-cell-rendering/">grid cellRenders</a>.</li>
         <li>New documentation page for <a href="../javascript-grid-accessibility/">accessibility</a>.</li>
         <li>Introduced <a href="../javascript-grid-refresh/#flashing">cell flashing</a>.</li>
         <li>New documentation pages <a href="../javascript-grid-value-getters/">Values and Expressions</a>
@@ -32,6 +34,7 @@ include '../documentation-main/documentation_header.php';
         <li>AG-513 - Improved <a href="../javascript-grid-grouping">row grouping</a>. The preferred way to do row grouping now
         is using auto group columns. All the examples in the docs have been updated to use when possible auto group columns.
         The new row grouping makes group sorting work out of the box and fixes some bugs related with sorting and row grouping</li>
+        <li>AG-529 - Improved the way gri property changes are handled in React.</li>
         <li>AG-401 - New property <a href="../javascript-grid-column-menu/">menuTabs</a> to specify which column menu tabs to show and in which order.</li>
         <li>AG-38 - New <a href="../javascript-grid-accessibility/">accessibility</a> features and documentation. </li>
         <li>AG-517 - Review of valueGetters and valueFormatters and introduced valueSetters and valueParsers.
@@ -49,6 +52,8 @@ include '../documentation-main/documentation_header.php';
 
     <h4>Bug fixes</h4>
     <ul>
+        <li>AG-557 - Fixed issue where rowGroupPanelShow would not work if using any framework. ie Angular, React...</li>
+        <li>AG-539 - Fixed issues in the react examples</li>
         <li>AG-347 - Fixed issue where in some cases groupSuppressAutoColumn : true Makes copy not work on the group column</li>
         <li>AG-481 - Fixed issue where multi column sort wouldn't work when sorting many columns once, including row group columns</li>
         <li>AG-348 - Callbacks processCellForClipboard() and processCellFromClipboard() now get invoked with doing Ctrl + D (copy range down)</li>
