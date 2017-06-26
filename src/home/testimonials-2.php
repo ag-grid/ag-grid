@@ -1,8 +1,5 @@
 <section class="HomeSection Testimonials">
     <div class="container">
-            <p>
-                Since launching in March 2016, we now have over 500 customers in 45 countries. This includes over 10% of the companies listed on the Fortune 500. Below are some of the companies that enjoy all the features of ag-Grid Enterprise.
-            </p>
         <div class="row">
             <div class="col-md-2" style="padding: 20px; text-align: center;">
                 <img src="../images/clients/JasonBoorn_home.jpg" class="circle" style="width: 100px;"/>
