@@ -19,7 +19,7 @@
 
 
 <div class="news-box">
-    <div class="news-header">8th Jun 2017</div>
+    <div class="news-header">26th Jun 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
         <span style="font-weight: bold; color: white; font-size: 25px; position: absolute; top: 70px; left: 110px;">
             v11.0
