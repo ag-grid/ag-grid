@@ -19,14 +19,15 @@ include '../documentation-main/documentation_header.php';
 
     <h4>Documentation</h4>
     <ul>
-        <li><a href="../javascript-grid-grouping">Row grouping docs</a> rewritten to highlight auto group columns as the preferred solution for row grouping</li>
+        <li><a href="../javascript-grid-grouping">Row Grouping </a> docs rewritten, favours new <i>rowGroup</i> property
+            (instead of <i>rowGroupIndex</i>) and also favours auto group columns (instead of configurating column explicitly).</li>
         <li>New documentation page to <a href="../javascript-grid-testing">test with Jasmine or Karma</a>.</li>
         <li>New documentation page to <a href="../javascript-grid-rxjs">integrate RxJs</a>.</li>
-        <li>New documentation page for <a href="../javascript-grid-cell-rendering/">grid cellRenders</a>.</li>
+        <li>New documentation page for <a href="../javascript-grid-cell-rendering/">grid provided cellRenders</a>.</li>
         <li>New documentation page for <a href="../javascript-grid-accessibility/">accessibility</a>.</li>
-        <li>Introduced <a href="../javascript-grid-refresh/#flashing">cell flashing</a>.</li>
+        <li>New documentation section for <a href="../javascript-grid-refresh/#flashing">cell flashing</a>.</li>
         <li>New documentation pages <a href="../javascript-grid-value-getters/">Values and Expressions</a>
-            and <a href="../javascript-grid-cell-expressions/">Cell Expressions</a> for details.</li></li>
+            and <a href="../javascript-grid-cell-expressions/">Cell Expressions</a>.</li></li>
     </ul>
 
     <h4>Enhancements</h4>
@@ -41,13 +42,13 @@ include '../documentation-main/documentation_header.php';
             See new documentation pages <a href="../javascript-grid-value-getters/">Values and Expressions</a>
             and <a href="../javascript-grid-cell-expressions/">Cell Expressions</a> for details.</li>
         <li>AG-551 - Added <a href="../javascript-grid-pivoting/#totalPivotColumns">Pivot Total Columns</a> - allows expanding / collapsing of pivot columns into totals</li>
-        <li>AG-515 - New property <a href="../javascript-grid-sorting/#accentedSort">gridOptions.accentedSort</a> Set to true to specify that the sort
+        <li>AG-515 - New property <a href="../javascript-grid-sorting/#accentedSort">gridOptions.accentedSort</a>. Set to true to specify that the sort
             should take into account accented characters, if this feature is turned on the sort will perform slower.</li>
         <li>AG-182 - New property <a href="../javascript-grid-clipboard/#deliminator">clipboardDeliminator</a> to specify deliminator to use while copying to clipboard.</li>
         <li>AG-398 / AG-371 - New property <a href="../javascript-grid-clipboard/#suppressPaste">colDef.suppressPaste</a> to suppress pasting from clipboard for certain cells.</li>
-        <li>AG-73 - Now when editing or updating data, if value is not different, data is not updated, cell is not refreshed and no 'valueChangedEvent' fired. Also impacts when tabbing while editing, previously no change was still an edit, no now change is no change.</li>
-        <li>AG-524 - <a href="../javascript-grid-refresh">Delta changes</a> won't update the cell when a new delta change is provided unless the actual data received
-            is different from the curret data displayed. This works with strings and numbers.</li>
+        <li>AG-73 - Now when editing or updating data, if value is not different, data is not updated, cell is not
+            refreshed and no 'valueChangedEvent' fired. This was important when tabbing through cells while editing,
+            previously events were first as you navigate cells even though the value was not changed.</li>
     </ul>
 
     <h4>Bug fixes</h4>
@@ -68,9 +69,15 @@ include '../documentation-main/documentation_header.php';
 
     <h4>Breaking Changes</h4>
     <ul>
-        <li>Aggregation data and group data are no longer stored in rowNode.data, instead they are stored in rowNode.groupData and rowNode.aggData</li>
+        <li>Aggregation data and group data are no longer stored in rowNode.data, instead they are stored in rowNode.groupData and rowNode.aggData. If you are
+        accessing rowNode.data for aggreation or group data, this will now not work.</li>
         <li>Removed property suppressUseColIdForGroups, because of new way of storing grouped data in the rowNode, it is not needed.</li>
-        <li>colDef.showRowGroup: true Now it's mandatory in the column showing groups if you have groupSuppressAutoColumn: true</li>
+        <li>
+            If you are providing your own group display columns (ie columns to show the groups, not columns
+            to group by) then you have to specify <i>colDef.showRowGroup=true</i> to get the grid to return
+            the right values for the chosen group. This is explained in
+            <a href="../javascript-grid-grouping/#showRowGroup">Show Row Group</a>.
+        </li>
         <li>
             gridOptions.groupColumnDef has been renamed to autoGroupColumnDef.
         </li>
@@ -78,11 +85,16 @@ include '../documentation-main/documentation_header.php';
             gridOptions.enableFilter now needs to be specifically switched on to get the filter menu in the columns.
         </li>
         <li>
-            Deprecated cellRendererParams properties: restrictToOneGroup, keyMap The way row grouping has been simplified. See AG-513 for more details
+            Deprecated cellRendererParams properties: restrictToOneGroup. See row grouping docs on new way to restrict to one group.
+        </li>
+        <li>
+            Deprecated cellRendererParams properties: keyMap. The 'keymap' solution was before you could group using
+            valueGetters. If you want the group to have a different value, use either a valueGetter, or use a cellFormatter
+            to format the value.
         </li>
         <li>
             Deprecated gridOptions properties: suppressMenuFilterPanel suppressMenuMainPanel and suppressMenuColumnPanel,
-            use colDef.menuTabs instead. See AG-401 for more details
+            use colDef.menuTabs instead. Instead use colDef.menuTabs property to set what tabs you want.
         </li>
     </ul>
 
