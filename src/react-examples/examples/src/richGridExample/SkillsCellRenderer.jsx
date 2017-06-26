@@ -1,4 +1,5 @@
 import React from 'react';
+import * as PropTypes from 'prop-types';
 import RefData from './RefData';
 
 export default class SkillsCellRenderer extends React.Component {
@@ -22,5 +23,5 @@ export default class SkillsCellRenderer extends React.Component {
 // this piece is optional. the grid will always pass the 'params'
 // props, so little need for adding this validation meta-data.
 SkillsCellRenderer.propTypes = {
-    params: React.PropTypes.object
+    params: PropTypes.object
 };

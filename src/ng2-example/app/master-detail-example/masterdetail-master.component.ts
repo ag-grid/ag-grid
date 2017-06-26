@@ -28,7 +28,7 @@ export class MasterComponent implements AfterViewInit{
             },
             {headerName: 'Account', field: 'account'},
             {headerName: 'Calls', field: 'totalCalls'},
-            {headerName: 'Minutes', field: 'totalMinutes', cellFormatter: this.minuteCellFormatter}
+            {headerName: 'Minutes', field: 'totalMinutes', valuelFormatter: this.minuteCellFormatter}
         ];
     }
 

@@ -46,10 +46,18 @@ export class DateComponent implements IDateAngularComp {
     }
 
     setDate(date: Date): void {
-        this.dd = date.getDate() + '';
-        this.mm = (date.getMonth() + 1) + '';
-        this.yyyy = date.getFullYear() + '';
-        this.date = date;
+        if (date == null){
+            this.dd = '';
+            this.mm = '';
+            this.yyyy = '';
+            this.date = null;
+        } else {
+            this.dd = date.getDate() + '';
+            this.mm = (date.getMonth() + 1) + '';
+            this.yyyy = date.getFullYear() + '';
+            this.date = date;
+
+        }
         this.params.onDateChanged();
     }
 

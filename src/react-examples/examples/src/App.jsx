@@ -30,7 +30,6 @@ class App extends Component {
     }
 
     setExample(example) {
-        console.log(example);
         this.setState({
             example
         })

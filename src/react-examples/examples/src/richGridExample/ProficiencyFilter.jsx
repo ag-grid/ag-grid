@@ -32,11 +32,9 @@ export default class ProficiencyFilter extends React.Component {
     };
 
     onButtonPressed(name) {
-        console.log(name);
         var newState = {selected: name};
         // set the state, and once it is done, then call filterChangedCallback
         this.setState(newState, this.props.filterChangedCallback);
-        console.log(name);
     }
 
     render() {

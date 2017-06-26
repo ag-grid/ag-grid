@@ -16,6 +16,9 @@ export default class DetailPanelComponent extends Component {
 
         this.onGridReady = this.onGridReady.bind(this);
         this.onSearchTextChange = this.onSearchTextChange.bind(this);
+
+        // override the containing div so that the child grid fills the row height
+        this.props.reactContainer.style.height = "100%";
     }
 
     onGridReady(params) {
@@ -41,7 +44,7 @@ export default class DetailPanelComponent extends Component {
                 headerName: 'Duration',
                 field: 'duration',
                 cellClass: 'call-record-cell',
-                cellFormatter: this.secondCellFormatter
+                valueFormatter: this.secondCellFormatter
             },
             {headerName: 'Switch', field: 'switchCode', cellClass: 'call-record-cell'}];
 

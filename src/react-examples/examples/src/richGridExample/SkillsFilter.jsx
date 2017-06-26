@@ -31,11 +31,11 @@ export default class SkillsFilter extends React.Component {
 
     setModel(model) {
         this.setState({
-            android: model.android,
-            css: model.css,
-            html5: model.html5,
-            mac: model.mac,
-            windows: model.windows
+            android: model ? model.android : null,
+            css: model ? model.css : null,
+            html5: model ? model.html5 : null,
+            mac: model ? model.mac : null,
+            windows: model ? model.windows : null
         });
     }
 

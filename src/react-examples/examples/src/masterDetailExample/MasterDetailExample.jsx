@@ -35,7 +35,7 @@ export default class MasterDetailExample extends Component {
             },
             {headerName: 'Account', field: 'account'},
             {headerName: 'Calls', field: 'totalCalls'},
-            {headerName: 'Minutes', field: 'totalMinutes', cellFormatter: this.minuteCellFormatter}
+            {headerName: 'Minutes', field: 'totalMinutes', valueFormatter: this.minuteCellFormatter}
         ];
     }
 
@@ -131,7 +131,6 @@ export default class MasterDetailExample extends Component {
 
                     enableSorting
                     enableColResize
-                    suppressMenuFilterPanel
 
                     // events
                     onGridReady={this.onGridReady}>

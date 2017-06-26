@@ -75,7 +75,7 @@ class GridComponent extends Component {
                     enableColResize
                     rowSelection="multiple"
                     enableRangeSelection
-                    groupColumnDef={{
+                    autoColumnGroupDef={{
                         headerName: 'Symbol',
                         cellRenderer: 'group',
                         field: 'symbol'

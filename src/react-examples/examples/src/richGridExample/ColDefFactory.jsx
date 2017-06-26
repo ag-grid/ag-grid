@@ -4,7 +4,7 @@ import ProficiencyCellRenderer from './ProficiencyCellRenderer.jsx';
 import RefData from './RefData';
 import SkillsFilter from './SkillsFilter.jsx';
 import ProficiencyFilter from './ProficiencyFilter.jsx';
-import MyReactHeaderGroupComponent from './MyReactHeaderGroupComponent.jsx';
+import HeaderGroupComponent from './HeaderGroupComponent.jsx';
 
 export default class ColDefFactory {
 
@@ -15,7 +15,7 @@ export default class ColDefFactory {
                 suppressMenu: true, pinned: true},
             {
                 headerName: 'Employee',
-                headerGroupComponentFramework: MyReactHeaderGroupComponent,
+                headerGroupComponentFramework: HeaderGroupComponent,
                 children: [
                     {
                         headerName: "Name", field: "name", enableRowGroup: true, enablePivot: true,
