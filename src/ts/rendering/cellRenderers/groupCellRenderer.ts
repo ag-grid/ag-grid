@@ -55,7 +55,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     @RefSelector('eChildCount') private eChildCount: HTMLElement;
 
     private params: GroupCellRendererParams;
+
+
+    // will be true if the node was pulled down
     private draggedFromHideOpenParents: boolean;
+
+    // this is normally the rowNode of this row, however when doing hideOpenParents, it will
+    // be the parent who's details we are actually showing if the data was pulled down.
+    private displayedGroup: RowNode;
 
     constructor() {
         super(GroupCellRenderer.TEMPLATE);
@@ -72,11 +79,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             return;
         }
 
-        let column = params.column;
-
-        this.draggedFromHideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents()
-            && !column.isRowGroupDisplayed(params.node.field);
-
+        this.setupDragOpenParents();
         this.setupComponents();
     }
 
@@ -247,14 +250,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         // then this could be left out, or set to -1, ie no child count
         if (this.params.suppressCount) { return; }
 
-        this.addDestroyableEventListener(this.params.node, RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED, this.updateChildCount.bind(this));
+        this.addDestroyableEventListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED, this.updateChildCount.bind(this));
 
         // filtering changes the child count, so need to cater for it
         this.updateChildCount();
     }
 
     private updateChildCount(): void {
-        let allChildrenCount = this.params.node.allChildrenCount;
+        let allChildrenCount = this.displayedGroup.allChildrenCount;
         let text = allChildrenCount >= 0 ? `(${allChildrenCount})` : '';
         this.eChildCount.innerHTML = text;
     }
@@ -326,17 +329,48 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
-    public onExpandOrContract(): void {
+    private setupDragOpenParents(): void {
 
+        let column = this.params.column;
         let rowNode: RowNode = this.params.node;
 
-        // if value was pulled down, we need to find the correct parent row node to expand
+        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
+            this.draggedFromHideOpenParents = false;
+        } else if (!rowNode.group) {
+            // if we are here, and we are not a group, then we must of been dragged down,
+            // as otherwise the cell would be blank, and if cell is blank, this method is never called.
+            this.draggedFromHideOpenParents = true;
+        } else {
+            let rowGroupColumn = rowNode.rowGroupColumn;
+            // if the displayGroup column for this col matches the rowGroupColumn we grouped by for this node,
+            // then nothing was dragged down
+            this.draggedFromHideOpenParents = !column.isRowGroupDisplayed(rowGroupColumn.getId());
+        }
+
         if (this.draggedFromHideOpenParents) {
-            let column: Column = this.params.column;
-            while (!column.isRowGroupDisplayed(rowNode.field)) {
-                rowNode = rowNode.parent;
+            let pointer = rowNode.parent;
+            while (true) {
+                if (_.missing(pointer)) {
+                    break;
+                }
+                if (pointer.rowGroupColumn && column.isRowGroupDisplayed(pointer.rowGroupColumn.getId())) {
+                    this.displayedGroup = pointer;
+                    break;
+                }
+                pointer = pointer.parent;
             }
         }
+
+        // if we didn't find a displayed group, set it to the row node
+        if (_.missing(this.displayedGroup)) {
+            this.displayedGroup = rowNode;
+        }
+    }
+
+    public onExpandOrContract(): void {
+
+        // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
+        let rowNode: RowNode = this.displayedGroup;
 
         rowNode.setExpanded(!rowNode.expanded);
 
