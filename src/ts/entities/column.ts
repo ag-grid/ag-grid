@@ -46,6 +46,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     // + renderedHeaderCell - marks the header with sort icon
     public static EVENT_SORT_CHANGED = 'sortChanged';
 
+    public static EVENT_MENU_VISIBLE_CHANGED = 'menuVisibleChanged';
+
     // + toolpanel, for gui updates
     public static EVENT_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
     // + toolpanel, for gui updates
@@ -76,6 +78,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private sort: string;
     private sortedAt: number;
     private moving = false;
+    private menuVisible = false;
 
     private lastLeftPinned: boolean;
     private firstRightPinned: boolean;
@@ -331,6 +334,17 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             this.sort = sort;
             this.eventService.dispatchEvent(Column.EVENT_SORT_CHANGED);
         }
+    }
+
+    public setMenuVisible(visible: boolean): void {
+        if (this.menuVisible !== visible) {
+            this.menuVisible = visible;
+            this.eventService.dispatchEvent(Column.EVENT_MENU_VISIBLE_CHANGED);
+        }
+    }
+
+    public isMenuVisible(): boolean {
+        return this.menuVisible;
     }
 
     public isSortAscending(): boolean {
