@@ -34,10 +34,7 @@ export class AutoGroupColService {
         // if one provided by user, use it, otherwise create one
         let defaultAutoColDef: ColDef = this.generateDefaultColDef(rowGroupCol, index);
         let userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
-
-
-
-        // if doing multi, set the field
+       // if doing multi, set the field
         let colId: string;
 
         if (rowGroupCol) {
@@ -54,13 +51,12 @@ export class AutoGroupColService {
         return newCol;
     }
 
-    private generateDefaultColDef (rowGroupCol?: Column, index?: number):ColDef{
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        let defaultAutoColDef: ColDef = {
-            headerName: localeTextFunc('group', 'Group'),
-            cellRenderer: 'group'
-        };
+    private generateDefaultColDef (rowGroupCol?: Column, index?: number):ColDef {
+            let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            let defaultAutoColDef: ColDef = {
+                headerName: localeTextFunc('group', 'Group'),
+                cellRenderer: 'group'
+            };
 
         // we never allow moving the group column
         defaultAutoColDef.suppressMovable = true;

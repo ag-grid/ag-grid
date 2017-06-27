@@ -563,6 +563,9 @@ export class GridOptionsWrapper {
             console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['columnsMenuTab'] instead of suppressMenuColumnPanel=true`);
         }
         if (options.suppressUseColIdForGroups) {
+            console.warn(`ag-grid: since version 11.0.x, this is not in use anymore. You should be able to remove it from your definition`);
+        }
+        if (options.suppressUseColIdForGroups) {
             console.warn(`ag-grid: since version 11.0.x suppressUseColIdForGroups is not in use anymore. You should be able to remove it from your definition`);
         }
         if (options.groupColumnDef) {
