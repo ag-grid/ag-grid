@@ -72,6 +72,24 @@ include('../includes/mediaHeader.php');
 
 </div>
 
+<div class="weekly-news-section">
+
+    <a href="./20170620/">
+        <div class="weekly-news-title">
+            Preparing for Next Release, New Team Members Settling In
+        </div>
+        <div class="weekly-news-sub-title">
+            Niall Crosby, 20th June 2017
+        </div>
+    </a>
+
+    <div style="clear: both;"></div>
+
+    <div class="weekly-news-paragraph">
+        This week we are finalising the next release while our new joiners are settling in nicely.
+    </div>
+
+</div>
 
 <div class="weekly-news-section">
 
