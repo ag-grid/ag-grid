@@ -126,13 +126,31 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        This is illustrated in the following example. Note the following:
+        The following example shows the easiest way to implement this with a single auto group column and a value getter
+        in the <i>autoGroupColumnDef</i> that is returning the athlete column
+
+        Note that
+    </p>
+
+
+    <ul>
+        <li>To see the leaf node values, open any country and any year int the group column. Note how their leaf nodes are showing
+            the value for the athlete column, this is achieved with a valueGetter:
+<pre> valueGetter: function (params){
+    return params.data ? params.data.athlete : ''
+}</pre></li>
+        <li>Filtering is switched on so you can see how now you can filter the group column by athlete.</li>
+    </ul>
+
+    <show-example example="exampleValueGettersSimple"></show-example>
+
+
+    <p>
+        Adding lead nodes data can also be achieved even if you provide your own group columns, this is illustrated
+        in the following example. Note the following:
     </p>
 
     <ul>
-        <li>We are suppressing auto group columns <code>groupSuppressAutoColumn = true</code> but the idea behind adding
-        a value getter or a field reference to a group column would apply no matter which flavor of row grouping you
-        are applying.</li>
         <li>To see the leaf node values, open any country and any year group column. Note how their leaf nodes have
         values for the columns 'Country' and 'Year - Group', the default is not to have values for this cells.</li>
         <li>Filtering is switched on so you can see how now you can filter the group column 'Country' and 'Year - Group'
