@@ -455,7 +455,7 @@ export class RowNode implements IEventEmitter {
         }
 
         if (rangeSelect) {
-            let rowModelNormal = this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL;
+            let rowModelNormal = this.rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY;
             let newRowClicked = this.selectionController.getLastSelectedNode() !== this;
             let allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
             if (rowModelNormal && newRowClicked && allowMultiSelect) {

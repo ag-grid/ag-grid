@@ -50,7 +50,7 @@ export class Constants {
 
     static ROW_MODEL_TYPE_INFINITE = 'infinite';
     static ROW_MODEL_TYPE_VIEWPORT = 'viewport';
-    static ROW_MODEL_TYPE_NORMAL = 'normal';
+    static ROW_MODEL_TYPE_IN_MEMORY = 'inMemory';
     static ROW_MODEL_TYPE_ENTERPRISE = 'enterprise';
 
     static ALWAYS = 'always';

@@ -84,7 +84,7 @@ export class GridApi {
     @PostConstruct
     private init(): void {
         switch (this.rowModel.getType()) {
-            case Constants.ROW_MODEL_TYPE_NORMAL:
+            case Constants.ROW_MODEL_TYPE_IN_MEMORY:
                 this.inMemoryRowModel = <InMemoryRowModel> this.rowModel;
                 break;
             case Constants.ROW_MODEL_TYPE_INFINITE:

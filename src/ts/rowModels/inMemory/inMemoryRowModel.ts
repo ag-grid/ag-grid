@@ -141,7 +141,7 @@ export class InMemoryRowModel {
     }
 
     public getType(): string {
-        return Constants.ROW_MODEL_TYPE_NORMAL;
+        return Constants.ROW_MODEL_TYPE_IN_MEMORY;
     }
 
     private onValueChanged(): void {

@@ -210,7 +210,7 @@ export class GridSerializer {
 
         // when in pivot mode, we always render cols on screen, never 'all columns'
         let isPivotMode = this.columnController.isPivotMode();
-        let rowModelNormal = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_NORMAL;
+        let rowModelNormal = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_IN_MEMORY;
 
         let onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
 
