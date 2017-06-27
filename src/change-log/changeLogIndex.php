@@ -13,6 +13,16 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+    <h2>Version NEXT</h2>
+
+    <ul>
+        <li>Bug fix: when using multiple group auto columns and header checkbox selection,
+            the header checkbox now only appears in the first column header.</li>
+        <li>AG-469: Enhancement: new event for column 'menuVisibleChanged', gets fired when column menu is shown / hidden.
+        Useful if doing your own headerComponent and want the header to look different when menu is shown / hidden.</li>
+        <li>Enhancement: Now header DIV will contain class <i>ag-column-menu-visible</i> when the column menu is showing.</li>
+    </ul>
+
     <h2>Version 11.0.x</h2>
     <h3>Version 11.0.0 [26-JUN-2017]</h3>
 
