@@ -167,7 +167,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private addValueElement(): void {
         let params = this.params;
-        let rowNode = this.params.node;
+        let rowNode = this.displayedGroup;
         if (params.innerRenderer) {
             this.createFromInnerRenderer();
         } else if (rowNode.footer) {
@@ -212,9 +212,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private createGroupCell(): void {
         let params = this.params;
+        let rowGroupColumn = this.displayedGroup.rowGroupColumn;
 
         // we try and use the cellRenderer of the column used for the grouping if we can
-        let columnToUse: Column = params.node.rowGroupColumn ? params.node.rowGroupColumn : params.column;
+        let columnToUse: Column = rowGroupColumn ? rowGroupColumn : params.column;
 
         let groupName = this.params.value;
         let valueFormatted = this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName);
