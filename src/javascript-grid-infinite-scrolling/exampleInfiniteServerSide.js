@@ -32,8 +32,10 @@ var columnDefs = [
             newRowsAction: 'keep'
         }
     },
-    {headerName: "Country", field: "country", width: 120, suppressFilter: true},
-    {headerName: "Year", field: "year", width: 90, filter: 'set', filterParams: {values: ['2000','2004','2008','2012'], newRowsAction: 'keep'}},
+    {headerName: "Country", field: "country", width: 120,
+        filter: 'set', filterParams: {values: listOfCountries, newRowsAction: 'keep'}},
+    {headerName: "Year", field: "year", width: 90,
+        filter: 'set', filterParams: {values: ['2000','2004','2008','2012'], newRowsAction: 'keep'}},
     {headerName: "Date", field: "date", width: 110, suppressFilter: true},
     {headerName: "Sport", field: "sport", width: 110, suppressMenu: true, suppressFilter: true},
     {headerName: "Gold", field: "gold", width: 100, suppressMenu: true, suppressFilter: true},
