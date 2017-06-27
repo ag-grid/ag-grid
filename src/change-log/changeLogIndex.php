@@ -21,7 +21,9 @@ include '../documentation-main/documentation_header.php';
         <li>AG-469: Enhancement: new event for column 'menuVisibleChanged', gets fired when column menu is shown / hidden.
         Useful if doing your own headerComponent and want the header to look different when menu is shown / hidden.</li>
         <li>Enhancement: Now header DIV will contain class <i>ag-column-menu-visible</i> when the column menu is showing.</li>
-        <li>AG-366: Bugfix: Multiple sort numbers were disapping after horizontal scrolling</li>
+        <li>AG-366: Bugfix: Multiple sort numbers were disappearing after horizontal scrolling</li>
+        <li>AG-375: After calling columnApi.setState() and doing multi-column sort,
+            the sort numbers were not getting displayed beside the relavent column.</li>
     </ul>
 
     <h2>Version 11.0.x</h2>
