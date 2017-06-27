@@ -305,8 +305,8 @@ export interface GetQuickFilterTextParams {
 }
 
 export interface BaseColDefParams {
-    node: any;
-    data: RowNode;
+    node: RowNode;
+    data: any;
     colDef: ColDef;
     column: Column;
     api: GridApi;
