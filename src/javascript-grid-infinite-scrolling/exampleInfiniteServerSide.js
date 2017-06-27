@@ -50,7 +50,7 @@ var gridOptions = {
     enableServerSideSorting: true,
     enableServerSideFilter: true,
     enableColResize: true,
-    rowSelection: 'single',
+    rowSelection: 'multiple',
     rowDeselection: true,
     columnDefs: columnDefs,
     rowModelType: 'infinite',
