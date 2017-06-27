@@ -80,7 +80,10 @@ export class EnterpriseMenuFactory implements IMenuFactory {
         let hidePopup = this.popupService.addAsModalPopup(
             eMenuGui,
             true,
-            ()=> menu.destroy()
+            () => { // menu closed callback
+                menu.destroy();
+                column.setMenuVisible(false);
+            }
         );
 
         positionCallback(menu);
@@ -96,6 +99,8 @@ export class EnterpriseMenuFactory implements IMenuFactory {
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, (event: any) => {
             this.lastSelectedTab = event.key
         } );
+
+        column.setMenuVisible(true);
     }
 
     public isMenuEnabled(column: Column): boolean {
