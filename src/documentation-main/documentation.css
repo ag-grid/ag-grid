@@ -27,29 +27,35 @@
     padding: 5px;
     margin: 5px;
 }
+
 .block {
     border: 1px solid darkgrey;
     padding: 5px;
     margin: 5px;
 }
+
 .agClass {
     font-weight: bold;
     color: black;
 }
+
 .agAttr {
     font-weight: bold;
     color: blue;
 }
+
 .agPos {
     font-weight: bold;
     color: darkgreen;
 }
+
 .codeBlock {
     border: 1px solid darkgrey;
     padding: 5px;
     margin: 5px;
     color: grey;
 }
+
 .note {
     border: 1px solid darkgrey;
     padding: 5px;
@@ -93,7 +99,7 @@
 }
 
 /* collapsable sidebar items */
-.docsMenu-header{
+.docsMenu-header {
     cursor: pointer;
     display: block;
     position: relative;
@@ -101,7 +107,7 @@
     border-radius: 3px;
     padding: 10px;
     margin-top: 10px;
-    //transition: all .3s ease-in-out;
+/ / transition: all .3 s ease-in-out;
 }
 
 .docsMenu-header h4 {
@@ -127,21 +133,26 @@
     transition: all .3s ease-in-out;
     color: #999;
 }
+
 .docsMenu-header.active, .docsMenu-header.toggleActive, .docsMenu-header:hover {
     background: #eee;
 }
+
 .docsMenu-header.active .fa, .docsMenu-header.toggleActive .fa {
     transform: rotate(90deg)
 }
-.docsMenu-header + div{
+
+.docsMenu-header + div {
     max-height: 0;
     overflow: hidden;
     transition: all .5s ease-in-out;
     margin: 5px 0 10px;
 }
-.docsMenu-header.active + div, .docsMenu-header.toggleActive + div{
+
+.docsMenu-header.active + div, .docsMenu-header.toggleActive + div {
     max-height: 1000px;
 }
+
 .docsMenu-header.docsMenu-header_feature.active + div, .docsMenu-header.docsMenu-header_feature.toggleActive + div {
     max-height: 2000px;
 }
@@ -156,12 +167,13 @@
     padding-right: 5px;
 }
 
-.collapsableDocs-header{
+.collapsableDocs-header {
     cursor: pointer;
     display: block;
     position: relative;
     padding: 4px;
 }
+
 .collapsableDocs-header .fa {
     position: absolute;
     top: 14px;
@@ -170,28 +182,32 @@
     transition: all .3s ease-in-out;
     color: #999;
 }
+
 .collapsableDocs-header.active .fa {
     transform: rotate(90deg)
 }
-.collapsableDocs-header + div{
+
+.collapsableDocs-header + div {
     max-height: 0;
     overflow: hidden;
     transition: all .5s ease-in-out;
 }
-.collapsableDocs-header.active + div{
+
+.collapsableDocs-header.active + div {
     max-height: 7000px;
 }
-.collapsableDocs-header.collapsableDocs-header_feature.active + div{
+
+.collapsableDocs-header.collapsableDocs-header_feature.active + div {
     max-height: 7000px;
     border: 1px solid lightgrey;
 }
+
 .collapsableDocs-content {
     padding: 5px;
 }
 
-
 #frameworkContext {
-  width: 100%;
+    width: 100%;
     margin: 5px 0 10px;
 }
 
@@ -363,7 +379,7 @@ label[collapsible]::before {
     margin-bottom: 10px;
 }
 
-@media only screen and (min-width : 992px) {
+@media only screen and (min-width: 992px) {
     #documentationSearch {
         width: 250px;
         height: 25px;
@@ -402,7 +418,8 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 
 .cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
     margin-top: 5px !important;
-    padding: 5px 27px 6px 27px; !important;
+    padding: 5px 27px 6px 27px;
+!important;
 }
 
 /*
@@ -411,6 +428,7 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 .frameworkBox {
     margin-bottom: 15px;
 }
+
 .frameworkDropdownButton {
     width: 100%;
     position: relative;
@@ -464,7 +482,7 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 .frameworkContainer {
     background: #EEE;
     padding: 5px;
-    border-radius: 3px;      
+    border-radius: 3px;
 }
 
 .frameworkDropdownButton .web-components {
@@ -479,7 +497,7 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 @media only screen and (max-width: 768px) {
 
     .frameworkBox .dropdown-menu li {
-         padding: 2px 10px 2px 10px;
+        padding: 2px 10px 2px 10px;
     }
 
 }
@@ -519,6 +537,7 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
     border-bottom: 1px solid black;
     /*padding: 20px;*/
 }
+
 .section-icon-container {
     float: left;
     height: 80px;
@@ -526,11 +545,12 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
     padding-right: 20px;
     padding-top: 10px;
 }
+
 .float-parent {
     display: inline-block;
 }
 
-.expandAll, .expandAll:visited, .expandAll:active, .expandAll:focus  {
+.expandAll, .expandAll:visited, .expandAll:active, .expandAll:focus {
     color: #333;
     font-size: 13px;
     display: block;
@@ -557,7 +577,7 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 /* override bootstrap mobile styles */
 
 @media only screen and (max-width: 768px) {
-    
+
     .dropdown-menu {
         position: absolute;
         top: 100%;
@@ -574,7 +594,6 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
         background-color: #fff;
         -webkit-background-clip: padding-box;
         background-clip: padding-box;
-        border: 1px solid #ccc;
         border: 1px solid rgba(0, 0, 0, .15);
         border-radius: 4px;
         -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
@@ -583,8 +602,6 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 
 }
 
-
-
-.nline-block{
+.inline-block {
     display: inline-block;
 }
