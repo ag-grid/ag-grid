@@ -151,6 +151,8 @@ NumericCellEditor.prototype.init = function (params) {
         if (!isKeyPressedNumeric(event)) {
             that.eInput.focus();
             if (event.preventDefault) event.preventDefault();
+        } else if (this.isKeyPressedNavigation(event)){
+            event.stopPropagation();
         }
     });
 
@@ -158,6 +160,12 @@ NumericCellEditor.prototype.init = function (params) {
     var charPressIsNotANumber = params.charPress && ('1234567890'.indexOf(params.charPress) < 0);
     this.cancelBeforeStart = charPressIsNotANumber;
 };
+
+NumericCellEditor.prototype.isKeyPressedNavigation = function (event){
+    return event.keyCode===39
+        || event.keyCode===37;
+};
+
 
 // gets called once when grid ready to insert the element
 NumericCellEditor.prototype.getGui = function () {

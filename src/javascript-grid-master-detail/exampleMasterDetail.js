@@ -32,6 +32,7 @@ function createRowData() {
             // duration is random number between 20 and 120
             var callDuration = Math.floor(Math.random() * 100) + 20;
             var callRecord = {
+                name: 'susan',
                 callId: callIdSequence++,
                 duration: callDuration,
                 switchCode: 'SW' + Math.floor(Math.random() * 10),
@@ -197,9 +198,9 @@ var masterGridOptions = {
     columnDefs: masterColumnDefs,
     rowData: rowData,
     enableSorting: true,
+    enableFilter: true,
     enableColResize: true,
     floatingFilter: true,
-    enableFilter: true,
     // we cannot filter on the groups, as filters work on the child nodes, and in this example
     // the child nodes are not aggregations of the parent.
     defaultColDef:{
