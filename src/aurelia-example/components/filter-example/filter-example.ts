@@ -16,8 +16,9 @@ export class FilterExample {
     this.gridOptions = <GridOptions>{};
     this.gridOptions.rowData = this.createRowData();
     this.gridOptions.enableFilter = true;
-    this.gridOptions.suppressMenuColumnPanel = true; // ag-enterprise only
-    this.gridOptions.suppressMenuMainPanel = true; // ag-enterprise only
+    this.gridOptions.defaultColDef = {
+      menuTabs:['filterMenuTab']
+    }
   }
 
   private createRowData() {

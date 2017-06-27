@@ -1,5 +1,6 @@
 import React from 'react';
 import RefData from './RefData';
+import * as PropTypes from 'prop-types';
 
 var KEY_BACKSPACE = 8;
 var KEY_DELETE = 46;
@@ -113,5 +114,5 @@ export default class NameCellEditor extends React.Component {
 // this piece is optional. the grid will always pass the 'params'
 // props, so little need for adding this validation meta-data.
 NameCellEditor.propTypes = {
-    params: React.PropTypes.object
+    params: PropTypes.object
 };

@@ -16,8 +16,8 @@ export class MedalRendererComponent implements ICellRendererAngularComp {
     agInit(params: any): void {
         this.params = params;
         this.country = params.node.key;
-        this.gold = params.data.gold;
-        this.silver = params.data.silver;
-        this.bronze = params.data.bronze;
+        this.gold = params.node.aggData.gold;
+        this.silver = params.node.aggData.silver;
+        this.bronze = params.node.aggData.bronze;
     }
 }

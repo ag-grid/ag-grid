@@ -39,7 +39,8 @@ export default class FilterComponentExample extends Component {
                 headerName: "Filter Component",
                 field: "name",
                 filterFramework: PartialMatchFilter,
-                width: 400
+                width: 400,
+                menuTabs:['filterMenuTab']
             }
         ];
     }
@@ -75,8 +76,6 @@ export default class FilterComponentExample extends Component {
                     rowData={this.state.rowData}
 
                     enableFilter
-                    suppressMenuColumnPanel // ag-enterprise only
-                    suppressMenuMainPanel   // ag-enterprise only
 
                     // events
                     onGridReady={this.onGridReady}>

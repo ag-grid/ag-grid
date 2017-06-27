@@ -56,7 +56,7 @@
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
 
-    <script src="./dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused47"></script>
+    <script src="./dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused48"></script>
 
     <script src="example.js"></script>
 

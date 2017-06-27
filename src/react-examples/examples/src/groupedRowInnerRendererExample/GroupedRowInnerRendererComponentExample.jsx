@@ -3,8 +3,6 @@ import React, {Component} from "react";
 import {AgGridReact} from "ag-grid-react";
 import MedalRenderer from "./MedalRenderer";
 
-import "./GroupedRowInnerRendererComponentExample.css";
-
 import "ag-grid-enterprise";
 
 export default class GroupedRowInnerRendererComponentExample extends Component {

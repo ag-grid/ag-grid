@@ -54,19 +54,19 @@ export class RxJsComponentByFullSet {
             {
                 headerName: "Bid", field: "bid", width: 100,
                 cellClass: 'cell-number',
-                cellFormatter: this.numberFormatter,
+                valueFormatter: this.numberFormatter,
                 cellRenderer: 'animateShowChange'
             },
             {
                 headerName: "Mid", field: "mid", width: 100,
                 cellClass: 'cell-number',
-                cellFormatter: this.numberFormatter,
+                valueFormatter: this.numberFormatter,
                 cellRenderer: 'animateShowChange'
             },
             {
                 headerName: "Ask", field: "ask", width: 100,
                 cellClass: 'cell-number',
-                cellFormatter: this.numberFormatter,
+                valueFormatter: this.numberFormatter,
                 cellRenderer: 'animateShowChange'
             },
             {

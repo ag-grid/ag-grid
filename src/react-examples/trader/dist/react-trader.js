@@ -24597,7 +24597,7 @@
 
 
 	// module
-	exports.push([module.id, ".ag-fresh {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #222;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-fresh img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-fresh .ag-root {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-fresh .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-fresh .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-fresh .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-fresh .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-fresh .ag-cell-focus {\n  border: 1px solid #a9a9a9;\n}\n.ag-fresh .ag-cell-no-focus {\n  border-top: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-fresh .ag-ltr .ag-cell-no-focus {\n  border-right: 1px dotted #808080;\n  border-left: 1px solid transparent;\n}\n.ag-fresh .ag-rtl .ag-cell-no-focus {\n  border-right: 1px solid transparent;\n  border-left: 1px dotted #808080;\n}\n.ag-fresh .ag-rtl .ag-cell-first-right-pinned {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-ltr .ag-cell-first-right-pinned {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-rtl .ag-cell-last-left-pinned {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-ltr .ag-cell-last-left-pinned {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-fresh .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-fresh .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-fresh .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-fresh .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-fresh .ag-value-change-value {\n  background-color: transparent;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-fresh .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-fresh .ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #808080;\n  background-color: #fff;\n}\n.ag-fresh .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-fresh .ag-rich-select-list {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-fresh .ag-rich-select-row-selected {\n  background-color: #bde2e5;\n}\n.ag-fresh .ag-large-text {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-header-select-all {\n  padding: 5px 0px 0px 3px;\n  line-height: 0;\n}\n.ag-fresh .ag-header {\n  color: #000;\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border-bottom: 1px solid #808080;\n  font-weight: normal;\n}\n.ag-fresh .ag-header-icon {\n  color: #000;\n  stroke: none;\n  fill: #000;\n}\n.ag-fresh .ag-layout-for-print .ag-header-container {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-ltr .ag-header-cell {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-rtl .ag-header-cell {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-fresh .ag-ltr .ag-header-group-cell {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-rtl .ag-header-group-cell {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-header-group-cell-with-group {\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-fresh .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-fresh .ag-header-group-cell-label {\n  padding: 4px;\n}\n.ag-fresh .ag-ltr .ag-header-group-cell-label {\n  padding-left: 10px;\n}\n.ag-fresh .ag-rtl .ag-header-group-cell-label {\n  padding-right: 10px;\n}\n.ag-fresh .ag-rtl .ag-header-group-text {\n  margin-left: 2px;\n}\n.ag-fresh .ag-ltr .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-fresh .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  margin-left: 1px;\n  margin-right: 1px;\n  border: 1px solid transparent;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-fresh .ag-ltr .ag-pinned-right-header {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-rtl .ag-pinned-left-header {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-menu-button:hover {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-body {\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-row-odd {\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-row-even {\n  background-color: #fff;\n}\n.ag-fresh .ag-row-selected {\n  background-color: #b0e0e6;\n}\n.ag-fresh .ag-row-stub {\n  background-color: #f0f0f0;\n}\n.ag-fresh .ag-stub-cell {\n  padding: 2px 2px 2px 10px;\n}\n.ag-fresh .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-fresh .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-fresh .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-fresh .ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-fresh .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-fresh .ag-group-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-fresh .ag-footer-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-fresh .ag-group-cell {\n  font-style: italic;\n}\n.ag-fresh .ag-ltr .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-fresh .ag-rtl .ag-group-expanded {\n  padding-left: 4px;\n}\n.ag-fresh .ag-ltr .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-fresh .ag-rtl .ag-group-contracted {\n  padding-left: 4px;\n}\n.ag-fresh .ag-ltr .ag-group-loading {\n  padding-right: 4px;\n}\n.ag-fresh .ag-rtl .ag-group-loading {\n  padding-left: 4px;\n}\n.ag-fresh .ag-ltr .ag-group-value {\n  padding-right: 2px;\n}\n.ag-fresh .ag-rtl .ag-group-value {\n  padding-left: 2px;\n}\n.ag-fresh .ag-ltr .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-fresh .ag-rtl .ag-group-checkbox {\n  padding-left: 2px;\n}\n.ag-fresh .ag-group-child-count {\n  display: inline-block;\n}\n.ag-fresh .ag-footer-cell {\n  font-style: italic;\n}\n.ag-fresh .ag-menu {\n  border: 1px solid #808080;\n  background-color: #f6f6f6;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-fresh .ag-menu .ag-tab-header {\n  background-color: #e6e6e6;\n}\n.ag-fresh .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-fresh .ag-menu .ag-tab-selected {\n  background-color: #f6f6f6;\n  border-right: 1px solid #d3d3d3;\n  border-left: 1px solid #d3d3d3;\n  border-top: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-fresh .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 2px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-fresh .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-fresh .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-filter-apply-panel {\n  border-top: 1px solid #d3d3d3;\n  padding: 2px;\n}\n.ag-fresh .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-fresh .ag-ltr .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-fresh .ag-rtl .ag-selection-checkbox {\n  padding-left: 4px;\n}\n.ag-fresh .ag-paging-panel {\n  padding: 4px;\n}\n.ag-fresh .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-fresh .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-fresh .ag-tool-panel {\n  background-color: #f6f6f6;\n  border-bottom: 1px solid #808080;\n  border-top: 1px solid #808080;\n  color: #222;\n}\n.ag-fresh .ltr .ag-tool-panel {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .rtl .ag-tool-panel {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-status-bar {\n  color: #222;\n  background-color: #f6f6f6;\n  font-size: 14px;\n  height: 22px;\n  border-bottom: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n  padding: 2px;\n}\n.ag-fresh .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-fresh .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-fresh .ag-column-drop-cell {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  color: #000;\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-fresh .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  border-radius: 3px;\n}\n.ag-fresh .ag-column-drop-cell-button:hover {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-fresh .ag-column-drop-icon {\n  margin: 3px;\n}\n.ag-fresh .ag-column-drop {\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-column-drop-horizontal {\n  padding: 2px;\n  border-top: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-vertical {\n  padding: 4px 4px 10px 4px;\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-fresh .ag-column-drop-vertical .ag-column-drop-empty-message {\n  text-align: center;\n  padding: 5px;\n}\n.ag-fresh .ag-pivot-mode {\n  border-bottom: 1px solid #808080;\n  padding: 4px;\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-tool-panel .ag-column-select-panel {\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-select-agg-func-popup {\n  cursor: default;\n  position: absolute;\n  font-size: 14px;\n  background-color: #fff;\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-select-agg-func-item {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-fresh .ag-select-agg-func-item:hover {\n  background-color: #bde2e5;\n}\n", ""]);
+	exports.push([module.id, ".ag-fresh {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #222;\n/* this is for the rowGroupPanel, that appears along the top of the grid */\n/* this is for the column drops that appear in the toolPanel */\n}\n.ag-fresh img {\n  vertical-align: middle;\n  border: 0;\n}\n.ag-fresh .ag-root {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-cell-data-changed {\n  background-color: #cec;\n}\n.ag-fresh .ag-cell-data-changed-animation {\n  background-color: transparent;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-fresh .ag-cell-not-inline-editing {\n  padding: 2px;\n}\n.ag-fresh .ag-cell-range-selected-1:not(.ag-cell-focus) {\n  background-color: rgba(120,120,120,0.4);\n}\n.ag-fresh .ag-cell-range-selected-2:not(.ag-cell-focus) {\n  background-color: rgba(80,80,80,0.4);\n}\n.ag-fresh .ag-cell-range-selected-3:not(.ag-cell-focus) {\n  background-color: rgba(40,40,40,0.4);\n}\n.ag-fresh .ag-cell-range-selected-4:not(.ag-cell-focus) {\n  background-color: rgba(0,0,0,0.4);\n}\n.ag-fresh .ag-cell-focus {\n  border: 1px solid #a9a9a9;\n}\n.ag-fresh .ag-cell-no-focus {\n  border-top: 1px solid transparent;\n  border-bottom: 1px solid transparent;\n}\n.ag-fresh .ag-ltr .ag-cell-no-focus {\n  border-right: 1px dotted #808080;\n  border-left: 1px solid transparent;\n}\n.ag-fresh .ag-rtl .ag-cell-no-focus {\n  border-right: 1px solid transparent;\n  border-left: 1px dotted #808080;\n}\n.ag-fresh .ag-rtl .ag-cell-first-right-pinned {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-ltr .ag-cell-first-right-pinned {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-rtl .ag-cell-last-left-pinned {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-ltr .ag-cell-last-left-pinned {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-cell-highlight {\n  border: 1px solid #006400;\n}\n.ag-fresh .ag-cell-highlight-animation {\n  -webkit-transition: border 1s;\n  -moz-transition: border 1s;\n  -o-transition: border 1s;\n  -ms-transition: border 1s;\n  transition: border 1s;\n}\n.ag-fresh .ag-value-change-delta {\n  padding-right: 2px;\n}\n.ag-fresh .ag-value-change-delta-up {\n  color: #006400;\n}\n.ag-fresh .ag-value-change-delta-down {\n  color: #8b0000;\n}\n.ag-fresh .ag-value-change-value {\n  background-color: transparent;\n  border-radius: 1px;\n  padding-left: 1px;\n  padding-right: 1px;\n  -webkit-transition: background-color 1s;\n  -moz-transition: background-color 1s;\n  -o-transition: background-color 1s;\n  -ms-transition: background-color 1s;\n  transition: background-color 1s;\n}\n.ag-fresh .ag-value-change-value-highlight {\n  background-color: #cec;\n  -webkit-transition: background-color 0.1s;\n  -moz-transition: background-color 0.1s;\n  -o-transition: background-color 0.1s;\n  -ms-transition: background-color 0.1s;\n  transition: background-color 0.1s;\n}\n.ag-fresh .ag-rich-select {\n  font-size: 14px;\n  border: 1px solid #808080;\n  background-color: #fff;\n}\n.ag-fresh .ag-rich-select-value {\n  padding: 2px;\n}\n.ag-fresh .ag-rich-select-list {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-rich-select-row {\n  padding: 2px;\n}\n.ag-fresh .ag-rich-select-row-selected {\n  background-color: #bde2e5;\n}\n.ag-fresh .ag-large-text {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-header-select-all {\n  padding: 5px 0px 0px 3px;\n  line-height: 0;\n}\n.ag-fresh .ag-header {\n  color: #000;\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border-bottom: 1px solid #808080;\n  font-weight: normal;\n}\n.ag-fresh .ag-header-icon {\n  color: #000;\n  stroke: none;\n  fill: #000;\n}\n.ag-fresh .ag-layout-for-print .ag-header-container {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-ltr .ag-header-cell {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-rtl .ag-header-cell {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-moving .ag-header-cell-label {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-header-cell-moving {\n  background-color: #bebebe;\n}\n.ag-fresh .ag-ltr .ag-header-group-cell {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-rtl .ag-header-group-cell {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-header-group-cell-with-group {\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-label {\n  padding: 4px 2px 4px 2px;\n}\n.ag-fresh .ag-header-cell-text {\n  padding-left: 2px;\n}\n.ag-fresh .ag-header-group-cell-label {\n  padding: 4px;\n}\n.ag-fresh .ag-ltr .ag-header-group-cell-label {\n  padding-left: 10px;\n}\n.ag-fresh .ag-rtl .ag-header-group-cell-label {\n  padding-right: 10px;\n}\n.ag-fresh .ag-rtl .ag-header-group-text {\n  margin-left: 2px;\n}\n.ag-fresh .ag-ltr .ag-header-group-text {\n  margin-right: 2px;\n}\n.ag-fresh .ag-header-cell-menu-button {\n  padding: 2px;\n  margin-top: 4px;\n  margin-left: 1px;\n  margin-right: 1px;\n  border: 1px solid transparent;\n  border-radius: 3px;\n  -webkit-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  -moz-box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  box-sizing: content-box /* When using bootstrap, box-sizing was set to 'border-box' */;\n  line-height: 0px /* normal line height, a space was appearing below the menu button */;\n}\n.ag-fresh .ag-ltr .ag-pinned-right-header {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-rtl .ag-pinned-left-header {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-header-cell-menu-button:hover {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-body {\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-row-odd {\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-row-even {\n  background-color: #fff;\n}\n.ag-fresh .ag-row-selected {\n  background-color: #b0e0e6;\n}\n.ag-fresh .ag-row-stub {\n  background-color: #f0f0f0;\n}\n.ag-fresh .ag-stub-cell {\n  padding: 2px 2px 2px 10px;\n}\n.ag-fresh .ag-floating-top .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-fresh .ag-floating-bottom .ag-row {\n  background-color: #f0f0f0;\n}\n.ag-fresh .ag-overlay-loading-wrapper {\n  background-color: rgba(255,255,255,0.5);\n}\n.ag-fresh .ag-overlay-loading-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  border-radius: 10px;\n  padding: 10px;\n  color: #000;\n}\n.ag-fresh .ag-overlay-no-rows-center {\n  background-color: #fff;\n  border: 1px solid #808080;\n  border-radius: 10px;\n  padding: 10px;\n}\n.ag-fresh .ag-group-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-fresh .ag-footer-cell-entire-row {\n  background-color: #f6f6f6;\n  padding: 2px;\n}\n.ag-fresh .ag-group-cell {\n  font-style: italic;\n}\n.ag-fresh .ag-ltr .ag-group-expanded {\n  padding-right: 4px;\n}\n.ag-fresh .ag-rtl .ag-group-expanded {\n  padding-left: 4px;\n}\n.ag-fresh .ag-ltr .ag-group-contracted {\n  padding-right: 4px;\n}\n.ag-fresh .ag-rtl .ag-group-contracted {\n  padding-left: 4px;\n}\n.ag-fresh .ag-ltr .ag-group-loading {\n  padding-right: 4px;\n}\n.ag-fresh .ag-rtl .ag-group-loading {\n  padding-left: 4px;\n}\n.ag-fresh .ag-ltr .ag-group-value {\n  padding-right: 2px;\n}\n.ag-fresh .ag-rtl .ag-group-value {\n  padding-left: 2px;\n}\n.ag-fresh .ag-ltr .ag-group-checkbox {\n  padding-right: 2px;\n}\n.ag-fresh .ag-rtl .ag-group-checkbox {\n  padding-left: 2px;\n}\n.ag-fresh .ag-group-child-count {\n  display: inline-block;\n}\n.ag-fresh .ag-footer-cell {\n  font-style: italic;\n}\n.ag-fresh .ag-menu {\n  border: 1px solid #808080;\n  background-color: #f6f6f6;\n  cursor: default;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n}\n.ag-fresh .ag-menu .ag-tab-header {\n  background-color: #e6e6e6;\n}\n.ag-fresh .ag-menu .ag-tab {\n  padding: 6px 8px 6px 8px;\n  margin: 2px 2px 0px 2px;\n  display: inline-block;\n  border-right: 1px solid transparent;\n  border-left: 1px solid transparent;\n  border-top: 1px solid transparent;\n  border-top-right-radius: 2px;\n  border-top-left-radius: 2px;\n}\n.ag-fresh .ag-menu .ag-tab-selected {\n  background-color: #f6f6f6;\n  border-right: 1px solid #d3d3d3;\n  border-left: 1px solid #d3d3d3;\n  border-top: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-menu-separator {\n  border-top: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-menu-option-active {\n  background-color: #bde2e5;\n}\n.ag-fresh .ag-menu-option-icon {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-text {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-shortcut {\n  padding: 2px 2px 2px 2px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-popup-pointer {\n  padding: 2px 4px 2px 4px;\n  vertical-align: middle;\n}\n.ag-fresh .ag-menu-option-disabled {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-menu-column-select-wrapper {\n  margin: 2px;\n}\n.ag-fresh .ag-filter-checkbox {\n  position: relative;\n  top: 2px;\n  left: 2px;\n}\n.ag-fresh .ag-filter-header-container {\n  border-bottom: 1px solid #d3d3d3;\n}\n.ag-fresh .ag-filter-apply-panel {\n  border-top: 1px solid #d3d3d3;\n  padding: 2px;\n}\n.ag-fresh .ag-filter-value {\n  margin-left: 4px;\n}\n.ag-fresh .ag-ltr .ag-selection-checkbox {\n  padding-right: 4px;\n}\n.ag-fresh .ag-rtl .ag-selection-checkbox {\n  padding-left: 4px;\n}\n.ag-fresh .ag-paging-panel {\n  padding: 4px;\n}\n.ag-fresh .ag-paging-button {\n  margin-left: 4px;\n  margin-right: 4px;\n}\n.ag-fresh .ag-paging-row-summary-panel {\n  display: inline-block;\n  width: 300px;\n}\n.ag-fresh .ag-tool-panel {\n  background-color: #f6f6f6;\n  border-bottom: 1px solid #808080;\n  border-top: 1px solid #808080;\n  color: #222;\n}\n.ag-fresh .ltr .ag-tool-panel {\n  border-right: 1px solid #808080;\n}\n.ag-fresh .rtl .ag-tool-panel {\n  border-left: 1px solid #808080;\n}\n.ag-fresh .ag-status-bar {\n  color: #222;\n  background-color: #f6f6f6;\n  font-size: 14px;\n  height: 22px;\n  border-bottom: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n  padding: 2px;\n}\n.ag-fresh .ag-status-bar-aggregations {\n  float: right;\n}\n.ag-fresh .ag-status-bar-item {\n  padding-left: 10px;\n}\n.ag-fresh .ag-column-drop-cell {\n  background: -webkit-linear-gradient(#fff, #d3d3d3);\n  background: -moz-linear-gradient(#fff, #d3d3d3);\n  background: -o-linear-gradient(#fff, #d3d3d3);\n  background: -ms-linear-gradient(#fff, #d3d3d3);\n  background: linear-gradient(#fff, #d3d3d3);\n  color: #000;\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-cell-ghost {\n  opacity: 0.5;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  filter: alpha(opacity=50);\n}\n.ag-fresh .ag-column-drop-cell-text {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-fresh .ag-column-drop-cell-button {\n  border: 1px solid transparent;\n  padding-left: 2px;\n  padding-right: 2px;\n  border-radius: 3px;\n}\n.ag-fresh .ag-column-drop-cell-button:hover {\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-empty-message {\n  padding-left: 2px;\n  padding-right: 2px;\n  color: #808080;\n}\n.ag-fresh .ag-column-drop-icon {\n  margin: 3px;\n}\n.ag-fresh .ag-column-drop {\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-column-drop-horizontal {\n  padding: 2px;\n  border-top: 1px solid #808080;\n  border-left: 1px solid #808080;\n  border-right: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-vertical {\n  padding: 4px 4px 10px 4px;\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-column-drop-vertical .ag-column-drop-cell {\n  margin-top: 2px;\n}\n.ag-fresh .ag-column-drop-vertical .ag-column-drop-empty-message {\n  text-align: center;\n  padding: 5px;\n}\n.ag-fresh .ag-pivot-mode {\n  border-bottom: 1px solid #808080;\n  padding: 4px;\n  background-color: #f6f6f6;\n}\n.ag-fresh .ag-tool-panel .ag-column-select-panel {\n  border-bottom: 1px solid #808080;\n}\n.ag-fresh .ag-select-agg-func-popup {\n  cursor: default;\n  position: absolute;\n  font-size: 14px;\n  background-color: #fff;\n  border: 1px solid #808080;\n}\n.ag-fresh .ag-select-agg-func-item {\n  padding-left: 2px;\n  padding-right: 2px;\n}\n.ag-fresh .ag-select-agg-func-item:hover {\n  background-color: #bde2e5;\n}\n", ""]);
 
 	// exports
 
@@ -24679,11 +24679,11 @@
 
 	var _ExchangeService2 = _interopRequireDefault(_ExchangeService);
 
-	var _ControlPanel = __webpack_require__(373);
+	var _ControlPanel = __webpack_require__(367);
 
 	var _ControlPanel2 = _interopRequireDefault(_ControlPanel);
 
-	var _StockPanel = __webpack_require__(374);
+	var _StockPanel = __webpack_require__(368);
 
 	var _StockPanel2 = _interopRequireDefault(_StockPanel);
 
@@ -24762,23 +24762,19 @@
 
 	var _concat2 = _interopRequireDefault(_concat);
 
-	var _remove = __webpack_require__(240);
-
-	var _remove2 = _interopRequireDefault(_remove);
-
-	var _uniq = __webpack_require__(348);
+	var _uniq = __webpack_require__(240);
 
 	var _uniq2 = _interopRequireDefault(_uniq);
 
-	var _find = __webpack_require__(358);
+	var _find = __webpack_require__(288);
 
 	var _find2 = _interopRequireDefault(_find);
 
-	var _sampleSize = __webpack_require__(364);
+	var _sampleSize = __webpack_require__(358);
 
 	var _sampleSize2 = _interopRequireDefault(_sampleSize);
 
-	var _keys = __webpack_require__(300);
+	var _keys = __webpack_require__(312);
 
 	var _keys2 = _interopRequireDefault(_keys);
 
@@ -24812,7 +24808,13 @@
 	    }, {
 	        key: "removeSubscriber",
 	        value: function removeSubscriber(subscriber, symbol) {
-	            (0, _remove2.default)(this.subscribers[symbol], subscriber);
+	            var subscribers = this.subscribers[symbol];
+	            subscribers.splice(subscribers.indexOf(subscriber), 1);
+	        }
+	    }, {
+	        key: "removeSubscribers",
+	        value: function removeSubscribers() {
+	            this.subscribers = {};
 	        }
 	    }, {
 	        key: "getTicker",
@@ -25286,70 +25288,1434 @@
 /* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIteratee = __webpack_require__(241),
-	    basePullAt = __webpack_require__(343);
+	var baseUniq = __webpack_require__(241);
 
 	/**
-	 * Removes all elements from `array` that `predicate` returns truthy for
-	 * and returns an array of the removed elements. The predicate is invoked
-	 * with three arguments: (value, index, array).
-	 *
-	 * **Note:** Unlike `_.filter`, this method mutates `array`. Use `_.pull`
-	 * to pull elements from an array by value.
+	 * Creates a duplicate-free version of an array, using
+	 * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+	 * for equality comparisons, in which only the first occurrence of each element
+	 * is kept. The order of result values is determined by the order they occur
+	 * in the array.
 	 *
 	 * @static
 	 * @memberOf _
-	 * @since 2.0.0
+	 * @since 0.1.0
 	 * @category Array
-	 * @param {Array} array The array to modify.
-	 * @param {Function} [predicate=_.identity] The function invoked per iteration.
-	 * @returns {Array} Returns the new array of removed elements.
+	 * @param {Array} array The array to inspect.
+	 * @returns {Array} Returns the new duplicate free array.
 	 * @example
 	 *
-	 * var array = [1, 2, 3, 4];
-	 * var evens = _.remove(array, function(n) {
-	 *   return n % 2 == 0;
-	 * });
-	 *
-	 * console.log(array);
-	 * // => [1, 3]
-	 *
-	 * console.log(evens);
-	 * // => [2, 4]
+	 * _.uniq([2, 1, 2]);
+	 * // => [2, 1]
 	 */
-	function remove(array, predicate) {
-	  var result = [];
-	  if (!(array && array.length)) {
-	    return result;
-	  }
-	  var index = -1,
-	      indexes = [],
-	      length = array.length;
-
-	  predicate = baseIteratee(predicate, 3);
-	  while (++index < length) {
-	    var value = array[index];
-	    if (predicate(value, index, array)) {
-	      result.push(value);
-	      indexes.push(index);
-	    }
-	  }
-	  basePullAt(array, indexes);
-	  return result;
+	function uniq(array) {
+	  return (array && array.length) ? baseUniq(array) : [];
 	}
 
-	module.exports = remove;
+	module.exports = uniq;
 
 
 /***/ },
 /* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseMatches = __webpack_require__(242),
-	    baseMatchesProperty = __webpack_require__(323),
-	    identity = __webpack_require__(339),
+	var SetCache = __webpack_require__(242),
+	    arrayIncludes = __webpack_require__(277),
+	    arrayIncludesWith = __webpack_require__(282),
+	    cacheHas = __webpack_require__(283),
+	    createSet = __webpack_require__(284),
+	    setToArray = __webpack_require__(287);
+
+	/** Used as the size to enable large array optimizations. */
+	var LARGE_ARRAY_SIZE = 200;
+
+	/**
+	 * The base implementation of `_.uniqBy` without support for iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {Function} [iteratee] The iteratee invoked per element.
+	 * @param {Function} [comparator] The comparator invoked per element.
+	 * @returns {Array} Returns the new duplicate free array.
+	 */
+	function baseUniq(array, iteratee, comparator) {
+	  var index = -1,
+	      includes = arrayIncludes,
+	      length = array.length,
+	      isCommon = true,
+	      result = [],
+	      seen = result;
+
+	  if (comparator) {
+	    isCommon = false;
+	    includes = arrayIncludesWith;
+	  }
+	  else if (length >= LARGE_ARRAY_SIZE) {
+	    var set = iteratee ? null : createSet(array);
+	    if (set) {
+	      return setToArray(set);
+	    }
+	    isCommon = false;
+	    includes = cacheHas;
+	    seen = new SetCache;
+	  }
+	  else {
+	    seen = iteratee ? [] : result;
+	  }
+	  outer:
+	  while (++index < length) {
+	    var value = array[index],
+	        computed = iteratee ? iteratee(value) : value;
+
+	    value = (comparator || value !== 0) ? value : 0;
+	    if (isCommon && computed === computed) {
+	      var seenIndex = seen.length;
+	      while (seenIndex--) {
+	        if (seen[seenIndex] === computed) {
+	          continue outer;
+	        }
+	      }
+	      if (iteratee) {
+	        seen.push(computed);
+	      }
+	      result.push(value);
+	    }
+	    else if (!includes(seen, computed, comparator)) {
+	      if (seen !== result) {
+	        seen.push(computed);
+	      }
+	      result.push(value);
+	    }
+	  }
+	  return result;
+	}
+
+	module.exports = baseUniq;
+
+
+/***/ },
+/* 242 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var MapCache = __webpack_require__(243),
+	    setCacheAdd = __webpack_require__(275),
+	    setCacheHas = __webpack_require__(276);
+
+	/**
+	 *
+	 * Creates an array cache object to store unique values.
+	 *
+	 * @private
+	 * @constructor
+	 * @param {Array} [values] The values to cache.
+	 */
+	function SetCache(values) {
+	  var index = -1,
+	      length = values == null ? 0 : values.length;
+
+	  this.__data__ = new MapCache;
+	  while (++index < length) {
+	    this.add(values[index]);
+	  }
+	}
+
+	// Add methods to `SetCache`.
+	SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
+	SetCache.prototype.has = setCacheHas;
+
+	module.exports = SetCache;
+
+
+/***/ },
+/* 243 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var mapCacheClear = __webpack_require__(244),
+	    mapCacheDelete = __webpack_require__(269),
+	    mapCacheGet = __webpack_require__(272),
+	    mapCacheHas = __webpack_require__(273),
+	    mapCacheSet = __webpack_require__(274);
+
+	/**
+	 * Creates a map cache object to store key-value pairs.
+	 *
+	 * @private
+	 * @constructor
+	 * @param {Array} [entries] The key-value pairs to cache.
+	 */
+	function MapCache(entries) {
+	  var index = -1,
+	      length = entries == null ? 0 : entries.length;
+
+	  this.clear();
+	  while (++index < length) {
+	    var entry = entries[index];
+	    this.set(entry[0], entry[1]);
+	  }
+	}
+
+	// Add methods to `MapCache`.
+	MapCache.prototype.clear = mapCacheClear;
+	MapCache.prototype['delete'] = mapCacheDelete;
+	MapCache.prototype.get = mapCacheGet;
+	MapCache.prototype.has = mapCacheHas;
+	MapCache.prototype.set = mapCacheSet;
+
+	module.exports = MapCache;
+
+
+/***/ },
+/* 244 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Hash = __webpack_require__(245),
+	    ListCache = __webpack_require__(260),
+	    Map = __webpack_require__(268);
+
+	/**
+	 * Removes all key-value entries from the map.
+	 *
+	 * @private
+	 * @name clear
+	 * @memberOf MapCache
+	 */
+	function mapCacheClear() {
+	  this.size = 0;
+	  this.__data__ = {
+	    'hash': new Hash,
+	    'map': new (Map || ListCache),
+	    'string': new Hash
+	  };
+	}
+
+	module.exports = mapCacheClear;
+
+
+/***/ },
+/* 245 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var hashClear = __webpack_require__(246),
+	    hashDelete = __webpack_require__(256),
+	    hashGet = __webpack_require__(257),
+	    hashHas = __webpack_require__(258),
+	    hashSet = __webpack_require__(259);
+
+	/**
+	 * Creates a hash object.
+	 *
+	 * @private
+	 * @constructor
+	 * @param {Array} [entries] The key-value pairs to cache.
+	 */
+	function Hash(entries) {
+	  var index = -1,
+	      length = entries == null ? 0 : entries.length;
+
+	  this.clear();
+	  while (++index < length) {
+	    var entry = entries[index];
+	    this.set(entry[0], entry[1]);
+	  }
+	}
+
+	// Add methods to `Hash`.
+	Hash.prototype.clear = hashClear;
+	Hash.prototype['delete'] = hashDelete;
+	Hash.prototype.get = hashGet;
+	Hash.prototype.has = hashHas;
+	Hash.prototype.set = hashSet;
+
+	module.exports = Hash;
+
+
+/***/ },
+/* 246 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var nativeCreate = __webpack_require__(247);
+
+	/**
+	 * Removes all key-value entries from the hash.
+	 *
+	 * @private
+	 * @name clear
+	 * @memberOf Hash
+	 */
+	function hashClear() {
+	  this.__data__ = nativeCreate ? nativeCreate(null) : {};
+	  this.size = 0;
+	}
+
+	module.exports = hashClear;
+
+
+/***/ },
+/* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getNative = __webpack_require__(248);
+
+	/* Built-in method references that are verified to be native. */
+	var nativeCreate = getNative(Object, 'create');
+
+	module.exports = nativeCreate;
+
+
+/***/ },
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseIsNative = __webpack_require__(249),
+	    getValue = __webpack_require__(255);
+
+	/**
+	 * Gets the native function at `key` of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {string} key The key of the method to get.
+	 * @returns {*} Returns the function if it's native, else `undefined`.
+	 */
+	function getNative(object, key) {
+	  var value = getValue(object, key);
+	  return baseIsNative(value) ? value : undefined;
+	}
+
+	module.exports = getNative;
+
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isFunction = __webpack_require__(250),
+	    isMasked = __webpack_require__(252),
+	    isObject = __webpack_require__(251),
+	    toSource = __webpack_require__(254);
+
+	/**
+	 * Used to match `RegExp`
+	 * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
+	 */
+	var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+
+	/** Used to detect host constructors (Safari). */
+	var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+	/** Used for built-in method references. */
+	var funcProto = Function.prototype,
+	    objectProto = Object.prototype;
+
+	/** Used to resolve the decompiled source of functions. */
+	var funcToString = funcProto.toString;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/** Used to detect if a method is native. */
+	var reIsNative = RegExp('^' +
+	  funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
+	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+	);
+
+	/**
+	 * The base implementation of `_.isNative` without bad shim checks.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a native function,
+	 *  else `false`.
+	 */
+	function baseIsNative(value) {
+	  if (!isObject(value) || isMasked(value)) {
+	    return false;
+	  }
+	  var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
+	  return pattern.test(toSource(value));
+	}
+
+	module.exports = baseIsNative;
+
+
+/***/ },
+/* 250 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseGetTag = __webpack_require__(198),
+	    isObject = __webpack_require__(251);
+
+	/** `Object#toString` result references. */
+	var asyncTag = '[object AsyncFunction]',
+	    funcTag = '[object Function]',
+	    genTag = '[object GeneratorFunction]',
+	    proxyTag = '[object Proxy]';
+
+	/**
+	 * Checks if `value` is classified as a `Function` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a function, else `false`.
+	 * @example
+	 *
+	 * _.isFunction(_);
+	 * // => true
+	 *
+	 * _.isFunction(/abc/);
+	 * // => false
+	 */
+	function isFunction(value) {
+	  if (!isObject(value)) {
+	    return false;
+	  }
+	  // The use of `Object#toString` avoids issues with the `typeof` operator
+	  // in Safari 9 which returns 'object' for typed arrays and other constructors.
+	  var tag = baseGetTag(value);
+	  return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
+	}
+
+	module.exports = isFunction;
+
+
+/***/ },
+/* 251 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is the
+	 * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+	 * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(_.noop);
+	 * // => true
+	 *
+	 * _.isObject(null);
+	 * // => false
+	 */
+	function isObject(value) {
+	  var type = typeof value;
+	  return value != null && (type == 'object' || type == 'function');
+	}
+
+	module.exports = isObject;
+
+
+/***/ },
+/* 252 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var coreJsData = __webpack_require__(253);
+
+	/** Used to detect methods masquerading as native. */
+	var maskSrcKey = (function() {
+	  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
+	  return uid ? ('Symbol(src)_1.' + uid) : '';
+	}());
+
+	/**
+	 * Checks if `func` has its source masked.
+	 *
+	 * @private
+	 * @param {Function} func The function to check.
+	 * @returns {boolean} Returns `true` if `func` is masked, else `false`.
+	 */
+	function isMasked(func) {
+	  return !!maskSrcKey && (maskSrcKey in func);
+	}
+
+	module.exports = isMasked;
+
+
+/***/ },
+/* 253 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var root = __webpack_require__(200);
+
+	/** Used to detect overreaching core-js shims. */
+	var coreJsData = root['__core-js_shared__'];
+
+	module.exports = coreJsData;
+
+
+/***/ },
+/* 254 */
+/***/ function(module, exports) {
+
+	/** Used for built-in method references. */
+	var funcProto = Function.prototype;
+
+	/** Used to resolve the decompiled source of functions. */
+	var funcToString = funcProto.toString;
+
+	/**
+	 * Converts `func` to its source code.
+	 *
+	 * @private
+	 * @param {Function} func The function to convert.
+	 * @returns {string} Returns the source code.
+	 */
+	function toSource(func) {
+	  if (func != null) {
+	    try {
+	      return funcToString.call(func);
+	    } catch (e) {}
+	    try {
+	      return (func + '');
+	    } catch (e) {}
+	  }
+	  return '';
+	}
+
+	module.exports = toSource;
+
+
+/***/ },
+/* 255 */
+/***/ function(module, exports) {
+
+	/**
+	 * Gets the value at `key` of `object`.
+	 *
+	 * @private
+	 * @param {Object} [object] The object to query.
+	 * @param {string} key The key of the property to get.
+	 * @returns {*} Returns the property value.
+	 */
+	function getValue(object, key) {
+	  return object == null ? undefined : object[key];
+	}
+
+	module.exports = getValue;
+
+
+/***/ },
+/* 256 */
+/***/ function(module, exports) {
+
+	/**
+	 * Removes `key` and its value from the hash.
+	 *
+	 * @private
+	 * @name delete
+	 * @memberOf Hash
+	 * @param {Object} hash The hash to modify.
+	 * @param {string} key The key of the value to remove.
+	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+	 */
+	function hashDelete(key) {
+	  var result = this.has(key) && delete this.__data__[key];
+	  this.size -= result ? 1 : 0;
+	  return result;
+	}
+
+	module.exports = hashDelete;
+
+
+/***/ },
+/* 257 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var nativeCreate = __webpack_require__(247);
+
+	/** Used to stand-in for `undefined` hash values. */
+	var HASH_UNDEFINED = '__lodash_hash_undefined__';
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Gets the hash value for `key`.
+	 *
+	 * @private
+	 * @name get
+	 * @memberOf Hash
+	 * @param {string} key The key of the value to get.
+	 * @returns {*} Returns the entry value.
+	 */
+	function hashGet(key) {
+	  var data = this.__data__;
+	  if (nativeCreate) {
+	    var result = data[key];
+	    return result === HASH_UNDEFINED ? undefined : result;
+	  }
+	  return hasOwnProperty.call(data, key) ? data[key] : undefined;
+	}
+
+	module.exports = hashGet;
+
+
+/***/ },
+/* 258 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var nativeCreate = __webpack_require__(247);
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Checks if a hash value for `key` exists.
+	 *
+	 * @private
+	 * @name has
+	 * @memberOf Hash
+	 * @param {string} key The key of the entry to check.
+	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+	 */
+	function hashHas(key) {
+	  var data = this.__data__;
+	  return nativeCreate ? (data[key] !== undefined) : hasOwnProperty.call(data, key);
+	}
+
+	module.exports = hashHas;
+
+
+/***/ },
+/* 259 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var nativeCreate = __webpack_require__(247);
+
+	/** Used to stand-in for `undefined` hash values. */
+	var HASH_UNDEFINED = '__lodash_hash_undefined__';
+
+	/**
+	 * Sets the hash `key` to `value`.
+	 *
+	 * @private
+	 * @name set
+	 * @memberOf Hash
+	 * @param {string} key The key of the value to set.
+	 * @param {*} value The value to set.
+	 * @returns {Object} Returns the hash instance.
+	 */
+	function hashSet(key, value) {
+	  var data = this.__data__;
+	  this.size += this.has(key) ? 0 : 1;
+	  data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
+	  return this;
+	}
+
+	module.exports = hashSet;
+
+
+/***/ },
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var listCacheClear = __webpack_require__(261),
+	    listCacheDelete = __webpack_require__(262),
+	    listCacheGet = __webpack_require__(265),
+	    listCacheHas = __webpack_require__(266),
+	    listCacheSet = __webpack_require__(267);
+
+	/**
+	 * Creates an list cache object.
+	 *
+	 * @private
+	 * @constructor
+	 * @param {Array} [entries] The key-value pairs to cache.
+	 */
+	function ListCache(entries) {
+	  var index = -1,
+	      length = entries == null ? 0 : entries.length;
+
+	  this.clear();
+	  while (++index < length) {
+	    var entry = entries[index];
+	    this.set(entry[0], entry[1]);
+	  }
+	}
+
+	// Add methods to `ListCache`.
+	ListCache.prototype.clear = listCacheClear;
+	ListCache.prototype['delete'] = listCacheDelete;
+	ListCache.prototype.get = listCacheGet;
+	ListCache.prototype.has = listCacheHas;
+	ListCache.prototype.set = listCacheSet;
+
+	module.exports = ListCache;
+
+
+/***/ },
+/* 261 */
+/***/ function(module, exports) {
+
+	/**
+	 * Removes all key-value entries from the list cache.
+	 *
+	 * @private
+	 * @name clear
+	 * @memberOf ListCache
+	 */
+	function listCacheClear() {
+	  this.__data__ = [];
+	  this.size = 0;
+	}
+
+	module.exports = listCacheClear;
+
+
+/***/ },
+/* 262 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var assocIndexOf = __webpack_require__(263);
+
+	/** Used for built-in method references. */
+	var arrayProto = Array.prototype;
+
+	/** Built-in value references. */
+	var splice = arrayProto.splice;
+
+	/**
+	 * Removes `key` and its value from the list cache.
+	 *
+	 * @private
+	 * @name delete
+	 * @memberOf ListCache
+	 * @param {string} key The key of the value to remove.
+	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+	 */
+	function listCacheDelete(key) {
+	  var data = this.__data__,
+	      index = assocIndexOf(data, key);
+
+	  if (index < 0) {
+	    return false;
+	  }
+	  var lastIndex = data.length - 1;
+	  if (index == lastIndex) {
+	    data.pop();
+	  } else {
+	    splice.call(data, index, 1);
+	  }
+	  --this.size;
+	  return true;
+	}
+
+	module.exports = listCacheDelete;
+
+
+/***/ },
+/* 263 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var eq = __webpack_require__(264);
+
+	/**
+	 * Gets the index at which the `key` is found in `array` of key-value pairs.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {*} key The key to search for.
+	 * @returns {number} Returns the index of the matched value, else `-1`.
+	 */
+	function assocIndexOf(array, key) {
+	  var length = array.length;
+	  while (length--) {
+	    if (eq(array[length][0], key)) {
+	      return length;
+	    }
+	  }
+	  return -1;
+	}
+
+	module.exports = assocIndexOf;
+
+
+/***/ },
+/* 264 */
+/***/ function(module, exports) {
+
+	/**
+	 * Performs a
+	 * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+	 * comparison between two values to determine if they are equivalent.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to compare.
+	 * @param {*} other The other value to compare.
+	 * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+	 * @example
+	 *
+	 * var object = { 'a': 1 };
+	 * var other = { 'a': 1 };
+	 *
+	 * _.eq(object, object);
+	 * // => true
+	 *
+	 * _.eq(object, other);
+	 * // => false
+	 *
+	 * _.eq('a', 'a');
+	 * // => true
+	 *
+	 * _.eq('a', Object('a'));
+	 * // => false
+	 *
+	 * _.eq(NaN, NaN);
+	 * // => true
+	 */
+	function eq(value, other) {
+	  return value === other || (value !== value && other !== other);
+	}
+
+	module.exports = eq;
+
+
+/***/ },
+/* 265 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var assocIndexOf = __webpack_require__(263);
+
+	/**
+	 * Gets the list cache value for `key`.
+	 *
+	 * @private
+	 * @name get
+	 * @memberOf ListCache
+	 * @param {string} key The key of the value to get.
+	 * @returns {*} Returns the entry value.
+	 */
+	function listCacheGet(key) {
+	  var data = this.__data__,
+	      index = assocIndexOf(data, key);
+
+	  return index < 0 ? undefined : data[index][1];
+	}
+
+	module.exports = listCacheGet;
+
+
+/***/ },
+/* 266 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var assocIndexOf = __webpack_require__(263);
+
+	/**
+	 * Checks if a list cache value for `key` exists.
+	 *
+	 * @private
+	 * @name has
+	 * @memberOf ListCache
+	 * @param {string} key The key of the entry to check.
+	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+	 */
+	function listCacheHas(key) {
+	  return assocIndexOf(this.__data__, key) > -1;
+	}
+
+	module.exports = listCacheHas;
+
+
+/***/ },
+/* 267 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var assocIndexOf = __webpack_require__(263);
+
+	/**
+	 * Sets the list cache `key` to `value`.
+	 *
+	 * @private
+	 * @name set
+	 * @memberOf ListCache
+	 * @param {string} key The key of the value to set.
+	 * @param {*} value The value to set.
+	 * @returns {Object} Returns the list cache instance.
+	 */
+	function listCacheSet(key, value) {
+	  var data = this.__data__,
+	      index = assocIndexOf(data, key);
+
+	  if (index < 0) {
+	    ++this.size;
+	    data.push([key, value]);
+	  } else {
+	    data[index][1] = value;
+	  }
+	  return this;
+	}
+
+	module.exports = listCacheSet;
+
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getNative = __webpack_require__(248),
+	    root = __webpack_require__(200);
+
+	/* Built-in method references that are verified to be native. */
+	var Map = getNative(root, 'Map');
+
+	module.exports = Map;
+
+
+/***/ },
+/* 269 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getMapData = __webpack_require__(270);
+
+	/**
+	 * Removes `key` and its value from the map.
+	 *
+	 * @private
+	 * @name delete
+	 * @memberOf MapCache
+	 * @param {string} key The key of the value to remove.
+	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+	 */
+	function mapCacheDelete(key) {
+	  var result = getMapData(this, key)['delete'](key);
+	  this.size -= result ? 1 : 0;
+	  return result;
+	}
+
+	module.exports = mapCacheDelete;
+
+
+/***/ },
+/* 270 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isKeyable = __webpack_require__(271);
+
+	/**
+	 * Gets the data for `map`.
+	 *
+	 * @private
+	 * @param {Object} map The map to query.
+	 * @param {string} key The reference key.
+	 * @returns {*} Returns the map data.
+	 */
+	function getMapData(map, key) {
+	  var data = map.__data__;
+	  return isKeyable(key)
+	    ? data[typeof key == 'string' ? 'string' : 'hash']
+	    : data.map;
+	}
+
+	module.exports = getMapData;
+
+
+/***/ },
+/* 271 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is suitable for use as unique object key.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is suitable, else `false`.
+	 */
+	function isKeyable(value) {
+	  var type = typeof value;
+	  return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
+	    ? (value !== '__proto__')
+	    : (value === null);
+	}
+
+	module.exports = isKeyable;
+
+
+/***/ },
+/* 272 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getMapData = __webpack_require__(270);
+
+	/**
+	 * Gets the map value for `key`.
+	 *
+	 * @private
+	 * @name get
+	 * @memberOf MapCache
+	 * @param {string} key The key of the value to get.
+	 * @returns {*} Returns the entry value.
+	 */
+	function mapCacheGet(key) {
+	  return getMapData(this, key).get(key);
+	}
+
+	module.exports = mapCacheGet;
+
+
+/***/ },
+/* 273 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getMapData = __webpack_require__(270);
+
+	/**
+	 * Checks if a map value for `key` exists.
+	 *
+	 * @private
+	 * @name has
+	 * @memberOf MapCache
+	 * @param {string} key The key of the entry to check.
+	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+	 */
+	function mapCacheHas(key) {
+	  return getMapData(this, key).has(key);
+	}
+
+	module.exports = mapCacheHas;
+
+
+/***/ },
+/* 274 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getMapData = __webpack_require__(270);
+
+	/**
+	 * Sets the map `key` to `value`.
+	 *
+	 * @private
+	 * @name set
+	 * @memberOf MapCache
+	 * @param {string} key The key of the value to set.
+	 * @param {*} value The value to set.
+	 * @returns {Object} Returns the map cache instance.
+	 */
+	function mapCacheSet(key, value) {
+	  var data = getMapData(this, key),
+	      size = data.size;
+
+	  data.set(key, value);
+	  this.size += data.size == size ? 0 : 1;
+	  return this;
+	}
+
+	module.exports = mapCacheSet;
+
+
+/***/ },
+/* 275 */
+/***/ function(module, exports) {
+
+	/** Used to stand-in for `undefined` hash values. */
+	var HASH_UNDEFINED = '__lodash_hash_undefined__';
+
+	/**
+	 * Adds `value` to the array cache.
+	 *
+	 * @private
+	 * @name add
+	 * @memberOf SetCache
+	 * @alias push
+	 * @param {*} value The value to cache.
+	 * @returns {Object} Returns the cache instance.
+	 */
+	function setCacheAdd(value) {
+	  this.__data__.set(value, HASH_UNDEFINED);
+	  return this;
+	}
+
+	module.exports = setCacheAdd;
+
+
+/***/ },
+/* 276 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is in the array cache.
+	 *
+	 * @private
+	 * @name has
+	 * @memberOf SetCache
+	 * @param {*} value The value to search for.
+	 * @returns {number} Returns `true` if `value` is found, else `false`.
+	 */
+	function setCacheHas(value) {
+	  return this.__data__.has(value);
+	}
+
+	module.exports = setCacheHas;
+
+
+/***/ },
+/* 277 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseIndexOf = __webpack_require__(278);
+
+	/**
+	 * A specialized version of `_.includes` for arrays without support for
+	 * specifying an index to search from.
+	 *
+	 * @private
+	 * @param {Array} [array] The array to inspect.
+	 * @param {*} target The value to search for.
+	 * @returns {boolean} Returns `true` if `target` is found, else `false`.
+	 */
+	function arrayIncludes(array, value) {
+	  var length = array == null ? 0 : array.length;
+	  return !!length && baseIndexOf(array, value, 0) > -1;
+	}
+
+	module.exports = arrayIncludes;
+
+
+/***/ },
+/* 278 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseFindIndex = __webpack_require__(279),
+	    baseIsNaN = __webpack_require__(280),
+	    strictIndexOf = __webpack_require__(281);
+
+	/**
+	 * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {*} value The value to search for.
+	 * @param {number} fromIndex The index to search from.
+	 * @returns {number} Returns the index of the matched value, else `-1`.
+	 */
+	function baseIndexOf(array, value, fromIndex) {
+	  return value === value
+	    ? strictIndexOf(array, value, fromIndex)
+	    : baseFindIndex(array, baseIsNaN, fromIndex);
+	}
+
+	module.exports = baseIndexOf;
+
+
+/***/ },
+/* 279 */
+/***/ function(module, exports) {
+
+	/**
+	 * The base implementation of `_.findIndex` and `_.findLastIndex` without
+	 * support for iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {Function} predicate The function invoked per iteration.
+	 * @param {number} fromIndex The index to search from.
+	 * @param {boolean} [fromRight] Specify iterating from right to left.
+	 * @returns {number} Returns the index of the matched value, else `-1`.
+	 */
+	function baseFindIndex(array, predicate, fromIndex, fromRight) {
+	  var length = array.length,
+	      index = fromIndex + (fromRight ? 1 : -1);
+
+	  while ((fromRight ? index-- : ++index < length)) {
+	    if (predicate(array[index], index, array)) {
+	      return index;
+	    }
+	  }
+	  return -1;
+	}
+
+	module.exports = baseFindIndex;
+
+
+/***/ },
+/* 280 */
+/***/ function(module, exports) {
+
+	/**
+	 * The base implementation of `_.isNaN` without support for number objects.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is `NaN`, else `false`.
+	 */
+	function baseIsNaN(value) {
+	  return value !== value;
+	}
+
+	module.exports = baseIsNaN;
+
+
+/***/ },
+/* 281 */
+/***/ function(module, exports) {
+
+	/**
+	 * A specialized version of `_.indexOf` which performs strict equality
+	 * comparisons of values, i.e. `===`.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {*} value The value to search for.
+	 * @param {number} fromIndex The index to search from.
+	 * @returns {number} Returns the index of the matched value, else `-1`.
+	 */
+	function strictIndexOf(array, value, fromIndex) {
+	  var index = fromIndex - 1,
+	      length = array.length;
+
+	  while (++index < length) {
+	    if (array[index] === value) {
+	      return index;
+	    }
+	  }
+	  return -1;
+	}
+
+	module.exports = strictIndexOf;
+
+
+/***/ },
+/* 282 */
+/***/ function(module, exports) {
+
+	/**
+	 * This function is like `arrayIncludes` except that it accepts a comparator.
+	 *
+	 * @private
+	 * @param {Array} [array] The array to inspect.
+	 * @param {*} target The value to search for.
+	 * @param {Function} comparator The comparator invoked per element.
+	 * @returns {boolean} Returns `true` if `target` is found, else `false`.
+	 */
+	function arrayIncludesWith(array, value, comparator) {
+	  var index = -1,
+	      length = array == null ? 0 : array.length;
+
+	  while (++index < length) {
+	    if (comparator(value, array[index])) {
+	      return true;
+	    }
+	  }
+	  return false;
+	}
+
+	module.exports = arrayIncludesWith;
+
+
+/***/ },
+/* 283 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if a `cache` value for `key` exists.
+	 *
+	 * @private
+	 * @param {Object} cache The cache to query.
+	 * @param {string} key The key of the entry to check.
+	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+	 */
+	function cacheHas(cache, key) {
+	  return cache.has(key);
+	}
+
+	module.exports = cacheHas;
+
+
+/***/ },
+/* 284 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Set = __webpack_require__(285),
+	    noop = __webpack_require__(286),
+	    setToArray = __webpack_require__(287);
+
+	/** Used as references for various `Number` constants. */
+	var INFINITY = 1 / 0;
+
+	/**
+	 * Creates a set object of `values`.
+	 *
+	 * @private
+	 * @param {Array} values The values to add to the set.
+	 * @returns {Object} Returns the new set.
+	 */
+	var createSet = !(Set && (1 / setToArray(new Set([,-0]))[1]) == INFINITY) ? noop : function(values) {
+	  return new Set(values);
+	};
+
+	module.exports = createSet;
+
+
+/***/ },
+/* 285 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getNative = __webpack_require__(248),
+	    root = __webpack_require__(200);
+
+	/* Built-in method references that are verified to be native. */
+	var Set = getNative(root, 'Set');
+
+	module.exports = Set;
+
+
+/***/ },
+/* 286 */
+/***/ function(module, exports) {
+
+	/**
+	 * This method returns `undefined`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 2.3.0
+	 * @category Util
+	 * @example
+	 *
+	 * _.times(2, _.noop);
+	 * // => [undefined, undefined]
+	 */
+	function noop() {
+	  // No operation performed.
+	}
+
+	module.exports = noop;
+
+
+/***/ },
+/* 287 */
+/***/ function(module, exports) {
+
+	/**
+	 * Converts `set` to an array of its values.
+	 *
+	 * @private
+	 * @param {Object} set The set to convert.
+	 * @returns {Array} Returns the values.
+	 */
+	function setToArray(set) {
+	  var index = -1,
+	      result = Array(set.size);
+
+	  set.forEach(function(value) {
+	    result[++index] = value;
+	  });
+	  return result;
+	}
+
+	module.exports = setToArray;
+
+
+/***/ },
+/* 288 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var createFind = __webpack_require__(289),
+	    findIndex = __webpack_require__(354);
+
+	/**
+	 * Iterates over elements of `collection`, returning the first element
+	 * `predicate` returns truthy for. The predicate is invoked with three
+	 * arguments: (value, index|key, collection).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Collection
+	 * @param {Array|Object} collection The collection to inspect.
+	 * @param {Function} [predicate=_.identity] The function invoked per iteration.
+	 * @param {number} [fromIndex=0] The index to search from.
+	 * @returns {*} Returns the matched element, else `undefined`.
+	 * @example
+	 *
+	 * var users = [
+	 *   { 'user': 'barney',  'age': 36, 'active': true },
+	 *   { 'user': 'fred',    'age': 40, 'active': false },
+	 *   { 'user': 'pebbles', 'age': 1,  'active': true }
+	 * ];
+	 *
+	 * _.find(users, function(o) { return o.age < 40; });
+	 * // => object for 'barney'
+	 *
+	 * // The `_.matches` iteratee shorthand.
+	 * _.find(users, { 'age': 1, 'active': true });
+	 * // => object for 'pebbles'
+	 *
+	 * // The `_.matchesProperty` iteratee shorthand.
+	 * _.find(users, ['active', false]);
+	 * // => object for 'fred'
+	 *
+	 * // The `_.property` iteratee shorthand.
+	 * _.find(users, 'active');
+	 * // => object for 'barney'
+	 */
+	var find = createFind(findIndex);
+
+	module.exports = find;
+
+
+/***/ },
+/* 289 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseIteratee = __webpack_require__(290),
+	    isArrayLike = __webpack_require__(326),
+	    keys = __webpack_require__(312);
+
+	/**
+	 * Creates a `_.find` or `_.findLast` function.
+	 *
+	 * @private
+	 * @param {Function} findIndexFunc The function to find the collection index.
+	 * @returns {Function} Returns the new find function.
+	 */
+	function createFind(findIndexFunc) {
+	  return function(collection, predicate, fromIndex) {
+	    var iterable = Object(collection);
+	    if (!isArrayLike(collection)) {
+	      var iteratee = baseIteratee(predicate, 3);
+	      collection = keys(collection);
+	      predicate = function(key) { return iteratee(iterable[key], key, iterable); };
+	    }
+	    var index = findIndexFunc(collection, predicate, fromIndex);
+	    return index > -1 ? iterable[iteratee ? collection[index] : index] : undefined;
+	  };
+	}
+
+	module.exports = createFind;
+
+
+/***/ },
+/* 290 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseMatches = __webpack_require__(291),
+	    baseMatchesProperty = __webpack_require__(334),
+	    identity = __webpack_require__(350),
 	    isArray = __webpack_require__(238),
-	    property = __webpack_require__(340);
+	    property = __webpack_require__(351);
 
 	/**
 	 * The base implementation of `_.iteratee`.
@@ -25379,12 +26745,12 @@
 
 
 /***/ },
-/* 242 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsMatch = __webpack_require__(243),
-	    getMatchData = __webpack_require__(320),
-	    matchesStrictComparable = __webpack_require__(322);
+	var baseIsMatch = __webpack_require__(292),
+	    getMatchData = __webpack_require__(331),
+	    matchesStrictComparable = __webpack_require__(333);
 
 	/**
 	 * The base implementation of `_.matches` which doesn't clone `source`.
@@ -25407,11 +26773,11 @@
 
 
 /***/ },
-/* 243 */
+/* 292 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Stack = __webpack_require__(244),
-	    baseIsEqual = __webpack_require__(282);
+	var Stack = __webpack_require__(293),
+	    baseIsEqual = __webpack_require__(299);
 
 	/** Used to compose bitmasks for value comparisons. */
 	var COMPARE_PARTIAL_FLAG = 1,
@@ -25475,15 +26841,15 @@
 
 
 /***/ },
-/* 244 */
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ListCache = __webpack_require__(245),
-	    stackClear = __webpack_require__(253),
-	    stackDelete = __webpack_require__(254),
-	    stackGet = __webpack_require__(255),
-	    stackHas = __webpack_require__(256),
-	    stackSet = __webpack_require__(257);
+	var ListCache = __webpack_require__(260),
+	    stackClear = __webpack_require__(294),
+	    stackDelete = __webpack_require__(295),
+	    stackGet = __webpack_require__(296),
+	    stackHas = __webpack_require__(297),
+	    stackSet = __webpack_require__(298);
 
 	/**
 	 * Creates a stack cache object to store key-value pairs.
@@ -25508,257 +26874,10 @@
 
 
 /***/ },
-/* 245 */
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var listCacheClear = __webpack_require__(246),
-	    listCacheDelete = __webpack_require__(247),
-	    listCacheGet = __webpack_require__(250),
-	    listCacheHas = __webpack_require__(251),
-	    listCacheSet = __webpack_require__(252);
-
-	/**
-	 * Creates an list cache object.
-	 *
-	 * @private
-	 * @constructor
-	 * @param {Array} [entries] The key-value pairs to cache.
-	 */
-	function ListCache(entries) {
-	  var index = -1,
-	      length = entries == null ? 0 : entries.length;
-
-	  this.clear();
-	  while (++index < length) {
-	    var entry = entries[index];
-	    this.set(entry[0], entry[1]);
-	  }
-	}
-
-	// Add methods to `ListCache`.
-	ListCache.prototype.clear = listCacheClear;
-	ListCache.prototype['delete'] = listCacheDelete;
-	ListCache.prototype.get = listCacheGet;
-	ListCache.prototype.has = listCacheHas;
-	ListCache.prototype.set = listCacheSet;
-
-	module.exports = ListCache;
-
-
-/***/ },
-/* 246 */
-/***/ function(module, exports) {
-
-	/**
-	 * Removes all key-value entries from the list cache.
-	 *
-	 * @private
-	 * @name clear
-	 * @memberOf ListCache
-	 */
-	function listCacheClear() {
-	  this.__data__ = [];
-	  this.size = 0;
-	}
-
-	module.exports = listCacheClear;
-
-
-/***/ },
-/* 247 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var assocIndexOf = __webpack_require__(248);
-
-	/** Used for built-in method references. */
-	var arrayProto = Array.prototype;
-
-	/** Built-in value references. */
-	var splice = arrayProto.splice;
-
-	/**
-	 * Removes `key` and its value from the list cache.
-	 *
-	 * @private
-	 * @name delete
-	 * @memberOf ListCache
-	 * @param {string} key The key of the value to remove.
-	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
-	 */
-	function listCacheDelete(key) {
-	  var data = this.__data__,
-	      index = assocIndexOf(data, key);
-
-	  if (index < 0) {
-	    return false;
-	  }
-	  var lastIndex = data.length - 1;
-	  if (index == lastIndex) {
-	    data.pop();
-	  } else {
-	    splice.call(data, index, 1);
-	  }
-	  --this.size;
-	  return true;
-	}
-
-	module.exports = listCacheDelete;
-
-
-/***/ },
-/* 248 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var eq = __webpack_require__(249);
-
-	/**
-	 * Gets the index at which the `key` is found in `array` of key-value pairs.
-	 *
-	 * @private
-	 * @param {Array} array The array to inspect.
-	 * @param {*} key The key to search for.
-	 * @returns {number} Returns the index of the matched value, else `-1`.
-	 */
-	function assocIndexOf(array, key) {
-	  var length = array.length;
-	  while (length--) {
-	    if (eq(array[length][0], key)) {
-	      return length;
-	    }
-	  }
-	  return -1;
-	}
-
-	module.exports = assocIndexOf;
-
-
-/***/ },
-/* 249 */
-/***/ function(module, exports) {
-
-	/**
-	 * Performs a
-	 * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
-	 * comparison between two values to determine if they are equivalent.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to compare.
-	 * @param {*} other The other value to compare.
-	 * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
-	 * @example
-	 *
-	 * var object = { 'a': 1 };
-	 * var other = { 'a': 1 };
-	 *
-	 * _.eq(object, object);
-	 * // => true
-	 *
-	 * _.eq(object, other);
-	 * // => false
-	 *
-	 * _.eq('a', 'a');
-	 * // => true
-	 *
-	 * _.eq('a', Object('a'));
-	 * // => false
-	 *
-	 * _.eq(NaN, NaN);
-	 * // => true
-	 */
-	function eq(value, other) {
-	  return value === other || (value !== value && other !== other);
-	}
-
-	module.exports = eq;
-
-
-/***/ },
-/* 250 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var assocIndexOf = __webpack_require__(248);
-
-	/**
-	 * Gets the list cache value for `key`.
-	 *
-	 * @private
-	 * @name get
-	 * @memberOf ListCache
-	 * @param {string} key The key of the value to get.
-	 * @returns {*} Returns the entry value.
-	 */
-	function listCacheGet(key) {
-	  var data = this.__data__,
-	      index = assocIndexOf(data, key);
-
-	  return index < 0 ? undefined : data[index][1];
-	}
-
-	module.exports = listCacheGet;
-
-
-/***/ },
-/* 251 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var assocIndexOf = __webpack_require__(248);
-
-	/**
-	 * Checks if a list cache value for `key` exists.
-	 *
-	 * @private
-	 * @name has
-	 * @memberOf ListCache
-	 * @param {string} key The key of the entry to check.
-	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-	 */
-	function listCacheHas(key) {
-	  return assocIndexOf(this.__data__, key) > -1;
-	}
-
-	module.exports = listCacheHas;
-
-
-/***/ },
-/* 252 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var assocIndexOf = __webpack_require__(248);
-
-	/**
-	 * Sets the list cache `key` to `value`.
-	 *
-	 * @private
-	 * @name set
-	 * @memberOf ListCache
-	 * @param {string} key The key of the value to set.
-	 * @param {*} value The value to set.
-	 * @returns {Object} Returns the list cache instance.
-	 */
-	function listCacheSet(key, value) {
-	  var data = this.__data__,
-	      index = assocIndexOf(data, key);
-
-	  if (index < 0) {
-	    ++this.size;
-	    data.push([key, value]);
-	  } else {
-	    data[index][1] = value;
-	  }
-	  return this;
-	}
-
-	module.exports = listCacheSet;
-
-
-/***/ },
-/* 253 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ListCache = __webpack_require__(245);
+	var ListCache = __webpack_require__(260);
 
 	/**
 	 * Removes all key-value entries from the stack.
@@ -25776,7 +26895,7 @@
 
 
 /***/ },
-/* 254 */
+/* 295 */
 /***/ function(module, exports) {
 
 	/**
@@ -25800,7 +26919,7 @@
 
 
 /***/ },
-/* 255 */
+/* 296 */
 /***/ function(module, exports) {
 
 	/**
@@ -25820,7 +26939,7 @@
 
 
 /***/ },
-/* 256 */
+/* 297 */
 /***/ function(module, exports) {
 
 	/**
@@ -25840,12 +26959,12 @@
 
 
 /***/ },
-/* 257 */
+/* 298 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ListCache = __webpack_require__(245),
-	    Map = __webpack_require__(258),
-	    MapCache = __webpack_require__(267);
+	var ListCache = __webpack_require__(260),
+	    Map = __webpack_require__(268),
+	    MapCache = __webpack_require__(243);
 
 	/** Used as the size to enable large array optimizations. */
 	var LARGE_ARRAY_SIZE = 200;
@@ -25880,662 +26999,10 @@
 
 
 /***/ },
-/* 258 */
+/* 299 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(259),
-	    root = __webpack_require__(200);
-
-	/* Built-in method references that are verified to be native. */
-	var Map = getNative(root, 'Map');
-
-	module.exports = Map;
-
-
-/***/ },
-/* 259 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIsNative = __webpack_require__(260),
-	    getValue = __webpack_require__(266);
-
-	/**
-	 * Gets the native function at `key` of `object`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @param {string} key The key of the method to get.
-	 * @returns {*} Returns the function if it's native, else `undefined`.
-	 */
-	function getNative(object, key) {
-	  var value = getValue(object, key);
-	  return baseIsNative(value) ? value : undefined;
-	}
-
-	module.exports = getNative;
-
-
-/***/ },
-/* 260 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isFunction = __webpack_require__(261),
-	    isMasked = __webpack_require__(263),
-	    isObject = __webpack_require__(262),
-	    toSource = __webpack_require__(265);
-
-	/**
-	 * Used to match `RegExp`
-	 * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
-	 */
-	var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
-
-	/** Used to detect host constructors (Safari). */
-	var reIsHostCtor = /^\[object .+?Constructor\]$/;
-
-	/** Used for built-in method references. */
-	var funcProto = Function.prototype,
-	    objectProto = Object.prototype;
-
-	/** Used to resolve the decompiled source of functions. */
-	var funcToString = funcProto.toString;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/** Used to detect if a method is native. */
-	var reIsNative = RegExp('^' +
-	  funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
-	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
-	);
-
-	/**
-	 * The base implementation of `_.isNative` without bad shim checks.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a native function,
-	 *  else `false`.
-	 */
-	function baseIsNative(value) {
-	  if (!isObject(value) || isMasked(value)) {
-	    return false;
-	  }
-	  var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
-	  return pattern.test(toSource(value));
-	}
-
-	module.exports = baseIsNative;
-
-
-/***/ },
-/* 261 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseGetTag = __webpack_require__(198),
-	    isObject = __webpack_require__(262);
-
-	/** `Object#toString` result references. */
-	var asyncTag = '[object AsyncFunction]',
-	    funcTag = '[object Function]',
-	    genTag = '[object GeneratorFunction]',
-	    proxyTag = '[object Proxy]';
-
-	/**
-	 * Checks if `value` is classified as a `Function` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a function, else `false`.
-	 * @example
-	 *
-	 * _.isFunction(_);
-	 * // => true
-	 *
-	 * _.isFunction(/abc/);
-	 * // => false
-	 */
-	function isFunction(value) {
-	  if (!isObject(value)) {
-	    return false;
-	  }
-	  // The use of `Object#toString` avoids issues with the `typeof` operator
-	  // in Safari 9 which returns 'object' for typed arrays and other constructors.
-	  var tag = baseGetTag(value);
-	  return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
-	}
-
-	module.exports = isFunction;
-
-
-/***/ },
-/* 262 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is the
-	 * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
-	 * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
-	 * @example
-	 *
-	 * _.isObject({});
-	 * // => true
-	 *
-	 * _.isObject([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObject(_.noop);
-	 * // => true
-	 *
-	 * _.isObject(null);
-	 * // => false
-	 */
-	function isObject(value) {
-	  var type = typeof value;
-	  return value != null && (type == 'object' || type == 'function');
-	}
-
-	module.exports = isObject;
-
-
-/***/ },
-/* 263 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var coreJsData = __webpack_require__(264);
-
-	/** Used to detect methods masquerading as native. */
-	var maskSrcKey = (function() {
-	  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
-	  return uid ? ('Symbol(src)_1.' + uid) : '';
-	}());
-
-	/**
-	 * Checks if `func` has its source masked.
-	 *
-	 * @private
-	 * @param {Function} func The function to check.
-	 * @returns {boolean} Returns `true` if `func` is masked, else `false`.
-	 */
-	function isMasked(func) {
-	  return !!maskSrcKey && (maskSrcKey in func);
-	}
-
-	module.exports = isMasked;
-
-
-/***/ },
-/* 264 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var root = __webpack_require__(200);
-
-	/** Used to detect overreaching core-js shims. */
-	var coreJsData = root['__core-js_shared__'];
-
-	module.exports = coreJsData;
-
-
-/***/ },
-/* 265 */
-/***/ function(module, exports) {
-
-	/** Used for built-in method references. */
-	var funcProto = Function.prototype;
-
-	/** Used to resolve the decompiled source of functions. */
-	var funcToString = funcProto.toString;
-
-	/**
-	 * Converts `func` to its source code.
-	 *
-	 * @private
-	 * @param {Function} func The function to convert.
-	 * @returns {string} Returns the source code.
-	 */
-	function toSource(func) {
-	  if (func != null) {
-	    try {
-	      return funcToString.call(func);
-	    } catch (e) {}
-	    try {
-	      return (func + '');
-	    } catch (e) {}
-	  }
-	  return '';
-	}
-
-	module.exports = toSource;
-
-
-/***/ },
-/* 266 */
-/***/ function(module, exports) {
-
-	/**
-	 * Gets the value at `key` of `object`.
-	 *
-	 * @private
-	 * @param {Object} [object] The object to query.
-	 * @param {string} key The key of the property to get.
-	 * @returns {*} Returns the property value.
-	 */
-	function getValue(object, key) {
-	  return object == null ? undefined : object[key];
-	}
-
-	module.exports = getValue;
-
-
-/***/ },
-/* 267 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var mapCacheClear = __webpack_require__(268),
-	    mapCacheDelete = __webpack_require__(276),
-	    mapCacheGet = __webpack_require__(279),
-	    mapCacheHas = __webpack_require__(280),
-	    mapCacheSet = __webpack_require__(281);
-
-	/**
-	 * Creates a map cache object to store key-value pairs.
-	 *
-	 * @private
-	 * @constructor
-	 * @param {Array} [entries] The key-value pairs to cache.
-	 */
-	function MapCache(entries) {
-	  var index = -1,
-	      length = entries == null ? 0 : entries.length;
-
-	  this.clear();
-	  while (++index < length) {
-	    var entry = entries[index];
-	    this.set(entry[0], entry[1]);
-	  }
-	}
-
-	// Add methods to `MapCache`.
-	MapCache.prototype.clear = mapCacheClear;
-	MapCache.prototype['delete'] = mapCacheDelete;
-	MapCache.prototype.get = mapCacheGet;
-	MapCache.prototype.has = mapCacheHas;
-	MapCache.prototype.set = mapCacheSet;
-
-	module.exports = MapCache;
-
-
-/***/ },
-/* 268 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Hash = __webpack_require__(269),
-	    ListCache = __webpack_require__(245),
-	    Map = __webpack_require__(258);
-
-	/**
-	 * Removes all key-value entries from the map.
-	 *
-	 * @private
-	 * @name clear
-	 * @memberOf MapCache
-	 */
-	function mapCacheClear() {
-	  this.size = 0;
-	  this.__data__ = {
-	    'hash': new Hash,
-	    'map': new (Map || ListCache),
-	    'string': new Hash
-	  };
-	}
-
-	module.exports = mapCacheClear;
-
-
-/***/ },
-/* 269 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var hashClear = __webpack_require__(270),
-	    hashDelete = __webpack_require__(272),
-	    hashGet = __webpack_require__(273),
-	    hashHas = __webpack_require__(274),
-	    hashSet = __webpack_require__(275);
-
-	/**
-	 * Creates a hash object.
-	 *
-	 * @private
-	 * @constructor
-	 * @param {Array} [entries] The key-value pairs to cache.
-	 */
-	function Hash(entries) {
-	  var index = -1,
-	      length = entries == null ? 0 : entries.length;
-
-	  this.clear();
-	  while (++index < length) {
-	    var entry = entries[index];
-	    this.set(entry[0], entry[1]);
-	  }
-	}
-
-	// Add methods to `Hash`.
-	Hash.prototype.clear = hashClear;
-	Hash.prototype['delete'] = hashDelete;
-	Hash.prototype.get = hashGet;
-	Hash.prototype.has = hashHas;
-	Hash.prototype.set = hashSet;
-
-	module.exports = Hash;
-
-
-/***/ },
-/* 270 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var nativeCreate = __webpack_require__(271);
-
-	/**
-	 * Removes all key-value entries from the hash.
-	 *
-	 * @private
-	 * @name clear
-	 * @memberOf Hash
-	 */
-	function hashClear() {
-	  this.__data__ = nativeCreate ? nativeCreate(null) : {};
-	  this.size = 0;
-	}
-
-	module.exports = hashClear;
-
-
-/***/ },
-/* 271 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getNative = __webpack_require__(259);
-
-	/* Built-in method references that are verified to be native. */
-	var nativeCreate = getNative(Object, 'create');
-
-	module.exports = nativeCreate;
-
-
-/***/ },
-/* 272 */
-/***/ function(module, exports) {
-
-	/**
-	 * Removes `key` and its value from the hash.
-	 *
-	 * @private
-	 * @name delete
-	 * @memberOf Hash
-	 * @param {Object} hash The hash to modify.
-	 * @param {string} key The key of the value to remove.
-	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
-	 */
-	function hashDelete(key) {
-	  var result = this.has(key) && delete this.__data__[key];
-	  this.size -= result ? 1 : 0;
-	  return result;
-	}
-
-	module.exports = hashDelete;
-
-
-/***/ },
-/* 273 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var nativeCreate = __webpack_require__(271);
-
-	/** Used to stand-in for `undefined` hash values. */
-	var HASH_UNDEFINED = '__lodash_hash_undefined__';
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Gets the hash value for `key`.
-	 *
-	 * @private
-	 * @name get
-	 * @memberOf Hash
-	 * @param {string} key The key of the value to get.
-	 * @returns {*} Returns the entry value.
-	 */
-	function hashGet(key) {
-	  var data = this.__data__;
-	  if (nativeCreate) {
-	    var result = data[key];
-	    return result === HASH_UNDEFINED ? undefined : result;
-	  }
-	  return hasOwnProperty.call(data, key) ? data[key] : undefined;
-	}
-
-	module.exports = hashGet;
-
-
-/***/ },
-/* 274 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var nativeCreate = __webpack_require__(271);
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Checks if a hash value for `key` exists.
-	 *
-	 * @private
-	 * @name has
-	 * @memberOf Hash
-	 * @param {string} key The key of the entry to check.
-	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-	 */
-	function hashHas(key) {
-	  var data = this.__data__;
-	  return nativeCreate ? (data[key] !== undefined) : hasOwnProperty.call(data, key);
-	}
-
-	module.exports = hashHas;
-
-
-/***/ },
-/* 275 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var nativeCreate = __webpack_require__(271);
-
-	/** Used to stand-in for `undefined` hash values. */
-	var HASH_UNDEFINED = '__lodash_hash_undefined__';
-
-	/**
-	 * Sets the hash `key` to `value`.
-	 *
-	 * @private
-	 * @name set
-	 * @memberOf Hash
-	 * @param {string} key The key of the value to set.
-	 * @param {*} value The value to set.
-	 * @returns {Object} Returns the hash instance.
-	 */
-	function hashSet(key, value) {
-	  var data = this.__data__;
-	  this.size += this.has(key) ? 0 : 1;
-	  data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
-	  return this;
-	}
-
-	module.exports = hashSet;
-
-
-/***/ },
-/* 276 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getMapData = __webpack_require__(277);
-
-	/**
-	 * Removes `key` and its value from the map.
-	 *
-	 * @private
-	 * @name delete
-	 * @memberOf MapCache
-	 * @param {string} key The key of the value to remove.
-	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
-	 */
-	function mapCacheDelete(key) {
-	  var result = getMapData(this, key)['delete'](key);
-	  this.size -= result ? 1 : 0;
-	  return result;
-	}
-
-	module.exports = mapCacheDelete;
-
-
-/***/ },
-/* 277 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isKeyable = __webpack_require__(278);
-
-	/**
-	 * Gets the data for `map`.
-	 *
-	 * @private
-	 * @param {Object} map The map to query.
-	 * @param {string} key The reference key.
-	 * @returns {*} Returns the map data.
-	 */
-	function getMapData(map, key) {
-	  var data = map.__data__;
-	  return isKeyable(key)
-	    ? data[typeof key == 'string' ? 'string' : 'hash']
-	    : data.map;
-	}
-
-	module.exports = getMapData;
-
-
-/***/ },
-/* 278 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is suitable for use as unique object key.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is suitable, else `false`.
-	 */
-	function isKeyable(value) {
-	  var type = typeof value;
-	  return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
-	    ? (value !== '__proto__')
-	    : (value === null);
-	}
-
-	module.exports = isKeyable;
-
-
-/***/ },
-/* 279 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getMapData = __webpack_require__(277);
-
-	/**
-	 * Gets the map value for `key`.
-	 *
-	 * @private
-	 * @name get
-	 * @memberOf MapCache
-	 * @param {string} key The key of the value to get.
-	 * @returns {*} Returns the entry value.
-	 */
-	function mapCacheGet(key) {
-	  return getMapData(this, key).get(key);
-	}
-
-	module.exports = mapCacheGet;
-
-
-/***/ },
-/* 280 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getMapData = __webpack_require__(277);
-
-	/**
-	 * Checks if a map value for `key` exists.
-	 *
-	 * @private
-	 * @name has
-	 * @memberOf MapCache
-	 * @param {string} key The key of the entry to check.
-	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-	 */
-	function mapCacheHas(key) {
-	  return getMapData(this, key).has(key);
-	}
-
-	module.exports = mapCacheHas;
-
-
-/***/ },
-/* 281 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getMapData = __webpack_require__(277);
-
-	/**
-	 * Sets the map `key` to `value`.
-	 *
-	 * @private
-	 * @name set
-	 * @memberOf MapCache
-	 * @param {string} key The key of the value to set.
-	 * @param {*} value The value to set.
-	 * @returns {Object} Returns the map cache instance.
-	 */
-	function mapCacheSet(key, value) {
-	  var data = getMapData(this, key),
-	      size = data.size;
-
-	  data.set(key, value);
-	  this.size += data.size == size ? 0 : 1;
-	  return this;
-	}
-
-	module.exports = mapCacheSet;
-
-
-/***/ },
-/* 282 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIsEqualDeep = __webpack_require__(283),
+	var baseIsEqualDeep = __webpack_require__(300),
 	    isObjectLike = __webpack_require__(206);
 
 	/**
@@ -26566,17 +27033,17 @@
 
 
 /***/ },
-/* 283 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Stack = __webpack_require__(244),
-	    equalArrays = __webpack_require__(284),
-	    equalByTag = __webpack_require__(290),
-	    equalObjects = __webpack_require__(294),
-	    getTag = __webpack_require__(315),
+	var Stack = __webpack_require__(293),
+	    equalArrays = __webpack_require__(301),
+	    equalByTag = __webpack_require__(303),
+	    equalObjects = __webpack_require__(306),
+	    getTag = __webpack_require__(327),
 	    isArray = __webpack_require__(238),
-	    isBuffer = __webpack_require__(303),
-	    isTypedArray = __webpack_require__(306);
+	    isBuffer = __webpack_require__(315),
+	    isTypedArray = __webpack_require__(318);
 
 	/** Used to compose bitmasks for value comparisons. */
 	var COMPARE_PARTIAL_FLAG = 1;
@@ -26655,12 +27122,12 @@
 
 
 /***/ },
-/* 284 */
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SetCache = __webpack_require__(285),
-	    arraySome = __webpack_require__(288),
-	    cacheHas = __webpack_require__(289);
+	var SetCache = __webpack_require__(242),
+	    arraySome = __webpack_require__(302),
+	    cacheHas = __webpack_require__(283);
 
 	/** Used to compose bitmasks for value comparisons. */
 	var COMPARE_PARTIAL_FLAG = 1,
@@ -26744,85 +27211,7 @@
 
 
 /***/ },
-/* 285 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var MapCache = __webpack_require__(267),
-	    setCacheAdd = __webpack_require__(286),
-	    setCacheHas = __webpack_require__(287);
-
-	/**
-	 *
-	 * Creates an array cache object to store unique values.
-	 *
-	 * @private
-	 * @constructor
-	 * @param {Array} [values] The values to cache.
-	 */
-	function SetCache(values) {
-	  var index = -1,
-	      length = values == null ? 0 : values.length;
-
-	  this.__data__ = new MapCache;
-	  while (++index < length) {
-	    this.add(values[index]);
-	  }
-	}
-
-	// Add methods to `SetCache`.
-	SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
-	SetCache.prototype.has = setCacheHas;
-
-	module.exports = SetCache;
-
-
-/***/ },
-/* 286 */
-/***/ function(module, exports) {
-
-	/** Used to stand-in for `undefined` hash values. */
-	var HASH_UNDEFINED = '__lodash_hash_undefined__';
-
-	/**
-	 * Adds `value` to the array cache.
-	 *
-	 * @private
-	 * @name add
-	 * @memberOf SetCache
-	 * @alias push
-	 * @param {*} value The value to cache.
-	 * @returns {Object} Returns the cache instance.
-	 */
-	function setCacheAdd(value) {
-	  this.__data__.set(value, HASH_UNDEFINED);
-	  return this;
-	}
-
-	module.exports = setCacheAdd;
-
-
-/***/ },
-/* 287 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is in the array cache.
-	 *
-	 * @private
-	 * @name has
-	 * @memberOf SetCache
-	 * @param {*} value The value to search for.
-	 * @returns {number} Returns `true` if `value` is found, else `false`.
-	 */
-	function setCacheHas(value) {
-	  return this.__data__.has(value);
-	}
-
-	module.exports = setCacheHas;
-
-
-/***/ },
-/* 288 */
+/* 302 */
 /***/ function(module, exports) {
 
 	/**
@@ -26851,34 +27240,15 @@
 
 
 /***/ },
-/* 289 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if a `cache` value for `key` exists.
-	 *
-	 * @private
-	 * @param {Object} cache The cache to query.
-	 * @param {string} key The key of the entry to check.
-	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-	 */
-	function cacheHas(cache, key) {
-	  return cache.has(key);
-	}
-
-	module.exports = cacheHas;
-
-
-/***/ },
-/* 290 */
+/* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Symbol = __webpack_require__(199),
-	    Uint8Array = __webpack_require__(291),
-	    eq = __webpack_require__(249),
-	    equalArrays = __webpack_require__(284),
-	    mapToArray = __webpack_require__(292),
-	    setToArray = __webpack_require__(293);
+	    Uint8Array = __webpack_require__(304),
+	    eq = __webpack_require__(264),
+	    equalArrays = __webpack_require__(301),
+	    mapToArray = __webpack_require__(305),
+	    setToArray = __webpack_require__(287);
 
 	/** Used to compose bitmasks for value comparisons. */
 	var COMPARE_PARTIAL_FLAG = 1,
@@ -26988,7 +27358,7 @@
 
 
 /***/ },
-/* 291 */
+/* 304 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var root = __webpack_require__(200);
@@ -27000,7 +27370,7 @@
 
 
 /***/ },
-/* 292 */
+/* 305 */
 /***/ function(module, exports) {
 
 	/**
@@ -27024,34 +27394,10 @@
 
 
 /***/ },
-/* 293 */
-/***/ function(module, exports) {
-
-	/**
-	 * Converts `set` to an array of its values.
-	 *
-	 * @private
-	 * @param {Object} set The set to convert.
-	 * @returns {Array} Returns the values.
-	 */
-	function setToArray(set) {
-	  var index = -1,
-	      result = Array(set.size);
-
-	  set.forEach(function(value) {
-	    result[++index] = value;
-	  });
-	  return result;
-	}
-
-	module.exports = setToArray;
-
-
-/***/ },
-/* 294 */
+/* 306 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getAllKeys = __webpack_require__(295);
+	var getAllKeys = __webpack_require__(307);
 
 	/** Used to compose bitmasks for value comparisons. */
 	var COMPARE_PARTIAL_FLAG = 1;
@@ -27143,12 +27489,12 @@
 
 
 /***/ },
-/* 295 */
+/* 307 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetAllKeys = __webpack_require__(296),
-	    getSymbols = __webpack_require__(297),
-	    keys = __webpack_require__(300);
+	var baseGetAllKeys = __webpack_require__(308),
+	    getSymbols = __webpack_require__(309),
+	    keys = __webpack_require__(312);
 
 	/**
 	 * Creates an array of own enumerable property names and symbols of `object`.
@@ -27165,7 +27511,7 @@
 
 
 /***/ },
-/* 296 */
+/* 308 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var arrayPush = __webpack_require__(233),
@@ -27191,11 +27537,11 @@
 
 
 /***/ },
-/* 297 */
+/* 309 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayFilter = __webpack_require__(298),
-	    stubArray = __webpack_require__(299);
+	var arrayFilter = __webpack_require__(310),
+	    stubArray = __webpack_require__(311);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -27227,7 +27573,7 @@
 
 
 /***/ },
-/* 298 */
+/* 310 */
 /***/ function(module, exports) {
 
 	/**
@@ -27258,7 +27604,7 @@
 
 
 /***/ },
-/* 299 */
+/* 311 */
 /***/ function(module, exports) {
 
 	/**
@@ -27287,12 +27633,12 @@
 
 
 /***/ },
-/* 300 */
+/* 312 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayLikeKeys = __webpack_require__(301),
-	    baseKeys = __webpack_require__(311),
-	    isArrayLike = __webpack_require__(314);
+	var arrayLikeKeys = __webpack_require__(313),
+	    baseKeys = __webpack_require__(323),
+	    isArrayLike = __webpack_require__(326);
 
 	/**
 	 * Creates an array of the own enumerable property names of `object`.
@@ -27330,15 +27676,15 @@
 
 
 /***/ },
-/* 301 */
+/* 313 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseTimes = __webpack_require__(302),
+	var baseTimes = __webpack_require__(314),
 	    isArguments = __webpack_require__(236),
 	    isArray = __webpack_require__(238),
-	    isBuffer = __webpack_require__(303),
-	    isIndex = __webpack_require__(305),
-	    isTypedArray = __webpack_require__(306);
+	    isBuffer = __webpack_require__(315),
+	    isIndex = __webpack_require__(317),
+	    isTypedArray = __webpack_require__(318);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -27385,7 +27731,7 @@
 
 
 /***/ },
-/* 302 */
+/* 314 */
 /***/ function(module, exports) {
 
 	/**
@@ -27411,11 +27757,11 @@
 
 
 /***/ },
-/* 303 */
+/* 315 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(200),
-	    stubFalse = __webpack_require__(304);
+	    stubFalse = __webpack_require__(316);
 
 	/** Detect free variable `exports`. */
 	var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -27456,7 +27802,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(209)(module)))
 
 /***/ },
-/* 304 */
+/* 316 */
 /***/ function(module, exports) {
 
 	/**
@@ -27480,7 +27826,7 @@
 
 
 /***/ },
-/* 305 */
+/* 317 */
 /***/ function(module, exports) {
 
 	/** Used as references for various `Number` constants. */
@@ -27508,12 +27854,12 @@
 
 
 /***/ },
-/* 306 */
+/* 318 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsTypedArray = __webpack_require__(307),
-	    baseUnary = __webpack_require__(309),
-	    nodeUtil = __webpack_require__(310);
+	var baseIsTypedArray = __webpack_require__(319),
+	    baseUnary = __webpack_require__(321),
+	    nodeUtil = __webpack_require__(322);
 
 	/* Node.js helper references. */
 	var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
@@ -27541,11 +27887,11 @@
 
 
 /***/ },
-/* 307 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var baseGetTag = __webpack_require__(198),
-	    isLength = __webpack_require__(308),
+	    isLength = __webpack_require__(320),
 	    isObjectLike = __webpack_require__(206);
 
 	/** `Object#toString` result references. */
@@ -27607,7 +27953,7 @@
 
 
 /***/ },
-/* 308 */
+/* 320 */
 /***/ function(module, exports) {
 
 	/** Used as references for various `Number` constants. */
@@ -27648,7 +27994,7 @@
 
 
 /***/ },
-/* 309 */
+/* 321 */
 /***/ function(module, exports) {
 
 	/**
@@ -27668,7 +28014,7 @@
 
 
 /***/ },
-/* 310 */
+/* 322 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(201);
@@ -27697,11 +28043,11 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(209)(module)))
 
 /***/ },
-/* 311 */
+/* 323 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isPrototype = __webpack_require__(312),
-	    nativeKeys = __webpack_require__(313);
+	var isPrototype = __webpack_require__(324),
+	    nativeKeys = __webpack_require__(325);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -27733,7 +28079,7 @@
 
 
 /***/ },
-/* 312 */
+/* 324 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -27757,7 +28103,7 @@
 
 
 /***/ },
-/* 313 */
+/* 325 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var overArg = __webpack_require__(205);
@@ -27769,11 +28115,11 @@
 
 
 /***/ },
-/* 314 */
+/* 326 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isFunction = __webpack_require__(261),
-	    isLength = __webpack_require__(308);
+	var isFunction = __webpack_require__(250),
+	    isLength = __webpack_require__(320);
 
 	/**
 	 * Checks if `value` is array-like. A value is considered array-like if it's
@@ -27808,16 +28154,16 @@
 
 
 /***/ },
-/* 315 */
+/* 327 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var DataView = __webpack_require__(316),
-	    Map = __webpack_require__(258),
-	    Promise = __webpack_require__(317),
-	    Set = __webpack_require__(318),
-	    WeakMap = __webpack_require__(319),
+	var DataView = __webpack_require__(328),
+	    Map = __webpack_require__(268),
+	    Promise = __webpack_require__(329),
+	    Set = __webpack_require__(285),
+	    WeakMap = __webpack_require__(330),
 	    baseGetTag = __webpack_require__(198),
-	    toSource = __webpack_require__(265);
+	    toSource = __webpack_require__(254);
 
 	/** `Object#toString` result references. */
 	var mapTag = '[object Map]',
@@ -27872,10 +28218,10 @@
 
 
 /***/ },
-/* 316 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(259),
+	var getNative = __webpack_require__(248),
 	    root = __webpack_require__(200);
 
 	/* Built-in method references that are verified to be native. */
@@ -27885,10 +28231,10 @@
 
 
 /***/ },
-/* 317 */
+/* 329 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(259),
+	var getNative = __webpack_require__(248),
 	    root = __webpack_require__(200);
 
 	/* Built-in method references that are verified to be native. */
@@ -27898,23 +28244,10 @@
 
 
 /***/ },
-/* 318 */
+/* 330 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(259),
-	    root = __webpack_require__(200);
-
-	/* Built-in method references that are verified to be native. */
-	var Set = getNative(root, 'Set');
-
-	module.exports = Set;
-
-
-/***/ },
-/* 319 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getNative = __webpack_require__(259),
+	var getNative = __webpack_require__(248),
 	    root = __webpack_require__(200);
 
 	/* Built-in method references that are verified to be native. */
@@ -27924,11 +28257,11 @@
 
 
 /***/ },
-/* 320 */
+/* 331 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isStrictComparable = __webpack_require__(321),
-	    keys = __webpack_require__(300);
+	var isStrictComparable = __webpack_require__(332),
+	    keys = __webpack_require__(312);
 
 	/**
 	 * Gets the property names, values, and compare flags of `object`.
@@ -27954,10 +28287,10 @@
 
 
 /***/ },
-/* 321 */
+/* 332 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(262);
+	var isObject = __webpack_require__(251);
 
 	/**
 	 * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.
@@ -27975,7 +28308,7 @@
 
 
 /***/ },
-/* 322 */
+/* 333 */
 /***/ function(module, exports) {
 
 	/**
@@ -28001,16 +28334,16 @@
 
 
 /***/ },
-/* 323 */
+/* 334 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsEqual = __webpack_require__(282),
-	    get = __webpack_require__(324),
-	    hasIn = __webpack_require__(336),
-	    isKey = __webpack_require__(327),
-	    isStrictComparable = __webpack_require__(321),
-	    matchesStrictComparable = __webpack_require__(322),
-	    toKey = __webpack_require__(335);
+	var baseIsEqual = __webpack_require__(299),
+	    get = __webpack_require__(335),
+	    hasIn = __webpack_require__(347),
+	    isKey = __webpack_require__(338),
+	    isStrictComparable = __webpack_require__(332),
+	    matchesStrictComparable = __webpack_require__(333),
+	    toKey = __webpack_require__(346);
 
 	/** Used to compose bitmasks for value comparisons. */
 	var COMPARE_PARTIAL_FLAG = 1,
@@ -28040,10 +28373,10 @@
 
 
 /***/ },
-/* 324 */
+/* 335 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGet = __webpack_require__(325);
+	var baseGet = __webpack_require__(336);
 
 	/**
 	 * Gets the value at `path` of `object`. If the resolved value is
@@ -28079,11 +28412,11 @@
 
 
 /***/ },
-/* 325 */
+/* 336 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var castPath = __webpack_require__(326),
-	    toKey = __webpack_require__(335);
+	var castPath = __webpack_require__(337),
+	    toKey = __webpack_require__(346);
 
 	/**
 	 * The base implementation of `_.get` without support for default values.
@@ -28109,13 +28442,13 @@
 
 
 /***/ },
-/* 326 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var isArray = __webpack_require__(238),
-	    isKey = __webpack_require__(327),
-	    stringToPath = __webpack_require__(329),
-	    toString = __webpack_require__(332);
+	    isKey = __webpack_require__(338),
+	    stringToPath = __webpack_require__(340),
+	    toString = __webpack_require__(343);
 
 	/**
 	 * Casts `value` to a path array if it's not one.
@@ -28136,11 +28469,11 @@
 
 
 /***/ },
-/* 327 */
+/* 338 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var isArray = __webpack_require__(238),
-	    isSymbol = __webpack_require__(328);
+	    isSymbol = __webpack_require__(339);
 
 	/** Used to match property names within property paths. */
 	var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
@@ -28171,7 +28504,7 @@
 
 
 /***/ },
-/* 328 */
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var baseGetTag = __webpack_require__(198),
@@ -28206,10 +28539,10 @@
 
 
 /***/ },
-/* 329 */
+/* 340 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var memoizeCapped = __webpack_require__(330);
+	var memoizeCapped = __webpack_require__(341);
 
 	/** Used to match property names within property paths. */
 	var reLeadingDot = /^\./,
@@ -28240,10 +28573,10 @@
 
 
 /***/ },
-/* 330 */
+/* 341 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var memoize = __webpack_require__(331);
+	var memoize = __webpack_require__(342);
 
 	/** Used as the maximum memoize cache size. */
 	var MAX_MEMOIZE_SIZE = 500;
@@ -28272,10 +28605,10 @@
 
 
 /***/ },
-/* 331 */
+/* 342 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var MapCache = __webpack_require__(267);
+	var MapCache = __webpack_require__(243);
 
 	/** Error message constants. */
 	var FUNC_ERROR_TEXT = 'Expected a function';
@@ -28351,10 +28684,10 @@
 
 
 /***/ },
-/* 332 */
+/* 343 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseToString = __webpack_require__(333);
+	var baseToString = __webpack_require__(344);
 
 	/**
 	 * Converts `value` to a string. An empty string is returned for `null`
@@ -28385,13 +28718,13 @@
 
 
 /***/ },
-/* 333 */
+/* 344 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Symbol = __webpack_require__(199),
-	    arrayMap = __webpack_require__(334),
+	    arrayMap = __webpack_require__(345),
 	    isArray = __webpack_require__(238),
-	    isSymbol = __webpack_require__(328);
+	    isSymbol = __webpack_require__(339);
 
 	/** Used as references for various `Number` constants. */
 	var INFINITY = 1 / 0;
@@ -28428,7 +28761,7 @@
 
 
 /***/ },
-/* 334 */
+/* 345 */
 /***/ function(module, exports) {
 
 	/**
@@ -28455,10 +28788,10 @@
 
 
 /***/ },
-/* 335 */
+/* 346 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isSymbol = __webpack_require__(328);
+	var isSymbol = __webpack_require__(339);
 
 	/** Used as references for various `Number` constants. */
 	var INFINITY = 1 / 0;
@@ -28482,11 +28815,11 @@
 
 
 /***/ },
-/* 336 */
+/* 347 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseHasIn = __webpack_require__(337),
-	    hasPath = __webpack_require__(338);
+	var baseHasIn = __webpack_require__(348),
+	    hasPath = __webpack_require__(349);
 
 	/**
 	 * Checks if `path` is a direct or inherited property of `object`.
@@ -28522,7 +28855,7 @@
 
 
 /***/ },
-/* 337 */
+/* 348 */
 /***/ function(module, exports) {
 
 	/**
@@ -28541,15 +28874,15 @@
 
 
 /***/ },
-/* 338 */
+/* 349 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var castPath = __webpack_require__(326),
+	var castPath = __webpack_require__(337),
 	    isArguments = __webpack_require__(236),
 	    isArray = __webpack_require__(238),
-	    isIndex = __webpack_require__(305),
-	    isLength = __webpack_require__(308),
-	    toKey = __webpack_require__(335);
+	    isIndex = __webpack_require__(317),
+	    isLength = __webpack_require__(320),
+	    toKey = __webpack_require__(346);
 
 	/**
 	 * Checks if `path` exists on `object`.
@@ -28586,7 +28919,7 @@
 
 
 /***/ },
-/* 339 */
+/* 350 */
 /***/ function(module, exports) {
 
 	/**
@@ -28613,13 +28946,13 @@
 
 
 /***/ },
-/* 340 */
+/* 351 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseProperty = __webpack_require__(341),
-	    basePropertyDeep = __webpack_require__(342),
-	    isKey = __webpack_require__(327),
-	    toKey = __webpack_require__(335);
+	var baseProperty = __webpack_require__(352),
+	    basePropertyDeep = __webpack_require__(353),
+	    isKey = __webpack_require__(338),
+	    toKey = __webpack_require__(346);
 
 	/**
 	 * Creates a function that returns the value at `path` of a given object.
@@ -28651,7 +28984,7 @@
 
 
 /***/ },
-/* 341 */
+/* 352 */
 /***/ function(module, exports) {
 
 	/**
@@ -28671,10 +29004,10 @@
 
 
 /***/ },
-/* 342 */
+/* 353 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGet = __webpack_require__(325);
+	var baseGet = __webpack_require__(336);
 
 	/**
 	 * A specialized version of `baseProperty` which supports deep paths.
@@ -28693,556 +29026,12 @@
 
 
 /***/ },
-/* 343 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseUnset = __webpack_require__(344),
-	    isIndex = __webpack_require__(305);
-
-	/** Used for built-in method references. */
-	var arrayProto = Array.prototype;
-
-	/** Built-in value references. */
-	var splice = arrayProto.splice;
-
-	/**
-	 * The base implementation of `_.pullAt` without support for individual
-	 * indexes or capturing the removed elements.
-	 *
-	 * @private
-	 * @param {Array} array The array to modify.
-	 * @param {number[]} indexes The indexes of elements to remove.
-	 * @returns {Array} Returns `array`.
-	 */
-	function basePullAt(array, indexes) {
-	  var length = array ? indexes.length : 0,
-	      lastIndex = length - 1;
-
-	  while (length--) {
-	    var index = indexes[length];
-	    if (length == lastIndex || index !== previous) {
-	      var previous = index;
-	      if (isIndex(index)) {
-	        splice.call(array, index, 1);
-	      } else {
-	        baseUnset(array, index);
-	      }
-	    }
-	  }
-	  return array;
-	}
-
-	module.exports = basePullAt;
-
-
-/***/ },
-/* 344 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var castPath = __webpack_require__(326),
-	    last = __webpack_require__(345),
-	    parent = __webpack_require__(346),
-	    toKey = __webpack_require__(335);
-
-	/**
-	 * The base implementation of `_.unset`.
-	 *
-	 * @private
-	 * @param {Object} object The object to modify.
-	 * @param {Array|string} path The property path to unset.
-	 * @returns {boolean} Returns `true` if the property is deleted, else `false`.
-	 */
-	function baseUnset(object, path) {
-	  path = castPath(path, object);
-	  object = parent(object, path);
-	  return object == null || delete object[toKey(last(path))];
-	}
-
-	module.exports = baseUnset;
-
-
-/***/ },
-/* 345 */
-/***/ function(module, exports) {
-
-	/**
-	 * Gets the last element of `array`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Array
-	 * @param {Array} array The array to query.
-	 * @returns {*} Returns the last element of `array`.
-	 * @example
-	 *
-	 * _.last([1, 2, 3]);
-	 * // => 3
-	 */
-	function last(array) {
-	  var length = array == null ? 0 : array.length;
-	  return length ? array[length - 1] : undefined;
-	}
-
-	module.exports = last;
-
-
-/***/ },
-/* 346 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseGet = __webpack_require__(325),
-	    baseSlice = __webpack_require__(347);
-
-	/**
-	 * Gets the parent value at `path` of `object`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @param {Array} path The path to get the parent value of.
-	 * @returns {*} Returns the parent value.
-	 */
-	function parent(object, path) {
-	  return path.length < 2 ? object : baseGet(object, baseSlice(path, 0, -1));
-	}
-
-	module.exports = parent;
-
-
-/***/ },
-/* 347 */
-/***/ function(module, exports) {
-
-	/**
-	 * The base implementation of `_.slice` without an iteratee call guard.
-	 *
-	 * @private
-	 * @param {Array} array The array to slice.
-	 * @param {number} [start=0] The start position.
-	 * @param {number} [end=array.length] The end position.
-	 * @returns {Array} Returns the slice of `array`.
-	 */
-	function baseSlice(array, start, end) {
-	  var index = -1,
-	      length = array.length;
-
-	  if (start < 0) {
-	    start = -start > length ? 0 : (length + start);
-	  }
-	  end = end > length ? length : end;
-	  if (end < 0) {
-	    end += length;
-	  }
-	  length = start > end ? 0 : ((end - start) >>> 0);
-	  start >>>= 0;
-
-	  var result = Array(length);
-	  while (++index < length) {
-	    result[index] = array[index + start];
-	  }
-	  return result;
-	}
-
-	module.exports = baseSlice;
-
-
-/***/ },
-/* 348 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseUniq = __webpack_require__(349);
-
-	/**
-	 * Creates a duplicate-free version of an array, using
-	 * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
-	 * for equality comparisons, in which only the first occurrence of each element
-	 * is kept. The order of result values is determined by the order they occur
-	 * in the array.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Array
-	 * @param {Array} array The array to inspect.
-	 * @returns {Array} Returns the new duplicate free array.
-	 * @example
-	 *
-	 * _.uniq([2, 1, 2]);
-	 * // => [2, 1]
-	 */
-	function uniq(array) {
-	  return (array && array.length) ? baseUniq(array) : [];
-	}
-
-	module.exports = uniq;
-
-
-/***/ },
-/* 349 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var SetCache = __webpack_require__(285),
-	    arrayIncludes = __webpack_require__(350),
-	    arrayIncludesWith = __webpack_require__(355),
-	    cacheHas = __webpack_require__(289),
-	    createSet = __webpack_require__(356),
-	    setToArray = __webpack_require__(293);
-
-	/** Used as the size to enable large array optimizations. */
-	var LARGE_ARRAY_SIZE = 200;
-
-	/**
-	 * The base implementation of `_.uniqBy` without support for iteratee shorthands.
-	 *
-	 * @private
-	 * @param {Array} array The array to inspect.
-	 * @param {Function} [iteratee] The iteratee invoked per element.
-	 * @param {Function} [comparator] The comparator invoked per element.
-	 * @returns {Array} Returns the new duplicate free array.
-	 */
-	function baseUniq(array, iteratee, comparator) {
-	  var index = -1,
-	      includes = arrayIncludes,
-	      length = array.length,
-	      isCommon = true,
-	      result = [],
-	      seen = result;
-
-	  if (comparator) {
-	    isCommon = false;
-	    includes = arrayIncludesWith;
-	  }
-	  else if (length >= LARGE_ARRAY_SIZE) {
-	    var set = iteratee ? null : createSet(array);
-	    if (set) {
-	      return setToArray(set);
-	    }
-	    isCommon = false;
-	    includes = cacheHas;
-	    seen = new SetCache;
-	  }
-	  else {
-	    seen = iteratee ? [] : result;
-	  }
-	  outer:
-	  while (++index < length) {
-	    var value = array[index],
-	        computed = iteratee ? iteratee(value) : value;
-
-	    value = (comparator || value !== 0) ? value : 0;
-	    if (isCommon && computed === computed) {
-	      var seenIndex = seen.length;
-	      while (seenIndex--) {
-	        if (seen[seenIndex] === computed) {
-	          continue outer;
-	        }
-	      }
-	      if (iteratee) {
-	        seen.push(computed);
-	      }
-	      result.push(value);
-	    }
-	    else if (!includes(seen, computed, comparator)) {
-	      if (seen !== result) {
-	        seen.push(computed);
-	      }
-	      result.push(value);
-	    }
-	  }
-	  return result;
-	}
-
-	module.exports = baseUniq;
-
-
-/***/ },
-/* 350 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIndexOf = __webpack_require__(351);
-
-	/**
-	 * A specialized version of `_.includes` for arrays without support for
-	 * specifying an index to search from.
-	 *
-	 * @private
-	 * @param {Array} [array] The array to inspect.
-	 * @param {*} target The value to search for.
-	 * @returns {boolean} Returns `true` if `target` is found, else `false`.
-	 */
-	function arrayIncludes(array, value) {
-	  var length = array == null ? 0 : array.length;
-	  return !!length && baseIndexOf(array, value, 0) > -1;
-	}
-
-	module.exports = arrayIncludes;
-
-
-/***/ },
-/* 351 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseFindIndex = __webpack_require__(352),
-	    baseIsNaN = __webpack_require__(353),
-	    strictIndexOf = __webpack_require__(354);
-
-	/**
-	 * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
-	 *
-	 * @private
-	 * @param {Array} array The array to inspect.
-	 * @param {*} value The value to search for.
-	 * @param {number} fromIndex The index to search from.
-	 * @returns {number} Returns the index of the matched value, else `-1`.
-	 */
-	function baseIndexOf(array, value, fromIndex) {
-	  return value === value
-	    ? strictIndexOf(array, value, fromIndex)
-	    : baseFindIndex(array, baseIsNaN, fromIndex);
-	}
-
-	module.exports = baseIndexOf;
-
-
-/***/ },
-/* 352 */
-/***/ function(module, exports) {
-
-	/**
-	 * The base implementation of `_.findIndex` and `_.findLastIndex` without
-	 * support for iteratee shorthands.
-	 *
-	 * @private
-	 * @param {Array} array The array to inspect.
-	 * @param {Function} predicate The function invoked per iteration.
-	 * @param {number} fromIndex The index to search from.
-	 * @param {boolean} [fromRight] Specify iterating from right to left.
-	 * @returns {number} Returns the index of the matched value, else `-1`.
-	 */
-	function baseFindIndex(array, predicate, fromIndex, fromRight) {
-	  var length = array.length,
-	      index = fromIndex + (fromRight ? 1 : -1);
-
-	  while ((fromRight ? index-- : ++index < length)) {
-	    if (predicate(array[index], index, array)) {
-	      return index;
-	    }
-	  }
-	  return -1;
-	}
-
-	module.exports = baseFindIndex;
-
-
-/***/ },
-/* 353 */
-/***/ function(module, exports) {
-
-	/**
-	 * The base implementation of `_.isNaN` without support for number objects.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is `NaN`, else `false`.
-	 */
-	function baseIsNaN(value) {
-	  return value !== value;
-	}
-
-	module.exports = baseIsNaN;
-
-
-/***/ },
 /* 354 */
-/***/ function(module, exports) {
-
-	/**
-	 * A specialized version of `_.indexOf` which performs strict equality
-	 * comparisons of values, i.e. `===`.
-	 *
-	 * @private
-	 * @param {Array} array The array to inspect.
-	 * @param {*} value The value to search for.
-	 * @param {number} fromIndex The index to search from.
-	 * @returns {number} Returns the index of the matched value, else `-1`.
-	 */
-	function strictIndexOf(array, value, fromIndex) {
-	  var index = fromIndex - 1,
-	      length = array.length;
-
-	  while (++index < length) {
-	    if (array[index] === value) {
-	      return index;
-	    }
-	  }
-	  return -1;
-	}
-
-	module.exports = strictIndexOf;
-
-
-/***/ },
-/* 355 */
-/***/ function(module, exports) {
-
-	/**
-	 * This function is like `arrayIncludes` except that it accepts a comparator.
-	 *
-	 * @private
-	 * @param {Array} [array] The array to inspect.
-	 * @param {*} target The value to search for.
-	 * @param {Function} comparator The comparator invoked per element.
-	 * @returns {boolean} Returns `true` if `target` is found, else `false`.
-	 */
-	function arrayIncludesWith(array, value, comparator) {
-	  var index = -1,
-	      length = array == null ? 0 : array.length;
-
-	  while (++index < length) {
-	    if (comparator(value, array[index])) {
-	      return true;
-	    }
-	  }
-	  return false;
-	}
-
-	module.exports = arrayIncludesWith;
-
-
-/***/ },
-/* 356 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Set = __webpack_require__(318),
-	    noop = __webpack_require__(357),
-	    setToArray = __webpack_require__(293);
-
-	/** Used as references for various `Number` constants. */
-	var INFINITY = 1 / 0;
-
-	/**
-	 * Creates a set object of `values`.
-	 *
-	 * @private
-	 * @param {Array} values The values to add to the set.
-	 * @returns {Object} Returns the new set.
-	 */
-	var createSet = !(Set && (1 / setToArray(new Set([,-0]))[1]) == INFINITY) ? noop : function(values) {
-	  return new Set(values);
-	};
-
-	module.exports = createSet;
-
-
-/***/ },
-/* 357 */
-/***/ function(module, exports) {
-
-	/**
-	 * This method returns `undefined`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 2.3.0
-	 * @category Util
-	 * @example
-	 *
-	 * _.times(2, _.noop);
-	 * // => [undefined, undefined]
-	 */
-	function noop() {
-	  // No operation performed.
-	}
-
-	module.exports = noop;
-
-
-/***/ },
-/* 358 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var createFind = __webpack_require__(359),
-	    findIndex = __webpack_require__(360);
-
-	/**
-	 * Iterates over elements of `collection`, returning the first element
-	 * `predicate` returns truthy for. The predicate is invoked with three
-	 * arguments: (value, index|key, collection).
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Collection
-	 * @param {Array|Object} collection The collection to inspect.
-	 * @param {Function} [predicate=_.identity] The function invoked per iteration.
-	 * @param {number} [fromIndex=0] The index to search from.
-	 * @returns {*} Returns the matched element, else `undefined`.
-	 * @example
-	 *
-	 * var users = [
-	 *   { 'user': 'barney',  'age': 36, 'active': true },
-	 *   { 'user': 'fred',    'age': 40, 'active': false },
-	 *   { 'user': 'pebbles', 'age': 1,  'active': true }
-	 * ];
-	 *
-	 * _.find(users, function(o) { return o.age < 40; });
-	 * // => object for 'barney'
-	 *
-	 * // The `_.matches` iteratee shorthand.
-	 * _.find(users, { 'age': 1, 'active': true });
-	 * // => object for 'pebbles'
-	 *
-	 * // The `_.matchesProperty` iteratee shorthand.
-	 * _.find(users, ['active', false]);
-	 * // => object for 'fred'
-	 *
-	 * // The `_.property` iteratee shorthand.
-	 * _.find(users, 'active');
-	 * // => object for 'barney'
-	 */
-	var find = createFind(findIndex);
-
-	module.exports = find;
-
-
-/***/ },
-/* 359 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIteratee = __webpack_require__(241),
-	    isArrayLike = __webpack_require__(314),
-	    keys = __webpack_require__(300);
-
-	/**
-	 * Creates a `_.find` or `_.findLast` function.
-	 *
-	 * @private
-	 * @param {Function} findIndexFunc The function to find the collection index.
-	 * @returns {Function} Returns the new find function.
-	 */
-	function createFind(findIndexFunc) {
-	  return function(collection, predicate, fromIndex) {
-	    var iterable = Object(collection);
-	    if (!isArrayLike(collection)) {
-	      var iteratee = baseIteratee(predicate, 3);
-	      collection = keys(collection);
-	      predicate = function(key) { return iteratee(iterable[key], key, iterable); };
-	    }
-	    var index = findIndexFunc(collection, predicate, fromIndex);
-	    return index > -1 ? iterable[iteratee ? collection[index] : index] : undefined;
-	  };
-	}
-
-	module.exports = createFind;
-
-
-/***/ },
-/* 360 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseFindIndex = __webpack_require__(352),
-	    baseIteratee = __webpack_require__(241),
-	    toInteger = __webpack_require__(361);
+	var baseFindIndex = __webpack_require__(279),
+	    baseIteratee = __webpack_require__(290),
+	    toInteger = __webpack_require__(355);
 
 	/* Built-in method references for those with the same name as other `lodash` methods. */
 	var nativeMax = Math.max;
@@ -29298,10 +29087,10 @@
 
 
 /***/ },
-/* 361 */
+/* 355 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var toFinite = __webpack_require__(362);
+	var toFinite = __webpack_require__(356);
 
 	/**
 	 * Converts `value` to an integer.
@@ -29340,10 +29129,10 @@
 
 
 /***/ },
-/* 362 */
+/* 356 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var toNumber = __webpack_require__(363);
+	var toNumber = __webpack_require__(357);
 
 	/** Used as references for various `Number` constants. */
 	var INFINITY = 1 / 0,
@@ -29388,11 +29177,11 @@
 
 
 /***/ },
-/* 363 */
+/* 357 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(262),
-	    isSymbol = __webpack_require__(328);
+	var isObject = __webpack_require__(251),
+	    isSymbol = __webpack_require__(339);
 
 	/** Used as references for various `Number` constants. */
 	var NAN = 0 / 0;
@@ -29460,14 +29249,14 @@
 
 
 /***/ },
-/* 364 */
+/* 358 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arraySampleSize = __webpack_require__(365),
-	    baseSampleSize = __webpack_require__(369),
+	var arraySampleSize = __webpack_require__(359),
+	    baseSampleSize = __webpack_require__(363),
 	    isArray = __webpack_require__(238),
-	    isIterateeCall = __webpack_require__(372),
-	    toInteger = __webpack_require__(361);
+	    isIterateeCall = __webpack_require__(366),
+	    toInteger = __webpack_require__(355);
 
 	/**
 	 * Gets `n` random elements at unique keys from `collection` up to the
@@ -29503,12 +29292,12 @@
 
 
 /***/ },
-/* 365 */
+/* 359 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseClamp = __webpack_require__(366),
+	var baseClamp = __webpack_require__(360),
 	    copyArray = __webpack_require__(239),
-	    shuffleSelf = __webpack_require__(367);
+	    shuffleSelf = __webpack_require__(361);
 
 	/**
 	 * A specialized version of `_.sampleSize` for arrays.
@@ -29526,7 +29315,7 @@
 
 
 /***/ },
-/* 366 */
+/* 360 */
 /***/ function(module, exports) {
 
 	/**
@@ -29554,10 +29343,10 @@
 
 
 /***/ },
-/* 367 */
+/* 361 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseRandom = __webpack_require__(368);
+	var baseRandom = __webpack_require__(362);
 
 	/**
 	 * A specialized version of `_.shuffle` which mutates and sets the size of `array`.
@@ -29588,7 +29377,7 @@
 
 
 /***/ },
-/* 368 */
+/* 362 */
 /***/ function(module, exports) {
 
 	/* Built-in method references for those with the same name as other `lodash` methods. */
@@ -29612,12 +29401,12 @@
 
 
 /***/ },
-/* 369 */
+/* 363 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseClamp = __webpack_require__(366),
-	    shuffleSelf = __webpack_require__(367),
-	    values = __webpack_require__(370);
+	var baseClamp = __webpack_require__(360),
+	    shuffleSelf = __webpack_require__(361),
+	    values = __webpack_require__(364);
 
 	/**
 	 * The base implementation of `_.sampleSize` without param guards.
@@ -29636,11 +29425,11 @@
 
 
 /***/ },
-/* 370 */
+/* 364 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseValues = __webpack_require__(371),
-	    keys = __webpack_require__(300);
+	var baseValues = __webpack_require__(365),
+	    keys = __webpack_require__(312);
 
 	/**
 	 * Creates an array of the own enumerable string keyed property values of `object`.
@@ -29676,10 +29465,10 @@
 
 
 /***/ },
-/* 371 */
+/* 365 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayMap = __webpack_require__(334);
+	var arrayMap = __webpack_require__(345);
 
 	/**
 	 * The base implementation of `_.values` and `_.valuesIn` which creates an
@@ -29701,13 +29490,13 @@
 
 
 /***/ },
-/* 372 */
+/* 366 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var eq = __webpack_require__(249),
-	    isArrayLike = __webpack_require__(314),
-	    isIndex = __webpack_require__(305),
-	    isObject = __webpack_require__(262);
+	var eq = __webpack_require__(264),
+	    isArrayLike = __webpack_require__(326),
+	    isIndex = __webpack_require__(317),
+	    isObject = __webpack_require__(251);
 
 	/**
 	 * Checks if the given arguments are from an iteratee call.
@@ -29737,7 +29526,7 @@
 
 
 /***/ },
-/* 373 */
+/* 367 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -29810,7 +29599,7 @@
 	;
 
 /***/ },
-/* 374 */
+/* 368 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -29825,15 +29614,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _PriceChangesGrid = __webpack_require__(375);
+	var _PriceChangesGrid = __webpack_require__(369);
 
 	var _PriceChangesGrid2 = _interopRequireDefault(_PriceChangesGrid);
 
-	var _StockDetailPanel = __webpack_require__(537);
+	var _StockDetailPanel = __webpack_require__(527);
 
 	var _StockDetailPanel2 = _interopRequireDefault(_StockDetailPanel);
 
-	var _FxPanel = __webpack_require__(544);
+	var _FxPanel = __webpack_require__(534);
 
 	var _FxPanel2 = _interopRequireDefault(_FxPanel);
 
@@ -29920,7 +29709,7 @@
 	;
 
 /***/ },
-/* 375 */
+/* 369 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -29935,27 +29724,23 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _agGridReact = __webpack_require__(376);
+	var _agGridReact = __webpack_require__(370);
 
-	var _map = __webpack_require__(509);
+	var _map = __webpack_require__(504);
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _difference = __webpack_require__(516);
+	var _difference = __webpack_require__(511);
 
 	var _difference2 = _interopRequireDefault(_difference);
 
-	var _forEach = __webpack_require__(527);
+	var _forEach = __webpack_require__(522);
 
 	var _forEach2 = _interopRequireDefault(_forEach);
 
-	var _includes = __webpack_require__(530);
+	var _includes = __webpack_require__(525);
 
 	var _includes2 = _interopRequireDefault(_includes);
-
-	var _assign = __webpack_require__(532);
-
-	var _assign2 = _interopRequireDefault(_assign);
 
 	var _ExchangeService = __webpack_require__(231);
 
@@ -30009,6 +29794,9 @@
 	        _this.onGridReady = _this.onGridReady.bind(_this);
 	        _this.onSelectionChanged = _this.onSelectionChanged.bind(_this);
 
+	        // grid callbacks
+	        _this.getRowNodeId = _this.getRowNodeId.bind(_this);
+
 	        // component events
 	        _this.updateSymbol = _this.updateSymbol.bind(_this);
 	        return _this;
@@ -30035,12 +29823,17 @@
 	            var rowData = (0, _map2.default)(this.props.selectedExchange.supportedStocks, function (symbol) {
 	                return _this2.exchangeService.getTicker(symbol);
 	            });
-	            this.gridApi.addItems(rowData);
+	            this.gridApi.updateRowData({ add: rowData });
 
 	            // select the first symbol to show the chart
 	            this.gridApi.getModel().getRow(0).setSelected(true);
 
 	            this.gridApi.sizeColumnsToFit();
+	        }
+	    }, {
+	        key: "getRowNodeId",
+	        value: function getRowNodeId(data) {
+	            return data.symbol;
 	        }
 	    }, {
 	        key: "onSelectionChanged",
@@ -30082,28 +29875,28 @@
 	                    _this4.exchangeService.removeSubscriber(_this4.updateSymbol, symbol);
 	                });
 
+	                // Remove ag-grid nodes as necessary
+	                var rowsToRemove = [];
+	                this.gridApi.forEachNode(function (node) {
+	                    var data = node.data;
+
+	                    if ((0, _includes2.default)(symbolsRemoved, data.symbol)) {
+	                        rowsToRemove.push(data);
+	                    }
+	                });
+	                this.gridApi.updateRowData({ remove: rowsToRemove });
+
 	                // Subscribe to new ones that need to be added
 	                var symbolsAdded = (0, _difference2.default)(nextSymbols, currentSymbols);
 	                (0, _forEach2.default)(symbolsAdded, function (symbol) {
 	                    _this4.exchangeService.addSubscriber(_this4.updateSymbol, symbol);
 	                });
 
-	                // Remove ag-grid nodes as necessary
-	                var nodesToRemove = [];
-	                this.gridApi.forEachNode(function (node) {
-	                    var data = node.data;
-
-	                    if ((0, _includes2.default)(symbolsRemoved, data.symbol)) {
-	                        nodesToRemove.push(node);
-	                    }
-	                });
-	                this.gridApi.removeItems(nodesToRemove);
-
 	                // Insert new ag-grid nodes as necessary
 	                var rowData = (0, _map2.default)(symbolsAdded, function (symbol) {
 	                    return _this4.exchangeService.getTicker(symbol);
 	                });
-	                this.gridApi.addItems(rowData);
+	                this.gridApi.updateRowData({ add: rowData });
 
 	                // select the first symbol to show the chart
 	                this.gridApi.getModel().getRow(0).setSelected(true);
@@ -30112,53 +29905,12 @@
 	    }, {
 	        key: "updateSymbol",
 	        value: function updateSymbol(symbol) {
-	            var _this5 = this;
-
 	            if (!this.gridApi) {
 	                // the grid isn't ready yet
 	                return;
 	            }
 
-	            var updatedNodes = [];
-	            var updatedCols = [];
-
-	            this.gridApi.forEachNode(function (node) {
-	                var data = node.data;
-
-	                if (data.symbol === symbol.symbol) {
-	                    var _iteratorNormalCompletion = true;
-	                    var _didIteratorError = false;
-	                    var _iteratorError = undefined;
-
-	                    try {
-	                        for (var _iterator = _this5.state.columnDefs[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	                            var def = _step.value;
-
-	                            if (data[def.field] !== symbol[def.field]) {
-	                                updatedCols.push(def.field);
-	                            }
-	                        }
-	                    } catch (err) {
-	                        _didIteratorError = true;
-	                        _iteratorError = err;
-	                    } finally {
-	                        try {
-	                            if (!_iteratorNormalCompletion && _iterator.return) {
-	                                _iterator.return();
-	                            }
-	                        } finally {
-	                            if (_didIteratorError) {
-	                                throw _iteratorError;
-	                            }
-	                        }
-	                    }
-
-	                    (0, _assign2.default)(data, symbol);
-	                    updatedNodes.push(node);
-	                }
-	            });
-
-	            this.gridApi.refreshCells(updatedNodes, updatedCols);
+	            this.gridApi.updateRowData({ update: [symbol] });
 	        }
 	    }, {
 	        key: "render",
@@ -30173,6 +29925,9 @@
 	                    enableSorting: "true",
 	                    rowSelection: "single"
 
+	                    // callbacks
+	                    , getRowNodeId: this.getRowNodeId
+
 	                    // events
 	                    , onGridReady: this.onGridReady,
 	                    onSelectionChanged: this.onSelectionChanged })
@@ -30186,69 +29941,94 @@
 	exports.default = _class;
 
 /***/ },
-/* 376 */
+/* 370 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	exports.AgGridReact = __webpack_require__(377).AgGridReact;
-	exports.reactCellRendererFactory = __webpack_require__(504).reactCellRendererFactory;
-	exports.reactFilterFactory = __webpack_require__(507).reactFilterFactory;
+	exports.AgGridReact = __webpack_require__(371).AgGridReact;
+	exports.reactCellRendererFactory = __webpack_require__(499).reactCellRendererFactory;
+	exports.reactFilterFactory = __webpack_require__(502).reactFilterFactory;
 
 
 /***/ },
-/* 377 */
+/* 371 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v10.1.0
-	/// <reference path="../typings/tsd"/>
+	// ag-grid-react v11.0.0
 	"use strict";
-	var reactFrameworkFactory_1 = __webpack_require__(378);
-	var reactFrameworkComponentWrapper_1 = __webpack_require__(508);
+	var __extends = (this && this.__extends) || (function () {
+	    var extendStatics = Object.setPrototypeOf ||
+	        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+	        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+	    return function (d, b) {
+	        extendStatics(d, b);
+	        function __() { this.constructor = d; }
+	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	    };
+	})();
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var reactFrameworkFactory_1 = __webpack_require__(372);
+	var reactFrameworkComponentWrapper_1 = __webpack_require__(503);
 	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(36);
-	var AgGrid = __webpack_require__(379);
-	exports.AgGridReact = React.createClass({
-	    render: function () {
+	var react_1 = __webpack_require__(1);
+	var PropTypes = __webpack_require__(184);
+	var AgGrid = __webpack_require__(373);
+	var AgGridReact = (function (_super) {
+	    __extends(AgGridReact, _super);
+	    function AgGridReact(props, state) {
+	        var _this = _super.call(this, props, state) || this;
+	        _this.props = props;
+	        _this.state = state;
+	        return _this;
+	    }
+	    AgGridReact.prototype.render = function () {
+	        var _this = this;
 	        return React.DOM.div({
-	            style: this.createStyleForDiv()
+	            style: this.createStyleForDiv(),
+	            ref: function (e) {
+	                _this.eGridDiv = e;
+	            }
 	        });
-	    },
-	    createStyleForDiv: function () {
+	    };
+	    AgGridReact.prototype.createStyleForDiv = function () {
 	        var style = { height: '100%' };
 	        // allow user to override styles
 	        var containerStyle = this.props.containerStyle;
 	        if (containerStyle) {
 	            Object.keys(containerStyle).forEach(function (key) {
-	                var value = containerStyle[key];
-	                style[key] = value;
+	                style[key] = containerStyle[key];
 	            });
 	        }
 	        return style;
-	    },
-	    componentDidMount: function () {
+	    };
+	    AgGridReact.prototype.componentDidMount = function () {
 	        var reactFrameworkFactory = new reactFrameworkFactory_1.ReactFrameworkFactory(this);
 	        var gridParams = { frameworkFactory: reactFrameworkFactory };
-	        var domNode = ReactDOM.findDOMNode(this);
 	        this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(this.props.gridOptions, this.props);
 	        AgGrid.Grid.setFrameworkBeans([reactFrameworkComponentWrapper_1.ReactFrameworkComponentWrapper]);
-	        new AgGrid.Grid(domNode, this.gridOptions, gridParams);
+	        // don't need the return value
+	        new AgGrid.Grid(this.eGridDiv, this.gridOptions, gridParams);
 	        this.api = this.gridOptions.api;
 	        this.columnApi = this.gridOptions.columnApi;
-	    },
-	    shouldComponentUpdate: function () {
+	    };
+	    AgGridReact.prototype.shouldComponentUpdate = function () {
 	        // we want full control of the dom, as ag-Grid doesn't use React internally,
 	        // so for performance reasons we tell React we don't need render called after
 	        // property changes.
 	        return false;
-	    },
-	    componentWillReceiveProps: function (nextProps) {
+	    };
+	    AgGridReact.prototype.componentWillReceiveProps = function (nextProps) {
 	        var _this = this;
+	        var debugLogging = !!nextProps.debug;
 	        // keeping consistent with web components, put changing
 	        // values in currentValue and previousValue pairs and
 	        // not include items that have not changed.
 	        var changes = {};
 	        AgGrid.ComponentUtil.ALL_PROPERTIES.forEach(function (propKey) {
-	            if (_this.props[propKey] !== nextProps[propKey]) {
+	            if (!_this.areEquivalent(_this.props[propKey], nextProps[propKey])) {
+	                if (debugLogging) {
+	                    console.log("agGridReact: [" + propKey + "] property changed");
+	                }
 	                changes[propKey] = {
 	                    previousValue: _this.props[propKey],
 	                    currentValue: nextProps[propKey]
@@ -30257,6 +30037,9 @@
 	        });
 	        AgGrid.ComponentUtil.getEventCallbacks().forEach(function (funcName) {
 	            if (_this.props[funcName] !== nextProps[funcName]) {
+	                if (debugLogging) {
+	                    console.log("agGridReact: [" + funcName + "] event callback changed");
+	                }
 	                changes[funcName] = {
 	                    previousValue: _this.props[funcName],
 	                    currentValue: nextProps[funcName]
@@ -30264,38 +30047,96 @@
 	            }
 	        });
 	        AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
-	    },
-	    componentWillUnmount: function () {
+	    };
+	    AgGridReact.prototype.componentWillUnmount = function () {
 	        this.api.destroy();
-	    }
-	});
-	exports.AgGridReact.propTypes = {
-	    gridOptions: React.PropTypes.object,
+	    };
+	    /*
+	     * deeper object comparison - taken from https://stackoverflow.com/questions/1068834/object-comparison-in-javascript
+	     */
+	    AgGridReact.unwrapStringOrNumber = function (obj) {
+	        return (obj instanceof Number || obj instanceof String
+	            ? obj.valueOf()
+	            : obj);
+	    };
+	    AgGridReact.prototype.areEquivalent = function (a, b) {
+	        a = AgGridReact.unwrapStringOrNumber(a);
+	        b = AgGridReact.unwrapStringOrNumber(b);
+	        if (a === b)
+	            return true; //e.g. a and b both null
+	        if (a === null || b === null || typeof (a) !== typeof (b))
+	            return false;
+	        if (a instanceof Date)
+	            return b instanceof Date && a.valueOf() === b.valueOf();
+	        if (typeof (a) !== "object")
+	            return a == b; //for boolean, number, string, xml
+	        var newA = (a.areEquivalent_Eq_91_2_34 === undefined), newB = (b.areEquivalent_Eq_91_2_34 === undefined);
+	        try {
+	            var prop = void 0;
+	            if (newA)
+	                a.areEquivalent_Eq_91_2_34 = [];
+	            else if (a.areEquivalent_Eq_91_2_34.some(function (other) {
+	                return other === b;
+	            }))
+	                return true;
+	            if (newB)
+	                b.areEquivalent_Eq_91_2_34 = [];
+	            else if (b.areEquivalent_Eq_91_2_34.some(function (other) {
+	                return other === a;
+	            }))
+	                return true;
+	            a.areEquivalent_Eq_91_2_34.push(b);
+	            b.areEquivalent_Eq_91_2_34.push(a);
+	            var tmp = {};
+	            for (prop in a)
+	                if (prop != "areEquivalent_Eq_91_2_34")
+	                    tmp[prop] = null;
+	            for (prop in b)
+	                if (prop != "areEquivalent_Eq_91_2_34")
+	                    tmp[prop] = null;
+	            for (prop in tmp)
+	                if (!this.areEquivalent(a[prop], b[prop]))
+	                    return false;
+	            return true;
+	        }
+	        finally {
+	            if (newA)
+	                delete a.areEquivalent_Eq_91_2_34;
+	            if (newB)
+	                delete b.areEquivalent_Eq_91_2_34;
+	        }
+	    };
+	    return AgGridReact;
+	}(react_1.Component));
+	exports.AgGridReact = AgGridReact;
+	AgGridReact.propTypes = {
+	    gridOptions: PropTypes.object,
 	};
-	addProperties(AgGrid.ComponentUtil.getEventCallbacks(), React.PropTypes.func);
-	addProperties(AgGrid.ComponentUtil.BOOLEAN_PROPERTIES, React.PropTypes.bool);
-	addProperties(AgGrid.ComponentUtil.STRING_PROPERTIES, React.PropTypes.string);
-	addProperties(AgGrid.ComponentUtil.OBJECT_PROPERTIES, React.PropTypes.object);
-	addProperties(AgGrid.ComponentUtil.ARRAY_PROPERTIES, React.PropTypes.array);
-	addProperties(AgGrid.ComponentUtil.NUMBER_PROPERTIES, React.PropTypes.number);
-	addProperties(AgGrid.ComponentUtil.FUNCTION_PROPERTIES, React.PropTypes.func);
+	addProperties(AgGrid.ComponentUtil.getEventCallbacks(), PropTypes.func);
+	addProperties(AgGrid.ComponentUtil.BOOLEAN_PROPERTIES, PropTypes.bool);
+	addProperties(AgGrid.ComponentUtil.STRING_PROPERTIES, PropTypes.string);
+	addProperties(AgGrid.ComponentUtil.OBJECT_PROPERTIES, PropTypes.object);
+	addProperties(AgGrid.ComponentUtil.ARRAY_PROPERTIES, PropTypes.array);
+	addProperties(AgGrid.ComponentUtil.NUMBER_PROPERTIES, PropTypes.number);
+	addProperties(AgGrid.ComponentUtil.FUNCTION_PROPERTIES, PropTypes.func);
 	function addProperties(listOfProps, propType) {
 	    listOfProps.forEach(function (propKey) {
-	        exports.AgGridReact[propKey] = propType;
+	        AgGridReact[propKey] = propType;
 	    });
 	}
 
 
 /***/ },
-/* 378 */
+/* 372 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v10.1.0
+	// ag-grid-react v11.0.0
 	"use strict";
-	var ag_grid_1 = __webpack_require__(379);
-	var reactCellRendererFactory_1 = __webpack_require__(504);
-	var reactCellEditorFactory_1 = __webpack_require__(506);
-	var reactFilterFactory_1 = __webpack_require__(507);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var ag_grid_1 = __webpack_require__(373);
+	var reactCellRendererFactory_1 = __webpack_require__(499);
+	var reactCellEditorFactory_1 = __webpack_require__(501);
+	var reactFilterFactory_1 = __webpack_require__(502);
 	var ReactFrameworkFactory = (function () {
 	    function ReactFrameworkFactory(agGridReact) {
 	        this.baseFrameworkFactory = new ag_grid_1.BaseFrameworkFactory();
@@ -30366,41 +30207,41 @@
 
 
 /***/ },
-/* 379 */
+/* 373 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
 	// columnController
-	var balancedColumnTreeBuilder_1 = __webpack_require__(380);
+	var balancedColumnTreeBuilder_1 = __webpack_require__(374);
 	exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
-	var columnController_1 = __webpack_require__(392);
+	var columnController_1 = __webpack_require__(386);
 	exports.ColumnController = columnController_1.ColumnController;
-	var columnKeyCreator_1 = __webpack_require__(480);
+	var columnKeyCreator_1 = __webpack_require__(474);
 	exports.ColumnKeyCreator = columnKeyCreator_1.ColumnKeyCreator;
-	var columnUtils_1 = __webpack_require__(395);
+	var columnUtils_1 = __webpack_require__(389);
 	exports.ColumnUtils = columnUtils_1.ColumnUtils;
-	var displayedGroupCreator_1 = __webpack_require__(398);
+	var displayedGroupCreator_1 = __webpack_require__(392);
 	exports.DisplayedGroupCreator = displayedGroupCreator_1.DisplayedGroupCreator;
-	var groupInstanceIdCreator_1 = __webpack_require__(475);
+	var groupInstanceIdCreator_1 = __webpack_require__(471);
 	exports.GroupInstanceIdCreator = groupInstanceIdCreator_1.GroupInstanceIdCreator;
 	// components
-	var componentUtil_1 = __webpack_require__(388);
+	var componentUtil_1 = __webpack_require__(382);
 	exports.ComponentUtil = componentUtil_1.ComponentUtil;
-	var agGridNg1_1 = __webpack_require__(481);
+	var agGridNg1_1 = __webpack_require__(475);
 	exports.initialiseAgGridWithAngular1 = agGridNg1_1.initialiseAgGridWithAngular1;
-	var agGridWebComponent_1 = __webpack_require__(500);
+	var agGridWebComponent_1 = __webpack_require__(494);
 	exports.initialiseAgGridWithWebComponents = agGridWebComponent_1.initialiseAgGridWithWebComponents;
 	// context
-	var beanStub_1 = __webpack_require__(422);
+	var beanStub_1 = __webpack_require__(419);
 	exports.BeanStub = beanStub_1.BeanStub;
-	var context_1 = __webpack_require__(384);
+	var context_1 = __webpack_require__(378);
 	exports.Context = context_1.Context;
 	exports.Autowired = context_1.Autowired;
 	exports.PostConstruct = context_1.PostConstruct;
@@ -30409,227 +30250,229 @@
 	exports.Bean = context_1.Bean;
 	exports.Qualifier = context_1.Qualifier;
 	exports.PreDestroy = context_1.PreDestroy;
-	var componentAnnotations_1 = __webpack_require__(423);
+	var componentAnnotations_1 = __webpack_require__(420);
 	exports.QuerySelector = componentAnnotations_1.QuerySelector;
 	exports.Listener = componentAnnotations_1.Listener;
 	// dragAndDrop
-	var dragAndDropService_1 = __webpack_require__(461);
+	var dragAndDropService_1 = __webpack_require__(457);
 	exports.DragAndDropService = dragAndDropService_1.DragAndDropService;
 	exports.DragSourceType = dragAndDropService_1.DragSourceType;
 	exports.HDirection = dragAndDropService_1.HDirection;
 	exports.VDirection = dragAndDropService_1.VDirection;
-	var dragService_1 = __webpack_require__(408);
+	var dragService_1 = __webpack_require__(405);
 	exports.DragService = dragService_1.DragService;
 	// entities
-	var column_1 = __webpack_require__(394);
+	var column_1 = __webpack_require__(388);
 	exports.Column = column_1.Column;
-	var columnGroup_1 = __webpack_require__(393);
+	var columnGroup_1 = __webpack_require__(387);
 	exports.ColumnGroup = columnGroup_1.ColumnGroup;
-	var gridCell_1 = __webpack_require__(413);
+	var gridCell_1 = __webpack_require__(410);
 	exports.GridCell = gridCell_1.GridCell;
-	var gridRow_1 = __webpack_require__(414);
+	var gridRow_1 = __webpack_require__(411);
 	exports.GridRow = gridRow_1.GridRow;
-	var originalColumnGroup_1 = __webpack_require__(396);
+	var originalColumnGroup_1 = __webpack_require__(390);
 	exports.OriginalColumnGroup = originalColumnGroup_1.OriginalColumnGroup;
-	var rowNode_1 = __webpack_require__(404);
+	var rowNode_1 = __webpack_require__(398);
 	exports.RowNode = rowNode_1.RowNode;
 	// filter
-	var baseFilter_1 = __webpack_require__(420);
+	var baseFilter_1 = __webpack_require__(417);
 	exports.BaseFilter = baseFilter_1.BaseFilter;
-	var dateFilter_1 = __webpack_require__(425);
+	var dateFilter_1 = __webpack_require__(422);
 	exports.DateFilter = dateFilter_1.DateFilter;
-	var filterManager_1 = __webpack_require__(417);
+	var filterManager_1 = __webpack_require__(414);
 	exports.FilterManager = filterManager_1.FilterManager;
-	var numberFilter_1 = __webpack_require__(424);
+	var numberFilter_1 = __webpack_require__(421);
 	exports.NumberFilter = numberFilter_1.NumberFilter;
-	var textFilter_1 = __webpack_require__(419);
+	var textFilter_1 = __webpack_require__(416);
 	exports.TextFilter = textFilter_1.TextFilter;
 	// gridPanel
-	var gridPanel_1 = __webpack_require__(401);
+	var gridPanel_1 = __webpack_require__(395);
 	exports.GridPanel = gridPanel_1.GridPanel;
-	var scrollVisibleService_1 = __webpack_require__(438);
+	var scrollVisibleService_1 = __webpack_require__(435);
 	exports.ScrollVisibleService = scrollVisibleService_1.ScrollVisibleService;
-	var mouseEventService_1 = __webpack_require__(409);
+	var mouseEventService_1 = __webpack_require__(406);
 	exports.MouseEventService = mouseEventService_1.MouseEventService;
 	// headerRendering
-	var bodyDropPivotTarget_1 = __webpack_require__(473);
+	var bodyDropPivotTarget_1 = __webpack_require__(469);
 	exports.BodyDropPivotTarget = bodyDropPivotTarget_1.BodyDropPivotTarget;
-	var bodyDropTarget_1 = __webpack_require__(471);
+	var bodyDropTarget_1 = __webpack_require__(467);
 	exports.BodyDropTarget = bodyDropTarget_1.BodyDropTarget;
-	var cssClassApplier_1 = __webpack_require__(466);
+	var cssClassApplier_1 = __webpack_require__(462);
 	exports.CssClassApplier = cssClassApplier_1.CssClassApplier;
-	var headerContainer_1 = __webpack_require__(460);
+	var headerContainer_1 = __webpack_require__(456);
 	exports.HeaderContainer = headerContainer_1.HeaderContainer;
-	var headerRenderer_1 = __webpack_require__(459);
+	var headerRenderer_1 = __webpack_require__(455);
 	exports.HeaderRenderer = headerRenderer_1.HeaderRenderer;
-	var headerRowComp_1 = __webpack_require__(462);
+	var headerRowComp_1 = __webpack_require__(458);
 	exports.HeaderRowComp = headerRowComp_1.HeaderRowComp;
-	var headerTemplateLoader_1 = __webpack_require__(464);
+	var headerTemplateLoader_1 = __webpack_require__(460);
 	exports.HeaderTemplateLoader = headerTemplateLoader_1.HeaderTemplateLoader;
-	var horizontalDragService_1 = __webpack_require__(465);
+	var horizontalDragService_1 = __webpack_require__(461);
 	exports.HorizontalDragService = horizontalDragService_1.HorizontalDragService;
-	var moveColumnController_1 = __webpack_require__(472);
+	var moveColumnController_1 = __webpack_require__(468);
 	exports.MoveColumnController = moveColumnController_1.MoveColumnController;
-	var renderedHeaderCell_1 = __webpack_require__(463);
+	var renderedHeaderCell_1 = __webpack_require__(459);
 	exports.RenderedHeaderCell = renderedHeaderCell_1.RenderedHeaderCell;
-	var standardMenu_1 = __webpack_require__(483);
+	var standardMenu_1 = __webpack_require__(477);
 	exports.StandardMenuFactory = standardMenu_1.StandardMenuFactory;
 	// layout
-	var borderLayout_1 = __webpack_require__(407);
+	var borderLayout_1 = __webpack_require__(404);
 	exports.BorderLayout = borderLayout_1.BorderLayout;
-	var tabbedLayout_1 = __webpack_require__(501);
+	var tabbedLayout_1 = __webpack_require__(495);
 	exports.TabbedLayout = tabbedLayout_1.TabbedLayout;
-	var verticalStack_1 = __webpack_require__(502);
+	var verticalStack_1 = __webpack_require__(496);
 	exports.VerticalStack = verticalStack_1.VerticalStack;
 	// misc
-	var focusService_1 = __webpack_require__(415);
+	var focusService_1 = __webpack_require__(412);
 	exports.FocusService = focusService_1.FocusService;
-	var methodNotImplementedException_1 = __webpack_require__(453);
+	var methodNotImplementedException_1 = __webpack_require__(449);
 	exports.MethodNotImplementedException = methodNotImplementedException_1.MethodNotImplementedException;
-	var simpleHttpRequest_1 = __webpack_require__(503);
+	var simpleHttpRequest_1 = __webpack_require__(497);
 	exports.simpleHttpRequest = simpleHttpRequest_1.simpleHttpRequest;
-	var largeTextCellEditor_1 = __webpack_require__(445);
+	var largeTextCellEditor_1 = __webpack_require__(442);
 	exports.LargeTextCellEditor = largeTextCellEditor_1.LargeTextCellEditor;
-	var popupEditorWrapper_1 = __webpack_require__(442);
+	var popupEditorWrapper_1 = __webpack_require__(439);
 	exports.PopupEditorWrapper = popupEditorWrapper_1.PopupEditorWrapper;
-	var popupSelectCellEditor_1 = __webpack_require__(444);
+	var popupSelectCellEditor_1 = __webpack_require__(441);
 	exports.PopupSelectCellEditor = popupSelectCellEditor_1.PopupSelectCellEditor;
-	var popupTextCellEditor_1 = __webpack_require__(443);
+	var popupTextCellEditor_1 = __webpack_require__(440);
 	exports.PopupTextCellEditor = popupTextCellEditor_1.PopupTextCellEditor;
-	var selectCellEditor_1 = __webpack_require__(441);
+	var selectCellEditor_1 = __webpack_require__(438);
 	exports.SelectCellEditor = selectCellEditor_1.SelectCellEditor;
-	var textCellEditor_1 = __webpack_require__(440);
+	var textCellEditor_1 = __webpack_require__(437);
 	exports.TextCellEditor = textCellEditor_1.TextCellEditor;
-	var animateShowChangeCellRenderer_1 = __webpack_require__(448);
+	var animateShowChangeCellRenderer_1 = __webpack_require__(445);
 	exports.AnimateShowChangeCellRenderer = animateShowChangeCellRenderer_1.AnimateShowChangeCellRenderer;
-	var animateSlideCellRenderer_1 = __webpack_require__(447);
+	var animateSlideCellRenderer_1 = __webpack_require__(444);
 	exports.AnimateSlideCellRenderer = animateSlideCellRenderer_1.AnimateSlideCellRenderer;
-	var groupCellRenderer_1 = __webpack_require__(449);
+	var groupCellRenderer_1 = __webpack_require__(446);
 	exports.GroupCellRenderer = groupCellRenderer_1.GroupCellRenderer;
 	// features
-	var setLeftFeature_1 = __webpack_require__(434);
+	var setLeftFeature_1 = __webpack_require__(431);
 	exports.SetLeftFeature = setLeftFeature_1.SetLeftFeature;
 	// rendering
-	var autoWidthCalculator_1 = __webpack_require__(399);
+	var autoWidthCalculator_1 = __webpack_require__(393);
 	exports.AutoWidthCalculator = autoWidthCalculator_1.AutoWidthCalculator;
-	var cellEditorFactory_1 = __webpack_require__(439);
+	var cellEditorFactory_1 = __webpack_require__(436);
 	exports.CellEditorFactory = cellEditorFactory_1.CellEditorFactory;
-	var cellRendererFactory_1 = __webpack_require__(446);
+	var cellRendererFactory_1 = __webpack_require__(443);
 	exports.CellRendererFactory = cellRendererFactory_1.CellRendererFactory;
-	var cellRendererService_1 = __webpack_require__(450);
+	var cellRendererService_1 = __webpack_require__(447);
 	exports.CellRendererService = cellRendererService_1.CellRendererService;
-	var checkboxSelectionComponent_1 = __webpack_require__(452);
+	var checkboxSelectionComponent_1 = __webpack_require__(448);
 	exports.CheckboxSelectionComponent = checkboxSelectionComponent_1.CheckboxSelectionComponent;
-	var cellComp_1 = __webpack_require__(410);
+	var cellComp_1 = __webpack_require__(407);
 	exports.CellComp = cellComp_1.CellComp;
-	var rowComp_1 = __webpack_require__(456);
+	var rowComp_1 = __webpack_require__(452);
 	exports.RowComp = rowComp_1.RowComp;
-	var rowRenderer_1 = __webpack_require__(400);
+	var rowRenderer_1 = __webpack_require__(394);
 	exports.RowRenderer = rowRenderer_1.RowRenderer;
-	var valueFormatterService_1 = __webpack_require__(451);
+	var valueFormatterService_1 = __webpack_require__(402);
 	exports.ValueFormatterService = valueFormatterService_1.ValueFormatterService;
 	// rowControllers/inMemory
-	var filterStage_1 = __webpack_require__(484);
+	var filterStage_1 = __webpack_require__(478);
 	exports.FilterStage = filterStage_1.FilterStage;
-	var flattenStage_1 = __webpack_require__(488);
+	var flattenStage_1 = __webpack_require__(482);
 	exports.FlattenStage = flattenStage_1.FlattenStage;
-	var sortStage_1 = __webpack_require__(486);
+	var sortStage_1 = __webpack_require__(480);
 	exports.SortStage = sortStage_1.SortStage;
 	// row models
-	var floatingRowModel_1 = __webpack_require__(403);
+	var floatingRowModel_1 = __webpack_require__(397);
 	exports.FloatingRowModel = floatingRowModel_1.FloatingRowModel;
-	var inMemoryRowModel_1 = __webpack_require__(495);
+	var inMemoryRowModel_1 = __webpack_require__(489);
 	exports.InMemoryRowModel = inMemoryRowModel_1.InMemoryRowModel;
-	var inMemoryNodeManager_1 = __webpack_require__(496);
+	var inMemoryNodeManager_1 = __webpack_require__(490);
 	exports.InMemoryNodeManager = inMemoryNodeManager_1.InMemoryNodeManager;
-	var infiniteRowModel_1 = __webpack_require__(489);
+	var infiniteRowModel_1 = __webpack_require__(483);
 	exports.InfiniteRowModel = infiniteRowModel_1.InfiniteRowModel;
-	var rowNodeBlock_1 = __webpack_require__(492);
+	var rowNodeBlock_1 = __webpack_require__(486);
 	exports.RowNodeBlock = rowNodeBlock_1.RowNodeBlock;
-	var rowNodeBlockLoader_1 = __webpack_require__(494);
+	var rowNodeBlockLoader_1 = __webpack_require__(488);
 	exports.RowNodeBlockLoader = rowNodeBlockLoader_1.RowNodeBlockLoader;
-	var rowNodeCache_1 = __webpack_require__(493);
+	var rowNodeCache_1 = __webpack_require__(487);
 	exports.RowNodeCache = rowNodeCache_1.RowNodeCache;
 	//styling
-	var stylingService_1 = __webpack_require__(454);
+	var stylingService_1 = __webpack_require__(450);
 	exports.StylingService = stylingService_1.StylingService;
 	// widgets
-	var agCheckbox_1 = __webpack_require__(468);
+	var agCheckbox_1 = __webpack_require__(464);
 	exports.AgCheckbox = agCheckbox_1.AgCheckbox;
-	var component_1 = __webpack_require__(421);
+	var component_1 = __webpack_require__(418);
 	exports.Component = component_1.Component;
-	var popupService_1 = __webpack_require__(418);
+	var popupService_1 = __webpack_require__(415);
 	exports.PopupService = popupService_1.PopupService;
-	var touchListener_1 = __webpack_require__(429);
+	var touchListener_1 = __webpack_require__(426);
 	exports.TouchListener = touchListener_1.TouchListener;
 	// root
-	var baseFrameworkFactory_1 = __webpack_require__(497);
+	var baseFrameworkFactory_1 = __webpack_require__(491);
 	exports.BaseFrameworkFactory = baseFrameworkFactory_1.BaseFrameworkFactory;
-	var cellNavigationService_1 = __webpack_require__(458);
+	var cellNavigationService_1 = __webpack_require__(454);
 	exports.CellNavigationService = cellNavigationService_1.CellNavigationService;
-	var columnChangeEvent_1 = __webpack_require__(474);
+	var columnChangeEvent_1 = __webpack_require__(470);
 	exports.ColumnChangeEvent = columnChangeEvent_1.ColumnChangeEvent;
-	var constants_1 = __webpack_require__(387);
+	var constants_1 = __webpack_require__(381);
 	exports.Constants = constants_1.Constants;
-	var csvCreator_1 = __webpack_require__(390);
+	var csvCreator_1 = __webpack_require__(384);
 	exports.CsvCreator = csvCreator_1.CsvCreator;
-	var downloader_1 = __webpack_require__(478);
+	var downloader_1 = __webpack_require__(472);
 	exports.Downloader = downloader_1.Downloader;
-	var grid_1 = __webpack_require__(482);
+	var grid_1 = __webpack_require__(476);
 	exports.Grid = grid_1.Grid;
-	var gridApi_1 = __webpack_require__(389);
+	var gridApi_1 = __webpack_require__(383);
 	exports.GridApi = gridApi_1.GridApi;
-	var events_1 = __webpack_require__(386);
+	var events_1 = __webpack_require__(380);
 	exports.Events = events_1.Events;
-	var focusedCellController_1 = __webpack_require__(412);
+	var focusedCellController_1 = __webpack_require__(409);
 	exports.FocusedCellController = focusedCellController_1.FocusedCellController;
-	var functions_1 = __webpack_require__(477);
+	var functions_1 = __webpack_require__(498);
 	exports.defaultGroupComparator = functions_1.defaultGroupComparator;
-	var gridOptionsWrapper_1 = __webpack_require__(381);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
 	exports.GridOptionsWrapper = gridOptionsWrapper_1.GridOptionsWrapper;
-	var eventService_1 = __webpack_require__(382);
+	var eventService_1 = __webpack_require__(376);
 	exports.EventService = eventService_1.EventService;
-	var expressionService_1 = __webpack_require__(397);
+	var expressionService_1 = __webpack_require__(391);
 	exports.ExpressionService = expressionService_1.ExpressionService;
-	var gridCore_1 = __webpack_require__(416);
+	var gridCore_1 = __webpack_require__(413);
 	exports.GridCore = gridCore_1.GridCore;
-	var logger_1 = __webpack_require__(383);
+	var logger_1 = __webpack_require__(377);
 	exports.Logger = logger_1.Logger;
-	var masterSlaveService_1 = __webpack_require__(402);
+	var masterSlaveService_1 = __webpack_require__(396);
 	exports.MasterSlaveService = masterSlaveService_1.MasterSlaveService;
-	var selectionController_1 = __webpack_require__(405);
+	var selectionController_1 = __webpack_require__(399);
 	exports.SelectionController = selectionController_1.SelectionController;
-	var sortController_1 = __webpack_require__(431);
+	var sortController_1 = __webpack_require__(428);
 	exports.SortController = sortController_1.SortController;
-	var svgFactory_1 = __webpack_require__(428);
+	var svgFactory_1 = __webpack_require__(425);
 	exports.SvgFactory = svgFactory_1.SvgFactory;
-	var templateService_1 = __webpack_require__(411);
+	var templateService_1 = __webpack_require__(408);
 	exports.TemplateService = templateService_1.TemplateService;
-	var utils_1 = __webpack_require__(385);
+	var utils_1 = __webpack_require__(379);
 	exports.Utils = utils_1.Utils;
 	exports.NumberSequence = utils_1.NumberSequence;
 	exports._ = utils_1._;
-	var valueService_1 = __webpack_require__(406);
+	var valueService_1 = __webpack_require__(400);
 	exports.ValueService = valueService_1.ValueService;
-	var xmlFactory_1 = __webpack_require__(498);
+	var groupValueService_1 = __webpack_require__(401);
+	exports.GroupValueService = groupValueService_1.GroupValueService;
+	var xmlFactory_1 = __webpack_require__(492);
 	exports.XmlFactory = xmlFactory_1.XmlFactory;
-	var gridSerializer_1 = __webpack_require__(391);
+	var gridSerializer_1 = __webpack_require__(385);
 	exports.GridSerializer = gridSerializer_1.GridSerializer;
 	exports.BaseGridSerializingSession = gridSerializer_1.BaseGridSerializingSession;
 	exports.RowType = gridSerializer_1.RowType;
-	var logger_2 = __webpack_require__(383);
+	var logger_2 = __webpack_require__(377);
 	exports.LoggerFactory = logger_2.LoggerFactory;
-	var columnController_2 = __webpack_require__(392);
+	var columnController_2 = __webpack_require__(386);
 	exports.ColumnApi = columnController_2.ColumnApi;
 
 
 /***/ },
-/* 380 */
+/* 374 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -30647,17 +30490,17 @@
 	    return function (target, key) { decorator(target, key, paramIndex); }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var logger_1 = __webpack_require__(383);
-	var columnUtils_1 = __webpack_require__(395);
-	var columnKeyCreator_1 = __webpack_require__(480);
-	var originalColumnGroup_1 = __webpack_require__(396);
-	var column_1 = __webpack_require__(394);
-	var context_1 = __webpack_require__(384);
-	var context_2 = __webpack_require__(384);
-	var context_3 = __webpack_require__(384);
-	var context_4 = __webpack_require__(384);
-	var utils_1 = __webpack_require__(385);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var logger_1 = __webpack_require__(377);
+	var columnUtils_1 = __webpack_require__(389);
+	var columnKeyCreator_1 = __webpack_require__(474);
+	var originalColumnGroup_1 = __webpack_require__(390);
+	var column_1 = __webpack_require__(388);
+	var context_1 = __webpack_require__(378);
+	var context_2 = __webpack_require__(378);
+	var context_3 = __webpack_require__(378);
+	var context_4 = __webpack_require__(378);
+	var utils_1 = __webpack_require__(379);
 	// takes in a list of columns, as specified by the column definitions, and returns column groups
 	var BalancedColumnTreeBuilder = (function () {
 	    function BalancedColumnTreeBuilder() {
@@ -30826,12 +30669,12 @@
 
 
 /***/ },
-/* 381 */
+/* 375 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -30849,13 +30692,13 @@
 	    return function (target, key) { decorator(target, key, paramIndex); }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var eventService_1 = __webpack_require__(382);
-	var constants_1 = __webpack_require__(387);
-	var componentUtil_1 = __webpack_require__(388);
-	var gridApi_1 = __webpack_require__(389);
-	var context_1 = __webpack_require__(384);
-	var columnController_1 = __webpack_require__(392);
-	var utils_1 = __webpack_require__(385);
+	var eventService_1 = __webpack_require__(376);
+	var constants_1 = __webpack_require__(381);
+	var componentUtil_1 = __webpack_require__(382);
+	var gridApi_1 = __webpack_require__(383);
+	var context_1 = __webpack_require__(378);
+	var columnController_1 = __webpack_require__(386);
+	var utils_1 = __webpack_require__(379);
 	var DEFAULT_ROW_HEIGHT = 25;
 	var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 	var DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
@@ -30955,6 +30798,7 @@
 	    GridOptionsWrapper.prototype.isRowSelectionMulti = function () { return this.gridOptions.rowSelection === 'multiple'; };
 	    GridOptionsWrapper.prototype.getContext = function () { return this.gridOptions.context; };
 	    GridOptionsWrapper.prototype.isPivotMode = function () { return isTrue(this.gridOptions.pivotMode); };
+	    GridOptionsWrapper.prototype.isPivotTotals = function () { return isTrue(this.gridOptions.pivotTotals); };
 	    GridOptionsWrapper.prototype.isRowModelInfinite = function () { return this.gridOptions.rowModelType === constants_1.Constants.ROW_MODEL_TYPE_INFINITE; };
 	    GridOptionsWrapper.prototype.isRowModelViewport = function () { return this.gridOptions.rowModelType === constants_1.Constants.ROW_MODEL_TYPE_VIEWPORT; };
 	    GridOptionsWrapper.prototype.isRowModelEnterprise = function () { return this.gridOptions.rowModelType === constants_1.Constants.ROW_MODEL_TYPE_ENTERPRISE; };
@@ -30986,7 +30830,8 @@
 	    GridOptionsWrapper.prototype.isGroupSelectsChildren = function () { return isTrue(this.gridOptions.groupSelectsChildren); };
 	    GridOptionsWrapper.prototype.isGroupSelectsFiltered = function () { return isTrue(this.gridOptions.groupSelectsFiltered); };
 	    GridOptionsWrapper.prototype.isGroupHideOpenParents = function () { return isTrue(this.gridOptions.groupHideOpenParents); };
-	    GridOptionsWrapper.prototype.isGroupMultiAutoColumn = function () { return isTrue(this.gridOptions.groupMultiAutoColumn); };
+	    // if we are doing hideOpenParents, then we always have groupMultiAutoColumn, otherwise hideOpenParents would not work
+	    GridOptionsWrapper.prototype.isGroupMultiAutoColumn = function () { return isTrue(this.gridOptions.groupMultiAutoColumn) || isTrue(this.gridOptions.groupHideOpenParents); };
 	    GridOptionsWrapper.prototype.isGroupRemoveSingleChildren = function () { return isTrue(this.gridOptions.groupRemoveSingleChildren); };
 	    GridOptionsWrapper.prototype.isGroupIncludeFooter = function () { return isTrue(this.gridOptions.groupIncludeFooter); };
 	    GridOptionsWrapper.prototype.isGroupSuppressBlankHeader = function () { return isTrue(this.gridOptions.groupSuppressBlankHeader); };
@@ -31028,6 +30873,7 @@
 	    GridOptionsWrapper.prototype.getApi = function () { return this.gridOptions.api; };
 	    GridOptionsWrapper.prototype.getColumnApi = function () { return this.gridOptions.columnApi; };
 	    GridOptionsWrapper.prototype.isDeltaRowDataMode = function () { return isTrue(this.gridOptions.deltaRowDataMode); };
+	    GridOptionsWrapper.prototype.isEnforceRowDomOrder = function () { return isTrue(this.gridOptions.enforceRowDomOrder); };
 	    GridOptionsWrapper.prototype.isEnableColResize = function () { return isTrue(this.gridOptions.enableColResize); };
 	    GridOptionsWrapper.prototype.isSingleClickEdit = function () { return isTrue(this.gridOptions.singleClickEdit); };
 	    GridOptionsWrapper.prototype.isSuppressClickEdit = function () { return isTrue(this.gridOptions.suppressClickEdit); };
@@ -31046,7 +30892,7 @@
 	    GridOptionsWrapper.prototype.getRowData = function () { return this.gridOptions.rowData; };
 	    GridOptionsWrapper.prototype.isGroupUseEntireRow = function () { return isTrue(this.gridOptions.groupUseEntireRow); };
 	    GridOptionsWrapper.prototype.isEnableRtl = function () { return isTrue(this.gridOptions.enableRtl); };
-	    GridOptionsWrapper.prototype.getGroupColumnDef = function () { return this.gridOptions.groupColumnDef; };
+	    GridOptionsWrapper.prototype.getAutoGroupColumnDef = function () { return this.gridOptions.autoGroupColumnDef; };
 	    GridOptionsWrapper.prototype.isGroupSuppressRow = function () { return isTrue(this.gridOptions.groupSuppressRow); };
 	    GridOptionsWrapper.prototype.getRowGroupPanelShow = function () { return this.gridOptions.rowGroupPanelShow; };
 	    GridOptionsWrapper.prototype.getPivotPanelShow = function () { return this.gridOptions.pivotPanelShow; };
@@ -31059,6 +30905,7 @@
 	    GridOptionsWrapper.prototype.getViewportDatasource = function () { return this.gridOptions.viewportDatasource; };
 	    GridOptionsWrapper.prototype.getEnterpriseDatasource = function () { return this.gridOptions.enterpriseDatasource; };
 	    GridOptionsWrapper.prototype.isEnableSorting = function () { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); };
+	    GridOptionsWrapper.prototype.isAccentedSort = function () { return isTrue(this.gridOptions.accentedSort); };
 	    GridOptionsWrapper.prototype.isEnableCellExpressions = function () { return isTrue(this.gridOptions.enableCellExpressions); };
 	    GridOptionsWrapper.prototype.isEnableGroupEdit = function () { return isTrue(this.gridOptions.enableGroupEdit); };
 	    GridOptionsWrapper.prototype.isSuppressMiddleClickScrolls = function () { return isTrue(this.gridOptions.suppressMiddleClickScrolls); };
@@ -31074,14 +30921,16 @@
 	    GridOptionsWrapper.prototype.isEnableServerSideSorting = function () { return isTrue(this.gridOptions.enableServerSideSorting); };
 	    GridOptionsWrapper.prototype.isSuppressScrollLag = function () { return isTrue(this.gridOptions.suppressScrollLag); };
 	    GridOptionsWrapper.prototype.isSuppressMovableColumns = function () { return isTrue(this.gridOptions.suppressMovableColumns); };
-	    GridOptionsWrapper.prototype.isAnimateRows = function () { return isTrue(this.gridOptions.animateRows); };
+	    GridOptionsWrapper.prototype.isAnimateRows = function () {
+	        // never allow animating if enforcing the row order
+	        if (this.isEnforceRowDomOrder()) {
+	            return false;
+	        }
+	        return isTrue(this.gridOptions.animateRows);
+	    };
 	    GridOptionsWrapper.prototype.isSuppressColumnMoveAnimation = function () { return isTrue(this.gridOptions.suppressColumnMoveAnimation); };
-	    GridOptionsWrapper.prototype.isSuppressMenuColumnPanel = function () { return isTrue(this.gridOptions.suppressMenuColumnPanel); };
-	    GridOptionsWrapper.prototype.isSuppressMenuFilterPanel = function () { return isTrue(this.gridOptions.suppressMenuFilterPanel); };
-	    GridOptionsWrapper.prototype.isSuppressUseColIdForGroups = function () { return isTrue(this.gridOptions.suppressUseColIdForGroups); };
 	    GridOptionsWrapper.prototype.isSuppressAggFuncInHeader = function () { return isTrue(this.gridOptions.suppressAggFuncInHeader); };
 	    GridOptionsWrapper.prototype.isSuppressAggAtRootLevel = function () { return isTrue(this.gridOptions.suppressAggAtRootLevel); };
-	    GridOptionsWrapper.prototype.isSuppressMenuMainPanel = function () { return isTrue(this.gridOptions.suppressMenuMainPanel); };
 	    GridOptionsWrapper.prototype.isEnableRangeSelection = function () { return isTrue(this.gridOptions.enableRangeSelection); };
 	    GridOptionsWrapper.prototype.isPaginationAutoPageSize = function () { return isTrue(this.gridOptions.paginationAutoPageSize); };
 	    GridOptionsWrapper.prototype.isRememberGroupStateWhenNewData = function () { return isTrue(this.gridOptions.rememberGroupStateWhenNewData); };
@@ -31120,6 +30969,9 @@
 	    GridOptionsWrapper.prototype.getViewportRowModelBufferSize = function () { return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); };
 	    // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
 	    // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
+	    GridOptionsWrapper.prototype.getClipboardDeliminator = function () {
+	        return utils_1.Utils.exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
+	    };
 	    GridOptionsWrapper.prototype.setProperty = function (key, value) {
 	        var gridOptionsNoType = this.gridOptions;
 	        var previousValue = gridOptionsNoType[key];
@@ -31319,6 +31171,21 @@
 	        if (options.forPrint) {
 	            console.warn('ag-grid: since version 10.1.x, use property domLayout="forPrint" instead of forPrint=true');
 	        }
+	        if (options.suppressMenuFilterPanel) {
+	            console.warn("ag-grid: since version 11.0.x, use property colDef.menuTabs=['filterMenuTab'] instead of suppressMenuFilterPanel=true");
+	        }
+	        if (options.suppressMenuMainPanel) {
+	            console.warn("ag-grid: since version 11.0.x, use property colDef.menuTabs=['generalMenuTab'] instead of suppressMenuMainPanel=true");
+	        }
+	        if (options.suppressMenuColumnPanel) {
+	            console.warn("ag-grid: since version 11.0.x, use property colDef.menuTabs=['columnsMenuTab'] instead of suppressMenuColumnPanel=true");
+	        }
+	        if (options.suppressUseColIdForGroups) {
+	            console.warn("ag-grid: since version 11.0.x suppressUseColIdForGroups is not in use anymore. You should be able to remove it from your definition");
+	        }
+	        if (options.groupColumnDef) {
+	            console.warn("ag-grid: since version 11.0.x, groupColumnDef has been renamed, this property is now called autoColumnGroupDef. Please change your configuration accordingly");
+	        }
 	    };
 	    GridOptionsWrapper.prototype.getLocaleTextFunc = function () {
 	        if (this.gridOptions.localeTextFunc) {
@@ -31434,12 +31301,12 @@
 
 
 /***/ },
-/* 382 */
+/* 376 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31457,12 +31324,12 @@
 	    return function (target, key) { decorator(target, key, paramIndex); }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var logger_1 = __webpack_require__(383);
-	var utils_1 = __webpack_require__(385);
-	var context_1 = __webpack_require__(384);
-	var context_2 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var events_1 = __webpack_require__(386);
+	var logger_1 = __webpack_require__(377);
+	var utils_1 = __webpack_require__(379);
+	var context_1 = __webpack_require__(378);
+	var context_2 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var events_1 = __webpack_require__(380);
 	var EventService = EventService_1 = (function () {
 	    function EventService() {
 	        this.allSyncListeners = {};
@@ -31647,12 +31514,12 @@
 
 
 /***/ },
-/* 383 */
+/* 377 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31670,9 +31537,9 @@
 	    return function (target, key) { decorator(target, key, paramIndex); }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var context_1 = __webpack_require__(384);
-	var context_2 = __webpack_require__(384);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var context_1 = __webpack_require__(378);
+	var context_2 = __webpack_require__(378);
 	var LoggerFactory = (function () {
 	    function LoggerFactory() {
 	    }
@@ -31716,18 +31583,18 @@
 
 
 /***/ },
-/* 384 */
+/* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
+	var utils_1 = __webpack_require__(379);
 	var Context = (function () {
 	    function Context(params, logger) {
 	        this.beans = {};
@@ -32057,12 +31924,12 @@
 
 
 /***/ },
-/* 385 */
+/* 379 */
 /***/ function(module, exports) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -32260,12 +32127,12 @@
 	        });
 	        return Object.keys(allValues);
 	    };
-	    Utils.mergeDeep = function (object, source) {
+	    Utils.mergeDeep = function (into, source) {
 	        if (this.exists(source)) {
 	            this.iterateObject(source, function (key, target) {
-	                var currentValue = object[key];
+	                var currentValue = into[key];
 	                if (currentValue == null) {
-	                    object[key] = target;
+	                    into[key] = target;
 	                    return;
 	                }
 	                if (typeof currentValue === 'object') {
@@ -32275,7 +32142,7 @@
 	                    }
 	                }
 	                if (target) {
-	                    object[key] = target;
+	                    into[key] = target;
 	                }
 	            });
 	        }
@@ -32387,6 +32254,28 @@
 	    };
 	    Utils.isNodeOrElement = function (o) {
 	        return this.isNode(o) || this.isElement(o);
+	    };
+	    Utils.isEventFromPrintableCharacter = function (event) {
+	        var pressedChar = String.fromCharCode(event.charCode);
+	        if (exports._.exists(event.key)) {
+	            // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
+	            // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
+	            return event.key.length === 1;
+	        }
+	        else {
+	            // otherwise, for older browsers, we test against a list of characters, which doesn't include
+	            // accents for non-English, but don't care much, as most users are on modern browsers
+	            return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
+	        }
+	    };
+	    // returns true if values are string, number or boolean, and both values are equal
+	    Utils.valuesSimpleAndSame = function (val1, val2) {
+	        if (typeof val1 === 'string' || typeof val1 === 'number' || typeof val1 === 'boolean') {
+	            return val1 === val2;
+	        }
+	        else {
+	            return false;
+	        }
 	    };
 	    //adds all type of change listeners to an element, intended to be a text field
 	    Utils.addChangeListener = function (element, listener) {
@@ -32603,7 +32492,8 @@
 	            _this.insertIntoArray(array, obj, toIndex);
 	        });
 	    };
-	    Utils.defaultComparator = function (valueA, valueB) {
+	    Utils.defaultComparator = function (valueA, valueB, accentedCompare) {
+	        if (accentedCompare === void 0) { accentedCompare = false; }
 	        var valueAMissing = valueA === null || valueA === undefined;
 	        var valueBMissing = valueB === null || valueB === undefined;
 	        if (valueAMissing && valueBMissing) {
@@ -32616,13 +32506,19 @@
 	            return 1;
 	        }
 	        if (typeof valueA === "string") {
-	            try {
-	                // using local compare also allows chinese comparisons
-	                return valueA.localeCompare(valueB);
+	            if (!accentedCompare) {
+	                return doQuickCompare(valueA, valueB);
 	            }
-	            catch (e) {
-	                // if something wrong with localeCompare, eg not supported
-	                // by browser, then just continue without using it
+	            else {
+	                try {
+	                    // using local compare also allows chinese comparisons
+	                    return valueA.localeCompare(valueB);
+	                }
+	                catch (e) {
+	                    // if something wrong with localeCompare, eg not supported
+	                    // by browser, then just continue with the quick one
+	                    return doQuickCompare(valueA, valueB);
+	                }
 	            }
 	        }
 	        if (valueA < valueB) {
@@ -32633,6 +32529,9 @@
 	        }
 	        else {
 	            return 0;
+	        }
+	        function doQuickCompare(a, b) {
+	            return (a > b ? 1 : (a < b ? -1 : 0));
 	        }
 	    };
 	    Utils.compareArrays = function (array1, array2) {
@@ -33113,8 +33012,28 @@
 	            return false;
 	        return left === right;
 	    };
+	    Utils.get = function (source, expression, defaultValue) {
+	        if (source == null)
+	            return defaultValue;
+	        if (expression.indexOf('.') > -1) {
+	            var fields = expression.split('.');
+	            var thisKey = fields[0];
+	            var nextValue = source[thisKey];
+	            if (nextValue != null) {
+	                return Utils.get(nextValue, fields.slice(1, fields.length).join('.'), defaultValue);
+	            }
+	            else {
+	                return defaultValue;
+	            }
+	        }
+	        else {
+	            var nextValue = source[expression];
+	            return nextValue != null ? nextValue : defaultValue;
+	        }
+	    };
 	    return Utils;
 	}());
+	Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 	exports.Utils = Utils;
 	var NumberSequence = (function () {
 	    function NumberSequence(initValue, step) {
@@ -33141,12 +33060,12 @@
 
 
 /***/ },
-/* 386 */
+/* 380 */
 /***/ function(module, exports) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -33268,12 +33187,12 @@
 
 
 /***/ },
-/* 387 */
+/* 381 */
 /***/ function(module, exports) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -33292,6 +33211,10 @@
 	Constants.STEP_PIVOT = 5;
 	Constants.ROW_BUFFER_SIZE = 10;
 	Constants.LAYOUT_INTERVAL = 500;
+	Constants.EXPORT_TYPE_DRAG_COPY = 'dragCopy';
+	Constants.EXPORT_TYPE_CLIPBOARD = 'clipboard';
+	Constants.EXPORT_TYPE_EXCEL = 'excel';
+	Constants.EXPORT_TYPE_CSV = 'csv';
 	Constants.KEY_BACKSPACE = 8;
 	Constants.KEY_TAB = 9;
 	Constants.KEY_ENTER = 13;
@@ -33387,19 +33310,19 @@
 
 
 /***/ },
-/* 388 */
+/* 382 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var events_1 = __webpack_require__(386);
-	var utils_1 = __webpack_require__(385);
+	var events_1 = __webpack_require__(380);
+	var utils_1 = __webpack_require__(379);
 	var ComponentUtil = (function () {
 	    function ComponentUtil() {
 	    }
@@ -33555,11 +33478,12 @@
 	ComponentUtil.STRING_PROPERTIES = [
 	    'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
 	    'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType',
-	    'editType', 'domLayout'
+	    'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow'
 	];
 	ComponentUtil.OBJECT_PROPERTIES = [
-	    'rowStyle', 'context', 'groupColumnDef', 'localeText', 'icons', 'datasource', 'enterpriseDatasource', 'viewportDatasource',
-	    'groupRowRendererParams', 'aggFuncs', 'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams'
+	    'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText', 'icons', 'datasource',
+	    'enterpriseDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
+	    'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams'
 	    //,'cellRenderers','cellEditors'
 	];
 	ComponentUtil.ARRAY_PROPERTIES = [
@@ -33583,7 +33507,7 @@
 	    'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort', 'suppressScrollLag',
 	    'singleClickEdit', 'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'suppressAutoSize',
 	    'suppressParentsInRowNodes', 'showToolPanel', 'suppressColumnMoveAnimation', 'suppressMovableColumns',
-	    'suppressFieldDotNotation', 'enableRangeSelection', 'suppressEnterprise', 'rowGroupPanelShow',
+	    'suppressFieldDotNotation', 'enableRangeSelection', 'suppressEnterprise',
 	    'pivotPanelShow', 'suppressTouch', 'suppressAsyncEvents', 'allowContextMenuWithControlKey',
 	    'suppressContextMenu', 'suppressMenuFilterPanel', 'suppressMenuMainPanel', 'suppressMenuColumnPanel',
 	    'enableStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
@@ -33594,7 +33518,7 @@
 	    'enableGroupEdit', 'embedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter',
 	    'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus',
 	    'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
-	    'deltaRowDataMode'
+	    'deltaRowDataMode', 'enforceRowDomOrder', 'accentedSort', 'pivotTotals'
 	];
 	ComponentUtil.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
 	    'dateComponent', 'dateComponentFramework', 'groupRowRenderer', 'groupRowRendererFramework', 'isScrollLag', 'isExternalFilterPresent',
@@ -33625,12 +33549,12 @@
 
 
 /***/ },
-/* 389 */
+/* 383 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -33645,29 +33569,29 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var csvCreator_1 = __webpack_require__(390);
-	var rowRenderer_1 = __webpack_require__(400);
-	var headerRenderer_1 = __webpack_require__(459);
-	var filterManager_1 = __webpack_require__(417);
-	var columnController_1 = __webpack_require__(392);
-	var selectionController_1 = __webpack_require__(405);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var gridPanel_1 = __webpack_require__(401);
-	var valueService_1 = __webpack_require__(406);
-	var masterSlaveService_1 = __webpack_require__(402);
-	var eventService_1 = __webpack_require__(382);
-	var floatingRowModel_1 = __webpack_require__(403);
-	var constants_1 = __webpack_require__(387);
-	var context_1 = __webpack_require__(384);
-	var gridCore_1 = __webpack_require__(416);
-	var sortController_1 = __webpack_require__(431);
-	var focusedCellController_1 = __webpack_require__(412);
-	var gridCell_1 = __webpack_require__(413);
-	var utils_1 = __webpack_require__(385);
-	var cellRendererFactory_1 = __webpack_require__(446);
-	var cellEditorFactory_1 = __webpack_require__(439);
-	var paginationProxy_1 = __webpack_require__(437);
-	var immutableService_1 = __webpack_require__(479);
+	var csvCreator_1 = __webpack_require__(384);
+	var rowRenderer_1 = __webpack_require__(394);
+	var headerRenderer_1 = __webpack_require__(455);
+	var filterManager_1 = __webpack_require__(414);
+	var columnController_1 = __webpack_require__(386);
+	var selectionController_1 = __webpack_require__(399);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var gridPanel_1 = __webpack_require__(395);
+	var valueService_1 = __webpack_require__(400);
+	var masterSlaveService_1 = __webpack_require__(396);
+	var eventService_1 = __webpack_require__(376);
+	var floatingRowModel_1 = __webpack_require__(397);
+	var constants_1 = __webpack_require__(381);
+	var context_1 = __webpack_require__(378);
+	var gridCore_1 = __webpack_require__(413);
+	var sortController_1 = __webpack_require__(428);
+	var focusedCellController_1 = __webpack_require__(409);
+	var gridCell_1 = __webpack_require__(410);
+	var utils_1 = __webpack_require__(379);
+	var cellRendererFactory_1 = __webpack_require__(443);
+	var cellEditorFactory_1 = __webpack_require__(436);
+	var paginationProxy_1 = __webpack_require__(434);
+	var immutableService_1 = __webpack_require__(473);
 	var GridApi = (function () {
 	    function GridApi() {
 	    }
@@ -34251,13 +34175,13 @@
 	    };
 	    GridApi.prototype.removeItems = function (rowNodes, skipRefresh) {
 	        if (skipRefresh === void 0) { skipRefresh = false; }
-	        console.warn('ag-Grid: insertItemsAtIndex() is deprecated, use updateRowData(transaction) instead.');
+	        console.warn('ag-Grid: removeItems() is deprecated, use updateRowData(transaction) instead.');
 	        var dataToRemove = rowNodes.map(function (rowNode) { return rowNode.data; });
 	        this.updateRowData({ add: null, addIndex: null, update: null, remove: dataToRemove });
 	    };
 	    GridApi.prototype.addItems = function (items, skipRefresh) {
 	        if (skipRefresh === void 0) { skipRefresh = false; }
-	        console.warn('ag-Grid: insertItemsAtIndex() is deprecated, use updateRowData(transaction) instead.');
+	        console.warn('ag-Grid: addItems() is deprecated, use updateRowData(transaction) instead.');
 	        this.updateRowData({ add: items, addIndex: null, update: null, remove: null });
 	    };
 	    GridApi.prototype.refreshVirtualPageCache = function () {
@@ -34512,12 +34436,12 @@
 
 
 /***/ },
-/* 390 */
+/* 384 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -34542,12 +34466,13 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var gridSerializer_1 = __webpack_require__(391);
-	var downloader_1 = __webpack_require__(478);
-	var columnController_1 = __webpack_require__(392);
-	var valueService_1 = __webpack_require__(406);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
+	var context_1 = __webpack_require__(378);
+	var gridSerializer_1 = __webpack_require__(385);
+	var downloader_1 = __webpack_require__(472);
+	var columnController_1 = __webpack_require__(386);
+	var valueService_1 = __webpack_require__(400);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var constants_1 = __webpack_require__(381);
 	var LINE_SEPARATOR = '\r\n';
 	var CsvSerializingSession = (function (_super) {
 	    __extends(CsvSerializingSession, _super);
@@ -34613,7 +34538,7 @@
 	        if (index != 0) {
 	            this.result += this.columnSeparator;
 	        }
-	        this.result += this.putInQuotes(this.extractRowCellValue(column, index, node), this.suppressQuotes);
+	        this.result += this.putInQuotes(this.extractRowCellValue(column, index, constants_1.Constants.EXPORT_TYPE_CSV, node), this.suppressQuotes);
 	        this.lineOpened = true;
 	    };
 	    CsvSerializingSession.prototype.putInQuotes = function (value, suppressQuotes) {
@@ -34686,12 +34611,12 @@
 
 
 /***/ },
-/* 391 */
+/* 385 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -34706,17 +34631,17 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var columnController_1 = __webpack_require__(392);
-	var constants_1 = __webpack_require__(387);
-	var floatingRowModel_1 = __webpack_require__(403);
-	var utils_1 = __webpack_require__(385);
-	var selectionController_1 = __webpack_require__(405);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var displayedGroupCreator_1 = __webpack_require__(398);
-	var balancedColumnTreeBuilder_1 = __webpack_require__(380);
-	var groupInstanceIdCreator_1 = __webpack_require__(475);
-	var columnGroup_1 = __webpack_require__(393);
+	var context_1 = __webpack_require__(378);
+	var columnController_1 = __webpack_require__(386);
+	var constants_1 = __webpack_require__(381);
+	var floatingRowModel_1 = __webpack_require__(397);
+	var utils_1 = __webpack_require__(379);
+	var selectionController_1 = __webpack_require__(399);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var displayedGroupCreator_1 = __webpack_require__(392);
+	var balancedColumnTreeBuilder_1 = __webpack_require__(374);
+	var groupInstanceIdCreator_1 = __webpack_require__(471);
+	var columnGroup_1 = __webpack_require__(387);
 	var BaseGridSerializingSession = (function () {
 	    function BaseGridSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, cellAndHeaderEscaper) {
 	        this.columnController = columnController;
@@ -34733,7 +34658,7 @@
 	        }
 	        return this.cellAndHeaderEscaper ? this.cellAndHeaderEscaper(nameForCol) : nameForCol;
 	    };
-	    BaseGridSerializingSession.prototype.extractRowCellValue = function (column, index, node) {
+	    BaseGridSerializingSession.prototype.extractRowCellValue = function (column, index, type, node) {
 	        var isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
 	        var valueForCell;
 	        if (node.group && isRowGrouping && index === 0) {
@@ -34742,7 +34667,7 @@
 	        else {
 	            valueForCell = this.valueService.getValue(column, node);
 	        }
-	        valueForCell = this.processCell(node, column, valueForCell, this.processCellCallback);
+	        valueForCell = this.processCell(node, column, valueForCell, this.processCellCallback, type);
 	        if (valueForCell === null || valueForCell === undefined) {
 	            valueForCell = '';
 	        }
@@ -34769,7 +34694,7 @@
 	        }
 	        return keys.reverse().join(' -> ');
 	    };
-	    BaseGridSerializingSession.prototype.processCell = function (rowNode, column, value, processCellCallback) {
+	    BaseGridSerializingSession.prototype.processCell = function (rowNode, column, value, processCellCallback, type) {
 	        if (processCellCallback) {
 	            return processCellCallback({
 	                column: column,
@@ -34777,7 +34702,8 @@
 	                value: value,
 	                api: this.gridOptionsWrapper.getApi(),
 	                columnApi: this.gridOptionsWrapper.getColumnApi(),
-	                context: this.gridOptionsWrapper.getContext()
+	                context: this.gridOptionsWrapper.getContext(),
+	                type: type
 	            });
 	        }
 	        else {
@@ -34982,12 +34908,12 @@
 
 
 /***/ },
-/* 392 */
+/* 386 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -35005,25 +34931,25 @@
 	    return function (target, key) { decorator(target, key, paramIndex); }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var columnGroup_1 = __webpack_require__(393);
-	var column_1 = __webpack_require__(394);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var expressionService_1 = __webpack_require__(397);
-	var balancedColumnTreeBuilder_1 = __webpack_require__(380);
-	var displayedGroupCreator_1 = __webpack_require__(398);
-	var autoWidthCalculator_1 = __webpack_require__(399);
-	var eventService_1 = __webpack_require__(382);
-	var columnUtils_1 = __webpack_require__(395);
-	var logger_1 = __webpack_require__(383);
-	var events_1 = __webpack_require__(386);
-	var columnChangeEvent_1 = __webpack_require__(474);
-	var originalColumnGroup_1 = __webpack_require__(396);
-	var groupInstanceIdCreator_1 = __webpack_require__(475);
-	var context_1 = __webpack_require__(384);
-	var gridPanel_1 = __webpack_require__(401);
-	var columnAnimationService_1 = __webpack_require__(435);
-	var autoGroupColService_1 = __webpack_require__(476);
+	var utils_1 = __webpack_require__(379);
+	var columnGroup_1 = __webpack_require__(387);
+	var column_1 = __webpack_require__(388);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var expressionService_1 = __webpack_require__(391);
+	var balancedColumnTreeBuilder_1 = __webpack_require__(374);
+	var displayedGroupCreator_1 = __webpack_require__(392);
+	var autoWidthCalculator_1 = __webpack_require__(393);
+	var eventService_1 = __webpack_require__(376);
+	var columnUtils_1 = __webpack_require__(389);
+	var logger_1 = __webpack_require__(377);
+	var events_1 = __webpack_require__(380);
+	var columnChangeEvent_1 = __webpack_require__(470);
+	var originalColumnGroup_1 = __webpack_require__(390);
+	var groupInstanceIdCreator_1 = __webpack_require__(471);
+	var context_1 = __webpack_require__(378);
+	var gridPanel_1 = __webpack_require__(395);
+	var columnAnimationService_1 = __webpack_require__(432);
+	var autoGroupColService_1 = __webpack_require__(403);
 	var ColumnApi = (function () {
 	    function ColumnApi() {
 	    }
@@ -35322,9 +35248,14 @@
 	                    changesThisTimeAround++;
 	                }
 	                return true;
-	            }, function () {
-	                return new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withFinished(true);
 	            });
+	        }
+	        if (columnsAutosized.length > 0) {
+	            var event_1 = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withFinished(true).withColumns(columnsAutosized);
+	            if (columnsAutosized.length === 1) {
+	                event_1.withColumn(columnsAutosized[0]);
+	            }
+	            this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_RESIZED, event_1);
 	        }
 	    };
 	    ColumnController.prototype.autoSizeColumn = function (key) {
@@ -35567,8 +35498,8 @@
 	        // eg 1 pixel at a time, then each change will fire change events
 	        // in all the columns in the group, but only one with get the pixel.
 	        if (finished || widthChanged) {
-	            var event_1 = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
-	            this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_RESIZED, event_1);
+	            var event_2 = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
+	            this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_RESIZED, event_2);
 	        }
 	    };
 	    ColumnController.prototype.setColumnAggFunc = function (column, aggFunc) {
@@ -35610,41 +35541,34 @@
 	    ColumnController.prototype.doesMovePassRules = function (columnsToMove, toIndex) {
 	        var allColumnsCopy = this.gridColumns.slice();
 	        utils_1.Utils.moveInArray(allColumnsCopy, columnsToMove, toIndex);
-	        // look for broken groups, ie stray columns from groups that should be married
-	        for (var index = 0; index < (allColumnsCopy.length - 1); index++) {
-	            var thisColumn = allColumnsCopy[index];
-	            var nextColumn = allColumnsCopy[index + 1];
-	            // skip hidden columns
-	            if (!nextColumn.isVisible()) {
-	                continue;
+	        var rulesPass = true;
+	        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, function (child) {
+	            if (!(child instanceof originalColumnGroup_1.OriginalColumnGroup)) {
+	                return;
 	            }
-	            var thisPath = this.columnUtils.getOriginalPathForColumn(thisColumn, this.gridBalancedTree);
-	            var nextPath = this.columnUtils.getOriginalPathForColumn(nextColumn, this.gridBalancedTree);
-	            if (!nextPath || !thisPath) {
-	                console.log('next path is missing');
+	            var columnGroup = child;
+	            var marryChildren = columnGroup.getColGroupDef() && columnGroup.getColGroupDef().marryChildren;
+	            if (!marryChildren) {
+	                return;
 	            }
-	            // start at the top of the path and work down
-	            for (var dept = 0; dept < thisPath.length; dept++) {
-	                var thisOriginalGroup = thisPath[dept];
-	                var nextOriginalGroup = nextPath[dept];
-	                var lastColInGroup = thisOriginalGroup !== nextOriginalGroup;
-	                // a runaway is a column from this group that left the group, and the group has it's children marked as married
-	                var colGroupDef = thisOriginalGroup.getColGroupDef();
-	                var marryChildren = colGroupDef && colGroupDef.marryChildren;
-	                var needToCheckForRunaways = lastColInGroup && marryChildren;
-	                if (needToCheckForRunaways) {
-	                    for (var tailIndex = index + 1; tailIndex < allColumnsCopy.length; tailIndex++) {
-	                        var tailColumn = allColumnsCopy[tailIndex];
-	                        var tailPath = this.columnUtils.getOriginalPathForColumn(tailColumn, this.gridBalancedTree);
-	                        var tailOriginalGroup = tailPath[dept];
-	                        if (tailOriginalGroup === thisOriginalGroup) {
-	                            return false;
-	                        }
-	                    }
-	                }
+	            var newIndexes = [];
+	            columnGroup.getLeafColumns().forEach(function (col) {
+	                var newColIndex = allColumnsCopy.indexOf(col);
+	                newIndexes.push(newColIndex);
+	            });
+	            var maxIndex = Math.max.apply(Math, newIndexes);
+	            var minIndex = Math.min.apply(Math, newIndexes);
+	            // width is how far the first column in this group is away from the last column
+	            var spread = maxIndex - minIndex;
+	            var maxSpread = columnGroup.getLeafColumns().length - 1;
+	            // if the columns
+	            if (spread > maxSpread) {
+	                rulesPass = false;
 	            }
-	        }
-	        return true;
+	            // console.log(`maxIndex = ${maxIndex}, minIndex = ${minIndex}, spread = ${spread}, maxSpread = ${maxSpread}, fail = ${spread > (count-1)}`)
+	            // console.log(allColumnsCopy.map( col => col.getColDef().field).join(','));
+	        });
+	        return rulesPass;
 	    };
 	    ColumnController.prototype.moveColumn = function (key, toIndex) {
 	        this.moveColumns([key], toIndex);
@@ -35803,12 +35727,14 @@
 	            return;
 	        }
 	        this.updateDisplayedColumns();
-	        var event = createEvent();
-	        event.withColumns(updatedColumns);
-	        if (updatedColumns.length === 1) {
-	            event.withColumn(updatedColumns[0]);
+	        if (utils_1.Utils.exists(createEvent)) {
+	            var event_3 = createEvent();
+	            event_3.withColumns(updatedColumns);
+	            if (updatedColumns.length === 1) {
+	                event_3.withColumn(updatedColumns[0]);
+	            }
+	            this.eventService.dispatchEvent(event_3.getType(), event_3);
 	        }
-	        this.eventService.dispatchEvent(event.getType(), event);
 	    };
 	    ColumnController.prototype.getDisplayedColBefore = function (col) {
 	        var allDisplayedColumns = this.getAllDisplayedColumns();
@@ -36214,7 +36140,7 @@
 	        var _this = this;
 	        this.rowGroupColumns.forEach(function (column) { return column.setRowGroupActive(false); });
 	        this.rowGroupColumns = [];
-	        // pull out the columns
+	        // pull out items with rowGroupIndex
 	        this.primaryColumns.forEach(function (column) {
 	            if (typeof column.getColDef().rowGroupIndex === 'number') {
 	                _this.rowGroupColumns.push(column);
@@ -36225,12 +36151,24 @@
 	        this.rowGroupColumns.sort(function (colA, colB) {
 	            return colA.getColDef().rowGroupIndex - colB.getColDef().rowGroupIndex;
 	        });
+	        // now just pull out items rowGroup, they will be added at the end
+	        // after the indexed ones, but in the order the columns appear
+	        this.primaryColumns.forEach(function (column) {
+	            if (column.getColDef().rowGroup) {
+	                // if user already specified rowGroupIndex then we skip it as this col already included
+	                if (_this.rowGroupColumns.indexOf(column) >= 0) {
+	                    return;
+	                }
+	                _this.rowGroupColumns.push(column);
+	                column.setRowGroupActive(true);
+	            }
+	        });
 	    };
 	    ColumnController.prototype.extractPivotColumns = function () {
 	        var _this = this;
 	        this.pivotColumns.forEach(function (column) { return column.setPivotActive(false); });
 	        this.pivotColumns = [];
-	        // pull out the columns
+	        // pull out items with pivotIndex
 	        this.primaryColumns.forEach(function (column) {
 	            if (typeof column.getColDef().pivotIndex === 'number') {
 	                _this.pivotColumns.push(column);
@@ -36240,6 +36178,17 @@
 	        // then sort them
 	        this.pivotColumns.sort(function (colA, colB) {
 	            return colA.getColDef().pivotIndex - colB.getColDef().pivotIndex;
+	        });
+	        // now check the boolean equivalent
+	        this.primaryColumns.forEach(function (column) {
+	            if (column.getColDef().pivot) {
+	                // if user already specified pivotIndex then we skip it as this col already included
+	                if (_this.pivotColumns.indexOf(column) >= 0) {
+	                    return;
+	                }
+	                _this.pivotColumns.push(column);
+	                column.setPivotActive(true);
+	            }
 	        });
 	    };
 	    // called by headerRenderer - when a header is opened or closed
@@ -36302,6 +36251,23 @@
 	        }
 	        return columnsForDisplay;
 	    };
+	    ColumnController.prototype.calculateColumnsForGroupDisplay = function () {
+	        var _this = this;
+	        this.groupDisplayColumns = [];
+	        var checkFunc = function (col) {
+	            var colDef = col.getColDef();
+	            if (colDef && utils_1.Utils.exists(colDef.showRowGroup)) {
+	                _this.groupDisplayColumns.push(col);
+	            }
+	        };
+	        this.gridColumns.forEach(checkFunc);
+	        if (this.groupAutoColumns) {
+	            this.groupAutoColumns.forEach(checkFunc);
+	        }
+	    };
+	    ColumnController.prototype.getGroupDisplayColumns = function () {
+	        return this.groupDisplayColumns;
+	    };
 	    ColumnController.prototype.createColumnsToDisplayFromValueColumns = function () {
 	        var _this = this;
 	        // make a copy of the value columns, so we have to side effects
@@ -36320,6 +36286,7 @@
 	        this.buildDisplayedTrees(columnsForDisplay);
 	        // restore opened / closed state
 	        this.setColumnGroupState(oldGroupState);
+	        this.calculateColumnsForGroupDisplay();
 	        // this is also called when a group is opened or closed
 	        this.updateGroupsAndDisplayedColumns();
 	        this.setFirstRightAndLastLeftPinned();
@@ -36644,9 +36611,8 @@
 	        }
 	        this.setLeftValues();
 	        this.updateBodyWidths();
-	        // widths set, refresh the gui
 	        colsToFireEventFor.forEach(function (column) {
-	            var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withColumn(column);
+	            var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(true);
 	            _this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_RESIZED, event);
 	        });
 	        function moveToNotSpread(column) {
@@ -36790,12 +36756,12 @@
 
 
 /***/ },
-/* 393 */
+/* 387 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -36810,10 +36776,10 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var column_1 = __webpack_require__(394);
-	var eventService_1 = __webpack_require__(382);
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
+	var column_1 = __webpack_require__(388);
+	var eventService_1 = __webpack_require__(376);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
 	var ColumnGroup = (function () {
 	    function ColumnGroup(originalColumnGroup, groupId, instanceId) {
 	        // depends on the open/closed state of the group, only displaying columns are stored here
@@ -36887,13 +36853,6 @@
 	    ColumnGroup.prototype.removeEventListener = function (eventType, listener) {
 	        this.localEventService.removeEventListener(eventType, listener);
 	    };
-	    // public setMoving(moving: boolean) {
-	    //     this.getDisplayedLeafColumns().forEach( (column)=> column.setMoving(moving) );
-	    // }
-	    //
-	    // public isMoving(): boolean {
-	    //     return this.moving;
-	    // }
 	    ColumnGroup.prototype.getGroupId = function () {
 	        return this.groupId;
 	    };
@@ -36922,6 +36881,19 @@
 	            });
 	        }
 	        return groupActualWidth;
+	    };
+	    ColumnGroup.prototype.isResizable = function () {
+	        if (!this.displayedChildren) {
+	            return false;
+	        }
+	        // if at least one child is resizable, then the group is resizable
+	        var result = false;
+	        this.displayedChildren.forEach(function (child) {
+	            if (child.isResizable()) {
+	                result = true;
+	            }
+	        });
+	        return result;
 	    };
 	    ColumnGroup.prototype.getMinWidth = function () {
 	        var result = 0;
@@ -37045,12 +37017,12 @@
 
 
 /***/ },
-/* 394 */
+/* 388 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -37065,11 +37037,11 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var eventService_1 = __webpack_require__(382);
-	var utils_1 = __webpack_require__(385);
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var columnUtils_1 = __webpack_require__(395);
+	var eventService_1 = __webpack_require__(376);
+	var utils_1 = __webpack_require__(379);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var columnUtils_1 = __webpack_require__(389);
 	// Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 	// This class contains all the runtime information about a column, plus some logic (the definition has no logic).
 	// This class implements both interfaces ColumnGroupChild and OriginalColumnGroupChild as the class can
@@ -37124,6 +37096,14 @@
 	        this.tooltipFieldContainsDots = utils_1.Utils.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
 	        this.validate();
 	    };
+	    Column.prototype.isRowGroupDisplayed = function (colId) {
+	        if (utils_1.Utils.missing(this.colDef) || utils_1.Utils.missing(this.colDef.showRowGroup)) {
+	            return false;
+	        }
+	        var showingAllGroups = this.colDef.showRowGroup === true;
+	        var showingThisGroup = this.colDef.showRowGroup === colId;
+	        return showingAllGroups || showingThisGroup;
+	    };
 	    Column.prototype.getCellRenderer = function () {
 	        return this.cellRenderer;
 	    };
@@ -37159,9 +37139,32 @@
 	            if (utils_1.Utils.exists(this.colDef.rowGroupIndex)) {
 	                console.warn('ag-Grid: rowGroupIndex is only valid in ag-Grid-Enterprise');
 	            }
+	            if (utils_1.Utils.exists(this.colDef.rowGroup)) {
+	                console.warn('ag-Grid: rowGroup is only valid in ag-Grid-Enterprise');
+	            }
+	            if (utils_1.Utils.exists(this.colDef.pivotIndex)) {
+	                console.warn('ag-Grid: pivotIndex is only valid in ag-Grid-Enterprise');
+	            }
+	            if (utils_1.Utils.exists(this.colDef.pivot)) {
+	                console.warn('ag-Grid: pivot is only valid in ag-Grid-Enterprise');
+	            }
 	        }
 	        if (utils_1.Utils.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
 	            console.warn('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width);
+	        }
+	        if (utils_1.Utils.get(this, 'colDef.cellRendererParams.restrictToOneGroup', null)) {
+	            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.restrictToOneGroup is deprecated. You should use showRowGroup');
+	        }
+	        if (utils_1.Utils.get(this, 'colDef.cellRendererParams.keyMap', null)) {
+	            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
+	        }
+	        if (utils_1.Utils.exists(this.colDef.cellFormatter)) {
+	            console.warn('ag-Grid: colDef.cellFormatter was renamed to colDef.valueFormatter, please rename in your code as we will be dropping cellFormatter');
+	            this.colDef.valueFormatter = this.colDef.cellFormatter;
+	        }
+	        if (utils_1.Utils.exists(this.colDef.floatingCellFormatter)) {
+	            console.warn('ag-Grid: colDef.floatingCellFormatter was renamed to colDef.floatingValueFormatter, please rename in your code as we will be dropping floatingCellFormatter');
+	            this.colDef.floatingValueFormatter = this.colDef.floatingCellFormatter;
 	        }
 	    };
 	    Column.prototype.addEventListener = function (eventType, listener) {
@@ -37194,14 +37197,29 @@
 	        return false;
 	    };
 	    Column.prototype.isCellEditable = function (rowNode) {
+	        // only allow editing of groups if the user has this option enabled
+	        if (rowNode.group && !this.gridOptionsWrapper.isEnableGroupEdit()) {
+	            return false;
+	        }
+	        return this.isColumnFunc(rowNode, this.colDef.editable);
+	    };
+	    Column.prototype.isSuppressPaste = function (rowNode) {
+	        return this.isColumnFunc(rowNode, this.colDef ? this.colDef.suppressPaste : null);
+	    };
+	    Column.prototype.isResizable = function () {
+	        var enableColResize = this.gridOptionsWrapper.isEnableColResize();
+	        var suppressResize = this.colDef && this.colDef.suppressResize;
+	        return enableColResize && !suppressResize;
+	    };
+	    Column.prototype.isColumnFunc = function (rowNode, value) {
 	        // if boolean set, then just use it
-	        if (typeof this.colDef.editable === 'boolean') {
-	            return this.colDef.editable;
+	        if (typeof value === 'boolean') {
+	            return value;
 	        }
 	        // if function, then call the function to find out
-	        if (typeof this.colDef.editable === 'function') {
+	        if (typeof value === 'function') {
 	            var params = this.createIsColumnFuncParams(rowNode);
-	            var editableFunc = this.colDef.editable;
+	            var editableFunc = value;
 	            return editableFunc(params);
 	        }
 	        return false;
@@ -37411,6 +37429,14 @@
 	    Column.prototype.isAllowRowGroup = function () {
 	        return this.colDef.enableRowGroup === true;
 	    };
+	    Column.prototype.getMenuTabs = function (defaultValues) {
+	        var menuTabs = this.getColDef().menuTabs;
+	        if (menuTabs == null) {
+	            menuTabs = defaultValues;
+	        }
+	        ;
+	        return menuTabs;
+	    };
 	    return Column;
 	}());
 	// + renderedHeaderCell - for making header cell transparent when moving
@@ -37462,12 +37488,12 @@
 
 
 /***/ },
-/* 395 */
+/* 389 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -37482,11 +37508,11 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var columnGroup_1 = __webpack_require__(393);
-	var originalColumnGroup_1 = __webpack_require__(396);
-	var context_1 = __webpack_require__(384);
-	var context_2 = __webpack_require__(384);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var columnGroup_1 = __webpack_require__(387);
+	var originalColumnGroup_1 = __webpack_require__(390);
+	var context_1 = __webpack_require__(378);
+	var context_2 = __webpack_require__(378);
 	// takes in a list of columns, as specified by the column definitions, and returns column groups
 	var ColumnUtils = (function () {
 	    function ColumnUtils() {
@@ -37620,20 +37646,20 @@
 
 
 /***/ },
-/* 396 */
+/* 390 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var columnGroup_1 = __webpack_require__(393);
-	var column_1 = __webpack_require__(394);
-	var eventService_1 = __webpack_require__(382);
+	var columnGroup_1 = __webpack_require__(387);
+	var column_1 = __webpack_require__(388);
+	var eventService_1 = __webpack_require__(376);
 	var OriginalColumnGroup = (function () {
 	    function OriginalColumnGroup(colGroupDef, groupId, padding) {
 	        this.localEventService = new eventService_1.EventService();
@@ -37738,12 +37764,12 @@
 
 
 /***/ },
-/* 397 */
+/* 391 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -37761,9 +37787,9 @@
 	    return function (target, key) { decorator(target, key, paramIndex); }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var logger_1 = __webpack_require__(383);
-	var context_1 = __webpack_require__(384);
-	var context_2 = __webpack_require__(384);
+	var logger_1 = __webpack_require__(377);
+	var context_1 = __webpack_require__(378);
+	var context_2 = __webpack_require__(378);
 	var ExpressionService = (function () {
 	    function ExpressionService() {
 	        this.expressionToFunctionCache = {};
@@ -37771,18 +37797,35 @@
 	    ExpressionService.prototype.setBeans = function (loggerFactory) {
 	        this.logger = loggerFactory.create('ExpressionService');
 	    };
-	    ExpressionService.prototype.evaluate = function (expression, params) {
+	    ExpressionService.prototype.evaluate = function (expressionOrFunc, params) {
+	        if (typeof expressionOrFunc === 'function') {
+	            // valueGetter is a function, so just call it
+	            var func = expressionOrFunc;
+	            return func(params);
+	        }
+	        else if (typeof expressionOrFunc === 'string') {
+	            // valueGetter is an expression, so execute the expression
+	            var expression = expressionOrFunc;
+	            return this.evaluateExpression(expression, params);
+	        }
+	        else {
+	            console.error('ag-Grid: value should be either a string or a function', expressionOrFunc);
+	        }
+	    };
+	    ExpressionService.prototype.evaluateExpression = function (expression, params) {
 	        try {
 	            var javaScriptFunction = this.createExpressionFunction(expression);
-	            var result = javaScriptFunction(params.value, params.context, params.node, params.data, params.colDef, params.rowIndex, params.api, params.getValue, params.column, params.columnGroup);
+	            // the params don't have all these values, rather we add every possible
+	            // value a params can have, which makes whatever is in the params available.
+	            var result = javaScriptFunction(params.value, params.context, params.oldValue, params.newValue, params.value, params.node, params.data, params.colDef, params.rowIndex, params.api, params.columnApi, params.getValue, params.column, params.columnGroup);
 	            return result;
 	        }
 	        catch (e) {
 	            // the expression failed, which can happen, as it's the client that
 	            // provides the expression. so print a nice message
-	            this.logger.log('Processing of the expression failed');
-	            this.logger.log('Expression = ' + expression);
-	            this.logger.log('Exception = ' + e);
+	            console.log('Processing of the expression failed');
+	            console.log('Expression = ' + expression);
+	            console.log('Exception = ' + e);
 	            return null;
 	        }
 	    };
@@ -37793,7 +37836,7 @@
 	        }
 	        // if not found in cache, return the function
 	        var functionBody = this.createFunctionBody(expression);
-	        var theFunction = new Function('x, ctx, node, data, colDef, rowIndex, api, getValue, column, columnGroup', functionBody);
+	        var theFunction = new Function('x, ctx, oldValue, newValue, value, node, data, colDef, rowIndex, api, columnApi, getValue, column, columnGroup', functionBody);
 	        // store in cache
 	        this.expressionToFunctionCache[expression] = theFunction;
 	        return theFunction;
@@ -37823,12 +37866,12 @@
 
 
 /***/ },
-/* 398 */
+/* 392 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -37843,12 +37886,12 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var columnUtils_1 = __webpack_require__(395);
-	var columnGroup_1 = __webpack_require__(393);
-	var originalColumnGroup_1 = __webpack_require__(396);
-	var context_1 = __webpack_require__(384);
-	var utils_1 = __webpack_require__(385);
-	var context_2 = __webpack_require__(384);
+	var columnUtils_1 = __webpack_require__(389);
+	var columnGroup_1 = __webpack_require__(387);
+	var originalColumnGroup_1 = __webpack_require__(390);
+	var context_1 = __webpack_require__(378);
+	var utils_1 = __webpack_require__(379);
+	var context_2 = __webpack_require__(378);
 	// takes in a list of columns, as specified by the column definitions, and returns column groups
 	var DisplayedGroupCreator = (function () {
 	    function DisplayedGroupCreator() {
@@ -38018,12 +38061,12 @@
 
 
 /***/ },
-/* 399 */
+/* 393 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -38038,14 +38081,14 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var rowRenderer_1 = __webpack_require__(400);
-	var gridPanel_1 = __webpack_require__(401);
-	var context_1 = __webpack_require__(384);
-	var context_2 = __webpack_require__(384);
-	var headerRenderer_1 = __webpack_require__(459);
-	var renderedHeaderCell_1 = __webpack_require__(463);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var headerWrapperComp_1 = __webpack_require__(467);
+	var rowRenderer_1 = __webpack_require__(394);
+	var gridPanel_1 = __webpack_require__(395);
+	var context_1 = __webpack_require__(378);
+	var context_2 = __webpack_require__(378);
+	var headerRenderer_1 = __webpack_require__(455);
+	var renderedHeaderCell_1 = __webpack_require__(459);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var headerWrapperComp_1 = __webpack_require__(463);
 	var AutoWidthCalculator = (function () {
 	    function AutoWidthCalculator() {
 	    }
@@ -38158,12 +38201,12 @@
 
 
 /***/ },
-/* 400 */
+/* 394 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -38191,27 +38234,27 @@
 	    return function (target, key) { decorator(target, key, paramIndex); }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var gridPanel_1 = __webpack_require__(401);
-	var expressionService_1 = __webpack_require__(397);
-	var templateService_1 = __webpack_require__(411);
-	var valueService_1 = __webpack_require__(406);
-	var eventService_1 = __webpack_require__(382);
-	var floatingRowModel_1 = __webpack_require__(403);
-	var rowComp_1 = __webpack_require__(456);
-	var events_1 = __webpack_require__(386);
-	var constants_1 = __webpack_require__(387);
-	var cellComp_1 = __webpack_require__(410);
-	var context_1 = __webpack_require__(384);
-	var gridCore_1 = __webpack_require__(416);
-	var columnController_1 = __webpack_require__(392);
-	var logger_1 = __webpack_require__(383);
-	var focusedCellController_1 = __webpack_require__(412);
-	var cellNavigationService_1 = __webpack_require__(458);
-	var gridCell_1 = __webpack_require__(413);
-	var beanStub_1 = __webpack_require__(422);
-	var paginationProxy_1 = __webpack_require__(437);
+	var utils_1 = __webpack_require__(379);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var gridPanel_1 = __webpack_require__(395);
+	var expressionService_1 = __webpack_require__(391);
+	var templateService_1 = __webpack_require__(408);
+	var valueService_1 = __webpack_require__(400);
+	var eventService_1 = __webpack_require__(376);
+	var floatingRowModel_1 = __webpack_require__(397);
+	var rowComp_1 = __webpack_require__(452);
+	var events_1 = __webpack_require__(380);
+	var constants_1 = __webpack_require__(381);
+	var cellComp_1 = __webpack_require__(407);
+	var context_1 = __webpack_require__(378);
+	var gridCore_1 = __webpack_require__(413);
+	var columnController_1 = __webpack_require__(386);
+	var logger_1 = __webpack_require__(377);
+	var focusedCellController_1 = __webpack_require__(409);
+	var cellNavigationService_1 = __webpack_require__(454);
+	var gridCell_1 = __webpack_require__(410);
+	var beanStub_1 = __webpack_require__(419);
+	var paginationProxy_1 = __webpack_require__(434);
 	var RowRenderer = (function (_super) {
 	    __extends(RowRenderer, _super);
 	    function RowRenderer() {
@@ -38442,8 +38485,8 @@
 	        var _this = this;
 	        var rowsToRemove;
 	        var oldRowsByNodeId = {};
-	        // never keep rendered rows if doing forPrint, as we do not use 'top' to
-	        // position the rows in forPrint (use normal flow), so we have to remove
+	        // never keep rendered rows if doing forPrint or autoHeight, as we do not use 'top' to
+	        // position the rows (it uses normal flow), so we have to remove
 	        // all rows and insert them again from scratch
 	        if (this.gridOptionsWrapper.isForPrint() || this.gridOptionsWrapper.isAutoHeight()) {
 	            keepRenderedRows = false;
@@ -38628,6 +38671,13 @@
 	        if (!this.gridOptionsWrapper.isForPrint()) {
 	            this.rowContainers.pinnedLeft.flushDocumentFragment();
 	            this.rowContainers.pinnedRight.flushDocumentFragment();
+	        }
+	        if (this.gridOptionsWrapper.isEnforceRowDomOrder()) {
+	            utils_1.Utils.iterateObject(this.rowContainers, function (key, rowContainerComp) {
+	                if (rowContainerComp) {
+	                    rowContainerComp.sortDomByRowNodeIndex();
+	                }
+	            });
 	        }
 	        // if we are doing angular compiling, then do digest the scope here
 	        if (this.gridOptionsWrapper.isAngularCompileRows()) {
@@ -38967,12 +39017,12 @@
 
 
 /***/ },
-/* 401 */
+/* 395 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -39000,78 +39050,78 @@
 	    return function (target, key) { decorator(target, key, paramIndex); }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var masterSlaveService_1 = __webpack_require__(402);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var columnController_1 = __webpack_require__(392);
-	var rowRenderer_1 = __webpack_require__(400);
-	var floatingRowModel_1 = __webpack_require__(403);
-	var borderLayout_1 = __webpack_require__(407);
-	var logger_1 = __webpack_require__(383);
-	var context_1 = __webpack_require__(384);
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var dragService_1 = __webpack_require__(408);
-	var constants_1 = __webpack_require__(387);
-	var selectionController_1 = __webpack_require__(405);
-	var csvCreator_1 = __webpack_require__(390);
-	var mouseEventService_1 = __webpack_require__(409);
-	var focusedCellController_1 = __webpack_require__(412);
-	var rowComp_1 = __webpack_require__(456);
-	var scrollVisibleService_1 = __webpack_require__(438);
-	var beanStub_1 = __webpack_require__(422);
-	var rowContainerComponent_1 = __webpack_require__(457);
-	var paginationProxy_1 = __webpack_require__(437);
-	var popupEditorWrapper_1 = __webpack_require__(442);
+	var utils_1 = __webpack_require__(379);
+	var masterSlaveService_1 = __webpack_require__(396);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var columnController_1 = __webpack_require__(386);
+	var rowRenderer_1 = __webpack_require__(394);
+	var floatingRowModel_1 = __webpack_require__(397);
+	var borderLayout_1 = __webpack_require__(404);
+	var logger_1 = __webpack_require__(377);
+	var context_1 = __webpack_require__(378);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var dragService_1 = __webpack_require__(405);
+	var constants_1 = __webpack_require__(381);
+	var selectionController_1 = __webpack_require__(399);
+	var csvCreator_1 = __webpack_require__(384);
+	var mouseEventService_1 = __webpack_require__(406);
+	var focusedCellController_1 = __webpack_require__(409);
+	var rowComp_1 = __webpack_require__(452);
+	var scrollVisibleService_1 = __webpack_require__(435);
+	var beanStub_1 = __webpack_require__(419);
+	var rowContainerComponent_1 = __webpack_require__(453);
+	var paginationProxy_1 = __webpack_require__(434);
+	var popupEditorWrapper_1 = __webpack_require__(439);
 	// in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 	// it won't render correctly in safari, as safari renders white space as a gap
-	var HEADER_SNIPPET = '<div class="ag-header">' +
-	    '<div class="ag-pinned-left-header"></div>' +
-	    '<div class="ag-pinned-right-header"></div>' +
-	    '<div class="ag-header-viewport">' +
-	    '<div class="ag-header-container"></div>' +
+	var HEADER_SNIPPET = '<div class="ag-header" role="row">' +
+	    '<div class="ag-pinned-left-header" role="presentation"></div>' +
+	    '<div class="ag-pinned-right-header" role="presentation"></div>' +
+	    '<div class="ag-header-viewport" role="presentation">' +
+	    '<div class="ag-header-container" role="presentation"></div>' +
 	    '</div>' +
-	    '<div class="ag-header-overlay"></div>' +
+	    '<div class="ag-header-overlay" role="presentation"></div>' +
 	    '</div>';
-	var FLOATING_TOP_SNIPPET = '<div class="ag-floating-top">' +
-	    '<div class="ag-pinned-left-floating-top"></div>' +
-	    '<div class="ag-pinned-right-floating-top"></div>' +
-	    '<div class="ag-floating-top-viewport">' +
-	    '<div class="ag-floating-top-container"></div>' +
+	var FLOATING_TOP_SNIPPET = '<div class="ag-floating-top" role="presentation">' +
+	    '<div class="ag-pinned-left-floating-top" role="presentation"></div>' +
+	    '<div class="ag-pinned-right-floating-top" role="presentation"></div>' +
+	    '<div class="ag-floating-top-viewport" role="presentation">' +
+	    '<div class="ag-floating-top-container" role="presentation"></div>' +
 	    '</div>' +
-	    '<div class="ag-floating-top-full-width-container"></div>' +
+	    '<div class="ag-floating-top-full-width-container" role="presentation"></div>' +
 	    '</div>';
-	var FLOATING_BOTTOM_SNIPPET = '<div class="ag-floating-bottom">' +
-	    '<div class="ag-pinned-left-floating-bottom"></div>' +
-	    '<div class="ag-pinned-right-floating-bottom"></div>' +
-	    '<div class="ag-floating-bottom-viewport">' +
-	    '<div class="ag-floating-bottom-container"></div>' +
+	var FLOATING_BOTTOM_SNIPPET = '<div class="ag-floating-bottom" role="presentation">' +
+	    '<div class="ag-pinned-left-floating-bottom" role="presentation"></div>' +
+	    '<div class="ag-pinned-right-floating-bottom" role="presentation"></div>' +
+	    '<div class="ag-floating-bottom-viewport" role="presentation">' +
+	    '<div class="ag-floating-bottom-container" role="presentation"></div>' +
 	    '</div>' +
-	    '<div class="ag-floating-bottom-full-width-container"></div>' +
+	    '<div class="ag-floating-bottom-full-width-container" role="presentation"></div>' +
 	    '</div>';
-	var BODY_SNIPPET = '<div class="ag-body">' +
-	    '<div class="ag-pinned-left-cols-viewport">' +
-	    '<div class="ag-pinned-left-cols-container"></div>' +
+	var BODY_SNIPPET = '<div class="ag-body" role="presentation">' +
+	    '<div class="ag-pinned-left-cols-viewport" role="presentation">' +
+	    '<div class="ag-pinned-left-cols-container" role="presentation"></div>' +
 	    '</div>' +
-	    '<div class="ag-pinned-right-cols-viewport">' +
-	    '<div class="ag-pinned-right-cols-container"></div>' +
+	    '<div class="ag-pinned-right-cols-viewport" role="presentation">' +
+	    '<div class="ag-pinned-right-cols-container" role="presentation"></div>' +
 	    '</div>' +
-	    '<div class="ag-body-viewport-wrapper">' +
-	    '<div class="ag-body-viewport">' +
-	    '<div class="ag-body-container"></div>' +
+	    '<div class="ag-body-viewport-wrapper" role="presentation">' +
+	    '<div class="ag-body-viewport" role="presentation">' +
+	    '<div class="ag-body-container" role="presentation"></div>' +
 	    '</div>' +
 	    '</div>' +
-	    '<div class="ag-full-width-viewport">' +
-	    '<div class="ag-full-width-container"></div>' +
+	    '<div class="ag-full-width-viewport" role="presentation">' +
+	    '<div class="ag-full-width-container" role="presentation"></div>' +
 	    '</div>' +
 	    '</div>';
 	// the difference between the 'normal' and 'full height' template is the order of the floating and body,
 	// for normal, the floating top and bottom go in first as they are fixed position,
 	// for auto-height, the body is in the middle of the top and bottom as they are just normally laid out
-	var GRID_PANEL_NORMAL_TEMPLATE = '<div class="ag-root ag-font-style">' +
+	var GRID_PANEL_NORMAL_TEMPLATE = '<div class="ag-root ag-font-style" role="grid">' +
 	    HEADER_SNIPPET + FLOATING_TOP_SNIPPET + FLOATING_BOTTOM_SNIPPET + BODY_SNIPPET +
 	    '</div>';
-	var GRID_PANEL_AUTO_HEIGHT_TEMPLATE = '<div class="ag-root ag-font-style">' +
+	var GRID_PANEL_AUTO_HEIGHT_TEMPLATE = '<div class="ag-root ag-font-style" role="grid">' +
 	    HEADER_SNIPPET + FLOATING_TOP_SNIPPET + BODY_SNIPPET + FLOATING_BOTTOM_SNIPPET +
 	    '</div>';
 	// the template for for-print is much easier than that others, as it doesn't have any pinned areas
@@ -39088,7 +39138,7 @@
 	    '</div>';
 	// wrapping in outer div, and wrapper, is needed to center the loading icon
 	// The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
-	var OVERLAY_TEMPLATE = '<div class="ag-overlay-panel">' +
+	var OVERLAY_TEMPLATE = '<div class="ag-overlay-panel" role="presentation">' +
 	    '<div class="ag-overlay-wrapper ag-overlay-[OVERLAY_NAME]-wrapper">[OVERLAY_TEMPLATE]</div>' +
 	    '</div>';
 	var LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
@@ -39997,6 +40047,7 @@
 	        this.eRoot = utils_1.Utils.loadTemplate(template);
 	    };
 	    GridPanel.prototype.findElements = function () {
+	        var _this = this;
 	        if (this.forPrint) {
 	            this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
 	            this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
@@ -40074,6 +40125,11 @@
 	            };
 	            this.addMouseWheelEventListeners();
 	        }
+	        utils_1.Utils.iterateObject(this.rowContainerComponents, function (key, container) {
+	            if (container) {
+	                _this.context.wireBean(container);
+	            }
+	        });
 	    };
 	    GridPanel.prototype.getRowContainers = function () {
 	        return this.rowContainerComponents;
@@ -40540,6 +40596,10 @@
 	    __metadata("design:type", eventService_1.EventService)
 	], GridPanel.prototype, "eventService", void 0);
 	__decorate([
+	    context_1.Autowired('context'),
+	    __metadata("design:type", context_1.Context)
+	], GridPanel.prototype, "context", void 0);
+	__decorate([
 	    context_1.Autowired('paginationProxy'),
 	    __metadata("design:type", paginationProxy_1.PaginationProxy)
 	], GridPanel.prototype, "paginationProxy", void 0);
@@ -40639,12 +40699,12 @@
 
 
 /***/ },
-/* 402 */
+/* 396 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -40662,16 +40722,16 @@
 	    return function (target, key) { decorator(target, key, paramIndex); }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var columnController_1 = __webpack_require__(392);
-	var gridPanel_1 = __webpack_require__(401);
-	var eventService_1 = __webpack_require__(382);
-	var logger_1 = __webpack_require__(383);
-	var events_1 = __webpack_require__(386);
-	var context_1 = __webpack_require__(384);
-	var context_2 = __webpack_require__(384);
-	var context_3 = __webpack_require__(384);
-	var context_4 = __webpack_require__(384);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var columnController_1 = __webpack_require__(386);
+	var gridPanel_1 = __webpack_require__(395);
+	var eventService_1 = __webpack_require__(376);
+	var logger_1 = __webpack_require__(377);
+	var events_1 = __webpack_require__(380);
+	var context_1 = __webpack_require__(378);
+	var context_2 = __webpack_require__(378);
+	var context_3 = __webpack_require__(378);
+	var context_4 = __webpack_require__(378);
 	var MasterSlaveService = (function () {
 	    function MasterSlaveService() {
 	        // flag to mark if we are consuming. to avoid cyclic events (ie slave firing back to master
@@ -40853,12 +40913,12 @@
 
 
 /***/ },
-/* 403 */
+/* 397 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -40873,15 +40933,15 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var rowNode_1 = __webpack_require__(404);
-	var context_1 = __webpack_require__(384);
-	var eventService_1 = __webpack_require__(382);
-	var context_2 = __webpack_require__(384);
-	var events_1 = __webpack_require__(386);
-	var context_3 = __webpack_require__(384);
-	var constants_1 = __webpack_require__(387);
-	var utils_1 = __webpack_require__(385);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var rowNode_1 = __webpack_require__(398);
+	var context_1 = __webpack_require__(378);
+	var eventService_1 = __webpack_require__(376);
+	var context_2 = __webpack_require__(378);
+	var events_1 = __webpack_require__(380);
+	var context_3 = __webpack_require__(378);
+	var constants_1 = __webpack_require__(381);
+	var utils_1 = __webpack_require__(379);
 	var FloatingRowModel = (function () {
 	    function FloatingRowModel() {
 	    }
@@ -41011,12 +41071,12 @@
 
 
 /***/ },
-/* 404 */
+/* 398 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -41031,15 +41091,15 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var selectionController_1 = __webpack_require__(405);
-	var valueService_1 = __webpack_require__(406);
-	var columnController_1 = __webpack_require__(392);
-	var context_1 = __webpack_require__(384);
-	var constants_1 = __webpack_require__(387);
-	var utils_1 = __webpack_require__(385);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var selectionController_1 = __webpack_require__(399);
+	var valueService_1 = __webpack_require__(400);
+	var columnController_1 = __webpack_require__(386);
+	var context_1 = __webpack_require__(378);
+	var constants_1 = __webpack_require__(381);
+	var utils_1 = __webpack_require__(379);
 	var RowNode = (function () {
 	    function RowNode() {
 	        /** Children mapped by the pivot columns */
@@ -41109,6 +41169,33 @@
 	        this.oldRowTop = this.rowTop;
 	        this.setRowTop(null);
 	    };
+	    RowNode.prototype.setFirstChild = function (firstChild) {
+	        if (this.firstChild === firstChild) {
+	            return;
+	        }
+	        this.firstChild = firstChild;
+	        if (this.eventService) {
+	            this.eventService.dispatchEvent(RowNode.EVENT_FIRST_CHILD_CHANGED);
+	        }
+	    };
+	    RowNode.prototype.setLastChild = function (lastChild) {
+	        if (this.lastChild === lastChild) {
+	            return;
+	        }
+	        this.lastChild = lastChild;
+	        if (this.eventService) {
+	            this.eventService.dispatchEvent(RowNode.EVENT_LAST_CHILD_CHANGED);
+	        }
+	    };
+	    RowNode.prototype.setChildIndex = function (childIndex) {
+	        if (this.childIndex === childIndex) {
+	            return;
+	        }
+	        this.childIndex = childIndex;
+	        if (this.eventService) {
+	            this.eventService.dispatchEvent(RowNode.EVENT_CHILD_INDEX_CHANGED);
+	        }
+	    };
 	    RowNode.prototype.setRowTop = function (rowTop) {
 	        if (this.rowTop === rowTop) {
 	            return;
@@ -41174,12 +41261,20 @@
 	        this.valueService.setValue(this, column, newValue);
 	        this.dispatchCellChangedEvent(column, newValue);
 	    };
+	    RowNode.prototype.setGroupValue = function (colKey, newValue) {
+	        var column = this.columnController.getGridColumn(colKey);
+	        if (utils_1.Utils.missing(this.groupData)) {
+	            this.groupData = {};
+	        }
+	        this.groupData[column.getColId()] = newValue;
+	        this.dispatchCellChangedEvent(column, newValue);
+	    };
 	    // sets the data for an aggregation
 	    RowNode.prototype.setAggData = function (newAggData) {
 	        var _this = this;
 	        // find out all keys that could potentially change
-	        var colIds = utils_1.Utils.getAllKeysInObjects([this.data, newAggData]);
-	        this.data = newAggData;
+	        var colIds = utils_1.Utils.getAllKeysInObjects([this.aggData, newAggData]);
+	        this.aggData = newAggData;
 	        // if no event service, nobody has registered for events, so no need fire event
 	        if (this.eventService) {
 	            colIds.forEach(function (colId) {
@@ -41466,6 +41561,29 @@
 	    RowNode.prototype.onMouseLeave = function () {
 	        this.dispatchLocalEvent(RowNode.EVENT_MOUSE_LEAVE);
 	    };
+	    RowNode.prototype.getFirstChildOfFirstChild = function (rowGroupColumn) {
+	        var currentRowNode = this;
+	        // if we are hiding groups, then if we are the first child, of the first child,
+	        // all the way up to the column we are interested in, then we show the group cell.
+	        var isCandidate = true;
+	        var foundFirstChildPath = false;
+	        var nodeToSwapIn;
+	        while (isCandidate && !foundFirstChildPath) {
+	            var parentRowNode = currentRowNode.parent;
+	            var firstChild = utils_1.Utils.exists(parentRowNode) && currentRowNode.firstChild;
+	            if (firstChild) {
+	                if (parentRowNode.rowGroupColumn === rowGroupColumn) {
+	                    foundFirstChildPath = true;
+	                    nodeToSwapIn = parentRowNode;
+	                }
+	            }
+	            else {
+	                isCandidate = false;
+	            }
+	            currentRowNode = parentRowNode;
+	        }
+	        return foundFirstChildPath ? nodeToSwapIn : null;
+	    };
 	    return RowNode;
 	}());
 	RowNode.EVENT_ROW_SELECTED = 'rowSelected';
@@ -41476,6 +41594,9 @@
 	RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
 	RowNode.EVENT_HEIGHT_CHANGED = 'heightChanged';
 	RowNode.EVENT_TOP_CHANGED = 'topChanged';
+	RowNode.EVENT_FIRST_CHILD_CHANGED = 'firstChildChanged';
+	RowNode.EVENT_LAST_CHILD_CHANGED = 'lastChildChanged';
+	RowNode.EVENT_CHILD_INDEX_CHANGED = 'childIndexChanged';
 	RowNode.EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
 	RowNode.EVENT_EXPANDED_CHANGED = 'expandedChanged';
 	RowNode.EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
@@ -41511,12 +41632,12 @@
 
 
 /***/ },
-/* 405 */
+/* 399 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -41534,16 +41655,16 @@
 	    return function (target, key) { decorator(target, key, paramIndex); }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var context_1 = __webpack_require__(384);
-	var context_2 = __webpack_require__(384);
-	var logger_1 = __webpack_require__(383);
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var context_3 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var context_4 = __webpack_require__(384);
-	var constants_1 = __webpack_require__(387);
+	var utils_1 = __webpack_require__(379);
+	var context_1 = __webpack_require__(378);
+	var context_2 = __webpack_require__(378);
+	var logger_1 = __webpack_require__(377);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var context_3 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var context_4 = __webpack_require__(378);
+	var constants_1 = __webpack_require__(381);
 	var SelectionController = (function () {
 	    function SelectionController() {
 	    }
@@ -41815,12 +41936,12 @@
 
 
 /***/ },
-/* 406 */
+/* 400 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -41835,49 +41956,46 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var expressionService_1 = __webpack_require__(397);
-	var columnController_1 = __webpack_require__(392);
-	var context_1 = __webpack_require__(384);
-	var utils_1 = __webpack_require__(385);
-	var events_1 = __webpack_require__(386);
-	var eventService_1 = __webpack_require__(382);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var expressionService_1 = __webpack_require__(391);
+	var columnController_1 = __webpack_require__(386);
+	var context_1 = __webpack_require__(378);
+	var utils_1 = __webpack_require__(379);
+	var events_1 = __webpack_require__(380);
+	var eventService_1 = __webpack_require__(376);
+	var groupValueService_1 = __webpack_require__(401);
 	var ValueService = (function () {
 	    function ValueService() {
 	        this.initialised = false;
 	    }
 	    ValueService.prototype.init = function () {
 	        this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
-	        this.userProvidedTheGroups = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-	        this.suppressUseColIdForGroups = this.gridOptionsWrapper.isSuppressUseColIdForGroups();
 	        this.initialised = true;
 	    };
-	    ValueService.prototype.getValue = function (column, node) {
-	        var valueUsingSpecificData = this.getValueUsingSpecificData(column, node.data, node);
-	        if (valueUsingSpecificData != null) {
-	            return valueUsingSpecificData;
-	        }
-	        if (node.group && column.getColId() === node.field)
-	            return node.key;
-	        return null;
-	    };
-	    ValueService.prototype.getValueUsingSpecificData = function (column, data, node) {
+	    ValueService.prototype.getValue = function (column, rowNode, ignoreAggData) {
+	        if (ignoreAggData === void 0) { ignoreAggData = false; }
 	        // hack - the grid is getting refreshed before this bean gets initialised, race condition.
 	        // really should have a way so they get initialised in the right order???
 	        if (!this.initialised) {
 	            this.init();
 	        }
+	        // pull these out to make code below easier to read
 	        var colDef = column.getColDef();
 	        var field = colDef.field;
+	        var colId = column.getId();
+	        var data = rowNode.data;
 	        var result;
 	        // if there is a value getter, this gets precedence over a field
-	        // - need to revisit this, we check 'data' as this is the way for the grid to
-	        //   not render when on the footer row
-	        if (data && node.group && !this.userProvidedTheGroups && !this.suppressUseColIdForGroups) {
-	            result = node.data ? node.data[column.getId()] : undefined;
+	        var groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
+	        var aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
+	        if (groupDataExists) {
+	            result = rowNode.groupData[colId];
+	        }
+	        else if (aggDataExists) {
+	            result = rowNode.aggData[colId];
 	        }
 	        else if (colDef.valueGetter) {
-	            result = this.executeValueGetter(colDef.valueGetter, data, column, node);
+	            result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
 	        }
 	        else if (field && data) {
 	            result = utils_1.Utils.getValueUsingField(data, field, column.isFieldContainsDots());
@@ -41888,7 +42006,7 @@
 	        // the result could be an expression itself, if we are allowing cell values to be expressions
 	        if (this.cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
 	            var cellValueGetter = result.substring(1);
-	            result = this.executeValueGetter(cellValueGetter, data, column, node);
+	            result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
 	        }
 	        return result;
 	    };
@@ -41903,40 +42021,64 @@
 	        if (utils_1.Utils.missing(data)) {
 	            rowNode.data = {};
 	        }
-	        var field = column.getColDef().field;
-	        var newValueHandler = column.getColDef().newValueHandler;
+	        var _a = column.getColDef(), field = _a.field, newValueHandler = _a.newValueHandler, valueSetter = _a.valueSetter, valueParser = _a.valueParser;
 	        // need either a field or a newValueHandler for this to work
-	        if (utils_1.Utils.missing(field) && utils_1.Utils.missing(newValueHandler)) {
-	            console.warn("ag-Grid: you need either field or newValueHandler set on colDef for editing to work");
+	        if (utils_1.Utils.missing(field) && utils_1.Utils.missing(newValueHandler) && utils_1.Utils.missing(valueSetter)) {
+	            // we don't tell user about newValueHandler, as that is deprecated
+	            console.warn("ag-Grid: you need either field or valueSetter set on colDef for editing to work");
 	            return;
 	        }
-	        var paramsForCallbacks = {
+	        var params = {
 	            node: rowNode,
 	            data: rowNode.data,
 	            oldValue: this.getValue(column, rowNode),
 	            newValue: newValue,
 	            colDef: column.getColDef(),
+	            column: column,
 	            api: this.gridOptionsWrapper.getApi(),
+	            columnApi: this.gridOptionsWrapper.getColumnApi(),
 	            context: this.gridOptionsWrapper.getContext()
 	        };
-	        if (newValueHandler) {
-	            newValueHandler(paramsForCallbacks);
+	        var parsedValue = utils_1.Utils.exists(valueParser) ? this.expressionService.evaluate(valueParser, params) : newValue;
+	        params.newValue = parsedValue;
+	        var valueWasDifferent;
+	        if (utils_1.Utils.exists(newValueHandler)) {
+	            valueWasDifferent = newValueHandler(params);
+	        }
+	        else if (utils_1.Utils.exists(valueSetter)) {
+	            valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
 	        }
 	        else {
-	            this.setValueUsingField(data, field, newValue, column.isFieldContainsDots());
+	            valueWasDifferent = this.setValueUsingField(data, field, parsedValue, column.isFieldContainsDots());
+	        }
+	        // in case user forgot to return something (possible if they are not using TypeScript
+	        // and just forgot, or using an old newValueHandler we didn't always expect a return
+	        // value here), we default the return value to true, so we always refresh.
+	        if (valueWasDifferent === undefined) {
+	            valueWasDifferent = true;
+	        }
+	        // if no change to the value, then no need to do the updating, or notifying via events.
+	        // otherwise the user could be tabbing around the grid, and cellValueChange would get called
+	        // all the time.
+	        if (!valueWasDifferent) {
+	            return;
 	        }
 	        // reset quick filter on this row
 	        rowNode.resetQuickFilterAggregateText();
-	        paramsForCallbacks.newValue = this.getValue(column, rowNode);
+	        params.newValue = this.getValue(column, rowNode);
 	        if (typeof column.getColDef().onCellValueChanged === 'function') {
-	            column.getColDef().onCellValueChanged(paramsForCallbacks);
+	            column.getColDef().onCellValueChanged(params);
 	        }
-	        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
+	        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_VALUE_CHANGED, params);
 	    };
 	    ValueService.prototype.setValueUsingField = function (data, field, newValue, isFieldContainsDots) {
 	        // if no '.', then it's not a deep value
+	        var valuesAreSame;
 	        if (!isFieldContainsDots) {
-	            data[field] = newValue;
+	            valuesAreSame = utils_1.Utils.valuesSimpleAndSame(data[field], newValue);
+	            if (!valuesAreSame) {
+	                data[field] = newValue;
+	            }
 	        }
 	        else {
 	            // otherwise it is a deep value, so need to dig for it
@@ -41945,38 +42087,35 @@
 	            while (fieldPieces.length > 0 && currentObject) {
 	                var fieldPiece = fieldPieces.shift();
 	                if (fieldPieces.length === 0) {
-	                    currentObject[fieldPiece] = newValue;
+	                    valuesAreSame = utils_1.Utils.valuesSimpleAndSame(currentObject[fieldPiece], newValue);
+	                    if (!valuesAreSame) {
+	                        currentObject[fieldPiece] = newValue;
+	                    }
 	                }
 	                else {
 	                    currentObject = currentObject[fieldPiece];
 	                }
 	            }
 	        }
+	        return !valuesAreSame;
 	    };
 	    ValueService.prototype.executeValueGetter = function (valueGetter, data, column, node) {
-	        var context = this.gridOptionsWrapper.getContext();
-	        var api = this.gridOptionsWrapper.getApi();
 	        var params = {
 	            data: data,
 	            node: node,
+	            column: column,
 	            colDef: column.getColDef(),
-	            api: api,
-	            context: context,
-	            getValue: this.getValueCallback.bind(this, data, node)
+	            api: this.gridOptionsWrapper.getApi(),
+	            columnApi: this.gridOptionsWrapper.getColumnApi(),
+	            context: this.gridOptionsWrapper.getContext(),
+	            getValue: this.getValueCallback.bind(this, node)
 	        };
-	        if (typeof valueGetter === 'function') {
-	            // valueGetter is a function, so just call it
-	            return valueGetter(params);
-	        }
-	        else if (typeof valueGetter === 'string') {
-	            // valueGetter is an expression, so execute the expression
-	            return this.expressionService.evaluate(valueGetter, params);
-	        }
+	        return this.expressionService.evaluate(valueGetter, params);
 	    };
-	    ValueService.prototype.getValueCallback = function (data, node, field) {
+	    ValueService.prototype.getValueCallback = function (node, field) {
 	        var otherColumn = this.columnController.getPrimaryColumn(field);
 	        if (otherColumn) {
-	            return this.getValueUsingSpecificData(otherColumn, data, node);
+	            return this.getValue(otherColumn, node);
 	        }
 	        else {
 	            return null;
@@ -42001,6 +42140,10 @@
 	    __metadata("design:type", eventService_1.EventService)
 	], ValueService.prototype, "eventService", void 0);
 	__decorate([
+	    context_1.Autowired('groupValueService'),
+	    __metadata("design:type", groupValueService_1.GroupValueService)
+	], ValueService.prototype, "groupValueService", void 0);
+	__decorate([
 	    context_1.PostConstruct,
 	    __metadata("design:type", Function),
 	    __metadata("design:paramtypes", []),
@@ -42013,18 +42156,335 @@
 
 
 /***/ },
-/* 407 */
+/* 401 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
+	 * @link http://www.ag-grid.com/
+	 * @license MIT
+	 */
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var context_1 = __webpack_require__(378);
+	var valueFormatterService_1 = __webpack_require__(402);
+	var utils_1 = __webpack_require__(379);
+	var columnController_1 = __webpack_require__(386);
+	var autoGroupColService_1 = __webpack_require__(403);
+	var GroupValueService = (function () {
+	    function GroupValueService() {
+	    }
+	    GroupValueService.prototype.mapGroupName = function (rowNodeKey, keyMap) {
+	        if (keyMap && typeof keyMap === 'object') {
+	            var valueFromMap = keyMap[rowNodeKey];
+	            if (valueFromMap) {
+	                return valueFromMap;
+	            }
+	            else {
+	                return rowNodeKey;
+	            }
+	        }
+	        else {
+	            return rowNodeKey;
+	        }
+	    };
+	    GroupValueService.prototype.formatGroupName = function (unformatted, formattedParams, node) {
+	        var columnOfGroupedCol = this.getGroupColumn(formattedParams.rowGroupIndex, formattedParams.column);
+	        return this.valueFormatterService.formatValue(columnOfGroupedCol, node, formattedParams.scope, unformatted);
+	    };
+	    GroupValueService.prototype.getGroupColumn = function (rowGroupIndex, column) {
+	        // pull out the column that the grouping is on
+	        var rowGroupColumns = this.columnApi.getRowGroupColumns();
+	        // if we are using in memory grid grouping, then we try to look up the column that
+	        // we did the grouping on. however if it is not possible (happens when user provides
+	        // the data already grouped) then we just the current col, ie use cellRenderer of current col
+	        var columnOfGroupedCol = rowGroupColumns[rowGroupIndex];
+	        if (utils_1._.missing(columnOfGroupedCol)) {
+	            columnOfGroupedCol = column;
+	        }
+	        return columnOfGroupedCol;
+	    };
+	    GroupValueService.prototype.getGroupNameValuesByRawValue = function (rawValue, params) {
+	        return this.getGroupNameValues(rawValue, params, null);
+	    };
+	    GroupValueService.prototype.getGroupNameValuesByNode = function (params, node) {
+	        return this.getGroupNameValues(node.key, params, node);
+	    };
+	    GroupValueService.prototype.getGroupNameValues = function (rawValue, params, node) {
+	        var mappedGroupName = this.mapGroupName(rawValue, params.keyMap);
+	        var valueFormatted = null;
+	        if (node) {
+	            valueFormatted = this.formatGroupName(mappedGroupName, params, node);
+	        }
+	        var actualValue = utils_1._.exists(valueFormatted) ? valueFormatted : mappedGroupName;
+	        return {
+	            mappedGroupName: mappedGroupName,
+	            valueFormatted: valueFormatted,
+	            actualValue: actualValue
+	        };
+	    };
+	    GroupValueService.prototype.assignToParams = function (receiver, params, node) {
+	        var groupNameInfo = this.getGroupNameValuesByNode(params, node);
+	        receiver.value = groupNameInfo.mappedGroupName;
+	        receiver.valueFormatted = groupNameInfo.valueFormatted;
+	        receiver.actualValue = groupNameInfo.actualValue;
+	        return receiver;
+	    };
+	    GroupValueService.prototype.getGroupNameInfo = function (column, rowGroupIndex, rowIndex, rawValue) {
+	        var params = {
+	            rowGroupIndex: rowGroupIndex,
+	            column: column,
+	            rowIndex: rowIndex,
+	            scope: null,
+	            keyMap: {}
+	        };
+	        var groupColumn = this.getGroupColumn(params.rowGroupIndex, column);
+	        if (groupColumn.getColId() === column.getColId()) {
+	            return this.extractInfo(rawValue, params, column);
+	        }
+	        else if (column.getColId() === autoGroupColService_1.AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID) {
+	            return this.extractInfo(rawValue, params, column);
+	        }
+	        else if (column.getColId() === autoGroupColService_1.AutoGroupColService.GROUP_AUTO_COLUMN_ID + '_' + column.getColId()) {
+	            return this.extractInfo(rawValue, params, column);
+	        }
+	        return null;
+	    };
+	    GroupValueService.prototype.extractInfo = function (rawValue, params, column) {
+	        return this.enrich(this.getGroupNameValuesByRawValue(rawValue, params), column);
+	    };
+	    GroupValueService.prototype.enrich = function (values, column) {
+	        return {
+	            actualValue: values.actualValue,
+	            column: column,
+	            valueFormatted: values.valueFormatted,
+	            mappedGroupName: values.mappedGroupName
+	        };
+	    };
+	    return GroupValueService;
+	}());
+	__decorate([
+	    context_1.Autowired('valueFormatterService'),
+	    __metadata("design:type", valueFormatterService_1.ValueFormatterService)
+	], GroupValueService.prototype, "valueFormatterService", void 0);
+	__decorate([
+	    context_1.Autowired('columnApi'),
+	    __metadata("design:type", columnController_1.ColumnApi)
+	], GroupValueService.prototype, "columnApi", void 0);
+	GroupValueService = __decorate([
+	    context_1.Bean('groupValueService')
+	], GroupValueService);
+	exports.GroupValueService = GroupValueService;
+
+
+/***/ },
+/* 402 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+	 * @version v11.0.0
+	 * @link http://www.ag-grid.com/
+	 * @license MIT
+	 */
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var expressionService_1 = __webpack_require__(391);
+	var ValueFormatterService = (function () {
+	    function ValueFormatterService() {
+	    }
+	    ValueFormatterService.prototype.formatValue = function (column, rowNode, $scope, value) {
+	        var formatter;
+	        var colDef = column.getColDef();
+	        // if floating, give preference to the floating formatter
+	        if (rowNode.floating) {
+	            formatter = colDef.floatingValueFormatter ? colDef.floatingValueFormatter : colDef.valueFormatter;
+	        }
+	        else {
+	            formatter = colDef.valueFormatter;
+	        }
+	        var result = null;
+	        if (formatter) {
+	            var params = {
+	                value: value,
+	                node: rowNode,
+	                data: rowNode.data,
+	                colDef: column.getColDef(),
+	                column: column,
+	                api: this.gridOptionsWrapper.getApi(),
+	                columnApi: this.gridOptionsWrapper.getColumnApi(),
+	                context: this.gridOptionsWrapper.getContext()
+	            };
+	            // originally we put the angular 1 scope here, but we don't want the scope
+	            // in the params interface, as other frameworks will see the interface, and
+	            // angular 1 is not cool any more. so we hack the scope in here (we cannot
+	            // include it above, as it's not in the interface, so would cause a compile error).
+	            // in the future, when we stop supporting angular 1, we can take this out.
+	            params.$scope = $scope;
+	            result = this.expressionService.evaluate(formatter, params);
+	        }
+	        return result;
+	    };
+	    return ValueFormatterService;
+	}());
+	__decorate([
+	    context_1.Autowired('gridOptionsWrapper'),
+	    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+	], ValueFormatterService.prototype, "gridOptionsWrapper", void 0);
+	__decorate([
+	    context_1.Autowired('expressionService'),
+	    __metadata("design:type", expressionService_1.ExpressionService)
+	], ValueFormatterService.prototype, "expressionService", void 0);
+	ValueFormatterService = __decorate([
+	    context_1.Bean('valueFormatterService')
+	], ValueFormatterService);
+	exports.ValueFormatterService = ValueFormatterService;
+
+
+/***/ },
+/* 403 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+	 * @version v11.0.0
+	 * @link http://www.ag-grid.com/
+	 * @license MIT
+	 */
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var context_1 = __webpack_require__(378);
+	var column_1 = __webpack_require__(388);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var utils_1 = __webpack_require__(379);
+	var AutoGroupColService = AutoGroupColService_1 = (function () {
+	    function AutoGroupColService() {
+	    }
+	    AutoGroupColService.prototype.createAutoGroupColumns = function (rowGroupColumns) {
+	        var _this = this;
+	        var groupAutoColumns = [];
+	        // if doing groupMultiAutoColumn, then we call the method multiple times, once
+	        // for each column we are grouping by
+	        if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
+	            rowGroupColumns.forEach(function (rowGroupCol, index) {
+	                groupAutoColumns.push(_this.createOneAutoGroupColumn(rowGroupCol, index));
+	            });
+	        }
+	        else {
+	            groupAutoColumns.push(this.createOneAutoGroupColumn(null));
+	        }
+	        return groupAutoColumns;
+	    };
+	    // rowGroupCol and index are missing if groupMultiAutoColumn=false
+	    AutoGroupColService.prototype.createOneAutoGroupColumn = function (rowGroupCol, index) {
+	        // if one provided by user, use it, otherwise create one
+	        var defaultAutoColDef = this.generateDefaultColDef(rowGroupCol, index);
+	        var userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
+	        // if doing multi, set the field
+	        var colId;
+	        if (rowGroupCol) {
+	            colId = AutoGroupColService_1.GROUP_AUTO_COLUMN_ID + "-" + rowGroupCol.getId();
+	        }
+	        else {
+	            colId = AutoGroupColService_1.GROUP_AUTO_COLUMN_BUNDLE_ID;
+	        }
+	        utils_1._.mergeDeep(defaultAutoColDef, userAutoColDef);
+	        defaultAutoColDef.colId = colId;
+	        var newCol = new column_1.Column(defaultAutoColDef, colId, true);
+	        this.context.wireBean(newCol);
+	        return newCol;
+	    };
+	    AutoGroupColService.prototype.generateDefaultColDef = function (rowGroupCol, index) {
+	        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+	        var defaultAutoColDef = {
+	            headerName: localeTextFunc('group', 'Group'),
+	            cellRenderer: 'group'
+	        };
+	        // we never allow moving the group column
+	        defaultAutoColDef.suppressMovable = true;
+	        if (rowGroupCol) {
+	            var rowGroupColDef = rowGroupCol.getColDef();
+	            utils_1._.assign(defaultAutoColDef, {
+	                // cellRendererParams.groupKey: colDefToCopy.field;
+	                headerName: rowGroupColDef.headerName,
+	                headerValueGetter: rowGroupColDef.headerValueGetter
+	            });
+	            // if showing many cols, we don't want to show more than one with a checkbox for selection
+	            if (index > 0) {
+	                defaultAutoColDef.headerCheckboxSelection = false;
+	                defaultAutoColDef.cellRendererParams = {
+	                    checkbox: false
+	                };
+	            }
+	            defaultAutoColDef.showRowGroup = rowGroupCol.getColId();
+	        }
+	        else {
+	            defaultAutoColDef.showRowGroup = true;
+	        }
+	        return defaultAutoColDef;
+	    };
+	    return AutoGroupColService;
+	}());
+	AutoGroupColService.GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
+	AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID = AutoGroupColService_1.GROUP_AUTO_COLUMN_ID;
+	__decorate([
+	    context_1.Autowired('gridOptionsWrapper'),
+	    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+	], AutoGroupColService.prototype, "gridOptionsWrapper", void 0);
+	__decorate([
+	    context_1.Autowired('context'),
+	    __metadata("design:type", context_1.Context)
+	], AutoGroupColService.prototype, "context", void 0);
+	AutoGroupColService = AutoGroupColService_1 = __decorate([
+	    context_1.Bean('autoGroupColService')
+	], AutoGroupColService);
+	exports.AutoGroupColService = AutoGroupColService;
+	var AutoGroupColService_1;
+
+
+/***/ },
+/* 404 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
+	var utils_1 = __webpack_require__(379);
 	var BorderLayout = (function () {
 	    function BorderLayout(params) {
 	        this.centerHeightLastTime = -1;
@@ -42076,14 +42536,20 @@
 	            listener();
 	        });
 	    };
+	    // this logic is also in Component.ts - the plan is sometime in the future,
+	    // this layout panel may (or may not) extend the Component class, and somehow
+	    // act as a component.
+	    BorderLayout.prototype.getRefElement = function (refName) {
+	        return this.eGui.querySelector('[ref="' + refName + '"]');
+	    };
 	    BorderLayout.prototype.setupPanels = function (params) {
-	        this.eNorthWrapper = this.eGui.querySelector('#north');
-	        this.eSouthWrapper = this.eGui.querySelector('#south');
-	        this.eEastWrapper = this.eGui.querySelector('#east');
-	        this.eWestWrapper = this.eGui.querySelector('#west');
-	        this.eCenterWrapper = this.eGui.querySelector('#center');
-	        this.eOverlayWrapper = this.eGui.querySelector('#overlay');
-	        this.eCenterRow = this.eGui.querySelector('#centerRow');
+	        this.eNorthWrapper = this.getRefElement('north');
+	        this.eSouthWrapper = this.getRefElement('south');
+	        this.eEastWrapper = this.getRefElement('east');
+	        this.eWestWrapper = this.getRefElement('west');
+	        this.eCenterWrapper = this.getRefElement('center');
+	        this.eOverlayWrapper = this.getRefElement('overlay');
+	        this.eCenterRow = this.getRefElement('centerRow');
 	        this.eNorthChildLayout = this.setupPanel(params.north, this.eNorthWrapper);
 	        this.eSouthChildLayout = this.setupPanel(params.south, this.eSouthWrapper);
 	        this.eEastChildLayout = this.setupPanel(params.east, this.eEastWrapper);
@@ -42260,41 +42726,41 @@
 	}());
 	// this is used if there user has not specified any north or south parts
 	BorderLayout.TEMPLATE_FULL_HEIGHT = '<div class="ag-bl ag-bl-full-height">' +
-	    '  <div class="ag-bl-west ag-bl-full-height-west" id="west"></div>' +
-	    '  <div class="ag-bl-east ag-bl-full-height-east" id="east"></div>' +
-	    '  <div class="ag-bl-center ag-bl-full-height-center" id="center"></div>' +
-	    '  <div class="ag-bl-overlay" id="overlay"></div>' +
+	    '  <div class="ag-bl-west ag-bl-full-height-west" ref="west"></div>' +
+	    '  <div class="ag-bl-east ag-bl-full-height-east" ref="east"></div>' +
+	    '  <div class="ag-bl-center ag-bl-full-height-center" ref="center"></div>' +
+	    '  <div class="ag-bl-overlay" ref="overlay"></div>' +
 	    '</div>';
 	BorderLayout.TEMPLATE_NORMAL = '<div class="ag-bl ag-bl-normal">' +
-	    '  <div id="north"></div>' +
-	    '  <div class="ag-bl-center-row ag-bl-normal-center-row" id="centerRow">' +
-	    '    <div class="ag-bl-west ag-bl-normal-west" id="west"></div>' +
-	    '    <div class="ag-bl-east ag-bl-normal-east" id="east"></div>' +
-	    '    <div class="ag-bl-center ag-bl-normal-center" id="center"></div>' +
+	    '  <div ref="north"></div>' +
+	    '  <div class="ag-bl-center-row ag-bl-normal-center-row" ref="centerRow">' +
+	    '    <div class="ag-bl-west ag-bl-normal-west" ref="west"></div>' +
+	    '    <div class="ag-bl-east ag-bl-normal-east" ref="east"></div>' +
+	    '    <div class="ag-bl-center ag-bl-normal-center" ref="center"></div>' +
 	    '  </div>' +
-	    '  <div id="south"></div>' +
-	    '  <div class="ag-bl-overlay" id="overlay"></div>' +
+	    '  <div ref="south"></div>' +
+	    '  <div class="ag-bl-overlay" ref="overlay"></div>' +
 	    '</div>';
 	BorderLayout.TEMPLATE_DONT_FILL = '<div class="ag-bl ag-bl-dont-fill">' +
-	    '  <div id="north"></div>' +
-	    '  <div id="centerRow" class="ag-bl-center-row ag-bl-dont-fill-center-row">' +
-	    '    <div id="west" class="ag-bl-west ag-bl-dont-fill-west"></div>' +
-	    '    <div id="east" class="ag-bl-east ag-bl-dont-fill-east"></div>' +
-	    '    <div id="center" class="ag-bl-center ag-bl-dont-fill-center"></div>' +
+	    '  <div ref="north"></div>' +
+	    '  <div ref="centerRow" class="ag-bl-center-row ag-bl-dont-fill-center-row">' +
+	    '    <div ref="west" class="ag-bl-west ag-bl-dont-fill-west"></div>' +
+	    '    <div ref="east" class="ag-bl-east ag-bl-dont-fill-east"></div>' +
+	    '    <div ref="center" class="ag-bl-center ag-bl-dont-fill-center"></div>' +
 	    '  </div>' +
-	    '  <div id="south"></div>' +
-	    '  <div class="ag-bl-overlay" id="overlay"></div>' +
+	    '  <div ref="south"></div>' +
+	    '  <div class="ag-bl-overlay" ref="overlay"></div>' +
 	    '</div>';
 	exports.BorderLayout = BorderLayout;
 
 
 /***/ },
-/* 408 */
+/* 405 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -42309,12 +42775,12 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var logger_1 = __webpack_require__(383);
-	var utils_1 = __webpack_require__(385);
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
+	var context_1 = __webpack_require__(378);
+	var logger_1 = __webpack_require__(377);
+	var utils_1 = __webpack_require__(379);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
 	/** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
 	 * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 	var DragService = (function () {
@@ -42543,12 +43009,12 @@
 
 
 /***/ },
-/* 409 */
+/* 406 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -42563,11 +43029,11 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var context_2 = __webpack_require__(384);
-	var utils_1 = __webpack_require__(385);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var cellComp_1 = __webpack_require__(410);
+	var context_1 = __webpack_require__(378);
+	var context_2 = __webpack_require__(378);
+	var utils_1 = __webpack_require__(379);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var cellComp_1 = __webpack_require__(407);
 	var MouseEventService = (function () {
 	    function MouseEventService() {
 	    }
@@ -42599,12 +43065,12 @@
 
 
 /***/ },
-/* 410 */
+/* 407 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -42629,39 +43095,39 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var column_1 = __webpack_require__(394);
-	var rowNode_1 = __webpack_require__(404);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var expressionService_1 = __webpack_require__(397);
-	var rowRenderer_1 = __webpack_require__(400);
-	var templateService_1 = __webpack_require__(411);
-	var columnController_1 = __webpack_require__(392);
-	var valueService_1 = __webpack_require__(406);
-	var eventService_1 = __webpack_require__(382);
-	var constants_1 = __webpack_require__(387);
-	var events_1 = __webpack_require__(386);
-	var context_1 = __webpack_require__(384);
-	var gridApi_1 = __webpack_require__(389);
-	var focusedCellController_1 = __webpack_require__(412);
-	var gridCell_1 = __webpack_require__(413);
-	var focusService_1 = __webpack_require__(415);
-	var cellEditorFactory_1 = __webpack_require__(439);
-	var component_1 = __webpack_require__(421);
-	var popupService_1 = __webpack_require__(418);
-	var cellRendererFactory_1 = __webpack_require__(446);
-	var cellRendererService_1 = __webpack_require__(450);
-	var valueFormatterService_1 = __webpack_require__(451);
-	var checkboxSelectionComponent_1 = __webpack_require__(452);
-	var setLeftFeature_1 = __webpack_require__(434);
-	var methodNotImplementedException_1 = __webpack_require__(453);
-	var stylingService_1 = __webpack_require__(454);
-	var columnHoverService_1 = __webpack_require__(455);
-	var columnAnimationService_1 = __webpack_require__(435);
+	var utils_1 = __webpack_require__(379);
+	var column_1 = __webpack_require__(388);
+	var rowNode_1 = __webpack_require__(398);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var expressionService_1 = __webpack_require__(391);
+	var rowRenderer_1 = __webpack_require__(394);
+	var templateService_1 = __webpack_require__(408);
+	var columnController_1 = __webpack_require__(386);
+	var valueService_1 = __webpack_require__(400);
+	var eventService_1 = __webpack_require__(376);
+	var constants_1 = __webpack_require__(381);
+	var events_1 = __webpack_require__(380);
+	var context_1 = __webpack_require__(378);
+	var gridApi_1 = __webpack_require__(383);
+	var focusedCellController_1 = __webpack_require__(409);
+	var gridCell_1 = __webpack_require__(410);
+	var focusService_1 = __webpack_require__(412);
+	var cellEditorFactory_1 = __webpack_require__(436);
+	var component_1 = __webpack_require__(418);
+	var popupService_1 = __webpack_require__(415);
+	var cellRendererFactory_1 = __webpack_require__(443);
+	var cellRendererService_1 = __webpack_require__(447);
+	var valueFormatterService_1 = __webpack_require__(402);
+	var checkboxSelectionComponent_1 = __webpack_require__(448);
+	var setLeftFeature_1 = __webpack_require__(431);
+	var methodNotImplementedException_1 = __webpack_require__(449);
+	var stylingService_1 = __webpack_require__(450);
+	var columnHoverService_1 = __webpack_require__(451);
+	var columnAnimationService_1 = __webpack_require__(432);
 	var CellComp = (function (_super) {
 	    __extends(CellComp, _super);
 	    function CellComp(column, node, scope, renderedRow) {
-	        var _this = _super.call(this, '<div/>') || this;
+	        var _this = _super.call(this, '<div role="gridcell"/>') || this;
 	        // how many ranges this cell is in, depends what color to mark this cell
 	        _this.rangeCount = 0;
 	        // set to null, not false, as we need to set 'ag-cell-no-focus' first time around
@@ -42674,7 +43140,7 @@
 	        _this.column = column;
 	        _this.node = node;
 	        _this.scope = scope;
-	        _this.renderedRow = renderedRow;
+	        _this.rowComp = renderedRow;
 	        return _this;
 	    }
 	    CellComp.prototype.createGridCell = function () {
@@ -42766,28 +43232,14 @@
 	        return this.column;
 	    };
 	    CellComp.prototype.getValue = function () {
-	        var data = this.getDataForRow();
-	        return this.valueService.getValueUsingSpecificData(this.column, data, this.node);
-	    };
-	    CellComp.prototype.getDataForRow = function () {
-	        if (this.node.footer) {
-	            // if footer, we always show the data
-	            return this.node.data;
-	        }
-	        else if (this.node.group) {
-	            // if header and header is expanded, we show data in footer only
-	            var footersEnabled = this.gridOptionsWrapper.isGroupIncludeFooter();
-	            var suppressHideHeader = this.gridOptionsWrapper.isGroupSuppressBlankHeader();
-	            if (this.node.expanded && footersEnabled && !suppressHideHeader) {
-	                return undefined;
-	            }
-	            else {
-	                return this.node.data;
-	            }
+	        var isOpenGroup = this.node.group && this.node.expanded && !this.node.footer;
+	        if (isOpenGroup && this.gridOptionsWrapper.isGroupIncludeFooter()) {
+	            // if doing grouping and footers, we don't want to include the agg value
+	            // in the header when the group is open
+	            return this.valueService.getValue(this.column, this.node, true);
 	        }
 	        else {
-	            // otherwise it's a normal node, just return data as normal
-	            return this.node.data;
+	            return this.valueService.getValue(this.column, this.node);
 	        }
 	    };
 	    CellComp.prototype.addRangeSelectedListener = function () {
@@ -43024,7 +43476,7 @@
 	                this.onSpaceKeyPressed(event);
 	            }
 	            else {
-	                if (CellComp.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0) {
+	                if (utils_1.Utils.isEventFromPrintableCharacter(event)) {
 	                    this.startRowOrCellEdit(null, pressedChar);
 	                    // if we don't prevent default, then the keypress also gets applied to the text field
 	                    // (at least when doing the default editor), but we need to allow the editor to decide
@@ -43100,7 +43552,7 @@
 	    // called by rowRenderer when user navigates via tab key
 	    CellComp.prototype.startRowOrCellEdit = function (keyPress, charPress) {
 	        if (this.gridOptionsWrapper.isFullRowEdit()) {
-	            this.renderedRow.startRowEditing(keyPress, charPress, this);
+	            this.rowComp.startRowEditing(keyPress, charPress, this);
 	        }
 	        else {
 	            this.startEditingIfEnabled(keyPress, charPress, true);
@@ -43185,7 +43637,7 @@
 	    CellComp.prototype.stopRowOrCellEdit = function (cancel) {
 	        if (cancel === void 0) { cancel = false; }
 	        if (this.gridOptionsWrapper.isFullRowEdit()) {
-	            this.renderedRow.stopRowEditing(cancel);
+	            this.rowComp.stopRowEditing(cancel);
 	        }
 	        else {
 	            this.stopEditing(cancel);
@@ -43232,7 +43684,7 @@
 	            }
 	        }
 	        this.setInlineEditingClass();
-	        this.refreshCell();
+	        this.refreshCell({ dontSkipRefresh: true });
 	        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_EDITING_STOPPED, this.createParams());
 	    };
 	    CellComp.prototype.createParams = function () {
@@ -43256,16 +43708,12 @@
 	        return agEvent;
 	    };
 	    CellComp.prototype.getRenderedRow = function () {
-	        return this.renderedRow;
+	        return this.rowComp;
 	    };
 	    CellComp.prototype.isSuppressNavigable = function () {
 	        return this.column.isSuppressNavigable(this.node);
 	    };
 	    CellComp.prototype.isCellEditable = function () {
-	        // only allow editing of groups if the user has this option enabled
-	        if (this.node.group && !this.gridOptionsWrapper.isEnableGroupEdit()) {
-	            return false;
-	        }
 	        return this.column.isCellEditable(this.node);
 	    };
 	    CellComp.prototype.onMouseEvent = function (eventName, mouseEvent) {
@@ -43460,61 +43908,80 @@
 	    CellComp.prototype.isVolatile = function () {
 	        return this.column.getColDef().volatile;
 	    };
-	    CellComp.prototype.refreshCell = function (animate, newData) {
-	        if (animate === void 0) { animate = false; }
-	        if (newData === void 0) { newData = false; }
+	    CellComp.prototype.attemptCellRendererRefresh = function () {
+	        if (utils_1.Utils.missing(this.cellRenderer) || utils_1.Utils.missing(this.cellRenderer.refresh)) {
+	            return false;
+	        }
+	        try {
+	            // if the cell renderer has a refresh method, we call this instead of doing a refresh
+	            // note: should pass in params here instead of value?? so that client has formattedValue
+	            var valueFormatted = this.formatValue(this.value);
+	            var cellRendererParams = this.column.getColDef().cellRendererParams;
+	            var params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
+	            this.cellRenderer.refresh(params);
+	        }
+	        catch (e) {
+	            // this exception gets thrown by the frameworks, as our framework wrapper will implement
+	            // refresh(), but the wrapped component may not, and then the wrapper throws MethodNotImplementedException.
+	            if (e instanceof methodNotImplementedException_1.MethodNotImplementedException) {
+	                return false;
+	            }
+	            else {
+	                throw e;
+	            }
+	        }
+	        // got this far, we were able to refresh using the user provided cellRenderer
+	        return true;
+	    };
+	    CellComp.prototype.refreshCell = function (params) {
+	        var newData = params ? params.newData === true : false;
+	        var animate = params ? params.animate === true : false;
+	        var dontSkipRefresh = params ? params.dontSkipRefresh === true : false;
+	        var oldValue = this.value;
 	        this.value = this.getValue();
-	        var refreshFailed = false;
-	        var that = this;
+	        // for simple values only (not pojo's), see if the value is the same, and if it is, skip the refresh.
+	        // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
+	        // if was before the edit.
+	        // Niall Note - taking this out for now - it's effectively change detection. i think how the refresh is done
+	        // needs to be overhauled and redone in a properly planned way.
+	        var allowSkippingRefreshIfDataSame = !dontSkipRefresh && utils_1.Utils.valuesSimpleAndSame(oldValue, this.value);
+	        if (allowSkippingRefreshIfDataSame) {
+	            // return;
+	        }
+	        var cellRendererRefreshed;
 	        // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
 	        // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
 	        // then we are not showing a movement in the stock price, rather we are showing different stock.
-	        var attemptRefresh = !newData && this.cellRenderer && this.cellRenderer.refresh;
-	        if (attemptRefresh) {
-	            try {
-	                doRefresh();
-	            }
-	            catch (e) {
-	                if (e instanceof methodNotImplementedException_1.MethodNotImplementedException) {
-	                    refreshFailed = true;
-	                }
-	                else {
-	                    throw e;
-	                }
-	            }
+	        if (newData) {
+	            cellRendererRefreshed = false;
+	        }
+	        else {
+	            cellRendererRefreshed = this.attemptCellRendererRefresh();
 	        }
 	        // we do the replace if not doing refresh, or if refresh was unsuccessful.
 	        // the refresh can be unsuccessful if we are using a framework (eg ng2 or react) and the framework
 	        // wrapper has the refresh method, but the underlying component doesn't
-	        if (!attemptRefresh || refreshFailed) {
-	            doReplace();
+	        if (!cellRendererRefreshed) {
+	            this.replaceCellContent();
 	        }
 	        if (animate) {
 	            this.animateCellWithDataChanged();
 	        }
 	        // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
 	        this.addClassesFromRules();
-	        function doRefresh() {
-	            // if the cell renderer has a refresh method, we call this instead of doing a refresh
-	            // note: should pass in params here instead of value?? so that client has formattedValue
-	            var valueFormatted = that.formatValue(that.value);
-	            var cellRendererParams = that.column.getColDef().cellRendererParams;
-	            var params = that.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
-	            that.cellRenderer.refresh(params);
+	    };
+	    CellComp.prototype.replaceCellContent = function () {
+	        // otherwise we rip out the cell and replace it
+	        utils_1.Utils.removeAllChildren(this.eParentOfValue);
+	        // remove old renderer component if it exists
+	        if (this.cellRenderer && this.cellRenderer.destroy) {
+	            this.cellRenderer.destroy();
 	        }
-	        function doReplace() {
-	            // otherwise we rip out the cell and replace it
-	            utils_1.Utils.removeAllChildren(that.eParentOfValue);
-	            // remove old renderer component if it exists
-	            if (that.cellRenderer && that.cellRenderer.destroy) {
-	                that.cellRenderer.destroy();
-	            }
-	            that.cellRenderer = null;
-	            that.populateCell();
-	            // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
-	            if (that.gridOptionsWrapper.isAngularCompileRows()) {
-	                that.$compile(that.eGridCell)(that.scope);
-	            }
+	        this.cellRenderer = null;
+	        this.populateCell();
+	        // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
+	        if (this.gridOptionsWrapper.isAngularCompileRows()) {
+	            this.$compile(this.eGridCell)(this.scope);
 	        }
 	    };
 	    CellComp.prototype.addClassesFromRules = function () {
@@ -43538,7 +44005,7 @@
 	        var colDef = this.column.getColDef();
 	        var cellRenderer = this.column.getCellRenderer();
 	        var floatingCellRenderer = this.column.getFloatingCellRenderer();
-	        var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.gridCell.rowIndex, this.value);
+	        var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.value);
 	        if (colDef.template) {
 	            // template is really only used for angular 1 - as people using ng1 are used to providing templates with
 	            // bindings in it. in ng2, people will hopefully want to provide components, not templates.
@@ -43573,7 +44040,7 @@
 	            }
 	        }
 	        if (colDef.tooltipField) {
-	            var data = this.getDataForRow();
+	            var data = this.node.data;
 	            if (utils_1.Utils.exists(data)) {
 	                var tooltip = utils_1.Utils.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
 	                if (utils_1.Utils.exists(tooltip)) {
@@ -43583,9 +44050,10 @@
 	        }
 	    };
 	    CellComp.prototype.formatValue = function (value) {
-	        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.gridCell.rowIndex, value);
+	        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, value);
 	    };
 	    CellComp.prototype.createRendererAndRefreshParams = function (valueFormatted, cellRendererParams) {
+	        var that = this;
 	        var params = {
 	            value: this.value,
 	            valueFormatted: valueFormatted,
@@ -43603,7 +44071,16 @@
 	            refreshCell: this.refreshCell.bind(this),
 	            eGridCell: this.eGridCell,
 	            eParentOfValue: this.eParentOfValue,
-	            addRenderedRowListener: this.renderedRow.addEventListener.bind(this.renderedRow)
+	            // these bits are not documented anywhere, so we could drop them?
+	            // it was in the olden days to allow user to register for when rendered
+	            // row was removed (the row comp was removed), however now that the user
+	            // can provide components for cells, the destroy method gets call when this
+	            // happens so no longer need to fire event.
+	            addRowCompListener: this.rowComp.addEventListener.bind(this.rowComp),
+	            addRenderedRowListener: function (eventType, listener) {
+	                console.warn('ag-Grid: since ag-Grid .v11, params.addRenderedRowListener() is now params.addRowCompListener()');
+	                that.rowComp.addEventListener(eventType, listener);
+	            }
 	        };
 	        if (cellRendererParams) {
 	            utils_1.Utils.assign(params, cellRendererParams);
@@ -43626,7 +44103,6 @@
 	    };
 	    return CellComp;
 	}(component_1.Component));
-	CellComp.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 	CellComp.DOM_DATA_KEY_CELL_COMP = 'cellComp';
 	__decorate([
 	    context_1.Autowired('context'),
@@ -43730,12 +44206,12 @@
 
 
 /***/ },
-/* 411 */
+/* 408 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -43750,8 +44226,8 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var context_2 = __webpack_require__(384);
+	var context_1 = __webpack_require__(378);
+	var context_2 = __webpack_require__(378);
 	var TemplateService = (function () {
 	    function TemplateService() {
 	        this.templateCache = {};
@@ -43822,12 +44298,12 @@
 
 
 /***/ },
-/* 412 */
+/* 409 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -43842,14 +44318,14 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var columnController_1 = __webpack_require__(392);
-	var utils_1 = __webpack_require__(385);
-	var gridCell_1 = __webpack_require__(413);
-	var constants_1 = __webpack_require__(387);
+	var context_1 = __webpack_require__(378);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var columnController_1 = __webpack_require__(386);
+	var utils_1 = __webpack_require__(379);
+	var gridCell_1 = __webpack_require__(410);
+	var constants_1 = __webpack_require__(381);
 	var FocusedCellController = (function () {
 	    function FocusedCellController() {
 	    }
@@ -44016,19 +44492,19 @@
 
 
 /***/ },
-/* 413 */
+/* 410 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var gridRow_1 = __webpack_require__(414);
+	var utils_1 = __webpack_require__(379);
+	var gridRow_1 = __webpack_require__(411);
 	var GridCell = (function () {
 	    function GridCell(gridCellDef) {
 	        this.rowIndex = gridCellDef.rowIndex;
@@ -44057,20 +44533,20 @@
 
 
 /***/ },
-/* 414 */
+/* 411 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var constants_1 = __webpack_require__(387);
-	var utils_1 = __webpack_require__(385);
-	var gridCell_1 = __webpack_require__(413);
+	var constants_1 = __webpack_require__(381);
+	var utils_1 = __webpack_require__(379);
+	var gridCell_1 = __webpack_require__(410);
 	var GridRow = (function () {
 	    function GridRow(rowIndex, floating) {
 	        this.rowIndex = rowIndex;
@@ -44134,12 +44610,12 @@
 
 
 /***/ },
-/* 415 */
+/* 412 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -44154,12 +44630,12 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var utils_1 = __webpack_require__(385);
-	var gridCore_1 = __webpack_require__(416);
-	var columnController_1 = __webpack_require__(392);
-	var constants_1 = __webpack_require__(387);
-	var gridCell_1 = __webpack_require__(413);
+	var context_1 = __webpack_require__(378);
+	var utils_1 = __webpack_require__(379);
+	var gridCore_1 = __webpack_require__(413);
+	var columnController_1 = __webpack_require__(386);
+	var constants_1 = __webpack_require__(381);
+	var gridCell_1 = __webpack_require__(410);
 	// tracks when focus goes into a cell. cells listen to this, so they know to stop editing
 	// if focus goes into another cell.
 	/** THIS IS NOT USED - it was something Niall was working on, but doesn't work well with popup editors */
@@ -44270,12 +44746,12 @@
 
 
 /***/ },
-/* 416 */
+/* 413 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -44293,22 +44769,22 @@
 	    return function (target, key) { decorator(target, key, paramIndex); }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var columnController_1 = __webpack_require__(392);
-	var rowRenderer_1 = __webpack_require__(400);
-	var filterManager_1 = __webpack_require__(417);
-	var eventService_1 = __webpack_require__(382);
-	var gridPanel_1 = __webpack_require__(401);
-	var logger_1 = __webpack_require__(383);
-	var constants_1 = __webpack_require__(387);
-	var popupService_1 = __webpack_require__(418);
-	var events_1 = __webpack_require__(386);
-	var utils_1 = __webpack_require__(385);
-	var borderLayout_1 = __webpack_require__(407);
-	var context_1 = __webpack_require__(384);
-	var focusedCellController_1 = __webpack_require__(412);
-	var component_1 = __webpack_require__(421);
-	var paginationComp_1 = __webpack_require__(436);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var columnController_1 = __webpack_require__(386);
+	var rowRenderer_1 = __webpack_require__(394);
+	var filterManager_1 = __webpack_require__(414);
+	var eventService_1 = __webpack_require__(376);
+	var gridPanel_1 = __webpack_require__(395);
+	var logger_1 = __webpack_require__(377);
+	var constants_1 = __webpack_require__(381);
+	var popupService_1 = __webpack_require__(415);
+	var events_1 = __webpack_require__(380);
+	var utils_1 = __webpack_require__(379);
+	var borderLayout_1 = __webpack_require__(404);
+	var context_1 = __webpack_require__(378);
+	var focusedCellController_1 = __webpack_require__(409);
+	var component_1 = __webpack_require__(418);
+	var paginationComp_1 = __webpack_require__(433);
 	var GridCore = (function () {
 	    function GridCore(loggerFactory) {
 	        this.destroyFunctions = [];
@@ -44649,12 +45125,12 @@
 
 
 /***/ },
-/* 417 */
+/* 414 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -44669,18 +45145,18 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var popupService_1 = __webpack_require__(418);
-	var valueService_1 = __webpack_require__(406);
-	var columnController_1 = __webpack_require__(392);
-	var textFilter_1 = __webpack_require__(419);
-	var numberFilter_1 = __webpack_require__(424);
-	var context_1 = __webpack_require__(384);
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var dateFilter_1 = __webpack_require__(425);
-	var componentProvider_1 = __webpack_require__(426);
+	var utils_1 = __webpack_require__(379);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var popupService_1 = __webpack_require__(415);
+	var valueService_1 = __webpack_require__(400);
+	var columnController_1 = __webpack_require__(386);
+	var textFilter_1 = __webpack_require__(416);
+	var numberFilter_1 = __webpack_require__(421);
+	var context_1 = __webpack_require__(378);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var dateFilter_1 = __webpack_require__(422);
+	var componentProvider_1 = __webpack_require__(423);
 	var FilterManager = FilterManager_1 = (function () {
 	    function FilterManager() {
 	        this.allFilters = {};
@@ -45182,12 +45658,12 @@
 
 
 /***/ },
-/* 418 */
+/* 415 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45202,11 +45678,11 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var constants_1 = __webpack_require__(387);
-	var context_1 = __webpack_require__(384);
-	var gridCore_1 = __webpack_require__(416);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
+	var utils_1 = __webpack_require__(379);
+	var constants_1 = __webpack_require__(381);
+	var context_1 = __webpack_require__(378);
+	var gridCore_1 = __webpack_require__(413);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
 	var PopupService = (function () {
 	    function PopupService() {
 	    }
@@ -45463,12 +45939,12 @@
 
 
 /***/ },
-/* 419 */
+/* 416 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45493,9 +45969,9 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var baseFilter_1 = __webpack_require__(420);
-	var componentAnnotations_1 = __webpack_require__(423);
+	var utils_1 = __webpack_require__(379);
+	var baseFilter_1 = __webpack_require__(417);
+	var componentAnnotations_1 = __webpack_require__(420);
 	var TextFilter = (function (_super) {
 	    __extends(TextFilter, _super);
 	    function TextFilter() {
@@ -45640,12 +46116,12 @@
 
 
 /***/ },
-/* 420 */
+/* 417 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45670,11 +46146,11 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var component_1 = __webpack_require__(421);
-	var componentAnnotations_1 = __webpack_require__(423);
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var utils_1 = __webpack_require__(385);
+	var component_1 = __webpack_require__(418);
+	var componentAnnotations_1 = __webpack_require__(420);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var utils_1 = __webpack_require__(379);
 	var DEFAULT_TRANSLATIONS = {
 	    equals: 'Equals',
 	    notEqual: 'Not equal',
@@ -45958,12 +46434,12 @@
 
 
 /***/ },
-/* 421 */
+/* 418 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45979,8 +46455,8 @@
 	    };
 	})();
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var beanStub_1 = __webpack_require__(422);
+	var utils_1 = __webpack_require__(379);
+	var beanStub_1 = __webpack_require__(419);
 	var Component = (function (_super) {
 	    __extends(Component, _super);
 	    function Component(template) {
@@ -46177,19 +46653,19 @@
 
 
 /***/ },
-/* 422 */
+/* 419 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var eventService_1 = __webpack_require__(382);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
+	var eventService_1 = __webpack_require__(376);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
 	var BeanStub = (function () {
 	    function BeanStub() {
 	        this.destroyFunctions = [];
@@ -46249,12 +46725,12 @@
 
 
 /***/ },
-/* 423 */
+/* 420 */
 /***/ function(module, exports) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46317,12 +46793,12 @@
 
 
 /***/ },
-/* 424 */
+/* 421 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46347,9 +46823,9 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var componentAnnotations_1 = __webpack_require__(423);
-	var baseFilter_1 = __webpack_require__(420);
+	var utils_1 = __webpack_require__(379);
+	var componentAnnotations_1 = __webpack_require__(420);
+	var baseFilter_1 = __webpack_require__(417);
 	var NumberFilter = (function (_super) {
 	    __extends(NumberFilter, _super);
 	    function NumberFilter() {
@@ -46482,12 +46958,12 @@
 
 
 /***/ },
-/* 425 */
+/* 422 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46512,12 +46988,12 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var component_1 = __webpack_require__(421);
-	var componentAnnotations_1 = __webpack_require__(423);
-	var utils_1 = __webpack_require__(385);
-	var baseFilter_1 = __webpack_require__(420);
-	var context_1 = __webpack_require__(384);
-	var componentProvider_1 = __webpack_require__(426);
+	var component_1 = __webpack_require__(418);
+	var componentAnnotations_1 = __webpack_require__(420);
+	var utils_1 = __webpack_require__(379);
+	var baseFilter_1 = __webpack_require__(417);
+	var context_1 = __webpack_require__(378);
+	var componentProvider_1 = __webpack_require__(423);
 	var DateFilter = (function (_super) {
 	    __extends(DateFilter, _super);
 	    function DateFilter() {
@@ -46666,12 +47142,12 @@
 
 
 /***/ },
-/* 426 */
+/* 423 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46686,15 +47162,15 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var headerGroupComp_1 = __webpack_require__(427);
-	var headerComp_1 = __webpack_require__(430);
-	var dateFilter_1 = __webpack_require__(425);
-	var utils_1 = __webpack_require__(385);
-	var floatingFilter_1 = __webpack_require__(432);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var floatingFilterWrapper_1 = __webpack_require__(433);
-	var filterManager_1 = __webpack_require__(417);
+	var context_1 = __webpack_require__(378);
+	var headerGroupComp_1 = __webpack_require__(424);
+	var headerComp_1 = __webpack_require__(427);
+	var dateFilter_1 = __webpack_require__(422);
+	var utils_1 = __webpack_require__(379);
+	var floatingFilter_1 = __webpack_require__(429);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var floatingFilterWrapper_1 = __webpack_require__(430);
+	var filterManager_1 = __webpack_require__(414);
 	var ComponentType;
 	(function (ComponentType) {
 	    ComponentType[ComponentType["AG_GRID"] = 0] = "AG_GRID";
@@ -46939,12 +47415,12 @@
 
 
 /***/ },
-/* 427 */
+/* 424 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46969,15 +47445,15 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var component_1 = __webpack_require__(421);
-	var svgFactory_1 = __webpack_require__(428);
-	var utils_1 = __webpack_require__(385);
-	var columnController_1 = __webpack_require__(392);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var context_1 = __webpack_require__(384);
-	var touchListener_1 = __webpack_require__(429);
-	var componentAnnotations_1 = __webpack_require__(423);
-	var originalColumnGroup_1 = __webpack_require__(396);
+	var component_1 = __webpack_require__(418);
+	var svgFactory_1 = __webpack_require__(425);
+	var utils_1 = __webpack_require__(379);
+	var columnController_1 = __webpack_require__(386);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var context_1 = __webpack_require__(378);
+	var touchListener_1 = __webpack_require__(426);
+	var componentAnnotations_1 = __webpack_require__(420);
+	var originalColumnGroup_1 = __webpack_require__(390);
 	var svgFactory = svgFactory_1.SvgFactory.getInstance();
 	var HeaderGroupComp = (function (_super) {
 	    __extends(HeaderGroupComp, _super);
@@ -47071,12 +47547,12 @@
 
 
 /***/ },
-/* 428 */
+/* 425 */
 /***/ function(module, exports) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -47191,6 +47667,7 @@
 	        var eCachedImg = this.imageCache[key];
 	        if (!eCachedImg) {
 	            eCachedImg = document.createElement('img');
+	            eCachedImg.setAttribute('role', 'presentation');
 	            eCachedImg.src = data;
 	            this.imageCache[key] = eCachedImg;
 	        }
@@ -47377,19 +47854,19 @@
 
 
 /***/ },
-/* 429 */
+/* 426 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var eventService_1 = __webpack_require__(382);
-	var utils_1 = __webpack_require__(385);
+	var eventService_1 = __webpack_require__(376);
+	var utils_1 = __webpack_require__(379);
 	var TouchListener = (function () {
 	    function TouchListener(eElement) {
 	        var _this = this;
@@ -47476,12 +47953,12 @@
 
 
 /***/ },
-/* 430 */
+/* 427 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -47506,17 +47983,17 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var component_1 = __webpack_require__(421);
-	var column_1 = __webpack_require__(394);
-	var utils_1 = __webpack_require__(385);
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var sortController_1 = __webpack_require__(431);
-	var touchListener_1 = __webpack_require__(429);
-	var svgFactory_1 = __webpack_require__(428);
-	var eventService_1 = __webpack_require__(382);
-	var componentAnnotations_1 = __webpack_require__(423);
-	var events_1 = __webpack_require__(386);
+	var component_1 = __webpack_require__(418);
+	var column_1 = __webpack_require__(388);
+	var utils_1 = __webpack_require__(379);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var sortController_1 = __webpack_require__(428);
+	var touchListener_1 = __webpack_require__(426);
+	var svgFactory_1 = __webpack_require__(425);
+	var eventService_1 = __webpack_require__(376);
+	var componentAnnotations_1 = __webpack_require__(420);
+	var events_1 = __webpack_require__(380);
 	var svgFactory = svgFactory_1.SvgFactory.getInstance();
 	var HeaderComp = (function (_super) {
 	    __extends(HeaderComp, _super);
@@ -47663,13 +48140,13 @@
 	}(component_1.Component));
 	HeaderComp.TEMPLATE = '<div class="ag-cell-label-container">' +
 	    '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
-	    '  <div ref="eLabel" class="ag-header-cell-label">' +
-	    '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>' +
-	    '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
-	    '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
-	    '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>' +
-	    '    <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>' +
-	    '    <span ref="eText" class="ag-header-cell-text"></span>' +
+	    '  <div ref="eLabel" class="ag-header-cell-label" role="presentation">' +
+	    '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order" role="presentation"></span>' +
+	    '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon" role="presentation"></span>' +
+	    '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon" role="presentation"></span>' +
+	    '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon" role="presentation"></span>' +
+	    '    <span ref="eFilter" class="ag-header-icon ag-filter-icon" role="presentation"></span>' +
+	    '    <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>' +
 	    '  </div>' +
 	    '</div>';
 	__decorate([
@@ -47724,12 +48201,12 @@
 
 
 /***/ },
-/* 431 */
+/* 428 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -47744,14 +48221,14 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var column_1 = __webpack_require__(394);
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var columnController_1 = __webpack_require__(392);
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var context_2 = __webpack_require__(384);
-	var utils_1 = __webpack_require__(385);
+	var column_1 = __webpack_require__(388);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var columnController_1 = __webpack_require__(386);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var context_2 = __webpack_require__(378);
+	var utils_1 = __webpack_require__(379);
 	var SortController = SortController_1 = (function () {
 	    function SortController() {
 	    }
@@ -47918,12 +48395,12 @@
 
 
 /***/ },
-/* 432 */
+/* 429 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -47948,13 +48425,13 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var dateFilter_1 = __webpack_require__(425);
-	var componentAnnotations_1 = __webpack_require__(423);
-	var utils_1 = __webpack_require__(385);
-	var componentProvider_1 = __webpack_require__(426);
-	var component_1 = __webpack_require__(421);
-	var constants_1 = __webpack_require__(387);
+	var context_1 = __webpack_require__(378);
+	var dateFilter_1 = __webpack_require__(422);
+	var componentAnnotations_1 = __webpack_require__(420);
+	var utils_1 = __webpack_require__(379);
+	var componentProvider_1 = __webpack_require__(423);
+	var component_1 = __webpack_require__(418);
+	var constants_1 = __webpack_require__(381);
 	var InputTextFloatingFilterComp = (function (_super) {
 	    __extends(InputTextFloatingFilterComp, _super);
 	    function InputTextFloatingFilterComp() {
@@ -48203,12 +48680,12 @@
 
 
 /***/ },
-/* 433 */
+/* 430 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -48233,12 +48710,15 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var column_1 = __webpack_require__(394);
-	var utils_1 = __webpack_require__(385);
-	var setLeftFeature_1 = __webpack_require__(434);
-	var component_1 = __webpack_require__(421);
-	var componentAnnotations_1 = __webpack_require__(423);
+	var context_1 = __webpack_require__(378);
+	var column_1 = __webpack_require__(388);
+	var utils_1 = __webpack_require__(379);
+	var setLeftFeature_1 = __webpack_require__(431);
+	var component_1 = __webpack_require__(418);
+	var componentAnnotations_1 = __webpack_require__(420);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var svgFactory_1 = __webpack_require__(425);
+	var svgFactory = svgFactory_1.SvgFactory.getInstance();
 	var BaseFilterWrapperComp = (function (_super) {
 	    __extends(BaseFilterWrapperComp, _super);
 	    function BaseFilterWrapperComp() {
@@ -48287,8 +48767,10 @@
 	            utils_1._.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body');
 	        }
 	        else {
+	            // let icon:HTMLElement = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column, svgFactory.createFilterSvg12);
 	            floatingFilterBody.appendChild(this.floatingFilterComp.getGui());
 	            body.appendChild(utils_1._.loadTemplate("<div class=\"ag-floating-filter-button\">\n                    <button ref=\"eButtonShowMainFilter\">...</button>            \n            </div>"));
+	            // body.querySelector('button').appendChild(icon);
 	        }
 	        if (this.floatingFilterComp.afterGuiAttached) {
 	            this.floatingFilterComp.afterGuiAttached();
@@ -48298,7 +48780,7 @@
 	        this.floatingFilterComp.onParentModelChanged(parentModel);
 	    };
 	    FloatingFilterWrapperComp.prototype.showParentFilter = function () {
-	        this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filter');
+	        this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filterMenuTab', ['filterMenuTab']);
 	    };
 	    return FloatingFilterWrapperComp;
 	}(BaseFilterWrapperComp));
@@ -48310,6 +48792,10 @@
 	    context_1.Autowired('menuFactory'),
 	    __metadata("design:type", Object)
 	], FloatingFilterWrapperComp.prototype, "menuFactory", void 0);
+	__decorate([
+	    context_1.Autowired('gridOptionsWrapper'),
+	    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+	], FloatingFilterWrapperComp.prototype, "gridOptionsWrapper", void 0);
 	exports.FloatingFilterWrapperComp = FloatingFilterWrapperComp;
 	var EmptyFloatingFilterWrapperComp = (function (_super) {
 	    __extends(EmptyFloatingFilterWrapperComp, _super);
@@ -48326,12 +48812,12 @@
 
 
 /***/ },
-/* 434 */
+/* 431 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -48356,12 +48842,12 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var column_1 = __webpack_require__(394);
-	var beanStub_1 = __webpack_require__(422);
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var columnAnimationService_1 = __webpack_require__(435);
+	var utils_1 = __webpack_require__(379);
+	var column_1 = __webpack_require__(388);
+	var beanStub_1 = __webpack_require__(419);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var columnAnimationService_1 = __webpack_require__(432);
 	var SetLeftFeature = (function (_super) {
 	    __extends(SetLeftFeature, _super);
 	    function SetLeftFeature(columnOrGroup, eCell) {
@@ -48435,12 +48921,12 @@
 
 
 /***/ },
-/* 435 */
+/* 432 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -48455,10 +48941,10 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var gridPanel_1 = __webpack_require__(401);
-	var utils_1 = __webpack_require__(385);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var gridPanel_1 = __webpack_require__(395);
+	var utils_1 = __webpack_require__(379);
 	var ColumnAnimationService = (function () {
 	    function ColumnAnimationService() {
 	        this.executeNextFuncs = [];
@@ -48550,12 +49036,12 @@
 
 
 /***/ },
-/* 436 */
+/* 433 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -48580,15 +49066,15 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var component_1 = __webpack_require__(421);
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var componentAnnotations_1 = __webpack_require__(423);
-	var utils_1 = __webpack_require__(385);
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var rowRenderer_1 = __webpack_require__(400);
-	var paginationProxy_1 = __webpack_require__(437);
+	var component_1 = __webpack_require__(418);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var componentAnnotations_1 = __webpack_require__(420);
+	var utils_1 = __webpack_require__(379);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var rowRenderer_1 = __webpack_require__(394);
+	var paginationProxy_1 = __webpack_require__(434);
 	var PaginationComp = (function (_super) {
 	    __extends(PaginationComp, _super);
 	    function PaginationComp() {
@@ -48760,12 +49246,12 @@
 
 
 /***/ },
-/* 437 */
+/* 434 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -48790,14 +49276,14 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var beanStub_1 = __webpack_require__(422);
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var utils_1 = __webpack_require__(385);
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var gridPanel_1 = __webpack_require__(401);
-	var scrollVisibleService_1 = __webpack_require__(438);
+	var beanStub_1 = __webpack_require__(419);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var utils_1 = __webpack_require__(379);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var gridPanel_1 = __webpack_require__(395);
+	var scrollVisibleService_1 = __webpack_require__(435);
 	var RowBounds = (function () {
 	    function RowBounds() {
 	    }
@@ -49060,12 +49546,12 @@
 
 
 /***/ },
-/* 438 */
+/* 435 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49080,11 +49566,11 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var utils_1 = __webpack_require__(385);
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var columnController_1 = __webpack_require__(392);
+	var context_1 = __webpack_require__(378);
+	var utils_1 = __webpack_require__(379);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var columnController_1 = __webpack_require__(386);
 	var ScrollVisibleService = (function () {
 	    function ScrollVisibleService() {
 	    }
@@ -49150,12 +49636,12 @@
 
 
 /***/ },
-/* 439 */
+/* 436 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49170,15 +49656,15 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var utils_1 = __webpack_require__(385);
-	var textCellEditor_1 = __webpack_require__(440);
-	var selectCellEditor_1 = __webpack_require__(441);
-	var popupEditorWrapper_1 = __webpack_require__(442);
-	var popupTextCellEditor_1 = __webpack_require__(443);
-	var popupSelectCellEditor_1 = __webpack_require__(444);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var largeTextCellEditor_1 = __webpack_require__(445);
+	var context_1 = __webpack_require__(378);
+	var utils_1 = __webpack_require__(379);
+	var textCellEditor_1 = __webpack_require__(437);
+	var selectCellEditor_1 = __webpack_require__(438);
+	var popupEditorWrapper_1 = __webpack_require__(439);
+	var popupTextCellEditor_1 = __webpack_require__(440);
+	var popupSelectCellEditor_1 = __webpack_require__(441);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var largeTextCellEditor_1 = __webpack_require__(442);
 	var CellEditorFactory = CellEditorFactory_1 = (function () {
 	    function CellEditorFactory() {
 	        this.cellEditorMap = {};
@@ -49261,12 +49747,12 @@
 
 
 /***/ },
-/* 440 */
+/* 437 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49282,9 +49768,9 @@
 	    };
 	})();
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var constants_1 = __webpack_require__(387);
-	var component_1 = __webpack_require__(421);
-	var utils_1 = __webpack_require__(385);
+	var constants_1 = __webpack_require__(381);
+	var component_1 = __webpack_require__(418);
+	var utils_1 = __webpack_require__(379);
 	var TextCellEditor = (function (_super) {
 	    __extends(TextCellEditor, _super);
 	    function TextCellEditor() {
@@ -49372,12 +49858,12 @@
 
 
 /***/ },
-/* 441 */
+/* 438 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49393,9 +49879,9 @@
 	    };
 	})();
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var component_1 = __webpack_require__(421);
-	var utils_1 = __webpack_require__(385);
-	var constants_1 = __webpack_require__(387);
+	var component_1 = __webpack_require__(418);
+	var utils_1 = __webpack_require__(379);
+	var constants_1 = __webpack_require__(381);
 	var SelectCellEditor = (function (_super) {
 	    __extends(SelectCellEditor, _super);
 	    function SelectCellEditor() {
@@ -49447,12 +49933,12 @@
 
 
 /***/ },
-/* 442 */
+/* 439 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49477,9 +49963,9 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var component_1 = __webpack_require__(421);
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
+	var component_1 = __webpack_require__(418);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
 	var PopupEditorWrapper = (function (_super) {
 	    __extends(PopupEditorWrapper, _super);
 	    function PopupEditorWrapper(cellEditor) {
@@ -49557,12 +50043,12 @@
 
 
 /***/ },
-/* 443 */
+/* 440 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49578,7 +50064,7 @@
 	    };
 	})();
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var textCellEditor_1 = __webpack_require__(440);
+	var textCellEditor_1 = __webpack_require__(437);
 	var PopupTextCellEditor = (function (_super) {
 	    __extends(PopupTextCellEditor, _super);
 	    function PopupTextCellEditor() {
@@ -49593,12 +50079,12 @@
 
 
 /***/ },
-/* 444 */
+/* 441 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49614,7 +50100,7 @@
 	    };
 	})();
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var selectCellEditor_1 = __webpack_require__(441);
+	var selectCellEditor_1 = __webpack_require__(438);
 	var PopupSelectCellEditor = (function (_super) {
 	    __extends(PopupSelectCellEditor, _super);
 	    function PopupSelectCellEditor() {
@@ -49629,12 +50115,12 @@
 
 
 /***/ },
-/* 445 */
+/* 442 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49650,9 +50136,9 @@
 	    };
 	})();
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var component_1 = __webpack_require__(421);
-	var constants_1 = __webpack_require__(387);
-	var utils_1 = __webpack_require__(385);
+	var component_1 = __webpack_require__(418);
+	var constants_1 = __webpack_require__(381);
+	var utils_1 = __webpack_require__(379);
 	var LargeTextCellEditor = (function (_super) {
 	    __extends(LargeTextCellEditor, _super);
 	    function LargeTextCellEditor() {
@@ -49703,12 +50189,12 @@
 
 
 /***/ },
-/* 446 */
+/* 443 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49723,14 +50209,14 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var utils_1 = __webpack_require__(385);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var eventService_1 = __webpack_require__(382);
-	var expressionService_1 = __webpack_require__(397);
-	var animateSlideCellRenderer_1 = __webpack_require__(447);
-	var animateShowChangeCellRenderer_1 = __webpack_require__(448);
-	var groupCellRenderer_1 = __webpack_require__(449);
+	var context_1 = __webpack_require__(378);
+	var utils_1 = __webpack_require__(379);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var eventService_1 = __webpack_require__(376);
+	var expressionService_1 = __webpack_require__(391);
+	var animateSlideCellRenderer_1 = __webpack_require__(444);
+	var animateShowChangeCellRenderer_1 = __webpack_require__(445);
+	var groupCellRenderer_1 = __webpack_require__(446);
 	var CellRendererFactory = CellRendererFactory_1 = (function () {
 	    function CellRendererFactory() {
 	        this.cellRendererMap = {};
@@ -49789,12 +50275,12 @@
 
 
 /***/ },
-/* 447 */
+/* 444 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49810,8 +50296,8 @@
 	    };
 	})();
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var component_1 = __webpack_require__(421);
+	var utils_1 = __webpack_require__(379);
+	var component_1 = __webpack_require__(418);
 	var AnimateSlideCellRenderer = (function (_super) {
 	    __extends(AnimateSlideCellRenderer, _super);
 	    function AnimateSlideCellRenderer() {
@@ -49884,12 +50370,12 @@
 
 
 /***/ },
-/* 448 */
+/* 445 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49905,8 +50391,8 @@
 	    };
 	})();
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var component_1 = __webpack_require__(421);
+	var utils_1 = __webpack_require__(379);
+	var component_1 = __webpack_require__(418);
 	var ARROW_UP = '&#65514;';
 	var ARROW_DOWN = '&#65516;';
 	var AnimateShowChangeCellRenderer = (function (_super) {
@@ -49917,7 +50403,7 @@
 	        return _this;
 	    }
 	    AnimateShowChangeCellRenderer.prototype.init = function (params) {
-	        this.params = params;
+	        // this.params = params;
 	        this.eValue = this.queryForHtmlElement('.ag-value-change-value');
 	        this.eDelta = this.queryForHtmlElement('.ag-value-change-delta');
 	        this.refresh(params);
@@ -49992,12 +50478,12 @@
 
 
 /***/ },
-/* 449 */
+/* 446 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50022,21 +50508,21 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var svgFactory_1 = __webpack_require__(428);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var expressionService_1 = __webpack_require__(397);
-	var eventService_1 = __webpack_require__(382);
-	var constants_1 = __webpack_require__(387);
-	var utils_1 = __webpack_require__(385);
-	var context_1 = __webpack_require__(384);
-	var component_1 = __webpack_require__(421);
-	var rowNode_1 = __webpack_require__(404);
-	var cellRendererService_1 = __webpack_require__(450);
-	var valueFormatterService_1 = __webpack_require__(451);
-	var checkboxSelectionComponent_1 = __webpack_require__(452);
-	var columnController_1 = __webpack_require__(392);
-	var column_1 = __webpack_require__(394);
-	var componentAnnotations_1 = __webpack_require__(423);
+	var svgFactory_1 = __webpack_require__(425);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var expressionService_1 = __webpack_require__(391);
+	var eventService_1 = __webpack_require__(376);
+	var constants_1 = __webpack_require__(381);
+	var utils_1 = __webpack_require__(379);
+	var context_1 = __webpack_require__(378);
+	var component_1 = __webpack_require__(418);
+	var rowNode_1 = __webpack_require__(398);
+	var cellRendererService_1 = __webpack_require__(447);
+	var valueFormatterService_1 = __webpack_require__(402);
+	var checkboxSelectionComponent_1 = __webpack_require__(448);
+	var columnController_1 = __webpack_require__(386);
+	var column_1 = __webpack_require__(388);
+	var componentAnnotations_1 = __webpack_require__(420);
 	var svgFactory = svgFactory_1.SvgFactory.getInstance();
 	var GroupCellRenderer = (function (_super) {
 	    __extends(GroupCellRenderer, _super);
@@ -50044,84 +50530,24 @@
 	        return _super.call(this, GroupCellRenderer.TEMPLATE) || this;
 	    }
 	    GroupCellRenderer.prototype.init = function (params) {
-	        this.setParams(params);
-	        var groupKeyMismatch = this.isGroupKeyMismatch();
+	        this.params = params;
 	        var embeddedRowMismatch = this.embeddedRowMismatch();
-	        if (groupKeyMismatch || embeddedRowMismatch) {
+	        if (embeddedRowMismatch) {
 	            return;
 	        }
+	        if (utils_1.Utils.missing(params.value)) {
+	            return;
+	        }
+	        var column = params.column;
+	        this.draggedFromHideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents()
+	            && !column.isRowGroupDisplayed(params.node.field);
 	        this.setupComponents();
-	    };
-	    GroupCellRenderer.prototype.setParams = function (params) {
-	        if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
-	            var rowGroupColumn = this.getRowGroupColumn(params);
-	            var nodeToSwapIn = this.isFirstChildOfFirstChild(params.node, rowGroupColumn);
-	            this.nodeWasSwapped = utils_1.Utils.exists(nodeToSwapIn);
-	            if (this.nodeWasSwapped) {
-	                var newParams = {};
-	                utils_1.Utils.assign(newParams, params);
-	                newParams.node = nodeToSwapIn;
-	                this.params = newParams;
-	            }
-	            else {
-	                this.params = params;
-	            }
-	        }
-	        else {
-	            this.nodeWasSwapped = false;
-	            this.params = params;
-	        }
 	    };
 	    GroupCellRenderer.prototype.setupComponents = function () {
 	        this.addExpandAndContract();
 	        this.addCheckboxIfNeeded();
 	        this.addValueElement();
 	        this.addPadding();
-	    };
-	    GroupCellRenderer.prototype.isFirstChildOfFirstChild = function (rowNode, rowGroupColumn) {
-	        var currentRowNode = rowNode;
-	        // if we are hiding groups, then if we are the first child, of the first child,
-	        // all the way up to the column we are interested in, then we show the group cell.
-	        var isCandidate = true;
-	        var foundFirstChildPath = false;
-	        var nodeToSwapIn;
-	        while (isCandidate && !foundFirstChildPath) {
-	            var parentRowNode = currentRowNode.parent;
-	            var firstChild = utils_1.Utils.exists(parentRowNode) && currentRowNode.childIndex === 0;
-	            if (firstChild) {
-	                if (parentRowNode.rowGroupColumn === rowGroupColumn) {
-	                    foundFirstChildPath = true;
-	                    nodeToSwapIn = parentRowNode;
-	                }
-	            }
-	            else {
-	                isCandidate = false;
-	            }
-	            currentRowNode = parentRowNode;
-	        }
-	        return foundFirstChildPath ? nodeToSwapIn : null;
-	    };
-	    GroupCellRenderer.prototype.getRowGroupColumn = function (params) {
-	        // if we are using the auto-group, then the auto-group passes the
-	        // original rowGroupColumn
-	        if (params.originalRowGroupColumn) {
-	            return params.originalRowGroupColumn;
-	        }
-	        else {
-	            return params.column;
-	        }
-	    };
-	    GroupCellRenderer.prototype.isGroupKeyMismatch = function () {
-	        // if the user only wants to show details for one group in this column,
-	        // then the group key here says which column we are interested in.
-	        var restrictToOneGroup = this.params.restrictToOneGroup;
-	        var skipCheck = this.nodeWasSwapped || !restrictToOneGroup;
-	        if (skipCheck) {
-	            return false;
-	        }
-	        var columnGroup = this.getRowGroupColumn(this.params);
-	        var rowGroup = this.params.node.rowGroupColumn;
-	        return columnGroup !== rowGroup;
 	    };
 	    // if we are doing embedded full width rows, we only show the renderer when
 	    // in the body, or if pinning in the pinned section, or if pinning and RTL,
@@ -50153,6 +50579,9 @@
 	        }
 	    };
 	    GroupCellRenderer.prototype.setPadding = function () {
+	        if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
+	            return;
+	        }
 	        var params = this.params;
 	        var rowNode = params.node;
 	        var paddingPx;
@@ -50181,12 +50610,11 @@
 	        }
 	    };
 	    GroupCellRenderer.prototype.addPadding = function () {
-	        var params = this.params;
 	        // only do this if an indent - as this overwrites the padding that
 	        // the theme set, which will make things look 'not aligned' for the
 	        // first group level.
-	        var node = params.node;
-	        var suppressPadding = params.suppressPadding;
+	        var node = this.params.node;
+	        var suppressPadding = this.params.suppressPadding;
 	        if (!suppressPadding) {
 	            this.addDestroyableEventListener(node, rowNode_1.RowNode.EVENT_UI_LEVEL_CHANGED, this.setPadding.bind(this));
 	            this.setPadding();
@@ -50219,12 +50647,11 @@
 	    };
 	    GroupCellRenderer.prototype.createFooterCell = function () {
 	        var footerValue;
-	        var groupName = this.getGroupName();
 	        var footerValueGetter = this.params.footerValueGetter;
 	        if (footerValueGetter) {
 	            // params is same as we were given, except we set the value as the item to display
 	            var paramsClone = utils_1.Utils.cloneObject(this.params);
-	            paramsClone.value = groupName;
+	            paramsClone.value = this.params.value;
 	            if (typeof footerValueGetter === 'function') {
 	                footerValue = footerValueGetter(paramsClone);
 	            }
@@ -50236,30 +50663,23 @@
 	            }
 	        }
 	        else {
-	            footerValue = 'Total ' + groupName;
+	            footerValue = 'Total ' + this.params.value;
 	        }
 	        this.eValue.innerHTML = footerValue;
 	    };
 	    GroupCellRenderer.prototype.createGroupCell = function () {
 	        var params = this.params;
-	        // pull out the column that the grouping is on
-	        var rowGroupColumns = this.params.columnApi.getRowGroupColumns();
-	        // if we are using in memory grid grouping, then we try to look up the column that
-	        // we did the grouping on. however if it is not possible (happens when user provides
-	        // the data already grouped) then we just the current col, ie use cellRenderer of current col
-	        var columnOfGroupedCol = rowGroupColumns[params.node.rowGroupIndex];
-	        if (utils_1.Utils.missing(columnOfGroupedCol)) {
-	            columnOfGroupedCol = params.column;
-	        }
-	        var groupName = this.getGroupName();
-	        var valueFormatted = this.valueFormatterService.formatValue(columnOfGroupedCol, params.node, params.scope, params.rowIndex, groupName);
-	        var groupedColCellRenderer = columnOfGroupedCol.getCellRenderer();
+	        // we try and use the cellRenderer of the column used for the grouping if we can
+	        var columnToUse = params.node.rowGroupColumn ? params.node.rowGroupColumn : params.column;
+	        var groupName = this.params.value;
+	        var valueFormatted = this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName);
+	        var groupedColCellRenderer = columnToUse.getCellRenderer();
 	        // reuse the params but change the value
 	        if (typeof groupedColCellRenderer === 'function') {
 	            // reuse the params but change the value
 	            params.value = groupName;
 	            params.valueFormatted = valueFormatted;
-	            var colDefOfGroupedCol = columnOfGroupedCol.getColDef();
+	            var colDefOfGroupedCol = columnToUse.getColDef();
 	            var groupedColCellRendererParams = colDefOfGroupedCol ? colDefOfGroupedCol.cellRendererParams : null;
 	            // because we are talking about the different column to the original, any user provided params
 	            // are for the wrong column, so need to copy them in again.
@@ -50289,22 +50709,6 @@
 	        var allChildrenCount = this.params.node.allChildrenCount;
 	        var text = allChildrenCount >= 0 ? "(" + allChildrenCount + ")" : '';
 	        this.eChildCount.innerHTML = text;
-	    };
-	    GroupCellRenderer.prototype.getGroupName = function () {
-	        var keyMap = this.params.keyMap;
-	        var rowNodeKey = this.params.node.key;
-	        if (keyMap && typeof keyMap === 'object') {
-	            var valueFromMap = keyMap[rowNodeKey];
-	            if (valueFromMap) {
-	                return valueFromMap;
-	            }
-	            else {
-	                return rowNodeKey;
-	            }
-	        }
-	        else {
-	            return rowNodeKey;
-	        }
 	    };
 	    GroupCellRenderer.prototype.createLeafCell = function () {
 	        if (utils_1.Utils.exists(this.params.value)) {
@@ -50355,14 +50759,23 @@
 	    };
 	    GroupCellRenderer.prototype.onKeyDown = function (event) {
 	        if (utils_1.Utils.isKeyPressed(event, constants_1.Constants.KEY_ENTER)) {
-	            if (!this.params.node.isCellEditable()) {
-	                this.onExpandOrContract();
-	                event.preventDefault();
+	            var cellEditable = this.params.column.isCellEditable(this.params.node);
+	            if (cellEditable) {
+	                return;
 	            }
+	            event.preventDefault();
+	            this.onExpandOrContract();
 	        }
 	    };
 	    GroupCellRenderer.prototype.onExpandOrContract = function () {
 	        var rowNode = this.params.node;
+	        // if value was pulled down, we need to find the correct parent row node to expand
+	        if (this.draggedFromHideOpenParents) {
+	            var column = this.params.column;
+	            while (!column.isRowGroupDisplayed(rowNode.field)) {
+	                rowNode = rowNode.parent;
+	            }
+	        }
 	        rowNode.setExpanded(!rowNode.expanded);
 	        if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
 	            this.params.api.refreshRows([rowNode]);
@@ -50371,17 +50784,21 @@
 	    GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
 	        var rowNode = this.params.node;
 	        var reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
-	        var expandable = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
+	        var expandable = this.draggedFromHideOpenParents || (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
 	        if (expandable) {
-	            // if expandable, show one based on expand state
-	            utils_1.Utils.setVisible(this.eContracted, !rowNode.expanded);
-	            utils_1.Utils.setVisible(this.eExpanded, rowNode.expanded);
+	            // if expandable, show one based on expand state.
+	            // if we were dragged down, means our parent is always expanded
+	            var expanded = this.draggedFromHideOpenParents ? true : rowNode.expanded;
+	            utils_1.Utils.setVisible(this.eContracted, !expanded);
+	            utils_1.Utils.setVisible(this.eExpanded, expanded);
 	        }
 	        else {
 	            // it not expandable, show neither
 	            utils_1.Utils.setVisible(this.eExpanded, false);
 	            utils_1.Utils.setVisible(this.eContracted, false);
 	        }
+	    };
+	    GroupCellRenderer.prototype.refresh = function (params) {
 	    };
 	    return GroupCellRenderer;
 	}(component_1.Component));
@@ -50444,12 +50861,12 @@
 
 
 /***/ },
-/* 450 */
+/* 447 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50464,9 +50881,9 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var context_1 = __webpack_require__(384);
-	var cellRendererFactory_1 = __webpack_require__(446);
+	var utils_1 = __webpack_require__(379);
+	var context_1 = __webpack_require__(378);
+	var cellRendererFactory_1 = __webpack_require__(443);
 	/** Class to use a cellRenderer. */
 	var CellRendererService = (function () {
 	    function CellRendererService() {
@@ -50553,75 +50970,12 @@
 
 
 /***/ },
-/* 451 */
+/* 448 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
-	 * @link http://www.ag-grid.com/
-	 * @license MIT
-	 */
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var ValueFormatterService = (function () {
-	    function ValueFormatterService() {
-	    }
-	    ValueFormatterService.prototype.formatValue = function (column, rowNode, $scope, rowIndex, value) {
-	        var formatter;
-	        var colDef = column.getColDef();
-	        // if floating, give preference to the floating formatter
-	        if (rowNode.floating) {
-	            formatter = colDef.floatingCellFormatter ? colDef.floatingCellFormatter : colDef.cellFormatter;
-	        }
-	        else {
-	            formatter = colDef.cellFormatter;
-	        }
-	        var result = null;
-	        if (formatter) {
-	            var params = {
-	                value: value,
-	                node: rowNode,
-	                column: column,
-	                $scope: $scope,
-	                rowIndex: rowIndex,
-	                api: this.gridOptionsWrapper.getApi(),
-	                context: this.gridOptionsWrapper.getContext()
-	            };
-	            result = formatter(params);
-	        }
-	        return result;
-	    };
-	    return ValueFormatterService;
-	}());
-	__decorate([
-	    context_1.Autowired('gridOptionsWrapper'),
-	    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-	], ValueFormatterService.prototype, "gridOptionsWrapper", void 0);
-	ValueFormatterService = __decorate([
-	    context_1.Bean('valueFormatterService')
-	], ValueFormatterService);
-	exports.ValueFormatterService = ValueFormatterService;
-
-
-/***/ },
-/* 452 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50646,16 +51000,16 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var component_1 = __webpack_require__(421);
-	var rowNode_1 = __webpack_require__(404);
-	var utils_1 = __webpack_require__(385);
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var svgFactory_1 = __webpack_require__(428);
-	var events_1 = __webpack_require__(386);
-	var eventService_1 = __webpack_require__(382);
-	var gridApi_1 = __webpack_require__(389);
-	var columnController_1 = __webpack_require__(392);
+	var component_1 = __webpack_require__(418);
+	var rowNode_1 = __webpack_require__(398);
+	var utils_1 = __webpack_require__(379);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var svgFactory_1 = __webpack_require__(425);
+	var events_1 = __webpack_require__(380);
+	var eventService_1 = __webpack_require__(376);
+	var gridApi_1 = __webpack_require__(383);
+	var columnController_1 = __webpack_require__(386);
 	var svgFactory = svgFactory_1.SvgFactory.getInstance();
 	var CheckboxSelectionComponent = (function (_super) {
 	    __extends(CheckboxSelectionComponent, _super);
@@ -50752,12 +51106,12 @@
 
 
 /***/ },
-/* 453 */
+/* 449 */
 /***/ function(module, exports) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50772,12 +51126,12 @@
 
 
 /***/ },
-/* 454 */
+/* 450 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50792,8 +51146,8 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var expressionService_1 = __webpack_require__(397);
+	var context_1 = __webpack_require__(378);
+	var expressionService_1 = __webpack_require__(391);
 	var StylingService = (function () {
 	    function StylingService() {
 	    }
@@ -50858,12 +51212,12 @@
 
 
 /***/ },
-/* 455 */
+/* 451 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50888,10 +51242,10 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var eventService_1 = __webpack_require__(382);
-	var context_1 = __webpack_require__(384);
-	var events_1 = __webpack_require__(386);
-	var beanStub_1 = __webpack_require__(422);
+	var eventService_1 = __webpack_require__(376);
+	var context_1 = __webpack_require__(378);
+	var events_1 = __webpack_require__(380);
+	var beanStub_1 = __webpack_require__(419);
 	var ColumnHoverService = (function (_super) {
 	    __extends(ColumnHoverService, _super);
 	    function ColumnHoverService() {
@@ -50931,12 +51285,12 @@
 
 
 /***/ },
-/* 456 */
+/* 452 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50961,26 +51315,26 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var cellComp_1 = __webpack_require__(410);
-	var rowNode_1 = __webpack_require__(404);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var columnController_1 = __webpack_require__(392);
-	var column_1 = __webpack_require__(394);
-	var events_1 = __webpack_require__(386);
-	var eventService_1 = __webpack_require__(382);
-	var context_1 = __webpack_require__(384);
-	var focusedCellController_1 = __webpack_require__(412);
-	var constants_1 = __webpack_require__(387);
-	var cellRendererService_1 = __webpack_require__(450);
-	var cellRendererFactory_1 = __webpack_require__(446);
-	var gridPanel_1 = __webpack_require__(401);
-	var beanStub_1 = __webpack_require__(422);
-	var columnAnimationService_1 = __webpack_require__(435);
-	var paginationProxy_1 = __webpack_require__(437);
-	var component_1 = __webpack_require__(421);
-	var svgFactory_1 = __webpack_require__(428);
-	var componentAnnotations_1 = __webpack_require__(423);
+	var utils_1 = __webpack_require__(379);
+	var cellComp_1 = __webpack_require__(407);
+	var rowNode_1 = __webpack_require__(398);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var columnController_1 = __webpack_require__(386);
+	var column_1 = __webpack_require__(388);
+	var events_1 = __webpack_require__(380);
+	var eventService_1 = __webpack_require__(376);
+	var context_1 = __webpack_require__(378);
+	var focusedCellController_1 = __webpack_require__(409);
+	var constants_1 = __webpack_require__(381);
+	var cellRendererService_1 = __webpack_require__(447);
+	var cellRendererFactory_1 = __webpack_require__(443);
+	var gridPanel_1 = __webpack_require__(395);
+	var beanStub_1 = __webpack_require__(419);
+	var columnAnimationService_1 = __webpack_require__(432);
+	var paginationProxy_1 = __webpack_require__(434);
+	var component_1 = __webpack_require__(418);
+	var svgFactory_1 = __webpack_require__(425);
+	var componentAnnotations_1 = __webpack_require__(420);
 	var svgFactory = svgFactory_1.SvgFactory.getInstance();
 	var TempStubCell = (function (_super) {
 	    __extends(TempStubCell, _super);
@@ -51455,10 +51809,11 @@
 	        // if this is an update, we want to refresh, as this will allow the user to put in a transition
 	        // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
 	        // we will want to completely replace the cells
-	        var animate = event.update;
-	        var newData = !event.update;
 	        this.forEachRenderedCell(function (cellComp) {
-	            return cellComp.refreshCell(animate, newData);
+	            return cellComp.refreshCell({
+	                animate: event.update,
+	                newData: !event.update
+	            });
 	        });
 	        // check for selected also, as this could be after lazy loading of the row data, in which case
 	        // the id might of just gotten set inside the row and the row selected state may of changed
@@ -51551,12 +51906,20 @@
 	        }
 	    };
 	    RowComp.prototype.addEventListener = function (eventType, listener) {
+	        if (eventType === 'renderedRowRemoved') {
+	            eventType = RowComp.EVENT_ROW_REMOVED;
+	            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+	        }
 	        if (!this.renderedRowEventService) {
 	            this.renderedRowEventService = new eventService_1.EventService();
 	        }
 	        this.renderedRowEventService.addEventListener(eventType, listener);
 	    };
 	    RowComp.prototype.removeEventListener = function (eventType, listener) {
+	        if (eventType === 'renderedRowRemoved') {
+	            eventType = RowComp.EVENT_ROW_REMOVED;
+	            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+	        }
 	        this.renderedRowEventService.removeEventListener(eventType, listener);
 	    };
 	    RowComp.prototype.getRenderedCellForColumn = function (column) {
@@ -51589,7 +51952,7 @@
 	            delayedDestroyFunctions.forEach(function (func) { return func(); });
 	        }
 	        if (this.renderedRowEventService) {
-	            this.renderedRowEventService.dispatchEvent(RowComp.EVENT_RENDERED_ROW_REMOVED, { node: this.rowNode });
+	            this.renderedRowEventService.dispatchEvent(RowComp.EVENT_ROW_REMOVED, { node: this.rowNode });
 	        }
 	        var event = { node: this.rowNode, rowIndex: this.rowNode.rowIndex };
 	        this.mainEventService.dispatchEvent(events_1.Events.EVENT_VIRTUAL_ROW_REMOVED, event);
@@ -51673,6 +52036,7 @@
 	        var params = {
 	            data: this.rowNode.data,
 	            node: this.rowNode,
+	            value: this.rowNode.key,
 	            $scope: this.scope,
 	            rowIndex: this.rowNode.rowIndex,
 	            api: this.gridOptionsWrapper.getApi(),
@@ -51749,6 +52113,7 @@
 	    RowComp.prototype.createRowContainer = function (rowContainerComp, slideRowIn) {
 	        var _this = this;
 	        var eRow = document.createElement('div');
+	        eRow.setAttribute('role', 'row');
 	        this.addDomData(eRow);
 	        rowContainerComp.appendRowElement(eRow);
 	        this.eAllRowContainers.push(eRow);
@@ -51857,7 +52222,7 @@
 	        this.forEachRenderedCell(function (renderedCell) {
 	            var colForCel = renderedCell.getColumn();
 	            if (columnsToRefresh.indexOf(colForCel) >= 0) {
-	                renderedCell.refreshCell(animate);
+	                renderedCell.refreshCell({ animate: animate });
 	            }
 	        });
 	    };
@@ -51969,7 +52334,7 @@
 	    };
 	    return RowComp;
 	}(beanStub_1.BeanStub));
-	RowComp.EVENT_RENDERED_ROW_REMOVED = 'renderedRowRemoved';
+	RowComp.EVENT_ROW_REMOVED = 'rowRemoved';
 	RowComp.DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
 	__decorate([
 	    context_1.Autowired('gridOptionsWrapper'),
@@ -52021,18 +52386,30 @@
 
 
 /***/ },
-/* 457 */
+/* 453 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
+	var utils_1 = __webpack_require__(379);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var context_1 = __webpack_require__(378);
+	var rowComp_1 = __webpack_require__(452);
 	/**
 	 * There are many instances of this component covering each of the areas a row can be entered
 	 * eg body, pinned left, fullWidth. The component differs from others in that it's given the
@@ -52076,6 +52453,42 @@
 	            utils_1.Utils.prependDC(this.eContainer, this.eDocumentFragment);
 	        }
 	    };
+	    // WARNING - this method is very hard on the DOM, the shuffles the DOM rows even if they don't need
+	    // shuffling, hence a huge performance hit. really the order should be worked out as the rows are getting
+	    // inserted (which is not possible when using the Document Fragment) - so we should do this right (insert
+	    // at correct index) and not use Document Fragment when this is the case).
+	    RowContainerComponent.prototype.sortDomByRowNodeIndex = function () {
+	        var _this = this;
+	        // if a cell is focused, it will loose focus after this rearrange
+	        var originalFocusedElement = document.activeElement;
+	        var eChildren = [];
+	        for (var i = 0; i < this.eContainer.children.length; i++) {
+	            var eChild = this.eContainer.children[i];
+	            // we only include elements that have attached rowComps - when the grid removes rows
+	            // from the grid, the rowComp gets detached form the element
+	            var rowComp = this.gridOptionsWrapper.getDomData(eChild, rowComp_1.RowComp.DOM_DATA_KEY_RENDERED_ROW);
+	            if (rowComp) {
+	                eChildren.push(eChild);
+	            }
+	        }
+	        eChildren.sort(function (a, b) {
+	            var rowCompA = _this.gridOptionsWrapper.getDomData(a, rowComp_1.RowComp.DOM_DATA_KEY_RENDERED_ROW);
+	            var rowCompB = _this.gridOptionsWrapper.getDomData(b, rowComp_1.RowComp.DOM_DATA_KEY_RENDERED_ROW);
+	            return rowCompA.getRowNode().rowIndex - rowCompB.getRowNode().rowIndex;
+	        });
+	        // we assume the last one is in place, then go through each element
+	        // and place it before the one after
+	        for (var i = eChildren.length - 2; i >= 0; i--) {
+	            var eCurrent = eChildren[i];
+	            var eNext = eChildren[i + 1];
+	            this.eContainer.insertBefore(eCurrent, eNext);
+	        }
+	        // if focus was lost, reset it. if the focus was not a cell,
+	        // then the focus would not of gotten impacted.
+	        if (originalFocusedElement !== document.activeElement) {
+	            originalFocusedElement.focus();
+	        }
+	    };
 	    RowContainerComponent.prototype.checkVisibility = function () {
 	        if (!this.hideWhenNoChildren) {
 	            return;
@@ -52089,16 +52502,20 @@
 	    };
 	    return RowContainerComponent;
 	}());
+	__decorate([
+	    context_1.Autowired('gridOptionsWrapper'),
+	    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+	], RowContainerComponent.prototype, "gridOptionsWrapper", void 0);
 	exports.RowContainerComponent = RowContainerComponent;
 
 
 /***/ },
-/* 458 */
+/* 454 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52113,14 +52530,14 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var constants_1 = __webpack_require__(387);
-	var columnController_1 = __webpack_require__(392);
-	var floatingRowModel_1 = __webpack_require__(403);
-	var utils_1 = __webpack_require__(385);
-	var gridRow_1 = __webpack_require__(414);
-	var gridCell_1 = __webpack_require__(413);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
+	var context_1 = __webpack_require__(378);
+	var constants_1 = __webpack_require__(381);
+	var columnController_1 = __webpack_require__(386);
+	var floatingRowModel_1 = __webpack_require__(397);
+	var utils_1 = __webpack_require__(379);
+	var gridRow_1 = __webpack_require__(411);
+	var gridCell_1 = __webpack_require__(410);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
 	var CellNavigationService = (function () {
 	    function CellNavigationService() {
 	    }
@@ -52340,12 +52757,12 @@
 
 
 /***/ },
-/* 459 */
+/* 455 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52360,15 +52777,15 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var columnController_1 = __webpack_require__(392);
-	var gridPanel_1 = __webpack_require__(401);
-	var column_1 = __webpack_require__(394);
-	var context_1 = __webpack_require__(384);
-	var headerContainer_1 = __webpack_require__(460);
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var scrollVisibleService_1 = __webpack_require__(438);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var columnController_1 = __webpack_require__(386);
+	var gridPanel_1 = __webpack_require__(395);
+	var column_1 = __webpack_require__(388);
+	var context_1 = __webpack_require__(378);
+	var headerContainer_1 = __webpack_require__(456);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var scrollVisibleService_1 = __webpack_require__(435);
 	var HeaderRenderer = (function () {
 	    function HeaderRenderer() {
 	    }
@@ -52482,12 +52899,12 @@
 
 
 /***/ },
-/* 460 */
+/* 456 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52502,18 +52919,18 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var context_1 = __webpack_require__(384);
-	var dragAndDropService_1 = __webpack_require__(461);
-	var columnController_1 = __webpack_require__(392);
-	var gridPanel_1 = __webpack_require__(401);
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var headerRowComp_1 = __webpack_require__(462);
-	var bodyDropTarget_1 = __webpack_require__(471);
-	var column_1 = __webpack_require__(394);
-	var scrollVisibleService_1 = __webpack_require__(438);
+	var utils_1 = __webpack_require__(379);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var context_1 = __webpack_require__(378);
+	var dragAndDropService_1 = __webpack_require__(457);
+	var columnController_1 = __webpack_require__(386);
+	var gridPanel_1 = __webpack_require__(395);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var headerRowComp_1 = __webpack_require__(458);
+	var bodyDropTarget_1 = __webpack_require__(467);
+	var column_1 = __webpack_require__(388);
+	var scrollVisibleService_1 = __webpack_require__(435);
 	var HeaderContainer = (function () {
 	    function HeaderContainer(eContainer, eViewport, eRoot, pinned) {
 	        this.headerRowComps = [];
@@ -52653,12 +53070,12 @@
 
 
 /***/ },
-/* 461 */
+/* 457 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52676,13 +53093,13 @@
 	    return function (target, key) { decorator(target, key, paramIndex); }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var logger_1 = __webpack_require__(383);
-	var context_1 = __webpack_require__(384);
-	var utils_1 = __webpack_require__(385);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var svgFactory_1 = __webpack_require__(428);
-	var dragService_1 = __webpack_require__(408);
-	var columnController_1 = __webpack_require__(392);
+	var logger_1 = __webpack_require__(377);
+	var context_1 = __webpack_require__(378);
+	var utils_1 = __webpack_require__(379);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var svgFactory_1 = __webpack_require__(425);
+	var dragService_1 = __webpack_require__(405);
+	var columnController_1 = __webpack_require__(386);
 	var svgFactory = svgFactory_1.SvgFactory.getInstance();
 	var DragSourceType;
 	(function (DragSourceType) {
@@ -53026,12 +53443,12 @@
 
 
 /***/ },
-/* 462 */
+/* 458 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53056,20 +53473,20 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var component_1 = __webpack_require__(421);
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var columnGroup_1 = __webpack_require__(393);
-	var columnController_1 = __webpack_require__(392);
-	var column_1 = __webpack_require__(394);
-	var renderedHeaderCell_1 = __webpack_require__(463);
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var utils_1 = __webpack_require__(385);
-	var headerWrapperComp_1 = __webpack_require__(467);
-	var headerGroupWrapperComp_1 = __webpack_require__(470);
-	var filterManager_1 = __webpack_require__(417);
-	var componentProvider_1 = __webpack_require__(426);
+	var component_1 = __webpack_require__(418);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var columnGroup_1 = __webpack_require__(387);
+	var columnController_1 = __webpack_require__(386);
+	var column_1 = __webpack_require__(388);
+	var renderedHeaderCell_1 = __webpack_require__(459);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var utils_1 = __webpack_require__(379);
+	var headerWrapperComp_1 = __webpack_require__(463);
+	var headerGroupWrapperComp_1 = __webpack_require__(466);
+	var filterManager_1 = __webpack_require__(414);
+	var componentProvider_1 = __webpack_require__(423);
 	var HeaderRowType;
 	(function (HeaderRowType) {
 	    HeaderRowType[HeaderRowType["COLUMN_GROUP"] = 0] = "COLUMN_GROUP";
@@ -53079,7 +53496,7 @@
 	var HeaderRowComp = (function (_super) {
 	    __extends(HeaderRowComp, _super);
 	    function HeaderRowComp(dept, type, pinned, eRoot, dropTarget) {
-	        var _this = _super.call(this, "<div class=\"ag-header-row\"/>") || this;
+	        var _this = _super.call(this, "<div class=\"ag-header-row\" role=\"presentation\"/>") || this;
 	        _this.headerElements = {};
 	        _this.dept = dept;
 	        _this.type = type;
@@ -53242,7 +53659,7 @@
 	        var _this = this;
 	        var floatingFilterParams = this.createFloatingFilterParams(column);
 	        var floatingFilterWrapper = this.componentProvider.newFloatingFilterWrapperComponent(column, floatingFilterParams);
-	        column.addEventListener(column_1.Column.EVENT_FILTER_CHANGED, function () {
+	        this.addDestroyableEventListener(column, column_1.Column.EVENT_FILTER_CHANGED, function () {
 	            var filterComponent = _this.filterManager.getFilterComponent(column);
 	            floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
 	        });
@@ -53327,12 +53744,12 @@
 
 
 /***/ },
-/* 463 */
+/* 459 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53357,21 +53774,21 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var column_1 = __webpack_require__(394);
-	var filterManager_1 = __webpack_require__(417);
-	var columnController_1 = __webpack_require__(392);
-	var headerTemplateLoader_1 = __webpack_require__(464);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var horizontalDragService_1 = __webpack_require__(465);
-	var gridCore_1 = __webpack_require__(416);
-	var context_1 = __webpack_require__(384);
-	var cssClassApplier_1 = __webpack_require__(466);
-	var dragAndDropService_1 = __webpack_require__(461);
-	var sortController_1 = __webpack_require__(431);
-	var setLeftFeature_1 = __webpack_require__(434);
-	var touchListener_1 = __webpack_require__(429);
-	var component_1 = __webpack_require__(421);
+	var utils_1 = __webpack_require__(379);
+	var column_1 = __webpack_require__(388);
+	var filterManager_1 = __webpack_require__(414);
+	var columnController_1 = __webpack_require__(386);
+	var headerTemplateLoader_1 = __webpack_require__(460);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var horizontalDragService_1 = __webpack_require__(461);
+	var gridCore_1 = __webpack_require__(413);
+	var context_1 = __webpack_require__(378);
+	var cssClassApplier_1 = __webpack_require__(462);
+	var dragAndDropService_1 = __webpack_require__(457);
+	var sortController_1 = __webpack_require__(428);
+	var setLeftFeature_1 = __webpack_require__(431);
+	var touchListener_1 = __webpack_require__(426);
+	var component_1 = __webpack_require__(418);
 	var RenderedHeaderCell = (function (_super) {
 	    __extends(RenderedHeaderCell, _super);
 	    function RenderedHeaderCell(column, eRoot, dragSourceDropTarget, pinned) {
@@ -53737,12 +54154,12 @@
 
 
 /***/ },
-/* 464 */
+/* 460 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53757,10 +54174,10 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var svgFactory_1 = __webpack_require__(428);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var context_1 = __webpack_require__(384);
+	var utils_1 = __webpack_require__(379);
+	var svgFactory_1 = __webpack_require__(425);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var context_1 = __webpack_require__(378);
 	var svgFactory = svgFactory_1.SvgFactory.getInstance();
 	var HeaderTemplateLoader = HeaderTemplateLoader_1 = (function () {
 	    function HeaderTemplateLoader() {
@@ -53842,12 +54259,12 @@
 
 
 /***/ },
-/* 465 */
+/* 461 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53862,8 +54279,8 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var context_1 = __webpack_require__(384);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var context_1 = __webpack_require__(378);
 	var HorizontalDragService = (function () {
 	    function HorizontalDragService() {
 	    }
@@ -53957,18 +54374,18 @@
 
 
 /***/ },
-/* 466 */
+/* 462 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
+	var utils_1 = __webpack_require__(379);
 	var CssClassApplier = (function () {
 	    function CssClassApplier() {
 	    }
@@ -54021,12 +54438,12 @@
 
 
 /***/ },
-/* 467 */
+/* 463 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54051,25 +54468,25 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var component_1 = __webpack_require__(421);
-	var context_1 = __webpack_require__(384);
-	var column_1 = __webpack_require__(394);
-	var utils_1 = __webpack_require__(385);
-	var dragAndDropService_1 = __webpack_require__(461);
-	var columnController_1 = __webpack_require__(392);
-	var horizontalDragService_1 = __webpack_require__(465);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var cssClassApplier_1 = __webpack_require__(466);
-	var setLeftFeature_1 = __webpack_require__(434);
-	var gridApi_1 = __webpack_require__(389);
-	var sortController_1 = __webpack_require__(431);
-	var eventService_1 = __webpack_require__(382);
-	var componentProvider_1 = __webpack_require__(426);
-	var agCheckbox_1 = __webpack_require__(468);
-	var componentAnnotations_1 = __webpack_require__(423);
-	var selectAllFeature_1 = __webpack_require__(469);
-	var events_1 = __webpack_require__(386);
-	var columnHoverService_1 = __webpack_require__(455);
+	var component_1 = __webpack_require__(418);
+	var context_1 = __webpack_require__(378);
+	var column_1 = __webpack_require__(388);
+	var utils_1 = __webpack_require__(379);
+	var dragAndDropService_1 = __webpack_require__(457);
+	var columnController_1 = __webpack_require__(386);
+	var horizontalDragService_1 = __webpack_require__(461);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var cssClassApplier_1 = __webpack_require__(462);
+	var setLeftFeature_1 = __webpack_require__(431);
+	var gridApi_1 = __webpack_require__(383);
+	var sortController_1 = __webpack_require__(428);
+	var eventService_1 = __webpack_require__(376);
+	var componentProvider_1 = __webpack_require__(423);
+	var agCheckbox_1 = __webpack_require__(464);
+	var componentAnnotations_1 = __webpack_require__(420);
+	var selectAllFeature_1 = __webpack_require__(465);
+	var events_1 = __webpack_require__(380);
+	var columnHoverService_1 = __webpack_require__(451);
 	var HeaderWrapperComp = (function (_super) {
 	    __extends(HeaderWrapperComp, _super);
 	    function HeaderWrapperComp(column, eRoot, dragSourceDropTarget, pinned) {
@@ -54183,8 +54600,7 @@
 	        if (!this.eResize) {
 	            return;
 	        }
-	        var weWantResize = this.gridOptionsWrapper.isEnableColResize() && !colDef.suppressResize;
-	        if (!weWantResize) {
+	        if (!this.column.isResizable()) {
 	            utils_1.Utils.removeFromParent(this.eResize);
 	            return;
 	        }
@@ -54252,9 +54668,9 @@
 	    };
 	    return HeaderWrapperComp;
 	}(component_1.Component));
-	HeaderWrapperComp.TEMPLATE = '<div class="ag-header-cell">' +
+	HeaderWrapperComp.TEMPLATE = '<div class="ag-header-cell" role="presentation" >' +
 	    '<div ref="eResize" class="ag-header-cell-resize"></div>' +
-	    '<ag-checkbox ref="cbSelectAll" class="ag-header-select-all"></ag-checkbox>' +
+	    '<ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>' +
 	    // <inner component goes here>
 	    '</div>';
 	__decorate([
@@ -54323,12 +54739,12 @@
 
 
 /***/ },
-/* 468 */
+/* 464 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54353,12 +54769,12 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var component_1 = __webpack_require__(421);
-	var componentAnnotations_1 = __webpack_require__(423);
-	var utils_1 = __webpack_require__(385);
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var svgFactory_1 = __webpack_require__(428);
+	var component_1 = __webpack_require__(418);
+	var componentAnnotations_1 = __webpack_require__(420);
+	var utils_1 = __webpack_require__(379);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var svgFactory_1 = __webpack_require__(425);
 	var svgFactory = svgFactory_1.SvgFactory.getInstance();
 	var AgCheckbox = (function (_super) {
 	    __extends(AgCheckbox, _super);
@@ -54497,12 +54913,12 @@
 
 
 /***/ },
-/* 469 */
+/* 465 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54527,16 +54943,16 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var agCheckbox_1 = __webpack_require__(468);
-	var beanStub_1 = __webpack_require__(422);
-	var context_1 = __webpack_require__(384);
-	var columnController_1 = __webpack_require__(392);
-	var gridApi_1 = __webpack_require__(389);
-	var events_1 = __webpack_require__(386);
-	var eventService_1 = __webpack_require__(382);
-	var constants_1 = __webpack_require__(387);
-	var selectionController_1 = __webpack_require__(405);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
+	var agCheckbox_1 = __webpack_require__(464);
+	var beanStub_1 = __webpack_require__(419);
+	var context_1 = __webpack_require__(378);
+	var columnController_1 = __webpack_require__(386);
+	var gridApi_1 = __webpack_require__(383);
+	var events_1 = __webpack_require__(380);
+	var eventService_1 = __webpack_require__(376);
+	var constants_1 = __webpack_require__(381);
+	var selectionController_1 = __webpack_require__(399);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
 	var SelectAllFeature = (function (_super) {
 	    __extends(SelectAllFeature, _super);
 	    function SelectAllFeature(cbSelectAll, column) {
@@ -54717,12 +55133,12 @@
 
 
 /***/ },
-/* 470 */
+/* 466 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54747,19 +55163,19 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var component_1 = __webpack_require__(421);
-	var column_1 = __webpack_require__(394);
-	var utils_1 = __webpack_require__(385);
-	var columnGroup_1 = __webpack_require__(393);
-	var columnController_1 = __webpack_require__(392);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var horizontalDragService_1 = __webpack_require__(465);
-	var context_1 = __webpack_require__(384);
-	var cssClassApplier_1 = __webpack_require__(466);
-	var dragAndDropService_1 = __webpack_require__(461);
-	var setLeftFeature_1 = __webpack_require__(434);
-	var componentProvider_1 = __webpack_require__(426);
-	var gridApi_1 = __webpack_require__(389);
+	var component_1 = __webpack_require__(418);
+	var column_1 = __webpack_require__(388);
+	var utils_1 = __webpack_require__(379);
+	var columnGroup_1 = __webpack_require__(387);
+	var columnController_1 = __webpack_require__(386);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var horizontalDragService_1 = __webpack_require__(461);
+	var context_1 = __webpack_require__(378);
+	var cssClassApplier_1 = __webpack_require__(462);
+	var dragAndDropService_1 = __webpack_require__(457);
+	var setLeftFeature_1 = __webpack_require__(431);
+	var componentProvider_1 = __webpack_require__(423);
+	var gridApi_1 = __webpack_require__(383);
 	var HeaderGroupWrapperComp = (function (_super) {
 	    __extends(HeaderGroupWrapperComp, _super);
 	    function HeaderGroupWrapperComp(columnGroup, eRoot, dragSourceDropTarget, pinned) {
@@ -54902,7 +55318,7 @@
 	    HeaderGroupWrapperComp.prototype.setupResize = function () {
 	        var _this = this;
 	        this.eHeaderCellResize = this.getRefElement('agResize');
-	        if (!this.gridOptionsWrapper.isEnableColResize()) {
+	        if (!this.columnGroup.isResizable()) {
 	            utils_1.Utils.removeFromParent(this.eHeaderCellResize);
 	            return;
 	        }
@@ -54940,20 +55356,34 @@
 	    };
 	    HeaderGroupWrapperComp.prototype.onDragging = function (dragChange, finished) {
 	        var _this = this;
-	        var dragChangeNormalised = this.normaliseDragChange(dragChange);
-	        var newWidth = this.groupWidthStart + dragChangeNormalised;
-	        var minWidth = this.columnGroup.getMinWidth();
-	        if (newWidth < minWidth) {
-	            newWidth = minWidth;
+	        // this will be the width we have to distribute to the resizable columns
+	        var widthForResizableCols;
+	        // this is all the displayed cols in the group less those that we cannot resize
+	        var resizableCols;
+	        // a lot of variables defined for the first set of maths, but putting
+	        // braces in, we localise the variables to this bit of the method
+	        {
+	            var dragChangeNormalised = this.normaliseDragChange(dragChange);
+	            var totalGroupWidth = this.groupWidthStart + dragChangeNormalised;
+	            var displayedColumns = this.columnGroup.getDisplayedLeafColumns();
+	            resizableCols = utils_1.Utils.filter(displayedColumns, function (col) { return col.isResizable(); });
+	            var nonResizableCols = utils_1.Utils.filter(displayedColumns, function (col) { return !col.isResizable(); });
+	            var nonResizableColsWidth_1 = 0;
+	            nonResizableCols.forEach(function (col) { return nonResizableColsWidth_1 += col.getActualWidth(); });
+	            widthForResizableCols = totalGroupWidth - nonResizableColsWidth_1;
+	            var minWidth_1 = 0;
+	            resizableCols.forEach(function (col) { return minWidth_1 += col.getMinWidth(); });
+	            if (widthForResizableCols < minWidth_1) {
+	                widthForResizableCols = minWidth_1;
+	            }
 	        }
 	        // distribute the new width to the child headers
-	        var changeRatio = newWidth / this.groupWidthStart;
+	        var changeRatio = widthForResizableCols / this.groupWidthStart;
 	        // keep track of pixels used, and last column gets the remaining,
 	        // to cater for rounding errors, and min width adjustments
-	        var pixelsToDistribute = newWidth;
-	        var displayedColumns = this.columnGroup.getDisplayedLeafColumns();
-	        displayedColumns.forEach(function (column, index) {
-	            var notLastCol = index !== (displayedColumns.length - 1);
+	        var pixelsToDistribute = widthForResizableCols;
+	        resizableCols.forEach(function (column, index) {
+	            var notLastCol = index !== (resizableCols.length - 1);
 	            var newChildSize;
 	            if (notLastCol) {
 	                // if not the last col, calculate the column width as normal
@@ -55036,12 +55466,12 @@
 
 
 /***/ },
-/* 471 */
+/* 467 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55056,13 +55486,13 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var dragAndDropService_1 = __webpack_require__(461);
-	var context_1 = __webpack_require__(384);
-	var moveColumnController_1 = __webpack_require__(472);
-	var column_1 = __webpack_require__(394);
-	var gridPanel_1 = __webpack_require__(401);
-	var bodyDropPivotTarget_1 = __webpack_require__(473);
-	var columnController_1 = __webpack_require__(392);
+	var dragAndDropService_1 = __webpack_require__(457);
+	var context_1 = __webpack_require__(378);
+	var moveColumnController_1 = __webpack_require__(468);
+	var column_1 = __webpack_require__(388);
+	var gridPanel_1 = __webpack_require__(395);
+	var bodyDropPivotTarget_1 = __webpack_require__(469);
+	var columnController_1 = __webpack_require__(386);
 	var BodyDropTarget = (function () {
 	    function BodyDropTarget(pinned, eContainer) {
 	        this.pinned = pinned;
@@ -55157,12 +55587,12 @@
 
 
 /***/ },
-/* 472 */
+/* 468 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55177,14 +55607,14 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var logger_1 = __webpack_require__(383);
-	var columnController_1 = __webpack_require__(392);
-	var column_1 = __webpack_require__(394);
-	var utils_1 = __webpack_require__(385);
-	var dragAndDropService_1 = __webpack_require__(461);
-	var gridPanel_1 = __webpack_require__(401);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
+	var context_1 = __webpack_require__(378);
+	var logger_1 = __webpack_require__(377);
+	var columnController_1 = __webpack_require__(386);
+	var column_1 = __webpack_require__(388);
+	var utils_1 = __webpack_require__(379);
+	var dragAndDropService_1 = __webpack_require__(457);
+	var gridPanel_1 = __webpack_require__(395);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
 	var MoveColumnController = (function () {
 	    function MoveColumnController(pinned, eContainer) {
 	        this.needToMoveLeft = false;
@@ -55307,29 +55737,37 @@
 	        else {
 	            dragColumn = displayedMovingColumns[displayedMovingColumns.length - 1];
 	        }
-	        var newIndex = this.workOutNewIndex(displayedColumns, gridColumns, dragColumn, hDirection, xAdjusted);
+	        var validMoves = this.workOutNewIndex(displayedColumns, gridColumns, dragColumn, hDirection, xAdjusted);
 	        var oldIndex = gridColumns.indexOf(dragColumn);
-	        // the two check below stop an error when the user grabs a group my a middle column, then
-	        // it is possible the mouse pointer is to the right of a column while been dragged left.
-	        // so we need to make sure that the mouse pointer is actually left of the left most column
-	        // if moving left, and right of the right most column if moving right
-	        // we check 'fromEnter' below so we move the column to the new spot if the mouse is coming from
-	        // outside the grid, eg if the column is moving from side panel, mouse is moving left, then we should
-	        // place the column to the RHS even if the mouse is moving left and the column is already on
-	        // the LHS. otherwise we stick to the rule described above.
-	        // only allow left drag if this column is moving left
-	        if (!fromEnter && draggingLeft && newIndex >= oldIndex) {
+	        for (var i = 0; i < validMoves.length; i++) {
+	            var newIndex = validMoves[i];
+	            // the two check below stop an error when the user grabs a group my a middle column, then
+	            // it is possible the mouse pointer is to the right of a column while been dragged left.
+	            // so we need to make sure that the mouse pointer is actually left of the left most column
+	            // if moving left, and right of the right most column if moving right
+	            // we check 'fromEnter' below so we move the column to the new spot if the mouse is coming from
+	            // outside the grid, eg if the column is moving from side panel, mouse is moving left, then we should
+	            // place the column to the RHS even if the mouse is moving left and the column is already on
+	            // the LHS. otherwise we stick to the rule described above.
+	            // only allow left drag if this column is moving left
+	            if (!fromEnter && draggingLeft && newIndex >= oldIndex) {
+	                continue;
+	            }
+	            // only allow right drag if this column is moving right
+	            if (!fromEnter && draggingRight && newIndex <= oldIndex) {
+	                continue;
+	            }
+	            // if moving right, the new index is the index of the right most column, so adjust to first column
+	            if (draggingRight) {
+	                newIndex = newIndex - allMovingColumns.length + 1;
+	            }
+	            if (!this.columnController.doesMovePassRules(allMovingColumns, newIndex)) {
+	                continue;
+	            }
+	            this.columnController.moveColumns(allMovingColumns, newIndex);
+	            // important to return here, so once we do the first valid move, we don't try do any more
 	            return;
 	        }
-	        // only allow right drag if this column is moving right
-	        if (!fromEnter && draggingRight && newIndex <= oldIndex) {
-	            return;
-	        }
-	        // if moving right, the new index is the index of the right most column, so adjust to first column
-	        if (draggingRight) {
-	            newIndex = newIndex - allMovingColumns.length + 1;
-	        }
-	        this.columnController.moveColumns(allMovingColumns, newIndex);
 	    };
 	    MoveColumnController.prototype.getNewIndexForColMovingLeft = function (displayedColumns, allColumns, dragColumn, x) {
 	        var usedX = 0;
@@ -55356,7 +55794,18 @@
 	        else {
 	            newIndex = 0;
 	        }
-	        return newIndex;
+	        var validMoves = [newIndex];
+	        // add in all adjacent empty columns as other valid moves. this allows us to try putting the new
+	        // column in any place of a hidden column, to try different combinations so that we don't break
+	        // married children. in other words, maybe the new index breaks a group, but only because some
+	        // columns are hidden, maybe we can reshuffle the hidden columns to find a place that works.
+	        var col = allColumns[newIndex];
+	        while (utils_1.Utils.exists(col) && displayedColumns.indexOf(col) < 0) {
+	            validMoves.push(newIndex + 1);
+	            newIndex++;
+	            col = allColumns[newIndex];
+	        }
+	        return validMoves;
 	    };
 	    MoveColumnController.prototype.getNewIndexForColMovingRight = function (displayedColumns, allColumns, dragColumnOrGroup, x) {
 	        var dragColumn = dragColumnOrGroup;
@@ -55384,7 +55833,18 @@
 	        else {
 	            newIndex = 0;
 	        }
-	        return newIndex;
+	        var validMoves = [newIndex];
+	        // add in all adjacent empty columns as other valid moves. this allows us to try putting the new
+	        // column in any place of a hidden column, to try different combinations so that we don't break
+	        // married children. in other words, maybe the new index breaks a group, but only because some
+	        // columns are hidden, maybe we can reshuffle the hidden columns to find a place that works.
+	        var col = allColumns[newIndex];
+	        while (utils_1.Utils.exists(col) && displayedColumns.indexOf(col) < 0) {
+	            validMoves.push(newIndex + 1);
+	            newIndex++;
+	            col = allColumns[newIndex];
+	        }
+	        return [newIndex];
 	    };
 	    MoveColumnController.prototype.ensureIntervalStarted = function () {
 	        if (!this.movingIntervalId) {
@@ -55467,12 +55927,12 @@
 
 
 /***/ },
-/* 473 */
+/* 469 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55487,10 +55947,10 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var dragAndDropService_1 = __webpack_require__(461);
-	var columnController_1 = __webpack_require__(392);
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
+	var dragAndDropService_1 = __webpack_require__(457);
+	var columnController_1 = __webpack_require__(386);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
 	var BodyDropPivotTarget = (function () {
 	    function BodyDropPivotTarget(pinned) {
 	        this.columnsToAggregate = [];
@@ -55574,12 +56034,12 @@
 
 
 /***/ },
-/* 474 */
+/* 470 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55670,12 +56130,12 @@
 
 
 /***/ },
-/* 475 */
+/* 471 */
 /***/ function(module, exports) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55715,174 +56175,12 @@
 
 
 /***/ },
-/* 476 */
+/* 472 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
-	 * @link http://www.ag-grid.com/
-	 * @license MIT
-	 */
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var column_1 = __webpack_require__(394);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var utils_1 = __webpack_require__(385);
-	var functions_1 = __webpack_require__(477);
-	var AutoGroupColService = AutoGroupColService_1 = (function () {
-	    function AutoGroupColService() {
-	    }
-	    AutoGroupColService.prototype.createAutoGroupColumns = function (rowGroupColumns) {
-	        var _this = this;
-	        var groupAutoColumns = [];
-	        // if doing groupMultiAutoColumn, then we call the method multiple times, once
-	        // for each column we are grouping by
-	        if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
-	            rowGroupColumns.forEach(function (rowGroupCol, index) {
-	                groupAutoColumns.push(_this.createOneAutoGroupColumn(rowGroupCol, index));
-	            });
-	        }
-	        else {
-	            groupAutoColumns.push(this.createOneAutoGroupColumn(null));
-	        }
-	        return groupAutoColumns;
-	    };
-	    // rowGroupCol and index are missing if groupMultiAutoColumn=false
-	    AutoGroupColService.prototype.createOneAutoGroupColumn = function (rowGroupCol, index) {
-	        // if one provided by user, use it, otherwise create one
-	        var autoColDef = this.gridOptionsWrapper.getGroupColumnDef();
-	        if (!autoColDef) {
-	            var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-	            autoColDef = {
-	                headerName: localeTextFunc('group', 'Group'),
-	                comparator: functions_1.defaultGroupComparator,
-	                valueGetter: function (params) {
-	                    if (params.node.group) {
-	                        return params.node.key;
-	                    }
-	                    else if (params.data && params.colDef.field) {
-	                        return params.data[params.colDef.field];
-	                    }
-	                    else {
-	                        return null;
-	                    }
-	                },
-	                cellRenderer: 'group'
-	            };
-	        }
-	        // we never allow moving the group column
-	        autoColDef.suppressMovable = true;
-	        // if doing multi, set the field
-	        var colId;
-	        if (rowGroupCol) {
-	            // because we are going to be making changes, we need to make a copy,
-	            // otherwise we are overwriting the same colDef for each column.
-	            autoColDef = utils_1._.cloneObject(autoColDef);
-	            var rowGroupColDef = rowGroupCol.getColDef();
-	            utils_1._.assign(autoColDef, {
-	                // cellRendererParams.groupKey: colDefToCopy.field;
-	                headerName: rowGroupColDef.headerName,
-	                headerValueGetter: rowGroupColDef.headerValueGetter,
-	                field: rowGroupColDef.field
-	            });
-	            if (utils_1._.missing(autoColDef.cellRendererParams)) {
-	                autoColDef.cellRendererParams = {};
-	            }
-	            else {
-	                autoColDef.cellRendererParams = utils_1._.cloneObject(autoColDef.cellRendererParams);
-	            }
-	            // this is needed so we don't show the groups that are not relevant, otherwise
-	            // the grid would have duplicate data. having multiple column groups only makes sense
-	            // when this is true
-	            autoColDef.cellRendererParams.restrictToOneGroup = true;
-	            // this is needed for logic in the group cellRenderer, so it knows what the original
-	            // column was, so it can do the logic for restrictToOneGroup (it needs to know the grouping
-	            // column for that)
-	            autoColDef.cellRendererParams.originalRowGroupColumn = rowGroupCol;
-	            // if showing many cols, we don't want to show more than one with a checkbox for selection
-	            if (index > 0) {
-	                autoColDef.headerCheckboxSelection = false;
-	                autoColDef.cellRendererParams.checkbox = false;
-	            }
-	            colId = AutoGroupColService_1.GROUP_AUTO_COLUMN_ID + "-" + rowGroupCol.getId();
-	        }
-	        else {
-	            colId = AutoGroupColService_1.GROUP_AUTO_COLUMN_ID + "_bundle";
-	        }
-	        var newCol = new column_1.Column(autoColDef, colId, true);
-	        this.context.wireBean(newCol);
-	        return newCol;
-	    };
-	    return AutoGroupColService;
-	}());
-	AutoGroupColService.GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
-	__decorate([
-	    context_1.Autowired('gridOptionsWrapper'),
-	    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-	], AutoGroupColService.prototype, "gridOptionsWrapper", void 0);
-	__decorate([
-	    context_1.Autowired('context'),
-	    __metadata("design:type", context_1.Context)
-	], AutoGroupColService.prototype, "context", void 0);
-	AutoGroupColService = AutoGroupColService_1 = __decorate([
-	    context_1.Bean('autoGroupColService')
-	], AutoGroupColService);
-	exports.AutoGroupColService = AutoGroupColService;
-	var AutoGroupColService_1;
-
-
-/***/ },
-/* 477 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
-	 * @link http://www.ag-grid.com/
-	 * @license MIT
-	 */
-	"use strict";
-	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	function defaultGroupComparator(valueA, valueB, nodeA, nodeB) {
-	    var nodeAIsGroup = utils_1.Utils.exists(nodeA) && nodeA.group;
-	    var nodeBIsGroup = utils_1.Utils.exists(nodeB) && nodeB.group;
-	    var bothAreGroups = nodeAIsGroup && nodeBIsGroup;
-	    var bothAreNormal = !nodeAIsGroup && !nodeBIsGroup;
-	    if (bothAreGroups) {
-	        return utils_1.Utils.defaultComparator(nodeA.key, nodeB.key);
-	    }
-	    else if (bothAreNormal) {
-	        return utils_1.Utils.defaultComparator(valueA, valueB);
-	    }
-	    else if (nodeAIsGroup) {
-	        return 1;
-	    }
-	    else {
-	        return -1;
-	    }
-	}
-	exports.defaultGroupComparator = defaultGroupComparator;
-
-
-/***/ },
-/* 478 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55894,7 +56192,7 @@
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
+	var context_1 = __webpack_require__(378);
 	var Downloader = (function () {
 	    function Downloader() {
 	    }
@@ -55927,12 +56225,12 @@
 
 
 /***/ },
-/* 479 */
+/* 473 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55947,10 +56245,10 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var constants_1 = __webpack_require__(387);
-	var utils_1 = __webpack_require__(385);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
+	var context_1 = __webpack_require__(378);
+	var constants_1 = __webpack_require__(381);
+	var utils_1 = __webpack_require__(379);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
 	var ImmutableService = (function () {
 	    function ImmutableService() {
 	    }
@@ -56030,12 +56328,12 @@
 
 
 /***/ },
-/* 480 */
+/* 474 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56045,7 +56343,7 @@
 	// id is already taken, it will start appending numbers until it gets a unique id.
 	// eg, if the col field is 'name', it will try ids: {name, name_1, name_2...}
 	// if no field or id provided in the col, it will try the ids of natural numbers
-	var utils_1 = __webpack_require__(385);
+	var utils_1 = __webpack_require__(379);
 	var ColumnKeyCreator = (function () {
 	    function ColumnKeyCreator() {
 	        this.existingKeys = [];
@@ -56084,18 +56382,18 @@
 
 
 /***/ },
-/* 481 */
+/* 475 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var grid_1 = __webpack_require__(482);
+	var grid_1 = __webpack_require__(476);
 	function initialiseAgGridWithAngular1(angular) {
 	    var angularModule = angular.module("agGrid", []);
 	    angularModule.directive("agGrid", function () {
@@ -56131,77 +56429,78 @@
 
 
 /***/ },
-/* 482 */
+/* 476 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var floatingRowModel_1 = __webpack_require__(403);
-	var selectionController_1 = __webpack_require__(405);
-	var columnController_1 = __webpack_require__(392);
-	var rowRenderer_1 = __webpack_require__(400);
-	var headerRenderer_1 = __webpack_require__(459);
-	var filterManager_1 = __webpack_require__(417);
-	var valueService_1 = __webpack_require__(406);
-	var masterSlaveService_1 = __webpack_require__(402);
-	var eventService_1 = __webpack_require__(382);
-	var gridPanel_1 = __webpack_require__(401);
-	var gridApi_1 = __webpack_require__(389);
-	var headerTemplateLoader_1 = __webpack_require__(464);
-	var balancedColumnTreeBuilder_1 = __webpack_require__(380);
-	var displayedGroupCreator_1 = __webpack_require__(398);
-	var expressionService_1 = __webpack_require__(397);
-	var templateService_1 = __webpack_require__(411);
-	var popupService_1 = __webpack_require__(418);
-	var logger_1 = __webpack_require__(383);
-	var columnUtils_1 = __webpack_require__(395);
-	var autoWidthCalculator_1 = __webpack_require__(399);
-	var horizontalDragService_1 = __webpack_require__(465);
-	var context_1 = __webpack_require__(384);
-	var csvCreator_1 = __webpack_require__(390);
-	var gridCore_1 = __webpack_require__(416);
-	var standardMenu_1 = __webpack_require__(483);
-	var dragAndDropService_1 = __webpack_require__(461);
-	var dragService_1 = __webpack_require__(408);
-	var sortController_1 = __webpack_require__(431);
-	var focusedCellController_1 = __webpack_require__(412);
-	var mouseEventService_1 = __webpack_require__(409);
-	var cellNavigationService_1 = __webpack_require__(458);
-	var utils_1 = __webpack_require__(385);
-	var filterStage_1 = __webpack_require__(484);
-	var sortStage_1 = __webpack_require__(486);
-	var flattenStage_1 = __webpack_require__(488);
-	var focusService_1 = __webpack_require__(415);
-	var cellEditorFactory_1 = __webpack_require__(439);
-	var events_1 = __webpack_require__(386);
-	var infiniteRowModel_1 = __webpack_require__(489);
-	var inMemoryRowModel_1 = __webpack_require__(495);
-	var cellRendererFactory_1 = __webpack_require__(446);
-	var cellRendererService_1 = __webpack_require__(450);
-	var valueFormatterService_1 = __webpack_require__(451);
-	var agCheckbox_1 = __webpack_require__(468);
-	var baseFrameworkFactory_1 = __webpack_require__(497);
-	var scrollVisibleService_1 = __webpack_require__(438);
-	var downloader_1 = __webpack_require__(478);
-	var xmlFactory_1 = __webpack_require__(498);
-	var gridSerializer_1 = __webpack_require__(391);
-	var stylingService_1 = __webpack_require__(454);
-	var columnHoverService_1 = __webpack_require__(455);
-	var columnAnimationService_1 = __webpack_require__(435);
-	var componentProvider_1 = __webpack_require__(426);
-	var sortService_1 = __webpack_require__(487);
-	var filterService_1 = __webpack_require__(485);
-	var rowNodeFactory_1 = __webpack_require__(499);
-	var autoGroupColService_1 = __webpack_require__(476);
-	var paginationProxy_1 = __webpack_require__(437);
-	var immutableService_1 = __webpack_require__(479);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var floatingRowModel_1 = __webpack_require__(397);
+	var selectionController_1 = __webpack_require__(399);
+	var columnController_1 = __webpack_require__(386);
+	var rowRenderer_1 = __webpack_require__(394);
+	var headerRenderer_1 = __webpack_require__(455);
+	var filterManager_1 = __webpack_require__(414);
+	var valueService_1 = __webpack_require__(400);
+	var masterSlaveService_1 = __webpack_require__(396);
+	var eventService_1 = __webpack_require__(376);
+	var gridPanel_1 = __webpack_require__(395);
+	var gridApi_1 = __webpack_require__(383);
+	var headerTemplateLoader_1 = __webpack_require__(460);
+	var balancedColumnTreeBuilder_1 = __webpack_require__(374);
+	var displayedGroupCreator_1 = __webpack_require__(392);
+	var expressionService_1 = __webpack_require__(391);
+	var templateService_1 = __webpack_require__(408);
+	var popupService_1 = __webpack_require__(415);
+	var logger_1 = __webpack_require__(377);
+	var columnUtils_1 = __webpack_require__(389);
+	var autoWidthCalculator_1 = __webpack_require__(393);
+	var horizontalDragService_1 = __webpack_require__(461);
+	var context_1 = __webpack_require__(378);
+	var csvCreator_1 = __webpack_require__(384);
+	var gridCore_1 = __webpack_require__(413);
+	var standardMenu_1 = __webpack_require__(477);
+	var dragAndDropService_1 = __webpack_require__(457);
+	var dragService_1 = __webpack_require__(405);
+	var sortController_1 = __webpack_require__(428);
+	var focusedCellController_1 = __webpack_require__(409);
+	var mouseEventService_1 = __webpack_require__(406);
+	var cellNavigationService_1 = __webpack_require__(454);
+	var utils_1 = __webpack_require__(379);
+	var filterStage_1 = __webpack_require__(478);
+	var sortStage_1 = __webpack_require__(480);
+	var flattenStage_1 = __webpack_require__(482);
+	var focusService_1 = __webpack_require__(412);
+	var cellEditorFactory_1 = __webpack_require__(436);
+	var events_1 = __webpack_require__(380);
+	var infiniteRowModel_1 = __webpack_require__(483);
+	var inMemoryRowModel_1 = __webpack_require__(489);
+	var cellRendererFactory_1 = __webpack_require__(443);
+	var cellRendererService_1 = __webpack_require__(447);
+	var valueFormatterService_1 = __webpack_require__(402);
+	var agCheckbox_1 = __webpack_require__(464);
+	var baseFrameworkFactory_1 = __webpack_require__(491);
+	var scrollVisibleService_1 = __webpack_require__(435);
+	var downloader_1 = __webpack_require__(472);
+	var xmlFactory_1 = __webpack_require__(492);
+	var gridSerializer_1 = __webpack_require__(385);
+	var stylingService_1 = __webpack_require__(450);
+	var columnHoverService_1 = __webpack_require__(451);
+	var columnAnimationService_1 = __webpack_require__(432);
+	var componentProvider_1 = __webpack_require__(423);
+	var sortService_1 = __webpack_require__(481);
+	var filterService_1 = __webpack_require__(479);
+	var rowNodeFactory_1 = __webpack_require__(493);
+	var autoGroupColService_1 = __webpack_require__(403);
+	var paginationProxy_1 = __webpack_require__(434);
+	var immutableService_1 = __webpack_require__(473);
+	var groupValueService_1 = __webpack_require__(401);
 	var Grid = (function () {
 	    function Grid(eGridDiv, gridOptions, params) {
 	        if (!eGridDiv) {
@@ -56243,7 +56542,7 @@
 	                displayedGroupCreator_1.DisplayedGroupCreator, eventService_1.EventService, gridOptionsWrapper_1.GridOptionsWrapper, selectionController_1.SelectionController,
 	                filterManager_1.FilterManager, columnController_1.ColumnController, paginationProxy_1.PaginationProxy, rowRenderer_1.RowRenderer,
 	                headerRenderer_1.HeaderRenderer, expressionService_1.ExpressionService, balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder, csvCreator_1.CsvCreator, downloader_1.Downloader, xmlFactory_1.XmlFactory,
-	                gridSerializer_1.GridSerializer, templateService_1.TemplateService, gridPanel_1.GridPanel, popupService_1.PopupService, valueService_1.ValueService, masterSlaveService_1.MasterSlaveService,
+	                gridSerializer_1.GridSerializer, templateService_1.TemplateService, gridPanel_1.GridPanel, popupService_1.PopupService, valueService_1.ValueService, groupValueService_1.GroupValueService, masterSlaveService_1.MasterSlaveService,
 	                logger_1.LoggerFactory, columnUtils_1.ColumnUtils, autoWidthCalculator_1.AutoWidthCalculator, popupService_1.PopupService, gridCore_1.GridCore, standardMenu_1.StandardMenuFactory,
 	                dragAndDropService_1.DragAndDropService, sortController_1.SortController, columnController_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService,
 	                cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, focusService_1.FocusService, filterService_1.FilterService, rowNodeFactory_1.RowNodeFactory,
@@ -56309,12 +56608,12 @@
 
 
 /***/ },
-/* 483 */
+/* 477 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56329,12 +56628,12 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var filterManager_1 = __webpack_require__(417);
-	var utils_1 = __webpack_require__(385);
-	var popupService_1 = __webpack_require__(418);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var eventService_1 = __webpack_require__(382);
+	var context_1 = __webpack_require__(378);
+	var filterManager_1 = __webpack_require__(414);
+	var utils_1 = __webpack_require__(379);
+	var popupService_1 = __webpack_require__(415);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var eventService_1 = __webpack_require__(376);
 	var StandardMenuFactory = (function () {
 	    function StandardMenuFactory() {
 	    }
@@ -56413,12 +56712,12 @@
 
 
 /***/ },
-/* 484 */
+/* 478 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56433,9 +56732,9 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var filterService_1 = __webpack_require__(485);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var filterService_1 = __webpack_require__(479);
 	var FilterStage = (function () {
 	    function FilterStage() {
 	    }
@@ -56465,12 +56764,12 @@
 
 
 /***/ },
-/* 485 */
+/* 479 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56485,8 +56784,8 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var filterManager_1 = __webpack_require__(417);
+	var context_1 = __webpack_require__(378);
+	var filterManager_1 = __webpack_require__(414);
 	var FilterService = (function () {
 	    function FilterService() {
 	    }
@@ -56554,12 +56853,12 @@
 
 
 /***/ },
-/* 486 */
+/* 480 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56574,9 +56873,9 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var sortService_1 = __webpack_require__(487);
+	var context_1 = __webpack_require__(378);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var sortService_1 = __webpack_require__(481);
 	var SortStage = (function () {
 	    function SortStage() {
 	    }
@@ -56606,12 +56905,12 @@
 
 
 /***/ },
-/* 487 */
+/* 481 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56626,10 +56925,13 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var sortController_1 = __webpack_require__(431);
-	var utils_1 = __webpack_require__(385);
-	var valueService_1 = __webpack_require__(406);
+	var context_1 = __webpack_require__(378);
+	var sortController_1 = __webpack_require__(428);
+	var utils_1 = __webpack_require__(379);
+	var valueService_1 = __webpack_require__(400);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var groupValueService_1 = __webpack_require__(401);
+	var columnController_1 = __webpack_require__(386);
 	var SortService = (function () {
 	    function SortService() {
 	    }
@@ -56639,12 +56941,6 @@
 	    };
 	    SortService.prototype.sort = function (rowNode, sortOptions) {
 	        var _this = this;
-	        // sort any groups recursively
-	        rowNode.childrenAfterFilter.forEach(function (child) {
-	            if (child.group) {
-	                _this.sort(child, sortOptions);
-	            }
-	        });
 	        rowNode.childrenAfterSort = rowNode.childrenAfterFilter.slice(0);
 	        var sortActive = utils_1._.exists(sortOptions) && sortOptions.length > 0;
 	        if (sortActive) {
@@ -56653,11 +56949,20 @@
 	            //ie Comparator always returns 0, so if you want to ensure the array keeps its
 	            //order, then you need to add an additional sorting condition manually, in this
 	            //case we are going to inspect the original array position
-	            var sortedRowNodes = rowNode.childrenAfterSort.map(function (it, pos) { return { currentPos: pos, rowNode: it }; });
+	            var sortedRowNodes = rowNode.childrenAfterSort.map(function (it, pos) {
+	                return { currentPos: pos, rowNode: it };
+	            });
 	            sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
 	            rowNode.childrenAfterSort = sortedRowNodes.map(function (sorted) { return sorted.rowNode; });
 	        }
 	        this.updateChildIndexes(rowNode);
+	        this.pullDownDataForHideOpenParents(rowNode);
+	        // sort any groups recursively
+	        rowNode.childrenAfterFilter.forEach(function (child) {
+	            if (child.group) {
+	                _this.sort(child, sortOptions);
+	            }
+	        });
 	    };
 	    SortService.prototype.compareRowNodes = function (sortOptions, sortedNodeA, sortedNodeB) {
 	        var nodeA = sortedNodeA.rowNode;
@@ -56667,8 +56972,8 @@
 	            var sortOption = sortOptions[i];
 	            // let compared = compare(nodeA, nodeB, sortOption.column, sortOption.inverter === -1);
 	            var isInverted = sortOption.inverter === -1;
-	            var valueA = this.valueService.getValue(sortOption.column, nodeA);
-	            var valueB = this.valueService.getValue(sortOption.column, nodeB);
+	            var valueA = this.getValue(nodeA, sortOption.column);
+	            var valueB = this.getValue(nodeB, sortOption.column);
 	            var comparatorResult = void 0;
 	            if (sortOption.column.getColDef().comparator) {
 	                //if comparator provided, use it
@@ -56676,7 +56981,7 @@
 	            }
 	            else {
 	                //otherwise do our own comparison
-	                comparatorResult = utils_1._.defaultComparator(valueA, valueB);
+	                comparatorResult = utils_1._.defaultComparator(valueA, valueB, this.gridOptionsWrapper.isAccentedSort());
 	            }
 	            if (comparatorResult !== 0) {
 	                return comparatorResult * sortOption.inverter;
@@ -56685,14 +56990,51 @@
 	        // All matched, we make is so that the original sort order is kept:
 	        return sortedNodeA.currentPos - sortedNodeB.currentPos;
 	    };
+	    SortService.prototype.getValue = function (nodeA, column) {
+	        return this.valueService.getValue(column, nodeA);
+	    };
 	    SortService.prototype.updateChildIndexes = function (rowNode) {
 	        if (utils_1._.missing(rowNode.childrenAfterSort)) {
 	            return;
 	        }
 	        rowNode.childrenAfterSort.forEach(function (child, index) {
-	            child.firstChild = index === 0;
-	            child.lastChild = index === rowNode.childrenAfterSort.length - 1;
-	            child.childIndex = index;
+	            var firstChild = index === 0;
+	            var lastChild = index === rowNode.childrenAfterSort.length - 1;
+	            child.setFirstChild(firstChild);
+	            child.setLastChild(lastChild);
+	            child.setChildIndex(index);
+	        });
+	    };
+	    SortService.prototype.pullDownDataForHideOpenParents = function (rowNode) {
+	        var _this = this;
+	        if (utils_1._.missing(rowNode.childrenAfterSort)) {
+	            return;
+	        }
+	        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
+	            return;
+	        }
+	        rowNode.childrenAfterSort.forEach(function (childRowNode) {
+	            var groupDisplayCols = _this.columnController.getGroupDisplayColumns();
+	            groupDisplayCols.forEach(function (groupDisplayCol) {
+	                var showRowGroup = groupDisplayCol.getColDef().showRowGroup;
+	                if (typeof showRowGroup !== 'string') {
+	                    console.error('ag-Grid: groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup');
+	                    return;
+	                }
+	                var displayingGroupKey = showRowGroup;
+	                var rowGroupColumn = _this.columnController.getPrimaryColumn(displayingGroupKey);
+	                var thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
+	                if (thisRowNodeMatches) {
+	                    return;
+	                }
+	                var parentToStealFrom = childRowNode.getFirstChildOfFirstChild(rowGroupColumn);
+	                if (parentToStealFrom) {
+	                    childRowNode.setGroupValue(groupDisplayCol.getId(), parentToStealFrom.key);
+	                }
+	                else {
+	                    childRowNode.setGroupValue(groupDisplayCol.getId(), null);
+	                }
+	            });
 	        });
 	    };
 	    return SortService;
@@ -56702,9 +57044,21 @@
 	    __metadata("design:type", sortController_1.SortController)
 	], SortService.prototype, "sortController", void 0);
 	__decorate([
+	    context_1.Autowired('columnController'),
+	    __metadata("design:type", columnController_1.ColumnController)
+	], SortService.prototype, "columnController", void 0);
+	__decorate([
 	    context_1.Autowired('valueService'),
 	    __metadata("design:type", valueService_1.ValueService)
 	], SortService.prototype, "valueService", void 0);
+	__decorate([
+	    context_1.Autowired('groupValueService'),
+	    __metadata("design:type", groupValueService_1.GroupValueService)
+	], SortService.prototype, "groupValueService", void 0);
+	__decorate([
+	    context_1.Autowired('gridOptionsWrapper'),
+	    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+	], SortService.prototype, "gridOptionsWrapper", void 0);
 	SortService = __decorate([
 	    context_1.Bean('sortService')
 	], SortService);
@@ -56712,12 +57066,12 @@
 
 
 /***/ },
-/* 488 */
+/* 482 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56732,13 +57086,13 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var rowNode_1 = __webpack_require__(404);
-	var utils_1 = __webpack_require__(385);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var selectionController_1 = __webpack_require__(405);
-	var eventService_1 = __webpack_require__(382);
-	var columnController_1 = __webpack_require__(392);
+	var context_1 = __webpack_require__(378);
+	var rowNode_1 = __webpack_require__(398);
+	var utils_1 = __webpack_require__(379);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var selectionController_1 = __webpack_require__(399);
+	var eventService_1 = __webpack_require__(376);
+	var columnController_1 = __webpack_require__(386);
 	var FlattenStage = (function () {
 	    function FlattenStage() {
 	    }
@@ -56804,6 +57158,8 @@
 	                        this.ensureFooterNodeExists(rowNode);
 	                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevel);
 	                    }
+	                }
+	                else {
 	                }
 	            }
 	            else if (rowNode.canFlower && rowNode.expanded) {
@@ -56894,12 +57250,12 @@
 
 
 /***/ },
-/* 489 */
+/* 483 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56924,19 +57280,19 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var context_1 = __webpack_require__(384);
-	var eventService_1 = __webpack_require__(382);
-	var selectionController_1 = __webpack_require__(405);
-	var events_1 = __webpack_require__(386);
-	var sortController_1 = __webpack_require__(431);
-	var filterManager_1 = __webpack_require__(417);
-	var constants_1 = __webpack_require__(387);
-	var infiniteCache_1 = __webpack_require__(490);
-	var beanStub_1 = __webpack_require__(422);
-	var rowNodeCache_1 = __webpack_require__(493);
-	var rowNodeBlockLoader_1 = __webpack_require__(494);
+	var utils_1 = __webpack_require__(379);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var context_1 = __webpack_require__(378);
+	var eventService_1 = __webpack_require__(376);
+	var selectionController_1 = __webpack_require__(399);
+	var events_1 = __webpack_require__(380);
+	var sortController_1 = __webpack_require__(428);
+	var filterManager_1 = __webpack_require__(414);
+	var constants_1 = __webpack_require__(381);
+	var infiniteCache_1 = __webpack_require__(484);
+	var beanStub_1 = __webpack_require__(419);
+	var rowNodeCache_1 = __webpack_require__(487);
+	var rowNodeBlockLoader_1 = __webpack_require__(488);
 	var InfiniteRowModel = (function (_super) {
 	    __extends(InfiniteRowModel, _super);
 	    function InfiniteRowModel() {
@@ -57222,12 +57578,12 @@
 
 
 /***/ },
-/* 490 */
+/* 484 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -57255,12 +57611,12 @@
 	    return function (target, key) { decorator(target, key, paramIndex); }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var logger_1 = __webpack_require__(383);
-	var infiniteBlock_1 = __webpack_require__(491);
-	var rowNodeCache_1 = __webpack_require__(493);
+	var context_1 = __webpack_require__(378);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var logger_1 = __webpack_require__(377);
+	var infiniteBlock_1 = __webpack_require__(485);
+	var rowNodeCache_1 = __webpack_require__(487);
 	var InfiniteCache = (function (_super) {
 	    __extends(InfiniteCache, _super);
 	    function InfiniteCache(params) {
@@ -57389,12 +57745,12 @@
 
 
 /***/ },
-/* 491 */
+/* 485 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -57419,11 +57775,11 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var context_1 = __webpack_require__(384);
-	var rowNodeBlock_1 = __webpack_require__(492);
-	var rowRenderer_1 = __webpack_require__(400);
+	var utils_1 = __webpack_require__(379);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var context_1 = __webpack_require__(378);
+	var rowNodeBlock_1 = __webpack_require__(486);
+	var rowRenderer_1 = __webpack_require__(394);
 	var InfiniteBlock = (function (_super) {
 	    __extends(InfiniteBlock, _super);
 	    function InfiniteBlock(pageNumber, params) {
@@ -57523,12 +57879,12 @@
 
 
 /***/ },
-/* 492 */
+/* 486 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -57544,9 +57900,9 @@
 	    };
 	})();
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var rowNode_1 = __webpack_require__(404);
-	var beanStub_1 = __webpack_require__(422);
+	var utils_1 = __webpack_require__(379);
+	var rowNode_1 = __webpack_require__(398);
+	var beanStub_1 = __webpack_require__(419);
 	var RowNodeBlock = (function (_super) {
 	    __extends(RowNodeBlock, _super);
 	    function RowNodeBlock(blockNumber, rowNodeCacheParams) {
@@ -57720,12 +58076,12 @@
 
 
 /***/ },
-/* 493 */
+/* 487 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -57741,9 +58097,9 @@
 	    };
 	})();
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var beanStub_1 = __webpack_require__(422);
-	var rowNodeBlock_1 = __webpack_require__(492);
+	var utils_1 = __webpack_require__(379);
+	var beanStub_1 = __webpack_require__(419);
+	var rowNodeBlock_1 = __webpack_require__(486);
 	var RowNodeCache = (function (_super) {
 	    __extends(RowNodeCache, _super);
 	    function RowNodeCache(cacheParams) {
@@ -57947,12 +58303,12 @@
 
 
 /***/ },
-/* 494 */
+/* 488 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -57970,10 +58326,10 @@
 	    return function (target, key) { decorator(target, key, paramIndex); }
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var rowNodeBlock_1 = __webpack_require__(492);
-	var logger_1 = __webpack_require__(383);
-	var context_1 = __webpack_require__(384);
-	var utils_1 = __webpack_require__(385);
+	var rowNodeBlock_1 = __webpack_require__(486);
+	var logger_1 = __webpack_require__(377);
+	var context_1 = __webpack_require__(378);
+	var utils_1 = __webpack_require__(379);
 	var RowNodeBlockLoader = (function () {
 	    function RowNodeBlockLoader(maxConcurrentRequests) {
 	        this.activeBlockLoadsCount = 0;
@@ -58058,12 +58414,12 @@
 
 
 /***/ },
-/* 495 */
+/* 489 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58078,17 +58434,17 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
-	var constants_1 = __webpack_require__(387);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var columnController_1 = __webpack_require__(392);
-	var filterManager_1 = __webpack_require__(417);
-	var rowNode_1 = __webpack_require__(404);
-	var eventService_1 = __webpack_require__(382);
-	var events_1 = __webpack_require__(386);
-	var context_1 = __webpack_require__(384);
-	var selectionController_1 = __webpack_require__(405);
-	var inMemoryNodeManager_1 = __webpack_require__(496);
+	var utils_1 = __webpack_require__(379);
+	var constants_1 = __webpack_require__(381);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var columnController_1 = __webpack_require__(386);
+	var filterManager_1 = __webpack_require__(414);
+	var rowNode_1 = __webpack_require__(398);
+	var eventService_1 = __webpack_require__(376);
+	var events_1 = __webpack_require__(380);
+	var context_1 = __webpack_require__(378);
+	var selectionController_1 = __webpack_require__(399);
+	var inMemoryNodeManager_1 = __webpack_require__(490);
 	var RecursionType;
 	(function (RecursionType) {
 	    RecursionType[RecursionType["Normal"] = 0] = "Normal";
@@ -58591,19 +58947,19 @@
 
 
 /***/ },
-/* 496 */
+/* 490 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var rowNode_1 = __webpack_require__(404);
-	var utils_1 = __webpack_require__(385);
+	var rowNode_1 = __webpack_require__(398);
+	var utils_1 = __webpack_require__(379);
 	var InMemoryNodeManager = (function () {
 	    function InMemoryNodeManager(rootNode, gridOptionsWrapper, context, eventService) {
 	        this.nextId = 0;
@@ -58668,10 +59024,20 @@
 	            addIndex: null
 	        };
 	        if (utils_1.Utils.exists(add)) {
-	            add.forEach(function (item) {
-	                var newRowNode = _this.addRowNode(item, addIndex);
-	                rowNodeTransaction.add.push(newRowNode);
-	            });
+	            var useIndex = typeof addIndex === 'number' && addIndex >= 0;
+	            if (useIndex) {
+	                // items get inserted in reverse order for index insertion
+	                add.reverse().forEach(function (item) {
+	                    var newRowNode = _this.addRowNode(item, addIndex);
+	                    rowNodeTransaction.add.push(newRowNode);
+	                });
+	            }
+	            else {
+	                add.forEach(function (item) {
+	                    var newRowNode = _this.addRowNode(item);
+	                    rowNodeTransaction.add.push(newRowNode);
+	                });
+	            }
 	        }
 	        if (utils_1.Utils.exists(remove)) {
 	            remove.forEach(function (item) {
@@ -58693,7 +59059,7 @@
 	    };
 	    InMemoryNodeManager.prototype.addRowNode = function (data, index) {
 	        var newNode = this.createNode(data, null, InMemoryNodeManager.TOP_LEVEL);
-	        if (typeof index === 'number' && index >= 0) {
+	        if (utils_1.Utils.exists(index)) {
 	            utils_1.Utils.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
 	        }
 	        else {
@@ -58861,12 +59227,12 @@
 
 
 /***/ },
-/* 497 */
+/* 491 */
 /***/ function(module, exports) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58909,12 +59275,12 @@
 
 
 /***/ },
-/* 498 */
+/* 492 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58926,7 +59292,7 @@
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var context_1 = __webpack_require__(384);
+	var context_1 = __webpack_require__(378);
 	var LINE_SEPARATOR = '\r\n';
 	var XmlFactory = (function () {
 	    function XmlFactory() {
@@ -58983,12 +59349,12 @@
 
 
 /***/ },
-/* 499 */
+/* 493 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -59003,11 +59369,11 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var rowNode_1 = __webpack_require__(404);
-	var inMemoryNodeManager_1 = __webpack_require__(496);
-	var gridOptionsWrapper_1 = __webpack_require__(381);
-	var eventService_1 = __webpack_require__(382);
-	var context_1 = __webpack_require__(384);
+	var rowNode_1 = __webpack_require__(398);
+	var inMemoryNodeManager_1 = __webpack_require__(490);
+	var gridOptionsWrapper_1 = __webpack_require__(375);
+	var eventService_1 = __webpack_require__(376);
+	var context_1 = __webpack_require__(378);
 	var RowNodeFactory = (function () {
 	    function RowNodeFactory() {
 	    }
@@ -59039,19 +59405,19 @@
 
 
 /***/ },
-/* 500 */
+/* 494 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var componentUtil_1 = __webpack_require__(388);
-	var grid_1 = __webpack_require__(482);
+	var componentUtil_1 = __webpack_require__(382);
+	var grid_1 = __webpack_require__(476);
 	var registered = false;
 	function initialiseAgGridWithWebComponents() {
 	    // only register to WebComponents once
@@ -59160,18 +59526,18 @@
 
 
 /***/ },
-/* 501 */
+/* 495 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
-	var utils_1 = __webpack_require__(385);
+	var utils_1 = __webpack_require__(379);
 	var TabbedLayout = (function () {
 	    function TabbedLayout(params) {
 	        var _this = this;
@@ -59265,12 +59631,12 @@
 
 
 /***/ },
-/* 502 */
+/* 496 */
 /***/ function(module, exports) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -59311,12 +59677,12 @@
 
 
 /***/ },
-/* 503 */
+/* 497 */
 /***/ function(module, exports) {
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v10.1.0
+	 * @version v11.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -59353,10 +59719,46 @@
 
 
 /***/ },
-/* 504 */
+/* 498 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v10.1.0
+	/**
+	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+	 * @version v11.0.0
+	 * @link http://www.ag-grid.com/
+	 * @license MIT
+	 */
+	"use strict";
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var utils_1 = __webpack_require__(379);
+	function defaultGroupComparator(valueA, valueB, nodeA, nodeB, accentedCompare) {
+	    if (accentedCompare === void 0) { accentedCompare = false; }
+	    console.warn('ag-Grid: Since ag-grid 11.0.0 defaultGroupComparator is not necessary. You can remove this from your colDef');
+	    var nodeAIsGroup = utils_1.Utils.exists(nodeA) && nodeA.group;
+	    var nodeBIsGroup = utils_1.Utils.exists(nodeB) && nodeB.group;
+	    var bothAreGroups = nodeAIsGroup && nodeBIsGroup;
+	    var bothAreNormal = !nodeAIsGroup && !nodeBIsGroup;
+	    if (bothAreGroups) {
+	        return utils_1.Utils.defaultComparator(nodeA.key, nodeB.key, accentedCompare);
+	    }
+	    else if (bothAreNormal) {
+	        return utils_1.Utils.defaultComparator(valueA, valueB, accentedCompare);
+	    }
+	    else if (nodeAIsGroup) {
+	        return 1;
+	    }
+	    else {
+	        return -1;
+	    }
+	}
+	exports.defaultGroupComparator = defaultGroupComparator;
+
+
+/***/ },
+/* 499 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// ag-grid-react v11.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -59368,8 +59770,9 @@
 	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	    };
 	})();
-	var ag_grid_1 = __webpack_require__(379);
-	var agReactComponent_1 = __webpack_require__(505);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var main_1 = __webpack_require__(373);
+	var agReactComponent_1 = __webpack_require__(500);
 	function reactCellRendererFactory(reactComponent, parentComponent) {
 	    var ReactCellRenderer = (function (_super) {
 	        __extends(ReactCellRenderer, _super);
@@ -59382,7 +59785,7 @@
 	                componentRef.refresh(params);
 	            }
 	            else {
-	                throw new ag_grid_1.MethodNotImplementedException();
+	                throw new main_1.MethodNotImplementedException();
 	            }
 	        };
 	        return ReactCellRenderer;
@@ -59393,14 +59796,15 @@
 
 
 /***/ },
-/* 505 */
+/* 500 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v10.1.0
+	// ag-grid-react v11.0.0
 	"use strict";
+	Object.defineProperty(exports, "__esModule", { value: true });
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(36);
-	var AgGrid = __webpack_require__(379);
+	var AgGrid = __webpack_require__(373);
 	var AgReactComponent = (function () {
 	    function AgReactComponent(reactComponent, parentComponent) {
 	        this.reactComponent = reactComponent;
@@ -59435,10 +59839,10 @@
 
 
 /***/ },
-/* 506 */
+/* 501 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v10.1.0
+	// ag-grid-react v11.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -59450,7 +59854,8 @@
 	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	    };
 	})();
-	var agReactComponent_1 = __webpack_require__(505);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var agReactComponent_1 = __webpack_require__(500);
 	function reactCellEditorFactory(reactComponent, parentComponent) {
 	    var ReactCellEditor = (function (_super) {
 	        __extends(ReactCellEditor, _super);
@@ -59520,10 +59925,10 @@
 
 
 /***/ },
-/* 507 */
+/* 502 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v10.1.0
+	// ag-grid-react v11.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -59535,8 +59940,8 @@
 	        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	    };
 	})();
-	var agReactComponent_1 = __webpack_require__(505);
-	var React = __webpack_require__(1);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var agReactComponent_1 = __webpack_require__(500);
 	// wraps the provided React filter component
 	function reactFilterFactory(reactComponent, parentComponent) {
 	    var ReactFilter = (function (_super) {
@@ -59607,10 +60012,10 @@
 
 
 /***/ },
-/* 508 */
+/* 503 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v10.1.0
+	// ag-grid-react v11.0.0
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -59628,8 +60033,9 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var ag_grid_1 = __webpack_require__(379);
-	var agReactComponent_1 = __webpack_require__(505);
+	Object.defineProperty(exports, "__esModule", { value: true });
+	var ag_grid_1 = __webpack_require__(373);
+	var agReactComponent_1 = __webpack_require__(500);
 	var ReactFrameworkComponentWrapper = (function () {
 	    function ReactFrameworkComponentWrapper() {
 	    }
@@ -59663,18 +60069,18 @@
 	    return ReactFrameworkComponentWrapper;
 	}());
 	ReactFrameworkComponentWrapper = __decorate([
-	    ag_grid_1.Bean("frameworkComponentWrapper")
+	    ag_grid_1.Bean('frameworkComponentWrapper')
 	], ReactFrameworkComponentWrapper);
 	exports.ReactFrameworkComponentWrapper = ReactFrameworkComponentWrapper;
 
 
 /***/ },
-/* 509 */
+/* 504 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayMap = __webpack_require__(334),
-	    baseIteratee = __webpack_require__(241),
-	    baseMap = __webpack_require__(510),
+	var arrayMap = __webpack_require__(345),
+	    baseIteratee = __webpack_require__(290),
+	    baseMap = __webpack_require__(505),
 	    isArray = __webpack_require__(238);
 
 	/**
@@ -59728,11 +60134,11 @@
 
 
 /***/ },
-/* 510 */
+/* 505 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseEach = __webpack_require__(511),
-	    isArrayLike = __webpack_require__(314);
+	var baseEach = __webpack_require__(506),
+	    isArrayLike = __webpack_require__(326);
 
 	/**
 	 * The base implementation of `_.map` without support for iteratee shorthands.
@@ -59756,11 +60162,11 @@
 
 
 /***/ },
-/* 511 */
+/* 506 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseForOwn = __webpack_require__(512),
-	    createBaseEach = __webpack_require__(515);
+	var baseForOwn = __webpack_require__(507),
+	    createBaseEach = __webpack_require__(510);
 
 	/**
 	 * The base implementation of `_.forEach` without support for iteratee shorthands.
@@ -59776,11 +60182,11 @@
 
 
 /***/ },
-/* 512 */
+/* 507 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseFor = __webpack_require__(513),
-	    keys = __webpack_require__(300);
+	var baseFor = __webpack_require__(508),
+	    keys = __webpack_require__(312);
 
 	/**
 	 * The base implementation of `_.forOwn` without support for iteratee shorthands.
@@ -59798,10 +60204,10 @@
 
 
 /***/ },
-/* 513 */
+/* 508 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var createBaseFor = __webpack_require__(514);
+	var createBaseFor = __webpack_require__(509);
 
 	/**
 	 * The base implementation of `baseForOwn` which iterates over `object`
@@ -59820,7 +60226,7 @@
 
 
 /***/ },
-/* 514 */
+/* 509 */
 /***/ function(module, exports) {
 
 	/**
@@ -59851,10 +60257,10 @@
 
 
 /***/ },
-/* 515 */
+/* 510 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArrayLike = __webpack_require__(314);
+	var isArrayLike = __webpack_require__(326);
 
 	/**
 	 * Creates a `baseEach` or `baseEachRight` function.
@@ -59889,13 +60295,13 @@
 
 
 /***/ },
-/* 516 */
+/* 511 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseDifference = __webpack_require__(517),
+	var baseDifference = __webpack_require__(512),
 	    baseFlatten = __webpack_require__(234),
-	    baseRest = __webpack_require__(518),
-	    isArrayLikeObject = __webpack_require__(526);
+	    baseRest = __webpack_require__(513),
+	    isArrayLikeObject = __webpack_require__(521);
 
 	/**
 	 * Creates an array of `array` values not included in the other given arrays
@@ -59928,15 +60334,15 @@
 
 
 /***/ },
-/* 517 */
+/* 512 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SetCache = __webpack_require__(285),
-	    arrayIncludes = __webpack_require__(350),
-	    arrayIncludesWith = __webpack_require__(355),
-	    arrayMap = __webpack_require__(334),
-	    baseUnary = __webpack_require__(309),
-	    cacheHas = __webpack_require__(289);
+	var SetCache = __webpack_require__(242),
+	    arrayIncludes = __webpack_require__(277),
+	    arrayIncludesWith = __webpack_require__(282),
+	    arrayMap = __webpack_require__(345),
+	    baseUnary = __webpack_require__(321),
+	    cacheHas = __webpack_require__(283);
 
 	/** Used as the size to enable large array optimizations. */
 	var LARGE_ARRAY_SIZE = 200;
@@ -60001,12 +60407,12 @@
 
 
 /***/ },
-/* 518 */
+/* 513 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var identity = __webpack_require__(339),
-	    overRest = __webpack_require__(519),
-	    setToString = __webpack_require__(521);
+	var identity = __webpack_require__(350),
+	    overRest = __webpack_require__(514),
+	    setToString = __webpack_require__(516);
 
 	/**
 	 * The base implementation of `_.rest` which doesn't validate or coerce arguments.
@@ -60024,10 +60430,10 @@
 
 
 /***/ },
-/* 519 */
+/* 514 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var apply = __webpack_require__(520);
+	var apply = __webpack_require__(515);
 
 	/* Built-in method references for those with the same name as other `lodash` methods. */
 	var nativeMax = Math.max;
@@ -60066,7 +60472,7 @@
 
 
 /***/ },
-/* 520 */
+/* 515 */
 /***/ function(module, exports) {
 
 	/**
@@ -60093,11 +60499,11 @@
 
 
 /***/ },
-/* 521 */
+/* 516 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseSetToString = __webpack_require__(522),
-	    shortOut = __webpack_require__(525);
+	var baseSetToString = __webpack_require__(517),
+	    shortOut = __webpack_require__(520);
 
 	/**
 	 * Sets the `toString` method of `func` to return `string`.
@@ -60113,12 +60519,12 @@
 
 
 /***/ },
-/* 522 */
+/* 517 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var constant = __webpack_require__(523),
-	    defineProperty = __webpack_require__(524),
-	    identity = __webpack_require__(339);
+	var constant = __webpack_require__(518),
+	    defineProperty = __webpack_require__(519),
+	    identity = __webpack_require__(350);
 
 	/**
 	 * The base implementation of `setToString` without support for hot loop shorting.
@@ -60141,7 +60547,7 @@
 
 
 /***/ },
-/* 523 */
+/* 518 */
 /***/ function(module, exports) {
 
 	/**
@@ -60173,10 +60579,10 @@
 
 
 /***/ },
-/* 524 */
+/* 519 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(259);
+	var getNative = __webpack_require__(248);
 
 	var defineProperty = (function() {
 	  try {
@@ -60190,7 +60596,7 @@
 
 
 /***/ },
-/* 525 */
+/* 520 */
 /***/ function(module, exports) {
 
 	/** Used to detect hot functions by number of calls within a span of milliseconds. */
@@ -60233,10 +60639,10 @@
 
 
 /***/ },
-/* 526 */
+/* 521 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArrayLike = __webpack_require__(314),
+	var isArrayLike = __webpack_require__(326),
 	    isObjectLike = __webpack_require__(206);
 
 	/**
@@ -60272,12 +60678,12 @@
 
 
 /***/ },
-/* 527 */
+/* 522 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayEach = __webpack_require__(528),
-	    baseEach = __webpack_require__(511),
-	    castFunction = __webpack_require__(529),
+	var arrayEach = __webpack_require__(523),
+	    baseEach = __webpack_require__(506),
+	    castFunction = __webpack_require__(524),
 	    isArray = __webpack_require__(238);
 
 	/**
@@ -60319,7 +60725,7 @@
 
 
 /***/ },
-/* 528 */
+/* 523 */
 /***/ function(module, exports) {
 
 	/**
@@ -60347,10 +60753,10 @@
 
 
 /***/ },
-/* 529 */
+/* 524 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var identity = __webpack_require__(339);
+	var identity = __webpack_require__(350);
 
 	/**
 	 * Casts `value` to `identity` if it's not a function.
@@ -60367,14 +60773,14 @@
 
 
 /***/ },
-/* 530 */
+/* 525 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIndexOf = __webpack_require__(351),
-	    isArrayLike = __webpack_require__(314),
-	    isString = __webpack_require__(531),
-	    toInteger = __webpack_require__(361),
-	    values = __webpack_require__(370);
+	var baseIndexOf = __webpack_require__(278),
+	    isArrayLike = __webpack_require__(326),
+	    isString = __webpack_require__(526),
+	    toInteger = __webpack_require__(355),
+	    values = __webpack_require__(364);
 
 	/* Built-in method references for those with the same name as other `lodash` methods. */
 	var nativeMax = Math.max;
@@ -60426,7 +60832,7 @@
 
 
 /***/ },
-/* 531 */
+/* 526 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var baseGetTag = __webpack_require__(198),
@@ -60462,225 +60868,7 @@
 
 
 /***/ },
-/* 532 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var assignValue = __webpack_require__(533),
-	    copyObject = __webpack_require__(535),
-	    createAssigner = __webpack_require__(536),
-	    isArrayLike = __webpack_require__(314),
-	    isPrototype = __webpack_require__(312),
-	    keys = __webpack_require__(300);
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Assigns own enumerable string keyed properties of source objects to the
-	 * destination object. Source objects are applied from left to right.
-	 * Subsequent sources overwrite property assignments of previous sources.
-	 *
-	 * **Note:** This method mutates `object` and is loosely based on
-	 * [`Object.assign`](https://mdn.io/Object/assign).
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.10.0
-	 * @category Object
-	 * @param {Object} object The destination object.
-	 * @param {...Object} [sources] The source objects.
-	 * @returns {Object} Returns `object`.
-	 * @see _.assignIn
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 * }
-	 *
-	 * function Bar() {
-	 *   this.c = 3;
-	 * }
-	 *
-	 * Foo.prototype.b = 2;
-	 * Bar.prototype.d = 4;
-	 *
-	 * _.assign({ 'a': 0 }, new Foo, new Bar);
-	 * // => { 'a': 1, 'c': 3 }
-	 */
-	var assign = createAssigner(function(object, source) {
-	  if (isPrototype(source) || isArrayLike(source)) {
-	    copyObject(source, keys(source), object);
-	    return;
-	  }
-	  for (var key in source) {
-	    if (hasOwnProperty.call(source, key)) {
-	      assignValue(object, key, source[key]);
-	    }
-	  }
-	});
-
-	module.exports = assign;
-
-
-/***/ },
-/* 533 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseAssignValue = __webpack_require__(534),
-	    eq = __webpack_require__(249);
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Assigns `value` to `key` of `object` if the existing value is not equivalent
-	 * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
-	 * for equality comparisons.
-	 *
-	 * @private
-	 * @param {Object} object The object to modify.
-	 * @param {string} key The key of the property to assign.
-	 * @param {*} value The value to assign.
-	 */
-	function assignValue(object, key, value) {
-	  var objValue = object[key];
-	  if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
-	      (value === undefined && !(key in object))) {
-	    baseAssignValue(object, key, value);
-	  }
-	}
-
-	module.exports = assignValue;
-
-
-/***/ },
-/* 534 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var defineProperty = __webpack_require__(524);
-
-	/**
-	 * The base implementation of `assignValue` and `assignMergeValue` without
-	 * value checks.
-	 *
-	 * @private
-	 * @param {Object} object The object to modify.
-	 * @param {string} key The key of the property to assign.
-	 * @param {*} value The value to assign.
-	 */
-	function baseAssignValue(object, key, value) {
-	  if (key == '__proto__' && defineProperty) {
-	    defineProperty(object, key, {
-	      'configurable': true,
-	      'enumerable': true,
-	      'value': value,
-	      'writable': true
-	    });
-	  } else {
-	    object[key] = value;
-	  }
-	}
-
-	module.exports = baseAssignValue;
-
-
-/***/ },
-/* 535 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var assignValue = __webpack_require__(533),
-	    baseAssignValue = __webpack_require__(534);
-
-	/**
-	 * Copies properties of `source` to `object`.
-	 *
-	 * @private
-	 * @param {Object} source The object to copy properties from.
-	 * @param {Array} props The property identifiers to copy.
-	 * @param {Object} [object={}] The object to copy properties to.
-	 * @param {Function} [customizer] The function to customize copied values.
-	 * @returns {Object} Returns `object`.
-	 */
-	function copyObject(source, props, object, customizer) {
-	  var isNew = !object;
-	  object || (object = {});
-
-	  var index = -1,
-	      length = props.length;
-
-	  while (++index < length) {
-	    var key = props[index];
-
-	    var newValue = customizer
-	      ? customizer(object[key], source[key], key, object, source)
-	      : undefined;
-
-	    if (newValue === undefined) {
-	      newValue = source[key];
-	    }
-	    if (isNew) {
-	      baseAssignValue(object, key, newValue);
-	    } else {
-	      assignValue(object, key, newValue);
-	    }
-	  }
-	  return object;
-	}
-
-	module.exports = copyObject;
-
-
-/***/ },
-/* 536 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseRest = __webpack_require__(518),
-	    isIterateeCall = __webpack_require__(372);
-
-	/**
-	 * Creates a function like `_.assign`.
-	 *
-	 * @private
-	 * @param {Function} assigner The function to assign values.
-	 * @returns {Function} Returns the new assigner function.
-	 */
-	function createAssigner(assigner) {
-	  return baseRest(function(object, sources) {
-	    var index = -1,
-	        length = sources.length,
-	        customizer = length > 1 ? sources[length - 1] : undefined,
-	        guard = length > 2 ? sources[2] : undefined;
-
-	    customizer = (assigner.length > 3 && typeof customizer == 'function')
-	      ? (length--, customizer)
-	      : undefined;
-
-	    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
-	      customizer = length < 3 ? undefined : customizer;
-	      length = 1;
-	    }
-	    object = Object(object);
-	    while (++index < length) {
-	      var source = sources[index];
-	      if (source) {
-	        assigner(object, source, index, customizer);
-	      }
-	    }
-	    return object;
-	  });
-	}
-
-	module.exports = createAssigner;
-
-
-/***/ },
-/* 537 */
+/* 527 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -60699,19 +60887,19 @@
 
 	var _ExchangeService2 = _interopRequireDefault(_ExchangeService);
 
-	var _StockPriceDeltaPanel = __webpack_require__(538);
+	var _StockPriceDeltaPanel = __webpack_require__(528);
 
 	var _StockPriceDeltaPanel2 = _interopRequireDefault(_StockPriceDeltaPanel);
 
-	var _StockTimestampPanel = __webpack_require__(540);
+	var _StockTimestampPanel = __webpack_require__(530);
 
 	var _StockTimestampPanel2 = _interopRequireDefault(_StockTimestampPanel);
 
-	var _StockSummaryPanel = __webpack_require__(541);
+	var _StockSummaryPanel = __webpack_require__(531);
 
 	var _StockSummaryPanel2 = _interopRequireDefault(_StockSummaryPanel);
 
-	var _StockHistoricalChartPanel = __webpack_require__(542);
+	var _StockHistoricalChartPanel = __webpack_require__(532);
 
 	var _StockHistoricalChartPanel2 = _interopRequireDefault(_StockHistoricalChartPanel);
 
@@ -60786,7 +60974,7 @@
 	exports.default = _class;
 
 /***/ },
-/* 538 */
+/* 528 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -60801,7 +60989,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _isEqual = __webpack_require__(539);
+	var _isEqual = __webpack_require__(529);
 
 	var _isEqual2 = _interopRequireDefault(_isEqual);
 
@@ -60938,10 +61126,10 @@
 	exports.default = _class;
 
 /***/ },
-/* 539 */
+/* 529 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsEqual = __webpack_require__(282);
+	var baseIsEqual = __webpack_require__(299);
 
 	/**
 	 * Performs a deep comparison between two values to determine if they are
@@ -60979,7 +61167,7 @@
 
 
 /***/ },
-/* 540 */
+/* 530 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -61055,7 +61243,7 @@
 	exports.default = _class;
 
 /***/ },
-/* 541 */
+/* 531 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -61258,7 +61446,7 @@
 	exports.default = _class;
 
 /***/ },
-/* 542 */
+/* 532 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -61273,7 +61461,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _d = __webpack_require__(543);
+	var _d = __webpack_require__(533);
 
 	var d3 = _interopRequireWildcard(_d);
 
@@ -61400,7 +61588,7 @@
 	exports.default = _class;
 
 /***/ },
-/* 543 */
+/* 533 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://d3js.org Version 4.9.1. Copyright 2017 Mike Bostock.
@@ -78272,7 +78460,7 @@
 
 
 /***/ },
-/* 544 */
+/* 534 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -78287,15 +78475,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _FxDataService = __webpack_require__(545);
+	var _FxDataService = __webpack_require__(535);
 
 	var _FxDataService2 = _interopRequireDefault(_FxDataService);
 
-	var _FxQuoteMatrix = __webpack_require__(574);
+	var _FxQuoteMatrix = __webpack_require__(567);
 
 	var _FxQuoteMatrix2 = _interopRequireDefault(_FxQuoteMatrix);
 
-	var _TopMoversGrid = __webpack_require__(575);
+	var _TopMoversGrid = __webpack_require__(570);
 
 	var _TopMoversGrid2 = _interopRequireDefault(_TopMoversGrid);
 
@@ -78346,7 +78534,7 @@
 	;
 
 /***/ },
-/* 545 */
+/* 535 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -78357,11 +78545,11 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _sampleSize = __webpack_require__(364);
+	var _sampleSize = __webpack_require__(358);
 
 	var _sampleSize2 = _interopRequireDefault(_sampleSize);
 
-	var _cloneDeep = __webpack_require__(546);
+	var _cloneDeep = __webpack_require__(536);
 
 	var _cloneDeep2 = _interopRequireDefault(_cloneDeep);
 
@@ -78369,9 +78557,9 @@
 
 	var _StoreService2 = _interopRequireDefault(_StoreService);
 
-	var _fxDataActions = __webpack_require__(572);
+	var _fxDataActions = __webpack_require__(565);
 
-	var _HorizontalBarComponent = __webpack_require__(573);
+	var _HorizontalBarComponent = __webpack_require__(566);
 
 	var _HorizontalBarComponent2 = _interopRequireDefault(_HorizontalBarComponent);
 
@@ -78566,10 +78754,10 @@
 	var FX_CURRENCY_MATRIX = [["symbol"].concat(FX_CURRENCY_SYMBOLS), ["USDGBP", null, "0.89", "-0.01", "0.29", "0.28", "-0.04", "0.47", "0.17", "0.20", "0.11", "0.97", "0.07", "-0.20", "0.57", "0.54", "0.26", "0.33", "0.86", "0.95", "0.39", "0.21", "-0.49", "0.63", "-0.13", "-0.86", "0.18", "-0.84", "-0.89", "0.05", "-0.29", "0.34", "0.93", "0.41", "0.13", "-0.17", "0.70", "-0.17", "0.60", "0.00", "0.09", "-0.15", "0.10"], ["USDEUR", "0.89", null, "0.25", "0.29", "0.86", "-0.93", "0.09", "0.63", "0.76", "0.10", "0.51", "-0.31", "-0.51", "0.20", "0.48", "-0.42", "0.73", "0.57", "0.65", "0.40", "0.12", "0.24", "0.42", "0.75", "0.13", "0.75", "0.42", "-0.80", "-0.26", "0.68", "0.68", "0.98", "0.87", "0.48", "0.52", "0.23", "0.61", "0.71", "-0.61", "0.40", "-0.80", "-0.89"], ["USDAED", "0.90", "0.95", null, "0.71", "0.49", "0.50", "0.51", "0.07", "0.80", "-0.74", "0.54", "0.46", "-0.90", "-0.33", "0.75", "0.91", "0.84", "0.86", "0.89", "0.68", "0.71", "0.74", "0.58", "-0.24", "0.31", "0.85", "0.28", "0.44", "0.51", "-0.19", "0.71", "0.81", "0.85", "0.23", "0.09", "0.65", "-0.48", "0.43", "0.97", "0.11", "-0.81", "-0.69"], ["USDJPY", "0.84", "0.92", "0.36", null, "0.79", "0.90", "0.86", "0.42", "0.14", "0.98", "0.47", "0.76", "0.60", "0.15", "0.04", "0.58", "0.13", "-0.16", "0.63", "0.86", "-0.63", "-0.95", "0.42", "0.08", "0.90", "-0.39", "-0.16", "0.66", "0.95", "0.31", "0.66", "-0.84", "0.06", "-0.60", "0.08", "0.57", "0.93", "0.78", "0.15", "0.36", "0.78", "0.34"], ["USDCAD", "0.79", "-0.87", "0.93", "0.83", null, "0.10", "0.60", "0.34", "0.98", "0.70", "0.09", "0.46", "0.80", "0.10", "0.26", "-0.90", "0.69", "-0.22", "0.51", "-0.75", "-0.08", "0.07", "0.24", "0.68", "0.60", "0.37", "0.92", "0.02", "0.66", "0.16", "0.24", "-0.79", "0.19", "0.19", "0.08", "-0.97", "-0.93", "0.04", "-0.92", "0.86", "-0.36", "0.04"], ["USDCHF", "0.94", "-0.02", "0.70", "0.82", "0.41", null, "0.76", "0.06", "0.46", "0.99", "0.07", "0.72", "0.14", "0.90", "0.23", "-0.54", "0.64", "0.80", "0.16", "0.23", "0.66", "-0.89", "-0.54", "-0.95", "0.27", "0.56", "0.42", "0.41", "0.88", "0.81", "0.37", "0.75", "0.06", "-0.75", "0.98", "0.21", "0.01", "0.03", "0.35", "-0.42", "0.55", "0.19"], ["GBPUSD", "0.05", "-0.64", "0.47", "0.56", "0.51", "-0.47", null, "-0.15", "0.13", "0.55", "0.58", "0.57", "-0.49", "0.28", "0.86", "0.49", "0.12", "-0.91", "0.06", "0.12", "0.18", "-0.02", "-0.55", "0.18", "0.29", "0.76", "0.11", "0.04", "0.55", "0.16", "0.84", "0.83", "-0.94", "0.32", "0.07", "-0.33", "-0.29", "0.01", "-0.19", "0.01", "-0.60", "0.66"], ["GBPEUR", "-0.32", "0.17", "0.60", "-0.52", "-0.52", "0.39", "-0.42", null, "0.07", "0.69", "0.67", "0.01", "0.72", "0.35", "0.66", "-0.66", "0.21", "0.12", "0.42", "-0.57", "-0.04", "0.48", "0.91", "0.72", "-0.16", "0.79", "0.03", "0.44", "0.17", "0.87", "-0.82", "0.20", "0.88", "0.48", "0.59", "-0.70", "0.12", "0.56", "-0.69", "0.10", "0.90", "1.00"], ["GBPAED", "0.76", "0.05", "0.72", "-0.40", "0.93", "0.64", "0.90", "0.21", null, "0.91", "0.33", "-0.36", "0.28", "0.87", "0.25", "0.33", "0.44", "0.89", "0.17", "0.96", "0.86", "0.88", "0.03", "-0.25", "0.21", "0.98", "-0.60", "0.07", "0.90", "0.23", "0.41", "0.77", "0.83", "0.94", "0.12", "0.37", "0.58", "0.35", "-0.53", "0.49", "0.96", "-0.06"], ["GBPJPY", "0.63", "0.72", "0.59", "0.89", "-0.54", "0.97", "0.61", "0.64", "0.85", null, "0.35", "0.57", "0.25", "0.85", "0.27", "-0.70", "-0.30", "-0.36", "0.29", "0.82", "0.26", "0.69", "0.46", "0.01", "0.09", "0.78", "0.95", "0.16", "0.07", "0.41", "0.99", "0.67", "0.34", "-0.89", "0.83", "0.32", "0.21", "-0.48", "-0.64", "0.65", "0.58", "0.69"], ["GBPCAD", "0.78", "0.09", "0.33", "0.11", "0.95", "0.01", "0.96", "0.72", "0.13", "0.02", null, "0.44", "0.63", "-0.52", "0.08", "-0.85", "0.74", "0.41", "0.52", "0.15", "-0.97", "0.61", "0.58", "0.47", "0.56", "0.37", "0.54", "-0.65", "0.98", "0.44", "0.28", "0.70", "0.44", "0.34", "0.95", "0.82", "-0.09", "0.62", "0.87", "0.25", "-1.00", "0.99"], ["GBPCHF", "-0.87", "0.68", "0.84", "0.83", "0.50", "0.74", "0.02", "0.11", "-0.12", "0.36", "0.71", null, "0.45", "0.02", "0.51", "0.50", "-0.03", "-0.94", "0.23", "0.38", "0.09", "0.26", "0.14", "0.39", "0.36", "0.01", "0.76", "0.21", "0.03", "0.97", "-0.89", "0.68", "0.43", "0.43", "0.26", "0.01", "0.60", "0.15", "0.77", "0.51", "-0.31", "0.37"], ["EURUSD", "-0.45", "-0.05", "0.14", "-0.11", "0.36", "0.12", "0.76", "0.66", "0.50", "0.31", "0.28", "0.90", null, "-0.04", "0.73", "0.33", "0.27", "0.22", "0.86", "0.79", "-0.29", "0.30", "0.89", "0.73", "0.94", "0.24", "0.19", "0.81", "0.88", "0.46", "0.19", "0.79", "-0.16", "0.85", "0.84", "-0.57", "-0.87", "0.86", "0.69", "0.12", "0.64", "0.13"], ["EURGBP", "0.06", "0.81", "0.54", "0.57", "0.57", "0.81", "0.38", "0.70", "0.37", "0.58", "-0.56", "0.77", "0.59", null, "0.98", "-0.48", "0.60", "0.78", "0.22", "0.20", "-0.62", "-0.97", "-0.55", "0.39", "0.88", "0.96", "0.32", "0.84", "0.26", "-0.47", "0.04", "0.34", "-0.24", "0.53", "-0.75", "-0.97", "0.47", "0.81", "0.49", "-0.84", "0.94", "0.09"], ["EURAED", "0.61", "0.59", "0.11", "0.21", "0.41", "-0.45", "0.32", "0.90", "-0.98", "0.38", "0.27", "0.62", "0.67", "0.89", null, "0.27", "0.65", "0.72", "0.69", "0.66", "0.12", "0.32", "0.11", "-0.73", "-0.17", "0.74", "0.03", "0.96", "0.59", "-0.92", "-0.91", "-0.41", "0.09", "0.45", "0.90", "0.88", "0.96", "0.47", "0.95", "0.27", "-0.48", "0.71"], ["EURJPY", "-0.01", "0.36", "0.28", "0.68", "0.50", "0.25", "0.81", "0.64", "0.12", "-0.73", "-0.47", "0.96", "-0.98", "-0.41", "0.78", null, "0.19", "-0.37", "0.24", "0.63", "0.74", "-0.24", "0.46", "0.63", "0.99", "0.65", "0.52", "0.11", "0.52", "0.39", "0.41", "0.51", "0.78", "1.00", "0.80", "-0.11", "0.90", "0.96", "0.66", "0.32", "0.02", "0.19"], ["EURCAD", "-0.80", "0.40", "0.35", "0.45", "0.66", "0.21", "0.77", "0.58", "0.09", "1.00", "0.02", "-0.85", "0.89", "0.63", "-0.05", "0.46", null, "0.87", "0.96", "-0.48", "0.40", "0.18", "0.37", "0.81", "0.50", "-0.06", "-0.56", "0.38", "0.02", "0.83", "-0.93", "0.80", "0.31", "0.10", "0.70", "0.55", "0.47", "0.77", "0.98", "0.88", "0.19", "0.91"], ["EURCHF", "-0.93", "0.01", "-0.29", "0.46", "-0.59", "-0.15", "0.58", "0.00", "-0.62", "0.36", "0.27", "-0.10", "-0.10", "0.57", "0.57", "0.75", "-0.10", null, "0.88", "0.21", "0.89", "0.85", "0.16", "0.93", "0.60", "0.59", "0.42", "0.70", "0.66", "0.80", "0.83", "0.52", "0.01", "0.41", "0.68", "0.94", "0.81", "0.40", "0.69", "0.04", "0.70", "0.61"], ["AEDUSD", "0.10", "0.45", "0.06", "-0.37", "-0.14", "0.63", "0.10", "0.77", "0.95", "-0.12", "1.00", "-0.19", "-0.59", "0.78", "0.10", "0.76", "-0.45", "-0.99", null, "-0.46", "0.28", "0.31", "0.32", "0.42", "-0.00", "0.66", "0.24", "0.31", "0.10", "0.73", "0.02", "0.78", "0.07", "1.00", "0.43", "0.61", "0.53", "0.53", "0.41", "0.37", "0.97", "-0.19"], ["AEDGBP", "0.70", "0.73", "0.34", "0.97", "0.84", "0.05", "0.21", "0.14", "0.45", "0.69", "0.41", "-0.53", "0.28", "0.13", "0.99", "0.97", "0.93", "0.62", "0.35", null, "0.18", "0.96", "0.58", "0.04", "0.00", "0.58", "-0.54", "0.35", "0.84", "0.83", "-0.20", "0.51", "0.32", "0.01", "0.95", "0.69", "-0.73", "0.36", "0.78", "0.02", "0.22", "0.39"], ["AEDEUR", "0.18", "0.84", "-0.89", "0.90", "-0.25", "0.53", "0.71", "0.80", "0.60", "-0.98", "-0.81", "0.57", "0.72", "0.32", "-0.23", "0.98", "0.50", "0.93", "0.56", "0.26", null, "0.61", "0.47", "0.72", "0.58", "0.19", "0.94", "0.21", "0.47", "0.70", "0.67", "0.85", "0.98", "0.15", "0.21", "0.43", "0.03", "0.92", "0.91", "0.35", "0.70", "0.85"], ["AEDJPY", "0.88", "0.62", "0.50", "0.27", "0.56", "0.61", "0.06", "-0.02", "0.42", "0.26", "0.23", "0.83", "-0.55", "0.94", "0.01", "0.72", "-0.43", "0.10", "0.01", "-0.20", "0.13", null, "0.70", "0.10", "0.05", "0.43", "-0.14", "-0.64", "0.80", "0.79", "0.57", "0.14", "0.14", "0.04", "-0.96", "0.59", "0.14", "0.51", "0.23", "0.57", "0.94", "0.88"], ["AEDCAD", "0.75", "-0.99", "0.82", "-0.87", "0.79", "1.00", "0.21", "0.30", "-0.40", "0.34", "-0.85", "0.41", "0.79", "0.17", "0.58", "-0.24", "0.18", "0.15", "0.18", "0.44", "0.34", "0.90", null, "0.10", "0.34", "0.31", "0.34", "0.79", "-0.05", "0.19", "-0.86", "0.61", "-0.65", "0.23", "0.59", "0.69", "-0.65", "0.89", "0.97", "0.12", "0.63", "-0.24"], ["AEDCHF", "0.67", "0.46", "0.92", "0.22", "0.91", "0.67", "0.81", "0.04", "0.29", "0.13", "0.80", "0.95", "0.29", "0.99", "-0.17", "0.58", "0.64", "0.68", "0.41", "0.69", "0.84", "0.01", "0.04", null, "0.07", "0.16", "0.26", "-0.43", "0.08", "0.58", "0.33", "-0.28", "0.03", "-0.08", "0.54", "-0.91", "0.78", "-0.10", "-0.13", "0.15", "0.62", "-0.13"], ["JPYUSD", "-0.67", "0.90", "0.84", "0.10", "0.77", "0.43", "0.59", "0.69", "0.63", "0.82", "-0.61", "0.41", "0.07", "0.48", "1.00", "-0.52", "0.22", "0.89", "0.43", "0.54", "0.56", "-0.43", "0.78", "0.67", null, "0.06", "0.28", "0.04", "0.62", "0.18", "0.77", "0.63", "0.05", "0.87", "0.22", "0.21", "0.07", "0.25", "-0.55", "0.67", "0.10", "-0.67"], ["JPYGBP", "0.21", "0.46", "0.23", "0.53", "-0.97", "0.78", "0.43", "0.74", "-0.95", "0.98", "0.49", "0.66", "0.18", "0.55", "-0.33", "0.67", "0.65", "0.23", "-0.07", "-0.67", "0.56", "0.74", "-0.38", "-0.83", "-0.51", null, "-0.26", "-0.79", "0.73", "-0.78", "-0.09", "0.19", "0.48", "0.97", "0.11", "0.19", "0.51", "0.32", "0.81", "-0.02", "0.17", "0.48"], ["JPYEUR", "0.83", "0.86", "0.62", "-0.92", "0.64", "0.58", "0.55", "0.07", "0.81", "0.32", "0.33", "0.96", "0.48", "0.57", "0.25", "0.56", "0.33", "0.02", "-0.79", "0.44", "0.95", "0.35", "0.41", "0.06", "0.28", "0.77", null, "0.64", "0.79", "0.74", "0.67", "-0.97", "0.47", "-0.11", "0.03", "0.39", "-0.37", "0.06", "0.09", "0.13", "0.20", "0.87"], ["JPYAED", "0.69", "0.80", "0.90", "0.06", "0.55", "0.90", "-0.09", "0.05", "-0.10", "0.31", "0.57", "0.69", "-0.78", "0.42", "0.64", "0.96", "0.08", "-0.76", "0.59", "0.00", "0.40", "-0.88", "0.69", "0.17", "-0.16", "0.57", "0.86", null, "-0.61", "-0.14", "0.41", "-0.16", "0.36", "0.95", "0.44", "0.41", "0.35", "-0.56", "0.25", "0.66", "0.90", "0.82"], ["JPYCAD", "0.33", "0.27", "0.61", "0.01", "-0.16", "0.21", "0.57", "-0.41", "-0.56", "0.55", "0.13", "-0.87", "0.19", "0.64", "-0.38", "-0.80", "-0.10", "0.44", "0.72", "-0.72", "0.48", "0.42", "0.84", "0.73", "0.35", "0.68", "0.01", "0.09", null, "0.87", "0.17", "0.45", "0.02", "0.01", "0.77", "0.24", "0.62", "0.39", "-0.73", "0.21", "-0.08", "0.42"], ["JPYCHF", "-0.45", "0.52", "0.34", "0.85", "0.16", "0.96", "0.53", "0.62", "0.46", "0.94", "0.08", "-0.68", "0.81", "0.44", "0.27", "0.75", "-0.84", "0.69", "-0.99", "0.41", "0.66", "-0.94", "0.21", "0.85", "-0.08", "0.36", "0.62", "0.25", "-0.48", null, "0.51", "-0.39", "0.60", "0.63", "0.68", "0.10", "0.62", "0.68", "0.00", "0.24", "0.61", "0.23"], ["CADUSD", "-0.65", "0.73", "0.93", "0.27", "-0.00", "-0.46", "0.53", "0.36", "0.83", "0.58", "0.40", "0.03", "0.32", "0.38", "-0.53", "0.86", "0.42", "0.90", "0.83", "0.94", "0.34", "-0.56", "0.46", "-0.72", "0.13", "0.08", "0.25", "0.59", "0.75", "0.72", null, "0.62", "0.73", "0.52", "0.28", "0.03", "-0.54", "0.50", "0.76", "-0.28", "0.89", "0.97"], ["CADGBP", "0.74", "0.58", "0.55", "0.01", "0.33", "0.61", "0.75", "0.86", "-0.87", "0.50", "0.57", "0.84", "-0.34", "1.00", "0.77", "0.75", "0.40", "0.12", "-0.57", "-0.16", "-0.91", "0.06", "0.67", "-0.55", "0.02", "0.78", "0.57", "0.70", "0.21", "0.95", "-0.91", null, "-0.82", "0.71", "0.36", "0.46", "0.46", "0.24", "0.15", "0.54", "0.15", "0.83"], ["CADEUR", "-0.58", "0.29", "0.03", "0.70", "0.77", "0.80", "0.52", "0.04", "0.11", "0.86", "-0.98", "0.02", "0.01", "-0.19", "-0.48", "0.80", "0.90", "0.10", "0.28", "0.88", "0.98", "0.43", "0.47", "-0.41", "-0.92", "0.49", "0.64", "-0.60", "0.11", "0.61", "0.19", "-0.39", null, "-0.21", "0.56", "-0.45", "-0.48", "0.51", "0.04", "-0.44", "-0.22", "-0.29"], ["CADAED", "0.07", "0.55", "0.99", "-0.41", "0.65", "0.75", "0.97", "0.74", "0.65", "0.37", "-0.04", "0.85", "0.83", "0.25", "0.14", "-0.00", "0.80", "0.78", "-0.42", "0.54", "-0.42", "-0.07", "-0.62", "0.56", "0.89", "0.92", "0.19", "0.64", "0.45", "0.24", "0.97", "0.41", "0.36", null, "-0.54", "-0.85", "-0.68", "0.48", "0.13", "0.61", "0.75", "0.21"], ["CADJPY", "-0.84", "0.71", "0.59", "-0.78", "0.92", "0.93", "0.03", "0.27", "0.22", "0.71", "-0.79", "0.72", "0.27", "0.29", "0.40", "0.66", "0.44", "-0.33", "0.24", "0.99", "-0.95", "0.74", "0.42", "0.45", "0.08", "0.46", "0.22", "0.70", "0.80", "0.36", "0.36", "0.94", "0.75", "0.51", null, "0.10", "0.31", "0.54", "1.00", "0.78", "0.17", "0.32"], ["CADCHF", "0.19", "0.00", "0.62", "-0.63", "0.75", "0.57", "0.28", "-0.98", "0.17", "-0.63", "0.09", "0.10", "-0.09", "0.22", "0.65", "0.20", "0.27", "-0.66", "-0.70", "0.72", "0.40", "0.96", "0.52", "0.38", "0.96", "0.90", "0.35", "-0.70", "0.37", "0.94", "0.20", "0.78", "0.34", "0.24", "-0.18", null, "0.05", "0.71", "0.05", "0.38", "0.02", "0.60"], ["CHFUSD", "0.42", "0.61", "-0.30", "-0.27", "0.46", "0.63", "0.64", "0.33", "0.18", "0.88", "0.99", "0.73", "0.85", "0.07", "0.53", "0.31", "-0.63", "0.56", "-0.04", "-0.68", "0.43", "-0.96", "0.45", "0.45", "0.50", "0.17", "0.82", "0.34", "0.26", "0.16", "0.71", "0.35", "0.57", "0.79", "0.56", "0.55", null, "0.02", "-0.90", "0.84", "0.33", "0.18"], ["CHFGBP", "-0.38", "0.73", "0.25", "0.64", "0.41", "-0.48", "0.75", "-0.40", "0.37", "0.62", "0.30", "0.06", "0.54", "0.15", "0.51", "0.33", "-0.79", "-0.05", "-0.54", "0.21", "0.40", "0.86", "0.96", "0.94", "0.52", "0.07", "0.71", "-0.80", "-0.40", "0.71", "0.71", "0.89", "0.43", "-0.68", "0.93", "0.05", "0.42", null, "0.59", "-0.67", "0.03", "0.17"], ["CHFEUR", "-0.64", "0.96", "-0.34", "0.71", "0.53", "0.44", "0.27", "0.56", "0.96", "0.40", "0.86", "0.65", "0.82", "0.89", "-0.75", "0.29", "0.06", "0.70", "0.23", "0.68", "0.79", "0.21", "0.50", "0.14", "-0.27", "-0.83", "-0.22", "0.59", "0.40", "0.10", "0.88", "0.99", "0.21", "-0.36", "0.00", "0.53", "0.08", "0.08", null, "0.53", "-0.51", "0.03"], ["CHFAED", "-0.99", "0.71", "0.51", "0.58", "0.57", "0.73", "0.60", "0.23", "0.02", "0.84", "0.90", "0.56", "0.03", "-0.93", "0.59", "0.24", "-0.67", "0.13", "0.99", "0.28", "0.72", "0.79", "-0.83", "-0.30", "0.73", "0.08", "-0.02", "0.85", "0.33", "0.57", "0.09", "0.26", "0.16", "0.80", "0.65", "-0.19", "-0.38", "-0.61", "-0.98", null, "0.57", "-0.81"], ["CHFJPY", "0.60", "0.96", "0.22", "0.52", "0.63", "0.24", "0.76", "0.91", "0.80", "-0.14", "0.59", "-0.01", "0.60", "-0.08", "0.63", "0.39", "0.30", "-0.71", "0.18", "0.94", "-0.30", "0.28", "0.87", "0.92", "-0.19", "0.18", "-0.40", "0.44", "0.88", "0.52", "0.50", "0.44", "0.84", "0.24", "0.09", "0.15", "0.10", "0.30", "-0.05", "0.79", null, "0.99"], ["CHFCAD", "0.93", "0.24", "0.05", "0.40", "0.75", "0.12", "0.90", "0.56", "0.46", "0.62", "0.71", "0.01", "0.04", "0.02", "0.49", "0.51", "-0.94", "0.93", "0.80", "-0.40", "0.79", "0.82", "-0.04", "0.38", "-0.24", "-0.17", "0.78", "-0.42", "0.92", "-0.83", "-0.01", "0.54", "0.73", "0.52", "0.95", "0.44", "0.90", "0.81", "0.42", "0.26", "0.36", null]];
 
 /***/ },
-/* 546 */
+/* 536 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseClone = __webpack_require__(547);
+	var baseClone = __webpack_require__(537);
 
 	/** Used to compose bitmasks for cloning. */
 	var CLONE_DEEP_FLAG = 1,
@@ -78601,28 +78789,28 @@
 
 
 /***/ },
-/* 547 */
+/* 537 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Stack = __webpack_require__(244),
-	    arrayEach = __webpack_require__(528),
-	    assignValue = __webpack_require__(533),
-	    baseAssign = __webpack_require__(548),
-	    baseAssignIn = __webpack_require__(549),
-	    cloneBuffer = __webpack_require__(553),
+	var Stack = __webpack_require__(293),
+	    arrayEach = __webpack_require__(523),
+	    assignValue = __webpack_require__(538),
+	    baseAssign = __webpack_require__(540),
+	    baseAssignIn = __webpack_require__(542),
+	    cloneBuffer = __webpack_require__(546),
 	    copyArray = __webpack_require__(239),
-	    copySymbols = __webpack_require__(554),
-	    copySymbolsIn = __webpack_require__(555),
-	    getAllKeys = __webpack_require__(295),
-	    getAllKeysIn = __webpack_require__(557),
-	    getTag = __webpack_require__(315),
-	    initCloneArray = __webpack_require__(558),
-	    initCloneByTag = __webpack_require__(559),
-	    initCloneObject = __webpack_require__(570),
+	    copySymbols = __webpack_require__(547),
+	    copySymbolsIn = __webpack_require__(548),
+	    getAllKeys = __webpack_require__(307),
+	    getAllKeysIn = __webpack_require__(550),
+	    getTag = __webpack_require__(327),
+	    initCloneArray = __webpack_require__(551),
+	    initCloneByTag = __webpack_require__(552),
+	    initCloneObject = __webpack_require__(563),
 	    isArray = __webpack_require__(238),
-	    isBuffer = __webpack_require__(303),
-	    isObject = __webpack_require__(262),
-	    keys = __webpack_require__(300);
+	    isBuffer = __webpack_require__(315),
+	    isObject = __webpack_require__(251),
+	    keys = __webpack_require__(312);
 
 	/** Used to compose bitmasks for cloning. */
 	var CLONE_DEEP_FLAG = 1,
@@ -78760,11 +78948,76 @@
 
 
 /***/ },
-/* 548 */
+/* 538 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(535),
-	    keys = __webpack_require__(300);
+	var baseAssignValue = __webpack_require__(539),
+	    eq = __webpack_require__(264);
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Assigns `value` to `key` of `object` if the existing value is not equivalent
+	 * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+	 * for equality comparisons.
+	 *
+	 * @private
+	 * @param {Object} object The object to modify.
+	 * @param {string} key The key of the property to assign.
+	 * @param {*} value The value to assign.
+	 */
+	function assignValue(object, key, value) {
+	  var objValue = object[key];
+	  if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
+	      (value === undefined && !(key in object))) {
+	    baseAssignValue(object, key, value);
+	  }
+	}
+
+	module.exports = assignValue;
+
+
+/***/ },
+/* 539 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var defineProperty = __webpack_require__(519);
+
+	/**
+	 * The base implementation of `assignValue` and `assignMergeValue` without
+	 * value checks.
+	 *
+	 * @private
+	 * @param {Object} object The object to modify.
+	 * @param {string} key The key of the property to assign.
+	 * @param {*} value The value to assign.
+	 */
+	function baseAssignValue(object, key, value) {
+	  if (key == '__proto__' && defineProperty) {
+	    defineProperty(object, key, {
+	      'configurable': true,
+	      'enumerable': true,
+	      'value': value,
+	      'writable': true
+	    });
+	  } else {
+	    object[key] = value;
+	  }
+	}
+
+	module.exports = baseAssignValue;
+
+
+/***/ },
+/* 540 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var copyObject = __webpack_require__(541),
+	    keys = __webpack_require__(312);
 
 	/**
 	 * The base implementation of `_.assign` without support for multiple sources
@@ -78783,11 +79036,57 @@
 
 
 /***/ },
-/* 549 */
+/* 541 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(535),
-	    keysIn = __webpack_require__(550);
+	var assignValue = __webpack_require__(538),
+	    baseAssignValue = __webpack_require__(539);
+
+	/**
+	 * Copies properties of `source` to `object`.
+	 *
+	 * @private
+	 * @param {Object} source The object to copy properties from.
+	 * @param {Array} props The property identifiers to copy.
+	 * @param {Object} [object={}] The object to copy properties to.
+	 * @param {Function} [customizer] The function to customize copied values.
+	 * @returns {Object} Returns `object`.
+	 */
+	function copyObject(source, props, object, customizer) {
+	  var isNew = !object;
+	  object || (object = {});
+
+	  var index = -1,
+	      length = props.length;
+
+	  while (++index < length) {
+	    var key = props[index];
+
+	    var newValue = customizer
+	      ? customizer(object[key], source[key], key, object, source)
+	      : undefined;
+
+	    if (newValue === undefined) {
+	      newValue = source[key];
+	    }
+	    if (isNew) {
+	      baseAssignValue(object, key, newValue);
+	    } else {
+	      assignValue(object, key, newValue);
+	    }
+	  }
+	  return object;
+	}
+
+	module.exports = copyObject;
+
+
+/***/ },
+/* 542 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var copyObject = __webpack_require__(541),
+	    keysIn = __webpack_require__(543);
 
 	/**
 	 * The base implementation of `_.assignIn` without support for multiple sources
@@ -78806,12 +79105,12 @@
 
 
 /***/ },
-/* 550 */
+/* 543 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayLikeKeys = __webpack_require__(301),
-	    baseKeysIn = __webpack_require__(551),
-	    isArrayLike = __webpack_require__(314);
+	var arrayLikeKeys = __webpack_require__(313),
+	    baseKeysIn = __webpack_require__(544),
+	    isArrayLike = __webpack_require__(326);
 
 	/**
 	 * Creates an array of the own and inherited enumerable property names of `object`.
@@ -78844,12 +79143,12 @@
 
 
 /***/ },
-/* 551 */
+/* 544 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(262),
-	    isPrototype = __webpack_require__(312),
-	    nativeKeysIn = __webpack_require__(552);
+	var isObject = __webpack_require__(251),
+	    isPrototype = __webpack_require__(324),
+	    nativeKeysIn = __webpack_require__(545);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -78883,7 +79182,7 @@
 
 
 /***/ },
-/* 552 */
+/* 545 */
 /***/ function(module, exports) {
 
 	/**
@@ -78909,7 +79208,7 @@
 
 
 /***/ },
-/* 553 */
+/* 546 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(200);
@@ -78951,11 +79250,11 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(209)(module)))
 
 /***/ },
-/* 554 */
+/* 547 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(535),
-	    getSymbols = __webpack_require__(297);
+	var copyObject = __webpack_require__(541),
+	    getSymbols = __webpack_require__(309);
 
 	/**
 	 * Copies own symbols of `source` to `object`.
@@ -78973,11 +79272,11 @@
 
 
 /***/ },
-/* 555 */
+/* 548 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var copyObject = __webpack_require__(535),
-	    getSymbolsIn = __webpack_require__(556);
+	var copyObject = __webpack_require__(541),
+	    getSymbolsIn = __webpack_require__(549);
 
 	/**
 	 * Copies own and inherited symbols of `source` to `object`.
@@ -78995,13 +79294,13 @@
 
 
 /***/ },
-/* 556 */
+/* 549 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var arrayPush = __webpack_require__(233),
 	    getPrototype = __webpack_require__(204),
-	    getSymbols = __webpack_require__(297),
-	    stubArray = __webpack_require__(299);
+	    getSymbols = __webpack_require__(309),
+	    stubArray = __webpack_require__(311);
 
 	/* Built-in method references for those with the same name as other `lodash` methods. */
 	var nativeGetSymbols = Object.getOwnPropertySymbols;
@@ -79026,12 +79325,12 @@
 
 
 /***/ },
-/* 557 */
+/* 550 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetAllKeys = __webpack_require__(296),
-	    getSymbolsIn = __webpack_require__(556),
-	    keysIn = __webpack_require__(550);
+	var baseGetAllKeys = __webpack_require__(308),
+	    getSymbolsIn = __webpack_require__(549),
+	    keysIn = __webpack_require__(543);
 
 	/**
 	 * Creates an array of own and inherited enumerable property names and
@@ -79049,7 +79348,7 @@
 
 
 /***/ },
-/* 558 */
+/* 551 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -79081,16 +79380,16 @@
 
 
 /***/ },
-/* 559 */
+/* 552 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(560),
-	    cloneDataView = __webpack_require__(561),
-	    cloneMap = __webpack_require__(562),
-	    cloneRegExp = __webpack_require__(565),
-	    cloneSet = __webpack_require__(566),
-	    cloneSymbol = __webpack_require__(568),
-	    cloneTypedArray = __webpack_require__(569);
+	var cloneArrayBuffer = __webpack_require__(553),
+	    cloneDataView = __webpack_require__(554),
+	    cloneMap = __webpack_require__(555),
+	    cloneRegExp = __webpack_require__(558),
+	    cloneSet = __webpack_require__(559),
+	    cloneSymbol = __webpack_require__(561),
+	    cloneTypedArray = __webpack_require__(562);
 
 	/** `Object#toString` result references. */
 	var boolTag = '[object Boolean]',
@@ -79167,10 +79466,10 @@
 
 
 /***/ },
-/* 560 */
+/* 553 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Uint8Array = __webpack_require__(291);
+	var Uint8Array = __webpack_require__(304);
 
 	/**
 	 * Creates a clone of `arrayBuffer`.
@@ -79189,10 +79488,10 @@
 
 
 /***/ },
-/* 561 */
+/* 554 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(560);
+	var cloneArrayBuffer = __webpack_require__(553);
 
 	/**
 	 * Creates a clone of `dataView`.
@@ -79211,12 +79510,12 @@
 
 
 /***/ },
-/* 562 */
+/* 555 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var addMapEntry = __webpack_require__(563),
-	    arrayReduce = __webpack_require__(564),
-	    mapToArray = __webpack_require__(292);
+	var addMapEntry = __webpack_require__(556),
+	    arrayReduce = __webpack_require__(557),
+	    mapToArray = __webpack_require__(305);
 
 	/** Used to compose bitmasks for cloning. */
 	var CLONE_DEEP_FLAG = 1;
@@ -79239,7 +79538,7 @@
 
 
 /***/ },
-/* 563 */
+/* 556 */
 /***/ function(module, exports) {
 
 	/**
@@ -79260,7 +79559,7 @@
 
 
 /***/ },
-/* 564 */
+/* 557 */
 /***/ function(module, exports) {
 
 	/**
@@ -79292,7 +79591,7 @@
 
 
 /***/ },
-/* 565 */
+/* 558 */
 /***/ function(module, exports) {
 
 	/** Used to match `RegExp` flags from their coerced string values. */
@@ -79315,12 +79614,12 @@
 
 
 /***/ },
-/* 566 */
+/* 559 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var addSetEntry = __webpack_require__(567),
-	    arrayReduce = __webpack_require__(564),
-	    setToArray = __webpack_require__(293);
+	var addSetEntry = __webpack_require__(560),
+	    arrayReduce = __webpack_require__(557),
+	    setToArray = __webpack_require__(287);
 
 	/** Used to compose bitmasks for cloning. */
 	var CLONE_DEEP_FLAG = 1;
@@ -79343,7 +79642,7 @@
 
 
 /***/ },
-/* 567 */
+/* 560 */
 /***/ function(module, exports) {
 
 	/**
@@ -79364,7 +79663,7 @@
 
 
 /***/ },
-/* 568 */
+/* 561 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Symbol = __webpack_require__(199);
@@ -79388,10 +79687,10 @@
 
 
 /***/ },
-/* 569 */
+/* 562 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cloneArrayBuffer = __webpack_require__(560);
+	var cloneArrayBuffer = __webpack_require__(553);
 
 	/**
 	 * Creates a clone of `typedArray`.
@@ -79410,12 +79709,12 @@
 
 
 /***/ },
-/* 570 */
+/* 563 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseCreate = __webpack_require__(571),
+	var baseCreate = __webpack_require__(564),
 	    getPrototype = __webpack_require__(204),
-	    isPrototype = __webpack_require__(312);
+	    isPrototype = __webpack_require__(324);
 
 	/**
 	 * Initializes an object clone.
@@ -79434,10 +79733,10 @@
 
 
 /***/ },
-/* 571 */
+/* 564 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(262);
+	var isObject = __webpack_require__(251);
 
 	/** Built-in value references. */
 	var objectCreate = Object.create;
@@ -79470,7 +79769,7 @@
 
 
 /***/ },
-/* 572 */
+/* 565 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -79481,7 +79780,7 @@
 	exports.fxDataUpdated = fxDataUpdated;
 	exports.fxTopMoversUpdated = fxTopMoversUpdated;
 
-	var _cloneDeep = __webpack_require__(546);
+	var _cloneDeep = __webpack_require__(536);
 
 	var _cloneDeep2 = _interopRequireDefault(_cloneDeep);
 
@@ -79502,7 +79801,7 @@
 	}
 
 /***/ },
-/* 573 */
+/* 566 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -79516,6 +79815,12 @@
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _propTypes = __webpack_require__(184);
+
+	var PropTypes = _interopRequireWildcard(_propTypes);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -79586,11 +79891,11 @@
 
 
 	HorizontalBarComponent.propTypes = {
-	    params: _react2.default.PropTypes.object
+	    params: PropTypes.object
 	};
 
 /***/ },
-/* 574 */
+/* 567 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -79607,13 +79912,13 @@
 
 	var _reactRedux = __webpack_require__(182);
 
-	var _agGridReact = __webpack_require__(376);
+	var _agGridReact = __webpack_require__(370);
 
-	var _assign = __webpack_require__(532);
+	var _assign = __webpack_require__(568);
 
 	var _assign2 = _interopRequireDefault(_assign);
 
-	var _uniq = __webpack_require__(348);
+	var _uniq = __webpack_require__(240);
 
 	var _uniq2 = _interopRequireDefault(_uniq);
 
@@ -79639,6 +79944,9 @@
 
 	        // grid events
 	        _this.onGridReady = _this.onGridReady.bind(_this);
+
+	        // grid callbacks
+	        _this.getRowNodeId = _this.getRowNodeId.bind(_this);
 	        return _this;
 	    }
 
@@ -79653,22 +79961,22 @@
 	            }
 	        }
 	    }, {
+	        key: "getRowNodeId",
+	        value: function getRowNodeId(data) {
+	            return data.symbol;
+	        }
+	    }, {
 	        key: "componentWillReceiveProps",
 	        value: function componentWillReceiveProps(nextProps) {
 	            var newRowData = nextProps.rowData;
 
-	            var updatedNodes = [];
-	            var updatedCols = [];
+	            var updatedRows = [];
 
 	            for (var i = 0; i < newRowData.length; i++) {
-	                // note that for this use case we assume the existing and new row data have the same
-	                // row and column order
-	                var node = this.gridApi.getModel().getRow(i);
 	                var newRow = newRowData[i];
+	                var currentRowNode = this.gridApi.getRowNode(newRow.symbol);
 
-	                var data = node.data;
-
-	                var updated = false;
+	                var data = currentRowNode.data;
 	                var _iteratorNormalCompletion = true;
 	                var _didIteratorError = false;
 	                var _iteratorError = undefined;
@@ -79678,9 +79986,8 @@
 	                        var def = _step.value;
 
 	                        if (data[def.field] !== newRow[def.field]) {
-	                            updatedCols.push(def.field);
-
-	                            updated = true;
+	                            updatedRows.push(newRow);
+	                            break;
 	                        }
 	                    }
 	                } catch (err) {
@@ -79697,14 +80004,9 @@
 	                        }
 	                    }
 	                }
-
-	                if (updated) {
-	                    (0, _assign2.default)(data, newRow);
-	                    updatedNodes.push(node);
-	                }
 	            }
 
-	            this.gridApi.refreshCells(updatedNodes, (0, _uniq2.default)(updatedCols));
+	            this.gridApi.updateRowData({ update: updatedRows });
 	        }
 	    }, {
 	        key: "render",
@@ -79718,6 +80020,9 @@
 	                , { columnDefs: this.state.columnDefs,
 	                    enableSorting: "false",
 	                    enableFilter: "false"
+
+	                    // callbacks
+	                    , getRowNodeId: this.getRowNodeId
 
 	                    // events
 	                    , onGridReady: this.onGridReady })
@@ -79735,7 +80040,114 @@
 	})(FxQuoteMatrix);
 
 /***/ },
-/* 575 */
+/* 568 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var assignValue = __webpack_require__(538),
+	    copyObject = __webpack_require__(541),
+	    createAssigner = __webpack_require__(569),
+	    isArrayLike = __webpack_require__(326),
+	    isPrototype = __webpack_require__(324),
+	    keys = __webpack_require__(312);
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Assigns own enumerable string keyed properties of source objects to the
+	 * destination object. Source objects are applied from left to right.
+	 * Subsequent sources overwrite property assignments of previous sources.
+	 *
+	 * **Note:** This method mutates `object` and is loosely based on
+	 * [`Object.assign`](https://mdn.io/Object/assign).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.10.0
+	 * @category Object
+	 * @param {Object} object The destination object.
+	 * @param {...Object} [sources] The source objects.
+	 * @returns {Object} Returns `object`.
+	 * @see _.assignIn
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 * }
+	 *
+	 * function Bar() {
+	 *   this.c = 3;
+	 * }
+	 *
+	 * Foo.prototype.b = 2;
+	 * Bar.prototype.d = 4;
+	 *
+	 * _.assign({ 'a': 0 }, new Foo, new Bar);
+	 * // => { 'a': 1, 'c': 3 }
+	 */
+	var assign = createAssigner(function(object, source) {
+	  if (isPrototype(source) || isArrayLike(source)) {
+	    copyObject(source, keys(source), object);
+	    return;
+	  }
+	  for (var key in source) {
+	    if (hasOwnProperty.call(source, key)) {
+	      assignValue(object, key, source[key]);
+	    }
+	  }
+	});
+
+	module.exports = assign;
+
+
+/***/ },
+/* 569 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseRest = __webpack_require__(513),
+	    isIterateeCall = __webpack_require__(366);
+
+	/**
+	 * Creates a function like `_.assign`.
+	 *
+	 * @private
+	 * @param {Function} assigner The function to assign values.
+	 * @returns {Function} Returns the new assigner function.
+	 */
+	function createAssigner(assigner) {
+	  return baseRest(function(object, sources) {
+	    var index = -1,
+	        length = sources.length,
+	        customizer = length > 1 ? sources[length - 1] : undefined,
+	        guard = length > 2 ? sources[2] : undefined;
+
+	    customizer = (assigner.length > 3 && typeof customizer == 'function')
+	      ? (length--, customizer)
+	      : undefined;
+
+	    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
+	      customizer = length < 3 ? undefined : customizer;
+	      length = 1;
+	    }
+	    object = Object(object);
+	    while (++index < length) {
+	      var source = sources[index];
+	      if (source) {
+	        assigner(object, source, index, customizer);
+	      }
+	    }
+	    return object;
+	  });
+	}
+
+	module.exports = createAssigner;
+
+
+/***/ },
+/* 570 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -79752,7 +80164,7 @@
 
 	var _reactRedux = __webpack_require__(182);
 
-	var _agGridReact = __webpack_require__(376);
+	var _agGridReact = __webpack_require__(370);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -79801,6 +80213,8 @@
 
 	        // grid events
 	        _this.onGridReady = _this.onGridReady.bind(_this);
+
+	        // grid callbacks
 	        _this.getRowNodeId = _this.getRowNodeId.bind(_this);
 	        return _this;
 	    }

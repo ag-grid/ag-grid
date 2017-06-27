@@ -17,8 +17,6 @@ export class FilterComponentComponent {
         this.gridOptions.rowData = this.createRowData();
         this.gridOptions.columnDefs = this.createColumnDefs();
         this.gridOptions.enableFilter = true;
-        this.gridOptions.suppressMenuColumnPanel = true; // ag-enterprise only
-        this.gridOptions.suppressMenuMainPanel = true; // ag-enterprise only
     }
 
     onClicked(event): void {
@@ -32,7 +30,8 @@ export class FilterComponentComponent {
                 headerName: "Filter Component",
                 field: "name",
                 filterFramework: PartialMatchFilterComponent,
-                width: 400
+                width: 400,
+                menuTabs: ['filterMenuTab']
             }
         ];
     }

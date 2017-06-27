@@ -28,8 +28,8 @@ export class GroupedDataComponent {
     private createColumnDefs() {
         return [
             // group by these cols, and hide them, and let grid sort out the grouping columns
-            {headerName: "Country", field: "country", rowGroupIndex: 0, hide: true, cellRendererFramework: CountryRendererComponent},
-            {headerName: "Language", field: "language", rowGroupIndex: 1, hide: true},
+            {headerName: "Country", field: "country", rowGroup: true, showRowGroup:true, hide: true, cellRendererFramework: CountryRendererComponent},
+            {headerName: "Language", field: "language", rowGroup: true, showRowGroup:true, hide: true},
             {headerName: "Name", field: "name"},
             {headerName: "Gold", field: "gold"},
             {headerName: "Silver", field: "silver"},

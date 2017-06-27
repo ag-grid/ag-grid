@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var inlinesource = require('gulp-inline-source');
 var htmlmin = require('gulp-htmlmin');
 var uncss  = require('gulp-uncss');
+const debug = require('gulp-debug');
 
 gulp.task('copy-from-docs', copyFromDocs);
 gulp.task('copy-from-ag-grid', copyFromAgGrid);
@@ -43,6 +44,7 @@ function copyFromAgGridEnterprise() {
 
 function inlineIntoPhp() {
     return gulp.src(['./dist/**/*.php'])
+        .pipe(debug())
         .pipe(inlinesource())
         // this plugin couldn't handle javascript examples in the documentation, and also messed up the
         // layout of the index.html features list (the diamond separated list)

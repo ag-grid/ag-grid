@@ -12,9 +12,9 @@ export default Vue.extend({
     },
     created() {
         this.country = this.params.node.key;
-        this.gold = this.params.data.gold;
-        this.silver = this.params.data.silver;
-        this.bronze = this.params.data.bronze;
+        this.gold = this.params.node.aggData.gold;
+        this.silver = this.params.node.aggData.silver;
+        this.bronze = this.params.node.aggData.bronze;
     }
 })
 

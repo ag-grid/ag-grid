@@ -2,8 +2,8 @@ import React, {Component} from "react";
 import {AgGridReact} from "ag-grid-react";
 import RowDataFactory from "./RowDataFactory";
 import ColDefFactory from "./ColDefFactory.jsx";
-import MyReactDateComponent from "./MyReactDateComponent.jsx";
-import MyReactHeaderComponent from "./MyReactHeaderComponent.jsx";
+import DateComponent from "./DateComponent.jsx";
+import SortableHeaderComponent from "./SortableHeaderComponent";
 
 import "./RichGridExample.css";
 
@@ -41,13 +41,13 @@ export default class RichGridExample extends Component {
         // what you want!
         this.gridOptions = {
             //We register the react date component that ag-grid will use to render
-            dateComponentFramework: MyReactDateComponent,
+            dateComponentFramework: DateComponent,
             // this is how you listen for events using gridOptions
             onModelUpdated: function () {
                 console.log('event onModelUpdated received');
             },
             defaultColDef: {
-                headerComponentFramework: MyReactHeaderComponent,
+                headerComponentFramework: SortableHeaderComponent,
                 headerComponentParams: {
                     menuIcon: 'fa-bars'
                 }
@@ -101,15 +101,15 @@ export default class RichGridExample extends Component {
     }
 
     onRefreshData() {
-        var newRowData = new RowDataFactory().createRowData();
+        let newRowData = new RowDataFactory().createRowData();
         this.setState({
             rowData: newRowData
         });
     }
 
     invokeSkillsFilterMethod() {
-        var skillsFilter = this.api.getFilterInstance('skills');
-        var componentInstance = skillsFilter.getFrameworkComponentInstance();
+        let skillsFilter = this.api.getFilterInstance('skills');
+        let componentInstance = skillsFilter.getFrameworkComponentInstance();
         componentInstance.helloFromSkillsFilter();
     }
 
@@ -117,14 +117,19 @@ export default class RichGridExample extends Component {
         let dateFilterComponent = this.gridOptions.api.getFilterInstance('dob');
         dateFilterComponent.setFilterType('equals');
         dateFilterComponent.setDateFrom('2000-01-01');
-        this.gridOptions.api.onFilterChanged();
 
+        // as the date filter is a React component, and its using setState internally, we need
+        // to allow time for the state to be set (as setState is an async operation)
+        // simply wait for the next tick
+        setTimeout(() => {
+            this.gridOptions.api.onFilterChanged();
+        },0)
     }
 
     render() {
-        var gridTemplate;
-        var bottomHeaderTemplate;
-        var topHeaderTemplate;
+        let gridTemplate;
+        let bottomHeaderTemplate;
+        let topHeaderTemplate;
 
         topHeaderTemplate = (
             <div>
