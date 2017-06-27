@@ -45,6 +45,13 @@ export class AutoGroupColService {
 
         _.mergeDeep(defaultAutoColDef, userAutoColDef);
         defaultAutoColDef.colId = colId;
+        // if showing many cols, we don't want to show more than one with a checkbox for selection
+        if (index>0) {
+            defaultAutoColDef.headerCheckboxSelection = false;
+            defaultAutoColDef.cellRendererParams= {
+                checkbox: false
+            };
+        }
         let newCol = new Column(defaultAutoColDef, colId, true);
         this.context.wireBean(newCol);
 
@@ -69,13 +76,6 @@ export class AutoGroupColService {
                 headerValueGetter: rowGroupColDef.headerValueGetter
             });
 
-            // if showing many cols, we don't want to show more than one with a checkbox for selection
-            if (index>0) {
-                defaultAutoColDef.headerCheckboxSelection = false;
-                defaultAutoColDef.cellRendererParams= {
-                    checkbox: false
-                };
-            }
 
             defaultAutoColDef.showRowGroup = rowGroupCol.getColId();
         } else {
