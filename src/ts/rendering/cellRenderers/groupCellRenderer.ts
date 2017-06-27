@@ -259,8 +259,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private updateChildCount(): void {
         let allChildrenCount = this.displayedGroup.allChildrenCount;
-        let text = allChildrenCount >= 0 ? `(${allChildrenCount})` : '';
-        this.eChildCount.innerHTML = text;
+        this.eChildCount.innerHTML = allChildrenCount >= 0 ? `(${allChildrenCount})` : ``;
     }
 
     private createLeafCell(): void {
