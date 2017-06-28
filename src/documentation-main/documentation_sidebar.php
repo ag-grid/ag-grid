@@ -17,6 +17,19 @@
     }
 </style>
 
+<div class="news-box">
+    <div class="news-header">28th Jun 2017</div>
+    <div>
+        <a href="../weekly-update/20170627/">
+            <img src="../weekly-update/20170627/images/MergeCells_200.png" width="100%"/>
+        </a>
+    </div>
+    <div style="padding-top: 10px;">
+        <a href="../weekly-update/20170627/">
+            This Week's Update
+        </a>
+    </div>
+</div>
 
 <div class="news-box">
     <div class="news-header">26th Jun 2017</div>
@@ -73,7 +86,7 @@
     <div class="news-header">20th Jun 2017</div>
     <div>
         <a href="../weekly-update/20170620/">
-            <img src="../weekly-update/20170620/images/DevTeam.png" width="100%"/>
+            <img src="../weekly-update/20170620/images/DevTeam_200.png" width="100%"/>
         </a>
     </div>
     <div style="padding-top: 10px;">
