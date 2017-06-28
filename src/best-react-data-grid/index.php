@@ -11,31 +11,46 @@ include '../documentation-main/documentation_header.php';
 
     <h1>
         <img style="vertical-align: middle" src="/images/react_large.png" height="50px"/>
-        ag-Grid: The React Grid - Built for Enterprise
+        ag-Grid, the Best React Datagrid for Enterprise
     </h1>
 
-    <h2>
-        Welcome to ag-Grid for React
-    </h2>
     <p>
-        ag-Grid is a feature rich data grid that is designed for building Enterprise applications with React. As the popularity of React has grown over the past years, the demand for a feature rich data grid has also grown. ag-Grid fits seamlessly with React so you can deliver the features you need quickly. Use React components natively within the grid to leverage the power of React and our grid.
+        The ag-Grid-React project is used by thousands of enterprises for their data grid needs inside React applications.
     </p>
 
+    <ul>
+        <li>Use ag-Grid as a React Component</li>
+        <li>Customise using your own React Components</li>
+        <li>Support for Redux data stores</li>
+    </ul>
+
     <h2>
-        Features
+        Full Feature Set
     </h2>
     
     <p>
-        ag-Grid has an extensive feature list including filtering, sorting, grouping & aggregation, pivoting and much more. 
-    <ul>
-    <li>
-        View an overview of features <a href="../#features">here.</a>
-    </li>
-    <li>    
-        For detailed documentation on each of the features, click <a href="/javascript-grid-features/">here.</a>
-    </li>
-    </ul>    
+        All of the extensive features (filtering, sorting, grouping & aggregation, pivoting etc)
+        of ag-Grid are available in ag-Grid React.
     </p>
+
+    <div style="text-align: center;">
+
+        <a class="btn btn-primary btn-large" href="../javascript-grid-features/">
+            ag-Grid Features
+        </a>
+
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        &nbsp;
+
+        <a class="btn btn-primary btn-large" href="../example.php">
+            ag-Grid Demo
+        </a>
+
+    </div>
+
     <h2>
         Using Our Documentation
     </h2>
@@ -82,31 +97,6 @@ include '../documentation-main/documentation_header.php';
             </div>
         </a>
     </div>
-
-    <h2>
-        Further information
-    </h2>
-    <p>
-    A list of useful links for more information:
-    <ul>
-    <li>
-       Licensing and Pricing Information <a href="/license-pricing.php">here.</a>
-    </li>
-    <li>    
-       Blogs <a href="/media/media.php">here.</a>
-    </li>
-    <li>    
-       View our Video Tour <a href="https://www.youtube.com/watch?v=tsuhoLiSWmU">here.</a>
-    </li>
-    <li>    
-       Our Demo showcasing our features is <a href="/example.php">here.</a>
-    </li>
-    <li>    
-       Information about the Company is <a href="/about.php">here.</a>
-    </li>
-
-    </ul>    
-    </p>
 
 </div>
 
