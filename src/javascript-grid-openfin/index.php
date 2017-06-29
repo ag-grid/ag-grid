@@ -92,6 +92,28 @@ npm install
 
     <img width="100%" src="../images/openfin-masterdetail-graph.png"/>
 
+    <h3>A Trader Dashboard with Tear Out Windows</h3>
+
+    <p>In this example we host the full <a href="../ag-grid-trader-dashboard">Trader Dashboard</a> within an OpenFin container,
+    but also add the ability to <span style="font-style: italic">tear out</span> the Stock Detail panel from the top left.</p>
+
+    <p>The following images show the default state of the application followed by the state of the application with the Detail
+    Panel torn out:</p>
+
+    <h5>Default State</h5>
+    <img width="100%" src="./trader-default.png" style="padding-bottom: 15px"/>
+
+    <h5>Torn Out State</h5>
+    <img width="100%" src="./trader-tearout.png" style="padding-bottom: 15px"/>
+
+    <p>A better illustration of the functionality is shown in the movie below - note how the top grid fills out the remaining space
+    when the Detail Panel is torn out. Note too that the Detail Panel could become larger once torn out, perhaps showing
+        a more detailed view once torn out:</p>
+
+    <h5>Application in Action</h5>
+    <img src="openfin-tearout.gif" width="100%"/>
+
+
 
 </div>
 <?php include '../documentation-main/documentation_footer.php'; ?>

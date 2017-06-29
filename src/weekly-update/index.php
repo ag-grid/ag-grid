@@ -55,19 +55,19 @@ include('../includes/mediaHeader.php');
 
 <div class="weekly-news-section">
 
-    <a href="./20170620/">
+    <a href="./20170627/">
         <div class="weekly-news-title">
-            Preparing for Next Release, New Team Members Settling In
+            Version 11 Released - OpenFin Integration - More JIRAs
         </div>
         <div class="weekly-news-sub-title">
-            Niall Crosby, 20th June 2017
+            Customer Experience Team, 28th June 2017
         </div>
     </a>
 
     <div style="clear: both;"></div>
 
     <div class="weekly-news-paragraph">
-        This week we are finalising the next release while our new joiners are settling in nicely.
+        This week saw Version 11 released, we are cracking on with more JIRAs and have more new features in the pipeline.
     </div>
 
 </div>
