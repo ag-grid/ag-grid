@@ -78,7 +78,7 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
     public context: Context;
 
     @Autowired('gridOptionsWrapper')
-    private gridOptionsWrapper: GridOptionsWrapper;
+    gridOptionsWrapper: GridOptionsWrapper;
 
     public init(params: P): void {
         this.filterParams = params;
