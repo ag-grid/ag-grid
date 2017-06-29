@@ -1,10 +1,10 @@
 var columnDefs = [
-    {headerName: 'A', field: 'a', aggFunc: 'sum', valueParser: 'Number(newValue)'},
-    {headerName: 'B', field: 'b', aggFunc: 'sum', valueParser: 'Number(newValue)'},
-    {headerName: 'C', field: 'c', aggFunc: 'sum', valueParser: 'Number(newValue)'},
-    {headerName: 'D', field: 'd', aggFunc: 'sum', valueParser: 'Number(newValue)'},
-    {headerName: 'E', field: 'e', aggFunc: 'sum', valueParser: 'Number(newValue)'},
-    {headerName: 'F', field: 'f', aggFunc: 'sum', valueParser: 'Number(newValue)'},
+    {headerName: 'A', field: 'a', type: 'valueColumn'},
+    {headerName: 'B', field: 'b', type: 'valueColumn'},
+    {headerName: 'C', field: 'c', type: 'valueColumn'},
+    {headerName: 'D', field: 'd', type: 'valueColumn'},
+    {headerName: 'E', field: 'e', type: 'valueColumn'},
+    {headerName: 'F', field: 'f', type: 'valueColumn'},
     {headerName: 'Total',
         valueGetter: 'data.a + data.b + data.c + data.d + data.e + data.f',
         editable: false,
@@ -26,6 +26,9 @@ for (var i = 1; i<=20; i++) {
 }
 
 var gridOptions = {
+    columnTypes: {
+        valueColumn: { editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)'}
+    },
     columnDefs: columnDefs,
     rowData: rowData,
     groupDefaultExpanded: 1,
@@ -33,12 +36,6 @@ var gridOptions = {
     enableCellChangeFlash: true,
     animateRows: true,
     enableSorting: true,
-    defaultColDef: {
-        editable: true
-    },
-    onCellValueChanged: function(event) {
-        gridOptions.api.refreshCells({flash: true});
-    },
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }

@@ -1,11 +1,15 @@
 var columnDefs = [
-    {headerName: 'Group', field: 'group', rowGroup: true},
-    {headerName: 'A', field: 'a', aggFunc: 'sum', valueParser: 'Number(newValue)'},
-    {headerName: 'B', field: 'b', aggFunc: 'sum', valueParser: 'Number(newValue)'},
-    {headerName: 'C', field: 'c', aggFunc: 'sum', valueParser: 'Number(newValue)'},
-    {headerName: 'D', field: 'd', aggFunc: 'sum', valueParser: 'Number(newValue)'},
-    {headerName: 'E', field: 'e', aggFunc: 'sum', valueParser: 'Number(newValue)'},
-    {headerName: 'F', field: 'f', aggFunc: 'sum', valueParser: 'Number(newValue)'}
+    {headerName: 'Group', field: 'group', rowGroup: true, hide: true},
+    {headerName: 'A', field: 'a', type: 'valueColumn'},
+    {headerName: 'B', field: 'b', type: 'valueColumn'},
+    {headerName: 'C', field: 'c', type: 'valueColumn'},
+    {headerName: 'D', field: 'd', type: 'valueColumn'},
+    {headerName: 'E', field: 'e', type: 'valueColumn'},
+    {headerName: 'F', field: 'f', type: 'valueColumn'},
+    {headerName: 'Total',
+        // we use getValue() instead of data.a so that it gets the aggregated values at the group level
+        valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d") + getValue("e") + getValue("f")',
+        editable: false}
 ];
 
 var rowData = [];
@@ -23,20 +27,15 @@ for (var i = 1; i<=10; i++) {
 
 var gridOptions = {
     columnDefs: columnDefs,
+    columnTypes: {
+        valueColumn: { editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)'}
+    },
     rowData: rowData,
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
-    enableCellChangeFlash: true,
+    // enableCellChangeFlash: true,
     animateRows: true,
     enableSorting: true,
-    defaultColDef: {
-        editable: true
-    },
-    onCellValueChanged: function(event) {
-        gridOptions.api.updateRowData({
-            update: [event.data]
-        });
-    },
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }
