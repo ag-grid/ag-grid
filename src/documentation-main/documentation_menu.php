@@ -171,7 +171,7 @@
 
     menuItem(0, 'Selection', 'Selection', 'javascript-grid-selection/');
     menuItemWithIcon('enterprise.png', 0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
-    menuItem(0, 'Column Definitions', 'Column Definitions', 'javascript-grid-column-definitions/');
+    menuItem(0, 'ColumnDefs', 'Column Definitions', 'javascript-grid-column-definitions/');
     menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
     menuItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
     menuItem(0, 'Column Header', 'Column Header', 'javascript-grid-column-header/');
