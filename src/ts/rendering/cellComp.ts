@@ -1114,7 +1114,7 @@ export class CellComp extends Component {
         // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
         // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
         // then we are not showing a movement in the stock price, rather we are showing different stock.
-        if (newData) {
+        if (newData || suppressFlash) {
             cellRendererRefreshed = false;
         } else {
             cellRendererRefreshed = this.attemptCellRendererRefresh();
@@ -1127,12 +1127,18 @@ export class CellComp extends Component {
             this.replaceCellContent();
         }
 
-        if (!suppressFlash && this.gridOptionsWrapper.isEnableCellChangeFlash()) {
-            this.animateCell('data-changed');
+        if (!suppressFlash) {
+            this.flashCell();
         }
 
         // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
         this.addClassesFromRules();
+    }
+
+    private flashCell(): void {
+        if (this.gridOptionsWrapper.isEnableCellChangeFlash() || this.column.getColDef().enableCellChangeFlash) {
+            this.animateCell('data-changed');
+        }
     }
 
     private replaceCellContent(): void {
