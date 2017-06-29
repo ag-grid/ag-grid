@@ -131,22 +131,29 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
 
     onFloatingFilterChanged:(change:BaseFloatingFilterChange<SerializedDateFilter>)=>void;
     currentParentModel:()=>SerializedDateFilter;
+    lastKnownModel:SerializedDateFilter = null;
 
     init (params:IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>){
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.currentParentModel = params.currentParentModel;
+        let debounceMs: number = params.debounceMs != null ? params.debounceMs : 500;
+        let toDebounce:()=>void = _.debounce(this.onDateChanged.bind(this), debounceMs);
         let dateComponentParams: IDateParams = {
-            onDateChanged: this.onDateChanged.bind(this)
+            onDateChanged: toDebounce
         };
         this.dateComponent = this.componentProvider.newDateComponent(dateComponentParams);
         let body: HTMLElement = _.loadTemplate(`<div></div>`);
         body.appendChild(this.dateComponent.getGui());
         this.setTemplateFromElement(body);
-
+        this.lastKnownModel = this.asParentModel();
     }
 
     private onDateChanged(): void {
         let parentModel:SerializedDateFilter = this.currentParentModel();
+
+        let model = this.asParentModel();
+        if (this.equalModels(this.lastKnownModel, model)) return;
+
         let rawDate:Date = this.dateComponent.getDate();
         if (!rawDate || typeof rawDate.getMonth !== 'function'){
             this.onFloatingFilterChanged(null);
@@ -159,16 +166,47 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         if (parentModel){
             dateTo = parentModel.dateTo;
         }
+        let newModel = {
+            type: type,
+            dateFrom: date,
+            dateTo: dateTo,
+            filterType: 'date'
+        };
         this.onFloatingFilterChanged({
-            model:{
-                type: type,
-                dateFrom: date,
-                dateTo: dateTo,
-                filterType: 'date'
-            },
+            model: newModel,
             apply:true
         });
+        this.lastKnownModel = newModel;
     }
+
+    equalModels (left:SerializedDateFilter, right:SerializedDateFilter):boolean{
+        if (_.referenceCompare(left, right)) return true;
+        if (!left || !right) return false;
+
+        if (Array.isArray(left) || Array.isArray(right)) return false;
+
+        return (
+            _.referenceCompare(left.type, right.type) &&
+            _.referenceCompare(left.dateFrom, right.dateFrom) &&
+            _.referenceCompare(left.dateTo, right.dateTo)  &&
+            _.referenceCompare(left.filterType, right.filterType)
+        )
+    }
+
+
+    asParentModel(): SerializedDateFilter {
+        let currentParentModel = this.currentParentModel();
+        let filterValueDate:Date = this.dateComponent.getDate();
+        let filterValueText:string = _.serializeDateToYyyyMmDd(DateFilter.removeTimezone(filterValueDate), "-");
+
+        return {
+            type: currentParentModel.type,
+            dateFrom: filterValueText ? filterValueText : currentParentModel.dateFrom,
+            dateTo: null,
+            filterType: 'date'
+        };
+    }
+
 
     onParentModelChanged(parentModel: SerializedDateFilter): void {
         if (!parentModel || !parentModel.dateFrom){
