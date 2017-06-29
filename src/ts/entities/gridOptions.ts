@@ -183,6 +183,7 @@ export interface GridOptions {
     floatingBottomRowData?: any[];
     showToolPanel?: boolean;
     columnDefs?: (ColDef|ColGroupDef)[];
+    columnTypes?: any;
     datasource?: IDatasource;
     viewportDatasource?: IViewportDatasource;
     enterpriseDatasource?: IEnterpriseDatasource;
