@@ -157,6 +157,9 @@ export interface ColDef extends AbstractColDef {
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA?: RowNode, nodeB?: RowNode, isInverted?: boolean) => number;
 
+    /** Comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed. */
+    equals?: (valueA: any, valueB: any) => boolean;
+
     /** Comparator for ordering the pivot columns */
     pivotComparator?: (valueA: string, valueB: string) => number;
 

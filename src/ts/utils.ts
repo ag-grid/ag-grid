@@ -383,15 +383,6 @@ export class Utils {
         }
     }
 
-    // returns true if values are string, number or boolean, and both values are equal
-    static valuesSimpleAndSame(val1: any, val2: any): boolean {
-        if (typeof val1 === 'string' || typeof val1 === 'number' || typeof val1 === 'boolean') {
-            return val1 === val2;
-        } else {
-            return false;
-        }
-    }
-
     //adds all type of change listeners to an element, intended to be a text field
     static addChangeListener(element: HTMLElement, listener: EventListener) {
         element.addEventListener("changed", listener);

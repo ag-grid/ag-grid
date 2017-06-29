@@ -140,10 +140,7 @@ export class ValueService {
         // if no '.', then it's not a deep value
         let valuesAreSame: boolean;
         if (!isFieldContainsDots) {
-            valuesAreSame = _.valuesSimpleAndSame(data[field], newValue);
-            if (!valuesAreSame) {
-                data[field] = newValue;
-            }
+            data[field] = newValue;
         } else {
             // otherwise it is a deep value, so need to dig for it
             let fieldPieces = field.split('.');
@@ -151,10 +148,7 @@ export class ValueService {
             while (fieldPieces.length > 0 && currentObject) {
                 let fieldPiece = fieldPieces.shift();
                 if (fieldPieces.length === 0) {
-                    valuesAreSame = _.valuesSimpleAndSame(currentObject[fieldPiece], newValue);
-                    if (!valuesAreSame) {
-                        currentObject[fieldPiece] = newValue;
-                    }
+                    currentObject[fieldPiece] = newValue;
                 } else {
                     currentObject = currentObject[fieldPiece];
                 }

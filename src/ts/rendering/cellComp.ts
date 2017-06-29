@@ -271,15 +271,17 @@ export class CellComp extends Component {
     private addChangeListener(): void {
         let cellChangeListener = (event: any) => {
             if (event.column === this.column) {
-                this.refreshCell();
-                this.animateCellWithDataChanged();
+                this.refreshCell({optionallyFlash: true});
             }
         };
         this.addDestroyableEventListener(this.node, RowNode.EVENT_CELL_CHANGED, cellChangeListener);
     }
 
-    private animateCellWithDataChanged(): void {
-        if (this.gridOptionsWrapper.isEnableCellChangeFlash() || this.column.getColDef().enableCellChangeFlash) {
+    private animateCellWithDataChanged(alwaysFlash: boolean, optionallyFlash: boolean): void {
+        let flashEnabledForCell = this.gridOptionsWrapper.isEnableCellChangeFlash()
+            || this.column.getColDef().enableCellChangeFlash;
+        let flashCell = alwaysFlash || (optionallyFlash && flashEnabledForCell);
+        if (flashCell) {
             this.animateCell('data-changed');
         }
     }
@@ -789,7 +791,7 @@ export class CellComp extends Component {
 
         this.setInlineEditingClass();
 
-        this.refreshCell({dontSkipRefresh: true});
+        this.refreshCell({forceRefresh: true});
 
         this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STOPPED, this.createParamsWithValue());
     }
@@ -1067,11 +1069,35 @@ export class CellComp extends Component {
         return true;
     }
 
-    public refreshCell(params?: {animate?: boolean, newData?: boolean, dontSkipRefresh?: boolean}) {
+    private valuesAreEqual(val1: any, val2: any): boolean {
 
-        let newData = params ? params.newData === true : false;
-        let animate = params ? params.animate === true : false;
-        let dontSkipRefresh = params ? params.dontSkipRefresh === true : false;
+        // if the user provided an equals method, use that, otherwise do simple comparison
+        let colDef = this.column.getColDef();
+        let equalsMethod: (valueA: any, valueB: any) => boolean = colDef ? colDef.equals : null;
+
+        if (equalsMethod) {
+            return equalsMethod(val1, val2);
+        } else {
+            return val1 === val2;
+        }
+    }
+
+    // + stop editing {dontSkipRefresh: true}
+    // + event cellChanged {}
+    // + cellRenderer.params.refresh() {} -> method passes 'as is' to the cellRenderer, so params could be anything
+    // + rowComp: event dataChanged {animate: update, newData: !update}
+    // + rowComp: api refreshCells() {animate: true/false}
+    // + rowRenderer: api softRefreshView() {}
+    public refreshCell(params?: {optionallyFlash?: boolean, alwaysFlash?: boolean, newData?: boolean, forceRefresh?: boolean, volatile?: boolean}) {
+
+        let newData = params && params.newData;
+        let optionallyFlash = params && params.optionallyFlash;
+        let alwaysFlash = params && params.alwaysFlash;
+        let volatile = params && params.volatile;
+        let forceRefresh = params && params.forceRefresh;
+
+        // if only refreshing volatile cells, then skip the refresh if we are not volatile
+        if (volatile && !this.isVolatile()) { return; }
 
         let oldValue = this.value;
         this.value = this.getValue();
@@ -1079,11 +1105,9 @@ export class CellComp extends Component {
         // for simple values only (not pojo's), see if the value is the same, and if it is, skip the refresh.
         // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
         // if was before the edit.
-        // Niall Note - taking this out for now - it's effectively change detection. i think how the refresh is done
-        // needs to be overhauled and redone in a properly planned way.
-        let allowSkippingRefreshIfDataSame = !dontSkipRefresh && _.valuesSimpleAndSame(oldValue, this.value);
-        if (allowSkippingRefreshIfDataSame) {
-            // return;
+        let skipRefresh = !forceRefresh && this.valuesAreEqual(oldValue, this.value);
+        if (skipRefresh) {
+            return;
         }
 
         let cellRendererRefreshed: boolean;
@@ -1104,9 +1128,7 @@ export class CellComp extends Component {
             this.replaceCellContent();
         }
 
-        if (animate) {
-            this.animateCellWithDataChanged();
-        }
+        this.animateCellWithDataChanged(alwaysFlash, optionallyFlash);
 
         // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
         this.addClassesFromRules();

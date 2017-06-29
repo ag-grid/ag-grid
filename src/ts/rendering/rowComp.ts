@@ -342,7 +342,7 @@ export class RowComp extends BeanStub {
     }
 
     public stopEditing(cancel = false): void {
-        this.forEachRenderedCell( renderedCell => {
+        this.forEachCellComp(renderedCell => {
             renderedCell.stopEditing(cancel);
         });
         if (this.editingRow) {
@@ -363,7 +363,7 @@ export class RowComp extends BeanStub {
         // don't do it if already editing
         if (this.editingRow) { return; }
 
-        this.forEachRenderedCell( renderedCell => {
+        this.forEachCellComp(renderedCell => {
             let cellStartedEdit = renderedCell === sourceRenderedCell;
             if (cellStartedEdit) {
                 renderedCell.startEditingIfEnabled(keyPress, charPress, cellStartedEdit)
@@ -623,7 +623,7 @@ export class RowComp extends BeanStub {
         this.onTopChanged();
     }
 
-    public forEachRenderedCell(callback: (renderedCell: CellComp)=>void): void {
+    public forEachCellComp(callback: (renderedCell: CellComp)=>void): void {
         _.iterateObject(this.renderedCells, (key: any, renderedCell: CellComp)=> {
             if (renderedCell) {
                 callback(renderedCell);
@@ -635,9 +635,9 @@ export class RowComp extends BeanStub {
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells
-        this.forEachRenderedCell( cellComp =>
+        this.forEachCellComp(cellComp =>
             cellComp.refreshCell({
-                animate: event.update,
+                optionallyFlash: event.update,
                 newData: !event.update
             })
         );
@@ -782,7 +782,7 @@ export class RowComp extends BeanStub {
 
         this.destroyScope();
         this.destroyFullWidthComponent();
-        this.forEachRenderedCell( renderedCell => renderedCell.destroy() );
+        this.forEachCellComp(renderedCell => renderedCell.destroy() );
 
 
         if (animate) {
@@ -1094,20 +1094,6 @@ export class RowComp extends BeanStub {
 
     public getRowNode(): RowNode {
         return this.rowNode;
-    }
-
-    public refreshCells(cols: (string|ColDef|Column)[], animate: boolean): void {
-        if (!cols) {
-            return;
-        }
-        let columnsToRefresh = this.columnController.getGridColumns(cols);
-
-        this.forEachRenderedCell( renderedCell => {
-            let colForCel = renderedCell.getColumn();
-            if (columnsToRefresh.indexOf(colForCel)>=0) {
-                renderedCell.refreshCell({animate: animate});
-            }
-        });
     }
 
     private addClassesFromRowClassFunc(): void {

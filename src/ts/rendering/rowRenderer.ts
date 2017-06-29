@@ -25,6 +25,7 @@ import {RowContainerComponent} from "./rowContainerComponent";
 import {ColDef} from "../entities/colDef";
 import {BeanStub} from "../context/beanStub";
 import {PaginationProxy} from "../rowModels/paginationProxy";
+import {RefreshCellsParams} from "../gridApi";
 
 @Bean('rowRenderer')
 export class RowRenderer extends BeanStub {
@@ -51,9 +52,9 @@ export class RowRenderer extends BeanStub {
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
-    private renderedRows: {[key: string]: RowComp} = {};
-    private renderedTopFloatingRows: RowComp[] = [];
-    private renderedBottomFloatingRows: RowComp[] = [];
+    private rowCompsById: {[key: string]: RowComp} = {};
+    private floatingTopRowComps: RowComp[] = [];
+    private floatingBottomRowComps: RowComp[] = [];
 
     private rowContainers: RowContainerComponents;
 
@@ -84,9 +85,9 @@ export class RowRenderer extends BeanStub {
     public getAllCellsForColumn(column: Column): HTMLElement[] {
         let eCells: HTMLElement[] = [];
 
-        _.iterateObject(this.renderedRows, callback);
-        _.iterateObject(this.renderedBottomFloatingRows, callback);
-        _.iterateObject(this.renderedTopFloatingRows, callback);
+        _.iterateObject(this.rowCompsById, callback);
+        _.iterateObject(this.floatingBottomRowComps, callback);
+        _.iterateObject(this.floatingTopRowComps, callback);
 
         function callback(key: any, renderedRow: RowComp) {
             let eCell = renderedRow.getCellForCol(column);
@@ -98,16 +99,16 @@ export class RowRenderer extends BeanStub {
         return eCells;
     }
 
-    public refreshAllFloatingRows(): void {
+    public refreshFloatingRowComps(): void {
         this.refreshFloatingRows(
-            this.renderedTopFloatingRows,
+            this.floatingTopRowComps,
             this.floatingRowModel.getFloatingTopRowData(),
             this.rowContainers.floatingTopPinnedLeft,
             this.rowContainers.floatingTopPinnedRight,
             this.rowContainers.floatingTop,
             this.rowContainers.floatingTopFullWidth);
         this.refreshFloatingRows(
-            this.renderedBottomFloatingRows,
+            this.floatingBottomRowComps,
             this.floatingRowModel.getFloatingBottomRowData(),
             this.rowContainers.floatingBottomPinnedLeft,
             this.rowContainers.floatingBottomPinnedRight,
@@ -163,7 +164,7 @@ export class RowRenderer extends BeanStub {
     private getRenderedIndexesForRowNodes(rowNodes: RowNode[]): string[] {
         let result: any = [];
         if (_.missing(rowNodes)) { return result; }
-        _.iterateObject(this.renderedRows, (key: string, renderedRow: RowComp)=> {
+        _.iterateObject(this.rowCompsById, (key: string, renderedRow: RowComp)=> {
             let rowNode = renderedRow.getRowNode();
             if (rowNodes.indexOf(rowNode)>=0) {
                 result.push(key);
@@ -172,7 +173,7 @@ export class RowRenderer extends BeanStub {
         return result;
     }
 
-    public refreshRows(rowNodes: RowNode[]): void {
+    public redrawRows(rowNodes: RowNode[]): void {
         if (!rowNodes || rowNodes.length==0) {
             return;
         }
@@ -182,7 +183,7 @@ export class RowRenderer extends BeanStub {
         let indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
 
         // remove the rows
-        this.removeVirtualRows(indexesToRemove);
+        this.removeRowComps(indexesToRemove);
 
         // add draw them again
         this.refreshView({
@@ -239,9 +240,9 @@ export class RowRenderer extends BeanStub {
             this.gridPanel.scrollToTop();
         }
 
-        this.refreshAllVirtualRows(params.keepRenderedRows, params.animate);
+        this.refreshRowComps(params.keepRenderedRows, params.animate);
         if (!params.onlyBody){
-            this.refreshAllFloatingRows();
+            this.refreshFloatingRowComps();
         }
 
         this.restoreFocusedCell(focusedCell);
@@ -275,18 +276,6 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    public softRefreshView() {
-        let focusedCell = this.focusedCellController.getFocusCellToUseAfterRefresh();
-
-        this.forEachRenderedCell( renderedCell => {
-            if (renderedCell.isVolatile()) {
-                renderedCell.refreshCell();
-            }
-        });
-
-        this.restoreFocusedCell(focusedCell);
-    }
-
     public stopEditing(cancel: boolean = false) {
         this.forEachRenderedRow( (key: string, renderedRow: RowComp) => {
             renderedRow.stopEditing(cancel);
@@ -294,45 +283,105 @@ export class RowRenderer extends BeanStub {
     }
 
     public forEachRenderedCell(callback: (renderedCell: CellComp)=>void): void {
-        _.iterateObject(this.renderedRows, (key: any, renderedRow: RowComp)=> {
-            renderedRow.forEachRenderedCell(callback);
+        _.iterateObject(this.rowCompsById, (key: any, renderedRow: RowComp)=> {
+            renderedRow.forEachCellComp(callback);
         });
     }
 
     private forEachRenderedRow(callback: (key: string, renderedCell: RowComp)=>void): void {
-        _.iterateObject(this.renderedRows, callback);
-        _.iterateObject(this.renderedTopFloatingRows, callback);
-        _.iterateObject(this.renderedBottomFloatingRows, callback);
+        _.iterateObject(this.rowCompsById, callback);
+        _.iterateObject(this.floatingTopRowComps, callback);
+        _.iterateObject(this.floatingBottomRowComps, callback);
     }
 
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void {
-        let renderedRow = this.renderedRows[rowIndex];
+        let renderedRow = this.rowCompsById[rowIndex];
         renderedRow.addEventListener(eventName, callback);
     }
 
-    public refreshCells(rowNodes: RowNode[], cols: (string|ColDef|Column)[], animate = false): void {
-        if (!rowNodes || rowNodes.length==0) {
-            return;
+    public refreshCells(params: RefreshCellsParams): void {
+
+        let rowIdsMap: any;
+        if (_.exists(params.rowNodes)) {
+            rowIdsMap = {
+                top: {},
+                bottom: {},
+                normal: {}
+            };
+            params.rowNodes.forEach( rowNode => {
+                if (rowNode.floating===Constants.FLOATING_TOP) {
+                    rowIdsMap.top[rowNode.id] = true;
+                } else if (rowNode.floating===Constants.FLOATING_BOTTOM) {
+                    rowIdsMap.bottom[rowNode.id] = true;
+                } else {
+                    rowIdsMap.normal[rowNode.id] = true;
+                }
+            });
         }
-        // we only need to be worried about rendered rows, as this method is
-        // called to whats rendered. if the row isn't rendered, we don't care
-        _.iterateObject(this.renderedRows, (key: string, renderedRow: RowComp)=> {
-            let rowNode = renderedRow.getRowNode();
-            if (rowNodes.indexOf(rowNode)>=0) {
-                renderedRow.refreshCells(cols, animate);
+
+        let colIdsMap: any;
+        if (_.exists(params.columns)) {
+            colIdsMap = {};
+            params.columns.forEach( (colKey: string|Column) => {
+                let column: Column = this.columnController.getGridColumn(colKey);
+                colIdsMap[column.getId()] = true
+            });
+        }
+
+        let processRow = (rowComp: RowComp) => {
+            let rowNode: RowNode = rowComp.getRowNode();
+
+            let id = rowNode.id;
+            let floating = rowNode.floating;
+
+            // skip this row if it is missing from the provided list
+            if (_.exists(rowIdsMap)) {
+                if (floating===Constants.FLOATING_BOTTOM) {
+                    if (!rowIdsMap.bottom[id]) { return; }
+                } else if (floating===Constants.FLOATING_TOP) {
+                    if (!rowIdsMap.top[id]) { return; }
+                } else {
+                    if (!rowIdsMap.normal[id]) { return; }
+                }
             }
+
+            rowComp.forEachCellComp(cellComp => {
+
+                let colId: string = cellComp.getColumn().getId();
+                let excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
+                if (excludeColFromRefresh) { return; }
+
+                cellComp.refreshCell({
+                    forceRefresh: params.forceRefresh,
+                    alwaysFlash: params.flash,
+                    volatile: params.volatile,
+                    newData: false
+                });
+            });
+        };
+
+        _.iterateObject(this.rowCompsById, (key: string, rowComp: RowComp)=> {
+            processRow(rowComp);
         });
+
+        if (this.floatingTopRowComps) {
+            this.floatingTopRowComps.forEach(processRow);
+        }
+
+        if (this.floatingBottomRowComps) {
+            this.floatingBottomRowComps.forEach(processRow);
+        }
     }
 
     @PreDestroy
     public destroy() {
         super.destroy();
 
-        let rowsToRemove = Object.keys(this.renderedRows);
-        this.removeVirtualRows(rowsToRemove);
+        let rowsToRemove = Object.keys(this.rowCompsById);
+        this.removeRowComps(rowsToRemove);
     }
 
-    private refreshAllVirtualRows(keepRenderedRows: boolean, animate: boolean) {
+    private refreshRowComps(keepRenderedRows: boolean, animate: boolean) {
         let rowsToRemove: string[];
         let oldRowsByNodeId: {[key: string]: RowComp} = {};
 
@@ -346,47 +395,31 @@ export class RowRenderer extends BeanStub {
 
         if (keepRenderedRows) {
             rowsToRemove = [];
-            _.iterateObject(this.renderedRows, (index: string, renderedRow: RowComp)=> {
+            _.iterateObject(this.rowCompsById, (index: string, renderedRow: RowComp)=> {
                 let rowNode = renderedRow.getRowNode();
                 if (_.exists(rowNode.id)) {
                     oldRowsByNodeId[rowNode.id] = renderedRow;
-                    delete this.renderedRows[index];
+                    delete this.rowCompsById[index];
                 } else {
                     rowsToRemove.push(index);
                 }
             });
         } else {
-            rowsToRemove = Object.keys(this.renderedRows);
+            rowsToRemove = Object.keys(this.rowCompsById);
         }
 
-        this.removeVirtualRows(rowsToRemove);
+        this.removeRowComps(rowsToRemove);
         this.drawVirtualRows(oldRowsByNodeId, animate);
     }
 
-    // public - removes the group rows and then redraws them again
-    public refreshGroupRows() {
-        // find all the group rows
-        let rowsToRemove: any = [];
-        Object.keys(this.renderedRows).forEach( (index: any) => {
-            let renderedRow = this.renderedRows[index];
-            if (renderedRow.isGroup()) {
-                rowsToRemove.push(index);
-            }
-        });
-        // remove the rows
-        this.removeVirtualRows(rowsToRemove);
-        // and draw them back again
-        this.ensureRowsRendered();
-    }
-
     // takes array of row indexes
-    private removeVirtualRows(rowsToRemove: any[]) {
+    private removeRowComps(rowsToRemove: any[]) {
         // if no fromIndex then set to -1, which will refresh everything
         // let realFromIndex = -1;
         rowsToRemove.forEach( indexToRemove => {
-            let renderedRow = this.renderedRows[indexToRemove];
+            let renderedRow = this.rowCompsById[indexToRemove];
             renderedRow.destroy();
-            delete this.renderedRows[indexToRemove];
+            delete this.rowCompsById[indexToRemove];
         });
     }
 
@@ -475,7 +508,7 @@ export class RowRenderer extends BeanStub {
         // let timer = new Timer();
 
         // at the end, this array will contain the items we need to remove
-        let rowsToRemove = Object.keys(this.renderedRows);
+        let rowsToRemove = Object.keys(this.rowCompsById);
 
         // add in new rows
         let delayedCreateFunctions: Function[] = [];
@@ -491,7 +524,7 @@ export class RowRenderer extends BeanStub {
             if (node) {
                 let renderedRow = this.getOrCreateRenderedRow(node, oldRenderedRowsByNodeId, animate);
                 _.pushAll(delayedCreateFunctions, renderedRow.getAndClearNextVMTurnFunctions());
-                this.renderedRows[rowIndex] = renderedRow;
+                this.rowCompsById[rowIndex] = renderedRow;
             }
         }
         setTimeout( ()=> {
@@ -510,7 +543,7 @@ export class RowRenderer extends BeanStub {
         rowsToRemove = _.filter(rowsToRemove, indexStr => {
             let REMOVE_ROW : boolean = true;
             let KEEP_ROW : boolean = false;
-            let renderedRow = this.renderedRows[indexStr];
+            let renderedRow = this.rowCompsById[indexStr];
             let rowNode = renderedRow.getRowNode();
 
             let rowHasFocus = this.focusedCellController.isRowNodeFocused(rowNode);
@@ -529,7 +562,7 @@ export class RowRenderer extends BeanStub {
         });
 
         // at this point, everything in our 'rowsToRemove' is an old index that needs to be removed
-        this.removeVirtualRows(rowsToRemove);
+        this.removeRowComps(rowsToRemove);
 
         // and everything in our oldRenderedRowsByNodeId is an old row that is no longer used
         let delayedDestroyFunctions: Function[] = [];
@@ -592,7 +625,7 @@ export class RowRenderer extends BeanStub {
     }
 
     public getRenderedNodes() {
-        let renderedRows = this.renderedRows;
+        let renderedRows = this.rowCompsById;
         return Object.keys(renderedRows).map(key => {
             return renderedRows[key].getRowNode();
         });
@@ -677,13 +710,13 @@ export class RowRenderer extends BeanStub {
         let rowComponent: RowComp;
         switch (gridCell.floating) {
             case Constants.FLOATING_TOP:
-                rowComponent = this.renderedTopFloatingRows[gridCell.rowIndex];
+                rowComponent = this.floatingTopRowComps[gridCell.rowIndex];
                 break;
             case Constants.FLOATING_BOTTOM:
-                rowComponent = this.renderedBottomFloatingRows[gridCell.rowIndex];
+                rowComponent = this.floatingBottomRowComps[gridCell.rowIndex];
                 break;
             default:
-                rowComponent = this.renderedRows[gridCell.rowIndex];
+                rowComponent = this.rowCompsById[gridCell.rowIndex];
                 break;
         }
 

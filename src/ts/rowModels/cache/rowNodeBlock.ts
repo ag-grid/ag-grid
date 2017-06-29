@@ -211,7 +211,7 @@ export abstract class RowNodeBlock extends BeanStub {
             this.setDataAndId(rowNode, data, this.startRow + index);
         });
         if (rowNodesToRefresh.length > 0) {
-            this.beans.rowRenderer.refreshRows(rowNodesToRefresh);
+            this.beans.rowRenderer.redrawRows(rowNodesToRefresh);
         }
     }
 

@@ -47,6 +47,18 @@ export interface StartEditingCellParams {
     charPress?: string;
 }
 
+export interface RefreshCellsParams {
+    volatile?: boolean;
+    rowNodes?: RowNode[];
+    columns?: (string|Column)[];
+    forceRefresh?: boolean;
+    flash?: boolean;
+}
+
+export interface RedrawRowsParams {
+    rowNodes?: RowNode[];
+}
+
 @Bean('gridApi')
 export class GridApi {
 
@@ -201,37 +213,60 @@ export class GridApi {
         return this.gridPanel.getVerticalPixelRange();
     }
 
+    public refreshCells(params: RefreshCellsParams = {}): void {
+        if (Array.isArray(params)) {
+            // the old version of refreshCells() took an array of rowNodes for the first argument
+            console.warn('since ag-Grid v11.1, refreshCells() now takes parameters, please see the documentation.');
+            return;
+        }
+        this.rowRenderer.refreshCells(params);
+    }
+
+    public redrawRows(params: RedrawRowsParams = {}) {
+        if (params && params.rowNodes) {
+            this.rowRenderer.redrawRows(params.rowNodes);
+        } else {
+            this.rowRenderer.refreshView();
+        }
+    }
+
+    // *** deprecated
+    public refreshView() {
+        console.warn('ag-Grid: since v11.1, refreshView() is deprecated, please call redrawRows() instead');
+        this.redrawRows();
+    }
+
+    // *** deprecated
     public refreshRows(rowNodes: RowNode[]): void {
-        this.rowRenderer.refreshRows(rowNodes);
+        console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) instead');
+        this.refreshCells({rowNodes: rowNodes});
     }
 
-    public refreshCells(rowNodes: RowNode[], cols: (string|ColDef|Column)[], animate = false): void {
-        this.rowRenderer.refreshCells(rowNodes, cols, animate);
-    }
-
+    // *** deprecated
     public rowDataChanged(rows:any) {
         console.log('ag-Grid: rowDataChanged is deprecated, either call refreshView() to refresh everything, or call rowNode.setRowData(newData) to set value on a particular node')
-        this.refreshView();
+        this.redrawRows();
     }
 
-    public refreshView() {
-        this.rowRenderer.refreshView();
+    // *** deprecated
+    public softRefreshView() {
+        console.warn('ag-Grid: since v11.1, softRefreshView() is deprecated, call refreshCells(params) instead.');
+        this.refreshCells({volatile: true});
+    }
+
+    // *** deprecated
+    public refreshGroupRows() {
+        console.warn('ag-Grid: since v11.1, refreshGroupRows() is no longer supported, call refreshCells() instead. ' +
+            'Because refreshCells() now does dirty checking, it will only refresh cells that have changed, so it should ' +
+            'not be necessary to only refresh the group rows.');
+        this.refreshCells();
     }
 
     public setFunctionsReadOnly(readOnly: boolean) {
         this.gridOptionsWrapper.setProperty('functionsReadOnly', readOnly);
     }
 
-    public softRefreshView() {
-        this.rowRenderer.softRefreshView();
-    }
-
-    public refreshGroupRows() {
-        this.rowRenderer.refreshGroupRows();
-    }
-
     public refreshHeader() {
-        // need to review this - the refreshHeader should also refresh all icons in the header
         this.headerRenderer.refreshHeader();
     }
 
