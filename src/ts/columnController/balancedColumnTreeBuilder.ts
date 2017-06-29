@@ -146,7 +146,8 @@ export class BalancedColumnTreeBuilder {
         _.assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
 
         if(colDef.type) {
-            _.assign(colDefMerged, this.gridOptionsWrapper.getColumnTypes()[colDef.type]);
+            let typeNames = colDef.type.split(',');
+            typeNames.forEach((t) => _.assign(colDefMerged, this.gridOptionsWrapper.getColumnTypes()[t]));
         }
 
         _.assign(colDefMerged, colDef);
