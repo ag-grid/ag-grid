@@ -1152,7 +1152,7 @@ export class CellComp extends Component {
         }
     }
 
-    private addClassesFromRules() :void{
+    private addClassesFromRules(): void{
         this.stylingService.processCellClassRules(
             this.column.getColDef(),
             {

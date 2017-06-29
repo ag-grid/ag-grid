@@ -9,6 +9,10 @@ import {Utils as _} from "./utils";
 import {Events} from "./events";
 import {EventService} from "./eventService";
 import {GroupValueService} from "./groupValueService";
+import {IRowModel} from "./interfaces/iRowModel";
+import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
+import {Constants} from "./constants";
+import {RowRenderer} from "./rendering/rowRenderer";
 
 @Bean('valueService')
 export class ValueService {
@@ -19,7 +23,11 @@ export class ValueService {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('groupValueService') private groupValueService: GroupValueService;
 
+    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+
     private cellExpressions: boolean;
+    private inMemoryRowModel: InMemoryRowModel;
 
     private initialised = false;
 
@@ -27,6 +35,9 @@ export class ValueService {
     public init(): void {
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
         this.initialised = true;
+        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
+            this.inMemoryRowModel = <InMemoryRowModel> this.rowModel;
+        }
     }
 
     public getValue(column: Column, rowNode: RowNode, ignoreAggData = false): any {
@@ -134,6 +145,11 @@ export class ValueService {
             column.getColDef().onCellValueChanged(params);
         }
         this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, params);
+
+        if (this.inMemoryRowModel) {
+            this.inMemoryRowModel.doAggregate();
+        }
+        this.rowRenderer.refreshCells({flash: true});
     }
 
     private setValueUsingField(data: any, field: string, newValue: any, isFieldContainsDots: boolean): boolean {

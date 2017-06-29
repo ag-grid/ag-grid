@@ -758,6 +758,9 @@ export class GridApi {
         } else {
             console.error('ag-Grid: updateRowData() only works with InMemoryRowModel and InfiniteRowModel.');
         }
+
+        // do change detection for all present cells
+        this.rowRenderer.refreshCells({flash: true});
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh = false): void {
