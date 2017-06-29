@@ -69,6 +69,39 @@ include '../documentation-main/documentation_header.php';
         You might also ask, do we have a cool Virtual DOM like React does? The answer is no.
     </note>
 
+    <h3>Comparing Values</h3>
+
+    <p>
+        By default the grid will compare values by using triple equals, eg <i>"oldValue === newValue"</i>.
+        This will work most of the time for you, especially if your values are simple strings and numbers.
+        This may be a problem if the value is an object as object references will be used for comparison.
+        If the data has change, but the object reference is the same, then you will need to override
+        how the value's are compared.
+    </p>
+
+    <p>
+        If your code is using immutable objects, or the grid values are all simple strings and numbers,
+        then you will never need to provide your own custom equals method.
+    </p>
+
+    <p>
+        To provide custom comparison of objects, use the <code>colDef.equals(val1,val2)</code> method.
+        For example, the following code snippet provides custom comparison to a 'Name' column where the
+        name is stored in a complex object.
+    </p>
+
+    <pre><span class="codeComment">// column with custom equals method for change detection</span>
+colDef = {
+
+    <span class="codeComment">// method returns true if first and last names are equal</span>
+    equals: function(person1, person2) {
+        var firstNameEqual = person1.firstName === person2.firstName;
+        var lastNameEqual = person2.lastName === person2.lastName;
+        return firstNameEqual && lastNameEqual;
+    }
+    ...
+}</pre>
+
     <h2>Change Detection Initiation</h2>
 
     <p>

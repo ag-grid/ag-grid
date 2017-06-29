@@ -9,52 +9,89 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1">Change Detection</h1>
+    <h1 class="first-h1">Refresh</h1>
 
     <p>
-        The grid has built in change detection so when you change cells value, all dependent
-        cells will also change reflect the change. Dependent cells are cells that are one of
-        the following:
+        The grid has change detection. So as long as you are updating the data via the grid's API,
+        the values displayed should be the most recent up to date values.
+    </p>
+
+    <p>
+        However sometimes you may be updating the data outside of the grids control. When
+        you give data to the grid, the grid will not make a copy. Thus if you change the value
+        of the data outside of the grid, the grid will also be impacted by that data change.
+    </p>
+
+    <p>
+        To deal with the scenario where the row data is changed without the grid been aware,
+        the grid provides the following methods:
         <ul>
             <li>
-                Cells using <a href="../javascript-grid-value-getters/">valueGetter's</a>, where
-                they reference the changed cell.
+                <b>api.refreshCells(params)</b>: Gets the grid to refresh all cells. Change detection will
+                be used to refresh only cells who's display cell values are out of sync with the actual value.
+                If using a <a href="../javascript-grid-cell-rendering-components/">cellRenderer</a> with a refresh
+                method, the refresh method will get called.
             </li>
             <li>
-                Rows with results from <a href="../javascript-grid-aggregation/">Row aggregation</a>,
-                where they aggregate the cells value into the group level.
+                <b>api.redrawRows(params)</b>: Removes the rows from the DOM and draws them again from scratch.
+                The cells are created again from scratch. No change detection is done. No refreshing of cells
+                is done.
             </li>
         </ul>
     </p>
 
-    <p>
-        This section explains the grid's change detection.
-    </p>
+    <h2>Refresh Cells</h2>
 
     <p>
-        However sometimes the data inside your model will change and you just want to tell
-        the grid to update without changing the data. For example, suppose you set a bunch of
-        10 'car' records into the grid, with each car having 'make', 'model' and 'price' attributes.
-        The grid does not copy the records, rather it wraps each on in a rowNode object.
-        That means that if you make any changes to the 'car' record, the record inside the grid
-        will also be updated. So you might change the record in another part of your application,
-        and then require the grid to refresh it's cells.
+        To get the grid to refresh the cells, call <code>api.refreshCells()</code>. The interface is as follows:
     </p>
 
-    <note>
-        If you are using Angular or React to build your cells (eg using an Angular or React cellRenderer),
-        then you may be benefiting from binding that your framework provides.
-        If you are, then you might be wondering what all this refresh rubbish is all about and do you need it?
-        If your cells are keeping up to date with the help of your chosen framework, that is totally fine
-        if you are happy with it. This section explains how to refresh outside of the context of your framework.
-    </note>
+    <pre><span class="codeComment">// method for refreshing cells</span>
+function refreshCells(params: RefreshCellsParams = {}): void;
+
+<span class="codeComment">// params for refresh cells</span>
+export interface RefreshCellsParams {
+    rowNodes?: RowNode[]; <span class="codeComment">// specify rows, or all rows by default</span>
+    columns?: (string|Column)[]; <span class="codeComment">// specify columns, or all columns by default</span>
+    forceRefresh?: boolean; <span class="codeComment">// skips change detection, refresh everything</span>
+    volatile?: boolean; <span class="codeComment">// only volatile cells</span>
+}</pre>
+
+    <p>
+        Each parameter is optional. The simplest is to call with no parameters which will refresh
+        all cells using <a href="../javascript-grid-change-detection/">change detection</a> (change
+        detection means it will only refresh cells who's values have changed).
+    </p>
+
+    <h3>Example Refresh Cells</h3>
+
+    <p>
+        Below shows calling <code>api.refreshCells()</code>
+    </p>
+
+    <show-example example="exampleRefreshApi"></show-example>
+
+
+    <h1 style="background-color: #5bc0de">If you are reading this, Niall is in the middle of updating the docs below</h1>
+
+
+
+
+
+
+
+
+
+
+
+
 
     <h3 id="refresh-view">Full Grid Refresh</h3>
 
     <p>
         The easiest way to get the grid to refresh it's view is to call
         <code>api.refreshView()</code>, which will refresh everything. Refreshing the entire view works very fast
-        so this 'on method to refresh everything' may work for you every time you want to refresh just the
+        so this 'one method to refresh everything' may work for you every time you want to refresh just the
         smallest item.
     </p>
 
@@ -145,11 +182,6 @@ include '../documentation-main/documentation_header.php';
         recomputing the aggregates, you can call <i>api.refreshGroupRows()</i> - useful if you want to refresh
         for reasons other than the aggregates being recomputed.
     </p>
-
-
-
-    <h2>API</h2>
-    <show-example example="exampleRefreshApi"></show-example>
 
 </div>
 

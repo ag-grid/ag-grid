@@ -33,14 +33,11 @@ var gridOptions = {
     rowData: rowData,
     floatingTopRowData: topRowData,
     floatingBottomRowData: bottomRowData,
+    enableCellChangeFlash: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }
 };
-
-function isFlashCellsSelected() {
-    return document.querySelector('#flashCells').checked;
-}
 
 function isForceRefreshSelected() {
     return document.querySelector('#forceRefresh').checked;
@@ -49,7 +46,6 @@ function isForceRefreshSelected() {
 function scrambleAndRefreshAll() {
     scramble();
     var params = {
-        flash: isFlashCellsSelected(),
         forceRefresh: isForceRefreshSelected()
     };
     gridOptions.api.refreshCells(params);
@@ -61,7 +57,6 @@ function scrambleAndRefreshLeftToRight() {
     ['a','b','c','d','e','f'].forEach( function(col, index) {
         var millis = index * 100;
         var params = {
-            flash: isFlashCellsSelected(),
             forceRefresh: isForceRefreshSelected(),
             columns: [col]
         };
@@ -95,7 +90,6 @@ function scrambleAndRefreshTopToBottom() {
         var millis = frame++ * 100;
         var rowNodes = [rowNode]; // params needs an array
         var params = {
-            flash: isFlashCellsSelected(),
             forceRefresh: isForceRefreshSelected(),
             rowNodes: rowNodes
         };
