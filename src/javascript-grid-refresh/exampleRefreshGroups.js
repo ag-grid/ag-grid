@@ -7,9 +7,9 @@ var columnDefs = [
     {headerName: 'E', field: 'e', type: 'valueColumn'},
     {headerName: 'F', field: 'f', type: 'valueColumn'},
     {headerName: 'Total',
+        type: 'totalColumn',
         // we use getValue() instead of data.a so that it gets the aggregated values at the group level
-        valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d") + getValue("e") + getValue("f")',
-        editable: false}
+        valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d") + getValue("e") + getValue("f")'}
 ];
 
 var rowData = [];
@@ -28,12 +28,12 @@ for (var i = 1; i<=10; i++) {
 var gridOptions = {
     columnDefs: columnDefs,
     columnTypes: {
-        valueColumn: { editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)'}
+        valueColumn: { editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)', cellClass: 'number-cell', cellRenderer: 'animateShowChange'},
+        totalColumn: { cellRenderer: 'animateShowChange', cellClass: 'number-cell'}
     },
     rowData: rowData,
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
-    // enableCellChangeFlash: true,
     animateRows: true,
     enableSorting: true,
     onGridReady: function(params) {

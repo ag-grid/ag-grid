@@ -29,6 +29,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Breaking Changes</h2>
     <ul>
         <li>api.softRefresh() renamed to api.refreshVolatileCells()</li>
+        <li>cellRenderer.params.valueGetter() is now called cellRenderer.params.getValue()</li>
     </ul>
 
 

@@ -245,10 +245,13 @@ The parameters are identical regardless of which cellRenderer type you use and c
         <td>If a valueFormatter was provided, is the result of calling the formatter.</td>
     </tr>
     <tr>
-        <th>valueGetter</th>
-        <td>A function, that when called, gives you the value, calling the relevant valueGetter / expression
-            if necessary. This can be called at any time after rendering should the value change and you
-            find the refresh functionality provided by the grid is not enough.</td>
+        <th>getValue()</th>
+        <td>Gives the current value for the cell, calling the relevant valueGetter / expression
+            if necessary. This can be called at any time after rendering and will return the current value.</td>
+    </tr>
+    <tr>
+        <th>setValue(value)</th>
+        <td>Sets the value for the cell. If the value is different, will result in the cell getting refreshed.</td>
     </tr>
     <tr>
         <th>formatValue</th>
