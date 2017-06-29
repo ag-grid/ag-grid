@@ -50,7 +50,7 @@ include '../documentation-main/documentation_header.php';
 function refreshCells(params: RefreshCellsParams = {}): void;
 
 <span class="codeComment">// params for refresh cells</span>
-export interface RefreshCellsParams {
+interface RefreshCellsParams {
     rowNodes?: RowNode[]; <span class="codeComment">// specify rows, or all rows by default</span>
     columns?: (string|Column)[]; <span class="codeComment">// specify columns, or all columns by default</span>
     forceRefresh?: boolean; <span class="codeComment">// skips change detection, refresh everything</span>
@@ -63,102 +63,147 @@ export interface RefreshCellsParams {
         detection means it will only refresh cells who's values have changed).
     </p>
 
+    <h3>Volatile Cells</h3>
+
+    <p>
+        Most people will not use volatile cells - they were introduced into ag-Grid early before change detection
+        existed and was a way to do partial refreshes of the grid. If you find you don't have a use for volatile cells,
+        that's good and normal, just ignore them. However the feature is kept (at least for now) for backwards compatibility.
+    </p>
+
+    <p>
+        When you mark a column as volatile
+        then only those marked columns will get refreshed when you call
+        <code>api.refreshCells({volatile:true})</code>.
+    </p>
+
+    <p>
+        To mark a column as volatile, set the <code>colDef.volatile=true</code> attribute as follows:
+    </p>
+    <pre><span class="codeComment">// this column definition says the whole column is volatile</span>
+var colDef = {
+    volatile: true,
+    ...
+}</pre>
+
     <h3>Example Refresh Cells</h3>
 
     <p>
-        Below shows calling <code>api.refreshCells()</code>
+        Below shows calling <code>api.refreshCells()</code> with different scenarios using a mixture of the
+        <code>rowNodes</code>, <code>columns</code> and <code>forceRefresh</code> parameters. From the example, the
+        following can be noted:
     </p>
+
+    <ul>
+        <li>
+            The grid has <code>enableCellChangeFlash=true</code>, so cells that are refreshed will be flashed.
+        </li>
+        <li>
+            The grid has two floating rows at the top and two floating rows at the bottom. This is to demonstrate
+            that cell refreshing works for floating rows also.
+        </li>
+        <li>
+            The three buttons each make use of a <b>scramble</b> operation. The scramble operation selects
+            50% of the cells at random and assigns new values to them. This is done outside of the grid so the
+            grid has not been informed of the data changes. Each button then gets the grid to refresh in a
+            different way.
+        </li>
+        <li>
+            The <b>Scramble & Refresh All</b> button will scramble the data, then call
+            <code>api.refreshCells()</code>. You will notice that randomly half the cells will flash as
+            the change detection only update the cells who's underlying values have changed.
+        </li>
+        <li>
+            The <b>Scramble & Refresh Left to Right</b> button will scramble as before, then call
+            <code>api.refreshCells({columns})</code> 5 times, 100ms apart, once for each column. This will show the
+            grid refreshing one column at a time from left to right.
+        </li>
+        <li>
+            The <b>Scramble & Refresh Top to Bottom</b> button will scramble as before, then call
+            <code>api.refreshCells({rowNodes})</code> 20 times, 100ms apart, once for each row (including floating rows).
+            This will show the grid refreshing one row at a time from top to bottom.
+        </li>
+        <li>
+            The <b>Scramble & Refresh Volatile</b> button will scramble as before, then call
+            <code>api.refreshCells({volatile=true})</code> with volatile set to true. This will show the grid refreshing
+            the last three columns only as they are marked as volatile via <code>colDef.volatile=true</code>.
+        </li>
+        <li>
+            The checkbox <b>Force Refresh</b> sets how the above three refreshes work. If checked, all the cells
+            will get refreshed regardless of whether they have changes. In other words, change detection will not
+            but used as part of the refresh.
+        </li>
+    </ul>
 
     <show-example example="exampleRefreshApi"></show-example>
 
+    <note>
+        You may be wondering why would you want to force refresh, what is the point in refreshing a cell that
+        has no changes? The answer is to do with cells that don't show underlying data or depend on something other
+        than just the underlying data. One example is a cell that might contain action buttons (add, delete, send etc)
+        and you might want to disable the action buttons if the logged in user changes role (if roles are tied to the
+        functions), or if it's past 5pm and you don't want to allow such operations past a certain time. In this case
+        you may wish to update the cells even though the underlying data has not changed.
+    </note>
 
-    <h1 style="background-color: #5bc0de">If you are reading this, Niall is in the middle of updating the docs below</h1>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <h3 id="refresh-view">Full Grid Refresh</h3>
+    <h2>Redraw Rows</h2>
 
     <p>
-        The easiest way to get the grid to refresh it's view is to call
-        <code>api.refreshView()</code>, which will refresh everything. Refreshing the entire view works very fast
-        so this 'one method to refresh everything' may work for you every time you want to refresh just the
-        smallest item.
+        Redraw rows is a much heavier operation than refreshing cells. If refreshing cells meets your needs, then don't
+        use redraw rows. A row redraw will rip the row out of the DOM and draw it again from scratch.
     </p>
-
-    <h3 id="refresh-rows">Refresh Rows</h3>
 
     <p>
-        The method <code>api.refreshRows(rowNodes)</code> will refresh particular rows. In this instance,
-        the grid will rip the rows out of the dom and draw in new rows from scratch.
+        Use redraw row if you want to create the row again from scratch. This is useful when you have changed a property
+        that only gets used when the row is created for the first time such as:
+        <ul>
+            <li>
+                Whether the row is <a href="../javascript-grid-full-width-rows">fullWidth</a> or not.
+            </li>
+            <li>
+                The cellRenderer used for any cell (as this is specified once when the cell is created).
+            </li>
+            <li>
+                You want to specify different styles for the row via the callbacks <code>getRowStyle()</code>
+                or <code>getRowClass()</code>.
+            </li>
+        </ul>
     </p>
-
-    <h3 id="refresh-cells">Refresh Cells</h3>
 
     <p>
-        The method <code>api.refreshCells(rowNodes, colIds)</code> will refresh particular cells. In this
-        instance, all other cells on that row will stay intact.
+        To get the grid to redraw rows, call <code>api.redrawRows()</code>. The interface is as follows:
     </p>
 
-    <h3>Example - Simple Refresh</h3>
+    <pre><span class="codeComment">// method for redraw rows</span>
+function redrawRows(params: RedrawRowsParams = {})
+
+<span class="codeComment">// params for redraw rows</span>
+interface RedrawRowsParams {
+    rowNodes?: RowNode[]; <span class="codeComment">// the row nodes to redraw</span>
+}</pre>
+
+    <h3>Example Redraw Nodes</h3>
 
     <p>
-        The grid below shows the above three options in action. The grid's columns 'Make' and 'Model'
-        have cellRenderers that also display the timestamp the cell was rendered, so you can see when
-        the cell is rendered again. The example demonstrates the following:
+        Below shows calling <code>api.redrawRows()</code> with different to change the background color of the rows.
+        From the example, the following can be noted:
     </p>
+
     <ul>
-        <li><b>Refresh All</b>: All cells get refreshed.</li>
-        <li><b>Double Jillian</b>: Jillian's rows get completely refreshed.</li>
-        <li><b>Double Niall</b>: The 'Price' column only in Niall's rows get refreshed.</li>
+        <li>
+            The <b>Redraw All Rows</b> redraws all the rows using a different background color by calling
+            <code>api.redrawRows()</code> with no parameters.
+        </li>
+        <li>
+            The <b>Redraw Top Rows</b> redraws only the top half of the rows by calling <code>api.redrawRows({rowNodes})</code>.
+        </li>
+
     </ul>
 
-    <show-example example="example3"></show-example>
+    <show-example example="exampleRedrawRows"></show-example>
 
-    <h3 id="volatile-cells">Volatile Cells</h3>
 
-    <p>
-        In addition to the <i>api.refreshView()</i> call, there is also a similar <i>api.refreshVolatileCells()</i> call.
-        The volatile refresh differs in the following ways:
-    </p>
-    <ul>
-        <li>The rows are left intact, only the contents of the cells are redrawn.</li>
-        <li>Only cells marked as <i>volatile</i> are redrawn.</li>
-    </ul>
-    <p>
-        Cells are marked as volatile by setting the attribute on the column definition.
-    </p>
 
-    <p>
-        This can give a performance increase, however refreshing the entire grid works really fast anyway.
-        The real benefit of this is not destroying cells that the user may be interacting with for inputting
-        data. For example you could have a cell that the user is placing some text into which then other
-        cells are reflecting changes in, such as some formula that get re-run as the user is typing in text.
-    </p>
-
-    <h3 id="volatile-cells-example">Volatile Cells Example</h3>
-
-    <p>
-        The example below shows refreshing in action. The weekday columns are editable. As you edit the cells,
-        the numbers on the right has side change. The <i>volatile summary</i> change as the cells change, as
-        the columns are marked as <i>volatile</i> and the grid <i>onCellValueChanged()</i> function is calling
-        <i>api.refreshVolatileCells()</i>
-    </p>
-    <p>
-        Note that the class rules are reapplied as the total and value change, marking the value as bold and
-        red it if goes above the threshold.
-    </p>
-
-    <show-example example="example1"></show-example>
 
     <h3 id="cell-refresh-from-inside">Cell Refresh from Inside</h3>
 

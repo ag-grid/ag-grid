@@ -2,9 +2,9 @@ var columnDefs = [
     {headerName: 'A', field: 'a'},
     {headerName: 'B', field: 'b'},
     {headerName: 'C', field: 'c'},
-    {headerName: 'D', field: 'd'},
-    {headerName: 'E', field: 'e'},
-    {headerName: 'F', field: 'f'}
+    {headerName: 'D', field: 'd', volatile: true},
+    {headerName: 'E', field: 'e', volatile: true},
+    {headerName: 'F', field: 'f', volatile: true}
 ];
 
 // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
@@ -47,6 +47,15 @@ function scrambleAndRefreshAll() {
     scramble();
     var params = {
         forceRefresh: isForceRefreshSelected()
+    };
+    gridOptions.api.refreshCells(params);
+}
+
+function scrambleAndRefreshVolatile() {
+    scramble();
+    var params = {
+        forceRefresh: isForceRefreshSelected(),
+        volatile: true
     };
     gridOptions.api.refreshCells(params);
 }
