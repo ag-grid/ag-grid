@@ -9,11 +9,26 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="refresh">View Refresh</h2>
+    <h1 class="first-h1">Change Detection</h1>
 
     <p>
-        If you want to change the data in the grid, the best way to do it is use the grid's
-        <a href="../javascript-grid-data-update/">data update</a> functions.
+        The grid has built in change detection so when you change cells value, all dependent
+        cells will also change reflect the change. Dependent cells are cells that are one of
+        the following:
+        <ul>
+            <li>
+                Cells using <a href="../javascript-grid-value-getters/">valueGetter's</a>, where
+                they reference the changed cell.
+            </li>
+            <li>
+                Rows with results from <a href="../javascript-grid-aggregation/">Row aggregation</a>,
+                where they aggregate the cells value into the group level.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        This section explains the grid's change detection.
     </p>
 
     <p>
@@ -131,67 +146,10 @@ include '../documentation-main/documentation_header.php';
         for reasons other than the aggregates being recomputed.
     </p>
 
-    <h3 id="headers-footers-cell-refresh-example">Headers, Footers and Cell Refresh Example</h3>
 
-    <p>
-        The example below demonstrates the following features:
-    </p>
-
-    <ul>
-        <li>
-            <b>Cell Refresh:</b> As you hit + and - below, the containing cell updates the record and calls
-            <i>api.refreshCell()</i>. This gets the cell to redraw and have it's css rules reapplied - marking
-            the cell as red if the value goes above a threshold.
-        </li>
-        <li>
-            <b>Aggregate Refresh:</b> As the values change, the table is also recomputing the aggregates, which
-            in turn get redrawn.
-        </li>
-    </ul>
-
-    <show-example example="example2"></show-example>
-
-    <h3 id="flashing">Flashing Data Changes</h3>
-
-    <p>
-        If you want the grid to flash the cell when the data changes, set attribute
-        <code>colDef.enableCellChangeFlash=true</code>. In the example below, when you click
-        'Update Some Data', the data is changed in 20 random cells and the grid flashes the cells.
-    </p>
-
-    <note>
-        This is a simple and quick way to visually show to the user that the data has changed.
-        It is also possible to have more intelligent animations by putting animations into custom
-        cellRenderer's. Check out the grid provided
-        <a href="../javascript-grid-cell-rendering/#animate-renderer">animation cellRenderer's</a>
-        or look at implementing your own refresh in a
-        <a href="../javascript-grid-cell-rendering-components/">customer cellRenderer</a>.
-    </note>
-
-    <show-example example="exampleFlashingCells"></show-example>
-
-    <h4>How Flashing Works</h4>
-
-    <p>
-        Each time the call value is changed, the grid adds the CSS class <code>ag-cell-data-changed</code>
-        for 500ms, and then then CSS class <code>ag-cell-data-changed-animation</code> for 1,000ms.
-        The grid provide themes use this to apply a background color (for the first 500ms) and then a fade
-        out transition (for the remaining 1,000ms).
-    </p>
-
-    <p>
-        If you want to override how the flash presents itself (eg change the background color, or remove
-        the animation) then override the relevant CSS classes.
-    </p>
 
     <h2>API</h2>
     <show-example example="exampleRefreshApi"></show-example>
-
-    <h2>Value Getter</h2>
-    <show-example example="exampleRefreshValueGetter"></show-example>
-
-    <h2>Groups</h2>
-    <show-example example="exampleRefreshGroups"></show-example>
 
 </div>
 

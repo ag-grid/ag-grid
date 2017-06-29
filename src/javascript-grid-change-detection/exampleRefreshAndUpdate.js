@@ -1,5 +1,5 @@
 var columnDefs = [
-    {headerName: 'Group', field: 'group', rowGroup: true, hide: true},
+    {headerName: 'Group', field: 'group', rowGroup: true, editable: true},
     {headerName: 'A', field: 'a', type: 'valueColumn'},
     {headerName: 'B', field: 'b', type: 'valueColumn'},
     {headerName: 'C', field: 'c', type: 'valueColumn'},
@@ -28,7 +28,11 @@ for (var i = 1; i<=10; i++) {
 var gridOptions = {
     columnDefs: columnDefs,
     columnTypes: {
-        valueColumn: { editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)', cellClass: 'number-cell', cellRenderer: 'animateShowChange'},
+        valueColumn: {
+            editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)',
+            cellClass: 'number-cell', cellRenderer: 'animateShowChange',
+            filter: 'number'
+        },
         totalColumn: { cellRenderer: 'animateShowChange', cellClass: 'number-cell'}
     },
     rowData: rowData,
@@ -36,6 +40,10 @@ var gridOptions = {
     suppressAggFuncInHeader: true,
     animateRows: true,
     enableSorting: true,
+    onCellValueChanged: function(params) {
+        var changedData = [params.data];
+        params.api.updateRowData({update: changedData});
+    },
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }

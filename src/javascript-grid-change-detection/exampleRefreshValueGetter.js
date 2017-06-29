@@ -27,7 +27,7 @@ for (var i = 1; i<=20; i++) {
 
 var gridOptions = {
     columnTypes: {
-        valueColumn: { editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)'}
+        valueColumn: { editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)', filter: 'number'}
     },
     columnDefs: columnDefs,
     rowData: rowData,

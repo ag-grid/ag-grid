@@ -82,7 +82,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
         That means, if you call <i>api.refreshInMemoryRowModel('filter')</i>, it will
         also execute pivot, aggregate, sort and map.
-   </note>
+    </note>
 
     <h3>Updating RowNodes Data Example</h3>
 
@@ -109,7 +109,7 @@ include '../documentation-main/documentation_header.php';
     </show-complex-example>
 
 
-    <h2>Bulk Updating</h2>
+    <h2 id="bulk-updating">Bulk Updating</h2>
 
     <p>
         If you want to update more than one row at a time, then you have the following options:
@@ -442,6 +442,39 @@ interface RowDataTransaction {
     </p>
 
     <show-example example="exampleComplexImmutableStore"></show-example>
+
+    <h2 id="flashing">Flashing Data Changes</h2>
+
+    <p>
+        If you want the grid to flash the cell when the data changes, set attribute
+        <code>colDef.enableCellChangeFlash=true</code>. In the example below, when you click
+        'Update Some Data', the data is changed in 20 random cells and the grid flashes the cells.
+    </p>
+
+    <note>
+        This is a simple and quick way to visually show to the user that the data has changed.
+        It is also possible to have more intelligent animations by putting animations into custom
+        cellRenderer's. Check out the grid provided
+        <a href="../javascript-grid-cell-rendering/#animate-renderer">animation cellRenderer's</a>
+        or look at implementing your own refresh in a
+        <a href="../javascript-grid-cell-rendering-components/">customer cellRenderer</a>.
+    </note>
+
+    <show-example example="exampleFlashingCells"></show-example>
+
+    <h3>How Flashing Works</h3>
+
+    <p>
+        Each time the call value is changed, the grid adds the CSS class <code>ag-cell-data-changed</code>
+        for 500ms, and then then CSS class <code>ag-cell-data-changed-animation</code> for 1,000ms.
+        The grid provide themes use this to apply a background color (for the first 500ms) and then a fade
+        out transition (for the remaining 1,000ms).
+    </p>
+
+    <p>
+        If you want to override how the flash presents itself (eg change the background color, or remove
+        the animation) then override the relevant CSS classes.
+    </p>
 
 </div>
 
