@@ -5,8 +5,13 @@ import {
     Autowired,
     PostConstruct,
     GridOptionsWrapper,
-    ICellRendererComp
+    ICellRendererComp,
+    SvgFactory,
+    _,
+    Column
 } from "ag-grid/main";
+
+let svgFactory = SvgFactory.getInstance();
 
 export class SetFilterListItem extends Component {
 
@@ -17,36 +22,65 @@ export class SetFilterListItem extends Component {
 
     private static TEMPLATE =
         '<label class="ag-set-filter-item">'+
-        '<input type="checkbox" class="ag-filter-checkbox"/>'+
+        '<div class="ag-filter-checkbox"></div>'+
         '<span class="ag-filter-value"></span>'+
         '</label>';
 
-    private eCheckbox: HTMLInputElement;
+    private eCheckbox: HTMLElement;
+    private selected: boolean = true;
 
     private value: any;
+    private column: Column;
     private cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
 
-    constructor(value: any, cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string) {
+    private eCheckedIcon: HTMLElement;
+    private eUncheckedIcon: HTMLElement;
+
+    constructor(value: any, cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string, column: Column) {
         super(SetFilterListItem.TEMPLATE);
         this.value = value;
         this.cellRenderer = cellRenderer;
+        this.column = column;
     }
 
     @PostConstruct
     private init(): void {
+        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column, svgFactory.createCheckboxCheckedIcon);
+        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column, svgFactory.createCheckboxUncheckedIcon);
+
+        this.eCheckbox = this.queryForHtmlElement(".ag-filter-checkbox");
+
+        this.updateCheckboxIcon();
         this.render();
 
-        this.eCheckbox = this.queryForHtmlInputElement("input");
 
-        this.addDestroyableEventListener(this.eCheckbox, 'click', ()=> this.dispatchEvent(SetFilterListItem.EVENT_SELECTED) );
+        this.addDestroyableEventListener(this.eCheckbox, 'click', () => {
+            this.selected = !this.selected;
+            return this.dispatchEvent(SetFilterListItem.EVENT_SELECTED);
+        });
     }
 
     public isSelected(): boolean {
-        return this.eCheckbox.checked;
+        return this.selected;
     }
 
     public setSelected(selected: boolean): void {
-        this.eCheckbox.checked = selected;
+        this.selected = selected;
+        this.updateCheckboxIcon();
+    }
+
+    private updateCheckboxIcon (){
+        if (this.eCheckbox.children){
+            for (let i=0; i<this.eCheckbox.children.length; i++){
+                this.eCheckbox.removeChild(this.eCheckbox.children.item(i));
+            }
+        }
+
+        if (this.isSelected()){
+            this.eCheckbox.appendChild(this.eCheckedIcon);
+        }else{
+            this.eCheckbox.appendChild(this.eUncheckedIcon);
+        }
     }
 
     public render(): void {
