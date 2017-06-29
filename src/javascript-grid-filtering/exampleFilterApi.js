@@ -91,49 +91,63 @@ function printCountryModel() {
 
 function ageBelow25() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
-    ageFilterComponent.setType('lessThan');
-    ageFilterComponent.setFilter(25);
+    ageFilterComponent.setModel({
+        type: 'lessThan',
+        filter: 25,
+        filterTo: null
+    });
     ageFilterComponent.onFilterChanged();
 }
 
 function ageAbove30() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
-    ageFilterComponent.setType('greaterThan');
-    ageFilterComponent.setFilter(30);
+    ageFilterComponent.setModel({
+        type: 'greaterThan',
+        filter: 30,
+        filterTo: null
+    });
     ageFilterComponent.onFilterChanged();
 }
 
 function ageBetween25And30() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
-    ageFilterComponent.setType('inRange');
-    ageFilterComponent.setFilter(25);
-    ageFilterComponent.setFilterTo(30);
+    ageFilterComponent.setModel({
+        type: 'inRange',
+        filter: 25,
+        filterTo: 30
+    });
     ageFilterComponent.onFilterChanged();
 }
 
 function clearAgeFilter() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
-    ageFilterComponent.setFilter(null);
+    ageFilterComponent.setModel(null);
     ageFilterComponent.onFilterChanged();
 }
 
 function after2010(){
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
-    dateFilterComponent.setFilterType('greaterThan');
-    dateFilterComponent.setDateFrom('2010-01-01');
+    dateFilterComponent.setModel({
+        type: 'greaterThan',
+        dateFrom: '2010-01-01',
+        dateTo: null
+    });
     dateFilterComponent.onFilterChanged();
 }
 
 function before2012(){
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
-    dateFilterComponent.setFilterType('lessThan');
-    dateFilterComponent.setDateFrom('2012-01-01');
+    dateFilterComponent.setModel({
+        type: 'lessThan',
+        dateFrom: '2012-01-01',
+        dateTo: null
+    });
     dateFilterComponent.onFilterChanged();
 }
 
 function clearDateFilter(){
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
-    dateFilterComponent.setDateFrom(null);
+    dateFilterComponent.setModel(null);
     dateFilterComponent.onFilterChanged();
 }
 
