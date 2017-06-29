@@ -271,19 +271,10 @@ export class CellComp extends Component {
     private addChangeListener(): void {
         let cellChangeListener = (event: any) => {
             if (event.column === this.column) {
-                this.refreshCell({optionallyFlash: true});
+                this.refreshCell({});
             }
         };
         this.addDestroyableEventListener(this.node, RowNode.EVENT_CELL_CHANGED, cellChangeListener);
-    }
-
-    private animateCellWithDataChanged(alwaysFlash: boolean, optionallyFlash: boolean): void {
-        let flashEnabledForCell = this.gridOptionsWrapper.isEnableCellChangeFlash()
-            || this.column.getColDef().enableCellChangeFlash;
-        let flashCell = alwaysFlash || (optionallyFlash && flashEnabledForCell);
-        if (flashCell) {
-            this.animateCell('data-changed');
-        }
     }
 
     private animateCellWithHighlight(): void {
@@ -752,8 +743,6 @@ export class CellComp extends Component {
             return;
         }
 
-        this.editingCell = false;
-
         if (!cancel) {
             // also have another option here to cancel after editing, so for example user could have a popup editor and
             // it is closed by user clicking outside the editor. then the editor will close automatically (with false
@@ -765,6 +754,12 @@ export class CellComp extends Component {
                 this.value = this.getValue();
             }
         }
+
+        // it is important we set this after setValue() above, as otherwise the cell will flash
+        // when editing stops. the 'refresh' method checks editing, and doesn't refresh editing cells.
+        // thus it will skip the refresh on this cell until the end of this method where we call
+        // refresh directly and we suppress the flash.
+        this.editingCell = false;
 
         if (this.cellEditor.destroy) {
             this.cellEditor.destroy();
@@ -791,7 +786,10 @@ export class CellComp extends Component {
 
         this.setInlineEditingClass();
 
-        this.refreshCell({forceRefresh: true});
+        // we suppress the flash, as it is not correct to flash the cell the user has finished editing,
+        // the user doesn't need to flash as they were the one who did the edit, the flash is pointless
+        // (as the flash is meant to draw the user to a change that they didn't manually do themselves).
+        this.refreshCell({forceRefresh: true, suppressFlash: true});
 
         this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STOPPED, this.createParamsWithValue());
     }
@@ -1088,11 +1086,12 @@ export class CellComp extends Component {
     // + rowComp: event dataChanged {animate: update, newData: !update}
     // + rowComp: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
-    public refreshCell(params?: {optionallyFlash?: boolean, alwaysFlash?: boolean, newData?: boolean, forceRefresh?: boolean, volatile?: boolean}) {
+    public refreshCell(params?: {suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean, volatile?: boolean}) {
+
+        if (this.editingCell) { return; }
 
         let newData = params && params.newData;
-        let optionallyFlash = params && params.optionallyFlash;
-        let alwaysFlash = params && params.alwaysFlash;
+        let suppressFlash = params && params.suppressFlash;
         let volatile = params && params.volatile;
         let forceRefresh = params && params.forceRefresh;
 
@@ -1128,7 +1127,9 @@ export class CellComp extends Component {
             this.replaceCellContent();
         }
 
-        this.animateCellWithDataChanged(alwaysFlash, optionallyFlash);
+        if (!suppressFlash && this.gridOptionsWrapper.isEnableCellChangeFlash()) {
+            this.animateCell('data-changed');
+        }
 
         // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
         this.addClassesFromRules();
@@ -1231,7 +1232,8 @@ export class CellComp extends Component {
         let params = <ICellRendererParams> {
             value: this.value,
             valueFormatted: valueFormatted,
-            valueGetter: this.getValue,
+            getValue: this.getValue.bind(this),
+            setValue: (value: any) => { this.valueService.setValue(this.node, this.column, value) },
             formatValue: this.formatValue.bind(this),
             data: this.node.data,
             node: this.node,

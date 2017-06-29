@@ -216,6 +216,7 @@ export class GridOptionsWrapper {
     public isFunctionsPassive() { return isTrue(this.gridOptions.functionsPassive); }
     public isSuppressRowHoverClass() { return isTrue(this.gridOptions.suppressRowHoverClass); }
     public isSuppressTabbing() { return isTrue(this.gridOptions.suppressTabbing); }
+    public isSuppressChangeDetection() { return isTrue(this.gridOptions.suppressChangeDetection); }
 
     public getQuickFilterText(): string { return this.gridOptions.quickFilterText; }
     public isCacheQuickFilter() { return isTrue(this.gridOptions.cacheQuickFilter); }

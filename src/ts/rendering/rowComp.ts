@@ -637,7 +637,7 @@ export class RowComp extends BeanStub {
         // we will want to completely replace the cells
         this.forEachCellComp(cellComp =>
             cellComp.refreshCell({
-                optionallyFlash: event.update,
+                suppressFlash: !event.update,
                 newData: !event.update
             })
         );

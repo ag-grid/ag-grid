@@ -52,7 +52,6 @@ export interface RefreshCellsParams {
     rowNodes?: RowNode[];
     columns?: (string|Column)[];
     forceRefresh?: boolean;
-    flash?: boolean;
 }
 
 export interface RedrawRowsParams {
@@ -760,7 +759,9 @@ export class GridApi {
         }
 
         // do change detection for all present cells
-        this.rowRenderer.refreshCells({flash: true});
+        if (!this.gridOptionsWrapper.isSuppressChangeDetection()) {
+            this.rowRenderer.refreshCells();
+        }
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh = false): void {

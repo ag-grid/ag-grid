@@ -102,6 +102,7 @@ export interface GridOptions {
     maxBlocksInCache?: number;
     purgeClosedRowNodes?: boolean;
     domLayout?: string;
+    suppressChangeDetection?: boolean;
 
     cacheOverflowSize?: number;
     infiniteInitialRowCount?: number;

@@ -299,7 +299,7 @@ export class RowRenderer extends BeanStub {
         renderedRow.addEventListener(eventName, callback);
     }
 
-    public refreshCells(params: RefreshCellsParams): void {
+    public refreshCells(params: RefreshCellsParams = {}): void {
 
         let rowIdsMap: any;
         if (_.exists(params.rowNodes)) {
@@ -353,7 +353,6 @@ export class RowRenderer extends BeanStub {
 
                 cellComp.refreshCell({
                     forceRefresh: params.forceRefresh,
-                    alwaysFlash: params.flash,
                     volatile: params.volatile,
                     newData: false
                 });

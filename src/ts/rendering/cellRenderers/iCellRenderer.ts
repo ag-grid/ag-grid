@@ -8,7 +8,8 @@ import {ColumnApi} from "../../columnController/columnController";
 export interface ICellRendererParams {
     value: any,
     valueFormatted: any,
-    valueGetter: ()=>any,
+    getValue: ()=> any,
+    setValue: (value: any) => void,
     formatValue: (value: any) => any,
     data: any,
     node: RowNode,

@@ -146,10 +146,19 @@ export class ValueService {
         }
         this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, params);
 
+        this.doChangeDetection();
+    }
+
+    private doChangeDetection(): void {
+        if (this.gridOptionsWrapper.isSuppressChangeDetection()) { return; }
+
+        // step 1 of change detection is to update the aggregated values
         if (this.inMemoryRowModel) {
             this.inMemoryRowModel.doAggregate();
         }
-        this.rowRenderer.refreshCells({flash: true});
+
+        // step 2 of change detection is to refresh the cells
+        this.rowRenderer.refreshCells();
     }
 
     private setValueUsingField(data: any, field: string, newValue: any, isFieldContainsDots: boolean): boolean {
