@@ -1,0 +1,54 @@
+<html>
+<head>
+    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="../dist/ag-grid/ag-grid.js?ignore=notused48"></script>
+    <script src="exampleRefreshApi.js"></script>
+</head>
+
+<style>
+    .ag-dark .ag-floating-top {
+        background-color: black;
+    }
+    .ag-dark .ag-floating-top .ag-row {
+        background-color: black;
+    }
+    .ag-dark .ag-floating-bottom {
+        background-color: black;
+    }
+    .ag-dark .ag-floating-bottom .ag-row {
+        background-color: black;
+    }
+</style>
+
+<body>
+
+    <div style="height: 100%; padding-top: 20px; box-sizing: border-box;">
+        <div id="myGrid" style="height: 100%;" class="ag-dark"></div>
+    </div>
+    <div style="position: absolute; padding-top: 4px; padding-left: 8px; top: 0px; left: 0px;">
+
+        <button onclick="scrambleAndRefreshAll()">Scramble & Refresh All</button>
+
+        <button onclick="scrambleAndRefreshLeftToRight()">Scramble & Refresh Left to Right</button>
+
+        <button onclick="scrambleAndRefreshTopToBottom()">Scramble & Refresh Top to Bottom</button>
+
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        &nbsp;
+
+        <label>
+            <input id="flashCells" type="checkbox" checked/>
+            Flash Cells
+        </label>
+        <label>
+            <input id="forceRefresh" type="checkbox"/>
+            Force Refresh
+        </label>
+
+    </div>
+
+</body>
+</html>

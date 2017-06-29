@@ -1,6 +1,6 @@
     var columnDefs = [
         {headerName: "Person", field: 'name', width: 400,
-            cellStyle:  {'background-color': 'rgba(255, 255, 180, 0.5)'} // light yellow background
+            cellClass: 'person-section'
         },
         {
             headerName: 'Weekly Editable Values',
@@ -18,15 +18,12 @@
                 {headerName: "Total",
                     valueGetter: "data.mon + data.tue + data.wed + data.thur + data.fri",
                     volatile: true,
-                    cellStyle:  {'background-color': 'rgba(180, 255, 255, 0.5)'}, // light blue background
-                    cellClassRules: {
-                        'bold-and-red': 'x>20'
-                    }
+                    cellClass: 'volatile-section'
                 },
                 {headerName: "Avg",
                     valueGetter: "(data.mon + data.tue + data.wed + data.thur + data.fri) / 5",
                     volatile: true,
-                    cellStyle:  {'background-color': 'rgba(180, 255, 255, 0.5)'} // light blue background
+                    cellClass: 'volatile-section'
                 }
             ]
         },
@@ -35,14 +32,11 @@
             children: [
                 {headerName: "Total",
                     valueGetter: "data.mon + data.tue + data.wed + data.thur + data.fri",
-                    cellStyle:  {'background-color': 'rgba(255, 180, 255, 0.5)'}, // light red background
-                    cellClassRules: {
-                        'bold-and-red': 'x>20'
-                    }
+                    cellClass: 'hard-section'
                 },
                 {headerName: "Avg",
                     valueGetter: "(data.mon + data.tue + data.wed + data.thur + data.fri) / 5",
-                    cellStyle:  {'background-color': 'rgba(255, 180, 255, 0.5)'} // light red background
+                    cellClass: 'hard-section'
                 }
             ]
         }
@@ -76,24 +70,19 @@
         }
     }
 
-    function cellValueChangedFunction() {
-        // after a value changes, get the volatile cells to update
-        gridOptions.api.softRefreshView();
-    }
-
     var gridOptions = {
         columnDefs: columnDefs,
         rowData: data,
-        rowSelection: 'single',
-        enableSorting: true,
-        onCellValueChanged: cellValueChangedFunction,
+        onCellValueChanged: function( ){
+            gridOptions.api.refreshCells({volatile: true, flash: true});
+        },
         onGridReady: function(event) {
             event.api.sizeColumnsToFit();
         }
     };
 
-    function onHardRefresh() {
-        gridOptions.api.refreshView();
+    function onRefreshAllCells() {
+        gridOptions.api.refreshCells({flash: true});
     }
 
     // setup the grid after the page has finished loading

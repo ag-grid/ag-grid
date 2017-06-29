@@ -159,7 +159,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>volatile</th>
-            <td>If true, this cell gets refreshed when api.softRefreshView() gets called.</td>
+            <td>If true, this cell gets refreshed when api.refreshVolatileCells() gets called.</td>
         </tr>
         <tr>
             <th>cellRenderer<br/>cellRendererFramework</th>

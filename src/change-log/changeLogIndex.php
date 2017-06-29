@@ -26,6 +26,12 @@ include '../documentation-main/documentation_header.php';
             the sort numbers were not getting displayed beside the relavent column.</li>
     </ul>
 
+    <h2>Breaking Changes</h2>
+    <ul>
+        <li>api.softRefresh() renamed to api.refreshVolatileCells()</li>
+    </ul>
+
+
     <h2>Version 11.0.x</h2>
     <h3>Version 11.0.0 [26-JUN-2017]</h3>
 

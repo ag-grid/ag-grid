@@ -699,7 +699,7 @@ function onThemeChanged(newTheme) {
         gridOptions.icons.checkboxIndeterminate = undefined;
     }
     gridOptions.api.resetRowHeights();
-    gridOptions.api.refreshRows();
+    gridOptions.api.redrawRows();
 }
 
 var filterCount = 0;

@@ -174,7 +174,7 @@ MyCellRenderer.prototype.destroy = function() {
         Calling <i>api.refreshCells(rowNodes, colIds)</i> to inform grid data has changed (see <a href="../javascript-grid-refresh/">Refresh</a>).
     </li>
     <li>
-        Calling <i>api.softRefreshView()</i> to inform grid data has changed (see <a href="../javascript-grid-refresh/">Refresh</a>).
+        Calling <i>api.refreshVolatileCells()</i> to inform grid data has changed (see <a href="../javascript-grid-refresh/">Refresh</a>).
     </li>
 </ul>
 If any of the above occur, the <i>refresh()</i> method will be called if it is provided. If not,

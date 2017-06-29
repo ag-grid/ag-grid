@@ -75,8 +75,8 @@ include '../documentation-main/documentation_header.php';
     <h3 id="volatile-cells">Volatile Cells</h3>
 
     <p>
-        In addition to the <i>api.refreshView()</i> call, there is also a similar <i>api.softRefreshView()</i> call.
-        The soft refresh differs in the following ways:
+        In addition to the <i>api.refreshView()</i> call, there is also a similar <i>api.refreshVolatileCells()</i> call.
+        The volatile refresh differs in the following ways:
     </p>
     <ul>
         <li>The rows are left intact, only the contents of the cells are redrawn.</li>
@@ -98,7 +98,8 @@ include '../documentation-main/documentation_header.php';
     <p>
         The example below shows refreshing in action. The weekday columns are editable. As you edit the cells,
         the numbers on the right has side change. The <i>volatile summary</i> change as the cells change, as
-        the columns are marked as <i>volatile</i> and the grid <i>onCellValueChanged()</i> function is calling <i>api.softRefresh()</i>
+        the columns are marked as <i>volatile</i> and the grid <i>onCellValueChanged()</i> function is calling
+        <i>api.refreshVolatileCells()</i>
     </p>
     <p>
         Note that the class rules are reapplied as the total and value change, marking the value as bold and
@@ -182,6 +183,15 @@ include '../documentation-main/documentation_header.php';
         If you want to override how the flash presents itself (eg change the background color, or remove
         the animation) then override the relevant CSS classes.
     </p>
+
+    <h2>API</h2>
+    <show-example example="exampleRefreshApi"></show-example>
+
+    <h2>Value Getter</h2>
+    <show-example example="exampleRefreshValueGetter"></show-example>
+
+    <h2>Groups</h2>
+    <show-example example="exampleRefreshGroups"></show-example>
 
 </div>
 

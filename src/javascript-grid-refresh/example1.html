@@ -10,11 +10,20 @@
         color: darkred;
         font-weight: bold;
     }
+    .volatile-section {
+        background-color: rgba(180, 255, 255, 0.5); /* light blue */
+    }
+    .hard-section {
+        background-color: rgba(255, 180, 255, 0.5); /* light purple */
+    }
+    .person-section {
+        background-color: rgba(255, 255, 180, 0.5); /* light yellow */
+    }
 </style>
 
 <body>
     <div style="height: 6%;">
-        Click this button to refresh the Hard Summary >> <button onclick="onHardRefresh()">Hard Refresh</button>
+        <button onclick="onRefreshAllCells()">Refresh Hard Summary</button>
     </div>
     <div style="height: 94%;" id="myGrid" class="ag-fresh"></div>
 </body>

@@ -4,7 +4,7 @@ var columnDefs = [
     {headerName: 'Editable C', field: 'c', editable: true, valueParser: numberValueParser},
     {headerName: 'API D', field: 'd', valueParser: numberValueParser, cellRenderer: 'animateShowChange'},
     {headerName: 'API E', field: 'e', valueParser: numberValueParser, cellRenderer: 'animateShowChange'},
-    // these columns use value getters. volatile=true means the cells will be refreshed when we call softRefreshView
+    // these columns use value getters. volatile=true means the cells will be refreshed when we call refreshVolatileCells
     {headerName: 'Total', valueGetter: 'data.a + data.b + data.c + data.d + data.e', volatile: true, cellRenderer: 'animateShowChange'},
     {headerName: 'Average', valueGetter: '(data.a + data.b + data.c + data.d + data.e) / 5', volatile: true, cellRenderer: 'animateSlide'}
 ];
@@ -47,7 +47,7 @@ var gridOptions = {
     enableColResize: true,
     // this bit is important - it gets the grid to refresh every time there is a change
     onCellValueChanged: function () {
-        gridOptions.api.softRefreshView();
+        gridOptions.api.refreshVolatileCells();
     }
 };
 

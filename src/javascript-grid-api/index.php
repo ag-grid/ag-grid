@@ -229,9 +229,9 @@ include '../documentation-main/documentation_header.php';
             <td>Rip out and re-insert all visible rows. Handy as a blanket 'redraw all' if changes have been made to the row data.</td>
         </tr>
         <tr>
-            <th>softRefreshView()</th>
-            <td>Leave the rows intact. Each cell that has been marked as volatile (via colDef attribute) will be redrawn. Any cells that
-                are not marked as volatile will be left alone, hence keeping any context or state that they have.</td>
+            <th>refreshVolatileCells()</th>
+            <td>Leave the rows intact. Each cell that has been marked as volatile (via colDef attribute) will be refreshed.
+                Any cells that are not marked as volatile will be left alone.</td>
         </tr>
         <tr>
             <th>refreshRows(rowNodes)</th>
