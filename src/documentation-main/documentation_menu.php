@@ -135,7 +135,7 @@
     <?php
     menuItem(0, 'Interfacing Overview', 'Overview', 'javascript-grid-interfacing-overview/');
     menuItem(0, 'Properties', 'Properties', 'javascript-grid-properties/');
-    menuItem(0, 'columnDefs', 'Columns', 'javascript-grid-column-definitions/');
+    menuItem(0, 'Column Properties', 'Columns', 'javascript-grid-column-properties/');
     menuItem(0, 'Events', 'Events', 'javascript-grid-events/');
     menuItem(0, 'Callbacks', 'Callbacks', 'javascript-grid-callbacks/');
     menuItem(0, 'Grid API', 'Grid API', 'javascript-grid-api/');
@@ -171,6 +171,7 @@
 
     menuItem(0, 'Selection', 'Selection', 'javascript-grid-selection/');
     menuItemWithIcon('enterprise.png', 0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
+    menuItem(0, 'Column Definitions', 'Column Definitions', 'javascript-grid-column-definitions/');
     menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
     menuItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
     menuItem(0, 'Column Header', 'Column Header', 'javascript-grid-column-header/');
