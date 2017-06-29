@@ -64,6 +64,9 @@ export interface ColDef extends AbstractColDef {
     /** The field of the row to get the cells data from */
     field?: string;
 
+    /** The name of the ColumnType to use as a template for this ColDef */
+    type?: string;
+
     /** Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field 'visible' and mark it false to hide,
      *  however we want all default values to be false and we want columns to be visible by default. */
     hide?: boolean;
