@@ -9,6 +9,9 @@ var gridOptions = {
         // using number column type
         {headerName: "Age", field: "age", type: "numberColumn"},
         {headerName: "Year", field: "year", type: "numberColumn"},
+
+        // using date and non-editable column types
+        {headerName: "Date", field: "date", type: "dateColumn, nonEditableColumn"},
         {
             headerName: "Medals", groupId: "medalsGroup",
             children: [
@@ -37,8 +40,37 @@ var gridOptions = {
 
     // define specific column types
     columnTypes: {
-        "numberColumn": {width: 100, filter: 'number'},
-        "medalColumn": {minWidth: 100, columnGroupShow: 'open', suppressFilter: true}
+        "numberColumn": {width: 83, filter: 'number'},
+        "medalColumn": {width: 100, columnGroupShow: 'open', suppressFilter: true},
+        "nonEditableColumn": {editable: true},
+        "dateColumn": {
+            // specify we want to use the date filter
+            filter: 'date',
+
+            // add extra parameters for the date filter
+            filterParams: {
+                // provide comparator function
+                comparator: function (filterLocalDateAtMidnight, cellValue) {
+
+                    // In the example application, dates are stored as dd/mm/yyyy
+                    // We create a Date object for comparison against the filter date
+                    var dateParts = cellValue.split("/");
+                    var day = Number(dateParts[2]);
+                    var month = Number(dateParts[1]) - 1;
+                    var year = Number(dateParts[0]);
+                    var cellDate = new Date(day, month, year);
+
+                    // Now that both parameters are Date objects, we can compare
+                    if (cellDate < filterLocalDateAtMidnight) {
+                        return -1;
+                    } else if (cellDate > filterLocalDateAtMidnight) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+        }
     },
 
     rowData: null,

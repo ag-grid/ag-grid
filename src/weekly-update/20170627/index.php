@@ -137,11 +137,44 @@ include('../../includes/mediaHeader.php');
 
     </div>
 
+    <div style="background-color: #eee; padding: 10px; display: inline-block;">
+
+        <div style="margin-bottom: 5px;">If you liked this article then please share</div>
+
+        <table style="background-color: #eee;">
+            <tr>
+                <td>
+                    <script type="text/javascript" src="//www.redditstatic.com/button/button1.js"></script>
+                </td>
+                <td>
+                    &nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                    <a href="https://twitter.com/share" class="twitter-share-button"
+                       data-url="https://www.ag-grid.com/weekly-update/20170627/"
+                       data-text="ag-Grid Weekly Update 28th #javascript #angularjs #react" data-via="ceolter"
+                       data-size="large">Tweet</a>
+                    <script>!function (d, s, id) {
+                            var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+                            if (!d.getElementById(id)) {
+                                js = d.createElement(s);
+                                js.id = id;
+                                js.src = p + '://platform.twitter.com/widgets.js';
+                                fjs.parentNode.insertBefore(js, fjs);
+                            }
+                        }(document, 'script', 'twitter-wjs');</script>
+                </td>
+            </tr>
+        </table>
+    </div>
+
 </div>
 
-</body>
+</div>
 
 <?php include_once("../../includes/footer.php"); ?>
+
+</body>
 
 <?php include_once("../../includes/analytics.php"); ?>
 

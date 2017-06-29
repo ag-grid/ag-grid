@@ -36,7 +36,7 @@ include '../documentation-main/documentation_header.php';
     <pre>var gridOptions = {
     rowData: myRowData,
 
-    <span class="codeComment">// define 4 columns</span>
+    <span class="codeComment">// define columns</span>
     columnDefs: {
         <span class="codeComment">// uses the default column properties</span>
         {headerName: 'Col A', field: 'a'}
@@ -46,6 +46,9 @@ include '../documentation-main/documentation_header.php';
 
         <span class="codeComment">// overrides the default using a column type</span>
         {headerName: 'Col C', field: 'c', type: 'nonEditableColumn'}
+
+        <span class="codeComment">// overrides the default using a multiple column types</span>
+        {headerName: 'Col C', field: 'c', type: 'dateColumn,nonEditableColumn'}
     },
 
     <span class="codeComment">// a default column definition with properties that get applied to every column</span>
@@ -63,7 +66,35 @@ include '../documentation-main/documentation_header.php';
 
     <span class="codeComment">// define a column type (you can define as many as you like)</span>
     columnTypes: {
-        "nonEditableColumn": {editable: true}
+        "nonEditableColumn": {editable: false},
+        "dateColumn": {
+            // specify we want to use the date filter
+            filter: 'date',
+
+            // add extra parameters for the date filter
+            filterParams: {
+                // provide comparator function
+                comparator: function (filterLocalDateAtMidnight, cellValue) {
+
+                    // In the example application, dates are stored as dd/mm/yyyy
+                    // We create a Date object for comparison against the filter date
+                    var dateParts = cellValue.split("/");
+                    var day = Number(dateParts[2]);
+                    var month = Number(dateParts[1]) - 1;
+                    var year = Number(dateParts[0]);
+                    var cellDate = new Date(day, month, year);
+
+                    // Now that both parameters are Date objects, we can compare
+                    if (cellDate < filterLocalDateAtMidnight) {
+                        return -1;
+                    } else if (cellDate > filterLocalDateAtMidnight) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+        }
     }
 
     <span class="codeComment">// other grid options here...</span>
@@ -77,13 +108,16 @@ include '../documentation-main/documentation_header.php';
     </p>
 
 
-    <pre><span class="codeComment">// First select the default column properties</span>
+<pre><span class="codeComment">// Step 1: start with an empty column definition</span>
+{}
+
+<span class="codeComment">// Step 2: select the default column properties</span>
 {width: 100, editable: true, filter: 'text'}
 
-<span class="codeComment">// Then merge the column type properties (using the 'type' property)</span>
+<span class="codeComment">// Step 3: merge the column type properties (using the 'type' property)</span>
 {width: 100, editable: false, filter: 'number'}
 
-<span class="codeComment">// Then merge the colDef properties</span>
+<span class="codeComment">// Step 4: finally merge in the colDef properties</span>
 {headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'number'}
     </pre>
 

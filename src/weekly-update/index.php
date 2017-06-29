@@ -129,6 +129,7 @@ include('../includes/mediaHeader.php');
 
 </div>
 
+</div>
 
 <?php include_once("../includes/footer.php"); ?>
 
