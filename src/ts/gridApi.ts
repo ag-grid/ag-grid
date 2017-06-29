@@ -221,7 +221,7 @@ export class GridApi {
         this.rowRenderer.refreshCells(params);
     }
 
-    public redrawRows(params: RedrawRowsParams = {}) {
+    public redrawRows(params: RedrawRowsParams = {}): void {
         if (params && params.rowNodes) {
             this.rowRenderer.redrawRows(params.rowNodes);
         } else {
