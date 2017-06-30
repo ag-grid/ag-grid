@@ -236,6 +236,14 @@ colDef = {
 
     <show-example example="exampleChangeDetectionFilterSortGroup"></show-example>
 
+    <h2 id="delta-aggregation-rebuilding">Delta Aggregation Rebuilding</h2>
+
+    <p>
+        bla bla bla
+    </p>
+
+    <show-example example="exampleChangeDetectionDeltaAggregation"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
