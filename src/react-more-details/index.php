@@ -273,6 +273,9 @@ constructor(props) {
 
     <h3>Using plain React-Redux</h3>
 
+    <note>Please take a look at our <a href="../example-react-redux/">Simple Redux Example</a> for an example of using ag-Grid
+        and Redux in practice.</note>
+
     <p>To use React and Redux we'll make use of <code>react-redux</code>. If we (in this example) only listen of rowData
         changes
         then the following will suffice:</p>

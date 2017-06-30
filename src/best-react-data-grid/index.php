@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
 
     <h1>
         <img style="vertical-align: middle" src="/images/react_large.png" height="50px"/>
-        ag-Grid, the Best React Datagrid for Enterprise
+        ag-Grid - the Best React Datagrid for Enterprise
     </h1>
 
     <p>
@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li>Use ag-Grid as a React Component</li>
-        <li>Customise using your own React Components</li>
+        <li>Customise your Grid using your own React Components</li>
         <li>Support for Redux data stores</li>
     </ul>
 
