@@ -8,7 +8,7 @@ import {EventService} from "../../eventService";
 import {Events, ModelUpdatedEvent} from "../../events";
 import {Bean, Context, Autowired, PostConstruct, Optional} from "../../context/context";
 import {SelectionController} from "../../selectionController";
-import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
+import {ChangedPath, IRowNodeStage} from "../../interfaces/iRowNodeStage";
 import {InMemoryNodeManager} from "./inMemoryNodeManager";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes};
@@ -369,9 +369,9 @@ export class InMemoryRowModel {
 
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
-    public doAggregate() {
+    public doAggregate(changedPath?: ChangedPath) {
         if (this.aggregationStage) {
-            this.aggregationStage.execute({rowNode: this.rootNode});
+            this.aggregationStage.execute({rowNode: this.rootNode, changedPath: changedPath});
         }
     }
 

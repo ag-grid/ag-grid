@@ -13,6 +13,7 @@ import {IRowModel} from "./interfaces/iRowModel";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
 import {Constants} from "./constants";
 import {RowRenderer} from "./rendering/rowRenderer";
+import {ChangedPath} from "./interfaces/iRowNodeStage";
 
 @Bean('valueService')
 export class ValueService {
@@ -146,15 +147,23 @@ export class ValueService {
         }
         this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, params);
 
-        this.doChangeDetection();
+        this.doChangeDetection(rowNode, column);
     }
 
-    private doChangeDetection(): void {
+    private doChangeDetection(rowNode: RowNode, column: Column): void {
         if (this.gridOptionsWrapper.isSuppressChangeDetection()) { return; }
 
         // step 1 of change detection is to update the aggregated values
         if (this.inMemoryRowModel) {
-            this.inMemoryRowModel.doAggregate();
+
+            let changedPath: ChangedPath;
+            if (rowNode.parent) {
+                changedPath = {};
+                changedPath[rowNode.parent.id] = {};
+                changedPath[rowNode.parent.id][column.getId()] = true;
+            }
+
+            this.inMemoryRowModel.doAggregate(changedPath);
         }
 
         // step 2 of change detection is to refresh the cells
