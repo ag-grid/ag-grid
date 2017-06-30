@@ -254,7 +254,7 @@ The parameters are identical regardless of which cellRenderer type you use and c
         <td>Sets the value for the cell. If the value is different, will result in the cell getting refreshed.</td>
     </tr>
     <tr>
-        <th>formatValue</th>
+        <th>formatValue()</th>
         <td>A function, that when called, formats the value. The valueFormatted attribute already gives
             you the formatted value, however you can call this if you need to format another value,
             maybe you need to format a different value (this is used by the provided 'animation' cellRenderers
@@ -297,7 +297,7 @@ The parameters are identical regardless of which cellRenderer type you use and c
         <td>The context as set on the gridOptions.</td>
     </tr>
     <tr>
-        <th>refreshCell</th>
+        <th>refreshCell()</th>
         <td>A callback function, to tell the grid to refresh this cell and reapply all css styles and classes.
             Useful if you update the data for the cell and want to just render again from scratch.</td>
     </tr>

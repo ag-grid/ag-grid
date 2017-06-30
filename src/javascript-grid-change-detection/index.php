@@ -12,30 +12,30 @@ include '../documentation-main/documentation_header.php';
     <h1 class="first-h1">Change Detection</h1>
 
     <p>
-        The grid has built in change detection so when you change cells value, all dependent
-        cells will also change reflect the change. Dependent cells are cells that are one of
+        The grid has built in change detection so when you change a cells value, all dependent
+        cells will reflect the change. Dependent cells are cells that are one of
         the following:
         <ul>
             <li>
                 Cells using <a href="../javascript-grid-value-getters/">valueGetter's</a>, where
-                they reference the changed cell.
+                they reference the changed value.
             </li>
             <li>
-                Rows with results from <a href="../javascript-grid-aggregation/">row aggregation</a>,
-                where they aggregate the cells value into the group level.
+                Group rows showing results from <a href="../javascript-grid-aggregation/">row aggregation</a>,
+                where the value is part of the aggregated set.
             </li>
         </ul>
     </p>
 
     <p>
-        This section explains the grid's change detection.
+        This section explains the grid's change detection that makes this possible.
     </p>
 
     <note>
         If you are using Angular or React to build your cells (eg using an Angular or React cellRenderer),
         then you will be already benefiting from binding and change detection that your framework provides.
         In this scenario, your components refresh() method will get called with the new value when the value
-        changes. It is your components responsibility to save this new value to the components attribute
+        changes. It is your components responsibility to save this new value to the components state
         so it will be picked up as a change from the frameworks change detection.
     </note>
 
@@ -45,8 +45,8 @@ include '../documentation-main/documentation_header.php';
         The change detection algorithm is as follows: When you update a value in the grid, the grid will:
         <ol>
             <li>
-                If the value's column has an <a href="../javascript-grid-aggregation/">aggregation</a>, the aggregated
-                value is updated.
+                If the value's column has an <a href="../javascript-grid-aggregation/">aggregation</a>, the aggregation
+                is recomputed.
             </li>
             <li>
                 The displayed value in every rendered cell is checked against it's most up to date value.
@@ -62,11 +62,14 @@ include '../documentation-main/documentation_header.php';
     <note>
         You might ask, is checking every cell against it's value a performance problem? The answer is no.
         What ag-Grid does is similar to the change detection algorithm's in frameworks such as React or Angular.
-        Doing this many check's in JavaScript is not a problem. Slowness comes when the DOM is updated and
-        ag-Grid only updates the DOM where changes are detected.
+        Doing this many check's in JavaScript is not a problem. Slowness comes when the DOM is updated to
+        many times. ag-Grid minimises the DOM updates by only updating the DOM where changes are detected.
         <br/>&nbsp;
         <br/>
-        You might also ask, do we have a cool Virtual DOM like React does? The answer is no.
+        You might also ask, does ag-Grid have a cool Virtual DOM like React does? The answer is no. The grid has
+        state stored in the Row Model. So rather than comparing the actual DOM with a virtual DOM,
+        the grid compares 'the value that was rendered last time into the DOM' with with the value's
+        in the Row Model.
     </note>
 
     <h3>Comparing Values</h3>
@@ -80,12 +83,14 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        If your code is using immutable objects, or the grid values are all simple strings and numbers,
-        then you will never need to provide your own custom equals method.
+        A value is an attribute of your row data record. So if you update the attribute on the
+        row data, but the row data record is the same instance, then the triple equals will work on the
+        attribute. So as long as you replace full object values as attributes, or are using simple
+        strings and numbers as attributes, then you will never need to provide your own custom equals method.
     </p>
 
     <p>
-        To provide custom comparison of objects, use the <code>colDef.equals(val1,val2)</code> method.
+        If you do need to provide custom comparison of objects, use the <code>colDef.equals(val1,val2)</code> method.
         For example, the following code snippet provides custom comparison to a 'Name' column where the
         name is stored in a complex object.
     </p>
@@ -117,8 +122,8 @@ colDef = {
         If you do not want change detection to be automatically done, then set the grid property
         <code>suppressChangeDetection=true</code>. This will stop the change detection process firing
         when the above events happen. Ideally you should not want to turn off change detection, however
-        the option is there if you choose to turn it off. One think that may entice you to turn it off
-        is if you have some custom value getters that are expensive operations to call, you may want
+        the option is there if you choose to turn it off. One thing that may entice you to turn it off
+        is if you have some custom value getters that are doing some time intensive calculations, you may want
         limit the number of times they are called and have more control over when refreshing is done.
     </p>
 

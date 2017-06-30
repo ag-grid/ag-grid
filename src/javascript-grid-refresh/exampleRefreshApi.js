@@ -9,7 +9,7 @@ var columnDefs = [
 
 // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
 // the row animation look nice when you see all the rows
-var rowData = createData(16);
+var rowData = createData(14);
 var topRowData = createData(2);
 var bottomRowData = createData(2);
 

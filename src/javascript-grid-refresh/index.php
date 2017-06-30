@@ -63,18 +63,11 @@ interface RefreshCellsParams {
         detection means it will only refresh cells who's values have changed).
     </p>
 
-    <h3>Volatile Cells</h3>
+    <h3>Volatile Columns</h3>
 
     <p>
-        Most people will not use volatile cells - they were introduced into ag-Grid early before change detection
-        existed and was a way to do partial refreshes of the grid. If you find you don't have a use for volatile cells,
-        that's good and normal, just ignore them. However the feature is kept (at least for now) for backwards compatibility.
-    </p>
-
-    <p>
-        When you mark a column as volatile
-        then only those marked columns will get refreshed when you call
-        <code>api.refreshCells({volatile:true})</code>.
+        Volatile columns allow you to mark specific columns only for refresh when you call
+        <code>api.refreshCells()</code> with the volatile parameter set to true.
     </p>
 
     <p>
@@ -85,6 +78,12 @@ var colDef = {
     volatile: true,
     ...
 }</pre>
+
+    <note>
+        Most people will not use volatile cells - they were introduced into ag-Grid early before change detection
+        existed and was a way to do partial refreshes of the grid. If you find you don't have a use for volatile cells,
+        that's good and normal, just ignore them. However the feature is kept (at least for now) for backwards compatibility.
+    </note>
 
     <h3>Example Refresh Cells</h3>
 
@@ -201,32 +200,6 @@ interface RedrawRowsParams {
     </ul>
 
     <show-example example="exampleRedrawRows"></show-example>
-
-
-
-
-    <h3 id="cell-refresh-from-inside">Cell Refresh from Inside</h3>
-
-    <p>
-        You can request a cell to be refreshed from within by calling the <i>params.refreshCell()</i> function
-        passed to the cell renderer. This is handy if the cell wants to refresh itself and / or get the cell
-        style rules reapplied.
-    </p>
-
-    <p>
-        This can be handy if the cell gets itself into a state it wants to get out for. For example, you could have
-        your own custom editing, and when the data has finished editing, you cal 'refreshCell()' will is a handy
-        way to get the grid to rip the cell out and put it back again to the fresh 'non-editing' state.
-    </p>
-
-    <h3 id="refresh-headers-and-footers">Refresh Headers and Footers</h3>
-
-    <p>
-        If you call <i>api.recomputeAggregates()</i>, all header and footer rows will subsequently get ripped
-        out and redrawn to show the new aggregate values. If you want to refresh all headers and footers without
-        recomputing the aggregates, you can call <i>api.refreshGroupRows()</i> - useful if you want to refresh
-        for reasons other than the aggregates being recomputed.
-    </p>
 
 </div>
 

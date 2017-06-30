@@ -9,20 +9,20 @@ include '../documentation-main/documentation_header.php';
 
 <div xmlns="http://www.w3.org/1999/html">
 
-    <h2 id="headerHeight">Column Header</h2>
+    <h1 class="first-h1" id="headerHeight">Column Header</h1>
 
     <p>
         Each column has a header at the top that typically displays the column name and has access to column
         features, such as sorting, filtering and a column menu. This page explains how you can manage the headers.
     </p>
 
-    <h3 id="customHeader">Custom Header</h3>
+    <h2 id="customHeader">Custom Header</h2>
     <p>
         If you want to customise the contents and / or behaviour of the header, then please refer to the
         section on <a href="../javascript-grid-header-rendering/">Header Components</a>.
     </p>
 
-    <h3 id="headerHeight">Header Height</h3>
+    <h2 id="headerHeight">Header Height</h2>
     <p>
         These properties can be used to change the different heights used in the headers.
     </p>
@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
     </p>
     <?php printPropertiesTable($headerHeightApi) ?>
 
-    <h3 id="textOrientation">Text Orientation</h3>
+    <h2 id="textOrientation">Text Orientation</h2>
 
     <p>
         By default, the text label for the header is display horizontally, ie as normal readable text.
@@ -43,7 +43,7 @@ include '../documentation-main/documentation_header.php';
         and also provide the adequate header heights using the appropriate grid property.
     </p>
 
-    <h3 id="headerHeightExample">Header Height and Text Orientation Example</h3>
+    <h2 id="headerHeightExample">Header Height and Text Orientation Example</h2>
 
     <p>
         The following example shows how you can provide a unique look & feel to the headers. Note that:
@@ -140,13 +140,24 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleDynamicHeaders"></show-example>
 
-<h3 id="headerHeight">Dynamic Header Heights</h3>
+    <h2 id="headerHeight">Dynamic Header Heights</h2>
 
-As you can see in the example below, if you change any of the header heights, this change will be reflected automatically.
-Note how if the value is set to null, it might reuse other values. To see all the interactions check the properties
-descriptions at the top of the page
+    <p>
+        As you can see in the example below, if you change any of the header heights, this change will be reflected automatically.
+        Note how if the value is set to null, it might reuse other values. To see all the interactions check the properties
+        descriptions at the top of the page
+    </p>
 
     <show-example example="exampleDynamicHeaders2"></show-example>
+
+    <h2 id="refresh-headers-and-footers">Refresh Headers and Footers</h2>
+
+    <p>
+        If you call <i>api.recomputeAggregates()</i>, all header and footer rows will subsequently get ripped
+        out and redrawn to show the new aggregate values. If you want to refresh all headers and footers without
+        recomputing the aggregates, you can call <i>api.refreshGroupRows()</i> - useful if you want to refresh
+        for reasons other than the aggregates being recomputed.
+    </p>
 
 </div>
 
