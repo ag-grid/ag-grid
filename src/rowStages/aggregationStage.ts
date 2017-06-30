@@ -11,7 +11,8 @@ import {
     Utils,
     StageExecuteParams,
     IAggFunc,
-    GroupValueService
+    GroupValueService,
+    ChangedPath
 } from "ag-grid/main";
 import {PivotStage} from "./pivotStage";
 import {AggFuncService} from "../aggregation/aggFuncService";
@@ -29,7 +30,7 @@ export class AggregationStage implements IRowNodeStage {
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
     public execute(params: StageExecuteParams): any {
-        let rootNode = params.rowNode;
+        let {rowNode, changedPath} = params;
 
         // we don't do aggregation if user provided the groups
         let rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
@@ -42,28 +43,34 @@ export class AggregationStage implements IRowNodeStage {
         let measureColumns = this.columnController.getValueColumns();
         let pivotColumns = pivotActive ? this.columnController.getPivotColumns() : [];
 
-        this.recursivelyCreateAggData(rootNode, measureColumns, pivotColumns);
+        this.recursivelyCreateAggData(rowNode, changedPath, measureColumns, pivotColumns);
     }
 
-    private recursivelyCreateAggData(rowNode: RowNode, measureColumns: Column[], pivotColumns: Column[]) {
+    private recursivelyCreateAggData(rowNode: RowNode, changedPath: ChangedPath, measureColumns: Column[], pivotColumns: Column[]) {
 
         // aggregate all children first, as we use the result in this nodes calculations
         rowNode.childrenAfterFilter.forEach( child => {
             if (child.group) {
-                this.recursivelyCreateAggData(child, measureColumns, pivotColumns);
+                this.recursivelyCreateAggData(child, changedPath, measureColumns, pivotColumns);
             }
         });
 
         //Optionally prevent the aggregation at the root Node
         //https://ag-grid.atlassian.net/browse/AG-388
-        let notPivoting = !this.columnController.isPivotMode();
-        let suppressAggAtRootLevel = this.gridOptionsWrapper.isSuppressAggAtRootLevel();
         let isRootNode = rowNode.level === -1;
-        if (isRootNode && suppressAggAtRootLevel && notPivoting) return;
-        this.aggregateRowNode(rowNode, measureColumns, pivotColumns);
+        if (isRootNode) {
+            let notPivoting = !this.columnController.isPivotMode();
+            let suppressAggAtRootLevel = this.gridOptionsWrapper.isSuppressAggAtRootLevel();
+            if (suppressAggAtRootLevel && notPivoting) { return; }
+        }
+
+        let skipBecauseNoChangedPath = changedPath && !changedPath[rowNode.id];
+        if (skipBecauseNoChangedPath) { return; }
+
+        this.aggregateRowNode(rowNode, changedPath, measureColumns, pivotColumns);
     }
 
-    private aggregateRowNode(rowNode: RowNode, measureColumns: Column[], pivotColumns: Column[]): void {
+    private aggregateRowNode(rowNode: RowNode, changedPath: ChangedPath, measureColumns: Column[], pivotColumns: Column[]): void {
 
         let measureColumnsMissing = measureColumns.length === 0;
         let pivotColumnsMissing = pivotColumns.length === 0;
@@ -72,12 +79,15 @@ export class AggregationStage implements IRowNodeStage {
         let aggResult: any;
         if (rowNode.group && userProvidedGroupRowAggNodes) {
             aggResult = userProvidedGroupRowAggNodes(rowNode.childrenAfterFilter);
+            if (changedPath) { this.pullUpChangedPath(rowNode, changedPath); }
         } else if (measureColumnsMissing) {
             aggResult = null;
         } else if (rowNode.group && pivotColumnsMissing) {
-            aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, measureColumns);
+            aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, changedPath, measureColumns);
+            if (changedPath) { this.pullUpChangedPath(rowNode, changedPath); }
         } else {
             aggResult = this.aggregateRowNodeUsingValuesAndPivot(rowNode);
+            if (changedPath) { this.pullUpChangedPath(rowNode, changedPath); }
         }
 
         rowNode.setAggData(aggResult);
@@ -86,6 +96,19 @@ export class AggregationStage implements IRowNodeStage {
         // to the group, so update the data here also if there is one
         if (rowNode.sibling) {
             rowNode.sibling.setAggData(aggResult);
+        }
+    }
+
+    private pullUpChangedPath(rowNode: RowNode, changedPath: ChangedPath): void {
+        if (!rowNode.parent) { return; }
+        let parentId = rowNode.parent.id;
+        let colIds: {[id:string]:boolean} = changedPath[rowNode.id];
+        if (colIds) {
+            if (!changedPath[parentId]) {
+                changedPath[parentId] = {};
+            }
+            let parentColIds = changedPath[parentId];
+            Object.keys(colIds).forEach( key => parentColIds[key] = true );
         }
     }
 
@@ -129,14 +152,32 @@ export class AggregationStage implements IRowNodeStage {
         return result;
     }
 
-    private aggregateRowNodeUsingValuesOnly(rowNode: RowNode, valueColumns: Column[]): any {
+    private aggregateRowNodeUsingValuesOnly(rowNode: RowNode, changedPath: ChangedPath, valueColumns: Column[]): any {
         let result: any = {};
 
-        let values2d = this.getValuesNormal(rowNode, valueColumns);
+        let changedPathThisRowNode = changedPath ? changedPath[rowNode.id] : null;
 
-        valueColumns.forEach( (valueColumn: Column, index: number) => {
+        // if a change path was provided, we only gather values for the change columns
+        let changedValueColumns = changedPathThisRowNode ?
+            valueColumns.filter( col => changedPathThisRowNode[col.getId()])
+            : valueColumns;
+
+        let notChangedValueColumns = changedPathThisRowNode ?
+            valueColumns.filter( col => !changedPathThisRowNode[col.getId()])
+            : null;
+
+        let values2d = this.getValuesNormal(rowNode, changedValueColumns);
+        let oldValues = rowNode.aggData;
+
+        changedValueColumns.forEach( (valueColumn: Column, index: number) => {
             result[valueColumn.getId()] = this.aggregateValues(values2d[index], valueColumn.getAggFunc());
         });
+
+        if (notChangedValueColumns && oldValues) {
+            notChangedValueColumns.forEach( (valueColumn: Column) => {
+                result[valueColumn.getId()] = oldValues[valueColumn.getId()];
+            });
+        }
 
         return result;
     }
