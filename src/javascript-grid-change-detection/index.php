@@ -158,7 +158,7 @@ colDef = {
         </ul>
     </p>
 
-    <show-example example="exampleRefreshValueGetter"></show-example>
+    <show-example example="exampleChangeDetectionValueGetter"></show-example>
 
     <h2 id="example-change-detection-and-groups">Example - Change Detection and Groups</h2>
 
@@ -193,7 +193,7 @@ colDef = {
         </ul>
     </p>
 
-    <show-example example="exampleRefreshGroups"></show-example>
+    <show-example example="exampleChangeDetectionGroups"></show-example>
 
     <h2>Example - Change Detection and Filter / Sort / Group</h2>
 
@@ -234,7 +234,7 @@ colDef = {
         </ul>
     </p>
 
-    <show-example example="exampleRefreshAndUpdate"></show-example>
+    <show-example example="exampleChangeDetectionFilterSortGroup"></show-example>
 
 </div>
 
