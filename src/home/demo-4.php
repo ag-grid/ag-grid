@@ -25,57 +25,57 @@
     }
 
     .fx-null {
-        border-top: 20px solid #3ACFD5;
-        border-right: 20px solid #3a4ed5;
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-        background-position: 0 0, 0 100%;
-        background-repeat: no-repeat;
-        -webkit-background-size: 100% 20px;
-        -moz-background-size: 100% 20px;
-        background-size: 100% 20px;
-        /*background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9Imxlc3NoYXQtZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzYWNmZDUiIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzNhNGVkNSIgc3RvcC1vcGFjaXR5PSIxIi8+PC9saW5lYXJHcmFkaWVudD48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2xlc3NoYXQtZ2VuZXJhdGVkKSIgLz48L3N2Zz4=),url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9Imxlc3NoYXQtZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzYWNmZDUiIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzNhNGVkNSIgc3RvcC1vcGFjaXR5PSIxIi8+PC9saW5lYXJHcmFkaWVudD48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2xlc3NoYXQtZ2VuZXJhdGVkKSIgLz48L3N2Zz4=);*/
-        background-image: -webkit-linear-gradient(top, #afbcff 0%, #c1d5c9 100%), -webkit-linear-gradient(top, #afbcff 0%, #c1d5c9 100%);
-        background-image: -moz-linear-gradient(top, #afbcff 0%, #c1d5c9 100%), -moz-linear-gradient(top, #afbcff 0%, #c1d5c9 100%);
-        background-image: -o-linear-gradient(top, #afbcff 0%, #c1d5c9 100%), -o-linear-gradient(top, #afbcff 0%, #c1d5c9 100%);
-        background-image: linear-gradient(to bottom, #afbcff 0%, #c1d5c9 100%), linear-gradient(to bottom, #afbcff 0%, #c1d5c9 100%);
+        background-color: rgb(98, 98, 98);
     }
 
     .fx-positive {
-        border-top: 20px solid #3ACFD5;
-        border-right: 20px solid #3a4ed5;
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-        background-position: 0 0, 0 100%;
-        background-repeat: no-repeat;
-        -webkit-background-size: 100% 20px;
-        -moz-background-size: 100% 20px;
-        background-size: 100% 20px;
-        /*background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9Imxlc3NoYXQtZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzYWNmZDUiIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzNhNGVkNSIgc3RvcC1vcGFjaXR5PSIxIi8+PC9saW5lYXJHcmFkaWVudD48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2xlc3NoYXQtZ2VuZXJhdGVkKSIgLz48L3N2Zz4=),url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9Imxlc3NoYXQtZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzYWNmZDUiIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzNhNGVkNSIgc3RvcC1vcGFjaXR5PSIxIi8+PC9saW5lYXJHcmFkaWVudD48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2xlc3NoYXQtZ2VuZXJhdGVkKSIgLz48L3N2Zz4=);*/
-        background-image: -webkit-linear-gradient(top, #00FF00 0%, #c1d5c9 100%), -webkit-linear-gradient(top, #00FF00 0%, #c1d5c9 100%);
-        background-image: -moz-linear-gradient(top, #00FF00 0%, #c1d5c9 100%), -moz-linear-gradient(top, #00FF00 0%, #c1d5c9 100%);
-        background-image: -o-linear-gradient(top, #00FF00 0%, #c1d5c9 100%), -o-linear-gradient(top, #00FF00 0%, #c1d5c9 100%);
-        background-image: linear-gradient(to bottom, #00FF00 0%, #c1d5c9 100%), linear-gradient(to bottom, #00FF00 0%, #c1d5c9 100%);
+        background-color: green;
     }
 
     .fx-negative {
-        border-top: 20px solid #3ACFD5;
-        border-right: 20px solid #3a4ed5;
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-        background-position: 0 0, 0 100%;
-        background-repeat: no-repeat;
-        -webkit-background-size: 100% 20px;
-        -moz-background-size: 100% 20px;
-        background-size: 100% 20px;
+        background-color: red;
         /*background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9Imxlc3NoYXQtZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzYWNmZDUiIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzNhNGVkNSIgc3RvcC1vcGFjaXR5PSIxIi8+PC9saW5lYXJHcmFkaWVudD48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2xlc3NoYXQtZ2VuZXJhdGVkKSIgLz48L3N2Zz4=),url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9Imxlc3NoYXQtZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzYWNmZDUiIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzNhNGVkNSIgc3RvcC1vcGFjaXR5PSIxIi8+PC9saW5lYXJHcmFkaWVudD48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2xlc3NoYXQtZ2VuZXJhdGVkKSIgLz48L3N2Zz4=);*/
-        background-image: -webkit-linear-gradient(top, #FF0000 0%, #d5b3af 100%), -webkit-linear-gradient(top, #FF0000 0%, #d5b3af 100%);
-        background-image: -moz-linear-gradient(top, #FF0000 0%, #d5b3af 100%), -moz-linear-gradient(top, #FF0000 0%, #d5b3af 100%);
-        background-image: -o-linear-gradient(top, #FF0000 0%, #d5b3af 100%), -o-linear-gradient(top, #FF0000 0%, #d5b3af 100%);
-        background-image: linear-gradient(to bottom, #FF0000 0%, #d5b3af 100%), linear-gradient(to bottom, #FF0000 0%, #d5b3af 100%);
+
+    }
+
+
+    .blackish{
+        background-color: #333333;
+        padding-bottom: 10px;
+    }
+
+    .graphBox{
+        color:white;
+        border: 1px solid grey;
+        margin-top: 22px;
+    }
+
+    span#deltaPanelPrice {
+        font-size: 31px !important;
+    }
+
+    .graphBoxContainer{
+        padding-left:10px;
+    }
+
+    text {
+        fill: grey;
+    }
+
+    .ag-value-change-delta-down{
+        color:red !important
+    }
+
+    .ag-value-change-delta-up{
+        color:#2d812f !important
+    }
+
+    .ag-value-change-value-highlight{
+        background-color: rgb(98, 98, 98) !important;
+        color: black !important;;
+    }
+
+    path {
     }
 </style>
 
@@ -86,7 +86,7 @@
         </div>
 
         <div class="row HomeDemo-main">
-            <div class="col-md-12">
+            <div class="col-md-12 blackish">
                 <div>
                     <div style="float: left; margin-right: 25px">
                         <div style="width: 700px;">
@@ -101,10 +101,10 @@
                                         class="fa fa-question-circle-o" aria-hidden="true"></i></a>
                         </div>
                         <div id="priceChangesGrid" style="clear:both;height: 410px; width: 700px"
-                             class="ag-fresh"></div>
+                             class="ag-dark"></div>
                     </div>
-                    <div style="float: left">
-                        <div>
+                    <div style="float: left" class="graphBox">
+                        <div class="graphBoxContainer">
                             <div>
                         <span id="deltaPanelPrice"
                               style="font-size: 2.6em; font-weight: bold;margin-right: 10px"></span>
@@ -190,10 +190,10 @@
                                    data-content="A service will provide updates rows only, with the Grid updating the row data with the Transaction API.<br/><br/>Only changed rows are re-rendered for improved performance."><i
                                             class="fa fa-question-circle-o" aria-hidden="true"></i></a>
                             </div>
-                            <div id="quoteMatrix" style="height: 410px; width: 700px" class="ag-fresh"></div>
+                            <div id="quoteMatrix" style="height: 410px; width: 700px" class="ag-dark"></div>
                         </div>
                         <div style="float: left;display: inline-block;">
-                            <div style="width: 400px;display: inline-block">
+                            <div style="width: 415px;display: inline-block">
                                 <a tabindex="0"
                                    style="float: right"
                                    data-toggle="popover"
@@ -204,7 +204,7 @@
                                    data-content="A service will provide the complete set of row data for each update, with altered rows within the data set. The Grid updates the row data using the <code>deltaRowDataMode</code>.<br/><br/>Only changed rows are re-rendered for improved performance."><i
                                             class="fa fa-question-circle-o" aria-hidden="true"></i></a>
                             </div>
-                            <div id="topMovers" style="height: 410px; width: 400px" class="ag-fresh"></div>
+                            <div id="topMovers" style="height: 410px; width: 415px" class="ag-dark"></div>
                         </div>
                     </div>
                 </div>
