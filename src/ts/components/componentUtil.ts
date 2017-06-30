@@ -33,8 +33,8 @@ export class ComponentUtil {
         'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded',
         'minColWidth', 'maxColWidth', 'viewportRowModelPageSize', 'viewportRowModelBufferSize',
         'layoutInterval', 'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests',
-        'cacheOverflowSize', 'paginationPageSize', 'infiniteBlockSize', 'infiniteInitialRowCount',
-        'scrollbarWidth', 'paginationStartPage', 'infiniteBlockSize'
+        'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount',
+        'scrollbarWidth', 'paginationStartPage'
     ];
 
     public static BOOLEAN_PROPERTIES = [

@@ -544,7 +544,7 @@ export class GridOptionsWrapper {
             console.warn('ag-grid: since version 9.0.x infinitePageSize is now called cacheBlockSize');
         }
         if (options.infiniteBlockSize) {
-            console.warn('ag-grid: since version 10.0.x infinitePageSize is now called cacheBlockSize');
+            console.warn('ag-grid: since version 10.0.x infiniteBlockSize is now called cacheBlockSize');
         }
         if (options.maxPagesInCache) {
             console.warn('ag-grid: since version 10.0.x maxPagesInCache is now called maxBlocksInCache');
