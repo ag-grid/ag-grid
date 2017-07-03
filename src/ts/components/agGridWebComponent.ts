@@ -5,6 +5,8 @@ let registered = false;
 
 export function initialiseAgGridWithWebComponents() {
 
+    console.warn('ag-grid: initialiseAgGridWithWebComponents is deprecated. Please use the ag-grid-webcomponent dependency instead. ');
+
     // only register to WebComponents once
     if (registered) {
         return;
