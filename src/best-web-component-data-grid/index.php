@@ -327,5 +327,6 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 
+</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
