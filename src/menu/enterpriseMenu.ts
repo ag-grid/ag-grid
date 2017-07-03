@@ -157,8 +157,8 @@ export class EnterpriseMenu {
 
         this.includeChecks[EnterpriseMenu.TAB_GENERAL] = ()=> true;
         this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => {
-            let isFilterEnabled = this.gridOptionsWrapper.isEnableFilter();
-            let isFloatingFiltersEnabled = this.gridOptionsWrapper.isFloatingFilter;
+            let isFilterEnabled: boolean = this.gridOptionsWrapper.isEnableFilter();
+            let isFloatingFiltersEnabled: boolean = this.gridOptionsWrapper.isFloatingFilter();
             let isAnyFilteringEnabled = isFilterEnabled || isFloatingFiltersEnabled;
 
             let suppressFilterForThisColumn = this.column.getColDef().suppressFilter;
