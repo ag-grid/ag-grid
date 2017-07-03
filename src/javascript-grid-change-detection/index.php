@@ -291,6 +291,8 @@ colDef = {
         </li>
     </ul>
 
+    <show-example example="exampleChangeDetectionPivot"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
