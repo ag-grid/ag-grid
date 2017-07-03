@@ -46,10 +46,20 @@ export class AutoGroupColService {
         _.mergeDeep(defaultAutoColDef, userAutoColDef);
         defaultAutoColDef.colId = colId;
 
+        //If the user is not telling us his preference with regards wether the filtering
+        //should be suppressed, we suppress it if there are no leaf nodes
+        if (userAutoColDef == null || userAutoColDef.suppressFilter == null){
+            let produceLeafNodeValues = defaultAutoColDef.field != null || defaultAutoColDef.valueGetter != null;
+            defaultAutoColDef.suppressFilter = !produceLeafNodeValues;
+        }
+
         // if showing many cols, we don't want to show more than one with a checkbox for selection
         if (index>0) {
             defaultAutoColDef.headerCheckboxSelection = false;
         }
+
+
+
 
         let newCol = new Column(defaultAutoColDef, colId, true);
         this.context.wireBean(newCol);
