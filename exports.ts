@@ -133,6 +133,7 @@ export {SortStage} from "./dist/lib/rowModels/inMemory/sortStage";
 // row models
 export {FloatingRowModel} from "./dist/lib/rowModels/floatingRowModel";
 export {InMemoryRowModel, RowNodeTransaction} from "./dist/lib/rowModels/inMemory/inMemoryRowModel";
+export {ChangedPath} from "./dist/lib/rowModels/inMemory/changedPath";
 export {InMemoryNodeManager} from "./dist/lib/rowModels/inMemory/inMemoryNodeManager";
 export {InfiniteRowModel} from "./dist/lib/rowModels/infinite/infiniteRowModel";
 export {IEnterpriseGetRowsParams} from "./dist/lib/interfaces/iEnterpriseDatasource";
@@ -214,7 +215,7 @@ export {OriginalColumnGroupChild} from "./dist/lib/entities/originalColumnGroupC
 export {IViewportDatasource} from "./dist/lib/interfaces/iViewportDatasource"
 export {IContextMenuFactory} from "./dist/lib/interfaces/iContextMenuFactory"
 export {ICompFactory} from "./dist/lib/interfaces/iCompFactory"
-export {IRowNodeStage, StageExecuteParams, ChangedPath} from "./dist/lib/interfaces/iRowNodeStage"
+export {IRowNodeStage, StageExecuteParams} from "./dist/lib/interfaces/iRowNodeStage"
 export {IFilterParams, IDoesFilterPassParams} from "./dist/lib/interfaces/iFilter"
 export {ISetFilterParams} from "./dist/lib/interfaces/iSetFilterParams"
 export {IDateParams, IDate} from "./dist/lib/rendering/dateComponent";

@@ -5,7 +5,7 @@ import {ColDef, NewValueParams, ValueGetterParams} from "./entities/colDef";
 import {Autowired, Bean, PostConstruct} from "./context/context";
 import {RowNode} from "./entities/rowNode";
 import {Column} from "./entities/column";
-import {Utils as _} from "./utils";
+import {NumberSequence, Utils as _} from "./utils";
 import {Events} from "./events";
 import {EventService} from "./eventService";
 import {GroupValueService} from "./groupValueService";
@@ -13,7 +13,7 @@ import {IRowModel} from "./interfaces/iRowModel";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
 import {Constants} from "./constants";
 import {RowRenderer} from "./rendering/rowRenderer";
-import {ChangedPath} from "./interfaces/iRowNodeStage";
+import {ChangedPath} from "./rowModels/inMemory/changedPath";
 
 @Bean('valueService')
 export class ValueService {
@@ -32,6 +32,11 @@ export class ValueService {
 
     private initialised = false;
 
+    private turnIdSequence = new NumberSequence();
+    private turnActive = false;
+    private turnId: number;
+    private turnStackCount = 0;
+
     @PostConstruct
     public init(): void {
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
@@ -41,7 +46,27 @@ export class ValueService {
         }
     }
 
+    public startTurn(): void {
+        this.turnStackCount++;
+        if (this.turnStackCount===1) {
+            this.turnId = this.turnIdSequence.next();
+            this.turnActive = true;
+        }
+        console.log(`start (${this.turnId}) ${this.turnStackCount}`);
+    }
+
+    public endTurn(): void {
+        console.log(`end (${this.turnId}) ${this.turnStackCount}`);
+        this.turnStackCount--;
+        if (this.turnStackCount===0) {
+            this.turnId = null;
+            this.turnActive = false;
+        }
+    }
+
     public getValue(column: Column, rowNode: RowNode, ignoreAggData = false): any {
+
+        // console.log(`turnActive = ${this.turnActive}`);
 
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
@@ -52,6 +77,11 @@ export class ValueService {
         let field = colDef.field;
         let colId = column.getId();
         let data = rowNode.data;
+
+        // if inside the same turn, just return back the value we got last time
+        if (this.turnActive && rowNode.__turnId===this.turnId && rowNode.__turnData[colId]!==undefined) {
+            return rowNode.__turnData[colId];
+        }
 
         let result: any;
 
@@ -74,6 +104,15 @@ export class ValueService {
         if (this.cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
             let cellValueGetter = result.substring(1);
             result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
+        }
+
+        // if a turn is active, store the value in case the grid asks for it again
+        if (this.turnActive) {
+            if (rowNode.__turnId !== this.turnId) {
+                rowNode.__turnId = this.turnId;
+                rowNode.__turnData = {};
+            }
+            rowNode.__turnData[colId] = result;
         }
 
         return result;
@@ -140,6 +179,8 @@ export class ValueService {
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
 
+        this.startTurn();
+
         params.newValue = this.getValue(column, rowNode);
 
         if (typeof column.getColDef().onCellValueChanged === 'function') {
@@ -148,6 +189,8 @@ export class ValueService {
         this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, params);
 
         this.doChangeDetection(rowNode, column);
+
+        this.endTurn();
     }
 
     private doChangeDetection(rowNode: RowNode, column: Column): void {
@@ -158,9 +201,8 @@ export class ValueService {
 
             let changedPath: ChangedPath;
             if (rowNode.parent) {
-                changedPath = {};
-                changedPath[rowNode.parent.id] = {};
-                changedPath[rowNode.parent.id][column.getId()] = true;
+                changedPath = new ChangedPath(true);
+                changedPath.addParentNode(rowNode.parent, [column]);
             }
 
             this.inMemoryRowModel.doAggregate(changedPath);

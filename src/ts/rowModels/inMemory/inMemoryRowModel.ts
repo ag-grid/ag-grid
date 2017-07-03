@@ -8,8 +8,10 @@ import {EventService} from "../../eventService";
 import {Events, ModelUpdatedEvent} from "../../events";
 import {Bean, Context, Autowired, PostConstruct, Optional} from "../../context/context";
 import {SelectionController} from "../../selectionController";
-import {ChangedPath, IRowNodeStage} from "../../interfaces/iRowNodeStage";
+import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 import {InMemoryNodeManager} from "./inMemoryNodeManager";
+import {ChangedPath} from "./changedPath";
+import {ValueService} from "../../valueService";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes};
 
@@ -58,6 +60,7 @@ export class InMemoryRowModel {
     @Autowired('context') private context: Context;
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
+    @Autowired('valueService') private valueService: ValueService;
 
     @Autowired('sortStage') private sortStage: IRowNodeStage;
     @Autowired('flattenStage') private flattenStage: IRowNodeStage;
@@ -89,11 +92,10 @@ export class InMemoryRowModel {
         this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, this.refreshModel.bind(this, {step: Constants.STEP_MAP, keepRenderedRows: true, animate: true} ));
 
         this.rootNode = new RowNode();
-        this.nodeManager = new InMemoryNodeManager(this.rootNode, this.gridOptionsWrapper, this.context, this.eventService);
+        this.nodeManager = new InMemoryNodeManager(this.rootNode, this.gridOptionsWrapper,
+            this.context, this.eventService, this.columnController);
 
         this.context.wireBean(this.rootNode);
-
-        this.setRowData(this.gridOptionsWrapper.getRowData(), this.columnController.isReady());
     }
 
     public isLastRowFound(): boolean {
@@ -152,6 +154,26 @@ export class InMemoryRowModel {
         }
     }
 
+    private createChangePath(transaction: RowNodeTransaction): ChangedPath {
+
+        if (!transaction) { return null; }
+
+        // for updates, if the row is updated at all, then we re-calc all the values
+        // in that row. we could compare each value to each old value, however if we
+        // did this, we would be calling the valueService twice, once on the old value
+        // and once on the new value. so it's less valueGetter calls if we just assume
+        // each column is different. that way the changedPath is used so that only
+        // the impacted parent rows are recalculated, parents who's children have
+        // not changed are not impacted.
+        let valueColumns = this.columnController.getValueColumns();
+
+        if (!valueColumns || valueColumns.length === 0) { return null; }
+
+        let changedPath = new ChangedPath(false);
+
+        return changedPath;
+    }
+
     public refreshModel(params: RefreshModelParams): void {
 
         // this goes through the pipeline of stages. what's in my head is similar
@@ -166,10 +188,12 @@ export class InMemoryRowModel {
         // let start: number;
         // console.log('======= start =======');
 
+        let changedPath: ChangedPath = this.createChangePath(params.rowNodeTransaction);
+
         switch (params.step) {
             case constants.STEP_EVERYTHING:
                 // start = new Date().getTime();
-                this.doRowGrouping(params.groupState, params.rowNodeTransaction);
+                this.doRowGrouping(params.groupState, params.rowNodeTransaction, changedPath);
                 // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants.STEP_FILTER:
                 // start = new Date().getTime();
@@ -179,7 +203,7 @@ export class InMemoryRowModel {
                 this.doPivot();
             case constants.STEP_AGGREGATE: // depends on agg fields
                 // start = new Date().getTime();
-                this.doAggregate();
+                this.doAggregate(changedPath);
                 // console.log('aggregation = ' + (new Date().getTime() - start));
             case constants.STEP_SORT:
                 // start = new Date().getTime();
@@ -399,7 +423,7 @@ export class InMemoryRowModel {
         this.sortStage.execute({rowNode: this.rootNode});
     }
 
-    private doRowGrouping(groupState: any, rowNodeTransaction: RowNodeTransaction) {
+    private doRowGrouping(groupState: any, rowNodeTransaction: RowNodeTransaction, changedPath: ChangedPath) {
 
         // grouping is enterprise only, so if service missing, skip the step
         let rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
@@ -408,7 +432,9 @@ export class InMemoryRowModel {
         if (this.groupStage) {
 
             if (rowNodeTransaction) {
-                this.groupStage.execute({rowNode: this.rootNode, rowNodeTransaction: rowNodeTransaction});
+                this.groupStage.execute({rowNode: this.rootNode,
+                    rowNodeTransaction: rowNodeTransaction,
+                    changedPath: changedPath});
             } else {
                 // groups are about to get disposed, so need to deselect any that are selected
                 this.selectionController.removeGroupsFromSelection();
@@ -467,8 +493,9 @@ export class InMemoryRowModel {
     }
 
     // rows: the rows to put into the model
-    // firstId: the first id to use, used for paging, where we are not on the first page
-    public setRowData(rowData: any[], refresh: boolean) {
+    public setRowData(rowData: any[]) {
+
+        this.valueService.startTurn();
 
         // remember group state, so we can expand groups that should be expanded
         let groupState = this.getGroupState();
@@ -481,15 +508,17 @@ export class InMemoryRowModel {
         // - shows 'no rows' overlay if needed
         this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED);
 
-        if (refresh) {
-            this.refreshModel({
-                step: Constants.STEP_EVERYTHING,
-                groupState: groupState,
-                newData: true});
-        }
+        this.refreshModel({
+            step: Constants.STEP_EVERYTHING,
+            groupState: groupState,
+            newData: true});
+
+        this.valueService.endTurn();
     }
 
     public updateRowData(rowDataTran: RowDataTransaction) {
+
+        this.valueService.startTurn();
 
         let rowNodeTran = this.nodeManager.updateRowData(rowDataTran);
 
@@ -502,6 +531,8 @@ export class InMemoryRowModel {
         });
 
         this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_UPDATED);
+
+        this.valueService.endTurn();
     }
 
     private doRowsToDisplay() {

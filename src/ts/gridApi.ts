@@ -173,7 +173,7 @@ export class GridApi {
                 this.inMemoryRowModel.updateRowData(transaction);
             } else {
                 this.selectionController.reset();
-                this.inMemoryRowModel.setRowData(rowData, true);
+                this.inMemoryRowModel.setRowData(rowData);
             }
         } else {
             console.log('cannot call setRowData unless using normal row model');

@@ -140,6 +140,10 @@ export class RowNode implements IEventEmitter {
      * a copy where daemon=true. */
     public daemon: boolean;
 
+    /** Used by the value service, stores values for a particular change detection turn. */
+    public __turnData: any;
+    public __turnId: number;
+
     private selected = false;
     private eventService: EventService;
 

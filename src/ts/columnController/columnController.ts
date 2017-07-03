@@ -22,6 +22,7 @@ import {IAggFuncService} from "../interfaces/iAggFuncService";
 import {ColumnAnimationService} from "../rendering/columnAnimationService";
 import {AutoGroupColService} from "./autoGroupColService";
 import {RowNode} from "../entities/rowNode";
+import {ValueService} from "../valueService";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -187,6 +188,7 @@ export class ColumnController {
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
+    @Optional('valueService') private valueService: ValueService;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -265,9 +267,6 @@ export class ColumnController {
     @PostConstruct
     public init(): void {
         this.pivotMode = this.gridOptionsWrapper.isPivotMode();
-        if (this.gridOptionsWrapper.getColumnDefs()) {
-            this.setColumnDefs(this.gridOptionsWrapper.getColumnDefs());
-        }
     }
 
     private setVirtualViewportLeftAndRight(): void {
@@ -1496,6 +1495,8 @@ export class ColumnController {
     }
 
     public setColumnDefs(columnDefs: (ColDef|ColGroupDef)[]) {
+        this.valueService.startTurn();
+
         this.autoGroupsNeedBuilding = true;
 
         let balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(columnDefs, true);
@@ -1516,6 +1517,8 @@ export class ColumnController {
         let everythingChangedEvent = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, everythingChangedEvent);
         this.eventService.dispatchEvent(Events.EVENT_NEW_COLUMNS_LOADED);
+
+        this.valueService.endTurn();
     }
 
     public isReady(): boolean {

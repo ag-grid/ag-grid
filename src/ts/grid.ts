@@ -61,7 +61,8 @@ import {AutoGroupColService} from "./columnController/autoGroupColService";
 import {PaginationAutoPageSizeService, PaginationProxy} from "./rowModels/paginationProxy";
 import {ImmutableService} from "./rowModels/inMemory/immutableService";
 import {GroupValueService} from "./groupValueService";
-
+import {IRowModel} from "./interfaces/iRowModel";
+import {Constants} from "./constants";
 
 export interface GridParams {
     // used by Web Components
@@ -148,7 +149,8 @@ export class Grid {
         let contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
-            beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
+            beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, CellRendererFactory,
+                HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory,
@@ -167,16 +169,50 @@ export class Grid {
         let isLoggingFunc = ()=> contextParams.debug;
         this.context = new Context(contextParams, new Logger('Context', isLoggingFunc));
 
-        let eventService = this.context.getBean('eventService');
+        // we do this at the end, after the boot sequence is complete
+        this.setColumnsAndData();
+
+        this.dispatchGridReadyEvent(gridOptions);
+
+        if (gridOptions.debug) {
+            console.log('ag-Grid -> initialised successfully, enterprise = ' + enterprise);
+        }
+    }
+
+    private setColumnsAndData(): void {
+
+        let gridOptionsWrapper: GridOptionsWrapper = this.context.getBean('gridOptionsWrapper');
+        let columnController: ColumnController = this.context.getBean('columnController');
+        let rowModel: IRowModel = this.context.getBean('rowModel');
+
+        let columnDefs = gridOptionsWrapper.getColumnDefs();
+        let rowData = gridOptionsWrapper.getRowData();
+
+        let nothingToSet = _.missing(columnDefs) && _.missing(rowData);
+        if (nothingToSet) { return; }
+
+        let valueService: ValueService = this.context.getBean('valueService');
+        valueService.startTurn();
+
+        if (_.exists(columnDefs)) {
+            columnController.setColumnDefs(columnDefs);
+        }
+
+        if (_.exists(rowData) && rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
+            let inMemoryRowModel = <InMemoryRowModel> rowModel;
+            inMemoryRowModel.setRowData(rowData);
+        }
+
+        valueService.endTurn();
+    }
+
+    private dispatchGridReadyEvent(gridOptions: GridOptions): void {
+        let eventService: EventService = this.context.getBean('eventService');
         let readyEvent = {
             api: gridOptions.api,
             columnApi: gridOptions.columnApi
         };
         eventService.dispatchEvent(Events.EVENT_GRID_READY, readyEvent);
-
-        if (gridOptions.debug) {
-            console.log('ag-Grid -> initialised successfully, enterprise = ' + enterprise);
-        }
     }
 
     private getRowModelClass(gridOptions: GridOptions): any {
