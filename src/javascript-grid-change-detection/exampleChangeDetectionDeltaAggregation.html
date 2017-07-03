@@ -16,7 +16,18 @@
 </style>
 
 <body>
-    <div id="myGrid" style="height: 100%;" class="ag-dark"></div>
+
+    <div style="height: 100%; padding-top: 26px; box-sizing: border-box;">
+        <div id="myGrid" style="height: 100%;" class="ag-dark"></div>
+    </div>
+    <div style="position: absolute; top: 0px; left: 0px; padding: 8px;">
+        <button onclick="updateOneRecord()">Update One Value</button>
+        <button onclick="updateUsingTransaction()">Update Using Transaction</button>
+        <button onclick="removeUsingTransaction()">Remove Using Transaction</button>
+        <button onclick="addUsingTransaction()">Add Using Transaction</button>
+        <button onclick="changeGroupUsingTransaction()">Change Group Using Transaction</button>
+    </div>
+
 </body>
 
 </html>

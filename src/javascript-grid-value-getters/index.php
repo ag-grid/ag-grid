@@ -125,6 +125,14 @@ colDef.valueGetter = function(params) {
     return params.data.firstName + params.data.lastName;
 }</pre>
 
+    <note>
+        All valueGetter's must be pure functions. That means, given the same state of your
+        data, it should consistently return the same result. This is important as the grid will only call your
+        valueGetter once during a redraw, even though the value may be used multiple times. For example, the
+        value will be used to display the cell value, however it can additionally be used to provide values
+        to an aggregation function when grouping, or can be used as input to another valueGetter via the
+        params.getValue() function.
+    </note>
 
     <h2>Value Setter</h2>
 
