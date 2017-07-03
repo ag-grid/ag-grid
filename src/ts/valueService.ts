@@ -52,11 +52,11 @@ export class ValueService {
             this.turnId = this.turnIdSequence.next();
             this.turnActive = true;
         }
-        console.log(`start (${this.turnId}) ${this.turnStackCount}`);
+        // console.log(`start (${this.turnId}) ${this.turnStackCount}`);
     }
 
     public endTurn(): void {
-        console.log(`end (${this.turnId}) ${this.turnStackCount}`);
+        // console.log(`end (${this.turnId}) ${this.turnStackCount}`);
         this.turnStackCount--;
         if (this.turnStackCount===0) {
             this.turnId = null;
