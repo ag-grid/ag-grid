@@ -49,7 +49,7 @@ export class AggregationStage implements IRowNodeStage {
     private recursivelyCreateAggData(rowNode: RowNode, changedPath: ChangedPath, measureColumns: Column[], pivotColumns: Column[]) {
 
         // aggregate all children first, as we use the result in this nodes calculations
-        rowNode.childrenAfterFilter.forEach( child => {
+        rowNode.childrenAfterFilter.forEach( (child: RowNode) => {
             if (child.group) {
                 this.recursivelyCreateAggData(child, changedPath, measureColumns, pivotColumns);
             }
@@ -64,7 +64,7 @@ export class AggregationStage implements IRowNodeStage {
             if (suppressAggAtRootLevel && notPivoting) { return; }
         }
 
-        let skipBecauseNoChangedPath = changedPath && !changedPath[rowNode.id];
+        let skipBecauseNoChangedPath = changedPath && !changedPath.isInPath(rowNode);
         if (skipBecauseNoChangedPath) { return; }
 
         this.aggregateRowNode(rowNode, changedPath, measureColumns, pivotColumns);
@@ -79,15 +79,12 @@ export class AggregationStage implements IRowNodeStage {
         let aggResult: any;
         if (rowNode.group && userProvidedGroupRowAggNodes) {
             aggResult = userProvidedGroupRowAggNodes(rowNode.childrenAfterFilter);
-            if (changedPath) { this.pullUpChangedPath(rowNode, changedPath); }
         } else if (measureColumnsMissing) {
             aggResult = null;
         } else if (rowNode.group && pivotColumnsMissing) {
             aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, changedPath, measureColumns);
-            if (changedPath) { this.pullUpChangedPath(rowNode, changedPath); }
         } else {
             aggResult = this.aggregateRowNodeUsingValuesAndPivot(rowNode);
-            if (changedPath) { this.pullUpChangedPath(rowNode, changedPath); }
         }
 
         rowNode.setAggData(aggResult);
@@ -96,19 +93,6 @@ export class AggregationStage implements IRowNodeStage {
         // to the group, so update the data here also if there is one
         if (rowNode.sibling) {
             rowNode.sibling.setAggData(aggResult);
-        }
-    }
-
-    private pullUpChangedPath(rowNode: RowNode, changedPath: ChangedPath): void {
-        if (!rowNode.parent) { return; }
-        let parentId = rowNode.parent.id;
-        let colIds: {[id:string]:boolean} = changedPath[rowNode.id];
-        if (colIds) {
-            if (!changedPath[parentId]) {
-                changedPath[parentId] = {};
-            }
-            let parentColIds = changedPath[parentId];
-            Object.keys(colIds).forEach( key => parentColIds[key] = true );
         }
     }
 
@@ -155,16 +139,8 @@ export class AggregationStage implements IRowNodeStage {
     private aggregateRowNodeUsingValuesOnly(rowNode: RowNode, changedPath: ChangedPath, valueColumns: Column[]): any {
         let result: any = {};
 
-        let changedPathThisRowNode = changedPath ? changedPath[rowNode.id] : null;
-
-        // if a change path was provided, we only gather values for the change columns
-        let changedValueColumns = changedPathThisRowNode ?
-            valueColumns.filter( col => changedPathThisRowNode[col.getId()])
-            : valueColumns;
-
-        let notChangedValueColumns = changedPathThisRowNode ?
-            valueColumns.filter( col => !changedPathThisRowNode[col.getId()])
-            : null;
+        let changedValueColumns = changedPath ? changedPath.getValueColumnsForNode(rowNode, valueColumns) : valueColumns;
+        let notChangedValueColumns = changedPath ? changedPath.getNotValueColumnsForNode(rowNode, valueColumns) : null;
 
         let values2d = this.getValuesNormal(rowNode, changedValueColumns);
         let oldValues = rowNode.aggData;
@@ -184,7 +160,7 @@ export class AggregationStage implements IRowNodeStage {
 
     private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
         let values: any[] = [];
-        rowNode.childrenAfterFilter.forEach( rowNode => {
+        rowNode.childrenAfterFilter.forEach( (rowNode: RowNode) => {
             let value = rowNode.aggData[colId];
             values.push(value);
         });

@@ -2,7 +2,6 @@ import {
     _,
     Autowired,
     Bean,
-    ColDef,
     Column,
     ColumnController,
     Context,
@@ -15,7 +14,8 @@ import {
     RowNodeTransaction,
     SelectionController,
     StageExecuteParams,
-    ValueService
+    ValueService,
+    ChangedPath
 } from "ag-grid/main";
 
 
@@ -43,7 +43,8 @@ export class GroupStage implements IRowNodeStage {
     // for leaf groups, rowNode.childrenAfterGroup = rowNode.allLeafChildren;
 
     public execute(params: StageExecuteParams): void {
-        let rootNode = params.rowNode;
+
+        let {rowNode, changedPath, rowNodeTransaction} = params;
 
         let groupedCols = this.columnController.getRowGroupColumns();
         let expandByDefault: number;
@@ -57,30 +58,39 @@ export class GroupStage implements IRowNodeStage {
         let includeParents = !this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         let isPivot = this.columnController.isPivotMode();
 
-        if (params.rowNodeTransaction) {
-            this.handleTransaction(params.rowNodeTransaction, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
+        if (rowNodeTransaction) {
+            this.handleTransaction(rowNodeTransaction, changedPath, rowNode, groupedCols, expandByDefault, includeParents, isPivot);
         } else {
-            this.shotgunResetEverything(rootNode, groupedCols, expandByDefault, includeParents, isPivot);
+            this.shotgunResetEverything(rowNode, groupedCols, expandByDefault, includeParents, isPivot);
         }
     }
 
-    private handleTransaction(tran: RowNodeTransaction, rootNode: RowNode, groupedCols: Column[], expandByDefault: number, includeParents: boolean, isPivot: boolean): void {
+    private handleTransaction(tran: RowNodeTransaction, changedPath: ChangedPath, rootNode: RowNode, groupedCols: Column[], expandByDefault: number, includeParents: boolean, isPivot: boolean): void {
+        // changedPath.addParentNodes(transaction.add);
+        // changedPath.addParentNodes(transaction.remove);
+        // changedPath.addParentNodes(transaction.update);
+
         if (tran.add) {
-            this.insertRowNodesIntoGroups(tran.add, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
+            this.insertRowNodesIntoGroups(tran.add, changedPath, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
         }
         if (tran.update) {
             // the InMemoryNodeManager already updated the value, however we
             // need to check the grouping, in case a dimension changed.
-            this.checkParents(tran.update, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
+            this.checkParents(tran.update, changedPath, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
         }
         if (tran.remove) {
-            this.removeRowNodesFromGroups(tran.remove, rootNode);
+            this.removeRowNodesFromGroups(tran.remove, changedPath, rootNode);
         }
     }
 
-    private checkParents(leafRowNodes: RowNode[], rootNode: RowNode, groupColumns: Column[], expandByDefault: any, includeParents: boolean, isPivot: boolean): void {
+    private checkParents(leafRowNodes: RowNode[], changedPath: ChangedPath, rootNode: RowNode,
+                         groupColumns: Column[], expandByDefault: any, includeParents: boolean, isPivot: boolean): void {
 
-        leafRowNodes.forEach( nodeToPlace => {
+        leafRowNodes.forEach( (nodeToPlace: RowNode) => {
+
+            // always add existing parent, as if row is moved, then old parent needs
+            // to be recomputed
+            changedPath.addParentNode(nodeToPlace.parent);
 
             let groupKeys = groupColumns.map( col => this.getKeyForNode(col, nodeToPlace) );
 
@@ -97,13 +107,19 @@ export class GroupStage implements IRowNodeStage {
             if (!keysMatch) {
                 this.removeRowNodeFromGroups(nodeToPlace, rootNode);
                 this.insertRowNodeIntoGroups(nodeToPlace, rootNode, groupColumns, expandByDefault, includeParents, isPivot);
+
+                // add in new parent
+                changedPath.addParentNode(nodeToPlace.parent);
             }
         });
     }
 
-    private removeRowNodesFromGroups(leafRowNodes: RowNode[], rootNode: RowNode): void {
+    private removeRowNodesFromGroups(leafRowNodes: RowNode[], changedPath: ChangedPath, rootNode: RowNode): void {
         leafRowNodes.forEach( leafToRemove => {
             this.removeRowNodeFromGroups(leafToRemove, rootNode);
+            if (changedPath) {
+                changedPath.addParentNode(leafToRemove.parent);
+            }
         });
     }
 
@@ -142,12 +158,15 @@ export class GroupStage implements IRowNodeStage {
         rootNode.childrenAfterGroup = [];
         rootNode.childrenMapped = {};
 
-        this.insertRowNodesIntoGroups(rootNode.allLeafChildren, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
+        this.insertRowNodesIntoGroups(rootNode.allLeafChildren, null, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
     }
 
-    private insertRowNodesIntoGroups(newRowNodes: RowNode[], rootNode: RowNode, groupColumns: Column[], expandByDefault: any, includeParents: boolean, isPivot: boolean): void {
+    private insertRowNodesIntoGroups(newRowNodes: RowNode[], changedPath: ChangedPath, rootNode: RowNode, groupColumns: Column[], expandByDefault: any, includeParents: boolean, isPivot: boolean): void {
         newRowNodes.forEach( rowNode => {
             this.insertRowNodeIntoGroups(rowNode, rootNode, groupColumns, expandByDefault, includeParents, isPivot);
+            if (changedPath) {
+                changedPath.addParentNode(rowNode.parent);
+            }
         });
     }
 
