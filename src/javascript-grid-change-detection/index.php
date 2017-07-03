@@ -236,6 +236,63 @@ colDef = {
 
     <show-example example="exampleChangeDetectionFilterSortGroup"></show-example>
 
+    <h2 id="delta-aggregation-rebuilding">Delta Aggregation Rebuilding</h2>
+
+    <p>
+        asdf
+    </p>
+    <ul>
+        <li>
+            When editing cell (or calling rowNode.setDataValue(col, val)), aggregations are recomputed on changed
+            tree only AND on changed column only.
+        </li>
+        <li>
+            When updating with transaction (or calling rowNode.setData(data), aggregations are recomputed on changed
+            tree only on ALL columns.
+        </li>
+    </ul>
+
+    <show-example example="exampleChangeDetectionDeltaAggregation"></show-example>
+
+    <h2>Refresh Turns</h2>
+
+    <p>
+        A refresh turn happens at the following points:
+    </p>
+    <ul>
+        <li>
+            Grid initialisation, transaction around setting columns, and then row data.
+        </li>
+        <li>
+            columnController.setColumnDefs();
+        </li>
+        <li>
+            inMemoryRowModel.setRowData();
+        </li>
+        <li>
+            inMemoryRowModel.updateRowData(); (transaction update)
+        </li>
+        <li>
+            rowRenderer.refreshView(); (after any UI update needed, eg scrolling, filter, etc)
+        </li>
+        <li>
+            valueService.setValue(); // AFTER value is updated (as we call once to get old value)
+        </li>
+    </ul>
+
+    <p>
+        Problems:
+    </p>
+    <ul>
+        <li>Aggregations on expressions don't work</li>
+        <li>
+            Difficult to understand: a) change detection on value b) caching of valueGetters
+            c) re-calc of aggregated values
+        </li>
+    </ul>
+
+    <show-example example="exampleChangeDetectionPivot"></show-example>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
