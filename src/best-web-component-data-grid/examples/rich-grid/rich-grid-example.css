@@ -1,3 +1,6 @@
+html, body {
+    height: 100%;
+}
 
 .ag-basic .ag-cell {
     padding-top: 2px !important;
@@ -26,4 +29,17 @@ label {
     display: inline-block;
     height: 100%;
     width: 100%;
+}
+
+.toolbar button {
+    margin: 2px;
+    padding: 0;
+}
+
+button:disabled {
+    color: #a0a0a0;
+}
+
+.ag-menu {
+    z-index: 10;
 }
