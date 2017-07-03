@@ -30,7 +30,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The column definition options shown above can be used as follows:
+        The column definition options listed above can be used as follows:
     </p>
 
     <pre>var gridOptions = {
@@ -67,44 +67,20 @@ include '../documentation-main/documentation_header.php';
     <span class="codeComment">// define a column type (you can define as many as you like)</span>
     columnTypes: {
         "nonEditableColumn": {editable: false},
-        "dateColumn": {
-            // specify we want to use the date filter
-            filter: 'date',
-
-            // add extra parameters for the date filter
-            filterParams: {
-                // provide comparator function
-                comparator: function (filterLocalDateAtMidnight, cellValue) {
-
-                    // In the example application, dates are stored as dd/mm/yyyy
-                    // We create a Date object for comparison against the filter date
-                    var dateParts = cellValue.split("/");
-                    var day = Number(dateParts[2]);
-                    var month = Number(dateParts[1]) - 1;
-                    var year = Number(dateParts[0]);
-                    var cellDate = new Date(day, month, year);
-
-                    // Now that both parameters are Date objects, we can compare
-                    if (cellDate < filterLocalDateAtMidnight) {
-                        return -1;
-                    } else if (cellDate > filterLocalDateAtMidnight) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }
-            }
+        "dateColumn": {filter: 'date', filterParams: {comparator: myDateComparator}, suppressMenu:true}
         }
     }
 
     <span class="codeComment">// other grid options here...</span>
 }</pre>
 
-    <p>Columns are positioned into the grid according to the order they are specified columnDef's in the grid options.</p>
+    <p>Columns are positioned in the order the ColDef's are specified in the grid options.</p>
 
     <p>
-        When the grid creates a column it applies an order of precedence when selecting the properties to use when there is more to choose from.
-        As an example, these are the steps used when creating 'Col C' shown above:
+        When the grid creates a column it applies an order of precedence when selecting the properties to use.
+    </p>
+    <p>
+        Below is an outline of the steps used when creating 'Col C' shown above:
     </p>
 
 
