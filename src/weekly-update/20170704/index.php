@@ -131,13 +131,27 @@ include('../../includes/mediaHeader.php');
             JIRA update - we are down to 136 tickets so the steady progress continues. You can view the progress on our <a href="https://www.ag-grid.com/ag-grid-pipeline/">pipeline</a>
             </p>
 
-
             </p>
 
-        <h3>ag-Grid Frameworks Update</h3>
+            <h4>Continuing with Accessibility</h4>
+
+            <p>
+                Rob is continuing his work on Accessibility as well as helping the team close off JIRA's.
+            </p>
+
+            <h4>Preparing for TypeScript 2.4</h4>
+
+            <p>
+                TypeScript 2.4 comes with some breaking changes, which breaks some of our ag-Grid
+                interfaces (those feckers!). We will fix these so the next release of ag-Grid
+                will work with TypeScript 2.4.
+            </p>
+
+            <h3>ag-Grid Frameworks Update</h3>
             <h4>Web Components</h4>
             <p>
-            We have deprecated Web Components support in ag-Grid Core but have made it available in a new stand-alone web component. This brings it in line with our other framework support.
+                We have moved Web Components support in ag-Grid Core to a
+                new stand-alone <a href="https://github.com/ceolter/ag-grid-webcomponent/">Github repository</a>. This brings it in line with our other supported frameworks.
             </p>
 
             <p>
@@ -148,12 +162,20 @@ include('../../includes/mediaHeader.php');
             Building on this work, we are turning our focus to support for Polymer. We will provide support for this in the same as our other frameworks.
             </p>
 
-            Notable Updates from the Industry
-            for next weekly update - mention the TS 2.4 issue
-
         <h3>Customer Experience</h3>
             <p>
             The team have been planning and working on our social media, so expect to see us appear more in your Twitter feeds! We’ll be keeping you in the loop about what we’re getting up to and keeping you up-to-date on our new features and updates. We’ve got some really interesting stuff to share with you, so stay tuned.
+            </p>
+
+        <h3>Next Release</h3>
+            <p>
+                We are targeting our next release for Friday 14th July. Fingers crossed no upsets and we hit the date.
+            </p>
+
+        <h3>Help Us Out!</h3>
+
+            <p>
+                Spread the news on ag-Grid, use the share buttons below! We like your tweets and Reddit mentions are great :)
             </p>
         </div>
 
