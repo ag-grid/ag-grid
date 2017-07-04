@@ -1,4 +1,3 @@
-
 <style>
     html, body {
         height: 100%;
@@ -38,14 +37,13 @@
 
     }
 
-
-    .blackish{
+    .blackish {
         background-color: #333333;
         padding-bottom: 10px;
     }
 
-    .graphBox{
-        color:white;
+    .graphBox {
+        color: white;
         border: 1px solid grey;
         margin-top: 22px;
     }
@@ -54,23 +52,23 @@
         font-size: 31px !important;
     }
 
-    .graphBoxContainer{
-        padding-left:10px;
+    .graphBoxContainer {
+        padding-left: 10px;
     }
 
     text {
         fill: grey;
     }
 
-    .ag-value-change-delta-down{
-        color:red !important
+    .ag-value-change-delta-down {
+        color: red !important
     }
 
-    .ag-value-change-delta-up{
-        color:#2d812f !important
+    .ag-value-change-delta-up {
+        color: #2d812f !important
     }
 
-    .ag-value-change-value-highlight{
+    .ag-value-change-value-highlight {
         background-color: rgb(98, 98, 98) !important;
         color: black !important;;
     }
