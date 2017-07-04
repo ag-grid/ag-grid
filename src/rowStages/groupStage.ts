@@ -7,7 +7,6 @@ import {
     Context,
     EventService,
     GridOptionsWrapper,
-    GroupValueService,
     IRowNodeStage,
     NumberSequence,
     RowNode,
@@ -26,7 +25,6 @@ export class GroupStage implements IRowNodeStage {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('groupValueService') private groupValueService: GroupValueService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
