@@ -1,41 +1,48 @@
 <!DOCTYPE html>
-<html>
-<head lang="en">
+<html lang="en">
+<head>
     <meta charset="UTF-8">
+    <title>ag-Grid Web Component - Rich Example</title>
 
-    <!-- to support old browsers, we use webcomponents-lite.js to polyfill -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.10/webcomponents-lite.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+        }
+    </style>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="html5grid-wc.css" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
+    <link href="rich-grid-example.css" rel="stylesheet">
+
+    <!-- webcomponents polyfill - must be before any wc related javascript is executed -->
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/custom-elements/1.0.0/custom-elements.min.js></script>
+
+    <!-- before the ag-grid web component -->
+    <!-- either ag-grid or ag-grid-enterprise, depending on which you're using -->
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
-    <script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused48"></script>
+    <script src="../../../dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused48"></script>
 
-    <script src="webComponentDataGrid-wc.js"></script>
+    <!-- the ag-grid-webcomponent-->
+    <link rel="import" href="../../ag-grid-webcomponent/ag-grid.html">
 
-    <style>
-        .toolbar button { margin: 2px; padding: 0px; }
-        button:disabled { color: #a0a0a0; }
-    </style>
+    <!-- the application code -->
+    <script src="rich-grid-example.js"></script>
 </head>
-
 <body>
-
-    <div style="width: 800px;">
-        <div style="padding: 4px">
-            <div style="float: right;">
-                <input type="text" id="quickFilterInput" placeholder="Type text to filter..."/>
-            </div>
-            <div style="padding: 4px;">
-                <b>Employees Skills and Contact Details</b> <span id="rowCount"/>
-            </div>
+<div style="width: 800px;">
+    <div style="padding: 4px">
+        <div style="float: right;">
+            <input type="text" id="quickFilterInput" placeholder="Type text to filter..."/>
+        </div>
+        <div style="padding: 4px;">
+            <b>Employees Skills and Contact Details</b> <span id="rowCount"/>
+        </div>
         <div style="clear: both;"/>
         <div style="padding: 4px;" class="toolbar">
             <span>
@@ -62,24 +69,20 @@
         </div>
         <div style="clear: both;"/>
 
-        <!-- Putting the width and height on a wrapped element, as couldn't get web component to accept css -->
-        <div style="height: 350px; width: 800px;">
-            <ag-grid id="myGrid" class="ag-fresh ag-basic"
-
-                     enable-col-resize
-                     enable-sorting
-                     enable-filter
-                     group-headers
-                     suppress-row-click-selection
-                     tool-panel-suppress-groups
-                     tool-panel-suppress-values
-                     row-height="22"
-                     row-selection="multiple"
-                     pinned-column-count="3"
-
-                    ></ag-grid>
-        </div>
+        <ag-grid id="myGrid"
+                 style="height: 350px; width: 800px;display: block;"
+                 class="ag-fresh ag-basic"
+                 enable-col-resize
+                 enable-sorting
+                 enable-filter
+                 group-headers
+                 suppress-row-click-selection
+                 tool-panel-suppress-groups
+                 tool-panel-suppress-values
+                 row-height="22"
+                 row-selection="multiple"
+                 pinned-column-count="3"></ag-grid>
     </div>
-
+</div>
 </body>
 </html>

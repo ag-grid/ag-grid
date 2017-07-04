@@ -111,7 +111,7 @@ open index.html
 <span class="codeComment">&lt;!-- index.hmtl --></span>
 &lt;html&gt;
 &lt;head&gt;
-    <span class="codeComment">&&lt;!-- reference the ag-Grid library--></span>
+    <span class="codeComment">&lt;!-- reference the ag-Grid library--></span>
     &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/10.1.0/ag-grid.js"&gt;&lt;/script&gt;
 
     <span class="codeComment">&lt;!-- our application code --></span>
