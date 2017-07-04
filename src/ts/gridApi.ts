@@ -758,6 +758,9 @@ export class GridApi {
     public updateRowData(rowDataTransaction: RowDataTransaction): void {
         if (this.inMemoryRowModel) {
             this.inMemoryRowModel.updateRowData(rowDataTransaction);
+            if (!this.gridOptionsWrapper.isSuppressChangeDetection()) {
+                this.rowRenderer.refreshCells();
+            }
         } else if (this.infinitePageRowModel) {
             this.infinitePageRowModel.updateRowData(rowDataTransaction);
         } else {

@@ -14,6 +14,7 @@ import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
 import {RowNodeCache, RowNodeCacheParams} from "../rowModels/cache/rowNodeCache";
 import {RowNodeBlock} from "../rowModels/cache/rowNodeBlock";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
+import {ValueCache} from "../valueService/valueCache";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -52,6 +53,7 @@ export class RowNode implements IEventEmitter {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('context') private context: Context;
+    @Autowired('valueCache') private valueCache: ValueCache;
 
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
@@ -150,6 +152,8 @@ export class RowNode implements IEventEmitter {
     public setData(data: any): void {
         let oldData = this.data;
         this.data = data;
+
+        this.valueCache.onDataChanged();
 
         let event = {oldData: oldData, newData: data, update: false};
         this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
