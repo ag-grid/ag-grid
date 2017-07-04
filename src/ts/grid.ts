@@ -6,7 +6,7 @@ import {ColumnController, ColumnApi} from "./columnController/columnController";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {HeaderRenderer} from "./headerRendering/headerRenderer";
 import {FilterManager} from "./filter/filterManager";
-import {ValueService} from "./valueService";
+import {ValueService} from "./valueService/valueService";
 import {MasterSlaveService} from "./masterSlaveService";
 import {EventService} from "./eventService";
 import {GridPanel} from "./gridPanel/gridPanel";
@@ -14,7 +14,7 @@ import {GridApi} from "./gridApi";
 import {HeaderTemplateLoader} from "./headerRendering/deprecated/headerTemplateLoader";
 import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
-import {ExpressionService} from "./expressionService";
+import {ExpressionService} from "./valueService/expressionService";
 import {TemplateService} from "./templateService";
 import {PopupService} from "./widgets/popupService";
 import {LoggerFactory, Logger} from "./logger";
@@ -60,9 +60,9 @@ import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
 import {AutoGroupColService} from "./columnController/autoGroupColService";
 import {PaginationAutoPageSizeService, PaginationProxy} from "./rowModels/paginationProxy";
 import {ImmutableService} from "./rowModels/inMemory/immutableService";
-import {GroupValueService} from "./groupValueService";
 import {IRowModel} from "./interfaces/iRowModel";
 import {Constants} from "./constants";
+import {ValueCache} from "./valueService/valueCache";
 
 export interface GridParams {
     // used by Web Components
@@ -152,9 +152,9 @@ export class Grid {
             beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, CellRendererFactory,
                 HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
-                FilterManager, ColumnController, PaginationProxy, RowRenderer,
-                HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory,
-                GridSerializer, TemplateService, GridPanel, PopupService, ValueService, GroupValueService, MasterSlaveService,
+                FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,
+                BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
+                GridPanel, PopupService, ValueCache, ValueService, MasterSlaveService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService, FilterService, RowNodeFactory,
@@ -192,7 +192,6 @@ export class Grid {
         if (nothingToSet) { return; }
 
         let valueService: ValueService = this.context.getBean('valueService');
-        valueService.startTurn();
 
         if (_.exists(columnDefs)) {
             columnController.setColumnDefs(columnDefs);
@@ -202,8 +201,6 @@ export class Grid {
             let inMemoryRowModel = <InMemoryRowModel> rowModel;
             inMemoryRowModel.setRowData(rowData);
         }
-
-        valueService.endTurn();
     }
 
     private dispatchGridReadyEvent(gridOptions: GridOptions): void {

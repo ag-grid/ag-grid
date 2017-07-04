@@ -7,7 +7,7 @@ import {FloatingRowModel} from "./rowModels/floatingRowModel";
 import {Utils as _} from "./utils";
 import {RowNode} from "./entities/rowNode";
 import {SelectionController} from "./selectionController";
-import {ValueService} from "./valueService";
+import {ValueService} from "./valueService/valueService";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {
     BaseExportParams,

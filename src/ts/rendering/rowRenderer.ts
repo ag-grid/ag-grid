@@ -1,9 +1,9 @@
 import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {GridPanel, RowContainerComponents} from "../gridPanel/gridPanel";
-import {ExpressionService} from "../expressionService";
+import {ExpressionService} from "../valueService/expressionService";
 import {TemplateService} from "../templateService";
-import {ValueService} from "../valueService";
+import {ValueService} from "../valueService/valueService";
 import {EventService} from "../eventService";
 import {FloatingRowModel} from "../rowModels/floatingRowModel";
 import {RowComp} from "./rowComp";
@@ -260,12 +260,10 @@ export class RowRenderer extends BeanStub {
         }
 
         this.refreshInProgress = true;
-        this.valueService.startTurn();
     }
 
     private releaseLockOnRefresh(): void {
         this.refreshInProgress = false;
-        this.valueService.endTurn();
     }
 
     // sets the focus to the provided cell, if the cell is provided. this way, the user can call refresh without

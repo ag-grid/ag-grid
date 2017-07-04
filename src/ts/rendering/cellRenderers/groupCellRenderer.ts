@@ -1,6 +1,6 @@
 import {SvgFactory} from "../../svgFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {ExpressionService} from "../../expressionService";
+import {ExpressionService} from "../../valueService/expressionService";
 import {EventService} from "../../eventService";
 import {Constants} from "../../constants";
 import {Utils as _} from "../../utils";

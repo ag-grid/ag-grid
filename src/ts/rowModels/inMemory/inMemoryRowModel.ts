@@ -11,7 +11,8 @@ import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 import {InMemoryNodeManager} from "./inMemoryNodeManager";
 import {ChangedPath} from "./changedPath";
-import {ValueService} from "../../valueService";
+import {ValueService} from "../../valueService/valueService";
+import {ValueCache} from "../../valueService/valueCache";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes};
 
@@ -58,17 +59,19 @@ export class InMemoryRowModel {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
+    @Autowired('valueService') private valueService: ValueService;
+    @Autowired('valueCache') private valueCache: ValueCache;
+
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
-    @Autowired('valueService') private valueService: ValueService;
-
     @Autowired('sortStage') private sortStage: IRowNodeStage;
     @Autowired('flattenStage') private flattenStage: IRowNodeStage;
+
     // enterprise stages
     @Optional('groupStage') private groupStage: IRowNodeStage;
-
     @Optional('aggregationStage') private aggregationStage: IRowNodeStage;
     @Optional('pivotStage') private pivotStage: IRowNodeStage;
+
     // top most node of the tree. the children are the user provided data.
     private rootNode: RowNode;
 
@@ -495,7 +498,8 @@ export class InMemoryRowModel {
     // rows: the rows to put into the model
     public setRowData(rowData: any[]) {
 
-        this.valueService.startTurn();
+        // no need to invalidate cache, as the cache is stored on the rowNode,
+        // so new rowNodes means the cache is wiped anyway.
 
         // remember group state, so we can expand groups that should be expanded
         let groupState = this.getGroupState();
@@ -512,13 +516,11 @@ export class InMemoryRowModel {
             step: Constants.STEP_EVERYTHING,
             groupState: groupState,
             newData: true});
-
-        this.valueService.endTurn();
     }
 
     public updateRowData(rowDataTran: RowDataTransaction) {
 
-        this.valueService.startTurn();
+        this.valueCache.onDataChanged();
 
         let rowNodeTran = this.nodeManager.updateRowData(rowDataTran);
 
@@ -531,8 +533,6 @@ export class InMemoryRowModel {
         });
 
         this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_UPDATED);
-
-        this.valueService.endTurn();
     }
 
     private doRowsToDisplay() {

@@ -1,19 +1,19 @@
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ExpressionService} from "./expressionService";
-import {ColumnController} from "./columnController/columnController";
-import {ColDef, NewValueParams, ValueGetterParams} from "./entities/colDef";
-import {Autowired, Bean, PostConstruct} from "./context/context";
-import {RowNode} from "./entities/rowNode";
-import {Column} from "./entities/column";
-import {NumberSequence, Utils as _} from "./utils";
-import {Events} from "./events";
-import {EventService} from "./eventService";
-import {GroupValueService} from "./groupValueService";
-import {IRowModel} from "./interfaces/iRowModel";
-import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
-import {Constants} from "./constants";
-import {RowRenderer} from "./rendering/rowRenderer";
-import {ChangedPath} from "./rowModels/inMemory/changedPath";
+import {ColumnController} from "../columnController/columnController";
+import {ColDef, NewValueParams, ValueGetterParams} from "../entities/colDef";
+import {Autowired, Bean, PostConstruct} from "../context/context";
+import {RowNode} from "../entities/rowNode";
+import {Column} from "../entities/column";
+import {_} from "../utils";
+import {Events} from "../events";
+import {EventService} from "../eventService";
+import {IRowModel} from "../interfaces/iRowModel";
+import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
+import {Constants} from "../constants";
+import {RowRenderer} from "../rendering/rowRenderer";
+import {ChangedPath} from "../rowModels/inMemory/changedPath";
+import {ValueCache} from "./valueCache";
 
 @Bean('valueService')
 export class ValueService {
@@ -22,7 +22,7 @@ export class ValueService {
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('groupValueService') private groupValueService: GroupValueService;
+    @Autowired('valueCache') private valueCache: ValueCache;
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -32,35 +32,12 @@ export class ValueService {
 
     private initialised = false;
 
-    private turnIdSequence = new NumberSequence();
-    private turnActive = false;
-    private turnId: number;
-    private turnStackCount = 0;
-
     @PostConstruct
     public init(): void {
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
         this.initialised = true;
         if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             this.inMemoryRowModel = <InMemoryRowModel> this.rowModel;
-        }
-    }
-
-    public startTurn(): void {
-        this.turnStackCount++;
-        if (this.turnStackCount===1) {
-            this.turnId = this.turnIdSequence.next();
-            this.turnActive = true;
-        }
-        // console.log(`start (${this.turnId}) ${this.turnStackCount}`);
-    }
-
-    public endTurn(): void {
-        // console.log(`end (${this.turnId}) ${this.turnStackCount}`);
-        this.turnStackCount--;
-        if (this.turnStackCount===0) {
-            this.turnId = null;
-            this.turnActive = false;
         }
     }
 
@@ -77,11 +54,6 @@ export class ValueService {
         let field = colDef.field;
         let colId = column.getId();
         let data = rowNode.data;
-
-        // if inside the same turn, just return back the value we got last time
-        if (this.turnActive && rowNode.__turnId===this.turnId && rowNode.__turnData[colId]!==undefined) {
-            return rowNode.__turnData[colId];
-        }
 
         let result: any;
 
@@ -104,15 +76,6 @@ export class ValueService {
         if (this.cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
             let cellValueGetter = result.substring(1);
             result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
-        }
-
-        // if a turn is active, store the value in case the grid asks for it again
-        if (this.turnActive) {
-            if (rowNode.__turnId !== this.turnId) {
-                rowNode.__turnId = this.turnId;
-                rowNode.__turnData = {};
-            }
-            rowNode.__turnData[colId] = result;
         }
 
         return result;
@@ -179,7 +142,7 @@ export class ValueService {
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
 
-        this.startTurn();
+        this.valueCache.onDataChanged();
 
         params.newValue = this.getValue(column, rowNode);
 
@@ -189,8 +152,6 @@ export class ValueService {
         this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, params);
 
         this.doChangeDetection(rowNode, column);
-
-        this.endTurn();
     }
 
     private doChangeDetection(rowNode: RowNode, column: Column): void {
@@ -233,20 +194,34 @@ export class ValueService {
         return !valuesAreSame;
     }
 
-    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, node: RowNode): any {
+    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: RowNode): any {
+
+        let colId = column.getId();
+
+        // if inside the same turn, just return back the value we got last time
+        let valueFromCache = this.valueCache.getValue(rowNode, colId);
+
+        if (valueFromCache!==undefined) {
+            return valueFromCache;
+        }
 
         let params: ValueGetterParams = {
             data: data,
-            node: node,
+            node: rowNode,
             column: column,
             colDef: column.getColDef(),
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
-            getValue: this.getValueCallback.bind(this, node)
+            getValue: this.getValueCallback.bind(this, rowNode)
         };
 
-        return this.expressionService.evaluate(valueGetter, params);
+        let result = this.expressionService.evaluate(valueGetter, params);
+
+        // if a turn is active, store the value in case the grid asks for it again
+        this.valueCache.setValue(rowNode, colId, result);
+
+        return result;
     }
 
     private getValueCallback(node: RowNode, field: string): any {

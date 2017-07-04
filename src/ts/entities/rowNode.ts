@@ -4,7 +4,7 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {SelectionController} from "../selectionController";
 import {ColDef} from "./colDef";
 import {Column} from "./column";
-import {ValueService} from "../valueService";
+import {ValueService} from "../valueService/valueService";
 import {ColumnController} from "../columnController/columnController";
 import {Autowired, Context} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
@@ -141,8 +141,8 @@ export class RowNode implements IEventEmitter {
     public daemon: boolean;
 
     /** Used by the value service, stores values for a particular change detection turn. */
-    public __turnData: any;
-    public __turnId: number;
+    public __cacheData: {[colId: string]: any};
+    public __cacheVersion: number;
 
     private selected = false;
     private eventService: EventService;

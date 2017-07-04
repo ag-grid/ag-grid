@@ -4,7 +4,7 @@ import {Downloader} from "./downloader";
 import {Column} from "./entities/column";
 import {RowNode} from "./entities/rowNode";
 import {ColumnController} from "./columnController/columnController";
-import {ValueService} from "./valueService";
+import {ValueService} from "./valueService/valueService";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./exportParams";
 import {Constants} from "./constants";
