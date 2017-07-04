@@ -188,10 +188,10 @@
     menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
     menuItem(0, 'Context', 'Context', 'javascript-grid-context/');
     menuItem(0, 'AccessingData', 'Accessing Data', 'javascript-grid-accessing-data/');
-    menuItem(0, 'DataUpdate', 'Data Update', 'javascript-grid-data-update/');
-    menuItem(0, 'Change Detection', 'Change Detection', 'javascript-grid-change-detection/');
-    menuItem(0, 'Refresh', 'View Refresh', 'javascript-grid-refresh/');
     menuItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
+    menuItem(0, 'DataUpdate', 'Data Update', 'javascript-grid-data-update/');
+    menuItem(0, 'Refresh', 'View Refresh', 'javascript-grid-refresh/');
+    menuItem(0, 'Change Detection', 'Change Detection', 'javascript-grid-change-detection/');
     menuItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
     menuItem(0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/');
     menuItemWithIcon('lab.png', 0, 'Accessibility', 'Accessibility', 'javascript-grid-accessibility/');

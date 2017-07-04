@@ -20,8 +20,21 @@
     <div style="position: absolute; top: 0px; left: 0px; padding: 8px;">
         <label>
             <input onclick="pivotMode(this.checked)" type="checkbox" checked/>
-            Pivot Mode
+            Group & Pivot
         </label>
+
+        <button onclick="updateOneRecord()">Set One Value</button>
+
+        <button onclick="updateUsingTransaction()">Update Points</button>
+
+        <button onclick="addNewGroupUsingTransaction()">Add New Group</button>
+
+        <button onclick="addNewCourse()">Add Physics Row</button>
+
+        <button onclick="removePhysics()">Remove All Physics</button>
+
+        <button onclick="moveCourse()">Move Course</button>
+
     </div>
 
 </body>

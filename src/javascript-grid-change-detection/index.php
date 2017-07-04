@@ -280,6 +280,8 @@ colDef = {
         </li>
     </ul>
 
+    <show-example example="exampleChangeDetectionPivot"></show-example>
+
     <p>
         Problems:
     </p>
@@ -291,7 +293,11 @@ colDef = {
         </li>
     </ul>
 
-    <show-example example="exampleChangeDetectionPivot"></show-example>
+    <p>Ideas</p>
+
+    <ul>
+        <li>Do we cache value getters between data changes?</li>
+    </ul>
 
 </div>
 
