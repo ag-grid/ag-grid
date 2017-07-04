@@ -1,11 +1,50 @@
 <?php
 
-$pageTitle = "ag-Grid Weekly Update 28th June 2017";
-$pageDescription = "ag-Grid Weekly Update 28th June 2017";
+$pageTitle = "ag-Grid Weekly Update 4th July 2017";
+$pageDescription = "ag-Grid Weekly Update 4th July 2017";
 $pageKeyboards = "ag-Grid Weekly Update";
 
 include('../../includes/mediaHeader.php');
 ?>
+
+<!DOCTYPE html>
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="css/animate.css">
+    <!-- Icomoon Icon Fonts-->
+    <link rel="stylesheet" href="css/icomoon.css">
+    <!-- Simple Line Icons -->
+    <link rel="stylesheet" href="css/simple-line-icons.css">
+    <!-- Magnific Popup -->
+    <link rel="stylesheet" href="css/magnific-popup.css">
+    <!-- Theme Style -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Modernizr JS -->
+    <script src="js/modernizr-2.6.2.min.js"></script>
+    <!-- FOR IE9 below -->
+    <!--[if lt IE 9]>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+
+    </head>
+    <body>
+
+    <!-- jQuery -->
+    <script src="js/jquery.min.js"></script>
+    <!-- jQuery Easing -->
+    <script src="js/jquery.easing.1.3.js"></script>
+    <!-- Bootstrap -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Waypoints -->
+    <script src="js/jquery.waypoints.min.js"></script>
+    <!-- Magnific Popup -->
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <!-- Main JS -->
+    <script src="js/main.js"></script>
+
+    
+    </body>
+</html>
 
 <style>
     .weekly-news-paragraph {
@@ -48,125 +87,111 @@ include('../../includes/mediaHeader.php');
     View the <a href="../">full list of weekly updates</a> to see other progress reports.
 </div>
 
-<div class="weekly-news-section">
+<div class="container" style="margin-top: 50px;">
 
-    <div style="overflow: hidden;">
-        <div class="weekly-news-title">
-            Version 11 Released - OpenFin Integration - More JIRAs
-        </div>
-        <div class="weekly-news-sub-title">
-            Customer Experience Team, 28th June 2017
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Weekly Update for July, 4th.</h2>
         </div>
     </div>
 
-    <div class="weekly-news-paragraph">
-        The week started on a good note with Version 11 of ag-Grid going out the door. There's plenty more to come as we update you on the team's focus for this week.
-    </div>
+    <div class="row">
+        <div class="col-md-10">
 
-    <div class="weekly-news-paragraph-title">Version 11 Released</div>
+        <h3>Company Update</h3>
+            <p>
+            Happy Independence Day to our American readers. We hope you enjoy your holiday. It's business as usual here at ag-Grid so here's our weekly update.
+            </p>
 
-    <div class="weekly-news-paragraph">
-    Version 11 was released yesterday, make sure you sign up for release notes if you don't get our emails. Please see our <a href="../../change-log/changeLogIndex.php">Change Log</a> for more information.
-    </div>
+            <p>
+            We are so close to hitting 3,000 GitHub stars! If you haven’t already given us a GitHub star, please make sure you do and help us smash our target.
+            </p>
 
-    <div class="weekly-news-image-right">
-        <img src="./images/MergeCells.png" style="width: 100%;"/>
-        <br/>
-        Column Spanning/Merge Cells - coming in the next release
-    </div>
+        <h3>The Latest from the Development Team</h3>
+            <p>
+            Niall has rewritten how the Refresh works, giving it a much cleaner API for users, and in doing that, realised that putting in change detection would be a great idea, too!
+            </p> 
+            
+            <p>He’s now busy at work on a new change detection system. As your data changes in your grid, it will automatically find any cells that were impacted through aggregations or through valueGeters, recompute those cells and update *only* those cells in the DOM.
+            </p>
 
-    <div class="weekly-news-paragraph-title">New Features in our Next Release: colSpan and User Defined Column Types</div>
+            <p>Not only is there a brand new, cleaner Refresh API, you probably won't even need to call it, as the change detection and auto-refresh will take care of everything for you.
+            </p>
 
-    <div class="weekly-news-paragraph">
-        Those of you who follow us on Twitter will have seen that Niall has completed work on a new feature called colSpan - also known as Merge Cells. We know that many of you have been looking for this so
-        this should be a welcome feature in our next release.
+            <p>
+            JIRA update - we are down to 136 tickets so the steady progress continues. You can view the progress on our <a href="https://www.ag-grid.com/ag-grid-pipeline/">pipeline</a>
+            </p>
 
-        Robert is working on adding the ability to specify User Defined Column Types which will simplify column definitions.
-    </div>
 
-    <div class="weekly-news-paragraph-title">JIRA Update</div>
+            </p>
 
-    <div class="weekly-news-paragraph">
-        We have knocked over more JIRAs so the countdown continues - we are down to 142 at this stage - we did add a few as well. This remains the focus of the core team for this week.
-    </div>
+        <h3>ag-Grid Frameworks Update</h3>
+            <p>
+            We have released x to improve support for Web Components. We are now starting our work on supporting Polymer.
+            </p>
 
-    <div class="weekly-news-paragraph-title">GitHub Stars</div>
+            Notable Updates from the Industry
+            for next weekly update - mention the TS 2.4 issue
 
-    <div class="weekly-news-paragraph">
-        We just reached 2,900 GitHub stars. This is really important for us as it helps new users to find us and pushes the growth of ag-Grid. If you haven't already, please give us a GitHub star. Thanks.
-    </div>
-
-    <div class="weekly-news-paragraph-title">Accessibility</div>
-
-    <div class="weekly-news-paragraph">
-        Robert is continuing to add additional accessibility support based on user feedback from our first drop in v11.0. Please send your feedback to us for this important new feature in ag-Grid.
-    </div>
-    
-    <div class="weekly-news-paragraph-title">ag-Grid and OpenFin</div>
-
-    <div class="weekly-news-paragraph">
-        Following on from his original example, Sean is working on another ag-Grid and OpenFin example that features tear-out functionality.
-    </div>
-
-    <div class="weekly-news-paragraph-title">New Documentation</div>
-
-    <div class="weekly-news-paragraph">
-        Niall has introduced valueSetters and valueParsers and rewrote the documentation pages for "Values and Formatters" and "Cell Expressions".
-    </div>
-
-    <div class="weekly-news-paragraph-title">Support for Web Components</div>
-
-    <div class="weekly-news-paragraph">
-        Following completion of the OpenFin example, Sean will be turning his attention to our support for Web Components. If you're using this, keep an eye out as it's getting an overhaul during the course of this week. Again, target is for our next release.
-    </div>
-
-    <div class="weekly-news-image-right">
-        <img src="./images/SwearJar.jpeg" style="width: 70%;"/>
-        <br/>
-        The Swear Jar - already quite full!
-    </div>
-    
-    <div class="weekly-news-paragraph-title">Update from the Customer Experience Team</div>
-
-    <div class="weekly-news-paragraph">
-    <p>Dimple and Bas have made their mark on the office, introducing a swear jar for the team and it’s rattling already! We’ve not decided on where the proceeds should go. If you have any suggestions, please let us know in the comments below. </p>
-
-    <p>The team are also actively contacting clients about renewing ag-Grid so watch out for an email from Dimple.</p>
-
-    <p>John is working on improving our website so you will notice changes over the coming week. We are putting a lot of effort into making our website more intuitive and making it easier to find the relevant content.</p>
+        <h3>Customer Experience</h3>
+            <p>
+            The team have been planning and working on our social media, so expect to see us appear more in your Twitter feeds! We’ll be keeping you in the loop about what we’re getting up to and keeping you up-to-date on our new features and updates. We’ve got some really interesting stuff to share with you, so stay tuned.
+            </p>
+        </div>
 
     </div>
 
-    <div style="background-color: #eee; padding: 10px; display: inline-block;">
+    <hr/>
 
-        <div style="margin-bottom: 5px;">If you liked this article then please share</div>
+<div style="background-color: #eee; padding: 10px; display: inline-block;">
 
-        <table style="background-color: #eee;">
-            <tr>
-                <td>
-                    <script type="text/javascript" src="//www.redditstatic.com/button/button1.js"></script>
-                </td>
-                <td>
-                    &nbsp;&nbsp;&nbsp;
-                </td>
-                <td>
-                    <a href="https://twitter.com/share" class="twitter-share-button"
-                       data-url="https://www.ag-grid.com/weekly-update/20170627/"
-                       data-text="ag-Grid Weekly Update 28th #javascript #angularjs #react" data-via="ceolter"
-                       data-size="large">Tweet</a>
-                    <script>!function (d, s, id) {
-                            var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-                            if (!d.getElementById(id)) {
-                                js = d.createElement(s);
-                                js.id = id;
-                                js.src = p + '://platform.twitter.com/widgets.js';
-                                fjs.parentNode.insertBefore(js, fjs);
-                            }
-                        }(document, 'script', 'twitter-wjs');</script>
-                </td>
-            </tr>
-        </table>
-    </div>
+    <div style="margin-bottom: 5px;">If you liked this article then please share</div>
+
+    <table style="background-color: #eee;">
+        <tr>
+            <td>
+                <script type="text/javascript" src="//www.redditstatic.com/button/button1.js"></script>
+            </td>
+            <td>
+                &nbsp;&nbsp;&nbsp;
+            </td>
+            <td>
+                <a href="https://twitter.com/share" class="twitter-share-button"
+                   data-url="https://www.ag-grid.com/weekly-update/20170627/"
+                   data-text="ag-Grid Weekly Update 28th #javascript #angularjs #react" data-via="ceolter"
+                   data-size="large">Tweet</a>
+                <script>!function (d, s, id) {
+                        var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+                        if (!d.getElementById(id)) {
+                            js = d.createElement(s);
+                            js.id = id;
+                            js.src = p + '://platform.twitter.com/widgets.js';
+                            fjs.parentNode.insertBefore(js, fjs);
+                        }
+                    }(document, 'script', 'twitter-wjs');</script>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES * * */
+        var disqus_shortname = 'angulargrid';
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+    <hr/>
+</div>
+
+
 
 </div>
 
@@ -175,7 +200,5 @@ include('../../includes/mediaHeader.php');
 <?php include_once("../../includes/footer.php"); ?>
 
 </body>
-
-<?php include_once("../../includes/analytics.php"); ?>
 
 </html>
