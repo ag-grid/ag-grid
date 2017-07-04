@@ -184,11 +184,7 @@ export class GridSerializer {
     @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    public serialize<T>(gridSerializingSession: GridSerializingSession<T>, userParams?: ExportParams<T>): string {
-        let baseParams:BaseExportParams = this.gridOptionsWrapper.getDefaultExportParams();
-        let params:ExportParams<T> = <any>{};
-        _.assign(params, baseParams);
-        _.assign(params, userParams);
+    public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params?: ExportParams<T>): string {
 
         let dontSkipRows= (): boolean =>false;
 

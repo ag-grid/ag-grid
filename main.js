@@ -204,6 +204,7 @@ var constants_1 = require("./dist/lib/constants");
 exports.Constants = constants_1.Constants;
 var csvCreator_1 = require("./dist/lib/csvCreator");
 exports.CsvCreator = csvCreator_1.CsvCreator;
+exports.BaseCreator = csvCreator_1.BaseCreator;
 var downloader_1 = require("./dist/lib/downloader");
 exports.Downloader = downloader_1.Downloader;
 var grid_1 = require("./dist/lib/grid");

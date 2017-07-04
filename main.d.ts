@@ -100,7 +100,7 @@ export { BaseFrameworkFactory } from "./dist/lib/baseFrameworkFactory";
 export { CellNavigationService } from "./dist/lib/cellNavigationService";
 export { ColumnChangeEvent } from "./dist/lib/columnChangeEvent";
 export { Constants } from "./dist/lib/constants";
-export { CsvCreator } from "./dist/lib/csvCreator";
+export { CsvCreator, BaseCreator } from "./dist/lib/csvCreator";
 export { Downloader } from "./dist/lib/downloader";
 export { Grid, GridParams } from "./dist/lib/grid";
 export { GridApi } from "./dist/lib/gridApi";
