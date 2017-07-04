@@ -29,6 +29,10 @@ let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 let DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
 
+const OFF = 'off';
+const EXPIRES_AFTER_UPDATE = 'expiresAfterUpdate';
+const EXPIRES_NEVER = 'expiresNever';
+
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
 }
@@ -333,6 +337,10 @@ export class GridOptionsWrapper {
     public getRowNodeIdFunc(): GetRowNodeIdFunc { return this.gridOptions.getRowNodeId; }
     public getNavigateToNextCellFunc(): (params: NavigateToNextCellParams)=>GridCellDef { return this.gridOptions.navigateToNextCell; }
     public getTabToNextCellFunc(): (params: TabToNextCellParams)=>GridCellDef { return this.gridOptions.tabToNextCell; }
+
+    public isValueCacheOff(): boolean { return this.gridOptions.valueCacheStrategy === OFF; }
+    public isValueCacheExpiresNever(): boolean { return this.gridOptions.valueCacheStrategy === EXPIRES_NEVER; }
+    public isValueCacheExpiresAfterUpdate(): boolean { return !this.isValueCacheOff() && !this.isValueCacheExpiresNever(); }
 
     public getProcessSecondaryColDefFunc(): (colDef: ColDef)=>void { return this.gridOptions.processSecondaryColDef; }
     public getProcessSecondaryColGroupDefFunc(): (colGroupDef: ColGroupDef)=>void { return this.gridOptions.processSecondaryColGroupDef; }

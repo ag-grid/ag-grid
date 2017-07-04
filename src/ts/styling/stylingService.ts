@@ -1,6 +1,6 @@
 import {ColDef} from "../entities/colDef";
 import {Autowired, Bean} from "../context/context";
-import {ExpressionService} from "../expressionService";
+import {ExpressionService} from "../valueService/expressionService";
 
 @Bean('stylingService')
 export class StylingService {

@@ -4,7 +4,7 @@ import {Column} from "../entities/column";
 import {ColDef, AbstractColDef, ColGroupDef, IAggFunc, ColSpanParams} from "../entities/colDef";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ExpressionService} from "../expressionService";
+import {ExpressionService} from "../valueService/expressionService";
 import {BalancedColumnTreeBuilder} from "./balancedColumnTreeBuilder";
 import {DisplayedGroupCreator} from "./displayedGroupCreator";
 import {AutoWidthCalculator} from "../rendering/autoWidthCalculator";
@@ -22,7 +22,7 @@ import {IAggFuncService} from "../interfaces/iAggFuncService";
 import {ColumnAnimationService} from "../rendering/columnAnimationService";
 import {AutoGroupColService} from "./autoGroupColService";
 import {RowNode} from "../entities/rowNode";
-import {ValueService} from "../valueService";
+import {ValueCache} from "../valueService/valueCache";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -188,7 +188,7 @@ export class ColumnController {
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
-    @Optional('valueService') private valueService: ValueService;
+    @Optional('valueCache') private valueCache: ValueCache;
 
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
@@ -1495,7 +1495,9 @@ export class ColumnController {
     }
 
     public setColumnDefs(columnDefs: (ColDef|ColGroupDef)[]) {
-        this.valueService.startTurn();
+        // always invalidate cache on changing columns, as the column id's for the new columns
+        // could overlap with the old id's, so the cache would return old values for new columns.
+        this.valueCache.invalidate();
 
         this.autoGroupsNeedBuilding = true;
 
@@ -1517,8 +1519,6 @@ export class ColumnController {
         let everythingChangedEvent = new ColumnChangeEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED);
         this.eventService.dispatchEvent(Events.EVENT_COLUMN_EVERYTHING_CHANGED, everythingChangedEvent);
         this.eventService.dispatchEvent(Events.EVENT_NEW_COLUMNS_LOADED);
-
-        this.valueService.endTurn();
     }
 
     public isReady(): boolean {

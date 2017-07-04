@@ -6,7 +6,7 @@ import {ColumnController} from "./columnController/columnController";
 import {SelectionController} from "./selectionController";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {GridPanel} from "./gridPanel/gridPanel";
-import {ValueService} from "./valueService";
+import {ValueService} from "./valueService/valueService";
 import {MasterSlaveService} from "./masterSlaveService";
 import {EventService} from "./eventService";
 import {FloatingRowModel} from "./rowModels/floatingRowModel";
@@ -38,6 +38,7 @@ import {PaginationProxy} from "./rowModels/paginationProxy";
 import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
 import {InMemoryRowModel, RefreshModelParams, RowDataTransaction} from "./rowModels/inMemory/inMemoryRowModel";
 import {ImmutableService} from "./rowModels/inMemory/immutableService";
+import {ValueCache} from "./valueService/valueCache";
 
 
 export interface StartEditingCellParams {
@@ -87,6 +88,7 @@ export class GridApi {
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
+    @Autowired('valueCache') private valueCache: ValueCache;
 
     private inMemoryRowModel: InMemoryRowModel;
     private infinitePageRowModel: InfiniteRowModel;
@@ -206,6 +208,10 @@ export class GridApi {
 
     public setColumnDefs(colDefs: (ColDef|ColGroupDef)[]) {
         this.columnController.setColumnDefs(colDefs);
+    }
+
+    public invalidateValueCache(): void {
+        this.valueCache.invalidate();
     }
 
     public getVerticalPixelRange(): any {
