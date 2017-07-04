@@ -170,7 +170,7 @@ include '../documentation-main/documentation_header.php';
     <pre>
 &lt;body&gt;
 &lt;ag-grid id="myGrid"
-         style="height: 140px; width: 350px; display: block;"
+         style="height: 140px; width: 350px;"
          class="ag-fresh"&gt;&lt;/ag-grid&gt;
 &lt;/body&gt;
     </pre>
@@ -180,7 +180,7 @@ include '../documentation-main/documentation_header.php';
     <pre>
 &lt;body&gt;
     &lt;ag-grid id="myGrid"
-             style="height: 140px; width: 350px; display: block;"
+             style="height: 140px; width: 350px;"
              class="ag-fresh"&gt
              enable-col-resize
              enable-sorting
@@ -198,29 +198,23 @@ include '../documentation-main/documentation_header.php';
     &lt;meta charset="UTF-8"&gt;
     &lt;title&gt;ag-Grid Web Component - Simple Example&lt;/title&gt;
 
-    &lt;style&gt;
-        html, body {
-            height: 100%;
-        }
-    &lt;/style&gt;
+    <span class="codeComment">&lt;!-- webcomponents polyfill - must be before any wc related javascript is executed --&gt;</span>
+    <span style="font-weight: bold">&lt;script src=../../node_modules/@webcomponents/custom-elements/custom-elements.min.js&gt;&lt;/script&gt;</span>
 
-    &lt;!-- webcomponents polyfill - must be before any wc related javascript is executed --&gt;
-    &lt;script src=../../node_modules/@webcomponents/custom-elements/custom-elements.min.js&gt;&lt;/script&gt;
+    <span class="codeComment">&lt;!-- before the ag-grid web component --&gt;</span>
+    <span class="codeComment">&lt;!-- either ag-grid or ag-grid-enterprise, depending on which you're using --&gt;</span>
+    <span style="font-weight: bold">&lt;script src="../../node_modules/ag-grid/dist/ag-grid.min.js"&gt;&lt;/script&gt;</span>
 
-    &lt;!-- before the ag-grid web component --&gt;
-    &lt;!-- either ag-grid or ag-grid-enterprise, depending on which you're using --&gt;
-    &lt;script src="../../node_modules/ag-grid/dist/ag-grid.min.js"&gt;&lt;/script&gt;
+    <span class="codeComment">&lt;!-- the ag-grid-webcomponent--&gt;</span>
+    <span style="font-weight: bold">&lt;link rel="import" href="../../node_modules/ag-grid-webcomponent/ag-grid.html"&gt;</span>
 
-    &lt;!-- the ag-grid-webcomponent--&gt;
-    &lt;link rel="import" href="../../node_modules/ag-grid-webcomponent/ag-grid.html"&gt;
-
-    &lt;!-- the application code --&gt;
-    &lt;script src="simple-grid-example.js"&gt;&lt;/script&gt;
+    <span class="codeComment">&lt;!-- the application code --&gt;</span>
+    <span style="font-weight: bold">&lt;script src="simple-grid-example.js"&gt;&lt;/script&gt;</span>
 &lt;/head&gt;
 &lt;body&gt;
-&lt;ag-grid id="myGrid"
-         style="height: 140px; width: 350px; display: block;"
-         class="ag-fresh"&gt;&lt;/ag-grid&gt;
+<span style="font-weight: bold">&lt;ag-grid id="myGrid"
+         style="height: 140px; width: 350px;"
+         class="ag-fresh"&gt;&lt;/ag-grid&gt;</span>
 &lt;/body&gt;
 &lt;/html&gt;
 </pre>
