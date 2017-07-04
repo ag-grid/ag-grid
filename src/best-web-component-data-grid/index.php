@@ -40,6 +40,9 @@ include '../documentation-main/documentation_header.php';
         yourself.
     </note>
 
+    <note>Full working examples of the ag-Grid Web Component can be found in <a href="https://github.com/ceolter/ag-grid-webcomponent">Github</a>,
+        illustrating both a Simple Grid and a Rich Grid.</note>
+
     <h3>Dependencies</h3>
 
     <p>Using ag-Grid as a Web Component requires two dependencies: <code>ag-grid-webcomponent</code> and
@@ -192,7 +195,7 @@ include '../documentation-main/documentation_header.php';
     <p>A complete html file might look something like this:</p>
     
     <pre>
-&lt;!DOCTYPE html&lt;
+&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
     &lt;meta charset="UTF-8"&gt;
