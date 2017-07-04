@@ -66,7 +66,7 @@ include('../../includes/mediaHeader.php');
     <div class="weekly-news-paragraph-title">Version 11 Released</div>
 
     <div class="weekly-news-paragraph">
-    Version 11 was released yesterday, make sure you sign up for release notes if you don't get our emails. Please see our <a href="../change-log/changeLogIndex.php">Change Log</a> for more information.
+    Version 11 was released yesterday, make sure you sign up for release notes if you don't get our emails. Please see our <a href="../../change-log/changeLogIndex.php">Change Log</a> for more information.
     </div>
 
     <div class="weekly-news-image-right">
@@ -75,12 +75,13 @@ include('../../includes/mediaHeader.php');
         Column Spanning/Merge Cells - coming in the next release
     </div>
 
-    <div class="weekly-news-paragraph-title">New Features: colSpan and User Defined Column Types</div>
+    <div class="weekly-news-paragraph-title">New Features in our Next Release: colSpan and User Defined Column Types</div>
 
     <div class="weekly-news-paragraph">
+    <p>
         Those of you who follow us on Twitter will have seen that Niall has completed work on a new feature called colSpan - also known as Merge Cells. We know that many of you have been looking for this so
         this should be a welcome feature in our next release.
-
+    </p>
         Robert is working on adding the ability to specify User Defined Column Types which will simplify column definitions.
     </div>
 
