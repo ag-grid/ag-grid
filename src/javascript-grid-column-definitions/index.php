@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
         {headerName: 'Col C', field: 'c', type: 'nonEditableColumn'}
 
         <span class="codeComment">// overrides the default using a multiple column types</span>
-        {headerName: 'Col C', field: 'c', type: 'dateColumn,nonEditableColumn'}
+        {headerName: 'Col D', field: 'd', type: 'dateColumn,nonEditableColumn'}
     },
 
     <span class="codeComment">// a default column definition with properties that get applied to every column</span>

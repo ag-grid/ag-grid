@@ -27,7 +27,7 @@ function createData(count) {
 }
 
 var colorIndex = 0;
-var colors = ['#000000','#000022','#002200','#220000'];
+var colors = ['#000000','#000066','#006600','#660000'];
 
 var gridOptions = {
     columnDefs: columnDefs,
