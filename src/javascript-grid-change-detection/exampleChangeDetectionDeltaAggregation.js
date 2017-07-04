@@ -2,30 +2,21 @@ var columnDefs = [
     {field: 'topGroup', rowGroup: true, hide: true},
     {field: 'group', rowGroup: true, hide: true},
     {headerName: 'ID',field: 'id', cellClass: 'number-cell'},
-    {headerName: 'Value Getter A', field: 'a', type: 'valueColumn', valueGetter: sharedValueGetter},
-    {headerName: 'Value Getter B', field: 'b', type: 'valueColumn', valueGetter: sharedValueGetter},
-    {headerName: 'Normal C', field: 'c', type: 'valueColumn'},
-    {headerName: 'Normal D', field: 'd', type: 'valueColumn'},
-    {headerName: 'Normal E', field: 'e', type: 'valueColumn'},
-    {headerName: 'Normal F', field: 'f', type: 'valueColumn'},
+    {headerName: 'A', field: 'a', type: 'valueColumn'},
+    {headerName: 'B', field: 'b', type: 'valueColumn'},
+    {headerName: 'C', field: 'c', type: 'valueColumn'},
+    {headerName: 'D', field: 'd', type: 'valueColumn'},
+    {headerName: 'E', field: 'e', type: 'valueColumn'},
+    {headerName: 'F', field: 'f', type: 'valueColumn'},
     {headerName: 'Total',
         type: 'totalColumn',
         // we use getValue() instead of data.a so that it gets the aggregated values at the group level
         valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d") + getValue("e") + getValue("f")'}
 ];
 
-var callCount = 0;
 var rowIdCounter = 0;
 
 var rowData = createRowData();
-
-function sharedValueGetter(params) {
-    var field = params.colDef.field;
-    var result = params.data[field];
-    console.log('callCount='+ callCount+ ', valueGetter:('+field+','+params.node.id+')='+result);
-    callCount++;
-    return result;
-}
 
 function createRowData() {
     var result = [];
@@ -42,8 +33,6 @@ function createRowData() {
 
 function createRowItem(i,j,k) {
     var rowDataItem = {
-        topGroup: i === 1 ? 'Top' : 'Bottom',
-        group: 'Group ' + j,
         id: rowIdCounter++,
         a: (j * k * 863) % 100,
         b: (j * k * 811) % 100,
@@ -52,14 +41,41 @@ function createRowItem(i,j,k) {
         e: (j * k * 619) % 100,
         f: (j * k * 571) % 100
     };
+    if (i === 1) {
+        rowDataItem.topGroup = 'Top';
+        rowDataItem.group = 'Group A' + j;
+    } else {
+        rowDataItem.topGroup =  'Bottom';
+        rowDataItem.group = 'Group B' + j;
+    }
     return rowDataItem;
+}
+
+// converts strings to numbers
+function numberValueParser(params) {
+    console.log('=> updating to ' + params.newValue);
+    return Number(params.newValue);
 }
 
 var gridOptions = {
     columnDefs: columnDefs,
+    aggFuncs: {
+        'sum': function(values) {
+            var result = 0;
+            if (values) {
+                values.forEach(function(value) {
+                    if (typeof value === 'number') {
+                        result += value;
+                    }
+                });
+            }
+            console.log('aggregation: sum([' + values.join(',') + ']) = ' + result);
+            return result;
+        }
+    },
     columnTypes: {
-        valueColumn: { editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)', cellClass: 'number-cell',
-            cellRenderer: 'animateShowChange', filter: 'number'},
+        valueColumn: { editable: true, aggFunc: 'sum', cellClass: 'number-cell',
+            cellRenderer: 'animateShowChange', filter: 'number', valueParser: numberValueParser},
         totalColumn: { cellRenderer: 'animateShowChange', cellClass: 'number-cell'}
     },
     groupDefaultExpanded: 1,
@@ -70,23 +86,12 @@ var gridOptions = {
     getRowNodeId: function(rowData) {
         return rowData.id;
     },
-    onCellValueChanged: function() {
-        resetCallCount();
-    },
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
-        resetCallCount();
     }
 };
 
-function resetCallCount() {
-    callCount = 0;
-    console.log('=========== RESET CALL COUNT =============== time = ' + new Date());
-}
-
 function updateOneRecord() {
-    resetCallCount();
-
     var rowNodeToUpdate = pickExistingRowNodeAtRandom();
 
     var randomValue = createRandomNumber();
@@ -124,7 +129,6 @@ function pickExistingRowNodeAtRandom() {
 }
 
 function updateUsingTransaction() {
-    resetCallCount();
 
     var itemToUpdate = pickExistingRowItemAtRandom();
     if (!itemToUpdate) { return; }
@@ -144,7 +148,6 @@ function updateUsingTransaction() {
 }
 
 function removeUsingTransaction() {
-    resetCallCount();
 
     var itemToRemove = pickExistingRowItemAtRandom();
     if (!itemToRemove) { return; }
@@ -159,7 +162,6 @@ function removeUsingTransaction() {
 }
 
 function addUsingTransaction() {
-    resetCallCount();
 
     var i = Math.floor(Math.random() * 2);
     var j = Math.floor(Math.random() * 5);
@@ -176,7 +178,6 @@ function addUsingTransaction() {
 }
 
 function changeGroupUsingTransaction() {
-    resetCallCount();
 
     var itemToUpdate = pickExistingRowItemAtRandom();
     if (!itemToUpdate) { return; }

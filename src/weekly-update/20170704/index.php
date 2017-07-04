@@ -99,43 +99,83 @@ include('../../includes/mediaHeader.php');
         <div class="col-md-10">
 
         <h3>Company Update</h3>
+
+        <div class="weekly-news-image-right">
+            <img src="./images/aggrid_npm_usage.png" style="width: 100%;"/>
+            <br/>
+            Usage of ag-Grid from our NPM downloads.
+        </div>
+
             <p>
             Happy Independence Day to our American readers. We hope you enjoy your holiday. It's business as usual here at ag-Grid so here's our weekly update.
             </p>
-
+            <h4>GitHub Stars</h4>
             <p>
             We are so close to hitting 3,000 GitHub stars! If you haven’t already given us a GitHub star, please make sure you do and help us smash our target.
             </p>
 
         <h3>The Latest from the Development Team</h3>
+            <h4>Refreshing the Grid</h4>
             <p>
             Niall has rewritten how the Refresh works, giving it a much cleaner API for users, and in doing that, realised that putting in change detection would be a great idea, too!
             </p> 
             
+            <h4>Change Detection</h4>
             <p>He’s now busy at work on a new change detection system. As your data changes in your grid, it will automatically find any cells that were impacted through aggregations or through valueGeters, recompute those cells and update *only* those cells in the DOM.
             </p>
 
             <p>Not only is there a brand new, cleaner Refresh API, you probably won't even need to call it, as the change detection and auto-refresh will take care of everything for you.
             </p>
-
+            <h4>JIRA Update</h4>
             <p>
             JIRA update - we are down to 136 tickets so the steady progress continues. You can view the progress on our <a href="https://www.ag-grid.com/ag-grid-pipeline/">pipeline</a>
             </p>
 
-
             </p>
 
-        <h3>ag-Grid Frameworks Update</h3>
+            <h4>Continuing with Accessibility</h4>
+
             <p>
-            We have released x to improve support for Web Components. We are now starting our work on supporting Polymer.
+                Rob is continuing his work on Accessibility as well as helping the team close off JIRA's.
             </p>
 
-            Notable Updates from the Industry
-            for next weekly update - mention the TS 2.4 issue
+            <h4>Preparing for TypeScript 2.4</h4>
+
+            <p>
+                TypeScript 2.4 comes with some breaking changes, which breaks some of our ag-Grid
+                interfaces (those feckers!). We will fix these so the next release of ag-Grid
+                will work with TypeScript 2.4.
+            </p>
+
+            <h3>ag-Grid Frameworks Update</h3>
+            <h4>Web Components</h4>
+            <p>
+                We have moved Web Components support in ag-Grid Core to a
+                new stand-alone <a href="https://github.com/ceolter/ag-grid-webcomponent/">Github repository</a>. This brings it in line with our other supported frameworks.
+            </p>
+
+            <p>
+            You can view our updated <a href="https://www.ag-grid.com/best-web-component-data-grid/">documentation</a> to read more. We have also published the <a href="https://www.webcomponents.org/element/ceolter/ag-grid-webcomponent/">Web Component</a> to the Web Component Registry.
+            </p>
+            <h4>Polymer</h4>
+            <p>
+            Building on this work, we are turning our focus to support for Polymer. We will provide support for this in the same as our other frameworks.
+            </p>
 
         <h3>Customer Experience</h3>
             <p>
             The team have been planning and working on our social media, so expect to see us appear more in your Twitter feeds! We’ll be keeping you in the loop about what we’re getting up to and keeping you up-to-date on our new features and updates. We’ve got some really interesting stuff to share with you, so stay tuned.
+            </p>
+
+        <h3>Next Release</h3>
+            <p>
+                We are targeting our next release for Friday 14th July. Fingers crossed no upsets and we hit the date.
+            </p>
+
+        <h3>Help Us Out!</h3>
+
+            <p>
+                Spread the news on ag-Grid, use the share buttons below! We like your tweets and Reddit mentions are great :)
             </p>
         </div>
 
@@ -197,7 +237,7 @@ include('../../includes/mediaHeader.php');
 
 </div>
 
-<?php include_once("../../includes/footer.php"); ?>
+<?php include_once("../../includes/mediafooter.php"); ?>
 
 </body>
 

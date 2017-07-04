@@ -12,23 +12,31 @@ include '../documentation-main/documentation_header.php';
     <h1 class="first-h1">Change Detection</h1>
 
     <p>
-        The grid has built in change detection so when you change a cells value, all dependent
-        cells will reflect the change. Dependent cells are cells that are one of
-        the following:
-        <ul>
-            <li>
-                Cells using <a href="../javascript-grid-value-getters/">valueGetter's</a>, where
-                they reference the changed value.
-            </li>
-            <li>
-                Group rows showing results from <a href="../javascript-grid-aggregation/">row aggregation</a>,
-                where the value is part of the aggregated set.
-            </li>
-        </ul>
+        The grid has built in change detection. This means when you update the value of a cell,
+        either through the UI or via the grid's API, the grid will automatically work out all
+        the cells that need to be updated to reflect the new value.
     </p>
 
+<!--    <note>
+        The grid having change detection built in is cool. This section explains how it works.
+        If you are happy to just use the change detection and are not worried about the implementation
+        details, feel free to skip this section. You may read this section when you find you need
+        to understand what's happening.
+    </note>
+-->
     <p>
-        This section explains the grid's change detection that makes this possible.
+        Change detection can be broken down into the following two categories:
+        <ul>
+            <li>
+                <b>Value Change Detection:</b> When a value for a cell changes, the grid compares the
+                new value to the currently rendered value. If the values are equal, the cell is not refreshed.
+            </li>
+            <li>
+                <b>Aggregation Change Detection:</b> When a value for a cell changed,
+                the grid will recalculate all
+                <a href="../javascript-grid-aggregation/">aggregations</a> that are impacted.
+            </li>
+        </ul>
     </p>
 
     <note>
@@ -39,24 +47,35 @@ include '../documentation-main/documentation_header.php';
         so it will be picked up as a change from the frameworks change detection.
     </note>
 
-    <h2>Change Detection Algorithm</h2>
+    <h2>Example - Change Detection and Value Getter's</h2>
 
     <p>
-        The change detection algorithm is as follows: When you update a value in the grid, the grid will:
-        <ol>
-            <li>
-                If the value's column has an <a href="../javascript-grid-aggregation/">aggregation</a>, the aggregation
-                is recomputed.
-            </li>
-            <li>
-                The displayed value in every rendered cell is checked against it's most up to date value.
-                If the value is different, the cell is refreshed. This makes sure any cells with
-                <a href="../javascript-grid-value-getters/">valueGetters</a> that were impacted
-                will get refreshed. This is done with rendered cells only - e.g. if the grid has 20,000
-                rows, but only 40 are displayed due to the vertical scroll position, then only 40
-                rows are required to be checked.
-            </li>
-        </ol>
+        The example below shows the impact of change detection on value getters. Try the following in the example:
+    <ul>
+        <li>
+            The 'Total' column uses a value getter to calculate the sum of all values in that row.
+        </li>
+        <li>
+            Edit any of the values in columns A to F.
+        </li>
+        <li>
+            Notice that the 'Total' column gets automatically updated and flashed.
+        </li>
+    </ul>
+    </p>
+
+    <show-example example="exampleChangeDetectionValueGetter"></show-example>
+
+    <p>
+        Notice the code for setting up the grid is simple. All of the refreshing and recalculating of values
+        is done internally by the grid.
+    </p>
+
+    <h2>Value Change Detection</h2>
+
+    <p>
+        The grid keeps a local copy of all values rendered in each cell. When a refresh of the cell
+        is requested, the cell will only be refreshed if the value has changed.
     </p>
 
     <note>
@@ -75,10 +94,15 @@ include '../documentation-main/documentation_header.php';
     <h3>Comparing Values</h3>
 
     <p>
+        This section explains how the grid compares values. This is of interest if you want to compare
+        values in a different way.
+    </p>
+
+    <p>
         By default the grid will compare values by using triple equals, eg <i>"oldValue === newValue"</i>.
         This will work most of the time for you, especially if your values are simple strings and numbers.
         This may be a problem if the value is an object as object references will be used for comparison.
-        If the data has change, but the object reference is the same, then you will need to override
+        If the data has changed, but the object reference is the same, then you will need to override
         how the value's are compared.
     </p>
 
@@ -107,12 +131,12 @@ colDef = {
     ...
 }</pre>
 
-    <h2>Change Detection Initiation</h2>
+    <h2>Triggering Value Change Detection</h2>
 
     <p>
-        The following operations will initiate change detection:
+        The following operations will <b>automatically</b> trigger change detection on all visible cells:
         <ol>
-            <li>Editing values via the grid UI (e.g. double clicking a cell and entering a new value).</li>
+            <li>Editing any value via the grid UI (e.g. double clicking a cell and entering a new value).</li>
             <li>Using the <code>rowNode.setDataValue(col,value)</code> Row Node method.</li>
             <li>Using the <code>api.updateRowData(transaction)</code> API method.</li>
         </ol>
@@ -127,38 +151,23 @@ colDef = {
         limit the number of times they are called and have more control over when refreshing is done.
     </p>
 
-    <h2>Change Detection Manual Triggering</h2>
+    <p>
+        To <b>manually</b> run value change detection to refresh all visible cells
+        call <a href="../javascript-grid-refresh/">api.refreshCells()</a>.
+    </p>
+
+    <h2>Aggregation Change Detection</h2>
 
     <p>
-        If you want the grid to do change detection on all visible cells (ie update the cell
-        if the value has changed) then use <a href="../javascript-grid-refresh/">api.refreshCells()</a>.
+        On top of checking all DOM cells values, the grid will <b>automatically</b> update any
+        <a href="../javascript-grid-aggregation/">aggregation</a> that the value can impact.
     </p>
 
     <p>
-        If you want the grid to re-compute the aggregated values, then call
-        <a href="../javascript-grid-data-update/index.php#refreshInMemoryRowModel">
+        To <b>manually</b> run aggregation change detection to re-compute the aggregated values,
+        then call <a href="../javascript-grid-data-update/index.php#refreshInMemoryRowModel">
             api.refreshInMemoryRowModel('aggregate')</a>.
     </p>
-
-    <h2>Example - Change Detection and Value Getter's</h2>
-
-    <p>
-        The example below shows the impact of change detection on value getters. From the example, the
-        following can be noted:
-        <ul>
-            <li>
-                Column 'Total' has a valueGetter which gives a sum of all columns A to F.
-            </li>
-            <li>
-                Columns A to F are editable. If you edit a cells value, the total column will also get updated.
-            </li>
-            <li>
-                As values change in the Total column, they are <a href="../javascript-grid-data-update/#flashing">flashed</a>.
-            </li>
-        </ul>
-    </p>
-
-    <show-example example="exampleChangeDetectionValueGetter"></show-example>
 
     <h2 id="example-change-detection-and-groups">Example - Change Detection and Groups</h2>
 
@@ -166,6 +175,11 @@ colDef = {
         The example below shows change detection impacting the result of groups. From the example, the
         following can be noted:
         <ul>
+            <li>
+                Column 'Group' is marked as a <a href="../javascript-grid-grouping/">Row Group</a>
+                and columns A to F are marked as <a href="../javascript-grid-aggregation/">Aggregation</a>
+                columns so that their values are summed into the group level.
+            </li>
             <li>
                 Column 'Total' has a valueGetter which gives a sum of all columns A to F.
             </li>
@@ -195,17 +209,44 @@ colDef = {
 
     <show-example example="exampleChangeDetectionGroups"></show-example>
 
-    <h2>Example - Change Detection and Filter / Sort / Group</h2>
+    <p>
+        Notice the code for setting up the grid is simple. All of the refreshing and recalculating of values is
+        done internally by the grid.
+    </p>
+
+
+    <h2>Change Detection and Sorting, Filtering, Grouping</h2>
 
     <p>
-        As mentioned, change detection will only update aggregated values (in the
-        <a href="../javascript-grid-in-memory/">In Memory Row Model</a> and displayed
-        values. It will not try to re-order, re-sort or re-group the data.
-        If you want to have the data updated to reflect order, sort and group,
-        you should listen for the event <code>cellValueChanged</code> and call
+        When a value changes, the grid's automatic change detection will update:
+    <ul>
+        <li>Aggregated values.</li>
+        <li>Values displayed in cells.</li>
+    </ul>
+    The grid will <b>not</b>:
+    <ul>
+        <li>Sort</li>
+        <li>Filter</li>
+        <li>Group</li>
+    </ul>
+    </p>
+
+    <p>
+        The reason why sorting, filtering and grouping is not done automatically is that it
+        would be considered bad user experience in most use cases to change the displayed
+        rows while editing. For example, if a user edits a cell, then the row should not
+        jump location (due to sorting and grouping) or even worse, disappear altogether (if
+        the filter removes the row due to the new value failing the filter).
+    </p>
+
+    <p>
+        For this reason, if you want to update the sorting, filtering or group grouping
+        after an update, you should listen for the event <code>cellValueChanged</code> and call
         <a href="../javascript-grid-data-update/#bulk-updating">api.updateRowData(transaction)</a>
         with the rows that were updated.
     </p>
+
+    <h2>Example - Change Detection and Filter / Sort / Group</h2>
 
     <p>
         The following example is the same as the example above
@@ -236,12 +277,43 @@ colDef = {
 
     <show-example example="exampleChangeDetectionFilterSortGroup"></show-example>
 
-    <h2 id="delta-aggregation-rebuilding">Delta Aggregation Rebuilding</h2>
+    <h2 id="path-selection">Aggregation Path Selection</h2>
 
     <p>
-        asdf
+        When the grid needs to update aggregations, it will only update aggregations that are
+        impacted by the changed values. This is done using path selection.
     </p>
-    <ul>
+
+    <p>
+        Path selection means, when a value is changed, the aggregation will only:
+        <ul>
+            <li>Update the parent group(s) of the value.</li>
+            <li>For single cell changes*, only update the column.</li>
+        </ul>
+    </p>
+
+    <p>
+        <i>
+            *single cell changes are when you update using the UI or you update via
+            the <code>rowNode.setRowData(column, data)</code> API. If you update using
+            a transaction, then all columns are recomputed on the effected path.
+        </i>
+    </p>
+
+    <p>
+        This is easiest explained with an example. Consider the example below and you edit
+        a cell value under "Bottom" -> "Group B2" -> "Column C". Then the grid will only
+        recompute column C aggregations for "Group B2" and "Bottom". It will not recompute
+        any aggregates for any other groups or for any other columns.
+    </p>
+
+    <p>
+        The path selection ensures only the minimal amount of recalculations are done.
+    </p>
+
+    <h2>Example Aggregation Path Selection</h2>
+
+<!--    <ul>
         <li>
             When editing cell (or calling rowNode.setDataValue(col, val)), aggregations are recomputed on changed
             tree only AND on changed column only.
@@ -251,7 +323,7 @@ colDef = {
             tree only on ALL columns.
         </li>
     </ul>
-
+-->
     <show-example example="exampleChangeDetectionDeltaAggregation"></show-example>
 
     <h2>Refresh Turns</h2>

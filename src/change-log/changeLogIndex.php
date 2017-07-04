@@ -23,7 +23,8 @@ include '../documentation-main/documentation_header.php';
         <li>Enhancement: Now header DIV will contain class <i>ag-column-menu-visible</i> when the column menu is showing.</li>
         <li>AG-366: Bugfix: Multiple sort numbers were disappearing after horizontal scrolling</li>
         <li>AG-375: After calling columnApi.setState() and doing multi-column sort,
-            the sort numbers were not getting displayed beside the relavent column.</li>
+            the sort numbers were not getting displayed beside the relevant column.</li>
+        <li>Value Getter Cache</li>
     </ul>
 
     <h2>Breaking Changes</h2>
@@ -31,7 +32,6 @@ include '../documentation-main/documentation_header.php';
         <li>api.softRefresh() renamed to api.refreshVolatileCells()</li>
         <li>cellRenderer.params.valueGetter() is now called cellRenderer.params.getValue()</li>
     </ul>
-
 
     <h2>Version 11.0.x</h2>
     <h3>Version 11.0.0 [26-JUN-2017]</h3>
