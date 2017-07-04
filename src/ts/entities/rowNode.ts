@@ -307,7 +307,7 @@ export class RowNode implements IEventEmitter {
     // this method is for the client to call, so the cell listens for the change
     // event, and also flashes the cell when the change occurs.
     public setDataValue(colKey: string|ColDef|Column, newValue: any): void {
-        let column = this.columnController.getGridColumn(colKey);
+        let column = this.columnController.getPrimaryColumn(colKey);
         this.valueService.setValue(this, column, newValue);
         this.dispatchCellChangedEvent(column, newValue);
     }
