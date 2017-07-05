@@ -28,13 +28,18 @@ include '../documentation-main/documentation_header.php';
         Change detection can be broken down into the following two categories:
         <ul>
             <li>
-                <b>Value Change Detection:</b> When a value for a cell changes, the grid compares the
-                new value to the currently rendered value. If the values are equal, the cell is not refreshed.
+                <b>Value Change Detection:</b> When a value for any cell changes, the grid goes through
+                every cell in the grid and compares the new value to the currently rendered value.
+                If the values differ, the cell is refreshed. This means all cells using
+                <code>valueGetter's</code> will have their values updated if they depended on the
+                changed cell.
             </li>
             <li>
-                <b>Aggregation Change Detection:</b> When a value for a cell changed,
+                <b>Aggregation Change Detection:</b> When a value for any cell changes,
                 the grid will recalculate all
-                <a href="../javascript-grid-aggregation/">aggregations</a> that are impacted.
+                <a href="../javascript-grid-aggregation/">aggregations</a> that are impacted
+                by the changed value. This means the grid will automatically keep aggregation
+                results (the values in the grouped row) up to date as the data beneath it changes.
             </li>
         </ul>
     </p>
@@ -50,7 +55,14 @@ include '../documentation-main/documentation_header.php';
     <h2>Example - Change Detection and Value Getter's</h2>
 
     <p>
-        The example below shows the impact of change detection on value getters. Try the following in the example:
+        Notice the code for setting up the grid is simple. All of the refreshing and recalculating of values
+        is done internally by the grid.
+    </p>
+
+    <p>
+        The example below shows the impact of change detection on value getters. The grid is
+        doing all the refresh by itself with no need for the client application explicitly requesting
+        a refresh. Notice the following:
     <ul>
         <li>
             The 'Total' column uses a value getter to calculate the sum of all values in that row.
@@ -59,17 +71,12 @@ include '../documentation-main/documentation_header.php';
             Edit any of the values in columns A to F.
         </li>
         <li>
-            Notice that the 'Total' column gets automatically updated and flashed.
+            The 'Total' column gets automatically refreshed and flashes.
         </li>
     </ul>
     </p>
 
     <show-example example="exampleChangeDetectionValueGetter"></show-example>
-
-    <p>
-        Notice the code for setting up the grid is simple. All of the refreshing and recalculating of values
-        is done internally by the grid.
-    </p>
 
     <h2>Value Change Detection</h2>
 
@@ -81,14 +88,15 @@ include '../documentation-main/documentation_header.php';
     <note>
         You might ask, is checking every cell against it's value a performance problem? The answer is no.
         What ag-Grid does is similar to the change detection algorithm's in frameworks such as React or Angular.
-        Doing this many check's in JavaScript is not a problem. Slowness comes when the DOM is updated to
+        Doing this many check's in JavaScript is not a problem. Slowness comes when the DOM is updated
         many times. ag-Grid minimises the DOM updates by only updating the DOM where changes are detected.
         <br/>&nbsp;
         <br/>
         You might also ask, does ag-Grid have a cool Virtual DOM like React does? The answer is no. The grid has
         state stored in the Row Model. So rather than comparing the actual DOM with a virtual DOM,
         the grid compares 'the value that was rendered last time into the DOM' with with the value's
-        in the Row Model.
+        in the Row Model. Having a virtual DOM in this case would be redundant as the grid already has
+        data structures to compare.
     </note>
 
     <h3>Comparing Values</h3>
@@ -100,17 +108,17 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         By default the grid will compare values by using triple equals, eg <i>"oldValue === newValue"</i>.
-        This will work most of the time for you, especially if your values are simple strings and numbers.
-        This may be a problem if the value is an object as object references will be used for comparison.
-        If the data has changed, but the object reference is the same, then you will need to override
-        how the value's are compared.
+        This will work most of the time for you, especially if your values are simple types
+        (string, number, boolean) or immutable objects.
+        This will be a problem for mutable objects as object references will be used for comparison
+        which won't detect internal changes in the object.
+        If using mutable objects (data has changed but it's the same object reference),
+        then you will need to override how the value's are compared.
     </p>
 
     <p>
-        A value is an attribute of your row data record. So if you update the attribute on the
-        row data, but the row data record is the same instance, then the triple equals will work on the
-        attribute. So as long as you replace full object values as attributes, or are using simple
-        strings and numbers as attributes, then you will never need to provide your own custom equals method.
+        If your row data attributes are simple types (string, boolean, number) or immutable
+        objects you don't need to implement your own comparison method.
     </p>
 
     <p>
