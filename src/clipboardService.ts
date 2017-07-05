@@ -402,7 +402,7 @@ export class ClipboardService implements IClipboardService {
         }
     }
 
-    public copySelectedRowsToClipboard(includeHeaders = false, columnKeys?: (string|Column|ColDef)[]): void {
+    public copySelectedRowsToClipboard(includeHeaders = false, columnKeys?: (string|Column)[]): void {
 
         let skipHeader = !includeHeaders;
         let deliminator = this.gridOptionsWrapper.getClipboardDeliminator();

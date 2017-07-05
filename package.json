@@ -27,7 +27,7 @@
     "gulp": "3.9.0",
     "gulp-typescript": "2.10.0",
     "gulp-clean": "0.3.1",
-    "typescript": "2.1.6",
+    "typescript": "2.4.1",
     "gulp-header": "1.7.0",
     "merge2": "0.3.6",
     "webpack-stream": "3.1.0",
