@@ -22,7 +22,7 @@ var gridOptions = {
     enableColResize: true,
     columnDefs: columnDefs,
     showToolPanel: true,
-    rowModelType: 'pagination',
+    pagination:true,
     rowGroupPanelShow: 'always',
     enableStatusBar: true,
     paginationPageSize: 500,
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
-            setDataSource(httpResult);
+            gridOptions.api.setRowData(httpResult);
         }
     };
 });
