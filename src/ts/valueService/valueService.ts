@@ -24,11 +24,7 @@ export class ValueService {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('valueCache') private valueCache: ValueCache;
 
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-
     private cellExpressions: boolean;
-    private inMemoryRowModel: InMemoryRowModel;
 
     private initialised = false;
 
@@ -36,9 +32,6 @@ export class ValueService {
     public init(): void {
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
         this.initialised = true;
-        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
-            this.inMemoryRowModel = <InMemoryRowModel> this.rowModel;
-        }
     }
 
     public getValue(column: Column, rowNode: RowNode, ignoreAggData = false): any {
@@ -150,27 +143,6 @@ export class ValueService {
             column.getColDef().onCellValueChanged(params);
         }
         this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, params);
-
-        this.doChangeDetection(rowNode, column);
-    }
-
-    private doChangeDetection(rowNode: RowNode, column: Column): void {
-        if (this.gridOptionsWrapper.isSuppressChangeDetection()) { return; }
-
-        // step 1 of change detection is to update the aggregated values
-        if (this.inMemoryRowModel) {
-
-            let changedPath: ChangedPath;
-            if (rowNode.parent) {
-                changedPath = new ChangedPath(true);
-                changedPath.addParentNode(rowNode.parent, [column]);
-            }
-
-            this.inMemoryRowModel.doAggregate(changedPath);
-        }
-
-        // step 2 of change detection is to refresh the cells
-        this.rowRenderer.refreshCells();
     }
 
     private setValueUsingField(data: any, field: string, newValue: any, isFieldContainsDots: boolean): boolean {

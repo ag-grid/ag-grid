@@ -63,6 +63,7 @@ import {ImmutableService} from "./rowModels/inMemory/immutableService";
 import {IRowModel} from "./interfaces/iRowModel";
 import {Constants} from "./constants";
 import {ValueCache} from "./valueService/valueCache";
+import {ChangeDetectionService} from "./valueService/changeDetectionService";
 
 export interface GridParams {
     // used by Web Components
@@ -159,7 +160,8 @@ export class Grid {
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService, FilterService, RowNodeFactory,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
-                ColumnHoverService, ColumnAnimationService, SortService, AutoGroupColService, ImmutableService],
+                ColumnHoverService, ColumnAnimationService, SortService, AutoGroupColService, ImmutableService,
+                ChangeDetectionService],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],
