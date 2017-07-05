@@ -30,7 +30,7 @@
     "nib": "^1.1.0",
     "stylus": "0.53.0",
     "vinyl-buffer": "1.0.0",
-    "typescript": "2.0.10",
+    "typescript": "2.4.1",
     "merge2": "0.3.6",
     "font-awesome": "4.5.0",
     "bootstrap": "3.3.6",
