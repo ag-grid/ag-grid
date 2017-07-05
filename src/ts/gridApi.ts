@@ -43,7 +43,7 @@ import {ValueCache} from "./valueService/valueCache";
 
 export interface StartEditingCellParams {
     rowIndex: number;
-    colKey: string|Column|ColDef;
+    colKey: string|Column;
     keyPress?: number;
     charPress?: string;
 }
@@ -474,7 +474,7 @@ export class GridApi {
         console.warn('ag-Grid: ensureColIndexVisible(index) no longer supported, use ensureColumnVisible(colKey) instead.');
     }
 
-    public ensureColumnVisible(key: string|Column|ColDef) {
+    public ensureColumnVisible(key: string|Column) {
         this.gridPanel.ensureColumnVisible(key);
     }
 
@@ -510,26 +510,26 @@ export class GridApi {
         return this.getFilterInstance(colDef);
     }
 
-    public getFilterInstance(key: string|Column|ColDef): IFilterComp {
+    public getFilterInstance(key: string|Column): IFilterComp {
         let column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return this.filterManager.getFilterComponent(column);
         }
     }
 
-    public getFilterApi(key: string|Column|ColDef) {
+    public getFilterApi(key: string|Column) {
         console.warn('ag-Grid: getFilterApi is deprecated, use getFilterInstance instead');
         return this.getFilterInstance(key);
     }
 
-    public destroyFilter(key: string|Column|ColDef) {
+    public destroyFilter(key: string|Column) {
         let column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return this.filterManager.destroyFilter(column);
         }
     }
 
-    public getColumnDef(key: string|Column|ColDef) {
+    public getColumnDef(key: string|Column) {
         let column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
@@ -570,7 +570,7 @@ export class GridApi {
         return this.focusedCellController.clearFocusedCell();
     }
 
-    public setFocusedCell(rowIndex: number, colKey: Column|ColDef|string, floating?: string) {
+    public setFocusedCell(rowIndex: number, colKey: string|Column, floating?: string) {
         this.focusedCellController.setFocusedCell(rowIndex, colKey, floating, true);
     }
 
@@ -627,7 +627,7 @@ export class GridApi {
         }
     }
 
-    public getValue(colKey: string|ColDef|Column, rowNode: RowNode): any {
+    public getValue(colKey: string|Column, rowNode: RowNode): any {
         let column = this.columnController.getPrimaryColumn(colKey);
         if (_.missing(column)) {
             column = this.columnController.getGridColumn(colKey);
@@ -688,7 +688,7 @@ export class GridApi {
         this.rangeController.clearSelection();
     }
 
-    public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string|Column|ColDef)[]): void {
+    public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string|Column)[]): void {
         if (!this.clipboardService) { console.warn('ag-Grid: clipboard is only available in ag-Grid Enterprise'); }
         this.clipboardService.copySelectedRowsToClipboard(includeHeader, columnKeys);
     }
@@ -703,12 +703,12 @@ export class GridApi {
         this.clipboardService.copyRangeDown();
     }
 
-    public showColumnMenuAfterButtonClick(colKey: string|Column|ColDef, buttonElement: HTMLElement): void {
+    public showColumnMenuAfterButtonClick(colKey: string|Column, buttonElement: HTMLElement): void {
         let column = this.columnController.getPrimaryColumn(colKey);
         this.menuFactory.showMenuAfterButtonClick(column, buttonElement);
     }
 
-    public showColumnMenuAfterMouseClick(colKey: string|Column|ColDef, mouseEvent: MouseEvent|Touch): void {
+    public showColumnMenuAfterMouseClick(colKey: string|Column, mouseEvent: MouseEvent|Touch): void {
         let column = this.columnController.getPrimaryColumn(colKey);
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     }

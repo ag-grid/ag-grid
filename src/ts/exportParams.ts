@@ -12,7 +12,7 @@ export interface BaseExportParams{
     skipFloatingTop?: boolean;
     skipFloatingBottom?: boolean;
     suppressQuotes?: boolean;
-    columnKeys?: (Column|ColDef|string)[]
+    columnKeys?: (string|Column)[]
     fileName?: string;
     allColumns?: boolean;
     onlySelected?: boolean;

@@ -5,13 +5,13 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ExpressionService} from "../valueService/expressionService";
 import {RowRenderer} from "./rowRenderer";
 import {TemplateService} from "../templateService";
-import {ColumnController, ColumnApi} from "../columnController/columnController";
+import {ColumnApi, ColumnController} from "../columnController/columnController";
 import {ValueService} from "../valueService/valueService";
 import {EventService} from "../eventService";
 import {Constants} from "../constants";
-import {Events, CellEvent} from "../events";
+import {CellEvent, Events} from "../events";
 import {RowComp} from "./rowComp";
-import {Autowired, PostConstruct, Optional, Context} from "../context/context";
+import {Autowired, Context, Optional, PostConstruct} from "../context/context";
 import {GridApi} from "../gridApi";
 import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
@@ -22,18 +22,16 @@ import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {CellEditorFactory} from "./cellEditorFactory";
 import {Component} from "../widgets/component";
 import {PopupService} from "../widgets/popupService";
-import {ICellRendererFunc, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {CellRendererFactory} from "./cellRendererFactory";
 import {CellRendererService} from "./cellRendererService";
 import {ValueFormatterService} from "./valueFormatterService";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {SetLeftFeature} from "./features/setLeftFeature";
-import {MethodNotImplementedException} from "../misc/methodNotImplementedException";
 import {StylingService} from "../styling/stylingService";
 import {ColumnHoverService} from "./columnHoverService";
 import {ColumnAnimationService} from "./columnAnimationService";
-import {GroupCellRenderer} from "./cellRenderers/groupCellRenderer";
-import {BaseWithValueColDefParams, ColDef} from "../entities/colDef";
+import {BaseWithValueColDefParams} from "../entities/colDef";
 
 export class CellComp extends Component {
 
@@ -1046,25 +1044,25 @@ export class CellComp extends Component {
             return false;
         }
 
-        try {
-            // if the cell renderer has a refresh method, we call this instead of doing a refresh
-            // note: should pass in params here instead of value?? so that client has formattedValue
-            let valueFormatted = this.formatValue(this.value);
-            let cellRendererParams = this.column.getColDef().cellRendererParams;
-            let params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
-            this.cellRenderer.refresh(params);
-        } catch (e) {
-            // this exception gets thrown by the frameworks, as our framework wrapper will implement
-            // refresh(), but the wrapped component may not, and then the wrapper throws MethodNotImplementedException.
-            if (e instanceof MethodNotImplementedException) {
-                return false;
-            } else {
-                throw e;
-            }
+        // if the cell renderer has a refresh method, we call this instead of doing a refresh
+        // note: should pass in params here instead of value?? so that client has formattedValue
+        let valueFormatted = this.formatValue(this.value);
+        let cellRendererParams = this.column.getColDef().cellRendererParams;
+        let params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
+        let result: boolean | void = this.cellRenderer.refresh(params);
+
+        if (result===false) {
+            // if result from renderer is false
+            return false;
+        } else {
+            // if result from renderer is true OR undefined
+            return true;
         }
 
-        // got this far, we were able to refresh using the user provided cellRenderer
-        return true;
+        // NOTE on undefined: previous version of the cellRenderer.refresh() interface
+        // returned nothing, if the method existed, we assumed it refreshed. so for
+        // backwards compatibility, we assume if method exists and returns nothing,
+        // that it was successful.
     }
 
     private valuesAreEqual(val1: any, val2: any): boolean {

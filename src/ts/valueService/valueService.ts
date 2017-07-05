@@ -74,7 +74,7 @@ export class ValueService {
         return result;
     }
 
-    public setValue(rowNode: RowNode, colKey: string|ColDef|Column, newValue: any): void {
+    public setValue(rowNode: RowNode, colKey: string|Column, newValue: any): void {
         let column = this.columnController.getPrimaryColumn(colKey);
 
         if (!rowNode || !column) {

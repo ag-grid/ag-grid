@@ -399,4 +399,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
+    public refresh(): boolean {
+        return false;
+    }
 }

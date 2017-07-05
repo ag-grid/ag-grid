@@ -51,6 +51,10 @@ class TempStubCell extends Component {
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
     }
+
+    public refresh(params: any): boolean {
+        return false;
+    }
 }
 
 export class RowComp extends BeanStub {

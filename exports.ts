@@ -92,7 +92,6 @@ export {TabbedItem} from "./dist/lib/layout/tabbedLayout"
 
 // misc
 export {FocusService} from "./dist/lib/misc/focusService";
-export {MethodNotImplementedException} from "./dist/lib/misc/methodNotImplementedException";
 export {simpleHttpRequest} from "./dist/lib/misc/simpleHttpRequest";
 
 // editing / cellEditors

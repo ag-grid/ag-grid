@@ -122,7 +122,7 @@ export class FocusedCellController {
         }
     }
 
-    public setFocusedCell(rowIndex: number, colKey: Column|ColDef|string, floating: string, forceBrowserFocus = false): void {
+    public setFocusedCell(rowIndex: number, colKey: string|Column, floating: string, forceBrowserFocus = false): void {
         if (this.gridOptionsWrapper.isSuppressCellSelection()) {
             return;
         }
