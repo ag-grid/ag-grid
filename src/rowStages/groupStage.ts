@@ -64,10 +64,6 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private handleTransaction(tran: RowNodeTransaction, changedPath: ChangedPath, rootNode: RowNode, groupedCols: Column[], expandByDefault: number, includeParents: boolean, isPivot: boolean): void {
-        // changedPath.addParentNodes(transaction.add);
-        // changedPath.addParentNodes(transaction.remove);
-        // changedPath.addParentNodes(transaction.update);
-
         if (tran.add) {
             this.insertRowNodesIntoGroups(tran.add, changedPath, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
         }
@@ -88,7 +84,9 @@ export class GroupStage implements IRowNodeStage {
 
             // always add existing parent, as if row is moved, then old parent needs
             // to be recomputed
-            changedPath.addParentNode(nodeToPlace.parent);
+            if (changedPath) {
+                changedPath.addParentNode(nodeToPlace.parent);
+            }
 
             let groupKeys = groupColumns.map( col => this.getKeyForNode(col, nodeToPlace) );
 
@@ -107,7 +105,9 @@ export class GroupStage implements IRowNodeStage {
                 this.insertRowNodeIntoGroups(nodeToPlace, rootNode, groupColumns, expandByDefault, includeParents, isPivot);
 
                 // add in new parent
-                changedPath.addParentNode(nodeToPlace.parent);
+                if (changedPath) {
+                    changedPath.addParentNode(nodeToPlace.parent);
+                }
             }
         });
     }
