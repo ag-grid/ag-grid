@@ -350,6 +350,7 @@
 
     menuItem(0, 'ag-Grid Third Party Examples', 'Overview', 'javascript-grid-third-party/');
     menuItem(1, 'ag-Grid OpenFin', 'OpenFin', 'javascript-grid-openfin/');
+    menuItem(2, 'ag-Grid OpenFin Dashboard', 'Trader Dashboard', 'javascript-grid-openfin-dashboard/');
     menuItem(1, 'ag-Grid Graphing', 'Graphing', 'javascript-grid-graphing/');
     ?>
 </div>

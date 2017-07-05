@@ -11,10 +11,8 @@ include '../documentation-main/documentation_header.php';
         Trader Dashboard
     </h1>
 
-    <p>This section documents how to get started with ag-Grid and JavaScript as quickly as possible. You will start off
-        with
-        a simple application and section by section add Grid features to the application ending up with a fully fledged
-        application with ag-Grid at the heart of it.</p>
+    <p>This example illustrates a number of different ways to provide live updates to the Grid - each of the grids below
+        use a slightly different mechanism to update Grid values.</p>
 
     <?php include 'dashboard.html'; ?>
 
