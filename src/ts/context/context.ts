@@ -177,31 +177,29 @@ export class Context {
     }
 
     private autoWireBean(bean: any): void {
-        if (!bean
-            || !bean.__agBeanMetaData
-            || !bean.__agBeanMetaData[bean.constructor.name]
-            || !bean.__agBeanMetaData[bean.constructor.name].agClassAttributes) {
-            return;
-        }
 
         let currentProto = bean.__proto__;
         while (currentProto != null){
-            if (!bean.__agBeanMetaData[currentProto.constructor.name]) return;
+            let protoName = currentProto.constructor.name;
+            if (bean
+                && bean.__agBeanMetaData
+                && bean.__agBeanMetaData[protoName]
+                && bean.__agBeanMetaData[protoName].agClassAttributes)
+            {
+                let attributes = bean.__agBeanMetaData[protoName].agClassAttributes;
+                if (!attributes) {
+                    return;
+                }
 
-            let attributes = bean.__agBeanMetaData[currentProto.constructor.name].agClassAttributes;
-            if (!attributes) {
-                return;
+                let beanName = this.getBeanName(currentProto);
+
+                attributes.forEach( (attribute: any)=> {
+                    let otherBean = this.lookupBeanInstance(beanName, attribute.beanName, attribute.optional);
+                    bean[attribute.attributeName] = otherBean;
+                });
+
             }
-
-            let beanName = this.getBeanName(currentProto);
-
-            attributes.forEach( (attribute: any)=> {
-                let otherBean = this.lookupBeanInstance(beanName, attribute.beanName, attribute.optional);
-                bean[attribute.attributeName] = otherBean;
-            });
-
             currentProto = currentProto.__proto__;
-
         }
 
     }
