@@ -1,21 +1,12 @@
 <?php
 
-$valuesAndFormattersProperties = [
+$gettersAndFormattersProperties = [
     ['valueGetter(params)',
         'Function or expression. Gets the value from your data for display.'
-    ],
-    ['valueSetter(params)',
-        'Function or expression. Sets the value into your data for saving. Return true if the data changed.'
     ],
     ['valueFormatter(params)',
         'Function or expression. Formats the value for display.'
     ],
-    ['valueParser(params)',
-        'Function or expression. Parses the value for saving.'
-    ]
-];
-
-$valuesAndFormattersMoreProperties = [
     ['headerValueGetter(params)',
         'Function or expression. Gets the value for display in the header.'
     ],

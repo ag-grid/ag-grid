@@ -144,10 +144,11 @@ include '../documentation-main/documentation_header.php';
             <td>cellEditor to use for this column.</td>
         </tr>
 
-        <?php include '../javascript-grid-value-getters/valuesAndFormattersProperties.php' ?>
-        <?php printPropertiesRows($valuesAndFormattersProperties) ?>
+        <?php include '../javascript-grid-value-getters/gettersAndFormattersProperties.php' ?>
+        <?php printPropertiesRows($gettersAndFormattersProperties) ?>
 
-        <?php printPropertiesRows($valuesAndFormattersMoreProperties) ?>
+        <?php include '../javascript-grid-value-setters/settersAndParsersProperties.php' ?>
+        <?php printPropertiesRows($settersAndParsersProperties) ?>
 
         <tr>
             <th>keyCreator(params)</th>
