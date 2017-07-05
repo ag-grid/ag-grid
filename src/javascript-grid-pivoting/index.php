@@ -330,6 +330,18 @@ console.log('found column with id ' + sausageKingdomColumn.getId());
 
     <show-example example="examplePivotHideOpenParents"></show-example>
 
+    <h2 id="change-detection">Change Detection and Pivot</h2>
+
+    <p>
+        While pivoting, you can do delta changes to your data and have the grid reflect this
+        delta changes with animations.
+    </p>
+
+    <p>
+        This is demonstrated in the section on
+        <a href="../javascript-grid-change-detection/#pivot-example">Pivoting with Change Detection</a>,
+        so rather that repeat, check out the example there.
+    </p>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -16,6 +16,8 @@ var columnDefs = [
 
 var rowIdCounter = 0;
 
+var callCount = 0;
+
 var rowData = createRowData();
 
 function createRowData() {
@@ -69,7 +71,8 @@ var gridOptions = {
                     }
                 });
             }
-            console.log('aggregation: sum([' + values.join(',') + ']) = ' + result);
+            callCount++;
+            console.log(callCount + ' aggregation: sum([' + values.join(',') + ']) = ' + result);
             return result;
         }
     },
