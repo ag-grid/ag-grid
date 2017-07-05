@@ -16,8 +16,10 @@ include '../documentation-main/documentation_header.php';
         a simple application and section by section add Grid features to the application ending up with a fully fledged
         application with ag-Grid at the heart of it.</p>
 
+    <?php include 'dashboard.html'; ?>
 
     <show-complex-example example="dashboard.html"
+                          sourcesOnly="true"
                           sources="{
                             [
                                 { root: './', files: 'dashboard.js,dashboard.html' },
@@ -26,7 +28,7 @@ include '../documentation-main/documentation_header.php';
                                 { root: './services/', files: 'ExchangeService.js,FxDataService.js' }
                             ]
                           }"
-    exampleHeight="925px">
+                          exampleHeight="925px">
     </show-complex-example>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

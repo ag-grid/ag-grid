@@ -91,7 +91,7 @@ include('../../includes/mediaHeader.php');
 
     <div class="row">
         <div class="col-md-12">
-            <h2>Weekly Update for July, 4th.</h2>
+            <h2>New Refresh & Change Detection - Web Components Support - Adding Polymer</h2>
         </div>
     </div>
 
@@ -103,11 +103,16 @@ include('../../includes/mediaHeader.php');
         <div class="weekly-news-image-right">
             <img src="./images/aggrid_npm_usage.png" style="width: 100%;"/>
             <br/>
-            Usage of ag-Grid from our NPM downloads.
+            NPM downloads of ag-Grid for the past seven days.
         </div>
 
             <p>
             Happy Independence Day to our American readers. We hope you enjoy your holiday. It's business as usual here at ag-Grid so here's our weekly update.
+            </p>
+
+            <h4>NPM Downloads of ag-Grid</h4>
+            <p>
+            We keep an eye on the downloads of our various NPM repositories. It's a good way to gauge the relative popularity of frameworks. We've added a graph of downloads for the past week so you can draw your own conclusions.
             </p>
             <h4>GitHub Stars</h4>
             <p>
@@ -121,14 +126,14 @@ include('../../includes/mediaHeader.php');
             </p> 
             
             <h4>Change Detection</h4>
-            <p>He’s now busy at work on a new change detection system. As your data changes in your grid, it will automatically find any cells that were impacted through aggregations or through valueGeters, recompute those cells and update *only* those cells in the DOM.
+            <p>He’s now busy at work on a new change detection system. As data changes in your grid, it will automatically find any cells that were impacted through aggregations or through valueGeters, recompute those cells and update *only* those cells in the DOM.
             </p>
 
             <p>Not only is there a brand new, cleaner Refresh API, you probably won't even need to call it, as the change detection and auto-refresh will take care of everything for you.
             </p>
             <h4>JIRA Update</h4>
             <p>
-            JIRA update - we are down to 136 tickets so the steady progress continues. You can view the progress on our <a href="https://www.ag-grid.com/ag-grid-pipeline/">pipeline</a>
+            We are down to 136 tickets so the steady progress continues. You can monitor via our <a href="https://www.ag-grid.com/ag-grid-pipeline/">pipeline</a>. Please bear in mind these items that are completed will be in our next release.
             </p>
 
             </p>
@@ -136,7 +141,7 @@ include('../../includes/mediaHeader.php');
             <h4>Continuing with Accessibility</h4>
 
             <p>
-                Rob is continuing his work on Accessibility as well as helping the team close off JIRA's.
+                Rob is continuing his work on Accessibility as well as helping the team close off JIRA tickets.
             </p>
 
             <h4>Preparing for TypeScript 2.4</h4>
@@ -159,7 +164,7 @@ include('../../includes/mediaHeader.php');
             </p>
             <h4>Polymer</h4>
             <p>
-            Building on this work, we are turning our focus to support for Polymer. We will provide support for this in the same as our other frameworks.
+            Building on this work, we are turning our focus to support for Polymer. This will become the eighth framework that we support and we will treat it in the same way as the others.
             </p>
 
         <h3>Customer Experience</h3>
@@ -183,62 +188,45 @@ include('../../includes/mediaHeader.php');
 
     <hr/>
 
-<div style="background-color: #eee; padding: 10px; display: inline-block;">
+    <div style="background-color: #eee; padding: 10px; display: inline-block;">
 
-    <div style="margin-bottom: 5px;">If you liked this article then please share</div>
+        <div style="margin-bottom: 5px;">If you liked this article then please share</div>
 
-    <table style="background-color: #eee;">
-        <tr>
-            <td>
-                <script type="text/javascript" src="//www.redditstatic.com/button/button1.js"></script>
-            </td>
-            <td>
-                &nbsp;&nbsp;&nbsp;
-            </td>
-            <td>
-                <a href="https://twitter.com/share" class="twitter-share-button"
-                   data-url="https://www.ag-grid.com/weekly-update/20170627/"
-                   data-text="ag-Grid Weekly Update 28th #javascript #angularjs #react" data-via="ceolter"
-                   data-size="large">Tweet</a>
-                <script>!function (d, s, id) {
-                        var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-                        if (!d.getElementById(id)) {
-                            js = d.createElement(s);
-                            js.id = id;
-                            js.src = p + '://platform.twitter.com/widgets.js';
-                            fjs.parentNode.insertBefore(js, fjs);
-                        }
-                    }(document, 'script', 'twitter-wjs');</script>
-            </td>
-        </tr>
-    </table>
-</div>
-
-<div id="disqus_thread"></div>
-    <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES * * */
-        var disqus_shortname = 'angulargrid';
-
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function() {
-            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-
-    <hr/>
-</div>
-
-
+        <table style="background-color: #eee;">
+            <tr>
+                <td>
+                    <script type="text/javascript" src="//www.redditstatic.com/button/button1.js"></script>
+                </td>
+                <td>
+                    &nbsp;&nbsp;&nbsp;
+                </td>
+                <td>
+                    <a href="https://twitter.com/share" class="twitter-share-button"
+                       data-url="https://www.ag-grid.com/weekly-update/20170740/"
+                       data-text="ag-Grid Weekly Update #javascript #angularjs #react" data-via="ceolter"
+                       data-size="large">Tweet</a>
+                    <script>!function (d, s, id) {
+                            var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+                            if (!d.getElementById(id)) {
+                                js = d.createElement(s);
+                                js.id = id;
+                                js.src = p + '://platform.twitter.com/widgets.js';
+                                fjs.parentNode.insertBefore(js, fjs);
+                            }
+                        }(document, 'script', 'twitter-wjs');</script>
+                </td>
+            </tr>
+        </table>
+    </div>
 
 </div>
 
 </div>
 
-<?php include_once("../../includes/mediafooter.php"); ?>
+<?php include_once("../../includes/footer.php"); ?>
 
 </body>
+
+<?php include_once("../../includes/analytics.php"); ?>
 
 </html>

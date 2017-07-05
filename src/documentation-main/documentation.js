@@ -112,8 +112,10 @@
     function ShowComplexScriptExampleController($scope, $http, $attrs, $sce) {
         var pathname = getPathWithTrailingSlash();
 
-        $scope.source = pathname + $attrs["example"];
-        $scope.selectedTab = 'example';
+        $scope.sourcesOnly = $attrs["sourcesonly"];
+
+        $scope.source = $scope.sourcesOnly ? $attrs["example"] : (pathname + $attrs["example"]);
+        $scope.selectedTab = $scope.sourcesOnly ? 'source' : 'example';
 
         $scope.plunker = null;
         if ($attrs.plunker && $attrs.plunker.indexOf("https://embed.plnkr.co") === 0) {
