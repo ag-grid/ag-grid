@@ -113,8 +113,6 @@ exports.VerticalStack = verticalStack_1.VerticalStack;
 // misc
 var focusService_1 = require("./dist/lib/misc/focusService");
 exports.FocusService = focusService_1.FocusService;
-var methodNotImplementedException_1 = require("./dist/lib/misc/methodNotImplementedException");
-exports.MethodNotImplementedException = methodNotImplementedException_1.MethodNotImplementedException;
 var simpleHttpRequest_1 = require("./dist/lib/misc/simpleHttpRequest");
 exports.simpleHttpRequest = simpleHttpRequest_1.simpleHttpRequest;
 var largeTextCellEditor_1 = require("./dist/lib/rendering/cellEditors/largeTextCellEditor");

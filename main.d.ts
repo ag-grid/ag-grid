@@ -47,7 +47,6 @@ export { TabbedLayout } from "./dist/lib/layout/tabbedLayout";
 export { VerticalStack } from "./dist/lib/layout/verticalStack";
 export { TabbedItem } from "./dist/lib/layout/tabbedLayout";
 export { FocusService } from "./dist/lib/misc/focusService";
-export { MethodNotImplementedException } from "./dist/lib/misc/methodNotImplementedException";
 export { simpleHttpRequest } from "./dist/lib/misc/simpleHttpRequest";
 export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./dist/lib/rendering/cellEditors/iCellEditor";
 export { LargeTextCellEditor } from "./dist/lib/rendering/cellEditors/largeTextCellEditor";
