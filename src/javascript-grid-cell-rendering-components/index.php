@@ -7,7 +7,7 @@ $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2 id="cell-rendering">Cell Renderer</h2>
+<h1 class="first-h1" id="cell-rendering">Cell Renderer</h1>
 
 <p>
     The Cell Renderer - the most important component of ag-Grid. With this, you can put whatever
@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
 </ul>
 </p>
 
-<h3 id="cell-renderer-function">cellRenderer Function</h3>
+<h1 id="cell-renderer-function">cellRenderer Function</h1>
 
 <p>
     The easiest (but not as flexible) way to provide your own cellRenderer is to provide a function.
@@ -70,7 +70,7 @@ colDef.cellRenderer = function(params) {
     See further below for the set of parameters passed to the rendering function.
 </p>
 
-<h3 id="cell-renderer-component">cellRenderer Component</h3>
+<h1 id="cell-renderer-component">cellRenderer Component</h1>
 
 <p>
     The most flexible (but a little more tricky) way to provide a cellRenderer is to provide a component class.
@@ -104,9 +104,10 @@ colDef.cellRenderer = function(params) {
     <span class="codeComment">// do it here</span>
     destroy?(): void;
 
-    <span class="codeComment">// Optional - Get the cell to refresh. If this method is not provided, then when refresh is needed, the grid</span>
-    <span class="codeComment">// will remove the component from the DOM and create a new component in it's place with the new values.</span>
-    refresh?(params: any): void;
+    <span class="codeComment">// Mandatory - Get the cell to refresh. Return true if the refresh succeeded, otherwise return false.</span>
+    <span class="codeComment">// If you return false, the grid will remove the component from the DOM and create</span>
+    <span class="codeComment">// a new component in it's place with the new values.</span>
+    refresh(params: any): boolean;
 }</pre>
 
     <p>
@@ -145,6 +146,8 @@ MyCellRenderer.prototype.getGui = function() {
 MyCellRenderer.prototype.refresh = function(params) {
     <span class="codeComment">// set value into cell again</span>
     this.eValue.innerHTML = params.valueFormatted ? params.valueFormatted : params.value;
+    <span class="codeComment">// return true to tell the grid we refreshed successfully</span>
+    return true;
 };
 
 <span class="codeComment">// gets called when the cell is removed from the grid</span>
@@ -153,28 +156,26 @@ MyCellRenderer.prototype.destroy = function() {
     this.eButton.removeEventListener('click', this.eventListener);
 };</code></pre>
 
-<h3 id="cell-renderer-component-refresh">cellRenderer Component Refresh</h3>
+<h1 id="cell-renderer-component-refresh">Component Refresh</h1>
 
 <p>
-    The grid is constantly refreshing rows and cells into the browser, but not every refresh of the grid
-    results in the refresh method of your cellRenderer getting called. The following details when your
-    cellRenderer refresh method gets called and when not.
+    Component refresh needs a bit more explanation. Here we go through some of the finer details.
 </p>
 
+<h3>Events Causing Refresh</h3>
 <p>
+    The grid is constantly refreshing the data in the browser, but not every refresh of the grid
+    results in the refresh method of your cellRenderer getting called.
     The following will result in cellRenderer refresh method getting called:
 <ul>
     <li>
-        Calling <i>rowNode.setDataValue(colKey, value)</i> to set a value directly onto the rowNode
+        Calling <code>rowNode.setDataValue(colKey, value)</code> to set a value directly onto the rowNode
     </li>
     <li>
         When editing a cell and editing is stopped, so that cell displays new value after editing.
     </li>
     <li>
-        Calling <i>api.refreshCells(rowNodes, colIds)</i> to inform grid data has changed (see <a href="../javascript-grid-refresh/">Refresh</a>).
-    </li>
-    <li>
-        Calling <i>api.refreshVolatileCells()</i> to inform grid data has changed (see <a href="../javascript-grid-refresh/">Refresh</a>).
+        Calling <code>api.refreshCells()</code> to inform grid data has changed (see <a href="../javascript-grid-refresh/">Refresh</a>).
     </li>
 </ul>
 If any of the above occur, the <i>refresh()</i> method will be called if it is provided. If not,
@@ -185,42 +186,55 @@ the component will be destroyed and replaced.
     The following will <b>not</b> result in cellRenderer refresh method getting called:
 <ul>
     <li>
-        Calling <i>rowNode.setData(data)</i> to set new data into a rowNode.
+        Calling <code>rowNode.setData(data)</code> to set new data into a rowNode.
     </li>
     <li>
         Scrolling the grid vertically (results in rows getting ripped in / out of the dom).
-    </li>
-    <li>
-        All other api refresh methods (<i>refreshRows, refreshView</i> etc).
     </li>
 </ul>
 All of the above will result in the component getting destroyed and recreated.
 </p>
 
-<h3 id="cell-renderer-component-lifecycle">
+<h3>Change Detection</h3>
+
+    <p>
+        As mentioned in the section on <a href="../javascript-grid-change-detection/">Change Detection</a>,
+        the refresh of the cell will not take place if the value getting rendered has not changed.
+    </p>
+
+<h3 id="grid-vs-cell-refresh">Grid vs Component Refresh</h3>
+
+    <p>
+        The refresh method returns back a boolean value. If you do not want to handle the refresh in the
+        cellRenderer, just return back <code>false</code> from an otherwise empty method. This will indicate
+        to the grid that you did not refresh and the grid will instead rip the component out and destroy it
+        and create another instance of your component from scratch instead.
+    </p>
+
+<h1 id="cell-renderer-component-lifecycle">
     cellRenderer Component Lifecycle
-</h3>
+</h1>
 
 <p>
     The lifecycle of the cellRenderer is as follows:
 <ul>
-    <li><i>new</i> is called on the class.</li>
-    <li><i>init()</i> is called once.</li>
-    <li><i>getGui()</i> is called once.</li>
-    <li><i>refresh()</i> is called 0..n times (ie it may never be called, or called multiple times)</li>
-    <li><i>destroy()</i> is called once.</li>
+    <li><code>new</code> is called on the class.</li>
+    <li><code>init()</code> is called once.</li>
+    <li><code>getGui()</code> is called once.</li>
+    <li><code>refresh()</code> is called 0..n times (ie it may never be called, or called multiple times)</li>
+    <li><code>destroy()</code> is called once.</li>
 </ul>
-In other words, <i>new(), init(), getGui()</i> and <i>destroy()</i> are always called exactly once.
+In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> and <code>destroy()</code> are always called exactly once.
 <i>refresh()</i> is optionally called multiple times.
 </p>
 
 <p>
-    If you are implementing <i>refresh()</i>, remember that <i>getGui()</i> is only called once, so be sure
-    to update the existing GUI in your refresh, do not think that the grid is going to call <i>getGui()</i>
+    If you are doing <code>refresh()</code>, remember that <code>getGui()</code> is only called once, so be sure
+    to update the existing GUI in your refresh, do not think that the grid is going to call <code>getGui()</code>
     again to get a new version of the GUI.
 </p>
 
-<h3 id="cell-renderer-params">cellRenderer Params</h3>
+<h1 id="cell-renderer-params">cellRenderer Params</h1>
 
 <p>
     The cellRenderer function and cellRenderer component take parameters as follows:
@@ -344,32 +358,7 @@ colDef.cellRendererParams = {
     color: 'irishGreen'
 }</code></pre>
 
-<h3 id="provided-cell-renderers">Provided cellRenderers</h3>
-
-<p>Instead of providing a cellRenderer function or component, you can select from ones that come with the
-    grid or install your own into the grid.</p>
-
-<p>
-    The cellRenderers provided by the grid are as follows:
-<ul>
-    <li><b>group</b>: For group rendering.</li>
-    <li><b>animateShowChange</b>: Cell renderer that when data changes, it animates showing the difference by showing the delta for a period of time.</li>
-    <li><b>animateSlide</b>: Cell renderer that when data changes, it animates showing the old value fading away to the left.</li>
-</ul>
-</p>
-
-<p>
-    From the provided cellRenderers, it is intended the you use 'group' as is, however
-    'animateShowChange' and 'animateSlide' are given as examples on what is possible. How you show
-    changes or otherwise want to refresh is going to be different for everyone. So take influence from
-    what you see, but consider creating your own.
-</p>
-
-<p>Usage of group cellRenderer is detailed in the section <a href="../javascript-grid-grouping/">Grouping Rows and Aggregation</a>.</p>
-
-<p>Usage of animateShowChange and animateSlide is demonstrated in the section <a href="../javascript-grid-viewport/">Viewport</a>.</p>
-
-<h3 id="example-using-cell-renderers">Example: Using cellRenderers</h3>
+<h1 id="example-using-cell-renderers">Example: Using cellRenderers</h1>
 
 <p>
     The example below shows five columns formatted, demonstrating each of the
@@ -384,7 +373,7 @@ colDef.cellRendererParams = {
 
 <show-example example="example2"></show-example>
 
-<h3 id="cell-renderers-and-row-groups">Cell Renderers and Row Groups</h3>
+<h1 id="cell-renderers-and-row-groups">Cell Renderers and Row Groups</h1>
 
 <p>
     If you are mixing cellRenderers and row grouping, then you need to understand that the value and / or data

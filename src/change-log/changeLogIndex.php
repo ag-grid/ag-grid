@@ -31,6 +31,16 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li>api.softRefresh() renamed to api.refreshVolatileCells()</li>
         <li>cellRenderer.params.valueGetter() is now called cellRenderer.params.getValue()</li>
+        <li>AG-591: cellRenderer.refresh() is now a mandatory method and returns boolean (previously it
+            was optional and returned void). This is to
+            support TypeScript 2.4 that mandated a breaking change (TypeScript 2.4 doesn't allow
+            interface with just optional methods). Check the
+            <a href="../javascript-grid-cell-rendering-components/#cell-renderer-component">cellRenderer Refresh</a>
+            documentation for details on how to now implement this method. In summary, if you implemented
+            this method before, just make sure you return true. If you did not implement this method before,
+            then implment an empty version of it that returns false.
+        </li>
+
     </ul>
 
     <h2>Version 11.0.x</h2>
