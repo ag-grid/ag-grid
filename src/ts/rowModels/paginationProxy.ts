@@ -9,6 +9,7 @@ import {Bean, Autowired, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
+import {SelectionController} from "../selectionController";
 
 export class RowBounds {
     rowTop: number;
@@ -66,6 +67,7 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('selectionController') private selectionController: SelectionController;
 
     private active: boolean;
 
@@ -146,6 +148,10 @@ export class PaginationProxy extends BeanStub implements IRowModel {
 
     public isRowsToRender(): boolean {
         return this.rowModel.isRowsToRender();
+    }
+
+    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+        return this.rowModel.getNodesInRangeForSelection(firstInRange, lastInRange);
     }
 
     public forEachNode(callback: (rowNode: RowNode) => void): void {

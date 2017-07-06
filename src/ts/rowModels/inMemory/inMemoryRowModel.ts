@@ -6,7 +6,7 @@ import {FilterManager} from "../../filter/filterManager";
 import {RowNode} from "../../entities/rowNode";
 import {EventService} from "../../eventService";
 import {Events, ModelUpdatedEvent} from "../../events";
-import {Bean, Context, Autowired, PostConstruct, Optional} from "../../context/context";
+import {Autowired, Bean, Context, Optional, PostConstruct} from "../../context/context";
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
 import {InMemoryNodeManager} from "./inMemoryNodeManager";
@@ -250,6 +250,54 @@ export class InMemoryRowModel {
     public isRowsToRender(): boolean {
         return _.exists(this.rowsToDisplay) && this.rowsToDisplay.length > 0;
     }
+
+
+    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+
+        // if lastSelectedNode is missing, we start at the first row
+        let firstRowHit = !lastInRange;
+        let lastRowHit = false;
+        let lastRow: RowNode;
+
+        let result: RowNode[] = [];
+
+        let groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+
+        this.forEachNodeAfterFilterAndSort((rowNode: RowNode) => {
+
+            let lookingForLastRow = firstRowHit && !lastRowHit;
+
+            // check if we need to flip the select switch
+            if (!firstRowHit) {
+                if (rowNode === lastInRange || rowNode === firstInRange) {
+                    firstRowHit = true;
+                }
+            }
+
+            let skipThisGroupNode = rowNode.group && groupsSelectChildren;
+            if (!skipThisGroupNode) {
+                let inRange = firstRowHit && !lastRowHit;
+                let childOfLastRow = rowNode.isParentOfNode(lastRow);
+                if (inRange || childOfLastRow) {
+                    result.push(rowNode);
+                }
+            }
+
+            if (lookingForLastRow) {
+                if (rowNode === lastInRange || rowNode === firstInRange) {
+                    lastRowHit = true;
+                    if (rowNode === lastInRange) {
+                        lastRow = lastInRange;
+                    } else {
+                        lastRow = firstInRange;
+                    }
+                }
+            }
+        });
+
+        return result;
+    }
+
 
     public setDatasource(datasource: any): void {
         console.error('ag-Grid: should never call setDatasource on inMemoryRowController');

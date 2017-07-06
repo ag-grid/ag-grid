@@ -47,6 +47,48 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         this.forEachBlockInOrder( block => this.destroyBlock(block) );
     }
 
+    public getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+        let result: RowNode[] = [];
+
+        let lastBlockId = -1;
+        let inActiveRange = false;
+        let numberSequence: NumberSequence = new NumberSequence();
+
+        // if only one node passed, we start the selection at the top
+        if (_.missing(firstInRange)) {
+            inActiveRange = true;
+        }
+
+        let foundGapInSelection = false;
+
+        this.forEachBlockInOrder((block: RowNodeBlock, id: number) => {
+            if (foundGapInSelection) return;
+
+            if (inActiveRange && (lastBlockId + 1 !== id)) {
+                foundGapInSelection = true;
+                return;
+            }
+
+            lastBlockId = id;
+
+            block.forEachNodeShallow(rowNode => {
+                let hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
+                if (inActiveRange || hitFirstOrLast) {
+                    result.push(rowNode);
+                }
+
+                if (hitFirstOrLast) {
+                    inActiveRange = !inActiveRange;
+                }
+
+            }, numberSequence, this.virtualRowCount);
+        });
+
+        // inActiveRange will be still true if we never hit the second rowNode
+        let invalidRange = foundGapInSelection || inActiveRange;
+        return invalidRange ? [] : result;
+    }
+
     protected init(): void {
         this.active = true;
         this.addDestroyFunc( ()=> this.active = false );

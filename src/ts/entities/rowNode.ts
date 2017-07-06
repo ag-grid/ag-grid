@@ -463,10 +463,9 @@ export class RowNode implements IEventEmitter {
         }
 
         if (rangeSelect) {
-            let rowModelNormal = this.rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY;
             let newRowClicked = this.selectionController.getLastSelectedNode() !== this;
             let allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
-            if (rowModelNormal && newRowClicked && allowMultiSelect) {
+            if (newRowClicked && allowMultiSelect) {
                 return this.doRowRangeSelection();
             }
         }
@@ -533,49 +532,19 @@ export class RowNode implements IEventEmitter {
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
     private doRowRangeSelection(): number {
-        let lastSelectedNode = this.selectionController.getLastSelectedNode();
-
-        // if lastSelectedNode is missing, we start at the first row
-        let firstRowHit = !lastSelectedNode;
-        let lastRowHit = false;
-        let lastRow: RowNode;
-
-        let groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
-
         let updatedCount = 0;
 
-        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
-        inMemoryRowModel.forEachNodeAfterFilterAndSort( (rowNode: RowNode) => {
+        let groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        let lastSelectedNode = this.selectionController.getLastSelectedNode();
 
-            let lookingForLastRow = firstRowHit && !lastRowHit;
+        let nodesToSelect = this.rowModel.getNodesInRangeForSelection(lastSelectedNode, this);
 
-            // check if we need to flip the select switch
-            if (!firstRowHit) {
-                if (rowNode===lastSelectedNode || rowNode===this) {
-                    firstRowHit = true;
-                }
-            }
+        nodesToSelect.forEach( rowNode => {
+            if (rowNode.group && groupsSelectChildren) { return; }
 
-            let skipThisGroupNode = rowNode.group && groupsSelectChildren;
-            if (!skipThisGroupNode) {
-                let inRange = firstRowHit && !lastRowHit;
-                let childOfLastRow = rowNode.isParentOfNode(lastRow);
-                let nodeWasSelected = rowNode.selectThisNode(inRange || childOfLastRow);
-                if (nodeWasSelected) {
-                    updatedCount++;
-                }
-            }
-
-            if (lookingForLastRow) {
-                if (rowNode===lastSelectedNode || rowNode===this) {
-
-                    lastRowHit = true;
-                    if (rowNode===lastSelectedNode) {
-                        lastRow = lastSelectedNode;
-                    } else {
-                        lastRow = this;
-                    }
-                }
+            let nodeWasSelected = rowNode.selectThisNode(true);
+            if (nodeWasSelected) {
+                updatedCount++;
             }
         });
 
@@ -588,7 +557,7 @@ export class RowNode implements IEventEmitter {
         return updatedCount;
     }
 
-    private isParentOfNode(potentialParent: RowNode): boolean {
+    public isParentOfNode(potentialParent: RowNode): boolean {
         let parentNode = this.parent;
         while (parentNode) {
             if (parentNode === potentialParent) {
