@@ -179,6 +179,22 @@ export class ViewportRowModel implements IRowModel {
         return this.rowCount > 0;
     }
 
+    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+        let firstIndex = Utils.missing(firstInRange) ? 0 : firstInRange.rowIndex;
+        let lastIndex = lastInRange.rowIndex;
+
+        let firstNodeOutOfRange = firstIndex < this.firstRow || firstIndex > this.lastRow;
+        let lastNodeOutOfRange = lastIndex < this.firstRow || lastIndex > this.lastRow;
+
+        if (firstNodeOutOfRange || lastNodeOutOfRange) { return []; }
+
+        let result: RowNode[] = [];
+        for (let i = firstIndex; i<=lastIndex; i++) {
+            result.push(this.rowNodesByIndex[i]);
+        }
+        return result;
+    }
+
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         let callbackCount = 0;
         Object.keys(this.rowNodesByIndex).forEach(indexStr => {

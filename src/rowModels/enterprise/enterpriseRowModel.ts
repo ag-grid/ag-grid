@@ -11,9 +11,7 @@ import {
     Events,
     EventService,
     FilterManager,
-    FlattenStage,
     IEnterpriseDatasource,
-    IRowModel,
     Logger,
     ModelUpdatedEvent,
     LoggerFactory,
@@ -35,7 +33,6 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
-    // @Autowired('flattenStage') private flattenStage: FlattenStage;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
@@ -321,6 +318,11 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         }
     }
 
+    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+        if (_.exists(firstInRange) && firstInRange.parent !== lastInRange.parent) return [];
+        return lastInRange.parent.childrenCache.getRowNodesInRange(firstInRange, lastInRange);
+    }
+
     public getBlockState(): any {
         if (this.rowNodeBlockLoader) {
             return this.rowNodeBlockLoader.getBlockState();
@@ -332,5 +334,4 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     public isRowPresent(rowNode: RowNode): boolean {
         return false;
     }
-
 }
