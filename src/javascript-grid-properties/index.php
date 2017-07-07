@@ -576,6 +576,11 @@ include '../documentation-main/documentation_header.php';
             <th colspan="2"><h2>Miscellaneous</h2></th>
         </tr>
         <tr>
+            <th>valueCacheStrategy</th>
+            <td>The strategy to use for the <a href="../javascript-grid-value-cache/">value cache</a>, one
+            of {off, invalidateNever, invalidateAfterUpdate}. Default is invalidateAfterUpdate.</td>
+        </tr>
+        <tr>
             <th>suppressMiddleClickScrolls</th>
             <td>If true, then middle clicks will result in 'click' events for cell and row. Otherwise the browser
                 will use middle click to scroll the grid.</td>
