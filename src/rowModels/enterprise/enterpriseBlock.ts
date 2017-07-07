@@ -108,6 +108,7 @@ export class EnterpriseBlock extends RowNodeBlock {
 
             if (!currentRowNode) {
                 console.log(`missing rowNode`);
+                return;
             }
 
             if (currentRowNode.rowIndex === rowIndex) {
