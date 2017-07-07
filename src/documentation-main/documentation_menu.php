@@ -182,6 +182,7 @@
     menuItem(0, 'Floating', 'Floating Rows', 'javascript-grid-floating/');
     menuItem(0, 'Getters and Formatters', 'Getters & Formatters', 'javascript-grid-value-getters/');
     menuItem(0, 'Setters and Parsers', 'Setters and Parsers', 'javascript-grid-value-setters/');
+    menuItem(0, 'Value Cache', 'Value Cache', 'javascript-grid-value-cache/');
     menuItem(0, 'Cell Expressions', 'Expressions', 'javascript-grid-cell-expressions/');
     menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
     menuItem(0, 'Cell Renderer', 'Cell Renderer', 'javascript-grid-cell-rendering/');

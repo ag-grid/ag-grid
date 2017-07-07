@@ -47,6 +47,26 @@ var countryColDef = {
         expressions.
     </p>
 
+    <h2 id="example-value-getter">Example - Getters and Formatters</h2>
+
+    <p>
+        The example below demonstrates <code>valueGetter</code> and <code>valueFormatter</code>.
+        The following can be noted from the demo:
+    </p>
+
+    <ul>
+        <li>Column 'Number' is a simple column with a <code>field</code> to get the data and without formatting.</li>
+        <li>Column 'Formatted' uses the same field, however it formats the value.</li>
+        <li>Column 'A + B' uses a value getter to sum the contents of cells 'A' and 'B'.</li>
+        <li>
+            Column 'Chain' uses a value getter than references the result of the 'A + B' value
+            getter, demonstrating how the value getter's can chain result from one to the other.
+        </li>
+        <li>Column 'Const' uses a value getter to always return back the same string value.</li>
+    </ul>
+
+    <show-example example="exampleGettersAndFormatters"></show-example>
+
     <h2>Rendering Value Flow</h2>
 
     <p>
