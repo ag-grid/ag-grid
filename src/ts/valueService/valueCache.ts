@@ -14,7 +14,7 @@ export class ValueCache {
     @PostConstruct
     public init(): void {
         this.cacheActive = !this.gridOptionsWrapper.isValueCacheOff();
-        this.invalidateOnDataChanged = this.gridOptionsWrapper.isValueCacheExpiresAfterUpdate();
+        this.invalidateOnDataChanged = this.gridOptionsWrapper.isValueCacheInvalidateAfterUpdate();
     }
 
     public onDataChanged(): void {
