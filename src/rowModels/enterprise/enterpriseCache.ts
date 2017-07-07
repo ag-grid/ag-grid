@@ -33,7 +33,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
     @Autowired('context') private context: Context;
 
     // this will always be zero for the top level cache only,
-    // all the other ones chance as the groups open and close
+    // all the other ones change as the groups open and close
     private firstDisplayIndex: number = 0;
     private lastDisplayIndex: number;
 
@@ -94,9 +94,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         // this can happen if asking for a row that doesn't exist in the model,
         // eg if a cell range is selected, and the user filters so rows no longer
         // exist
-        if (rowIndex >= this.getVirtualRowCount()) {
-            return null;
-        }
+        if (!this.isIndexInCache(rowIndex)) { return null; }
 
         // if we have the block, then this is the block
         let block: EnterpriseBlock = null;
