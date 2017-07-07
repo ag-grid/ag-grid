@@ -285,6 +285,13 @@ interface IGetRowsParams {
                           exampleheight="350px">
     </show-complex-example>
 
+    <note>
+        When performing multiple row selections using 'shift-click', it is possible that not all rows are available in
+        memory if the configured value of <i>maxBlocksInCache</i> doesn't cover the range. In this case multiple selections
+        will not be allowed.
+    </note>
+
+
     <h3 id="configuring-a-bit-differently">Configuring A Bit Differently</h3>
 
     <p>
