@@ -91,6 +91,13 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
     // gets called in a) init() above and b) by the grid
     public getRow(rowIndex: number): RowNode {
 
+        // this can happen if asking for a row that doesn't exist in the model,
+        // eg if a cell range is selected, and the user filters so rows no longer
+        // exist
+        if (rowIndex >= this.getVirtualRowCount()) {
+            return null;
+        }
+
         // if we have the block, then this is the block
         let block: EnterpriseBlock = null;
         // this is the last block that we have BEFORE the right block
@@ -113,25 +120,19 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
             let displayIndexStart: number;
 
             // because missing blocks are always fully closed, we can work out
-            // the start index of the block we want by hopping from the closes block,
+            // the start index of the block we want by hopping from the closest block,
             // as we know the row count in closed blocks is equal to the page size
             if (beforeBlock) {
                 blockNumber = beforeBlock.getPageNumber() + 1;
                 displayIndexStart = beforeBlock.getDisplayEndIndex();
 
-                let isInRange = ():boolean => {
+                let isInRange = (): boolean => {
                     return rowIndex >= displayIndexStart && rowIndex < (displayIndexStart + this.cacheParams.blockSize);
                 };
-
-                let count = 0;
 
                 while (!isInRange()) {
                     displayIndexStart += this.cacheParams.blockSize;
                     blockNumber++;
-                    count++;
-                    if (count>1000) {
-                        debugger;
-                    }
                 }
             } else {
                 let localIndex = rowIndex - this.firstDisplayIndex;

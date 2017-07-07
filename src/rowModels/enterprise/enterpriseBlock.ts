@@ -94,22 +94,10 @@ export class EnterpriseBlock extends RowNodeBlock {
             return null;
         }
 
-        let count = 0;
-
         while (true) {
-
-            count++;
-            if (count>1000) {
-                debugger;
-            }
 
             let midPointer = Math.floor((bottomPointer + topPointer) / 2);
             let currentRowNode = super.getRowUsingLocalIndex(midPointer);
-
-            if (!currentRowNode) {
-                console.log(`missing rowNode`);
-                return;
-            }
 
             if (currentRowNode.rowIndex === rowIndex) {
                 return currentRowNode;
