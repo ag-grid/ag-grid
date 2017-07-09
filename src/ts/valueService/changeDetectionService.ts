@@ -43,7 +43,8 @@ export class ChangeDetectionService extends BeanStub {
 
             let changedPath: ChangedPath;
             if (rowNode.parent) {
-                changedPath = new ChangedPath(true);
+                let onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
+                changedPath = new ChangedPath(onlyChangedColumns);
                 changedPath.addParentNode(rowNode.parent, [column]);
             }
 

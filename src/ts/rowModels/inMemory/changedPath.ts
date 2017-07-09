@@ -1,6 +1,6 @@
-
 import {RowNode} from "../../entities/rowNode";
 import {Column} from "../../entities/column";
+
 export class ChangedPath {
 
     private keepingColumns: boolean;
@@ -22,7 +22,7 @@ export class ChangedPath {
 
             // if columns, add the columns in all the way to parent, merging
             // in any other columns that might be there already
-            if (columns) {
+            if (this.keepingColumns && columns) {
                 if (!this.nodeIdsToColumns[pointer.id]) {
                     this.nodeIdsToColumns[pointer.id] = {};
                 }
