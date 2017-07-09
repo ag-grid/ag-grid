@@ -178,8 +178,9 @@ MyCellRenderer.prototype.destroy = function() {
         Calling <code>api.refreshCells()</code> to inform grid data has changed (see <a href="../javascript-grid-refresh/">Refresh</a>).
     </li>
 </ul>
-If any of the above occur, the <i>refresh()</i> method will be called if it is provided. If not,
-the component will be destroyed and replaced.
+If any of the above occur and the grid confirms the data has changed via
+<a href="../javascript-grid-change-detection/">Change Detection</a>, then the <i>refresh()</i>
+method will be called.
 </p>
 
 <p>
@@ -377,17 +378,16 @@ colDef.cellRendererParams = {
 
 <p>
     If you are mixing cellRenderers and row grouping, then you need to understand that the value and / or data
-    may be missing in the group row. The data and value will be missing if you are not doing any aggregations
-    (hence no data at the group level) and the value will be missing if you are doing aggregations but not
-    on the column the cellRenderer is on.
+    may be missing in the group row. You can check if you are on a group row of not by checking <code>rowNode.group</code>.
+    Groups will have <code>aggData</code> and <code>groupData</code> instead of data.
 </p>
 <p>
     This is simply fixed by checking for the existence of the data before you use it like the following:
     <pre>
 colDef.cellRenderer = function(params) {
 
-    <span class="codeComment">// check the data exists, to avoid error when grouping but not aggregating</span>
-    if (params.data) {
+    <span class="codeComment">// check the data exists, to avoid error</span>
+    if (!params.node.group) {
         <span class="codeComment">// data exists, so we can access it</span>
         return '&lt;b>'+params.data.theBoldValue+'&lt;/b>';
     } else {
