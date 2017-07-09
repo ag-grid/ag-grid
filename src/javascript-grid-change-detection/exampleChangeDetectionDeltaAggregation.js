@@ -60,6 +60,8 @@ function numberValueParser(params) {
 }
 
 var gridOptions = {
+    // set this to true, so only the column in question gets updated
+    aggregateOnlyChangedColumns: true,
     columnDefs: columnDefs,
     aggFuncs: {
         'sum': function(values) {

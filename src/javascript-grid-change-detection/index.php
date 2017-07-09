@@ -194,11 +194,6 @@ colDef = {
             aggregations as a result of the change.
         </li>
         <li>
-            As well as aggregating the values at the group level, the grid also has a valueGetter
-            configured for the 'Total' column. So this example shows both valueGetters's and
-            aggregations getting updated together.
-        </li>
-        <li>
             All cells are configured to use one of the grids
             <a href="../javascript-grid-cell-rendering/animate-renderer">animation
                 cell renderer</a> instead of flashing cells.
@@ -300,21 +295,33 @@ colDef = {
         impacted by the changed values. This is done using path selection.
     </p>
 
+    <h3 id="tree-path-selection">Tree Path Selection</h3>
+
     <p>
-        Path selection means, when a value is changed, the aggregation will only:
-        <ul>
-            <li>Update the parent group(s) of the value.</li>
-            <li>For single cell changes*, only update the column.</li>
-        </ul>
+        Tree path selection means when a value is changed, the aggregation will only
+        update the parent group(s) of the value.
+    </p>
+
+    <h3>Column Path Selection</h3>
+
+    <p>
+        single cell changes are when you update using the UI or you update via
+        the <code>rowNode.setRowData(column, data)</code> API. If you update using
+        a transaction, then all columns are recomputed on the effected path.
     </p>
 
     <p>
-        <i>
-            *single cell changes are when you update using the UI or you update via
-            the <code>rowNode.setRowData(column, data)</code> API. If you update using
-            a transaction, then all columns are recomputed on the effected path.
-        </i>
+        By default, the grid will recalculate aggregations on all columns for the updated tree path,
+        even if only one of the columns were updated. This is because the grid assumes, because of value
+        getters, that any column column be referencing the changed column, so to be sure, it reaggregates
+        all columns.
     </p>
+
+    <p>
+        To only re-aggregate the changed column, set grid property <code>aggregateOnlyChangedColumns=true</code>.
+    </p>
+
+    <h2>Example - Tree Path & Column Path Selection</h2>
 
     <p>
         This is easiest explained with an example. Consider the example below and you edit

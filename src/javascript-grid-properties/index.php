@@ -348,6 +348,11 @@ include '../documentation-main/documentation_header.php';
             <td>When true, the aggregations won't be computed for root node of the grid.</td>
         </tr>
         <tr>
+            <th>aggregateOnlyChangedColumns</th>
+            <td>When using <a href="../javascript-grid-change-detection/#tree-path-selection">change detection</a>,
+                only the updated column with get re-aggregated.</td>
+        </tr>
+        <tr>
             <th>functionsReadOnly</th>
             <td>If true, then row group, pivot and value aggregation will be read only from the gui. The grid will display
                 what values are used for each, but will not allow the use to change the selection.</td>
