@@ -51,9 +51,9 @@ function formatNumber(params) {
     return Math.floor(number).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 }
 
-function onInvalidateValueCache(){
+function onExpireValueCache(){
     console.log('onInvalidateValueCache -> start');
-    gridOptions.api.invalidateValueCache();
+    gridOptions.api.expireValueCache();
     console.log('onInvalidateValueCache -> end');
 }
 

@@ -6,7 +6,8 @@ var columnDefs = [
     {headerName: "Q3", field: "q3", type: 'quarterFigure'},
     {headerName: "Q4", field: "q4", type: 'quarterFigure'},
     {headerName: "Year", field: "year", rowGroup: true, hide: true},
-    {headerName: "Total", colId: "total", cellClass: 'number-cell total-col', valueFormatter: formatNumber,
+    {headerName: "Total", colId: "total", cellClass: 'number-cell total-col', aggFunc: "sum",
+        valueFormatter: formatNumber,
         valueGetter: function(params) {
             var q1 = params.getValue('q1');
             var q2 = params.getValue('q2');
@@ -18,7 +19,8 @@ var columnDefs = [
             return result;
         }
     },
-    {headerName: "Total x 10", cellClass: 'number-cell total-col', valueFormatter: formatNumber,
+    {headerName: "Total x 10", cellClass: 'number-cell total-col', aggFunc: "sum",
+        valueFormatter: formatNumber,
         valueGetter: function(params) {
             var total = params.getValue('total');
             return total * 10;
@@ -49,6 +51,12 @@ function formatNumber(params) {
     // this puts commas into the number eg 1000 goes to 1,000,
     // i pulled this from stack overflow, i have no idea how it works
     return Math.floor(number).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+}
+
+function onExpireValueCache(){
+    console.log('onInvalidateValueCache -> start');
+    gridOptions.api.expireValueCache();
+    console.log('onInvalidateValueCache -> end');
 }
 
 function onRefreshCells(){
@@ -85,7 +93,6 @@ var gridOptions = {
     enableColResize: true,
     enableRangeSelection: true,
     groupDefaultExpanded: 1,
-    valueCacheStrategy: 'off',
     onCellValueChanged: function() {
         console.log('onCellValueChanged');
     }

@@ -46,7 +46,7 @@ function isForceRefreshSelected() {
 function scrambleAndRefreshAll() {
     scramble();
     var params = {
-        forceRefresh: isForceRefreshSelected()
+        force: isForceRefreshSelected()
     };
     gridOptions.api.refreshCells(params);
 }
@@ -57,7 +57,7 @@ function scrambleAndRefreshLeftToRight() {
     ['a','b','c','d','e','f'].forEach( function(col, index) {
         var millis = index * 100;
         var params = {
-            forceRefresh: isForceRefreshSelected(),
+            force: isForceRefreshSelected(),
             columns: [col]
         };
         callRefreshAfterMillis(params, millis);
@@ -90,7 +90,7 @@ function scrambleAndRefreshTopToBottom() {
         var millis = frame++ * 100;
         var rowNodes = [rowNode]; // params needs an array
         var params = {
-            forceRefresh: isForceRefreshSelected(),
+            force: isForceRefreshSelected(),
             rowNodes: rowNodes
         };
         callRefreshAfterMillis(params, millis);

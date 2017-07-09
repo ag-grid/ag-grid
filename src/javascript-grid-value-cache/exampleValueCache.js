@@ -7,6 +7,7 @@ var columnDefs = [
     {headerName: "Q4", field: "q4", type: 'quarterFigure'},
     {headerName: "Year", field: "year", rowGroup: true, hide: true},
     {headerName: "Total", colId: "total", cellClass: 'number-cell total-col', valueFormatter: formatNumber,
+        aggFunc: "sum",
         valueGetter: function(params) {
             var q1 = params.getValue('q1');
             var q2 = params.getValue('q2');
@@ -17,19 +18,13 @@ var columnDefs = [
             callCount++;
             return result;
         }
-    },
-    {headerName: "Total x 10", cellClass: 'number-cell total-col', valueFormatter: formatNumber,
-        valueGetter: function(params) {
-            var total = params.getValue('total');
-            return total * 10;
-        }
     }
 ];
 
 function createRowData() {
     var rowData = [];
 
-    for (var i = 0; i<10; i++) {
+    for (var i = 0; i<100; i++) {
         rowData.push({
             id: i,
             numberGood: Math.floor(((i+2) * 476321) % 10000),
@@ -51,32 +46,12 @@ function formatNumber(params) {
     return Math.floor(number).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 }
 
-function onInvalidateValueCache(){
-    console.log('onInvalidateValueCache -> start');
-    gridOptions.api.invalidateValueCache();
-    console.log('onInvalidateValueCache -> end');
-}
-
-function onRefreshCells(){
-    console.log('onRefreshCells -> start');
-    gridOptions.api.refreshCells();
-    console.log('onRefreshCells -> end');
-}
-
-function onUpdateOneValue() {
-    var randomId = Math.floor(Math.random()*10);
-    var rowNode = gridOptions.api.getRowNode(randomId);
-    var randomCol = ['q1','q2','q3','q4'][Math.floor(Math.random()*4)];
-    var newValue = Math.floor(Math.random() * 1000);
-    console.log('onUpdateOneValue -> start');
-    rowNode.setDataValue(randomCol, newValue);
-    console.log('onUpdateOneValue -> end');
-}
-
 var gridOptions = {
+    // we set the value cache in the function createGrid below
+    // valueCache = true / false;
     columnTypes: {
         quarterFigure: {
-            editable: true, cellClass: 'number-cell', aggFunc: 'sum',
+            cellClass: 'number-cell', aggFunc: 'sum',
             valueFormatter: formatNumber,
             valueParser: function numberParser(params) {
                 return Number(params.newValue);
@@ -96,9 +71,30 @@ var gridOptions = {
     }
 };
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+function onValueCache(valueCacheOn) {
+    destroyOldGridIfExists();
+    createGrid(valueCacheOn);
+}
+
+function destroyOldGridIfExists() {
+    if (gridOptions.api) {
+        console.log('==========> destroying old grid');
+        gridOptions.api.destroy();
+    }
+}
+
+function createGrid(valueCacheOn) {
+    console.log('==========> creating grid');
+    callCount = 1;
+    gridOptions.valueCache = valueCacheOn;
+
+    // then similar to all the other examples, create the grid
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
     gridOptions.api.sizeColumnsToFit();
+}
+
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function() {
+    onValueCache(false);
 });

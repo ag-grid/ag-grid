@@ -31,55 +31,60 @@ var usdFormatter = new Intl.NumberFormat('en-US', {
 });
 
 var data = [
-    {product: 'Product 1', currency: 'EUR', price: 644},
-    {product: 'Product 2', currency: 'EUR', price: 354},
-    {product: 'Product 3', currency: 'GBP', price: 429},
-    {product: 'Product 4', currency: 'GBP', price: 143},
-    {product: 'Product 5', currency: 'USD', price: 345},
-    {product: 'Product 6', currency: 'USD', price: 982}
+    {product: 'Product 1', price: {currency: 'EUR', amount: 644}},
+    {product: 'Product 2', price: {currency: 'EUR', amount: 354}},
+    {product: 'Product 3', price: {currency: 'GBP', amount: 429}},
+    {product: 'Product 4', price: {currency: 'GBP', amount: 143}},
+    {product: 'Product 5', price: {currency: 'USD', amount: 345}},
+    {product: 'Product 6', price: {currency: 'USD', amount: 982}}
 ];
 
 var columnDefs = [
     {headerName: "Product", field: "product", width: 150},
-    {headerName: "Currency", field: "currency", width: 150},
+    {headerName: "Currency", field: "price.currency", width: 150},
     {headerName: "Price Local", field: "price",
         cellStyle: {'text-align': 'right'},
-        cellRenderer: actualCurrencyCellRenderer,
+        cellRenderer: currencyCellRenderer,
         width: 150},
     {headerName: "Report Price", width: 150,
+        field: "price",
         cellStyle: {'text-align': 'right'},
-        cellRenderer: reportingCurrencyCellRenderer,
+        cellRenderer: currencyCellRenderer,
+        valueGetter: reportingCurrencyValueGetter,
         headerValueGetter: 'ctx.reportingCurrency'}
 ];
 
-function actualCurrencyCellRenderer(params) {
-    switch (params.data.currency) {
-        case 'EUR': return eurFormatter.format(params.value);
-        case 'USD': return usdFormatter.format(params.value);
-        case 'GBP': return gbpFormatter.format(params.value);
-    }
-}
-
-function reportingCurrencyCellRenderer(params) {
+function reportingCurrencyValueGetter(params) {
+    var price = params.data[params.colDef.field];
     var reportingCurrency = params.context.reportingCurrency;
     var fxRateSet = exchangeRates[reportingCurrency];
-    var fxRate = fxRateSet[params.data.currency];
-    var value;
+    var fxRate = fxRateSet[price.currency];
+    var priceInReportingCurrency;
     if (fxRate) {
-        value = params.data.price * fxRate;
+        priceInReportingCurrency = price.amount * fxRate;
     } else {
-        value = params.data.price;
+        priceInReportingCurrency = price.amount;
     }
-    switch (reportingCurrency) {
-        case 'EUR': return eurFormatter.format(value);
-        case 'USD': return usdFormatter.format(value);
-        case 'GBP': return gbpFormatter.format(value);
+
+    var result = {
+        currency: reportingCurrency,
+        amount: priceInReportingCurrency
+    };
+
+    return result;
+}
+
+function currencyCellRenderer(params) {
+    switch (params.value.currency) {
+        case 'EUR': return eurFormatter.format(params.value.amount);
+        case 'USD': return usdFormatter.format(params.value.amount);
+        case 'GBP': return gbpFormatter.format(params.value.amount);
     }
 }
 
 var currencyChanged = function(value) {
     gridOptions.context.reportingCurrency = value;
-    gridOptions.api.refreshView();
+    gridOptions.api.refreshCells();
     gridOptions.api.refreshHeader();
 };
 

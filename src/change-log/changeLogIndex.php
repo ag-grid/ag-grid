@@ -16,6 +16,16 @@ include '../documentation-main/documentation_header.php';
     <h2>Version NEXT</h2>
 
     <ul>
+        <li>
+            New feature: <a href="../javascript-grid-change-detection/">Change Detection.</a> Say goodbye to
+            change grid refreshes.
+        </li>
+        <li>
+            New feature: <a href="../javascript-grid-value-cache/">Value Cache.</a> Get better performance if your
+            valueGetter's are CPU intensive.
+        </li>
+        <li>Update Documentation: <a href="../javascript-grid-value-getters/">Getters and Formatters.</a></li>
+        <li>Update Documentation: <a href="../javascript-grid-value-setters/">Setters and Parsers.</a></li>
         <li>Bug fix: when using multiple group auto columns and header checkbox selection,
             the header checkbox now only appears in the first column header.</li>
         <li>AG-469: Enhancement: new event for column 'menuVisibleChanged', gets fired when column menu is shown / hidden.
@@ -27,9 +37,35 @@ include '../documentation-main/documentation_header.php';
         <li>Value Getter Cache</li>
     </ul>
 
-    <h2>Breaking Changes</h2>
+    <h3>Changes to Refresh</h3>
+    <p>
+        The multiple refresh methods in the grid were confusing. We reviewed all the methods and replaced them with
+        two simple equivalents:
+        <a href="../javascript-grid-refresh/">api.refreshCells(params)</a> and
+        <a href="../javascript-grid-refresh/">api.redrawRows(params)</a>. For 99% of the time, you will call
+        api.refreshCells(params). However - given the grid now has change detection, you may find that you don't
+        need to call refresh ever again.
+    </p>
     <ul>
-        <li>api.softRefresh() renamed to api.refreshVolatileCells()</li>
+        <li>
+            refreshView() -> use api.refreshCells(params) instead
+        </li>
+        <li>
+            softRefreshView() -> use api.refreshCells(params) instead and include (the volatile) columns in params
+        </li>
+        <li>
+            refreshRows(rowNodes) -> use api.refreshCells(params) instead and include rows in params
+        </li>
+        <li>
+            refreshCells(rowNodes, colIds) -> use api.refreshCells(params) instead and include rows and columns in params
+        </li>
+        <li>
+            refreshGroupRows() -> use api.refreshCells(params) instead and include rows and columns in params
+        </li>
+    </ul>
+
+    <h3>Breaking Changes</h3>
+    <ul>
         <li>cellRenderer.params.valueGetter() is now called cellRenderer.params.getValue()</li>
         <li>AG-591: cellRenderer.refresh() is now a mandatory method and returns boolean (previously it
             was optional and returned void). This is to
@@ -38,14 +74,13 @@ include '../documentation-main/documentation_header.php';
             <a href="../javascript-grid-cell-rendering-components/#cell-renderer-component">cellRenderer Refresh</a>
             documentation for details on how to now implement this method. In summary, if you implemented
             this method before, just make sure you return true. If you did not implement this method before,
-            then implment an empty version of it that returns false.
+            then implement an empty version of it that returns false.
         </li>
 
     </ul>
 
     <h2>Version 11.0.x</h2>
     <h3>Version 11.0.0 [26-JUN-2017]</h3>
-
 
     <h4>Documentation</h4>
     <ul>
