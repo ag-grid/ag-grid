@@ -1497,7 +1497,7 @@ export class ColumnController {
     public setColumnDefs(columnDefs: (ColDef|ColGroupDef)[]) {
         // always invalidate cache on changing columns, as the column id's for the new columns
         // could overlap with the old id's, so the cache would return old values for new columns.
-        this.valueCache.invalidate();
+        this.valueCache.expire();
 
         this.autoGroupsNeedBuilding = true;
 

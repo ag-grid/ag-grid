@@ -52,7 +52,7 @@ export interface RefreshCellsParams {
     volatile?: boolean;
     rowNodes?: RowNode[];
     columns?: (string|Column)[];
-    forceRefresh?: boolean;
+    force?: boolean;
 }
 
 export interface RedrawRowsParams {
@@ -112,14 +112,6 @@ export class GridApi {
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getMasterSlaveService(): MasterSlaveService {
         return this.masterSlaveService;
-    }
-
-    public getFirstRenderedRow(): number {
-        return this.rowRenderer.getFirstVirtualRenderedRow();
-    }
-
-    public getLastRenderedRow(): number {
-        return this.rowRenderer.getLastVirtualRenderedRow();
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {
@@ -210,8 +202,8 @@ export class GridApi {
         this.columnController.setColumnDefs(colDefs);
     }
 
-    public invalidateValueCache(): void {
-        this.valueCache.invalidate();
+    public expireValueCache(): void {
+        this.valueCache.expire();
     }
 
     public getVerticalPixelRange(): any {
@@ -889,6 +881,14 @@ export class GridApi {
 
     public checkGridSize(): void {
         this.gridPanel.setBodyAndHeaderHeights();
+    }
+
+    public getFirstDisplayedRow(): number {
+        return this.rowRenderer.getFirstVirtualRenderedRow();
+    }
+
+    public getLastDisplayedRow(): number {
+        return this.rowRenderer.getLastVirtualRenderedRow();
     }
 
     public getDisplayedRowAtIndex(index: number): RowNode {

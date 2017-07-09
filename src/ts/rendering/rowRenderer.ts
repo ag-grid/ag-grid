@@ -352,7 +352,7 @@ export class RowRenderer extends BeanStub {
                 if (excludeColFromRefresh) { return; }
 
                 cellComp.refreshCell({
-                    forceRefresh: params.forceRefresh,
+                    forceRefresh: params.force,
                     volatile: params.volatile,
                     newData: false
                 });

@@ -29,7 +29,6 @@ let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 let DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
 
-const OFF = 'off';
 const INVALIDATE_AFTER_UPDATE = 'invalidateAfterUpdate';
 const INVALIDATE_NEVER = 'invalidateNever';
 
@@ -338,9 +337,8 @@ export class GridOptionsWrapper {
     public getNavigateToNextCellFunc(): (params: NavigateToNextCellParams)=>GridCellDef { return this.gridOptions.navigateToNextCell; }
     public getTabToNextCellFunc(): (params: TabToNextCellParams)=>GridCellDef { return this.gridOptions.tabToNextCell; }
 
-    public isValueCacheOff(): boolean { return this.gridOptions.valueCacheStrategy === OFF; }
-    public isValueCacheInvalidateNever(): boolean { return this.gridOptions.valueCacheStrategy === INVALIDATE_NEVER; }
-    public isValueCacheInvalidateAfterUpdate(): boolean { return !this.isValueCacheOff() && !this.isValueCacheInvalidateNever(); }
+    public isValueCache(): boolean { return isTrue(this.gridOptions.valueCache); }
+    public isValueCacheNeverExpires(): boolean { return isTrue(this.gridOptions.valueCacheNeverExpires); }
 
     public getProcessSecondaryColDefFunc(): (colDef: ColDef)=>void { return this.gridOptions.processSecondaryColDef; }
     public getProcessSecondaryColGroupDefFunc(): (colGroupDef: ColGroupDef)=>void { return this.gridOptions.processSecondaryColGroupDef; }

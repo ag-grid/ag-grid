@@ -15,7 +15,7 @@ export class ComponentUtil {
     public static STRING_PROPERTIES = [
         'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
         'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType',
-        'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow', 'valueCacheStrategy'];
+        'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow'];
 
     public static OBJECT_PROPERTIES = [
         'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText', 'icons', 'datasource',
@@ -58,7 +58,8 @@ export class ComponentUtil {
         'enableGroupEdit', 'embedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter',
         'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus',
         'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
-        'deltaRowDataMode', 'enforceRowDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection'
+        'deltaRowDataMode', 'enforceRowDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection',
+        'valueCache', 'valueCacheNeverExpires'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',

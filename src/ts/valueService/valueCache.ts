@@ -8,27 +8,27 @@ export class ValueCache {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private cacheVersion = 0;
-    private cacheActive: boolean;
-    private invalidateOnDataChanged: boolean;
+    private active: boolean;
+    private neverExpires: boolean;
 
     @PostConstruct
     public init(): void {
-        this.cacheActive = !this.gridOptionsWrapper.isValueCacheOff();
-        this.invalidateOnDataChanged = this.gridOptionsWrapper.isValueCacheInvalidateAfterUpdate();
+        this.active = this.gridOptionsWrapper.isValueCache();
+        this.neverExpires = this.gridOptionsWrapper.isValueCacheNeverExpires();
     }
 
     public onDataChanged(): void {
-        if (this.invalidateOnDataChanged) {
-            this.invalidate();
-        }
+        if (this.neverExpires) { return; }
+
+        this.expire();
     }
 
-    public invalidate(): void {
+    public expire(): void {
         this.cacheVersion++;
     }
 
     public setValue(rowNode: RowNode, colId: string, value: any): any {
-        if (this.cacheActive) {
+        if (this.active) {
             if (rowNode.__cacheVersion !== this.cacheVersion) {
                 rowNode.__cacheVersion = this.cacheVersion;
                 rowNode.__cacheData = {};
@@ -38,7 +38,7 @@ export class ValueCache {
     }
 
     public getValue(rowNode: RowNode, colId: string): any {
-        let valueInCache = this.cacheActive
+        let valueInCache = this.active
             && rowNode.__cacheVersion===this.cacheVersion
             && rowNode.__cacheData[colId]!==undefined;
         if (valueInCache) {
