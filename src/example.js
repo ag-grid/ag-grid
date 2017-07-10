@@ -499,7 +499,7 @@ var monthGroup = {
 defaultCols.push(monthGroup);
 months.forEach(function (month) {
     monthGroup.children.push({
-        headerName: month + 'sldfj saljflksajf lk;sadjf lk;sadjf l;ksdjf lk;saj fd', field: month.toLocaleLowerCase(),
+        headerName: month, field: month.toLocaleLowerCase(),
         width: 100, filter: 'number', editable: true,
         enableValue: true,
         // aggFunc: 'sum',
