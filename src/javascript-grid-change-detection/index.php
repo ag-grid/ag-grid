@@ -12,9 +12,10 @@ include '../documentation-main/documentation_header.php';
     <h1 class="first-h1">Change Detection</h1>
 
     <p>
-        The grid has built in change detection. This means when you update the value of a cell,
-        either through the UI or via the grid's API, the grid will automatically work out all
-        the cells that need to be updated to reflect the new value.
+        The grid has built in change detection.
+        When a value in the grid changes, either via the UI or via the grid API, the grid will check
+        all cells to see which ones need updating and update exactly only those cells, so minimal
+        changes are made to the DOM.
     </p>
 
 <!--    <note>
@@ -28,11 +29,13 @@ include '../documentation-main/documentation_header.php';
         Change detection can be broken down into the following two categories:
         <ul>
             <li>
-                <b>Value Change Detection:</b> When a value for any cell changes, the grid goes through
-                every cell in the grid and compares the new value to the currently rendered value.
-                If the values differ, the cell is refreshed. This means all cells using
-                <code>valueGetter's</code> will have their values updated if they depended on the
-                changed cell.
+                <b>Value Change Detection:</b> When a value for any cell changes (e.g. after an edit),
+                the grid goes through
+                every cell in the grid and compares the current value to the previous value.
+                If the values differ, the cell is refreshed. This allows all cells using
+                <code>valueGetter's</code> to be kept up to date where a change to one cell (that was
+                edited) may impact the value of another cell (that references the first cell) - just
+                like Excel!
             </li>
             <li>
                 <b>Aggregation Change Detection:</b> When a value for any cell changes,
@@ -305,20 +308,16 @@ colDef = {
     <h3>Column Path Selection</h3>
 
     <p>
-        single cell changes are when you update using the UI or you update via
-        the <code>rowNode.setRowData(column, data)</code> API. If you update using
-        a transaction, then all columns are recomputed on the effected path.
-    </p>
-
-    <p>
         By default, the grid will recalculate aggregations on all columns for the updated tree path,
-        even if only one of the columns were updated. This is because the grid assumes, because of value
-        getters, that any column column be referencing the changed column, so to be sure, it reaggregates
-        all columns.
+        even if only one of the columns were updated.
+        This is because the grid assumes any column has the potential to impact any other column,
+        should the column be referenced in a valueGetter.
     </p>
 
     <p>
-        To only re-aggregate the changed column, set grid property <code>aggregateOnlyChangedColumns=true</code>.
+        If you are sure that a value change impacts that one column only, then you can
+        set the grid property <code>aggregateOnlyChangedColumns=true</code>. This will re-aggregate
+        only the changed column and not all columns after a single cell is updated.
     </p>
 
     <h2>Example - Tree Path & Column Path Selection</h2>
