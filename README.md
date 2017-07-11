@@ -8,6 +8,13 @@ Usage
 
 Please refer to www.ag-grid.com for full documentation on ag-Grid and Aurelia integration. Also take a look a the provided examples at https://github.com/ceolter/ag-grid-aurelia-example.
 
+Frameworks Supported
+====================
+Framework specific Getting Started guides:
+[Angular 1](https://www.ag-grid.com/best-angularjs-data-grid/) | [Angular 2](https://www.ag-grid.com/best-angular-2-data-grid/) | [Aurelia](https://www.ag-grid.com/best-aurelia-data-grid/)
+[Javascript](https://www.ag-grid.com/best-javascript-data-grid/) | [React](https://www.ag-grid.com/best-react-data-grid/) | [TypeScript](https://www.ag-grid.com/ag-grid-typescript-webpack-2/)
+[VueJS](https://www.ag-grid.com/best-vuejs-data-grid/) | [Web Components](https://www.ag-grid.com/best-web-component-data-grid/)
+
 In your main entry.
 ```
 aurelia.use
