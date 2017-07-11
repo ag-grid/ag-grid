@@ -81,6 +81,9 @@ include('../../includes/mediaHeader.php');
         float: right;
         width: 500px;
     }
+    h4 {
+        margin-top: 40px;
+    }
 </style>
 
 <div class="weekly-news-section">
@@ -110,7 +113,9 @@ include('../../includes/mediaHeader.php');
 
             <h4>Our First VC Meeting</h4>
             <p>
-            The past week has been very exciting for us. We met with a serious VC who wanted to learn a little bit more about what we have been doing. It's obviously very early days but it's a great validation of everything that we have achieved in the past 18 months. We have been binge watching Dragon's Den to prepare!
+                The past week has been very exciting for us. A serious VC contacted us (yes they contacted us, not
+                the other way around) and wanted to learn more about what we are doing. It's early days but great
+                validation of everything that we have achieved in the past 18 months in that VC's are seeking us out.
             </p>
 
             <h4>OpenFin Demo Goes Live</h4>
@@ -128,18 +133,20 @@ include('../../includes/mediaHeader.php');
         <hr/>
             <h4>New Value Cache</h4>
             <p>
-            Niall has introduced a 'Value Cache' for people who have complicated Value Getters. This will ensure that Value Getters are not called multiple times, over and over again, when they give the same answer. He is also working on some documentation to help you along the process if you have any questions or need some guidance.
+                Niall has introduced a 'Value Cache' for people who have complicated Value Getters. This will ensure
+                that Value Getters are not called multiple times, over and over again, when they give the same answer.
+                He is now working on the documentation to make it as easy as possible to follow.
             </p> 
             
             <h4>Change Detection</h4>
             <p>
-            Niall has also been working on documentation on Change Detection to make it clear and easy to use, so you can expect to see this rolled out very soon with a solid set of documentation to help you along.
+                Niall has also been working the Change Detection documentation to make it clear and easy to use.
             </p>
             
 
-            <h4>Multiple Selection in all Row Models</h4>
+            <h4>Shift 'Range Selection' in all Row Models</h4>
             <p>
-            Rob has added ‘Multiple Selection’ to all Row Models, which was previously only available in ‘Memory Row Model’, making the feature more accessible to our users. 
+            Rob has added shift ‘Range Selection’ to all Row Models, which was previously only available in ‘Memory Row Model’, making the feature more accessible to our users.
             </p>
 
             <h4>Dynamic Row Heights</h4>
@@ -158,18 +165,19 @@ include('../../includes/mediaHeader.php');
             <hr/>
             <h4>Polymer</h4>
             <p>
-            Sean is making good headway with Polymer Support, adding constantly to it. We’re aiming to have something substantial after this next release.
+                Sean is making good headway with Polymer Support, adding constantly to it. It probably won't make this weeks
+                release, but we should have something substantial the following release.
             </p>
             <h4>Web Components</h4>
             <p>
-            Our improved support for Web Components went live last week - check out the <a href="https://www.ag-grid.com/best-web-component-data-grid/">documentation</a> to read more. 
+                Our improved support for Web Components went live last week - check out the <a href="https://www.ag-grid.com/best-web-component-data-grid/">documentation</a> to read more.
             </p>
             <hr/>
 
         <h3>Next Release</h3>
         <hr/>
             <p>
-             We are still on target for our next release, which should be out this Friday. The clock is ticking, but we’re all working really hard so we should be able to have the release out as planned.
+             We are still on target for our next release, which should be out this Friday 14th July.
             </p>
             <hr/>
 
@@ -186,7 +194,7 @@ include('../../includes/mediaHeader.php');
         <h3>Spread the Word</h3>
         <hr/>
 
-        <h4>Targetting React Space</h3>
+        <h4>Targetting React Space</h4>
             <p>
              John has been focusing on improving our presence in the React space. So for all our React users, help us spread the word or let us know of any good resources where we can get involved.
             </p>
