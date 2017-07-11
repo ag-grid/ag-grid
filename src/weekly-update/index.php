@@ -151,6 +151,10 @@ include('../includes/mediaHeader.php');
 
 </div>
 
-<?php include_once("../includes/mediafooter.php"); ?>
+<?php include_once("../includes/footer.php"); ?>
+
+</body>
+
+<?php include_once("../includes/analytics.php"); ?>
 
 </html>

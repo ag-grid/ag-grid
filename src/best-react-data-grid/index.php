@@ -1,7 +1,7 @@
 <?php
 $key = "Overview React";
 $pageTitle = "React Grid";
-$pageDescription = "A feature rich data grid designed for React and Enterprise. Easily integrate with React and React Components to deliver filtering, grouping, aggregation, pivoting and much more.";
+$pageDescription = "A feature-rich data grid designed for React and Enterprise. Easily integrate with React and React Components to deliver all the grid features that you need.";
 $pageKeyboards = "React Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
