@@ -75,7 +75,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let embeddedRowMismatch = this.embeddedRowMismatch();
         if (embeddedRowMismatch) { return; }
 
-        if (_.missing(params.value)) {
+        if (params.value==null) {
             return;
         }
 
