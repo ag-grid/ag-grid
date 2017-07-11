@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "ag-Grid Weekly Update 4th July 2017";
-$pageDescription = "ag-Grid Weekly Update 4th July 2017";
+$pageTitle = "ag-Grid Weekly Update 11th July 2017";
+$pageDescription = "ag-Grid Weekly Update 11th July 2017";
 $pageKeyboards = "ag-Grid Weekly Update";
 
 include('../../includes/mediaHeader.php');
@@ -74,12 +74,12 @@ include('../../includes/mediaHeader.php');
         color: #767676;
     }
     .weekly-news-image-right {
-        margin-left: 10px;
-        margin-bottom: 10px;
+        margin-left: 15px;
+        margin-bottom: 15px;
         font-size: 14px;
         font-style: italic;
         float: right;
-        width: 400px;
+        width: 500px;
     }
 </style>
 
@@ -91,7 +91,8 @@ include('../../includes/mediaHeader.php');
 
     <div class="row">
         <div class="col-md-12">
-            <h2>New Refresh & Change Detection - Web Components Support - Adding Polymer</h2>
+            <h2>VC Meeting - OpenFin Demo - New Value Cache</h2>
+            <p>
         </div>
     </div>
 
@@ -99,88 +100,99 @@ include('../../includes/mediaHeader.php');
         <div class="col-md-10">
 
         <h3>Company Update</h3>
+        <hr/>   
 
         <div class="weekly-news-image-right">
-            <img src="./images/aggrid_npm_usage.png" style="width: 100%;"/>
+            <img src="./images/team_photo.jpg" style="width: 100%;"/>
             <br/>
-            NPM downloads of ag-Grid for the past seven days.
+            The team enjoying dinner at London's best steak house.
         </div>
 
+            <h4>Our First VC Meeting</h4>
             <p>
-            Happy Independence Day to our American readers. We hope you enjoy your holiday. It's business as usual here at ag-Grid so here's our weekly update.
+            The past week has been very exciting for us. We met with a serious VC who wanted to learn a little bit more about what we have been doing. It's obviously very early days but it's a great validation of everything that we have achieved in the past 18 months. We have been binge watching Dragon's Den to prepare!
             </p>
 
-            <h4>NPM Downloads of ag-Grid</h4>
+            <h4>OpenFin Demo Goes Live</h4>
             <p>
-            We keep an eye on the downloads of our various NPM repositories. It's a good way to gauge the relative popularity of frameworks. We've added a graph of downloads for the past week so you can draw your own conclusions.
+            We have been working closely with the guys at OpenFin and our Trader Dashboard went live on their demo page yesterday. If you haven't checked it out yet, you can download and play around with it on their <a href="https://openfin.co/demos/">site.</a> You can also find the <a href="https://www.ag-grid.com//javascript-grid-openfin-dashboard/">Trader Dashboard</a> on our site.
             </p>
+
             <h4>GitHub Stars</h4>
             <p>
-            We are so close to hitting 3,000 GitHub stars! If you haven’t already given us a GitHub star, please make sure you do and help us smash our target.
+            The push continues - just another 60 will bring us to 3,000 - if you haven't already, please give us a <a href="https://github.com/ceolter/ag-grid/">star!</a>
             </p>
+            <hr/>
 
         <h3>The Latest from the Development Team</h3>
-            <h4>Refreshing the Grid</h4>
+        <hr/>
+            <h4>New Value Cache</h4>
             <p>
-            Niall has rewritten how the Refresh works, giving it a much cleaner API for users, and in doing that, realised that putting in change detection would be a great idea, too!
+            Niall has introduced a 'Value Cache' for people who have complicated Value Getters. This will ensure that Value Getters are not called multiple times, over and over again, when they give the same answer. He is also working on some documentation to help you along the process if you have any questions or need some guidance.
             </p> 
             
             <h4>Change Detection</h4>
-            <p>He’s now busy at work on a new change detection system. As data changes in your grid, it will automatically find any cells that were impacted through aggregations or through valueGeters, recompute those cells and update *only* those cells in the DOM.
+            <p>
+            Niall has also been working on documentation on Change Detection to make it clear and easy to use, so you can expect to see this rolled out very soon with a solid set of documentation to help you along.
+            </p>
+            
+
+            <h4>Multiple Selection in all Row Models</h4>
+            <p>
+            Rob has added ‘Multiple Selection’ to all Row Models, which was previously only available in ‘Memory Row Model’, making the feature more accessible to our users. 
             </p>
 
-            <p>Not only is there a brand new, cleaner Refresh API, you probably won't even need to call it, as the change detection and auto-refresh will take care of everything for you.
+            <h4>Dynamic Row Heights</h4>
+            <p>
+            Rob is now tackling adding Dynamic Row Height in the Enterprise Row Model - it's still early days as it has to get through Niall's rigorous code review! Check out the release notes in the next release to see if it makes it.
             </p>
+
             <h4>JIRA Update</h4>
             <p>
-            We are down to 136 tickets so the steady progress continues. You can monitor via our <a href="https://www.ag-grid.com/ag-grid-pipeline/">pipeline</a>. Please bear in mind these items that are completed will be in our next release.
+            We’ve had a bunch of new tickets come through, so we’ve been steadily making our way through those – our users like to keep us on our toes! We’re down to 142 and making really good progress with it.
             </p>
-
-            </p>
-
-            <h4>Continuing with Accessibility</h4>
-
-            <p>
-                Rob is continuing his work on Accessibility as well as helping the team close off JIRA tickets.
-            </p>
-
-            <h4>Preparing for TypeScript 2.4</h4>
-
-            <p>
-                TypeScript 2.4 comes with some breaking changes, which breaks some of our ag-Grid
-                interfaces (those feckers!). We will fix these so the next release of ag-Grid
-                will work with TypeScript 2.4.
+            <hr/>
             </p>
 
             <h3>ag-Grid Frameworks Update</h3>
-            <h4>Web Components</h4>
-            <p>
-                We have moved Web Components support in ag-Grid Core to a
-                new stand-alone <a href="https://github.com/ceolter/ag-grid-webcomponent/">Github repository</a>. This brings it in line with our other supported frameworks.
-            </p>
-
-            <p>
-            You can view our updated <a href="https://www.ag-grid.com/best-web-component-data-grid/">documentation</a> to read more. We have also published the <a href="https://www.webcomponents.org/element/ceolter/ag-grid-webcomponent/">Web Component</a> to the Web Component Registry.
-            </p>
+            <hr/>
             <h4>Polymer</h4>
             <p>
-            Building on this work, we are turning our focus to support for Polymer. This will become the eighth framework that we support and we will treat it in the same way as the others.
+            Sean is making good headway with Polymer Support, adding constantly to it. We’re aiming to have something substantial after this next release.
             </p>
-
-        <h3>Customer Experience</h3>
+            <h4>Web Components</h4>
             <p>
-            The team have been planning and working on our social media, so expect to see us appear more in your Twitter feeds! We’ll be keeping you in the loop about what we’re getting up to and keeping you up-to-date on our new features and updates. We’ve got some really interesting stuff to share with you, so stay tuned.
+            Our improved support for Web Components went live last week - check out the <a href="https://www.ag-grid.com/best-web-component-data-grid/">documentation</a> to read more. 
             </p>
+            <hr/>
 
         <h3>Next Release</h3>
+        <hr/>
             <p>
-                We are targeting our next release for Friday 14th July. Fingers crossed no upsets and we hit the date.
+             We are still on target for our next release, which should be out this Friday. The clock is ticking, but we’re all working really hard so we should be able to have the release out as planned.
+            </p>
+            <hr/>
+
+        <h3>Customer Experience</h3>
+        <hr/>
+            <p>
+            The whole team enjoyed a well-earned company dinner to recharge our batteries and to welcome the new members of the Customer Experience team. 😊
+            </p>
+            <p>
+            We have been busy thinking of ways to reach out to new customers and we’ve got some really cool ideas that we’re hoping to roll out in the next few weeks, so stay tuned! We would like to hear your ideas so please get in touch on Twitter or email.
+            </p>
+            <hr/>
+
+        <h3>Spread the Word</h3>
+        <hr/>
+
+        <h4>Targetting React Space</h3>
+            <p>
+             John has been focusing on improving our presence in the React space. So for all our React users, help us spread the word or let us know of any good resources where we can get involved.
             </p>
 
-        <h3>Help Us Out!</h3>
-
             <p>
-                Spread the news on ag-Grid, use the share buttons below! We like your tweets and Reddit mentions are great :)
+            If you’re not following us on Twitter, please click below to keep up to date.
             </p>
         </div>
 
@@ -202,7 +214,7 @@ include('../../includes/mediaHeader.php');
                 </td>
                 <td>
                     <a href="https://twitter.com/share" class="twitter-share-button"
-                       data-url="https://www.ag-grid.com/weekly-update/20170704/"
+                       data-url="https://www.ag-grid.com/weekly-update/20170711/"
                        data-text="ag-Grid Weekly Update #javascript #angularjs #react" data-via="ceolter"
                        data-size="large">Tweet</a>
                     <script>!function (d, s, id) {
