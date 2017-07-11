@@ -214,7 +214,7 @@ export {ICompFactory} from "./dist/lib/interfaces/iCompFactory"
 export {IRowNodeStage, StageExecuteParams} from "./dist/lib/interfaces/iRowNodeStage"
 export {IFilterParams, IDoesFilterPassParams} from "./dist/lib/interfaces/iFilter"
 export {ISetFilterParams} from "./dist/lib/interfaces/iSetFilterParams"
-export {IDateParams, IDate} from "./dist/lib/rendering/dateComponent";
+export {IDateParams, IDate, IDateComp} from "./dist/lib/rendering/dateComponent";
 export {IAfterGuiAttachedParams, IComponent} from "./dist/lib/interfaces/iComponent";
 export {IFilter, IFilterComp} from "./dist/lib/interfaces/iFilter";
 export {IHeaderParams} from "./dist/lib/headerRendering/header/headerComp";
