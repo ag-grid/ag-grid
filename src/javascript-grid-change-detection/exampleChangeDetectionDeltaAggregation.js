@@ -16,6 +16,8 @@ var columnDefs = [
 
 var rowIdCounter = 0;
 
+var callCount = 0;
+
 var rowData = createRowData();
 
 function createRowData() {
@@ -58,6 +60,8 @@ function numberValueParser(params) {
 }
 
 var gridOptions = {
+    // set this to true, so only the column in question gets updated
+    aggregateOnlyChangedColumns: true,
     columnDefs: columnDefs,
     aggFuncs: {
         'sum': function(values) {
@@ -69,7 +73,8 @@ var gridOptions = {
                     }
                 });
             }
-            console.log('aggregation: sum([' + values.join(',') + ']) = ' + result);
+            callCount++;
+            console.log(callCount + ' aggregation: sum([' + values.join(',') + ']) = ' + result);
             return result;
         }
     },

@@ -190,6 +190,10 @@ interface IViewportDatasourceParams {
         selection value. See the example below for setting up <i>getRowNodeId()</i>.
     </p>
 
+    <note>
+        Performing multiple row selections using 'shift-click' is only possible for rows that are available within the viewport.
+    </note>
+
     <h2>Grouping</h2>
 
     <p>

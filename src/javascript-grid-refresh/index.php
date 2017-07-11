@@ -59,7 +59,7 @@ function refreshCells(params: RefreshCellsParams = {}): void;
 interface RefreshCellsParams {
     rowNodes?: RowNode[]; <span class="codeComment">// specify rows, or all rows by default</span>
     columns?: (string|Column)[]; <span class="codeComment">// specify columns, or all columns by default</span>
-    forceRefresh?: boolean; <span class="codeComment">// skips change detection, refresh everything</span>
+    force?: boolean; <span class="codeComment">// skips change detection, refresh everything</span>
     volatile?: boolean; <span class="codeComment">// only volatile cells - deprecated - for backwards compatibility</span>
 }</pre>
 
@@ -101,7 +101,7 @@ interface RefreshCellsParams {
 
     <p>
         Below shows calling <code>api.refreshCells()</code> with different scenarios using a mixture of the
-        <code>rowNodes</code>, <code>columns</code> and <code>forceRefresh</code> parameters. From the example, the
+        <code>rowNodes</code>, <code>columns</code> and <code>force</code> parameters. From the example, the
         following can be noted:
     </p>
 
