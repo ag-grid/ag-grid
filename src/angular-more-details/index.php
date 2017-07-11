@@ -115,7 +115,7 @@ include '../documentation-main/documentation_header.php';
     </table>
 
     <p>The Enterprise dependency has to be made available before any Grid related component, so we suggest importing it in your
-    Angular root module if possible(typically named index.js) before kicking off the actual application - for example:</p>
+    Angular root module if possible before kicking off the actual application - for example:</p>
 
 <pre>
 <span class="codeComment">// only necessary if you're using ag-Grid-Enterprise features</span>
