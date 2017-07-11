@@ -15,7 +15,32 @@
     .separator {
         text-align: center;
     }
+    
+    
+    .question {
+        font-weight: bold;
+        padding-top: 20px;
+        padding-bottom: 10px;
+    }
+    .answer {
+
+    }
+
 </style>
+
+<div class="news-box">
+    <div class="news-header">11th July 2017</div>
+    <div>
+        <a href="../weekly-update/20170711/">
+            <img src="../weekly-update/20170711/images/team_photo_200.jpg" width="100%"/>
+        </a>
+    </div>
+    <div style="padding-top: 10px;">
+        <a href="../weekly-update/20170711/">
+            Weekly Update
+        </a>
+    </div>
+</div>
 
 <div class="news-box">
     <div class="news-header">4th July 2017</div>
