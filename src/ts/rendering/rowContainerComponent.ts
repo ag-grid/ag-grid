@@ -8,7 +8,6 @@ export interface RowContainerComponentParams {
     eContainer: HTMLElement;
     eViewport?: HTMLElement;
     hideWhenNoChildren?: boolean;
-    useDocumentFragment?: boolean;
 }
 
 /**
@@ -19,7 +18,6 @@ export interface RowContainerComponentParams {
 export class RowContainerComponent {
 
     private eContainer: HTMLElement;
-    private eDocumentFragment: DocumentFragment;
     private eViewport: HTMLElement;
 
     private hideWhenNoChildren: boolean;
@@ -32,45 +30,72 @@ export class RowContainerComponent {
         this.eContainer = params.eContainer;
         this.eViewport = params.eViewport;
 
-        if (params.useDocumentFragment) {
-            this.setupDocumentFragment();
-        }
-
         this.hideWhenNoChildren = params.hideWhenNoChildren;
 
         this.checkVisibility();
-    }
-
-    public setupDocumentFragment(): void {
-        let browserSupportsDocumentFragment = !!document.createDocumentFragment;
-        if (browserSupportsDocumentFragment) {
-            this.eDocumentFragment = document.createDocumentFragment();
-        }
     }
 
     public setHeight(height: number): void {
         this.eContainer.style.height = height + "px";
     }
 
-    public appendRowElement(eRow: HTMLElement): void {
-        let eTarget = this.eDocumentFragment ? this.eDocumentFragment : this.eContainer;
-        eTarget.appendChild(eRow);
+    public appendRowElement_old(eRow: HTMLElement, eRowBefore: HTMLElement): void {
+        this.eContainer.appendChild(eRow);
         this.childCount++;
         this.checkVisibility();
+    }
+
+    public appendRowElement(eRow: HTMLElement, eRowBefore: HTMLElement): void {
+        if (eRowBefore) {
+            if (eRowBefore.nextSibling) {
+                // insert between the eRowBefore and the row after it
+                this.eContainer.insertBefore(eRow, eRowBefore.nextSibling);
+            } else {
+                // if nextSibling is missing, means other row is at end, so just append new row at the end
+                this.eContainer.appendChild(eRow);
+            }
+        } else {
+            if (this.eContainer.firstChild) {
+                // insert it at the first location
+                this.eContainer.insertBefore(eRow, this.eContainer.firstChild);
+            } else {
+                // otherwise eContainer is empty, so just append it
+                this.eContainer.appendChild(eRow);
+            }
+        }
+        this.childCount++;
+        this.checkVisibility();
+    }
+
+    public ensureDomOrder_old(eRow: HTMLElement, eRowBefore: HTMLElement): void {
+
+    }
+
+    public ensureDomOrder(eRow: HTMLElement, eRowBefore: HTMLElement): void {
+        // if already in right order, do nothing
+        if (eRowBefore && eRowBefore.nextSibling === eRow) { return; }
+
+        if (eRowBefore) {
+            if (eRowBefore.nextSibling) {
+                // insert between the eRowBefore and the row after it
+                this.eContainer.insertBefore(eRow, eRowBefore.nextSibling);
+            } else {
+                // if nextSibling is missing, means other row is at end, so just append new row at the end
+                this.eContainer.appendChild(eRow);
+            }
+        } else {
+            // otherwise put at start
+            if (this.eContainer.firstChild) {
+                // insert it at the first location
+                this.eContainer.insertBefore(eRow, this.eContainer.firstChild);
+            }
+        }
     }
 
     public removeRowElement(eRow: HTMLElement): void {
         this.eContainer.removeChild(eRow);
         this.childCount--;
         this.checkVisibility();
-    }
-
-    public flushDocumentFragment(): void {
-        if (_.exists(this.eDocumentFragment)) {
-            // we prepend rather than append so that new rows appear under current rows. this way the new
-            // rows are not over the current rows which will get animation as they slid to new position
-            _.prependDC(this.eContainer, this.eDocumentFragment);
-        }
     }
 
     // WARNING - this method is very hard on the DOM, the shuffles the DOM rows even if they don't need

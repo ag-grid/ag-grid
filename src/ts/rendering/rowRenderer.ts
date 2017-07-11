@@ -27,6 +27,15 @@ import {BeanStub} from "../context/beanStub";
 import {PaginationProxy} from "../rowModels/paginationProxy";
 import {RefreshCellsParams} from "../gridApi";
 
+export interface ContainerElements {
+    left: HTMLElement;
+    right: HTMLElement;
+    body: HTMLElement;
+    fullWidth: HTMLElement;
+}
+
+let TEMP_PREVIOUS_ELEMENTS: ContainerElements = {body: null, left: null, right: null, fullWidth: null};
+
 @Bean('rowRenderer')
 export class RowRenderer extends BeanStub {
 
@@ -52,7 +61,7 @@ export class RowRenderer extends BeanStub {
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
-    private rowCompsById: {[key: string]: RowComp} = {};
+    private rowCompsByIndex: {[key: string]: RowComp} = {};
     private floatingTopRowComps: RowComp[] = [];
     private floatingBottomRowComps: RowComp[] = [];
 
@@ -85,7 +94,7 @@ export class RowRenderer extends BeanStub {
     public getAllCellsForColumn(column: Column): HTMLElement[] {
         let eCells: HTMLElement[] = [];
 
-        _.iterateObject(this.rowCompsById, callback);
+        _.iterateObject(this.rowCompsByIndex, callback);
         _.iterateObject(this.floatingBottomRowComps, callback);
         _.iterateObject(this.floatingTopRowComps, callback);
 
@@ -138,7 +147,8 @@ export class RowRenderer extends BeanStub {
                     pinnedLeftContainerComp,
                     pinnedRightContainerComp,
                     node,
-                    false);
+                    false,
+                    TEMP_PREVIOUS_ELEMENTS);
                 this.context.wireBean(renderedRow);
                 renderedRows.push(renderedRow);
             })
@@ -164,10 +174,10 @@ export class RowRenderer extends BeanStub {
     private getRenderedIndexesForRowNodes(rowNodes: RowNode[]): string[] {
         let result: any = [];
         if (_.missing(rowNodes)) { return result; }
-        _.iterateObject(this.rowCompsById, (key: string, renderedRow: RowComp)=> {
+        _.iterateObject(this.rowCompsByIndex, (index: string, renderedRow: RowComp)=> {
             let rowNode = renderedRow.getRowNode();
             if (rowNodes.indexOf(rowNode)>=0) {
-                result.push(key);
+                result.push(index);
             }
         });
         return result;
@@ -214,6 +224,7 @@ export class RowRenderer extends BeanStub {
         return focusedCell;
     }
 
+    // gets called after changes to the model.
     public refreshView(params: RefreshViewParams = {}): void {
         this.logger.log('refreshView');
 
@@ -277,25 +288,25 @@ export class RowRenderer extends BeanStub {
     }
 
     public stopEditing(cancel: boolean = false) {
-        this.forEachRenderedRow( (key: string, renderedRow: RowComp) => {
+        this.forEachRowComp( (key: string, renderedRow: RowComp) => {
             renderedRow.stopEditing(cancel);
         });
     }
 
-    public forEachRenderedCell(callback: (renderedCell: CellComp)=>void): void {
-        _.iterateObject(this.rowCompsById, (key: any, renderedRow: RowComp)=> {
+    public forEachCellComp(callback: (renderedCell: CellComp)=>void): void {
+        _.iterateObject(this.rowCompsByIndex, (index: any, renderedRow: RowComp)=> {
             renderedRow.forEachCellComp(callback);
         });
     }
 
-    private forEachRenderedRow(callback: (key: string, renderedCell: RowComp)=>void): void {
-        _.iterateObject(this.rowCompsById, callback);
+    private forEachRowComp(callback: (key: string, renderedCell: RowComp)=>void): void {
+        _.iterateObject(this.rowCompsByIndex, callback);
         _.iterateObject(this.floatingTopRowComps, callback);
         _.iterateObject(this.floatingBottomRowComps, callback);
     }
 
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void {
-        let renderedRow = this.rowCompsById[rowIndex];
+        let renderedRow = this.rowCompsByIndex[rowIndex];
         renderedRow.addEventListener(eventName, callback);
     }
 
@@ -359,7 +370,7 @@ export class RowRenderer extends BeanStub {
             });
         };
 
-        _.iterateObject(this.rowCompsById, (key: string, rowComp: RowComp)=> {
+        _.iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowComp)=> {
             processRow(rowComp);
         });
 
@@ -376,13 +387,14 @@ export class RowRenderer extends BeanStub {
     public destroy() {
         super.destroy();
 
-        let rowsToRemove = Object.keys(this.rowCompsById);
-        this.removeRowComps(rowsToRemove);
+        let rowIndexesToRemove = Object.keys(this.rowCompsByIndex);
+        this.removeRowComps(rowIndexesToRemove);
     }
 
     private refreshRowComps(keepRenderedRows: boolean, animate: boolean) {
-        let rowsToRemove: string[];
-        let oldRowsByNodeId: {[key: string]: RowComp} = {};
+
+        let indexesToRemove: string[];
+        let previousRowComps: {[key: string]: RowComp} = {};
 
         // never keep rendered rows if doing forPrint or autoHeight, as we do not use 'top' to
         // position the rows (it uses normal flow), so we have to remove
@@ -393,22 +405,23 @@ export class RowRenderer extends BeanStub {
         }
 
         if (keepRenderedRows) {
-            rowsToRemove = [];
-            _.iterateObject(this.rowCompsById, (index: string, renderedRow: RowComp)=> {
-                let rowNode = renderedRow.getRowNode();
+            indexesToRemove = [];
+            _.iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowComp)=> {
+                let rowNode = rowComp.getRowNode();
                 if (_.exists(rowNode.id)) {
-                    oldRowsByNodeId[rowNode.id] = renderedRow;
-                    delete this.rowCompsById[index];
+                    previousRowComps[rowNode.id] = rowComp;
+                    delete this.rowCompsByIndex[index];
                 } else {
-                    rowsToRemove.push(index);
+                    indexesToRemove.push(index);
                 }
             });
         } else {
-            rowsToRemove = Object.keys(this.rowCompsById);
+            indexesToRemove = Object.keys(this.rowCompsByIndex);
         }
 
-        this.removeRowComps(rowsToRemove);
-        this.drawVirtualRows(oldRowsByNodeId, animate);
+        this.removeRowComps(indexesToRemove);
+        this.drawVirtualRows(previousRowComps, animate);
+
     }
 
     // takes array of row indexes
@@ -416,9 +429,9 @@ export class RowRenderer extends BeanStub {
         // if no fromIndex then set to -1, which will refresh everything
         // let realFromIndex = -1;
         rowsToRemove.forEach( indexToRemove => {
-            let renderedRow = this.rowCompsById[indexToRemove];
+            let renderedRow = this.rowCompsByIndex[indexToRemove];
             renderedRow.destroy();
-            delete this.rowCompsById[indexToRemove];
+            delete this.rowCompsByIndex[indexToRemove];
         });
     }
 
@@ -432,9 +445,9 @@ export class RowRenderer extends BeanStub {
         this.releaseLockOnRefresh();
     }
 
-    private drawVirtualRows(oldRowsByNodeId?: {[key: string]: RowComp}, animate = false) {
+    private drawVirtualRows(previousRowComps?: {[key: string]: RowComp}, animate = false) {
         this.workOutFirstAndLastRowsToRender();
-        this.ensureRowsRendered(oldRowsByNodeId, animate);
+        this.ensureRowsRendered(previousRowComps, animate);
     }
 
     private workOutFirstAndLastRowsToRender(): void {
@@ -502,85 +515,173 @@ export class RowRenderer extends BeanStub {
         return this.lastRenderedRow;
     }
 
-    private ensureRowsRendered(oldRenderedRowsByNodeId?: {[key: string]: RowComp}, animate = false) {
+    private ensureRowsRendered(previousRowCompsById?: {[key: string]: RowComp}, animate = false) {
+
+        let indexesWeWant: number[] = [];
+        for (let rowIndex = this.firstRenderedRow; rowIndex<=this.lastRenderedRow; rowIndex++) {
+            indexesWeWant.push(rowIndex);
+        }
+
+        let rowIndexesToRemove: string[] = [];
+        _.iterateObject(this.rowCompsByIndex, (indexStr: string, rowComp: RowComp) => {
+            let index = Number(indexStr);
+            if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
+                if (this.keepRowBecauseEditing(rowComp)) {
+                    indexesWeWant.push(index);
+                } else {
+                    rowIndexesToRemove.push(indexStr);
+                }
+            }
+        });
+        this.removeRowComps(rowIndexesToRemove);
+
+        indexesWeWant.sort( (a: number, b: number) => a - b);
+
+        let previousElements: ContainerElements = {body: null, left: null, right: null, fullWidth: null};
+
+        // add in new rows
+        let delayedCreateFunctions: Function[] = [];
+
+        indexesWeWant.forEach( rowIndex => {
+
+            let rowNode: RowNode;
+
+            let rowComp = this.rowCompsByIndex[rowIndex];
+
+            // if no row comp, see if we can get it from the previous rowComps
+            if (!rowComp) {
+                rowNode = this.paginationProxy.getRow(rowIndex);
+                if (_.exists(previousRowCompsById) && previousRowCompsById[rowNode.id]) {
+                    rowComp = previousRowCompsById[rowNode.id];
+                    delete previousRowCompsById[rowNode.id];
+                }
+            }
+
+            let creatingNewRowComp = !rowComp;
+
+            if (creatingNewRowComp) {
+                // create a new one
+                if (!rowNode) {
+                    rowNode = this.paginationProxy.getRow(rowIndex);
+                }
+                rowComp = this.createRowComp(rowNode, animate, previousElements);
+            } else {
+                // ensure row comp is in right position in DOM
+                rowComp.ensureInDomAfter(previousElements);
+            }
+
+            _.pushAll(delayedCreateFunctions, rowComp.getAndClearNextVMTurnFunctions());
+
+            this.rowCompsByIndex[rowIndex] = rowComp;
+
+            this.updatePreviousElements(previousElements, rowComp);
+        });
+
+        setTimeout( ()=> {
+            delayedCreateFunctions.forEach( func => func() );
+        }, 0);
+
+        let delayedDestroyFunctions: Function[] = [];
+        _.iterateObject(previousRowCompsById, (nodeId: string, renderedRow: RowComp) => {
+            renderedRow.destroy(animate);
+            renderedRow.getAndClearDelayedDestroyFunctions().forEach(func => delayedDestroyFunctions.push(func) );
+            delete previousRowCompsById[nodeId];
+        });
+        setTimeout( ()=> {
+            delayedDestroyFunctions.forEach( func => func() );
+        }, 400);
+
+        // if we are doing angular compiling, then do digest the scope here
+        if (this.gridOptionsWrapper.isAngularCompileRows()) {
+            // we do it in a timeout, in case we are already in an apply
+            setTimeout( () => { this.$scope.$apply(); }, 0);
+        }
+    }
+
+    private updatePreviousElements(previousElements: ContainerElements, rowComp: RowComp): void {
+        let body: HTMLElement = rowComp.getBodyRowElement();
+        let left: HTMLElement = rowComp.getPinnedLeftRowElement();
+        let right: HTMLElement = rowComp.getPinnedRightRowElement();
+        let fullWidth: HTMLElement = rowComp.getFullWidthRowElement();
+
+        if (body) {
+            previousElements.body = body;
+        }
+        if (left) {
+            previousElements.left = left;
+        }
+        if (right) {
+            previousElements.right = right;
+        }
+        if (fullWidth) {
+            previousElements.fullWidth = fullWidth;
+        }
+    }
+/*
+    private ensureRowsRendered_old(previousRowCompsById?: {[key: string]: RowComp}, animate = false) {
+
+        // the row can already exist and be in the following:
+        // previousRowCompsById -> if model change, then the index may be different, however row may
+        //                         exist here from previous time (mapped by id).
+        // this.rowCompsByIndex -> if just a scroll, then this will contain what is currently in the viewport
 
         // let timer = new Timer();
 
         // at the end, this array will contain the items we need to remove
-        let rowsToRemove = Object.keys(this.rowCompsById);
+        let rowsToRemove = Object.keys(this.rowCompsByIndex);
 
         // add in new rows
         let delayedCreateFunctions: Function[] = [];
 
         for (let rowIndex = this.firstRenderedRow; rowIndex <= this.lastRenderedRow; rowIndex++) {
+
             // see if item already there, and if yes, take it out of the 'to remove' array
-            if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
+            let rowAlreadyInDom = rowsToRemove.indexOf(rowIndex.toString()) >= 0;
+            if (rowAlreadyInDom) {
                 _.removeFromArray(rowsToRemove, rowIndex.toString());
                 continue;
             }
             // check this row actually exists (in case overflow buffer window exceeds real data)
-            let node = this.paginationProxy.getRow(rowIndex);
-            if (node) {
-                let renderedRow = this.getOrCreateRenderedRow(node, oldRenderedRowsByNodeId, animate);
-                _.pushAll(delayedCreateFunctions, renderedRow.getAndClearNextVMTurnFunctions());
-                this.rowCompsById[rowIndex] = renderedRow;
+            let rowNode = this.paginationProxy.getRow(rowIndex);
+            if (rowNode) {
+
+                let rowComp: RowComp;
+
+                if (_.exists(previousRowCompsById) && previousRowCompsById[rowNode.id]) {
+                    rowComp = previousRowCompsById[rowNode.id];
+                    delete previousRowCompsById[rowNode.id];
+                } else {
+                    rowComp = this.createRowComp(rowNode, animate, TEMP_PREVIOUS_ELEMENTS);
+                }
+
+                _.pushAll(delayedCreateFunctions, rowComp.getAndClearNextVMTurnFunctions());
+                this.rowCompsByIndex[rowIndex] = rowComp;
             }
         }
+
         setTimeout( ()=> {
             delayedCreateFunctions.forEach( func => func() );
         }, 0);
 
         // timer.print('creating template');
 
-        // check that none of the rows to remove are editing or focused as:
-        // a) if editing, we want to keep them, otherwise the user will loose the context of the edit,
-        //    eg user starts editing, enters some text, then scrolls down and then up, next time row rendered
-        //    the edit is reset - so we want to keep it rendered.
-        // b) if focused, we want ot keep keyboard focus, so if user ctrl+c, it goes to clipboard,
-        //    otherwise the user can range select and drag (with focus cell going out of the viewport)
-        //    and then ctrl+c, nothing will happen if cell is removed from dom.
-        rowsToRemove = _.filter(rowsToRemove, indexStr => {
-            let REMOVE_ROW : boolean = true;
-            let KEEP_ROW : boolean = false;
-            let renderedRow = this.rowCompsById[indexStr];
-            let rowNode = renderedRow.getRowNode();
-
-            let rowHasFocus = this.focusedCellController.isRowNodeFocused(rowNode);
-            let rowIsEditing = renderedRow.isEditing();
-
-            let mightWantToKeepRow = rowHasFocus || rowIsEditing;
-
-            // if we deffo don't want to keep it,
-            if (!mightWantToKeepRow) { return REMOVE_ROW; }
-
-            // editing row, only remove if it is no longer rendered, eg filtered out or new data set.
-            // the reason we want to keep is if user is scrolling up and down, we don't want to loose
-            // the context of the editing in process.
-            let rowNodePresent = this.paginationProxy.isRowPresent(rowNode);
-            return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
-        });
+        rowsToRemove = this.filterOutEditingRows(rowsToRemove);
 
         // at this point, everything in our 'rowsToRemove' is an old index that needs to be removed
         this.removeRowComps(rowsToRemove);
 
-        // and everything in our oldRenderedRowsByNodeId is an old row that is no longer used
+        // and everything in our previousRowCompsById is an old row that is no longer used
         let delayedDestroyFunctions: Function[] = [];
-        _.iterateObject(oldRenderedRowsByNodeId, (nodeId: string, renderedRow: RowComp) => {
+        _.iterateObject(previousRowCompsById, (nodeId: string, renderedRow: RowComp) => {
             renderedRow.destroy(animate);
             renderedRow.getAndClearDelayedDestroyFunctions().forEach(func => delayedDestroyFunctions.push(func) );
-            delete oldRenderedRowsByNodeId[nodeId];
+            delete previousRowCompsById[nodeId];
         });
         setTimeout( ()=> {
             delayedDestroyFunctions.forEach( func => func() );
         }, 400);
 
         // timer.print('removing');
-
-        this.rowContainers.body.flushDocumentFragment();
-        if (!this.gridOptionsWrapper.isForPrint()) {
-            this.rowContainers.pinnedLeft.flushDocumentFragment();
-            this.rowContainers.pinnedRight.flushDocumentFragment();
-        }
 
         if (this.gridOptionsWrapper.isEnforceRowDomOrder()) {
             _.iterateObject(this.rowContainers, (key: string, rowContainerComp: RowContainerComponent) => {
@@ -597,34 +698,78 @@ export class RowRenderer extends BeanStub {
         }
 
         // timer.print('total');
+    }*/
+
+    // check that none of the rows to remove are editing or focused as:
+    // a) if editing, we want to keep them, otherwise the user will loose the context of the edit,
+    //    eg user starts editing, enters some text, then scrolls down and then up, next time row rendered
+    //    the edit is reset - so we want to keep it rendered.
+    // b) if focused, we want ot keep keyboard focus, so if user ctrl+c, it goes to clipboard,
+    //    otherwise the user can range select and drag (with focus cell going out of the viewport)
+    //    and then ctrl+c, nothing will happen if cell is removed from dom.
+/*    private filterOutEditingRows(rowsToRemove: string[]): string[] {
+        return _.filter(rowsToRemove, indexStr => {
+            let REMOVE_ROW : boolean = true;
+            let KEEP_ROW : boolean = false;
+            let renderedRow = this.rowCompsByIndex[indexStr];
+            let rowNode = renderedRow.getRowNode();
+
+            let rowHasFocus = this.focusedCellController.isRowNodeFocused(rowNode);
+            let rowIsEditing = renderedRow.isEditing();
+
+            let mightWantToKeepRow = rowHasFocus || rowIsEditing;
+
+            // if we deffo don't want to keep it,
+            if (!mightWantToKeepRow) { return REMOVE_ROW; }
+
+            // editing row, only remove if it is no longer rendered, eg filtered out or new data set.
+            // the reason we want to keep is if user is scrolling up and down, we don't want to loose
+            // the context of the editing in process.
+            let rowNodePresent = this.paginationProxy.isRowPresent(rowNode);
+            return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
+        });
+    }*/
+
+    // check that none of the rows to remove are editing or focused as:
+    // a) if editing, we want to keep them, otherwise the user will loose the context of the edit,
+    //    eg user starts editing, enters some text, then scrolls down and then up, next time row rendered
+    //    the edit is reset - so we want to keep it rendered.
+    // b) if focused, we want ot keep keyboard focus, so if user ctrl+c, it goes to clipboard,
+    //    otherwise the user can range select and drag (with focus cell going out of the viewport)
+    //    and then ctrl+c, nothing will happen if cell is removed from dom.
+    private keepRowBecauseEditing(rowComp: RowComp): boolean {
+
+        let REMOVE_ROW : boolean = false;
+        let KEEP_ROW : boolean = true;
+        let rowNode = rowComp.getRowNode();
+
+        let rowHasFocus = this.focusedCellController.isRowNodeFocused(rowNode);
+        let rowIsEditing = rowComp.isEditing();
+
+        let mightWantToKeepRow = rowHasFocus || rowIsEditing;
+
+        // if we deffo don't want to keep it,
+        if (!mightWantToKeepRow) { return REMOVE_ROW; }
+
+        // editing row, only remove if it is no longer rendered, eg filtered out or new data set.
+        // the reason we want to keep is if user is scrolling up and down, we don't want to loose
+        // the context of the editing in process.
+        let rowNodePresent = this.paginationProxy.isRowPresent(rowNode);
+        return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
     }
 
-    private getOrCreateRenderedRow(rowNode: RowNode,
-                                   oldRowsByNodeId: {[key: string]: RowComp}, animate: boolean): RowComp {
+    private createRowComp(rowNode: RowNode, animate: boolean, previousElements: ContainerElements): RowComp {
+        let rowComp = new RowComp(this.$scope,
+            this, this.rowContainers.body, this.rowContainers.fullWidth,
+            this.rowContainers.pinnedLeft, this.rowContainers.pinnedRight,
+            rowNode, animate, previousElements);
 
-        let renderedRow: RowComp;
-
-        if (_.exists(oldRowsByNodeId) && oldRowsByNodeId[rowNode.id]) {
-
-            renderedRow = oldRowsByNodeId[rowNode.id];
-            delete oldRowsByNodeId[rowNode.id];
-
-        } else {
-
-            renderedRow = new RowComp(this.$scope,
-                this, this.rowContainers.body, this.rowContainers.fullWidth,
-                this.rowContainers.pinnedLeft, this.rowContainers.pinnedRight,
-                rowNode, animate);
-
-            this.context.wireBean(renderedRow);
-
-        }
-
-        return renderedRow;
+        this.context.wireBean(rowComp);
+        return rowComp;
     }
 
     public getRenderedNodes() {
-        let renderedRows = this.rowCompsById;
+        let renderedRows = this.rowCompsByIndex;
         return Object.keys(renderedRows).map(key => {
             return renderedRows[key].getRowNode();
         });
@@ -715,7 +860,7 @@ export class RowRenderer extends BeanStub {
                 rowComponent = this.floatingBottomRowComps[gridCell.rowIndex];
                 break;
             default:
-                rowComponent = this.rowCompsById[gridCell.rowIndex];
+                rowComponent = this.rowCompsByIndex[gridCell.rowIndex];
                 break;
         }
 

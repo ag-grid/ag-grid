@@ -3,7 +3,7 @@ import {CellComp} from "./cellComp";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
-import {RowRenderer} from "./rowRenderer";
+import {ContainerElements, RowRenderer} from "./rowRenderer";
 import {Column} from "../entities/column";
 import {Events} from "../events";
 import {EventService} from "../eventService";
@@ -133,6 +133,8 @@ export class RowComp extends BeanStub {
 
     private rowFocusedLastTime: boolean;
 
+    private previousElements: ContainerElements;
+
     constructor(parentScope: any,
                 rowRenderer: RowRenderer,
                 bodyContainerComp: RowContainerComponent,
@@ -140,7 +142,8 @@ export class RowComp extends BeanStub {
                 pinnedLeftContainerComp: RowContainerComponent,
                 pinnedRightContainerComp: RowContainerComponent,
                 node: RowNode,
-                animateIn: boolean) {
+                animateIn: boolean,
+                previousElements: ContainerElements) {
         super();
         this.parentScope = parentScope;
         this.rowRenderer = rowRenderer;
@@ -152,6 +155,7 @@ export class RowComp extends BeanStub {
 
         this.rowNode = node;
         this.animateIn = animateIn;
+        this.previousElements = previousElements;
     }
 
     private setupRowStub(animateInRowTop: boolean): void {
@@ -209,6 +213,29 @@ export class RowComp extends BeanStub {
         );
     }
 
+    public ensureInDomAfter(containers: ContainerElements): void {
+
+        let body = this.getBodyRowElement();
+        if (body) {
+            this.bodyContainerComp.ensureDomOrder(body, containers.body);
+        }
+
+        let left = this.getPinnedLeftRowElement();
+        if (left) {
+            this.pinnedLeftContainerComp.ensureDomOrder(left, containers.left);
+        }
+
+        let right = this.getPinnedRightRowElement();
+        if (right) {
+            this.pinnedRightContainerComp.ensureDomOrder(right, containers.right);
+        }
+
+        let fullWidth = this.getFullWidthRowElement();
+        if (fullWidth) {
+            this.bodyContainerComp.ensureDomOrder(fullWidth, containers.fullWidth);
+        }
+    }
+
     private setupFullWidthContainers(animateInRowTop: boolean): void {
         this.fullWidthRow = true;
         this.fullWidthCellRenderer = this.gridOptionsWrapper.getFullWidthCellRenderer();
@@ -249,9 +276,9 @@ export class RowComp extends BeanStub {
         if (embedFullWidthRows) {
 
             // if embedding the full width, it gets added to the body, left and right
-            this.eFullWidthRowBody = this.createRowContainer(this.bodyContainerComp, animateInRowTop);
-            this.eFullWidthRowLeft = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop);
-            this.eFullWidthRowRight = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop);
+            this.eFullWidthRowBody = this.createRowContainer(this.bodyContainerComp, animateInRowTop, this.previousElements.body);
+            this.eFullWidthRowLeft = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop, this.previousElements.left);
+            this.eFullWidthRowRight = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop, this.previousElements.right);
 
             _.addCssClass(this.eFullWidthRowLeft, 'ag-cell-last-left-pinned');
             _.addCssClass(this.eFullWidthRowRight, 'ag-cell-first-right-pinned');
@@ -259,7 +286,7 @@ export class RowComp extends BeanStub {
         } else {
 
             // otherwise we add to the fullWidth container as normal
-            this.eFullWidthRow = this.createRowContainer(this.fullWidthContainerComp, animateInRowTop);
+            this.eFullWidthRow = this.createRowContainer(this.fullWidthContainerComp, animateInRowTop, this.previousElements.fullWidth);
 
             // and fake the mouse wheel for the fullWidth container
             if (!this.gridOptionsWrapper.isForPrint()) {
@@ -271,11 +298,11 @@ export class RowComp extends BeanStub {
     private setupNormalContainers(animateInRowTop: boolean): void {
         this.fullWidthRow = false;
 
-        this.eBodyRow = this.createRowContainer(this.bodyContainerComp, animateInRowTop);
+        this.eBodyRow = this.createRowContainer(this.bodyContainerComp, animateInRowTop, this.previousElements.body);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
-            this.ePinnedLeftRow = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop);
-            this.ePinnedRightRow = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop);
+            this.ePinnedLeftRow = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop, this.previousElements.left);
+            this.ePinnedRightRow = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop, this.previousElements.right);
         }
     }
 
@@ -980,13 +1007,13 @@ export class RowComp extends BeanStub {
         return agEvent;
     }
 
-    private createRowContainer(rowContainerComp: RowContainerComponent, slideRowIn: boolean): HTMLElement {
+    private createRowContainer(rowContainerComp: RowContainerComponent, slideRowIn: boolean, eElementBefore: HTMLElement): HTMLElement {
         let eRow = document.createElement('div');
         eRow.setAttribute('role', 'row');
 
         this.addDomData(eRow);
 
-        rowContainerComp.appendRowElement(eRow);
+        rowContainerComp.appendRowElement(eRow, eElementBefore);
 
         this.eAllRowContainers.push(eRow);
 
@@ -999,7 +1026,6 @@ export class RowComp extends BeanStub {
                 let rowTop = this.roundRowTopToBounds(this.rowNode.rowTop);
                 this.setRowTop(rowTop);
             }
-            // _.prepend(eParent, eRow);
         });
 
         if (this.animateIn) {
@@ -1212,4 +1238,25 @@ export class RowComp extends BeanStub {
             this.eAllRowContainers.forEach( row => _.addCssClass(row, classStr));
         });
     }
+
+    // returns the pinned left container, either the normal one, or the embedded full with one if exists
+    public getPinnedLeftRowElement(): HTMLElement {
+        return this.ePinnedLeftRow ? this.ePinnedLeftRow : this.eFullWidthRowLeft;
+    }
+
+    // returns the pinned right container, either the normal one, or the embedded full with one if exists
+    public getPinnedRightRowElement(): HTMLElement {
+        return this.ePinnedRightRow ? this.ePinnedRightRow : this.eFullWidthRowRight;
+    }
+
+    // returns the body container, either the normal one, or the embedded full with one if exists
+    public getBodyRowElement(): HTMLElement {
+        return this.eBodyRow ? this.eBodyRow : this.eFullWidthRowBody;
+    }
+
+    // returns the full width container
+    public getFullWidthRowElement(): HTMLElement {
+        return this.eFullWidthRow;
+    }
+
 }
