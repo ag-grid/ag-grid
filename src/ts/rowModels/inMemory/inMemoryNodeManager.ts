@@ -96,8 +96,7 @@ export class InMemoryNodeManager {
         let rowNodeTransaction: RowNodeTransaction = {
             remove: [],
             update: [],
-            add: [],
-            addIndex: null
+            add: []
         };
 
         if (_.exists(add)) {

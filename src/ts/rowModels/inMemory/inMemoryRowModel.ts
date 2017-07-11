@@ -43,7 +43,6 @@ export interface RowDataTransaction {
 }
 
 export interface RowNodeTransaction {
-    addIndex: number,
     add: RowNode[];
     remove: RowNode[];
     update: RowNode[];
