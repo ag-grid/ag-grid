@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
 -->
     <p>
         Change detection can be broken down into the following two categories:
-        <ul>
+        <ol>
             <li>
                 <b>Value Change Detection:</b> When a value for any cell changes (e.g. after an edit),
                 the grid goes through
@@ -44,7 +44,7 @@ include '../documentation-main/documentation_header.php';
                 by the changed value. This means the grid will automatically keep aggregation
                 results (the values in the grouped row) up to date as the data beneath it changes.
             </li>
-        </ul>
+        </ol>
     </p>
 
     <note>
@@ -58,11 +58,6 @@ include '../documentation-main/documentation_header.php';
     <h2>Example - Change Detection and Value Getter's</h2>
 
     <p>
-        Notice the code for setting up the grid is simple. All of the refreshing and recalculating of values
-        is done internally by the grid.
-    </p>
-
-    <p>
         The example below shows the impact of change detection on value getters. The grid is
         doing all the refresh by itself with no need for the client application explicitly requesting
         a refresh. Notice the following:
@@ -71,7 +66,7 @@ include '../documentation-main/documentation_header.php';
             The 'Total' column uses a value getter to calculate the sum of all values in that row.
         </li>
         <li>
-            Edit any of the values in columns A to F.
+            Edit any of the values in columns A to F by double clicking a cell and entering a new value.
         </li>
         <li>
             The 'Total' column gets automatically refreshed and flashes.
@@ -81,7 +76,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleChangeDetectionValueGetter"></show-example>
 
-    <h1>Value Change Detection</h1>
+    <h1>1. Value Change Detection</h1>
 
     <p>
         The grid keeps a local copy of all values rendered in each cell. When a refresh of the cell
@@ -167,7 +162,7 @@ colDef = {
         call <a href="../javascript-grid-refresh/">api.refreshCells()</a>.
     </p>
 
-    <h1>Aggregation Change Detection</h1>
+    <h1>2. Aggregation Change Detection</h1>
 
     <p>
         Aggregation change detection means rerunning
