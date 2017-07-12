@@ -1,5 +1,4 @@
 import {Utils as _} from "../utils";
-import {MasterSlaveService} from "../masterSlaveService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
 import {RowRenderer, RefreshViewParams} from "../rendering/rowRenderer";
@@ -28,6 +27,7 @@ import {GridCell} from "../entities/gridCell";
 import {RowNode} from "../entities/rowNode";
 import {PaginationProxy} from "../rowModels/paginationProxy";
 import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
+import {ColumnSyncService} from "../columnSyncService";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -135,7 +135,7 @@ export interface RowContainerComponents {
 @Bean('gridPanel')
 export class GridPanel extends BeanStub {
 
-    @Autowired('masterSlaveService') private masterSlaveService: MasterSlaveService;
+    @Autowired('columnSyncService') private columnSyncService: ColumnSyncService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -1684,7 +1684,7 @@ export class GridPanel extends BeanStub {
             this.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL, {direction: 'horizontal'});
             this.lastLeftPosition = newLeftPosition;
             this.horizontallyScrollHeaderCenterAndFloatingCenter();
-            this.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
+            this.columnSyncService.fireHorizontalScrollEvent(newLeftPosition);
             this.setLeftAndRightBounds();
         }
     }

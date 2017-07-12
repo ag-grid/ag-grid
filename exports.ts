@@ -163,6 +163,7 @@ export {IRangeController} from "./dist/lib/interfaces/iRangeController"
 export {BaseFrameworkFactory} from "./dist/lib/baseFrameworkFactory";
 export {CellNavigationService} from "./dist/lib/cellNavigationService";
 export {ColumnChangeEvent} from "./dist/lib/columnChangeEvent";
+export {ColumnSyncService} from "./dist/lib/columnSyncService";
 export {Constants} from "./dist/lib/constants";
 export {CsvCreator, BaseCreator} from "./dist/lib/csvCreator";
 export {Downloader} from "./dist/lib/downloader";
@@ -175,7 +176,6 @@ export {GridOptionsWrapper} from "./dist/lib/gridOptionsWrapper";
 export {EventService} from "./dist/lib/eventService";
 export {GridCore} from "./dist/lib/gridCore";
 export {Logger} from "./dist/lib/logger";
-export {MasterSlaveService} from "./dist/lib/masterSlaveService";
 export {SelectionController} from "./dist/lib/selectionController";
 export {SortController} from "./dist/lib/sortController";
 export {SvgFactory} from "./dist/lib/svgFactory";
