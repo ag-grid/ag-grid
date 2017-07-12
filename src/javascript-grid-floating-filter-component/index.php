@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li>When the provided floating filter for a provided filter does not meet your requirements and you
         want to replace with one of your own.</li>
-        <li>Whe you have a custom filter and want to provide a floating filter for your custom filter.</li>
+        <li>When you have a custom filter and want to provide a floating filter for your custom filter.</li>
     </ul>
 </p>
 
