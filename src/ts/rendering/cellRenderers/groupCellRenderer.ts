@@ -75,6 +75,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let embeddedRowMismatch = this.embeddedRowMismatch();
         if (embeddedRowMismatch) { return; }
 
+        //This allows for empty strings to appear as groups since
+        //it will only return for null or undefined.
         if (params.value==null) {
             return;
         }
