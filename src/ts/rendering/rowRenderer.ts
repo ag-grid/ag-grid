@@ -480,9 +480,6 @@ export class RowRenderer extends BeanStub {
     private redraw(rowsToRecycle?: {[key: string]: RowComp}, animate = false) {
         this.workOutFirstAndLastRowsToRender();
 
-        // make copy, so no method side effects
-        let rowsToRecycleCopy = rowsToRecycle ? _.cloneObject(rowsToRecycle) : null;
-
         // the row can already exist and be in the following:
         // rowsToRecycle -> if model change, then the index may be different, however row may
         //                         exist here from previous time (mapped by id).
@@ -502,7 +499,7 @@ export class RowRenderer extends BeanStub {
         let nextVmTurnFunctions: Function[] = [];
 
         indexesToDraw.forEach( rowIndex => {
-            let rowComp = this.createOrUpdateRowComp(rowIndex, rowsToRecycleCopy, animate, previousElements);
+            let rowComp = this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, previousElements);
             _.pushAll(nextVmTurnFunctions, rowComp.getAndClearNextVMTurnFunctions());
         });
 
@@ -510,7 +507,7 @@ export class RowRenderer extends BeanStub {
             nextVmTurnFunctions.forEach( func => func() );
         }, 0);
 
-        this.destroyRowComps(rowsToRecycleCopy, animate);
+        this.destroyRowComps(rowsToRecycle, animate);
 
         this.checkAngularCompile();
     }
