@@ -84,7 +84,7 @@ export class RowRenderer extends BeanStub {
         this.rowContainers = this.gridPanel.getRowContainers();
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
-        this.refreshView();
+        this.redrawAfterModelUpdate();
     }
 
     private onPageLoaded(refreshEvent: ModelUpdatedEvent = {animate: false, keepRenderedRows: false, newData: false, newPage: false}): void {
@@ -156,17 +156,17 @@ export class RowRenderer extends BeanStub {
     }
 
     private onFloatingRowDataChanged(): void {
-        this.refreshView();
+        this.redrawAfterModelUpdate();
     }
 
     private onModelUpdated(refreshEvent: ModelUpdatedEvent): void {
         let params: RefreshViewParams = {
-            keepRenderedRows: refreshEvent.keepRenderedRows,
+            recycleRows: refreshEvent.keepRenderedRows,
             animate: refreshEvent.animate,
             newData: refreshEvent.newData,
             newPage: refreshEvent.newPage
         };
-        this.refreshView(params);
+        this.redrawAfterModelUpdate(params);
         // this.eventService.dispatchEvent(Events.DEPRECATED_EVENT_PAGINATION_PAGE_LOADED);
     }
 
@@ -196,8 +196,8 @@ export class RowRenderer extends BeanStub {
         this.removeRowComps(indexesToRemove);
 
         // add draw them again
-        this.refreshView({
-            keepRenderedRows: true
+        this.redrawAfterModelUpdate({
+            recycleRows: true
         });
     }
 
@@ -225,7 +225,7 @@ export class RowRenderer extends BeanStub {
     }
 
     // gets called after changes to the model.
-    public refreshView(params: RefreshViewParams = {}): void {
+    public redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
         this.logger.log('refreshView');
 
         this.getLockOnRefresh();
@@ -233,25 +233,22 @@ export class RowRenderer extends BeanStub {
         let focusedCell: GridCell = this.getCellToRestoreFocusToAfterRefresh(params);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
-            let containerHeight = this.paginationProxy.getCurrentPageHeight();
-            // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
-            // we still want the scroll to be present, otherwise there would be no way to access the columns
-            // on the RHS - and if that was where the filter was that cause no rows to be presented, there
-            // is no way to remove the filter.
-            if (containerHeight===0) { containerHeight = 1; }
-            this.rowContainers.body.setHeight(containerHeight);
-            this.rowContainers.fullWidth.setHeight(containerHeight);
-            this.rowContainers.pinnedLeft.setHeight(containerHeight);
-            this.rowContainers.pinnedRight.setHeight(containerHeight);
+            this.sizeContainerToPageHeight();
         }
 
-        let scrollToTop = params.newData || params.newPage;
-        let suppressScrollToTop = this.gridOptionsWrapper.isSuppressScrollOnNewData();
-        if (scrollToTop && !suppressScrollToTop) {
-            this.gridPanel.scrollToTop();
-        }
+        this.scrollToTopIfNewData(params);
 
-        this.refreshRowComps(params.keepRenderedRows, params.animate);
+        // never keep rendered rows if doing forPrint or autoHeight, as we do not use 'top' to
+        // position the rows (it uses normal flow), so we have to remove
+        // all rows and insert them again from scratch
+        let rowsUsingFlow = this.gridOptionsWrapper.isForPrint() || this.gridOptionsWrapper.isAutoHeight();
+        let recycleRows = rowsUsingFlow ? false : params.recycleRows;
+        let animate = rowsUsingFlow ? false : params.animate;
+
+        let rowsToRecycle: {[key: string]: RowComp} = this.binRowComps(recycleRows);
+
+        this.redraw(rowsToRecycle, animate);
+
         if (!params.onlyBody){
             this.refreshFloatingRowComps();
         }
@@ -259,6 +256,27 @@ export class RowRenderer extends BeanStub {
         this.restoreFocusedCell(focusedCell);
 
         this.releaseLockOnRefresh();
+    }
+
+    private scrollToTopIfNewData(params: RefreshViewParams): void {
+        let scrollToTop = params.newData || params.newPage;
+        let suppressScrollToTop = this.gridOptionsWrapper.isSuppressScrollOnNewData();
+        if (scrollToTop && !suppressScrollToTop) {
+            this.gridPanel.scrollToTop();
+        }
+    }
+
+    private sizeContainerToPageHeight(): void {
+        let containerHeight = this.paginationProxy.getCurrentPageHeight();
+        // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
+        // we still want the scroll to be present, otherwise there would be no way to access the columns
+        // on the RHS - and if that was where the filter was that cause no rows to be presented, there
+        // is no way to remove the filter.
+        if (containerHeight===0) { containerHeight = 1; }
+        this.rowContainers.body.setHeight(containerHeight);
+        this.rowContainers.fullWidth.setHeight(containerHeight);
+        this.rowContainers.pinnedLeft.setHeight(containerHeight);
+        this.rowContainers.pinnedRight.setHeight(containerHeight);
     }
 
     private getLockOnRefresh(): void {
@@ -391,25 +409,17 @@ export class RowRenderer extends BeanStub {
         this.removeRowComps(rowIndexesToRemove);
     }
 
-    private refreshRowComps(keepRenderedRows: boolean, animate: boolean) {
+    private binRowComps(recycleRows: boolean): {[key: string]: RowComp} {
 
         let indexesToRemove: string[];
-        let previousRowComps: {[key: string]: RowComp} = {};
+        let rowsToRecycle: {[key: string]: RowComp} = {};
 
-        // never keep rendered rows if doing forPrint or autoHeight, as we do not use 'top' to
-        // position the rows (it uses normal flow), so we have to remove
-        // all rows and insert them again from scratch
-        if (this.gridOptionsWrapper.isForPrint() || this.gridOptionsWrapper.isAutoHeight()) {
-            keepRenderedRows = false;
-            animate = false;
-        }
-
-        if (keepRenderedRows) {
+        if (recycleRows) {
             indexesToRemove = [];
             _.iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowComp)=> {
                 let rowNode = rowComp.getRowNode();
                 if (_.exists(rowNode.id)) {
-                    previousRowComps[rowNode.id] = rowComp;
+                    rowsToRecycle[rowNode.id] = rowComp;
                     delete this.rowCompsByIndex[index];
                 } else {
                     indexesToRemove.push(index);
@@ -420,8 +430,8 @@ export class RowRenderer extends BeanStub {
         }
 
         this.removeRowComps(indexesToRemove);
-        this.drawVirtualRows(previousRowComps, animate);
 
+        return rowsToRecycle;
     }
 
     // takes array of row indexes
@@ -439,15 +449,115 @@ export class RowRenderer extends BeanStub {
     // 1) size of grid changed
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
-    public drawVirtualRowsWithLock() {
+    public redrawAfterScroll() {
         this.getLockOnRefresh();
-        this.drawVirtualRows();
+        this.redraw();
         this.releaseLockOnRefresh();
     }
 
-    private drawVirtualRows(previousRowComps?: {[key: string]: RowComp}, animate = false) {
+    private removeRowsOutsideViewport(indexesWeWant: number[]): void {
+        let rowIndexesToRemove: string[] = [];
+        _.iterateObject(this.rowCompsByIndex, (indexStr: string, rowComp: RowComp) => {
+            let index = Number(indexStr);
+            if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
+                if (this.keepRowBecauseEditing(rowComp)) {
+                    indexesWeWant.push(index);
+                } else {
+                    rowIndexesToRemove.push(indexStr);
+                }
+            }
+        });
+        this.removeRowComps(rowIndexesToRemove);
+    }
+
+    private redraw(rowsToRecycle?: {[key: string]: RowComp}, animate = false) {
         this.workOutFirstAndLastRowsToRender();
-        this.ensureRowsRendered(previousRowComps, animate);
+
+        // make copy, so no method side effects
+        let rowsToRecycleCopy = rowsToRecycle ? _.cloneObject(rowsToRecycle) : null;
+
+        // the row can already exist and be in the following:
+        // rowsToRecycle -> if model change, then the index may be different, however row may
+        //                         exist here from previous time (mapped by id).
+        // this.rowCompsByIndex -> if just a scroll, then this will contain what is currently in the viewport
+
+        let indexesToDraw = _.createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
+
+        // we pass in indexesWeWant do allow the clearOut method to add some rows to keep
+        this.removeRowsOutsideViewport(indexesToDraw);
+        // sort (after calling above) so we ensure order is the index order
+        indexesToDraw.sort( (a: number, b: number) => a - b);
+
+        // this keeps track of the last inserted element in each container, so when rows are getting
+        // inserted or repositioned, they can be done relative to the previous DOM element
+        let previousElements: ContainerElements = {body: null, left: null, right: null, fullWidth: null};
+
+        // add in new rows
+        let delayedCreateFunctions: Function[] = [];
+
+        indexesToDraw.forEach( rowIndex => {
+
+            let rowNode: RowNode;
+
+            let rowComp = this.rowCompsByIndex[rowIndex];
+
+            // if no row comp, see if we can get it from the previous rowComps
+            if (!rowComp) {
+                rowNode = this.paginationProxy.getRow(rowIndex);
+                if (_.exists(rowsToRecycleCopy) && rowsToRecycleCopy[rowNode.id]) {
+                    rowComp = rowsToRecycleCopy[rowNode.id];
+                    rowsToRecycleCopy[rowNode.id] = null;
+                }
+            }
+
+            let creatingNewRowComp = !rowComp;
+
+            if (creatingNewRowComp) {
+                // create a new one
+                if (!rowNode) {
+                    rowNode = this.paginationProxy.getRow(rowIndex);
+                }
+                rowComp = this.createRowComp(rowNode, animate, previousElements);
+            } else {
+                // ensure row comp is in right position in DOM
+                rowComp.ensureInDomAfter(previousElements);
+            }
+
+            _.pushAll(delayedCreateFunctions, rowComp.getAndClearNextVMTurnFunctions());
+
+            this.rowCompsByIndex[rowIndex] = rowComp;
+
+            this.updatePreviousElements(previousElements, rowComp);
+        });
+
+        setTimeout( ()=> {
+            delayedCreateFunctions.forEach( func => func() );
+        }, 0);
+
+        this.destroyRowComps(rowsToRecycleCopy, animate);
+
+        this.checkAngularCompile();
+    }
+
+    private destroyRowComps(rowCompsMap: {[key: string]: RowComp}, animate: boolean): void {
+        let delayedDestroyFunctions: Function[] = [];
+        _.iterateObject(rowCompsMap, (nodeId: string, rowComp: RowComp) => {
+            // if row was used, then it's null
+            if (!rowComp) { return; }
+            rowComp.destroy(animate);
+            rowComp.getAndClearDelayedDestroyFunctions().forEach(func => delayedDestroyFunctions.push(func) );
+        });
+        setTimeout( ()=> {
+            delayedDestroyFunctions.forEach( func => func() );
+        }, 400);
+    }
+
+    private checkAngularCompile(): void {
+        // if we are doing angular compiling, then do digest the scope here
+        if (this.gridOptionsWrapper.isAngularCompileRows()) {
+            // we do it in a timeout, in case we are already in an apply
+            setTimeout( () => { this.$scope.$apply(); }, 0);
+        }
     }
 
     private workOutFirstAndLastRowsToRender(): void {
@@ -515,89 +625,6 @@ export class RowRenderer extends BeanStub {
         return this.lastRenderedRow;
     }
 
-    private ensureRowsRendered(previousRowCompsById?: {[key: string]: RowComp}, animate = false) {
-
-        let indexesWeWant: number[] = [];
-        for (let rowIndex = this.firstRenderedRow; rowIndex<=this.lastRenderedRow; rowIndex++) {
-            indexesWeWant.push(rowIndex);
-        }
-
-        let rowIndexesToRemove: string[] = [];
-        _.iterateObject(this.rowCompsByIndex, (indexStr: string, rowComp: RowComp) => {
-            let index = Number(indexStr);
-            if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
-                if (this.keepRowBecauseEditing(rowComp)) {
-                    indexesWeWant.push(index);
-                } else {
-                    rowIndexesToRemove.push(indexStr);
-                }
-            }
-        });
-        this.removeRowComps(rowIndexesToRemove);
-
-        indexesWeWant.sort( (a: number, b: number) => a - b);
-
-        let previousElements: ContainerElements = {body: null, left: null, right: null, fullWidth: null};
-
-        // add in new rows
-        let delayedCreateFunctions: Function[] = [];
-
-        indexesWeWant.forEach( rowIndex => {
-
-            let rowNode: RowNode;
-
-            let rowComp = this.rowCompsByIndex[rowIndex];
-
-            // if no row comp, see if we can get it from the previous rowComps
-            if (!rowComp) {
-                rowNode = this.paginationProxy.getRow(rowIndex);
-                if (_.exists(previousRowCompsById) && previousRowCompsById[rowNode.id]) {
-                    rowComp = previousRowCompsById[rowNode.id];
-                    delete previousRowCompsById[rowNode.id];
-                }
-            }
-
-            let creatingNewRowComp = !rowComp;
-
-            if (creatingNewRowComp) {
-                // create a new one
-                if (!rowNode) {
-                    rowNode = this.paginationProxy.getRow(rowIndex);
-                }
-                rowComp = this.createRowComp(rowNode, animate, previousElements);
-            } else {
-                // ensure row comp is in right position in DOM
-                rowComp.ensureInDomAfter(previousElements);
-            }
-
-            _.pushAll(delayedCreateFunctions, rowComp.getAndClearNextVMTurnFunctions());
-
-            this.rowCompsByIndex[rowIndex] = rowComp;
-
-            this.updatePreviousElements(previousElements, rowComp);
-        });
-
-        setTimeout( ()=> {
-            delayedCreateFunctions.forEach( func => func() );
-        }, 0);
-
-        let delayedDestroyFunctions: Function[] = [];
-        _.iterateObject(previousRowCompsById, (nodeId: string, renderedRow: RowComp) => {
-            renderedRow.destroy(animate);
-            renderedRow.getAndClearDelayedDestroyFunctions().forEach(func => delayedDestroyFunctions.push(func) );
-            delete previousRowCompsById[nodeId];
-        });
-        setTimeout( ()=> {
-            delayedDestroyFunctions.forEach( func => func() );
-        }, 400);
-
-        // if we are doing angular compiling, then do digest the scope here
-        if (this.gridOptionsWrapper.isAngularCompileRows()) {
-            // we do it in a timeout, in case we are already in an apply
-            setTimeout( () => { this.$scope.$apply(); }, 0);
-        }
-    }
-
     private updatePreviousElements(previousElements: ContainerElements, rowComp: RowComp): void {
         let body: HTMLElement = rowComp.getBodyRowElement();
         let left: HTMLElement = rowComp.getPinnedLeftRowElement();
@@ -617,118 +644,6 @@ export class RowRenderer extends BeanStub {
             previousElements.fullWidth = fullWidth;
         }
     }
-/*
-    private ensureRowsRendered_old(previousRowCompsById?: {[key: string]: RowComp}, animate = false) {
-
-        // the row can already exist and be in the following:
-        // previousRowCompsById -> if model change, then the index may be different, however row may
-        //                         exist here from previous time (mapped by id).
-        // this.rowCompsByIndex -> if just a scroll, then this will contain what is currently in the viewport
-
-        // let timer = new Timer();
-
-        // at the end, this array will contain the items we need to remove
-        let rowsToRemove = Object.keys(this.rowCompsByIndex);
-
-        // add in new rows
-        let delayedCreateFunctions: Function[] = [];
-
-        for (let rowIndex = this.firstRenderedRow; rowIndex <= this.lastRenderedRow; rowIndex++) {
-
-            // see if item already there, and if yes, take it out of the 'to remove' array
-            let rowAlreadyInDom = rowsToRemove.indexOf(rowIndex.toString()) >= 0;
-            if (rowAlreadyInDom) {
-                _.removeFromArray(rowsToRemove, rowIndex.toString());
-                continue;
-            }
-            // check this row actually exists (in case overflow buffer window exceeds real data)
-            let rowNode = this.paginationProxy.getRow(rowIndex);
-            if (rowNode) {
-
-                let rowComp: RowComp;
-
-                if (_.exists(previousRowCompsById) && previousRowCompsById[rowNode.id]) {
-                    rowComp = previousRowCompsById[rowNode.id];
-                    delete previousRowCompsById[rowNode.id];
-                } else {
-                    rowComp = this.createRowComp(rowNode, animate, TEMP_PREVIOUS_ELEMENTS);
-                }
-
-                _.pushAll(delayedCreateFunctions, rowComp.getAndClearNextVMTurnFunctions());
-                this.rowCompsByIndex[rowIndex] = rowComp;
-            }
-        }
-
-        setTimeout( ()=> {
-            delayedCreateFunctions.forEach( func => func() );
-        }, 0);
-
-        // timer.print('creating template');
-
-        rowsToRemove = this.filterOutEditingRows(rowsToRemove);
-
-        // at this point, everything in our 'rowsToRemove' is an old index that needs to be removed
-        this.removeRowComps(rowsToRemove);
-
-        // and everything in our previousRowCompsById is an old row that is no longer used
-        let delayedDestroyFunctions: Function[] = [];
-        _.iterateObject(previousRowCompsById, (nodeId: string, renderedRow: RowComp) => {
-            renderedRow.destroy(animate);
-            renderedRow.getAndClearDelayedDestroyFunctions().forEach(func => delayedDestroyFunctions.push(func) );
-            delete previousRowCompsById[nodeId];
-        });
-        setTimeout( ()=> {
-            delayedDestroyFunctions.forEach( func => func() );
-        }, 400);
-
-        // timer.print('removing');
-
-        if (this.gridOptionsWrapper.isEnforceRowDomOrder()) {
-            _.iterateObject(this.rowContainers, (key: string, rowContainerComp: RowContainerComponent) => {
-                if (rowContainerComp) {
-                    rowContainerComp.sortDomByRowNodeIndex();
-                }
-            });
-        }
-
-        // if we are doing angular compiling, then do digest the scope here
-        if (this.gridOptionsWrapper.isAngularCompileRows()) {
-            // we do it in a timeout, in case we are already in an apply
-            setTimeout( () => { this.$scope.$apply(); }, 0);
-        }
-
-        // timer.print('total');
-    }*/
-
-    // check that none of the rows to remove are editing or focused as:
-    // a) if editing, we want to keep them, otherwise the user will loose the context of the edit,
-    //    eg user starts editing, enters some text, then scrolls down and then up, next time row rendered
-    //    the edit is reset - so we want to keep it rendered.
-    // b) if focused, we want ot keep keyboard focus, so if user ctrl+c, it goes to clipboard,
-    //    otherwise the user can range select and drag (with focus cell going out of the viewport)
-    //    and then ctrl+c, nothing will happen if cell is removed from dom.
-/*    private filterOutEditingRows(rowsToRemove: string[]): string[] {
-        return _.filter(rowsToRemove, indexStr => {
-            let REMOVE_ROW : boolean = true;
-            let KEEP_ROW : boolean = false;
-            let renderedRow = this.rowCompsByIndex[indexStr];
-            let rowNode = renderedRow.getRowNode();
-
-            let rowHasFocus = this.focusedCellController.isRowNodeFocused(rowNode);
-            let rowIsEditing = renderedRow.isEditing();
-
-            let mightWantToKeepRow = rowHasFocus || rowIsEditing;
-
-            // if we deffo don't want to keep it,
-            if (!mightWantToKeepRow) { return REMOVE_ROW; }
-
-            // editing row, only remove if it is no longer rendered, eg filtered out or new data set.
-            // the reason we want to keep is if user is scrolling up and down, we don't want to loose
-            // the context of the editing in process.
-            let rowNodePresent = this.paginationProxy.isRowPresent(rowNode);
-            return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
-        });
-    }*/
 
     // check that none of the rows to remove are editing or focused as:
     // a) if editing, we want to keep them, otherwise the user will loose the context of the edit,
@@ -1035,7 +950,7 @@ export class RowRenderer extends BeanStub {
 }
 
 export interface RefreshViewParams {
-    keepRenderedRows?:boolean;
+    recycleRows?:boolean;
     animate?:boolean;
     suppressKeepFocus?:boolean;
     onlyBody?:boolean;

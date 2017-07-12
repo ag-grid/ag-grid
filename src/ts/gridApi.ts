@@ -223,7 +223,7 @@ export class GridApi {
         if (params && params.rowNodes) {
             this.rowRenderer.redrawRows(params.rowNodes);
         } else {
-            this.rowRenderer.refreshView();
+            this.rowRenderer.redrawAfterModelUpdate();
         }
     }
 

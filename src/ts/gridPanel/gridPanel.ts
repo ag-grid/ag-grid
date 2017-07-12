@@ -675,7 +675,7 @@ export class GridPanel extends BeanStub {
             onlyBody: true,
             suppressKeepFocus: true
         };
-        this.rowRenderer.refreshView(refreshViewParams);
+        this.rowRenderer.redrawAfterModelUpdate(refreshViewParams);
 
 
         //***************************************************************************
@@ -915,13 +915,13 @@ export class GridPanel extends BeanStub {
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
             eViewportToScroll.scrollTop = rowTopPixel;
-            this.rowRenderer.drawVirtualRowsWithLock();
+            this.rowRenderer.redrawAfterScroll();
         } else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             let viewportHeight = vRangeBottom - vRangeTop;
             let newScrollPosition = rowBottomPixel - viewportHeight;
             eViewportToScroll.scrollTop = newScrollPosition;
-            this.rowRenderer.drawVirtualRowsWithLock();
+            this.rowRenderer.redrawAfterScroll();
         }
         // otherwise, row is already in view, so do nothing
     }
@@ -1705,7 +1705,7 @@ export class GridPanel extends BeanStub {
 
             this.fakeVerticalScroll(newTopPosition);
 
-            this.rowRenderer.drawVirtualRowsWithLock();
+            this.rowRenderer.redrawAfterScroll();
         }
     }
 

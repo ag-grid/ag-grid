@@ -290,6 +290,14 @@ export class Utils {
         source.forEach(func => target.push(func));
     }
 
+    static createArrayOfNumbers(first: number, last: number): number[] {
+        let result: number[] = [];
+        for (let i = first; i<=last; i++) {
+            result.push(i);
+        }
+        return result;
+    }
+
     static getFunctionParameters(func: any) {
         let fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
         let result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);
