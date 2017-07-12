@@ -37,7 +37,7 @@ var gridOptionsTop = {
     // don't show the horizontal scrollbar on the top grid
     suppressHorizontalScroll: true,
     enableSorting: true,
-    columnSyncGrids: []
+    alignedGrids: []
 };
 
 // this is the grid options for the bottom grid
@@ -50,11 +50,11 @@ var gridOptionsBottom = {
     rowClass: 'bold-row',
     // hide the header on the bottom grid
     headerHeight: 0,
-    columnSyncGrids: []
+    alignedGrids: []
 };
 
-gridOptionsTop.columnSyncGrids.push(gridOptionsBottom);
-gridOptionsBottom.columnSyncGrids.push(gridOptionsTop);
+gridOptionsTop.alignedGrids.push(gridOptionsBottom);
+gridOptionsBottom.alignedGrids.push(gridOptionsTop);
 
 function btSizeColsToFix() {
     gridOptionsTop.api.sizeColumnsToFit();

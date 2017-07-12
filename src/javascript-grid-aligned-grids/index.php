@@ -1,18 +1,18 @@
 <?php
-$key = "Column Sync";
-$pageTitle = "ag-Grid Column Sync";
-$pageDescription = "ag-Grid Column Sync";
-$pageKeyboards = "ag-Grid Column Sync";
+$key = "Aligned Grids";
+$pageTitle = "ag-Grid Aligned Grids";
+$pageDescription = "ag-Grid Aligned Grids";
+$pageKeyboards = "ag-Grid Aligned Grids";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h1 class="first-h1" id="master-slave">Column Sync</h1>
+    <h1 class="first-h1" id="master-slave">Aligned Grids</h1>
 
     <p>
-        Column syncing two or more grids means columns will be kept synchronised in all grids.
+        Aligning two or more grids means columns will be kept aligned in all grids.
         In other words, column changes to one grid (column width, column order, column visibility etc)
         are reflected in the other grid.
         This is useful if you have two grids, one above the other such that their columns are vertically aligned,
@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         To have one (the first) grid reflect column changes in another (the second), place the
-        first grid's options in <code>columnSyncGrids</code> property of the second grids.
+        first grid's options in <code>alignedGrids</code> property of the second grids.
     </p>
     <pre><code>gridOptionsFirst = {
     <span class="codeComment">// some grid options here</span>
@@ -32,16 +32,16 @@ include '../documentation-main/documentation_header.php';
 
 gridOptionsSecond = {
     <span class="codeComment">// register first grid to receive events from the second</span>
-    columnSyncGrids: [gridOptionsFirst]
+    alignedGrids: [gridOptionsFirst]
 
     <span class="codeComment">// other grid options here</span>
     ...
 }</code></pre>
 
-    <h2 id="demonstration-example">Example - Synced Columns</h2>
+    <h2 id="demonstration-example">Example - Aligned Grids</h2>
 
     <p>
-        Below shows two grids, both synchronised with the other (so any column change to one will be
+        Below shows two grids, both aligned with the other (so any column change to one will be
         reflected in the other). The following should be noted:
         <ul>
             <li>When either grid is scrolled horizontally, the other grid follows.</li>
@@ -54,11 +54,11 @@ gridOptionsSecond = {
         it demonstrates the features in an easy to understand way.
     </p>
 
-    <show-example example="exampleMasterSlave"></show-example>
+    <show-example example="exampleAlignedGrids"></show-example>
 
     <h2 id="events">Events</h2>
     <p>
-        The events which are fired as part of the master slave relationship are as follows:
+        The events which are fired as part of the grid alignment relationship are as follows:
         <ul>
             <li>Horizontal Scroll</li>
             <li>Column Hidden / Shown</li>
@@ -72,15 +72,15 @@ gridOptionsSecond = {
     <h2 id="pivots">Pivots</h2>
 
     <p>
-        The pivot functionality does not work with synced grids. This is because pivoting data changes
-        the columns, which would make the synced grids incompatible, as they are no longer sharing
+        The pivot functionality does not work with aligned grids. This is because pivoting data changes
+        the columns, which would make the aligned grids incompatible, as they are no longer sharing
         the same set of columns.
     </p>
 
-    <h2 id="a-wee-more-useful-example">Example - Second Grid as Footer</h2>
+    <h2 id="a-wee-more-useful-example">Example - Aligned Grid as Footer</h2>
 
     <p>
-        So why would you want to column sync grids like this? It's great for aligning grids that have
+        So why would you want to align grids like this? It's great for aligning grids that have
         different data but similar columns. Maybe you want to include a footer grid with 'summary' data.
         Maybe you have two sets of data, but one is aggregated differently to the other.
     </p>
@@ -94,28 +94,28 @@ gridOptionsSecond = {
             widths from the top grid.</li>
     </p>
 
-    <show-example example="exampleFloatingFooter"></show-example>
+    <show-example example="exampleAlignedFloatingFooter"></show-example>
 
-    <h2 id="split-column-groups">Example - Synced Column Groups</h2>
+    <h2 id="split-column-groups">Example - Align Column Groups</h2>
 
     <p>
         It is possible that you have column groups that are split because of pinning or the
         order of the columns. The grid below has only two groups that are split, displayed
-        as many split groups. The column syncing also works here in that a change to a split
+        as many split groups. The column aligning also works here in that a change to a split
         group will open / close all the instances of that group in both tables.
     </p>
 
-    <show-example example="exampleMasterSlaveGroups"></show-example>
+    <show-example example="exampleAlignedGroups"></show-example>
 
     <h2 id="event-propagation">Event Propagation</h2>
 
     <p>
-        When a grid fires an event, it will be processed to all registered synced grids. However if
-        a grid is processing a sync, it will not fire an event to other synced grids. For example, consider
-        the grids A, B and C where B is synced to A and C is synced to B (ie A -> B -> C). If
-        A gets a column resized, it will fire the event to B, but B will not fire the event to C. If
+        When a grid fires an event, it will be processed to all registered aligned grids. However if
+        a grid is processing such an event, it will not fire an event to other aligned grids.
+        For example, consider the grids A, B and C where B is aligned to A and C is aligned to B (ie A -> B -> C).
+        If A gets a column resized, it will fire the event to B, but B will not fire the event to C. If
         C is also dependent on A, it needs to be set up directly. This stops cyclic dependencies
-        between grids causing infinite firing of events if two grids are synced to each other.
+        between grids causing infinite firing of events if two grids are aligned to each other.
     </p>
 
 </div>
