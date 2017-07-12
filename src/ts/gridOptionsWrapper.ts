@@ -312,7 +312,7 @@ export class GridOptionsWrapper {
     public getAggFuncs(): {[key: string]: IAggFunc} { return this.gridOptions.aggFuncs; }
     public getIsScrollLag() { return this.gridOptions.isScrollLag; }
     public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
-    public getColumnSyncGrids(): GridOptions[] { return this.gridOptions.columnSyncGrids; }
+    public getAlignedGrids(): GridOptions[] { return this.gridOptions.alignedGrids; }
     public getGroupRowRendererParams() { return this.gridOptions.groupRowRendererParams; }
     public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
     public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
@@ -581,7 +581,7 @@ export class GridOptionsWrapper {
             console.warn(`ag-grid: since version 11.0.x, groupColumnDef has been renamed, this property is now called autoGroupColumnDef. Please change your configuration accordingly`);
         }
         if (options.slaveGrids) {
-            console.warn(`ag-grid: since version 11.0.x, slaveGrids has been renamed, this property is now called columnSyncGrids. Please change your configuration accordingly`);
+            console.warn(`ag-grid: since version 11.0.x, slaveGrids has been renamed, this property is now called alignedGrids. Please change your configuration accordingly`);
         }
     }
 

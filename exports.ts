@@ -163,7 +163,7 @@ export {IRangeController} from "./dist/lib/interfaces/iRangeController"
 export {BaseFrameworkFactory} from "./dist/lib/baseFrameworkFactory";
 export {CellNavigationService} from "./dist/lib/cellNavigationService";
 export {ColumnChangeEvent} from "./dist/lib/columnChangeEvent";
-export {ColumnSyncService} from "./dist/lib/columnSyncService";
+export {AlignedGridsService} from "./dist/lib/alignedGridsService";
 export {Constants} from "./dist/lib/constants";
 export {CsvCreator, BaseCreator} from "./dist/lib/csvCreator";
 export {Downloader} from "./dist/lib/downloader";

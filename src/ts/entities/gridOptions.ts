@@ -170,7 +170,7 @@ export interface GridOptions {
     rowClass?: any;
     groupDefaultExpanded?: number;
     slaveGrids?: GridOptions[]; // slaveGrids deprecated, replace with columnSyncGrids
-    columnSyncGrids?: GridOptions[];
+    alignedGrids?: GridOptions[];
     rowSelection?: string;
     rowDeselection?: boolean;
     overlayLoadingTemplate?: string;

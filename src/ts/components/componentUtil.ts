@@ -25,7 +25,7 @@ export class ComponentUtil {
     ];
 
     public static ARRAY_PROPERTIES = [
-        'slaveGrids', 'columnSyncGrids', 'rowData', 'floatingTopRowData', 'floatingBottomRowData',
+        'slaveGrids', 'alignedGrids', 'rowData', 'floatingTopRowData', 'floatingBottomRowData',
         'columnDefs', 'excelStyles'
     ];
 
