@@ -14,8 +14,8 @@ import {Qualifier} from "./context/context";
 import {Autowired} from "./context/context";
 import {PostConstruct} from "./context/context";
 
-@Bean('masterSlaveService')
-export class MasterSlaveService {
+@Bean('columnSyncService')
+export class ColumnSyncService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
@@ -43,7 +43,7 @@ export class MasterSlaveService {
     }
 
     // common logic across all the fire methods
-    private fireEvent(callback: (slaveService: MasterSlaveService)=>void): void {
+    private fireEvent(callback: (slaveService: ColumnSyncService)=>void): void {
         // if we are already consuming, then we are acting on an event from a master,
         // so we don't cause a cyclic firing of events
         if (this.consuming) {
@@ -51,11 +51,11 @@ export class MasterSlaveService {
         }
 
         // iterate through the slave grids, and pass each slave service to the callback
-        let slaveGrids = this.gridOptionsWrapper.getSlaveGrids();
-        if (slaveGrids) {
-            slaveGrids.forEach( (slaveGridOptions: GridOptions) => {
-                if (slaveGridOptions.api) {
-                    let slaveService = slaveGridOptions.api.__getMasterSlaveService();
+        let otherGrids = this.gridOptionsWrapper.getColumnSyncGrids();
+        if (otherGrids) {
+            otherGrids.forEach( (otherGridOptions: GridOptions) => {
+                if (otherGridOptions.api) {
+                    let slaveService = otherGridOptions.api.__getColumnSyncService();
                     callback(slaveService);
                 }
             });
@@ -71,13 +71,13 @@ export class MasterSlaveService {
     }
 
     private fireColumnEvent(event: ColumnChangeEvent): void {
-        this.fireEvent( (slaveService: MasterSlaveService)=> {
+        this.fireEvent( (slaveService: ColumnSyncService)=> {
             slaveService.onColumnEvent(event);
         });
     }
 
     public fireHorizontalScrollEvent(horizontalScroll: number): void {
-        this.fireEvent( (slaveService: MasterSlaveService)=> {
+        this.fireEvent( (slaveService: ColumnSyncService)=> {
             slaveService.onScrollEvent(horizontalScroll);
         });
     }

@@ -7,7 +7,6 @@ import {SelectionController} from "./selectionController";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {GridPanel} from "./gridPanel/gridPanel";
 import {ValueService} from "./valueService/valueService";
-import {MasterSlaveService} from "./masterSlaveService";
 import {EventService} from "./eventService";
 import {FloatingRowModel} from "./rowModels/floatingRowModel";
 import {ColDef, ColGroupDef, IAggFunc} from "./entities/colDef";
@@ -39,6 +38,7 @@ import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
 import {InMemoryRowModel, RefreshModelParams, RowDataTransaction} from "./rowModels/inMemory/inMemoryRowModel";
 import {ImmutableService} from "./rowModels/inMemory/immutableService";
 import {ValueCache} from "./valueService/valueCache";
+import {ColumnSyncService} from "./columnSyncService";
 
 
 export interface StartEditingCellParams {
@@ -74,7 +74,7 @@ export class GridApi {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('masterSlaveService') private masterSlaveService: MasterSlaveService;
+    @Autowired('columnSyncService') private columnSyncService: ColumnSyncService;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
     @Autowired('context') private context: Context;
@@ -110,8 +110,8 @@ export class GridApi {
     }
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    public __getMasterSlaveService(): MasterSlaveService {
-        return this.masterSlaveService;
+    public __getColumnSyncService(): ColumnSyncService {
+        return this.columnSyncService;
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {

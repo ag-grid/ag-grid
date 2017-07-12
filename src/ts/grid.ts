@@ -7,7 +7,6 @@ import {RowRenderer} from "./rendering/rowRenderer";
 import {HeaderRenderer} from "./headerRendering/headerRenderer";
 import {FilterManager} from "./filter/filterManager";
 import {ValueService} from "./valueService/valueService";
-import {MasterSlaveService} from "./masterSlaveService";
 import {EventService} from "./eventService";
 import {GridPanel} from "./gridPanel/gridPanel";
 import {GridApi} from "./gridApi";
@@ -64,6 +63,7 @@ import {IRowModel} from "./interfaces/iRowModel";
 import {Constants} from "./constants";
 import {ValueCache} from "./valueService/valueCache";
 import {ChangeDetectionService} from "./valueService/changeDetectionService";
+import {ColumnSyncService} from "./columnSyncService";
 
 export interface GridParams {
     // used by Web Components
@@ -155,7 +155,7 @@ export class Grid {
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,
                 BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
-                GridPanel, PopupService, ValueCache, ValueService, MasterSlaveService,
+                GridPanel, PopupService, ValueCache, ValueService, ColumnSyncService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService, FilterService, RowNodeFactory,
