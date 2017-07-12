@@ -6,7 +6,7 @@ import {TemplateService} from "../templateService";
 import {ValueService} from "../valueService/valueService";
 import {EventService} from "../eventService";
 import {FloatingRowModel} from "../rowModels/floatingRowModel";
-import {RowComp} from "./rowComp";
+import {ContainerElements, RowComp} from "./rowComp";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {Events, ModelUpdatedEvent} from "../events";
@@ -22,17 +22,9 @@ import {CellNavigationService} from "../cellNavigationService";
 import {GridCell} from "../entities/gridCell";
 import {NavigateToNextCellParams, TabToNextCellParams} from "../entities/gridOptions";
 import {RowContainerComponent} from "./rowContainerComponent";
-import {ColDef} from "../entities/colDef";
 import {BeanStub} from "../context/beanStub";
 import {PaginationProxy} from "../rowModels/paginationProxy";
 import {RefreshCellsParams} from "../gridApi";
-
-export interface ContainerElements {
-    left: HTMLElement;
-    right: HTMLElement;
-    body: HTMLElement;
-    fullWidth: HTMLElement;
-}
 
 let TEMP_PREVIOUS_ELEMENTS: ContainerElements = {body: null, left: null, right: null, fullWidth: null};
 
@@ -455,19 +447,34 @@ export class RowRenderer extends BeanStub {
         this.releaseLockOnRefresh();
     }
 
-    private removeRowsOutsideViewport(indexesWeWant: number[]): void {
-        let rowIndexesToRemove: string[] = [];
+    private removeRowCompsNotToDraw(indexesToDraw: number[]): void {
+        // for speedy lookup, dump into map
+        let indexesToDrawMap: {[index: string]: boolean} = {};
+        indexesToDraw.forEach(index => indexesToDrawMap[index] = true);
+
+        let existingIndexes = Object.keys(this.rowCompsByIndex);
+        let indexesNotToDraw: string[] = _.filter(existingIndexes, index => !indexesToDrawMap[index]);
+
+        this.removeRowComps(indexesNotToDraw);
+    }
+
+    private calculateIndexesToDraw(): number[] {
+        // all in all indexes in the viewport
+        let indexesToDraw = _.createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
+
+        // add in indexes of rows we want to keep, because they are currently editing
         _.iterateObject(this.rowCompsByIndex, (indexStr: string, rowComp: RowComp) => {
             let index = Number(indexStr);
             if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
                 if (this.keepRowBecauseEditing(rowComp)) {
-                    indexesWeWant.push(index);
-                } else {
-                    rowIndexesToRemove.push(indexStr);
+                    indexesToDraw.push(index);
                 }
             }
         });
-        this.removeRowComps(rowIndexesToRemove);
+
+        indexesToDraw.sort( (a: number, b: number) => a - b);
+
+        return indexesToDraw
     }
 
     private redraw(rowsToRecycle?: {[key: string]: RowComp}, animate = false) {
@@ -481,57 +488,26 @@ export class RowRenderer extends BeanStub {
         //                         exist here from previous time (mapped by id).
         // this.rowCompsByIndex -> if just a scroll, then this will contain what is currently in the viewport
 
-        let indexesToDraw = _.createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
+        // this is all the indexes we want, including those that already exist, so this method
+        // will end up going through each index and drawing only if the row doesn't already exist
+        let indexesToDraw = this.calculateIndexesToDraw();
 
-        // we pass in indexesWeWant do allow the clearOut method to add some rows to keep
-        this.removeRowsOutsideViewport(indexesToDraw);
-        // sort (after calling above) so we ensure order is the index order
-        indexesToDraw.sort( (a: number, b: number) => a - b);
+        this.removeRowCompsNotToDraw(indexesToDraw);
 
         // this keeps track of the last inserted element in each container, so when rows are getting
         // inserted or repositioned, they can be done relative to the previous DOM element
         let previousElements: ContainerElements = {body: null, left: null, right: null, fullWidth: null};
 
         // add in new rows
-        let delayedCreateFunctions: Function[] = [];
+        let nextVmTurnFunctions: Function[] = [];
 
         indexesToDraw.forEach( rowIndex => {
-
-            let rowNode: RowNode;
-
-            let rowComp = this.rowCompsByIndex[rowIndex];
-
-            // if no row comp, see if we can get it from the previous rowComps
-            if (!rowComp) {
-                rowNode = this.paginationProxy.getRow(rowIndex);
-                if (_.exists(rowsToRecycleCopy) && rowsToRecycleCopy[rowNode.id]) {
-                    rowComp = rowsToRecycleCopy[rowNode.id];
-                    rowsToRecycleCopy[rowNode.id] = null;
-                }
-            }
-
-            let creatingNewRowComp = !rowComp;
-
-            if (creatingNewRowComp) {
-                // create a new one
-                if (!rowNode) {
-                    rowNode = this.paginationProxy.getRow(rowIndex);
-                }
-                rowComp = this.createRowComp(rowNode, animate, previousElements);
-            } else {
-                // ensure row comp is in right position in DOM
-                rowComp.ensureInDomAfter(previousElements);
-            }
-
-            _.pushAll(delayedCreateFunctions, rowComp.getAndClearNextVMTurnFunctions());
-
-            this.rowCompsByIndex[rowIndex] = rowComp;
-
-            this.updatePreviousElements(previousElements, rowComp);
+            let rowComp = this.createOrUpdateRowComp(rowIndex, rowsToRecycleCopy, animate, previousElements);
+            _.pushAll(nextVmTurnFunctions, rowComp.getAndClearNextVMTurnFunctions());
         });
 
         setTimeout( ()=> {
-            delayedCreateFunctions.forEach( func => func() );
+            nextVmTurnFunctions.forEach( func => func() );
         }, 0);
 
         this.destroyRowComps(rowsToRecycleCopy, animate);
@@ -539,16 +515,52 @@ export class RowRenderer extends BeanStub {
         this.checkAngularCompile();
     }
 
+    private createOrUpdateRowComp(rowIndex: number, rowsToRecycle: {[key: string]: RowComp},
+                                 animate: boolean, previousElements: ContainerElements): RowComp {
+
+        let rowNode: RowNode;
+
+        let rowComp = this.rowCompsByIndex[rowIndex];
+
+        // if no row comp, see if we can get it from the previous rowComps
+        if (!rowComp) {
+            rowNode = this.paginationProxy.getRow(rowIndex);
+            if (_.exists(rowsToRecycle) && rowsToRecycle[rowNode.id]) {
+                rowComp = rowsToRecycle[rowNode.id];
+                rowsToRecycle[rowNode.id] = null;
+            }
+        }
+
+        let creatingNewRowComp = !rowComp;
+
+        if (creatingNewRowComp) {
+            // create a new one
+            if (!rowNode) {
+                rowNode = this.paginationProxy.getRow(rowIndex);
+            }
+            rowComp = this.createRowComp(rowNode, animate, previousElements);
+        } else {
+            // ensure row comp is in right position in DOM
+            rowComp.ensureInDomAfter(previousElements);
+        }
+
+        this.updatePreviousElements(previousElements, rowComp);
+
+        this.rowCompsByIndex[rowIndex] = rowComp;
+
+        return rowComp;
+    }
+
     private destroyRowComps(rowCompsMap: {[key: string]: RowComp}, animate: boolean): void {
-        let delayedDestroyFunctions: Function[] = [];
+        let delayedFuncs: Function[] = [];
         _.iterateObject(rowCompsMap, (nodeId: string, rowComp: RowComp) => {
             // if row was used, then it's null
             if (!rowComp) { return; }
             rowComp.destroy(animate);
-            rowComp.getAndClearDelayedDestroyFunctions().forEach(func => delayedDestroyFunctions.push(func) );
+            rowComp.getAndClearDelayedDestroyFunctions().forEach(func => delayedFuncs.push(func) );
         });
         setTimeout( ()=> {
-            delayedDestroyFunctions.forEach( func => func() );
+            delayedFuncs.forEach( func => func() );
         }, 400);
     }
 

@@ -3,22 +3,21 @@ import {CellComp} from "./cellComp";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
-import {ContainerElements, RowRenderer} from "./rowRenderer";
+import {RowRenderer} from "./rowRenderer";
 import {Column} from "../entities/column";
 import {Events} from "../events";
 import {EventService} from "../eventService";
-import {Context, Autowired, PostConstruct} from "../context/context";
+import {Autowired, Context, PostConstruct} from "../context/context";
 import {ColumnChangeEvent} from "../columnChangeEvent";
 import {FocusedCellController} from "../focusedCellController";
 import {Constants} from "../constants";
 import {CellRendererService} from "./cellRendererService";
 import {CellRendererFactory} from "./cellRendererFactory";
-import {ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {BeanStub} from "../context/beanStub";
 import {RowContainerComponent} from "./rowContainerComponent";
 import {ColumnAnimationService} from "./columnAnimationService";
-import {ColDef, ColSpanParams} from "../entities/colDef";
 import {PaginationProxy} from "../rowModels/paginationProxy";
 import {Component} from "../widgets/component";
 import {SvgFactory} from "../svgFactory";
@@ -55,6 +54,13 @@ class TempStubCell extends Component {
     public refresh(params: any): boolean {
         return false;
     }
+}
+
+export interface ContainerElements {
+    left: HTMLElement;
+    right: HTMLElement;
+    body: HTMLElement;
+    fullWidth: HTMLElement;
 }
 
 export class RowComp extends BeanStub {
