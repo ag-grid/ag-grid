@@ -27,6 +27,7 @@ export class SetFilterListItem extends Component {
         '</label>';
 
     private eCheckbox: HTMLElement;
+    private eClickableArea: HTMLElement;
     private selected: boolean = true;
 
     private value: any;
@@ -47,17 +48,18 @@ export class SetFilterListItem extends Component {
     private init(): void {
         this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column, svgFactory.createCheckboxCheckedIcon);
         this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column, svgFactory.createCheckboxUncheckedIcon);
-
         this.eCheckbox = this.queryForHtmlElement(".ag-filter-checkbox");
+        this.eClickableArea = this.getGui();
 
         this.updateCheckboxIcon();
         this.render();
 
 
-        this.addDestroyableEventListener(this.eCheckbox, 'click', () => {
+        let listener = () => {
             this.selected = !this.selected;
             return this.dispatchEvent(SetFilterListItem.EVENT_SELECTED);
-        });
+        };
+        this.addDestroyableEventListener(this.eClickableArea, 'click', listener);
     }
 
     public isSelected(): boolean {
