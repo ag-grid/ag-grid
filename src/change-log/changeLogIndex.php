@@ -31,6 +31,7 @@ include '../documentation-main/documentation_header.php';
         </li>
         <li>Update Documentation: <a href="../javascript-grid-value-getters/">Getters and Formatters.</a></li>
         <li>Update Documentation: <a href="../javascript-grid-value-setters/">Setters and Parsers.</a></li>
+        <li>Renamed 'Master / Slave' to '<a href="../javascript-grid-column-sync/">Synced Columns</a>' so that it's not confused with 'Master / Detail', which is nothing to do with 'Synced Columns'.</li>
         <li>AG-569: For accessibility, rows in the DOM are now placed in the same order you see on the screen.</li>
         <li>Bug fix: when using multiple group auto columns and header checkbox selection,
             the header checkbox now only appears in the first column header.</li>
@@ -91,6 +92,7 @@ include '../documentation-main/documentation_header.php';
     </p>
     <ul>
         <li>cellRenderer.params.valueGetter() is now called cellRenderer.params.getValue()</li>
+        <li>Grid property slaveGrids is now called columnSyncGrids.</li>
     </ul>
 
     <h2>Version 11.0.x</h2>
