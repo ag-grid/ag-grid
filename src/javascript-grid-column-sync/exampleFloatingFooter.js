@@ -1,21 +1,30 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 200},
-    {headerName: "Age", field: "age", width: 150},
+    {headerName: "Age", field: "age", width: 100},
     {headerName: "Country", field: "country", width: 150},
     {headerName: "Year", field: "year", width: 120},
-    {headerName: "Date", field: "date", width: 150},
-    {headerName: "Sport", field: "sport", width: 150},
+    {headerName: "Sport", field: "sport", width: 200},
     // in the total col, we have a value getter, which usually means we don't need to provide a field
     // however the master/slave depends on the column id (which is derived from the field if provided) in
-    // order to match up the columns
-    {headerName: 'Medals',
-        children: [
-            {headerName: "Total", columnGroupShow: 'closed', field: "total",
-                valueGetter: "data.gold + data.silver + data.bronze", width: 200},
-            {headerName: "Gold", columnGroupShow: 'open', field: "gold", width: 100},
-            {headerName: "Silver", columnGroupShow: 'open', field: "silver", width: 100},
-            {headerName: "Bronze", columnGroupShow: 'open', field: "bronze", width: 100}
-        ]
+    // order ot match up the columns
+    {headerName: "Total", field: "total",
+        valueGetter: "data.gold + data.silver + data.bronze", width: 200},
+    {headerName: "Gold", field: "gold", width: 100},
+    {headerName: "Silver", field: "silver", width: 100},
+    {headerName: "Bronze", field: "bronze", width: 100}
+];
+
+var dataForBottomGrid = [
+    {
+        athlete: 'Total',
+        age: '15 - 61',
+        country: 'Ireland',
+        year: '2020',
+        date: '26/11/1970',
+        sport: 'Synchronised Riding',
+        gold: 55,
+        silver: 65,
+        bronze: 12
     }
 ];
 
@@ -25,47 +34,37 @@ var gridOptionsTop = {
     rowData: null,
     enableColResize: true,
     debug: true,
-    slaveGrids: []
+    // don't show the horizontal scrollbar on the top grid
+    suppressHorizontalScroll: true,
+    enableSorting: true,
+    columnSyncGrids: []
 };
 
 // this is the grid options for the bottom grid
 var gridOptionsBottom = {
     columnDefs: columnDefs,
-    rowData: null,
+    // we are hard coding the data here, it's just for demo purposes
+    rowData: dataForBottomGrid,
     enableColResize: true,
     debug: true,
-    slaveGrids: []
+    rowClass: 'bold-row',
+    // hide the header on the bottom grid
+    headerHeight: 0,
+    columnSyncGrids: []
 };
 
-gridOptionsTop.slaveGrids.push(gridOptionsBottom);
-gridOptionsBottom.slaveGrids.push(gridOptionsTop);
+gridOptionsTop.columnSyncGrids.push(gridOptionsBottom);
+gridOptionsBottom.columnSyncGrids.push(gridOptionsTop);
 
-function onCbAthlete(value) {
-    // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi.setColumnVisible('athlete', value);
-}
-
-function onCbAge(value) {
-    // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi.setColumnVisible('age', value);
-}
-
-function onCbCountry(value) {
-    // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi.setColumnVisible('country', value);
-}
-
-function setData(rowData) {
-    gridOptionsTop.api.setRowData(rowData);
-    gridOptionsBottom.api.setRowData(rowData);
+function btSizeColsToFix() {
     gridOptionsTop.api.sizeColumnsToFit();
+    console.log('btSizeColsToFix ');
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDivTop = document.querySelector('#myGridTop');
     new agGrid.Grid(gridDivTop, gridOptionsTop);
-
     var gridDivBottom = document.querySelector('#myGridBottom');
     new agGrid.Grid(gridDivBottom, gridOptionsBottom);
 
@@ -77,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
-            setData(httpResult);
+            gridOptionsTop.api.setRowData(httpResult);
         }
     };
 });

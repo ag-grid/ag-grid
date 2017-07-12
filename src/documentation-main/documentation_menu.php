@@ -199,7 +199,7 @@
     menuItemWithIcon('lab.png', 0, 'Accessibility', 'Accessibility', 'javascript-grid-accessibility/');
     menuItem(0, 'Full Width Rows', 'Full Width Rows', 'javascript-grid-full-width-rows/');
     menuItem(0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');
-    menuItem(0, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave/');
+    menuItem(0, 'Column Sync', 'Column Sync', 'javascript-grid-column-sync/');
     menuItem(0, 'Touch', 'Touch', 'javascript-grid-touch/');
     menuItem(0, 'Data Export', 'CSV Export', 'javascript-grid-export/');
     menuItemWithIcon('enterprise.png', 0, 'Excel Export', 'Excel Export', 'javascript-grid-excel/');
