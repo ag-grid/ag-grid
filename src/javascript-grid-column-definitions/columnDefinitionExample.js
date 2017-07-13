@@ -42,7 +42,7 @@ var gridOptions = {
     columnTypes: {
         "numberColumn": {width: 83, filter: 'number'},
         "medalColumn": {width: 100, columnGroupShow: 'open', suppressFilter: true},
-        "nonEditableColumn": {editable: true},
+        "nonEditableColumn": {editable: false},
         "dateColumn": {
             // specify we want to use the date filter
             filter: 'date',
