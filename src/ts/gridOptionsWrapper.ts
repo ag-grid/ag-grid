@@ -29,9 +29,6 @@ let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 let DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
 
-const INVALIDATE_AFTER_UPDATE = 'invalidateAfterUpdate';
-const INVALIDATE_NEVER = 'invalidateNever';
-
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
 }
@@ -578,7 +575,13 @@ export class GridOptionsWrapper {
             console.warn(`ag-grid: since version 11.0.x, groupColumnDef has been renamed, this property is now called autoGroupColumnDef. Please change your configuration accordingly`);
         }
         if (options.slaveGrids) {
-            console.warn(`ag-grid: since version 11.0.x, slaveGrids has been renamed, this property is now called alignedGrids. Please change your configuration accordingly`);
+            console.warn(`ag-grid: since version 12.x, slaveGrids has been renamed, this property is now called alignedGrids. Please change your configuration accordingly`);
+        }
+        if (options.floatingTopRowData) {
+            console.warn(`ag-grid: since version 12.x, floatingTopRowData is now called pinnedTopRowData`);
+        }
+        if (options.floatingBottomRowData) {
+            console.warn(`ag-grid: since version 12.x, floatingBottomRowData is now called pinnedBottomRowData`);
         }
     }
 
