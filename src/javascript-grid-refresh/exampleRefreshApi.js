@@ -31,8 +31,8 @@ function createData(count) {
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
-    floatingTopRowData: topRowData,
-    floatingBottomRowData: bottomRowData,
+    pinnedTopRowData: topRowData,
+    pinnedBottomRowData: bottomRowData,
     enableCellChangeFlash: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
@@ -71,8 +71,8 @@ function scrambleAndRefreshTopToBottom() {
     var i;
     var rowNode;
 
-    for (i = 0; i<gridOptions.api.getFloatingTopRowCount(); i++) {
-        rowNode = gridOptions.api.getFloatingTopRow(i);
+    for (i = 0; i<gridOptions.api.getPinnedTopRowCount(); i++) {
+        rowNode = gridOptions.api.getPinnedTopRow(i);
         refreshRow(rowNode);
     }
 
@@ -81,8 +81,8 @@ function scrambleAndRefreshTopToBottom() {
         refreshRow(rowNode);
     }
 
-    for (i = 0; i<gridOptions.api.getFloatingBottomRowCount(); i++) {
-        rowNode = gridOptions.api.getFloatingBottomRow(i);
+    for (i = 0; i<gridOptions.api.getPinnedBottomRowCount(); i++) {
+        rowNode = gridOptions.api.getPinnedBottomRow(i);
         refreshRow(rowNode);
     }
 

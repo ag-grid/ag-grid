@@ -395,12 +395,12 @@ include '../documentation-main/documentation_header.php';
             <td>InMemoryRowModel only - enables <a href="../javascript-grid-data-update/#delta-row-data">delta row data mode</a>, for compatibility with immutable stores.</td>
         </tr>
         <tr>
-            <th>floatingTopRowData</th>
-            <td>Data to be displayed as floating top rows in the table</td>
+            <th>pinnedTopRowData</th>
+            <td>Data to be displayed as pinned top rows in the table</td>
         </tr>
         <tr>
-            <th>floatingBottomRowData</th>
-            <td>Data to be displayed as floating bottom rows in the table</td>
+            <th>pinnedBottomRowData</th>
+            <td>Data to be displayed as pinned bottom rows in the table</td>
         </tr>
         <!------------------->
         <!-- Selection -->

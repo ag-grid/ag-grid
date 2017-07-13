@@ -132,12 +132,12 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>
-                setFloatingTopRowData(rowData)<br/>
-                setFloatingBottomRowData()<br/>
-                getFloatingTopRowCount()<br/>
-                getFloatingBottomRowCount()<br/>
-                getFloatingTopRow(index)<br/>
-                getFloatingBottomRow(index)
+                setPinnedTopRowData(rowData)<br/>
+                setPinnedBottomRowData()<br/>
+                getPinnedTopRowCount()<br/>
+                getPinnedBottomRowCount()<br/>
+                getPinnedTopRow(index)<br/>
+                getPinnedBottomRow(index)
             </th>
             <td>
                 Methods for getting and setting the data and getting the Row Nodes of the floating rows.

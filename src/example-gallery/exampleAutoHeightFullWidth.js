@@ -20,9 +20,6 @@ var columnDefs = [
 
 var makes = ['Toyota','Ford','BMW','Phantom','Porsche'];
 
-var floatingTopRows = [createRow(999),createRow(998)];
-var floatingBottomRows = [createRow(997),createRow(996)];
-
 var gridOptions = {
     defaultColDef: {
         enableRowGroup: true,
@@ -38,7 +35,7 @@ var gridOptions = {
         var cssClass;
         var message;
 
-        if (params.node.floating) {
+        if (params.node.rowPinned) {
             cssClass = 'example-full-width-floating-row';
             message = 'Floating full width row at index ' + params.rowIndex;
         } else {
@@ -93,18 +90,6 @@ function setRowData(rowCount) {
         rowData.push(createRow(i));
     }
     gridOptions.api.setRowData(rowData);
-
-    document.querySelector('#currentRowCount').innerHTML = rowCount;
-}
-
-function cbFloatingRows(show) {
-    if (show) {
-        gridOptions.api.setFloatingTopRowData(floatingTopRows);
-        gridOptions.api.setFloatingBottomRowData(floatingBottomRows);
-    } else {
-        gridOptions.api.setFloatingTopRowData(null);
-        gridOptions.api.setFloatingBottomRowData(null);
-    }
 }
 
 // setup the grid after the page has finished loading

@@ -2,8 +2,8 @@
 var LETTERS_IN_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 var mainRowData = createData(20, 'body');
-var floatingTopRowData = createData(3, 'floating');
-var floatingBottomRowData = createData(3, 'floating');
+var pinnedTopRowData = createData(3, 'floating');
+var pinnedBottomRowData = createData(3, 'floating');
 
 function createData(count, prefix) {
     var rowData = [];
@@ -43,8 +43,8 @@ var gridOptions = {
     domLayout: "forPrint",
     columnDefs: columnDefs,
     rowData: mainRowData,
-    floatingTopRowData: floatingTopRowData,
-    floatingBottomRowData: floatingTopRowData,
+    pinnedTopRowData: pinnedTopRowData,
+    pinnedBottomRowData: pinnedTopRowData,
     isFullWidthCell: function(rowNode) {
         // in this example, we check the fullWidth attribute that we set
         // while creating the data. what check you do to decide if you

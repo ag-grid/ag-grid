@@ -23,10 +23,10 @@ var columnDefs = [{
 }];
 
 
-var floatingTopRow = { athlete: 'Floating Top Athlete', age: 999, country: 'Floating Top Country', year: 2020,
+var pinnedTopRow = { athlete: 'Floating Top Athlete', age: 999, country: 'Floating Top Country', year: 2020,
     date: '01-08-2020', sport: 'Floating Top Sport', gold: 22, silver: 33, bronze: 44, total: 55};
 
-var floatingBottomRow = { athlete: 'Floating Bottom Athlete', age: 888, country: 'Floating Bottom Country', year: 2030,
+var pinnedBottomRow = { athlete: 'Floating Bottom Athlete', age: 888, country: 'Floating Bottom Country', year: 2030,
     date: '01-08-2030', sport: 'Floating Bottom Sport', gold: 222, silver: 233, bronze: 244, total: 255};
 
 var gridOptions = {
@@ -35,8 +35,8 @@ var gridOptions = {
     enableSorting: true,
     showToolPanel: true,
     rowSelection: 'multiple',
-    floatingTopRowData: [floatingTopRow],
-    floatingBottomRowData: [floatingBottomRow]
+    pinnedTopRowData: [pinnedTopRow],
+    pinnedBottomRowData: [pinnedBottomRow]
 };
 
 function getBooleanValue(cssSelector) {
