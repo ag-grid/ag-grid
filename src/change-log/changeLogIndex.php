@@ -97,6 +97,7 @@ include '../documentation-main/documentation_header.php';
             <li>gridOptions.floatingTopRowData -> gridOptions.pinnedTopRowData</li>
             <li>gridOptions.floatingBottomRowData -> gridOptions.pinnedBottomRowData</li>
             <li>gridOptions.slaveGrids -> gridOptions.alignedGrids</li>
+            <li>rowNode.floating -> rowNode.rowPinned</li>
         </ul>
     </p>
 

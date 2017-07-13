@@ -58,9 +58,9 @@ var gridOptions = {
         var cssClass;
         var message;
 
-        if (params.node.floating) {
+        if (params.node.rowPinned) {
             cssClass = 'example-full-width-floating-row';
-            message = 'Floating full width row at index ' + params.rowIndex;
+            message = 'Pinned full width row at index ' + params.rowIndex;
         } else {
             cssClass = 'example-full-width-row';
             message = 'Normal full width row at index' + params.rowIndex;
@@ -81,7 +81,7 @@ var gridOptions = {
     },
     getRowHeight: function(params) {
         // you can have normal rows and full width rows any height that you want
-        var isBodyRow = params.node.floating===undefined;
+        var isBodyRow = params.node.rowPinned===undefined;
         var isFullWidth = params.node.data.fullWidth;
         if (isBodyRow && isFullWidth) {
             return 55;
