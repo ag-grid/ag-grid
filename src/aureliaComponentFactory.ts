@@ -45,6 +45,10 @@ export class AureliaComponentFactory {
                 this.view.returnToCache();
             }
 
+            refresh(params: any): boolean{
+                return false;
+            }
+
         }
 
         return CellRendererComponent;

@@ -18,4 +18,8 @@ export class AureliaCellRendererComponent implements ICellRenderer{
         this.view.returnToCache();
     }
 
+    refresh(params: any): boolean{
+        return false;
+    }
+
 }

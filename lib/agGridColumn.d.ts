@@ -1,4 +1,4 @@
-// ag-grid-aurelia v11.0.0
+// ag-grid-aurelia v12.0.0
 import { ColDef } from "ag-grid/main";
 import { AgCellTemplate, AgEditorTemplate, AgFilterTemplate } from "./agTemplate";
 export declare class AgGridColumn {
