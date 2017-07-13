@@ -1,7 +1,7 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150,
-        // for athlete only, have the floating header italics
-        floatingCellRenderer: function(params) {
+        // for athlete only, have the pinned header italics
+        pinnedRowCellRenderer: function(params) {
             return '<i>'+params.value+'</i>'
         }},
     {headerName: "Age", field: "age", width: 90},
@@ -18,32 +18,32 @@ var gridOptions = {
     enableSorting: true,
     enableFilter: true,
     getRowStyle: function(params) {
-        if (params.node.floating) {
+        if (params.node.rowPinned) {
             return {'font-weight': 'bold'}
         }
     },
-    // no rows to float to start with
-    floatingTopRowData: [],
-    floatingBottomRowData: []
+    // no rows to pin to start with
+    pinnedTopRowData: [],
+    pinnedBottomRowData: []
 };
 
-function onFloatingTopCount(headerRowsToFloat) {
+function onPinnedRowTopCount(headerRowsToFloat) {
     var count = Number(headerRowsToFloat);
     var rows = createData(count, 'Top');
-    gridOptions.api.setFloatingTopRowData(rows);
+    gridOptions.api.setPinnedTopRowData(rows);
 }
 
-function onFloatingBottomCount(footerRowsToFloat) {
+function onPinnedRowBottomCount(footerRowsToFloat) {
     var count = Number(footerRowsToFloat);
     var rows = createData(count, 'Bottom');
-    gridOptions.api.setFloatingBottomRowData(rows);
+    gridOptions.api.setPinnedBottomRowData(rows);
 }
 
 function setData(rowData) {
     gridOptions.api.setRowData(rowData);
-    // initilise the floating rows
-    onFloatingTopCount(1);
-    onFloatingBottomCount(1);
+    // initilise the pinned rows
+    onPinnedRowTopCount(1);
+    onPinnedRowBottomCount(1);
     // if this timeout is missing, we size to fit before the scrollbar shows,
     // which doesn't fit the columns very well
     setTimeout( function() {

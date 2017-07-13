@@ -47,7 +47,7 @@ include '../documentation-main/documentation_header.php';
         Example below shows floating rows.
     </p>
 
-    <show-example example="exampleFloating" example-height="450px"></show-example>
+    <show-example example="examplePinnedRow" example-height="450px"></show-example>
 
 </div>
 
