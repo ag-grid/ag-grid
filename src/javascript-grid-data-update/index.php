@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="insert-remove">Data Update</h2>
+    <h2 id="insert-remove">Updating Data</h2>
 
     <p>
         Data can be updated inside the grid using the grid's API.

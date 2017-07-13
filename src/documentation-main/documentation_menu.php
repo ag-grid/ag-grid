@@ -157,7 +157,10 @@
     <?php
     menuItem(0, 'Features', 'Overview', 'javascript-grid-features/');
     menuItem(0, 'Width & Height', 'Grid Size', 'javascript-grid-width-and-height/');
-    menuItem(0, 'Sorting', 'Sorting', 'javascript-grid-sorting/');
+    menuItem(0, 'ColumnDefs', 'Column Definitions', 'javascript-grid-column-definitions/');
+    menuItem(0, 'Grouping Columns', 'Column Groups', 'javascript-grid-grouping-headers/');
+    menuItem(0, 'Column Header', 'Column Header', 'javascript-grid-column-header/');
+    menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
     menuItem(0, 'Column Filter', 'Column Filter', 'javascript-grid-filtering/');
 
     menuItem(1, 'Text Filter', 'Text Filter', 'javascript-grid-filter-text/');
@@ -169,44 +172,41 @@
     menuItem(0, 'Quick Filter', 'Quick Filter', 'javascript-grid-filter-quick/');
     menuItem(0, 'External Filter', 'External Filter', 'javascript-grid-filter-external/');
 
+    menuItem(0, 'Sorting', 'Row Sorting', 'javascript-grid-sorting/');
     menuItem(0, 'Selection', 'Row Selection', 'javascript-grid-selection/');
     menuItemWithIcon('enterprise.png', 0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
-    menuItem(0, 'ColumnDefs', 'Column Definitions', 'javascript-grid-column-definitions/');
-    menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
-    menuItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
-    menuItem(0, 'Column Header', 'Column Header', 'javascript-grid-column-header/');
-    menuItem(0, 'Grouping Columns', 'Column Grouping', 'javascript-grid-grouping-headers/');
     menuItem(0, 'Column Spanning', 'Column Spanning', 'javascript-grid-column-spanning/');
-    menuItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
+    menuItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
+    menuItem(0, 'Row Pinning', 'Row Pinning', 'javascript-grid-row-pinning/');
     menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
-    menuItem(0, 'Pinned Rows', 'Pinned Rows', 'javascript-grid-pinned-rows/');
+    menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
+    menuItem(0, 'Cell Renderer', 'Cell Rendering', 'javascript-grid-cell-rendering/');
+    menuItem(0, 'Cell Editing', 'Cell Editing', 'javascript-grid-cell-editing/');
+    menuItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
+    menuItem(0, 'Touch', 'Touch Support', 'javascript-grid-touch/');
+    menuItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
+    menuItem(0, 'AccessingData', 'Accessing Data', 'javascript-grid-accessing-data/');
+
     menuItem(0, 'Getters and Formatters', 'Getters & Formatters', 'javascript-grid-value-getters/');
     menuItem(0, 'Setters and Parsers', 'Setters and Parsers', 'javascript-grid-value-setters/');
-    menuItem(0, 'Value Cache', 'Value Cache', 'javascript-grid-value-cache/');
     menuItem(0, 'Cell Expressions', 'Expressions', 'javascript-grid-cell-expressions/');
-    menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
-    menuItem(0, 'Cell Renderer', 'Cell Renderer', 'javascript-grid-cell-rendering/');
-    menuItem(0, 'Cell Editing', 'Cell Editing', 'javascript-grid-cell-editing/');
+    menuItem(0, 'Value Cache', 'Value Cache', 'javascript-grid-value-cache/');
     menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
-    menuItem(0, 'Context', 'Context', 'javascript-grid-context/');
-    menuItem(0, 'AccessingData', 'Accessing Data', 'javascript-grid-accessing-data/');
-    menuItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
-    menuItem(0, 'DataUpdate', 'Data Update', 'javascript-grid-data-update/');
+    menuItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
+    menuItem(0, 'DataUpdate', 'Updating Data', 'javascript-grid-data-update/');
     menuItem(0, 'Refresh', 'View Refresh', 'javascript-grid-refresh/');
     menuItem(0, 'Change Detection', 'Change Detection', 'javascript-grid-change-detection/');
-    menuItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
     menuItem(0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/');
     menuItemWithIcon('lab.png', 0, 'Accessibility', 'Accessibility', 'javascript-grid-accessibility/');
     menuItem(0, 'Full Width Rows', 'Full Width Rows', 'javascript-grid-full-width-rows/');
     menuItem(0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');
     menuItem(0, 'Aligned Grids', 'Aligned Grids', 'javascript-grid-aligned-grids/');
-    menuItem(0, 'Touch', 'Touch', 'javascript-grid-touch/');
     menuItem(0, 'Data Export', 'CSV Export', 'javascript-grid-export/');
     menuItemWithIcon('enterprise.png', 0, 'Excel Export', 'Excel Export', 'javascript-grid-excel/');
     menuItem(0, 'RTL', 'RTL', 'javascript-grid-rtl/');
-    menuItem(0, 'Icons', 'Icons', 'javascript-grid-icons/');
-    menuItem(0, 'Overlays', 'Overlays', 'javascript-grid-overlays/');
-    menuItem(0, 'For Print', 'For Print', 'javascript-grid-for-print/');
+    menuItem(0, 'Icons', 'Custom Icons', 'javascript-grid-icons/');
+    menuItem(0, 'Overlays', 'Custom Overlays', 'javascript-grid-overlays/');
+    menuItem(0, 'For Print', 'Layout for Print', 'javascript-grid-for-print/');
 
     menuItemWithIcon('enterprise.png', 0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
     menuItemWithIcon('enterprise.png', 1, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping/');
@@ -219,6 +219,8 @@
     menuItemWithIcon('enterprise.png', 0, 'Context Menu', 'Context Menu', 'javascript-grid-context-menu/');
     menuItemWithIcon('enterprise.png', 0, 'Status Bar', 'Status Bar', 'javascript-grid-status-bar/');
     menuItemWithIcon('enterprise.png', 0, 'License Key', 'License Key', 'javascript-grid-set-license/');
+
+    menuItem(0, 'Context', 'Context', 'javascript-grid-context/');
 
     ?>
 </div>

@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1" id="grouping-columns">Grouping Columns</h1>
+    <h1 class="first-h1" id="grouping-columns">Column Groups</h1>
 
     <p>
         Grouping columns allows you to have multiple levels of columns in your header and the ability,

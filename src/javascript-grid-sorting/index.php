@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="sorting">Sorting</h2>
+    <h2 id="sorting">Row Sorting</h2>
 
     <p>
         This page describes how to get your grid data sorting.
