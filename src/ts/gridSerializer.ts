@@ -3,7 +3,6 @@ import {Autowired, Bean} from "./context/context";
 import {ColumnController} from "./columnController/columnController";
 import {Constants} from "./constants";
 import {IRowModel} from "./interfaces/iRowModel";
-import {FloatingRowModel} from "./rowModels/floatingRowModel";
 import {Utils as _} from "./utils";
 import {RowNode} from "./entities/rowNode";
 import {SelectionController} from "./selectionController";
@@ -23,6 +22,7 @@ import {ColumnGroupChild} from "./entities/columnGroupChild";
 import {ColumnGroup} from "./entities/columnGroup";
 import {GridApi} from "./gridApi";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
+import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 
 /**
  * This interface works in conjuction with the GridSerializer. When serializing a grid, an instance that implements this interface
@@ -179,7 +179,7 @@ export class GridSerializer {
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -257,7 +257,7 @@ export class GridSerializer {
             });
         }
 
-        this.floatingRowModel.forEachFloatingTopRow(processRow);
+        this.pinnedRowModel.forEachPinnedTopRow(processRow);
 
         if (isPivotMode) {
             inMemoryRowModel.forEachPivotNode(processRow);
@@ -280,7 +280,7 @@ export class GridSerializer {
             }
         }
 
-        this.floatingRowModel.forEachFloatingBottomRow(processRow);
+        this.pinnedRowModel.forEachPinnedBottomRow(processRow);
 
         if (includeCustomFooter) {
             gridSerializingSession.addCustomFooter (params.customFooter);
@@ -299,11 +299,11 @@ export class GridSerializer {
                 return;
             }
 
-            if (skipFloatingTop && node.floating === 'top') {
+            if (skipFloatingTop && node.rowPinned === 'top') {
                 return;
             }
 
-            if (skipFloatingBottom && node.floating === 'bottom') {
+            if (skipFloatingBottom && node.rowPinned === 'bottom') {
                 return;
             }
 

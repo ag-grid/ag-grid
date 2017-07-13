@@ -57,7 +57,7 @@ export class Events {
     public static EVENT_ROW_DATA_UPDATED = 'rowDataUpdated';
 
     /** The client has set new floating data into the grid */
-    public static EVENT_FLOATING_ROW_DATA_CHANGED = 'floatingRowDataChanged';
+    public static EVENT_PINNED_ROW_DATA_CHANGED = 'pinnedRowDataChanged';
 
     /** Range selection has changed */
     public static EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
@@ -81,18 +81,11 @@ export class Events {
 
     /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */
     public static EVENT_FILTER_CHANGED = 'filterChanged';
-    // See AG-471
-    public static DEPRECATED_EVENT_AFTER_FILTER_CHANGED = 'afterFilterChanged';
-    /** deprecated event */
-    public static DEPRECATED_EVENT_BEFORE_FILTER_CHANGED = 'beforeFilterChanged';
 
     /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
     public static EVENT_FILTER_MODIFIED = 'filterModified';
 
     public static EVENT_SORT_CHANGED = 'sortChanged';
-    /** deprecated events */
-    public static DEPRECATED_EVENT_BEFORE_SORT_CHANGED = 'beforeSortChanged';
-    public static DEPRECATED_EVENT_AFTER_SORT_CHANGED = 'afterSortChanged';
 
     /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */
     public static EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
@@ -134,10 +127,6 @@ export class Events {
     public static EVENT_PAGINATION_CHANGED = 'paginationChanged';
 
     public static EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
-
-    public static DEPRECATED_EVENT_PAGINATION_RESET = 'paginationReset';
-    public static DEPRECATED_EVENT_PAGINATION_PAGE_LOADED = 'paginationPageLoaded';
-    public static DEPRECATED_EVENT_PAGINATION_PAGE_REQUESTED = 'paginationPageRequested';
 
     // not documented, as it's experimental, don't want people with dependencies on this
     public static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';

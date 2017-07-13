@@ -285,7 +285,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
                 // footers cannot be selected
                 && !rowNode.footer
                 // floating rows cannot be selected
-                && !rowNode.floating
+                && !rowNode.rowPinned
                 // flowers cannot be selected
                 && !rowNode.flower;
         if (checkboxNeeded) {

@@ -25,8 +25,9 @@ export class ComponentUtil {
     ];
 
     public static ARRAY_PROPERTIES = [
-        'slaveGrids', 'alignedGrids', 'rowData', 'floatingTopRowData', 'floatingBottomRowData',
-        'columnDefs', 'excelStyles'
+        'slaveGrids', 'alignedGrids', 'rowData',
+        'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData'
+        // deprecated
     ];
 
     public static NUMBER_PROPERTIES = [

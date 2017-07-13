@@ -184,8 +184,8 @@ export interface GridOptions {
 
     // changeable with impact
     rowData?: any[];
-    floatingTopRowData?: any[];
-    floatingBottomRowData?: any[];
+    pinnedTopRowData?: any[];
+    pinnedBottomRowData?: any[];
     showToolPanel?: boolean;
     columnDefs?: (ColDef|ColGroupDef)[];
     columnTypes?: {[key: string]: ColDef};

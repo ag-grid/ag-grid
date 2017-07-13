@@ -10,24 +10,24 @@ import {PostConstruct} from "../context/context";
 import {Constants} from "../constants";
 import {Utils as _} from '../utils';
 
-@Bean('floatingRowModel')
-export class FloatingRowModel {
+@Bean('pinnedRowModel')
+export class PinnedRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
-    private floatingTopRows: RowNode[];
-    private floatingBottomRows: RowNode[];
+    private pinnedTopRows: RowNode[];
+    private pinnedBottomRows: RowNode[];
 
     @PostConstruct
     public init(): void {
-        this.setFloatingTopRowData(this.gridOptionsWrapper.getFloatingTopRowData());
-        this.setFloatingBottomRowData(this.gridOptionsWrapper.getFloatingBottomRowData());
+        this.setPinnedTopRowData(this.gridOptionsWrapper.getPinnedTopRowData());
+        this.setPinnedBottomRowData(this.gridOptionsWrapper.getPinnedBottomRowData());
     }
 
     public isEmpty(floating: string): boolean {
-        let rows = floating===Constants.FLOATING_TOP ? this.floatingTopRows : this.floatingBottomRows;
+        let rows = floating===Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
         return _.missingOrEmpty(rows);
     }
 
@@ -36,7 +36,7 @@ export class FloatingRowModel {
     }
 
     public getRowAtPixel(pixel: number, floating: string): number {
-        let rows = floating===Constants.FLOATING_TOP ? this.floatingTopRows : this.floatingBottomRows;
+        let rows = floating===Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
         if (_.missingOrEmpty(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
         }
@@ -52,14 +52,14 @@ export class FloatingRowModel {
         return rows.length - 1;
     }
 
-    public setFloatingTopRowData(rowData: any[]): void {
-        this.floatingTopRows = this.createNodesFromData(rowData, true);
-        this.eventService.dispatchEvent(Events.EVENT_FLOATING_ROW_DATA_CHANGED);
+    public setPinnedTopRowData(rowData: any[]): void {
+        this.pinnedTopRows = this.createNodesFromData(rowData, true);
+        this.eventService.dispatchEvent(Events.EVENT_PINNED_ROW_DATA_CHANGED);
     }
 
-    public setFloatingBottomRowData(rowData: any[]): void {
-        this.floatingBottomRows = this.createNodesFromData(rowData, false);
-        this.eventService.dispatchEvent(Events.EVENT_FLOATING_ROW_DATA_CHANGED);
+    public setPinnedBottomRowData(rowData: any[]): void {
+        this.pinnedBottomRows = this.createNodesFromData(rowData, false);
+        this.eventService.dispatchEvent(Events.EVENT_PINNED_ROW_DATA_CHANGED);
     }
 
     private createNodesFromData(allData: any[], isTop: boolean): RowNode[] {
@@ -70,7 +70,7 @@ export class FloatingRowModel {
                 let rowNode = new RowNode();
                 this.context.wireBean(rowNode);
                 rowNode.data = dataItem;
-                rowNode.floating = isTop ? Constants.FLOATING_TOP : Constants.FLOATING_BOTTOM;
+                rowNode.rowPinned = isTop ? Constants.PINNED_TOP : Constants.PINNED_BOTTOM;
                 rowNode.setRowTop(nextRowTop);
                 rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
                 rowNode.setRowIndex(index);
@@ -81,46 +81,46 @@ export class FloatingRowModel {
         return rowNodes
     }
 
-    public getFloatingTopRowData(): RowNode[] {
-        return this.floatingTopRows;
+    public getPinnedTopRowData(): RowNode[] {
+        return this.pinnedTopRows;
     }
 
-    public getFloatingBottomRowData(): RowNode[] {
-        return this.floatingBottomRows;
+    public getPinnedBottomRowData(): RowNode[] {
+        return this.pinnedBottomRows;
     }
 
-    public getFloatingTopTotalHeight(): number {
-        return this.getTotalHeight(this.floatingTopRows);
+    public getPinnedTopTotalHeight(): number {
+        return this.getTotalHeight(this.pinnedTopRows);
     }
 
-    public getFloatingTopRowCount(): number {
-        return this.floatingTopRows ? this.floatingTopRows.length : 0;
+    public getPinnedTopRowCount(): number {
+        return this.pinnedTopRows ? this.pinnedTopRows.length : 0;
     }
 
-    public getFloatingBottomRowCount(): number {
-        return this.floatingBottomRows ? this.floatingBottomRows.length : 0;
+    public getPinnedBottomRowCount(): number {
+        return this.pinnedBottomRows ? this.pinnedBottomRows.length : 0;
     }
 
-    public getFloatingTopRow(index: number): RowNode {
-        return this.floatingTopRows[index];
+    public getPinnedTopRow(index: number): RowNode {
+        return this.pinnedTopRows[index];
     }
 
-    public getFloatingBottomRow(index: number): RowNode {
-        return this.floatingBottomRows[index];
+    public getPinnedBottomRow(index: number): RowNode {
+        return this.pinnedBottomRows[index];
     }
 
-    public forEachFloatingTopRow(callback: (rowNode: RowNode, index: number)=>void): void {
-        if (_.missingOrEmpty(this.floatingTopRows)) { return; }
-        this.floatingTopRows.forEach(callback);
+    public forEachPinnedTopRow(callback: (rowNode: RowNode, index: number)=>void): void {
+        if (_.missingOrEmpty(this.pinnedTopRows)) { return; }
+        this.pinnedTopRows.forEach(callback);
     }
 
-    public forEachFloatingBottomRow(callback: (rowNode: RowNode, index: number)=>void): void {
-        if (_.missingOrEmpty(this.floatingBottomRows)) { return; }
-        this.floatingBottomRows.forEach(callback);
+    public forEachPinnedBottomRow(callback: (rowNode: RowNode, index: number)=>void): void {
+        if (_.missingOrEmpty(this.pinnedBottomRows)) { return; }
+        this.pinnedBottomRows.forEach(callback);
     }
 
-    public getFloatingBottomTotalHeight(): number {
-        return this.getTotalHeight(this.floatingBottomRows);
+    public getPinnedBottomTotalHeight(): number {
+        return this.getTotalHeight(this.pinnedBottomRows);
     }
 
     private getTotalHeight(rowNodes: RowNode[]): number {

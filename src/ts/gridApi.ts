@@ -8,7 +8,6 @@ import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {GridPanel} from "./gridPanel/gridPanel";
 import {ValueService} from "./valueService/valueService";
 import {EventService} from "./eventService";
-import {FloatingRowModel} from "./rowModels/floatingRowModel";
 import {ColDef, ColGroupDef, IAggFunc} from "./entities/colDef";
 import {RowNode} from "./entities/rowNode";
 import {Constants} from "./constants";
@@ -39,6 +38,7 @@ import {InMemoryRowModel, RefreshModelParams, RowDataTransaction} from "./rowMod
 import {ImmutableService} from "./rowModels/inMemory/immutableService";
 import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
+import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 
 
 export interface StartEditingCellParams {
@@ -76,7 +76,7 @@ export class GridApi {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('context') private context: Context;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('sortController') private sortController: SortController;
@@ -174,28 +174,64 @@ export class GridApi {
         }
     }
 
+    // DEPRECATED
     public setFloatingTopRowData(rows: any[]): void {
-        this.floatingRowModel.setFloatingTopRowData(rows);
+        console.warn('ag-Grid: since v12, api.setFloatingTopRowData() is now api.setPinnedTopRowData()');
+        this.setPinnedTopRowData(rows);
     }
 
+    // DEPRECATED
     public setFloatingBottomRowData(rows: any[]): void {
-        this.floatingRowModel.setFloatingBottomRowData(rows);
+        console.warn('ag-Grid: since v12, api.setFloatingBottomRowData() is now api.setPinnedBottomRowData()');
+        this.setPinnedBottomRowData(rows);
     }
 
+    // DEPRECATED
     public getFloatingTopRowCount(): number {
-        return this.floatingRowModel.getFloatingTopRowCount();
+        console.warn('ag-Grid: since v12, api.getFloatingTopRowCount() is now api.getPinnedTopRowCount()');
+        return this.getPinnedTopRowCount();
     }
 
+    // DEPRECATED
     public getFloatingBottomRowCount(): number {
-        return this.floatingRowModel.getFloatingBottomRowCount();
+        console.warn('ag-Grid: since v12, api.getFloatingBottomRowCount() is now api.getPinnedBottomRowCount()');
+        return this.getPinnedBottomRowCount();
     }
 
+    // DEPRECATED
     public getFloatingTopRow(index: number): RowNode {
-        return this.floatingRowModel.getFloatingTopRow(index);
+        console.warn('ag-Grid: since v12, api.getFloatingTopRow() is now api.getPinnedTopRow()');
+        return this.getPinnedTopRow(index);
     }
 
+    // DEPRECATED
     public getFloatingBottomRow(index: number): RowNode {
-        return this.floatingRowModel.getFloatingBottomRow(index);
+        console.warn('ag-Grid: since v12, api.getFloatingBottomRow() is now api.getPinnedBottomRow()');
+        return this.getPinnedBottomRow(index);
+    }
+
+    public setPinnedTopRowData(rows: any[]): void {
+        this.pinnedRowModel.setPinnedTopRowData(rows);
+    }
+
+    public setPinnedBottomRowData(rows: any[]): void {
+        this.pinnedRowModel.setPinnedBottomRowData(rows);
+    }
+
+    public getPinnedTopRowCount(): number {
+        return this.pinnedRowModel.getPinnedTopRowCount();
+    }
+
+    public getPinnedBottomRowCount(): number {
+        return this.pinnedRowModel.getPinnedBottomRowCount();
+    }
+
+    public getPinnedTopRow(index: number): RowNode {
+        return this.pinnedRowModel.getPinnedTopRow(index);
+    }
+
+    public getPinnedBottomRow(index: number): RowNode {
+        return this.pinnedRowModel.getPinnedBottomRow(index);
     }
 
     public setColumnDefs(colDefs: (ColDef|ColGroupDef)[]) {

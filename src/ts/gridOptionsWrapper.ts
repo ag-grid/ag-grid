@@ -214,8 +214,8 @@ export class GridOptionsWrapper {
     public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }
     public isSuppressNoRowsOverlay() { return isTrue(this.gridOptions.suppressNoRowsOverlay); }
     public isSuppressFieldDotNotation() { return isTrue(this.gridOptions.suppressFieldDotNotation); }
-    public getFloatingTopRowData(): any[] { return this.gridOptions.floatingTopRowData; }
-    public getFloatingBottomRowData(): any[] { return this.gridOptions.floatingBottomRowData; }
+    public getPinnedTopRowData(): any[] { return this.gridOptions.pinnedTopRowData; }
+    public getPinnedBottomRowData(): any[] { return this.gridOptions.pinnedBottomRowData; }
     public isFunctionsPassive() { return isTrue(this.gridOptions.functionsPassive); }
     public isSuppressRowHoverClass() { return isTrue(this.gridOptions.suppressRowHoverClass); }
     public isSuppressTabbing() { return isTrue(this.gridOptions.suppressTabbing); }

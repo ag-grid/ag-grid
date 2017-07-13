@@ -5,7 +5,6 @@ import {ExpressionService} from "../valueService/expressionService";
 import {TemplateService} from "../templateService";
 import {ValueService} from "../valueService/valueService";
 import {EventService} from "../eventService";
-import {FloatingRowModel} from "../rowModels/floatingRowModel";
 import {ContainerElements, RowComp} from "./rowComp";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
@@ -25,6 +24,7 @@ import {RowContainerComponent} from "./rowContainerComponent";
 import {BeanStub} from "../context/beanStub";
 import {PaginationProxy} from "../rowModels/paginationProxy";
 import {RefreshCellsParams} from "../gridApi";
+import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 
 let TEMP_PREVIOUS_ELEMENTS: ContainerElements = {body: null, left: null, right: null, fullWidth: null};
 
@@ -41,7 +41,7 @@ export class RowRenderer extends BeanStub {
     @Autowired('templateService') private templateService: TemplateService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('context') private context: Context;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
@@ -75,7 +75,7 @@ export class RowRenderer extends BeanStub {
     public init(): void {
         this.rowContainers = this.gridPanel.getRowContainers();
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
         this.redrawAfterModelUpdate();
     }
 
@@ -103,14 +103,14 @@ export class RowRenderer extends BeanStub {
     public refreshFloatingRowComps(): void {
         this.refreshFloatingRows(
             this.floatingTopRowComps,
-            this.floatingRowModel.getFloatingTopRowData(),
+            this.pinnedRowModel.getPinnedTopRowData(),
             this.rowContainers.floatingTopPinnedLeft,
             this.rowContainers.floatingTopPinnedRight,
             this.rowContainers.floatingTop,
             this.rowContainers.floatingTopFullWidth);
         this.refreshFloatingRows(
             this.floatingBottomRowComps,
-            this.floatingRowModel.getFloatingBottomRowData(),
+            this.pinnedRowModel.getPinnedBottomRowData(),
             this.rowContainers.floatingBottomPinnedLeft,
             this.rowContainers.floatingBottomPinnedRight,
             this.rowContainers.floatingBottom,
@@ -330,9 +330,9 @@ export class RowRenderer extends BeanStub {
                 normal: {}
             };
             params.rowNodes.forEach( rowNode => {
-                if (rowNode.floating===Constants.FLOATING_TOP) {
+                if (rowNode.rowPinned===Constants.PINNED_TOP) {
                     rowIdsMap.top[rowNode.id] = true;
-                } else if (rowNode.floating===Constants.FLOATING_BOTTOM) {
+                } else if (rowNode.rowPinned===Constants.PINNED_BOTTOM) {
                     rowIdsMap.bottom[rowNode.id] = true;
                 } else {
                     rowIdsMap.normal[rowNode.id] = true;
@@ -353,13 +353,13 @@ export class RowRenderer extends BeanStub {
             let rowNode: RowNode = rowComp.getRowNode();
 
             let id = rowNode.id;
-            let floating = rowNode.floating;
+            let floating = rowNode.rowPinned;
 
             // skip this row if it is missing from the provided list
             if (_.exists(rowIdsMap)) {
-                if (floating===Constants.FLOATING_BOTTOM) {
+                if (floating===Constants.PINNED_BOTTOM) {
                     if (!rowIdsMap.bottom[id]) { return; }
-                } else if (floating===Constants.FLOATING_TOP) {
+                } else if (floating===Constants.PINNED_TOP) {
                     if (!rowIdsMap.top[id]) { return; }
                 } else {
                     if (!rowIdsMap.normal[id]) { return; }
@@ -777,10 +777,10 @@ export class RowRenderer extends BeanStub {
     private getComponentForCell(gridCell: GridCell): CellComp {
         let rowComponent: RowComp;
         switch (gridCell.floating) {
-            case Constants.FLOATING_TOP:
+            case Constants.PINNED_TOP:
                 rowComponent = this.floatingTopRowComps[gridCell.rowIndex];
                 break;
-            case Constants.FLOATING_BOTTOM:
+            case Constants.PINNED_BOTTOM:
                 rowComponent = this.floatingBottomRowComps[gridCell.rowIndex];
                 break;
             default:

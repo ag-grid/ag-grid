@@ -121,20 +121,15 @@ export interface ColDef extends AbstractColDef {
     cellEditorFramework?: any;
     cellEditorParams?: any;
 
-    /** A function for rendering a floating cell. */
-    floatingCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
-    floatingCellRendererFramework?: any;
-    floatingCellRendererParams?: any;
-
-    /** DEPRECATED - A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    cellFormatter?: (params: any) => string;
-    /** DEPRECATED - A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    floatingCellFormatter?: (params: any) => string;
+    /** A function for rendering a pinned row cell. */
+    pinnedRowCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
+    pinnedRowCellRendererFramework?: any;
+    pinnedRowCellRendererParams?: any;
 
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     valueFormatter?: (params: ValueFormatterParams) => string | string;
-    /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    floatingValueFormatter?: (params: ValueFormatterParams) => string | string;
+    /** A function to format a pinned row value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    pinnedRowValueFormatter?: (params: ValueFormatterParams) => string | string;
 
     /** Gets called after editing, converts the value in the cell. */
     valueParser?: (params: ValueParserParams) => any | string;

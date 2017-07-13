@@ -163,8 +163,8 @@ exports.FlattenStage = flattenStage_1.FlattenStage;
 var sortStage_1 = require("./dist/lib/rowModels/inMemory/sortStage");
 exports.SortStage = sortStage_1.SortStage;
 // row models
-var floatingRowModel_1 = require("./dist/lib/rowModels/floatingRowModel");
-exports.FloatingRowModel = floatingRowModel_1.FloatingRowModel;
+var pinnedRowModel_1 = require("./dist/lib/rowModels/pinnedRowModel");
+exports.PinnedRowModel = pinnedRowModel_1.PinnedRowModel;
 var inMemoryRowModel_1 = require("./dist/lib/rowModels/inMemory/inMemoryRowModel");
 exports.InMemoryRowModel = inMemoryRowModel_1.InMemoryRowModel;
 var changedPath_1 = require("./dist/lib/rowModels/inMemory/changedPath");

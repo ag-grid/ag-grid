@@ -635,7 +635,7 @@ export class RowComp extends BeanStub {
     }
 
     private setRowFocusClasses(): void {
-        let rowFocused = this.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.floating);
+        let rowFocused = this.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
         if (rowFocused !== this.rowFocusedLastTime) {
             this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
             this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
@@ -710,7 +710,7 @@ export class RowComp extends BeanStub {
         if (_.exists(pixels)) {
 
             let pixelsWithOffset: number;
-            if (this.rowNode.isFloating()) {
+            if (this.rowNode.isRowPinned()) {
                 pixelsWithOffset = pixels;
             } else {
                 pixelsWithOffset = pixels - this.paginationProxy.getPixelOffset();
@@ -752,9 +752,9 @@ export class RowComp extends BeanStub {
     private addRowIndexes(): void {
         let rowIndexListener = () => {
             let rowStr = this.rowNode.rowIndex.toString();
-            if (this.rowNode.floating===Constants.FLOATING_BOTTOM) {
+            if (this.rowNode.rowPinned===Constants.PINNED_BOTTOM) {
                 rowStr = 'fb-' + rowStr;
-            } else if (this.rowNode.floating===Constants.FLOATING_TOP) {
+            } else if (this.rowNode.rowPinned===Constants.PINNED_TOP) {
                 rowStr = 'ft-' + rowStr;
             }
             this.eAllRowContainers.forEach( eRow => {
@@ -1100,7 +1100,7 @@ export class RowComp extends BeanStub {
         }
 
         // we also don't allow selection of floating rows
-        if (this.rowNode.floating) {
+        if (this.rowNode.rowPinned) {
             return;
         }
 

@@ -13,7 +13,7 @@ export class BaseFrameworkFactory implements IFrameworkFactory {
     }
 
     public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRendererComp} | ICellRendererFunc | string {
-        return colDef.floatingCellRenderer;
+        return colDef.pinnedRowCellRenderer;
     }
 
     public colDefCellRenderer(colDef: ColDef): {new(): ICellRendererComp} | ICellRendererFunc | string {

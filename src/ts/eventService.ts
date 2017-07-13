@@ -26,22 +26,6 @@ export class EventService implements IEventEmitter {
     // events first, to give model and service objects preference over the view
     private static PRIORITY = '-P1';
 
-    private static DEPRECATED_EVENTS:{[key:string]:string} = (():{[key:string]:string}=>{
-        let deprecatedEvents:{[key:string]:string} = {};
-        let deprecatedInV10Msg = function (deprecated:string, solution:string) {
-            return `The event ${deprecated} has been deprecated in v10. This event is 
-            not going to be triggered anymore, you should listen instead to: ${solution}`;
-        };
-
-        deprecatedEvents[Events.DEPRECATED_EVENT_AFTER_FILTER_CHANGED]= deprecatedInV10Msg(Events.DEPRECATED_EVENT_AFTER_FILTER_CHANGED, Events.EVENT_FILTER_CHANGED);
-        deprecatedEvents[Events.DEPRECATED_EVENT_BEFORE_FILTER_CHANGED]= deprecatedInV10Msg(Events.DEPRECATED_EVENT_BEFORE_FILTER_CHANGED, Events.EVENT_FILTER_CHANGED);
-        deprecatedEvents[Events.DEPRECATED_EVENT_AFTER_SORT_CHANGED]= deprecatedInV10Msg(Events.DEPRECATED_EVENT_AFTER_SORT_CHANGED, Events.EVENT_SORT_CHANGED);
-        deprecatedEvents[Events.DEPRECATED_EVENT_BEFORE_SORT_CHANGED]= deprecatedInV10Msg(Events.DEPRECATED_EVENT_BEFORE_SORT_CHANGED, Events.EVENT_SORT_CHANGED);
-        return deprecatedEvents;
-    }) ();
-
-
-
     // because this class is used both inside the context and outside the context, we do not
     // use autowired attributes, as that would be confusing, as sometimes the attributes
     // would be wired, and sometimes not.
@@ -81,14 +65,13 @@ export class EventService implements IEventEmitter {
         }
     }
 
-    private assertNotDeprecated (eventType:string):boolean{
-        let deprecatedEvent = EventService.DEPRECATED_EVENTS[eventType];
-        if (deprecatedEvent){
-            console.warn(deprecatedEvent);
+    private assertNotDeprecated(eventType:string):boolean{
+        if (eventType==='floatingRowDataChanged') {
+            console.warn('ag-Grid: floatingRowDataChanged is now called pinnedRowDataChanged');
             return false;
+        } else {
+            return true;
         }
-
-        return true;
     }
 
     // for some events, it's important that the model gets to hear about them before the view,

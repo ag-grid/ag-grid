@@ -1,6 +1,5 @@
 import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {FloatingRowModel} from "./rowModels/floatingRowModel";
 import {SelectionController} from "./selectionController";
 import {ColumnController, ColumnApi} from "./columnController/columnController";
 import {RowRenderer} from "./rendering/rowRenderer";
@@ -64,6 +63,7 @@ import {Constants} from "./constants";
 import {ValueCache} from "./valueService/valueCache";
 import {ChangeDetectionService} from "./valueService/changeDetectionService";
 import {AlignedGridsService} from "./alignedGridsService";
+import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 
 export interface GridParams {
     // used by Web Components
@@ -151,7 +151,7 @@ export class Grid {
             overrideBeans: overrideBeans,
             seed: seed,
             beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, CellRendererFactory,
-                HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
+                HorizontalDragService, HeaderTemplateLoader, PinnedRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,
                 BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
