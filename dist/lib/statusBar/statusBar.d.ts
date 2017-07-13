@@ -6,7 +6,7 @@ export declare class StatusBar extends Component {
     private rangeController;
     private valueService;
     private cellNavigationService;
-    private floatingRowModel;
+    private pinnedRowModel;
     private rowModel;
     private context;
     private gridOptionsWrapper;

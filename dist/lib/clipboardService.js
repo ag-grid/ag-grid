@@ -317,10 +317,10 @@ var ClipboardService = (function () {
     };
     ClipboardService.prototype.getRowNode = function (gridRow) {
         switch (gridRow.floating) {
-            case main_1.Constants.FLOATING_TOP:
-                return this.floatingRowModel.getFloatingTopRowData()[gridRow.rowIndex];
-            case main_1.Constants.FLOATING_BOTTOM:
-                return this.floatingRowModel.getFloatingBottomRowData()[gridRow.rowIndex];
+            case main_1.Constants.PINNED_TOP:
+                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
+            case main_1.Constants.PINNED_BOTTOM:
+                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
             default:
                 return this.rowModel.getRow(gridRow.rowIndex);
         }
@@ -460,9 +460,9 @@ var ClipboardService = (function () {
         __metadata("design:type", Object)
     ], ClipboardService.prototype, "rowModel", void 0);
     __decorate([
-        main_1.Autowired('floatingRowModel'),
-        __metadata("design:type", main_1.FloatingRowModel)
-    ], ClipboardService.prototype, "floatingRowModel", void 0);
+        main_1.Autowired('pinnedRowModel'),
+        __metadata("design:type", main_1.PinnedRowModel)
+    ], ClipboardService.prototype, "pinnedRowModel", void 0);
     __decorate([
         main_1.Autowired('valueService'),
         __metadata("design:type", main_1.ValueService)

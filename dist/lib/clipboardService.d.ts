@@ -6,7 +6,7 @@ export declare class ClipboardService implements IClipboardService {
     private selectionController;
     private rangeController;
     private rowModel;
-    private floatingRowModel;
+    private pinnedRowModel;
     private valueService;
     private focusedCellController;
     private rowRenderer;

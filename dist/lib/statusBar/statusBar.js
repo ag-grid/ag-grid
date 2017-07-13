@@ -143,10 +143,10 @@ var StatusBar = (function (_super) {
     };
     StatusBar.prototype.getRowNode = function (gridRow) {
         switch (gridRow.floating) {
-            case main_1.Constants.FLOATING_TOP:
-                return this.floatingRowModel.getFloatingTopRowData()[gridRow.rowIndex];
-            case main_1.Constants.FLOATING_BOTTOM:
-                return this.floatingRowModel.getFloatingBottomRowData()[gridRow.rowIndex];
+            case main_1.Constants.PINNED_TOP:
+                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
+            case main_1.Constants.PINNED_BOTTOM:
+                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
             default:
                 return this.rowModel.getRow(gridRow.rowIndex);
         }
@@ -170,9 +170,9 @@ var StatusBar = (function (_super) {
         __metadata("design:type", main_1.CellNavigationService)
     ], StatusBar.prototype, "cellNavigationService", void 0);
     __decorate([
-        main_1.Autowired('floatingRowModel'),
-        __metadata("design:type", main_1.FloatingRowModel)
-    ], StatusBar.prototype, "floatingRowModel", void 0);
+        main_1.Autowired('pinnedRowModel'),
+        __metadata("design:type", main_1.PinnedRowModel)
+    ], StatusBar.prototype, "pinnedRowModel", void 0);
     __decorate([
         main_1.Autowired('rowModel'),
         __metadata("design:type", Object)
