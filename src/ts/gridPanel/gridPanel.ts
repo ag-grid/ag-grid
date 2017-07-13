@@ -135,7 +135,7 @@ export interface RowContainerComponents {
 @Bean('gridPanel')
 export class GridPanel extends BeanStub {
 
-    @Autowired('columnSyncService') private columnSyncService: AlignedGridsService;
+    @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -1684,7 +1684,7 @@ export class GridPanel extends BeanStub {
             this.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL, {direction: 'horizontal'});
             this.lastLeftPosition = newLeftPosition;
             this.horizontallyScrollHeaderCenterAndFloatingCenter();
-            this.columnSyncService.fireHorizontalScrollEvent(newLeftPosition);
+            this.alignedGridsService.fireHorizontalScrollEvent(newLeftPosition);
             this.setLeftAndRightBounds();
         }
     }

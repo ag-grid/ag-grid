@@ -169,7 +169,7 @@ export interface GridOptions {
     rowStyle?: any;
     rowClass?: any;
     groupDefaultExpanded?: number;
-    slaveGrids?: GridOptions[]; // slaveGrids deprecated, replace with columnSyncGrids
+    slaveGrids?: GridOptions[]; // slaveGrids deprecated, replace with alignedGrids
     alignedGrids?: GridOptions[];
     rowSelection?: string;
     rowDeselection?: boolean;
