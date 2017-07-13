@@ -2,8 +2,8 @@
 var LETTERS_IN_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 var mainRowData = createData(20, 'body');
-var pinnedTopRowData = createData(3, 'floating');
-var pinnedBottomRowData = createData(3, 'floating');
+var pinnedTopRowData = createData(3, 'pinned');
+var pinnedBottomRowData = createData(3, 'pinned');
 
 function createData(count, prefix) {
     var rowData = [];
@@ -59,9 +59,9 @@ var gridOptions = {
         var cssClass;
         var message;
 
-        if (params.node.floating) {
+        if (params.node.rowPinned) {
             cssClass = 'example-full-width-floating-row';
-            message = 'Floating full width row at index ' + params.rowIndex;
+            message = 'Pinned full width row at index ' + params.rowIndex;
         } else {
             cssClass = 'example-full-width-row';
             message = 'Normal full width row at index' + params.rowIndex;
