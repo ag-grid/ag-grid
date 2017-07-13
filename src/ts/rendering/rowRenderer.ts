@@ -507,7 +507,9 @@ export class RowRenderer extends BeanStub {
 
         indexesToDraw.forEach( rowIndex => {
             let rowComp = this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, previousElements);
-            _.pushAll(nextVmTurnFunctions, rowComp.getAndClearNextVMTurnFunctions());
+            if (_.exists(rowComp)) {
+                _.pushAll(nextVmTurnFunctions, rowComp.getAndClearNextVMTurnFunctions());
+            }
         });
 
         setTimeout( ()=> {
@@ -529,7 +531,7 @@ export class RowRenderer extends BeanStub {
         // if no row comp, see if we can get it from the previous rowComps
         if (!rowComp) {
             rowNode = this.paginationProxy.getRow(rowIndex);
-            if (_.exists(rowsToRecycle) && rowsToRecycle[rowNode.id]) {
+            if (_.exists(rowNode) && _.exists(rowsToRecycle) && rowsToRecycle[rowNode.id]) {
                 rowComp = rowsToRecycle[rowNode.id];
                 rowsToRecycle[rowNode.id] = null;
             }
@@ -542,11 +544,15 @@ export class RowRenderer extends BeanStub {
             if (!rowNode) {
                 rowNode = this.paginationProxy.getRow(rowIndex);
             }
-            rowComp = this.createRowComp(rowNode, animate, previousElements);
+            if (_.exists(rowNode)) {
+                rowComp = this.createRowComp(rowNode, animate, previousElements);
+            }
         } else {
             // ensure row comp is in right position in DOM
             rowComp.ensureInDomAfter(previousElements);
         }
+
+        if (_.missing(rowNode)) { return null; }
 
         this.updatePreviousElements(previousElements, rowComp);
 
