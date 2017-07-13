@@ -57,6 +57,9 @@ export class RowRenderer extends BeanStub {
     private floatingTopRowComps: RowComp[] = [];
     private floatingBottomRowComps: RowComp[] = [];
 
+    private forPrint: boolean;
+    private autoHeight: boolean;
+
     private rowContainers: RowContainerComponents;
 
     // we only allow one refresh at a time, otherwise the internal memory structure here
@@ -73,6 +76,9 @@ export class RowRenderer extends BeanStub {
 
     @PostConstruct
     public init(): void {
+        this.forPrint = this.gridOptionsWrapper.isForPrint();
+        this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
+
         this.rowContainers = this.gridPanel.getRowContainers();
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
@@ -224,7 +230,7 @@ export class RowRenderer extends BeanStub {
 
         let focusedCell: GridCell = this.getCellToRestoreFocusToAfterRefresh(params);
 
-        if (!this.gridOptionsWrapper.isForPrint()) {
+        if (!this.forPrint) {
             this.sizeContainerToPageHeight();
         }
 
@@ -233,7 +239,7 @@ export class RowRenderer extends BeanStub {
         // never keep rendered rows if doing forPrint or autoHeight, as we do not use 'top' to
         // position the rows (it uses normal flow), so we have to remove
         // all rows and insert them again from scratch
-        let rowsUsingFlow = this.gridOptionsWrapper.isForPrint() || this.gridOptionsWrapper.isAutoHeight();
+        let rowsUsingFlow = this.forPrint || this.autoHeight;
         let recycleRows = rowsUsingFlow ? false : params.recycleRows;
         let animate = rowsUsingFlow ? false : params.animate;
 
@@ -493,7 +499,8 @@ export class RowRenderer extends BeanStub {
 
         // this keeps track of the last inserted element in each container, so when rows are getting
         // inserted or repositioned, they can be done relative to the previous DOM element
-        let previousElements: ContainerElements = {body: null, left: null, right: null, fullWidth: null};
+        let previousElements: ContainerElements
+            = this.forPrint ? null : {body: null, left: null, right: null, fullWidth: null};
 
         // add in new rows
         let nextVmTurnFunctions: Function[] = [];
@@ -582,7 +589,7 @@ export class RowRenderer extends BeanStub {
             let pageFirstRow = this.paginationProxy.getPageFirstRow();
             let pageLastRow = this.paginationProxy.getPageLastRow();
 
-            if (this.gridOptionsWrapper.isForPrint()) {
+            if (this.forPrint) {
                 newFirst = pageFirstRow;
                 newLast = pageLastRow;
             } else {
@@ -635,6 +642,8 @@ export class RowRenderer extends BeanStub {
     }
 
     private updatePreviousElements(previousElements: ContainerElements, rowComp: RowComp): void {
+        if (_.missing(previousElements)) { return; }
+
         let body: HTMLElement = rowComp.getBodyRowElement();
         let left: HTMLElement = rowComp.getPinnedLeftRowElement();
         let right: HTMLElement = rowComp.getPinnedRightRowElement();

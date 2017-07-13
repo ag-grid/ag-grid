@@ -282,9 +282,13 @@ export class RowComp extends BeanStub {
         if (embedFullWidthRows) {
 
             // if embedding the full width, it gets added to the body, left and right
-            this.eFullWidthRowBody = this.createRowContainer(this.bodyContainerComp, animateInRowTop, this.previousElements.body);
-            this.eFullWidthRowLeft = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop, this.previousElements.left);
-            this.eFullWidthRowRight = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop, this.previousElements.right);
+            let previousBody = this.previousElements ? this.previousElements.body : null;
+            let previousLeft = this.previousElements ? this.previousElements.left : null;
+            let previousRight = this.previousElements ? this.previousElements.right : null;
+
+            this.eFullWidthRowBody = this.createRowContainer(this.bodyContainerComp, animateInRowTop, previousBody);
+            this.eFullWidthRowLeft = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop, previousLeft);
+            this.eFullWidthRowRight = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop, previousRight);
 
             _.addCssClass(this.eFullWidthRowLeft, 'ag-cell-last-left-pinned');
             _.addCssClass(this.eFullWidthRowRight, 'ag-cell-first-right-pinned');
@@ -292,7 +296,8 @@ export class RowComp extends BeanStub {
         } else {
 
             // otherwise we add to the fullWidth container as normal
-            this.eFullWidthRow = this.createRowContainer(this.fullWidthContainerComp, animateInRowTop, this.previousElements.fullWidth);
+            let previousFullWidth = this.previousElements ? this.previousElements.fullWidth : null;
+            this.eFullWidthRow = this.createRowContainer(this.fullWidthContainerComp, animateInRowTop, previousFullWidth);
 
             // and fake the mouse wheel for the fullWidth container
             if (!this.gridOptionsWrapper.isForPrint()) {
@@ -304,11 +309,15 @@ export class RowComp extends BeanStub {
     private setupNormalContainers(animateInRowTop: boolean): void {
         this.fullWidthRow = false;
 
-        this.eBodyRow = this.createRowContainer(this.bodyContainerComp, animateInRowTop, this.previousElements.body);
+        let previousBody = this.previousElements ? this.previousElements.body : null;
+        let previousLeft = this.previousElements ? this.previousElements.left : null;
+        let previousRight = this.previousElements ? this.previousElements.right : null;
+
+        this.eBodyRow = this.createRowContainer(this.bodyContainerComp, animateInRowTop, previousBody);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
-            this.ePinnedLeftRow = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop, this.previousElements.left);
-            this.ePinnedRightRow = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop, this.previousElements.right);
+            this.ePinnedLeftRow = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop, previousLeft);
+            this.ePinnedRightRow = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop, previousRight);
         }
     }
 
