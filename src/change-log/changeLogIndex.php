@@ -25,9 +25,12 @@ include '../documentation-main/documentation_header.php';
             valueGetter's are CPU intensive.
         </li>
         <li>
+            New feature: <a href="../javascript-grid-column-spanning/">Column Spanning</a>.
+        </li>
+        <li>
             Rewrite of <a href="../javascript-grid-refresh/">Grid Refresh</a>. There were once a few similar confusing
-            methods. There are are two clear and clean methods: cellRefresh() and redrawRows(). See below for
-            for more details.
+            methods. There are are two clear and clean methods: cellRefresh() and redrawRows().
+            See 'Changes to Refresh' below for more details.
         </li>
         <li>Update Documentation: <a href="../javascript-grid-value-getters/">Getters and Formatters.</a></li>
         <li>Update Documentation: <a href="../javascript-grid-value-setters/">Setters and Parsers.</a></li>
