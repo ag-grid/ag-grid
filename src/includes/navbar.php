@@ -5,6 +5,8 @@ if (!isset($rootFolder)) {
 }
 ?>
 
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
 <header class="Header navbar navbar-inverse navbar-logo navbar-hiddenxs" style="margin-bottom: 0">
     <div class="container">
         <div class="row">
