@@ -169,7 +169,7 @@
     menuItem(0, 'Quick Filter', 'Quick Filter', 'javascript-grid-filter-quick/');
     menuItem(0, 'External Filter', 'External Filter', 'javascript-grid-filter-external/');
 
-    menuItem(0, 'Selection', 'Selection', 'javascript-grid-selection/');
+    menuItem(0, 'Selection', 'Row Selection', 'javascript-grid-selection/');
     menuItemWithIcon('enterprise.png', 0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
     menuItem(0, 'ColumnDefs', 'Column Definitions', 'javascript-grid-column-definitions/');
     menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
@@ -199,7 +199,7 @@
     menuItemWithIcon('lab.png', 0, 'Accessibility', 'Accessibility', 'javascript-grid-accessibility/');
     menuItem(0, 'Full Width Rows', 'Full Width Rows', 'javascript-grid-full-width-rows/');
     menuItem(0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');
-    menuItem(0, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave/');
+    menuItem(0, 'Aligned Grids', 'Aligned Grids', 'javascript-grid-aligned-grids/');
     menuItem(0, 'Touch', 'Touch', 'javascript-grid-touch/');
     menuItem(0, 'Data Export', 'CSV Export', 'javascript-grid-export/');
     menuItemWithIcon('enterprise.png', 0, 'Excel Export', 'Excel Export', 'javascript-grid-excel/');

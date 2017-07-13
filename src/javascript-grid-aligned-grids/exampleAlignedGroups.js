@@ -36,7 +36,7 @@ var gridOptionsTop = {
     rowData: null,
     enableColResize: true,
     debug: true,
-    slaveGrids: []
+    alignedGrids: []
 };
 
 // this is the grid options for the bottom grid
@@ -45,11 +45,11 @@ var gridOptionsBottom = {
     rowData: null,
     enableColResize: true,
     debug: true,
-    slaveGrids: []
+    alignedGrids: []
 };
 
-gridOptionsTop.slaveGrids.push(gridOptionsBottom);
-gridOptionsBottom.slaveGrids.push(gridOptionsTop);
+gridOptionsTop.alignedGrids.push(gridOptionsBottom);
+gridOptionsBottom.alignedGrids.push(gridOptionsTop);
 
 function setData(rowData) {
     gridOptionsTop.api.setRowData(rowData);

@@ -120,8 +120,14 @@ h4 {
     padding-bottom: 2px;
 }
 
+body {
+    font-family: 'Roboto', sans-serif !important;
+}
+
 @media (min-width: 200px) and (max-width: 800px) {
     body {
+
+        font-family: 'Roboto', sans-serif;
         font-size: 20px !important;
     }
     .hide-when-small {

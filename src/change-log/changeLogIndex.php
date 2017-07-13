@@ -31,6 +31,8 @@ include '../documentation-main/documentation_header.php';
         </li>
         <li>Update Documentation: <a href="../javascript-grid-value-getters/">Getters and Formatters.</a></li>
         <li>Update Documentation: <a href="../javascript-grid-value-setters/">Setters and Parsers.</a></li>
+        <li>Renamed 'Master / Slave' to '<a href="../javascript-grid-aligned-grids/">Aligned Grids</a>' so that it's not confused with 'Master / Detail', which is nothing to do with 'Aligned Grids'.</li>
+        <li>AG-569: For accessibility, rows in the DOM are now placed in the same order you see on the screen.</li>
         <li>Bug fix: when using multiple group auto columns and header checkbox selection,
             the header checkbox now only appears in the first column header.</li>
         <li>AG-469: Enhancement: new event for column 'menuVisibleChanged', gets fired when column menu is shown / hidden.
@@ -90,6 +92,7 @@ include '../documentation-main/documentation_header.php';
     </p>
     <ul>
         <li>cellRenderer.params.valueGetter() is now called cellRenderer.params.getValue()</li>
+        <li>Grid property slaveGrids is now called alignedGrids.</li>
     </ul>
 
     <h2>Version 11.0.x</h2>
