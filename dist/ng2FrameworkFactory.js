@@ -9,12 +9,12 @@ var Ng2FrameworkFactory = (function () {
         this._baseFrameworkFactory = new main_1.BaseFrameworkFactory(); // todo - inject this
     }
     Ng2FrameworkFactory.prototype.colDefFloatingCellRenderer = function (colDef) {
-        if (colDef.floatingCellRendererFramework && colDef.floatingCellRendererFramework.component) {
-            console.warn("colDef.floatingCellRendererFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
-            colDef.floatingCellRendererFramework = colDef.floatingCellRendererFramework.component;
+        if (colDef.pinnedRowCellRendererFramework && colDef.pinnedRowCellRendererFramework.component) {
+            console.warn("colDef.pinnedRowCellRendererFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            colDef.pinnedRowCellRendererFramework = colDef.pinnedRowCellRendererFramework.component;
         }
-        if (colDef.floatingCellRendererFramework) {
-            return this._componentFactory.createRendererFromComponent(colDef.floatingCellRendererFramework, this._viewContainerRef);
+        if (colDef.pinnedRowCellRendererFramework) {
+            return this._componentFactory.createRendererFromComponent(colDef.pinnedRowCellRendererFramework, this._viewContainerRef);
         }
         else {
             return this._baseFrameworkFactory.colDefFloatingCellRenderer(colDef);

@@ -217,6 +217,9 @@ export declare class AgGridNg2 implements AfterViewInit {
     valueCache: any;
     valueCacheNeverExpires: any;
     aggregateOnlyChangedColumns: any;
+    pinnedTopRowData: any;
+    pinnedBottomRowData: any;
+    pinnedRowDataChanged: any;
     /**
      * Outputs
      */

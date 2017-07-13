@@ -204,6 +204,9 @@ var AgGridNg2 = (function () {
         this.valueCache = undefined;
         this.valueCacheNeverExpires = undefined;
         this.aggregateOnlyChangedColumns = undefined;
+        this.pinnedTopRowData = undefined;
+        this.pinnedBottomRowData = undefined;
+        this.pinnedRowDataChanged = undefined;
         this._nativeElement = elementDef.nativeElement;
         // create all the events generically. this is done generically so that
         // if the list of grid events change, we don't need to change this code.
@@ -487,6 +490,9 @@ AgGridNg2.propDecorators = {
     'valueCache': [{ type: core_1.Input },],
     'valueCacheNeverExpires': [{ type: core_1.Input },],
     'aggregateOnlyChangedColumns': [{ type: core_1.Input },],
+    'pinnedTopRowData': [{ type: core_1.Input },],
+    'pinnedBottomRowData': [{ type: core_1.Input },],
+    'pinnedRowDataChanged': [{ type: core_1.Input },],
     'gridReady': [{ type: core_1.Output },],
     'columnEverythingChanged': [{ type: core_1.Output },],
     'newColumnsLoaded': [{ type: core_1.Output },],

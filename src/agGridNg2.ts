@@ -321,6 +321,9 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public valueCache: any = undefined;
     @Input() public valueCacheNeverExpires: any = undefined;
     @Input() public aggregateOnlyChangedColumns: any = undefined;
+    @Input() public pinnedTopRowData: any = undefined;
+    @Input() public pinnedBottomRowData: any = undefined;
+    @Input() public pinnedRowDataChanged: any = undefined;
 
 
     /**

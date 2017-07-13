@@ -20,13 +20,13 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
     }
 
     public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRendererComp} | ICellRendererFunc | string {
-        if(colDef.floatingCellRendererFramework && colDef.floatingCellRendererFramework.component) {
-            console.warn("colDef.floatingCellRendererFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
-            colDef.floatingCellRendererFramework = colDef.floatingCellRendererFramework.component;
+        if(colDef.pinnedRowCellRendererFramework && colDef.pinnedRowCellRendererFramework.component) {
+            console.warn("colDef.pinnedRowCellRendererFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            colDef.pinnedRowCellRendererFramework = colDef.pinnedRowCellRendererFramework.component;
         }
 
-        if (colDef.floatingCellRendererFramework) {
-            return this._componentFactory.createRendererFromComponent(colDef.floatingCellRendererFramework,
+        if (colDef.pinnedRowCellRendererFramework) {
+            return this._componentFactory.createRendererFromComponent(colDef.pinnedRowCellRendererFramework,
                 this._viewContainerRef)
         } else {
             return this._baseFrameworkFactory.colDefFloatingCellRenderer(colDef);
