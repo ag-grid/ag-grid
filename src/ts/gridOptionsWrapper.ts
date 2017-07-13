@@ -316,6 +316,7 @@ export class GridOptionsWrapper {
     public isSuppressAutoSize() { return isTrue(this.gridOptions.suppressAutoSize); }
     public isSuppressParentsInRowNodes() { return isTrue(this.gridOptions.suppressParentsInRowNodes); }
     public isEnableStatusBar() { return isTrue(this.gridOptions.enableStatusBar); }
+    public isAlwaysShowStatusBar() { return isTrue(this.gridOptions.alwaysShowStatusBar); }
     public isFunctionsReadOnly() { return isTrue(this.gridOptions.functionsReadOnly); }
     public isFloatingFilter(): boolean { return this.gridOptions.floatingFilter; }
     // public isFloatingFilter(): boolean { return true; }
