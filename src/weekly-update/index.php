@@ -67,7 +67,7 @@ include('../includes/mediaHeader.php');
     <div style="clear: both;"></div>
 
     <div class="weekly-news-paragraph">
-        This week's update covers our first VC meeting, our Development update including a new value cache, finishing change detection, adding multiple selection to more row models and working on dynamic row heights for the Enterprise Row Model. Our support for Polymer is gathering pace and Web Components has gone live.
+        This week's update covers our first VC meeting, our Development update including a new value cache, finishing change detection, adding Shift range selection to more row models and working on dynamic row heights for the Enterprise Row Model. Our support for Polymer is gathering pace and Web Components has gone live.
     </div>
 
 </div>
