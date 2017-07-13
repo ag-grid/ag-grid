@@ -179,7 +179,7 @@
     menuItem(0, 'Column Spanning', 'Column Spanning', 'javascript-grid-column-spanning/');
     menuItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
     menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
-    menuItem(0, 'Floating', 'Floating Rows', 'javascript-grid-floating/');
+    menuItem(0, 'Pinned Rows', 'Pinned Rows', 'javascript-grid-pinned-rows/');
     menuItem(0, 'Getters and Formatters', 'Getters & Formatters', 'javascript-grid-value-getters/');
     menuItem(0, 'Setters and Parsers', 'Setters and Parsers', 'javascript-grid-value-setters/');
     menuItem(0, 'Value Cache', 'Value Cache', 'javascript-grid-value-cache/');
