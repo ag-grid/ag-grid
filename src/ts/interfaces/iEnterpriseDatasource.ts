@@ -31,7 +31,7 @@ export interface IEnterpriseGetRowsParams {
     request: IEnterpriseGetRowsRequest;
 
     // success callback, pass the rows back the grid asked for
-    successCallback(rowsThisPage: any[]): void;
+    successCallback(rowsThisPage: any[], lastRow: number): void;
 
     // fail callback, tell the grid the call failed so it can adjust it's state
     failCallback(): void;
