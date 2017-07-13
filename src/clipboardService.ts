@@ -11,7 +11,7 @@ import {
     LoggerFactory,
     SelectionController,
     IRowModel,
-    FloatingRowModel,
+    PinnedRowModel,
     ValueService,
     FocusedCellController,
     RowRenderer,
@@ -48,7 +48,7 @@ export class ClipboardService implements IClipboardService {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('rangeController') private rangeController: RangeController;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -393,10 +393,10 @@ export class ClipboardService implements IClipboardService {
 
     private getRowNode(gridRow: GridRow): RowNode {
         switch (gridRow.floating) {
-            case Constants.FLOATING_TOP:
-                return this.floatingRowModel.getFloatingTopRowData()[gridRow.rowIndex];
-            case Constants.FLOATING_BOTTOM:
-                return this.floatingRowModel.getFloatingBottomRowData()[gridRow.rowIndex];
+            case Constants.PINNED_TOP:
+                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
+            case Constants.PINNED_BOTTOM:
+                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
             default:
                 return this.rowModel.getRow(gridRow.rowIndex);
         }
