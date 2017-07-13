@@ -130,7 +130,7 @@ export {FlattenStage} from "./dist/lib/rowModels/inMemory/flattenStage";
 export {SortStage} from "./dist/lib/rowModels/inMemory/sortStage";
 
 // row models
-export {FloatingRowModel} from "./dist/lib/rowModels/floatingRowModel";
+export {PinnedRowModel} from "./dist/lib/rowModels/pinnedRowModel";
 export {InMemoryRowModel, RowNodeTransaction} from "./dist/lib/rowModels/inMemory/inMemoryRowModel";
 export {ChangedPath} from "./dist/lib/rowModels/inMemory/changedPath";
 export {InMemoryNodeManager} from "./dist/lib/rowModels/inMemory/inMemoryNodeManager";

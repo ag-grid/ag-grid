@@ -72,10 +72,10 @@ export class FocusService {
             let rowId = _.getElementAttribute(eTarget, 'row');
             if (_.exists(rowId) && _.containsClass(eTarget, 'ag-row')) {
                 if (rowId.indexOf('ft')===0) {
-                    floating = Constants.FLOATING_TOP;
+                    floating = Constants.PINNED_TOP;
                     rowId = rowId.substr(3);
                 } else if (rowId.indexOf('fb')===0) {
-                    floating = Constants.FLOATING_BOTTOM;
+                    floating = Constants.PINNED_BOTTOM;
                     rowId = rowId.substr(3);
                 } else {
                     floating = null;

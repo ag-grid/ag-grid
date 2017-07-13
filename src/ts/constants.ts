@@ -56,8 +56,8 @@ export class Constants {
     static ALWAYS = 'always';
     static ONLY_WHEN_GROUPING = 'onlyWhenGrouping';
 
-    static FLOATING_TOP = 'top';
-    static FLOATING_BOTTOM = 'bottom';
+    static PINNED_TOP = 'top';
+    static PINNED_BOTTOM = 'bottom';
     
     static VERTICAL_SCROLL_KEYS_ID = 'verticalScrollKeys';
     static HORIZONTAL_SCROLL_KEYS_ID = 'horizontalScrollKeys';

@@ -91,8 +91,8 @@ export class RowNode implements IEventEmitter {
     public childIndex: number;
     /** The index of this node in the grid, only valid if node is displayed in the grid, otherwise it should be ignored as old index may be present */
     public rowIndex: number;
-    /** Either 'top' or 'bottom' if floating, otherwise undefined or null */
-    public floating: string;
+    /** Either 'top' or 'bottom' if row pinned, otherwise undefined or null */
+    public rowPinned: string;
     /** If using quick filter, stores a string representation of the row for searching against */
     public quickFilterAggregateText: string;
     /** Groups only - True if row is a footer. Footers  have group = true and footer = true */
@@ -429,8 +429,8 @@ export class RowNode implements IEventEmitter {
         });
     }
 
-    public isFloating(): boolean {
-        return this.floating === Constants.FLOATING_TOP || this.floating === Constants.FLOATING_BOTTOM;
+    public isRowPinned(): boolean {
+        return this.rowPinned === Constants.PINNED_TOP || this.rowPinned === Constants.PINNED_BOTTOM;
     }
 
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
@@ -450,8 +450,8 @@ export class RowNode implements IEventEmitter {
             return 0;
         }
 
-        if (this.floating) {
-            console.log('ag-Grid: cannot select floating rows');
+        if (this.rowPinned) {
+            console.log('ag-Grid: cannot select pinned rows');
             return 0;
         }
 
