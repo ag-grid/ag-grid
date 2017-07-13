@@ -19,7 +19,7 @@ export declare class RowRenderer extends BeanStub {
     private templateService;
     private valueService;
     private eventService;
-    private floatingRowModel;
+    private pinnedRowModel;
     private context;
     private loggerFactory;
     private focusedCellController;

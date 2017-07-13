@@ -94,11 +94,11 @@ var FocusedCellController = (function () {
             var rowId = utils_1.Utils.getElementAttribute(eTarget, 'row');
             if (utils_1.Utils.exists(rowId) && utils_1.Utils.containsClass(eTarget, 'ag-row')) {
                 if (rowId.indexOf('ft') === 0) {
-                    floating = constants_1.Constants.FLOATING_TOP;
+                    floating = constants_1.Constants.PINNED_TOP;
                     rowId = rowId.substr(3);
                 }
                 else if (rowId.indexOf('fb') === 0) {
-                    floating = constants_1.Constants.FLOATING_BOTTOM;
+                    floating = constants_1.Constants.PINNED_BOTTOM;
                     rowId = rowId.substr(3);
                 }
                 else {
@@ -136,7 +136,7 @@ var FocusedCellController = (function () {
         return this.focusedCell.column === gridCell.column && this.isRowFocused(gridCell.rowIndex, gridCell.floating);
     };
     FocusedCellController.prototype.isRowNodeFocused = function (rowNode) {
-        return this.isRowFocused(rowNode.rowIndex, rowNode.floating);
+        return this.isRowFocused(rowNode.rowIndex, rowNode.rowPinned);
     };
     FocusedCellController.prototype.isAnyCellFocused = function () {
         return !!this.focusedCell;

@@ -81,7 +81,7 @@ export declare class GridSerializer {
     private displayedGroupCreator;
     private columnController;
     private rowModel;
-    private floatingRowModel;
+    private pinnedRowModel;
     private selectionController;
     private balancedColumnTreeBuilder;
     private gridOptionsWrapper;

@@ -137,13 +137,22 @@ var Column = (function () {
         if (utils_1.Utils.get(this, 'colDef.cellRendererParams.keyMap', null)) {
             console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
         }
-        if (utils_1.Utils.exists(this.colDef.cellFormatter)) {
-            console.warn('ag-Grid: colDef.cellFormatter was renamed to colDef.valueFormatter, please rename in your code as we will be dropping cellFormatter');
-            this.colDef.valueFormatter = this.colDef.cellFormatter;
+        var colDefAny = this.colDef;
+        if (colDefAny.floatingCellRenderer) {
+            console.warn('ag-Grid: since v11, floatingCellRenderer is now pinnedRowCellRenderer');
+            this.colDef.pinnedRowCellRenderer = colDefAny.floatingCellRenderer;
         }
-        if (utils_1.Utils.exists(this.colDef.floatingCellFormatter)) {
-            console.warn('ag-Grid: colDef.floatingCellFormatter was renamed to colDef.floatingValueFormatter, please rename in your code as we will be dropping floatingCellFormatter');
-            this.colDef.floatingValueFormatter = this.colDef.floatingCellFormatter;
+        if (colDefAny.floatingRendererFramework) {
+            console.warn('ag-Grid: since v11, floatingRendererFramework is now pinnedRowCellRendererFramework');
+            this.colDef.pinnedRowCellRendererFramework = colDefAny.floatingRendererFramework;
+        }
+        if (colDefAny.floatingRendererParams) {
+            console.warn('ag-Grid: since v11, floatingRendererParams is now pinnedRowCellRendererParams');
+            this.colDef.pinnedRowCellRendererParams = colDefAny.floatingRendererParams;
+        }
+        if (colDefAny.floatingValueFormatter) {
+            console.warn('ag-Grid: since v11, floatingValueFormatter is now ');
+            this.colDef.pinnedRowValueFormatter = colDefAny.floatingValueFormatter;
         }
     };
     Column.prototype.addEventListener = function (eventType, listener) {

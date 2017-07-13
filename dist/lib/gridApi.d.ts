@@ -45,7 +45,7 @@ export declare class GridApi {
     private valueService;
     private alignedGridsService;
     private eventService;
-    private floatingRowModel;
+    private pinnedRowModel;
     private context;
     private rowModel;
     private sortController;
@@ -78,6 +78,12 @@ export declare class GridApi {
     getFloatingBottomRowCount(): number;
     getFloatingTopRow(index: number): RowNode;
     getFloatingBottomRow(index: number): RowNode;
+    setPinnedTopRowData(rows: any[]): void;
+    setPinnedBottomRowData(rows: any[]): void;
+    getPinnedTopRowCount(): number;
+    getPinnedBottomRowCount(): number;
+    getPinnedTopRow(index: number): RowNode;
+    getPinnedBottomRow(index: number): RowNode;
     setColumnDefs(colDefs: (ColDef | ColGroupDef)[]): void;
     expireValueCache(): void;
     getVerticalPixelRange(): any;

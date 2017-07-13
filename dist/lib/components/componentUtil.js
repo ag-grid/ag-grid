@@ -170,8 +170,9 @@ var ComponentUtil = (function () {
         //,'cellRenderers','cellEditors'
     ];
     ComponentUtil.ARRAY_PROPERTIES = [
-        'slaveGrids', 'alignedGrids', 'rowData', 'floatingTopRowData', 'floatingBottomRowData',
-        'columnDefs', 'excelStyles'
+        'slaveGrids', 'alignedGrids', 'rowData',
+        'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData'
+        // deprecated
     ];
     ComponentUtil.NUMBER_PROPERTIES = [
         'rowHeight', 'rowBuffer', 'colWidth', 'headerHeight', 'groupHeaderHeight', 'floatingFiltersHeight',
@@ -226,9 +227,6 @@ utils_1.Utils.iterateObject(events_1.Events, function (key, value) {
     ComponentUtil.EVENTS.push(value);
 });
 function checkForDeprecated(changes) {
-    if (changes.ready || changes.onReady) {
-        console.warn('ag-grid: as of v3.3 ready event is now called gridReady, so the callback should be onGridReady');
-    }
     if (changes.rowDeselected || changes.onRowDeselected) {
         console.warn('ag-grid: as of v3.4 rowDeselected no longer exists. Please check the docs.');
     }

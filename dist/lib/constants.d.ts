@@ -48,8 +48,8 @@ export declare class Constants {
     static ROW_MODEL_TYPE_ENTERPRISE: string;
     static ALWAYS: string;
     static ONLY_WHEN_GROUPING: string;
-    static FLOATING_TOP: string;
-    static FLOATING_BOTTOM: string;
+    static PINNED_TOP: string;
+    static PINNED_BOTTOM: string;
     static VERTICAL_SCROLL_KEYS_ID: string;
     static HORIZONTAL_SCROLL_KEYS_ID: string;
     static DIAGONAL_SCROLL_KEYS_ID: string;

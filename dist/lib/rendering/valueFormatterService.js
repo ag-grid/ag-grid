@@ -25,8 +25,8 @@ var ValueFormatterService = (function () {
         var formatter;
         var colDef = column.getColDef();
         // if floating, give preference to the floating formatter
-        if (rowNode.floating) {
-            formatter = colDef.floatingValueFormatter ? colDef.floatingValueFormatter : colDef.valueFormatter;
+        if (rowNode.rowPinned) {
+            formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
         }
         else {
             formatter = colDef.valueFormatter;

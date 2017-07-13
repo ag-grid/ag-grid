@@ -514,7 +514,7 @@ var RowComp = (function (_super) {
         this.eAllRowContainers.forEach(function (eRow) { return utils_1.Utils.addOrRemoveCssClass(eRow, 'ag-row-hover', hover); });
     };
     RowComp.prototype.setRowFocusClasses = function () {
-        var rowFocused = this.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.floating);
+        var rowFocused = this.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
         if (rowFocused !== this.rowFocusedLastTime) {
             this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused); });
             this.eAllRowContainers.forEach(function (row) { return utils_1.Utils.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused); });
@@ -579,7 +579,7 @@ var RowComp = (function (_super) {
         // visible (ie parent group was expanded) but is now not visible
         if (utils_1.Utils.exists(pixels)) {
             var pixelsWithOffset = void 0;
-            if (this.rowNode.isFloating()) {
+            if (this.rowNode.isRowPinned()) {
                 pixelsWithOffset = pixels;
             }
             else {
@@ -617,10 +617,10 @@ var RowComp = (function (_super) {
         var _this = this;
         var rowIndexListener = function () {
             var rowStr = _this.rowNode.rowIndex.toString();
-            if (_this.rowNode.floating === constants_1.Constants.FLOATING_BOTTOM) {
+            if (_this.rowNode.rowPinned === constants_1.Constants.PINNED_BOTTOM) {
                 rowStr = 'fb-' + rowStr;
             }
-            else if (_this.rowNode.floating === constants_1.Constants.FLOATING_TOP) {
+            else if (_this.rowNode.rowPinned === constants_1.Constants.PINNED_TOP) {
                 rowStr = 'ft-' + rowStr;
             }
             _this.eAllRowContainers.forEach(function (eRow) {
@@ -921,7 +921,7 @@ var RowComp = (function (_super) {
             return;
         }
         // we also don't allow selection of floating rows
-        if (this.rowNode.floating) {
+        if (this.rowNode.rowPinned) {
             return;
         }
         // if no selection method enabled, do nothing

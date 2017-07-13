@@ -25,7 +25,6 @@ var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var gridPanel_1 = require("./gridPanel/gridPanel");
 var valueService_1 = require("./valueService/valueService");
 var eventService_1 = require("./eventService");
-var floatingRowModel_1 = require("./rowModels/floatingRowModel");
 var constants_1 = require("./constants");
 var context_1 = require("./context/context");
 var gridCore_1 = require("./gridCore");
@@ -39,6 +38,7 @@ var paginationProxy_1 = require("./rowModels/paginationProxy");
 var immutableService_1 = require("./rowModels/inMemory/immutableService");
 var valueCache_1 = require("./valueService/valueCache");
 var alignedGridsService_1 = require("./alignedGridsService");
+var pinnedRowModel_1 = require("./rowModels/pinnedRowModel");
 var GridApi = (function () {
     function GridApi() {
     }
@@ -120,23 +120,53 @@ var GridApi = (function () {
             console.log('cannot call setRowData unless using normal row model');
         }
     };
+    // DEPRECATED
     GridApi.prototype.setFloatingTopRowData = function (rows) {
-        this.floatingRowModel.setFloatingTopRowData(rows);
+        console.warn('ag-Grid: since v12, api.setFloatingTopRowData() is now api.setPinnedTopRowData()');
+        this.setPinnedTopRowData(rows);
     };
+    // DEPRECATED
     GridApi.prototype.setFloatingBottomRowData = function (rows) {
-        this.floatingRowModel.setFloatingBottomRowData(rows);
+        console.warn('ag-Grid: since v12, api.setFloatingBottomRowData() is now api.setPinnedBottomRowData()');
+        this.setPinnedBottomRowData(rows);
     };
+    // DEPRECATED
     GridApi.prototype.getFloatingTopRowCount = function () {
-        return this.floatingRowModel.getFloatingTopRowCount();
+        console.warn('ag-Grid: since v12, api.getFloatingTopRowCount() is now api.getPinnedTopRowCount()');
+        return this.getPinnedTopRowCount();
     };
+    // DEPRECATED
     GridApi.prototype.getFloatingBottomRowCount = function () {
-        return this.floatingRowModel.getFloatingBottomRowCount();
+        console.warn('ag-Grid: since v12, api.getFloatingBottomRowCount() is now api.getPinnedBottomRowCount()');
+        return this.getPinnedBottomRowCount();
     };
+    // DEPRECATED
     GridApi.prototype.getFloatingTopRow = function (index) {
-        return this.floatingRowModel.getFloatingTopRow(index);
+        console.warn('ag-Grid: since v12, api.getFloatingTopRow() is now api.getPinnedTopRow()');
+        return this.getPinnedTopRow(index);
     };
+    // DEPRECATED
     GridApi.prototype.getFloatingBottomRow = function (index) {
-        return this.floatingRowModel.getFloatingBottomRow(index);
+        console.warn('ag-Grid: since v12, api.getFloatingBottomRow() is now api.getPinnedBottomRow()');
+        return this.getPinnedBottomRow(index);
+    };
+    GridApi.prototype.setPinnedTopRowData = function (rows) {
+        this.pinnedRowModel.setPinnedTopRowData(rows);
+    };
+    GridApi.prototype.setPinnedBottomRowData = function (rows) {
+        this.pinnedRowModel.setPinnedBottomRowData(rows);
+    };
+    GridApi.prototype.getPinnedTopRowCount = function () {
+        return this.pinnedRowModel.getPinnedTopRowCount();
+    };
+    GridApi.prototype.getPinnedBottomRowCount = function () {
+        return this.pinnedRowModel.getPinnedBottomRowCount();
+    };
+    GridApi.prototype.getPinnedTopRow = function (index) {
+        return this.pinnedRowModel.getPinnedTopRow(index);
+    };
+    GridApi.prototype.getPinnedBottomRow = function (index) {
+        return this.pinnedRowModel.getPinnedBottomRow(index);
     };
     GridApi.prototype.setColumnDefs = function (colDefs) {
         this.columnController.setColumnDefs(colDefs);
@@ -855,9 +885,9 @@ var GridApi = (function () {
         __metadata("design:type", eventService_1.EventService)
     ], GridApi.prototype, "eventService", void 0);
     __decorate([
-        context_1.Autowired('floatingRowModel'),
-        __metadata("design:type", floatingRowModel_1.FloatingRowModel)
-    ], GridApi.prototype, "floatingRowModel", void 0);
+        context_1.Autowired('pinnedRowModel'),
+        __metadata("design:type", pinnedRowModel_1.PinnedRowModel)
+    ], GridApi.prototype, "pinnedRowModel", void 0);
     __decorate([
         context_1.Autowired('context'),
         __metadata("design:type", context_1.Context)

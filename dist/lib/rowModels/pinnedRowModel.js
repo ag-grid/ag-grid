@@ -24,22 +24,22 @@ var events_1 = require("../events");
 var context_3 = require("../context/context");
 var constants_1 = require("../constants");
 var utils_1 = require("../utils");
-var FloatingRowModel = (function () {
-    function FloatingRowModel() {
+var PinnedRowModel = (function () {
+    function PinnedRowModel() {
     }
-    FloatingRowModel.prototype.init = function () {
-        this.setFloatingTopRowData(this.gridOptionsWrapper.getFloatingTopRowData());
-        this.setFloatingBottomRowData(this.gridOptionsWrapper.getFloatingBottomRowData());
+    PinnedRowModel.prototype.init = function () {
+        this.setPinnedTopRowData(this.gridOptionsWrapper.getPinnedTopRowData());
+        this.setPinnedBottomRowData(this.gridOptionsWrapper.getPinnedBottomRowData());
     };
-    FloatingRowModel.prototype.isEmpty = function (floating) {
-        var rows = floating === constants_1.Constants.FLOATING_TOP ? this.floatingTopRows : this.floatingBottomRows;
+    PinnedRowModel.prototype.isEmpty = function (floating) {
+        var rows = floating === constants_1.Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
         return utils_1.Utils.missingOrEmpty(rows);
     };
-    FloatingRowModel.prototype.isRowsToRender = function (floating) {
+    PinnedRowModel.prototype.isRowsToRender = function (floating) {
         return !this.isEmpty(floating);
     };
-    FloatingRowModel.prototype.getRowAtPixel = function (pixel, floating) {
-        var rows = floating === constants_1.Constants.FLOATING_TOP ? this.floatingTopRows : this.floatingBottomRows;
+    PinnedRowModel.prototype.getRowAtPixel = function (pixel, floating) {
+        var rows = floating === constants_1.Constants.PINNED_TOP ? this.pinnedTopRows : this.pinnedBottomRows;
         if (utils_1.Utils.missingOrEmpty(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
         }
@@ -54,15 +54,15 @@ var FloatingRowModel = (function () {
         }
         return rows.length - 1;
     };
-    FloatingRowModel.prototype.setFloatingTopRowData = function (rowData) {
-        this.floatingTopRows = this.createNodesFromData(rowData, true);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED);
+    PinnedRowModel.prototype.setPinnedTopRowData = function (rowData) {
+        this.pinnedTopRows = this.createNodesFromData(rowData, true);
+        this.eventService.dispatchEvent(events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED);
     };
-    FloatingRowModel.prototype.setFloatingBottomRowData = function (rowData) {
-        this.floatingBottomRows = this.createNodesFromData(rowData, false);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED);
+    PinnedRowModel.prototype.setPinnedBottomRowData = function (rowData) {
+        this.pinnedBottomRows = this.createNodesFromData(rowData, false);
+        this.eventService.dispatchEvent(events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED);
     };
-    FloatingRowModel.prototype.createNodesFromData = function (allData, isTop) {
+    PinnedRowModel.prototype.createNodesFromData = function (allData, isTop) {
         var _this = this;
         var rowNodes = [];
         if (allData) {
@@ -71,7 +71,7 @@ var FloatingRowModel = (function () {
                 var rowNode = new rowNode_1.RowNode();
                 _this.context.wireBean(rowNode);
                 rowNode.data = dataItem;
-                rowNode.floating = isTop ? constants_1.Constants.FLOATING_TOP : constants_1.Constants.FLOATING_BOTTOM;
+                rowNode.rowPinned = isTop ? constants_1.Constants.PINNED_TOP : constants_1.Constants.PINNED_BOTTOM;
                 rowNode.setRowTop(nextRowTop_1);
                 rowNode.setRowHeight(_this.gridOptionsWrapper.getRowHeightForNode(rowNode));
                 rowNode.setRowIndex(index);
@@ -81,43 +81,43 @@ var FloatingRowModel = (function () {
         }
         return rowNodes;
     };
-    FloatingRowModel.prototype.getFloatingTopRowData = function () {
-        return this.floatingTopRows;
+    PinnedRowModel.prototype.getPinnedTopRowData = function () {
+        return this.pinnedTopRows;
     };
-    FloatingRowModel.prototype.getFloatingBottomRowData = function () {
-        return this.floatingBottomRows;
+    PinnedRowModel.prototype.getPinnedBottomRowData = function () {
+        return this.pinnedBottomRows;
     };
-    FloatingRowModel.prototype.getFloatingTopTotalHeight = function () {
-        return this.getTotalHeight(this.floatingTopRows);
+    PinnedRowModel.prototype.getPinnedTopTotalHeight = function () {
+        return this.getTotalHeight(this.pinnedTopRows);
     };
-    FloatingRowModel.prototype.getFloatingTopRowCount = function () {
-        return this.floatingTopRows ? this.floatingTopRows.length : 0;
+    PinnedRowModel.prototype.getPinnedTopRowCount = function () {
+        return this.pinnedTopRows ? this.pinnedTopRows.length : 0;
     };
-    FloatingRowModel.prototype.getFloatingBottomRowCount = function () {
-        return this.floatingBottomRows ? this.floatingBottomRows.length : 0;
+    PinnedRowModel.prototype.getPinnedBottomRowCount = function () {
+        return this.pinnedBottomRows ? this.pinnedBottomRows.length : 0;
     };
-    FloatingRowModel.prototype.getFloatingTopRow = function (index) {
-        return this.floatingTopRows[index];
+    PinnedRowModel.prototype.getPinnedTopRow = function (index) {
+        return this.pinnedTopRows[index];
     };
-    FloatingRowModel.prototype.getFloatingBottomRow = function (index) {
-        return this.floatingBottomRows[index];
+    PinnedRowModel.prototype.getPinnedBottomRow = function (index) {
+        return this.pinnedBottomRows[index];
     };
-    FloatingRowModel.prototype.forEachFloatingTopRow = function (callback) {
-        if (utils_1.Utils.missingOrEmpty(this.floatingTopRows)) {
+    PinnedRowModel.prototype.forEachPinnedTopRow = function (callback) {
+        if (utils_1.Utils.missingOrEmpty(this.pinnedTopRows)) {
             return;
         }
-        this.floatingTopRows.forEach(callback);
+        this.pinnedTopRows.forEach(callback);
     };
-    FloatingRowModel.prototype.forEachFloatingBottomRow = function (callback) {
-        if (utils_1.Utils.missingOrEmpty(this.floatingBottomRows)) {
+    PinnedRowModel.prototype.forEachPinnedBottomRow = function (callback) {
+        if (utils_1.Utils.missingOrEmpty(this.pinnedBottomRows)) {
             return;
         }
-        this.floatingBottomRows.forEach(callback);
+        this.pinnedBottomRows.forEach(callback);
     };
-    FloatingRowModel.prototype.getFloatingBottomTotalHeight = function () {
-        return this.getTotalHeight(this.floatingBottomRows);
+    PinnedRowModel.prototype.getPinnedBottomTotalHeight = function () {
+        return this.getTotalHeight(this.pinnedBottomRows);
     };
-    FloatingRowModel.prototype.getTotalHeight = function (rowNodes) {
+    PinnedRowModel.prototype.getTotalHeight = function (rowNodes) {
         if (!rowNodes || rowNodes.length === 0) {
             return 0;
         }
@@ -129,24 +129,24 @@ var FloatingRowModel = (function () {
     __decorate([
         context_2.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-    ], FloatingRowModel.prototype, "gridOptionsWrapper", void 0);
+    ], PinnedRowModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_2.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)
-    ], FloatingRowModel.prototype, "eventService", void 0);
+    ], PinnedRowModel.prototype, "eventService", void 0);
     __decorate([
         context_2.Autowired('context'),
         __metadata("design:type", context_1.Context)
-    ], FloatingRowModel.prototype, "context", void 0);
+    ], PinnedRowModel.prototype, "context", void 0);
     __decorate([
         context_3.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
-    ], FloatingRowModel.prototype, "init", null);
-    FloatingRowModel = __decorate([
-        context_1.Bean('floatingRowModel')
-    ], FloatingRowModel);
-    return FloatingRowModel;
+    ], PinnedRowModel.prototype, "init", null);
+    PinnedRowModel = __decorate([
+        context_1.Bean('pinnedRowModel')
+    ], PinnedRowModel);
+    return PinnedRowModel;
 }());
-exports.FloatingRowModel = FloatingRowModel;
+exports.PinnedRowModel = PinnedRowModel;

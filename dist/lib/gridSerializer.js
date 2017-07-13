@@ -18,7 +18,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("./context/context");
 var columnController_1 = require("./columnController/columnController");
 var constants_1 = require("./constants");
-var floatingRowModel_1 = require("./rowModels/floatingRowModel");
 var utils_1 = require("./utils");
 var selectionController_1 = require("./selectionController");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
@@ -26,6 +25,7 @@ var displayedGroupCreator_1 = require("./columnController/displayedGroupCreator"
 var balancedColumnTreeBuilder_1 = require("./columnController/balancedColumnTreeBuilder");
 var groupInstanceIdCreator_1 = require("./columnController/groupInstanceIdCreator");
 var columnGroup_1 = require("./entities/columnGroup");
+var pinnedRowModel_1 = require("./rowModels/pinnedRowModel");
 var BaseGridSerializingSession = (function () {
     function BaseGridSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, cellAndHeaderEscaper) {
         this.columnController = columnController;
@@ -158,7 +158,7 @@ var GridSerializer = (function () {
                 gridRowIterator_1.onColumn(column, index, null);
             });
         }
-        this.floatingRowModel.forEachFloatingTopRow(processRow);
+        this.pinnedRowModel.forEachPinnedTopRow(processRow);
         if (isPivotMode) {
             inMemoryRowModel.forEachPivotNode(processRow);
         }
@@ -181,7 +181,7 @@ var GridSerializer = (function () {
                 inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
             }
         }
-        this.floatingRowModel.forEachFloatingBottomRow(processRow);
+        this.pinnedRowModel.forEachPinnedBottomRow(processRow);
         if (includeCustomFooter) {
             gridSerializingSession.addCustomFooter(params.customFooter);
         }
@@ -195,10 +195,10 @@ var GridSerializer = (function () {
             if (onlySelected && !node.isSelected()) {
                 return;
             }
-            if (skipFloatingTop && node.floating === 'top') {
+            if (skipFloatingTop && node.rowPinned === 'top') {
                 return;
             }
-            if (skipFloatingBottom && node.floating === 'bottom') {
+            if (skipFloatingBottom && node.rowPinned === 'bottom') {
                 return;
             }
             // if we are in pivotMode, then the grid will show the root node only
@@ -258,9 +258,9 @@ var GridSerializer = (function () {
         __metadata("design:type", Object)
     ], GridSerializer.prototype, "rowModel", void 0);
     __decorate([
-        context_1.Autowired('floatingRowModel'),
-        __metadata("design:type", floatingRowModel_1.FloatingRowModel)
-    ], GridSerializer.prototype, "floatingRowModel", void 0);
+        context_1.Autowired('pinnedRowModel'),
+        __metadata("design:type", pinnedRowModel_1.PinnedRowModel)
+    ], GridSerializer.prototype, "pinnedRowModel", void 0);
     __decorate([
         context_1.Autowired('selectionController'),
         __metadata("design:type", selectionController_1.SelectionController)

@@ -32,7 +32,6 @@ var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var columnController_1 = require("../columnController/columnController");
 var rowRenderer_1 = require("../rendering/rowRenderer");
-var floatingRowModel_1 = require("../rowModels/floatingRowModel");
 var borderLayout_1 = require("../layout/borderLayout");
 var logger_1 = require("../logger");
 var context_1 = require("../context/context");
@@ -51,6 +50,7 @@ var rowContainerComponent_1 = require("../rendering/rowContainerComponent");
 var paginationProxy_1 = require("../rowModels/paginationProxy");
 var popupEditorWrapper_1 = require("../rendering/cellEditors/popupEditorWrapper");
 var alignedGridsService_1 = require("../alignedGridsService");
+var pinnedRowModel_1 = require("../rowModels/pinnedRowModel");
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
 var HEADER_SNIPPET = '<div class="ag-header" role="row">' +
@@ -259,7 +259,7 @@ var GridPanel = (function (_super) {
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_ITEMS_ADDED, this.onRowDataChanged.bind(this));
@@ -600,19 +600,19 @@ var GridPanel = (function (_super) {
             var rowEnd = void 0;
             var floatingStart = void 0;
             var floatingEnd = void 0;
-            if (this.floatingRowModel.isEmpty(constants_1.Constants.FLOATING_TOP)) {
+            if (this.pinnedRowModel.isEmpty(constants_1.Constants.PINNED_TOP)) {
                 floatingStart = null;
             }
             else {
-                floatingStart = constants_1.Constants.FLOATING_TOP;
+                floatingStart = constants_1.Constants.PINNED_TOP;
             }
-            if (this.floatingRowModel.isEmpty(constants_1.Constants.FLOATING_BOTTOM)) {
+            if (this.pinnedRowModel.isEmpty(constants_1.Constants.PINNED_BOTTOM)) {
                 floatingEnd = null;
                 rowEnd = this.paginationProxy.getTotalRowCount() - 1;
             }
             else {
-                floatingEnd = constants_1.Constants.FLOATING_BOTTOM;
-                rowEnd = this.floatingRowModel.getFloatingBottomRowData().length = 1;
+                floatingEnd = constants_1.Constants.PINNED_BOTTOM;
+                rowEnd = this.pinnedRowModel.getPinnedBottomRowData().length = 1;
             }
             var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
             if (utils_1.Utils.missingOrEmpty(allDisplayedColumns)) {
@@ -1313,10 +1313,10 @@ var GridPanel = (function (_super) {
             return;
         }
         // padding top covers the header and the floating rows on top
-        var floatingTopHeight = this.floatingRowModel.getFloatingTopTotalHeight();
+        var floatingTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
         var paddingTop = totalHeaderHeight + floatingTopHeight;
         // bottom is just the bottom floating rows
-        var floatingBottomHeight = this.floatingRowModel.getFloatingBottomTotalHeight();
+        var floatingBottomHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
         var floatingBottomTop = heightOfContainer - floatingBottomHeight;
         var bodyHeight = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
         this.eBody.style.top = paddingTop + 'px';
@@ -1399,7 +1399,7 @@ var GridPanel = (function (_super) {
             this.eventService.dispatchEvent(events_1.Events.EVENT_BODY_SCROLL, { direction: 'horizontal' });
             this.lastLeftPosition = newLeftPosition;
             this.horizontallyScrollHeaderCenterAndFloatingCenter();
-            this.columnSyncService.fireHorizontalScrollEvent(newLeftPosition);
+            this.alignedGridsService.fireHorizontalScrollEvent(newLeftPosition);
             this.setLeftAndRightBounds();
         }
     };
@@ -1548,9 +1548,9 @@ var GridPanel = (function (_super) {
         this.eBodyViewport.removeEventListener('scroll', listener);
     };
     __decorate([
-        context_1.Autowired('columnSyncService'),
+        context_1.Autowired('alignedGridsService'),
         __metadata("design:type", alignedGridsService_1.AlignedGridsService)
-    ], GridPanel.prototype, "columnSyncService", void 0);
+    ], GridPanel.prototype, "alignedGridsService", void 0);
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
@@ -1564,9 +1564,9 @@ var GridPanel = (function (_super) {
         __metadata("design:type", rowRenderer_1.RowRenderer)
     ], GridPanel.prototype, "rowRenderer", void 0);
     __decorate([
-        context_1.Autowired('floatingRowModel'),
-        __metadata("design:type", floatingRowModel_1.FloatingRowModel)
-    ], GridPanel.prototype, "floatingRowModel", void 0);
+        context_1.Autowired('pinnedRowModel'),
+        __metadata("design:type", pinnedRowModel_1.PinnedRowModel)
+    ], GridPanel.prototype, "pinnedRowModel", void 0);
     __decorate([
         context_1.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)

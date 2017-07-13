@@ -176,8 +176,8 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isSuppressLoadingOverlay = function () { return isTrue(this.gridOptions.suppressLoadingOverlay); };
     GridOptionsWrapper.prototype.isSuppressNoRowsOverlay = function () { return isTrue(this.gridOptions.suppressNoRowsOverlay); };
     GridOptionsWrapper.prototype.isSuppressFieldDotNotation = function () { return isTrue(this.gridOptions.suppressFieldDotNotation); };
-    GridOptionsWrapper.prototype.getFloatingTopRowData = function () { return this.gridOptions.floatingTopRowData; };
-    GridOptionsWrapper.prototype.getFloatingBottomRowData = function () { return this.gridOptions.floatingBottomRowData; };
+    GridOptionsWrapper.prototype.getPinnedTopRowData = function () { return this.gridOptions.pinnedTopRowData; };
+    GridOptionsWrapper.prototype.getPinnedBottomRowData = function () { return this.gridOptions.pinnedBottomRowData; };
     GridOptionsWrapper.prototype.isFunctionsPassive = function () { return isTrue(this.gridOptions.functionsPassive); };
     GridOptionsWrapper.prototype.isSuppressRowHoverClass = function () { return isTrue(this.gridOptions.suppressRowHoverClass); };
     GridOptionsWrapper.prototype.isSuppressTabbing = function () { return isTrue(this.gridOptions.suppressTabbing); };
@@ -467,9 +467,6 @@ var GridOptionsWrapper = (function () {
         }
         if (options.groupKeys) {
             console.warn('ag-grid: as of v3 groupKeys is not used. You need to set rowGroupIndex on the columns to group. Please refer to the documentation');
-        }
-        if (options.ready || options.onReady) {
-            console.warn('ag-grid: as of v3.3 ready event is now called gridReady, so the callback should be onGridReady');
         }
         if (typeof options.groupDefaultExpanded === 'boolean') {
             console.warn('ag-grid: groupDefaultExpanded can no longer be boolean. for groupDefaultExpanded=true, use groupDefaultExpanded=9999 instead, to expand all the groups');

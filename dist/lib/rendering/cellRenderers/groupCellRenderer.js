@@ -245,7 +245,7 @@ var GroupCellRenderer = (function (_super) {
         var rowNode = this.params.node;
         var checkboxNeeded = this.isUserWantsSelected()
             && !rowNode.footer
-            && !rowNode.floating
+            && !rowNode.rowPinned
             && !rowNode.flower;
         if (checkboxNeeded) {
             var cbSelectionComponent_1 = new checkboxSelectionComponent_1.CheckboxSelectionComponent();

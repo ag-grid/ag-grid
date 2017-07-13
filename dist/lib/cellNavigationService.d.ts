@@ -6,7 +6,7 @@ import { GridCell } from "./entities/gridCell";
 export declare class CellNavigationService {
     private columnController;
     private rowModel;
-    private floatingRowModel;
+    private pinnedRowModel;
     private gridOptionsWrapper;
     getNextCellToFocus(key: any, lastCellToFocus: GridCell): GridCell;
     private getCellToLeft(lastCell);

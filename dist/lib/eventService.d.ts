@@ -13,7 +13,6 @@ export declare class EventService implements IEventEmitter {
     private asyncFunctionsQueue;
     private scheduled;
     private static PRIORITY;
-    private static DEPRECATED_EVENTS;
     setBeans(loggerFactory: LoggerFactory, gridOptionsWrapper: GridOptionsWrapper, globalEventListener?: Function): void;
     private getListenerList(eventType, async);
     addEventListener(eventType: string, listener: Function, async?: boolean): void;

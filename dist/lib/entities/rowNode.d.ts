@@ -71,8 +71,8 @@ export declare class RowNode implements IEventEmitter {
     childIndex: number;
     /** The index of this node in the grid, only valid if node is displayed in the grid, otherwise it should be ignored as old index may be present */
     rowIndex: number;
-    /** Either 'top' or 'bottom' if floating, otherwise undefined or null */
-    floating: string;
+    /** Either 'top' or 'bottom' if row pinned, otherwise undefined or null */
+    rowPinned: string;
     /** If using quick filter, stores a string representation of the row for searching against */
     quickFilterAggregateText: string;
     /** Groups only - True if row is a footer. Footers  have group = true and footer = true */
@@ -152,7 +152,7 @@ export declare class RowNode implements IEventEmitter {
     private calculateSelectedFromChildrenBubbleUp();
     setSelectedInitialValue(selected: boolean): void;
     setSelected(newValue: boolean, clearSelection?: boolean, tailingNodeInSequence?: boolean): void;
-    isFloating(): boolean;
+    isRowPinned(): boolean;
     setSelectedParams(params: SetSelectedParams): number;
     private doRowRangeSelection();
     isParentOfNode(potentialParent: RowNode): boolean;

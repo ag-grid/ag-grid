@@ -21,11 +21,11 @@ export interface RowContainerComponents {
     floatingBottomFullWith: RowContainerComponent;
 }
 export declare class GridPanel extends BeanStub {
-    private columnSyncService;
+    private alignedGridsService;
     private gridOptionsWrapper;
     private columnController;
     private rowRenderer;
-    private floatingRowModel;
+    private pinnedRowModel;
     private eventService;
     private context;
     private paginationProxy;

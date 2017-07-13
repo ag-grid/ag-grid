@@ -7,7 +7,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
-var floatingRowModel_1 = require("./rowModels/floatingRowModel");
 var selectionController_1 = require("./selectionController");
 var columnController_1 = require("./columnController/columnController");
 var rowRenderer_1 = require("./rendering/rowRenderer");
@@ -69,6 +68,7 @@ var constants_1 = require("./constants");
 var valueCache_1 = require("./valueService/valueCache");
 var changeDetectionService_1 = require("./valueService/changeDetectionService");
 var alignedGridsService_1 = require("./alignedGridsService");
+var pinnedRowModel_1 = require("./rowModels/pinnedRowModel");
 var Grid = (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -107,7 +107,7 @@ var Grid = (function () {
             overrideBeans: overrideBeans,
             seed: seed,
             beans: [rowModelClass, paginationProxy_1.PaginationAutoPageSizeService, gridApi_1.GridApi, componentProvider_1.ComponentProvider, cellRendererFactory_1.CellRendererFactory,
-                horizontalDragService_1.HorizontalDragService, headerTemplateLoader_1.HeaderTemplateLoader, floatingRowModel_1.FloatingRowModel, dragService_1.DragService,
+                horizontalDragService_1.HorizontalDragService, headerTemplateLoader_1.HeaderTemplateLoader, pinnedRowModel_1.PinnedRowModel, dragService_1.DragService,
                 displayedGroupCreator_1.DisplayedGroupCreator, eventService_1.EventService, gridOptionsWrapper_1.GridOptionsWrapper, selectionController_1.SelectionController,
                 filterManager_1.FilterManager, columnController_1.ColumnController, paginationProxy_1.PaginationProxy, rowRenderer_1.RowRenderer, headerRenderer_1.HeaderRenderer, expressionService_1.ExpressionService,
                 balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder, csvCreator_1.CsvCreator, downloader_1.Downloader, xmlFactory_1.XmlFactory, gridSerializer_1.GridSerializer, templateService_1.TemplateService,

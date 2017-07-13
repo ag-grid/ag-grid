@@ -72,11 +72,11 @@ var FocusService = (function () {
             var rowId = utils_1.Utils.getElementAttribute(eTarget, 'row');
             if (utils_1.Utils.exists(rowId) && utils_1.Utils.containsClass(eTarget, 'ag-row')) {
                 if (rowId.indexOf('ft') === 0) {
-                    floating = constants_1.Constants.FLOATING_TOP;
+                    floating = constants_1.Constants.PINNED_TOP;
                     rowId = rowId.substr(3);
                 }
                 else if (rowId.indexOf('fb') === 0) {
-                    floating = constants_1.Constants.FLOATING_BOTTOM;
+                    floating = constants_1.Constants.PINNED_BOTTOM;
                     rowId = rowId.substr(3);
                 }
                 else {

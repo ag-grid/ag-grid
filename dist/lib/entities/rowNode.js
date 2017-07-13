@@ -288,8 +288,8 @@ var RowNode = (function () {
             rangeSelect: false
         });
     };
-    RowNode.prototype.isFloating = function () {
-        return this.floating === constants_1.Constants.FLOATING_TOP || this.floating === constants_1.Constants.FLOATING_BOTTOM;
+    RowNode.prototype.isRowPinned = function () {
+        return this.rowPinned === constants_1.Constants.PINNED_TOP || this.rowPinned === constants_1.Constants.PINNED_BOTTOM;
     };
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
     RowNode.prototype.setSelectedParams = function (params) {
@@ -304,8 +304,8 @@ var RowNode = (function () {
             console.warn('ag-Grid: cannot select node until id for node is known');
             return 0;
         }
-        if (this.floating) {
-            console.log('ag-Grid: cannot select floating rows');
+        if (this.rowPinned) {
+            console.log('ag-Grid: cannot select pinned rows');
             return 0;
         }
         // if we are a footer, we don't do selection, just pass the info

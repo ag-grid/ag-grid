@@ -75,7 +75,7 @@ var CellComp = (function (_super) {
     CellComp.prototype.createGridCell = function () {
         var gridCellDef = {
             rowIndex: this.node.rowIndex,
-            floating: this.node.floating,
+            floating: this.node.rowPinned,
             column: this.column
         };
         this.gridCell = new gridCell_1.GridCell(gridCellDef);
@@ -144,7 +144,7 @@ var CellComp = (function (_super) {
         // if boolean set, then just use it
         var colDef = this.column.getColDef();
         // never allow selection on floating rows
-        if (this.node.floating) {
+        if (this.node.rowPinned) {
             this.usingWrapper = false;
         }
         else if (typeof colDef.checkboxSelection === 'boolean') {
@@ -440,7 +440,7 @@ var CellComp = (function (_super) {
         if (this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.node.floating);
+        this.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.node.rowPinned);
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     };
@@ -613,7 +613,7 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.focusCell = function (forceBrowserFocus) {
         if (forceBrowserFocus === void 0) { forceBrowserFocus = false; }
-        this.focusedCellController.setFocusedCell(this.gridCell.rowIndex, this.column, this.node.floating, forceBrowserFocus);
+        this.focusedCellController.setFocusedCell(this.gridCell.rowIndex, this.column, this.node.rowPinned, forceBrowserFocus);
     };
     // pass in 'true' to cancel the editing.
     CellComp.prototype.stopRowOrCellEdit = function (cancel) {
@@ -1035,9 +1035,9 @@ var CellComp = (function (_super) {
             }
             // use cell renderer if it exists
         }
-        else if (floatingCellRenderer && this.node.floating) {
+        else if (floatingCellRenderer && this.node.rowPinned) {
             // if floating, then give preference to floating cell renderer
-            this.useCellRenderer(floatingCellRenderer, colDef.floatingCellRendererParams, valueFormatted);
+            this.useCellRenderer(floatingCellRenderer, colDef.pinnedRowCellRendererParams, valueFormatted);
         }
         else if (cellRenderer) {
             // use normal cell renderer

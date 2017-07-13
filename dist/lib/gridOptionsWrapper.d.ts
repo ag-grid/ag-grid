@@ -85,8 +85,8 @@ export declare class GridOptionsWrapper {
     isSuppressLoadingOverlay(): boolean;
     isSuppressNoRowsOverlay(): boolean;
     isSuppressFieldDotNotation(): boolean;
-    getFloatingTopRowData(): any[];
-    getFloatingBottomRowData(): any[];
+    getPinnedTopRowData(): any[];
+    getPinnedBottomRowData(): any[];
     isFunctionsPassive(): boolean;
     isSuppressRowHoverClass(): boolean;
     isSuppressTabbing(): boolean;

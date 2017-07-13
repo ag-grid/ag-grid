@@ -14,7 +14,7 @@ var BaseFrameworkFactory = (function () {
         return gridOptions.dateComponent;
     };
     BaseFrameworkFactory.prototype.colDefFloatingCellRenderer = function (colDef) {
-        return colDef.floatingCellRenderer;
+        return colDef.pinnedRowCellRenderer;
     };
     BaseFrameworkFactory.prototype.colDefCellRenderer = function (colDef) {
         return colDef.cellRenderer;

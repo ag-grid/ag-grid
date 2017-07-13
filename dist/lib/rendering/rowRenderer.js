@@ -35,7 +35,6 @@ var expressionService_1 = require("../valueService/expressionService");
 var templateService_1 = require("../templateService");
 var valueService_1 = require("../valueService/valueService");
 var eventService_1 = require("../eventService");
-var floatingRowModel_1 = require("../rowModels/floatingRowModel");
 var rowComp_1 = require("./rowComp");
 var events_1 = require("../events");
 var constants_1 = require("../constants");
@@ -49,6 +48,7 @@ var cellNavigationService_1 = require("../cellNavigationService");
 var gridCell_1 = require("../entities/gridCell");
 var beanStub_1 = require("../context/beanStub");
 var paginationProxy_1 = require("../rowModels/paginationProxy");
+var pinnedRowModel_1 = require("../rowModels/pinnedRowModel");
 var TEMP_PREVIOUS_ELEMENTS = { body: null, left: null, right: null, fullWidth: null };
 var RowRenderer = (function (_super) {
     __extends(RowRenderer, _super);
@@ -72,7 +72,7 @@ var RowRenderer = (function (_super) {
     RowRenderer.prototype.init = function () {
         this.rowContainers = this.gridPanel.getRowContainers();
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
         this.redrawAfterModelUpdate();
     };
     RowRenderer.prototype.onPageLoaded = function (refreshEvent) {
@@ -93,8 +93,8 @@ var RowRenderer = (function (_super) {
         return eCells;
     };
     RowRenderer.prototype.refreshFloatingRowComps = function () {
-        this.refreshFloatingRows(this.floatingTopRowComps, this.floatingRowModel.getFloatingTopRowData(), this.rowContainers.floatingTopPinnedLeft, this.rowContainers.floatingTopPinnedRight, this.rowContainers.floatingTop, this.rowContainers.floatingTopFullWidth);
-        this.refreshFloatingRows(this.floatingBottomRowComps, this.floatingRowModel.getFloatingBottomRowData(), this.rowContainers.floatingBottomPinnedLeft, this.rowContainers.floatingBottomPinnedRight, this.rowContainers.floatingBottom, this.rowContainers.floatingBottomFullWith);
+        this.refreshFloatingRows(this.floatingTopRowComps, this.pinnedRowModel.getPinnedTopRowData(), this.rowContainers.floatingTopPinnedLeft, this.rowContainers.floatingTopPinnedRight, this.rowContainers.floatingTop, this.rowContainers.floatingTopFullWidth);
+        this.refreshFloatingRows(this.floatingBottomRowComps, this.pinnedRowModel.getPinnedBottomRowData(), this.rowContainers.floatingBottomPinnedLeft, this.rowContainers.floatingBottomPinnedRight, this.rowContainers.floatingBottom, this.rowContainers.floatingBottomFullWith);
     };
     RowRenderer.prototype.refreshFloatingRows = function (renderedRows, rowNodes, pinnedLeftContainerComp, pinnedRightContainerComp, bodyContainerComp, fullWidthContainerComp) {
         var _this = this;
@@ -273,10 +273,10 @@ var RowRenderer = (function (_super) {
                 normal: {}
             };
             params.rowNodes.forEach(function (rowNode) {
-                if (rowNode.floating === constants_1.Constants.FLOATING_TOP) {
+                if (rowNode.rowPinned === constants_1.Constants.PINNED_TOP) {
                     rowIdsMap.top[rowNode.id] = true;
                 }
-                else if (rowNode.floating === constants_1.Constants.FLOATING_BOTTOM) {
+                else if (rowNode.rowPinned === constants_1.Constants.PINNED_BOTTOM) {
                     rowIdsMap.bottom[rowNode.id] = true;
                 }
                 else {
@@ -295,15 +295,15 @@ var RowRenderer = (function (_super) {
         var processRow = function (rowComp) {
             var rowNode = rowComp.getRowNode();
             var id = rowNode.id;
-            var floating = rowNode.floating;
+            var floating = rowNode.rowPinned;
             // skip this row if it is missing from the provided list
             if (utils_1.Utils.exists(rowIdsMap)) {
-                if (floating === constants_1.Constants.FLOATING_BOTTOM) {
+                if (floating === constants_1.Constants.PINNED_BOTTOM) {
                     if (!rowIdsMap.bottom[id]) {
                         return;
                     }
                 }
-                else if (floating === constants_1.Constants.FLOATING_TOP) {
+                else if (floating === constants_1.Constants.PINNED_TOP) {
                     if (!rowIdsMap.top[id]) {
                         return;
                     }
@@ -657,10 +657,10 @@ var RowRenderer = (function (_super) {
     RowRenderer.prototype.getComponentForCell = function (gridCell) {
         var rowComponent;
         switch (gridCell.floating) {
-            case constants_1.Constants.FLOATING_TOP:
+            case constants_1.Constants.PINNED_TOP:
                 rowComponent = this.floatingTopRowComps[gridCell.rowIndex];
                 break;
-            case constants_1.Constants.FLOATING_BOTTOM:
+            case constants_1.Constants.PINNED_BOTTOM:
                 rowComponent = this.floatingBottomRowComps[gridCell.rowIndex];
                 break;
             default:
@@ -852,9 +852,9 @@ var RowRenderer = (function (_super) {
         __metadata("design:type", eventService_1.EventService)
     ], RowRenderer.prototype, "eventService", void 0);
     __decorate([
-        context_1.Autowired('floatingRowModel'),
-        __metadata("design:type", floatingRowModel_1.FloatingRowModel)
-    ], RowRenderer.prototype, "floatingRowModel", void 0);
+        context_1.Autowired('pinnedRowModel'),
+        __metadata("design:type", pinnedRowModel_1.PinnedRowModel)
+    ], RowRenderer.prototype, "pinnedRowModel", void 0);
     __decorate([
         context_1.Autowired('context'),
         __metadata("design:type", context_1.Context)
