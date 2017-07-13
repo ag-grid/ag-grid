@@ -146,7 +146,7 @@ include('../../includes/mediaHeader.php');
 
             <h4>Shift 'Range Selection' in all Row Models</h4>
             <p>
-            Rob has added shift ‘Range Selection’ to all Row Models, which was previously only available in ‘Memory Row Model’, making the feature more accessible to our users.
+            Rob has added shift ‘Range Selection’ to all Row Models, which was previously only available for the ‘In Memory Row Model’, making the feature more accessible to our users.
             </p>
 
             <h4>Dynamic Row Heights</h4>
