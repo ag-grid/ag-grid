@@ -142,14 +142,11 @@ export class StatusBar extends Component {
                     }
 
                     currentRow = this.cellNavigationService.getRowBelow(currentRow);
-
                 }
-
             });
-
         }
 
-        let gotResult = count > 1;
+        let gotResult = this.gridOptionsWrapper.isAlwaysShowStatusBar() || count > 1;
         let gotNumberResult = numberCount > 1;
 
         // we should count even if no numbers
