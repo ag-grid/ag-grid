@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div xmlns="http://www.w3.org/1999/html">
 
-    <h1 class="first-h1" id="headerHeight">Column Header</h1>
+    <h1 class="first-h1" id="headerHeight">Column Headers</h1>
 
     <p>
         Each column has a header at the top that typically displays the column name and has access to column

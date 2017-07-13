@@ -77,6 +77,8 @@
 <div class="docsMenu-content">
 
     <?php
+    menuItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
+
     if (isFrameworkJavaScript()) {
         menuItem(1, 'Overview JavaScript', 'Javascript', 'best-javascript-data-grid/');
         menuItem(2, 'Getting Started Javascript', 'Getting Started', 'javascript-getting-started');
@@ -159,7 +161,7 @@
     menuItem(0, 'Width & Height', 'Grid Size', 'javascript-grid-width-and-height/');
     menuItem(0, 'ColumnDefs', 'Column Definitions', 'javascript-grid-column-definitions/');
     menuItem(0, 'Grouping Columns', 'Column Groups', 'javascript-grid-grouping-headers/');
-    menuItem(0, 'Column Header', 'Column Header', 'javascript-grid-column-header/');
+    menuItem(0, 'Column Header', 'Column Headers', 'javascript-grid-column-header/');
     menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
     menuItem(0, 'Column Filter', 'Column Filter', 'javascript-grid-filtering/');
 

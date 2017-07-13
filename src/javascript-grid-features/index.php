@@ -38,6 +38,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         When you see this symbol, the feature is only available in ag-Grid Enterprise.
     </p>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
