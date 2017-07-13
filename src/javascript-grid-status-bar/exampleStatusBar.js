@@ -15,6 +15,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     enableStatusBar: true,
+    alwaysShowStatusBar: false, //status bar can be be fixed
     enableRangeSelection: true
 };
 
