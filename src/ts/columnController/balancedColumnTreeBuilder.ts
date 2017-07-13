@@ -147,7 +147,14 @@ export class BalancedColumnTreeBuilder {
 
         if(colDef.type) {
             let typeNames = colDef.type.split(',');
-            typeNames.forEach((t) => _.assign(colDefMerged, this.gridOptionsWrapper.getColumnTypes()[t]));
+            typeNames.forEach((t) => {
+                let typeColDef = this.gridOptionsWrapper.getColumnTypes()[t.trim()];
+                if(typeColDef) {
+                    _.assign(colDefMerged, typeColDef);
+                } else {
+                    console.warn("ag-grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
+                }
+            });
         }
 
         _.assign(colDefMerged, colDef);
