@@ -6,7 +6,7 @@ if [ "$#" -ne 4 ]
     exit 1
 fi
 
-declare -a subfolders=("ag-grid-angular-example/systemjs_aot" "ag-grid-angular-example/webpack" "ag-grid-angular-example/ngtools_webpack" "ag-grid-angular-example/webpack2")
+declare -a subfolders=("ag-grid-angular-example/systemjs_aot" "ag-grid-angular-example/webpack" "ag-grid-angular-example/ngtools_webpack" "ag-grid-angular-example/webpack2" "ag-grid-angular-example/angular-cli")
 
 current_dir=$(pwd)
 for subfolder in "${subfolders[@]}"
