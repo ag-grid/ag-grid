@@ -1210,7 +1210,7 @@ export class Utils {
         }
     }
 
-    static passiveEvents:string[] = ['mousewheel','touchstart','touchend','touchmove','touchcancel'];
+    static passiveEvents:string[] = ['touchstart','touchend','touchmove','touchcancel'];
 
     static addSafePassiveEventListener (eElement: HTMLElement, event: string, listener: (event?: any)=>void){
         eElement.addEventListener(event, listener, <any>(Utils.passiveEvents.indexOf(event) > -1 ? {passive:true} : null));
