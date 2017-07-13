@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li>When the provided floating filter for a provided filter does not meet your requirements and you
         want to replace with one of your own.</li>
-        <li>Whe you have a custom filter and want to provide a floating filter for your custom filter.</li>
+        <li>When you have a custom filter and want to provide a floating filter for your custom filter.</li>
     </ul>
 </p>
 
@@ -27,8 +27,8 @@ include '../documentation-main/documentation_header.php';
 <h3 id="lifecycle">Floating Filter LifeCycle</h3>
 
 <p>
-    Floating filters do not contain filter state. They show the state of the actual filter. Floating
-    filters are only another GUI for the main filter. For this reason, floating filters lifecycle is
+    Floating filters do not contain filter state, they merely show the state of the actual underlying filter. Floating
+    filters are just another view for the main filter. For this reason the floating filters lifecycle is
     bound to the visibility of the column. So if you hide a column (either set not visible, or
     horizontally scroll the column out of view) then the floating filter GUI component is destroyed.
     If the column comes back into view, it is created again. This is different to column filters,
@@ -43,16 +43,16 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    To see examples of the different ways to implement floating filters, check the examples below.
+    To see examples of the different ways to implement floating filters please refer to the examples below.
 </p>
 
 <h3>Floating Filter Interface</h3>
 
 <p>
-    To provide a custom floating filter, you have to provide it through the column definition property
-    <i>floatingFilterComponent</i> if using plain JS or <i>floatingFilterComponentFramework</i> if you
-    are using your favourite framework.
-
+    To provide a custom floating filter you have to provide it either through the column definition property
+    <i>floatingFilterComponent</i> if using plain JS, or via <i>floatingFilterComponentFramework</i> if you
+    are using a framework (such as <code>React</code> or <code>Angular</code>).
+</p><p>
     For plain JS (<i>floatingFilterComponent</i>) it needs to be provided in the form of a function.
     ag-Grid will call 'new' on this function and treat the generated class instance as a floating filter
     component. A floating filter component class can be any function /class that implements the following interface:

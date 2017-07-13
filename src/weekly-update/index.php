@@ -55,6 +55,45 @@ include('../includes/mediaHeader.php');
 
 <div class="weekly-news-section">
 
+    <a href="./20170711/">
+        <div class="weekly-news-title">
+            VC Meeting - OpenFin Demo - New Value Cache
+        </div>
+        <div class="weekly-news-sub-title">
+            Customer Experience Team, 11th July, 2017
+        </div>
+    </a>
+
+    <div style="clear: both;"></div>
+
+    <div class="weekly-news-paragraph">
+        This week's update covers our first VC meeting, our Development update including a new value cache, finishing change detection, adding multiple selection to more row models and working on dynamic row heights for the Enterprise Row Model. Our support for Polymer is gathering pace and Web Components has gone live.
+    </div>
+
+</div>
+
+<div class="weekly-news-section">
+
+    <a href="./20170704/">
+        <div class="weekly-news-title">
+            New Refresh & Change Detection - Web Components Support - Adding Polymer
+        </div>
+        <div class="weekly-news-sub-title">
+            Customer Experience Team, 4th July, 2017
+        </div>
+    </a>
+
+    <div style="clear: both;"></div>
+
+    <div class="weekly-news-paragraph">
+        This week we are improving how the grid refreshes data, scoping out change detection and improving our
+        frameowrk support - updating Web Components and starting on Polymer.
+    </div>
+
+</div>
+
+<div class="weekly-news-section">
+
     <a href="./20170627/">
         <div class="weekly-news-title">
             Version 11 Released - OpenFin Integration - More JIRAs

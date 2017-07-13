@@ -169,7 +169,7 @@
     menuItem(0, 'Quick Filter', 'Quick Filter', 'javascript-grid-filter-quick/');
     menuItem(0, 'External Filter', 'External Filter', 'javascript-grid-filter-external/');
 
-    menuItem(0, 'Selection', 'Selection', 'javascript-grid-selection/');
+    menuItem(0, 'Selection', 'Row Selection', 'javascript-grid-selection/');
     menuItemWithIcon('enterprise.png', 0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
     menuItem(0, 'ColumnDefs', 'Column Definitions', 'javascript-grid-column-definitions/');
     menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
@@ -181,6 +181,8 @@
     menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
     menuItem(0, 'Floating', 'Floating Rows', 'javascript-grid-floating/');
     menuItem(0, 'Getters and Formatters', 'Getters & Formatters', 'javascript-grid-value-getters/');
+    menuItem(0, 'Setters and Parsers', 'Setters and Parsers', 'javascript-grid-value-setters/');
+    menuItem(0, 'Value Cache', 'Value Cache', 'javascript-grid-value-cache/');
     menuItem(0, 'Cell Expressions', 'Expressions', 'javascript-grid-cell-expressions/');
     menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
     menuItem(0, 'Cell Renderer', 'Cell Renderer', 'javascript-grid-cell-rendering/');
@@ -188,16 +190,16 @@
     menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
     menuItem(0, 'Context', 'Context', 'javascript-grid-context/');
     menuItem(0, 'AccessingData', 'Accessing Data', 'javascript-grid-accessing-data/');
-    menuItem(0, 'DataUpdate', 'Data Update', 'javascript-grid-data-update/');
-    menuItem(0, 'Change Detection', 'Change Detection', 'javascript-grid-change-detection/');
-    menuItem(0, 'Refresh', 'View Refresh', 'javascript-grid-refresh/');
     menuItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
+    menuItem(0, 'DataUpdate', 'Data Update', 'javascript-grid-data-update/');
+    menuItem(0, 'Refresh', 'View Refresh', 'javascript-grid-refresh/');
+    menuItem(0, 'Change Detection', 'Change Detection', 'javascript-grid-change-detection/');
     menuItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
     menuItem(0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/');
     menuItemWithIcon('lab.png', 0, 'Accessibility', 'Accessibility', 'javascript-grid-accessibility/');
     menuItem(0, 'Full Width Rows', 'Full Width Rows', 'javascript-grid-full-width-rows/');
     menuItem(0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');
-    menuItem(0, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave/');
+    menuItem(0, 'Aligned Grids', 'Aligned Grids', 'javascript-grid-aligned-grids/');
     menuItem(0, 'Touch', 'Touch', 'javascript-grid-touch/');
     menuItem(0, 'Data Export', 'CSV Export', 'javascript-grid-export/');
     menuItemWithIcon('enterprise.png', 0, 'Excel Export', 'Excel Export', 'javascript-grid-excel/');
@@ -350,6 +352,7 @@
 
     menuItem(0, 'ag-Grid Third Party Examples', 'Overview', 'javascript-grid-third-party/');
     menuItem(1, 'ag-Grid OpenFin', 'OpenFin', 'javascript-grid-openfin/');
+    menuItem(2, 'ag-Grid OpenFin Dashboard', 'Trader Dashboard', 'javascript-grid-openfin-dashboard/');
     menuItem(1, 'ag-Grid Graphing', 'Graphing', 'javascript-grid-graphing/');
     ?>
 </div>

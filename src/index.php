@@ -35,7 +35,7 @@ include 'includes/navbar.php'; ?>
                     </h1>
                 </div>
                 <div class="col-md-8">
-                    <h1 style="padding-top: 113px;">The Best Grid In The World</h1>
+                    <h1 style="padding-top: 100px;">The Best HTML 5 Grid In The World</h1>
                 </div>
             </div>
         </div>
@@ -61,8 +61,8 @@ include 'includes/navbar.php'; ?>
                     use <b>ag-Grid Enterprise</b>.
                 </div>
                 <div class="col-md-4 info-item">
-                    Over <span class="info-item-big">50,000 Downloads</span>
-                    per month of <b>ag-Grid Free</b>.
+                    Over <span class="info-item-big">60,000 Downloads</span>
+                    per month.
                 </div>
             </div>
         </div>

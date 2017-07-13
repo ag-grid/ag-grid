@@ -2,9 +2,9 @@ var columnDefs = [
     {headerName: 'A', field: 'a'},
     {headerName: 'B', field: 'b'},
     {headerName: 'C', field: 'c'},
-    {headerName: 'D', field: 'd', volatile: true},
-    {headerName: 'E', field: 'e', volatile: true},
-    {headerName: 'F', field: 'f', volatile: true}
+    {headerName: 'D', field: 'd'},
+    {headerName: 'E', field: 'e'},
+    {headerName: 'F', field: 'f'}
 ];
 
 // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
@@ -46,16 +46,7 @@ function isForceRefreshSelected() {
 function scrambleAndRefreshAll() {
     scramble();
     var params = {
-        forceRefresh: isForceRefreshSelected()
-    };
-    gridOptions.api.refreshCells(params);
-}
-
-function scrambleAndRefreshVolatile() {
-    scramble();
-    var params = {
-        forceRefresh: isForceRefreshSelected(),
-        volatile: true
+        force: isForceRefreshSelected()
     };
     gridOptions.api.refreshCells(params);
 }
@@ -66,7 +57,7 @@ function scrambleAndRefreshLeftToRight() {
     ['a','b','c','d','e','f'].forEach( function(col, index) {
         var millis = index * 100;
         var params = {
-            forceRefresh: isForceRefreshSelected(),
+            force: isForceRefreshSelected(),
             columns: [col]
         };
         callRefreshAfterMillis(params, millis);
@@ -99,7 +90,7 @@ function scrambleAndRefreshTopToBottom() {
         var millis = frame++ * 100;
         var rowNodes = [rowNode]; // params needs an array
         var params = {
-            forceRefresh: isForceRefreshSelected(),
+            force: isForceRefreshSelected(),
             rowNodes: rowNodes
         };
         callRefreshAfterMillis(params, millis);

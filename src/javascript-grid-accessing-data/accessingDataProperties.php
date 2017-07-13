@@ -21,6 +21,12 @@ $getRowNodeApi = [
     ],
     ['getDisplayedRowCount()',
     'Returns the total number of displayed rows.'
+    ],
+    ['getFirstDisplayedRow()',
+    'Get the index of the first displayed row due to scrolling (includes not visible rendered rows in the buffer)'
+    ],
+    ['getLastDisplayedRow()',
+    'Get the index of the last displayed row due to scrolling (includes not visible rendered rows in the buffer)'
     ]
 ];
 

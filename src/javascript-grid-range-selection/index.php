@@ -119,8 +119,8 @@ GridCell {
     floatingStart: string, // the starting floating ('top', 'bottom' or null/undefined)
     rowEnd: number, // the end row index
     floatingEnd: string, // the end floating ('top', 'bottom' or null/undefined)
-    columnStart: Column|ColDef|string, // colId of the starting column
-    columnEnd: Column|ColDef|string // colId of the ending column
+    columnStart: string|Column, // colId of the starting column
+    columnEnd: string|Column // colId of the ending column
 }</pre>
     </p>
 

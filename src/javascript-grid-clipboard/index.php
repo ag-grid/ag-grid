@@ -21,12 +21,15 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Copy to clipboard operation can be done in the following ways:
-        <ul>
-            <li>Select 'Copy' from the context menu that appears when you right click over a cell.</li>
-            <li>Press keys Ctrl+C while focus is on the grid.</li>
-            <li>Use the API methods: copySelectedRowsToClipboard(includeHeaders) and copySelectedRangeToClipboard(includeHeaders)</li>
-        </ul>
-        The API calls take a boolean value <i>includeHeaders</i> which when true, will include column headers in what is copied.
+    <ul>
+        <li>Select 'Copy' from the context menu that appears when you right click over a cell.</li>
+        <li>Press keys Ctrl+C while focus is on the grid.</li>
+        <li>Use the API methods: copySelectedRowsToClipboard(includeHeaders) and
+            copySelectedRangeToClipboard(includeHeaders)
+        </li>
+    </ul>
+    The API calls take a boolean value <i>includeHeaders</i> which when true, will include column headers in what is
+    copied.
     </p>
 
     <h3>
@@ -35,10 +38,10 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Paste to clipboard can only be done in one way:
-        <ul>
-            <li>Press keys Ctrl+V while focus in on the grid with a cell selected.</li>
-        </ul>
-        The paste will then proceed starting at the selected cell if multiple cells are to be pasted.
+    <ul>
+        <li>Press keys Ctrl+V while focus in on the grid with a cell selected.</li>
+    </ul>
+    The paste will then proceed starting at the selected cell if multiple cells are to be pasted.
     </p>
 
     <note>
@@ -54,17 +57,17 @@ include '../documentation-main/documentation_header.php';
     <p>
         The copy operation will copy selected ranges, selected rows, or the currently focused cell, based
         on this order:
-        <ul>
-            <li>
-                1. If range selected (via range selection), copy range.
-            </li>
-            <li>
-                2. Else if rows selected (via row selection), copy rows.
-            </li>
-            <li>
-                3. Else copy focused cell.
-            </li>
-        </ul>
+    <ul>
+        <li>
+            1. If range selected (via range selection), copy range.
+        </li>
+        <li>
+            2. Else if rows selected (via row selection), copy rows.
+        </li>
+        <li>
+            3. Else copy focused cell.
+        </li>
+    </ul>
     </p>
 
     <note>
@@ -86,13 +89,13 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Below you can:
-        <ul>
+    <ul>
         <li>Copy with the Context Menu or 'Ctrl & C'.</li>
         <li>Paste with 'Ctrl & V'.</li>
         <li>Copy with the provided buttons.</li>
     </ul>
-        The example has both row click selection and range selection enabled. You probably won't do
-        this in your application as it's confusing, it's done below just to demonstrate them side by side.
+    The example has both row click selection and range selection enabled. You probably won't do
+    this in your application as it's confusing, it's done below just to demonstrate them side by side.
     </p>
 
     <p>When row click selection and range selection are enabled the shortcut would copy the selected row, not the
@@ -118,6 +121,18 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleClipboardCustom" example-height="450px"></show-example>
 
+    <h3 class="processClipboard">Processing Clipboard Data</h3>
+
+    <p>If you wish to process the data before pasting into or out of the Grid, you can use the following call backs to
+        do so: </p>
+
+    <ul>
+        <li><code>processCellForClipboard(params):</code>Allows you to process cells for the clipboard. Handy if you have date objects that you need to have a particular format if importing into Excel.
+        </li>
+        <li><code>processCellFromClipboard(params):</code>Allows you to process cells from the clipboard. Handy if you have for example number fields, and want to block non-numbers from getting into the grid.
+        </li>
+    </ul>
+
     <h3 id="deliminator">Changing the Deliminator</h3>
 
     <p>
@@ -138,20 +153,20 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The example below demonstrates:
-        <ul>
-            <li>
-                Uses CSV by setting <code>clipboardDeliminator=','</code>. To test,
-                copy to clipboard, then paste into a text editor.
-            </li>
-            <li>
-                Does not allow paste into the 'silver' column by setting
-                <code>colDef.suppressPaste=true</code>.
-            </li>
-        </ul>
+    <ul>
+        <li>
+            Uses CSV by setting <code>clipboardDeliminator=','</code>. To test,
+            copy to clipboard, then paste into a text editor.
+        </li>
+        <li>
+            Does not allow paste into the 'silver' column by setting
+            <code>colDef.suppressPaste=true</code>.
+        </li>
+    </ul>
     </p>
 
     <show-example example="exampleClipboardExtra"></show-example>
 
 </div>
 
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php'; ?>

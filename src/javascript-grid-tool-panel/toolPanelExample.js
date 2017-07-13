@@ -30,6 +30,7 @@ var gridOptions = {
     rowData: null,
     enableSorting: true,
     showToolPanel: true,
+    enableFilter: true,
     rowGroupPanelShow: 'always'
 };
 

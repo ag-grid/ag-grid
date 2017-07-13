@@ -27,20 +27,26 @@ include '../documentation-main/documentation_header.php';
         the grid provides the following methods:
         <ul>
             <li>
-                <b>api.refreshCells(params)</b>: Gets the grid to refresh all cells. Change detection will
+                <b>Refresh Cells</b>: <code>api.refreshCells(cellRefreshParams)</code> - Gets the grid to refresh all cells. Change detection will
                 be used to refresh only cells who's display cell values are out of sync with the actual value.
                 If using a <a href="../javascript-grid-cell-rendering-components/">cellRenderer</a> with a refresh
                 method, the refresh method will get called.
             </li>
             <li>
-                <b>api.redrawRows(params)</b>: Removes the rows from the DOM and draws them again from scratch.
+                <b>Redraw Rows</b>: <code>api.redrawRows(redrawRowsParams)</code> - Removes the rows from the DOM and draws them again from scratch.
                 The cells are created again from scratch. No change detection is done. No refreshing of cells
                 is done.
             </li>
         </ul>
     </p>
 
-    <h2>Refresh Cells</h2>
+    <p>
+        Your preference should be to use <code>refreshCells()</code> over <code>redrawRows()</code>.
+        Only use <code>redrawRows()</code> if you find <code>refreshCells()</code> doesn't
+        suit your needs.
+    </p>
+
+    <h1>Refresh Cells</h1>
 
     <p>
         To get the grid to refresh the cells, call <code>api.refreshCells()</code>. The interface is as follows:
@@ -53,8 +59,8 @@ function refreshCells(params: RefreshCellsParams = {}): void;
 interface RefreshCellsParams {
     rowNodes?: RowNode[]; <span class="codeComment">// specify rows, or all rows by default</span>
     columns?: (string|Column)[]; <span class="codeComment">// specify columns, or all columns by default</span>
-    forceRefresh?: boolean; <span class="codeComment">// skips change detection, refresh everything</span>
-    volatile?: boolean; <span class="codeComment">// only volatile cells</span>
+    force?: boolean; <span class="codeComment">// skips change detection, refresh everything</span>
+    volatile?: boolean; <span class="codeComment">// only volatile cells - deprecated - for backwards compatibility</span>
 }</pre>
 
     <p>
@@ -63,33 +69,39 @@ interface RefreshCellsParams {
         detection means it will only refresh cells who's values have changed).
     </p>
 
-    <h3>Volatile Columns</h3>
-
-    <p>
-        Volatile columns allow you to mark specific columns only for refresh when you call
-        <code>api.refreshCells()</code> with the volatile parameter set to true.
-    </p>
-
-    <p>
-        To mark a column as volatile, set the <code>colDef.volatile=true</code> attribute as follows:
-    </p>
-    <pre><span class="codeComment">// this column definition says the whole column is volatile</span>
-var colDef = {
-    volatile: true,
-    ...
-}</pre>
-
     <note>
-        Most people will not use volatile cells - they were introduced into ag-Grid early before change detection
-        existed and was a way to do partial refreshes of the grid. If you find you don't have a use for volatile cells,
-        that's good and normal, just ignore them. However the feature is kept (at least for now) for backwards compatibility.
+        <h3>Deprecated - Volatile Columns</h3>
+
+        <p>
+            Volatile columns allow you to mark specific columns for refresh when you call
+            <code>api.refreshCells()</code>.
+        </p>
+
+        <p>
+            Columns are marked as volatile by setting the column definition property
+            <code>volatile = true</code>.
+        </p>
+
+        <p>
+            This feature is no longer needed, as you can pass a list of columns to refresh
+            to the 'cellRefresh()' method.
+        </p>
+
+        <p>
+            If you are using volatile columns, instead of calling <code>api.softRefresh()</code>,
+            can call <code>api.refreshCells({volatile: true})</code> instead to achieve the same.
+            However volatile columns are deprecated so will be removed in a future release.
+            You should instead move to passing a list of columns to the <code>api.softRefresh()</code>
+            method.
+        </p>
+
     </note>
 
     <h3>Example Refresh Cells</h3>
 
     <p>
         Below shows calling <code>api.refreshCells()</code> with different scenarios using a mixture of the
-        <code>rowNodes</code>, <code>columns</code> and <code>forceRefresh</code> parameters. From the example, the
+        <code>rowNodes</code>, <code>columns</code> and <code>force</code> parameters. From the example, the
         following can be noted:
     </p>
 
@@ -123,11 +135,6 @@ var colDef = {
             This will show the grid refreshing one row at a time from top to bottom.
         </li>
         <li>
-            The <b>Scramble & Refresh Volatile</b> button will scramble as before, then call
-            <code>api.refreshCells({volatile=true})</code> with volatile set to true. This will show the grid refreshing
-            the last three columns only as they are marked as volatile via <code>colDef.volatile=true</code>.
-        </li>
-        <li>
             The checkbox <b>Force Refresh</b> sets how the above three refreshes work. If checked, all the cells
             will get refreshed regardless of whether they have changes. In other words, change detection will not
             but used as part of the refresh.
@@ -145,7 +152,7 @@ var colDef = {
         you may wish to update the cells even though the underlying data has not changed.
     </note>
 
-    <h2>Redraw Rows</h2>
+    <h1>Redraw Rows</h1>
 
     <p>
         Redraw rows is a much heavier operation than refreshing cells. If refreshing cells meets your needs, then don't

@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="selection">Selection</h2>
+    <h2 id="selection">Row Selection</h2>
 
     <p>
         When you pass data to the grid, it wraps each data item in an node. This is explained

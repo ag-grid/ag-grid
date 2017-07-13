@@ -273,12 +273,18 @@ export interface ColumnVO {
     and will make sure they are unique.
 </p>
 
-<h3 id="selection">Example - Click Selection Selection</h3>
+<h3 id="selection">Example - Single 'Click' and Multiple 'Shift-Click' Selections</h3>
 
 <p>
-    The example below shows simple click selection. When you click on a leaf level
-    row, the row is selected. Standard click selection does not allow selecting groups,
-    as clicking on groups is reserved for opening and closing the groups.
+    The example below shows both simple 'click' selection as well as multiple 'shift-click' selections. Selecting groups
+    is not allowed as clicking on groups is reserved for opening and closing the groups.
+
+<ul>
+    <li><b>Single 'Click' Selection</b> - when you click on a leaf level row, the row is selected.</li>
+    <li><b>Multiple 'Shift-Click' Selections</b> - select a leaf row (single click) and then 'shift-click' another leaf
+        row within the same group to select all rows between that range.</li>
+</ul>
+
 </p>
 
 <show-complex-example example="exampleEnterpriseSelection.html"
@@ -289,6 +295,12 @@ export interface ColumnVO {
                               }"
                       exampleheight="500px">
 </show-complex-example>
+
+<note>
+    Performing multiple row selections using 'shift-click' is only permitted within each grouping level as each group
+    contains a separate row cache. Also depending on the configured value of <i>maxBlocksInCache</i>, a large selection
+    range may not be possible as not all rows will be in memory.
+</note>
 
 <h3 id="selection">Example - Checkbox Selection</h3>
 
