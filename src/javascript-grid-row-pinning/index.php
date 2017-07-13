@@ -1,5 +1,5 @@
 <?php
-$key = "Pinned Rows";
+$key = "Row Pinning";
 $pageTitle = "ag-Grid Pinned Rows";
 $pageDescription = "ag-Grid Pinned Rows";
 $pageKeyboards = "ag-Grid Pinned Rows";
@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="floating-rows">Pinned Rows</h2>
+    <h2 id="floating-rows">Row Pinning</h2>
 
     <p>
         Pinned rows appear either above or below the normal rows of a table.

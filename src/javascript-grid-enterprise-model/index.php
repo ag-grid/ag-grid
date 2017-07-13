@@ -90,8 +90,10 @@ interface IEnterpriseDatasource {
     <span class="codeComment">// details for the request</span>
     request: IEnterpriseGetRowsRequest;
 
-    <span class="codeComment">// success callback, pass the rows back the grid asked for</span>
-    successCallback(rowsThisPage: any[]): void;
+    <span class="codeComment">// success callback, pass the rows back the grid asked for.</span>
+    <span class="codeComment">// if the total row count is known, provide it via lastRow, so the</span>
+    <span class="codeComment">// grid can adjust the scrollbar accordingly.</span>
+    successCallback(rowsThisPage: any[], lastRow: number): void;
 
     <span class="codeComment">// fail callback, tell the grid the call failed so it can adjust its state</span>
     failCallback(): void;

@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1">Refresh</h1>
+    <h1 class="first-h1">View Refresh</h1>
 
     <p>
         The grid has change detection. So as long as you are updating the data via the grid's API,
