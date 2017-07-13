@@ -525,9 +525,6 @@ export class GridOptionsWrapper {
         if (options.groupKeys) {
             console.warn('ag-grid: as of v3 groupKeys is not used. You need to set rowGroupIndex on the columns to group. Please refer to the documentation');
         }
-        if (options.ready || options.onReady) {
-            console.warn('ag-grid: as of v3.3 ready event is now called gridReady, so the callback should be onGridReady');
-        }
         if (typeof options.groupDefaultExpanded === 'boolean') {
             console.warn('ag-grid: groupDefaultExpanded can no longer be boolean. for groupDefaultExpanded=true, use groupDefaultExpanded=9999 instead, to expand all the groups');
         }

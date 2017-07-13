@@ -247,9 +247,6 @@ _.iterateObject(Events, function (key, value) {
 });
 
 function checkForDeprecated(changes: any): void {
-    if (changes.ready || changes.onReady) {
-        console.warn('ag-grid: as of v3.3 ready event is now called gridReady, so the callback should be onGridReady');
-    }
     if (changes.rowDeselected || changes.onRowDeselected) {
         console.warn('ag-grid: as of v3.4 rowDeselected no longer exists. Please check the docs.');
     }
