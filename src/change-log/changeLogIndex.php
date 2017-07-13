@@ -75,6 +75,29 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <p>
+        <b>Other API And Property Changes</b>
+    </p>
+    <p>
+        The following API and property changes were done around the renaming of pinned rows and aligned grids.
+        All this is done to make the grid API easier to understand and interface with.
+        <ul>
+            <li>colDef.floatingCellRenderer -> colDef.pinnedRowCellRenderer</li>
+            <li>colDef.floatingCellRendererFramework -> colDef.pinnedRowCellRendererFramework</li>
+            <li>colDef.floatingCellRendererParams -> colDef.pinnedRowCellRendererParams</li>
+            <li>colDef.floatingValueFormatter -> colDef.pinnedRowValueFormatter</li>
+            <li>gridApi.setFloatingTopRowData-> api.setPinnedTopRowData</li>
+            <li>gridApi.setFloatingBottomRowData-> api.setPinnedBottomRowData</li>
+            <li>gridApi.getFloatingTopRowCount-> api.getPinnedTopRowCount</li>
+            <li>gridApi.getFloatingBottomRowCount-> api.getPinnedBottomRowCount</li>
+            <li>gridApi.getFloatingTopRow-> api.getPinnedTopRow</li>
+            <li>gridApi.getFloatingBottomRow-> api.getPinnedBottomRow</li>
+            <li>gridOptions.floatingTopRowData -> gridOptions.pinnedTopRowData</li>
+            <li>gridOptions.floatingBottomRowData -> gridOptions.pinnedBottomRowData</li>
+            <li>gridOptions.slaveGrids -> gridOptions.alignedGrids</li>
+        </ul>
+    </p>
+
+    <p>
         <b>AG-591: Breaking Change to Cell Renderer - To Support TypeScript 2.4</b>
     </p>
 
