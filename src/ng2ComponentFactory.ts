@@ -2,7 +2,6 @@ import {ViewContainerRef, ComponentRef, Injectable, ComponentFactoryResolver} fr
 import {
     ICellRendererComp,
     ICellEditorComp,
-    MethodNotImplementedException,
     IDoesFilterPassParams,
     IFilterComp,
     IFilterParams,
@@ -47,13 +46,14 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
                 this._componentRef.changeDetectorRef.detectChanges();
             }
 
-            refresh(params: any): void {
+            refresh(params: any): boolean {
                 this._params = params;
 
                 if (this._agAwareComponent.refresh) {
                     this._agAwareComponent.refresh(params);
+                    return true;
                 } else {
-                    throw new MethodNotImplementedException();
+                    return false;
                 }
             }
 

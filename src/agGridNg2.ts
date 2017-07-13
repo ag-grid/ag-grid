@@ -314,6 +314,15 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public enforceRowDomOrder: any = undefined;
     @Input() public accentedSort: any = undefined;
     @Input() public pivotTotals: any = undefined;
+    @Input() public alignedGrids: any = undefined;
+    @Input() public columnTypes: any = undefined;
+    @Input() public cacheBlockSize: any = undefined;
+    @Input() public suppressChangeDetection: any = undefined;
+    @Input() public valueCache: any = undefined;
+    @Input() public valueCacheNeverExpires: any = undefined;
+    @Input() public aggregateOnlyChangedColumns: any = undefined;
+
+
     /**
      * Outputs
      */
