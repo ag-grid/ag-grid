@@ -238,7 +238,7 @@ export class RowComp extends BeanStub {
 
         let fullWidth = this.getFullWidthRowElement();
         if (fullWidth) {
-            this.bodyContainerComp.ensureDomOrder(fullWidth, containers.fullWidth);
+            this.fullWidthContainerComp.ensureDomOrder(fullWidth, containers.fullWidth);
         }
     }
 
