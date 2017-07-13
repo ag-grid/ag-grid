@@ -1,4 +1,4 @@
-// ag-grid-react v11.0.0
+// ag-grid-react v12.0.0
 import { IHeaderGroup, IHeaderGroupParams, IHeader, IHeaderParams, IFilterParams, IDate, IDateParams, ICellRenderer, ICellRendererParams, ICellEditor, ICellEditorParams, IFilter } from 'ag-grid';
 export interface AgReactFrameworkComponent<T> {
 }

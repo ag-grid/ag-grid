@@ -1,4 +1,4 @@
-// ag-grid-react v11.0.0
+// ag-grid-react v12.0.0
 import { AgReactFrameworkComponent } from "./interfaces";
 export declare class AgReactComponent implements AgReactFrameworkComponent<any> {
     private eParentElement;

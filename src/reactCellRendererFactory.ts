@@ -1,4 +1,4 @@
-import {ICellRendererComp, MethodNotImplementedException} from 'ag-grid/main';
+import {ICellRendererComp} from 'ag-grid/main';
 import {AgReactComponent} from "./agReactComponent";
 
 export function reactCellRendererFactory(reactComponent: any, parentComponent?: any): {new(): ICellRendererComp} {
@@ -9,12 +9,13 @@ export function reactCellRendererFactory(reactComponent: any, parentComponent?: 
             super(reactComponent, parentComponent);
         }
 
-        public refresh(params: any): void {
+        public refresh(params: any): boolean {
             const componentRef = this.getFrameworkComponentInstance();
             if (componentRef.refresh) {
                 componentRef.refresh(params);
+                return true;
             } else {
-                throw new MethodNotImplementedException();
+                return false;
             }
         }
 
