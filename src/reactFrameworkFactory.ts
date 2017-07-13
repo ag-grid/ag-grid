@@ -33,8 +33,8 @@ export class ReactFrameworkFactory implements IFrameworkFactory {
     }
 
     public colDefFloatingCellRenderer(colDef: ColDef): {new(): ICellRendererComp} | ICellRendererFunc | string {
-        if (Utils.exists(colDef.floatingCellRendererFramework)) {
-            return reactCellRendererFactory(colDef.floatingCellRendererFramework, this.agGridReact);
+        if (Utils.exists(colDef.pinnedRowCellRendererFramework)) {
+            return reactCellRendererFactory(colDef.pinnedRowCellRendererFramework, this.agGridReact);
         } else {
             return this.baseFrameworkFactory.colDefFloatingCellRenderer(colDef);
         }
