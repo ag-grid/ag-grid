@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
         <li>AG-366: Bugfix: Multiple sort numbers were disappearing after horizontal scrolling</li>
         <li>AG-375: After calling columnApi.setState() and doing multi-column sort,
             the sort numbers were not getting displayed beside the relevant column.</li>
-        <li>Value Getter Cache</li>
+        <li>AG-602: Bugfix: Enteprise Row Model success callback interface was missing 'lastRow'.</li>
     </ul>
 
     <p>
