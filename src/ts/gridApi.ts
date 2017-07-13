@@ -479,7 +479,7 @@ export class GridApi {
     }
 
     public forEachLeafNode(callback: (rowNode: RowNode)=>void ) {
-        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call forEachNodeAfterFilter unless using normal row model') }
+        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call forEachNode unless using normal row model') }
         this.inMemoryRowModel.forEachLeafNode(callback);
     }
 
