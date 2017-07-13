@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1" id="value-getters">Value Getters and Formatters</h1>
+    <h1 class="first-h1" id="value-getters">Value Getters and Value Formatters</h1>
 
     <p>
         The grid displays values from your data. The easiest way to configure this is to set <code>colDef.field</code>.

@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1" id="value-getters">Value Setters & Parsers</h1>
+    <h1 class="first-h1" id="value-getters">Value Setters & Value Parsers</h1>
 
     <p>
         The section <a href="../javascript-grid-value-getters">Getters and Formatters</a>

@@ -182,7 +182,7 @@
     menuItem(0, 'Row Pinning', 'Row Pinning', 'javascript-grid-row-pinning/');
     menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
     menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
-    menuItem(0, 'Cell Renderer', 'Cell Rendering', 'javascript-grid-cell-rendering/');
+    menuItem(0, 'Cell Rendering', 'Cell Rendering', 'javascript-grid-cell-rendering/');
     menuItem(0, 'Cell Editing', 'Cell Editing', 'javascript-grid-cell-editing/');
     menuItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
     menuItem(0, 'Touch', 'Touch Support', 'javascript-grid-touch/');

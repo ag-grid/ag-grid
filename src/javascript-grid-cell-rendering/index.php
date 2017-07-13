@@ -1,13 +1,13 @@
 <?php
-$key = "Cell Renderer";
+$key = "Cell Rendering";
 $pageTitle = "ag-Grid Cell Rendering";
 $pageDescription = "Out of the box grid rendering components and how to configure them.";
 $pageKeyboards = "ag-Grid Rendering";
-$pageGroup = "features";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="first-h1" id="cell-editors">Cell Renderer's</h1>
+<h1 class="first-h1" id="cell-editors">Cell Rendering</h1>
 
 <p>
     By default, the grid will place the values of your data into the cells as simple strings.
