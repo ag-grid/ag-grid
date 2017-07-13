@@ -1,5 +1,4 @@
 import {Utils as _} from "../utils";
-import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Autowired} from "../context/context";
 import {RowComp} from "./rowComp";
@@ -39,13 +38,13 @@ export class RowContainerComponent {
         this.eContainer.style.height = height + "px";
     }
 
-    public appendRowElement_old(eRow: HTMLElement, eRowBefore: HTMLElement): void {
-        this.eContainer.appendChild(eRow);
-        this.childCount++;
-        this.checkVisibility();
-    }
-
     public appendRowElement(eRow: HTMLElement, eRowBefore: HTMLElement): void {
+        // if doing forPrint, we always just append
+        if (this.gridOptionsWrapper.isForPrint()) {
+            this.eContainer.appendChild(eRow);
+            return;
+        }
+
         if (eRowBefore) {
             if (eRowBefore.nextSibling) {
                 // insert between the eRowBefore and the row after it
@@ -67,11 +66,10 @@ export class RowContainerComponent {
         this.checkVisibility();
     }
 
-    public ensureDomOrder_old(eRow: HTMLElement, eRowBefore: HTMLElement): void {
-
-    }
-
     public ensureDomOrder(eRow: HTMLElement, eRowBefore: HTMLElement): void {
+        // if doing for print, we don't do the dom order here
+        if (this.gridOptionsWrapper.isForPrint()) { return; }
+
         // if already in right order, do nothing
         if (eRowBefore && eRowBefore.nextSibling === eRow) { return; }
 
