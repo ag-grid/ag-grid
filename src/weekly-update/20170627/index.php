@@ -66,7 +66,7 @@ include('../../includes/mediaHeader.php');
     <div class="weekly-news-paragraph-title">Version 11 Released</div>
 
     <div class="weekly-news-paragraph">
-    Version 11 was released yesterday, make sure you sign up for release notes if you don't get our emails. Please see our <a href="../change-log/changeLogIndex.php">Change Log</a> for more information.
+    Version 11 was released yesterday, make sure you sign up for release notes if you don't get our emails. Please see our <a href="https://www.ag-grid.com/change-log/changeLogIndex.php">Change Log</a> for more information.
     </div>
 
     <div class="weekly-news-image-right">

@@ -208,7 +208,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The grid will order the sort the columns based on the <code>rowGroupIndex</code>. The values
+        The grid will order sort the columns based on the <code>rowGroupIndex</code>. The values
         can be any numbers that are sortable, they do NOT need to start at zero (or one) and the sequence
         can have gaps.
     </p>
@@ -401,7 +401,7 @@ gridOptions.groupRowRendererParams: {
     <h2>Grouping API</h2>
 
     <p>
-        To expand or contract a group via the API, you fist must get a reference to the rowNode and then call
+        To expand or contract a group via the API, you first must get a reference to the rowNode and then call
         <i>rowNode.setExpanded(boolean).</i> This will result in the grid getting updated and displaying the
         correct rows. For example, to expand a group with the name 'Zimbabwe' would be done as follows:
     <pre>gridOptions.api.forEachNode(function(node) {
