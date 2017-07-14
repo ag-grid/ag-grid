@@ -46,6 +46,7 @@ export interface GridOptions {
     enableFilter?: boolean;
     enableServerSideFilter?: boolean;
     enableStatusBar?: boolean;
+    alwaysShowStatusBar?: boolean;
     enableGroupEdit?: boolean;
     suppressMiddleClickScrolls?: boolean;
     suppressPreventDefaultOnMouseWheel?: boolean;
