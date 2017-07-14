@@ -207,8 +207,8 @@
     menuItemWithIcon('enterprise.png', 0, 'Excel Export', 'Excel Export', 'javascript-grid-excel/');
     menuItem(0, 'RTL', 'RTL', 'javascript-grid-rtl/');
     menuItem(0, 'Icons', 'Custom Icons', 'javascript-grid-icons/');
-    menuItem(0, 'Overlays', 'Custom Overlays', 'javascript-grid-overlays/');
-    menuItem(0, 'For Print', 'Layout for Print', 'javascript-grid-for-print/');
+    menuItem(0, 'Overlays', 'Overlays', 'javascript-grid-overlays/');
+    menuItem(0, 'For Print', 'Layout For Print', 'javascript-grid-for-print/');
 
     menuItemWithIcon('enterprise.png', 0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
     menuItemWithIcon('enterprise.png', 1, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping/');
