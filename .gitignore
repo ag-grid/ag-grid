@@ -16,6 +16,4 @@ src/ts/**/*.js
 
 ag-grid.iml
 
-dist/
-
 
