@@ -569,9 +569,6 @@ export class GridOptionsWrapper {
         if (options.suppressUseColIdForGroups) {
             console.warn(`ag-grid: since version 11.0.x, this is not in use anymore. You should be able to remove it from your definition`);
         }
-        if (options.suppressUseColIdForGroups) {
-            console.warn(`ag-grid: since version 11.0.x suppressUseColIdForGroups is not in use anymore. You should be able to remove it from your definition`);
-        }
         if (options.groupColumnDef) {
             console.warn(`ag-grid: since version 11.0.x, groupColumnDef has been renamed, this property is now called autoGroupColumnDef. Please change your configuration accordingly`);
         }
