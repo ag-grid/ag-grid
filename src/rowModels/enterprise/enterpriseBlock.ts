@@ -14,7 +14,8 @@ import {
     RowNode,
     Column,
     ColumnController,
-    ValueService
+    ValueService,
+    GridOptionsWrapper
 } from "ag-grid";
 
 import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
@@ -25,11 +26,16 @@ export class EnterpriseBlock extends RowNodeBlock {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private logger: Logger;
 
     private displayStartIndex: number;
     private displayEndIndex: number;
+
+    private blockTop: number;
+    private blockHeight: number;
+
     private params: EnterpriseCacheParams;
     private parentCache: EnterpriseCache;
 
@@ -157,6 +163,7 @@ export class EnterpriseBlock extends RowNodeBlock {
 
             rowNode.setDataAndId(data, idToUse);
             rowNode.key = data[this.groupField];
+            this.setHeightFromCallback(rowNode);
         } else {
             rowNode.setDataAndId(undefined, undefined);
             rowNode.key = null;
@@ -175,7 +182,10 @@ export class EnterpriseBlock extends RowNodeBlock {
                 }
             });
         }
+    }
 
+    private setHeightFromCallback(rowNode: RowNode) {
+        rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
     }
 
     protected loadFromDatasource(): void {
@@ -218,8 +228,13 @@ export class EnterpriseBlock extends RowNodeBlock {
         return keys;
     }
 
-    public setDisplayIndexes(displayIndexSeq: NumberSequence, virtualRowCount: number): void {
+    public setDisplayIndexes(displayIndexSeq: NumberSequence,
+                             virtualRowCount: number,
+                             nextRowTop: {value: number},
+                             rowIndexBounds: {[rowIndex: number]: {rowTop: number, rowHeight: number}}): void {
         this.displayStartIndex = displayIndexSeq.peek();
+        
+        this.blockTop = nextRowTop.value;
 
         let start = this.getStartRow();
         let end = this.getEndRow();
@@ -233,16 +248,20 @@ export class EnterpriseBlock extends RowNodeBlock {
             if (rowNode) {
                 let rowIndex = displayIndexSeq.next();
                 rowNode.setRowIndex(rowIndex);
-                rowNode.rowTop = this.params.rowHeight * rowIndex;
+
+                rowNode.rowTop = nextRowTop.value;
+                nextRowTop.value += rowNode.rowHeight;
+                rowIndexBounds[rowIndex] = {rowTop: rowNode.rowTop, rowHeight: rowNode.rowHeight};
 
                 if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
                     let enterpriseCache = <EnterpriseCache> rowNode.childrenCache;
-                    enterpriseCache.setDisplayIndexes(displayIndexSeq);
+                    enterpriseCache.setDisplayIndexes(displayIndexSeq, nextRowTop, rowIndexBounds);
                 }
             }
         }
 
         this.displayEndIndex = displayIndexSeq.peek();
+        this.blockHeight = nextRowTop.value - this.blockTop;
     }
 
     private createLoadParams(): IEnterpriseGetRowsParams {
@@ -283,4 +302,11 @@ export class EnterpriseBlock extends RowNodeBlock {
         return this.displayEndIndex;
     }
 
+    public getBlockHeight(): number {
+        return this.blockHeight;
+    }
+
+    public getBlockTop(): number {
+        return this.blockTop;
+    }
 }

@@ -1,22 +1,18 @@
 import {
-    InfiniteCacheParams,
     _,
-    Logger,
-    RowNode,
-    Context,
     Autowired,
-    Events,
+    ColumnVO,
+    Context,
     EventService,
     IEnterpriseCache,
     IEnterpriseDatasource,
+    LoggerFactory,
     NumberSequence,
-    RowNodeBlock,
-    RowNodeCache,
-    RowNodeCacheParams,
-    ColumnVO,
     PostConstruct,
     Qualifier,
-    LoggerFactory
+    RowNode,
+    RowNodeCache,
+    RowNodeCacheParams
 } from "ag-grid";
 import {EnterpriseBlock} from "./enterpriseBlock";
 
@@ -39,6 +35,9 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
 
     private parentRowNode: RowNode;
 
+    private cacheTop: number = 0;
+    private blockHeights: {[blockId: number]: number} = {};
+
     constructor(cacheParams: EnterpriseCacheParams, parentRowNode: RowNode) {
         super(cacheParams);
         this.parentRowNode = parentRowNode;
@@ -53,8 +52,12 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         super.init();
     }
 
-    public setDisplayIndexes(numberSequence: NumberSequence): void {
+    public setDisplayIndexes(numberSequence: NumberSequence,
+                             nextRowTop: {value: number},
+                             rowBounds: {[rowIndex: number]: {rowTop: number, rowHeight: number}}): void {
         this.firstDisplayIndex = numberSequence.peek();
+
+        this.cacheTop = nextRowTop.value;
 
         let lastBlockId = -1;
 
@@ -69,9 +72,20 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
                 numberSequence.skip(rowsSkippedCount);
             }
 
+            for (let i = 1; i <= blocksSkippedCount; i++) {
+                let blockToAddId = blockId - i;
+                if (_.exists(this.blockHeights[blockToAddId])) {
+                    nextRowTop.value += this.blockHeights[blockToAddId];
+                } else {
+                    nextRowTop.value += this.cacheParams.blockSize * this.cacheParams.rowHeight;
+                }
+            }
+
             lastBlockId = blockId;
 
-            currentBlock.setDisplayIndexes(numberSequence, this.getVirtualRowCount());
+            currentBlock.setDisplayIndexes(numberSequence, this.getVirtualRowCount(), nextRowTop, rowBounds);
+
+            this.blockHeights[blockId] = currentBlock.getBlockHeight();
         });
 
         // if any blocks missing at the end, need to increase the row index for them also
@@ -83,6 +97,7 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         let rowsNotAccountedFor = rowCount - lastVisitedRow - 1;
         if (rowsNotAccountedFor > 0) {
             numberSequence.skip(rowsNotAccountedFor);
+            nextRowTop.value += rowsNotAccountedFor * this.cacheParams.rowHeight;
         }
 
         this.lastDisplayIndex = numberSequence.peek() - 1;
@@ -116,13 +131,15 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
 
             let blockNumber: number;
             let displayIndexStart: number;
+            let nextRowTop: number;
 
             // because missing blocks are always fully closed, we can work out
             // the start index of the block we want by hopping from the closest block,
             // as we know the row count in closed blocks is equal to the page size
             if (beforeBlock) {
-                blockNumber = beforeBlock.getPageNumber() + 1;
+                blockNumber = beforeBlock.getBlockNumber() + 1;
                 displayIndexStart = beforeBlock.getDisplayEndIndex();
+                nextRowTop = beforeBlock.getBlockHeight() + beforeBlock.getBlockTop();
 
                 let isInRange = (): boolean => {
                     return rowIndex >= displayIndexStart && rowIndex < (displayIndexStart + this.cacheParams.blockSize);
@@ -130,14 +147,24 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
 
                 while (!isInRange()) {
                     displayIndexStart += this.cacheParams.blockSize;
+
+                    let cachedBlockHeight = this.blockHeights[blockNumber];
+                    if (_.exists(cachedBlockHeight)) {
+                        nextRowTop += cachedBlockHeight;
+                    } else {
+                        nextRowTop += this.cacheParams.rowHeight * this.cacheParams.blockSize;
+                    }
+
                     blockNumber++;
                 }
             } else {
                 let localIndex = rowIndex - this.firstDisplayIndex;
                 blockNumber = Math.floor(localIndex / this.cacheParams.blockSize);
                 displayIndexStart = this.firstDisplayIndex + (blockNumber * this.cacheParams.blockSize);
+                nextRowTop = this.cacheTop + (blockNumber * this.cacheParams.blockSize * this.cacheParams.rowHeight);
             }
-            block = this.createBlock(blockNumber, displayIndexStart);
+
+            block = this.createBlock(blockNumber, displayIndexStart, {value: nextRowTop});
 
             this.logger.log(`block missing, rowIndex = ${rowIndex}, creating #${blockNumber}, displayIndexStart = ${displayIndexStart}`);
         }
@@ -147,13 +174,15 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         return rowNode;
     }
 
-    private createBlock(blockNumber: number, displayIndex: number): EnterpriseBlock {
+    private createBlock(blockNumber: number, displayIndex: number, nextRowTop: {value: number}): EnterpriseBlock {
 
         let newBlock = new EnterpriseBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
         this.context.wireBean(newBlock);
 
         let displayIndexSequence = new NumberSequence(displayIndex);
-        newBlock.setDisplayIndexes(displayIndexSequence, this.getVirtualRowCount());
+        let rowBounds = {}; //TODO: improve
+
+        newBlock.setDisplayIndexes(displayIndexSequence, this.getVirtualRowCount(), nextRowTop, rowBounds);
 
         this.postCreateBlock(newBlock);
 
@@ -191,6 +220,5 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
             return null;
         }
     }
-
 }
 
