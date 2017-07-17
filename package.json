@@ -23,7 +23,6 @@
     "gulp-livereload": "3.8.1",
     "gulp-rename": "1.2.2",
     "gulp-replace": "latest",
-    "gulp-shell": "^0.6.3",
     "gulp-sourcemaps": "1.5.2",
     "gulp-stylus": "2.2.0",
     "gulp-task-listing": "latest",

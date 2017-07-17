@@ -11,7 +11,6 @@ var nib = require('nib');
 var liveReload = require('gulp-livereload');
 var replace = require('gulp-replace');
 var gulpIf = require('gulp-if');
-const shell = require('gulp-shell')
 
 gulp.task('default', ['webpack'], watchTask);
 gulp.task('watch-angular', ['webpack-angular'], watchAngularTask);
