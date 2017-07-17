@@ -241,7 +241,7 @@ export class GridOptionsWrapper {
     public getApi(): GridApi { return this.gridOptions.api; }
     public getColumnApi(): ColumnApi { return this.gridOptions.columnApi; }
     public isDeltaRowDataMode() { return isTrue(this.gridOptions.deltaRowDataMode); }
-    public isEnforceRowDomOrder() { return isTrue(this.gridOptions.enforceRowDomOrder); }
+    public isEnsureDomOrder() { return isTrue(this.gridOptions.ensureDomOrder); }
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
     public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }
@@ -296,7 +296,7 @@ export class GridOptionsWrapper {
     public isSuppressMovableColumns() { return isTrue(this.gridOptions.suppressMovableColumns); }
     public isAnimateRows() {
         // never allow animating if enforcing the row order
-        if (this.isEnforceRowDomOrder()) { return false; }
+        if (this.isEnsureDomOrder()) { return false; }
         return isTrue(this.gridOptions.animateRows);
     }
     public isSuppressColumnMoveAnimation() { return isTrue(this.gridOptions.suppressColumnMoveAnimation); }

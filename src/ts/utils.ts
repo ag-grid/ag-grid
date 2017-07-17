@@ -685,6 +685,48 @@ export class Utils {
         return true;
     }
 
+    static ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void {
+
+        // if already in right order, do nothing
+        if (eChildBefore && eChildBefore.nextSibling === eChild) { return; }
+
+        if (eChildBefore) {
+            if (eChildBefore.nextSibling) {
+                // insert between the eRowBefore and the row after it
+                eContainer.insertBefore(eChild, eChildBefore.nextSibling);
+            } else {
+                // if nextSibling is missing, means other row is at end, so just append new row at the end
+                eContainer.appendChild(eChild);
+            }
+        } else {
+            // otherwise put at start
+            if (eContainer.firstChild) {
+                // insert it at the first location
+                eContainer.insertBefore(eChild, eContainer.firstChild);
+            }
+        }
+    }
+
+    static insertWithDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void {
+        if (eChildBefore) {
+            if (eChildBefore.nextSibling) {
+                // insert between the eRowBefore and the row after it
+                eContainer.insertBefore(eChild, eChildBefore.nextSibling);
+            } else {
+                // if nextSibling is missing, means other row is at end, so just append new row at the end
+                eContainer.appendChild(eChild);
+            }
+        } else {
+            if (eContainer.firstChild) {
+                // insert it at the first location
+                eContainer.insertBefore(eChild, eContainer.firstChild);
+            } else {
+                // otherwise eContainer is empty, so just append it
+                eContainer.appendChild(eChild);
+            }
+        }
+    }
+
     static toStringOrNull(value: any): string {
         if (this.exists(value) && value.toString) {
             return value.toString();

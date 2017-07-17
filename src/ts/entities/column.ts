@@ -13,7 +13,7 @@ import {Autowired, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnUtils} from "../columnController/columnUtils";
 import {RowNode} from "./rowNode";
-import {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
+import {ICellRendererFunc, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
 import {ICellEditorComp} from "../rendering/cellEditors/iCellEditor";
 import {IFilter} from "../interfaces/iFilter";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";

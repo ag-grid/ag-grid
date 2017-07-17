@@ -5,7 +5,7 @@ import {ExpressionService} from "../valueService/expressionService";
 import {TemplateService} from "../templateService";
 import {ValueService} from "../valueService/valueService";
 import {EventService} from "../eventService";
-import {ContainerElements, RowComp} from "./rowComp";
+import {LastPlacedElements, RowComp} from "./rowComp";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {Events, ModelUpdatedEvent} from "../events";
@@ -25,8 +25,6 @@ import {BeanStub} from "../context/beanStub";
 import {PaginationProxy} from "../rowModels/paginationProxy";
 import {RefreshCellsParams} from "../gridApi";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
-
-let TEMP_PREVIOUS_ELEMENTS: ContainerElements = {body: null, left: null, right: null, fullWidth: null};
 
 @Bean('rowRenderer')
 export class RowRenderer extends BeanStub {
@@ -146,7 +144,7 @@ export class RowRenderer extends BeanStub {
                     pinnedRightContainerComp,
                     node,
                     false,
-                    TEMP_PREVIOUS_ELEMENTS);
+                    null);
                 this.context.wireBean(renderedRow);
                 renderedRows.push(renderedRow);
             })
@@ -499,8 +497,8 @@ export class RowRenderer extends BeanStub {
 
         // this keeps track of the last inserted element in each container, so when rows are getting
         // inserted or repositioned, they can be done relative to the previous DOM element
-        let previousElements: ContainerElements
-            = this.forPrint ? null : {body: null, left: null, right: null, fullWidth: null};
+        let ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder() && !this.forPrint;
+        let previousElements: LastPlacedElements = ensureDomOrder ? {eBody: null, eLeft: null, eRight: null, eFullWidth: null} : null;
 
         // add in new rows
         let nextVmTurnFunctions: Function[] = [];
@@ -522,7 +520,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private createOrUpdateRowComp(rowIndex: number, rowsToRecycle: {[key: string]: RowComp},
-                                 animate: boolean, previousElements: ContainerElements): RowComp {
+                                 animate: boolean, previousElements: LastPlacedElements): RowComp {
 
         let rowNode: RowNode;
 
@@ -546,13 +544,15 @@ export class RowRenderer extends BeanStub {
             }
             if (_.exists(rowNode)) {
                 rowComp = this.createRowComp(rowNode, animate, previousElements);
+            } else {
+                // this should never happen - if somehow we are trying to create
+                // a row for a rowNode that does not exist.
+                return;
             }
         } else {
             // ensure row comp is in right position in DOM
             rowComp.ensureInDomAfter(previousElements);
         }
-
-        if (_.missing(rowNode)) { return null; }
 
         this.updatePreviousElements(previousElements, rowComp);
 
@@ -647,7 +647,7 @@ export class RowRenderer extends BeanStub {
         return this.lastRenderedRow;
     }
 
-    private updatePreviousElements(previousElements: ContainerElements, rowComp: RowComp): void {
+    private updatePreviousElements(previousElements: LastPlacedElements, rowComp: RowComp): void {
         if (_.missing(previousElements)) { return; }
 
         let body: HTMLElement = rowComp.getBodyRowElement();
@@ -656,16 +656,16 @@ export class RowRenderer extends BeanStub {
         let fullWidth: HTMLElement = rowComp.getFullWidthRowElement();
 
         if (body) {
-            previousElements.body = body;
+            previousElements.eBody = body;
         }
         if (left) {
-            previousElements.left = left;
+            previousElements.eLeft = left;
         }
         if (right) {
-            previousElements.right = right;
+            previousElements.eRight = right;
         }
         if (fullWidth) {
-            previousElements.fullWidth = fullWidth;
+            previousElements.eFullWidth = fullWidth;
         }
     }
 
@@ -697,7 +697,7 @@ export class RowRenderer extends BeanStub {
         return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
     }
 
-    private createRowComp(rowNode: RowNode, animate: boolean, previousElements: ContainerElements): RowComp {
+    private createRowComp(rowNode: RowNode, animate: boolean, previousElements: LastPlacedElements): RowComp {
         let rowComp = new RowComp(this.$scope,
             this, this.rowContainers.body, this.rowContainers.fullWidth,
             this.rowContainers.pinnedLeft, this.rowContainers.pinnedRight,
