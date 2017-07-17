@@ -638,6 +638,10 @@ export class GridOptionsWrapper {
         }
     }
 
+    public isDynamicRowHeight(): boolean {
+        return typeof this.gridOptions.getRowHeight !== 'function';
+    }
+
     private isNumeric(value:any) {
         return !isNaN(value) && typeof value === 'number';
     }
