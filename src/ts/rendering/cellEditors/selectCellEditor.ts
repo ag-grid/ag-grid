@@ -2,11 +2,15 @@ import {Component} from "../../widgets/component";
 import {ICellEditorComp} from "./iCellEditor";
 import {Utils as _} from '../../utils';
 import {Constants} from "../../constants";
+import {Autowired} from "../../context/context";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 
 export class SelectCellEditor extends Component implements ICellEditorComp {
 
     private focusAfterAttached: boolean;
     private eSelect: HTMLSelectElement;
+
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     constructor() {
         super('<div class="ag-cell-edit-input"><select class="ag-cell-edit-input"/></div>');
@@ -30,7 +34,11 @@ export class SelectCellEditor extends Component implements ICellEditorComp {
             this.eSelect.appendChild(option);
         });
 
-        this.addDestroyableEventListener(this.eSelect, 'change', ()=> params.stopEditing() );
+        // we don't want to add this if full row editing, otherwise selecting will stop the
+        // full row editing.
+        if (!this.gridOptionsWrapper.isFullRowEdit()) {
+            this.addDestroyableEventListener(this.eSelect, 'change', ()=> params.stopEditing() );
+        }
 
         this.addDestroyableEventListener(this.eSelect, 'keydown', (event: KeyboardEvent)=> {
             let isNavigationKey = event.keyCode===Constants.KEY_UP || event.keyCode===Constants.KEY_DOWN;
@@ -55,6 +63,7 @@ export class SelectCellEditor extends Component implements ICellEditorComp {
     }
 
     public getValue(): any {
+        console.log('value is ' + this.eSelect.value);
         return this.eSelect.value;
     }
 
