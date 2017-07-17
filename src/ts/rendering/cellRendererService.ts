@@ -1,12 +1,11 @@
 import {Utils as _} from "../utils";
-import {ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
-import {Autowired, Context, Bean} from "../context/context";
+import {ICellRenderer, ICellRendererComp, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
+import {Autowired, Bean, Context} from "../context/context";
 import {CellRendererFactory} from "./cellRendererFactory";
 
 /** Class to use a cellRenderer. */
 @Bean('cellRendererService')
 export class CellRendererService {
-
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('context') private context: Context;
 

@@ -731,13 +731,13 @@ export class GridApi {
     }
 
     public removeItems(rowNodes: RowNode[], skipRefresh = false): void {
-        console.warn('ag-Grid: insertItemsAtIndex() is deprecated, use updateRowData(transaction) instead.');
+        console.warn('ag-Grid: removeItems() is deprecated, use updateRowData(transaction) instead.');
         let dataToRemove: any[] = rowNodes.map(rowNode => rowNode.data);
         this.updateRowData({add: null, addIndex: null, update: null, remove: dataToRemove});
     }
 
     public addItems(items: any[], skipRefresh = false): void {
-        console.warn('ag-Grid: insertItemsAtIndex() is deprecated, use updateRowData(transaction) instead.');
+        console.warn('ag-Grid: addItems() is deprecated, use updateRowData(transaction) instead.');
         this.updateRowData({add: items, addIndex: null, update: null, remove: null});
     }
 

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { MasterSlaveService } from "./masterSlaveService";
@@ -112,7 +112,7 @@ export declare class GridApi {
     getSelectedNodes(): RowNode[];
     getSelectedRows(): any[];
     getBestCostNodeSelection(): any;
-    getRenderedNodes(): any[];
+    getRenderedNodes(): RowNode[];
     ensureColIndexVisible(index: any): void;
     ensureColumnVisible(key: string | Column | ColDef): void;
     ensureIndexVisible(index: any): void;

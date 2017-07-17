@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -74,6 +74,14 @@ var Column = (function () {
         this.tooltipFieldContainsDots = utils_1.Utils.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
         this.validate();
     };
+    Column.prototype.isRowGroupDisplayed = function (colId) {
+        if (utils_1.Utils.missing(this.colDef) || utils_1.Utils.missing(this.colDef.showRowGroup)) {
+            return false;
+        }
+        var showingAllGroups = this.colDef.showRowGroup === true;
+        var showingThisGroup = this.colDef.showRowGroup === colId;
+        return showingAllGroups || showingThisGroup;
+    };
     Column.prototype.getCellRenderer = function () {
         return this.cellRenderer;
     };
@@ -109,9 +117,32 @@ var Column = (function () {
             if (utils_1.Utils.exists(this.colDef.rowGroupIndex)) {
                 console.warn('ag-Grid: rowGroupIndex is only valid in ag-Grid-Enterprise');
             }
+            if (utils_1.Utils.exists(this.colDef.rowGroup)) {
+                console.warn('ag-Grid: rowGroup is only valid in ag-Grid-Enterprise');
+            }
+            if (utils_1.Utils.exists(this.colDef.pivotIndex)) {
+                console.warn('ag-Grid: pivotIndex is only valid in ag-Grid-Enterprise');
+            }
+            if (utils_1.Utils.exists(this.colDef.pivot)) {
+                console.warn('ag-Grid: pivot is only valid in ag-Grid-Enterprise');
+            }
         }
         if (utils_1.Utils.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             console.warn('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width);
+        }
+        if (utils_1.Utils.get(this, 'colDef.cellRendererParams.restrictToOneGroup', null)) {
+            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.restrictToOneGroup is deprecated. You should use showRowGroup');
+        }
+        if (utils_1.Utils.get(this, 'colDef.cellRendererParams.keyMap', null)) {
+            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
+        }
+        if (utils_1.Utils.exists(this.colDef.cellFormatter)) {
+            console.warn('ag-Grid: colDef.cellFormatter was renamed to colDef.valueFormatter, please rename in your code as we will be dropping cellFormatter');
+            this.colDef.valueFormatter = this.colDef.cellFormatter;
+        }
+        if (utils_1.Utils.exists(this.colDef.floatingCellFormatter)) {
+            console.warn('ag-Grid: colDef.floatingCellFormatter was renamed to colDef.floatingValueFormatter, please rename in your code as we will be dropping floatingCellFormatter');
+            this.colDef.floatingValueFormatter = this.colDef.floatingCellFormatter;
         }
     };
     Column.prototype.addEventListener = function (eventType, listener) {
@@ -144,14 +175,29 @@ var Column = (function () {
         return false;
     };
     Column.prototype.isCellEditable = function (rowNode) {
+        // only allow editing of groups if the user has this option enabled
+        if (rowNode.group && !this.gridOptionsWrapper.isEnableGroupEdit()) {
+            return false;
+        }
+        return this.isColumnFunc(rowNode, this.colDef.editable);
+    };
+    Column.prototype.isSuppressPaste = function (rowNode) {
+        return this.isColumnFunc(rowNode, this.colDef ? this.colDef.suppressPaste : null);
+    };
+    Column.prototype.isResizable = function () {
+        var enableColResize = this.gridOptionsWrapper.isEnableColResize();
+        var suppressResize = this.colDef && this.colDef.suppressResize;
+        return enableColResize && !suppressResize;
+    };
+    Column.prototype.isColumnFunc = function (rowNode, value) {
         // if boolean set, then just use it
-        if (typeof this.colDef.editable === 'boolean') {
-            return this.colDef.editable;
+        if (typeof value === 'boolean') {
+            return value;
         }
         // if function, then call the function to find out
-        if (typeof this.colDef.editable === 'function') {
+        if (typeof value === 'function') {
             var params = this.createIsColumnFuncParams(rowNode);
-            var editableFunc = this.colDef.editable;
+            var editableFunc = value;
             return editableFunc(params);
         }
         return false;
@@ -360,6 +406,14 @@ var Column = (function () {
     };
     Column.prototype.isAllowRowGroup = function () {
         return this.colDef.enableRowGroup === true;
+    };
+    Column.prototype.getMenuTabs = function (defaultValues) {
+        var menuTabs = this.getColDef().menuTabs;
+        if (menuTabs == null) {
+            menuTabs = defaultValues;
+        }
+        ;
+        return menuTabs;
     };
     return Column;
 }());

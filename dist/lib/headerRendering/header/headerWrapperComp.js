@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -157,8 +157,7 @@ var HeaderWrapperComp = (function (_super) {
         if (!this.eResize) {
             return;
         }
-        var weWantResize = this.gridOptionsWrapper.isEnableColResize() && !colDef.suppressResize;
-        if (!weWantResize) {
+        if (!this.column.isResizable()) {
             utils_1.Utils.removeFromParent(this.eResize);
             return;
         }
@@ -226,9 +225,9 @@ var HeaderWrapperComp = (function (_super) {
     };
     return HeaderWrapperComp;
 }(component_1.Component));
-HeaderWrapperComp.TEMPLATE = '<div class="ag-header-cell">' +
-    '<div ref="eResize" class="ag-header-cell-resize"></div>' +
-    '<ag-checkbox ref="cbSelectAll" class="ag-header-select-all"></ag-checkbox>' +
+HeaderWrapperComp.TEMPLATE = '<div class="ag-header-cell" role="presentation" >' +
+    '<div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>' +
+    '<ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>' +
     // <inner component goes here>
     '</div>';
 __decorate([

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -57,7 +57,7 @@ var columnAnimationService_1 = require("./columnAnimationService");
 var CellComp = (function (_super) {
     __extends(CellComp, _super);
     function CellComp(column, node, scope, renderedRow) {
-        var _this = _super.call(this, '<div/>') || this;
+        var _this = _super.call(this, '<div role="gridcell"/>') || this;
         // how many ranges this cell is in, depends what color to mark this cell
         _this.rangeCount = 0;
         // set to null, not false, as we need to set 'ag-cell-no-focus' first time around
@@ -70,7 +70,7 @@ var CellComp = (function (_super) {
         _this.column = column;
         _this.node = node;
         _this.scope = scope;
-        _this.renderedRow = renderedRow;
+        _this.rowComp = renderedRow;
         return _this;
     }
     CellComp.prototype.createGridCell = function () {
@@ -162,28 +162,14 @@ var CellComp = (function (_super) {
         return this.column;
     };
     CellComp.prototype.getValue = function () {
-        var data = this.getDataForRow();
-        return this.valueService.getValueUsingSpecificData(this.column, data, this.node);
-    };
-    CellComp.prototype.getDataForRow = function () {
-        if (this.node.footer) {
-            // if footer, we always show the data
-            return this.node.data;
-        }
-        else if (this.node.group) {
-            // if header and header is expanded, we show data in footer only
-            var footersEnabled = this.gridOptionsWrapper.isGroupIncludeFooter();
-            var suppressHideHeader = this.gridOptionsWrapper.isGroupSuppressBlankHeader();
-            if (this.node.expanded && footersEnabled && !suppressHideHeader) {
-                return undefined;
-            }
-            else {
-                return this.node.data;
-            }
+        var isOpenGroup = this.node.group && this.node.expanded && !this.node.footer;
+        if (isOpenGroup && this.gridOptionsWrapper.isGroupIncludeFooter()) {
+            // if doing grouping and footers, we don't want to include the agg value
+            // in the header when the group is open
+            return this.valueService.getValue(this.column, this.node, true);
         }
         else {
-            // otherwise it's a normal node, just return data as normal
-            return this.node.data;
+            return this.valueService.getValue(this.column, this.node);
         }
     };
     CellComp.prototype.addRangeSelectedListener = function () {
@@ -420,7 +406,7 @@ var CellComp = (function (_super) {
                 this.onSpaceKeyPressed(event);
             }
             else {
-                if (CellComp.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0) {
+                if (utils_1.Utils.isEventFromPrintableCharacter(event)) {
                     this.startRowOrCellEdit(null, pressedChar);
                     // if we don't prevent default, then the keypress also gets applied to the text field
                     // (at least when doing the default editor), but we need to allow the editor to decide
@@ -496,7 +482,7 @@ var CellComp = (function (_super) {
     // called by rowRenderer when user navigates via tab key
     CellComp.prototype.startRowOrCellEdit = function (keyPress, charPress) {
         if (this.gridOptionsWrapper.isFullRowEdit()) {
-            this.renderedRow.startRowEditing(keyPress, charPress, this);
+            this.rowComp.startRowEditing(keyPress, charPress, this);
         }
         else {
             this.startEditingIfEnabled(keyPress, charPress, true);
@@ -581,7 +567,7 @@ var CellComp = (function (_super) {
     CellComp.prototype.stopRowOrCellEdit = function (cancel) {
         if (cancel === void 0) { cancel = false; }
         if (this.gridOptionsWrapper.isFullRowEdit()) {
-            this.renderedRow.stopRowEditing(cancel);
+            this.rowComp.stopRowEditing(cancel);
         }
         else {
             this.stopEditing(cancel);
@@ -628,7 +614,7 @@ var CellComp = (function (_super) {
             }
         }
         this.setInlineEditingClass();
-        this.refreshCell();
+        this.refreshCell({ dontSkipRefresh: true });
         this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_EDITING_STOPPED, this.createParams());
     };
     CellComp.prototype.createParams = function () {
@@ -652,16 +638,12 @@ var CellComp = (function (_super) {
         return agEvent;
     };
     CellComp.prototype.getRenderedRow = function () {
-        return this.renderedRow;
+        return this.rowComp;
     };
     CellComp.prototype.isSuppressNavigable = function () {
         return this.column.isSuppressNavigable(this.node);
     };
     CellComp.prototype.isCellEditable = function () {
-        // only allow editing of groups if the user has this option enabled
-        if (this.node.group && !this.gridOptionsWrapper.isEnableGroupEdit()) {
-            return false;
-        }
         return this.column.isCellEditable(this.node);
     };
     CellComp.prototype.onMouseEvent = function (eventName, mouseEvent) {
@@ -856,61 +838,80 @@ var CellComp = (function (_super) {
     CellComp.prototype.isVolatile = function () {
         return this.column.getColDef().volatile;
     };
-    CellComp.prototype.refreshCell = function (animate, newData) {
-        if (animate === void 0) { animate = false; }
-        if (newData === void 0) { newData = false; }
+    CellComp.prototype.attemptCellRendererRefresh = function () {
+        if (utils_1.Utils.missing(this.cellRenderer) || utils_1.Utils.missing(this.cellRenderer.refresh)) {
+            return false;
+        }
+        try {
+            // if the cell renderer has a refresh method, we call this instead of doing a refresh
+            // note: should pass in params here instead of value?? so that client has formattedValue
+            var valueFormatted = this.formatValue(this.value);
+            var cellRendererParams = this.column.getColDef().cellRendererParams;
+            var params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
+            this.cellRenderer.refresh(params);
+        }
+        catch (e) {
+            // this exception gets thrown by the frameworks, as our framework wrapper will implement
+            // refresh(), but the wrapped component may not, and then the wrapper throws MethodNotImplementedException.
+            if (e instanceof methodNotImplementedException_1.MethodNotImplementedException) {
+                return false;
+            }
+            else {
+                throw e;
+            }
+        }
+        // got this far, we were able to refresh using the user provided cellRenderer
+        return true;
+    };
+    CellComp.prototype.refreshCell = function (params) {
+        var newData = params ? params.newData === true : false;
+        var animate = params ? params.animate === true : false;
+        var dontSkipRefresh = params ? params.dontSkipRefresh === true : false;
+        var oldValue = this.value;
         this.value = this.getValue();
-        var refreshFailed = false;
-        var that = this;
+        // for simple values only (not pojo's), see if the value is the same, and if it is, skip the refresh.
+        // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
+        // if was before the edit.
+        // Niall Note - taking this out for now - it's effectively change detection. i think how the refresh is done
+        // needs to be overhauled and redone in a properly planned way.
+        var allowSkippingRefreshIfDataSame = !dontSkipRefresh && utils_1.Utils.valuesSimpleAndSame(oldValue, this.value);
+        if (allowSkippingRefreshIfDataSame) {
+            // return;
+        }
+        var cellRendererRefreshed;
         // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
         // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
         // then we are not showing a movement in the stock price, rather we are showing different stock.
-        var attemptRefresh = !newData && this.cellRenderer && this.cellRenderer.refresh;
-        if (attemptRefresh) {
-            try {
-                doRefresh();
-            }
-            catch (e) {
-                if (e instanceof methodNotImplementedException_1.MethodNotImplementedException) {
-                    refreshFailed = true;
-                }
-                else {
-                    throw e;
-                }
-            }
+        if (newData) {
+            cellRendererRefreshed = false;
+        }
+        else {
+            cellRendererRefreshed = this.attemptCellRendererRefresh();
         }
         // we do the replace if not doing refresh, or if refresh was unsuccessful.
         // the refresh can be unsuccessful if we are using a framework (eg ng2 or react) and the framework
         // wrapper has the refresh method, but the underlying component doesn't
-        if (!attemptRefresh || refreshFailed) {
-            doReplace();
+        if (!cellRendererRefreshed) {
+            this.replaceCellContent();
         }
         if (animate) {
             this.animateCellWithDataChanged();
         }
         // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
         this.addClassesFromRules();
-        function doRefresh() {
-            // if the cell renderer has a refresh method, we call this instead of doing a refresh
-            // note: should pass in params here instead of value?? so that client has formattedValue
-            var valueFormatted = that.formatValue(that.value);
-            var cellRendererParams = that.column.getColDef().cellRendererParams;
-            var params = that.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
-            that.cellRenderer.refresh(params);
+    };
+    CellComp.prototype.replaceCellContent = function () {
+        // otherwise we rip out the cell and replace it
+        utils_1.Utils.removeAllChildren(this.eParentOfValue);
+        // remove old renderer component if it exists
+        if (this.cellRenderer && this.cellRenderer.destroy) {
+            this.cellRenderer.destroy();
         }
-        function doReplace() {
-            // otherwise we rip out the cell and replace it
-            utils_1.Utils.removeAllChildren(that.eParentOfValue);
-            // remove old renderer component if it exists
-            if (that.cellRenderer && that.cellRenderer.destroy) {
-                that.cellRenderer.destroy();
-            }
-            that.cellRenderer = null;
-            that.populateCell();
-            // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
-            if (that.gridOptionsWrapper.isAngularCompileRows()) {
-                that.$compile(that.eGridCell)(that.scope);
-            }
+        this.cellRenderer = null;
+        this.populateCell();
+        // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
+        if (this.gridOptionsWrapper.isAngularCompileRows()) {
+            this.$compile(this.eGridCell)(this.scope);
         }
     };
     CellComp.prototype.addClassesFromRules = function () {
@@ -934,7 +935,7 @@ var CellComp = (function (_super) {
         var colDef = this.column.getColDef();
         var cellRenderer = this.column.getCellRenderer();
         var floatingCellRenderer = this.column.getFloatingCellRenderer();
-        var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.gridCell.rowIndex, this.value);
+        var valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.value);
         if (colDef.template) {
             // template is really only used for angular 1 - as people using ng1 are used to providing templates with
             // bindings in it. in ng2, people will hopefully want to provide components, not templates.
@@ -969,7 +970,7 @@ var CellComp = (function (_super) {
             }
         }
         if (colDef.tooltipField) {
-            var data = this.getDataForRow();
+            var data = this.node.data;
             if (utils_1.Utils.exists(data)) {
                 var tooltip = utils_1.Utils.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
                 if (utils_1.Utils.exists(tooltip)) {
@@ -979,9 +980,10 @@ var CellComp = (function (_super) {
         }
     };
     CellComp.prototype.formatValue = function (value) {
-        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.gridCell.rowIndex, value);
+        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, value);
     };
     CellComp.prototype.createRendererAndRefreshParams = function (valueFormatted, cellRendererParams) {
+        var that = this;
         var params = {
             value: this.value,
             valueFormatted: valueFormatted,
@@ -999,7 +1001,16 @@ var CellComp = (function (_super) {
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.eGridCell,
             eParentOfValue: this.eParentOfValue,
-            addRenderedRowListener: this.renderedRow.addEventListener.bind(this.renderedRow)
+            // these bits are not documented anywhere, so we could drop them?
+            // it was in the olden days to allow user to register for when rendered
+            // row was removed (the row comp was removed), however now that the user
+            // can provide components for cells, the destroy method gets call when this
+            // happens so no longer need to fire event.
+            addRowCompListener: this.rowComp.addEventListener.bind(this.rowComp),
+            addRenderedRowListener: function (eventType, listener) {
+                console.warn('ag-Grid: since ag-Grid .v11, params.addRenderedRowListener() is now params.addRowCompListener()');
+                that.rowComp.addEventListener(eventType, listener);
+            }
         };
         if (cellRendererParams) {
             utils_1.Utils.assign(params, cellRendererParams);
@@ -1022,7 +1033,6 @@ var CellComp = (function (_super) {
     };
     return CellComp;
 }(component_1.Component));
-CellComp.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 CellComp.DOM_DATA_KEY_CELL_COMP = 'cellComp';
 __decorate([
     context_1.Autowired('context'),

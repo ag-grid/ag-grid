@@ -162,6 +162,7 @@ export class GridOptionsWrapper {
     public isRowSelectionMulti() { return this.gridOptions.rowSelection === 'multiple'; }
     public getContext() { return this.gridOptions.context; }
     public isPivotMode() { return isTrue(this.gridOptions.pivotMode); }
+    public isPivotTotals() { return isTrue(this.gridOptions.pivotTotals); }
 
     public isRowModelInfinite() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE; }
     public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
@@ -191,7 +192,8 @@ export class GridOptionsWrapper {
     public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
     public isGroupSelectsFiltered() { return isTrue(this.gridOptions.groupSelectsFiltered); }
     public isGroupHideOpenParents() { return isTrue(this.gridOptions.groupHideOpenParents); }
-    public isGroupMultiAutoColumn() { return isTrue(this.gridOptions.groupMultiAutoColumn); }
+    // if we are doing hideOpenParents, then we always have groupMultiAutoColumn, otherwise hideOpenParents would not work
+    public isGroupMultiAutoColumn() { return isTrue(this.gridOptions.groupMultiAutoColumn) || isTrue(this.gridOptions.groupHideOpenParents); }
     public isGroupRemoveSingleChildren() { return isTrue(this.gridOptions.groupRemoveSingleChildren); }
     public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }
     public isGroupSuppressBlankHeader() { return isTrue(this.gridOptions.groupSuppressBlankHeader); }
@@ -238,6 +240,7 @@ export class GridOptionsWrapper {
     public getApi(): GridApi { return this.gridOptions.api; }
     public getColumnApi(): ColumnApi { return this.gridOptions.columnApi; }
     public isDeltaRowDataMode() { return isTrue(this.gridOptions.deltaRowDataMode); }
+    public isEnforceRowDomOrder() { return isTrue(this.gridOptions.enforceRowDomOrder); }
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
     public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }
@@ -258,7 +261,7 @@ export class GridOptionsWrapper {
     public getRowData(): any[] { return this.gridOptions.rowData; }
     public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
     public isEnableRtl() { return isTrue(this.gridOptions.enableRtl); }
-    public getGroupColumnDef(): ColDef { return this.gridOptions.groupColumnDef; }
+    public getAutoGroupColumnDef(): ColDef { return this.gridOptions.autoGroupColumnDef; }
     public isGroupSuppressRow() { return isTrue(this.gridOptions.groupSuppressRow); }
     public getRowGroupPanelShow() { return this.gridOptions.rowGroupPanelShow; }
     public getPivotPanelShow() { return this.gridOptions.pivotPanelShow; }
@@ -271,6 +274,7 @@ export class GridOptionsWrapper {
     public getViewportDatasource(): IViewportDatasource { return this.gridOptions.viewportDatasource; }
     public getEnterpriseDatasource(): IEnterpriseDatasource { return this.gridOptions.enterpriseDatasource; }
     public isEnableSorting() { return isTrue(this.gridOptions.enableSorting) || isTrue(this.gridOptions.enableServerSideSorting); }
+    public isAccentedSort() { return isTrue(this.gridOptions.accentedSort) }
     public isEnableCellExpressions() { return isTrue(this.gridOptions.enableCellExpressions); }
     public isEnableGroupEdit() { return isTrue(this.gridOptions.enableGroupEdit); }
     public isSuppressMiddleClickScrolls() { return isTrue(this.gridOptions.suppressMiddleClickScrolls); }
@@ -288,14 +292,14 @@ export class GridOptionsWrapper {
 
     public isSuppressScrollLag() { return isTrue(this.gridOptions.suppressScrollLag); }
     public isSuppressMovableColumns() { return isTrue(this.gridOptions.suppressMovableColumns); }
-    public isAnimateRows() { return isTrue(this.gridOptions.animateRows); }
+    public isAnimateRows() {
+        // never allow animating if enforcing the row order
+        if (this.isEnforceRowDomOrder()) { return false; }
+        return isTrue(this.gridOptions.animateRows);
+    }
     public isSuppressColumnMoveAnimation() { return isTrue(this.gridOptions.suppressColumnMoveAnimation); }
-    public isSuppressMenuColumnPanel() { return isTrue(this.gridOptions.suppressMenuColumnPanel); }
-    public isSuppressMenuFilterPanel() { return isTrue(this.gridOptions.suppressMenuFilterPanel); }
-    public isSuppressUseColIdForGroups() { return isTrue(this.gridOptions.suppressUseColIdForGroups); }
     public isSuppressAggFuncInHeader() { return isTrue(this.gridOptions.suppressAggFuncInHeader); }
     public isSuppressAggAtRootLevel() { return isTrue(this.gridOptions.suppressAggAtRootLevel); }
-    public isSuppressMenuMainPanel() { return isTrue(this.gridOptions.suppressMenuMainPanel); }
     public isEnableRangeSelection(): boolean { return isTrue(this.gridOptions.enableRangeSelection); }
     public isPaginationAutoPageSize(): boolean { return isTrue(this.gridOptions.paginationAutoPageSize); }
     public isRememberGroupStateWhenNewData(): boolean { return isTrue(this.gridOptions.rememberGroupStateWhenNewData); }
@@ -338,6 +342,10 @@ export class GridOptionsWrapper {
     public getViewportRowModelBufferSize(): number { return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE); }
     // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
     // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
+
+    public getClipboardDeliminator() {
+        return _.exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
+    }
 
     public setProperty(key: string, value: any): void {
         let gridOptionsNoType = <any> this.gridOptions;
@@ -544,6 +552,21 @@ export class GridOptionsWrapper {
         }
         if (options.forPrint) {
             console.warn('ag-grid: since version 10.1.x, use property domLayout="forPrint" instead of forPrint=true');
+        }
+        if (options.suppressMenuFilterPanel) {
+            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['filterMenuTab'] instead of suppressMenuFilterPanel=true`);
+        }
+        if (options.suppressMenuMainPanel) {
+            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['generalMenuTab'] instead of suppressMenuMainPanel=true`);
+        }
+        if (options.suppressMenuColumnPanel) {
+            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['columnsMenuTab'] instead of suppressMenuColumnPanel=true`);
+        }
+        if (options.suppressUseColIdForGroups) {
+            console.warn(`ag-grid: since version 11.0.x suppressUseColIdForGroups is not in use anymore. You should be able to remove it from your definition`);
+        }
+        if (options.groupColumnDef) {
+            console.warn(`ag-grid: since version 11.0.x, groupColumnDef has been renamed, this property is now called autoColumnGroupDef. Please change your configuration accordingly`);
         }
     }
 

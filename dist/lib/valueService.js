@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,42 +22,39 @@ var context_1 = require("./context/context");
 var utils_1 = require("./utils");
 var events_1 = require("./events");
 var eventService_1 = require("./eventService");
+var groupValueService_1 = require("./groupValueService");
 var ValueService = (function () {
     function ValueService() {
         this.initialised = false;
     }
     ValueService.prototype.init = function () {
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
-        this.userProvidedTheGroups = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        this.suppressUseColIdForGroups = this.gridOptionsWrapper.isSuppressUseColIdForGroups();
         this.initialised = true;
     };
-    ValueService.prototype.getValue = function (column, node) {
-        var valueUsingSpecificData = this.getValueUsingSpecificData(column, node.data, node);
-        if (valueUsingSpecificData != null) {
-            return valueUsingSpecificData;
-        }
-        if (node.group && column.getColId() === node.field)
-            return node.key;
-        return null;
-    };
-    ValueService.prototype.getValueUsingSpecificData = function (column, data, node) {
+    ValueService.prototype.getValue = function (column, rowNode, ignoreAggData) {
+        if (ignoreAggData === void 0) { ignoreAggData = false; }
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
         if (!this.initialised) {
             this.init();
         }
+        // pull these out to make code below easier to read
         var colDef = column.getColDef();
         var field = colDef.field;
+        var colId = column.getId();
+        var data = rowNode.data;
         var result;
         // if there is a value getter, this gets precedence over a field
-        // - need to revisit this, we check 'data' as this is the way for the grid to
-        //   not render when on the footer row
-        if (data && node.group && !this.userProvidedTheGroups && !this.suppressUseColIdForGroups) {
-            result = node.data ? node.data[column.getId()] : undefined;
+        var groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
+        var aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
+        if (groupDataExists) {
+            result = rowNode.groupData[colId];
+        }
+        else if (aggDataExists) {
+            result = rowNode.aggData[colId];
         }
         else if (colDef.valueGetter) {
-            result = this.executeValueGetter(colDef.valueGetter, data, column, node);
+            result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         }
         else if (field && data) {
             result = utils_1.Utils.getValueUsingField(data, field, column.isFieldContainsDots());
@@ -68,7 +65,7 @@ var ValueService = (function () {
         // the result could be an expression itself, if we are allowing cell values to be expressions
         if (this.cellExpressions && (typeof result === 'string') && result.indexOf('=') === 0) {
             var cellValueGetter = result.substring(1);
-            result = this.executeValueGetter(cellValueGetter, data, column, node);
+            result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
         }
         return result;
     };
@@ -83,40 +80,64 @@ var ValueService = (function () {
         if (utils_1.Utils.missing(data)) {
             rowNode.data = {};
         }
-        var field = column.getColDef().field;
-        var newValueHandler = column.getColDef().newValueHandler;
+        var _a = column.getColDef(), field = _a.field, newValueHandler = _a.newValueHandler, valueSetter = _a.valueSetter, valueParser = _a.valueParser;
         // need either a field or a newValueHandler for this to work
-        if (utils_1.Utils.missing(field) && utils_1.Utils.missing(newValueHandler)) {
-            console.warn("ag-Grid: you need either field or newValueHandler set on colDef for editing to work");
+        if (utils_1.Utils.missing(field) && utils_1.Utils.missing(newValueHandler) && utils_1.Utils.missing(valueSetter)) {
+            // we don't tell user about newValueHandler, as that is deprecated
+            console.warn("ag-Grid: you need either field or valueSetter set on colDef for editing to work");
             return;
         }
-        var paramsForCallbacks = {
+        var params = {
             node: rowNode,
             data: rowNode.data,
             oldValue: this.getValue(column, rowNode),
             newValue: newValue,
             colDef: column.getColDef(),
+            column: column,
             api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext()
         };
-        if (newValueHandler) {
-            newValueHandler(paramsForCallbacks);
+        var parsedValue = utils_1.Utils.exists(valueParser) ? this.expressionService.evaluate(valueParser, params) : newValue;
+        params.newValue = parsedValue;
+        var valueWasDifferent;
+        if (utils_1.Utils.exists(newValueHandler)) {
+            valueWasDifferent = newValueHandler(params);
+        }
+        else if (utils_1.Utils.exists(valueSetter)) {
+            valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
         }
         else {
-            this.setValueUsingField(data, field, newValue, column.isFieldContainsDots());
+            valueWasDifferent = this.setValueUsingField(data, field, parsedValue, column.isFieldContainsDots());
+        }
+        // in case user forgot to return something (possible if they are not using TypeScript
+        // and just forgot, or using an old newValueHandler we didn't always expect a return
+        // value here), we default the return value to true, so we always refresh.
+        if (valueWasDifferent === undefined) {
+            valueWasDifferent = true;
+        }
+        // if no change to the value, then no need to do the updating, or notifying via events.
+        // otherwise the user could be tabbing around the grid, and cellValueChange would get called
+        // all the time.
+        if (!valueWasDifferent) {
+            return;
         }
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
-        paramsForCallbacks.newValue = this.getValue(column, rowNode);
+        params.newValue = this.getValue(column, rowNode);
         if (typeof column.getColDef().onCellValueChanged === 'function') {
-            column.getColDef().onCellValueChanged(paramsForCallbacks);
+            column.getColDef().onCellValueChanged(params);
         }
-        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_VALUE_CHANGED, paramsForCallbacks);
+        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_VALUE_CHANGED, params);
     };
     ValueService.prototype.setValueUsingField = function (data, field, newValue, isFieldContainsDots) {
         // if no '.', then it's not a deep value
+        var valuesAreSame;
         if (!isFieldContainsDots) {
-            data[field] = newValue;
+            valuesAreSame = utils_1.Utils.valuesSimpleAndSame(data[field], newValue);
+            if (!valuesAreSame) {
+                data[field] = newValue;
+            }
         }
         else {
             // otherwise it is a deep value, so need to dig for it
@@ -125,38 +146,35 @@ var ValueService = (function () {
             while (fieldPieces.length > 0 && currentObject) {
                 var fieldPiece = fieldPieces.shift();
                 if (fieldPieces.length === 0) {
-                    currentObject[fieldPiece] = newValue;
+                    valuesAreSame = utils_1.Utils.valuesSimpleAndSame(currentObject[fieldPiece], newValue);
+                    if (!valuesAreSame) {
+                        currentObject[fieldPiece] = newValue;
+                    }
                 }
                 else {
                     currentObject = currentObject[fieldPiece];
                 }
             }
         }
+        return !valuesAreSame;
     };
     ValueService.prototype.executeValueGetter = function (valueGetter, data, column, node) {
-        var context = this.gridOptionsWrapper.getContext();
-        var api = this.gridOptionsWrapper.getApi();
         var params = {
             data: data,
             node: node,
+            column: column,
             colDef: column.getColDef(),
-            api: api,
-            context: context,
-            getValue: this.getValueCallback.bind(this, data, node)
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            context: this.gridOptionsWrapper.getContext(),
+            getValue: this.getValueCallback.bind(this, node)
         };
-        if (typeof valueGetter === 'function') {
-            // valueGetter is a function, so just call it
-            return valueGetter(params);
-        }
-        else if (typeof valueGetter === 'string') {
-            // valueGetter is an expression, so execute the expression
-            return this.expressionService.evaluate(valueGetter, params);
-        }
+        return this.expressionService.evaluate(valueGetter, params);
     };
-    ValueService.prototype.getValueCallback = function (data, node, field) {
+    ValueService.prototype.getValueCallback = function (node, field) {
         var otherColumn = this.columnController.getPrimaryColumn(field);
         if (otherColumn) {
-            return this.getValueUsingSpecificData(otherColumn, data, node);
+            return this.getValue(otherColumn, node);
         }
         else {
             return null;
@@ -180,6 +198,10 @@ __decorate([
     context_1.Autowired('eventService'),
     __metadata("design:type", eventService_1.EventService)
 ], ValueService.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('groupValueService'),
+    __metadata("design:type", groupValueService_1.GroupValueService)
+], ValueService.prototype, "groupValueService", void 0);
 __decorate([
     context_1.PostConstruct,
     __metadata("design:type", Function),

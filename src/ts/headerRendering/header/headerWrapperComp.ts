@@ -24,9 +24,9 @@ import {ColumnHoverService} from "../../rendering/columnHoverService";
 export class HeaderWrapperComp extends Component {
 
     private static TEMPLATE =
-        '<div class="ag-header-cell">' +
-          '<div ref="eResize" class="ag-header-cell-resize"></div>' +
-          '<ag-checkbox ref="cbSelectAll" class="ag-header-select-all"></ag-checkbox>' +
+        '<div class="ag-header-cell" role="presentation" >' +
+          '<div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>' +
+          '<ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>' +
             // <inner component goes here>
         '</div>';
 
@@ -180,8 +180,7 @@ export class HeaderWrapperComp extends Component {
             return;
         }
 
-        let weWantResize = this.gridOptionsWrapper.isEnableColResize() && !colDef.suppressResize;
-        if (!weWantResize) {
+        if (!this.column.isResizable()) {
             _.removeFromParent(this.eResize);
             return;
         }

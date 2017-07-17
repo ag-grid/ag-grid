@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -72,10 +72,20 @@ var InMemoryNodeManager = (function () {
             addIndex: null
         };
         if (utils_1.Utils.exists(add)) {
-            add.forEach(function (item) {
-                var newRowNode = _this.addRowNode(item, addIndex);
-                rowNodeTransaction.add.push(newRowNode);
-            });
+            var useIndex = typeof addIndex === 'number' && addIndex >= 0;
+            if (useIndex) {
+                // items get inserted in reverse order for index insertion
+                add.reverse().forEach(function (item) {
+                    var newRowNode = _this.addRowNode(item, addIndex);
+                    rowNodeTransaction.add.push(newRowNode);
+                });
+            }
+            else {
+                add.forEach(function (item) {
+                    var newRowNode = _this.addRowNode(item);
+                    rowNodeTransaction.add.push(newRowNode);
+                });
+            }
         }
         if (utils_1.Utils.exists(remove)) {
             remove.forEach(function (item) {
@@ -97,7 +107,7 @@ var InMemoryNodeManager = (function () {
     };
     InMemoryNodeManager.prototype.addRowNode = function (data, index) {
         var newNode = this.createNode(data, null, InMemoryNodeManager.TOP_LEVEL);
-        if (typeof index === 'number' && index >= 0) {
+        if (utils_1.Utils.exists(index)) {
             utils_1.Utils.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
         }
         else {

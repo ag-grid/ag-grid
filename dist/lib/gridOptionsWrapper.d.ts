@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
@@ -51,6 +51,7 @@ export declare class GridOptionsWrapper {
     isRowSelectionMulti(): boolean;
     getContext(): any;
     isPivotMode(): boolean;
+    isPivotTotals(): boolean;
     isRowModelInfinite(): boolean;
     isRowModelViewport(): boolean;
     isRowModelEnterprise(): boolean;
@@ -107,6 +108,7 @@ export declare class GridOptionsWrapper {
     getApi(): GridApi;
     getColumnApi(): ColumnApi;
     isDeltaRowDataMode(): boolean;
+    isEnforceRowDomOrder(): boolean;
     isEnableColResize(): boolean;
     isSingleClickEdit(): boolean;
     isSuppressClickEdit(): boolean;
@@ -125,7 +127,7 @@ export declare class GridOptionsWrapper {
     getRowData(): any[];
     isGroupUseEntireRow(): boolean;
     isEnableRtl(): boolean;
-    getGroupColumnDef(): ColDef;
+    getAutoGroupColumnDef(): ColDef;
     isGroupSuppressRow(): boolean;
     getRowGroupPanelShow(): string;
     getPivotPanelShow(): string;
@@ -138,6 +140,7 @@ export declare class GridOptionsWrapper {
     getViewportDatasource(): IViewportDatasource;
     getEnterpriseDatasource(): IEnterpriseDatasource;
     isEnableSorting(): boolean;
+    isAccentedSort(): boolean;
     isEnableCellExpressions(): boolean;
     isEnableGroupEdit(): boolean;
     isSuppressMiddleClickScrolls(): boolean;
@@ -154,12 +157,8 @@ export declare class GridOptionsWrapper {
     isSuppressMovableColumns(): boolean;
     isAnimateRows(): boolean;
     isSuppressColumnMoveAnimation(): boolean;
-    isSuppressMenuColumnPanel(): boolean;
-    isSuppressMenuFilterPanel(): boolean;
-    isSuppressUseColIdForGroups(): boolean;
     isSuppressAggFuncInHeader(): boolean;
     isSuppressAggAtRootLevel(): boolean;
-    isSuppressMenuMainPanel(): boolean;
     isEnableRangeSelection(): boolean;
     isPaginationAutoPageSize(): boolean;
     isRememberGroupStateWhenNewData(): boolean;
@@ -197,6 +196,7 @@ export declare class GridOptionsWrapper {
     getProcessCellFromClipboardFunc(): (params: ProcessCellForExportParams) => any;
     getViewportRowModelPageSize(): number;
     getViewportRowModelBufferSize(): number;
+    getClipboardDeliminator(): string;
     setProperty(key: string, value: any): void;
     addEventListener(key: string, listener: Function): void;
     removeEventListener(key: string, listener: Function): void;

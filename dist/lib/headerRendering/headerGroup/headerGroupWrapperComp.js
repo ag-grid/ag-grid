@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -180,7 +180,7 @@ var HeaderGroupWrapperComp = (function (_super) {
     HeaderGroupWrapperComp.prototype.setupResize = function () {
         var _this = this;
         this.eHeaderCellResize = this.getRefElement('agResize');
-        if (!this.gridOptionsWrapper.isEnableColResize()) {
+        if (!this.columnGroup.isResizable()) {
             utils_1.Utils.removeFromParent(this.eHeaderCellResize);
             return;
         }
@@ -218,20 +218,34 @@ var HeaderGroupWrapperComp = (function (_super) {
     };
     HeaderGroupWrapperComp.prototype.onDragging = function (dragChange, finished) {
         var _this = this;
-        var dragChangeNormalised = this.normaliseDragChange(dragChange);
-        var newWidth = this.groupWidthStart + dragChangeNormalised;
-        var minWidth = this.columnGroup.getMinWidth();
-        if (newWidth < minWidth) {
-            newWidth = minWidth;
+        // this will be the width we have to distribute to the resizable columns
+        var widthForResizableCols;
+        // this is all the displayed cols in the group less those that we cannot resize
+        var resizableCols;
+        // a lot of variables defined for the first set of maths, but putting
+        // braces in, we localise the variables to this bit of the method
+        {
+            var dragChangeNormalised = this.normaliseDragChange(dragChange);
+            var totalGroupWidth = this.groupWidthStart + dragChangeNormalised;
+            var displayedColumns = this.columnGroup.getDisplayedLeafColumns();
+            resizableCols = utils_1.Utils.filter(displayedColumns, function (col) { return col.isResizable(); });
+            var nonResizableCols = utils_1.Utils.filter(displayedColumns, function (col) { return !col.isResizable(); });
+            var nonResizableColsWidth_1 = 0;
+            nonResizableCols.forEach(function (col) { return nonResizableColsWidth_1 += col.getActualWidth(); });
+            widthForResizableCols = totalGroupWidth - nonResizableColsWidth_1;
+            var minWidth_1 = 0;
+            resizableCols.forEach(function (col) { return minWidth_1 += col.getMinWidth(); });
+            if (widthForResizableCols < minWidth_1) {
+                widthForResizableCols = minWidth_1;
+            }
         }
         // distribute the new width to the child headers
-        var changeRatio = newWidth / this.groupWidthStart;
+        var changeRatio = widthForResizableCols / this.groupWidthStart;
         // keep track of pixels used, and last column gets the remaining,
         // to cater for rounding errors, and min width adjustments
-        var pixelsToDistribute = newWidth;
-        var displayedColumns = this.columnGroup.getDisplayedLeafColumns();
-        displayedColumns.forEach(function (column, index) {
-            var notLastCol = index !== (displayedColumns.length - 1);
+        var pixelsToDistribute = widthForResizableCols;
+        resizableCols.forEach(function (column, index) {
+            var notLastCol = index !== (resizableCols.length - 1);
             var newChildSize;
             if (notLastCol) {
                 // if not the last col, calculate the column width as normal

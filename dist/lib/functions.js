@@ -1,22 +1,24 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("./utils");
-function defaultGroupComparator(valueA, valueB, nodeA, nodeB) {
+function defaultGroupComparator(valueA, valueB, nodeA, nodeB, accentedCompare) {
+    if (accentedCompare === void 0) { accentedCompare = false; }
+    console.warn('ag-Grid: Since ag-grid 11.0.0 defaultGroupComparator is not necessary. You can remove this from your colDef');
     var nodeAIsGroup = utils_1.Utils.exists(nodeA) && nodeA.group;
     var nodeBIsGroup = utils_1.Utils.exists(nodeB) && nodeB.group;
     var bothAreGroups = nodeAIsGroup && nodeBIsGroup;
     var bothAreNormal = !nodeAIsGroup && !nodeBIsGroup;
     if (bothAreGroups) {
-        return utils_1.Utils.defaultComparator(nodeA.key, nodeB.key);
+        return utils_1.Utils.defaultComparator(nodeA.key, nodeB.key, accentedCompare);
     }
     else if (bothAreNormal) {
-        return utils_1.Utils.defaultComparator(valueA, valueB);
+        return utils_1.Utils.defaultComparator(valueA, valueB, accentedCompare);
     }
     else if (nodeAIsGroup) {
         return 1;

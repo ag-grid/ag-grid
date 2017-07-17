@@ -19,6 +19,7 @@ import {IFilter} from "../interfaces/iFilter";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
 
+
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
 // This class implements both interfaces ColumnGroupChild and OriginalColumnGroupChild as the class can
@@ -153,6 +154,15 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.validate();
     }
 
+    public isRowGroupDisplayed(colId: string): boolean {
+        if (_.missing(this.colDef) || _.missing(this.colDef.showRowGroup)) { return false; }
+
+        let showingAllGroups = this.colDef.showRowGroup === true;
+        let showingThisGroup = this.colDef.showRowGroup === colId;
+
+        return showingAllGroups || showingThisGroup;
+    }
+
     public getCellRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string {
         return this.cellRenderer;
     }
@@ -197,10 +207,39 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             if (_.exists(this.colDef.rowGroupIndex)) {
                 console.warn('ag-Grid: rowGroupIndex is only valid in ag-Grid-Enterprise');
             }
+            if (_.exists(this.colDef.rowGroup)) {
+                console.warn('ag-Grid: rowGroup is only valid in ag-Grid-Enterprise');
+            }
+            if (_.exists(this.colDef.pivotIndex)) {
+                console.warn('ag-Grid: pivotIndex is only valid in ag-Grid-Enterprise');
+            }
+            if (_.exists(this.colDef.pivot)) {
+                console.warn('ag-Grid: pivot is only valid in ag-Grid-Enterprise');
+            }
         }
+
         if (_.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             console.warn('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width);
         }
+
+        if (_.get(this, 'colDef.cellRendererParams.restrictToOneGroup', null)) {
+            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.restrictToOneGroup is deprecated. You should use showRowGroup');
+        }
+
+        if (_.get(this, 'colDef.cellRendererParams.keyMap', null)) {
+            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
+        }
+
+        if (_.exists(this.colDef.cellFormatter)) {
+            console.warn('ag-Grid: colDef.cellFormatter was renamed to colDef.valueFormatter, please rename in your code as we will be dropping cellFormatter');
+            this.colDef.valueFormatter = this.colDef.cellFormatter;
+        }
+
+        if (_.exists(this.colDef.floatingCellFormatter)) {
+            console.warn('ag-Grid: colDef.floatingCellFormatter was renamed to colDef.floatingValueFormatter, please rename in your code as we will be dropping floatingCellFormatter');
+            this.colDef.floatingValueFormatter = this.colDef.floatingCellFormatter;
+        }
+
     }
     
     public addEventListener(eventType: string, listener: Function): void {
@@ -239,15 +278,35 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isCellEditable(rowNode: RowNode): boolean {
+
+        // only allow editing of groups if the user has this option enabled
+        if (rowNode.group && !this.gridOptionsWrapper.isEnableGroupEdit()) {
+            return false;
+        }
+
+        return this.isColumnFunc(rowNode, this.colDef.editable);
+    }
+
+    public isSuppressPaste(rowNode: RowNode): boolean {
+        return this.isColumnFunc(rowNode, this.colDef ? this.colDef.suppressPaste : null);
+    }
+
+    public isResizable(): boolean {
+        let enableColResize = this.gridOptionsWrapper.isEnableColResize();
+        let suppressResize = this.colDef && this.colDef.suppressResize;
+        return enableColResize && !suppressResize;
+    }
+
+    private isColumnFunc(rowNode: RowNode, value: boolean | IsColumnFunc): boolean {
         // if boolean set, then just use it
-        if (typeof this.colDef.editable === 'boolean') {
-            return <boolean> this.colDef.editable;
+        if (typeof value === 'boolean') {
+            return <boolean> value;
         }
 
         // if function, then call the function to find out
-        if (typeof this.colDef.editable === 'function') {
+        if (typeof value === 'function') {
             let params = this.createIsColumnFuncParams(rowNode);
-            let editableFunc = <IsColumnFunc> this.colDef.editable;
+            let editableFunc = <IsColumnFunc> value;
             return editableFunc(params);
         }
 
@@ -508,5 +567,13 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public isAllowRowGroup(): boolean {
         return this.colDef.enableRowGroup === true;
+    }
+
+    public getMenuTabs(defaultValues:string[]):string [] {
+        let menuTabs: string[] = this.getColDef().menuTabs;
+        if (menuTabs == null) {
+            menuTabs = defaultValues;
+        };
+        return menuTabs;
     }
 }

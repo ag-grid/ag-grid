@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -27,6 +27,7 @@ export declare abstract class BaseFilterWrapperComp<M, F extends FloatingFilterC
 export declare class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends BaseFilterWrapperComp<M, F, PC, P> {
     eButtonShowMainFilter: HTMLInputElement;
     private menuFactory;
+    private gridOptionsWrapper;
     floatingFilterComp: IFloatingFilterComp<M, F, PC>;
     suppressFilterButton: boolean;
     init(params: P): void;

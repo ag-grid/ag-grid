@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 export { BalancedColumnTreeBuilder } from "./dist/lib/columnController/balancedColumnTreeBuilder";
@@ -118,6 +118,9 @@ export { SvgFactory } from "./dist/lib/svgFactory";
 export { TemplateService } from "./dist/lib/templateService";
 export { Utils, NumberSequence, _ } from "./dist/lib/utils";
 export { ValueService } from "./dist/lib/valueService";
+export { GroupValueService } from "./dist/lib/groupValueService";
+export { GroupNameInfoParams } from "./dist/lib/groupValueService";
+export { GroupNameInfo } from "./dist/lib/groupValueService";
 export { XmlFactory } from "./dist/lib/xmlFactory";
 export { GridSerializer, BaseGridSerializingSession, RowType } from "./dist/lib/gridSerializer";
 export { CsvExportParams, ExportParams } from "./dist/lib/exportParams";

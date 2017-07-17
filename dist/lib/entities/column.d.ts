@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -61,6 +61,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     setParent(parent: ColumnGroupChild): void;
     getParent(): ColumnGroupChild;
     initialise(): void;
+    isRowGroupDisplayed(colId: string): boolean;
     getCellRenderer(): {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
@@ -84,6 +85,9 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private createIsColumnFuncParams(rowNode);
     isSuppressNavigable(rowNode: RowNode): boolean;
     isCellEditable(rowNode: RowNode): boolean;
+    isSuppressPaste(rowNode: RowNode): boolean;
+    isResizable(): boolean;
+    private isColumnFunc(rowNode, value);
     setMoving(moving: boolean): void;
     isMoving(): boolean;
     getSort(): string;
@@ -135,4 +139,5 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isAllowPivot(): boolean;
     isAllowValue(): boolean;
     isAllowRowGroup(): boolean;
+    getMenuTabs(defaultValues: string[]): string[];
 }

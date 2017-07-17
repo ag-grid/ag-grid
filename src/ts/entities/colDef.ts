@@ -1,11 +1,10 @@
 import {RowNode} from "./rowNode";
 import {ICellEditorComp} from "../rendering/cellEditors/iCellEditor";
-import {ICellRendererFunc, ICellRenderer, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
 import {Column} from "./column";
 import {IFilterComp} from "../interfaces/iFilter";
 import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
-import {IHeaderComp, IHeader} from "../headerRendering/header/headerComp";
 import {IHeaderGroupComp} from "../headerRendering/headerGroup/headerGroupComp";
 import {IFloatingFilterComp} from "../filter/floatingFilter";
 
@@ -79,7 +78,10 @@ export interface ColDef extends AbstractColDef {
     headerTooltip?: string;
 
     /** Expression or function to get the cells value. */
-    valueGetter?: string | Function;
+    valueGetter?: (params: ValueGetterParams) => any | string;
+
+    /** If not using a field, then this puts the value into the cell */
+    valueSetter?: (params: ValueSetterParams) => boolean | string;
 
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field. */
@@ -121,10 +123,18 @@ export interface ColDef extends AbstractColDef {
     floatingCellRendererFramework?: any;
     floatingCellRendererParams?: any;
 
-    /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    /** DEPRECATED - A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     cellFormatter?: (params: any) => string;
-    /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    /** DEPRECATED - A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     floatingCellFormatter?: (params: any) => string;
+
+    /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    valueFormatter?: (params: ValueFormatterParams) => string | string;
+    /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    floatingValueFormatter?: (params: ValueFormatterParams) => string | string;
+
+    /** Gets called after editing, converts the value in the cell. */
+    valueParser?: (params: ValueParserParams) => any | string;
 
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
     aggFunc?: string | IAggFunc;
@@ -133,11 +143,16 @@ export interface ColDef extends AbstractColDef {
      * Can be eg ['sum','avg']. This will restrict what the GUI allows to select only.*/
     allowedAggFuncs?: string[];
 
-    /** To group by this column by default, provide an index here. */
+    /** To group by this column by default, either provide an index (eg rowGroupIndex=1), or set rowGroup=true. */
     rowGroupIndex?: number;
+    rowGroup?: boolean;
 
-    /** To pivot by this column by default, provide an index here. */
+    /** Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group. */
+    showRowGroup?: string | boolean;
+
+    /** To pivot by this column by default, either provide an index (eg pivotIndex=1), or set pivot=true. */
     pivotIndex?: number;
+    pivot?: boolean;
 
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA?: RowNode, nodeB?: RowNode, isInverted?: boolean) => number;
@@ -156,6 +171,10 @@ export interface ColDef extends AbstractColDef {
 
     /** Set to true if no menu should be shown for this column header. */
     suppressMenu?: boolean;
+
+    /** The menu tabs to show, and in which order, the valid values for this property are:
+     * filterMenuTab, generalMenuTab, columnsMenuTab **/
+    menuTabs?:string[]
 
     /** Set to true if no sorting should be done for this column. */
     suppressSorting?: boolean;
@@ -190,14 +209,20 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
     editable?: boolean | IsColumnFunc;
 
+    /** Set to true if this col should not be allowed take new values from teh clipboard . */
+    suppressPaste?: boolean | IsColumnFunc;
+
     /** Set to tru if this col should not be navigable with the tab key. Can also be a function to have different rows editable. */
     suppressNavigable?: boolean | IsColumnFunc;
 
     /** To create the quick filter text for this column, if toString is not good enough on the value. */
     getQuickFilterText?: (params: GetQuickFilterTextParams) => string;
 
-    /** Callbacks for editing.See editing section for further details. */
-    newValueHandler?: Function;
+    /** Callbacks for editing. See editing section for further details.
+     * Return true if the update was successful, or false if not.
+     * If false, then skips the UI refresh and no events are emitted.
+     * Return false if the values are the same (ie no update). */
+    newValueHandler?: (params: any)=>boolean;
 
     /** If true, this cell gets refreshed when api.softRefreshView() gets called. */
     volatile?: boolean;
@@ -240,6 +265,9 @@ export interface ColDef extends AbstractColDef {
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotValueColumn?: Column;
 
+    /** Never set this, it is used internally by grid when doing in-grid pivoting */
+    pivotTotalColumnIds?: string[];
+
     /** The custom header component to be used for rendering the component header. If none specified the default ag-Grid is used**/
     headerComponent?:{new(): any}
     /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
@@ -272,4 +300,31 @@ export interface GetQuickFilterTextParams {
     data: any;
     column: Column;
     colDef: ColDef;
+}
+
+export interface BaseColDefParams {
+    node: any,
+    data: RowNode,
+    colDef: ColDef,
+    column: Column,
+    api: GridApi,
+    columnApi: ColumnApi,
+    context: any
+}
+
+export interface ValueGetterParams extends BaseColDefParams {
+    getValue: (field: string) => any
+}
+
+export interface NewValueParams extends BaseColDefParams {
+    oldValue: any,
+    newValue: any
+}
+
+export interface ValueSetterParams extends NewValueParams {}
+
+export interface ValueParserParams extends NewValueParams {}
+
+export interface ValueFormatterParams extends BaseColDefParams {
+    value: any;
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,18 +28,35 @@ var ExpressionService = (function () {
     ExpressionService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ExpressionService');
     };
-    ExpressionService.prototype.evaluate = function (expression, params) {
+    ExpressionService.prototype.evaluate = function (expressionOrFunc, params) {
+        if (typeof expressionOrFunc === 'function') {
+            // valueGetter is a function, so just call it
+            var func = expressionOrFunc;
+            return func(params);
+        }
+        else if (typeof expressionOrFunc === 'string') {
+            // valueGetter is an expression, so execute the expression
+            var expression = expressionOrFunc;
+            return this.evaluateExpression(expression, params);
+        }
+        else {
+            console.error('ag-Grid: value should be either a string or a function', expressionOrFunc);
+        }
+    };
+    ExpressionService.prototype.evaluateExpression = function (expression, params) {
         try {
             var javaScriptFunction = this.createExpressionFunction(expression);
-            var result = javaScriptFunction(params.value, params.context, params.node, params.data, params.colDef, params.rowIndex, params.api, params.getValue, params.column, params.columnGroup);
+            // the params don't have all these values, rather we add every possible
+            // value a params can have, which makes whatever is in the params available.
+            var result = javaScriptFunction(params.value, params.context, params.oldValue, params.newValue, params.value, params.node, params.data, params.colDef, params.rowIndex, params.api, params.columnApi, params.getValue, params.column, params.columnGroup);
             return result;
         }
         catch (e) {
             // the expression failed, which can happen, as it's the client that
             // provides the expression. so print a nice message
-            this.logger.log('Processing of the expression failed');
-            this.logger.log('Expression = ' + expression);
-            this.logger.log('Exception = ' + e);
+            console.log('Processing of the expression failed');
+            console.log('Expression = ' + expression);
+            console.log('Exception = ' + e);
             return null;
         }
     };
@@ -50,7 +67,7 @@ var ExpressionService = (function () {
         }
         // if not found in cache, return the function
         var functionBody = this.createFunctionBody(expression);
-        var theFunction = new Function('x, ctx, node, data, colDef, rowIndex, api, getValue, column, columnGroup', functionBody);
+        var theFunction = new Function('x, ctx, oldValue, newValue, value, node, data, colDef, rowIndex, api, columnApi, getValue, column, columnGroup', functionBody);
         // store in cache
         this.expressionToFunctionCache[expression] = theFunction;
         return theFunction;

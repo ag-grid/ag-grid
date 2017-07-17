@@ -236,6 +236,8 @@ export class ColumnController {
 
     private groupAutoColumns: Column[];
 
+    private groupDisplayColumns: Column[];
+
     private ready = false;
     private logger: Logger;
 
@@ -403,9 +405,15 @@ export class ColumnController {
                     changesThisTimeAround++;
                 }
                 return true;
-            }, ()=> {
-                return new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withFinished(true);
             });
+        }
+
+        if (columnsAutosized.length > 0) {
+            let event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withFinished(true).withColumns(columnsAutosized);
+            if (columnsAutosized.length===1) {
+                event.withColumn(columnsAutosized[0]);
+            }
+            this.eventService.dispatchEvent(Events.EVENT_COLUMN_RESIZED, event);
         }
     }
 
@@ -757,52 +765,45 @@ export class ColumnController {
         this.columnAnimationService.finish();
     }
 
-    private doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
+    public doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
 
         let allColumnsCopy = this.gridColumns.slice();
 
         _.moveInArray(allColumnsCopy, columnsToMove, toIndex);
 
-        // look for broken groups, ie stray columns from groups that should be married
-        for (let index = 0; index < (allColumnsCopy.length-1); index++) {
-            let thisColumn = allColumnsCopy[index];
-            let nextColumn = allColumnsCopy[index + 1];
+        let rulesPass = true;
 
-            // skip hidden columns
-            if (!nextColumn.isVisible()) {
-                continue;
+        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, child => {
+            if (!(child instanceof OriginalColumnGroup)) { return; }
+
+            let columnGroup = <OriginalColumnGroup> child;
+
+            let marryChildren = columnGroup.getColGroupDef() && columnGroup.getColGroupDef().marryChildren;
+            if (!marryChildren) { return; }
+
+            let newIndexes: number[] = [];
+            columnGroup.getLeafColumns().forEach( col => {
+                let newColIndex = allColumnsCopy.indexOf(col);
+                newIndexes.push(newColIndex);
+            } );
+
+            let maxIndex = Math.max.apply(Math, newIndexes);
+            let minIndex = Math.min.apply(Math, newIndexes);
+
+            // width is how far the first column in this group is away from the last column
+            let spread = maxIndex - minIndex;
+            let maxSpread = columnGroup.getLeafColumns().length - 1;
+
+            // if the columns
+            if (spread > maxSpread) {
+                rulesPass = false;
             }
 
-            let thisPath = this.columnUtils.getOriginalPathForColumn(thisColumn, this.gridBalancedTree);
-            let nextPath = this.columnUtils.getOriginalPathForColumn(nextColumn, this.gridBalancedTree);
+            // console.log(`maxIndex = ${maxIndex}, minIndex = ${minIndex}, spread = ${spread}, maxSpread = ${maxSpread}, fail = ${spread > (count-1)}`)
+            // console.log(allColumnsCopy.map( col => col.getColDef().field).join(','));
+        });
 
-            if (!nextPath || !thisPath) {
-                console.log('next path is missing');
-            }
-
-            // start at the top of the path and work down
-            for (let dept = 0; dept<thisPath.length; dept++) {
-                let thisOriginalGroup = thisPath[dept];
-                let nextOriginalGroup = nextPath[dept];
-                let lastColInGroup = thisOriginalGroup!==nextOriginalGroup;
-                // a runaway is a column from this group that left the group, and the group has it's children marked as married
-                let colGroupDef = thisOriginalGroup.getColGroupDef();
-                let marryChildren = colGroupDef && colGroupDef.marryChildren;
-                let needToCheckForRunaways = lastColInGroup && marryChildren;
-                if (needToCheckForRunaways) {
-                    for (let tailIndex = index+1; tailIndex < allColumnsCopy.length; tailIndex++) {
-                        let tailColumn = allColumnsCopy[tailIndex];
-                        let tailPath = this.columnUtils.getOriginalPathForColumn(tailColumn, this.gridBalancedTree);
-                        let tailOriginalGroup = tailPath[dept];
-                        if (tailOriginalGroup===thisOriginalGroup) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-
-        return true;
+        return rulesPass;
     }
 
     public moveColumn(key: string|Column|ColDef, toIndex: number) {
@@ -963,7 +964,7 @@ export class ColumnController {
                             // and won't be included in the event
                             action: (column:Column) => boolean,
                             // should return back a column event of the right type
-                            createEvent: ()=>ColumnChangeEvent): void {
+                            createEvent?: ()=>ColumnChangeEvent): void {
 
         if (_.missingOrEmpty(keys)) { return; }
 
@@ -983,14 +984,18 @@ export class ColumnController {
         if (updatedColumns.length===0) { return; }
 
         this.updateDisplayedColumns();
-        let event = createEvent();
 
-        event.withColumns(updatedColumns);
-        if (updatedColumns.length===1) {
-            event.withColumn(updatedColumns[0]);
+        if (_.exists(createEvent)) {
+
+            let event = createEvent();
+
+            event.withColumns(updatedColumns);
+            if (updatedColumns.length===1) {
+                event.withColumn(updatedColumns[0]);
+            }
+
+            this.eventService.dispatchEvent(event.getType(), event);
         }
-
-        this.eventService.dispatchEvent(event.getType(), event);
     }
 
     public getDisplayedColBefore(col: Column): Column {
@@ -1440,8 +1445,8 @@ export class ColumnController {
     private extractRowGroupColumns(): void {
         this.rowGroupColumns.forEach( column => column.setRowGroupActive(false) );
         this.rowGroupColumns = [];
-        // pull out the columns
-        this.primaryColumns.forEach( (column: Column) => {
+        // pull out items with rowGroupIndex
+        this.primaryColumns.forEach( column => {
             if (typeof column.getColDef().rowGroupIndex === 'number') {
                 this.rowGroupColumns.push(column);
                 column.setRowGroupActive(true);
@@ -1451,12 +1456,23 @@ export class ColumnController {
         this.rowGroupColumns.sort(function (colA: Column, colB: Column): number {
             return colA.getColDef().rowGroupIndex - colB.getColDef().rowGroupIndex;
         });
+        // now just pull out items rowGroup, they will be added at the end
+        // after the indexed ones, but in the order the columns appear
+        this.primaryColumns.forEach( column => {
+            if (column.getColDef().rowGroup) {
+                // if user already specified rowGroupIndex then we skip it as this col already included
+                if (this.rowGroupColumns.indexOf(column)>=0) { return; }
+
+                this.rowGroupColumns.push(column);
+                column.setRowGroupActive(true);
+            }
+        });
     }
 
     private extractPivotColumns(): void {
         this.pivotColumns.forEach( column => column.setPivotActive(false) );
         this.pivotColumns = [];
-        // pull out the columns
+        // pull out items with pivotIndex
         this.primaryColumns.forEach( (column: Column) => {
             if (typeof column.getColDef().pivotIndex === 'number') {
                 this.pivotColumns.push(column);
@@ -1466,6 +1482,16 @@ export class ColumnController {
         // then sort them
         this.pivotColumns.sort(function (colA: Column, colB: Column): number {
             return colA.getColDef().pivotIndex - colB.getColDef().pivotIndex;
+        });
+        // now check the boolean equivalent
+        this.primaryColumns.forEach( (column: Column) => {
+            if (column.getColDef().pivot) {
+                // if user already specified pivotIndex then we skip it as this col already included
+                if (this.pivotColumns.indexOf(column)>=0) { return; }
+
+                this.pivotColumns.push(column);
+                column.setPivotActive(true);
+            }
         });
     }
 
@@ -1538,6 +1564,25 @@ export class ColumnController {
         return columnsForDisplay;
     }
 
+    private calculateColumnsForGroupDisplay(): void {
+        this.groupDisplayColumns = [];
+        let checkFunc = (col: Column) => {
+            let colDef = col.getColDef();
+            if (colDef && _.exists(colDef.showRowGroup)) {
+                this.groupDisplayColumns.push(col);
+            }
+        };
+
+        this.gridColumns.forEach(checkFunc);
+        if (this.groupAutoColumns) {
+            this.groupAutoColumns.forEach(checkFunc);
+        }
+    }
+
+    public getGroupDisplayColumns(): Column[] {
+        return this.groupDisplayColumns;
+    }
+
     private createColumnsToDisplayFromValueColumns(): Column [] {
         // make a copy of the value columns, so we have to side effects
         let result = this.valueColumns.slice();
@@ -1560,6 +1605,8 @@ export class ColumnController {
 
         // restore opened / closed state
         this.setColumnGroupState(oldGroupState);
+
+        this.calculateColumnsForGroupDisplay();
 
         // this is also called when a group is opened or closed
         this.updateGroupsAndDisplayedColumns();
@@ -1918,9 +1965,8 @@ export class ColumnController {
         this.setLeftValues();
         this.updateBodyWidths();
 
-        // widths set, refresh the gui
         colsToFireEventFor.forEach( (column: Column) => {
-            let event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withColumn(column);
+            let event = new ColumnChangeEvent(Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(true);
             this.eventService.dispatchEvent(Events.EVENT_COLUMN_RESIZED, event);
         });
 

@@ -113,14 +113,6 @@ export class ColumnGroup implements ColumnGroupChild {
         this.localEventService.removeEventListener(eventType, listener);
     }
 
-    // public setMoving(moving: boolean) {
-    //     this.getDisplayedLeafColumns().forEach( (column)=> column.setMoving(moving) );
-    // }
-    //
-    // public isMoving(): boolean {
-    //     return this.moving;
-    // }
-
     public getGroupId(): string {
         return this.groupId;
     }
@@ -154,6 +146,20 @@ export class ColumnGroup implements ColumnGroupChild {
             });
         }
         return groupActualWidth;
+    }
+
+    public isResizable(): boolean {
+        if (!this.displayedChildren) { return false; }
+
+        // if at least one child is resizable, then the group is resizable
+        let result = false;
+        this.displayedChildren.forEach( (child: ColumnGroupChild)=> {
+            if (child.isResizable()) {
+                result = true;
+            }
+        });
+
+        return result;
     }
 
     public getMinWidth(): number {

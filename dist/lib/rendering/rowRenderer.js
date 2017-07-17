@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -279,8 +279,8 @@ var RowRenderer = (function (_super) {
         var _this = this;
         var rowsToRemove;
         var oldRowsByNodeId = {};
-        // never keep rendered rows if doing forPrint, as we do not use 'top' to
-        // position the rows in forPrint (use normal flow), so we have to remove
+        // never keep rendered rows if doing forPrint or autoHeight, as we do not use 'top' to
+        // position the rows (it uses normal flow), so we have to remove
         // all rows and insert them again from scratch
         if (this.gridOptionsWrapper.isForPrint() || this.gridOptionsWrapper.isAutoHeight()) {
             keepRenderedRows = false;
@@ -465,6 +465,13 @@ var RowRenderer = (function (_super) {
         if (!this.gridOptionsWrapper.isForPrint()) {
             this.rowContainers.pinnedLeft.flushDocumentFragment();
             this.rowContainers.pinnedRight.flushDocumentFragment();
+        }
+        if (this.gridOptionsWrapper.isEnforceRowDomOrder()) {
+            utils_1.Utils.iterateObject(this.rowContainers, function (key, rowContainerComp) {
+                if (rowContainerComp) {
+                    rowContainerComp.sortDomByRowNodeIndex();
+                }
+            });
         }
         // if we are doing angular compiling, then do digest the scope here
         if (this.gridOptionsWrapper.isAngularCompileRows()) {

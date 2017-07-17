@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColDef } from "./colDef";
@@ -22,6 +22,9 @@ export declare class RowNode implements IEventEmitter {
     static EVENT_MOUSE_LEAVE: string;
     static EVENT_HEIGHT_CHANGED: string;
     static EVENT_TOP_CHANGED: string;
+    static EVENT_FIRST_CHILD_CHANGED: string;
+    static EVENT_LAST_CHILD_CHANGED: string;
+    static EVENT_CHILD_INDEX_CHANGED: string;
     static EVENT_ROW_INDEX_CHANGED: string;
     static EVENT_EXPANDED_CHANGED: string;
     static EVENT_UI_LEVEL_CHANGED: string;
@@ -35,6 +38,10 @@ export declare class RowNode implements IEventEmitter {
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
     id: string;
+    /** The group data */
+    groupData: any;
+    /** The aggregated data */
+    aggData: any;
     /** The user provided data */
     data: any;
     /** The parent node to this node, or empty if top level */
@@ -118,6 +125,9 @@ export declare class RowNode implements IEventEmitter {
     setDataAndId(data: any, id: string): void;
     setId(id: string): void;
     clearRowTop(): void;
+    setFirstChild(firstChild: boolean): void;
+    setLastChild(lastChild: boolean): void;
+    setChildIndex(childIndex: number): void;
     setRowTop(rowTop: number): void;
     setAllChildrenCount(allChildrenCount: number): void;
     setRowHeight(rowHeight: number): void;
@@ -126,6 +136,7 @@ export declare class RowNode implements IEventEmitter {
     setExpanded(expanded: boolean): void;
     private dispatchLocalEvent(eventName, event?);
     setDataValue(colKey: string | ColDef | Column, newValue: any): void;
+    setGroupValue(colKey: string | ColDef | Column, newValue: any): void;
     setAggData(newAggData: any): void;
     private dispatchCellChangedEvent(column, newValue);
     resetQuickFilterAggregateText(): void;
@@ -147,4 +158,5 @@ export declare class RowNode implements IEventEmitter {
     removeEventListener(eventType: string, listener: Function): void;
     onMouseEnter(): void;
     onMouseLeave(): void;
+    getFirstChildOfFirstChild(rowGroupColumn: Column): RowNode;
 }

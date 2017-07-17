@@ -98,10 +98,19 @@ export class InMemoryNodeManager {
         };
 
         if (_.exists(add)) {
-            add.forEach( item => {
-                let newRowNode: RowNode = this.addRowNode(item, addIndex);
-                rowNodeTransaction.add.push(newRowNode);
-            });
+            let useIndex = typeof addIndex === 'number' && addIndex >= 0;
+            if (useIndex) {
+                // items get inserted in reverse order for index insertion
+                add.reverse().forEach( item => {
+                    let newRowNode: RowNode = this.addRowNode(item, addIndex);
+                    rowNodeTransaction.add.push(newRowNode);
+                });
+            } else {
+                add.forEach( item => {
+                    let newRowNode: RowNode = this.addRowNode(item);
+                    rowNodeTransaction.add.push(newRowNode);
+                });
+            }
         }
 
         if (_.exists(remove)) {
@@ -125,11 +134,11 @@ export class InMemoryNodeManager {
         return rowNodeTransaction;
     }
 
-    private addRowNode(data: any, index: number): RowNode {
+    private addRowNode(data: any, index?: number): RowNode {
 
         let newNode = this.createNode(data, null, InMemoryNodeManager.TOP_LEVEL);
 
-        if (typeof index === 'number' && index >= 0) {
+        if (_.exists(index)) {
             _.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
         } else {
             this.rootNode.allLeafChildren.push(newNode);

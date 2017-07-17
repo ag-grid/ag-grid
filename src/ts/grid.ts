@@ -60,6 +60,7 @@ import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
 import {AutoGroupColService} from "./columnController/autoGroupColService";
 import {PaginationAutoPageSizeService, PaginationProxy} from "./rowModels/paginationProxy";
 import {ImmutableService} from "./rowModels/inMemory/immutableService";
+import {GroupValueService} from "./groupValueService";
 
 
 export interface GridParams {
@@ -151,7 +152,7 @@ export class Grid {
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer,
                 HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory,
-                GridSerializer, TemplateService, GridPanel, PopupService, ValueService, MasterSlaveService,
+                GridSerializer, TemplateService, GridPanel, PopupService, ValueService, GroupValueService, MasterSlaveService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService, FilterService, RowNodeFactory,

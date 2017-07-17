@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./rowNode";
@@ -20,6 +20,7 @@ export interface GridOptions {
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. PLEASE!*
      ****************************************************************/
+    enforceRowDomOrder?: boolean;
     deltaRowDataMode?: boolean;
     scrollbarWidth?: number;
     toolPanelSuppressRowGroups?: boolean;
@@ -31,6 +32,7 @@ export interface GridOptions {
     suppressRowHoverClass?: boolean;
     sortingOrder?: string[];
     suppressMultiSort?: boolean;
+    accentedSort?: boolean;
     suppressHorizontalScroll?: boolean;
     suppressTabbing?: boolean;
     unSortIcon?: boolean;
@@ -69,22 +71,20 @@ export interface GridOptions {
     suppressDragLeaveHidesColumns?: boolean;
     suppressParentsInRowNodes?: boolean;
     suppressFieldDotNotation?: boolean;
-    suppressUseColIdForGroups?: boolean;
     suppressCopyRowsToClipboard?: boolean;
+    clipboardDeliminator?: string;
     suppressAggFuncInHeader?: boolean;
     suppressAggAtRootLevel?: boolean;
     suppressFocusAfterRefresh?: boolean;
     rowModelType?: string;
     pivotMode?: boolean;
+    pivotTotals?: boolean;
     enableRangeSelection?: boolean;
     suppressEnterprise?: boolean;
     rowGroupPanelShow?: string;
     pivotPanelShow?: string;
     suppressContextMenu?: boolean;
     allowContextMenuWithControlKey?: boolean;
-    suppressMenuFilterPanel?: boolean;
-    suppressMenuMainPanel?: boolean;
-    suppressMenuColumnPanel?: boolean;
     rememberGroupStateWhenNewData?: boolean;
     viewportRowModelPageSize?: number;
     viewportRowModelBufferSize?: number;
@@ -139,6 +139,7 @@ export interface GridOptions {
     groupMultiAutoColumn?: boolean;
     groupSuppressBlankHeader?: boolean;
     groupColumnDef?: ColDef;
+    autoGroupColumnDef?: ColDef;
     forPrint?: boolean;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. YOU'VE BEEN WARNED*

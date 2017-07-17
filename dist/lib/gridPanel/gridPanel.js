@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -53,53 +53,53 @@ var paginationProxy_1 = require("../rowModels/paginationProxy");
 var popupEditorWrapper_1 = require("../rendering/cellEditors/popupEditorWrapper");
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
-var HEADER_SNIPPET = '<div class="ag-header">' +
-    '<div class="ag-pinned-left-header"></div>' +
-    '<div class="ag-pinned-right-header"></div>' +
-    '<div class="ag-header-viewport">' +
-    '<div class="ag-header-container"></div>' +
+var HEADER_SNIPPET = '<div class="ag-header" role="row">' +
+    '<div class="ag-pinned-left-header" role="presentation"></div>' +
+    '<div class="ag-pinned-right-header" role="presentation"></div>' +
+    '<div class="ag-header-viewport" role="presentation">' +
+    '<div class="ag-header-container" role="presentation"></div>' +
     '</div>' +
-    '<div class="ag-header-overlay"></div>' +
+    '<div class="ag-header-overlay" role="presentation"></div>' +
     '</div>';
-var FLOATING_TOP_SNIPPET = '<div class="ag-floating-top">' +
-    '<div class="ag-pinned-left-floating-top"></div>' +
-    '<div class="ag-pinned-right-floating-top"></div>' +
-    '<div class="ag-floating-top-viewport">' +
-    '<div class="ag-floating-top-container"></div>' +
+var FLOATING_TOP_SNIPPET = '<div class="ag-floating-top" role="presentation">' +
+    '<div class="ag-pinned-left-floating-top" role="presentation"></div>' +
+    '<div class="ag-pinned-right-floating-top" role="presentation"></div>' +
+    '<div class="ag-floating-top-viewport" role="presentation">' +
+    '<div class="ag-floating-top-container" role="presentation"></div>' +
     '</div>' +
-    '<div class="ag-floating-top-full-width-container"></div>' +
+    '<div class="ag-floating-top-full-width-container" role="presentation"></div>' +
     '</div>';
-var FLOATING_BOTTOM_SNIPPET = '<div class="ag-floating-bottom">' +
-    '<div class="ag-pinned-left-floating-bottom"></div>' +
-    '<div class="ag-pinned-right-floating-bottom"></div>' +
-    '<div class="ag-floating-bottom-viewport">' +
-    '<div class="ag-floating-bottom-container"></div>' +
+var FLOATING_BOTTOM_SNIPPET = '<div class="ag-floating-bottom" role="presentation">' +
+    '<div class="ag-pinned-left-floating-bottom" role="presentation"></div>' +
+    '<div class="ag-pinned-right-floating-bottom" role="presentation"></div>' +
+    '<div class="ag-floating-bottom-viewport" role="presentation">' +
+    '<div class="ag-floating-bottom-container" role="presentation"></div>' +
     '</div>' +
-    '<div class="ag-floating-bottom-full-width-container"></div>' +
+    '<div class="ag-floating-bottom-full-width-container" role="presentation"></div>' +
     '</div>';
-var BODY_SNIPPET = '<div class="ag-body">' +
-    '<div class="ag-pinned-left-cols-viewport">' +
-    '<div class="ag-pinned-left-cols-container"></div>' +
+var BODY_SNIPPET = '<div class="ag-body" role="presentation">' +
+    '<div class="ag-pinned-left-cols-viewport" role="presentation">' +
+    '<div class="ag-pinned-left-cols-container" role="presentation"></div>' +
     '</div>' +
-    '<div class="ag-pinned-right-cols-viewport">' +
-    '<div class="ag-pinned-right-cols-container"></div>' +
+    '<div class="ag-pinned-right-cols-viewport" role="presentation">' +
+    '<div class="ag-pinned-right-cols-container" role="presentation"></div>' +
     '</div>' +
-    '<div class="ag-body-viewport-wrapper">' +
-    '<div class="ag-body-viewport">' +
-    '<div class="ag-body-container"></div>' +
+    '<div class="ag-body-viewport-wrapper" role="presentation">' +
+    '<div class="ag-body-viewport" role="presentation">' +
+    '<div class="ag-body-container" role="presentation"></div>' +
     '</div>' +
     '</div>' +
-    '<div class="ag-full-width-viewport">' +
-    '<div class="ag-full-width-container"></div>' +
+    '<div class="ag-full-width-viewport" role="presentation">' +
+    '<div class="ag-full-width-container" role="presentation"></div>' +
     '</div>' +
     '</div>';
 // the difference between the 'normal' and 'full height' template is the order of the floating and body,
 // for normal, the floating top and bottom go in first as they are fixed position,
 // for auto-height, the body is in the middle of the top and bottom as they are just normally laid out
-var GRID_PANEL_NORMAL_TEMPLATE = '<div class="ag-root ag-font-style">' +
+var GRID_PANEL_NORMAL_TEMPLATE = '<div class="ag-root ag-font-style" role="grid">' +
     HEADER_SNIPPET + FLOATING_TOP_SNIPPET + FLOATING_BOTTOM_SNIPPET + BODY_SNIPPET +
     '</div>';
-var GRID_PANEL_AUTO_HEIGHT_TEMPLATE = '<div class="ag-root ag-font-style">' +
+var GRID_PANEL_AUTO_HEIGHT_TEMPLATE = '<div class="ag-root ag-font-style" role="grid">' +
     HEADER_SNIPPET + FLOATING_TOP_SNIPPET + BODY_SNIPPET + FLOATING_BOTTOM_SNIPPET +
     '</div>';
 // the template for for-print is much easier than that others, as it doesn't have any pinned areas
@@ -116,7 +116,7 @@ var GRID_PANEL_FOR_PRINT_TEMPLATE = '<div class="ag-root ag-font-style">' +
     '</div>';
 // wrapping in outer div, and wrapper, is needed to center the loading icon
 // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
-var OVERLAY_TEMPLATE = '<div class="ag-overlay-panel">' +
+var OVERLAY_TEMPLATE = '<div class="ag-overlay-panel" role="presentation">' +
     '<div class="ag-overlay-wrapper ag-overlay-[OVERLAY_NAME]-wrapper">[OVERLAY_TEMPLATE]</div>' +
     '</div>';
 var LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
@@ -1025,6 +1025,7 @@ var GridPanel = (function (_super) {
         this.eRoot = utils_1.Utils.loadTemplate(template);
     };
     GridPanel.prototype.findElements = function () {
+        var _this = this;
         if (this.forPrint) {
             this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
             this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
@@ -1102,6 +1103,11 @@ var GridPanel = (function (_super) {
             };
             this.addMouseWheelEventListeners();
         }
+        utils_1.Utils.iterateObject(this.rowContainerComponents, function (key, container) {
+            if (container) {
+                _this.context.wireBean(container);
+            }
+        });
     };
     GridPanel.prototype.getRowContainers = function () {
         return this.rowContainerComponents;
@@ -1567,6 +1573,10 @@ __decorate([
     context_1.Autowired('eventService'),
     __metadata("design:type", eventService_1.EventService)
 ], GridPanel.prototype, "eventService", void 0);
+__decorate([
+    context_1.Autowired('context'),
+    __metadata("design:type", context_1.Context)
+], GridPanel.prototype, "context", void 0);
 __decorate([
     context_1.Autowired('paginationProxy'),
     __metadata("design:type", paginationProxy_1.PaginationProxy)

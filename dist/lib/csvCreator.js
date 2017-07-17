@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,6 +31,7 @@ var downloader_1 = require("./downloader");
 var columnController_1 = require("./columnController/columnController");
 var valueService_1 = require("./valueService");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
+var constants_1 = require("./constants");
 var LINE_SEPARATOR = '\r\n';
 var CsvSerializingSession = (function (_super) {
     __extends(CsvSerializingSession, _super);
@@ -96,7 +97,7 @@ var CsvSerializingSession = (function (_super) {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        this.result += this.putInQuotes(this.extractRowCellValue(column, index, node), this.suppressQuotes);
+        this.result += this.putInQuotes(this.extractRowCellValue(column, index, constants_1.Constants.EXPORT_TYPE_CSV, node), this.suppressQuotes);
         this.lineOpened = true;
     };
     CsvSerializingSession.prototype.putInQuotes = function (value, suppressQuotes) {

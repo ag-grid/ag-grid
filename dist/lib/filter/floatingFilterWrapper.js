@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,6 +31,9 @@ var utils_1 = require("../utils");
 var setLeftFeature_1 = require("../rendering/features/setLeftFeature");
 var component_1 = require("../widgets/component");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var svgFactory_1 = require("../svgFactory");
+var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var BaseFilterWrapperComp = (function (_super) {
     __extends(BaseFilterWrapperComp, _super);
     function BaseFilterWrapperComp() {
@@ -38,7 +41,7 @@ var BaseFilterWrapperComp = (function (_super) {
     }
     BaseFilterWrapperComp.prototype.init = function (params) {
         this.column = params.column;
-        var base = utils_1._.loadTemplate("<div class=\"ag-header-cell\"><div class=\"ag-floating-filter-body\"></div></div>");
+        var base = utils_1._.loadTemplate("<div class=\"ag-header-cell\" aria-hidden=\"true\"><div class=\"ag-floating-filter-body\" aria-hidden=\"true\"></div></div>");
         this.enrichBody(base);
         this.setTemplateFromElement(base);
         this.setupWidth();
@@ -79,8 +82,10 @@ var FloatingFilterWrapperComp = (function (_super) {
             utils_1._.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body');
         }
         else {
+            // let icon:HTMLElement = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column, svgFactory.createFilterSvg12);
             floatingFilterBody.appendChild(this.floatingFilterComp.getGui());
-            body.appendChild(utils_1._.loadTemplate("<div class=\"ag-floating-filter-button\">\n                    <button ref=\"eButtonShowMainFilter\">...</button>            \n            </div>"));
+            body.appendChild(utils_1._.loadTemplate("<div class=\"ag-floating-filter-button\" aria-hidden=\"true\">\n                    <button ref=\"eButtonShowMainFilter\">...</button>            \n            </div>"));
+            // body.querySelector('button').appendChild(icon);
         }
         if (this.floatingFilterComp.afterGuiAttached) {
             this.floatingFilterComp.afterGuiAttached();
@@ -90,7 +95,7 @@ var FloatingFilterWrapperComp = (function (_super) {
         this.floatingFilterComp.onParentModelChanged(parentModel);
     };
     FloatingFilterWrapperComp.prototype.showParentFilter = function () {
-        this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filter');
+        this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filterMenuTab', ['filterMenuTab']);
     };
     return FloatingFilterWrapperComp;
 }(BaseFilterWrapperComp));
@@ -102,6 +107,10 @@ __decorate([
     context_1.Autowired('menuFactory'),
     __metadata("design:type", Object)
 ], FloatingFilterWrapperComp.prototype, "menuFactory", void 0);
+__decorate([
+    context_1.Autowired('gridOptionsWrapper'),
+    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+], FloatingFilterWrapperComp.prototype, "gridOptionsWrapper", void 0);
 exports.FloatingFilterWrapperComp = FloatingFilterWrapperComp;
 var EmptyFloatingFilterWrapperComp = (function (_super) {
     __extends(EmptyFloatingFilterWrapperComp, _super);

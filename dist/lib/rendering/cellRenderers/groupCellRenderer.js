@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,84 +47,22 @@ var GroupCellRenderer = (function (_super) {
         return _super.call(this, GroupCellRenderer.TEMPLATE) || this;
     }
     GroupCellRenderer.prototype.init = function (params) {
-        this.setParams(params);
-        var groupKeyMismatch = this.isGroupKeyMismatch();
+        this.params = params;
         var embeddedRowMismatch = this.embeddedRowMismatch();
-        if (groupKeyMismatch || embeddedRowMismatch) {
+        if (embeddedRowMismatch) {
             return;
         }
+        if (utils_1.Utils.missing(params.value)) {
+            return;
+        }
+        this.setupDragOpenParents();
         this.setupComponents();
-    };
-    GroupCellRenderer.prototype.setParams = function (params) {
-        if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
-            var rowGroupColumn = this.getRowGroupColumn(params);
-            var nodeToSwapIn = this.isFirstChildOfFirstChild(params.node, rowGroupColumn);
-            this.nodeWasSwapped = utils_1.Utils.exists(nodeToSwapIn);
-            if (this.nodeWasSwapped) {
-                var newParams = {};
-                utils_1.Utils.assign(newParams, params);
-                newParams.node = nodeToSwapIn;
-                this.params = newParams;
-            }
-            else {
-                this.params = params;
-            }
-        }
-        else {
-            this.nodeWasSwapped = false;
-            this.params = params;
-        }
     };
     GroupCellRenderer.prototype.setupComponents = function () {
         this.addExpandAndContract();
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.addPadding();
-    };
-    GroupCellRenderer.prototype.isFirstChildOfFirstChild = function (rowNode, rowGroupColumn) {
-        var currentRowNode = rowNode;
-        // if we are hiding groups, then if we are the first child, of the first child,
-        // all the way up to the column we are interested in, then we show the group cell.
-        var isCandidate = true;
-        var foundFirstChildPath = false;
-        var nodeToSwapIn;
-        while (isCandidate && !foundFirstChildPath) {
-            var parentRowNode = currentRowNode.parent;
-            var firstChild = utils_1.Utils.exists(parentRowNode) && currentRowNode.childIndex === 0;
-            if (firstChild) {
-                if (parentRowNode.rowGroupColumn === rowGroupColumn) {
-                    foundFirstChildPath = true;
-                    nodeToSwapIn = parentRowNode;
-                }
-            }
-            else {
-                isCandidate = false;
-            }
-            currentRowNode = parentRowNode;
-        }
-        return foundFirstChildPath ? nodeToSwapIn : null;
-    };
-    GroupCellRenderer.prototype.getRowGroupColumn = function (params) {
-        // if we are using the auto-group, then the auto-group passes the
-        // original rowGroupColumn
-        if (params.originalRowGroupColumn) {
-            return params.originalRowGroupColumn;
-        }
-        else {
-            return params.column;
-        }
-    };
-    GroupCellRenderer.prototype.isGroupKeyMismatch = function () {
-        // if the user only wants to show details for one group in this column,
-        // then the group key here says which column we are interested in.
-        var restrictToOneGroup = this.params.restrictToOneGroup;
-        var skipCheck = this.nodeWasSwapped || !restrictToOneGroup;
-        if (skipCheck) {
-            return false;
-        }
-        var columnGroup = this.getRowGroupColumn(this.params);
-        var rowGroup = this.params.node.rowGroupColumn;
-        return columnGroup !== rowGroup;
     };
     // if we are doing embedded full width rows, we only show the renderer when
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
@@ -156,6 +94,9 @@ var GroupCellRenderer = (function (_super) {
         }
     };
     GroupCellRenderer.prototype.setPadding = function () {
+        if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
+            return;
+        }
         var params = this.params;
         var rowNode = params.node;
         var paddingPx;
@@ -184,12 +125,11 @@ var GroupCellRenderer = (function (_super) {
         }
     };
     GroupCellRenderer.prototype.addPadding = function () {
-        var params = this.params;
         // only do this if an indent - as this overwrites the padding that
         // the theme set, which will make things look 'not aligned' for the
         // first group level.
-        var node = params.node;
-        var suppressPadding = params.suppressPadding;
+        var node = this.params.node;
+        var suppressPadding = this.params.suppressPadding;
         if (!suppressPadding) {
             this.addDestroyableEventListener(node, rowNode_1.RowNode.EVENT_UI_LEVEL_CHANGED, this.setPadding.bind(this));
             this.setPadding();
@@ -222,12 +162,11 @@ var GroupCellRenderer = (function (_super) {
     };
     GroupCellRenderer.prototype.createFooterCell = function () {
         var footerValue;
-        var groupName = this.getGroupName();
         var footerValueGetter = this.params.footerValueGetter;
         if (footerValueGetter) {
             // params is same as we were given, except we set the value as the item to display
             var paramsClone = utils_1.Utils.cloneObject(this.params);
-            paramsClone.value = groupName;
+            paramsClone.value = this.params.value;
             if (typeof footerValueGetter === 'function') {
                 footerValue = footerValueGetter(paramsClone);
             }
@@ -239,30 +178,23 @@ var GroupCellRenderer = (function (_super) {
             }
         }
         else {
-            footerValue = 'Total ' + groupName;
+            footerValue = 'Total ' + this.params.value;
         }
         this.eValue.innerHTML = footerValue;
     };
     GroupCellRenderer.prototype.createGroupCell = function () {
         var params = this.params;
-        // pull out the column that the grouping is on
-        var rowGroupColumns = this.params.columnApi.getRowGroupColumns();
-        // if we are using in memory grid grouping, then we try to look up the column that
-        // we did the grouping on. however if it is not possible (happens when user provides
-        // the data already grouped) then we just the current col, ie use cellRenderer of current col
-        var columnOfGroupedCol = rowGroupColumns[params.node.rowGroupIndex];
-        if (utils_1.Utils.missing(columnOfGroupedCol)) {
-            columnOfGroupedCol = params.column;
-        }
-        var groupName = this.getGroupName();
-        var valueFormatted = this.valueFormatterService.formatValue(columnOfGroupedCol, params.node, params.scope, params.rowIndex, groupName);
-        var groupedColCellRenderer = columnOfGroupedCol.getCellRenderer();
+        // we try and use the cellRenderer of the column used for the grouping if we can
+        var columnToUse = params.node.rowGroupColumn ? params.node.rowGroupColumn : params.column;
+        var groupName = this.params.value;
+        var valueFormatted = this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName);
+        var groupedColCellRenderer = columnToUse.getCellRenderer();
         // reuse the params but change the value
         if (typeof groupedColCellRenderer === 'function') {
             // reuse the params but change the value
             params.value = groupName;
             params.valueFormatted = valueFormatted;
-            var colDefOfGroupedCol = columnOfGroupedCol.getColDef();
+            var colDefOfGroupedCol = columnToUse.getColDef();
             var groupedColCellRendererParams = colDefOfGroupedCol ? colDefOfGroupedCol.cellRendererParams : null;
             // because we are talking about the different column to the original, any user provided params
             // are for the wrong column, so need to copy them in again.
@@ -284,30 +216,14 @@ var GroupCellRenderer = (function (_super) {
         if (this.params.suppressCount) {
             return;
         }
-        this.addDestroyableEventListener(this.params.node, rowNode_1.RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED, this.updateChildCount.bind(this));
+        this.addDestroyableEventListener(this.displayedGroup, rowNode_1.RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED, this.updateChildCount.bind(this));
         // filtering changes the child count, so need to cater for it
         this.updateChildCount();
     };
     GroupCellRenderer.prototype.updateChildCount = function () {
-        var allChildrenCount = this.params.node.allChildrenCount;
+        var allChildrenCount = this.displayedGroup.allChildrenCount;
         var text = allChildrenCount >= 0 ? "(" + allChildrenCount + ")" : '';
         this.eChildCount.innerHTML = text;
-    };
-    GroupCellRenderer.prototype.getGroupName = function () {
-        var keyMap = this.params.keyMap;
-        var rowNodeKey = this.params.node.key;
-        if (keyMap && typeof keyMap === 'object') {
-            var valueFromMap = keyMap[rowNodeKey];
-            if (valueFromMap) {
-                return valueFromMap;
-            }
-            else {
-                return rowNodeKey;
-            }
-        }
-        else {
-            return rowNodeKey;
-        }
     };
     GroupCellRenderer.prototype.createLeafCell = function () {
         if (utils_1.Utils.exists(this.params.value)) {
@@ -358,14 +274,52 @@ var GroupCellRenderer = (function (_super) {
     };
     GroupCellRenderer.prototype.onKeyDown = function (event) {
         if (utils_1.Utils.isKeyPressed(event, constants_1.Constants.KEY_ENTER)) {
-            if (!this.params.node.isCellEditable()) {
-                this.onExpandOrContract();
-                event.preventDefault();
+            var cellEditable = this.params.column.isCellEditable(this.params.node);
+            if (cellEditable) {
+                return;
             }
+            event.preventDefault();
+            this.onExpandOrContract();
+        }
+    };
+    GroupCellRenderer.prototype.setupDragOpenParents = function () {
+        var column = this.params.column;
+        var rowNode = this.params.node;
+        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
+            this.draggedFromHideOpenParents = false;
+        }
+        else if (!rowNode.group) {
+            // if we are here, and we are not a group, then we must of been dragged down,
+            // as otherwise the cell would be blank, and if cell is blank, this method is never called.
+            this.draggedFromHideOpenParents = true;
+        }
+        else {
+            var rowGroupColumn = rowNode.rowGroupColumn;
+            // if the displayGroup column for this col matches the rowGroupColumn we grouped by for this node,
+            // then nothing was dragged down
+            this.draggedFromHideOpenParents = !column.isRowGroupDisplayed(rowGroupColumn.getId());
+        }
+        if (this.draggedFromHideOpenParents) {
+            var pointer = rowNode.parent;
+            while (true) {
+                if (utils_1.Utils.missing(pointer)) {
+                    break;
+                }
+                if (pointer.rowGroupColumn && column.isRowGroupDisplayed(pointer.rowGroupColumn.getId())) {
+                    this.displayedGroup = pointer;
+                    break;
+                }
+                pointer = pointer.parent;
+            }
+        }
+        // if we didn't find a displayed group, set it to the row node
+        if (utils_1.Utils.missing(this.displayedGroup)) {
+            this.displayedGroup = rowNode;
         }
     };
     GroupCellRenderer.prototype.onExpandOrContract = function () {
-        var rowNode = this.params.node;
+        // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
+        var rowNode = this.displayedGroup;
         rowNode.setExpanded(!rowNode.expanded);
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
             this.params.api.refreshRows([rowNode]);
@@ -374,11 +328,13 @@ var GroupCellRenderer = (function (_super) {
     GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
         var rowNode = this.params.node;
         var reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
-        var expandable = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
+        var expandable = this.draggedFromHideOpenParents || (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
         if (expandable) {
-            // if expandable, show one based on expand state
-            utils_1.Utils.setVisible(this.eContracted, !rowNode.expanded);
-            utils_1.Utils.setVisible(this.eExpanded, rowNode.expanded);
+            // if expandable, show one based on expand state.
+            // if we were dragged down, means our parent is always expanded
+            var expanded = this.draggedFromHideOpenParents ? true : rowNode.expanded;
+            utils_1.Utils.setVisible(this.eContracted, !expanded);
+            utils_1.Utils.setVisible(this.eExpanded, expanded);
         }
         else {
             // it not expandable, show neither

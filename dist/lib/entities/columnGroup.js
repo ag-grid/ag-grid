@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -92,13 +92,6 @@ var ColumnGroup = (function () {
     ColumnGroup.prototype.removeEventListener = function (eventType, listener) {
         this.localEventService.removeEventListener(eventType, listener);
     };
-    // public setMoving(moving: boolean) {
-    //     this.getDisplayedLeafColumns().forEach( (column)=> column.setMoving(moving) );
-    // }
-    //
-    // public isMoving(): boolean {
-    //     return this.moving;
-    // }
     ColumnGroup.prototype.getGroupId = function () {
         return this.groupId;
     };
@@ -127,6 +120,19 @@ var ColumnGroup = (function () {
             });
         }
         return groupActualWidth;
+    };
+    ColumnGroup.prototype.isResizable = function () {
+        if (!this.displayedChildren) {
+            return false;
+        }
+        // if at least one child is resizable, then the group is resizable
+        var result = false;
+        this.displayedChildren.forEach(function (child) {
+            if (child.isResizable()) {
+                result = true;
+            }
+        });
+        return result;
     };
     ColumnGroup.prototype.getMinWidth = function () {
         var result = 0;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { CellComp } from "./cellComp";
@@ -9,7 +9,7 @@ import { BeanStub } from "../context/beanStub";
 import { RowContainerComponent } from "./rowContainerComponent";
 import { ColDef } from "../entities/colDef";
 export declare class RowComp extends BeanStub {
-    static EVENT_RENDERED_ROW_REMOVED: string;
+    static EVENT_ROW_REMOVED: string;
     static DOM_DATA_KEY_RENDERED_ROW: string;
     private gridOptionsWrapper;
     private columnController;
@@ -121,7 +121,7 @@ export declare class RowComp extends BeanStub {
     private roundRowTopToBounds(rowTop);
     private onRowDblClick(event);
     onRowClick(event: MouseEvent): void;
-    getRowNode(): any;
+    getRowNode(): RowNode;
     refreshCells(cols: (string | ColDef | Column)[], animate: boolean): void;
     private addClassesFromRowClassFunc();
     private addGridClasses();

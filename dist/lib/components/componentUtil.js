@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -163,11 +163,12 @@ ComponentUtil.EVENTS = [];
 ComponentUtil.STRING_PROPERTIES = [
     'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
     'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType',
-    'editType', 'domLayout'
+    'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow'
 ];
 ComponentUtil.OBJECT_PROPERTIES = [
-    'rowStyle', 'context', 'groupColumnDef', 'localeText', 'icons', 'datasource', 'enterpriseDatasource', 'viewportDatasource',
-    'groupRowRendererParams', 'aggFuncs', 'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams'
+    'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText', 'icons', 'datasource',
+    'enterpriseDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
+    'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams'
     //,'cellRenderers','cellEditors'
 ];
 ComponentUtil.ARRAY_PROPERTIES = [
@@ -191,7 +192,7 @@ ComponentUtil.BOOLEAN_PROPERTIES = [
     'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort', 'suppressScrollLag',
     'singleClickEdit', 'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'suppressAutoSize',
     'suppressParentsInRowNodes', 'showToolPanel', 'suppressColumnMoveAnimation', 'suppressMovableColumns',
-    'suppressFieldDotNotation', 'enableRangeSelection', 'suppressEnterprise', 'rowGroupPanelShow',
+    'suppressFieldDotNotation', 'enableRangeSelection', 'suppressEnterprise',
     'pivotPanelShow', 'suppressTouch', 'suppressAsyncEvents', 'allowContextMenuWithControlKey',
     'suppressContextMenu', 'suppressMenuFilterPanel', 'suppressMenuMainPanel', 'suppressMenuColumnPanel',
     'enableStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
@@ -202,7 +203,7 @@ ComponentUtil.BOOLEAN_PROPERTIES = [
     'enableGroupEdit', 'embedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter',
     'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus',
     'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
-    'deltaRowDataMode'
+    'deltaRowDataMode', 'enforceRowDomOrder', 'accentedSort', 'pivotTotals'
 ];
 ComponentUtil.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
     'dateComponent', 'dateComponentFramework', 'groupRowRenderer', 'groupRowRendererFramework', 'isScrollLag', 'isExternalFilterPresent',

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -42,7 +42,7 @@ var BaseGridSerializingSession = (function () {
         }
         return this.cellAndHeaderEscaper ? this.cellAndHeaderEscaper(nameForCol) : nameForCol;
     };
-    BaseGridSerializingSession.prototype.extractRowCellValue = function (column, index, node) {
+    BaseGridSerializingSession.prototype.extractRowCellValue = function (column, index, type, node) {
         var isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
         var valueForCell;
         if (node.group && isRowGrouping && index === 0) {
@@ -51,7 +51,7 @@ var BaseGridSerializingSession = (function () {
         else {
             valueForCell = this.valueService.getValue(column, node);
         }
-        valueForCell = this.processCell(node, column, valueForCell, this.processCellCallback);
+        valueForCell = this.processCell(node, column, valueForCell, this.processCellCallback, type);
         if (valueForCell === null || valueForCell === undefined) {
             valueForCell = '';
         }
@@ -78,7 +78,7 @@ var BaseGridSerializingSession = (function () {
         }
         return keys.reverse().join(' -> ');
     };
-    BaseGridSerializingSession.prototype.processCell = function (rowNode, column, value, processCellCallback) {
+    BaseGridSerializingSession.prototype.processCell = function (rowNode, column, value, processCellCallback, type) {
         if (processCellCallback) {
             return processCellCallback({
                 column: column,
@@ -86,7 +86,8 @@ var BaseGridSerializingSession = (function () {
                 value: value,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
-                context: this.gridOptionsWrapper.getContext()
+                context: this.gridOptionsWrapper.getContext(),
+                type: type
             });
         }
         else {

@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "10.1.0",
+  "version": "11.0.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
   "scripts": {
@@ -25,7 +25,7 @@
     "reactjs"
   ],
   "jspm": {
-    "main":"jspm-main"
+    "main": "jspm-main"
   },
   "author": "Niall Crosby <niall.crosby@ag-grid.com>",
   "license": "MIT",

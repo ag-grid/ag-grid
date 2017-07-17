@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -519,10 +519,11 @@ var RowComp = (function (_super) {
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells
-        var animate = event.update;
-        var newData = !event.update;
         this.forEachRenderedCell(function (cellComp) {
-            return cellComp.refreshCell(animate, newData);
+            return cellComp.refreshCell({
+                animate: event.update,
+                newData: !event.update
+            });
         });
         // check for selected also, as this could be after lazy loading of the row data, in which case
         // the id might of just gotten set inside the row and the row selected state may of changed
@@ -615,12 +616,20 @@ var RowComp = (function (_super) {
         }
     };
     RowComp.prototype.addEventListener = function (eventType, listener) {
+        if (eventType === 'renderedRowRemoved') {
+            eventType = RowComp.EVENT_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+        }
         if (!this.renderedRowEventService) {
             this.renderedRowEventService = new eventService_1.EventService();
         }
         this.renderedRowEventService.addEventListener(eventType, listener);
     };
     RowComp.prototype.removeEventListener = function (eventType, listener) {
+        if (eventType === 'renderedRowRemoved') {
+            eventType = RowComp.EVENT_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+        }
         this.renderedRowEventService.removeEventListener(eventType, listener);
     };
     RowComp.prototype.getRenderedCellForColumn = function (column) {
@@ -653,7 +662,7 @@ var RowComp = (function (_super) {
             delayedDestroyFunctions.forEach(function (func) { return func(); });
         }
         if (this.renderedRowEventService) {
-            this.renderedRowEventService.dispatchEvent(RowComp.EVENT_RENDERED_ROW_REMOVED, { node: this.rowNode });
+            this.renderedRowEventService.dispatchEvent(RowComp.EVENT_ROW_REMOVED, { node: this.rowNode });
         }
         var event = { node: this.rowNode, rowIndex: this.rowNode.rowIndex };
         this.mainEventService.dispatchEvent(events_1.Events.EVENT_VIRTUAL_ROW_REMOVED, event);
@@ -737,6 +746,7 @@ var RowComp = (function (_super) {
         var params = {
             data: this.rowNode.data,
             node: this.rowNode,
+            value: this.rowNode.key,
             $scope: this.scope,
             rowIndex: this.rowNode.rowIndex,
             api: this.gridOptionsWrapper.getApi(),
@@ -813,6 +823,7 @@ var RowComp = (function (_super) {
     RowComp.prototype.createRowContainer = function (rowContainerComp, slideRowIn) {
         var _this = this;
         var eRow = document.createElement('div');
+        eRow.setAttribute('role', 'row');
         this.addDomData(eRow);
         rowContainerComp.appendRowElement(eRow);
         this.eAllRowContainers.push(eRow);
@@ -921,7 +932,7 @@ var RowComp = (function (_super) {
         this.forEachRenderedCell(function (renderedCell) {
             var colForCel = renderedCell.getColumn();
             if (columnsToRefresh.indexOf(colForCel) >= 0) {
-                renderedCell.refreshCell(animate);
+                renderedCell.refreshCell({ animate: animate });
             }
         });
     };
@@ -1033,7 +1044,7 @@ var RowComp = (function (_super) {
     };
     return RowComp;
 }(beanStub_1.BeanStub));
-RowComp.EVENT_RENDERED_ROW_REMOVED = 'renderedRowRemoved';
+RowComp.EVENT_ROW_REMOVED = 'rowRemoved';
 RowComp.DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
 __decorate([
     context_1.Autowired('gridOptionsWrapper'),

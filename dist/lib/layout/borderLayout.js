@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58,14 +58,20 @@ var BorderLayout = (function () {
             listener();
         });
     };
+    // this logic is also in Component.ts - the plan is sometime in the future,
+    // this layout panel may (or may not) extend the Component class, and somehow
+    // act as a component.
+    BorderLayout.prototype.getRefElement = function (refName) {
+        return this.eGui.querySelector('[ref="' + refName + '"]');
+    };
     BorderLayout.prototype.setupPanels = function (params) {
-        this.eNorthWrapper = this.eGui.querySelector('#north');
-        this.eSouthWrapper = this.eGui.querySelector('#south');
-        this.eEastWrapper = this.eGui.querySelector('#east');
-        this.eWestWrapper = this.eGui.querySelector('#west');
-        this.eCenterWrapper = this.eGui.querySelector('#center');
-        this.eOverlayWrapper = this.eGui.querySelector('#overlay');
-        this.eCenterRow = this.eGui.querySelector('#centerRow');
+        this.eNorthWrapper = this.getRefElement('north');
+        this.eSouthWrapper = this.getRefElement('south');
+        this.eEastWrapper = this.getRefElement('east');
+        this.eWestWrapper = this.getRefElement('west');
+        this.eCenterWrapper = this.getRefElement('center');
+        this.eOverlayWrapper = this.getRefElement('overlay');
+        this.eCenterRow = this.getRefElement('centerRow');
         this.eNorthChildLayout = this.setupPanel(params.north, this.eNorthWrapper);
         this.eSouthChildLayout = this.setupPanel(params.south, this.eSouthWrapper);
         this.eEastChildLayout = this.setupPanel(params.east, this.eEastWrapper);
@@ -242,29 +248,29 @@ var BorderLayout = (function () {
 }());
 // this is used if there user has not specified any north or south parts
 BorderLayout.TEMPLATE_FULL_HEIGHT = '<div class="ag-bl ag-bl-full-height">' +
-    '  <div class="ag-bl-west ag-bl-full-height-west" id="west"></div>' +
-    '  <div class="ag-bl-east ag-bl-full-height-east" id="east"></div>' +
-    '  <div class="ag-bl-center ag-bl-full-height-center" id="center"></div>' +
-    '  <div class="ag-bl-overlay" id="overlay"></div>' +
+    '  <div class="ag-bl-west ag-bl-full-height-west" ref="west"></div>' +
+    '  <div class="ag-bl-east ag-bl-full-height-east" ref="east"></div>' +
+    '  <div class="ag-bl-center ag-bl-full-height-center" ref="center"></div>' +
+    '  <div class="ag-bl-overlay" ref="overlay"></div>' +
     '</div>';
 BorderLayout.TEMPLATE_NORMAL = '<div class="ag-bl ag-bl-normal">' +
-    '  <div id="north"></div>' +
-    '  <div class="ag-bl-center-row ag-bl-normal-center-row" id="centerRow">' +
-    '    <div class="ag-bl-west ag-bl-normal-west" id="west"></div>' +
-    '    <div class="ag-bl-east ag-bl-normal-east" id="east"></div>' +
-    '    <div class="ag-bl-center ag-bl-normal-center" id="center"></div>' +
+    '  <div ref="north"></div>' +
+    '  <div class="ag-bl-center-row ag-bl-normal-center-row" ref="centerRow">' +
+    '    <div class="ag-bl-west ag-bl-normal-west" ref="west"></div>' +
+    '    <div class="ag-bl-east ag-bl-normal-east" ref="east"></div>' +
+    '    <div class="ag-bl-center ag-bl-normal-center" ref="center"></div>' +
     '  </div>' +
-    '  <div id="south"></div>' +
-    '  <div class="ag-bl-overlay" id="overlay"></div>' +
+    '  <div ref="south"></div>' +
+    '  <div class="ag-bl-overlay" ref="overlay"></div>' +
     '</div>';
 BorderLayout.TEMPLATE_DONT_FILL = '<div class="ag-bl ag-bl-dont-fill">' +
-    '  <div id="north"></div>' +
-    '  <div id="centerRow" class="ag-bl-center-row ag-bl-dont-fill-center-row">' +
-    '    <div id="west" class="ag-bl-west ag-bl-dont-fill-west"></div>' +
-    '    <div id="east" class="ag-bl-east ag-bl-dont-fill-east"></div>' +
-    '    <div id="center" class="ag-bl-center ag-bl-dont-fill-center"></div>' +
+    '  <div ref="north"></div>' +
+    '  <div ref="centerRow" class="ag-bl-center-row ag-bl-dont-fill-center-row">' +
+    '    <div ref="west" class="ag-bl-west ag-bl-dont-fill-west"></div>' +
+    '    <div ref="east" class="ag-bl-east ag-bl-dont-fill-east"></div>' +
+    '    <div ref="center" class="ag-bl-center ag-bl-dont-fill-center"></div>' +
     '  </div>' +
-    '  <div id="south"></div>' +
-    '  <div class="ag-bl-overlay" id="overlay"></div>' +
+    '  <div ref="south"></div>' +
+    '  <div class="ag-bl-overlay" ref="overlay"></div>' +
     '</div>';
 exports.BorderLayout = BorderLayout;

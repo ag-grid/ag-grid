@@ -13,6 +13,17 @@
 .ag-fresh .ag-root {
   border: 1px solid #808080;
 }
+.ag-fresh .ag-cell-data-changed {
+  background-color: #cec;
+}
+.ag-fresh .ag-cell-data-changed-animation {
+  background-color: transparent;
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  transition: background-color 1s;
+}
 .ag-fresh .ag-cell-not-inline-editing {
   padding: 2px;
 }

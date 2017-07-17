@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -65,7 +65,7 @@ export declare class RowRenderer extends BeanStub {
     getLastVirtualRenderedRow(): number;
     private ensureRowsRendered(oldRenderedRowsByNodeId?, animate?);
     private getOrCreateRenderedRow(rowNode, oldRowsByNodeId, animate);
-    getRenderedNodes(): any[];
+    getRenderedNodes(): RowNode[];
     navigateToNextCell(event: KeyboardEvent, key: number, rowIndex: number, column: Column, floating: string): void;
     startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void;
     private getComponentForCell(gridCell);

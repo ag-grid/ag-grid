@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColDef } from "./entities/colDef";
@@ -42,6 +42,7 @@ export interface ProcessCellForExportParams {
     api: GridApi;
     columnApi: ColumnApi;
     context: any;
+    type: string;
 }
 export interface ProcessHeaderForExportParams {
     column: Column;

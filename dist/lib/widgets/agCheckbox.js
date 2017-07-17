@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -127,11 +127,11 @@ var AgCheckbox = (function (_super) {
     return AgCheckbox;
 }(component_1.Component));
 AgCheckbox.EVENT_CHANGED = 'change';
-AgCheckbox.TEMPLATE = '<span class="ag-checkbox">' +
-    '  <span class="ag-checkbox-checked"></span>' +
-    '  <span class="ag-checkbox-unchecked"></span>' +
-    '  <span class="ag-checkbox-indeterminate"></span>' +
-    '  <span class="ag-checkbox-label"></span>' +
+AgCheckbox.TEMPLATE = '<span class="ag-checkbox" role="presentation">' +
+    '  <span class="ag-checkbox-checked" role="presentation"></span>' +
+    '  <span class="ag-checkbox-unchecked" role="presentation"></span>' +
+    '  <span class="ag-checkbox-indeterminate" role="presentation"></span>' +
+    '  <span class="ag-checkbox-label" role="presentation"></span>' +
     '</span>';
 __decorate([
     context_1.Autowired('gridOptionsWrapper'),

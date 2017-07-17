@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -93,6 +93,33 @@ var RowNode = (function () {
         this.oldRowTop = this.rowTop;
         this.setRowTop(null);
     };
+    RowNode.prototype.setFirstChild = function (firstChild) {
+        if (this.firstChild === firstChild) {
+            return;
+        }
+        this.firstChild = firstChild;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_FIRST_CHILD_CHANGED);
+        }
+    };
+    RowNode.prototype.setLastChild = function (lastChild) {
+        if (this.lastChild === lastChild) {
+            return;
+        }
+        this.lastChild = lastChild;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_LAST_CHILD_CHANGED);
+        }
+    };
+    RowNode.prototype.setChildIndex = function (childIndex) {
+        if (this.childIndex === childIndex) {
+            return;
+        }
+        this.childIndex = childIndex;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_CHILD_INDEX_CHANGED);
+        }
+    };
     RowNode.prototype.setRowTop = function (rowTop) {
         if (this.rowTop === rowTop) {
             return;
@@ -158,12 +185,20 @@ var RowNode = (function () {
         this.valueService.setValue(this, column, newValue);
         this.dispatchCellChangedEvent(column, newValue);
     };
+    RowNode.prototype.setGroupValue = function (colKey, newValue) {
+        var column = this.columnController.getGridColumn(colKey);
+        if (utils_1.Utils.missing(this.groupData)) {
+            this.groupData = {};
+        }
+        this.groupData[column.getColId()] = newValue;
+        this.dispatchCellChangedEvent(column, newValue);
+    };
     // sets the data for an aggregation
     RowNode.prototype.setAggData = function (newAggData) {
         var _this = this;
         // find out all keys that could potentially change
-        var colIds = utils_1.Utils.getAllKeysInObjects([this.data, newAggData]);
-        this.data = newAggData;
+        var colIds = utils_1.Utils.getAllKeysInObjects([this.aggData, newAggData]);
+        this.aggData = newAggData;
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {
             colIds.forEach(function (colId) {
@@ -450,6 +485,29 @@ var RowNode = (function () {
     RowNode.prototype.onMouseLeave = function () {
         this.dispatchLocalEvent(RowNode.EVENT_MOUSE_LEAVE);
     };
+    RowNode.prototype.getFirstChildOfFirstChild = function (rowGroupColumn) {
+        var currentRowNode = this;
+        // if we are hiding groups, then if we are the first child, of the first child,
+        // all the way up to the column we are interested in, then we show the group cell.
+        var isCandidate = true;
+        var foundFirstChildPath = false;
+        var nodeToSwapIn;
+        while (isCandidate && !foundFirstChildPath) {
+            var parentRowNode = currentRowNode.parent;
+            var firstChild = utils_1.Utils.exists(parentRowNode) && currentRowNode.firstChild;
+            if (firstChild) {
+                if (parentRowNode.rowGroupColumn === rowGroupColumn) {
+                    foundFirstChildPath = true;
+                    nodeToSwapIn = parentRowNode;
+                }
+            }
+            else {
+                isCandidate = false;
+            }
+            currentRowNode = parentRowNode;
+        }
+        return foundFirstChildPath ? nodeToSwapIn : null;
+    };
     return RowNode;
 }());
 RowNode.EVENT_ROW_SELECTED = 'rowSelected';
@@ -460,6 +518,9 @@ RowNode.EVENT_MOUSE_ENTER = 'mouseEnter';
 RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
 RowNode.EVENT_HEIGHT_CHANGED = 'heightChanged';
 RowNode.EVENT_TOP_CHANGED = 'topChanged';
+RowNode.EVENT_FIRST_CHILD_CHANGED = 'firstChildChanged';
+RowNode.EVENT_LAST_CHILD_CHANGED = 'lastChildChanged';
+RowNode.EVENT_CHILD_INDEX_CHANGED = 'childIndexChanged';
 RowNode.EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
 RowNode.EVENT_EXPANDED_CHANGED = 'expandedChanged';
 RowNode.EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';

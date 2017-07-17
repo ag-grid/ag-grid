@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "./entities/column";
@@ -72,10 +72,10 @@ export declare abstract class BaseGridSerializingSession<T> implements GridSeria
     abstract onNewBodyRow(): RowAccumulator;
     abstract parse(): string;
     extractHeaderValue(column: Column): string;
-    extractRowCellValue(column: Column, index: number, node?: RowNode): any;
+    extractRowCellValue(column: Column, index: number, type: string, node?: RowNode): any;
     private getHeaderName(callback, column);
     private createValueForGroupNode(node);
-    private processCell(rowNode, column, value, processCellCallback);
+    private processCell(rowNode, column, value, processCellCallback, type);
 }
 export declare class GridSerializer {
     private displayedGroupCreator;

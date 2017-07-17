@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColDef } from "./entities/colDef";
@@ -9,15 +9,13 @@ export declare class ValueService {
     private expressionService;
     private columnController;
     private eventService;
+    private groupValueService;
     private cellExpressions;
-    private userProvidedTheGroups;
-    private suppressUseColIdForGroups;
     private initialised;
     init(): void;
-    getValue(column: Column, node: RowNode): any;
-    getValueUsingSpecificData(column: Column, data: any, node: RowNode): any;
+    getValue(column: Column, rowNode: RowNode, ignoreAggData?: boolean): any;
     setValue(rowNode: RowNode, colKey: string | ColDef | Column, newValue: any): void;
     private setValueUsingField(data, field, newValue, isFieldContainsDots);
     private executeValueGetter(valueGetter, data, column, node);
-    private getValueCallback(data, node, field);
+    private getValueCallback(node, field);
 }

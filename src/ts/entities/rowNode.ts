@@ -38,6 +38,9 @@ export class RowNode implements IEventEmitter {
     public static EVENT_MOUSE_LEAVE = 'mouseLeave';
     public static EVENT_HEIGHT_CHANGED = 'heightChanged';
     public static EVENT_TOP_CHANGED = 'topChanged';
+    public static EVENT_FIRST_CHILD_CHANGED = 'firstChildChanged';
+    public static EVENT_LAST_CHILD_CHANGED = 'lastChildChanged';
+    public static EVENT_CHILD_INDEX_CHANGED = 'childIndexChanged';
     public static EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
     public static EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
@@ -53,6 +56,10 @@ export class RowNode implements IEventEmitter {
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
     public id: string;
+    /** The group data */
+    public groupData: any;
+    /** The aggregated data */
+    public aggData: any;
     /** The user provided data */
     public data: any;
     /** The parent node to this node, or empty if top level */
@@ -209,6 +216,30 @@ export class RowNode implements IEventEmitter {
         this.setRowTop(null);
     }
 
+    public setFirstChild(firstChild: boolean): void {
+        if (this.firstChild === firstChild) { return; }
+        this.firstChild = firstChild;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_FIRST_CHILD_CHANGED);
+        }
+    }
+
+    public setLastChild(lastChild: boolean): void {
+        if (this.lastChild === lastChild) { return; }
+        this.lastChild = lastChild;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_LAST_CHILD_CHANGED);
+        }
+    }
+
+    public setChildIndex(childIndex: number): void {
+        if (this.childIndex === childIndex) { return; }
+        this.childIndex = childIndex;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(RowNode.EVENT_CHILD_INDEX_CHANGED);
+        }
+    }
+
     public setRowTop(rowTop: number): void {
         if (this.rowTop === rowTop) { return; }
         this.rowTop = rowTop;
@@ -277,13 +308,24 @@ export class RowNode implements IEventEmitter {
         this.dispatchCellChangedEvent(column, newValue);
     }
 
+    public setGroupValue(colKey: string|ColDef|Column, newValue: any): void {
+        let column = this.columnController.getGridColumn(colKey);
+
+        if (_.missing(this.groupData)) {
+            this.groupData = {};
+        }
+
+        this.groupData[column.getColId()] = newValue;
+        this.dispatchCellChangedEvent(column, newValue);
+    }
+
     // sets the data for an aggregation
     public setAggData(newAggData: any): void {
 
         // find out all keys that could potentially change
-        let colIds = _.getAllKeysInObjects([this.data, newAggData]);
+        let colIds = _.getAllKeysInObjects([this.aggData, newAggData]);
 
-        this.data = newAggData;
+        this.aggData = newAggData;
 
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {
@@ -610,4 +652,35 @@ export class RowNode implements IEventEmitter {
     public onMouseLeave(): void {
         this.dispatchLocalEvent(RowNode.EVENT_MOUSE_LEAVE);
     }
+
+    public getFirstChildOfFirstChild(rowGroupColumn: Column): RowNode {
+        let currentRowNode: RowNode = this;
+
+        // if we are hiding groups, then if we are the first child, of the first child,
+        // all the way up to the column we are interested in, then we show the group cell.
+
+        let isCandidate = true;
+        let foundFirstChildPath = false;
+        let nodeToSwapIn: RowNode;
+
+        while (isCandidate && !foundFirstChildPath) {
+
+            let parentRowNode = currentRowNode.parent;
+            let firstChild = _.exists(parentRowNode) && currentRowNode.firstChild;
+
+            if (firstChild) {
+                if (parentRowNode.rowGroupColumn === rowGroupColumn) {
+                    foundFirstChildPath = true;
+                    nodeToSwapIn = parentRowNode;
+                }
+            } else {
+                isCandidate = false;
+            }
+
+            currentRowNode = parentRowNode;
+        }
+
+        return foundFirstChildPath ? nodeToSwapIn : null;
+    }
+
 }

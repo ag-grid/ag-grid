@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -120,6 +120,7 @@ export declare class ColumnController {
     private valueColumns;
     private pivotColumns;
     private groupAutoColumns;
+    private groupDisplayColumns;
     private ready;
     private logger;
     private autoGroupsNeedBuilding;
@@ -183,7 +184,7 @@ export declare class ColumnController {
     setColumnAggFunc(column: Column, aggFunc: string): void;
     moveRowGroupColumn(fromIndex: number, toIndex: number): void;
     moveColumns(columnsToMoveKeys: (Column | ColDef | String)[], toIndex: number): void;
-    private doesMovePassRules(columnsToMove, toIndex);
+    doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean;
     moveColumn(key: string | Column | ColDef, toIndex: number): void;
     moveColumnByIndex(fromIndex: number, toIndex: number): void;
     getBodyContainerWidth(): number;
@@ -205,7 +206,7 @@ export declare class ColumnController {
     setColumnsVisible(keys: (Column | ColDef | String)[], visible: boolean): void;
     setColumnPinned(key: Column | ColDef | String, pinned: string | boolean): void;
     setColumnsPinned(keys: (Column | ColDef | String)[], pinned: string | boolean): void;
-    private actionOnGridColumns(keys, action, createEvent);
+    private actionOnGridColumns(keys, action, createEvent?);
     getDisplayedColBefore(col: Column): Column;
     getDisplayedColAfter(col: Column): Column;
     isPinningLeft(): boolean;
@@ -240,6 +241,8 @@ export declare class ColumnController {
     private getColumnGroupState();
     private setColumnGroupState(groupState);
     private calculateColumnsForDisplay();
+    private calculateColumnsForGroupDisplay();
+    getGroupDisplayColumns(): Column[];
     private createColumnsToDisplayFromValueColumns();
     private updateDisplayedColumns();
     isSecondaryColumnsPresent(): boolean;

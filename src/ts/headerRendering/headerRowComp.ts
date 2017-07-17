@@ -42,7 +42,7 @@ export class HeaderRowComp extends Component {
     private type: HeaderRowType;
 
     constructor(dept: number, type: HeaderRowType, pinned: string, eRoot: HTMLElement, dropTarget: DropTarget) {
-        super(`<div class="ag-header-row"/>`);
+        super(`<div class="ag-header-row" role="presentation"/>`);
         this.dept = dept;
         this.type = type;
         this.pinned = pinned;
@@ -237,7 +237,7 @@ export class HeaderRowComp extends Component {
             column,
             <null>floatingFilterParams
         );
-        column.addEventListener(Column.EVENT_FILTER_CHANGED, () => {
+        this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, () => {
             let filterComponent: BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
             floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
         });

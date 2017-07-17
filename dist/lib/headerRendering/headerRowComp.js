@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,7 +48,7 @@ var HeaderRowType;
 var HeaderRowComp = (function (_super) {
     __extends(HeaderRowComp, _super);
     function HeaderRowComp(dept, type, pinned, eRoot, dropTarget) {
-        var _this = _super.call(this, "<div class=\"ag-header-row\"/>") || this;
+        var _this = _super.call(this, "<div class=\"ag-header-row\" role=\"presentation\"/>") || this;
         _this.headerElements = {};
         _this.dept = dept;
         _this.type = type;
@@ -211,7 +211,7 @@ var HeaderRowComp = (function (_super) {
         var _this = this;
         var floatingFilterParams = this.createFloatingFilterParams(column);
         var floatingFilterWrapper = this.componentProvider.newFloatingFilterWrapperComponent(column, floatingFilterParams);
-        column.addEventListener(column_1.Column.EVENT_FILTER_CHANGED, function () {
+        this.addDestroyableEventListener(column, column_1.Column.EVENT_FILTER_CHANGED, function () {
             var filterComponent = _this.filterManager.getFilterComponent(column);
             floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
         });

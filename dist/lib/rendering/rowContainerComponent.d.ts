@@ -1,6 +1,7 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 export interface RowContainerComponentParams {
     eContainer: HTMLElement;
     eViewport?: HTMLElement;
@@ -19,11 +20,13 @@ export declare class RowContainerComponent {
     private hideWhenNoChildren;
     private childCount;
     private visible;
+    gridOptionsWrapper: GridOptionsWrapper;
     constructor(params: RowContainerComponentParams);
     setupDocumentFragment(): void;
     setHeight(height: number): void;
     appendRowElement(eRow: HTMLElement): void;
     removeRowElement(eRow: HTMLElement): void;
     flushDocumentFragment(): void;
+    sortDomByRowNodeIndex(): void;
     private checkVisibility();
 }

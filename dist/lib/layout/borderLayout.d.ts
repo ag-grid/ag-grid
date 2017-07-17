@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 export declare class BorderLayout {
@@ -33,6 +33,7 @@ export declare class BorderLayout {
     constructor(params: any);
     addSizeChangeListener(listener: Function): void;
     fireSizeChanged(): void;
+    private getRefElement(refName);
     private setupPanels(params);
     private setupPanel(content, ePanel);
     getGui(): HTMLElement;

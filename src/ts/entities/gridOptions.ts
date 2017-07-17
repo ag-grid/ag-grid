@@ -21,6 +21,7 @@ export interface GridOptions {
      ****************************************************************/
 
     // set once in init, can never change
+    enforceRowDomOrder?: boolean;
     deltaRowDataMode?: boolean;
     scrollbarWidth?: number;
     toolPanelSuppressRowGroups?: boolean;
@@ -32,6 +33,7 @@ export interface GridOptions {
     suppressRowHoverClass?: boolean;
     sortingOrder?: string[];
     suppressMultiSort?: boolean;
+    accentedSort?: boolean;
     suppressHorizontalScroll?: boolean;
     suppressTabbing?: boolean;
     unSortIcon?: boolean;
@@ -70,13 +72,14 @@ export interface GridOptions {
     suppressDragLeaveHidesColumns?: boolean;
     suppressParentsInRowNodes?: boolean;
     suppressFieldDotNotation?: boolean;
-    suppressUseColIdForGroups?: boolean;
     suppressCopyRowsToClipboard?: boolean;
+    clipboardDeliminator?: string;
     suppressAggFuncInHeader?: boolean;
     suppressAggAtRootLevel?: boolean;
     suppressFocusAfterRefresh?: boolean;
     rowModelType?: string;
     pivotMode?: boolean;
+    pivotTotals?: boolean;
     enableRangeSelection?: boolean;
     suppressEnterprise?: boolean;
     // enterprise only
@@ -84,9 +87,6 @@ export interface GridOptions {
     pivotPanelShow?: string;
     suppressContextMenu?: boolean;
     allowContextMenuWithControlKey?: boolean;
-    suppressMenuFilterPanel?: boolean;
-    suppressMenuMainPanel?: boolean;
-    suppressMenuColumnPanel?: boolean;
     rememberGroupStateWhenNewData?: boolean;
     viewportRowModelPageSize?: number;
     viewportRowModelBufferSize?: number;
@@ -150,7 +150,9 @@ export interface GridOptions {
     groupHideOpenParents?: boolean;
     groupMultiAutoColumn?: boolean;
     groupSuppressBlankHeader?: boolean;
+    //Deprecated in v11.0 substituted by autoGroupColumnDef
     groupColumnDef?: ColDef;
+    autoGroupColumnDef?: ColDef;
     // deprecated - should use domLayout
     forPrint?: boolean;
 

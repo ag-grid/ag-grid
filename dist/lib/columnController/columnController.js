@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -335,9 +335,14 @@ var ColumnController = (function () {
                     changesThisTimeAround++;
                 }
                 return true;
-            }, function () {
-                return new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withFinished(true);
             });
+        }
+        if (columnsAutosized.length > 0) {
+            var event_1 = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withFinished(true).withColumns(columnsAutosized);
+            if (columnsAutosized.length === 1) {
+                event_1.withColumn(columnsAutosized[0]);
+            }
+            this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_RESIZED, event_1);
         }
     };
     ColumnController.prototype.autoSizeColumn = function (key) {
@@ -580,8 +585,8 @@ var ColumnController = (function () {
         // eg 1 pixel at a time, then each change will fire change events
         // in all the columns in the group, but only one with get the pixel.
         if (finished || widthChanged) {
-            var event_1 = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
-            this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_RESIZED, event_1);
+            var event_2 = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
+            this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_RESIZED, event_2);
         }
     };
     ColumnController.prototype.setColumnAggFunc = function (column, aggFunc) {
@@ -623,41 +628,34 @@ var ColumnController = (function () {
     ColumnController.prototype.doesMovePassRules = function (columnsToMove, toIndex) {
         var allColumnsCopy = this.gridColumns.slice();
         utils_1.Utils.moveInArray(allColumnsCopy, columnsToMove, toIndex);
-        // look for broken groups, ie stray columns from groups that should be married
-        for (var index = 0; index < (allColumnsCopy.length - 1); index++) {
-            var thisColumn = allColumnsCopy[index];
-            var nextColumn = allColumnsCopy[index + 1];
-            // skip hidden columns
-            if (!nextColumn.isVisible()) {
-                continue;
+        var rulesPass = true;
+        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, function (child) {
+            if (!(child instanceof originalColumnGroup_1.OriginalColumnGroup)) {
+                return;
             }
-            var thisPath = this.columnUtils.getOriginalPathForColumn(thisColumn, this.gridBalancedTree);
-            var nextPath = this.columnUtils.getOriginalPathForColumn(nextColumn, this.gridBalancedTree);
-            if (!nextPath || !thisPath) {
-                console.log('next path is missing');
+            var columnGroup = child;
+            var marryChildren = columnGroup.getColGroupDef() && columnGroup.getColGroupDef().marryChildren;
+            if (!marryChildren) {
+                return;
             }
-            // start at the top of the path and work down
-            for (var dept = 0; dept < thisPath.length; dept++) {
-                var thisOriginalGroup = thisPath[dept];
-                var nextOriginalGroup = nextPath[dept];
-                var lastColInGroup = thisOriginalGroup !== nextOriginalGroup;
-                // a runaway is a column from this group that left the group, and the group has it's children marked as married
-                var colGroupDef = thisOriginalGroup.getColGroupDef();
-                var marryChildren = colGroupDef && colGroupDef.marryChildren;
-                var needToCheckForRunaways = lastColInGroup && marryChildren;
-                if (needToCheckForRunaways) {
-                    for (var tailIndex = index + 1; tailIndex < allColumnsCopy.length; tailIndex++) {
-                        var tailColumn = allColumnsCopy[tailIndex];
-                        var tailPath = this.columnUtils.getOriginalPathForColumn(tailColumn, this.gridBalancedTree);
-                        var tailOriginalGroup = tailPath[dept];
-                        if (tailOriginalGroup === thisOriginalGroup) {
-                            return false;
-                        }
-                    }
-                }
+            var newIndexes = [];
+            columnGroup.getLeafColumns().forEach(function (col) {
+                var newColIndex = allColumnsCopy.indexOf(col);
+                newIndexes.push(newColIndex);
+            });
+            var maxIndex = Math.max.apply(Math, newIndexes);
+            var minIndex = Math.min.apply(Math, newIndexes);
+            // width is how far the first column in this group is away from the last column
+            var spread = maxIndex - minIndex;
+            var maxSpread = columnGroup.getLeafColumns().length - 1;
+            // if the columns
+            if (spread > maxSpread) {
+                rulesPass = false;
             }
-        }
-        return true;
+            // console.log(`maxIndex = ${maxIndex}, minIndex = ${minIndex}, spread = ${spread}, maxSpread = ${maxSpread}, fail = ${spread > (count-1)}`)
+            // console.log(allColumnsCopy.map( col => col.getColDef().field).join(','));
+        });
+        return rulesPass;
     };
     ColumnController.prototype.moveColumn = function (key, toIndex) {
         this.moveColumns([key], toIndex);
@@ -816,12 +814,14 @@ var ColumnController = (function () {
             return;
         }
         this.updateDisplayedColumns();
-        var event = createEvent();
-        event.withColumns(updatedColumns);
-        if (updatedColumns.length === 1) {
-            event.withColumn(updatedColumns[0]);
+        if (utils_1.Utils.exists(createEvent)) {
+            var event_3 = createEvent();
+            event_3.withColumns(updatedColumns);
+            if (updatedColumns.length === 1) {
+                event_3.withColumn(updatedColumns[0]);
+            }
+            this.eventService.dispatchEvent(event_3.getType(), event_3);
         }
-        this.eventService.dispatchEvent(event.getType(), event);
     };
     ColumnController.prototype.getDisplayedColBefore = function (col) {
         var allDisplayedColumns = this.getAllDisplayedColumns();
@@ -1227,7 +1227,7 @@ var ColumnController = (function () {
         var _this = this;
         this.rowGroupColumns.forEach(function (column) { return column.setRowGroupActive(false); });
         this.rowGroupColumns = [];
-        // pull out the columns
+        // pull out items with rowGroupIndex
         this.primaryColumns.forEach(function (column) {
             if (typeof column.getColDef().rowGroupIndex === 'number') {
                 _this.rowGroupColumns.push(column);
@@ -1238,12 +1238,24 @@ var ColumnController = (function () {
         this.rowGroupColumns.sort(function (colA, colB) {
             return colA.getColDef().rowGroupIndex - colB.getColDef().rowGroupIndex;
         });
+        // now just pull out items rowGroup, they will be added at the end
+        // after the indexed ones, but in the order the columns appear
+        this.primaryColumns.forEach(function (column) {
+            if (column.getColDef().rowGroup) {
+                // if user already specified rowGroupIndex then we skip it as this col already included
+                if (_this.rowGroupColumns.indexOf(column) >= 0) {
+                    return;
+                }
+                _this.rowGroupColumns.push(column);
+                column.setRowGroupActive(true);
+            }
+        });
     };
     ColumnController.prototype.extractPivotColumns = function () {
         var _this = this;
         this.pivotColumns.forEach(function (column) { return column.setPivotActive(false); });
         this.pivotColumns = [];
-        // pull out the columns
+        // pull out items with pivotIndex
         this.primaryColumns.forEach(function (column) {
             if (typeof column.getColDef().pivotIndex === 'number') {
                 _this.pivotColumns.push(column);
@@ -1253,6 +1265,17 @@ var ColumnController = (function () {
         // then sort them
         this.pivotColumns.sort(function (colA, colB) {
             return colA.getColDef().pivotIndex - colB.getColDef().pivotIndex;
+        });
+        // now check the boolean equivalent
+        this.primaryColumns.forEach(function (column) {
+            if (column.getColDef().pivot) {
+                // if user already specified pivotIndex then we skip it as this col already included
+                if (_this.pivotColumns.indexOf(column) >= 0) {
+                    return;
+                }
+                _this.pivotColumns.push(column);
+                column.setPivotActive(true);
+            }
         });
     };
     // called by headerRenderer - when a header is opened or closed
@@ -1315,6 +1338,23 @@ var ColumnController = (function () {
         }
         return columnsForDisplay;
     };
+    ColumnController.prototype.calculateColumnsForGroupDisplay = function () {
+        var _this = this;
+        this.groupDisplayColumns = [];
+        var checkFunc = function (col) {
+            var colDef = col.getColDef();
+            if (colDef && utils_1.Utils.exists(colDef.showRowGroup)) {
+                _this.groupDisplayColumns.push(col);
+            }
+        };
+        this.gridColumns.forEach(checkFunc);
+        if (this.groupAutoColumns) {
+            this.groupAutoColumns.forEach(checkFunc);
+        }
+    };
+    ColumnController.prototype.getGroupDisplayColumns = function () {
+        return this.groupDisplayColumns;
+    };
     ColumnController.prototype.createColumnsToDisplayFromValueColumns = function () {
         var _this = this;
         // make a copy of the value columns, so we have to side effects
@@ -1333,6 +1373,7 @@ var ColumnController = (function () {
         this.buildDisplayedTrees(columnsForDisplay);
         // restore opened / closed state
         this.setColumnGroupState(oldGroupState);
+        this.calculateColumnsForGroupDisplay();
         // this is also called when a group is opened or closed
         this.updateGroupsAndDisplayedColumns();
         this.setFirstRightAndLastLeftPinned();
@@ -1657,9 +1698,8 @@ var ColumnController = (function () {
         }
         this.setLeftValues();
         this.updateBodyWidths();
-        // widths set, refresh the gui
         colsToFireEventFor.forEach(function (column) {
-            var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withColumn(column);
+            var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(true);
             _this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_RESIZED, event);
         });
         function moveToNotSpread(column) {

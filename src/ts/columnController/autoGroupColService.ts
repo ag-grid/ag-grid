@@ -1,13 +1,14 @@
-import {Bean, Autowired, Context} from "../context/context";
+import {Autowired, Bean, Context} from "../context/context";
 import {Column} from "../entities/column";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {_} from "../utils";
-import {defaultGroupComparator} from "../functions";
+import {ColDef} from "../entities/colDef";
 
 @Bean('autoGroupColService')
 export class AutoGroupColService {
 
     public static GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
+    public static GROUP_AUTO_COLUMN_BUNDLE_ID = AutoGroupColService.GROUP_AUTO_COLUMN_ID;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
@@ -31,74 +32,61 @@ export class AutoGroupColService {
     // rowGroupCol and index are missing if groupMultiAutoColumn=false
     private createOneAutoGroupColumn(rowGroupCol?: Column, index?: number): Column {
         // if one provided by user, use it, otherwise create one
-        let autoColDef = this.gridOptionsWrapper.getGroupColumnDef();
-        if (!autoColDef) {
-            let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            autoColDef = {
-                headerName: localeTextFunc('group', 'Group'),
-                comparator: defaultGroupComparator,
-                valueGetter: (params: any) => {
-                    if (params.node.group) {
-                        return params.node.key;
-                    } else if (params.data && params.colDef.field) {
-                        return params.data[params.colDef.field];
-                    } else {
-                        return null;
-                    }
-                },
-                cellRenderer: 'group'
-            };
-        }
-        // we never allow moving the group column
-        autoColDef.suppressMovable = true;
+        let defaultAutoColDef: ColDef = this.generateDefaultColDef(rowGroupCol, index);
+        let userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
+
+
 
         // if doing multi, set the field
         let colId: string;
 
         if (rowGroupCol) {
-
-            // because we are going to be making changes, we need to make a copy,
-            // otherwise we are overwriting the same colDef for each column.
-            autoColDef = _.cloneObject(autoColDef);
-
-            let rowGroupColDef = rowGroupCol.getColDef();
-            _.assign(autoColDef, {
-                // cellRendererParams.groupKey: colDefToCopy.field;
-                headerName: rowGroupColDef.headerName,
-                headerValueGetter: rowGroupColDef.headerValueGetter,
-                field: rowGroupColDef.field
-            });
-
-            if (_.missing(autoColDef.cellRendererParams)) {
-                autoColDef.cellRendererParams = {};
-            } else {
-                autoColDef.cellRendererParams = _.cloneObject(autoColDef.cellRendererParams);
-            }
-            // this is needed so we don't show the groups that are not relevant, otherwise
-            // the grid would have duplicate data. having multiple column groups only makes sense
-            // when this is true
-            autoColDef.cellRendererParams.restrictToOneGroup = true;
-            // this is needed for logic in the group cellRenderer, so it knows what the original
-            // column was, so it can do the logic for restrictToOneGroup (it needs to know the grouping
-            // column for that)
-            autoColDef.cellRendererParams.originalRowGroupColumn = rowGroupCol;
-
-
-            // if showing many cols, we don't want to show more than one with a checkbox for selection
-            if (index>0) {
-                autoColDef.headerCheckboxSelection = false;
-                autoColDef.cellRendererParams.checkbox = false;
-            }
-
             colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}-${rowGroupCol.getId()}`;
         } else {
-            colId = `${AutoGroupColService.GROUP_AUTO_COLUMN_ID}_bundle`;
+            colId = AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID;
         }
 
-        let newCol = new Column(autoColDef, colId, true);
+        _.mergeDeep(defaultAutoColDef, userAutoColDef);
+        defaultAutoColDef.colId = colId;
+        let newCol = new Column(defaultAutoColDef, colId, true);
         this.context.wireBean(newCol);
 
         return newCol;
+    }
+
+    private generateDefaultColDef (rowGroupCol?: Column, index?: number):ColDef{
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        let defaultAutoColDef: ColDef = {
+            headerName: localeTextFunc('group', 'Group'),
+            cellRenderer: 'group'
+        };
+
+        // we never allow moving the group column
+        defaultAutoColDef.suppressMovable = true;
+
+        if (rowGroupCol) {
+            let rowGroupColDef = rowGroupCol.getColDef();
+            _.assign(defaultAutoColDef, {
+                // cellRendererParams.groupKey: colDefToCopy.field;
+                headerName: rowGroupColDef.headerName,
+                headerValueGetter: rowGroupColDef.headerValueGetter
+            });
+
+            // if showing many cols, we don't want to show more than one with a checkbox for selection
+            if (index>0) {
+                defaultAutoColDef.headerCheckboxSelection = false;
+                defaultAutoColDef.cellRendererParams= {
+                    checkbox: false
+                };
+            }
+
+            defaultAutoColDef.showRowGroup = rowGroupCol.getColId();
+        } else {
+            defaultAutoColDef.showRowGroup = true;
+        }
+
+        return defaultAutoColDef;
     }
 
 }

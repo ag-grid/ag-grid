@@ -41,6 +41,8 @@ export class Utils {
     private static isChrome: boolean;
     private static isFirefox: boolean;
 
+    private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
+
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean {
@@ -225,13 +227,13 @@ export class Utils {
         return Object.keys(allValues);
     }
 
-    static mergeDeep(object: any, source: any): void {
+    static mergeDeep(into: any, source: any): void {
         if (this.exists(source)) {
             this.iterateObject(source, function (key: string, target: any) {
-                let currentValue: any = object[key];
+                let currentValue: any = into[key];
 
                 if (currentValue == null) {
-                    object[key] = target;
+                    into[key] = target;
                     return;
                 }
 
@@ -243,7 +245,7 @@ export class Utils {
                 }
 
                 if (target) {
-                    object[key] = target;
+                    into[key] = target;
                 }
             });
         }
@@ -366,6 +368,28 @@ export class Utils {
 
     static isNodeOrElement(o: any) {
         return this.isNode(o) || this.isElement(o);
+    }
+
+    static isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
+        let pressedChar = String.fromCharCode(event.charCode);
+        if (_.exists(event.key)) {
+            // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
+            // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
+            return event.key.length===1;
+        } else {
+            // otherwise, for older browsers, we test against a list of characters, which doesn't include
+            // accents for non-English, but don't care much, as most users are on modern browsers
+            return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar)>=0
+        }
+    }
+
+    // returns true if values are string, number or boolean, and both values are equal
+    static valuesSimpleAndSame(val1: any, val2: any): boolean {
+        if (typeof val1 === 'string' || typeof val1 === 'number' || typeof val1 === 'boolean') {
+            return val1 === val2;
+        } else {
+            return false;
+        }
     }
 
     //adds all type of change listeners to an element, intended to be a text field
@@ -601,7 +625,7 @@ export class Utils {
         });
     }
 
-    static defaultComparator(valueA: any, valueB: any): number {
+    static defaultComparator(valueA: any, valueB: any, accentedCompare: boolean = false): number {
         let valueAMissing = valueA === null || valueA === undefined;
         let valueBMissing = valueB === null || valueB === undefined;
         if (valueAMissing && valueBMissing) {
@@ -615,13 +639,19 @@ export class Utils {
         }
 
         if (typeof valueA === "string") {
-            try {
-                // using local compare also allows chinese comparisons
-                return valueA.localeCompare(valueB);
-            } catch (e) {
-                // if something wrong with localeCompare, eg not supported
-                // by browser, then just continue without using it
+            if (! accentedCompare) {
+                return doQuickCompare(valueA, valueB);
+            } else {
+                try {
+                    // using local compare also allows chinese comparisons
+                    return valueA.localeCompare(valueB);
+                } catch (e) {
+                    // if something wrong with localeCompare, eg not supported
+                    // by browser, then just continue with the quick one
+                    return doQuickCompare(valueA, valueB);
+                }
             }
+
         }
 
         if (valueA < valueB) {
@@ -630,6 +660,11 @@ export class Utils {
             return 1;
         } else {
             return 0;
+        }
+
+
+        function doQuickCompare (a:string, b:string): number{
+            return (a > b ? 1 : (a < b ? -1 : 0));
         }
     }
 
@@ -1150,11 +1185,30 @@ export class Utils {
         };
     };
 
-    static referenceCompare (left:any, right:any):boolean{
-        if (left == null && right==null) return true;
+    static referenceCompare(left: any, right: any): boolean {
+        if (left == null && right == null) return true;
         if (left == null && right) return false;
         if (left && right == null) return false;
         return left === right;
+    }
+
+
+    static get(source:{[p:string]:any}, expression:string, defaultValue:any): any{
+        if (source == null) return defaultValue;
+
+        if (expression.indexOf('.') > -1){
+            let fields:string[] = expression.split('.');
+            let thisKey:string = fields[0];
+            let nextValue: any = source[thisKey];
+            if (nextValue != null) {
+                return Utils.get(nextValue, fields.slice(1, fields.length).join('.'), defaultValue);
+            }else {
+                return defaultValue;
+            }
+        } else {
+            let nextValue: any = source[expression];
+            return nextValue != null ? nextValue : defaultValue;
+        }
     }
 }
 

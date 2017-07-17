@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "../../entities/rowNode";
@@ -25,7 +25,7 @@ export declare class InMemoryNodeManager {
     getRowNode(id: string): RowNode;
     setRowData(rowData: any[]): RowNode[];
     updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction;
-    private addRowNode(data, index);
+    private addRowNode(data, index?);
     private updatedRowNode(data, update);
     private recursiveFunction(rowData, parent, level);
     private createNode(dataItem, parent, level);

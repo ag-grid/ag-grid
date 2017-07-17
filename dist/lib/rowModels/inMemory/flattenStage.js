@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -87,6 +87,8 @@ var FlattenStage = (function () {
                         this.ensureFooterNodeExists(rowNode);
                         this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevel);
                     }
+                }
+                else {
                 }
             }
             else if (rowNode.canFlower && rowNode.expanded) {

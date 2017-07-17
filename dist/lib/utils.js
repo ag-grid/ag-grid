@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v10.1.0
+ * @version v11.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -198,12 +198,12 @@ var Utils = (function () {
         });
         return Object.keys(allValues);
     };
-    Utils.mergeDeep = function (object, source) {
+    Utils.mergeDeep = function (into, source) {
         if (this.exists(source)) {
             this.iterateObject(source, function (key, target) {
-                var currentValue = object[key];
+                var currentValue = into[key];
                 if (currentValue == null) {
-                    object[key] = target;
+                    into[key] = target;
                     return;
                 }
                 if (typeof currentValue === 'object') {
@@ -213,7 +213,7 @@ var Utils = (function () {
                     }
                 }
                 if (target) {
-                    object[key] = target;
+                    into[key] = target;
                 }
             });
         }
@@ -325,6 +325,28 @@ var Utils = (function () {
     };
     Utils.isNodeOrElement = function (o) {
         return this.isNode(o) || this.isElement(o);
+    };
+    Utils.isEventFromPrintableCharacter = function (event) {
+        var pressedChar = String.fromCharCode(event.charCode);
+        if (exports._.exists(event.key)) {
+            // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
+            // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
+            return event.key.length === 1;
+        }
+        else {
+            // otherwise, for older browsers, we test against a list of characters, which doesn't include
+            // accents for non-English, but don't care much, as most users are on modern browsers
+            return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
+        }
+    };
+    // returns true if values are string, number or boolean, and both values are equal
+    Utils.valuesSimpleAndSame = function (val1, val2) {
+        if (typeof val1 === 'string' || typeof val1 === 'number' || typeof val1 === 'boolean') {
+            return val1 === val2;
+        }
+        else {
+            return false;
+        }
     };
     //adds all type of change listeners to an element, intended to be a text field
     Utils.addChangeListener = function (element, listener) {
@@ -541,7 +563,8 @@ var Utils = (function () {
             _this.insertIntoArray(array, obj, toIndex);
         });
     };
-    Utils.defaultComparator = function (valueA, valueB) {
+    Utils.defaultComparator = function (valueA, valueB, accentedCompare) {
+        if (accentedCompare === void 0) { accentedCompare = false; }
         var valueAMissing = valueA === null || valueA === undefined;
         var valueBMissing = valueB === null || valueB === undefined;
         if (valueAMissing && valueBMissing) {
@@ -554,13 +577,19 @@ var Utils = (function () {
             return 1;
         }
         if (typeof valueA === "string") {
-            try {
-                // using local compare also allows chinese comparisons
-                return valueA.localeCompare(valueB);
+            if (!accentedCompare) {
+                return doQuickCompare(valueA, valueB);
             }
-            catch (e) {
-                // if something wrong with localeCompare, eg not supported
-                // by browser, then just continue without using it
+            else {
+                try {
+                    // using local compare also allows chinese comparisons
+                    return valueA.localeCompare(valueB);
+                }
+                catch (e) {
+                    // if something wrong with localeCompare, eg not supported
+                    // by browser, then just continue with the quick one
+                    return doQuickCompare(valueA, valueB);
+                }
             }
         }
         if (valueA < valueB) {
@@ -571,6 +600,9 @@ var Utils = (function () {
         }
         else {
             return 0;
+        }
+        function doQuickCompare(a, b) {
+            return (a > b ? 1 : (a < b ? -1 : 0));
         }
     };
     Utils.compareArrays = function (array1, array2) {
@@ -1051,8 +1083,28 @@ var Utils = (function () {
             return false;
         return left === right;
     };
+    Utils.get = function (source, expression, defaultValue) {
+        if (source == null)
+            return defaultValue;
+        if (expression.indexOf('.') > -1) {
+            var fields = expression.split('.');
+            var thisKey = fields[0];
+            var nextValue = source[thisKey];
+            if (nextValue != null) {
+                return Utils.get(nextValue, fields.slice(1, fields.length).join('.'), defaultValue);
+            }
+            else {
+                return defaultValue;
+            }
+        }
+        else {
+            var nextValue = source[expression];
+            return nextValue != null ? nextValue : defaultValue;
+        }
+    };
     return Utils;
 }());
+Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 exports.Utils = Utils;
 var NumberSequence = (function () {
     function NumberSequence(initValue, step) {

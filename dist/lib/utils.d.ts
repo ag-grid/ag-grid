@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -14,6 +14,7 @@ export declare class Utils {
     private static isEdge;
     private static isChrome;
     private static isFirefox;
+    private static PRINTABLE_CHARACTERS;
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean;
     static shallowCompare(arr1: any[], arr2: any[]): boolean;
     static getNameOfClass(TheClass: any): string;
@@ -31,7 +32,7 @@ export declare class Utils {
     static forEach<T>(array: T[], callback: (item: T, index: number) => void): void;
     static filter<T>(array: T[], callback: (item: T) => boolean): T[];
     static getAllKeysInObjects(objects: any[]): string[];
-    static mergeDeep(object: any, source: any): void;
+    static mergeDeep(into: any, source: any): void;
     static assign(object: any, source: any): void;
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date;
     static serializeDateToYyyyMmDd(date: Date, separator: string): string;
@@ -46,6 +47,8 @@ export declare class Utils {
     static isNode(o: any): boolean;
     static isElement(o: any): boolean;
     static isNodeOrElement(o: any): boolean;
+    static isEventFromPrintableCharacter(event: KeyboardEvent): boolean;
+    static valuesSimpleAndSame(val1: any, val2: any): boolean;
     static addChangeListener(element: HTMLElement, listener: EventListener): void;
     static makeNull(value: any): any;
     static missing(value: any): boolean;
@@ -77,7 +80,7 @@ export declare class Utils {
     static insertIntoArray<T>(array: T[], object: T, toIndex: number): void;
     static insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number): void;
     static moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number): void;
-    static defaultComparator(valueA: any, valueB: any): number;
+    static defaultComparator(valueA: any, valueB: any, accentedCompare?: boolean): number;
     static compareArrays(array1: any[], array2: any[]): boolean;
     static toStringOrNull(value: any): string;
     static formatWidth(width: number | string): string;
@@ -218,6 +221,9 @@ export declare class Utils {
      */
     static debounce(func: () => void, wait: number, immediate?: boolean): () => void;
     static referenceCompare(left: any, right: any): boolean;
+    static get(source: {
+        [p: string]: any;
+    }, expression: string, defaultValue: any): any;
 }
 export declare class NumberSequence {
     private nextValue;

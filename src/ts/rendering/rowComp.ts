@@ -55,7 +55,7 @@ class TempStubCell extends Component {
 
 export class RowComp extends BeanStub {
 
-    public static EVENT_RENDERED_ROW_REMOVED = 'renderedRowRemoved';
+    public static EVENT_ROW_REMOVED = 'rowRemoved';
 
     public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
 
@@ -628,10 +628,11 @@ export class RowComp extends BeanStub {
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells
-        let animate = event.update;
-        let newData = !event.update;
         this.forEachRenderedCell( cellComp =>
-            cellComp.refreshCell(animate, newData)
+            cellComp.refreshCell({
+                animate: event.update,
+                newData: !event.update
+            })
         );
 
         // check for selected also, as this could be after lazy loading of the row data, in which case
@@ -737,11 +738,19 @@ export class RowComp extends BeanStub {
     }
 
     public addEventListener(eventType: string, listener: Function): void {
+        if (eventType==='renderedRowRemoved') {
+            eventType = RowComp.EVENT_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+        }
         if (!this.renderedRowEventService) { this.renderedRowEventService = new EventService(); }
         this.renderedRowEventService.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: Function): void {
+        if (eventType==='renderedRowRemoved') {
+            eventType = RowComp.EVENT_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+        }
         this.renderedRowEventService.removeEventListener(eventType, listener);
     }
 
@@ -779,7 +788,7 @@ export class RowComp extends BeanStub {
         }
 
         if (this.renderedRowEventService) {
-            this.renderedRowEventService.dispatchEvent(RowComp.EVENT_RENDERED_ROW_REMOVED, {node: this.rowNode});
+            this.renderedRowEventService.dispatchEvent(RowComp.EVENT_ROW_REMOVED, {node: this.rowNode});
         }
 
         let event = {node: this.rowNode, rowIndex: this.rowNode.rowIndex};
@@ -880,6 +889,7 @@ export class RowComp extends BeanStub {
         let params = {
             data: this.rowNode.data,
             node: this.rowNode,
+            value: this.rowNode.key,
             $scope: this.scope,
             rowIndex: this.rowNode.rowIndex,
             api: this.gridOptionsWrapper.getApi(),
@@ -961,6 +971,7 @@ export class RowComp extends BeanStub {
 
     private createRowContainer(rowContainerComp: RowContainerComponent, slideRowIn: boolean): HTMLElement {
         let eRow = document.createElement('div');
+        eRow.setAttribute('role', 'row');
 
         this.addDomData(eRow);
 
@@ -1074,7 +1085,7 @@ export class RowComp extends BeanStub {
         }
     }
 
-    public getRowNode(): any {
+    public getRowNode(): RowNode {
         return this.rowNode;
     }
 
@@ -1087,7 +1098,7 @@ export class RowComp extends BeanStub {
         this.forEachRenderedCell( renderedCell => {
             let colForCel = renderedCell.getColumn();
             if (columnsToRefresh.indexOf(colForCel)>=0) {
-                renderedCell.refreshCell(animate);
+                renderedCell.refreshCell({animate: animate});
             }
         });
     }

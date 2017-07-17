@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v10.1.0
+// Type definitions for ag-grid v11.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -30,7 +30,6 @@ export declare class CellComp extends Component {
     private valueFormatterService;
     private stylingService;
     private columnHoverService;
-    private static PRINTABLE_CHARACTERS;
     static DOM_DATA_KEY_CELL_COMP: string;
     private eGridCell;
     private eSpanWithValue;
@@ -50,7 +49,7 @@ export declare class CellComp extends Component {
     private cellRenderer;
     private value;
     private usingWrapper;
-    private renderedRow;
+    private rowComp;
     private firstRightPinned;
     private lastLeftPinned;
     constructor(column: Column, node: RowNode, scope: any, renderedRow: RowComp);
@@ -67,7 +66,6 @@ export declare class CellComp extends Component {
     setupCheckboxSelection(): void;
     getColumn(): Column;
     private getValue();
-    private getDataForRow();
     private addRangeSelectedListener();
     private onRangeSelectionChanged();
     private addHighlightListener();
@@ -122,7 +120,13 @@ export declare class CellComp extends Component {
     private addClassesFromColDef();
     private createParentOfValue();
     isVolatile(): boolean;
-    refreshCell(animate?: boolean, newData?: boolean): void;
+    attemptCellRendererRefresh(): boolean;
+    refreshCell(params?: {
+        animate?: boolean;
+        newData?: boolean;
+        dontSkipRefresh?: boolean;
+    }): void;
+    private replaceCellContent();
     private addClassesFromRules();
     private putDataIntoCell();
     private formatValue(value);

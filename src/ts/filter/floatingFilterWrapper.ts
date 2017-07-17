@@ -7,6 +7,8 @@ import {IFloatingFilterParams, IFloatingFilterComp, FloatingFilterChange} from "
 import {Component} from "../widgets/component";
 import {RefSelector} from "../widgets/componentAnnotations";
 import {IComponent} from "../interfaces/iComponent";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {SvgFactory} from "../svgFactory";
 
 export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
     column:Column;
@@ -20,6 +22,7 @@ export interface IFloatingFilterWrapper <M>{
 
 export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P> { }
 
+let svgFactory = SvgFactory.getInstance();
 
 export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends Component implements IFloatingFilterWrapperComp<M, F, PC, P> {
     @Autowired('context') private context: Context;
@@ -30,7 +33,7 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
         this.column = params.column;
 
 
-        let base:HTMLElement = _.loadTemplate(`<div class="ag-header-cell"><div class="ag-floating-filter-body"></div></div>`);
+        let base:HTMLElement = _.loadTemplate(`<div class="ag-header-cell" aria-hidden="true"><div class="ag-floating-filter-body" aria-hidden="true"></div></div>`);
         this.enrichBody(base);
 
         this.setTemplateFromElement(base);
@@ -58,7 +61,10 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
     @RefSelector('eButtonShowMainFilter')
     eButtonShowMainFilter: HTMLInputElement;
 
-    @Autowired('menuFactory') private menuFactory: IMenuFactory;
+    @Autowired('menuFactory')
+    private menuFactory: IMenuFactory;
+    @Autowired('gridOptionsWrapper')
+    private gridOptionsWrapper: GridOptionsWrapper;
 
     floatingFilterComp:IFloatingFilterComp<M, F, PC>;
     suppressFilterButton:boolean;
@@ -80,10 +86,12 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
             _.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
             _.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body')
         } else {
+            // let icon:HTMLElement = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column, svgFactory.createFilterSvg12);
             floatingFilterBody.appendChild(this.floatingFilterComp.getGui());
-            body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button">
+            body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button" aria-hidden="true">
                     <button ref="eButtonShowMainFilter">...</button>            
             </div>`));
+            // body.querySelector('button').appendChild(icon);
         }
         if (this.floatingFilterComp.afterGuiAttached){
             this.floatingFilterComp.afterGuiAttached();
@@ -95,7 +103,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
     }
 
     private showParentFilter(){
-        this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filter');
+        this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filterMenuTab', ['filterMenuTab']);
     }
 
 }
