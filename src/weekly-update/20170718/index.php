@@ -181,10 +181,10 @@ include('../../includes/mediaHeader.php');
             If you’re not following us on Twitter, please click below to keep up to date. We appreciate all shares through social media.
             </p>
         </div>
-
+        
     </div>
 
-    <hr/>
+    
 
     <div style="background-color: #eee; padding: 10px; display: inline-block;">
 
