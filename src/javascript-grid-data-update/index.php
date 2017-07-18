@@ -119,7 +119,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The first method is to pass a transaction object to the grid containing rows to add, remove
-        and update. This is done using <code>api.updateData(transaction)</code>. The grid keeps
+        and update. This is done using <code>api.updateRowData(transaction)</code>. The grid keeps
         all active sorting, grouping and filtering, including updating to reflect the changes in
         the data should the sorting, grouping or filtering be impacted.
     </p>
@@ -167,7 +167,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Bulk Method 1 - Transaction</h2>
 
     <p>
-        The <code>api.updateData(transaction)</code> method takes a transaction as a parameter.
+        The <code>api.updateRowData(transaction)</code> method takes a transaction as a parameter.
         The transaction has the following interface:
     </p>
 
@@ -231,7 +231,7 @@ interface RowDataTransaction {
 
     <p>
         The <a href="../javascript-grid-in-memory">In Memory Row Model</a> fully supports the
-        <code>api.updateData()</code> call. The
+        <code>api.updateRowData()</code> call. The
         <a href="../javascript-grid-infinite-scrolling">Infinite Row Model</a> supports 'add'
         only (see the infinite docs for examples). The
         <a href="../javascript-grid-viewport">Viewport Row Model</a> and

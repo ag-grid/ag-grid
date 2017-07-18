@@ -135,6 +135,13 @@ include '../documentation-main/documentation_header.php';
         pinning, the fullWidth row will be split into the pinned sections.
     </p>
 
+    <h4>Max Height with Auto Height</h4>
+
+    <p>
+        It is not possible to specify a max height when using auto-height. It is also not possible to change
+        the layout once the grid has initialised.
+    </p>
+
     <h2>Max Rows in Grid</h2>
 
     <p>
