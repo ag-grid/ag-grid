@@ -401,4 +401,19 @@ export interface ColumnVO {
                       exampleheight="500px">
 </show-complex-example>
 
+<h2 id="enterprise-dynamic-row-height">Dynamic Row Height</h2>
+
+<p>
+    Using <a href="../javascript-grid-row-height/#">Dynamic Row Height</a> with <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a>.
+</p>
+
+<show-complex-example example="exampleEnterpriseDynamicRowHeight.html"
+                      sources="{
+                                [
+                                    { root: './', files: 'exampleEnterpriseDynamicRowHeight.html,exampleEnterpriseDynamicRowHeight.js,columns.js,mockServerComplex.js' }
+                                ]
+                              }"
+                      exampleheight="500px">
+</show-complex-example>
+
 <?php include '../documentation-main/documentation_footer.php';?>

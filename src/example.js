@@ -100,10 +100,10 @@ var gridOptions = {
         minWidth: 50
     },
     enableCellChangeFlash: true,
+    // ensureDomOrder: true,
     // postProcessPopup: function(params) {
     //     console.log(params);
     // },
-    // enforceRowDomOrder: true,
     // need to be careful here inside the normal demo, as names are not unique if big data sets
     // getRowNodeId: function(data) {
     //     return data.name;
