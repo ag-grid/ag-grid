@@ -55,6 +55,25 @@ include('../includes/mediaHeader.php');
 
 <div class="weekly-news-section">
 
+    <a href="./20170718/">
+        <div class="weekly-news-title">
+            The Lightening Bolt - New Names for Master/Detail - Polymer Beta Released
+        </div>
+        <div class="weekly-news-sub-title">
+            Customer Experience Team, 18th July, 2017
+        </div>
+    </a>
+
+    <div style="clear: both;"></div>
+
+    <div class="weekly-news-paragraph">
+        This week, one of our users suggests an emoji for us based on our speed. We are also working through features and renaming to more intuitive names. We released a Beta of Polymer and an update on our next release.
+    </div>
+
+</div>
+
+<div class="weekly-news-section">
+
     <a href="./20170711/">
         <div class="weekly-news-title">
             VC Meeting - OpenFin Demo - New Value Cache

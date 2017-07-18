@@ -29,6 +29,20 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">18th July 2017</div>
+    <div>
+        <a href="../weekly-update/20170718/">
+            <img src="../weekly-update/20170718/images/voltage_emoji_200.png" width="100%"/>
+        </a>
+    </div>
+    <div style="padding-top: 10px;">
+        <a href="../weekly-update/20170718/">
+            Weekly Update
+        </a>
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header">11th July 2017</div>
     <div>
         <a href="../weekly-update/20170711/">
@@ -212,16 +226,16 @@
 </div>
 
 
-<div class="news-box">
+<!-- <div class="news-box">
     <div class="news-header">6th Jun 2017</div>
     <div style="padding-top: 10px;">
         <a href="../weekly-update/">
             Weekly News Update
         </a>
     </div>
-</div>
+</div> -->
 
-<div class="news-box">
+<!-- <div class="news-box">
     <img style="float: left; margin-right: 10px;" src="../images/svg/docs/newspaper.svg" align="left" width="50" />
     <div class="news-header">19th May 2017</div>
     <div style="padding-top: 10px;">
@@ -637,4 +651,4 @@
         ag-Grid is Agnostic, Angular 2 is just one of the
         frameworks we are integrating with.
     </div>
-</div>
+</div> -->
