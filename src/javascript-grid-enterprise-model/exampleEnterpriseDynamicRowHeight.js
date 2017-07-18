@@ -22,23 +22,40 @@ var gridOptions = {
     maxConcurrentDatasourceRequests: 2,
     cacheBlockSize: 100,
     // maxBlocksInCache: 2,
+    groupUseEntireRow: true,
     purgeClosedRowNodes: true,
+    groupRowInnerRenderer: GroupInnerRenderer,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     },
     getRowHeight: function (params) {
-        // return 50;
-        if (params.node.group) {
-            return 75;
+        // top level group gets height of 50
+        if (params.node.level === 0) {
+            return 40;
         } else {
-            if (params.data.gold===0) {
-                return 25;
-            } else {
-                return 50;
-            }
+            return 25;
         }
     }
 };
+
+function GroupInnerRenderer() {}
+
+GroupInnerRenderer.prototype.init = function(params) {
+    var cssClass = params.node.level === 0 ? 'group-inner-renderer-country' : 'group-inner-renderer-year';
+    var template = '<span class="'+cssClass+'">'+params.value+'</span>';
+    this.eGui  = loadTemplate(template);
+};
+
+GroupInnerRenderer.prototype.getGui = function() {
+    return this.eGui;
+};
+
+function loadTemplate(template) {
+    var tempDiv = document.createElement('div');
+    tempDiv.innerHTML = template;
+    return tempDiv.firstChild;
+}
+
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
