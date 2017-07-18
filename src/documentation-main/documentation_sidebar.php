@@ -32,7 +32,7 @@
     <div class="news-header">18th July 2017</div>
     <div>
         <a href="../weekly-update/20170718/">
-            <img src="../weekly-update/20170718/images/voltage_emoji_200.png" width="100%"/>
+            <img src="../weekly-update/20170718/images/voltage_emoji_200.png" />
         </a>
     </div>
     <div style="padding-top: 10px;">
