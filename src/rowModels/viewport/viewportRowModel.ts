@@ -12,7 +12,8 @@ import {
     Events,
     Utils,
     SelectionController,
-    IViewportDatasource
+    IViewportDatasource,
+    RowBounds
 } from "ag-grid/main";
 
 @Bean('rowModel')
@@ -160,7 +161,7 @@ export class ViewportRowModel implements IRowModel {
         }
     }
 
-    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+    public getRowBounds(index: number): RowBounds {
         return {
             rowHeight: this.rowHeight,
             rowTop: this.rowHeight * index

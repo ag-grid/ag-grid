@@ -23,7 +23,8 @@ import {
     RowNode,
     RowNodeBlockLoader,
     RowNodeCache,
-    SortController
+    SortController,
+    RowBounds
 } from "ag-grid";
 import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
 
@@ -48,11 +49,8 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
 
     private rowNodeBlockLoader: RowNodeBlockLoader;
 
-    private rowBounds: {[rowIndex: number]: {rowTop: number, rowHeight: number}} = {};
-
     @PostConstruct
     private postConstruct(): void {
-        this.rowBounds = {};
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.addEventListeners();
     }
@@ -170,6 +168,14 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         let rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
         let valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
 
+        let dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
+        let maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
+        if (dynamicRowHeight && maxBlocksInCache >= 0 ) {
+            console.warn('ag-Grid: Enterprise Row Model does not support Dynamic Row Height and Cache Purging. ' +
+                'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.');
+            maxBlocksInCache = undefined;
+        }
+
         let params: EnterpriseCacheParams = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
@@ -186,10 +192,10 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
             overflowSize: 1,
             initialRowCount: 1,
             maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
-            maxBlocksInCache: this.gridOptionsWrapper.getMaxBlocksInCache(),
+            maxBlocksInCache: maxBlocksInCache,
             blockSize: this.gridOptionsWrapper.getCacheBlockSize(),
             rowHeight: this.rowHeight,
-            dynamicRowHeight: this.gridOptionsWrapper.isDynamicRowHeight()
+            dynamicRowHeight: dynamicRowHeight
         };
 
         // set defaults
@@ -236,9 +242,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
             let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
             let numberSequence = new NumberSequence();
             let nextRowTop = {value: 0};
-            let newRowIndexBounds = {};
-            enterpriseCache.setDisplayIndexes(numberSequence, nextRowTop, newRowIndexBounds);
-            this.rowBounds = newRowIndexBounds;
+            enterpriseCache.setDisplayIndexes(numberSequence, nextRowTop);
         }
     }
 
@@ -261,10 +265,16 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         if (cacheExists) {
             // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
             let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
-            lastRow = enterpriseCache.getLastDisplayedIndex();
+            lastRow = enterpriseCache.getDisplayIndexEnd() - 1;
         } else {
             lastRow = 0;
         }
+
+        // this doesn't make sense, but it works, if there are now rows, then -1 is returned above
+        if (lastRow < 0) {
+            lastRow = 0;
+        }
+
         return lastRow;
     }
 
@@ -272,47 +282,33 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         return this.getPageLastRow() + 1;
     }
 
-    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
-        let defaultResult = {
-            rowTop: this.rowHeight * index,
-            rowHeight: this.rowHeight
-        };
+    public getRowBounds(index: number): RowBounds {
 
-        let result = this.rowBounds[index];
-        return result ? result : defaultResult;
+        let cacheMissing = _.missing(this.rootNode) || _.missing(this.rootNode.childrenCache);
+
+        if (cacheMissing) {
+            return {
+                rowTop: 0,
+                rowHeight: this.rowHeight
+            };
+        }
+
+        let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
+        return enterpriseCache.getRowBounds(index);
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        let indexes = Object.keys(this.rowBounds);
-        if(pixel == 0) return 0;
 
-        let minIndex = 0, maxIndex = indexes.length - 1;
-        let currentIndex = 0, currentBound;
-        while (minIndex <= maxIndex) {
-            currentIndex = (minIndex + maxIndex) / 2 | 0;
-            currentBound = this.rowBounds[currentIndex];
+        if (pixel === 0) return 0;
 
-            // exit if pixel out of bounds
-            if (!currentBound) break;
+        let cacheMissing = _.missing(this.rootNode) || _.missing(this.rootNode.childrenCache);
 
-            // return if within bounds
-            if (this.pixelWithinBounds(pixel, currentBound)) {
-                return currentIndex;
-            }
+        if (cacheMissing) return 0;
 
-            // otherwise continue to sub divide
-            if (currentBound.rowTop < pixel) {
-                minIndex = currentIndex + 1;
-            } else {
-                maxIndex = currentIndex - 1;
-            }
-        }
+        let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
+        let result = enterpriseCache.getRowIndexAtPixel(pixel);
 
-        return this.getPageLastRow(); //TODO: still seem necessary???
-    }
-
-    private pixelWithinBounds(pixel: number, currentBound: {rowTop: number, rowHeight: number}): boolean {
-        return pixel >= currentBound.rowTop && pixel < currentBound.rowTop + currentBound.rowHeight;
+        return result;
     }
 
     public getCurrentPageHeight(): number {
