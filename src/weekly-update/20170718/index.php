@@ -103,84 +103,104 @@ include('../../includes/mediaHeader.php');
     <div class="row">
         <div class="col-md-12">
             <h2>The Lightening Bolt - New Names for Master/Detail - Polymer Beta Released</h2>
-            <p>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-md-10">
 
-        <h3>Company Update</h3>
-        <hr/>   
+        <h3>
+            The Latest from the Development Team
+        </h3>
 
-        <div class="weekly-news-image-right">
-            <img src="./images/voltage_emoji.png" style="width: 100%;"/>
-            <br/>
-            Our new Emoji! Rumour has it that some of the team are considering tattoos...
-        </div>
-
-            <h4>ag-Grid's New Emoji!</h4>
-            <p>
-                Yesterday was World Emoji Day! We had initially used a ‘geek chic’ emoji, but one of our Twitter followers suggested something a little different. In honour of the speed and performance of ag-Grid, we unveil the Lightening Bolt - our unofficial ag-Grid Emoji.
-            </p>
-
-            <h4>GitHub Stars</h4>
-            <p>
-            21 more stars! Don't forget to give us a <a href="https://github.com/ceolter/ag-grid/">star!</a>
-            </p>
-            <hr/>
-
-
-        <h3>The Latest from the Development Team</h3>
         <hr/>
-            <h4>New name for Master/Detail</h4>
-            <p>
-                Niall has renamed 'Master / Slave' to 'Aligned Grids' (so not to be confused with Master / Detail) and 'Floating Rows' to 'Pinned Rows' (so pinned rows and pinned columns go hand in hand). This is to make the grid easier to understand. The team are looking hard at the documentation to make it easier to navigate, so it's important to have relevant, meaningful names for the different features.
-            </p> 
-            
-            <h4>DOM Rendering Order</h4>
-            <p>
-                Niall is also ensuring that items are rendered in the DOM in order. This is very important for screen readers and continues our work on accessibility.
-            </p>
-            
 
-            <h4>JIRA Update</h4>
-            <p>
-            We have 151 tickets now selected for Development as we have added a few more than we completed due to your feedback in the forums.
-            </p>
-            <hr/>
-            </p>
+        Coming in the next release...
 
-            <h3>ag-Grid Frameworks Update</h3>
-            <hr/>
-            
-            <h4>Polymer</h4>
-            <p>
-                Sean has made excellent progress with Polymer, you can check out the <a href="https://github.com/ceolter/ag-grid-polymer/">Beta release</a> and an <a href="https://github.com/ceolter/ag-grid-polymer-example/">example</a>. We are expecting the final version at the end of this week.
-            </p>
-            <hr/>
+        <h4>Trying to Simplify</h4>
+
+        <p>
+            We want to make the grid easier to understand. With this in mind,
+            Niall has renamed 'Master / Slave' to 'Aligned Grids' (so not to be confused with Master / Detail)
+            and 'Floating Rows' to 'Pinned Rows' (so pinned rows and pinned columns go hand in hand).
+            We need meaningful names for the features.
+        </p>
+
+        <h4>DOM Rendering Order</h4>
+        <p>
+            Niall is also ensuring that items are rendered in the DOM in order. This is important for screen readers
+            and continues our work on accessibility.
+        </p>
+
+
+        <h4>JIRA Update</h4>
+        <p>
+            We have 151 tickets now selected for Development as we have added a few more than we completed due to
+            your feedback in the forums.
+        </p>
+        <hr/>
+
+        <h3>ag-Grid Frameworks Update</h3>
+        <hr/>
+
+        <h4>Polymer</h4>
+        <p>
+            Sean has made excellent progress with Polymer, you can check out the <a
+                    href="https://github.com/ceolter/ag-grid-polymer/">Beta release</a> and an <a
+                    href="https://github.com/ceolter/ag-grid-polymer-example/">example</a>. We are expecting the
+            final version at the end of this week.
+        </p>
+        <hr/>
 
         <h3>Next Release</h3>
         <hr/>
-            <p>
-             We were forced to postpone our release due last Friday as we ran into some issues during our regression testing. We have now worked through these and will be releasing this Friday, 21st July. We do apologise if this caused any inconvenience but we are committed to the quality of every release.
-            </p>
-            <hr/>
+        <p>
+            We were forced to postpone our release due last Friday as we ran into
+            some issues during our regression testing and trying to get dynamic row height
+            working with Enterprise Row Model. We have now worked through
+            these and will be releasing this Friday, 21st July.
+            We do apologise if this caused any inconvenience but we are committed to the quality of every release.
+        </p>
+        <hr/>
 
         <h3>Customer Experience</h3>
         <hr/>
-            <p>
-            We have been posting more frequently on Twitter and are enjoying the interactions with our users such as the image above. We will also be in touch with our customers very soon to gain a better understanding of the features that you are looking for - so keep an eye on your inbox.
-            </p>
-            <hr/>
+        <p>
+            We have been posting more frequently on Twitter and are enjoying the interactions with our users such as
+            the image above. We will also be in touch with our customers very soon to gain a better understanding of
+            the features that you are looking for - so keep an eye on your inbox.
+        </p>
+        <hr/>
+
+        <div class="weekly-news-image-right" style="width: unset;">
+            <img src="./images/voltage_emoji.png"
+                 style="border: 1px solid #eee; padding: 10px; margin-bottom: 10px;"/>
+            <br/>
+            Our new Emoji!
+        </div>
+
+        <h4>ag-Grid's New Emoji!</h4>
+        <p>
+            Yesterday was World Emoji Day! We had initially used a ‘geek chic’ emoji, but one of our Twitter
+            followers suggested something a little different. In honour of the speed and performance of ag-Grid, we
+            unveil the Lightening Bolt - our unofficial ag-Grid Emoji.
+        </p>
+
+        <h4>GitHub Stars</h4>
+        <p>
+            21 more stars! Don't forget to give us a <a href="https://github.com/ceolter/ag-grid/">star!</a>
+        </p>
+
+        <div style="clear: both;"/>
+
+        <hr/>
 
         <h3>Spread the Word</h3>
         <hr/>
 
-            <p>
-            If you’re not following us on Twitter, please click below to keep up to date. We appreciate all shares through social media.
-            </p>
-        </div>
+        <p>
+            If you’re not following us on Twitter, please click below to keep up to date. We appreciate all shares
+            through social media.
+        </p>
 
     </div>
 

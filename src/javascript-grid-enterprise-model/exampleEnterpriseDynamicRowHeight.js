@@ -10,7 +10,6 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableColResize: true,
     rowModelType: 'enterprise',
-    rowGroupPanelShow: 'always',
     enableFilter: true,
     animateRows: true,
     debug: true,
