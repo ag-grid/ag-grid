@@ -157,6 +157,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.validate();
     }
 
+    public isEmptyGroup(): boolean {
+        return false;
+    }
+
     public isRowGroupDisplayed(colId: string): boolean {
         if (_.missing(this.colDef) || _.missing(this.colDef.showRowGroup)) { return false; }
 

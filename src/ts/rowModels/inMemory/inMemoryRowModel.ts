@@ -13,6 +13,7 @@ import {InMemoryNodeManager} from "./inMemoryNodeManager";
 import {ChangedPath} from "./changedPath";
 import {ValueService} from "../../valueService/valueService";
 import {ValueCache} from "../../valueService/valueCache";
+import {RowBounds} from "../../interfaces/iRowModel";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes};
 
@@ -112,7 +113,7 @@ export class InMemoryRowModel {
         }
     }
 
-    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+    public getRowBounds(index: number): RowBounds {
         if (_.missing(this.rowsToDisplay)) { return null; }
         let rowNode = this.rowsToDisplay[index];
         if (rowNode) {

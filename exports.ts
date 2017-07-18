@@ -192,7 +192,7 @@ export {RowAccumulator, RowSpanningAccumulator} from "./dist/lib/gridSerializer"
 export {ModelUpdatedEvent} from "./dist/lib/events"
 
 // uncatalogued
-export {IRowModel} from "./dist/lib/interfaces/iRowModel"
+export {IRowModel, RowBounds} from "./dist/lib/interfaces/iRowModel"
 export {IAggFuncService} from "./dist/lib/interfaces/iAggFuncService"
 export {IClipboardService} from "./dist/lib/interfaces/iClipboardService"
 export {IExcelCreator} from "./dist/lib/interfaces/iExcelCreator"

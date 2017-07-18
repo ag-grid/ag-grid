@@ -4,7 +4,7 @@ import {RowNode} from "../../entities/rowNode";
 import {Autowired, Bean, Context, PostConstruct, PreDestroy} from "../../context/context";
 import {EventService} from "../../eventService";
 import {SelectionController} from "../../selectionController";
-import {IRowModel} from "../../interfaces/iRowModel";
+import {IRowModel, RowBounds} from "../../interfaces/iRowModel";
 import {Events} from "../../events";
 import {SortController} from "../../sortController";
 import {FilterManager} from "../../filter/filterManager";
@@ -33,7 +33,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
 
     private rowHeight: number;
 
-    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+    public getRowBounds(index: number): RowBounds {
         return {
             rowHeight: this.rowHeight,
             rowTop: this.rowHeight * index

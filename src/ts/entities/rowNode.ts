@@ -219,6 +219,10 @@ export class RowNode implements IEventEmitter {
         }
     }
 
+    public isPixelInRange(pixel: number): boolean {
+        return pixel >= this.rowTop && pixel < (this.rowTop + this.rowHeight);
+    }
+
     public clearRowTop(): void {
         this.oldRowTop = this.rowTop;
         this.setRowTop(null);

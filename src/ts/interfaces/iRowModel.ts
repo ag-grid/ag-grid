@@ -1,5 +1,10 @@
 import {RowNode} from "../entities/rowNode";
 
+export interface RowBounds {
+    rowTop: number;
+    rowHeight: number;
+}
+
 export interface IRowModel {
 
     /** Returns the rowNode at the given index. */
@@ -18,7 +23,7 @@ export interface IRowModel {
     /** Returns true if the provided rowNode is in the list of rows to render */
     isRowPresent(rowNode: RowNode): boolean;
     /** Returns row top and bottom for a given row */
-    getRowBounds(index: number): {rowTop: number, rowHeight: number};
+    getRowBounds(index: number): RowBounds;
 
     /** Returns true if this model has no rows, regardless of model filter. EG if rows present, but filtered
      * out, this still returns false. If it returns true, then the grid shows the 'no rows' overlay - but we

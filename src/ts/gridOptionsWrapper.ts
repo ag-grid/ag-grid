@@ -120,9 +120,6 @@ export class GridOptionsWrapper {
             console.warn('ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don\'t ask us how to us these together on our support forum either you will get the same answer!');
         }
 
-        if (this.isForPrint() && this.isAutoHeight()) {
-            console.warn('ag-Grid: properties forPrint and autoHeight do not work with each other, please pick only one.')
-        }
     }
 
     private setupFrameworkComponents(): void {
@@ -639,7 +636,7 @@ export class GridOptionsWrapper {
     }
 
     public isDynamicRowHeight(): boolean {
-        return typeof this.gridOptions.getRowHeight !== 'function';
+        return typeof this.gridOptions.getRowHeight === 'function';
     }
 
     private isNumeric(value:any) {

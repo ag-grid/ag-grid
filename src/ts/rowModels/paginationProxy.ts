@@ -1,6 +1,6 @@
 
 import {BeanStub} from "../context/beanStub";
-import {IRowModel} from "../interfaces/iRowModel";
+import {IRowModel, RowBounds} from "../interfaces/iRowModel";
 import {EventService} from "../eventService";
 import {Events, ModelUpdatedEvent} from "../events";
 import {RowNode} from "../entities/rowNode";
@@ -10,11 +10,6 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
 import {SelectionController} from "../selectionController";
-
-export class RowBounds {
-    rowTop: number;
-    rowHeight: number;
-}
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {

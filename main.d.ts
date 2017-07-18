@@ -125,7 +125,7 @@ export { XmlElement } from "./dist/lib/xmlFactory";
 export { LoggerFactory } from "./dist/lib/logger";
 export { RowAccumulator, RowSpanningAccumulator } from "./dist/lib/gridSerializer";
 export { ModelUpdatedEvent } from "./dist/lib/events";
-export { IRowModel } from "./dist/lib/interfaces/iRowModel";
+export { IRowModel, RowBounds } from "./dist/lib/interfaces/iRowModel";
 export { IAggFuncService } from "./dist/lib/interfaces/iAggFuncService";
 export { IClipboardService } from "./dist/lib/interfaces/iClipboardService";
 export { IExcelCreator } from "./dist/lib/interfaces/iExcelCreator";
