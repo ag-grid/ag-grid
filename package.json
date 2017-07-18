@@ -4,7 +4,7 @@
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "exit 0",
     "watchWebpack": "webpack --watch"
   },
   "typings": "./main.d.ts",
