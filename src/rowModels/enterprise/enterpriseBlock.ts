@@ -206,6 +206,7 @@ export class EnterpriseBlock extends RowNodeBlock {
         if (rowNode.group) {
             rowNode.expanded = false;
             rowNode.field = this.groupField;
+            rowNode.rowGroupColumn = this.rowGroupColumn;
         }
 
         return rowNode;
