@@ -887,12 +887,18 @@ export class RowComp extends BeanStub {
 
         this.destroyScope();
         this.destroyFullWidthComponent();
-        this.forEachCellComp(renderedCell => renderedCell.destroy() );
 
 
         if (animate) {
             this.startRemoveAnimationFunctions.forEach( func => func() );
+
+            this.delayedDestroyFunctions.push( ()=> {
+                this.forEachCellComp(renderedCell => renderedCell.destroy() );
+            });
+
         } else {
+            this.forEachCellComp(renderedCell => renderedCell.destroy() );
+
             // we are not animating, so execute the second stage of removal now.
             // we call getAndClear, so that they are only called once
             let delayedDestroyFunctions = this.getAndClearDelayedDestroyFunctions();
@@ -1087,7 +1093,7 @@ export class RowComp extends BeanStub {
 
         this.addDomData(eRow);
 
-        rowContainerComp.appendRowElement(eRow, eElementBefore, ensureDomOrder);
+        rowContainerComp.appendRowElement(eRow, eElementBefore);
 
         this.eAllRowContainers.push(eRow);
 

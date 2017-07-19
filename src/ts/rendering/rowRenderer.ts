@@ -510,9 +510,7 @@ export class RowRenderer extends BeanStub {
             }
         });
 
-        setTimeout( ()=> {
-            nextVmTurnFunctions.forEach( func => func() );
-        }, 0);
+        _.executeNextVMTurn(nextVmTurnFunctions);
 
         this.destroyRowComps(rowsToRecycle, animate);
 
@@ -567,11 +565,9 @@ export class RowRenderer extends BeanStub {
             // if row was used, then it's null
             if (!rowComp) { return; }
             rowComp.destroy(animate);
-            rowComp.getAndClearDelayedDestroyFunctions().forEach(func => delayedFuncs.push(func) );
+            _.pushAll(delayedFuncs, rowComp.getAndClearDelayedDestroyFunctions());
         });
-        setTimeout( ()=> {
-            delayedFuncs.forEach( func => func() );
-        }, 400);
+        _.executeInAWhile(delayedFuncs);
     }
 
     private checkAngularCompile(): void {

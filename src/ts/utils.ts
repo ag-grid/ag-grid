@@ -1226,6 +1226,22 @@ export class Utils {
         };
     };
 
+    static executeInAWhile(funcs: Function[]): void {
+        this.executeAfter(funcs, 400);
+    }
+
+    static executeNextVMTurn(funcs: Function[]): void {
+        this.executeAfter(funcs, 0);
+    }
+
+    static executeAfter(funcs: Function[], millis: number): void {
+        if (funcs.length > 0) {
+            setTimeout( ()=> {
+                funcs.forEach( func => func() );
+            }, millis);
+        }
+    }
+
     static referenceCompare(left: any, right: any): boolean {
         if (left == null && right == null) return true;
         if (left == null && right) return false;
