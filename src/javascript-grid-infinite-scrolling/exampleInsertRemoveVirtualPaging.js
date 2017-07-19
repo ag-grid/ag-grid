@@ -1,5 +1,6 @@
 var columnDefs = [
     {headerName: "Item ID", field: "id",
+        valueGetter: 'node.id',
         cellRenderer: function(params) {
             if (params.value !== undefined) {
                 return params.value;

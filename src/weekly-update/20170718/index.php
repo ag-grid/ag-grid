@@ -102,7 +102,7 @@ include('../../includes/mediaHeader.php');
 
     <div class="row">
         <div class="col-md-12">
-            <h2>The Lightening Bolt - New Names for Master/Detail - Polymer Beta Released</h2>
+            <h2>Trying to Simplify our Feature Names - Polymer Support Beta Released - Our New Emoji</h2>
         </div>
     </div>
 
@@ -122,7 +122,7 @@ include('../../includes/mediaHeader.php');
             We want to make the grid easier to understand. With this in mind,
             Niall has renamed 'Master / Slave' to 'Aligned Grids' (so not to be confused with Master / Detail)
             and 'Floating Rows' to 'Pinned Rows' (so pinned rows and pinned columns go hand in hand).
-            We need meaningful names for the features.
+            This is to provide meaningful names for the features.
         </p>
 
         <h4>DOM Rendering Order</h4>
@@ -156,19 +156,13 @@ include('../../includes/mediaHeader.php');
         <p>
             We were forced to postpone our release due last Friday as we ran into
             some issues during our regression testing and trying to get dynamic row height
-            working with Enterprise Row Model. We have now worked through
+            working with the Enterprise Row Model. We have now worked through
             these and will be releasing this Friday, 21st July.
             We do apologise if this caused any inconvenience but we are committed to the quality of every release.
         </p>
         <hr/>
 
         <h3>Customer Experience</h3>
-        <hr/>
-        <p>
-            We have been posting more frequently on Twitter and are enjoying the interactions with our users such as
-            the image above. We will also be in touch with our customers very soon to gain a better understanding of
-            the features that you are looking for - so keep an eye on your inbox.
-        </p>
         <hr/>
 
         <div class="weekly-news-image-right" style="width: unset;">
@@ -178,6 +172,12 @@ include('../../includes/mediaHeader.php');
             Our new Emoji!
         </div>
 
+        <p>
+            We have been posting more frequently on Twitter and are enjoying the interactions with our users such as
+            the image above. We will also be in touch with our customers very soon to gain a better understanding of
+            the features that you are looking for - so keep an eye on your inbox.
+        </p>
+     
         <h4>ag-Grid's New Emoji!</h4>
         <p>
             Yesterday was World Emoji Day! We had initially used a ‘geek chic’ emoji, but one of our Twitter

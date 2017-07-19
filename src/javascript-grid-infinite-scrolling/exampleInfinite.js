@@ -1,9 +1,12 @@
 var columnDefs = [
     // this row shows the row index, doesn't use any data from the row
     {headerName: "ID", width: 50,
+        // it is important to have node.id here, so that when the id changes (which happens
+        // when the row is loaded) then the cell is refreshed.
+        valueGetter: 'node.id',
         cellRenderer: function(params) {
-            if (params.data !== undefined) {
-                return params.node.id;
+            if (params.value !== undefined) {
+                return params.value;
             } else {
                 return '<img src="../images/loading.gif">'
             }

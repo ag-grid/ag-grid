@@ -13,9 +13,10 @@ var listOfCountries = ['United States','Russia','Australia','Canada','Norway','C
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
     {headerName: "ID", width: 50,
+        valueGetter: 'node.id',
         cellRenderer: function(params) {
-            if (params.data !== undefined) {
-                return params.node.id;
+            if (params.value !== undefined) {
+                return params.value;
             } else {
                 return '<img src="../images/loading.gif">'
             }

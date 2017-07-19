@@ -30,12 +30,12 @@
 
 <div class="news-box">
     <div class="news-header">18th July 2017</div>
-    <div>
+    <div style="float: left; margin-right: 10px;">
         <a href="../weekly-update/20170718/">
-            <img src="../weekly-update/20170718/images/voltage_emoji_200.png" width="100%"/>
+            <img src="../weekly-update/20170718/images/voltage_emoji.png" style="width: 20px;"/>
         </a>
     </div>
-    <div style="padding-top: 10px;">
+    <div style="padding-top: 5px;">
         <a href="../weekly-update/20170718/">
             Weekly Update
         </a>

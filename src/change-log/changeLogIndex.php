@@ -36,7 +36,7 @@ include '../documentation-main/documentation_header.php';
         <li>Update Documentation: <a href="../javascript-grid-value-setters/">Setters and Parsers.</a></li>
         <li>Renamed 'Master / Slave' to '<a href="../javascript-grid-aligned-grids/">Aligned Grids</a>' so that it's not confused with 'Master / Detail', which is nothing to do with 'Aligned Grids'.</li>
         <li>Renamed 'Floating Rows' to '<a href="../javascript-grid-row-pinning/">Pinned Rows</a>' because it was confusing, now we have <a href="../javascript-grid-row-pinning/">Pinned Rows</a> and <a href="../javascript-grid-pinning/">Pinned Columns</a> which are similar, but one for rows and one for columns.</li>
-        <li>AG-569: For accessibility, rows in the DOM are now placed in the same order you see on the screen.</li>
+        <li>AG-569: For accessibility, rows in the DOM are now placed in the same order you see on the screen. To turn on, set property ensureDomOrder=true.</li>
         <li>Bug fix: when using multiple group auto columns and header checkbox selection,
             the header checkbox now only appears in the first column header.</li>
         <li>AG-469: Enhancement: new event for column 'menuVisibleChanged', gets fired when column menu is shown / hidden.
@@ -45,8 +45,10 @@ include '../documentation-main/documentation_header.php';
         <li>AG-366: Bugfix: Multiple sort numbers were disappearing after horizontal scrolling</li>
         <li>AG-375: After calling columnApi.setState() and doing multi-column sort,
             the sort numbers were not getting displayed beside the relevant column.</li>
-        <li>AG-602: Bugfix: Enteprise Row Model success callback interface was missing 'lastRow'.</li>
+        <li>AG-602: Bugfix: Enterprise Row Model success callback interface was missing 'lastRow'.</li>
         <li>AG-624: 'select' editor, when you select a value, was closing 'full row edit'. Now select works fine with 'full row edit'.</li>
+        <li>AG-625: Now Enterprise Row Model works with complex objects (eg valueGetters and fields with dot notation).</li>
+        <li>AG-593: Added missing exports to exports.ts</li>
     </ul>
 
     <p>
