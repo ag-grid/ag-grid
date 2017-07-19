@@ -57,7 +57,7 @@ include('../includes/mediaHeader.php');
 
     <a href="./20170718/">
         <div class="weekly-news-title">
-            The Lightening Bolt - New Names for Master/Detail - Polymer Beta Released
+            Trying to Simplify our Feature Names - Polymer Support Beta Released - Our New Emoji
         </div>
         <div class="weekly-news-sub-title">
             Customer Experience Team, 18th July, 2017
@@ -67,7 +67,7 @@ include('../includes/mediaHeader.php');
     <div style="clear: both;"></div>
 
     <div class="weekly-news-paragraph">
-        This week, one of our users suggests an emoji for us based on our speed. We are also working through features and renaming to more intuitive names. We released a Beta of Polymer and an update on our next release.
+        This week, we will be releasing on Friday following postponing last week. We have also been working on simplifying the names of our features. We've also released our Beta of Poymer Support and will have the final version of this later in the week.
     </div>
 
 </div>
