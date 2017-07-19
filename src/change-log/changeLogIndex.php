@@ -28,6 +28,12 @@ include '../documentation-main/documentation_header.php';
             New feature: <a href="../javascript-grid-column-spanning/">Column Spanning</a>.
         </li>
         <li>
+            New feature: <a href="../javascript-grid-column-definitions/">Column Types</a>.
+        </li>
+        <li>
+            New feature: <a href="../javascript-grid-enterprise-model/#enterprise-dynamic-row-height">Dynamic Row Height on Enterprise Row Model</a>.
+        </li>
+        <li>
             Rewrite of <a href="../javascript-grid-refresh/">Grid Refresh</a>. There were once a few similar confusing
             methods. There are are two clear and clean methods: cellRefresh() and redrawRows().
             See 'Changes to Refresh' below for more details.
@@ -36,13 +42,17 @@ include '../documentation-main/documentation_header.php';
         <li>Update Documentation: <a href="../javascript-grid-value-setters/">Setters and Parsers.</a></li>
         <li>Renamed 'Master / Slave' to '<a href="../javascript-grid-aligned-grids/">Aligned Grids</a>' so that it's not confused with 'Master / Detail', which is nothing to do with 'Aligned Grids'.</li>
         <li>Renamed 'Floating Rows' to '<a href="../javascript-grid-row-pinning/">Pinned Rows</a>' because it was confusing, now we have <a href="../javascript-grid-row-pinning/">Pinned Rows</a> and <a href="../javascript-grid-pinning/">Pinned Columns</a> which are similar, but one for rows and one for columns.</li>
-        <li>AG-569: For accessibility, rows in the DOM are now placed in the same order you see on the screen. To turn on, set property ensureDomOrder=true.</li>
+        <li>AG-572: For accessibility, rows in the DOM are now placed in the same order you see on the screen. To turn on, set property ensureDomOrder=true.</li>
         <li>Bug fix: when using multiple group auto columns and header checkbox selection,
             the header checkbox now only appears in the first column header.</li>
         <li>AG-469: Enhancement: new event for column 'menuVisibleChanged', gets fired when column menu is shown / hidden.
         Useful if doing your own headerComponent and want the header to look different when menu is shown / hidden.</li>
         <li>Enhancement: Now header DIV will contain class <i>ag-column-menu-visible</i> when the column menu is showing.</li>
         <li>AG-366: Bugfix: Multiple sort numbers were disappearing after horizontal scrolling</li>
+        <li>AG-578: Bugfix: Exception raised when performing range selection and filtering on the enterprise row model</li>
+        <li>AG-327: Bugfix: Cumalative sort numbers disappear when refreshHeader is called</li>
+        <li>AG-619: New option to always show status bar</li>
+        <li>AG-523: Allow 'shift-click' selections on all row models</li>
         <li>AG-375: After calling columnApi.setState() and doing multi-column sort,
             the sort numbers were not getting displayed beside the relevant column.</li>
         <li>AG-602: Bugfix: Enterprise Row Model success callback interface was missing 'lastRow'.</li>
