@@ -163,8 +163,11 @@ export class EnterpriseBlock extends RowNodeBlock {
             let idToUse = this.createIdForIndex(index);
 
             rowNode.setDataAndId(data, idToUse);
-            rowNode.key = data[this.groupField];
             rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
+
+            if (rowNode.group) {
+                rowNode.key = this.valueService.getValue(this.rowGroupColumn, rowNode);
+            }
         } else {
             rowNode.setDataAndId(undefined, undefined);
             rowNode.key = null;
