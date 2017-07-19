@@ -41,6 +41,7 @@ exports.PreDestroy = context_1.PreDestroy;
 var componentAnnotations_1 = require("./dist/lib/widgets/componentAnnotations");
 exports.QuerySelector = componentAnnotations_1.QuerySelector;
 exports.Listener = componentAnnotations_1.Listener;
+exports.RefSelector = componentAnnotations_1.RefSelector;
 // dragAndDrop
 var dragAndDropService_1 = require("./dist/lib/dragAndDrop/dragAndDropService");
 exports.DragAndDropService = dragAndDropService_1.DragAndDropService;

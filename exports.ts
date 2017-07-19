@@ -23,7 +23,7 @@ export {
     Qualifier,
     PreDestroy
 } from "./dist/lib/context/context";
-export {QuerySelector, Listener} from "./dist/lib/widgets/componentAnnotations";
+export {QuerySelector, Listener, RefSelector} from "./dist/lib/widgets/componentAnnotations";
 
 // excel
 export {
@@ -205,10 +205,19 @@ export {
     GridOptions,
     GetContextMenuItemsParams,
     GetContextMenuItems,
-    MenuItemDef
+    MenuItemDef,
+    GetNodeChildDetails,
+    NodeChildDetails,
+    GetMainMenuItemsParams,
+    GetMainMenuItems,
+    GetRowNodeIdFunc,
+    ProcessRowParams,
+    NavigateToNextCellParams,
+    TabToNextCellParams,
+    PostProcessPopupParams
 } from "./dist/lib/entities/gridOptions"
 export {OriginalColumnGroupChild} from "./dist/lib/entities/originalColumnGroupChild"
-export {IViewportDatasource} from "./dist/lib/interfaces/iViewportDatasource"
+export {IViewportDatasource, IViewportDatasourceParams} from "./dist/lib/interfaces/iViewportDatasource"
 export {IContextMenuFactory} from "./dist/lib/interfaces/iContextMenuFactory"
 export {ICompFactory} from "./dist/lib/interfaces/iCompFactory"
 export {IRowNodeStage, StageExecuteParams} from "./dist/lib/interfaces/iRowNodeStage"
