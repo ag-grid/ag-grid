@@ -138,16 +138,10 @@ colDef.valueGetter = function(params) {
 function valueSetter(params: ValueSetterParams) => boolean;
 
 <span class="codeComment">// interface for params</span>
-interface ValueGetterParams {
+interface ValueSetterParams {
     oldValue: any, <span class="codeComment">// the value before the change</span>
     newValue: any, <span class="codeComment">// the value after the change</span>
-    data: any, <span class="codeComment">// the data you provided for this row</span>
-    node: RowNode, <span class="codeComment">// the row node for this row</span>
-    colDef: ColDef, <span class="codeComment">// the column def for this column</span>
-    column: Column, <span class="codeComment">// the column for this column</span>
-    api: GridApi, <span class="codeComment">// the grid API</span>
-    columnApi: ColumnApi, <span class="codeComment">// the grid Column API</span>
-    context: any  <span class="codeComment">// the context</span>
+    getValue: (colId: string) => any  <span class="codeComment">// a utility method, for getting other column values</span>
 }
 
 <span class="codeComment">// example value setter, put into a particular part of the data</span>
