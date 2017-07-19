@@ -128,11 +128,11 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        To force row order set<code>gridOptions.enforceRowDomOrder=true</code>.
+        To force row order set <code>gridOptions.enforceRowDomOrder=true</code>.
     </p>
 
     <p>
-        As a workaround for column order, set  <code>gridOptions.suppressColumnVirtualisation=true</code>.
+        As a workaround for column order, set <code>gridOptions.suppressColumnVirtualisation=true</code>.
     </p>
 
     <p>
