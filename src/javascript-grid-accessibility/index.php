@@ -126,16 +126,17 @@ include '../documentation-main/documentation_header.php';
         virtualises columns and rows, a technique whereby the grid draws columns and rows as the user scrolls.
         This 'incorrect order' can result in inconsistent results when parsed by screen readers.
     </p>
+
     <p>
-        As a workaround for column order, set <code>gridOption.suppressColumnVirtualisation=true</code>.
+        To force row order set<code>gridOptions.enforceRowDomOrder=true</code>.
     </p>
 
-    <note>
-        Note that a permanent solution to set column and row order will be released shortly.
-    </note>
+    <p>
+        As a workaround for column order, set  <code>gridOptions.suppressColumnVirtualisation=true</code>.
+    </p>
 
     <p>
-        The example below presents a simple grid layout with <i>suppressColumnVirtualisation</i> enabled.
+        The example below presents a simple grid layout with these options enabled.
     </p>
 
     <show-example example="accessibilityExample"></show-example>
