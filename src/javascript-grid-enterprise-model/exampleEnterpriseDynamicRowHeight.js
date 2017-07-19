@@ -14,8 +14,6 @@ var gridOptions = {
     animateRows: true,
     debug: true,
     enableSorting: true,
-    // pagination: true,
-    // paginationPageSize: 4,
     suppressAggFuncInHeader: true,
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,

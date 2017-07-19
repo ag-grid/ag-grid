@@ -404,7 +404,8 @@ export interface ColumnVO {
 <h2 id="enterprise-dynamic-row-height">Dynamic Row Height</h2>
 
 <p>
-    Using <a href="../javascript-grid-row-height/#">Dynamic Row Height</a> with <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a>.
+    To enable <a href="../javascript-grid-row-height/#">Dynamic Row Height</a> when using the enterprise row model you need to provide an implementation
+    for the 'getRowHeight' Grid Options property. This is demonstrated in the example below:
 </p>
 
 <show-complex-example example="exampleEnterpriseDynamicRowHeight.html"
@@ -415,5 +416,11 @@ export interface ColumnVO {
                               }"
                       exampleheight="500px">
 </show-complex-example>
+
+<note>
+    Purging the cache and dynamic row heights do not work together for the Enterprise Row Model.
+    If you are using dynamic row height, ensure 'maxBlocksInCache' is not set.
+</note>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
