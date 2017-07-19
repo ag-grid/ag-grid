@@ -56,6 +56,7 @@ include '../documentation-main/documentation_header.php';
         <li>AG-375: After calling columnApi.setState() and doing multi-column sort,
             the sort numbers were not getting displayed beside the relevant column.</li>
         <li>AG-602: Bugfix: Enterprise Row Model success callback interface was missing 'lastRow'.</li>
+        <li>AG-617: Buffix: Enterprise Row Model unable to perform full width groups</li>
         <li>AG-624: 'select' editor, when you select a value, was closing 'full row edit'. Now select works fine with 'full row edit'.</li>
         <li>AG-625: Now Enterprise Row Model works with complex objects (eg valueGetters and fields with dot notation).</li>
         <li>AG-593: Added missing exports to exports.ts</li>

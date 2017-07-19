@@ -23,6 +23,9 @@ var gridOptions = {
     purgeClosedRowNodes: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
+    },
+    icons: {
+        groupLoading: '<img src="spinner.gif" style="width:22px;height:22px;">'
     }
 };
 

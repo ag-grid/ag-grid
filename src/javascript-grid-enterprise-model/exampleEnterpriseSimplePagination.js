@@ -23,7 +23,10 @@ var gridOptions = {
     animateRows: true,
     debug: true,
     pagination: true,
-    paginationAutoPageSize: true
+    paginationAutoPageSize: true,
+    icons: {
+        groupLoading: '<img src="spinner.gif" style="width:22px;height:22px;">'
+    }
 };
 
 // setup the grid after the page has finished loading

@@ -32,6 +32,9 @@ var gridOptions = {
         } else {
             return 25;
         }
+    },
+    icons: {
+        groupLoading: '<img src="spinner.gif" style="width:22px;height:22px;">'
     }
 };
 
