@@ -607,6 +607,11 @@ include '../documentation-main/documentation_header.php';
         </tr>
 
         <tr>
+            <th>ensureDomOrder</th>
+            <td>When true, this property ensures the order of rows and columns, including the headers.</td>
+        </tr>
+
+        <tr>
             <th>rowBuffer</th>
             <td>The number of rows rendered outside the scrollable viewable area the grid renders. Defaults to 20.
                 Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.</td>

@@ -128,15 +128,11 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        To force row order set <code>gridOptions.enforceRowDomOrder=true</code>.
+        To force row and column order set <code>gridOptions.ensureDomOrder=true</code>.
     </p>
 
     <p>
-        As a workaround for column order, set <code>gridOptions.suppressColumnVirtualisation=true</code>.
-    </p>
-
-    <p>
-        The example below presents a simple grid layout with these options enabled.
+        The example below presents a simple grid layout with <i>ensureDomOrder</i> enabled.
     </p>
 
     <show-example example="accessibilityExample"></show-example>
