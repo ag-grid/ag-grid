@@ -313,15 +313,25 @@ interface IGetRowsParams {
     <p>
         The examples on this page use a loading spinner to show if the row is waiting for its data to be loaded. The
         grid does not provide this, rather it is a simple rendering technique used in the examples. If the data
-        is loading, then the rowNode will be missing data, and hence all values passed to cellRenderers will be
-        undefined. You can check for this and provide your own loading effect.
+        is loading, then the rowNode will have no id. So if you use the id as the value, the cell will get refreshed
+        when the id is set.
     </p>
 
-    <pre>cellRenderer: function(params) {
-    if (params.value !== undefined) {
-        return params.value;
-    } else {
-        return '&lt;img src="../images/loading.gif">'
+    <pre>
+loadingSpinnerColumn = {
+
+    <span class="codeComment">// use a value getter to have the node id as this columns value</span>
+    valueGetter: 'node.id',
+
+    <span class="codeComment">// then a custom cellRenderer</span>
+    cellRenderer: function(params) {
+        if (params.value === undefined) {
+            <span class="codeComment">// when no node id, display the spinner image</span>
+            return '&lt;img src="loading.gif">'
+        } else {
+            <span class="codeComment">// otherwise just display node id (or whatever you wish for this column)</span>
+            return params.value;
+        }
     }
 }</pre>
 
