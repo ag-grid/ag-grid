@@ -18,7 +18,7 @@ var gridOptions = {
     rowData: null,
     enableSorting:true,
     autoGroupColumnDef:{
-        headerName:'CUSTOM!',
+        headerName:' ',
         cellRendererParams:{
             suppressCount: true,
             checkbox:true

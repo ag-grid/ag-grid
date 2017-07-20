@@ -305,7 +305,7 @@ export default connect(
 &lt;/AgGridReact>
 </pre>
 
-            <p>Visually, the application appears no different with these changes, but peformance has dramatically been improved.
+            <p>Visually, the application appears no different with these changes, but performance has dramatically been improved.
             This would be evident in a larger application, especially one with a large amount of row data.</p>
 
             <div style="background-color: #eee; padding: 5px; display: inline-block;">

@@ -1,0 +1,72 @@
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<dom-module id="sliding-floating-filter">
+    <template>
+        <paper-slider id="slider" style="height: 20px;" min="[[min]]" max="[[max]]" value="{{value}}"
+                      editable></paper-slider>
+    </template>
+
+    <script>
+        class SlidingFloatingFilter extends Polymer.Element {
+            static get is() {
+                return 'sliding-floating-filter'
+            }
+
+            constructor() {
+                super();
+
+                this.isReady = false;
+            }
+
+            agInit(params) {
+                this.params = params;
+
+                this.min = this.params.minValue;
+                this.max = this.params.maxValue;
+                this.value = this.min;
+            }
+
+            static get properties() {
+                return {
+                    min: Number,
+                    max: Number,
+                    value: {
+                        type: Number,
+                        notify: true,
+                        observer: 'sliderValueChanged'
+                    }
+                };
+            }
+
+            ready() {
+                super.ready();
+                this.isReady = true;
+            }
+
+            sliderValueChanged() {
+                this.params.onFloatingFilterChanged({
+                    model: {
+                        filterType: 'number',
+                        type: 'greaterThanOrEqual',
+                        filter: this.value,
+                        filterTo: null
+                    }
+                })
+            }
+
+            onParentModelChanged(parentModel) {
+                if (!this.isReady) {
+                    return;
+                }
+                // When the filter is empty we will receive a null message here
+                if (!parentModel) {
+                    // If there is no filtering set to the minimum
+                    this.value = this.min;
+                } else {
+                    this.value = parentModel.filter;
+                }
+            }
+        }
+
+        customElements.define(SlidingFloatingFilter.is, SlidingFloatingFilter);
+    </script>
+</dom-module>
