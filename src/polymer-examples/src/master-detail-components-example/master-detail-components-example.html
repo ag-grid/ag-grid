@@ -1,0 +1,144 @@
+<link rel="import" href="detail-panel-component.html">
+<script src="static-data.js"></script>
+<dom-module id="master-detail-components-example">
+    <template>
+        <link rel="stylesheet" href="../../bower_components/ag-grid/dist/styles/ag-grid.css">
+        <link rel="stylesheet" href="../../bower_components/ag-grid/dist/styles/theme-fresh.css">
+
+        <div style="width: 800px;">
+            <h1>Master/Detail Example</h1>
+            <ag-grid-polymer id="x"
+                             style="width: 100%; height: 350px; display: block;"
+                             class="ag-fresh"
+                             gridOptions="{{gridOptions}}"
+
+                             isFullWidthCell="[[isFullWidthCell]]"
+                             getRowHeight="[[getRowHeight]]"
+                             getNodeChildDetails="[[getNodeChildDetails]]"
+                             fullWidthCellRendererFramework="'detail-panel-component'"
+
+                             enableSorting
+                             enableColResize
+
+                             onGridSizeChanged="[[gridSizeChanged]]"></ag-grid-polymer>
+        </div>
+    </template>
+
+    <script>
+        class MasterDetailExample extends Polymer.Element {
+            static get is() {
+                return "master-detail-components-example";
+            }
+
+            constructor() {
+                super();
+
+                this.gridOptions = {
+                    rowData: this.createRowData(),
+                    columnDefs: this.createColumnDefs(),
+                    fullWidthCellRendererFramework: 'detail-panel-component'
+                };
+            }
+
+            createColumnDefs() {
+                return [
+                    {
+                        headerName: 'Name', field: 'name',
+                        // left column is going to act as group column, with the expand / contract controls
+                        cellRenderer: 'group',
+                        // we don't want the child count - it would be one each time anyway as each parent
+                        // not has exactly one child node
+                        cellRendererParams: {suppressCount: true}
+                    },
+                    {headerName: 'Account', field: 'account'},
+                    {headerName: 'Calls', field: 'totalCalls'},
+                    {headerName: 'Minutes', field: 'totalMinutes', valueFormatter: this.minuteCellFormatter}
+                ];
+            }
+
+            isFullWidthCell(rowNode) {
+                return rowNode.level === 1;
+            }
+
+            getRowHeight(params) {
+                const rowIsDetailRow = params.node.level === 1;
+                // return 100 when detail row, otherwise return 25
+                return rowIsDetailRow ? 200 : 25;
+            }
+
+            getNodeChildDetails(record) {
+                if (record.callRecords) {
+                    return {
+                        group: true,
+                        // the key is used by the default group cellRenderer
+                        key: record.name,
+                        // provide ag-Grid with the children of this group
+                        children: [record.callRecords],
+                        // for demo, expand the third row by default
+                        expanded: record.account === 177002
+                    };
+                } else {
+                    return null;
+                }
+            }
+
+            createRowData() {
+                let rowData = [];
+
+                for (let i = 0; i < 20; i++) {
+                    let firstName = firstnames[Math.floor(Math.random() * firstnames.length)];
+                    let lastName = lastnames[Math.floor(Math.random() * lastnames.length)];
+
+                    let image = images[i % images.length];
+
+                    let totalDuration = 0;
+
+                    let callRecords = [];
+                    // call count is random number between 20 and 120
+                    let callCount = Math.floor(Math.random() * 100) + 20;
+                    for (let j = 0; j < callCount; j++) {
+                        // duration is random number between 20 and 120
+                        let callDuration = Math.floor(Math.random() * 100) + 20;
+                        let callRecord = {
+                            callId: callIdSequence++,
+                            duration: callDuration,
+                            switchCode: 'SW' + Math.floor(Math.random() * 10),
+                            // 50% chance of in vs out
+                            direction: (Math.random() > .5) ? 'In' : 'Out',
+                            // made up number
+                            number: '(0' + Math.floor(Math.random() * 10) + ') ' + Math.floor(Math.random() * 100000000)
+                        };
+                        callRecords.push(callRecord);
+                        totalDuration += callDuration;
+                    }
+
+                    let record = {
+                        name: firstName + ' ' + lastName,
+                        account: i + 177000,
+                        totalCalls: callCount,
+                        image: image,
+                        // convert from seconds to minutes
+                        totalMinutes: totalDuration / 60,
+                        callRecords: callRecords
+                    };
+                    rowData.push(record);
+                }
+
+                return rowData;
+            }
+
+            minuteCellFormatter(params) {
+                return params.value.toLocaleString() + 'm';
+            }
+
+            gridSizeChanged() {
+                // this check is only necessary at the component could have been created, but not currently visible
+                // this check prevents the grid warning about resizing a grid with 0 width
+                if(this.getBoundingClientRect().width) {
+                    this.api.sizeColumnsToFit();
+                }
+            }
+        }
+        customElements.define(MasterDetailExample.is, MasterDetailExample);
+    </script>
+</dom-module>

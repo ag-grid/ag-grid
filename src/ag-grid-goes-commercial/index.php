@@ -71,7 +71,7 @@ include('../includes/mediaHeader.php');
             <b>How do you decide what features go into ag-Grid-Enterprise?</b><br/>
             In my head I asked "what features are above and beyond what the other grids are offering"
             and decided to have that as a reference point on what should be provided for free vs paid. So if you are
-            looking for a grid that pretty much matches the other free ones for features (but kills them on peformance
+            looking for a grid that pretty much matches the other free ones for features (but kills them on performance
             and quality!) then you can use ag-Grid free version if you are on a budget.
         </p>
 

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ag-Grid Polymer Component - Simple Example</title>
+
+    <!-- polymer polyfill - must be before any wc related javascript is executed -->
+    <script src="../../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+    <link rel="import" href="../../bower_components/polymer/polymer.html">
+
+    <!-- before the ag-grid web component -->
+    <!-- either ag-grid or ag-grid-enterprise, depending on which you're using -->
+    <!-- note: using noStyle version here as the you can't directly style anything in a shadow tree using a CSS rule
+         outside of the shadow tree -->
+    <script src="../../bower_components/ag-grid/dist/ag-grid.min.noStyle.js"></script>
+
+    <!-- the ag-grid-polymer component-->
+    <link rel="import" href="../../bower_components/ag-grid-polymer/ag-grid-polymer.html">
+
+    <!-- the application code -->
+    <link rel="import" href="./rich-dynamic-components-example.html">
+</head>
+<body>
+<rich-dynamic-components-example></rich-dynamic-components-example>
+</body>
+</html>

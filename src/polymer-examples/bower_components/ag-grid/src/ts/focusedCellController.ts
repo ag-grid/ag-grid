@@ -1,0 +1,172 @@
+import {Bean, Autowired, PostConstruct} from "./context/context";
+import {EventService} from "./eventService";
+import {Column} from "./entities/column";
+import {Events} from "./events";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {ColDef} from "./entities/colDef";
+import {ColumnController} from "./columnController/columnController";
+import {Utils as _} from "./utils";
+import {GridCell} from "./entities/gridCell";
+import {Constants} from "./constants";
+import {RowNode} from "./entities/rowNode";
+
+@Bean('focusedCellController')
+export class FocusedCellController {
+
+    @Autowired('eventService') private eventService: EventService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
+
+    private focusedCell: GridCell;
+
+    @PostConstruct
+    private init(): void {
+        this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearFocusedCell.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearFocusedCell.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.clearFocusedCell.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.clearFocusedCell.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearFocusedCell.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearFocusedCell.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearFocusedCell.bind(this));
+    }
+
+    public clearFocusedCell(): void {
+        this.focusedCell = null;
+        this.onCellFocused(false);
+    }
+
+    public getFocusedCell(): GridCell {
+        return this.focusedCell;
+    }
+
+    // we check if the browser is focusing something, and if it is, and
+    // it's the cell we think is focused, then return the cell. so this
+    // methods returns the cell if a) we think it has focus and b) the
+    // browser thinks it has focus. this then returns nothing if we
+    // first focus a cell, then second click outside the grid, as then the
+    // grid cell will still be focused as far as the grid is concerned,
+    // however the browser focus will have moved somewhere else.
+    public getFocusCellToUseAfterRefresh(): GridCell {
+        if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh()) {
+            return null;
+        }
+        
+        if (!this.focusedCell) {
+            return null;
+        }
+        
+        let browserFocusedCell = this.getGridCellForDomElement(document.activeElement);
+        if (!browserFocusedCell) {
+            return null;
+        }
+
+        let gridFocusId = this.focusedCell.createId();
+        let browserFocusId = browserFocusedCell.createId();
+
+        if (gridFocusId === browserFocusId) {
+            return this.focusedCell;
+        } else {
+            return null;
+        }
+    }
+
+    private getGridCellForDomElement(eBrowserCell: Node): GridCell {
+        if (!eBrowserCell) {
+            return null;
+        }
+
+        let column: Column = null;
+        let row: number  = null;
+        let floating: string = null;
+        let that = this;
+
+        while (eBrowserCell) {
+            checkRow(eBrowserCell);
+            checkColumn(eBrowserCell);
+            eBrowserCell = eBrowserCell.parentNode;
+        }
+
+        if (_.exists(column) && _.exists(row)) {
+            let gridCell = new GridCell({rowIndex: row, floating: floating, column: column});
+            return gridCell;
+        } else {
+            return null;
+        }
+
+        function checkRow(eTarget: Node): void {
+            // match the column by checking a) it has a valid colId and b) it has the 'ag-cell' class
+            let rowId = _.getElementAttribute(eTarget, 'row');
+            if (_.exists(rowId) && _.containsClass(eTarget, 'ag-row')) {
+                if (rowId.indexOf('ft')===0) {
+                    floating = Constants.FLOATING_TOP;
+                    rowId = rowId.substr(3);
+                } else if (rowId.indexOf('fb')===0) {
+                    floating = Constants.FLOATING_BOTTOM;
+                    rowId = rowId.substr(3);
+                } else {
+                    floating = null;
+                }
+                row = parseInt(rowId);
+            }
+        }
+
+        function checkColumn(eTarget: Node): void {
+            // match the column by checking a) it has a valid colId and b) it has the 'ag-cell' class
+            let colId = _.getElementAttribute(eTarget, 'colid');
+            if (_.exists(colId) && _.containsClass(eTarget, 'ag-cell')) {
+                let foundColumn = that.columnController.getGridColumn(colId);
+                if (foundColumn) {
+                    column = foundColumn;
+                }
+            }
+        }
+    }
+
+    public setFocusedCell(rowIndex: number, colKey: Column|ColDef|string, floating: string, forceBrowserFocus = false): void {
+        if (this.gridOptionsWrapper.isSuppressCellSelection()) {
+            return;
+        }
+
+        let column = _.makeNull(this.columnController.getGridColumn(colKey));
+        this.focusedCell = new GridCell({rowIndex: rowIndex,
+                                        floating: _.makeNull(floating),
+                                        column: column});
+
+        this.onCellFocused(forceBrowserFocus);
+    }
+
+    public isCellFocused(gridCell: GridCell): boolean {
+        if (_.missing(this.focusedCell)) { return false; }
+        return this.focusedCell.column === gridCell.column && this.isRowFocused(gridCell.rowIndex, gridCell.floating);
+    }
+
+    public isRowNodeFocused(rowNode: RowNode): boolean {
+        return this.isRowFocused(rowNode.rowIndex, rowNode.floating);
+    }
+
+    public isAnyCellFocused(): boolean {
+        return !!this.focusedCell;
+    }
+
+    public isRowFocused(rowIndex: number, floating: string): boolean {
+        if (_.missing(this.focusedCell)) { return false; }
+        let floatingOrNull = _.makeNull(floating);
+        return this.focusedCell.rowIndex === rowIndex && this.focusedCell.floating === floatingOrNull;
+    }
+
+    private onCellFocused(forceBrowserFocus: boolean): void {
+        let event = {
+            rowIndex: <number> null,
+            column: <Column> null,
+            floating: <string> null,
+            forceBrowserFocus: forceBrowserFocus
+        };
+        if (this.focusedCell) {
+            event.rowIndex = this.focusedCell.rowIndex;
+            event.column = this.focusedCell.column;
+            event.floating = this.focusedCell.floating;
+        }
+
+        this.eventService.dispatchEvent(Events.EVENT_CELL_FOCUSED, event);
+    }
+}

@@ -92,7 +92,7 @@ npm start
     
     <p>In the case of the <code>model</code> column definition we've also defined a <code>cellRendererFramework</code> - this allows 
     us to use an Angular Component to render the data for that cell. This is entirely optional, but does allow you to leverage
-    the full power of Angular while still gaining the peformance and functionality offered by ag-Grid.</p>
+    the full power of Angular while still gaining the performance and functionality offered by ag-Grid.</p>
 
     <h3>Grid Definition</h3>
 
@@ -164,7 +164,7 @@ export class MyGridApplicationComponent {
                  [rowData]="rowData"
                  [columnDefs]="columnDefs"&gt;
 
-                 enableSort <span class="codeComment">// shorthand for [enableSort]="true"</span>
+                 enableSorting <span class="codeComment">// shorthand for [enableSorting]="true"</span>
 &lt;/ag-grid-angular&gt;
     </pre>
 

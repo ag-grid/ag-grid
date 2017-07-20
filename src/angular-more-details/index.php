@@ -90,7 +90,7 @@ include '../documentation-main/documentation_header.php';
 
     <h3><img src="../images/enterprise_50.png" style="height: 22px;margin-right: 5px"/>Downloading the ag-Grid Angular Enterprise Dependency</h3>
 
-    <p>If you're using the ag-Grid Enteprise features, then in addition to the ag-Grid Angular dependency above, you also require
+    <p>If you're using the ag-Grid Enterprise features, then in addition to the ag-Grid Angular dependency above, you also require
     the ag-Grid Angular Enterprise dependency:</p>
 
     <h3>Download ag-Grid-Enterprise</h3>

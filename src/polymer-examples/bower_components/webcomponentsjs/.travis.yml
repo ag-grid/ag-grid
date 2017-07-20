@@ -1,0 +1,21 @@
+language: node_js
+sudo: required
+dist: trusty
+node_js: stable
+addons:
+  firefox: latest
+  apt:
+    sources:
+    - google-chrome
+    packages:
+    - google-chrome-stable
+script:
+- npm install -g bower
+- bower install
+- xvfb-run wct -l chrome
+- xvfb-run wct -l firefox
+- if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then wct -s 'windows 10/microsoftedge@14' -s 'windows 8.1/internet explorer@11' -s 'os x 10.11/safari@10' -s 'os x 10.11/safari@9' -s 'Linux/chrome@41'; fi
+env:
+  global:
+  - secure: Fpp9LwJSGOdTrSIImQTlbzxozBsqe/2AJN5OfTXSe12FZxqzz50gevdxQcIlLypKaNyCtjb980DJbwdJR2cXUqaunLZAPWxrKa7ZPwamUxW+zVL7EHqy5zuvD+yJ+Vmk3ahs3WBTVyJ8T3XoaSfo9VumDIcKggWGJwgvM3blIMg=
+  - secure: Bj8MgzUVP0X8MLgK3d9eF48V7x0rPJyrN1IyguzKyJJVC8LV2XZXF+6o/M+zNsVMSsjhgXMkS3RRuaUShxO/OS6gHeG31FWcZqbXfZfgMMyH8a8zDls+r8m2lGEICaZo1OTXR0uiR/VNVt7n2xoBnTmjmRFwkaxAZk4yCjbXYzQ=

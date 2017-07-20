@@ -1,0 +1,140 @@
+<dom-module id="detail-panel-component">
+    <template>
+        <link rel="stylesheet" href="../../bower_components/ag-grid/dist/styles/ag-grid.css">
+        <link rel="stylesheet" href="../../bower_components/ag-grid/dist/styles/theme-fresh.css">
+        <link rel="stylesheet" href="master-detail-components-example/detail-panel-component.css">
+
+        <div class="full-width-panel">
+            <div class="full-width-details">
+                <div class="full-width-detail"><img width="120px" src="/images/{{parentRecord.image}}.png"/></div>
+                <div class="full-width-detail"><b>Name: </b> {{parentRecord.name}}</div>
+                <div class="full-width-detail"><b>Account: </b> {{parentRecord.account}}</div>
+            </div>
+            <ag-grid-polymer id="myGrid"
+                             style="display: block"
+                             class="ag-fresh full-width-grid"
+                             gridOptions="{{gridOptions}}"
+                             rowData="[[rowData]]"
+
+                             enableSorting
+                             enableFilter
+                             enableColResize
+            ></ag-grid-polymer>
+            <div class="full-width-grid-toolbar">
+                <img class="full-width-phone-icon" src="/images/phone.png"/>
+                <button on-click="onButtonClick"><img src="/images/fire.png"/></button>
+                <button on-click="onButtonClick"><img src="/images/frost.png"/></button>
+                <button on-click="onButtonClick"><img src="/images/sun.png"/></button>
+                <input class="full-width-search" on-input="onSearchTextChange" placeholder="Search..."/>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        class DetailPanelComponent extends Polymer.Element {
+            static get is() {
+                return "detail-panel-component";
+            }
+
+            constructor() {
+                super();
+
+                this.gridOptions = {
+                    columnDefs: this.createColumnDefs()
+                };
+            }
+
+            agInit(params) {
+                this.parentRecord = params.node.parent.data;
+                this.rowData = this.parentRecord.callRecords;
+            }
+
+            onSearchTextChange(event) {
+                console.log(event);
+                this.gridOptions.api.setQuickFilter(event.target.value);
+            }
+
+            secondCellFormatter(params) {
+                return params.value.toLocaleString() + 's';
+            }
+
+            ready() {
+                super.ready();
+
+                this.$.myGrid.addEventListener('mousewheel', this.consumeMouseWheelOnDetailGrid);
+                this.$.myGrid.addEventListener('dommousescroll', this.consumeMouseWheelOnDetailGrid);
+            }
+
+            // if we don't do this, then the mouse wheel will be picked up by the main
+            // grid and scroll the main grid and not this component. this ensures that
+            // the wheel move is only picked up by the text field
+            consumeMouseWheelOnDetailGrid($event) {
+                $event.stopPropagation();
+            }
+
+            onButtonClick() {
+                window.alert('Sample button pressed!!');
+            }
+
+            createColumnDefs() {
+                return [{headerName: 'Call ID', field: 'callId', cellClass: 'call-record-cell'},
+                    {headerName: 'Direction', field: 'direction', cellClass: 'call-record-cell'},
+                    {headerName: 'Number', field: 'number', cellClass: 'call-record-cell'},
+                    {
+                        headerName: 'Duration',
+                        field: 'duration',
+                        cellClass: 'call-record-cell',
+                        valueFormatter: this.secondCellFormatter
+                    },
+                    {headerName: 'Switch', field: 'switchCode', cellClass: 'call-record-cell'}];
+
+            }
+
+            createRowData() {
+                let rowData = [];
+
+                for (let i = 0; i < 20; i++) {
+                    let firstName = firstnames[Math.floor(Math.random() * firstnames.length)];
+                    let lastName = lastnames[Math.floor(Math.random() * lastnames.length)];
+
+                    let image = images[i % images.length];
+
+                    let totalDuration = 0;
+
+                    let callRecords = [];
+                    // call count is random number between 20 and 120
+                    let callCount = Math.floor(Math.random() * 100) + 20;
+                    for (let j = 0; j < callCount; j++) {
+                        // duration is random number between 20 and 120
+                        let callDuration = Math.floor(Math.random() * 100) + 20;
+                        let callRecord = {
+                            callId: callIdSequence++,
+                            duration: callDuration,
+                            switchCode: 'SW' + Math.floor(Math.random() * 10),
+                            // 50% chance of in vs out
+                            direction: (Math.random() > .5) ? 'In' : 'Out',
+                            // made up number
+                            number: '(0' + Math.floor(Math.random() * 10) + ') ' + Math.floor(Math.random() * 100000000)
+                        };
+                        callRecords.push(callRecord);
+                        totalDuration += callDuration;
+                    }
+
+                    let record = {
+                        name: firstName + ' ' + lastName,
+                        account: i + 177000,
+                        totalCalls: callCount,
+                        image: image,
+                        // convert from seconds to minutes
+                        totalMinutes: totalDuration / 60,
+                        callRecords: callRecords
+                    };
+                    rowData.push(record);
+                }
+
+                return rowData;
+            }
+        }
+        customElements.define(DetailPanelComponent.is, DetailPanelComponent);
+    </script>
+</dom-module>
