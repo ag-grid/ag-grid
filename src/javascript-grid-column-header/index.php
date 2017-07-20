@@ -153,9 +153,9 @@ include '../documentation-main/documentation_header.php';
     <h2 id="refresh-headers-and-footers">Refresh Headers and Footers</h2>
 
     <p>
-        If you call <i>api.recomputeAggregates()</i>, all header and footer rows will subsequently get ripped
+        If you call <code>api.recomputeAggregates()</code>, all header and footer rows will subsequently get ripped
         out and redrawn to show the new aggregate values. If you want to refresh all headers and footers without
-        recomputing the aggregates, you can call <i>api.refreshGroupRows()</i> - useful if you want to refresh
+        recomputing the aggregates, you can call <code>api.refreshCells()</code> - useful if you want to refresh
         for reasons other than the aggregates being recomputed.
     </p>
 

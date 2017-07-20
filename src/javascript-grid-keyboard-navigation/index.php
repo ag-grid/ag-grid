@@ -95,7 +95,7 @@ include '../documentation-main/documentation_header.php';
         function signature is as follows:
     </p>
 
-    <pre>export NavigateToNextCellParams {
+    <pre>interface NavigateToNextCellParams {
 
     <span class="codeComment">// the keycode for the arrow key pressed, left = 37, up = 38, right = 39, down = 40</span>
     key: number;

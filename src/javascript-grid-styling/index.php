@@ -179,7 +179,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
 <pre class="codeBlock">
-&lt;div class='<span class="agClass">ag-root ag-scrolls</span>'>
+&lt;div class='<span class="agClass">ag-root ag-layout-normal</span>'>
   &lt;!-- header -->
 
   &lt;div class="<span class="agClass">ag-header</span>">
@@ -259,15 +259,16 @@ include '../documentation-main/documentation_header.php';
 &lt;/div>
 </pre>
 
-    <h2 id="styling-with-no-scrolls">Styling with No Scrolls</h2>
+    <h2 id="styling-with-for-print">Styling with For Print</h2>
 
-    Styling with the option 'no scrolls' is similar to styling with scrolls, however the dom layout is much simpler.
-    When no scrolls, there are no pinned columns and no viewports for scrolling.
-
-    <p/>
+    <p>
+        Styling with the option <a href="../javascript-grid-for-print/">domLayout=forPrint</a>
+        is similar to styling as normal, however the dom layout is much simpler.
+        When laying out for printing, there are no pinned columns and no viewports for scrolling.
+    </p>
 
 <pre class="codeBlock">
-&lt;div class="<span class="agClass">ag-root ag-no-scrolls</span>">
+&lt;div class="<span class="agClass">ag-root ag-layout-for-print</span>">
 
     &lt;!-- header -->
     &lt;div class="<span class="agClass">ag-header-container</span>">

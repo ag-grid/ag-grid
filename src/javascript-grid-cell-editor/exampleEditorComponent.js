@@ -20,14 +20,18 @@ var students = [
 
 // double the array twice, make more data!
 students.forEach(function (item) {
-    students.push(item);
+    students.push(cloneObject(item));
 });
 students.forEach(function (item) {
-    students.push(item);
+    students.push(cloneObject(item));
 });
 students.forEach(function (item) {
-    students.push(item);
+    students.push(cloneObject(item));
 });
+
+function cloneObject(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
 
 var columnDefs = [
     {headerName: "First Name", field: "first_name", width: 100, editable: true},

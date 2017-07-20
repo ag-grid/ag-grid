@@ -51,10 +51,13 @@ include '../documentation-main/documentation_header.php';
             <h2 id="ng1Components">
                 <img src="../images/angularjs.png" style="width: 25px;"/> AngularJS 1.x
             </h2>
-            <p>When using <a href="../javascript-grid-components">Components</a> within an AngularJS 1.x application you need to manage
-                both the scope yourself - the Grid does not provide the scope to the Components nor will it destroy it.</p>
+            <p>
+                ag-Grid does not provide direct support for it's components and AngularJS 1.x. If you want to put custom
+                AngularJS 1.x components into ag-Grid, follow the instructions for plain JavaScript component. You will
+                then need to manage creating and destroying child scopes yourself inside the <i>init()</i> and
+                <i>destroy()</i> methods.
 
-            <p>You need to ensure provide an appropriate scope to the Components and ensure you delete it when the component is destroyed.</p>
+            </p>
 
             <p><code>angularCompileRows</code>, <code>angularCompileFilters</code> and <code>angularCompileHeaders</code> are not
                 supported within Components.</p>

@@ -1,5 +1,5 @@
 <?php
-$key = "Cell Rendering";
+$key = "Cell Rendering Components";
 $pageTitle = "ag-Grid Cell Rendering";
 $pageDescription = "You can customise every cell in ag-Grid. This is done by providing cell renderers. This page describe creating cell renderers.";
 $pageKeyboards = "ag-Grid Cell Renderers";

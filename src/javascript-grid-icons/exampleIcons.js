@@ -86,9 +86,9 @@ var gridOptions = {
         menuRemoveRowGroup: 'R',
         clipboardCopy: '>>',
         clipboardPaste: '>>',
-        checkboxChecked: '<i class="fa fa-arrow-left"/>',
-        checkboxUnchecked: '<i class="fa fa-arrow-right"/>',
-        checkboxIndeterminate: '<i class="fa fa-arrow-up"/>'
+        checkboxChecked: '<i class="fa fa-check-square-o"/>',
+        checkboxUnchecked: '<i class="fa fa-square-o"/>',
+        checkboxIndeterminate: '<i class="fa fa-circle-o"/>'
     },
     rowSelection: 'multiple'
 };

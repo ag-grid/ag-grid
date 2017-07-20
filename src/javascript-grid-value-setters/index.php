@@ -74,10 +74,6 @@ include '../documentation-main/documentation_header.php';
             <code>valueSetter</code> is used for setting the parts back into the grid (eg if you type 'Sam Boots',
             then 'Sam' gets set as the first name and 'Boots' as the last name.
         </li>
-        <li>
-            <b>Column 'A', 'B', 'A+B':</b> Columns A and B are simple number columns. Column A+B demonstrates
-            using a <code>valueGetter</code> to calculate a value for display.
-        </li>
     </ul>
 
     <show-example example="exampleSettersAndParsers"></show-example>

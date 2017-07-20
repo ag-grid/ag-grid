@@ -6,15 +6,8 @@ var columnDefs = [
         valueParser: numberParser},
     {headerName: "Name (editable)", editable: true, width: 160,
         valueGetter: nameValueGetter,
-        valueSetter: nameValueSetter},
-    {headerName: "A", field: 'a', width: 50},
-    {headerName: "B", field: 'b', width: 50},
-    {headerName: "A + B", valueGetter: aPlusBValueGetter, width: 80}
+        valueSetter: nameValueSetter}
 ];
-
-function aPlusBValueGetter(params) {
-    return params.data.a + params.data.b;
-}
 
 function numberFormatter(params) {
     return '£' + formatNumber(params.value);

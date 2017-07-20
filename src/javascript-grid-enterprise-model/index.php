@@ -299,9 +299,11 @@ export interface ColumnVO {
 </show-complex-example>
 
 <note>
-    Performing multiple row selections using 'shift-click' is only permitted within each grouping level as each group
-    contains a separate row cache. Also depending on the configured value of <i>maxBlocksInCache</i>, a large selection
-    range may not be possible as not all rows will be in memory.
+    Performing multiple row selections using 'shift-click' has the following restrictions:
+    <ul>
+        <li>Only works across rows that share the same parent.</li>
+        <li>Only works for rows that are loaded (eg a large range selection may span rows that are not loaded).</li>
+    </ul>
 </note>
 
 <h3 id="selection">Example - Checkbox Selection</h3>

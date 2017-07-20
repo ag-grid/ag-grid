@@ -284,7 +284,7 @@
 <div class="docsMenu-content">
     <?php
     menuItem(0, 'Components', 'Overview', 'javascript-grid-components/');
-    menuItem(0, 'Cell Rendering', 'Cell Renderer', 'javascript-grid-cell-rendering-components/');
+    menuItem(0, 'Cell Rendering Components', 'Cell Renderer', 'javascript-grid-cell-rendering-components/');
     menuItem(0, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/');
     menuItem(0, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component/');
     menuItem(0, 'Floating Filter Component', 'Floating Filter Component', 'javascript-grid-floating-filter-component/');
