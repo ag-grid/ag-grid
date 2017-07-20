@@ -1,11 +1,11 @@
 import {ComponentRef, ViewContainerRef, Injectable, ComponentFactoryResolver} from "@angular/core";
 import {IComponent, Bean}  from "ag-grid/main";
-import {FrameworkComponentWrapper}  from 'ag-grid';
+import {FrameworkComponentWrapper, BaseComponentWrapper, WrapableInterface}  from 'ag-grid';
 import {AgFrameworkComponent} from "./interfaces";
 
 @Injectable()
 @Bean("frameworkComponentWrapper")
-export class Ng2FrameworkComponentWrapper implements FrameworkComponentWrapper {
+export class Ng2FrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
     private viewContainerRef: ViewContainerRef;
     private componentFactoryResolver: ComponentFactoryResolver;
 
@@ -17,49 +17,35 @@ export class Ng2FrameworkComponentWrapper implements FrameworkComponentWrapper {
         this.componentFactoryResolver = componentFactoryResolver;
     }
 
-    wrap <A extends IComponent<any>>(Ng2Component: {new (): any}, mandatoryMethodList: string[], optionalMethodList?: string[]): A {
+    createWrapper(OriginalConstructor: { new (): any }): WrapableInterface{
         let that = this;
-        class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> {
+        class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> implements WrapableInterface{
             init(params: any): void {
                 super.init(params);
                 this._componentRef.changeDetectorRef.detectChanges();
             }
 
             protected createComponent(): ComponentRef<AgFrameworkComponent<any>> {
-                return that.createComponent(Ng2Component,
+                return that.createComponent(OriginalConstructor,
                     that.viewContainerRef);
             }
 
+            hasMethod(name: string): boolean{
+                return wrapper.getFrameworkComponentInstance()[name] != null;
+            }
+
+            callMethod(name: string, args: IArguments): void{
+                var componentRef = this.getFrameworkComponentInstance();
+                return wrapper.getFrameworkComponentInstance()[name].apply(componentRef, args)
+
+            }
+            addMethod(name:string, callback:Function): void {
+                wrapper[name] = callback
+            }
         }
 
-        function addMethod(wrapper: DynamicAgNg2Component, methodName:string, mandatory:boolean) {
-            let methodProxy: Function = function () {
-                if (wrapper.getFrameworkComponentInstance()[methodName]) {
-                    var componentRef = this.getFrameworkComponentInstance();
-                    return wrapper.getFrameworkComponentInstance()[methodName].apply(componentRef, arguments)
-                } else {
-                    if (mandatory){
-                        console.warn('ag-Grid: Angular component is missing the method ' + methodName + '()');
-                    }
-                    return null;
-                }
-            };
-
-            wrapper[methodName] = methodProxy
-        }
         let wrapper: DynamicAgNg2Component = new DynamicAgNg2Component();
-        mandatoryMethodList.forEach((methodName => {
-            addMethod(wrapper, methodName, true);
-        }));
-
-        if (optionalMethodList){
-            optionalMethodList.forEach((methodName => {
-                addMethod(wrapper, methodName, false);
-            }));
-        }
-
-
-        return <A><any>wrapper;
+        return wrapper;
 
     }
 
