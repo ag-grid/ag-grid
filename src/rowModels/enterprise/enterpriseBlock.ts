@@ -315,9 +315,10 @@ export class EnterpriseBlock extends RowNodeBlock {
             let rowNode = this.getRowUsingLocalIndex(i);
             if (rowNode) {
                 let rowIndex = displayIndexSeq.next();
-                rowNode.setRowIndex(rowIndex);
 
-                rowNode.rowTop = nextRowTop.value;
+                rowNode.setRowIndex(rowIndex);
+                rowNode.setRowTop(nextRowTop.value);
+
                 nextRowTop.value += rowNode.rowHeight;
 
                 if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {

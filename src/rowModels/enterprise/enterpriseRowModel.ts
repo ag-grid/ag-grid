@@ -245,10 +245,22 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         if (cacheExists) {
             // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
             let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
-            let numberSequence = new NumberSequence();
-            let nextRowTop = {value: 0};
-            enterpriseCache.setDisplayIndexes(numberSequence, nextRowTop);
+            this.resetRowTops(enterpriseCache);
+            this.setDisplayIndexes(enterpriseCache);
         }
+    }
+
+    private setDisplayIndexes(cache: EnterpriseCache): void {
+        let numberSequence = new NumberSequence();
+        let nextRowTop = {value: 0};
+        cache.setDisplayIndexes(numberSequence, nextRowTop);
+    }
+
+    // resetting row tops is needed for animation, as part of the operation is saving the old location,
+    // which is needed for rows that are transitioning in
+    private resetRowTops(cache: EnterpriseCache): void {
+        let numberSequence = new NumberSequence();
+        cache.forEachNodeDeep( rowNode => rowNode.clearRowTop(), numberSequence);
     }
 
     public getRow(index: number): RowNode {
