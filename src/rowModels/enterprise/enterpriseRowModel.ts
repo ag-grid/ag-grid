@@ -53,6 +53,11 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     private postConstruct(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.addEventListeners();
+
+        let datasource = this.gridOptionsWrapper.getEnterpriseDatasource();
+        if (_.exists(datasource)) {
+            this.setDatasource(datasource);
+        }
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
