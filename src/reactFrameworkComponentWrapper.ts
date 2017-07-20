@@ -1,10 +1,10 @@
-import {Bean, IComponent, FrameworkComponentWrapper}  from 'ag-grid';
+import {Bean, IComponent, FrameworkComponentWrapper, BaseComponentWrapper, WrapableInterface}  from 'ag-grid';
 import {AgReactComponent} from './agReactComponent';
 
 @Bean ('frameworkComponentWrapper')
-export class ReactFrameworkComponentWrapper implements  FrameworkComponentWrapper {
-    wrap <A extends IComponent<any>>(ReactComponent: { new (): any}, methodList: string[]): A{
-        class DynamicAgReactComponent extends AgReactComponent implements IComponent<any> {
+export class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements  FrameworkComponentWrapper {
+    createWrapper (ReactComponent: { new (): any}): WrapableInterface{
+        class DynamicAgReactComponent extends AgReactComponent implements IComponent<any>, WrapableInterface {
 
             constructor() {
                 super(ReactComponent);
@@ -14,25 +14,21 @@ export class ReactFrameworkComponentWrapper implements  FrameworkComponentWrappe
                 super.init(<any>params);
             }
 
+            hasMethod(name: string): boolean{
+                return wrapper.getFrameworkComponentInstance()[name] != null;
+            }
+
+            callMethod(name: string, args: IArguments): void{
+                var componentRef = this.getFrameworkComponentInstance();
+                return wrapper.getFrameworkComponentInstance()[name].apply(componentRef, args)
+
+            }
+            addMethod(name:string, callback:Function): void {
+                wrapper[name] = callback
+            }
         }
 
         const wrapper : DynamicAgReactComponent= new DynamicAgReactComponent ();
-        methodList.forEach((methodName=>{
-            const methodProxy: Function = function (){
-                if (wrapper.reactComponent.prototype[methodName]) {
-                    const componentRef = this.getFrameworkComponentInstance();
-                    return wrapper.reactComponent.prototype[methodName].apply (componentRef, arguments)
-                } else {
-                    console.warn('ag-Grid: React component is missing the method ' + methodName + '()');
-                    return null;
-                }
-            };
-
-            wrapper[methodName] = methodProxy
-
-        }));
-
-
-        return <A><any>wrapper;
+        return wrapper;
     }
 }
