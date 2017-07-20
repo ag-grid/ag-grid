@@ -56,7 +56,13 @@ export class GroupStage implements IRowNodeStage {
         let includeParents = !this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         let isPivot = this.columnController.isPivotMode();
 
-        if (rowNodeTransaction) {
+        let isGrouping = groupedCols.length > 0;
+
+        // important not to do transaction if we are not grouping, as otherwise the 'insert index' is ignored.
+        // ie, if not grouping, then we just want to shotgun so the rootNode.allLeafChildren gets copied
+        // to rootNode.childrenAfterGroup and maintaining order (as delta transaction misses the order).
+        let doTransaction = isGrouping && _.exists(rowNodeTransaction);
+        if (doTransaction) {
             this.handleTransaction(rowNodeTransaction, changedPath, rowNode, groupedCols, expandByDefault, includeParents, isPivot);
         } else {
             this.shotgunResetEverything(rowNode, groupedCols, expandByDefault, includeParents, isPivot);
