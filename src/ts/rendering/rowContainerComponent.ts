@@ -38,10 +38,12 @@ export class RowContainerComponent {
         this.eContainer.style.height = height + "px";
     }
 
-    public appendRowElement(eRow: HTMLElement, eRowBefore: HTMLElement): void {
-        // we use dome order either way - as it doesn't impact the animations
-        // when we insert. the animations only get impacted when we move already placed items
-        _.insertWithDomOrder(this.eContainer, eRow, eRowBefore);
+    public appendRowElement(eRow: HTMLElement, eRowBefore: HTMLElement, ensureDomOrder: boolean): void {
+        if (ensureDomOrder) {
+            _.insertWithDomOrder(this.eContainer, eRow, eRowBefore);
+        } else {
+            this.eContainer.appendChild(eRow);
+        }
 
         // it is important we put items in in order, so that when we open a row group,
         // the new rows are inserted after the opened group, but before the rows below.

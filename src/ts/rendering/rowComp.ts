@@ -1093,7 +1093,7 @@ export class RowComp extends BeanStub {
 
         this.addDomData(eRow);
 
-        rowContainerComp.appendRowElement(eRow, eElementBefore);
+        rowContainerComp.appendRowElement(eRow, eElementBefore, ensureDomOrder);
 
         this.eAllRowContainers.push(eRow);
 
