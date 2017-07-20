@@ -2,8 +2,8 @@ import {FrameworkComponentWrapper} from "./componentProvider";
 import {IComponent} from "./interfaces/iComponent";
 
 export interface WrapableInterface {
-    hasMethod(name: string): Function
-    callMethod(name: string, args: IArguments): Function
+    hasMethod(name: string): boolean
+    callMethod(name: string, args: IArguments): void
     addMethod(name:string, callback:Function): void
 }
 
@@ -12,12 +12,12 @@ export abstract class BaseComponentWrapper<F extends WrapableInterface> implemen
     wrap<A extends IComponent<any>>(OriginalConstructor: { new (): any }, mandatoryMethodList: string[], optionalMethodList?: string[]): A {
         let wrapper: F = this.createWrapper(OriginalConstructor);
         mandatoryMethodList.forEach((methodName => {
-            this.getOrCreateMethod(wrapper, methodName, true);
+            this.createMethod(wrapper, methodName, true);
         }));
 
         if (optionalMethodList) {
             optionalMethodList.forEach((methodName => {
-                this.getOrCreateMethod(wrapper, methodName, false);
+                this.createMethod(wrapper, methodName, false);
             }));
         }
 
@@ -29,7 +29,7 @@ export abstract class BaseComponentWrapper<F extends WrapableInterface> implemen
     abstract createWrapper(OriginalConstructor: { new (): any }): F;
 
 
-    private getOrCreateMethod(wrapper: F, methodName: string, mandatory: boolean): void{
+    private createMethod(wrapper: F, methodName: string, mandatory: boolean): void{
         wrapper.addMethod(methodName, this.createMethodProxy(wrapper, methodName, mandatory));
     }
 
