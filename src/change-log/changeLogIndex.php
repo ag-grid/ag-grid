@@ -60,7 +60,8 @@ include '../documentation-main/documentation_header.php';
         <li>AG-624: 'select' editor, when you select a value, was closing 'full row edit'. Now select works fine with 'full row edit'.</li>
         <li>AG-625: Now Enterprise Row Model works with complex objects (eg valueGetters and fields with dot notation).</li>
         <li>AG-593: Added missing exports to exports.ts</li>
-        <li>AG-628: Bugfix: Enterprise Data Source can now be set as a grid property (prviously API had to be used).</li>
+        <li>AG-628: Bugfix: Enterprise Data Source can now be set as a grid property (previously API had to be used).</li>
+        <li>AG-629: Bugfix: Row order now maintained when using ag-Grid Enterprise and inserting with transaction using 'addIndex'.</li>
     </ul>
 
     <p>
