@@ -252,3 +252,5 @@ var logger_2 = require("./dist/lib/logger");
 exports.LoggerFactory = logger_2.LoggerFactory;
 var columnController_2 = require("./dist/lib/columnController/columnController");
 exports.ColumnApi = columnController_2.ColumnApi;
+var baseComponentWrapper_1 = require("./dist/lib/baseComponentWrapper");
+exports.BaseComponentWrapper = baseComponentWrapper_1.BaseComponentWrapper;
