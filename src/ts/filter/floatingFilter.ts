@@ -156,7 +156,15 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
 
         let rawDate:Date = this.dateComponent.getDate();
         if (!rawDate || typeof rawDate.getMonth !== 'function'){
-            this.onFloatingFilterChanged(null);
+            this.onFloatingFilterChanged({
+                model:{
+                    type: parentModel.type,
+                    dateFrom: null,
+                    dateTo: null,
+                    filterType: 'date'
+                },
+                apply:true
+            });
             return;
         }
 
