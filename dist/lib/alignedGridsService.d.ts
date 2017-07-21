@@ -1,9 +1,9 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColumnChangeEvent } from "./columnChangeEvent";
 import { Column } from "./entities/column";
-export declare class MasterSlaveService {
+export declare class AlignedGridsService {
     private gridOptionsWrapper;
     private columnController;
     private gridPanel;

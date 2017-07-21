@@ -1,14 +1,19 @@
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ExpressionService} from "./expressionService";
-import {ColumnController} from "./columnController/columnController";
-import {ColDef, NewValueParams, ValueGetterParams} from "./entities/colDef";
-import {Autowired, Bean, PostConstruct} from "./context/context";
-import {RowNode} from "./entities/rowNode";
-import {Column} from "./entities/column";
-import {Utils as _} from "./utils";
-import {Events} from "./events";
-import {EventService} from "./eventService";
-import {GroupValueService} from "./groupValueService";
+import {ColumnController} from "../columnController/columnController";
+import {ColDef, NewValueParams, ValueGetterParams} from "../entities/colDef";
+import {Autowired, Bean, PostConstruct} from "../context/context";
+import {RowNode} from "../entities/rowNode";
+import {Column} from "../entities/column";
+import {_} from "../utils";
+import {Events} from "../events";
+import {EventService} from "../eventService";
+import {IRowModel} from "../interfaces/iRowModel";
+import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
+import {Constants} from "../constants";
+import {RowRenderer} from "../rendering/rowRenderer";
+import {ChangedPath} from "../rowModels/inMemory/changedPath";
+import {ValueCache} from "./valueCache";
 
 @Bean('valueService')
 export class ValueService {
@@ -17,7 +22,7 @@ export class ValueService {
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('groupValueService') private groupValueService: GroupValueService;
+    @Autowired('valueCache') private valueCache: ValueCache;
 
     private cellExpressions: boolean;
 
@@ -30,6 +35,8 @@ export class ValueService {
     }
 
     public getValue(column: Column, rowNode: RowNode, ignoreAggData = false): any {
+
+        // console.log(`turnActive = ${this.turnActive}`);
 
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
@@ -67,7 +74,7 @@ export class ValueService {
         return result;
     }
 
-    public setValue(rowNode: RowNode, colKey: string|ColDef|Column, newValue: any): void {
+    public setValue(rowNode: RowNode, colKey: string|Column, newValue: any): void {
         let column = this.columnController.getPrimaryColumn(colKey);
 
         if (!rowNode || !column) {
@@ -128,6 +135,8 @@ export class ValueService {
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
 
+        this.valueCache.onDataChanged();
+
         params.newValue = this.getValue(column, rowNode);
 
         if (typeof column.getColDef().onCellValueChanged === 'function') {
@@ -140,10 +149,7 @@ export class ValueService {
         // if no '.', then it's not a deep value
         let valuesAreSame: boolean;
         if (!isFieldContainsDots) {
-            valuesAreSame = _.valuesSimpleAndSame(data[field], newValue);
-            if (!valuesAreSame) {
-                data[field] = newValue;
-            }
+            data[field] = newValue;
         } else {
             // otherwise it is a deep value, so need to dig for it
             let fieldPieces = field.split('.');
@@ -151,10 +157,7 @@ export class ValueService {
             while (fieldPieces.length > 0 && currentObject) {
                 let fieldPiece = fieldPieces.shift();
                 if (fieldPieces.length === 0) {
-                    valuesAreSame = _.valuesSimpleAndSame(currentObject[fieldPiece], newValue);
-                    if (!valuesAreSame) {
-                        currentObject[fieldPiece] = newValue;
-                    }
+                    currentObject[fieldPiece] = newValue;
                 } else {
                     currentObject = currentObject[fieldPiece];
                 }
@@ -163,20 +166,34 @@ export class ValueService {
         return !valuesAreSame;
     }
 
-    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, node: RowNode): any {
+    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: RowNode): any {
+
+        let colId = column.getId();
+
+        // if inside the same turn, just return back the value we got last time
+        let valueFromCache = this.valueCache.getValue(rowNode, colId);
+
+        if (valueFromCache!==undefined) {
+            return valueFromCache;
+        }
 
         let params: ValueGetterParams = {
             data: data,
-            node: node,
+            node: rowNode,
             column: column,
             colDef: column.getColDef(),
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
-            getValue: this.getValueCallback.bind(this, node)
+            getValue: this.getValueCallback.bind(this, rowNode)
         };
 
-        return this.expressionService.evaluate(valueGetter, params);
+        let result = this.expressionService.evaluate(valueGetter, params);
+
+        // if a turn is active, store the value in case the grid asks for it again
+        this.valueCache.setValue(rowNode, colId, result);
+
+        return result;
     }
 
     private getValueCallback(node: RowNode, field: string): any {

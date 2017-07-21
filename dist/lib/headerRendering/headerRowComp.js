@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../widgets/component");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var columnGroup_1 = require("../entities/columnGroup");
 var columnController_1 = require("../columnController/columnController");
 var column_1 = require("../entities/column");
 var renderedHeaderCell_1 = require("./deprecated/renderedHeaderCell");
@@ -49,7 +48,7 @@ var HeaderRowComp = (function (_super) {
     __extends(HeaderRowComp, _super);
     function HeaderRowComp(dept, type, pinned, eRoot, dropTarget) {
         var _this = _super.call(this, "<div class=\"ag-header-row\" role=\"presentation\"/>") || this;
-        _this.headerElements = {};
+        _this.headerComps = {};
         _this.dept = dept;
         _this.type = type;
         _this.pinned = pinned;
@@ -59,25 +58,25 @@ var HeaderRowComp = (function (_super) {
     }
     HeaderRowComp.prototype.forEachHeaderElement = function (callback) {
         var _this = this;
-        Object.keys(this.headerElements).forEach(function (key) {
-            var headerElement = _this.headerElements[key];
+        Object.keys(this.headerComps).forEach(function (key) {
+            var headerElement = _this.headerComps[key];
             callback(headerElement);
         });
     };
     HeaderRowComp.prototype.destroy = function () {
-        var idsOfAllChildren = Object.keys(this.headerElements);
+        var idsOfAllChildren = Object.keys(this.headerComps);
         this.removeAndDestroyChildComponents(idsOfAllChildren);
         _super.prototype.destroy.call(this);
     };
     HeaderRowComp.prototype.removeAndDestroyChildComponents = function (idsToDestroy) {
         var _this = this;
         idsToDestroy.forEach(function (id) {
-            var child = _this.headerElements[id];
+            var child = _this.headerComps[id];
             _this.getGui().removeChild(child.getGui());
             if (child.destroy) {
                 child.destroy();
             }
-            delete _this.headerElements[id];
+            delete _this.headerComps[id];
         });
     };
     HeaderRowComp.prototype.onRowHeightChanged = function () {
@@ -138,7 +137,7 @@ var HeaderRowComp = (function (_super) {
         this.removeAndDestroyAllChildComponents();
     };
     HeaderRowComp.prototype.removeAndDestroyAllChildComponents = function () {
-        var idsOfAllChildren = Object.keys(this.headerElements);
+        var idsOfAllChildren = Object.keys(this.headerComps);
         this.removeAndDestroyChildComponents(idsOfAllChildren);
     };
     HeaderRowComp.prototype.onDisplayedColumnsChanged = function () {
@@ -147,27 +146,43 @@ var HeaderRowComp = (function (_super) {
     };
     HeaderRowComp.prototype.onVirtualColumnsChanged = function () {
         var _this = this;
-        var currentChildIds = Object.keys(this.headerElements);
+        var currentChildIds = Object.keys(this.headerComps);
         var itemsAtDepth = this.columnController.getVirtualHeaderGroupRow(this.pinned, this.type == HeaderRowType.FLOATING_FILTER ?
             this.dept - 1 :
             this.dept);
+        var ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        var eBefore;
         itemsAtDepth.forEach(function (child) {
-            var idOfChild = child.getUniqueId();
-            // if we already have this cell rendered, do nothing
-            if (currentChildIds.indexOf(idOfChild) >= 0) {
-                utils_1.Utils.removeFromArray(currentChildIds, idOfChild);
-                return;
-            }
             // skip groups that have no displayed children. this can happen when the group is broken,
             // and this section happens to have nothing to display for the open / closed state.
             // (a broken group is one that is split, ie columns in the group have a non-group column
             // in between them)
-            if (child instanceof columnGroup_1.ColumnGroup && child.getDisplayedChildren().length === 0) {
+            if (child.isEmptyGroup()) {
                 return;
             }
-            var renderedHeaderElement = _this.createHeaderElement(child);
-            _this.headerElements[idOfChild] = renderedHeaderElement;
-            _this.getGui().appendChild(renderedHeaderElement.getGui());
+            var idOfChild = child.getUniqueId();
+            var eParentContainer = _this.getGui();
+            // if we already have this cell rendered, do nothing
+            var colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
+            var headerComp;
+            if (colAlreadyInDom) {
+                utils_1.Utils.removeFromArray(currentChildIds, idOfChild);
+                headerComp = _this.headerComps[idOfChild];
+                if (ensureDomOrder) {
+                    utils_1.Utils.ensureDomOrder(eParentContainer, headerComp.getGui(), eBefore);
+                }
+            }
+            else {
+                headerComp = _this.createHeaderComp(child);
+                _this.headerComps[idOfChild] = headerComp;
+                if (ensureDomOrder) {
+                    utils_1.Utils.insertWithDomOrder(eParentContainer, headerComp.getGui(), eBefore);
+                }
+                else {
+                    eParentContainer.appendChild(headerComp.getGui());
+                }
+            }
+            eBefore = headerComp.getGui();
         });
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
         this.removeAndDestroyChildComponents(currentChildIds);
@@ -185,7 +200,7 @@ var HeaderRowComp = (function (_super) {
             this.gridOptionsWrapper.getHeaderCellRenderer()
         ]);
     };
-    HeaderRowComp.prototype.createHeaderElement = function (columnGroupChild) {
+    HeaderRowComp.prototype.createHeaderComp = function (columnGroupChild) {
         var result;
         switch (this.type) {
             case HeaderRowType.COLUMN:
@@ -224,11 +239,11 @@ var HeaderRowComp = (function (_super) {
     };
     HeaderRowComp.prototype.createFloatingFilterParams = function (column) {
         var _this = this;
-        /** We always get the freshest reference to the baseFilter because the filters get sometimes created
-         * and destroyed beetwen calls
-         *
-         *let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-         */
+        // We always get the freshest reference to the baseFilter because the filters get sometimes created
+        // and destroyed between calls
+        //
+        // let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+        //
         var baseParams = {
             column: column,
             currentParentModel: function () {
@@ -260,36 +275,36 @@ var HeaderRowComp = (function (_super) {
         };
         return baseParams;
     };
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], HeaderRowComp.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], HeaderRowComp.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], HeaderRowComp.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], HeaderRowComp.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('filterManager'),
+        __metadata("design:type", filterManager_1.FilterManager)
+    ], HeaderRowComp.prototype, "filterManager", void 0);
+    __decorate([
+        context_1.Autowired('componentProvider'),
+        __metadata("design:type", componentProvider_1.ComponentProvider)
+    ], HeaderRowComp.prototype, "componentProvider", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], HeaderRowComp.prototype, "init", null);
     return HeaderRowComp;
 }(component_1.Component));
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], HeaderRowComp.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], HeaderRowComp.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], HeaderRowComp.prototype, "context", void 0);
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], HeaderRowComp.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('filterManager'),
-    __metadata("design:type", filterManager_1.FilterManager)
-], HeaderRowComp.prototype, "filterManager", void 0);
-__decorate([
-    context_1.Autowired('componentProvider'),
-    __metadata("design:type", componentProvider_1.ComponentProvider)
-], HeaderRowComp.prototype, "componentProvider", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], HeaderRowComp.prototype, "init", null);
 exports.HeaderRowComp = HeaderRowComp;

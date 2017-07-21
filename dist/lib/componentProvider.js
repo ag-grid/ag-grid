@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -233,35 +233,35 @@ var ComponentProvider = (function () {
         };
         return this.createAgGridComponent(column.getColDef(), "floatingFilterWrapperComponent", "emptyFloatingFilterWrapperComponent", floatingFilterWrapperComponentParams);
     };
+    __decorate([
+        context_1.Autowired("gridOptions"),
+        __metadata("design:type", Object)
+    ], ComponentProvider.prototype, "gridOptions", void 0);
+    __decorate([
+        context_1.Autowired("gridOptionsWrapper"),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], ComponentProvider.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('filterManager'),
+        __metadata("design:type", filterManager_1.FilterManager)
+    ], ComponentProvider.prototype, "filterManager", void 0);
+    __decorate([
+        context_1.Autowired("context"),
+        __metadata("design:type", context_1.Context)
+    ], ComponentProvider.prototype, "context", void 0);
+    __decorate([
+        context_1.Optional("frameworkComponentWrapper"),
+        __metadata("design:type", Object)
+    ], ComponentProvider.prototype, "frameworkComponentWrapper", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ComponentProvider.prototype, "postContruct", null);
+    ComponentProvider = __decorate([
+        context_1.Bean('componentProvider')
+    ], ComponentProvider);
     return ComponentProvider;
 }());
-__decorate([
-    context_1.Autowired("gridOptions"),
-    __metadata("design:type", Object)
-], ComponentProvider.prototype, "gridOptions", void 0);
-__decorate([
-    context_1.Autowired("gridOptionsWrapper"),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], ComponentProvider.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('filterManager'),
-    __metadata("design:type", filterManager_1.FilterManager)
-], ComponentProvider.prototype, "filterManager", void 0);
-__decorate([
-    context_1.Autowired("context"),
-    __metadata("design:type", context_1.Context)
-], ComponentProvider.prototype, "context", void 0);
-__decorate([
-    context_1.Optional("frameworkComponentWrapper"),
-    __metadata("design:type", Object)
-], ComponentProvider.prototype, "frameworkComponentWrapper", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], ComponentProvider.prototype, "postContruct", null);
-ComponentProvider = __decorate([
-    context_1.Bean('componentProvider')
-], ComponentProvider);
 exports.ComponentProvider = ComponentProvider;

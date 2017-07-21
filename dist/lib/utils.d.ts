@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -38,6 +38,7 @@ export declare class Utils {
     static serializeDateToYyyyMmDd(date: Date, separator: string): string;
     static pad(num: number, totalStringSize: number): string;
     static pushAll(target: any[], source: any[]): void;
+    static createArrayOfNumbers(first: number, last: number): number[];
     static getFunctionParameters(func: any): any;
     static find<T>(collection: T[] | {
         [id: string]: T;
@@ -48,7 +49,6 @@ export declare class Utils {
     static isElement(o: any): boolean;
     static isNodeOrElement(o: any): boolean;
     static isEventFromPrintableCharacter(event: KeyboardEvent): boolean;
-    static valuesSimpleAndSame(val1: any, val2: any): boolean;
     static addChangeListener(element: HTMLElement, listener: EventListener): void;
     static makeNull(value: any): any;
     static missing(value: any): boolean;
@@ -82,6 +82,8 @@ export declare class Utils {
     static moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number): void;
     static defaultComparator(valueA: any, valueB: any, accentedCompare?: boolean): number;
     static compareArrays(array1: any[], array2: any[]): boolean;
+    static ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
+    static insertWithDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
     static toStringOrNull(value: any): string;
     static formatWidth(width: number | string): string;
     static formatNumberTwoDecimalPlacesAndCommas(value: number): string;
@@ -220,10 +222,15 @@ export declare class Utils {
      * https://stackoverflow.com/questions/24004791/can-someone-explain-the-debounce-function-in-javascript
      */
     static debounce(func: () => void, wait: number, immediate?: boolean): () => void;
+    static executeInAWhile(funcs: Function[]): void;
+    static executeNextVMTurn(funcs: Function[]): void;
+    static executeAfter(funcs: Function[], millis: number): void;
     static referenceCompare(left: any, right: any): boolean;
     static get(source: {
         [p: string]: any;
     }, expression: string, defaultValue: any): any;
+    static passiveEvents: string[];
+    static addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void): void;
 }
 export declare class NumberSequence {
     private nextValue;

@@ -2,6 +2,7 @@
 import {IEventEmitter} from "../interfaces/iEventEmitter";
 import {EventService} from "../eventService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {_} from "../utils";
 
 export class BeanStub implements IEventEmitter {
 
@@ -39,7 +40,7 @@ export class BeanStub implements IEventEmitter {
 
     public addDestroyableEventListener(eElement: HTMLElement|IEventEmitter|GridOptionsWrapper, event: string, listener: (event?: any)=>void): void {
         if (eElement instanceof HTMLElement) {
-            (<HTMLElement>eElement).addEventListener(event, listener);
+            _.addSafePassiveEventListener((<HTMLElement>eElement), event, listener)
         } else if (eElement instanceof GridOptionsWrapper) {
             (<GridOptionsWrapper>eElement).addEventListener(event, listener);
         } else {

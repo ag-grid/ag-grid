@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,7 +23,7 @@ var ImmutableService = (function () {
     function ImmutableService() {
     }
     ImmutableService.prototype.postConstruct = function () {
-        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
+        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             this.inMemoryRowModel = this.rowModel;
         }
     };
@@ -75,23 +75,23 @@ var ImmutableService = (function () {
         });
         return transaction;
     };
+    __decorate([
+        context_1.Autowired('rowModel'),
+        __metadata("design:type", Object)
+    ], ImmutableService.prototype, "rowModel", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], ImmutableService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ImmutableService.prototype, "postConstruct", null);
+    ImmutableService = __decorate([
+        context_1.Bean('immutableService')
+    ], ImmutableService);
     return ImmutableService;
 }());
-__decorate([
-    context_1.Autowired('rowModel'),
-    __metadata("design:type", Object)
-], ImmutableService.prototype, "rowModel", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], ImmutableService.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], ImmutableService.prototype, "postConstruct", null);
-ImmutableService = __decorate([
-    context_1.Bean('immutableService')
-], ImmutableService);
 exports.ImmutableService = ImmutableService;

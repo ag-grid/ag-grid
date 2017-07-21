@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -100,27 +100,27 @@ var HeaderGroupComp = (function (_super) {
             eInnerText.innerHTML = this.params.displayName;
         }
     };
+    HeaderGroupComp.TEMPLATE = "<div class=\"ag-header-group-cell-label\">" +
+        "<span ref=\"agLabel\" class=\"ag-header-group-text\"></span>" +
+        "<span ref=\"agOpened\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded\"></span>" +
+        "<span ref=\"agClosed\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed\"></span>" +
+        "</div>";
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], HeaderGroupComp.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], HeaderGroupComp.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('agOpened'),
+        __metadata("design:type", HTMLElement)
+    ], HeaderGroupComp.prototype, "eOpenIcon", void 0);
+    __decorate([
+        componentAnnotations_1.RefSelector('agClosed'),
+        __metadata("design:type", HTMLElement)
+    ], HeaderGroupComp.prototype, "eCloseIcon", void 0);
     return HeaderGroupComp;
 }(component_1.Component));
-HeaderGroupComp.TEMPLATE = "<div class=\"ag-header-group-cell-label\">" +
-    "<span ref=\"agLabel\" class=\"ag-header-group-text\"></span>" +
-    "<span ref=\"agOpened\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded\"></span>" +
-    "<span ref=\"agClosed\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed\"></span>" +
-    "</div>";
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], HeaderGroupComp.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], HeaderGroupComp.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('agOpened'),
-    __metadata("design:type", HTMLElement)
-], HeaderGroupComp.prototype, "eOpenIcon", void 0);
-__decorate([
-    componentAnnotations_1.RefSelector('agClosed'),
-    __metadata("design:type", HTMLElement)
-], HeaderGroupComp.prototype, "eCloseIcon", void 0);
 exports.HeaderGroupComp = HeaderGroupComp;

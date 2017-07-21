@@ -6,10 +6,8 @@ import {ColumnController} from "./columnController/columnController";
 import {SelectionController} from "./selectionController";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {GridPanel} from "./gridPanel/gridPanel";
-import {ValueService} from "./valueService";
-import {MasterSlaveService} from "./masterSlaveService";
+import {ValueService} from "./valueService/valueService";
 import {EventService} from "./eventService";
-import {FloatingRowModel} from "./rowModels/floatingRowModel";
 import {ColDef, ColGroupDef, IAggFunc} from "./entities/colDef";
 import {RowNode} from "./entities/rowNode";
 import {Constants} from "./constants";
@@ -38,13 +36,27 @@ import {PaginationProxy} from "./rowModels/paginationProxy";
 import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
 import {InMemoryRowModel, RefreshModelParams, RowDataTransaction} from "./rowModels/inMemory/inMemoryRowModel";
 import {ImmutableService} from "./rowModels/inMemory/immutableService";
+import {ValueCache} from "./valueService/valueCache";
+import {AlignedGridsService} from "./alignedGridsService";
+import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 
 
 export interface StartEditingCellParams {
     rowIndex: number;
-    colKey: string|Column|ColDef;
+    colKey: string|Column;
     keyPress?: number;
     charPress?: string;
+}
+
+export interface RefreshCellsParams {
+    volatile?: boolean;
+    rowNodes?: RowNode[];
+    columns?: (string|Column)[];
+    force?: boolean;
+}
+
+export interface RedrawRowsParams {
+    rowNodes?: RowNode[];
 }
 
 @Bean('gridApi')
@@ -62,9 +74,9 @@ export class GridApi {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridPanel') private gridPanel: GridPanel;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('masterSlaveService') private masterSlaveService: MasterSlaveService;
+    @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('context') private context: Context;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('sortController') private sortController: SortController;
@@ -76,6 +88,7 @@ export class GridApi {
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
+    @Autowired('valueCache') private valueCache: ValueCache;
 
     private inMemoryRowModel: InMemoryRowModel;
     private infinitePageRowModel: InfiniteRowModel;
@@ -84,7 +97,7 @@ export class GridApi {
     @PostConstruct
     private init(): void {
         switch (this.rowModel.getType()) {
-            case Constants.ROW_MODEL_TYPE_NORMAL:
+            case Constants.ROW_MODEL_TYPE_IN_MEMORY:
                 this.inMemoryRowModel = <InMemoryRowModel> this.rowModel;
                 break;
             case Constants.ROW_MODEL_TYPE_INFINITE:
@@ -97,16 +110,8 @@ export class GridApi {
     }
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    public __getMasterSlaveService(): MasterSlaveService {
-        return this.masterSlaveService;
-    }
-
-    public getFirstRenderedRow(): number {
-        return this.rowRenderer.getFirstVirtualRenderedRow();
-    }
-
-    public getLastRenderedRow(): number {
-        return this.rowRenderer.getLastVirtualRenderedRow();
+    public __getAlignedGridService(): AlignedGridsService {
+        return this.alignedGridsService;
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {
@@ -162,76 +167,139 @@ export class GridApi {
                 this.inMemoryRowModel.updateRowData(transaction);
             } else {
                 this.selectionController.reset();
-                this.inMemoryRowModel.setRowData(rowData, true);
+                this.inMemoryRowModel.setRowData(rowData);
             }
         } else {
             console.log('cannot call setRowData unless using normal row model');
         }
     }
 
+    // DEPRECATED
     public setFloatingTopRowData(rows: any[]): void {
-        this.floatingRowModel.setFloatingTopRowData(rows);
+        console.warn('ag-Grid: since v12, api.setFloatingTopRowData() is now api.setPinnedTopRowData()');
+        this.setPinnedTopRowData(rows);
     }
 
+    // DEPRECATED
     public setFloatingBottomRowData(rows: any[]): void {
-        this.floatingRowModel.setFloatingBottomRowData(rows);
+        console.warn('ag-Grid: since v12, api.setFloatingBottomRowData() is now api.setPinnedBottomRowData()');
+        this.setPinnedBottomRowData(rows);
     }
 
+    // DEPRECATED
     public getFloatingTopRowCount(): number {
-        return this.floatingRowModel.getFloatingTopRowCount();
+        console.warn('ag-Grid: since v12, api.getFloatingTopRowCount() is now api.getPinnedTopRowCount()');
+        return this.getPinnedTopRowCount();
     }
 
+    // DEPRECATED
     public getFloatingBottomRowCount(): number {
-        return this.floatingRowModel.getFloatingBottomRowCount();
+        console.warn('ag-Grid: since v12, api.getFloatingBottomRowCount() is now api.getPinnedBottomRowCount()');
+        return this.getPinnedBottomRowCount();
     }
 
+    // DEPRECATED
     public getFloatingTopRow(index: number): RowNode {
-        return this.floatingRowModel.getFloatingTopRow(index);
+        console.warn('ag-Grid: since v12, api.getFloatingTopRow() is now api.getPinnedTopRow()');
+        return this.getPinnedTopRow(index);
     }
 
+    // DEPRECATED
     public getFloatingBottomRow(index: number): RowNode {
-        return this.floatingRowModel.getFloatingBottomRow(index);
+        console.warn('ag-Grid: since v12, api.getFloatingBottomRow() is now api.getPinnedBottomRow()');
+        return this.getPinnedBottomRow(index);
+    }
+
+    public setPinnedTopRowData(rows: any[]): void {
+        this.pinnedRowModel.setPinnedTopRowData(rows);
+    }
+
+    public setPinnedBottomRowData(rows: any[]): void {
+        this.pinnedRowModel.setPinnedBottomRowData(rows);
+    }
+
+    public getPinnedTopRowCount(): number {
+        return this.pinnedRowModel.getPinnedTopRowCount();
+    }
+
+    public getPinnedBottomRowCount(): number {
+        return this.pinnedRowModel.getPinnedBottomRowCount();
+    }
+
+    public getPinnedTopRow(index: number): RowNode {
+        return this.pinnedRowModel.getPinnedTopRow(index);
+    }
+
+    public getPinnedBottomRow(index: number): RowNode {
+        return this.pinnedRowModel.getPinnedBottomRow(index);
     }
 
     public setColumnDefs(colDefs: (ColDef|ColGroupDef)[]) {
         this.columnController.setColumnDefs(colDefs);
     }
 
+    public expireValueCache(): void {
+        this.valueCache.expire();
+    }
+
     public getVerticalPixelRange(): any {
         return this.gridPanel.getVerticalPixelRange();
     }
 
+    public refreshCells(params: RefreshCellsParams = {}): void {
+        if (Array.isArray(params)) {
+            // the old version of refreshCells() took an array of rowNodes for the first argument
+            console.warn('since ag-Grid v11.1, refreshCells() now takes parameters, please see the documentation.');
+            return;
+        }
+        this.rowRenderer.refreshCells(params);
+    }
+
+    public redrawRows(params: RedrawRowsParams = {}): void {
+        if (params && params.rowNodes) {
+            this.rowRenderer.redrawRows(params.rowNodes);
+        } else {
+            this.rowRenderer.redrawAfterModelUpdate();
+        }
+    }
+
+    // *** deprecated
+    public refreshView() {
+        console.warn('ag-Grid: since v11.1, refreshView() is deprecated, please call redrawRows() instead');
+        this.redrawRows();
+    }
+
+    // *** deprecated
     public refreshRows(rowNodes: RowNode[]): void {
-        this.rowRenderer.refreshRows(rowNodes);
+        console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) or redrawRows({rowNodes: rows}) instead');
+        this.refreshCells({rowNodes: rowNodes});
     }
 
-    public refreshCells(rowNodes: RowNode[], cols: (string|ColDef|Column)[], animate = false): void {
-        this.rowRenderer.refreshCells(rowNodes, cols, animate);
-    }
-
+    // *** deprecated
     public rowDataChanged(rows:any) {
         console.log('ag-Grid: rowDataChanged is deprecated, either call refreshView() to refresh everything, or call rowNode.setRowData(newData) to set value on a particular node')
-        this.refreshView();
+        this.redrawRows();
     }
 
-    public refreshView() {
-        this.rowRenderer.refreshView();
+    // *** deprecated
+    public softRefreshView() {
+        console.warn('ag-Grid: since v11.1, softRefreshView() is deprecated, call refreshCells(params) instead.');
+        this.refreshCells({volatile: true});
+    }
+
+    // *** deprecated
+    public refreshGroupRows() {
+        console.warn('ag-Grid: since v11.1, refreshGroupRows() is no longer supported, call refreshCells() instead. ' +
+            'Because refreshCells() now does dirty checking, it will only refresh cells that have changed, so it should ' +
+            'not be necessary to only refresh the group rows.');
+        this.refreshCells();
     }
 
     public setFunctionsReadOnly(readOnly: boolean) {
         this.gridOptionsWrapper.setProperty('functionsReadOnly', readOnly);
     }
 
-    public softRefreshView() {
-        this.rowRenderer.softRefreshView();
-    }
-
-    public refreshGroupRows() {
-        this.rowRenderer.refreshGroupRows();
-    }
-
     public refreshHeader() {
-        // need to review this - the refreshHeader should also refresh all icons in the header
         this.headerRenderer.refreshHeader();
     }
 
@@ -434,7 +502,7 @@ export class GridApi {
         console.warn('ag-Grid: ensureColIndexVisible(index) no longer supported, use ensureColumnVisible(colKey) instead.');
     }
 
-    public ensureColumnVisible(key: string|Column|ColDef) {
+    public ensureColumnVisible(key: string|Column) {
         this.gridPanel.ensureColumnVisible(key);
     }
 
@@ -447,7 +515,7 @@ export class GridApi {
     }
 
     public forEachLeafNode(callback: (rowNode: RowNode)=>void ) {
-        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call forEachNodeAfterFilter unless using normal row model') }
+        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call forEachNode unless using normal row model') }
         this.inMemoryRowModel.forEachLeafNode(callback);
     }
 
@@ -470,26 +538,26 @@ export class GridApi {
         return this.getFilterInstance(colDef);
     }
 
-    public getFilterInstance(key: string|Column|ColDef): IFilterComp {
+    public getFilterInstance(key: string|Column): IFilterComp {
         let column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return this.filterManager.getFilterComponent(column);
         }
     }
 
-    public getFilterApi(key: string|Column|ColDef) {
+    public getFilterApi(key: string|Column) {
         console.warn('ag-Grid: getFilterApi is deprecated, use getFilterInstance instead');
         return this.getFilterInstance(key);
     }
 
-    public destroyFilter(key: string|Column|ColDef) {
+    public destroyFilter(key: string|Column) {
         let column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return this.filterManager.destroyFilter(column);
         }
     }
 
-    public getColumnDef(key: string|Column|ColDef) {
+    public getColumnDef(key: string|Column) {
         let column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
@@ -530,7 +598,7 @@ export class GridApi {
         return this.focusedCellController.clearFocusedCell();
     }
 
-    public setFocusedCell(rowIndex: number, colKey: Column|ColDef|string, floating?: string) {
+    public setFocusedCell(rowIndex: number, colKey: string|Column, floating?: string) {
         this.focusedCellController.setFocusedCell(rowIndex, colKey, floating, true);
     }
 
@@ -587,7 +655,7 @@ export class GridApi {
         }
     }
 
-    public getValue(colKey: string|ColDef|Column, rowNode: RowNode): any {
+    public getValue(colKey: string|Column, rowNode: RowNode): any {
         let column = this.columnController.getPrimaryColumn(colKey);
         if (_.missing(column)) {
             column = this.columnController.getGridColumn(colKey);
@@ -648,7 +716,7 @@ export class GridApi {
         this.rangeController.clearSelection();
     }
 
-    public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string|Column|ColDef)[]): void {
+    public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string|Column)[]): void {
         if (!this.clipboardService) { console.warn('ag-Grid: clipboard is only available in ag-Grid Enterprise'); }
         this.clipboardService.copySelectedRowsToClipboard(includeHeader, columnKeys);
     }
@@ -663,12 +731,12 @@ export class GridApi {
         this.clipboardService.copyRangeDown();
     }
 
-    public showColumnMenuAfterButtonClick(colKey: string|Column|ColDef, buttonElement: HTMLElement): void {
+    public showColumnMenuAfterButtonClick(colKey: string|Column, buttonElement: HTMLElement): void {
         let column = this.columnController.getPrimaryColumn(colKey);
         this.menuFactory.showMenuAfterButtonClick(column, buttonElement);
     }
 
-    public showColumnMenuAfterMouseClick(colKey: string|Column|ColDef, mouseEvent: MouseEvent|Touch): void {
+    public showColumnMenuAfterMouseClick(colKey: string|Column, mouseEvent: MouseEvent|Touch): void {
         let column = this.columnController.getPrimaryColumn(colKey);
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     }
@@ -718,10 +786,18 @@ export class GridApi {
     public updateRowData(rowDataTransaction: RowDataTransaction): void {
         if (this.inMemoryRowModel) {
             this.inMemoryRowModel.updateRowData(rowDataTransaction);
+            if (!this.gridOptionsWrapper.isSuppressChangeDetection()) {
+                this.rowRenderer.refreshCells();
+            }
         } else if (this.infinitePageRowModel) {
             this.infinitePageRowModel.updateRowData(rowDataTransaction);
         } else {
             console.error('ag-Grid: updateRowData() only works with InMemoryRowModel and InfiniteRowModel.');
+        }
+
+        // do change detection for all present cells
+        if (!this.gridOptionsWrapper.isSuppressChangeDetection()) {
+            this.rowRenderer.refreshCells();
         }
     }
 
@@ -841,6 +917,14 @@ export class GridApi {
 
     public checkGridSize(): void {
         this.gridPanel.setBodyAndHeaderHeights();
+    }
+
+    public getFirstDisplayedRow(): number {
+        return this.rowRenderer.getFirstVirtualRenderedRow();
+    }
+
+    public getLastDisplayedRow(): number {
+        return this.rowRenderer.getLastVirtualRenderedRow();
     }
 
     public getDisplayedRowAtIndex(index: number): RowNode {

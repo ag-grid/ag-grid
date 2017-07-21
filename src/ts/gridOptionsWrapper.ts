@@ -120,9 +120,6 @@ export class GridOptionsWrapper {
             console.warn('ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don\'t ask us how to us these together on our support forum either you will get the same answer!');
         }
 
-        if (this.isForPrint() && this.isAutoHeight()) {
-            console.warn('ag-Grid: properties forPrint and autoHeight do not work with each other, please pick only one.')
-        }
     }
 
     private setupFrameworkComponents(): void {
@@ -167,7 +164,7 @@ export class GridOptionsWrapper {
     public isRowModelInfinite() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_INFINITE; }
     public isRowModelViewport() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT; }
     public isRowModelEnterprise() { return this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_ENTERPRISE; }
-    public isRowModelDefault() { return _.missing(this.gridOptions.rowModelType) || this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_NORMAL; }
+    public isRowModelDefault() { return _.missing(this.gridOptions.rowModelType) || this.gridOptions.rowModelType === Constants.ROW_MODEL_TYPE_IN_MEMORY; }
 
     public isFullRowEdit() { return this.gridOptions.editType === 'fullRow'; }
     public isSuppressFocusAfterRefresh() { return isTrue(this.gridOptions.suppressFocusAfterRefresh); }
@@ -211,11 +208,12 @@ export class GridOptionsWrapper {
     public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }
     public isSuppressNoRowsOverlay() { return isTrue(this.gridOptions.suppressNoRowsOverlay); }
     public isSuppressFieldDotNotation() { return isTrue(this.gridOptions.suppressFieldDotNotation); }
-    public getFloatingTopRowData(): any[] { return this.gridOptions.floatingTopRowData; }
-    public getFloatingBottomRowData(): any[] { return this.gridOptions.floatingBottomRowData; }
+    public getPinnedTopRowData(): any[] { return this.gridOptions.pinnedTopRowData; }
+    public getPinnedBottomRowData(): any[] { return this.gridOptions.pinnedBottomRowData; }
     public isFunctionsPassive() { return isTrue(this.gridOptions.functionsPassive); }
     public isSuppressRowHoverClass() { return isTrue(this.gridOptions.suppressRowHoverClass); }
     public isSuppressTabbing() { return isTrue(this.gridOptions.suppressTabbing); }
+    public isSuppressChangeDetection() { return isTrue(this.gridOptions.suppressChangeDetection); }
 
     public getQuickFilterText(): string { return this.gridOptions.quickFilterText; }
     public isCacheQuickFilter() { return isTrue(this.gridOptions.cacheQuickFilter); }
@@ -240,7 +238,7 @@ export class GridOptionsWrapper {
     public getApi(): GridApi { return this.gridOptions.api; }
     public getColumnApi(): ColumnApi { return this.gridOptions.columnApi; }
     public isDeltaRowDataMode() { return isTrue(this.gridOptions.deltaRowDataMode); }
-    public isEnforceRowDomOrder() { return isTrue(this.gridOptions.enforceRowDomOrder); }
+    public isEnsureDomOrder() { return isTrue(this.gridOptions.ensureDomOrder); }
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
     public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }
@@ -255,7 +253,6 @@ export class GridOptionsWrapper {
     public getCacheBlockSize(): number { return this.gridOptions.cacheBlockSize; }
     public getInfiniteInitialRowCount(): number { return this.gridOptions.infiniteInitialRowCount; }
     public isPurgeClosedRowNodes() { return isTrue(this.gridOptions.purgeClosedRowNodes); }
-    public getPaginationStartPage(): number { return this.gridOptions.paginationStartPage; }
     public isSuppressPaginationPanel() { return isTrue(this.gridOptions.suppressPaginationPanel); }
 
     public getRowData(): any[] { return this.gridOptions.rowData; }
@@ -270,6 +267,7 @@ export class GridOptionsWrapper {
     public isAngularCompileHeaders() { return isTrue(this.gridOptions.angularCompileHeaders); }
     public isDebug() { return isTrue(this.gridOptions.debug); }
     public getColumnDefs() { return this.gridOptions.columnDefs; }
+    public getColumnTypes() { return this.gridOptions.columnTypes; }
     public getDatasource(): IDatasource { return this.gridOptions.datasource; }
     public getViewportDatasource(): IViewportDatasource { return this.gridOptions.viewportDatasource; }
     public getEnterpriseDatasource(): IEnterpriseDatasource { return this.gridOptions.enterpriseDatasource; }
@@ -294,7 +292,7 @@ export class GridOptionsWrapper {
     public isSuppressMovableColumns() { return isTrue(this.gridOptions.suppressMovableColumns); }
     public isAnimateRows() {
         // never allow animating if enforcing the row order
-        if (this.isEnforceRowDomOrder()) { return false; }
+        if (this.isEnsureDomOrder()) { return false; }
         return isTrue(this.gridOptions.animateRows);
     }
     public isSuppressColumnMoveAnimation() { return isTrue(this.gridOptions.suppressColumnMoveAnimation); }
@@ -307,13 +305,14 @@ export class GridOptionsWrapper {
     public getAggFuncs(): {[key: string]: IAggFunc} { return this.gridOptions.aggFuncs; }
     public getIsScrollLag() { return this.gridOptions.isScrollLag; }
     public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
-    public getSlaveGrids(): GridOptions[] { return this.gridOptions.slaveGrids; }
+    public getAlignedGrids(): GridOptions[] { return this.gridOptions.alignedGrids; }
     public getGroupRowRendererParams() { return this.gridOptions.groupRowRendererParams; }
     public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
     public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
     public isSuppressAutoSize() { return isTrue(this.gridOptions.suppressAutoSize); }
     public isSuppressParentsInRowNodes() { return isTrue(this.gridOptions.suppressParentsInRowNodes); }
     public isEnableStatusBar() { return isTrue(this.gridOptions.enableStatusBar); }
+    public isAlwaysShowStatusBar() { return isTrue(this.gridOptions.alwaysShowStatusBar); }
     public isFunctionsReadOnly() { return isTrue(this.gridOptions.functionsReadOnly); }
     public isFloatingFilter(): boolean { return this.gridOptions.floatingFilter; }
     // public isFloatingFilter(): boolean { return true; }
@@ -331,6 +330,10 @@ export class GridOptionsWrapper {
     public getRowNodeIdFunc(): GetRowNodeIdFunc { return this.gridOptions.getRowNodeId; }
     public getNavigateToNextCellFunc(): (params: NavigateToNextCellParams)=>GridCellDef { return this.gridOptions.navigateToNextCell; }
     public getTabToNextCellFunc(): (params: TabToNextCellParams)=>GridCellDef { return this.gridOptions.tabToNextCell; }
+
+    public isValueCache(): boolean { return isTrue(this.gridOptions.valueCache); }
+    public isValueCacheNeverExpires(): boolean { return isTrue(this.gridOptions.valueCacheNeverExpires); }
+    public isAggregateOnlyChangedColumns(): boolean { return isTrue(this.gridOptions.aggregateOnlyChangedColumns); }
 
     public getProcessSecondaryColDefFunc(): (colDef: ColDef)=>void { return this.gridOptions.processSecondaryColDef; }
     public getProcessSecondaryColGroupDefFunc(): (colGroupDef: ColGroupDef)=>void { return this.gridOptions.processSecondaryColGroupDef; }
@@ -516,9 +519,6 @@ export class GridOptionsWrapper {
         if (options.groupKeys) {
             console.warn('ag-grid: as of v3 groupKeys is not used. You need to set rowGroupIndex on the columns to group. Please refer to the documentation');
         }
-        if (options.ready || options.onReady) {
-            console.warn('ag-grid: as of v3.3 ready event is now called gridReady, so the callback should be onGridReady');
-        }
         if (typeof options.groupDefaultExpanded === 'boolean') {
             console.warn('ag-grid: groupDefaultExpanded can no longer be boolean. for groupDefaultExpanded=true, use groupDefaultExpanded=9999 instead, to expand all the groups');
         }
@@ -542,7 +542,7 @@ export class GridOptionsWrapper {
             console.warn('ag-grid: since version 9.0.x infinitePageSize is now called cacheBlockSize');
         }
         if (options.infiniteBlockSize) {
-            console.warn('ag-grid: since version 10.0.x infinitePageSize is now called cacheBlockSize');
+            console.warn('ag-grid: since version 10.0.x infiniteBlockSize is now called cacheBlockSize');
         }
         if (options.maxPagesInCache) {
             console.warn('ag-grid: since version 10.0.x maxPagesInCache is now called maxBlocksInCache');
@@ -563,10 +563,22 @@ export class GridOptionsWrapper {
             console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['columnsMenuTab'] instead of suppressMenuColumnPanel=true`);
         }
         if (options.suppressUseColIdForGroups) {
-            console.warn(`ag-grid: since version 11.0.x suppressUseColIdForGroups is not in use anymore. You should be able to remove it from your definition`);
+            console.warn(`ag-grid: since version 11.0.x, this is not in use anymore. You should be able to remove it from your definition`);
         }
         if (options.groupColumnDef) {
-            console.warn(`ag-grid: since version 11.0.x, groupColumnDef has been renamed, this property is now called autoColumnGroupDef. Please change your configuration accordingly`);
+            console.warn(`ag-grid: since version 11.0.x, groupColumnDef has been renamed, this property is now called autoGroupColumnDef. Please change your configuration accordingly`);
+        }
+        if (options.slaveGrids) {
+            console.warn(`ag-grid: since version 12.x, slaveGrids has been renamed, this property is now called alignedGrids. Please change your configuration accordingly`);
+        }
+        if (options.floatingTopRowData) {
+            console.warn(`ag-grid: since version 12.x, floatingTopRowData is now called pinnedTopRowData`);
+        }
+        if (options.floatingBottomRowData) {
+            console.warn(`ag-grid: since version 12.x, floatingBottomRowData is now called pinnedBottomRowData`);
+        }
+        if (options.paginationStartPage) {
+            console.warn(`ag-grid: since version 12.x, paginationStartPage is gone, please call api.paginationGoToPage(${options.paginationStartPage}) instead.`);
         }
     }
 
@@ -609,7 +621,7 @@ export class GridOptionsWrapper {
     public getRowHeightForNode(rowNode: RowNode): number {
         // check the function first, in case use set both function and
         // number, when using virtual pagination then function can be
-        // used for floating rows and the number for the body rows.
+        // used for pinned rows and the number for the body rows.
         if (typeof this.gridOptions.getRowHeight === 'function') {
             let params = {
                 node: rowNode,
@@ -623,6 +635,10 @@ export class GridOptionsWrapper {
         } else {
             return DEFAULT_ROW_HEIGHT;
         }
+    }
+
+    public isDynamicRowHeight(): boolean {
+        return typeof this.gridOptions.getRowHeight === 'function';
     }
 
     private isNumeric(value:any) {

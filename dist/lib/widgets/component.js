@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54,16 +54,20 @@ var Component = (function (_super) {
         this.swapInComponentForQuerySelectors(newComponent, childNode);
     };
     Component.prototype.swapInComponentForQuerySelectors = function (newComponent, childNode) {
-        var metaData = this.__agComponentMetaData;
-        if (!metaData || !metaData.querySelectors) {
-            return;
-        }
+        var thisProto = this.__proto__;
         var thisNoType = this;
-        metaData.querySelectors.forEach(function (querySelector) {
-            if (thisNoType[querySelector.attributeName] === childNode) {
-                thisNoType[querySelector.attributeName] = newComponent;
+        while (thisProto != null) {
+            var metaData = thisProto.__agComponentMetaData;
+            var currentProtoName = (thisProto.constructor).name;
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
+                metaData[currentProtoName].querySelectors.forEach(function (querySelector) {
+                    if (thisNoType[querySelector.attributeName] === childNode) {
+                        thisNoType[querySelector.attributeName] = newComponent;
+                    }
+                });
             }
-        });
+            thisProto = thisProto.__proto__;
+        }
     };
     Component.prototype.setTemplate = function (template) {
         var eGui = utils_1.Utils.loadTemplate(template);
@@ -79,48 +83,60 @@ var Component = (function (_super) {
     };
     Component.prototype.wireQuerySelectors = function () {
         var _this = this;
-        var metaData = this.__agComponentMetaData;
-        if (!metaData || !metaData.querySelectors) {
-            return;
-        }
         if (!this.eGui) {
             return;
         }
-        var thisNoType = this;
-        metaData.querySelectors.forEach(function (querySelector) {
-            var resultOfQuery = _this.eGui.querySelector(querySelector.querySelector);
-            if (resultOfQuery) {
-                var backingComponent = resultOfQuery.__agComponent;
-                if (backingComponent) {
-                    thisNoType[querySelector.attributeName] = backingComponent;
-                }
-                else {
-                    thisNoType[querySelector.attributeName] = resultOfQuery;
-                }
+        var thisProto = this.__proto__;
+        var _loop_1 = function () {
+            var metaData = thisProto.__agComponentMetaData;
+            var currentProtoName = (thisProto.constructor).name;
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
+                var thisNoType_1 = this_1;
+                metaData[currentProtoName].querySelectors.forEach(function (querySelector) {
+                    var resultOfQuery = _this.eGui.querySelector(querySelector.querySelector);
+                    if (resultOfQuery) {
+                        var backingComponent = resultOfQuery.__agComponent;
+                        if (backingComponent) {
+                            thisNoType_1[querySelector.attributeName] = backingComponent;
+                        }
+                        else {
+                            thisNoType_1[querySelector.attributeName] = resultOfQuery;
+                        }
+                    }
+                    else {
+                        // put debug msg in here if query selector fails???
+                    }
+                });
             }
-            else {
-                // put debug msg in here if query selector fails???
-            }
-        });
+            thisProto = thisProto.__proto__;
+        };
+        var this_1 = this;
+        while (thisProto != null) {
+            _loop_1();
+        }
     };
     Component.prototype.addAnnotatedEventListeners = function () {
         var _this = this;
         this.removeAnnotatedEventListeners();
-        var metaData = this.__agComponentMetaData;
-        if (!metaData || !metaData.listenerMethods) {
-            return;
-        }
         if (!this.eGui) {
             return;
         }
-        if (!this.annotatedEventListeners) {
-            this.annotatedEventListeners = [];
+        var thisProto = this.__proto__;
+        while (thisProto != null) {
+            var metaData = thisProto.__agComponentMetaData;
+            var currentProtoName = (thisProto.constructor).name;
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].listenerMethods) {
+                if (!this.annotatedEventListeners) {
+                    this.annotatedEventListeners = [];
+                }
+                metaData[currentProtoName].listenerMethods.forEach(function (eventListener) {
+                    var listener = _this[eventListener.methodName].bind(_this);
+                    _this.eGui.addEventListener(eventListener.eventName, listener);
+                    _this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener: listener });
+                });
+            }
+            thisProto = thisProto.__proto__;
         }
-        metaData.listenerMethods.forEach(function (eventListener) {
-            var listener = _this[eventListener.methodName].bind(_this);
-            _this.eGui.addEventListener(eventListener.eventName, listener);
-            _this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener: listener });
-        });
     };
     Component.prototype.removeAnnotatedEventListeners = function () {
         var _this = this;
@@ -207,7 +223,7 @@ var Component = (function (_super) {
     Component.prototype.getRefElement = function (refName) {
         return this.queryForHtmlElement('[ref="' + refName + '"]');
     };
+    Component.EVENT_VISIBLE_CHANGED = 'visibleChanged';
     return Component;
 }(beanStub_1.BeanStub));
-Component.EVENT_VISIBLE_CHANGED = 'visibleChanged';
 exports.Component = Component;

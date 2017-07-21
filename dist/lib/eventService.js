@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,8 +23,7 @@ var utils_1 = require("./utils");
 var context_1 = require("./context/context");
 var context_2 = require("./context/context");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
-var events_1 = require("./events");
-var EventService = EventService_1 = (function () {
+var EventService = (function () {
     function EventService() {
         this.allSyncListeners = {};
         this.allAsyncListeners = {};
@@ -33,6 +32,7 @@ var EventService = EventService_1 = (function () {
         this.asyncFunctionsQueue = [];
         this.scheduled = false;
     }
+    EventService_1 = EventService;
     // because this class is used both inside the context and outside the context, we do not
     // use autowired attributes, as that would be confusing, as sometimes the attributes
     // would be wired, and sometimes not.
@@ -69,12 +69,13 @@ var EventService = EventService_1 = (function () {
         }
     };
     EventService.prototype.assertNotDeprecated = function (eventType) {
-        var deprecatedEvent = EventService_1.DEPRECATED_EVENTS[eventType];
-        if (deprecatedEvent) {
-            console.warn(deprecatedEvent);
+        if (eventType === 'floatingRowDataChanged') {
+            console.warn('ag-Grid: floatingRowDataChanged is now called pinnedRowDataChanged');
             return false;
         }
-        return true;
+        else {
+            return true;
+        }
     };
     // for some events, it's important that the model gets to hear about them before the view,
     // as the model may need to update before the view works on the info. if you register
@@ -174,34 +175,23 @@ var EventService = EventService_1 = (function () {
         // execute the queue
         queueCopy.forEach(function (func) { return func(); });
     };
+    // this is an old idea niall had, should really take it out, was to do with ordering who gets to process
+    // events first, to give model and service objects preference over the view
+    EventService.PRIORITY = '-P1';
+    __decorate([
+        __param(0, context_2.Qualifier('loggerFactory')),
+        __param(1, context_2.Qualifier('gridOptionsWrapper')),
+        __param(2, context_2.Qualifier('globalEventListener')),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [logger_1.LoggerFactory,
+            gridOptionsWrapper_1.GridOptionsWrapper,
+            Function]),
+        __metadata("design:returntype", void 0)
+    ], EventService.prototype, "setBeans", null);
+    EventService = EventService_1 = __decorate([
+        context_1.Bean('eventService')
+    ], EventService);
     return EventService;
+    var EventService_1;
 }());
-// this is an old idea niall had, should really take it out, was to do with ordering who gets to process
-// events first, to give model and service objects preference over the view
-EventService.PRIORITY = '-P1';
-EventService.DEPRECATED_EVENTS = (function () {
-    var deprecatedEvents = {};
-    var deprecatedInV10Msg = function (deprecated, solution) {
-        return "The event " + deprecated + " has been deprecated in v10. This event is \n            not going to be triggered anymore, you should listen instead to: " + solution;
-    };
-    deprecatedEvents[events_1.Events.DEPRECATED_EVENT_AFTER_FILTER_CHANGED] = deprecatedInV10Msg(events_1.Events.DEPRECATED_EVENT_AFTER_FILTER_CHANGED, events_1.Events.EVENT_FILTER_CHANGED);
-    deprecatedEvents[events_1.Events.DEPRECATED_EVENT_BEFORE_FILTER_CHANGED] = deprecatedInV10Msg(events_1.Events.DEPRECATED_EVENT_BEFORE_FILTER_CHANGED, events_1.Events.EVENT_FILTER_CHANGED);
-    deprecatedEvents[events_1.Events.DEPRECATED_EVENT_AFTER_SORT_CHANGED] = deprecatedInV10Msg(events_1.Events.DEPRECATED_EVENT_AFTER_SORT_CHANGED, events_1.Events.EVENT_SORT_CHANGED);
-    deprecatedEvents[events_1.Events.DEPRECATED_EVENT_BEFORE_SORT_CHANGED] = deprecatedInV10Msg(events_1.Events.DEPRECATED_EVENT_BEFORE_SORT_CHANGED, events_1.Events.EVENT_SORT_CHANGED);
-    return deprecatedEvents;
-})();
-__decorate([
-    __param(0, context_2.Qualifier('loggerFactory')),
-    __param(1, context_2.Qualifier('gridOptionsWrapper')),
-    __param(2, context_2.Qualifier('globalEventListener')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [logger_1.LoggerFactory,
-        gridOptionsWrapper_1.GridOptionsWrapper,
-        Function]),
-    __metadata("design:returntype", void 0)
-], EventService.prototype, "setBeans", null);
-EventService = EventService_1 = __decorate([
-    context_1.Bean('eventService')
-], EventService);
 exports.EventService = EventService;
-var EventService_1;

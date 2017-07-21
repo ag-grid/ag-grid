@@ -9,10 +9,10 @@ export interface BaseExportParams{
     columnGroups?:boolean;
     skipFooters?: boolean;
     skipGroups?: boolean;
-    skipFloatingTop?: boolean;
-    skipFloatingBottom?: boolean;
+    skipPinnedTop?: boolean;
+    skipPinnedBottom?: boolean;
     suppressQuotes?: boolean;
-    columnKeys?: (Column|ColDef|string)[]
+    columnKeys?: (string|Column)[]
     fileName?: string;
     allColumns?: boolean;
     onlySelected?: boolean;

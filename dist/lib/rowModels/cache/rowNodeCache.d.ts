@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { NumberSequence } from "../../utils";
@@ -18,6 +18,7 @@ export interface RowNodeCacheParams {
     lastAccessedSequence: NumberSequence;
     maxConcurrentRequests: number;
     rowNodeBlockLoader: RowNodeBlockLoader;
+    dynamicRowHeight: boolean;
 }
 export declare abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCacheParams> extends BeanStub {
     static EVENT_CACHE_UPDATED: string;
@@ -25,7 +26,9 @@ export declare abstract class RowNodeCache<T extends RowNodeBlock, P extends Row
     private maxRowFound;
     protected cacheParams: P;
     private active;
-    private blocks;
+    blocks: {
+        [blockNumber: string]: T;
+    };
     private blockCount;
     protected logger: Logger;
     abstract getRow(rowIndex: number): RowNode;
@@ -53,4 +56,5 @@ export declare abstract class RowNodeCache<T extends RowNodeBlock, P extends Row
     protected destroyBlock(block: T): void;
     protected onCacheUpdated(): void;
     purgeCache(): void;
+    getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -59,7 +59,7 @@ var RowNodeCache = (function (_super) {
         if (!this.isActive()) {
             return;
         }
-        this.logger.log("onPageLoaded: page = " + event.page.getPageNumber() + ", lastRow = " + event.lastRow);
+        this.logger.log("onPageLoaded: page = " + event.page.getBlockNumber() + ", lastRow = " + event.lastRow);
         this.cacheParams.rowNodeBlockLoader.loadComplete();
         this.checkBlockToLoad();
         if (event.success) {
@@ -109,7 +109,7 @@ var RowNodeCache = (function (_super) {
     };
     RowNodeCache.prototype.postCreateBlock = function (newBlock) {
         newBlock.addEventListener(rowNodeBlock_1.RowNodeBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
-        this.setBlock(newBlock.getPageNumber(), newBlock);
+        this.setBlock(newBlock.getBlockNumber(), newBlock);
         this.purgeBlocksIfNeeded(newBlock);
         this.checkBlockToLoad();
     };
@@ -136,10 +136,16 @@ var RowNodeCache = (function (_super) {
         }
         else if (!this.maxRowFound) {
             // otherwise, see if we need to add some virtual rows
-            var lastRowIndex = (block.getPageNumber() + 1) * this.cacheParams.blockSize;
+            var lastRowIndex = (block.getBlockNumber() + 1) * this.cacheParams.blockSize;
             var lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.overflowSize;
             if (this.virtualRowCount < lastRowIndexPlusOverflow) {
                 this.virtualRowCount = lastRowIndexPlusOverflow;
+                this.onCacheUpdated();
+            }
+            else if (this.cacheParams.dynamicRowHeight) {
+                // the only other time is if dynamic row height, as loading rows
+                // will change the height of the block, given the height of the rows
+                // is only known after the row is loaded.
                 this.onCacheUpdated();
             }
         }
@@ -197,7 +203,7 @@ var RowNodeCache = (function (_super) {
         this.cacheParams.rowNodeBlockLoader.addBlock(block);
     };
     RowNodeCache.prototype.destroyBlock = function (block) {
-        delete this.blocks[block.getPageNumber()];
+        delete this.blocks[block.getBlockNumber()];
         block.destroy();
         this.blockCount--;
         this.cacheParams.rowNodeBlockLoader.removeBlock(block);
@@ -215,7 +221,40 @@ var RowNodeCache = (function (_super) {
         this.forEachBlockInOrder(function (block) { return _this.removeBlockFromCache(block); });
         this.onCacheUpdated();
     };
+    RowNodeCache.prototype.getRowNodesInRange = function (firstInRange, lastInRange) {
+        var _this = this;
+        var result = [];
+        var lastBlockId = -1;
+        var inActiveRange = false;
+        var numberSequence = new utils_1.NumberSequence();
+        // if only one node passed, we start the selection at the top
+        if (utils_1.Utils.missing(firstInRange)) {
+            inActiveRange = true;
+        }
+        var foundGapInSelection = false;
+        this.forEachBlockInOrder(function (block, id) {
+            if (foundGapInSelection)
+                return;
+            if (inActiveRange && (lastBlockId + 1 !== id)) {
+                foundGapInSelection = true;
+                return;
+            }
+            lastBlockId = id;
+            block.forEachNodeShallow(function (rowNode) {
+                var hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
+                if (inActiveRange || hitFirstOrLast) {
+                    result.push(rowNode);
+                }
+                if (hitFirstOrLast) {
+                    inActiveRange = !inActiveRange;
+                }
+            }, numberSequence, _this.virtualRowCount);
+        });
+        // inActiveRange will be still true if we never hit the second rowNode
+        var invalidRange = foundGapInSelection || inActiveRange;
+        return invalidRange ? [] : result;
+    };
+    RowNodeCache.EVENT_CACHE_UPDATED = 'cacheUpdated';
     return RowNodeCache;
 }(beanStub_1.BeanStub));
-RowNodeCache.EVENT_CACHE_UPDATED = 'cacheUpdated';
 exports.RowNodeCache = RowNodeCache;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54,12 +54,12 @@ var BaseFilterWrapperComp = (function (_super) {
     BaseFilterWrapperComp.prototype.onColumnWidthChanged = function () {
         this.getGui().style.width = this.column.getActualWidth() + 'px';
     };
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], BaseFilterWrapperComp.prototype, "context", void 0);
     return BaseFilterWrapperComp;
 }(component_1.Component));
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], BaseFilterWrapperComp.prototype, "context", void 0);
 exports.BaseFilterWrapperComp = BaseFilterWrapperComp;
 var FloatingFilterWrapperComp = (function (_super) {
     __extends(FloatingFilterWrapperComp, _super);
@@ -97,20 +97,20 @@ var FloatingFilterWrapperComp = (function (_super) {
     FloatingFilterWrapperComp.prototype.showParentFilter = function () {
         this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filterMenuTab', ['filterMenuTab']);
     };
+    __decorate([
+        componentAnnotations_1.RefSelector('eButtonShowMainFilter'),
+        __metadata("design:type", HTMLInputElement)
+    ], FloatingFilterWrapperComp.prototype, "eButtonShowMainFilter", void 0);
+    __decorate([
+        context_1.Autowired('menuFactory'),
+        __metadata("design:type", Object)
+    ], FloatingFilterWrapperComp.prototype, "menuFactory", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], FloatingFilterWrapperComp.prototype, "gridOptionsWrapper", void 0);
     return FloatingFilterWrapperComp;
 }(BaseFilterWrapperComp));
-__decorate([
-    componentAnnotations_1.RefSelector('eButtonShowMainFilter'),
-    __metadata("design:type", HTMLInputElement)
-], FloatingFilterWrapperComp.prototype, "eButtonShowMainFilter", void 0);
-__decorate([
-    context_1.Autowired('menuFactory'),
-    __metadata("design:type", Object)
-], FloatingFilterWrapperComp.prototype, "menuFactory", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], FloatingFilterWrapperComp.prototype, "gridOptionsWrapper", void 0);
 exports.FloatingFilterWrapperComp = FloatingFilterWrapperComp;
 var EmptyFloatingFilterWrapperComp = (function (_super) {
     __extends(EmptyFloatingFilterWrapperComp, _super);

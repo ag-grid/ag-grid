@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,11 +29,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../utils");
-var masterSlaveService_1 = require("../masterSlaveService");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var columnController_1 = require("../columnController/columnController");
 var rowRenderer_1 = require("../rendering/rowRenderer");
-var floatingRowModel_1 = require("../rowModels/floatingRowModel");
 var borderLayout_1 = require("../layout/borderLayout");
 var logger_1 = require("../logger");
 var context_1 = require("../context/context");
@@ -51,6 +49,8 @@ var beanStub_1 = require("../context/beanStub");
 var rowContainerComponent_1 = require("../rendering/rowContainerComponent");
 var paginationProxy_1 = require("../rowModels/paginationProxy");
 var popupEditorWrapper_1 = require("../rendering/cellEditors/popupEditorWrapper");
+var alignedGridsService_1 = require("../alignedGridsService");
+var pinnedRowModel_1 = require("../rowModels/pinnedRowModel");
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
 var HEADER_SNIPPET = '<div class="ag-header" role="row">' +
@@ -259,7 +259,7 @@ var GridPanel = (function (_super) {
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_ITEMS_ADDED, this.onRowDataChanged.bind(this));
@@ -518,7 +518,7 @@ var GridPanel = (function (_super) {
             onlyBody: true,
             suppressKeepFocus: true
         };
-        this.rowRenderer.refreshView(refreshViewParams);
+        this.rowRenderer.redrawAfterModelUpdate(refreshViewParams);
         //***************************************************************************
         // New focused cell
         var focusedRowIndex;
@@ -600,19 +600,19 @@ var GridPanel = (function (_super) {
             var rowEnd = void 0;
             var floatingStart = void 0;
             var floatingEnd = void 0;
-            if (this.floatingRowModel.isEmpty(constants_1.Constants.FLOATING_TOP)) {
+            if (this.pinnedRowModel.isEmpty(constants_1.Constants.PINNED_TOP)) {
                 floatingStart = null;
             }
             else {
-                floatingStart = constants_1.Constants.FLOATING_TOP;
+                floatingStart = constants_1.Constants.PINNED_TOP;
             }
-            if (this.floatingRowModel.isEmpty(constants_1.Constants.FLOATING_BOTTOM)) {
+            if (this.pinnedRowModel.isEmpty(constants_1.Constants.PINNED_BOTTOM)) {
                 floatingEnd = null;
                 rowEnd = this.paginationProxy.getTotalRowCount() - 1;
             }
             else {
-                floatingEnd = constants_1.Constants.FLOATING_BOTTOM;
-                rowEnd = this.floatingRowModel.getFloatingBottomRowData().length = 1;
+                floatingEnd = constants_1.Constants.PINNED_BOTTOM;
+                rowEnd = this.pinnedRowModel.getPinnedBottomRowData().length = 1;
             }
             var allDisplayedColumns = this.columnController.getAllDisplayedColumns();
             if (utils_1.Utils.missingOrEmpty(allDisplayedColumns)) {
@@ -714,14 +714,14 @@ var GridPanel = (function (_super) {
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
             eViewportToScroll.scrollTop = rowTopPixel;
-            this.rowRenderer.drawVirtualRowsWithLock();
+            this.rowRenderer.redrawAfterScroll();
         }
         else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             var viewportHeight = vRangeBottom - vRangeTop;
             var newScrollPosition = rowBottomPixel - viewportHeight;
             eViewportToScroll.scrollTop = newScrollPosition;
-            this.rowRenderer.drawVirtualRowsWithLock();
+            this.rowRenderer.redrawAfterScroll();
         }
         // otherwise, row is already in view, so do nothing
     };
@@ -1033,7 +1033,7 @@ var GridPanel = (function (_super) {
             this.eFloatingBottomContainer = this.queryHtmlElement('.ag-floating-bottom-container');
             this.eAllCellContainers = [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
             var containers = {
-                body: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eBodyContainer, useDocumentFragment: true }),
+                body: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eBodyContainer }),
                 fullWidth: null,
                 pinnedLeft: null,
                 pinnedRight: null,
@@ -1088,10 +1088,10 @@ var GridPanel = (function (_super) {
                 this.eFloatingTop, this.eFloatingBottom, this.eFullWidthCellContainer
             ];
             this.rowContainerComponents = {
-                body: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eBodyContainer, eViewport: this.eBodyViewport, useDocumentFragment: true }),
+                body: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eBodyContainer, eViewport: this.eBodyViewport }),
                 fullWidth: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eFullWidthCellContainer, hideWhenNoChildren: true, eViewport: this.eFullWidthCellViewport }),
-                pinnedLeft: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.ePinnedLeftColsContainer, eViewport: this.ePinnedLeftColsViewport, useDocumentFragment: true }),
-                pinnedRight: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.ePinnedRightColsContainer, eViewport: this.ePinnedRightColsViewport, useDocumentFragment: true }),
+                pinnedLeft: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.ePinnedLeftColsContainer, eViewport: this.ePinnedLeftColsViewport }),
+                pinnedRight: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.ePinnedRightColsContainer, eViewport: this.ePinnedRightColsViewport }),
                 floatingTop: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eFloatingTopContainer }),
                 floatingTopPinnedLeft: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.ePinnedLeftFloatingTop }),
                 floatingTopPinnedRight: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.ePinnedRightFloatingTop }),
@@ -1312,11 +1312,11 @@ var GridPanel = (function (_super) {
         if (this.autoHeight) {
             return;
         }
-        // padding top covers the header and the floating rows on top
-        var floatingTopHeight = this.floatingRowModel.getFloatingTopTotalHeight();
+        // padding top covers the header and the pinned rows on top
+        var floatingTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
         var paddingTop = totalHeaderHeight + floatingTopHeight;
-        // bottom is just the bottom floating rows
-        var floatingBottomHeight = this.floatingRowModel.getFloatingBottomTotalHeight();
+        // bottom is just the bottom pinned rows
+        var floatingBottomHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
         var floatingBottomTop = heightOfContainer - floatingBottomHeight;
         var bodyHeight = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
         this.eBody.style.top = paddingTop + 'px';
@@ -1399,7 +1399,7 @@ var GridPanel = (function (_super) {
             this.eventService.dispatchEvent(events_1.Events.EVENT_BODY_SCROLL, { direction: 'horizontal' });
             this.lastLeftPosition = newLeftPosition;
             this.horizontallyScrollHeaderCenterAndFloatingCenter();
-            this.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
+            this.alignedGridsService.fireHorizontalScrollEvent(newLeftPosition);
             this.setLeftAndRightBounds();
         }
     };
@@ -1415,7 +1415,7 @@ var GridPanel = (function (_super) {
             this.eventService.dispatchEvent(events_1.Events.EVENT_BODY_SCROLL, { direction: 'vertical' });
             this.lastTopPosition = newTopPosition;
             this.fakeVerticalScroll(newTopPosition);
-            this.rowRenderer.drawVirtualRowsWithLock();
+            this.rowRenderer.redrawAfterScroll();
         }
     };
     // if LTR, we hide body scroll if pinning right (as scroll is in right pinned),
@@ -1547,105 +1547,105 @@ var GridPanel = (function (_super) {
     GridPanel.prototype.removeScrollEventListener = function (listener) {
         this.eBodyViewport.removeEventListener('scroll', listener);
     };
+    __decorate([
+        context_1.Autowired('alignedGridsService'),
+        __metadata("design:type", alignedGridsService_1.AlignedGridsService)
+    ], GridPanel.prototype, "alignedGridsService", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], GridPanel.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], GridPanel.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('rowRenderer'),
+        __metadata("design:type", rowRenderer_1.RowRenderer)
+    ], GridPanel.prototype, "rowRenderer", void 0);
+    __decorate([
+        context_1.Autowired('pinnedRowModel'),
+        __metadata("design:type", pinnedRowModel_1.PinnedRowModel)
+    ], GridPanel.prototype, "pinnedRowModel", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], GridPanel.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], GridPanel.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('paginationProxy'),
+        __metadata("design:type", paginationProxy_1.PaginationProxy)
+    ], GridPanel.prototype, "paginationProxy", void 0);
+    __decorate([
+        context_1.Optional('rangeController'),
+        __metadata("design:type", Object)
+    ], GridPanel.prototype, "rangeController", void 0);
+    __decorate([
+        context_1.Autowired('dragService'),
+        __metadata("design:type", dragService_1.DragService)
+    ], GridPanel.prototype, "dragService", void 0);
+    __decorate([
+        context_1.Autowired('selectionController'),
+        __metadata("design:type", selectionController_1.SelectionController)
+    ], GridPanel.prototype, "selectionController", void 0);
+    __decorate([
+        context_1.Optional('clipboardService'),
+        __metadata("design:type", Object)
+    ], GridPanel.prototype, "clipboardService", void 0);
+    __decorate([
+        context_1.Autowired('csvCreator'),
+        __metadata("design:type", csvCreator_1.CsvCreator)
+    ], GridPanel.prototype, "csvCreator", void 0);
+    __decorate([
+        context_1.Autowired('mouseEventService'),
+        __metadata("design:type", mouseEventService_1.MouseEventService)
+    ], GridPanel.prototype, "mouseEventService", void 0);
+    __decorate([
+        context_1.Autowired('focusedCellController'),
+        __metadata("design:type", focusedCellController_1.FocusedCellController)
+    ], GridPanel.prototype, "focusedCellController", void 0);
+    __decorate([
+        context_1.Autowired('$scope'),
+        __metadata("design:type", Object)
+    ], GridPanel.prototype, "$scope", void 0);
+    __decorate([
+        context_1.Autowired('scrollVisibleService'),
+        __metadata("design:type", scrollVisibleService_1.ScrollVisibleService)
+    ], GridPanel.prototype, "scrollVisibleService", void 0);
+    __decorate([
+        context_1.Optional('contextMenuFactory'),
+        __metadata("design:type", Object)
+    ], GridPanel.prototype, "contextMenuFactory", void 0);
+    __decorate([
+        context_1.Autowired('frameworkFactory'),
+        __metadata("design:type", Object)
+    ], GridPanel.prototype, "frameworkFactory", void 0);
+    __decorate([
+        __param(0, context_1.Qualifier('loggerFactory')),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [logger_1.LoggerFactory]),
+        __metadata("design:returntype", void 0)
+    ], GridPanel.prototype, "agWire", null);
+    __decorate([
+        context_1.PreDestroy,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], GridPanel.prototype, "destroy", null);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], GridPanel.prototype, "init", null);
+    GridPanel = __decorate([
+        context_1.Bean('gridPanel')
+    ], GridPanel);
     return GridPanel;
 }(beanStub_1.BeanStub));
-__decorate([
-    context_1.Autowired('masterSlaveService'),
-    __metadata("design:type", masterSlaveService_1.MasterSlaveService)
-], GridPanel.prototype, "masterSlaveService", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], GridPanel.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], GridPanel.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('rowRenderer'),
-    __metadata("design:type", rowRenderer_1.RowRenderer)
-], GridPanel.prototype, "rowRenderer", void 0);
-__decorate([
-    context_1.Autowired('floatingRowModel'),
-    __metadata("design:type", floatingRowModel_1.FloatingRowModel)
-], GridPanel.prototype, "floatingRowModel", void 0);
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], GridPanel.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], GridPanel.prototype, "context", void 0);
-__decorate([
-    context_1.Autowired('paginationProxy'),
-    __metadata("design:type", paginationProxy_1.PaginationProxy)
-], GridPanel.prototype, "paginationProxy", void 0);
-__decorate([
-    context_1.Optional('rangeController'),
-    __metadata("design:type", Object)
-], GridPanel.prototype, "rangeController", void 0);
-__decorate([
-    context_1.Autowired('dragService'),
-    __metadata("design:type", dragService_1.DragService)
-], GridPanel.prototype, "dragService", void 0);
-__decorate([
-    context_1.Autowired('selectionController'),
-    __metadata("design:type", selectionController_1.SelectionController)
-], GridPanel.prototype, "selectionController", void 0);
-__decorate([
-    context_1.Optional('clipboardService'),
-    __metadata("design:type", Object)
-], GridPanel.prototype, "clipboardService", void 0);
-__decorate([
-    context_1.Autowired('csvCreator'),
-    __metadata("design:type", csvCreator_1.CsvCreator)
-], GridPanel.prototype, "csvCreator", void 0);
-__decorate([
-    context_1.Autowired('mouseEventService'),
-    __metadata("design:type", mouseEventService_1.MouseEventService)
-], GridPanel.prototype, "mouseEventService", void 0);
-__decorate([
-    context_1.Autowired('focusedCellController'),
-    __metadata("design:type", focusedCellController_1.FocusedCellController)
-], GridPanel.prototype, "focusedCellController", void 0);
-__decorate([
-    context_1.Autowired('$scope'),
-    __metadata("design:type", Object)
-], GridPanel.prototype, "$scope", void 0);
-__decorate([
-    context_1.Autowired('scrollVisibleService'),
-    __metadata("design:type", scrollVisibleService_1.ScrollVisibleService)
-], GridPanel.prototype, "scrollVisibleService", void 0);
-__decorate([
-    context_1.Optional('contextMenuFactory'),
-    __metadata("design:type", Object)
-], GridPanel.prototype, "contextMenuFactory", void 0);
-__decorate([
-    context_1.Autowired('frameworkFactory'),
-    __metadata("design:type", Object)
-], GridPanel.prototype, "frameworkFactory", void 0);
-__decorate([
-    __param(0, context_1.Qualifier('loggerFactory')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [logger_1.LoggerFactory]),
-    __metadata("design:returntype", void 0)
-], GridPanel.prototype, "agWire", null);
-__decorate([
-    context_1.PreDestroy,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], GridPanel.prototype, "destroy", null);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], GridPanel.prototype, "init", null);
-GridPanel = __decorate([
-    context_1.Bean('gridPanel')
-], GridPanel);
 exports.GridPanel = GridPanel;
 var ScrollType;
 (function (ScrollType) {

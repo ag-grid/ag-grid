@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -19,6 +19,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     static EVENT_FILTER_CHANGED: string;
     static EVENT_FILTER_ACTIVE_CHANGED: string;
     static EVENT_SORT_CHANGED: string;
+    static EVENT_MENU_VISIBLE_CHANGED: string;
     static EVENT_ROW_GROUP_CHANGED: string;
     static EVENT_PIVOT_CHANGED: string;
     static EVENT_VALUE_CHANGED: string;
@@ -40,6 +41,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private sort;
     private sortedAt;
     private moving;
+    private menuVisible;
     private lastLeftPinned;
     private firstRightPinned;
     private minWidth;
@@ -61,6 +63,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     setParent(parent: ColumnGroupChild): void;
     getParent(): ColumnGroupChild;
     initialise(): void;
+    isEmptyGroup(): boolean;
     isRowGroupDisplayed(colId: string): boolean;
     getCellRenderer(): {
         new (): ICellRendererComp;
@@ -92,6 +95,8 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isMoving(): boolean;
     getSort(): string;
     setSort(sort: string): void;
+    setMenuVisible(visible: boolean): void;
+    isMenuVisible(): boolean;
     isSortAscending(): boolean;
     isSortDescending(): boolean;
     isSortNone(): boolean;
@@ -123,6 +128,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     getId(): string;
     getDefinition(): AbstractColDef;
     getActualWidth(): number;
+    getColSpan(rowNode: RowNode): number;
     setActualWidth(actualWidth: number): void;
     isGreaterThanMax(width: number): boolean;
     getMinWidth(): number;

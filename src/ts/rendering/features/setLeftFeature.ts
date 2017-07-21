@@ -6,6 +6,8 @@ import {BeanStub} from "../../context/beanStub";
 import {Autowired, PostConstruct} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {ColumnAnimationService} from "../columnAnimationService";
+import {EventService} from "../../eventService";
+import {Events} from "../../events";
 
 export class SetLeftFeature extends BeanStub {
 
@@ -14,13 +16,31 @@ export class SetLeftFeature extends BeanStub {
 
     private actualLeft: number;
 
+    // if we are spanning columns, this tells what columns,
+    // otherwise this is empty
+    private colsSpanning: Column[];
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
 
-    constructor(columnOrGroup: ColumnGroupChild, eCell: HTMLElement) {
+    constructor(columnOrGroup: ColumnGroupChild, eCell: HTMLElement, colsSpanning?: Column[]) {
         super();
         this.columnOrGroup = columnOrGroup;
         this.eCell = eCell;
+        this.colsSpanning = colsSpanning;
+    }
+
+    public setColsSpanning(colsSpanning: Column[]): void {
+        this.colsSpanning = colsSpanning;
+        this.onLeftChanged();
+    }
+
+    public getColumnOrGroup(): ColumnGroupChild {
+        if (this.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
+            return this.colsSpanning[this.colsSpanning.length-1];
+        } else {
+            return this.columnOrGroup;
+        }
     }
 
     @PostConstruct
@@ -41,8 +61,8 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private animateInLeft(): void {
-        let left = this.columnOrGroup.getLeft();
-        let oldLeft = this.columnOrGroup.getOldLeft();
+        let left = this.getColumnOrGroup().getLeft();
+        let oldLeft = this.getColumnOrGroup().getOldLeft();
         this.setLeft(oldLeft);
 
         // we must keep track of the left we want to set to, as this would otherwise lead to a race
@@ -61,7 +81,7 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private onLeftChanged(): void {
-        this.actualLeft = this.columnOrGroup.getLeft();
+        this.actualLeft = this.getColumnOrGroup().getLeft();
         this.setLeft(this.actualLeft);
     }
 

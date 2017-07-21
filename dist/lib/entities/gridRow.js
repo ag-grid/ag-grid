@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,10 +15,10 @@ var GridRow = (function () {
         this.floating = utils_1.Utils.makeNull(floating);
     }
     GridRow.prototype.isFloatingTop = function () {
-        return this.floating === constants_1.Constants.FLOATING_TOP;
+        return this.floating === constants_1.Constants.PINNED_TOP;
     };
     GridRow.prototype.isFloatingBottom = function () {
-        return this.floating === constants_1.Constants.FLOATING_BOTTOM;
+        return this.floating === constants_1.Constants.PINNED_BOTTOM;
     };
     GridRow.prototype.isNotFloating = function () {
         return !this.isFloatingBottom() && !this.isFloatingTop();
@@ -38,22 +38,22 @@ var GridRow = (function () {
     GridRow.prototype.before = function (otherSelection) {
         var otherFloating = otherSelection.floating;
         switch (this.floating) {
-            case constants_1.Constants.FLOATING_TOP:
+            case constants_1.Constants.PINNED_TOP:
                 // we we are floating top, and other isn't, then we are always before
-                if (otherFloating !== constants_1.Constants.FLOATING_TOP) {
+                if (otherFloating !== constants_1.Constants.PINNED_TOP) {
                     return true;
                 }
                 break;
-            case constants_1.Constants.FLOATING_BOTTOM:
+            case constants_1.Constants.PINNED_BOTTOM:
                 // if we are floating bottom, and the other isn't, then we are never before
-                if (otherFloating !== constants_1.Constants.FLOATING_BOTTOM) {
+                if (otherFloating !== constants_1.Constants.PINNED_BOTTOM) {
                     return false;
                 }
                 break;
             default:
                 // if we are not floating, but the other one is floating...
                 if (utils_1.Utils.exists(otherFloating)) {
-                    if (otherFloating === constants_1.Constants.FLOATING_TOP) {
+                    if (otherFloating === constants_1.Constants.PINNED_TOP) {
                         // we are not floating, other is floating top, we are first
                         return false;
                     }

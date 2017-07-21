@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,7 +18,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("./context/context");
 var columnController_1 = require("./columnController/columnController");
 var constants_1 = require("./constants");
-var floatingRowModel_1 = require("./rowModels/floatingRowModel");
 var utils_1 = require("./utils");
 var selectionController_1 = require("./selectionController");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
@@ -26,6 +25,7 @@ var displayedGroupCreator_1 = require("./columnController/displayedGroupCreator"
 var balancedColumnTreeBuilder_1 = require("./columnController/balancedColumnTreeBuilder");
 var groupInstanceIdCreator_1 = require("./columnController/groupInstanceIdCreator");
 var columnGroup_1 = require("./entities/columnGroup");
+var pinnedRowModel_1 = require("./rowModels/pinnedRowModel");
 var BaseGridSerializingSession = (function () {
     function BaseGridSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, cellAndHeaderEscaper) {
         this.columnController = columnController;
@@ -100,18 +100,14 @@ exports.BaseGridSerializingSession = BaseGridSerializingSession;
 var GridSerializer = (function () {
     function GridSerializer() {
     }
-    GridSerializer.prototype.serialize = function (gridSerializingSession, userParams) {
-        var baseParams = this.gridOptionsWrapper.getDefaultExportParams();
-        var params = {};
-        utils_1.Utils.assign(params, baseParams);
-        utils_1.Utils.assign(params, userParams);
+    GridSerializer.prototype.serialize = function (gridSerializingSession, params) {
         var dontSkipRows = function () { return false; };
         var skipGroups = params && params.skipGroups;
         var skipHeader = params && params.skipHeader;
         var columnGroups = params && params.columnGroups;
         var skipFooters = params && params.skipFooters;
-        var skipFloatingTop = params && params.skipFloatingTop;
-        var skipFloatingBottom = params && params.skipFloatingBottom;
+        var skipPinnedTop = params && params.skipPinnedTop;
+        var skipPinnedBottom = params && params.skipPinnedBottom;
         var includeCustomHeader = params && params.customHeader;
         var includeCustomFooter = params && params.customFooter;
         var allColumns = params && params.allColumns;
@@ -123,7 +119,7 @@ var GridSerializer = (function () {
         var context = this.gridOptionsWrapper.getContext();
         // when in pivot mode, we always render cols on screen, never 'all columns'
         var isPivotMode = this.columnController.isPivotMode();
-        var rowModelNormal = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL;
+        var rowModelNormal = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY;
         var onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
         // we can only export if it's a normal row model - unless we are exporting
         // selected only, as this way we don't use the selected nodes rather than
@@ -162,7 +158,7 @@ var GridSerializer = (function () {
                 gridRowIterator_1.onColumn(column, index, null);
             });
         }
-        this.floatingRowModel.forEachFloatingTopRow(processRow);
+        this.pinnedRowModel.forEachPinnedTopRow(processRow);
         if (isPivotMode) {
             inMemoryRowModel.forEachPivotNode(processRow);
         }
@@ -185,7 +181,7 @@ var GridSerializer = (function () {
                 inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
             }
         }
-        this.floatingRowModel.forEachFloatingBottomRow(processRow);
+        this.pinnedRowModel.forEachPinnedBottomRow(processRow);
         if (includeCustomFooter) {
             gridSerializingSession.addCustomFooter(params.customFooter);
         }
@@ -199,10 +195,10 @@ var GridSerializer = (function () {
             if (onlySelected && !node.isSelected()) {
                 return;
             }
-            if (skipFloatingTop && node.floating === 'top') {
+            if (skipPinnedTop && node.rowPinned === 'top') {
                 return;
             }
-            if (skipFloatingBottom && node.floating === 'bottom') {
+            if (skipPinnedBottom && node.rowPinned === 'bottom') {
                 return;
             }
             // if we are in pivotMode, then the grid will show the root node only
@@ -249,39 +245,39 @@ var GridSerializer = (function () {
             gridRowIterator.onColumn(colDef != null ? colDef.headerName : '', columnIndex++, columnGroup.getLeafColumns().length - 1);
         });
     };
+    __decorate([
+        context_1.Autowired('displayedGroupCreator'),
+        __metadata("design:type", displayedGroupCreator_1.DisplayedGroupCreator)
+    ], GridSerializer.prototype, "displayedGroupCreator", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], GridSerializer.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('rowModel'),
+        __metadata("design:type", Object)
+    ], GridSerializer.prototype, "rowModel", void 0);
+    __decorate([
+        context_1.Autowired('pinnedRowModel'),
+        __metadata("design:type", pinnedRowModel_1.PinnedRowModel)
+    ], GridSerializer.prototype, "pinnedRowModel", void 0);
+    __decorate([
+        context_1.Autowired('selectionController'),
+        __metadata("design:type", selectionController_1.SelectionController)
+    ], GridSerializer.prototype, "selectionController", void 0);
+    __decorate([
+        context_1.Autowired('balancedColumnTreeBuilder'),
+        __metadata("design:type", balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder)
+    ], GridSerializer.prototype, "balancedColumnTreeBuilder", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], GridSerializer.prototype, "gridOptionsWrapper", void 0);
+    GridSerializer = __decorate([
+        context_1.Bean("gridSerializer")
+    ], GridSerializer);
     return GridSerializer;
 }());
-__decorate([
-    context_1.Autowired('displayedGroupCreator'),
-    __metadata("design:type", displayedGroupCreator_1.DisplayedGroupCreator)
-], GridSerializer.prototype, "displayedGroupCreator", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], GridSerializer.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('rowModel'),
-    __metadata("design:type", Object)
-], GridSerializer.prototype, "rowModel", void 0);
-__decorate([
-    context_1.Autowired('floatingRowModel'),
-    __metadata("design:type", floatingRowModel_1.FloatingRowModel)
-], GridSerializer.prototype, "floatingRowModel", void 0);
-__decorate([
-    context_1.Autowired('selectionController'),
-    __metadata("design:type", selectionController_1.SelectionController)
-], GridSerializer.prototype, "selectionController", void 0);
-__decorate([
-    context_1.Autowired('balancedColumnTreeBuilder'),
-    __metadata("design:type", balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder)
-], GridSerializer.prototype, "balancedColumnTreeBuilder", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], GridSerializer.prototype, "gridOptionsWrapper", void 0);
-GridSerializer = __decorate([
-    context_1.Bean("gridSerializer")
-], GridSerializer);
 exports.GridSerializer = GridSerializer;
 var RowType;
 (function (RowType) {

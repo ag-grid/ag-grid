@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -111,6 +111,9 @@ var InfiniteRowModel = (function (_super) {
     };
     InfiniteRowModel.prototype.isRowsToRender = function () {
         return utils_1.Utils.exists(this.infiniteCache);
+    };
+    InfiniteRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
+        return this.infiniteCache.getRowNodesInRange(firstInRange, lastInRange);
     };
     InfiniteRowModel.prototype.reset = function () {
         // important to return here, as the user could be setting filter or sort before
@@ -278,45 +281,45 @@ var InfiniteRowModel = (function (_super) {
             return null;
         }
     };
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], InfiniteRowModel.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('filterManager'),
+        __metadata("design:type", filterManager_1.FilterManager)
+    ], InfiniteRowModel.prototype, "filterManager", void 0);
+    __decorate([
+        context_1.Autowired('sortController'),
+        __metadata("design:type", sortController_1.SortController)
+    ], InfiniteRowModel.prototype, "sortController", void 0);
+    __decorate([
+        context_1.Autowired('selectionController'),
+        __metadata("design:type", selectionController_1.SelectionController)
+    ], InfiniteRowModel.prototype, "selectionController", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], InfiniteRowModel.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], InfiniteRowModel.prototype, "context", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], InfiniteRowModel.prototype, "init", null);
+    __decorate([
+        context_1.PreDestroy,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], InfiniteRowModel.prototype, "destroy", null);
+    InfiniteRowModel = __decorate([
+        context_1.Bean('rowModel')
+    ], InfiniteRowModel);
     return InfiniteRowModel;
 }(beanStub_1.BeanStub));
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], InfiniteRowModel.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('filterManager'),
-    __metadata("design:type", filterManager_1.FilterManager)
-], InfiniteRowModel.prototype, "filterManager", void 0);
-__decorate([
-    context_1.Autowired('sortController'),
-    __metadata("design:type", sortController_1.SortController)
-], InfiniteRowModel.prototype, "sortController", void 0);
-__decorate([
-    context_1.Autowired('selectionController'),
-    __metadata("design:type", selectionController_1.SelectionController)
-], InfiniteRowModel.prototype, "selectionController", void 0);
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], InfiniteRowModel.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], InfiniteRowModel.prototype, "context", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], InfiniteRowModel.prototype, "init", null);
-__decorate([
-    context_1.PreDestroy,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], InfiniteRowModel.prototype, "destroy", null);
-InfiniteRowModel = __decorate([
-    context_1.Bean('rowModel')
-], InfiniteRowModel);
 exports.InfiniteRowModel = InfiniteRowModel;

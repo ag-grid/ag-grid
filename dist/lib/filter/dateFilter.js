@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -139,20 +139,20 @@ var DateFilter = (function (_super) {
             return null;
         return new Date(from.getFullYear(), from.getMonth(), from.getDate());
     };
+    __decorate([
+        context_1.Autowired('componentProvider'),
+        __metadata("design:type", componentProvider_1.ComponentProvider)
+    ], DateFilter.prototype, "componentProvider", void 0);
+    __decorate([
+        componentAnnotations_1.QuerySelector('#filterDateFromPanel'),
+        __metadata("design:type", HTMLElement)
+    ], DateFilter.prototype, "eDateFromPanel", void 0);
+    __decorate([
+        componentAnnotations_1.QuerySelector('#filterDateToPanel'),
+        __metadata("design:type", HTMLElement)
+    ], DateFilter.prototype, "eDateToPanel", void 0);
     return DateFilter;
 }(baseFilter_1.ScalarBaseFilter));
-__decorate([
-    context_1.Autowired('componentProvider'),
-    __metadata("design:type", componentProvider_1.ComponentProvider)
-], DateFilter.prototype, "componentProvider", void 0);
-__decorate([
-    componentAnnotations_1.QuerySelector('#filterDateFromPanel'),
-    __metadata("design:type", HTMLElement)
-], DateFilter.prototype, "eDateFromPanel", void 0);
-__decorate([
-    componentAnnotations_1.QuerySelector('#filterDateToPanel'),
-    __metadata("design:type", HTMLElement)
-], DateFilter.prototype, "eDateToPanel", void 0);
 exports.DateFilter = DateFilter;
 var DefaultDateComponent = (function (_super) {
     __extends(DefaultDateComponent, _super);

@@ -1,13 +1,9 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { BeanStub } from "../context/beanStub";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowNode } from "../entities/rowNode";
-export declare class RowBounds {
-    rowTop: number;
-    rowHeight: number;
-}
 export declare class PaginationAutoPageSizeService extends BeanStub {
     private gridPanel;
     private eventService;
@@ -24,6 +20,7 @@ export declare class PaginationProxy extends BeanStub implements IRowModel {
     private gridPanel;
     private eventService;
     private gridOptionsWrapper;
+    private selectionController;
     private active;
     private pageSize;
     private totalPages;
@@ -45,6 +42,7 @@ export declare class PaginationProxy extends BeanStub implements IRowModel {
     private isRowInPage(rowNode);
     isEmpty(): boolean;
     isRowsToRender(): boolean;
+    getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
     forEachNode(callback: (rowNode: RowNode) => void): void;
     getType(): string;
     getRowBounds(index: number): {

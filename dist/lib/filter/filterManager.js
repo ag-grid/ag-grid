@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,7 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../utils");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var popupService_1 = require("../widgets/popupService");
-var valueService_1 = require("../valueService");
+var valueService_1 = require("../valueService/valueService");
 var columnController_1 = require("../columnController/columnController");
 var textFilter_1 = require("./textFilter");
 var numberFilter_1 = require("./numberFilter");
@@ -27,7 +27,7 @@ var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var dateFilter_1 = require("./dateFilter");
 var componentProvider_1 = require("../componentProvider");
-var FilterManager = FilterManager_1 = (function () {
+var FilterManager = (function () {
     function FilterManager() {
         this.allFilters = {};
         this.quickFilter = null;
@@ -37,6 +37,7 @@ var FilterManager = FilterManager_1 = (function () {
             'date': dateFilter_1.DateFilter
         };
     }
+    FilterManager_1 = FilterManager;
     FilterManager.prototype.init = function () {
         this.eventService.addEventListener(events_1.Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
@@ -457,71 +458,71 @@ var FilterManager = FilterManager_1 = (function () {
             console.warn('ag-grid: From ag-grid 1.14, the constructor should take no parameters and init() used instead.');
         }
     };
+    FilterManager.QUICK_FILTER_SEPARATOR = '\n';
+    __decorate([
+        context_1.Autowired('$compile'),
+        __metadata("design:type", Object)
+    ], FilterManager.prototype, "$compile", void 0);
+    __decorate([
+        context_1.Autowired('$scope'),
+        __metadata("design:type", Object)
+    ], FilterManager.prototype, "$scope", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], FilterManager.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('gridCore'),
+        __metadata("design:type", Object)
+    ], FilterManager.prototype, "gridCore", void 0);
+    __decorate([
+        context_1.Autowired('popupService'),
+        __metadata("design:type", popupService_1.PopupService)
+    ], FilterManager.prototype, "popupService", void 0);
+    __decorate([
+        context_1.Autowired('valueService'),
+        __metadata("design:type", valueService_1.ValueService)
+    ], FilterManager.prototype, "valueService", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], FilterManager.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('rowModel'),
+        __metadata("design:type", Object)
+    ], FilterManager.prototype, "rowModel", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], FilterManager.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('enterprise'),
+        __metadata("design:type", Boolean)
+    ], FilterManager.prototype, "enterprise", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], FilterManager.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('componentProvider'),
+        __metadata("design:type", componentProvider_1.ComponentProvider)
+    ], FilterManager.prototype, "componentProvider", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], FilterManager.prototype, "init", null);
+    __decorate([
+        context_1.PreDestroy,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], FilterManager.prototype, "destroy", null);
+    FilterManager = FilterManager_1 = __decorate([
+        context_1.Bean('filterManager')
+    ], FilterManager);
     return FilterManager;
+    var FilterManager_1;
 }());
-FilterManager.QUICK_FILTER_SEPARATOR = '\n';
-__decorate([
-    context_1.Autowired('$compile'),
-    __metadata("design:type", Object)
-], FilterManager.prototype, "$compile", void 0);
-__decorate([
-    context_1.Autowired('$scope'),
-    __metadata("design:type", Object)
-], FilterManager.prototype, "$scope", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], FilterManager.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('gridCore'),
-    __metadata("design:type", Object)
-], FilterManager.prototype, "gridCore", void 0);
-__decorate([
-    context_1.Autowired('popupService'),
-    __metadata("design:type", popupService_1.PopupService)
-], FilterManager.prototype, "popupService", void 0);
-__decorate([
-    context_1.Autowired('valueService'),
-    __metadata("design:type", valueService_1.ValueService)
-], FilterManager.prototype, "valueService", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], FilterManager.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('rowModel'),
-    __metadata("design:type", Object)
-], FilterManager.prototype, "rowModel", void 0);
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], FilterManager.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('enterprise'),
-    __metadata("design:type", Boolean)
-], FilterManager.prototype, "enterprise", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], FilterManager.prototype, "context", void 0);
-__decorate([
-    context_1.Autowired('componentProvider'),
-    __metadata("design:type", componentProvider_1.ComponentProvider)
-], FilterManager.prototype, "componentProvider", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], FilterManager.prototype, "init", null);
-__decorate([
-    context_1.PreDestroy,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], FilterManager.prototype, "destroy", null);
-FilterManager = FilterManager_1 = __decorate([
-    context_1.Bean('filterManager')
-], FilterManager);
 exports.FilterManager = FilterManager;
-var FilterManager_1;

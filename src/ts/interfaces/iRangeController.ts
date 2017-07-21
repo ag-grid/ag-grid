@@ -26,6 +26,6 @@ export interface AddRangeSelectionParams {
     floatingStart: string,
     rowEnd: number,
     floatingEnd: string,
-    columnStart: Column|ColDef|string,
-    columnEnd: Column|ColDef|string
+    columnStart: string|Column,
+    columnEnd: string|Column
 }

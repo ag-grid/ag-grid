@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,6 +29,7 @@ var columnUtils_1 = require("../columnController/columnUtils");
 var Column = (function () {
     function Column(colDef, colId, primary) {
         this.moving = false;
+        this.menuVisible = false;
         this.filterActive = false;
         this.eventService = new eventService_1.EventService();
         this.rowGroupActive = false;
@@ -73,6 +74,9 @@ var Column = (function () {
         this.fieldContainsDots = utils_1.Utils.exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
         this.tooltipFieldContainsDots = utils_1.Utils.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
         this.validate();
+    };
+    Column.prototype.isEmptyGroup = function () {
+        return false;
     };
     Column.prototype.isRowGroupDisplayed = function (colId) {
         if (utils_1.Utils.missing(this.colDef) || utils_1.Utils.missing(this.colDef.showRowGroup)) {
@@ -136,13 +140,22 @@ var Column = (function () {
         if (utils_1.Utils.get(this, 'colDef.cellRendererParams.keyMap', null)) {
             console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
         }
-        if (utils_1.Utils.exists(this.colDef.cellFormatter)) {
-            console.warn('ag-Grid: colDef.cellFormatter was renamed to colDef.valueFormatter, please rename in your code as we will be dropping cellFormatter');
-            this.colDef.valueFormatter = this.colDef.cellFormatter;
+        var colDefAny = this.colDef;
+        if (colDefAny.floatingCellRenderer) {
+            console.warn('ag-Grid: since v11, floatingCellRenderer is now pinnedRowCellRenderer');
+            this.colDef.pinnedRowCellRenderer = colDefAny.floatingCellRenderer;
         }
-        if (utils_1.Utils.exists(this.colDef.floatingCellFormatter)) {
-            console.warn('ag-Grid: colDef.floatingCellFormatter was renamed to colDef.floatingValueFormatter, please rename in your code as we will be dropping floatingCellFormatter');
-            this.colDef.floatingValueFormatter = this.colDef.floatingCellFormatter;
+        if (colDefAny.floatingRendererFramework) {
+            console.warn('ag-Grid: since v11, floatingRendererFramework is now pinnedRowCellRendererFramework');
+            this.colDef.pinnedRowCellRendererFramework = colDefAny.floatingRendererFramework;
+        }
+        if (colDefAny.floatingRendererParams) {
+            console.warn('ag-Grid: since v11, floatingRendererParams is now pinnedRowCellRendererParams');
+            this.colDef.pinnedRowCellRendererParams = colDefAny.floatingRendererParams;
+        }
+        if (colDefAny.floatingValueFormatter) {
+            console.warn('ag-Grid: since v11, floatingValueFormatter is now ');
+            this.colDef.pinnedRowValueFormatter = colDefAny.floatingValueFormatter;
         }
     };
     Column.prototype.addEventListener = function (eventType, listener) {
@@ -217,6 +230,15 @@ var Column = (function () {
             this.sort = sort;
             this.eventService.dispatchEvent(Column.EVENT_SORT_CHANGED);
         }
+    };
+    Column.prototype.setMenuVisible = function (visible) {
+        if (this.menuVisible !== visible) {
+            this.menuVisible = visible;
+            this.eventService.dispatchEvent(Column.EVENT_MENU_VISIBLE_CHANGED);
+        }
+    };
+    Column.prototype.isMenuVisible = function () {
+        return this.menuVisible;
     };
     Column.prototype.isSortAscending = function () {
         return this.sort === Column.SORT_ASC;
@@ -342,6 +364,30 @@ var Column = (function () {
     Column.prototype.getActualWidth = function () {
         return this.actualWidth;
     };
+    Column.prototype.getColSpan = function (rowNode) {
+        if (utils_1.Utils.missing(this.colDef.colSpan)) {
+            return 1;
+        }
+        else {
+            var params = {
+                node: rowNode,
+                data: rowNode.data,
+                colDef: this.colDef,
+                column: this,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
+            };
+            var colSpan = this.colDef.colSpan(params);
+            // colSpan must be number equal to or greater than 1
+            if (colSpan > 1) {
+                return colSpan;
+            }
+            else {
+                return 1;
+            }
+        }
+    };
     Column.prototype.setActualWidth = function (actualWidth) {
         if (this.actualWidth !== actualWidth) {
             this.actualWidth = actualWidth;
@@ -415,51 +461,52 @@ var Column = (function () {
         ;
         return menuTabs;
     };
+    // + renderedHeaderCell - for making header cell transparent when moving
+    Column.EVENT_MOVING_CHANGED = 'movingChanged';
+    // + renderedCell - changing left position
+    Column.EVENT_LEFT_CHANGED = 'leftChanged';
+    // + renderedCell - changing width
+    Column.EVENT_WIDTH_CHANGED = 'widthChanged';
+    // + renderedCell - for changing pinned classes
+    Column.EVENT_LAST_LEFT_PINNED_CHANGED = 'lastLeftPinnedChanged';
+    Column.EVENT_FIRST_RIGHT_PINNED_CHANGED = 'firstRightPinnedChanged';
+    // + renderedColumn - for changing visibility icon
+    Column.EVENT_VISIBLE_CHANGED = 'visibleChanged';
+    // + every time the filter changes, used in the floating filters
+    Column.EVENT_FILTER_CHANGED = 'filterChanged';
+    // + renderedHeaderCell - marks the header with filter icon
+    Column.EVENT_FILTER_ACTIVE_CHANGED = 'filterActiveChanged';
+    // + renderedHeaderCell - marks the header with sort icon
+    Column.EVENT_SORT_CHANGED = 'sortChanged';
+    Column.EVENT_MENU_VISIBLE_CHANGED = 'menuVisibleChanged';
+    // + toolpanel, for gui updates
+    Column.EVENT_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
+    // + toolpanel, for gui updates
+    Column.EVENT_PIVOT_CHANGED = 'columnPivotChanged';
+    // + toolpanel, for gui updates
+    Column.EVENT_VALUE_CHANGED = 'columnValueChanged';
+    Column.PINNED_RIGHT = 'right';
+    Column.PINNED_LEFT = 'left';
+    Column.SORT_ASC = 'asc';
+    Column.SORT_DESC = 'desc';
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], Column.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnUtils'),
+        __metadata("design:type", columnUtils_1.ColumnUtils)
+    ], Column.prototype, "columnUtils", void 0);
+    __decorate([
+        context_1.Autowired('frameworkFactory'),
+        __metadata("design:type", Object)
+    ], Column.prototype, "frameworkFactory", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], Column.prototype, "initialise", null);
     return Column;
 }());
-// + renderedHeaderCell - for making header cell transparent when moving
-Column.EVENT_MOVING_CHANGED = 'movingChanged';
-// + renderedCell - changing left position
-Column.EVENT_LEFT_CHANGED = 'leftChanged';
-// + renderedCell - changing width
-Column.EVENT_WIDTH_CHANGED = 'widthChanged';
-// + renderedCell - for changing pinned classes
-Column.EVENT_LAST_LEFT_PINNED_CHANGED = 'lastLeftPinnedChanged';
-Column.EVENT_FIRST_RIGHT_PINNED_CHANGED = 'firstRightPinnedChanged';
-// + renderedColumn - for changing visibility icon
-Column.EVENT_VISIBLE_CHANGED = 'visibleChanged';
-// + every time the filter changes, used in the floating filters
-Column.EVENT_FILTER_CHANGED = 'filterChanged';
-// + renderedHeaderCell - marks the header with filter icon
-Column.EVENT_FILTER_ACTIVE_CHANGED = 'filterActiveChanged';
-// + renderedHeaderCell - marks the header with sort icon
-Column.EVENT_SORT_CHANGED = 'sortChanged';
-// + toolpanel, for gui updates
-Column.EVENT_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
-// + toolpanel, for gui updates
-Column.EVENT_PIVOT_CHANGED = 'columnPivotChanged';
-// + toolpanel, for gui updates
-Column.EVENT_VALUE_CHANGED = 'columnValueChanged';
-Column.PINNED_RIGHT = 'right';
-Column.PINNED_LEFT = 'left';
-Column.SORT_ASC = 'asc';
-Column.SORT_DESC = 'desc';
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], Column.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('columnUtils'),
-    __metadata("design:type", columnUtils_1.ColumnUtils)
-], Column.prototype, "columnUtils", void 0);
-__decorate([
-    context_1.Autowired('frameworkFactory'),
-    __metadata("design:type", Object)
-], Column.prototype, "frameworkFactory", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], Column.prototype, "initialise", null);
 exports.Column = Column;

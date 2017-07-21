@@ -2,16 +2,16 @@ import {Utils as _} from "../utils";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ExpressionService} from "../expressionService";
+import {ExpressionService} from "../valueService/expressionService";
 import {RowRenderer} from "./rowRenderer";
 import {TemplateService} from "../templateService";
-import {ColumnController, ColumnApi} from "../columnController/columnController";
-import {ValueService} from "../valueService";
+import {ColumnApi, ColumnController} from "../columnController/columnController";
+import {ValueService} from "../valueService/valueService";
 import {EventService} from "../eventService";
 import {Constants} from "../constants";
-import {Events, CellEvent} from "../events";
+import {CellEvent, Events} from "../events";
 import {RowComp} from "./rowComp";
-import {Autowired, PostConstruct, Optional, Context} from "../context/context";
+import {Autowired, Context, Optional, PostConstruct} from "../context/context";
 import {GridApi} from "../gridApi";
 import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
@@ -22,17 +22,16 @@ import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {CellEditorFactory} from "./cellEditorFactory";
 import {Component} from "../widgets/component";
 import {PopupService} from "../widgets/popupService";
-import {ICellRendererFunc, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {CellRendererFactory} from "./cellRendererFactory";
 import {CellRendererService} from "./cellRendererService";
 import {ValueFormatterService} from "./valueFormatterService";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {SetLeftFeature} from "./features/setLeftFeature";
-import {MethodNotImplementedException} from "../misc/methodNotImplementedException";
 import {StylingService} from "../styling/stylingService";
 import {ColumnHoverService} from "./columnHoverService";
 import {ColumnAnimationService} from "./columnAnimationService";
-import {GroupCellRenderer} from "./cellRenderers/groupCellRenderer";
+import {BaseWithValueColDefParams} from "../entities/colDef";
 
 export class CellComp extends Component {
 
@@ -96,6 +95,9 @@ export class CellComp extends Component {
     private firstRightPinned = false;
     private lastLeftPinned = false;
 
+    private colsSpanning: Column[];
+    private setLeftFeature: SetLeftFeature;
+
     constructor(column: Column, node: RowNode, scope: any, renderedRow: RowComp) {
         super('<div role="gridcell"/>');
 
@@ -113,7 +115,7 @@ export class CellComp extends Component {
     private createGridCell(): void {
         let gridCellDef = <GridCellDef> {
             rowIndex: this.node.rowIndex,
-            floating: this.node.floating,
+            floating: this.node.rowPinned,
             column: this.column
         };
         this.gridCell = new GridCell(gridCellDef);
@@ -196,8 +198,8 @@ export class CellComp extends Component {
         // if boolean set, then just use it
         let colDef = this.column.getColDef();
 
-        // never allow selection on floating rows
-        if (this.node.floating) {
+        // never allow selection on pinned rows
+        if (this.node.rowPinned) {
             this.usingWrapper = false;
         } else if (typeof colDef.checkboxSelection === 'boolean') {
             this.usingWrapper = <boolean> colDef.checkboxSelection;
@@ -267,17 +269,10 @@ export class CellComp extends Component {
     private addChangeListener(): void {
         let cellChangeListener = (event: any) => {
             if (event.column === this.column) {
-                this.refreshCell();
-                this.animateCellWithDataChanged();
+                this.refreshCell({});
             }
         };
         this.addDestroyableEventListener(this.node, RowNode.EVENT_CELL_CHANGED, cellChangeListener);
-    }
-
-    private animateCellWithDataChanged(): void {
-        if (this.gridOptionsWrapper.isEnableCellChangeFlash() || this.column.getColDef().enableCellChangeFlash) {
-            this.animateCell('data-changed');
-        }
     }
 
     private animateCellWithHighlight(): void {
@@ -334,9 +329,19 @@ export class CellComp extends Component {
         }
     }
 
+    private getCellWidth(): number {
+        if (this.colsSpanning) {
+            let result = 0;
+            this.colsSpanning.forEach( col => result += col.getActualWidth() );
+            return result;
+        } else {
+            return this.column.getActualWidth();
+        }
+    }
+
     private setWidthOnCell(): void {
         let widthChangedListener = () => {
-            this.eGridCell.style.width = this.column.getActualWidth() + "px";
+            this.eGridCell.style.width = this.getCellWidth() + "px";
         };
 
         this.column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
@@ -351,6 +356,7 @@ export class CellComp extends Component {
     public init(): void {
         this.value = this.getValue();
 
+        this.setupColSpan();
         this.createGridCell();
         this.addIndexChangeListener();
 
@@ -366,8 +372,10 @@ export class CellComp extends Component {
 
         this.addDomData();
 
+        this.setLeftFeature = new SetLeftFeature(this.column, this.eGridCell, this.colsSpanning);
+        this.addFeature(this.context, this.setLeftFeature);
+
         // this.addSuppressShortcutKeyListenersWhileEditing();
-        this.addFeature(this.context, new SetLeftFeature(this.column, this.eGridCell));
 
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
@@ -379,6 +387,59 @@ export class CellComp extends Component {
         this.setInlineEditingClass();
         this.createParentOfValue();
         this.populateCell();
+    }
+
+    private setupColSpan(): void {
+        // if no cols span is active, then we don't set it up, as it would be wasteful of CPU
+        if (_.missing(this.column.getColDef().colSpan)) {
+            return;
+        }
+
+        // because we are col spanning, a reorder of the cols can change what cols we are spanning over
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.checkColSpan.bind(this));
+        // because we are spanning over multiple cols, we check for width any time any cols width changes.
+        // this is expensive - really we should be explicitly checking only the cols we are spanning over
+        // instead of every col, however it would be tricky code to track the cols we are spanning over, so
+        // because hardly anyone will be using colSpan, am favoring this easier way for more maintainable code.
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.setWidthOnCell.bind(this));
+
+        this.checkColSpan();
+    }
+
+    private checkColSpan(): void {
+        let colSpan = this.column.getColSpan(this.node);
+        let colsSpanning: Column[] = [];
+
+        // if just one col, the col span is just the column we are in
+        if (colSpan===1) {
+            colsSpanning.push(this.column);
+        } else {
+            let pointer = this.column;
+            let pinned = this.column.getPinned();
+            for (let i = 0; i<colSpan; i++) {
+                colsSpanning.push(pointer);
+                pointer = this.columnController.getDisplayedColAfter(pointer);
+                if (_.missing(pointer)) {
+                    break;
+                }
+                // we do not allow col spanning to span outside of pinned areas
+                if (pinned !== pointer.getPinned()) {
+                    break;
+                }
+            }
+        }
+
+        this.setColsSpanning(colsSpanning);
+    }
+
+    private setColsSpanning(colsSpanning: Column[]): void {
+        if (!_.compareArrays(this.colsSpanning, colsSpanning)) {
+            this.colsSpanning = colsSpanning;
+            this.setWidthOnCell();
+            if (this.setLeftFeature) {
+                this.setLeftFeature.setColsSpanning(colsSpanning);
+            }
+        }
     }
 
     private addColumnHoverListener(): void {
@@ -468,7 +529,7 @@ export class CellComp extends Component {
         if (this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.node.floating);
+        this.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.node.rowPinned);
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     }
@@ -622,7 +683,7 @@ export class CellComp extends Component {
             cellEditor.afterGuiAttached();
         }
 
-        this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STARTED, this.createParams());
+        this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STARTED, this.createParamsWithValue());
 
         return true;
     }
@@ -663,7 +724,7 @@ export class CellComp extends Component {
     }
 
     public focusCell(forceBrowserFocus = false): void {
-        this.focusedCellController.setFocusedCell(this.gridCell.rowIndex, this.column, this.node.floating, forceBrowserFocus);
+        this.focusedCellController.setFocusedCell(this.gridCell.rowIndex, this.column, this.node.rowPinned, forceBrowserFocus);
     }
 
     // pass in 'true' to cancel the editing.
@@ -680,8 +741,6 @@ export class CellComp extends Component {
             return;
         }
 
-        this.editingCell = false;
-
         if (!cancel) {
             // also have another option here to cancel after editing, so for example user could have a popup editor and
             // it is closed by user clicking outside the editor. then the editor will close automatically (with false
@@ -693,6 +752,12 @@ export class CellComp extends Component {
                 this.value = this.getValue();
             }
         }
+
+        // it is important we set this after setValue() above, as otherwise the cell will flash
+        // when editing stops. the 'refresh' method checks editing, and doesn't refresh editing cells.
+        // thus it will skip the refresh on this cell until the end of this method where we call
+        // refresh directly and we suppress the flash.
+        this.editingCell = false;
 
         if (this.cellEditor.destroy) {
             this.cellEditor.destroy();
@@ -719,29 +784,31 @@ export class CellComp extends Component {
 
         this.setInlineEditingClass();
 
-        this.refreshCell({dontSkipRefresh: true});
+        // we suppress the flash, as it is not correct to flash the cell the user has finished editing,
+        // the user doesn't need to flash as they were the one who did the edit, the flash is pointless
+        // (as the flash is meant to draw the user to a change that they didn't manually do themselves).
+        this.refreshCell({forceRefresh: true, suppressFlash: true});
 
-        this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STOPPED, this.createParams());
+        this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STOPPED, this.createParamsWithValue());
     }
 
-    private createParams(): any {
-        let params = {
+    private createParamsWithValue(): any {
+        let params: BaseWithValueColDefParams = {
             node: this.node,
             data: this.node.data,
             value: this.value,
-            rowIndex: this.gridCell.rowIndex,
             column: this.column,
             colDef: this.column.getColDef(),
-            $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),
             api: this.gridApi,
             columnApi: this.columnApi
         };
+        (<any>params).$scope = this.scope;
         return params;
     }
 
     private createEvent(event: any): CellEvent {
-        let agEvent = this.createParams();
+        let agEvent = this.createParamsWithValue();
         agEvent.event = event;
         return agEvent;
     }
@@ -977,32 +1044,57 @@ export class CellComp extends Component {
             return false;
         }
 
-        try {
-            // if the cell renderer has a refresh method, we call this instead of doing a refresh
-            // note: should pass in params here instead of value?? so that client has formattedValue
-            let valueFormatted = this.formatValue(this.value);
-            let cellRendererParams = this.column.getColDef().cellRendererParams;
-            let params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
-            this.cellRenderer.refresh(params);
-        } catch (e) {
-            // this exception gets thrown by the frameworks, as our framework wrapper will implement
-            // refresh(), but the wrapped component may not, and then the wrapper throws MethodNotImplementedException.
-            if (e instanceof MethodNotImplementedException) {
-                return false;
-            } else {
-                throw e;
-            }
+        // if the cell renderer has a refresh method, we call this instead of doing a refresh
+        // note: should pass in params here instead of value?? so that client has formattedValue
+        let valueFormatted = this.formatValue(this.value);
+        let cellRendererParams = this.column.getColDef().cellRendererParams;
+        let params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
+        let result: boolean | void = this.cellRenderer.refresh(params);
+
+        if (result===false) {
+            // if result from renderer is false
+            return false;
+        } else {
+            // if result from renderer is true OR undefined
+            return true;
         }
 
-        // got this far, we were able to refresh using the user provided cellRenderer
-        return true;
+        // NOTE on undefined: previous version of the cellRenderer.refresh() interface
+        // returned nothing, if the method existed, we assumed it refreshed. so for
+        // backwards compatibility, we assume if method exists and returns nothing,
+        // that it was successful.
     }
 
-    public refreshCell(params?: {animate?: boolean, newData?: boolean, dontSkipRefresh?: boolean}) {
+    private valuesAreEqual(val1: any, val2: any): boolean {
 
-        let newData = params ? params.newData === true : false;
-        let animate = params ? params.animate === true : false;
-        let dontSkipRefresh = params ? params.dontSkipRefresh === true : false;
+        // if the user provided an equals method, use that, otherwise do simple comparison
+        let colDef = this.column.getColDef();
+        let equalsMethod: (valueA: any, valueB: any) => boolean = colDef ? colDef.equals : null;
+
+        if (equalsMethod) {
+            return equalsMethod(val1, val2);
+        } else {
+            return val1 === val2;
+        }
+    }
+
+    // + stop editing {dontSkipRefresh: true}
+    // + event cellChanged {}
+    // + cellRenderer.params.refresh() {} -> method passes 'as is' to the cellRenderer, so params could be anything
+    // + rowComp: event dataChanged {animate: update, newData: !update}
+    // + rowComp: api refreshCells() {animate: true/false}
+    // + rowRenderer: api softRefreshView() {}
+    public refreshCell(params?: {suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean, volatile?: boolean}) {
+
+        if (this.editingCell) { return; }
+
+        let newData = params && params.newData;
+        let suppressFlash = params && params.suppressFlash;
+        let volatile = params && params.volatile;
+        let forceRefresh = params && params.forceRefresh;
+
+        // if only refreshing volatile cells, then skip the refresh if we are not volatile
+        if (volatile && !this.isVolatile()) { return; }
 
         let oldValue = this.value;
         this.value = this.getValue();
@@ -1010,11 +1102,9 @@ export class CellComp extends Component {
         // for simple values only (not pojo's), see if the value is the same, and if it is, skip the refresh.
         // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
         // if was before the edit.
-        // Niall Note - taking this out for now - it's effectively change detection. i think how the refresh is done
-        // needs to be overhauled and redone in a properly planned way.
-        let allowSkippingRefreshIfDataSame = !dontSkipRefresh && _.valuesSimpleAndSame(oldValue, this.value);
-        if (allowSkippingRefreshIfDataSame) {
-            // return;
+        let skipRefresh = !forceRefresh && this.valuesAreEqual(oldValue, this.value);
+        if (skipRefresh) {
+            return;
         }
 
         let cellRendererRefreshed: boolean;
@@ -1022,7 +1112,7 @@ export class CellComp extends Component {
         // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
         // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
         // then we are not showing a movement in the stock price, rather we are showing different stock.
-        if (newData) {
+        if (newData || suppressFlash) {
             cellRendererRefreshed = false;
         } else {
             cellRendererRefreshed = this.attemptCellRendererRefresh();
@@ -1035,12 +1125,18 @@ export class CellComp extends Component {
             this.replaceCellContent();
         }
 
-        if (animate) {
-            this.animateCellWithDataChanged();
+        if (!suppressFlash) {
+            this.flashCell();
         }
 
         // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
         this.addClassesFromRules();
+    }
+
+    private flashCell(): void {
+        if (this.gridOptionsWrapper.isEnableCellChangeFlash() || this.column.getColDef().enableCellChangeFlash) {
+            this.animateCell('data-changed');
+        }
     }
 
     private replaceCellContent(): void {
@@ -1061,7 +1157,7 @@ export class CellComp extends Component {
         }
     }
 
-    private addClassesFromRules() :void{
+    private addClassesFromRules(): void{
         this.stylingService.processCellClassRules(
             this.column.getColDef(),
             {
@@ -1104,9 +1200,9 @@ export class CellComp extends Component {
                 this.eParentOfValue.innerHTML = template;
             }
         // use cell renderer if it exists
-        } else if (floatingCellRenderer && this.node.floating) {
+        } else if (floatingCellRenderer && this.node.rowPinned) {
             // if floating, then give preference to floating cell renderer
-            this.useCellRenderer(floatingCellRenderer, colDef.floatingCellRendererParams, valueFormatted);
+            this.useCellRenderer(floatingCellRenderer, colDef.pinnedRowCellRendererParams, valueFormatted);
         } else if (cellRenderer) {
             // use normal cell renderer
             this.useCellRenderer(cellRenderer, colDef.cellRendererParams, valueFormatted);
@@ -1140,7 +1236,8 @@ export class CellComp extends Component {
         let params = <ICellRendererParams> {
             value: this.value,
             valueFormatted: valueFormatted,
-            valueGetter: this.getValue,
+            getValue: this.getValue.bind(this),
+            setValue: (value: any) => { this.valueService.setValue(this.node, this.column, value) },
             formatValue: this.formatValue.bind(this),
             data: this.node.data,
             node: this.node,

@@ -16,7 +16,7 @@ export class ImmutableService {
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL) {
+        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             this.inMemoryRowModel = <InMemoryRowModel> this.rowModel;
         }
     }

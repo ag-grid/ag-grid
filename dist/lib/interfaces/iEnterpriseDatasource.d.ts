@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 export interface ColumnVO {
@@ -18,7 +18,7 @@ export interface IEnterpriseGetRowsRequest {
 }
 export interface IEnterpriseGetRowsParams {
     request: IEnterpriseGetRowsRequest;
-    successCallback(rowsThisPage: any[]): void;
+    successCallback(rowsThisPage: any[], lastRow: number): void;
     failCallback(): void;
 }
 export interface IEnterpriseDatasource {

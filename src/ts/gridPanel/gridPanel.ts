@@ -1,9 +1,7 @@
 import {Utils as _} from "../utils";
-import {MasterSlaveService} from "../masterSlaveService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
 import {RowRenderer, RefreshViewParams} from "../rendering/rowRenderer";
-import {FloatingRowModel} from "../rowModels/floatingRowModel";
 import {BorderLayout} from "../layout/borderLayout";
 import {Logger, LoggerFactory} from "../logger";
 import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy, Context} from "../context/context";
@@ -28,6 +26,8 @@ import {GridCell} from "../entities/gridCell";
 import {RowNode} from "../entities/rowNode";
 import {PaginationProxy} from "../rowModels/paginationProxy";
 import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
+import {AlignedGridsService} from "../alignedGridsService";
+import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -135,11 +135,11 @@ export interface RowContainerComponents {
 @Bean('gridPanel')
 export class GridPanel extends BeanStub {
 
-    @Autowired('masterSlaveService') private masterSlaveService: MasterSlaveService;
+    @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
@@ -371,7 +371,7 @@ export class GridPanel extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.setBodyAndHeaderHeights.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ITEMS_ADDED, this.onRowDataChanged.bind(this));
@@ -675,7 +675,7 @@ export class GridPanel extends BeanStub {
             onlyBody: true,
             suppressKeepFocus: true
         };
-        this.rowRenderer.refreshView(refreshViewParams);
+        this.rowRenderer.redrawAfterModelUpdate(refreshViewParams);
 
 
         //***************************************************************************
@@ -775,18 +775,18 @@ export class GridPanel extends BeanStub {
             let floatingStart: string;
             let floatingEnd: string;
 
-            if (this.floatingRowModel.isEmpty(Constants.FLOATING_TOP)) {
+            if (this.pinnedRowModel.isEmpty(Constants.PINNED_TOP)) {
                 floatingStart = null;
             } else {
-                floatingStart = Constants.FLOATING_TOP;
+                floatingStart = Constants.PINNED_TOP;
             }
 
-            if (this.floatingRowModel.isEmpty(Constants.FLOATING_BOTTOM)) {
+            if (this.pinnedRowModel.isEmpty(Constants.PINNED_BOTTOM)) {
                 floatingEnd = null;
                 rowEnd = this.paginationProxy.getTotalRowCount() - 1;
             } else {
-                floatingEnd = Constants.FLOATING_BOTTOM;
-                rowEnd = this.floatingRowModel.getFloatingBottomRowData().length = 1;
+                floatingEnd = Constants.PINNED_BOTTOM;
+                rowEnd = this.pinnedRowModel.getPinnedBottomRowData().length = 1;
             }
 
             let allDisplayedColumns = this.columnController.getAllDisplayedColumns();
@@ -915,13 +915,13 @@ export class GridPanel extends BeanStub {
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
             eViewportToScroll.scrollTop = rowTopPixel;
-            this.rowRenderer.drawVirtualRowsWithLock();
+            this.rowRenderer.redrawAfterScroll();
         } else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             let viewportHeight = vRangeBottom - vRangeTop;
             let newScrollPosition = rowBottomPixel - viewportHeight;
             eViewportToScroll.scrollTop = newScrollPosition;
-            this.rowRenderer.drawVirtualRowsWithLock();
+            this.rowRenderer.redrawAfterScroll();
         }
         // otherwise, row is already in view, so do nothing
     }
@@ -1243,7 +1243,7 @@ export class GridPanel extends BeanStub {
             this.eAllCellContainers = [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
 
             let containers = {
-                body: new RowContainerComponent( {eContainer: this.eBodyContainer, useDocumentFragment: true} ),
+                body: new RowContainerComponent( {eContainer: this.eBodyContainer} ),
                 fullWidth: <RowContainerComponent> null,
                 pinnedLeft: <RowContainerComponent> null,
                 pinnedRight: <RowContainerComponent> null,
@@ -1304,10 +1304,10 @@ export class GridPanel extends BeanStub {
                 this.eFloatingTop, this.eFloatingBottom, this.eFullWidthCellContainer];
 
             this.rowContainerComponents = {
-                body: new RowContainerComponent({eContainer: this.eBodyContainer, eViewport: this.eBodyViewport, useDocumentFragment: true}),
+                body: new RowContainerComponent({eContainer: this.eBodyContainer, eViewport: this.eBodyViewport}),
                 fullWidth: new RowContainerComponent({eContainer: this.eFullWidthCellContainer, hideWhenNoChildren: true, eViewport: this.eFullWidthCellViewport}),
-                pinnedLeft: new RowContainerComponent({eContainer: this.ePinnedLeftColsContainer, eViewport: this.ePinnedLeftColsViewport, useDocumentFragment: true}),
-                pinnedRight: new RowContainerComponent({eContainer: this.ePinnedRightColsContainer, eViewport: this.ePinnedRightColsViewport, useDocumentFragment: true}),
+                pinnedLeft: new RowContainerComponent({eContainer: this.ePinnedLeftColsContainer, eViewport: this.ePinnedLeftColsViewport}),
+                pinnedRight: new RowContainerComponent({eContainer: this.ePinnedRightColsContainer, eViewport: this.ePinnedRightColsViewport}),
 
                 floatingTop: new RowContainerComponent({eContainer: this.eFloatingTopContainer}),
                 floatingTopPinnedLeft: new RowContainerComponent({eContainer: this.ePinnedLeftFloatingTop}),
@@ -1579,11 +1579,11 @@ export class GridPanel extends BeanStub {
             return;
         }
 
-        // padding top covers the header and the floating rows on top
-        let floatingTopHeight = this.floatingRowModel.getFloatingTopTotalHeight();
+        // padding top covers the header and the pinned rows on top
+        let floatingTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
         let paddingTop = totalHeaderHeight + floatingTopHeight;
-        // bottom is just the bottom floating rows
-        let floatingBottomHeight = this.floatingRowModel.getFloatingBottomTotalHeight();
+        // bottom is just the bottom pinned rows
+        let floatingBottomHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
         let floatingBottomTop = heightOfContainer - floatingBottomHeight;
 
         let bodyHeight = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
@@ -1684,7 +1684,7 @@ export class GridPanel extends BeanStub {
             this.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL, {direction: 'horizontal'});
             this.lastLeftPosition = newLeftPosition;
             this.horizontallyScrollHeaderCenterAndFloatingCenter();
-            this.masterSlaveService.fireHorizontalScrollEvent(newLeftPosition);
+            this.alignedGridsService.fireHorizontalScrollEvent(newLeftPosition);
             this.setLeftAndRightBounds();
         }
     }
@@ -1705,7 +1705,7 @@ export class GridPanel extends BeanStub {
 
             this.fakeVerticalScroll(newTopPosition);
 
-            this.rowRenderer.drawVirtualRowsWithLock();
+            this.rowRenderer.redrawAfterScroll();
         }
     }
 

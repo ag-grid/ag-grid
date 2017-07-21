@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -65,8 +65,6 @@ var HeaderRenderer = (function () {
     HeaderRenderer.prototype.onGridColumnsChanged = function () {
         this.setHeight();
     };
-    // this is called from the API and refreshes everything, should be broken out
-    // into refresh everything vs just something changed
     HeaderRenderer.prototype.refreshHeader = function () {
         this.setHeight();
         this.childContainers.forEach(function (container) { return container.refresh(); });
@@ -92,45 +90,45 @@ var HeaderRenderer = (function () {
         this.eHeaderViewport.style.marginLeft = pinnedLeftWidthWithScroll + 'px';
         this.eHeaderViewport.style.marginRight = pinnedRightWidthWithScroll + 'px';
     };
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], HeaderRenderer.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], HeaderRenderer.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('gridPanel'),
+        __metadata("design:type", gridPanel_1.GridPanel)
+    ], HeaderRenderer.prototype, "gridPanel", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], HeaderRenderer.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], HeaderRenderer.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('scrollVisibleService'),
+        __metadata("design:type", scrollVisibleService_1.ScrollVisibleService)
+    ], HeaderRenderer.prototype, "scrollVisibleService", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], HeaderRenderer.prototype, "init", null);
+    __decorate([
+        context_1.PreDestroy,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], HeaderRenderer.prototype, "destroy", null);
+    HeaderRenderer = __decorate([
+        context_1.Bean('headerRenderer')
+    ], HeaderRenderer);
     return HeaderRenderer;
 }());
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], HeaderRenderer.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], HeaderRenderer.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('gridPanel'),
-    __metadata("design:type", gridPanel_1.GridPanel)
-], HeaderRenderer.prototype, "gridPanel", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], HeaderRenderer.prototype, "context", void 0);
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], HeaderRenderer.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('scrollVisibleService'),
-    __metadata("design:type", scrollVisibleService_1.ScrollVisibleService)
-], HeaderRenderer.prototype, "scrollVisibleService", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], HeaderRenderer.prototype, "init", null);
-__decorate([
-    context_1.PreDestroy,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], HeaderRenderer.prototype, "destroy", null);
-HeaderRenderer = __decorate([
-    context_1.Bean('headerRenderer')
-], HeaderRenderer);
 exports.HeaderRenderer = HeaderRenderer;

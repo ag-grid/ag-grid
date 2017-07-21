@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var rowNode_1 = require("../../entities/rowNode");
 var utils_1 = require("../../utils");
 var InMemoryNodeManager = (function () {
-    function InMemoryNodeManager(rootNode, gridOptionsWrapper, context, eventService) {
+    function InMemoryNodeManager(rootNode, gridOptionsWrapper, context, eventService, columnController) {
         this.nextId = 0;
         // when user is provide the id's, we also keep a map of ids to row nodes for convenience
         this.allNodesMap = {};
@@ -17,6 +17,7 @@ var InMemoryNodeManager = (function () {
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.context = context;
         this.eventService = eventService;
+        this.columnController = columnController;
         this.rootNode.group = true;
         this.rootNode.level = -1;
         this.rootNode.id = InMemoryNodeManager.ROOT_NODE_ID;
@@ -68,8 +69,7 @@ var InMemoryNodeManager = (function () {
         var rowNodeTransaction = {
             remove: [],
             update: [],
-            add: [],
-            addIndex: null
+            add: []
         };
         if (utils_1.Utils.exists(add)) {
             var useIndex = typeof addIndex === 'number' && addIndex >= 0;
@@ -267,8 +267,8 @@ var InMemoryNodeManager = (function () {
             return false;
         }
     };
+    InMemoryNodeManager.TOP_LEVEL = 0;
+    InMemoryNodeManager.ROOT_NODE_ID = 'ROOT_NODE_ID';
     return InMemoryNodeManager;
 }());
-InMemoryNodeManager.TOP_LEVEL = 0;
-InMemoryNodeManager.ROOT_NODE_ID = 'ROOT_NODE_ID';
 exports.InMemoryNodeManager = InMemoryNodeManager;

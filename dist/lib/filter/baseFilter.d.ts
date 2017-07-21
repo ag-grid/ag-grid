@@ -1,9 +1,10 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Component } from "../widgets/component";
 import { IFilterComp, IDoesFilterPassParams, IFilterParams } from "../interfaces/iFilter";
 import { Context } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { FloatingFilterChange } from "./floatingFilter";
 export interface Comparator<T> {
     (left: T, right: T): number;
@@ -39,7 +40,7 @@ export declare abstract class BaseFilter<T, P extends IFilterParams, M> extends 
     private eApplyButton;
     private eClearButton;
     context: Context;
-    private gridOptionsWrapper;
+    gridOptionsWrapper: GridOptionsWrapper;
     init(params: P): void;
     onClearButton(): void;
     abstract customInit(): void;

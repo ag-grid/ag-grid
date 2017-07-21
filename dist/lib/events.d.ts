@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
@@ -42,7 +42,7 @@ export declare class Events {
     /** The client has set new data into the grid */
     static EVENT_ROW_DATA_UPDATED: string;
     /** The client has set new floating data into the grid */
-    static EVENT_FLOATING_ROW_DATA_CHANGED: string;
+    static EVENT_PINNED_ROW_DATA_CHANGED: string;
     /** Range selection has changed */
     static EVENT_RANGE_SELECTION_CHANGED: string;
     /** Model was updated - grid updates the drawn rows when this happens */
@@ -60,15 +60,9 @@ export declare class Events {
     static EVENT_COLUMN_HOVER_CHANGED: string;
     /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */
     static EVENT_FILTER_CHANGED: string;
-    static DEPRECATED_EVENT_AFTER_FILTER_CHANGED: string;
-    /** deprecated event */
-    static DEPRECATED_EVENT_BEFORE_FILTER_CHANGED: string;
     /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
     static EVENT_FILTER_MODIFIED: string;
     static EVENT_SORT_CHANGED: string;
-    /** deprecated events */
-    static DEPRECATED_EVENT_BEFORE_SORT_CHANGED: string;
-    static DEPRECATED_EVENT_AFTER_SORT_CHANGED: string;
     /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */
     static EVENT_VIRTUAL_ROW_REMOVED: string;
     static EVENT_ROW_CLICKED: string;
@@ -99,9 +93,6 @@ export declare class Events {
     /** All the events from here down are experimental, should not be documented or used by ag-Grid customers */
     static EVENT_PAGINATION_CHANGED: string;
     static EVENT_BODY_HEIGHT_CHANGED: string;
-    static DEPRECATED_EVENT_PAGINATION_RESET: string;
-    static DEPRECATED_EVENT_PAGINATION_PAGE_LOADED: string;
-    static DEPRECATED_EVENT_PAGINATION_PAGE_REQUESTED: string;
     static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED: string;
     static EVENT_SCROLL_VISIBILITY_CHANGED: string;
     static EVENT_COMPONENT_STATE_CHANGED: string;

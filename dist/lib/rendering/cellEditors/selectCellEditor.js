@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,10 +15,21 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../widgets/component");
 var utils_1 = require("../../utils");
 var constants_1 = require("../../constants");
+var context_1 = require("../../context/context");
+var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var SelectCellEditor = (function (_super) {
     __extends(SelectCellEditor, _super);
     function SelectCellEditor() {
@@ -42,7 +53,11 @@ var SelectCellEditor = (function (_super) {
             }
             _this.eSelect.appendChild(option);
         });
-        this.addDestroyableEventListener(this.eSelect, 'change', function () { return params.stopEditing(); });
+        // we don't want to add this if full row editing, otherwise selecting will stop the
+        // full row editing.
+        if (!this.gridOptionsWrapper.isFullRowEdit()) {
+            this.addDestroyableEventListener(this.eSelect, 'change', function () { return params.stopEditing(); });
+        }
         this.addDestroyableEventListener(this.eSelect, 'keydown', function (event) {
             var isNavigationKey = event.keyCode === constants_1.Constants.KEY_UP || event.keyCode === constants_1.Constants.KEY_DOWN;
             if (isNavigationKey) {
@@ -62,8 +77,13 @@ var SelectCellEditor = (function (_super) {
         this.eSelect.focus();
     };
     SelectCellEditor.prototype.getValue = function () {
+        console.log('value is ' + this.eSelect.value);
         return this.eSelect.value;
     };
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], SelectCellEditor.prototype, "gridOptionsWrapper", void 0);
     return SelectCellEditor;
 }(component_1.Component));
 exports.SelectCellEditor = SelectCellEditor;

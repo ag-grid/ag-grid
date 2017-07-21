@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./rowNode";
@@ -20,7 +20,7 @@ export interface GridOptions {
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. PLEASE!*
      ****************************************************************/
-    enforceRowDomOrder?: boolean;
+    ensureDomOrder?: boolean;
     deltaRowDataMode?: boolean;
     scrollbarWidth?: number;
     toolPanelSuppressRowGroups?: boolean;
@@ -45,6 +45,7 @@ export interface GridOptions {
     enableFilter?: boolean;
     enableServerSideFilter?: boolean;
     enableStatusBar?: boolean;
+    alwaysShowStatusBar?: boolean;
     enableGroupEdit?: boolean;
     suppressMiddleClickScrolls?: boolean;
     suppressPreventDefaultOnMouseWheel?: boolean;
@@ -102,6 +103,10 @@ export interface GridOptions {
     maxBlocksInCache?: number;
     purgeClosedRowNodes?: boolean;
     domLayout?: string;
+    suppressChangeDetection?: boolean;
+    aggregateOnlyChangedColumns?: boolean;
+    valueCache?: boolean;
+    valueCacheNeverExpires?: boolean;
     cacheOverflowSize?: number;
     infiniteInitialRowCount?: number;
     paginationPageSize?: number;
@@ -149,6 +154,7 @@ export interface GridOptions {
     rowClass?: any;
     groupDefaultExpanded?: number;
     slaveGrids?: GridOptions[];
+    alignedGrids?: GridOptions[];
     rowSelection?: string;
     rowDeselection?: boolean;
     overlayLoadingTemplate?: string;
@@ -159,10 +165,13 @@ export interface GridOptions {
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
     rowData?: any[];
-    floatingTopRowData?: any[];
-    floatingBottomRowData?: any[];
+    pinnedTopRowData?: any[];
+    pinnedBottomRowData?: any[];
     showToolPanel?: boolean;
     columnDefs?: (ColDef | ColGroupDef)[];
+    columnTypes?: {
+        [key: string]: ColDef;
+    };
     datasource?: IDatasource;
     viewportDatasource?: IViewportDatasource;
     enterpriseDatasource?: IEnterpriseDatasource;
@@ -237,7 +246,7 @@ export interface GridOptions {
     onVirtualColumnsChanged?(event?: any): void;
     onRowGroupOpened?(event?: any): void;
     onRowDataChanged?(event?: any): void;
-    onFloatingRowDataChanged?(event?: any): void;
+    onPinnedRowDataChanged?(event?: any): void;
     onRangeSelectionChanged?(event?: any): void;
     onColumnRowGroupAddRequest?(event?: any): void;
     onColumnRowGroupRemoveRequest?(event?: any): void;

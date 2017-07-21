@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49,19 +49,19 @@ var ColumnHoverService = (function (_super) {
     ColumnHoverService.prototype.isHovered = function (column) {
         return column == this.currentlySelectedColumn;
     };
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], ColumnHoverService.prototype, "eventService", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ColumnHoverService.prototype, "init", null);
+    ColumnHoverService = __decorate([
+        context_1.Bean('columnHoverService')
+    ], ColumnHoverService);
     return ColumnHoverService;
 }(beanStub_1.BeanStub));
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], ColumnHoverService.prototype, "eventService", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], ColumnHoverService.prototype, "init", null);
-ColumnHoverService = __decorate([
-    context_1.Bean('columnHoverService')
-], ColumnHoverService);
 exports.ColumnHoverService = ColumnHoverService;

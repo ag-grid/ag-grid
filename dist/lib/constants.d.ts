@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 export declare class Constants {
@@ -44,12 +44,12 @@ export declare class Constants {
     static KEY_CTRL_DOWN_NAME: string;
     static ROW_MODEL_TYPE_INFINITE: string;
     static ROW_MODEL_TYPE_VIEWPORT: string;
-    static ROW_MODEL_TYPE_NORMAL: string;
+    static ROW_MODEL_TYPE_IN_MEMORY: string;
     static ROW_MODEL_TYPE_ENTERPRISE: string;
     static ALWAYS: string;
     static ONLY_WHEN_GROUPING: string;
-    static FLOATING_TOP: string;
-    static FLOATING_BOTTOM: string;
+    static PINNED_TOP: string;
+    static PINNED_BOTTOM: string;
     static VERTICAL_SCROLL_KEYS_ID: string;
     static HORIZONTAL_SCROLL_KEYS_ID: string;
     static DIAGONAL_SCROLL_KEYS_ID: string;

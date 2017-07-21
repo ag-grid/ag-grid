@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { NumberSequence } from "../../utils";
@@ -23,7 +23,7 @@ export declare abstract class RowNodeBlock extends BeanStub {
     private blockNumber;
     private startRow;
     private endRow;
-    private rowNodes;
+    rowNodes: RowNode[];
     private beans;
     private rowNodeCacheParams;
     protected abstract loadFromDatasource(): void;
@@ -42,7 +42,7 @@ export declare abstract class RowNodeBlock extends BeanStub {
     protected init(beans: RowNodeBlockBeans): void;
     getStartRow(): number;
     getEndRow(): number;
-    getPageNumber(): number;
+    getBlockNumber(): number;
     setDirty(): void;
     setDirtyAndPurge(): void;
     getState(): string;

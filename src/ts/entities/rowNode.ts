@@ -4,7 +4,7 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {SelectionController} from "../selectionController";
 import {ColDef} from "./colDef";
 import {Column} from "./column";
-import {ValueService} from "../valueService";
+import {ValueService} from "../valueService/valueService";
 import {ColumnController} from "../columnController/columnController";
 import {Autowired, Context} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
@@ -14,6 +14,7 @@ import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
 import {RowNodeCache, RowNodeCacheParams} from "../rowModels/cache/rowNodeCache";
 import {RowNodeBlock} from "../rowModels/cache/rowNodeBlock";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
+import {ValueCache} from "../valueService/valueCache";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -52,6 +53,7 @@ export class RowNode implements IEventEmitter {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('context') private context: Context;
+    @Autowired('valueCache') private valueCache: ValueCache;
 
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
@@ -89,8 +91,8 @@ export class RowNode implements IEventEmitter {
     public childIndex: number;
     /** The index of this node in the grid, only valid if node is displayed in the grid, otherwise it should be ignored as old index may be present */
     public rowIndex: number;
-    /** Either 'top' or 'bottom' if floating, otherwise undefined or null */
-    public floating: string;
+    /** Either 'top' or 'bottom' if row pinned, otherwise undefined or null */
+    public rowPinned: string;
     /** If using quick filter, stores a string representation of the row for searching against */
     public quickFilterAggregateText: string;
     /** Groups only - True if row is a footer. Footers  have group = true and footer = true */
@@ -140,12 +142,18 @@ export class RowNode implements IEventEmitter {
      * a copy where daemon=true. */
     public daemon: boolean;
 
+    /** Used by the value service, stores values for a particular change detection turn. */
+    public __cacheData: {[colId: string]: any};
+    public __cacheVersion: number;
+
     private selected = false;
     private eventService: EventService;
 
     public setData(data: any): void {
         let oldData = this.data;
         this.data = data;
+
+        this.valueCache.onDataChanged();
 
         let event = {oldData: oldData, newData: data, update: false};
         this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
@@ -209,6 +217,10 @@ export class RowNode implements IEventEmitter {
         } else {
             this.id = id;
         }
+    }
+
+    public isPixelInRange(pixel: number): boolean {
+        return pixel >= this.rowTop && pixel < (this.rowTop + this.rowHeight);
     }
 
     public clearRowTop(): void {
@@ -302,13 +314,13 @@ export class RowNode implements IEventEmitter {
     // the cell knows about the change given it's in charge of the editing.
     // this method is for the client to call, so the cell listens for the change
     // event, and also flashes the cell when the change occurs.
-    public setDataValue(colKey: string|ColDef|Column, newValue: any): void {
-        let column = this.columnController.getGridColumn(colKey);
+    public setDataValue(colKey: string|Column, newValue: any): void {
+        let column = this.columnController.getPrimaryColumn(colKey);
         this.valueService.setValue(this, column, newValue);
         this.dispatchCellChangedEvent(column, newValue);
     }
 
-    public setGroupValue(colKey: string|ColDef|Column, newValue: any): void {
+    public setGroupValue(colKey: string|Column, newValue: any): void {
         let column = this.columnController.getGridColumn(colKey);
 
         if (_.missing(this.groupData)) {
@@ -421,8 +433,8 @@ export class RowNode implements IEventEmitter {
         });
     }
 
-    public isFloating(): boolean {
-        return this.floating === Constants.FLOATING_TOP || this.floating === Constants.FLOATING_BOTTOM;
+    public isRowPinned(): boolean {
+        return this.rowPinned === Constants.PINNED_TOP || this.rowPinned === Constants.PINNED_BOTTOM;
     }
 
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
@@ -442,8 +454,8 @@ export class RowNode implements IEventEmitter {
             return 0;
         }
 
-        if (this.floating) {
-            console.log('ag-Grid: cannot select floating rows');
+        if (this.rowPinned) {
+            console.log('ag-Grid: cannot select pinned rows');
             return 0;
         }
 
@@ -455,10 +467,9 @@ export class RowNode implements IEventEmitter {
         }
 
         if (rangeSelect) {
-            let rowModelNormal = this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL;
             let newRowClicked = this.selectionController.getLastSelectedNode() !== this;
             let allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
-            if (rowModelNormal && newRowClicked && allowMultiSelect) {
+            if (newRowClicked && allowMultiSelect) {
                 return this.doRowRangeSelection();
             }
         }
@@ -525,49 +536,19 @@ export class RowNode implements IEventEmitter {
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
     private doRowRangeSelection(): number {
-        let lastSelectedNode = this.selectionController.getLastSelectedNode();
-
-        // if lastSelectedNode is missing, we start at the first row
-        let firstRowHit = !lastSelectedNode;
-        let lastRowHit = false;
-        let lastRow: RowNode;
-
-        let groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
-
         let updatedCount = 0;
 
-        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
-        inMemoryRowModel.forEachNodeAfterFilterAndSort( (rowNode: RowNode) => {
+        let groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        let lastSelectedNode = this.selectionController.getLastSelectedNode();
 
-            let lookingForLastRow = firstRowHit && !lastRowHit;
+        let nodesToSelect = this.rowModel.getNodesInRangeForSelection(lastSelectedNode, this);
 
-            // check if we need to flip the select switch
-            if (!firstRowHit) {
-                if (rowNode===lastSelectedNode || rowNode===this) {
-                    firstRowHit = true;
-                }
-            }
+        nodesToSelect.forEach( rowNode => {
+            if (rowNode.group && groupsSelectChildren) { return; }
 
-            let skipThisGroupNode = rowNode.group && groupsSelectChildren;
-            if (!skipThisGroupNode) {
-                let inRange = firstRowHit && !lastRowHit;
-                let childOfLastRow = rowNode.isParentOfNode(lastRow);
-                let nodeWasSelected = rowNode.selectThisNode(inRange || childOfLastRow);
-                if (nodeWasSelected) {
-                    updatedCount++;
-                }
-            }
-
-            if (lookingForLastRow) {
-                if (rowNode===lastSelectedNode || rowNode===this) {
-
-                    lastRowHit = true;
-                    if (rowNode===lastSelectedNode) {
-                        lastRow = lastSelectedNode;
-                    } else {
-                        lastRow = this;
-                    }
-                }
+            let nodeWasSelected = rowNode.selectThisNode(true);
+            if (nodeWasSelected) {
+                updatedCount++;
             }
         });
 
@@ -580,7 +561,7 @@ export class RowNode implements IEventEmitter {
         return updatedCount;
     }
 
-    private isParentOfNode(potentialParent: RowNode): boolean {
+    public isParentOfNode(potentialParent: RowNode): boolean {
         let parentNode = this.parent;
         while (parentNode) {
             if (parentNode === potentialParent) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,11 +29,11 @@ var utils_1 = require("../utils");
 var column_1 = require("../entities/column");
 var rowNode_1 = require("../entities/rowNode");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var expressionService_1 = require("../expressionService");
+var expressionService_1 = require("../valueService/expressionService");
 var rowRenderer_1 = require("./rowRenderer");
 var templateService_1 = require("../templateService");
 var columnController_1 = require("../columnController/columnController");
-var valueService_1 = require("../valueService");
+var valueService_1 = require("../valueService/valueService");
 var eventService_1 = require("../eventService");
 var constants_1 = require("../constants");
 var events_1 = require("../events");
@@ -50,7 +50,6 @@ var cellRendererService_1 = require("./cellRendererService");
 var valueFormatterService_1 = require("./valueFormatterService");
 var checkboxSelectionComponent_1 = require("./checkboxSelectionComponent");
 var setLeftFeature_1 = require("./features/setLeftFeature");
-var methodNotImplementedException_1 = require("../misc/methodNotImplementedException");
 var stylingService_1 = require("../styling/stylingService");
 var columnHoverService_1 = require("./columnHoverService");
 var columnAnimationService_1 = require("./columnAnimationService");
@@ -76,7 +75,7 @@ var CellComp = (function (_super) {
     CellComp.prototype.createGridCell = function () {
         var gridCellDef = {
             rowIndex: this.node.rowIndex,
-            floating: this.node.floating,
+            floating: this.node.rowPinned,
             column: this.column
         };
         this.gridCell = new gridCell_1.GridCell(gridCellDef);
@@ -144,8 +143,8 @@ var CellComp = (function (_super) {
     CellComp.prototype.setupCheckboxSelection = function () {
         // if boolean set, then just use it
         var colDef = this.column.getColDef();
-        // never allow selection on floating rows
-        if (this.node.floating) {
+        // never allow selection on pinned rows
+        if (this.node.rowPinned) {
             this.usingWrapper = false;
         }
         else if (typeof colDef.checkboxSelection === 'boolean') {
@@ -215,16 +214,10 @@ var CellComp = (function (_super) {
         var _this = this;
         var cellChangeListener = function (event) {
             if (event.column === _this.column) {
-                _this.refreshCell();
-                _this.animateCellWithDataChanged();
+                _this.refreshCell({});
             }
         };
         this.addDestroyableEventListener(this.node, rowNode_1.RowNode.EVENT_CELL_CHANGED, cellChangeListener);
-    };
-    CellComp.prototype.animateCellWithDataChanged = function () {
-        if (this.gridOptionsWrapper.isEnableCellChangeFlash() || this.column.getColDef().enableCellChangeFlash) {
-            this.animateCell('data-changed');
-        }
     };
     CellComp.prototype.animateCellWithHighlight = function () {
         this.animateCell('highlight');
@@ -274,10 +267,20 @@ var CellComp = (function (_super) {
             this.stopRowOrCellEdit();
         }
     };
+    CellComp.prototype.getCellWidth = function () {
+        if (this.colsSpanning) {
+            var result_1 = 0;
+            this.colsSpanning.forEach(function (col) { return result_1 += col.getActualWidth(); });
+            return result_1;
+        }
+        else {
+            return this.column.getActualWidth();
+        }
+    };
     CellComp.prototype.setWidthOnCell = function () {
         var _this = this;
         var widthChangedListener = function () {
-            _this.eGridCell.style.width = _this.column.getActualWidth() + "px";
+            _this.eGridCell.style.width = _this.getCellWidth() + "px";
         };
         this.column.addEventListener(column_1.Column.EVENT_WIDTH_CHANGED, widthChangedListener);
         this.addDestroyFunc(function () {
@@ -287,6 +290,7 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.init = function () {
         this.value = this.getValue();
+        this.setupColSpan();
         this.createGridCell();
         this.addIndexChangeListener();
         this.setupCheckboxSelection();
@@ -298,8 +302,9 @@ var CellComp = (function (_super) {
         this.addCellFocusedListener();
         this.addColumnHoverListener();
         this.addDomData();
+        this.setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.eGridCell, this.colsSpanning);
+        this.addFeature(this.context, this.setLeftFeature);
         // this.addSuppressShortcutKeyListenersWhileEditing();
-        this.addFeature(this.context, new setLeftFeature_1.SetLeftFeature(this.column, this.eGridCell));
         // only set tab index if cell selection is enabled
         if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
             this.eGridCell.setAttribute("tabindex", "-1");
@@ -309,6 +314,53 @@ var CellComp = (function (_super) {
         this.setInlineEditingClass();
         this.createParentOfValue();
         this.populateCell();
+    };
+    CellComp.prototype.setupColSpan = function () {
+        // if no cols span is active, then we don't set it up, as it would be wasteful of CPU
+        if (utils_1.Utils.missing(this.column.getColDef().colSpan)) {
+            return;
+        }
+        // because we are col spanning, a reorder of the cols can change what cols we are spanning over
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.checkColSpan.bind(this));
+        // because we are spanning over multiple cols, we check for width any time any cols width changes.
+        // this is expensive - really we should be explicitly checking only the cols we are spanning over
+        // instead of every col, however it would be tricky code to track the cols we are spanning over, so
+        // because hardly anyone will be using colSpan, am favoring this easier way for more maintainable code.
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.setWidthOnCell.bind(this));
+        this.checkColSpan();
+    };
+    CellComp.prototype.checkColSpan = function () {
+        var colSpan = this.column.getColSpan(this.node);
+        var colsSpanning = [];
+        // if just one col, the col span is just the column we are in
+        if (colSpan === 1) {
+            colsSpanning.push(this.column);
+        }
+        else {
+            var pointer = this.column;
+            var pinned = this.column.getPinned();
+            for (var i = 0; i < colSpan; i++) {
+                colsSpanning.push(pointer);
+                pointer = this.columnController.getDisplayedColAfter(pointer);
+                if (utils_1.Utils.missing(pointer)) {
+                    break;
+                }
+                // we do not allow col spanning to span outside of pinned areas
+                if (pinned !== pointer.getPinned()) {
+                    break;
+                }
+            }
+        }
+        this.setColsSpanning(colsSpanning);
+    };
+    CellComp.prototype.setColsSpanning = function (colsSpanning) {
+        if (!utils_1.Utils.compareArrays(this.colsSpanning, colsSpanning)) {
+            this.colsSpanning = colsSpanning;
+            this.setWidthOnCell();
+            if (this.setLeftFeature) {
+                this.setLeftFeature.setColsSpanning(colsSpanning);
+            }
+        }
     };
     CellComp.prototype.addColumnHoverListener = function () {
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
@@ -388,7 +440,7 @@ var CellComp = (function (_super) {
         if (this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.node.floating);
+        this.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.node.rowPinned);
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     };
@@ -529,7 +581,7 @@ var CellComp = (function (_super) {
         if (cellEditor.afterGuiAttached) {
             cellEditor.afterGuiAttached();
         }
-        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_EDITING_STARTED, this.createParams());
+        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_EDITING_STARTED, this.createParamsWithValue());
         return true;
     };
     CellComp.prototype.addInCellEditor = function () {
@@ -561,7 +613,7 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.focusCell = function (forceBrowserFocus) {
         if (forceBrowserFocus === void 0) { forceBrowserFocus = false; }
-        this.focusedCellController.setFocusedCell(this.gridCell.rowIndex, this.column, this.node.floating, forceBrowserFocus);
+        this.focusedCellController.setFocusedCell(this.gridCell.rowIndex, this.column, this.node.rowPinned, forceBrowserFocus);
     };
     // pass in 'true' to cancel the editing.
     CellComp.prototype.stopRowOrCellEdit = function (cancel) {
@@ -578,7 +630,6 @@ var CellComp = (function (_super) {
         if (!this.editingCell) {
             return;
         }
-        this.editingCell = false;
         if (!cancel) {
             // also have another option here to cancel after editing, so for example user could have a popup editor and
             // it is closed by user clicking outside the editor. then the editor will close automatically (with false
@@ -590,6 +641,11 @@ var CellComp = (function (_super) {
                 this.value = this.getValue();
             }
         }
+        // it is important we set this after setValue() above, as otherwise the cell will flash
+        // when editing stops. the 'refresh' method checks editing, and doesn't refresh editing cells.
+        // thus it will skip the refresh on this cell until the end of this method where we call
+        // refresh directly and we suppress the flash.
+        this.editingCell = false;
         if (this.cellEditor.destroy) {
             this.cellEditor.destroy();
         }
@@ -614,26 +670,28 @@ var CellComp = (function (_super) {
             }
         }
         this.setInlineEditingClass();
-        this.refreshCell({ dontSkipRefresh: true });
-        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_EDITING_STOPPED, this.createParams());
+        // we suppress the flash, as it is not correct to flash the cell the user has finished editing,
+        // the user doesn't need to flash as they were the one who did the edit, the flash is pointless
+        // (as the flash is meant to draw the user to a change that they didn't manually do themselves).
+        this.refreshCell({ forceRefresh: true, suppressFlash: true });
+        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_EDITING_STOPPED, this.createParamsWithValue());
     };
-    CellComp.prototype.createParams = function () {
+    CellComp.prototype.createParamsWithValue = function () {
         var params = {
             node: this.node,
             data: this.node.data,
             value: this.value,
-            rowIndex: this.gridCell.rowIndex,
             column: this.column,
             colDef: this.column.getColDef(),
-            $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),
             api: this.gridApi,
             columnApi: this.columnApi
         };
+        params.$scope = this.scope;
         return params;
     };
     CellComp.prototype.createEvent = function (event) {
-        var agEvent = this.createParams();
+        var agEvent = this.createParamsWithValue();
         agEvent.event = event;
         return agEvent;
     };
@@ -842,47 +900,68 @@ var CellComp = (function (_super) {
         if (utils_1.Utils.missing(this.cellRenderer) || utils_1.Utils.missing(this.cellRenderer.refresh)) {
             return false;
         }
-        try {
-            // if the cell renderer has a refresh method, we call this instead of doing a refresh
-            // note: should pass in params here instead of value?? so that client has formattedValue
-            var valueFormatted = this.formatValue(this.value);
-            var cellRendererParams = this.column.getColDef().cellRendererParams;
-            var params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
-            this.cellRenderer.refresh(params);
+        // if the cell renderer has a refresh method, we call this instead of doing a refresh
+        // note: should pass in params here instead of value?? so that client has formattedValue
+        var valueFormatted = this.formatValue(this.value);
+        var cellRendererParams = this.column.getColDef().cellRendererParams;
+        var params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
+        var result = this.cellRenderer.refresh(params);
+        if (result === false) {
+            // if result from renderer is false
+            return false;
         }
-        catch (e) {
-            // this exception gets thrown by the frameworks, as our framework wrapper will implement
-            // refresh(), but the wrapped component may not, and then the wrapper throws MethodNotImplementedException.
-            if (e instanceof methodNotImplementedException_1.MethodNotImplementedException) {
-                return false;
-            }
-            else {
-                throw e;
-            }
+        else {
+            // if result from renderer is true OR undefined
+            return true;
         }
-        // got this far, we were able to refresh using the user provided cellRenderer
-        return true;
+        // NOTE on undefined: previous version of the cellRenderer.refresh() interface
+        // returned nothing, if the method existed, we assumed it refreshed. so for
+        // backwards compatibility, we assume if method exists and returns nothing,
+        // that it was successful.
     };
+    CellComp.prototype.valuesAreEqual = function (val1, val2) {
+        // if the user provided an equals method, use that, otherwise do simple comparison
+        var colDef = this.column.getColDef();
+        var equalsMethod = colDef ? colDef.equals : null;
+        if (equalsMethod) {
+            return equalsMethod(val1, val2);
+        }
+        else {
+            return val1 === val2;
+        }
+    };
+    // + stop editing {dontSkipRefresh: true}
+    // + event cellChanged {}
+    // + cellRenderer.params.refresh() {} -> method passes 'as is' to the cellRenderer, so params could be anything
+    // + rowComp: event dataChanged {animate: update, newData: !update}
+    // + rowComp: api refreshCells() {animate: true/false}
+    // + rowRenderer: api softRefreshView() {}
     CellComp.prototype.refreshCell = function (params) {
-        var newData = params ? params.newData === true : false;
-        var animate = params ? params.animate === true : false;
-        var dontSkipRefresh = params ? params.dontSkipRefresh === true : false;
+        if (this.editingCell) {
+            return;
+        }
+        var newData = params && params.newData;
+        var suppressFlash = params && params.suppressFlash;
+        var volatile = params && params.volatile;
+        var forceRefresh = params && params.forceRefresh;
+        // if only refreshing volatile cells, then skip the refresh if we are not volatile
+        if (volatile && !this.isVolatile()) {
+            return;
+        }
         var oldValue = this.value;
         this.value = this.getValue();
         // for simple values only (not pojo's), see if the value is the same, and if it is, skip the refresh.
         // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
         // if was before the edit.
-        // Niall Note - taking this out for now - it's effectively change detection. i think how the refresh is done
-        // needs to be overhauled and redone in a properly planned way.
-        var allowSkippingRefreshIfDataSame = !dontSkipRefresh && utils_1.Utils.valuesSimpleAndSame(oldValue, this.value);
-        if (allowSkippingRefreshIfDataSame) {
-            // return;
+        var skipRefresh = !forceRefresh && this.valuesAreEqual(oldValue, this.value);
+        if (skipRefresh) {
+            return;
         }
         var cellRendererRefreshed;
         // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
         // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
         // then we are not showing a movement in the stock price, rather we are showing different stock.
-        if (newData) {
+        if (newData || suppressFlash) {
             cellRendererRefreshed = false;
         }
         else {
@@ -894,11 +973,16 @@ var CellComp = (function (_super) {
         if (!cellRendererRefreshed) {
             this.replaceCellContent();
         }
-        if (animate) {
-            this.animateCellWithDataChanged();
+        if (!suppressFlash) {
+            this.flashCell();
         }
         // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
         this.addClassesFromRules();
+    };
+    CellComp.prototype.flashCell = function () {
+        if (this.gridOptionsWrapper.isEnableCellChangeFlash() || this.column.getColDef().enableCellChangeFlash) {
+            this.animateCell('data-changed');
+        }
     };
     CellComp.prototype.replaceCellContent = function () {
         // otherwise we rip out the cell and replace it
@@ -951,9 +1035,9 @@ var CellComp = (function (_super) {
             }
             // use cell renderer if it exists
         }
-        else if (floatingCellRenderer && this.node.floating) {
+        else if (floatingCellRenderer && this.node.rowPinned) {
             // if floating, then give preference to floating cell renderer
-            this.useCellRenderer(floatingCellRenderer, colDef.floatingCellRendererParams, valueFormatted);
+            this.useCellRenderer(floatingCellRenderer, colDef.pinnedRowCellRendererParams, valueFormatted);
         }
         else if (cellRenderer) {
             // use normal cell renderer
@@ -983,11 +1067,13 @@ var CellComp = (function (_super) {
         return this.valueFormatterService.formatValue(this.column, this.node, this.scope, value);
     };
     CellComp.prototype.createRendererAndRefreshParams = function (valueFormatted, cellRendererParams) {
+        var _this = this;
         var that = this;
         var params = {
             value: this.value,
             valueFormatted: valueFormatted,
-            valueGetter: this.getValue,
+            getValue: this.getValue.bind(this),
+            setValue: function (value) { _this.valueService.setValue(_this.node, _this.column, value); },
             formatValue: this.formatValue.bind(this),
             data: this.node.data,
             node: this.node,
@@ -1031,105 +1117,105 @@ var CellComp = (function (_super) {
             utils_1.Utils.addCssClass(this.eGridCell, 'ag-group-cell');
         }
     };
+    CellComp.DOM_DATA_KEY_CELL_COMP = 'cellComp';
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], CellComp.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], CellComp.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], CellComp.prototype, "gridApi", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], CellComp.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('expressionService'),
+        __metadata("design:type", expressionService_1.ExpressionService)
+    ], CellComp.prototype, "expressionService", void 0);
+    __decorate([
+        context_1.Autowired('rowRenderer'),
+        __metadata("design:type", rowRenderer_1.RowRenderer)
+    ], CellComp.prototype, "rowRenderer", void 0);
+    __decorate([
+        context_1.Autowired('$compile'),
+        __metadata("design:type", Object)
+    ], CellComp.prototype, "$compile", void 0);
+    __decorate([
+        context_1.Autowired('templateService'),
+        __metadata("design:type", templateService_1.TemplateService)
+    ], CellComp.prototype, "templateService", void 0);
+    __decorate([
+        context_1.Autowired('valueService'),
+        __metadata("design:type", valueService_1.ValueService)
+    ], CellComp.prototype, "valueService", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], CellComp.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], CellComp.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('columnAnimationService'),
+        __metadata("design:type", columnAnimationService_1.ColumnAnimationService)
+    ], CellComp.prototype, "columnAnimationService", void 0);
+    __decorate([
+        context_1.Optional('rangeController'),
+        __metadata("design:type", Object)
+    ], CellComp.prototype, "rangeController", void 0);
+    __decorate([
+        context_1.Autowired('focusedCellController'),
+        __metadata("design:type", focusedCellController_1.FocusedCellController)
+    ], CellComp.prototype, "focusedCellController", void 0);
+    __decorate([
+        context_1.Optional('contextMenuFactory'),
+        __metadata("design:type", Object)
+    ], CellComp.prototype, "contextMenuFactory", void 0);
+    __decorate([
+        context_1.Autowired('focusService'),
+        __metadata("design:type", focusService_1.FocusService)
+    ], CellComp.prototype, "focusService", void 0);
+    __decorate([
+        context_1.Autowired('cellEditorFactory'),
+        __metadata("design:type", cellEditorFactory_1.CellEditorFactory)
+    ], CellComp.prototype, "cellEditorFactory", void 0);
+    __decorate([
+        context_1.Autowired('cellRendererFactory'),
+        __metadata("design:type", cellRendererFactory_1.CellRendererFactory)
+    ], CellComp.prototype, "cellRendererFactory", void 0);
+    __decorate([
+        context_1.Autowired('popupService'),
+        __metadata("design:type", popupService_1.PopupService)
+    ], CellComp.prototype, "popupService", void 0);
+    __decorate([
+        context_1.Autowired('cellRendererService'),
+        __metadata("design:type", cellRendererService_1.CellRendererService)
+    ], CellComp.prototype, "cellRendererService", void 0);
+    __decorate([
+        context_1.Autowired('valueFormatterService'),
+        __metadata("design:type", valueFormatterService_1.ValueFormatterService)
+    ], CellComp.prototype, "valueFormatterService", void 0);
+    __decorate([
+        context_1.Autowired('stylingService'),
+        __metadata("design:type", stylingService_1.StylingService)
+    ], CellComp.prototype, "stylingService", void 0);
+    __decorate([
+        context_1.Autowired('columnHoverService'),
+        __metadata("design:type", columnHoverService_1.ColumnHoverService)
+    ], CellComp.prototype, "columnHoverService", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], CellComp.prototype, "init", null);
     return CellComp;
 }(component_1.Component));
-CellComp.DOM_DATA_KEY_CELL_COMP = 'cellComp';
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], CellComp.prototype, "context", void 0);
-__decorate([
-    context_1.Autowired('columnApi'),
-    __metadata("design:type", columnController_1.ColumnApi)
-], CellComp.prototype, "columnApi", void 0);
-__decorate([
-    context_1.Autowired('gridApi'),
-    __metadata("design:type", gridApi_1.GridApi)
-], CellComp.prototype, "gridApi", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], CellComp.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('expressionService'),
-    __metadata("design:type", expressionService_1.ExpressionService)
-], CellComp.prototype, "expressionService", void 0);
-__decorate([
-    context_1.Autowired('rowRenderer'),
-    __metadata("design:type", rowRenderer_1.RowRenderer)
-], CellComp.prototype, "rowRenderer", void 0);
-__decorate([
-    context_1.Autowired('$compile'),
-    __metadata("design:type", Object)
-], CellComp.prototype, "$compile", void 0);
-__decorate([
-    context_1.Autowired('templateService'),
-    __metadata("design:type", templateService_1.TemplateService)
-], CellComp.prototype, "templateService", void 0);
-__decorate([
-    context_1.Autowired('valueService'),
-    __metadata("design:type", valueService_1.ValueService)
-], CellComp.prototype, "valueService", void 0);
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], CellComp.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], CellComp.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('columnAnimationService'),
-    __metadata("design:type", columnAnimationService_1.ColumnAnimationService)
-], CellComp.prototype, "columnAnimationService", void 0);
-__decorate([
-    context_1.Optional('rangeController'),
-    __metadata("design:type", Object)
-], CellComp.prototype, "rangeController", void 0);
-__decorate([
-    context_1.Autowired('focusedCellController'),
-    __metadata("design:type", focusedCellController_1.FocusedCellController)
-], CellComp.prototype, "focusedCellController", void 0);
-__decorate([
-    context_1.Optional('contextMenuFactory'),
-    __metadata("design:type", Object)
-], CellComp.prototype, "contextMenuFactory", void 0);
-__decorate([
-    context_1.Autowired('focusService'),
-    __metadata("design:type", focusService_1.FocusService)
-], CellComp.prototype, "focusService", void 0);
-__decorate([
-    context_1.Autowired('cellEditorFactory'),
-    __metadata("design:type", cellEditorFactory_1.CellEditorFactory)
-], CellComp.prototype, "cellEditorFactory", void 0);
-__decorate([
-    context_1.Autowired('cellRendererFactory'),
-    __metadata("design:type", cellRendererFactory_1.CellRendererFactory)
-], CellComp.prototype, "cellRendererFactory", void 0);
-__decorate([
-    context_1.Autowired('popupService'),
-    __metadata("design:type", popupService_1.PopupService)
-], CellComp.prototype, "popupService", void 0);
-__decorate([
-    context_1.Autowired('cellRendererService'),
-    __metadata("design:type", cellRendererService_1.CellRendererService)
-], CellComp.prototype, "cellRendererService", void 0);
-__decorate([
-    context_1.Autowired('valueFormatterService'),
-    __metadata("design:type", valueFormatterService_1.ValueFormatterService)
-], CellComp.prototype, "valueFormatterService", void 0);
-__decorate([
-    context_1.Autowired('stylingService'),
-    __metadata("design:type", stylingService_1.StylingService)
-], CellComp.prototype, "stylingService", void 0);
-__decorate([
-    context_1.Autowired('columnHoverService'),
-    __metadata("design:type", columnHoverService_1.ColumnHoverService)
-], CellComp.prototype, "columnHoverService", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], CellComp.prototype, "init", null);
 exports.CellComp = CellComp;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,9 +23,10 @@ var eventService_1 = require("./eventService");
 var events_1 = require("./events");
 var context_2 = require("./context/context");
 var utils_1 = require("./utils");
-var SortController = SortController_1 = (function () {
+var SortController = (function () {
     function SortController() {
     }
+    SortController_1 = SortController;
     SortController.prototype.progressSort = function (column, multiSort) {
         var nextDirection = this.getNextSortDirection(column);
         this.setSortForColumn(column, nextDirection, multiSort);
@@ -166,23 +167,23 @@ var SortController = SortController_1 = (function () {
             };
         });
     };
+    SortController.DEFAULT_SORTING_ORDER = [column_1.Column.SORT_ASC, column_1.Column.SORT_DESC, null];
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], SortController.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], SortController.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], SortController.prototype, "eventService", void 0);
+    SortController = SortController_1 = __decorate([
+        context_2.Bean('sortController')
+    ], SortController);
     return SortController;
+    var SortController_1;
 }());
-SortController.DEFAULT_SORTING_ORDER = [column_1.Column.SORT_ASC, column_1.Column.SORT_DESC, null];
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], SortController.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], SortController.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], SortController.prototype, "eventService", void 0);
-SortController = SortController_1 = __decorate([
-    context_2.Bean('sortController')
-], SortController);
 exports.SortController = SortController;
-var SortController_1;

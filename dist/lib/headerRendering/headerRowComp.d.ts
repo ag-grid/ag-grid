@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Component } from "../widgets/component";
@@ -18,7 +18,7 @@ export declare class HeaderRowComp extends Component {
     private componentProvider;
     private dept;
     private pinned;
-    private headerElements;
+    private headerComps;
     private eRoot;
     private dropTarget;
     private type;
@@ -35,7 +35,7 @@ export declare class HeaderRowComp extends Component {
     private onDisplayedColumnsChanged();
     private onVirtualColumnsChanged();
     private isUsingOldHeaderRenderer(column);
-    private createHeaderElement(columnGroupChild);
+    private createHeaderComp(columnGroupChild);
     private createFloatingFilterWrapper(column);
     private createFloatingFilterParams<M, F>(column);
 }

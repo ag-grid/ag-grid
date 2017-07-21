@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,12 +33,25 @@ var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var columnAnimationService_1 = require("../columnAnimationService");
 var SetLeftFeature = (function (_super) {
     __extends(SetLeftFeature, _super);
-    function SetLeftFeature(columnOrGroup, eCell) {
+    function SetLeftFeature(columnOrGroup, eCell, colsSpanning) {
         var _this = _super.call(this) || this;
         _this.columnOrGroup = columnOrGroup;
         _this.eCell = eCell;
+        _this.colsSpanning = colsSpanning;
         return _this;
     }
+    SetLeftFeature.prototype.setColsSpanning = function (colsSpanning) {
+        this.colsSpanning = colsSpanning;
+        this.onLeftChanged();
+    };
+    SetLeftFeature.prototype.getColumnOrGroup = function () {
+        if (this.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
+            return this.colsSpanning[this.colsSpanning.length - 1];
+        }
+        else {
+            return this.columnOrGroup;
+        }
+    };
     SetLeftFeature.prototype.init = function () {
         this.addDestroyableEventListener(this.columnOrGroup, column_1.Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.setLeftFirstTime();
@@ -56,8 +69,8 @@ var SetLeftFeature = (function (_super) {
     };
     SetLeftFeature.prototype.animateInLeft = function () {
         var _this = this;
-        var left = this.columnOrGroup.getLeft();
-        var oldLeft = this.columnOrGroup.getOldLeft();
+        var left = this.getColumnOrGroup().getLeft();
+        var oldLeft = this.getColumnOrGroup().getOldLeft();
         this.setLeft(oldLeft);
         // we must keep track of the left we want to set to, as this would otherwise lead to a race
         // condition, if the user changed the left value many times in one VM turn, then we want to make
@@ -73,7 +86,7 @@ var SetLeftFeature = (function (_super) {
         });
     };
     SetLeftFeature.prototype.onLeftChanged = function () {
-        this.actualLeft = this.columnOrGroup.getLeft();
+        this.actualLeft = this.getColumnOrGroup().getLeft();
         this.setLeft(this.actualLeft);
     };
     SetLeftFeature.prototype.setLeft = function (value) {
@@ -84,20 +97,20 @@ var SetLeftFeature = (function (_super) {
             this.eCell.style.left = value + 'px';
         }
     };
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], SetLeftFeature.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnAnimationService'),
+        __metadata("design:type", columnAnimationService_1.ColumnAnimationService)
+    ], SetLeftFeature.prototype, "columnAnimationService", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], SetLeftFeature.prototype, "init", null);
     return SetLeftFeature;
 }(beanStub_1.BeanStub));
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], SetLeftFeature.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('columnAnimationService'),
-    __metadata("design:type", columnAnimationService_1.ColumnAnimationService)
-], SetLeftFeature.prototype, "columnAnimationService", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], SetLeftFeature.prototype, "init", null);
 exports.SetLeftFeature = SetLeftFeature;

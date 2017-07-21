@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,14 +15,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var expressionService_1 = require("./expressionService");
-var columnController_1 = require("./columnController/columnController");
-var context_1 = require("./context/context");
-var utils_1 = require("./utils");
-var events_1 = require("./events");
-var eventService_1 = require("./eventService");
-var groupValueService_1 = require("./groupValueService");
+var columnController_1 = require("../columnController/columnController");
+var context_1 = require("../context/context");
+var utils_1 = require("../utils");
+var events_1 = require("../events");
+var eventService_1 = require("../eventService");
+var valueCache_1 = require("./valueCache");
 var ValueService = (function () {
     function ValueService() {
         this.initialised = false;
@@ -32,6 +32,7 @@ var ValueService = (function () {
         this.initialised = true;
     };
     ValueService.prototype.getValue = function (column, rowNode, ignoreAggData) {
+        // console.log(`turnActive = ${this.turnActive}`);
         if (ignoreAggData === void 0) { ignoreAggData = false; }
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
@@ -57,7 +58,7 @@ var ValueService = (function () {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
         }
         else if (field && data) {
-            result = utils_1.Utils.getValueUsingField(data, field, column.isFieldContainsDots());
+            result = utils_1._.getValueUsingField(data, field, column.isFieldContainsDots());
         }
         else {
             result = undefined;
@@ -77,12 +78,12 @@ var ValueService = (function () {
         // this will only happen if user is trying to paste into a group row, which doesn't make sense
         // the user should not be trying to paste into group rows
         var data = rowNode.data;
-        if (utils_1.Utils.missing(data)) {
+        if (utils_1._.missing(data)) {
             rowNode.data = {};
         }
         var _a = column.getColDef(), field = _a.field, newValueHandler = _a.newValueHandler, valueSetter = _a.valueSetter, valueParser = _a.valueParser;
         // need either a field or a newValueHandler for this to work
-        if (utils_1.Utils.missing(field) && utils_1.Utils.missing(newValueHandler) && utils_1.Utils.missing(valueSetter)) {
+        if (utils_1._.missing(field) && utils_1._.missing(newValueHandler) && utils_1._.missing(valueSetter)) {
             // we don't tell user about newValueHandler, as that is deprecated
             console.warn("ag-Grid: you need either field or valueSetter set on colDef for editing to work");
             return;
@@ -98,13 +99,13 @@ var ValueService = (function () {
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext()
         };
-        var parsedValue = utils_1.Utils.exists(valueParser) ? this.expressionService.evaluate(valueParser, params) : newValue;
+        var parsedValue = utils_1._.exists(valueParser) ? this.expressionService.evaluate(valueParser, params) : newValue;
         params.newValue = parsedValue;
         var valueWasDifferent;
-        if (utils_1.Utils.exists(newValueHandler)) {
+        if (utils_1._.exists(newValueHandler)) {
             valueWasDifferent = newValueHandler(params);
         }
-        else if (utils_1.Utils.exists(valueSetter)) {
+        else if (utils_1._.exists(valueSetter)) {
             valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
         }
         else {
@@ -124,6 +125,7 @@ var ValueService = (function () {
         }
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
+        this.valueCache.onDataChanged();
         params.newValue = this.getValue(column, rowNode);
         if (typeof column.getColDef().onCellValueChanged === 'function') {
             column.getColDef().onCellValueChanged(params);
@@ -134,10 +136,7 @@ var ValueService = (function () {
         // if no '.', then it's not a deep value
         var valuesAreSame;
         if (!isFieldContainsDots) {
-            valuesAreSame = utils_1.Utils.valuesSimpleAndSame(data[field], newValue);
-            if (!valuesAreSame) {
-                data[field] = newValue;
-            }
+            data[field] = newValue;
         }
         else {
             // otherwise it is a deep value, so need to dig for it
@@ -146,10 +145,7 @@ var ValueService = (function () {
             while (fieldPieces.length > 0 && currentObject) {
                 var fieldPiece = fieldPieces.shift();
                 if (fieldPieces.length === 0) {
-                    valuesAreSame = utils_1.Utils.valuesSimpleAndSame(currentObject[fieldPiece], newValue);
-                    if (!valuesAreSame) {
-                        currentObject[fieldPiece] = newValue;
-                    }
+                    currentObject[fieldPiece] = newValue;
                 }
                 else {
                     currentObject = currentObject[fieldPiece];
@@ -158,18 +154,27 @@ var ValueService = (function () {
         }
         return !valuesAreSame;
     };
-    ValueService.prototype.executeValueGetter = function (valueGetter, data, column, node) {
+    ValueService.prototype.executeValueGetter = function (valueGetter, data, column, rowNode) {
+        var colId = column.getId();
+        // if inside the same turn, just return back the value we got last time
+        var valueFromCache = this.valueCache.getValue(rowNode, colId);
+        if (valueFromCache !== undefined) {
+            return valueFromCache;
+        }
         var params = {
             data: data,
-            node: node,
+            node: rowNode,
             column: column,
             colDef: column.getColDef(),
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext(),
-            getValue: this.getValueCallback.bind(this, node)
+            getValue: this.getValueCallback.bind(this, rowNode)
         };
-        return this.expressionService.evaluate(valueGetter, params);
+        var result = this.expressionService.evaluate(valueGetter, params);
+        // if a turn is active, store the value in case the grid asks for it again
+        this.valueCache.setValue(rowNode, colId, result);
+        return result;
     };
     ValueService.prototype.getValueCallback = function (node, field) {
         var otherColumn = this.columnController.getPrimaryColumn(field);
@@ -180,35 +185,35 @@ var ValueService = (function () {
             return null;
         }
     };
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], ValueService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('expressionService'),
+        __metadata("design:type", expressionService_1.ExpressionService)
+    ], ValueService.prototype, "expressionService", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], ValueService.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], ValueService.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('valueCache'),
+        __metadata("design:type", valueCache_1.ValueCache)
+    ], ValueService.prototype, "valueCache", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ValueService.prototype, "init", null);
+    ValueService = __decorate([
+        context_1.Bean('valueService')
+    ], ValueService);
     return ValueService;
 }());
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], ValueService.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('expressionService'),
-    __metadata("design:type", expressionService_1.ExpressionService)
-], ValueService.prototype, "expressionService", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], ValueService.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], ValueService.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('groupValueService'),
-    __metadata("design:type", groupValueService_1.GroupValueService)
-], ValueService.prototype, "groupValueService", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], ValueService.prototype, "init", null);
-ValueService = __decorate([
-    context_1.Bean('valueService')
-], ValueService);
 exports.ValueService = ValueService;

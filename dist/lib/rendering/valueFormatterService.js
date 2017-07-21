@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,7 +17,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var expressionService_1 = require("../expressionService");
+var expressionService_1 = require("../valueService/expressionService");
 var ValueFormatterService = (function () {
     function ValueFormatterService() {
     }
@@ -25,8 +25,8 @@ var ValueFormatterService = (function () {
         var formatter;
         var colDef = column.getColDef();
         // if floating, give preference to the floating formatter
-        if (rowNode.floating) {
-            formatter = colDef.floatingValueFormatter ? colDef.floatingValueFormatter : colDef.valueFormatter;
+        if (rowNode.rowPinned) {
+            formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
         }
         else {
             formatter = colDef.valueFormatter;
@@ -53,17 +53,17 @@ var ValueFormatterService = (function () {
         }
         return result;
     };
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], ValueFormatterService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('expressionService'),
+        __metadata("design:type", expressionService_1.ExpressionService)
+    ], ValueFormatterService.prototype, "expressionService", void 0);
+    ValueFormatterService = __decorate([
+        context_1.Bean('valueFormatterService')
+    ], ValueFormatterService);
     return ValueFormatterService;
 }());
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], ValueFormatterService.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('expressionService'),
-    __metadata("design:type", expressionService_1.ExpressionService)
-], ValueFormatterService.prototype, "expressionService", void 0);
-ValueFormatterService = __decorate([
-    context_1.Bean('valueFormatterService')
-], ValueFormatterService);
 exports.ValueFormatterService = ValueFormatterService;

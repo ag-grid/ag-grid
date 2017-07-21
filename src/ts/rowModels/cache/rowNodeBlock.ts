@@ -27,7 +27,7 @@ export abstract class RowNodeBlock extends BeanStub {
     private blockNumber: number;
     private startRow: number;
     private endRow: number;
-    private rowNodes: RowNode[];
+    public rowNodes: RowNode[];
 
     // because the framework cannot wire beans in parent classes, this is a hack
     // to pass bean references up. give out to niall for not getting an IoC context
@@ -134,7 +134,7 @@ export abstract class RowNodeBlock extends BeanStub {
         return this.endRow;
     }
 
-    public getPageNumber(): number {
+    public getBlockNumber(): number {
         return this.blockNumber;
     }
 
@@ -211,7 +211,7 @@ export abstract class RowNodeBlock extends BeanStub {
             this.setDataAndId(rowNode, data, this.startRow + index);
         });
         if (rowNodesToRefresh.length > 0) {
-            this.beans.rowRenderer.refreshRows(rowNodesToRefresh);
+            this.beans.rowRenderer.redrawRows(rowNodesToRefresh);
         }
     }
 

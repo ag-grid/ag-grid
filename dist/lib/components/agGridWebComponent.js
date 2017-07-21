@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10,6 +10,7 @@ var componentUtil_1 = require("./componentUtil");
 var grid_1 = require("../grid");
 var registered = false;
 function initialiseAgGridWithWebComponents() {
+    console.warn('ag-grid: initialiseAgGridWithWebComponents is deprecated. Please use the ag-grid-webcomponent dependency instead. ');
     // only register to WebComponents once
     if (registered) {
         return;

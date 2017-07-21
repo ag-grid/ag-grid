@@ -290,6 +290,14 @@ export class Utils {
         source.forEach(func => target.push(func));
     }
 
+    static createArrayOfNumbers(first: number, last: number): number[] {
+        let result: number[] = [];
+        for (let i = first; i<=last; i++) {
+            result.push(i);
+        }
+        return result;
+    }
+
     static getFunctionParameters(func: any) {
         let fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
         let result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);
@@ -380,15 +388,6 @@ export class Utils {
             // otherwise, for older browsers, we test against a list of characters, which doesn't include
             // accents for non-English, but don't care much, as most users are on modern browsers
             return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar)>=0
-        }
-    }
-
-    // returns true if values are string, number or boolean, and both values are equal
-    static valuesSimpleAndSame(val1: any, val2: any): boolean {
-        if (typeof val1 === 'string' || typeof val1 === 'number' || typeof val1 === 'boolean') {
-            return val1 === val2;
-        } else {
-            return false;
         }
     }
 
@@ -684,6 +683,48 @@ export class Utils {
             }
         }
         return true;
+    }
+
+    static ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void {
+
+        // if already in right order, do nothing
+        if (eChildBefore && eChildBefore.nextSibling === eChild) { return; }
+
+        if (eChildBefore) {
+            if (eChildBefore.nextSibling) {
+                // insert between the eRowBefore and the row after it
+                eContainer.insertBefore(eChild, eChildBefore.nextSibling);
+            } else {
+                // if nextSibling is missing, means other row is at end, so just append new row at the end
+                eContainer.appendChild(eChild);
+            }
+        } else {
+            // otherwise put at start
+            if (eContainer.firstChild) {
+                // insert it at the first location
+                eContainer.insertBefore(eChild, eContainer.firstChild);
+            }
+        }
+    }
+
+    static insertWithDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void {
+        if (eChildBefore) {
+            if (eChildBefore.nextSibling) {
+                // insert between the eRowBefore and the row after it
+                eContainer.insertBefore(eChild, eChildBefore.nextSibling);
+            } else {
+                // if nextSibling is missing, means other row is at end, so just append new row at the end
+                eContainer.appendChild(eChild);
+            }
+        } else {
+            if (eContainer.firstChild) {
+                // insert it at the first location
+                eContainer.insertBefore(eChild, eContainer.firstChild);
+            } else {
+                // otherwise eContainer is empty, so just append it
+                eContainer.appendChild(eChild);
+            }
+        }
     }
 
     static toStringOrNull(value: any): string {
@@ -1185,6 +1226,22 @@ export class Utils {
         };
     };
 
+    static executeInAWhile(funcs: Function[]): void {
+        this.executeAfter(funcs, 400);
+    }
+
+    static executeNextVMTurn(funcs: Function[]): void {
+        this.executeAfter(funcs, 0);
+    }
+
+    static executeAfter(funcs: Function[], millis: number): void {
+        if (funcs.length > 0) {
+            setTimeout( ()=> {
+                funcs.forEach( func => func() );
+            }, millis);
+        }
+    }
+
     static referenceCompare(left: any, right: any): boolean {
         if (left == null && right == null) return true;
         if (left == null && right) return false;
@@ -1209,6 +1266,12 @@ export class Utils {
             let nextValue: any = source[expression];
             return nextValue != null ? nextValue : defaultValue;
         }
+    }
+
+    static passiveEvents:string[] = ['touchstart','touchend','touchmove','touchcancel'];
+
+    static addSafePassiveEventListener (eElement: HTMLElement, event: string, listener: (event?: any)=>void){
+        eElement.addEventListener(event, listener, <any>(Utils.passiveEvents.indexOf(event) > -1 ? {passive:true} : null));
     }
 }
 

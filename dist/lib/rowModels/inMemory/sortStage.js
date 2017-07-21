@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,17 +30,17 @@ var SortStage = (function () {
             this.sortService.sortAccordingToColumnsState(params.rowNode);
         }
     };
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], SortStage.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('sortService'),
+        __metadata("design:type", sortService_1.SortService)
+    ], SortStage.prototype, "sortService", void 0);
+    SortStage = __decorate([
+        context_1.Bean('sortStage')
+    ], SortStage);
     return SortStage;
 }());
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], SortStage.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('sortService'),
-    __metadata("design:type", sortService_1.SortService)
-], SortStage.prototype, "sortService", void 0);
-SortStage = __decorate([
-    context_1.Bean('sortStage')
-], SortStage);
 exports.SortStage = SortStage;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -267,7 +267,7 @@ var GridCore = (function () {
         }
         // both of the two below should be done in gridPanel, the gridPanel should register 'resize' to the panel
         if (sizeChanged) {
-            this.rowRenderer.drawVirtualRowsWithLock();
+            this.rowRenderer.redrawAfterScroll();
             var event_1 = {
                 clientWidth: this.eRootPanel.getGui().clientWidth,
                 clientHeight: this.eRootPanel.getGui().clientHeight
@@ -275,99 +275,99 @@ var GridCore = (function () {
             this.eventService.dispatchEvent(events_1.Events.EVENT_GRID_SIZE_CHANGED, event_1);
         }
     };
+    __decorate([
+        context_1.Autowired('gridOptions'),
+        __metadata("design:type", Object)
+    ], GridCore.prototype, "gridOptions", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], GridCore.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('rowModel'),
+        __metadata("design:type", Object)
+    ], GridCore.prototype, "rowModel", void 0);
+    __decorate([
+        context_1.Autowired('frameworkFactory'),
+        __metadata("design:type", Object)
+    ], GridCore.prototype, "frameworkFactory", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], GridCore.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('rowRenderer'),
+        __metadata("design:type", rowRenderer_1.RowRenderer)
+    ], GridCore.prototype, "rowRenderer", void 0);
+    __decorate([
+        context_1.Autowired('filterManager'),
+        __metadata("design:type", filterManager_1.FilterManager)
+    ], GridCore.prototype, "filterManager", void 0);
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], GridCore.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('gridPanel'),
+        __metadata("design:type", gridPanel_1.GridPanel)
+    ], GridCore.prototype, "gridPanel", void 0);
+    __decorate([
+        context_1.Autowired('eGridDiv'),
+        __metadata("design:type", HTMLElement)
+    ], GridCore.prototype, "eGridDiv", void 0);
+    __decorate([
+        context_1.Autowired('$scope'),
+        __metadata("design:type", Object)
+    ], GridCore.prototype, "$scope", void 0);
+    __decorate([
+        context_1.Autowired('quickFilterOnScope'),
+        __metadata("design:type", String)
+    ], GridCore.prototype, "quickFilterOnScope", void 0);
+    __decorate([
+        context_1.Autowired('popupService'),
+        __metadata("design:type", popupService_1.PopupService)
+    ], GridCore.prototype, "popupService", void 0);
+    __decorate([
+        context_1.Autowired('focusedCellController'),
+        __metadata("design:type", focusedCellController_1.FocusedCellController)
+    ], GridCore.prototype, "focusedCellController", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], GridCore.prototype, "context", void 0);
+    __decorate([
+        context_1.Optional('rowGroupCompFactory'),
+        __metadata("design:type", Object)
+    ], GridCore.prototype, "rowGroupCompFactory", void 0);
+    __decorate([
+        context_1.Optional('pivotCompFactory'),
+        __metadata("design:type", Object)
+    ], GridCore.prototype, "pivotCompFactory", void 0);
+    __decorate([
+        context_1.Optional('toolPanel'),
+        __metadata("design:type", component_1.Component)
+    ], GridCore.prototype, "toolPanel", void 0);
+    __decorate([
+        context_1.Optional('statusBar'),
+        __metadata("design:type", component_1.Component)
+    ], GridCore.prototype, "statusBar", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], GridCore.prototype, "init", null);
+    __decorate([
+        context_1.PreDestroy,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], GridCore.prototype, "destroy", null);
+    GridCore = __decorate([
+        context_1.Bean('gridCore'),
+        __param(0, context_1.Qualifier('loggerFactory')),
+        __metadata("design:paramtypes", [logger_1.LoggerFactory])
+    ], GridCore);
     return GridCore;
 }());
-__decorate([
-    context_1.Autowired('gridOptions'),
-    __metadata("design:type", Object)
-], GridCore.prototype, "gridOptions", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], GridCore.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('rowModel'),
-    __metadata("design:type", Object)
-], GridCore.prototype, "rowModel", void 0);
-__decorate([
-    context_1.Autowired('frameworkFactory'),
-    __metadata("design:type", Object)
-], GridCore.prototype, "frameworkFactory", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], GridCore.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('rowRenderer'),
-    __metadata("design:type", rowRenderer_1.RowRenderer)
-], GridCore.prototype, "rowRenderer", void 0);
-__decorate([
-    context_1.Autowired('filterManager'),
-    __metadata("design:type", filterManager_1.FilterManager)
-], GridCore.prototype, "filterManager", void 0);
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], GridCore.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('gridPanel'),
-    __metadata("design:type", gridPanel_1.GridPanel)
-], GridCore.prototype, "gridPanel", void 0);
-__decorate([
-    context_1.Autowired('eGridDiv'),
-    __metadata("design:type", HTMLElement)
-], GridCore.prototype, "eGridDiv", void 0);
-__decorate([
-    context_1.Autowired('$scope'),
-    __metadata("design:type", Object)
-], GridCore.prototype, "$scope", void 0);
-__decorate([
-    context_1.Autowired('quickFilterOnScope'),
-    __metadata("design:type", String)
-], GridCore.prototype, "quickFilterOnScope", void 0);
-__decorate([
-    context_1.Autowired('popupService'),
-    __metadata("design:type", popupService_1.PopupService)
-], GridCore.prototype, "popupService", void 0);
-__decorate([
-    context_1.Autowired('focusedCellController'),
-    __metadata("design:type", focusedCellController_1.FocusedCellController)
-], GridCore.prototype, "focusedCellController", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], GridCore.prototype, "context", void 0);
-__decorate([
-    context_1.Optional('rowGroupCompFactory'),
-    __metadata("design:type", Object)
-], GridCore.prototype, "rowGroupCompFactory", void 0);
-__decorate([
-    context_1.Optional('pivotCompFactory'),
-    __metadata("design:type", Object)
-], GridCore.prototype, "pivotCompFactory", void 0);
-__decorate([
-    context_1.Optional('toolPanel'),
-    __metadata("design:type", component_1.Component)
-], GridCore.prototype, "toolPanel", void 0);
-__decorate([
-    context_1.Optional('statusBar'),
-    __metadata("design:type", component_1.Component)
-], GridCore.prototype, "statusBar", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], GridCore.prototype, "init", null);
-__decorate([
-    context_1.PreDestroy,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], GridCore.prototype, "destroy", null);
-GridCore = __decorate([
-    context_1.Bean('gridCore'),
-    __param(0, context_1.Qualifier('loggerFactory')),
-    __metadata("design:paramtypes", [logger_1.LoggerFactory])
-], GridCore);
 exports.GridCore = GridCore;

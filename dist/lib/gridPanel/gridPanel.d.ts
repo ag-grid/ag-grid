@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { BorderLayout } from "../layout/borderLayout";
@@ -21,11 +21,11 @@ export interface RowContainerComponents {
     floatingBottomFullWith: RowContainerComponent;
 }
 export declare class GridPanel extends BeanStub {
-    private masterSlaveService;
+    private alignedGridsService;
     private gridOptionsWrapper;
     private columnController;
     private rowRenderer;
-    private floatingRowModel;
+    private pinnedRowModel;
     private eventService;
     private context;
     private paginationProxy;

@@ -3,11 +3,10 @@ import {Autowired, Bean} from "./context/context";
 import {ColumnController} from "./columnController/columnController";
 import {Constants} from "./constants";
 import {IRowModel} from "./interfaces/iRowModel";
-import {FloatingRowModel} from "./rowModels/floatingRowModel";
 import {Utils as _} from "./utils";
 import {RowNode} from "./entities/rowNode";
 import {SelectionController} from "./selectionController";
-import {ValueService} from "./valueService";
+import {ValueService} from "./valueService/valueService";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {
     BaseExportParams,
@@ -23,6 +22,7 @@ import {ColumnGroupChild} from "./entities/columnGroupChild";
 import {ColumnGroup} from "./entities/columnGroup";
 import {GridApi} from "./gridApi";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
+import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 
 /**
  * This interface works in conjuction with the GridSerializer. When serializing a grid, an instance that implements this interface
@@ -179,16 +179,12 @@ export class GridSerializer {
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('balancedColumnTreeBuilder') private balancedColumnTreeBuilder: BalancedColumnTreeBuilder;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    public serialize<T>(gridSerializingSession: GridSerializingSession<T>, userParams?: ExportParams<T>): string {
-        let baseParams:BaseExportParams = this.gridOptionsWrapper.getDefaultExportParams();
-        let params:ExportParams<T> = <any>{};
-        _.assign(params, baseParams);
-        _.assign(params, userParams);
+    public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params?: ExportParams<T>): string {
 
         let dontSkipRows= (): boolean =>false;
 
@@ -196,8 +192,8 @@ export class GridSerializer {
         let skipHeader = params && params.skipHeader;
         let columnGroups = params && params.columnGroups;
         let skipFooters = params && params.skipFooters;
-        let skipFloatingTop = params && params.skipFloatingTop;
-        let skipFloatingBottom = params && params.skipFloatingBottom;
+        let skipPinnedTop = params && params.skipPinnedTop;
+        let skipPinnedBottom = params && params.skipPinnedBottom;
         let includeCustomHeader = params && params.customHeader;
         let includeCustomFooter = params && params.customFooter;
         let allColumns = params && params.allColumns;
@@ -210,7 +206,7 @@ export class GridSerializer {
 
         // when in pivot mode, we always render cols on screen, never 'all columns'
         let isPivotMode = this.columnController.isPivotMode();
-        let rowModelNormal = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_NORMAL;
+        let rowModelNormal = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_IN_MEMORY;
 
         let onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
 
@@ -261,7 +257,7 @@ export class GridSerializer {
             });
         }
 
-        this.floatingRowModel.forEachFloatingTopRow(processRow);
+        this.pinnedRowModel.forEachPinnedTopRow(processRow);
 
         if (isPivotMode) {
             inMemoryRowModel.forEachPivotNode(processRow);
@@ -284,7 +280,7 @@ export class GridSerializer {
             }
         }
 
-        this.floatingRowModel.forEachFloatingBottomRow(processRow);
+        this.pinnedRowModel.forEachPinnedBottomRow(processRow);
 
         if (includeCustomFooter) {
             gridSerializingSession.addCustomFooter (params.customFooter);
@@ -303,11 +299,11 @@ export class GridSerializer {
                 return;
             }
 
-            if (skipFloatingTop && node.floating === 'top') {
+            if (skipPinnedTop && node.rowPinned === 'top') {
                 return;
             }
 
-            if (skipFloatingBottom && node.floating === 'bottom') {
+            if (skipPinnedBottom && node.rowPinned === 'bottom') {
                 return;
             }
 

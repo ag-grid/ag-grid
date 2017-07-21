@@ -74,7 +74,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         this.eDelta.innerHTML = '';
     }
 
-    public refresh(params: any): void {
+    public refresh(params: any): boolean {
         let value = params.value;
 
         if (value === this.lastValue) {
@@ -104,5 +104,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         this.setTimerToRemoveDelta();
 
         this.lastValue = value;
+
+        return true;
     }
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -89,7 +89,7 @@ var RowNodeBlock = (function (_super) {
     RowNodeBlock.prototype.getEndRow = function () {
         return this.endRow;
     };
-    RowNodeBlock.prototype.getPageNumber = function () {
+    RowNodeBlock.prototype.getBlockNumber = function () {
         return this.blockNumber;
     };
     RowNodeBlock.prototype.setDirty = function () {
@@ -156,7 +156,7 @@ var RowNodeBlock = (function (_super) {
             _this.setDataAndId(rowNode, data, _this.startRow + index);
         });
         if (rowNodesToRefresh.length > 0) {
-            this.beans.rowRenderer.refreshRows(rowNodesToRefresh);
+            this.beans.rowRenderer.redrawRows(rowNodesToRefresh);
         }
     };
     RowNodeBlock.prototype.destroy = function () {
@@ -181,11 +181,11 @@ var RowNodeBlock = (function (_super) {
         var event = { success: true, page: this, lastRow: lastRow };
         this.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
     };
+    RowNodeBlock.EVENT_LOAD_COMPLETE = 'loadComplete';
+    RowNodeBlock.STATE_DIRTY = 'dirty';
+    RowNodeBlock.STATE_LOADING = 'loading';
+    RowNodeBlock.STATE_LOADED = 'loaded';
+    RowNodeBlock.STATE_FAILED = 'failed';
     return RowNodeBlock;
 }(beanStub_1.BeanStub));
-RowNodeBlock.EVENT_LOAD_COMPLETE = 'loadComplete';
-RowNodeBlock.STATE_DIRTY = 'dirty';
-RowNodeBlock.STATE_LOADING = 'loading';
-RowNodeBlock.STATE_LOADED = 'loaded';
-RowNodeBlock.STATE_FAILED = 'failed';
 exports.RowNodeBlock = RowNodeBlock;

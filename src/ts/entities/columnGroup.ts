@@ -64,6 +64,10 @@ export class ColumnGroup implements ColumnGroupChild {
         return ColumnGroup.createUniqueId(this.groupId, this.instanceId);
     }
 
+    public isEmptyGroup(): boolean {
+        return this.displayedChildren.length === 0;
+    }
+
     public checkLeft(): void {
         // first get all children to setLeft, as it impacts our decision below
         this.displayedChildren.forEach( (child: ColumnGroupChild) => {

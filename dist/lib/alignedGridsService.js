@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,17 +28,17 @@ var context_1 = require("./context/context");
 var context_2 = require("./context/context");
 var context_3 = require("./context/context");
 var context_4 = require("./context/context");
-var MasterSlaveService = (function () {
-    function MasterSlaveService() {
+var AlignedGridsService = (function () {
+    function AlignedGridsService() {
         // flag to mark if we are consuming. to avoid cyclic events (ie slave firing back to master
         // while processing a master event) we mark this if consuming an event, and if we are, then
         // we don't fire back any events.
         this.consuming = false;
     }
-    MasterSlaveService.prototype.setBeans = function (loggerFactory) {
+    AlignedGridsService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('MasterSlaveService');
     };
-    MasterSlaveService.prototype.init = function () {
+    AlignedGridsService.prototype.init = function () {
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
@@ -46,47 +46,47 @@ var MasterSlaveService = (function () {
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
     };
     // common logic across all the fire methods
-    MasterSlaveService.prototype.fireEvent = function (callback) {
+    AlignedGridsService.prototype.fireEvent = function (callback) {
         // if we are already consuming, then we are acting on an event from a master,
         // so we don't cause a cyclic firing of events
         if (this.consuming) {
             return;
         }
         // iterate through the slave grids, and pass each slave service to the callback
-        var slaveGrids = this.gridOptionsWrapper.getSlaveGrids();
-        if (slaveGrids) {
-            slaveGrids.forEach(function (slaveGridOptions) {
-                if (slaveGridOptions.api) {
-                    var slaveService = slaveGridOptions.api.__getMasterSlaveService();
-                    callback(slaveService);
+        var otherGrids = this.gridOptionsWrapper.getAlignedGrids();
+        if (otherGrids) {
+            otherGrids.forEach(function (otherGridOptions) {
+                if (otherGridOptions.api) {
+                    var alignedGridService = otherGridOptions.api.__getAlignedGridService();
+                    callback(alignedGridService);
                 }
             });
         }
     };
     // common logic across all consume methods. very little common logic, however extracting
     // guarantees consistency across the methods.
-    MasterSlaveService.prototype.onEvent = function (callback) {
+    AlignedGridsService.prototype.onEvent = function (callback) {
         this.consuming = true;
         callback();
         this.consuming = false;
     };
-    MasterSlaveService.prototype.fireColumnEvent = function (event) {
+    AlignedGridsService.prototype.fireColumnEvent = function (event) {
         this.fireEvent(function (slaveService) {
             slaveService.onColumnEvent(event);
         });
     };
-    MasterSlaveService.prototype.fireHorizontalScrollEvent = function (horizontalScroll) {
+    AlignedGridsService.prototype.fireHorizontalScrollEvent = function (horizontalScroll) {
         this.fireEvent(function (slaveService) {
             slaveService.onScrollEvent(horizontalScroll);
         });
     };
-    MasterSlaveService.prototype.onScrollEvent = function (horizontalScroll) {
+    AlignedGridsService.prototype.onScrollEvent = function (horizontalScroll) {
         var _this = this;
         this.onEvent(function () {
             _this.gridPanel.setHorizontalScrollPosition(horizontalScroll);
         });
     };
-    MasterSlaveService.prototype.getMasterColumns = function (event) {
+    AlignedGridsService.prototype.getMasterColumns = function (event) {
         var result = [];
         if (event.getColumn()) {
             result.push(event.getColumn());
@@ -98,7 +98,7 @@ var MasterSlaveService = (function () {
         }
         return result;
     };
-    MasterSlaveService.prototype.getColumnIds = function (event) {
+    AlignedGridsService.prototype.getColumnIds = function (event) {
         var result = [];
         if (event.getColumn()) {
             result.push(event.getColumn().getColId());
@@ -110,7 +110,7 @@ var MasterSlaveService = (function () {
         }
         return result;
     };
-    MasterSlaveService.prototype.onColumnEvent = function (event) {
+    AlignedGridsService.prototype.onColumnEvent = function (event) {
         var _this = this;
         this.onEvent(function () {
             // the column in the event is from the master grid. need to
@@ -172,37 +172,37 @@ var MasterSlaveService = (function () {
             }
         });
     };
-    return MasterSlaveService;
+    __decorate([
+        context_3.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], AlignedGridsService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_3.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], AlignedGridsService.prototype, "columnController", void 0);
+    __decorate([
+        context_3.Autowired('gridPanel'),
+        __metadata("design:type", gridPanel_1.GridPanel)
+    ], AlignedGridsService.prototype, "gridPanel", void 0);
+    __decorate([
+        context_3.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], AlignedGridsService.prototype, "eventService", void 0);
+    __decorate([
+        __param(0, context_2.Qualifier('loggerFactory')),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [logger_1.LoggerFactory]),
+        __metadata("design:returntype", void 0)
+    ], AlignedGridsService.prototype, "setBeans", null);
+    __decorate([
+        context_4.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], AlignedGridsService.prototype, "init", null);
+    AlignedGridsService = __decorate([
+        context_1.Bean('alignedGridsService')
+    ], AlignedGridsService);
+    return AlignedGridsService;
 }());
-__decorate([
-    context_3.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], MasterSlaveService.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_3.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], MasterSlaveService.prototype, "columnController", void 0);
-__decorate([
-    context_3.Autowired('gridPanel'),
-    __metadata("design:type", gridPanel_1.GridPanel)
-], MasterSlaveService.prototype, "gridPanel", void 0);
-__decorate([
-    context_3.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], MasterSlaveService.prototype, "eventService", void 0);
-__decorate([
-    __param(0, context_2.Qualifier('loggerFactory')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [logger_1.LoggerFactory]),
-    __metadata("design:returntype", void 0)
-], MasterSlaveService.prototype, "setBeans", null);
-__decorate([
-    context_4.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], MasterSlaveService.prototype, "init", null);
-MasterSlaveService = __decorate([
-    context_1.Bean('masterSlaveService')
-], MasterSlaveService);
-exports.MasterSlaveService = MasterSlaveService;
+exports.AlignedGridsService = AlignedGridsService;

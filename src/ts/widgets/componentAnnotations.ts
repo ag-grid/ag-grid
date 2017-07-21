@@ -18,7 +18,7 @@ function querySelectorFunc(selector: string, classPrototype: any, methodOrAttrib
     }
 
     // it's an attribute on the class
-    let props = getOrCreateProps(classPrototype);
+    let props = getOrCreateProps(classPrototype, classPrototype.constructor.name);
     if (!props.querySelectors) {
         props.querySelectors = [];
     }
@@ -40,7 +40,7 @@ function listenerFunc(eventName: string, target: Object, methodName: string, des
     }
 
     // it's an attribute on the class
-    let props = getOrCreateProps(target);
+    let props = getOrCreateProps(target, (<any>target.constructor).name);
     if (!props.listenerMethods) {
         props.listenerMethods = [];
     }
@@ -50,14 +50,14 @@ function listenerFunc(eventName: string, target: Object, methodName: string, des
     });
 }
 
-function getOrCreateProps(target: any): any {
-
-    let props = target.__agComponentMetaData;
-
-    if (!props) {
-        props = {};
-        target.__agComponentMetaData = props;
+function getOrCreateProps(target: any, instanceName:string): any {
+    if (!target.__agComponentMetaData) {
+        target.__agComponentMetaData = {};
     }
 
-    return props;
+    if (!target.__agComponentMetaData[instanceName]){
+        target.__agComponentMetaData[instanceName]={}
+    }
+
+    return target.__agComponentMetaData[instanceName];
 }

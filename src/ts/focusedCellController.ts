@@ -3,7 +3,6 @@ import {EventService} from "./eventService";
 import {Column} from "./entities/column";
 import {Events} from "./events";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {ColDef} from "./entities/colDef";
 import {ColumnController} from "./columnController/columnController";
 import {Utils as _} from "./utils";
 import {GridCell} from "./entities/gridCell";
@@ -98,10 +97,10 @@ export class FocusedCellController {
             let rowId = _.getElementAttribute(eTarget, 'row');
             if (_.exists(rowId) && _.containsClass(eTarget, 'ag-row')) {
                 if (rowId.indexOf('ft')===0) {
-                    floating = Constants.FLOATING_TOP;
+                    floating = Constants.PINNED_TOP;
                     rowId = rowId.substr(3);
                 } else if (rowId.indexOf('fb')===0) {
-                    floating = Constants.FLOATING_BOTTOM;
+                    floating = Constants.PINNED_BOTTOM;
                     rowId = rowId.substr(3);
                 } else {
                     floating = null;
@@ -122,7 +121,7 @@ export class FocusedCellController {
         }
     }
 
-    public setFocusedCell(rowIndex: number, colKey: Column|ColDef|string, floating: string, forceBrowserFocus = false): void {
+    public setFocusedCell(rowIndex: number, colKey: string|Column, floating: string, forceBrowserFocus = false): void {
         if (this.gridOptionsWrapper.isSuppressCellSelection()) {
             return;
         }
@@ -141,7 +140,7 @@ export class FocusedCellController {
     }
 
     public isRowNodeFocused(rowNode: RowNode): boolean {
-        return this.isRowFocused(rowNode.rowIndex, rowNode.floating);
+        return this.isRowFocused(rowNode.rowIndex, rowNode.rowPinned);
     }
 
     public isAnyCellFocused(): boolean {

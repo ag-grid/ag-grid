@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,11 +18,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("./context/context");
 var constants_1 = require("./constants");
 var columnController_1 = require("./columnController/columnController");
-var floatingRowModel_1 = require("./rowModels/floatingRowModel");
 var utils_1 = require("./utils");
 var gridRow_1 = require("./entities/gridRow");
 var gridCell_1 = require("./entities/gridCell");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
+var pinnedRowModel_1 = require("./rowModels/pinnedRowModel");
 var CellNavigationService = (function () {
     function CellNavigationService() {
     }
@@ -75,8 +75,8 @@ var CellNavigationService = (function () {
                 return null;
             }
             else if (lastRow.isNotFloating()) {
-                if (this.floatingRowModel.isRowsToRender(constants_1.Constants.FLOATING_BOTTOM)) {
-                    return new gridRow_1.GridRow(0, constants_1.Constants.FLOATING_BOTTOM);
+                if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_BOTTOM)) {
+                    return new gridRow_1.GridRow(0, constants_1.Constants.PINNED_BOTTOM);
                 }
                 else {
                     return null;
@@ -86,8 +86,8 @@ var CellNavigationService = (function () {
                 if (this.rowModel.isRowsToRender()) {
                     return new gridRow_1.GridRow(0, null);
                 }
-                else if (this.floatingRowModel.isRowsToRender(constants_1.Constants.FLOATING_BOTTOM)) {
-                    return new gridRow_1.GridRow(0, constants_1.Constants.FLOATING_BOTTOM);
+                else if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_BOTTOM)) {
+                    return new gridRow_1.GridRow(0, constants_1.Constants.PINNED_BOTTOM);
                 }
                 else {
                     return null;
@@ -110,11 +110,11 @@ var CellNavigationService = (function () {
     };
     CellNavigationService.prototype.isLastRowInContainer = function (gridRow) {
         if (gridRow.isFloatingTop()) {
-            var lastTopIndex = this.floatingRowModel.getFloatingTopRowData().length - 1;
+            var lastTopIndex = this.pinnedRowModel.getPinnedTopRowData().length - 1;
             return lastTopIndex === gridRow.rowIndex;
         }
         else if (gridRow.isFloatingBottom()) {
-            var lastBottomIndex = this.floatingRowModel.getFloatingBottomRowData().length - 1;
+            var lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowData().length - 1;
             return lastBottomIndex === gridRow.rowIndex;
         }
         else {
@@ -129,7 +129,7 @@ var CellNavigationService = (function () {
                 return null;
             }
             else if (lastRow.isNotFloating()) {
-                if (this.floatingRowModel.isRowsToRender(constants_1.Constants.FLOATING_TOP)) {
+                if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_TOP)) {
                     return this.getLastFloatingTopRow();
                 }
                 else {
@@ -141,7 +141,7 @@ var CellNavigationService = (function () {
                 if (this.rowModel.isRowsToRender()) {
                     return this.getLastBodyCell();
                 }
-                else if (this.floatingRowModel.isRowsToRender(constants_1.Constants.FLOATING_TOP)) {
+                else if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_TOP)) {
                     return this.getLastFloatingTopRow();
                 }
                 else {
@@ -168,8 +168,8 @@ var CellNavigationService = (function () {
         return new gridRow_1.GridRow(lastBodyRow, null);
     };
     CellNavigationService.prototype.getLastFloatingTopRow = function () {
-        var lastFloatingRow = this.floatingRowModel.getFloatingTopRowData().length - 1;
-        return new gridRow_1.GridRow(lastFloatingRow, constants_1.Constants.FLOATING_TOP);
+        var lastFloatingRow = this.pinnedRowModel.getPinnedTopRowData().length - 1;
+        return new gridRow_1.GridRow(lastFloatingRow, constants_1.Constants.PINNED_TOP);
     };
     CellNavigationService.prototype.getNextTabbedCell = function (gridCell, backwards) {
         if (backwards) {
@@ -217,25 +217,25 @@ var CellNavigationService = (function () {
         var gridCellDef = { rowIndex: newRowIndex, column: newColumn, floating: newFloating };
         return new gridCell_1.GridCell(gridCellDef);
     };
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], CellNavigationService.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('rowModel'),
+        __metadata("design:type", Object)
+    ], CellNavigationService.prototype, "rowModel", void 0);
+    __decorate([
+        context_1.Autowired('pinnedRowModel'),
+        __metadata("design:type", pinnedRowModel_1.PinnedRowModel)
+    ], CellNavigationService.prototype, "pinnedRowModel", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], CellNavigationService.prototype, "gridOptionsWrapper", void 0);
+    CellNavigationService = __decorate([
+        context_1.Bean('cellNavigationService')
+    ], CellNavigationService);
     return CellNavigationService;
 }());
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], CellNavigationService.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('rowModel'),
-    __metadata("design:type", Object)
-], CellNavigationService.prototype, "rowModel", void 0);
-__decorate([
-    context_1.Autowired('floatingRowModel'),
-    __metadata("design:type", floatingRowModel_1.FloatingRowModel)
-], CellNavigationService.prototype, "floatingRowModel", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], CellNavigationService.prototype, "gridOptionsWrapper", void 0);
-CellNavigationService = __decorate([
-    context_1.Bean('cellNavigationService')
-], CellNavigationService);
 exports.CellNavigationService = CellNavigationService;
