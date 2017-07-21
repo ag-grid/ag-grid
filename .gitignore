@@ -2,9 +2,7 @@ dist/
 node_modules/
 !src/ng2-example/node_modules
 !src/dist
-!src/vue-examples/dist
-!src/react-examples/examples/dist
-!src/react-examples/trader/dist
+
 
 .DS_Store
 ag-grid-docs.iml
