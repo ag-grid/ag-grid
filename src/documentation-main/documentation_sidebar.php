@@ -29,6 +29,44 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">21st July 2017</div>
+    <div style="background-color: black; padding: 10px; position: relative;">
+        <span style="font-weight: bold; color: white; font-size: 25px; position: absolute; top: 70px; left: 110px;">
+            v12.0
+        </span>
+        <img src="../images/logo-dark-hacked.svg"
+             style="width: 100%;"/>
+    </div>
+    <br/>
+    <div>
+        Featuring:
+    </div>
+    <div>
+        <ul style="padding-left: 20px;">
+            <li>
+                <a href="../javascript-grid-column-spanning/">Column Spanning</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-enterprise-model/#enterprise-dynamic-row-height">Enterprise Row Height</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-change-detection/">Change Detection</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-refresh/">New Refresh</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-value-cache/">Value Getter Cache</a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        See the <a href="../change-log/changeLogIndex.php">Change Log</a>
+        for full release details.
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header">18th July 2017</div>
     <div style="float: left; margin-right: 10px;">
         <a href="../weekly-update/20170718/">
