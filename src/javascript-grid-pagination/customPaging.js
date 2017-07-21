@@ -53,7 +53,6 @@ var gridOptions = {
     columnDefs: columnDefs,
     pagination: true,
     paginationPageSize:10,
-    paginationStartPage:4,
     autoGroupColumnDef: groupColumn,
     defaultColDef:{
         editable: true,
@@ -81,6 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
+            gridOptions.api.paginationGoToPage(4)
         }
     };
 });
