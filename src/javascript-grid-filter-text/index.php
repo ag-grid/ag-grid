@@ -236,8 +236,7 @@ athleteFilterComponent.onFilterChanged()
     ie: if you filter using the text 'usa' it will match United States or 'holland' will match 'Netherlands'</li>
     <li>The country column has a debounce of 2000ms <i>debounceMs:2000</i> in the column filter menu. The floating filter
         has the default 500ms</li>
-    <li>The year column has two one filter options <i>filterOptions=['inRange', 'greaterThan']. The default should be
-        'inRange' since is the first one of the list and default is not specified</i></li>
+    <li>The year column has one filter option <i>filterOptions=['inRange']. </i></li>
     <li>The sports column has a different default option <i>defaultOption='startsWith'</i></li>
 </ul>
 </p>
