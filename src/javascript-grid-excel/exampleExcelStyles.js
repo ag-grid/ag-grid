@@ -122,8 +122,8 @@ function onBtExport() {
         columnGroups: getBooleanValue('#columnGroups'),
         skipFooters: getBooleanValue('#skipFooters'),
         skipGroups: getBooleanValue('#skipGroups'),
-        skipFloatingTop: getBooleanValue('#skipFloatingTop'),
-        skipFloatingBottom: getBooleanValue('#skipFloatingBottom'),
+        skipPinnedTop: getBooleanValue('#skipPinnedTop'),
+        skipPinnedBottom: getBooleanValue('#skipPinnedBottom'),
         allColumns: getBooleanValue('#allColumns'),
         onlySelected: getBooleanValue('#onlySelected'),
         fileName: document.querySelector('#fileName').value
