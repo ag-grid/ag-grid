@@ -4956,8 +4956,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var skipHeader = params && params.skipHeader;
 	        var columnGroups = params && params.columnGroups;
 	        var skipFooters = params && params.skipFooters;
-	        var skipFloatingTop = params && params.skipFloatingTop;
-	        var skipFloatingBottom = params && params.skipFloatingBottom;
+	        var skipPinnedTop = params && params.skipPinnedTop;
+	        var skipPinnedBottom = params && params.skipPinnedBottom;
 	        var includeCustomHeader = params && params.customHeader;
 	        var includeCustomFooter = params && params.customFooter;
 	        var allColumns = params && params.allColumns;
@@ -5045,10 +5045,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (onlySelected && !node.isSelected()) {
 	                return;
 	            }
-	            if (skipFloatingTop && node.rowPinned === 'top') {
+	            if (skipPinnedTop && node.rowPinned === 'top') {
 	                return;
 	            }
-	            if (skipFloatingBottom && node.rowPinned === 'bottom') {
+	            if (skipPinnedBottom && node.rowPinned === 'bottom') {
 	                return;
 	            }
 	            // if we are in pivotMode, then the grid will show the root node only
