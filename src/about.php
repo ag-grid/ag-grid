@@ -25,6 +25,53 @@
 
 <?php $headerTitle = "About"; include 'includes/headerRow.php'; ?>
 
+<style>
+    .weekly-news-paragraph {
+        color: #767676;
+        padding-bottom: 20px;
+    }
+    .weekly-news-paragraph-title {
+        font-weight: bold;
+        color: #767676;
+        padding-bottom: 5px;
+    }
+    .weekly-news-section {
+        overflow: hidden;
+        border: 1px solid darkgrey;
+        background-color: #eee;
+        padding: 10px;
+        margin: 30px 5px 5px 5px;
+    }
+    .weekly-news-title {
+        font-size: 20px;
+        color: #167ac6;
+        float: left;
+        padding-bottom: 10px;
+    }
+    .weekly-news-sub-title {
+        float: right;
+        color: #767676;
+    }
+    .weekly-news-image-right {
+        margin-left: 15px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        font-style: italic;
+        float: right;
+        width: 500px;
+    }
+    h4 {
+        margin-top: 40px;
+    }
+
+    hr {
+    height: 1px;
+    color: #9c3636;
+    background-color: #9c3636;
+    border: none;
+    }
+
+</style>
 
 <div class="container">
 
@@ -34,15 +81,15 @@
             <h2>
                 Our Mission:
             </h2>
+            <hr/>
             <p>
-
                 At ag-Grid, our mission is simple:
-
-                </p>
-                <blockquote>
-                <h3>Build the best data grid in the world.
-                </h3>
-                </blockquote>
+            </p>
+               
+            <h3>
+                Build the best data grid in the world.
+            </h3>
+            <br/>
             </p>
 
             <p>
@@ -64,6 +111,7 @@
             <h2>
                 Our Principles:
             </h2>
+            <hr/>
             <p>
                 We believe that a datagrid should be agnostic to the framework that developers choose. This allows flexibility and future-proofs your development. This is also where the 'ag' in ag-Grid comes from.
             </p>
@@ -75,7 +123,7 @@
             <p>
                 We give away what others charge for - ag-Grid Free provides all of the features of our competion. We only charge when we go above and beyond, with features that other grids don’t provide.
             </p>
-        </div> <!-- end col -->
+        </div> 
 
     </div>
 
@@ -83,18 +131,20 @@
 
         <div class="col-md-12" style="padding-top: 40px;">
 
-            <h2 id="team">
-                Who We Are:
+            <h2 id="tech_team">
+                The Technical Team:
             </h2>
+            <hr/>
 
-        </div> <!-- end col -->
+        </div> 
 
     </div>
+
     <div class="row" style="margin-top: 50px;">
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div>
-                <img src='images/niall.png'/>
+                <img src='images/team/niall.png'/>
             </div>
             <h3>Niall Crosby</h3>
             <h4>Niall Crosby, CEO & CTO</h4>
@@ -103,9 +153,9 @@
             </p>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div>
-                <img src='images/sean.png'/>
+                <img src='images/team/sean.png'/>
             </div>
             <h3>Sean Landsman</h3>
             <h4>Lead Developer - Frameworks</h4>
@@ -114,9 +164,9 @@
             </p>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div>
-                <img src='images/alberto.png'/>
+                <img src='images/team/alberto.png'/>
             </div>
             <h3>Alberto Gutierrez</h3>
             <h4>Lead Developer - Data Internals</h4>
@@ -125,15 +175,9 @@
             </p>
         </div>
 
-    </div>
-
-
-
-    <div class="row" style="margin-top: 50px;">
-    
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div>
-                <img src='images/rob.png'/>
+                <img src='images/team/rob.jpg'/>
             </div>
             <h3>Rob Clarke</h3>
             <h4>Lead Developer - Enterprise Applications</h4>
@@ -142,9 +186,26 @@
             </p>
         </div>
 
-        <div class="col-md-4">
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-12" style="padding-top: 40px;">
+
+            <h2 id="customer_team">
+                The Customer Experience Team:
+            </h2>
+            <hr/>
+
+        </div> 
+
+    </div>
+
+    <div class="row" style="margin-top: 50px;">
+    
+        <div class="col-md-3">
             <div>
-                <img src='images/john.png'/>
+                <img src='images/team/john.jpg'/>
             </div>
             <h3>John Masterson</h3>
             <h4>Customer Experience Manager</h4>
@@ -153,15 +214,48 @@
             </p>
         </div>
 
+        <div class="col-md-3">
+            <div>
+                <img src='images/team/bas.jpg'/>
+            </div>
+            <h3>Bas Rahman</h3>
+            <h4>Customer Experience Team</h4>
+            <p>
+                Bas joined the team to manage our evergrowing customer base - she has broad experience in dealing with customers and internal stakeholders from previous roles in startups and 
+                consulting companies.
+            </p>
+        </div>
+
+        <div class="col-md-3">
+            <div>
+                <img src='images/team/dimple.jpg'/>
+            </div>
+            <h3>Dimple Unalkat</h3>
+            <h4>Customer Experience Team</h4>
+            <p>
+                Dimple also joined as we expanded our customer team. She brings a wealth of sales and customer service experience from her previous roles in B2B sales.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-12" style="padding-top: 40px;">
+
+            <h2 id="contact">
+                Contact Us
+            </h2>
+            <hr/>
+
+        </div> 
+
     </div>
 
     <div class="row" style="margin-top: 50px;">
          <div class="col-md-6">
-            <h2>
-                Contact Us:
-            </h2>
             <p>
-                Our Address:
+            Our Address:
 
             <address>
             <strong>ag-Grid Ltd.</strong><br>
