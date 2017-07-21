@@ -1,16 +1,16 @@
 <?php
-$key = "Angular Floating Row";
-$pageTitle = "ag-Grid Angular Floating Row";
-$pageDescription = "ag-Grid Angular Floating Row Example";
-$pageKeyboards = "ag-Grid angular floating row";
+$key = "Angular Pinned Row";
+$pageTitle = "ag-Grid Angular Pinned Row";
+$pageDescription = "ag-Grid Angular Pinned Row Example";
+$pageKeyboards = "ag-Grid angular pinned row";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h2>Floating Row Renderer</h2>
-    <p>A Floating Row Renderer Example</p>
+    <h2>Pinned Row Renderer</h2>
+    <p>A Pinned Row Renderer Example</p>
 
     <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=floating-row"
                           sources="{

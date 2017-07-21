@@ -111,7 +111,7 @@ import "ag-grid-enterprise/main";
                     href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/editor-example/editor-example.html"
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
-        <li>A Floating Row Renderer Example
+        <li>A Pinned Row Renderer Example
             <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
                     href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.html"

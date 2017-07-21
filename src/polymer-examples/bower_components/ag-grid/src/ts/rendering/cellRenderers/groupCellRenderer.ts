@@ -282,7 +282,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let checkboxNeeded = this.isUserWantsSelected()
                 // footers cannot be selected
                 && !rowNode.footer
-                // floating rows cannot be selected
+                // pinned rows cannot be selected
                 && !rowNode.floating
                 // flowers cannot be selected
                 && !rowNode.flower;

@@ -1579,10 +1579,10 @@ export class GridPanel extends BeanStub {
             return;
         }
 
-        // padding top covers the header and the floating rows on top
+        // padding top covers the header and the pinned rows on top
         let floatingTopHeight = this.floatingRowModel.getFloatingTopTotalHeight();
         let paddingTop = totalHeaderHeight + floatingTopHeight;
-        // bottom is just the bottom floating rows
+        // bottom is just the bottom pinned rows
         let floatingBottomHeight = this.floatingRowModel.getFloatingBottomTotalHeight();
         let floatingBottomTop = heightOfContainer - floatingBottomHeight;
 

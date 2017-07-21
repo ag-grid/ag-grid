@@ -32,7 +32,7 @@ import {EditorComponent} from "./editor-component-example/editor.component";
 import {NumericEditorComponent} from "./editor-component-example/numeric-editor.component";
 import {MoodEditorComponent} from "./editor-component-example/mood-editor.component";
 import {MoodRendererComponent} from "./editor-component-example/mood-renderer.component";
-// floating row
+// pinned row
 import {FloatingRowComponent} from "./floating-row-example/floating-row-renderer.component";
 import {StyledComponent} from "./floating-row-example/styled-renderer.component";
 // full width

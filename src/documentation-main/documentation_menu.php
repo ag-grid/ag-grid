@@ -313,7 +313,7 @@
         menuItem(2, 'React Dynamic', 'Cell Renderers', 'example-react-dynamic/');
         menuItem(2, 'React Editor', 'Editor Component', 'example-react-editor/');
         menuItem(2, 'React Filter', 'Filter Component', 'example-react-filter/');
-        menuItem(2, 'React Floating Row', 'Floating Rows', 'example-react-floating-row/');
+        menuItem(2, 'React Pinned Row', 'Pinned Rows', 'example-react-floating-row/');
         menuItem(2, 'React Full Width', 'Full Width Rows', 'example-react-full-width-rows/');
         menuItem(2, 'React Group Row', 'Group Rows', 'example-react-grouped-row/');
         menuItem(2, 'React MasterDetail', 'Master/Detail', 'example-react-master-detail/');
@@ -327,7 +327,7 @@
         menuItem(2, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
         menuItem(2, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
         menuItem(2, 'Angular Floating Filter', 'Floating Filter', 'javascript-grid-floating-filter-component/#ng2Angular');
-        menuItem(2, 'Angular Floating Row', 'Floating Rows', 'example-angular-floating-row/');
+        menuItem(2, 'Angular Pinned Row', 'Pinned Rows', 'example-angular-floating-row/');
         menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
         menuItem(2, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
         menuItem(2, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');

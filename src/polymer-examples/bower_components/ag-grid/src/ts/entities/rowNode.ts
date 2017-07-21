@@ -443,7 +443,7 @@ export class RowNode implements IEventEmitter {
         }
 
         if (this.floating) {
-            console.log('ag-Grid: cannot select floating rows');
+            console.log('ag-Grid: cannot select pinned rows');
             return 0;
         }
 

@@ -16,7 +16,7 @@ export class AppComponent {
         {key: 'from-component', title: "Dynamic Angular Component Example"},
         {key: 'from-rich-component', title: "Dynamic Angular Components - Richer Example"},
         {key: 'editor-component', title: "Cell Editor Component Example"},
-        {key: 'floating-row', title: "Floating Row Renderer Example"},
+        {key: 'floating-row', title: "Pinned Row Renderer Example"},
         {key: 'full-width', title: "Full Width Renderer Example"},
         {key: 'group-row', title: "Grouped Row Inner Renderer Example"},
         {key: 'filter', title: "Filters Component Example"},

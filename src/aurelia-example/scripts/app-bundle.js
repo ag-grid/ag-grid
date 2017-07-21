@@ -38,7 +38,7 @@ define('app',["require", "exports"], function (require, exports) {
                     name: 'floating-row',
                     nav: true,
                     moduleId: 'components/floating-row-example/floating-row-example',
-                    title: 'Floating Row Example',
+                    title: 'Pinned Row Example',
                     href: '#/floating-row'
                 },
                 {
@@ -2442,7 +2442,7 @@ var GridOptionsWrapper = GridOptionsWrapper_1 = (function () {
     GridOptionsWrapper.prototype.getRowHeightForNode = function (rowNode) {
         // check the function first, in case use set both function and
         // number, when using virtual pagination then function can be
-        // used for floating rows and the number for the body rows.
+        // used for pinned rows and the number for the body rows.
         if (typeof this.gridOptions.getRowHeight === 'function') {
             var params = {
                 node: rowNode,
@@ -9436,7 +9436,7 @@ var RowRenderer = (function (_super) {
     RowRenderer.prototype.init = function () {
         this.rowContainers = this.gridPanel.getRowContainers();
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_FLOATING_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.refreshView();
     };
     RowRenderer.prototype.onPageLoaded = function (refreshEvent) {
@@ -9479,7 +9479,7 @@ var RowRenderer = (function (_super) {
             });
         }
     };
-    RowRenderer.prototype.onFloatingRowDataChanged = function () {
+    RowRenderer.prototype.onPinnedRowDataChanged = function () {
         this.refreshView();
     };
     RowRenderer.prototype.onModelUpdated = function (refreshEvent) {
@@ -11490,10 +11490,10 @@ var GridPanel = (function (_super) {
         if (this.autoHeight) {
             return;
         }
-        // padding top covers the header and the floating rows on top
+        // padding top covers the header and the pinned rows on top
         var floatingTopHeight = this.floatingRowModel.getFloatingTopTotalHeight();
         var paddingTop = totalHeaderHeight + floatingTopHeight;
-        // bottom is just the bottom floating rows
+        // bottom is just the bottom pinned rows
         var floatingBottomHeight = this.floatingRowModel.getFloatingBottomTotalHeight();
         var floatingBottomTop = heightOfContainer - floatingBottomHeight;
         var bodyHeight = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
@@ -12526,7 +12526,7 @@ var RowNode = (function () {
             return 0;
         }
         if (this.floating) {
-            console.log('ag-Grid: cannot select floating rows');
+            console.log('ag-Grid: cannot select pinned rows');
             return 0;
         }
         // if we are a footer, we don't do selection, just pass the info
@@ -14334,7 +14334,7 @@ var CellComp = (function (_super) {
     CellComp.prototype.setupCheckboxSelection = function () {
         // if boolean set, then just use it
         var colDef = this.column.getColDef();
-        // never allow selection on floating rows
+        // never allow selection on pinned rows
         if (this.node.floating) {
             this.usingWrapper = false;
         }
@@ -23169,7 +23169,7 @@ var RowComp = (function (_super) {
         if (this.rowNode.group) {
             return;
         }
-        // we also don't allow selection of floating rows
+        // we also don't allow selection of pinned rows
         if (this.rowNode.floating) {
             return;
         }
@@ -39034,7 +39034,7 @@ define('text!editors/numeric-editor.html', ['module'], function(module) { module
 define('text!headerComponent/headerGroup.css', ['module'], function(module) { module.exports = ".customHeaderLabel{\n    margin-left: 5px;\n    margin-top: 3px;\n    float: left;\n}\n\n.customExpandButton{\n    float:right;\n    margin-top: 5px;\n    margin-left: 3px;\n}\n\n.expanded {\n    animation-name: toExpanded;\n    animation-duration: 1s;\n    -ms-transform: rotate(180deg); /* IE 9 */\n    -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */\n    transform: rotate(180deg);\n}\n\n.collapsed {\n    color: cornflowerblue;\n    animation-name: toCollapsed;\n    animation-duration: 1s;\n    -ms-transform: rotate(0deg); /* IE 9 */\n    -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */\n    transform: rotate(0deg);\n}\n\n\n\n@keyframes  toExpanded{\n    from {\n        color: cornflowerblue;\n        -ms-transform: rotate(0deg); /* IE 9 */\n        -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */\n        transform: rotate(0deg);\n    }\n    to {\n        color: black;\n        -ms-transform: rotate(180deg); /* IE 9 */\n        -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */\n        transform: rotate(180deg);\n    }\n}\n\n@keyframes toCollapsed{\n    from {\n        color: black;\n        -ms-transform: rotate(180deg); /* IE 9 */\n        -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */\n        transform: rotate(180deg);\n    }\n    to {\n        color: cornflowerblue;\n        -ms-transform: rotate(0deg); /* IE 9 */\n        -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */\n        transform: rotate(0deg);\n    }\n}"; });
 define('text!components/editor-example/editor-example.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"../../editors/numeric-editor\"></require>\n  <require from=\"../../editors/mood-editor\"></require>\n  <div style=\"width: 800px;\">\n    <h1>Editor Example</h1>\n    <div style=\"width: 100%; height: 350px;\">\n    <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                     grid-options.bind=\"gridOptions\">\n\n      <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"300\"></ag-grid-column>\n      <ag-grid-column header-name=\"Mood\" field=\"mood\" width.bind=\"250\" editable.bind=\"true\">\n        <ag-cell-template>\n          <img width=\"20px\" if.bind=\"params.value === 'Happy'\" src=\"images/smiley.png\"/>\n          <img width=\"20px\" if.bind=\"params.value !== 'Happy'\" src=\"images/smiley-sad.png\"/>\n        </ag-cell-template>\n        <ag-editor-template>\n          <ag-mood-editor></ag-mood-editor>\n        </ag-editor-template>\n      </ag-grid-column>\n      <ag-grid-column header-name=\"Numeric\" field=\"number\" width.bind=\"249\" editable.bind=\"true\">\n        <ag-editor-template>\n          <ag-numeric-editor></ag-numeric-editor>\n        </ag-editor-template>\n      </ag-grid-column>\n    </ag-grid-aurelia>\n  </div>\n</template>\n"; });
 define('text!components/rich-grid-example/rich-grid-example.css', ['module'], function(module) { module.exports = ".filter {\n    margin: 2px\n}\n\n.dd {\n    width: 30px\n}\n\n.mm {\n    width: 30px\n}\n\n.yyyy {\n    width: 60px\n}\n\n.reset {\n    padding: 2px;\n    background-color: red;\n    border-radius: 3px;\n    font-size: 10px;\n    margin-right: 5px;\n    color: white\n}"; });
-define('text!components/floating-row-example/floating-row-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Floating Row Example</h1>\n      <div style=\"width: 100%; height: 350px;\">\n        <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                         grid-options.bind=\"gridOptions\">\n            <ag-grid-column header-name=\"Row\" field=\"row\" width.bind=\"400\">\n              <ag-cell-template>\n                <span style=\"font-weight: bold\">${params.value}</span>\n              </ag-cell-template>\n            </ag-grid-column>\n            <ag-grid-column header-name=\"Number\" field=\"number\" width.bind=\"399\">\n              <ag-cell-template>\n                <span style=\"font-style: italic\">${params.value}</span>\n              </ag-cell-template>\n            </ag-grid-column>\n        </ag-grid-aurelia>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
+define('text!components/floating-row-example/floating-row-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Pinned Row Example</h1>\n      <div style=\"width: 100%; height: 350px;\">\n        <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                         grid-options.bind=\"gridOptions\">\n            <ag-grid-column header-name=\"Row\" field=\"row\" width.bind=\"400\">\n              <ag-cell-template>\n                <span style=\"font-weight: bold\">${params.value}</span>\n              </ag-cell-template>\n            </ag-grid-column>\n            <ag-grid-column header-name=\"Number\" field=\"number\" width.bind=\"399\">\n              <ag-cell-template>\n                <span style=\"font-style: italic\">${params.value}</span>\n              </ag-cell-template>\n            </ag-grid-column>\n        </ag-grid-aurelia>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
 define('text!components/filter-example/filter-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Filter Example</h1>\n    <div style=\"width: 100%; height: 350px;\">\n      <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                       grid-options.bind=\"gridOptions\">\n        <ag-grid-column header-name=\"Row\" field=\"row\" width.bind=\"400\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Filter Component\" field=\"name\" width.bind=\"400\" filter.bind=\"getPartialMatchFilter()\">\n        </ag-grid-column>\n      </ag-grid-aurelia>\n    </div>\n  </div>\n  </div>\n</template>\n"; });
 define('text!components/full-width-example/full-width-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Full Width Example</h1>\n      <div style=\"width: 100%; height: 350px;\">\n        <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                         grid-options.bind=\"gridOptions\">\n            <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"400\">\n            </ag-grid-column>\n            <ag-grid-column header-name=\"Age\" field=\"age\" width.bind=\"400\">\n            </ag-grid-column>\n        </ag-grid-aurelia>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
 define('text!components/group-row-example/group-row-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Group Row Example</h1>\n    <div style=\"width: 100%; height: 350px;\">\n      <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                       grid-options.bind=\"gridOptions\">\n        <ag-grid-column header-name=\"Country\" field=\"country\" width.bind=\"100\" row-group-index.bind=\"0\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"100\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Gold\" field=\"gold\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Silver\" field=\"silver\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Bronze\" field=\"bronze\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n      </ag-grid-aurelia>\n    </div>\n  </div>\n  </div>\n</template>\n"; });

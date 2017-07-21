@@ -1,6 +1,6 @@
 <template>
     <div style="width: 800px;">
-        <h1>Floating Row Component</h1>
+        <h1>Pinned Row Component</h1>
         <ag-grid-vue style="width: 100%; height: 350px;" class="ag-fresh"
                      :gridOptions="gridOptions">
         </ag-grid-vue>

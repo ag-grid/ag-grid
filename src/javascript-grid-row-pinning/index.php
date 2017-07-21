@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Pinned rows appear either above or below the normal rows of a table.
-        This feature in other grids is also known as <i>Frozen Rows</i> or <i>Floating Rows</i>.
+        This feature in other grids is also known as <i>Frozen Rows</i> or <i>Pinned Rows</i>.
     </p>
 
     <p>

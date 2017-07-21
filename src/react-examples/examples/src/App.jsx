@@ -44,7 +44,7 @@ class App extends Component {
                     <li role="presentation" className={this.state.example === 'dynamic' ? 'active' : null} onClick={() => this.setExample("dynamic")}><a href="#">Dynamic React Component Example</a></li>
                     <li role="presentation" className={this.state.example === 'rich-dynamic' ? 'active' : null} onClick={() => this.setExample("rich-dynamic")}><a href="#">Dynamic React Components - Richer Example</a></li>
                     <li role="presentation" className={this.state.example === 'editor' ? 'active' : null} onClick={() => this.setExample("editor")}><a href="#">Cell Editor Component Example</a></li>
-                    <li role="presentation" className={this.state.example === 'floating-row' ? 'active' : null} onClick={() => this.setExample("floating-row")}><a href="#">Floating Row Renderer Example</a></li>
+                    <li role="presentation" className={this.state.example === 'floating-row' ? 'active' : null} onClick={() => this.setExample("floating-row")}><a href="#">Pinned Row Renderer Example</a></li>
                     <li role="presentation" className={this.state.example === 'full-width' ? 'active' : null} onClick={() => this.setExample("full-width")}><a href="#">Full Width Renderer Example</a></li>
                     <li role="presentation" className={this.state.example === 'group-row' ? 'active' : null} onClick={() => this.setExample("group-row")}><a href="#">Grouped Row Inner Renderer Example</a></li>
                     <li role="presentation" className={this.state.example === 'filter' ? 'active' : null} onClick={() => this.setExample("filter")}><a href="#">Filters Component Example</a></li>

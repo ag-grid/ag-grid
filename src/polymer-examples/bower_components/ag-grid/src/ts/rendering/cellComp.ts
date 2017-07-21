@@ -196,7 +196,7 @@ export class CellComp extends Component {
         // if boolean set, then just use it
         let colDef = this.column.getColDef();
 
-        // never allow selection on floating rows
+        // never allow selection on pinned rows
         if (this.node.floating) {
             this.usingWrapper = false;
         } else if (typeof colDef.checkboxSelection === 'boolean') {

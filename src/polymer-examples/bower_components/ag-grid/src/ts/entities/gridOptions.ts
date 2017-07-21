@@ -258,7 +258,7 @@ export interface GridOptions {
     onVirtualColumnsChanged?(event?: any): void;
     onRowGroupOpened?(event?: any): void;
     onRowDataChanged?(event?: any): void;
-    onFloatingRowDataChanged?(event?: any): void;
+    onPinnedRowDataChanged?(event?: any): void;
     onRangeSelectionChanged?(event?: any): void;
     onColumnRowGroupAddRequest?(event?: any): void;
     onColumnRowGroupRemoveRequest?(event?: any): void;

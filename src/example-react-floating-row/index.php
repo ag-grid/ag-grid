@@ -1,16 +1,16 @@
 <?php
-$key = "React Floating Row";
-$pageTitle = "ag-Grid React Floating Row";
-$pageDescription = "ag-Grid React Floating Row Example";
-$pageKeyboards = "ag-Grid react floating row";
+$key = "React Pinned Row";
+$pageTitle = "ag-Grid React Pinned Row";
+$pageDescription = "ag-Grid React Pinned Row Example";
+$pageKeyboards = "ag-Grid react pinned row";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h2>Floating Row Renderer</h2>
-    <p>A Floating Row Renderer Example</p>
+    <h2>Pinned Row Renderer</h2>
+    <p>A Pinned Row Renderer Example</p>
 
     <show-complex-example example="../react-examples/examples/?fromDocs&example=floating-row"
                           sources="{
