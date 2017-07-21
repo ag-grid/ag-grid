@@ -105,6 +105,80 @@ define('main',["require", "exports", "./environment"], function (require, export
     exports.configure = configure;
 });
 
+define('dateComponent/dateComponent',["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var DateComponent = (function () {
+        function DateComponent() {
+            this.init = function (params) {
+                this.params = params;
+                this.eGui = document.createElement('div');
+                this.eGui.innerHTML = '' +
+                    '<div class="filter">' +
+                    '<span class="reset">x</span>' +
+                    '<input class="dd" placeholder="dd" maxLength="2"/>/' +
+                    '<input class="mm" placeholder="mm" maxLength="2"/>/' +
+                    '<input class="yyyy" placeholder="yyyy" maxLength="4"/>' +
+                    '</div>';
+                this.eReset = this.eGui.querySelector('.reset');
+                this.onResetDate = this.onResetDate.bind(this);
+                this.eReset.addEventListener('click', this.onResetDate);
+                this.eDD = this.eGui.querySelector('.dd');
+                this.eMM = this.eGui.querySelector('.mm');
+                this.eYYYY = this.eGui.querySelector('.yyyy');
+                this.onDateChanged = this.onDateChanged.bind(this);
+                this.eDD.addEventListener('change', this.onDateChanged);
+                this.eMM.addEventListener('change', this.onDateChanged);
+                this.eYYYY.addEventListener('change', this.onDateChanged);
+            };
+            this.getGui = function () {
+                return this.eGui;
+            };
+            this.onDateChanged = function (event) {
+                var targetClass = event.target.classList[0];
+                var targetValue = event.target.value;
+                this.date = this.parseDate(targetClass === 'dd' ? targetValue : this.eDD.value, targetClass === 'mm' ? targetValue : this.eMM.value, targetClass === 'yyyy' ? targetValue : this.eYYYY.value);
+                this.params.onDateChanged();
+            };
+            this.onResetDate = function () {
+                this.dd = '';
+                this.mm = '';
+                this.yyyy = '';
+                this.date = null;
+                this.params.onDateChanged();
+            };
+            this.getDate = function () {
+                return this.date;
+            };
+            this.setDate = function (date) {
+                this.dd = date.getDate() + '';
+                this.mm = (date.getMonth() + 1) + '';
+                this.yyyy = date.getFullYear() + '';
+                this.date = date;
+                this.params.onDateChanged();
+            };
+            this.parseDate = function (dd, mm, yyyy) {
+                if (dd.trim() === '' || mm.trim() === '' || yyyy.trim() === '') {
+                    return null;
+                }
+                var day = Number(dd);
+                var month = Number(mm);
+                var year = Number(yyyy);
+                var date = new Date(year, month - 1, day);
+                if (isNaN(date.getTime())) {
+                    return null;
+                }
+                if (date.getDate() != day || date.getMonth() + 1 != month || date.getFullYear() != year) {
+                    return null;
+                }
+                return date;
+            };
+        }
+        return DateComponent;
+    }());
+    exports.default = DateComponent;
+});
+
 define('data/refData',["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -230,80 +304,6 @@ define('data/refData',["require", "exports"], function (require, exports) {
         return RefData;
     }());
     exports.default = RefData;
-});
-
-define('dateComponent/dateComponent',["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var DateComponent = (function () {
-        function DateComponent() {
-            this.init = function (params) {
-                this.params = params;
-                this.eGui = document.createElement('div');
-                this.eGui.innerHTML = '' +
-                    '<div class="filter">' +
-                    '<span class="reset">x</span>' +
-                    '<input class="dd" placeholder="dd" maxLength="2"/>/' +
-                    '<input class="mm" placeholder="mm" maxLength="2"/>/' +
-                    '<input class="yyyy" placeholder="yyyy" maxLength="4"/>' +
-                    '</div>';
-                this.eReset = this.eGui.querySelector('.reset');
-                this.onResetDate = this.onResetDate.bind(this);
-                this.eReset.addEventListener('click', this.onResetDate);
-                this.eDD = this.eGui.querySelector('.dd');
-                this.eMM = this.eGui.querySelector('.mm');
-                this.eYYYY = this.eGui.querySelector('.yyyy');
-                this.onDateChanged = this.onDateChanged.bind(this);
-                this.eDD.addEventListener('change', this.onDateChanged);
-                this.eMM.addEventListener('change', this.onDateChanged);
-                this.eYYYY.addEventListener('change', this.onDateChanged);
-            };
-            this.getGui = function () {
-                return this.eGui;
-            };
-            this.onDateChanged = function (event) {
-                var targetClass = event.target.classList[0];
-                var targetValue = event.target.value;
-                this.date = this.parseDate(targetClass === 'dd' ? targetValue : this.eDD.value, targetClass === 'mm' ? targetValue : this.eMM.value, targetClass === 'yyyy' ? targetValue : this.eYYYY.value);
-                this.params.onDateChanged();
-            };
-            this.onResetDate = function () {
-                this.dd = '';
-                this.mm = '';
-                this.yyyy = '';
-                this.date = null;
-                this.params.onDateChanged();
-            };
-            this.getDate = function () {
-                return this.date;
-            };
-            this.setDate = function (date) {
-                this.dd = date.getDate() + '';
-                this.mm = (date.getMonth() + 1) + '';
-                this.yyyy = date.getFullYear() + '';
-                this.date = date;
-                this.params.onDateChanged();
-            };
-            this.parseDate = function (dd, mm, yyyy) {
-                if (dd.trim() === '' || mm.trim() === '' || yyyy.trim() === '') {
-                    return null;
-                }
-                var day = Number(dd);
-                var month = Number(mm);
-                var year = Number(yyyy);
-                var date = new Date(year, month - 1, day);
-                if (isNaN(date.getTime())) {
-                    return null;
-                }
-                if (date.getDate() != day || date.getMonth() + 1 != month || date.getFullYear() != year) {
-                    return null;
-                }
-                return date;
-            };
-        }
-        return DateComponent;
-    }());
-    exports.default = DateComponent;
 });
 
 var __extends = (this && this.__extends) || (function () {
