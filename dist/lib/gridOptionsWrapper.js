@@ -212,7 +212,6 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getCacheBlockSize = function () { return this.gridOptions.cacheBlockSize; };
     GridOptionsWrapper.prototype.getInfiniteInitialRowCount = function () { return this.gridOptions.infiniteInitialRowCount; };
     GridOptionsWrapper.prototype.isPurgeClosedRowNodes = function () { return isTrue(this.gridOptions.purgeClosedRowNodes); };
-    GridOptionsWrapper.prototype.getPaginationStartPage = function () { return this.gridOptions.paginationStartPage; };
     GridOptionsWrapper.prototype.isSuppressPaginationPanel = function () { return isTrue(this.gridOptions.suppressPaginationPanel); };
     GridOptionsWrapper.prototype.getRowData = function () { return this.gridOptions.rowData; };
     GridOptionsWrapper.prototype.isGroupUseEntireRow = function () { return isTrue(this.gridOptions.groupUseEntireRow); };
@@ -521,6 +520,9 @@ var GridOptionsWrapper = (function () {
         }
         if (options.floatingBottomRowData) {
             console.warn("ag-grid: since version 12.x, floatingBottomRowData is now called pinnedBottomRowData");
+        }
+        if (options.paginationStartPage) {
+            console.warn("ag-grid: since version 12.x, paginationStartPage is gone, please call api.paginationGoToPage(" + options.paginationStartPage + ") instead.");
         }
     };
     GridOptionsWrapper.prototype.getLocaleTextFunc = function () {

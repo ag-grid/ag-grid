@@ -764,7 +764,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    GridOptionsWrapper.prototype.getCacheBlockSize = function () { return this.gridOptions.cacheBlockSize; };
 	    GridOptionsWrapper.prototype.getInfiniteInitialRowCount = function () { return this.gridOptions.infiniteInitialRowCount; };
 	    GridOptionsWrapper.prototype.isPurgeClosedRowNodes = function () { return isTrue(this.gridOptions.purgeClosedRowNodes); };
-	    GridOptionsWrapper.prototype.getPaginationStartPage = function () { return this.gridOptions.paginationStartPage; };
 	    GridOptionsWrapper.prototype.isSuppressPaginationPanel = function () { return isTrue(this.gridOptions.suppressPaginationPanel); };
 	    GridOptionsWrapper.prototype.getRowData = function () { return this.gridOptions.rowData; };
 	    GridOptionsWrapper.prototype.isGroupUseEntireRow = function () { return isTrue(this.gridOptions.groupUseEntireRow); };
@@ -1073,6 +1072,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        if (options.floatingBottomRowData) {
 	            console.warn("ag-grid: since version 12.x, floatingBottomRowData is now called pinnedBottomRowData");
+	        }
+	        if (options.paginationStartPage) {
+	            console.warn("ag-grid: since version 12.x, paginationStartPage is gone, please call api.paginationGoToPage(" + options.paginationStartPage + ") instead.");
 	        }
 	    };
 	    GridOptionsWrapper.prototype.getLocaleTextFunc = function () {
@@ -3704,7 +3706,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    // *** deprecated
 	    GridApi.prototype.refreshRows = function (rowNodes) {
-	        console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) instead');
+	        console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) or redrawRows({rowNodes: rows}) instead');
 	        this.refreshCells({ rowNodes: rowNodes });
 	    };
 	    // *** deprecated
@@ -19173,8 +19175,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
 	        this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
 	        this.onModelUpdated();
-	        var paginationStartPage = this.gridOptionsWrapper.getPaginationStartPage();
-	        this.currentPage = paginationStartPage ? paginationStartPage : 0;
 	    };
 	    PaginationProxy.prototype.isLastRowFound = function () {
 	        return this.rowModel.isLastRowFound();
