@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h1>
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
         <img style="vertical-align: middle" src="/images/polymer-large.png" height="45px"/>
-        polymer Grid
+        Polymer Grid
     </h1>
     <h2>More Details</h2>
 
