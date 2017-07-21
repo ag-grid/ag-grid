@@ -1150,7 +1150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    GridOptionsWrapper.prototype.getRowHeightForNode = function (rowNode) {
 	        // check the function first, in case use set both function and
 	        // number, when using virtual pagination then function can be
-	        // used for floating rows and the number for the body rows.
+	        // used for pinned rows and the number for the body rows.
 	        if (typeof this.gridOptions.getRowHeight === 'function') {
 	            var params = {
 	                node: rowNode,
@@ -8484,7 +8484,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
 	        this.rowContainers = this.gridPanel.getRowContainers();
 	        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
-	        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
+	        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
 	        this.redrawAfterModelUpdate();
 	    };
 	    RowRenderer.prototype.onPageLoaded = function (refreshEvent) {
@@ -8527,7 +8527,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	        }
 	    };
-	    RowRenderer.prototype.onFloatingRowDataChanged = function () {
+	    RowRenderer.prototype.onPinnedRowDataChanged = function () {
 	        this.redrawAfterModelUpdate();
 	    };
 	    RowRenderer.prototype.onModelUpdated = function (refreshEvent) {
@@ -10640,10 +10640,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this.autoHeight) {
 	            return;
 	        }
-	        // padding top covers the header and the floating rows on top
+	        // padding top covers the header and the pinned rows on top
 	        var floatingTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
 	        var paddingTop = totalHeaderHeight + floatingTopHeight;
-	        // bottom is just the bottom floating rows
+	        // bottom is just the bottom pinned rows
 	        var floatingBottomHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
 	        var floatingBottomTop = heightOfContainer - floatingBottomHeight;
 	        var bodyHeight = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
@@ -12058,7 +12058,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    CellComp.prototype.setupCheckboxSelection = function () {
 	        // if boolean set, then just use it
 	        var colDef = this.column.getColDef();
-	        // never allow selection on floating rows
+	        // never allow selection on pinned rows
 	        if (this.node.rowPinned) {
 	            this.usingWrapper = false;
 	        }
@@ -22231,7 +22231,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this.rowNode.group) {
 	            return;
 	        }
-	        // we also don't allow selection of floating rows
+	        // we also don't allow selection of pinned rows
 	        if (this.rowNode.rowPinned) {
 	            return;
 	        }
