@@ -192,8 +192,8 @@ export class GridSerializer {
         let skipHeader = params && params.skipHeader;
         let columnGroups = params && params.columnGroups;
         let skipFooters = params && params.skipFooters;
-        let skipFloatingTop = params && params.skipFloatingTop;
-        let skipFloatingBottom = params && params.skipFloatingBottom;
+        let skipPinnedTop = params && params.skipPinnedTop;
+        let skipPinnedBottom = params && params.skipPinnedBottom;
         let includeCustomHeader = params && params.customHeader;
         let includeCustomFooter = params && params.customFooter;
         let allColumns = params && params.allColumns;
@@ -299,11 +299,11 @@ export class GridSerializer {
                 return;
             }
 
-            if (skipFloatingTop && node.rowPinned === 'top') {
+            if (skipPinnedTop && node.rowPinned === 'top') {
                 return;
             }
 
-            if (skipFloatingBottom && node.rowPinned === 'bottom') {
+            if (skipPinnedBottom && node.rowPinned === 'bottom') {
                 return;
             }
 

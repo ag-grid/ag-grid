@@ -9,8 +9,8 @@ export interface BaseExportParams{
     columnGroups?:boolean;
     skipFooters?: boolean;
     skipGroups?: boolean;
-    skipFloatingTop?: boolean;
-    skipFloatingBottom?: boolean;
+    skipPinnedTop?: boolean;
+    skipPinnedBottom?: boolean;
     suppressQuotes?: boolean;
     columnKeys?: (string|Column)[]
     fileName?: string;
