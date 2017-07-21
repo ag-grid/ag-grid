@@ -614,6 +614,6 @@ cse .gsc-search-button input.gsc-search-button-v2, input.gsc-search-button-v2 {
 
 }
 
-.inline-block {
+.nline-block{
     display: inline-block;
 }
