@@ -54,7 +54,7 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li><i>paginationPageSize</i> is set to 10</li>
-        <li><i>paginationStartPage</i> is set to 4 (0 based, so he 5th page)</li>
+        <li><i>api.paginationGoToPage(4)</i> is called to go to page 4 (0 based, so he 5th page)</li>
         <li>A dropdown to change the page size dynamically is available. This makes a call to
             <i>paginationSetPageSize(newPageSize)</i></li>
     </ul>

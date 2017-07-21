@@ -133,7 +133,7 @@ laterOnInYourApplicationSomewhere() {
     <span class="codeComment">// get React instance from the ag-Grid instance</span>
     var reactFilterInstance = agGridFilter.getFrameworkComponentInstance();
 
-    <span class="codeComment">// now were sucking diesel!!!</span>
+    <span class="codeComment">// now we're sucking diesel!!!</span>
     reactFilterInstance.myMethod();
 }</pre>
 

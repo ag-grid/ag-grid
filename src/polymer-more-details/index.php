@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h1>
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
         <img style="vertical-align: middle" src="/images/polymer-large.png" height="45px"/>
-        polymer Grid
+        Polymer Grid
     </h1>
     <h2>More Details</h2>
 
@@ -276,10 +276,7 @@ this.params.context.componentParent
         point is that you can use the <code>context</code> mechanism to share information between the
         components.</p>
 
-    <p>The <span
-                style="font-style: italic">"Dynamic Components Example"</span> illustrates this in the Child/Parent column</p>
-
-    spl todo - link to polymer example in question
+    <p>The <a href="../example-polymer-dynamic#dynamic">Dynamic Components Example</a> illustrates this in the Child/Parent column</p>
 
 </div>
 

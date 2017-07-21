@@ -50,6 +50,16 @@ include '../documentation-main/documentation_header.php';
             </div>
         <?php } ?>
 
+<? if (isFrameworkPolymer()) { ?>
+    <h4>
+        <img src="/images/polymer-large.png" height="20px"/>
+        Polymer
+    </h4>
+    <p>
+        Add properties to the gridOptions or set as properties on the <code>ag-grid-polymer</code> component.
+    </p>
+<? } ?>
+
         <?php if (isFrameworkAngular2()) { ?>
             <div>
                 <h4>
@@ -425,8 +435,8 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>suppressHorizontalScroll</th>
-            <td>Set to true to never show the horizontal scroll. This is useful if the grid is a slave grid,
-                and will scroll with a master grid.</td>
+            <td>Set to true to never show the horizontal scroll. This is useful if the grid is aligned with
+                another grid and will scroll when the other grid scrolls.</td>
         </tr>
         <tr>
             <th>suppressColumnVirtualisation</th>

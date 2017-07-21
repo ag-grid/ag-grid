@@ -62,7 +62,7 @@ include 'includes/navbar.php'; ?>
                     use <b>ag-Grid Enterprise</b>.
                 </div>
                 <div class="col-md-4 info-item">
-                    Over <span class="info-item-big">60,000 Downloads</span>
+                    Over <span class="info-item-big">80,000 Downloads</span>
                     per month.
                 </div>
             </div>

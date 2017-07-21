@@ -8,6 +8,9 @@
             <?php } elseif (isFrameworkAngular2()) { ?>
                 <img src="/images/angular2_small.png" alt="Angular"/>
                 Angular
+            <?php } elseif (isFrameworkPolymer()) { ?>
+                <img src="/images/polymer-small.png" alt="Polymer"/>
+                Polymer
             <?php } elseif (isFrameworkAngular1()) { ?>
                 <img src="/images/angularjs_small.png" alt="Angular 1"/>
                 Angular JS
@@ -42,6 +45,8 @@
             <li><a class="frameworkDropdown-link" data-id="angular" href="#"><img src="/images/angularjs_small.png"
                                                                                   alt="Angular 1"/> Angular (Angular 2
                     and later)</a></li>
+            <li><a class="frameworkDropdown-link" data-id="polymer" href="#"><img src="/images/polymer-small.png"
+                                                                                  alt="Polymer 2"/> Polymer 2</a></li>
             <li><a class="frameworkDropdown-link" data-id="angularjs" href="#"><img src="/images/angularjs_small.png"
                                                                                     alt="Angular 1"/> Angular JS
                     (Angular 1)</a></li>
@@ -89,6 +94,7 @@
         menuItem(2, 'Getting Started React', 'Getting Started', 'react-getting-started/');
         menuItem(2, 'More Detail React', 'More Details', 'react-more-details/');
     }
+
     if (isFrameworkAngular2()) {
         menuItem(1, 'Overview Angular', 'Angular 2.x/4.x', 'best-angular-2-data-grid/');
         menuItem(2, 'Getting Started Angular', 'Getting Started', 'angular-getting-started/');
@@ -100,6 +106,13 @@
         menuItemCollapsibleChild(3, 'Angular ngtools Webpack', '@ngtools', 'ag-grid-angular-ngtools-webpack/', 'angularParent', 'angularChild');
         menuItemCollapsibleChild(3, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/', 'angularParent', 'angularChild', 'end');
     }
+
+    if (isFrameworkPolymer()) {
+        menuItem(1, 'Overview Polymer', 'Polymer', 'best-polymer-data-grid/');
+        menuItem(2, 'Getting Started Polymer', 'Getting Started', 'polymer-getting-started/');
+        menuItem(2, 'More Detail Polymer', 'More Details', 'polymer-more-details/');
+    }
+
     if (isFrameworkAngular1()) {
         menuItem(1, 'Getting Started ng1', 'AngularJS 1.x', 'best-angularjs-data-grid/');
     }
@@ -326,13 +339,25 @@
         menuItem(2, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
         menuItem(2, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
         menuItem(2, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
-        menuItem(2, 'Angular Floating Filter', 'Floating Filter', 'javascript-grid-floating-filter-component/#ng2Angular');
+        menuItem(2, 'Angular Floating Filter', 'Floating Filter', 'javascript-grid-floating-filter-component#ng2Angular');
         menuItem(2, 'Angular Pinned Row', 'Pinned Rows', 'example-angular-floating-row/');
         menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
         menuItem(2, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
         menuItem(2, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
         menuItem(2, 'Angular RxJS', 'RxJS', 'example-angular-rxjs/');
         menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
+    }
+    if (isFrameworkPolymer() || isFrameworkAll()) {
+        menuItemWithIcon('polymer-small.png', 1, 'Polymer Examples', 'Polymer Examples', 'example-polymer/', true);
+        menuItem(2, 'Polymer Rich Grid', 'Rich Grid', 'example-polymer-rich-grid/');
+        menuItem(2, 'Polymer Dynamic', 'Cell Renderers', 'example-polymer-dynamic/');
+        menuItem(2, 'Polymer Editor', 'Editor Component', 'example-polymer-editor/');
+        menuItem(2, 'Polymer Filter', 'Filter Component', 'example-polymer-filter/');
+        menuItem(2, 'Polymer Floating Filter', 'Floating Filter', 'javascript-grid-floating-filter-component#polymerFilter');
+        menuItem(2, 'Polymer Floating Row', 'Floating Rows', 'example-polymer-floating-row/');
+        menuItem(2, 'Polymer Full Width', 'Full Width Rows', 'example-polymer-full-width-rows/');
+        menuItem(2, 'Polymer Group Row', 'Group Rows', 'example-polymer-grouped-row/');
+        menuItem(2, 'Polymer MasterDetail', 'Master/Detail', 'example-polymer-master-detail/');
     }
     menuItem(1, 'Styled Report', 'Styled Report', 'example-account-report/');
     menuItem(1, 'File Browser', 'File Browser', 'example-file-browser/');
