@@ -37,7 +37,7 @@ var ValuesColumnPanel = (function (_super) {
             dragAndDropService: this.dragAndDropService
         });
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to aggregate');
+        var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag here to aggregate');
         var title = localeTextFunc('values', 'Values');
         _super.prototype.init.call(this, {
             dragAndDropIcon: main_1.DragAndDropService.ICON_AGGREGATE,
