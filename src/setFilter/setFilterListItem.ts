@@ -57,6 +57,7 @@ export class SetFilterListItem extends Component {
 
         let listener = () => {
             this.selected = !this.selected;
+            this.updateCheckboxIcon();
             return this.dispatchEvent(SetFilterListItem.EVENT_SELECTED);
         };
         this.addDestroyableEventListener(this.eClickableArea, 'click', listener);

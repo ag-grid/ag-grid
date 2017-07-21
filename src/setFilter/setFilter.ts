@@ -20,8 +20,11 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
     @QuerySelector('#selectAll')
     private eSelectAll: HTMLInputElement;
+    @QuerySelector('#selectAllContainer')
+    private eSelectAllContainer: HTMLElement;
     @QuerySelector('.ag-filter-filter')
     private eMiniFilter: HTMLInputElement;
+
 
     private virtualList: VirtualList;
     private debounceFilterChanged:()=>void;
@@ -86,7 +89,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
         this.updateCheckboxIcon();
 
-        this.eSelectAll.onclick = this.onSelectAll.bind(this);
+        this.eSelectAllContainer.onclick = this.onSelectAll.bind(this);
         this.updateSelectAll();
         this.virtualList.refresh();
     }
@@ -201,7 +204,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
                         <input class="ag-filter-filter" type="text" placeholder="${translate('searchOoo')}"/>
                     </div>
                     <div class="ag-filter-header-container">
-                        <label>
+                        <label id="selectAllContainer">
                             <div id="selectAll" class="ag-filter-checkbox"></div>
                             <span class="ag-filter-value">(${translate('selectAll')})</span>
                         </label>
