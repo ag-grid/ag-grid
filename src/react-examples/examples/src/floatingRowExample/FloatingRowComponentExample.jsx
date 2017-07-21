@@ -55,7 +55,7 @@ export default class FloatingRowComponentExample extends Component {
 
         for (let i = 0; i < 15; i++) {
             rowData.push({
-                row: "Row " + i,
+                row: "Rou " + i,
                 number: Math.round(Math.random() * 100)
             });
         }
@@ -73,8 +73,8 @@ export default class FloatingRowComponentExample extends Component {
                     columnDefs={this.state.columnDefs}
                     rowData={this.state.rowData}
 
-                    floatingTopRowData={this.state.pinnedTopRowData}
-                    floatingBottomRowData={this.state.pinnedBottomRowData}
+                    pinnedTopRowData={this.state.pinnedTopRowData}
+                    pinnedBottomRowData={this.state.pinnedBottomRowData}
 
                     // events
                     onGridReady={this.onGridReady}>

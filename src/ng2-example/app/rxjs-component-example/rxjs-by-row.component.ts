@@ -31,12 +31,18 @@ export class RxJsComponentByRow {
                     rowData => {
                         // the initial full set of data
                         // note that we don't need to un-subscribe here as it's a one off data load
-                        this.gridOptions.api.setRowData(rowData);
+                        if (this.gridOptions.api) { // can be null when tabbing between the examples
+                            this.gridOptions.api.setRowData(rowData);
+                        }
 
                         // now listen for updates
                         // we process the updates with a transaction - this ensures that only the changes
                         // rows will get re-rendered, improving performance
-                        this.rowDataUpdates$.subscribe((updates) => this.gridOptions.api.updateRowData({update: updates}));
+                        this.rowDataUpdates$.subscribe((updates) => {
+                            if (this.gridOptions.api) { // can be null when tabbing between the examples
+                                this.gridOptions.api.updateRowData({update: updates})
+                            }
+                        });
                     }
                 );
                 this.gridOptions.api.sizeColumnsToFit();

@@ -1,28 +1,28 @@
-.customHeaderMenuButton{
+.customHeaderMenuButton {
     margin-top: 5px;
     margin-left: 4px;
     float: left;
 }
 
-.customHeaderLabel{
+.customHeaderLabel {
     margin-left: 5px;
     margin-top: 3px;
     float: left;
 }
 
-.customSortDownLabel{
+.customSortDownLabel {
     float: left;
     margin-left: 10px;
     margin-top: 5px;
 }
 
-.customSortUpLabel{
+.customSortUpLabel {
     float: left;
     margin-left: 3px;
     margin-top: 4px;
 }
 
-.customSortRemoveLabel{
+.customSortRemoveLabel {
     float: left;
     font-size: 11px;
     margin-left: 3px;
@@ -33,4 +33,6 @@
     color: cornflowerblue;
 }
 
-.hidden { display:none; }
+.hidden {
+    display: none;
+}

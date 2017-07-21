@@ -32,9 +32,9 @@ import {EditorComponent} from "./editor-component-example/editor.component";
 import {NumericEditorComponent} from "./editor-component-example/numeric-editor.component";
 import {MoodEditorComponent} from "./editor-component-example/mood-editor.component";
 import {MoodRendererComponent} from "./editor-component-example/mood-renderer.component";
-// pinned row
-import {FloatingRowComponent} from "./floating-row-example/floating-row-renderer.component";
-import {StyledComponent} from "./floating-row-example/styled-renderer.component";
+// Pinned Row
+import {PinnedRowComponent} from "./pinned-row-example/pinned-row-renderer.component";
+import {StyledComponent} from "./pinned-row-example/styled-renderer.component";
 // full width
 import {FullWidthComponent} from "./full-width-example/full-width-renderer.component";
 import {NameAndAgeRendererComponent} from "./full-width-example/name-age-renderer.component";
@@ -50,9 +50,6 @@ import {DetailPanelComponent} from "./master-detail-example/detail-panel.compone
 // floating filter
 import {FloatingFilterComponent} from "./floating-filter-example/floating-filter.component";
 import {SliderFloatingFilter} from "./floating-filter-example/slider-floating-filter.component";
-// grouped data
-import {GroupedDataComponent} from "./grouped-data-example/grouped-data.component";
-import {CountryRendererComponent} from "./grouped-data-example/country-renderer.component";
 // rxjs
 import {RxJsComponentByRow} from "./rxjs-component-example/rxjs-by-row.component";
 import {RxJsComponentByFullSet} from "./rxjs-component-example/rxjs-by-bulk.component";
@@ -83,7 +80,6 @@ import {RxJsComponentByFullSet} from "./rxjs-component-example/rxjs-by-bulk.comp
                 DateComponent,
                 HeaderComponent,
                 HeaderGroupComponent,
-                CountryRendererComponent,
                 FloatingFilterComponent,
                 SliderFloatingFilter
             ]),
@@ -108,7 +104,7 @@ import {RxJsComponentByFullSet} from "./rxjs-component-example/rxjs-by-bulk.comp
         NumericEditorComponent,
         MoodEditorComponent,
         MoodRendererComponent,
-        FloatingRowComponent,
+        PinnedRowComponent,
         StyledComponent,
         FullWidthComponent,
         NameAndAgeRendererComponent,
@@ -118,8 +114,6 @@ import {RxJsComponentByFullSet} from "./rxjs-component-example/rxjs-by-bulk.comp
         PartialMatchFilterComponent,
         MasterComponent,
         DetailPanelComponent,
-        GroupedDataComponent,
-        CountryRendererComponent,
         FloatingFilterComponent,
         SliderFloatingFilter,
         RxJsComponentByRow,

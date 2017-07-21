@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
+import {Component} from "@angular/core";
 
-import {ICellRendererAngularComp} from 'ag-grid-angular/main';
+import {ICellRendererAngularComp} from "ag-grid-angular/main";
 
 @Component({
     selector: 'cube-cell',
@@ -17,9 +17,10 @@ export class CubeComponent implements ICellRendererAngularComp {
     }
 
     // called when the cell is refreshed
-    refresh(params: any): void {
+    refresh(params: any): boolean {
         this.params = params;
         this.cubed = this.params.data.value * this.params.data.value * this.params.data.value;
+        return true;
     }
 
     public valueCubed(): number {

@@ -5,16 +5,15 @@
         <div class="full-width-detail"><b>Account: </b> {{parentRecord.account}}</div>
     </div>
     <ag-grid-angular
-                 class="full-width-grid"
-                 [gridOptions]="gridOptions"
+            class="full-width-grid"
+            [gridOptions]="gridOptions"
 
-                 enableSorting
-                 enableFilter
-                 enableColResize
+            enableSorting
+            enableFilter
+            enableColResize
 
-                 (mousewheel)="consumeMouseWheelOnDetailGrid($event)"
-                 (DOMMouseScroll)="consumeMouseWheelOnDetailGrid($event)">
-
+            (mousewheel)="consumeMouseWheelOnDetailGrid($event)"
+            (DOMMouseScroll)="consumeMouseWheelOnDetailGrid($event)">
     </ag-grid-angular>
     <div class="full-width-grid-toolbar">
         <img class="full-width-phone-icon" src="../images/phone.png"/>

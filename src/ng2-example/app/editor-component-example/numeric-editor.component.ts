@@ -1,6 +1,6 @@
-import {Component, ViewContainerRef, ViewChild, AfterViewInit} from '@angular/core';
+import {AfterViewInit, Component, ViewChild, ViewContainerRef} from "@angular/core";
 
-import {ICellEditorAngularComp} from 'ag-grid-angular/main';
+import {ICellEditorAngularComp} from "ag-grid-angular/main";
 
 @Component({
     selector: 'numeric-cell',
@@ -57,8 +57,8 @@ export class NumericEditorComponent implements ICellEditorAngularComp, AfterView
     }
 
     private isKeyPressedNumeric(event): boolean {
-        var charCode = this.getCharCodeFromEvent(event);
-        var charStr = event.key ? event.key : String.fromCharCode(charCode);
+        const charCode = this.getCharCodeFromEvent(event);
+        const charStr = event.key ? event.key : String.fromCharCode(charCode);
         return this.isCharNumeric(charStr);
     }
 }

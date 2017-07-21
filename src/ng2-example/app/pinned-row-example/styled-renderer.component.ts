@@ -14,4 +14,8 @@ export class StyledComponent implements ICellRendererAngularComp {
         this.params = params;
         this.style = this.params.style;
     }
+
+    refresh():boolean{
+        return false;
+    }
 }

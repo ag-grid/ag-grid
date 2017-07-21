@@ -1,4 +1,4 @@
-import {Component, AfterViewInit} from "@angular/core";
+import {AfterViewInit, Component} from "@angular/core";
 import {GridOptions} from "ag-grid/main";
 import {ICellRendererAngularComp} from "ag-grid-angular/main";
 
@@ -8,7 +8,7 @@ import {ICellRendererAngularComp} from "ag-grid-angular/main";
     templateUrl: 'detail-panel.component.html',
     styleUrls: ['detail-panel.component.css'],
 })
-export class DetailPanelComponent implements ICellRendererAngularComp,AfterViewInit {
+export class DetailPanelComponent implements ICellRendererAngularComp, AfterViewInit {
     public gridOptions: GridOptions;
     public parentRecord: any;
 
@@ -62,5 +62,9 @@ export class DetailPanelComponent implements ICellRendererAngularComp,AfterViewI
 
     onButtonClick() {
         window.alert('Sample button pressed!!');
+    }
+
+    refresh(): boolean {
+        return false;
     }
 }

@@ -12,6 +12,7 @@ import GroupedRowInnerRendererComponentExample from "./groupedRowInnerRendererEx
 import FilterComponentExample from "./filterComponentExample/FilterComponentExample";
 import MasterDetailExample from "./masterDetailExample/MasterDetailExample";
 import SimpleReduxExample from "./simpleReduxExample/SimpleReduxExample";
+import SimpleGridExample from "./floatingFilter/SimpleGridExample";
 
 class App extends Component {
     constructor(props) {
@@ -48,6 +49,7 @@ class App extends Component {
                     <li role="presentation" className={this.state.example === 'full-width' ? 'active' : null} onClick={() => this.setExample("full-width")}><a href="#">Full Width Renderer Example</a></li>
                     <li role="presentation" className={this.state.example === 'group-row' ? 'active' : null} onClick={() => this.setExample("group-row")}><a href="#">Grouped Row Inner Renderer Example</a></li>
                     <li role="presentation" className={this.state.example === 'filter' ? 'active' : null} onClick={() => this.setExample("filter")}><a href="#">Filters Component Example</a></li>
+                    <li role="presentation" className={this.state.example === 'floating-filter' ? 'active' : null} onClick={() => this.setExample("floating-filter")}><a href="#">Floating Filters</a></li>
                     <li role="presentation" className={this.state.example === 'master-detail' ? 'active' : null} onClick={() => this.setExample("master-detail")}><a href="#">Master Detail Example</a></li>
                     <li role="presentation" className={this.state.example === 'simple-redux' ? 'active' : null} onClick={() => this.setExample("simple-redux")}><a href="#">Simple Redux Example</a></li>
                 </ul>)
@@ -81,6 +83,9 @@ class App extends Component {
                 break;
             case 'simple-redux':
                 example = <SimpleReduxExample/>;
+                break;
+            case 'floating-filter':
+                example = <SimpleGridExample/>;
                 break;
             default:
                 example = <RichGridExample/>;
