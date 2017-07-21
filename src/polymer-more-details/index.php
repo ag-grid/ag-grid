@@ -276,10 +276,7 @@ this.params.context.componentParent
         point is that you can use the <code>context</code> mechanism to share information between the
         components.</p>
 
-    <p>The <span
-                style="font-style: italic">"Dynamic Components Example"</span> illustrates this in the Child/Parent column</p>
-
-    spl todo - link to polymer example in question
+    <p>The <a href="../example-polymer-dynamic#dynamic">Dynamic Components Example</a> illustrates this in the Child/Parent column</p>
 
 </div>
 
