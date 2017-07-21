@@ -807,7 +807,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    GridOptionsWrapper.prototype.getCacheBlockSize = function () { return this.gridOptions.cacheBlockSize; };
 	    GridOptionsWrapper.prototype.getInfiniteInitialRowCount = function () { return this.gridOptions.infiniteInitialRowCount; };
 	    GridOptionsWrapper.prototype.isPurgeClosedRowNodes = function () { return isTrue(this.gridOptions.purgeClosedRowNodes); };
-	    GridOptionsWrapper.prototype.getPaginationStartPage = function () { return this.gridOptions.paginationStartPage; };
 	    GridOptionsWrapper.prototype.isSuppressPaginationPanel = function () { return isTrue(this.gridOptions.suppressPaginationPanel); };
 	    GridOptionsWrapper.prototype.getRowData = function () { return this.gridOptions.rowData; };
 	    GridOptionsWrapper.prototype.isGroupUseEntireRow = function () { return isTrue(this.gridOptions.groupUseEntireRow); };
@@ -1117,6 +1116,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (options.floatingBottomRowData) {
 	            console.warn("ag-grid: since version 12.x, floatingBottomRowData is now called pinnedBottomRowData");
 	        }
+	        if (options.paginationStartPage) {
+	            console.warn("ag-grid: since version 12.x, paginationStartPage is gone, please call api.paginationGoToPage(" + options.paginationStartPage + ") instead.");
+	        }
 	    };
 	    GridOptionsWrapper.prototype.getLocaleTextFunc = function () {
 	        if (this.gridOptions.localeTextFunc) {
@@ -1157,7 +1159,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    GridOptionsWrapper.prototype.getRowHeightForNode = function (rowNode) {
 	        // check the function first, in case use set both function and
 	        // number, when using virtual pagination then function can be
-	        // used for floating rows and the number for the body rows.
+	        // used for pinned rows and the number for the body rows.
 	        if (typeof this.gridOptions.getRowHeight === 'function') {
 	            var params = {
 	                node: rowNode,
@@ -3747,7 +3749,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    // *** deprecated
 	    GridApi.prototype.refreshRows = function (rowNodes) {
-	        console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) instead');
+	        console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) or redrawRows({rowNodes: rows}) instead');
 	        this.refreshCells({ rowNodes: rowNodes });
 	    };
 	    // *** deprecated
@@ -8491,7 +8493,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
 	        this.rowContainers = this.gridPanel.getRowContainers();
 	        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
-	        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
+	        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
 	        this.redrawAfterModelUpdate();
 	    };
 	    RowRenderer.prototype.onPageLoaded = function (refreshEvent) {
@@ -8534,7 +8536,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	        }
 	    };
-	    RowRenderer.prototype.onFloatingRowDataChanged = function () {
+	    RowRenderer.prototype.onPinnedRowDataChanged = function () {
 	        this.redrawAfterModelUpdate();
 	    };
 	    RowRenderer.prototype.onModelUpdated = function (refreshEvent) {
@@ -10647,10 +10649,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this.autoHeight) {
 	            return;
 	        }
-	        // padding top covers the header and the floating rows on top
+	        // padding top covers the header and the pinned rows on top
 	        var floatingTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
 	        var paddingTop = totalHeaderHeight + floatingTopHeight;
-	        // bottom is just the bottom floating rows
+	        // bottom is just the bottom pinned rows
 	        var floatingBottomHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
 	        var floatingBottomTop = heightOfContainer - floatingBottomHeight;
 	        var bodyHeight = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;
@@ -12065,7 +12067,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    CellComp.prototype.setupCheckboxSelection = function () {
 	        // if boolean set, then just use it
 	        var colDef = this.column.getColDef();
-	        // never allow selection on floating rows
+	        // never allow selection on pinned rows
 	        if (this.node.rowPinned) {
 	            this.usingWrapper = false;
 	        }
@@ -19216,8 +19218,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
 	        this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
 	        this.onModelUpdated();
-	        var paginationStartPage = this.gridOptionsWrapper.getPaginationStartPage();
-	        this.currentPage = paginationStartPage ? paginationStartPage : 0;
 	    };
 	    PaginationProxy.prototype.isLastRowFound = function () {
 	        return this.rowModel.isLastRowFound();
@@ -22238,7 +22238,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this.rowNode.group) {
 	            return;
 	        }
-	        // we also don't allow selection of floating rows
+	        // we also don't allow selection of pinned rows
 	        if (this.rowNode.rowPinned) {
 	            return;
 	        }
@@ -37295,7 +37295,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            dragAndDropService: this.dragAndDropService
 	        });
 	        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-	        var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to aggregate');
+	        var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag here to aggregate');
 	        var title = localeTextFunc('values', 'Values');
 	        _super.prototype.init.call(this, {
 	            dragAndDropIcon: main_1.DragAndDropService.ICON_AGGREGATE,
