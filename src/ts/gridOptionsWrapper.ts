@@ -253,7 +253,6 @@ export class GridOptionsWrapper {
     public getCacheBlockSize(): number { return this.gridOptions.cacheBlockSize; }
     public getInfiniteInitialRowCount(): number { return this.gridOptions.infiniteInitialRowCount; }
     public isPurgeClosedRowNodes() { return isTrue(this.gridOptions.purgeClosedRowNodes); }
-    public getPaginationStartPage(): number { return this.gridOptions.paginationStartPage; }
     public isSuppressPaginationPanel() { return isTrue(this.gridOptions.suppressPaginationPanel); }
 
     public getRowData(): any[] { return this.gridOptions.rowData; }
@@ -577,6 +576,9 @@ export class GridOptionsWrapper {
         }
         if (options.floatingBottomRowData) {
             console.warn(`ag-grid: since version 12.x, floatingBottomRowData is now called pinnedBottomRowData`);
+        }
+        if (options.paginationStartPage) {
+            console.warn(`ag-grid: since version 12.x, paginationStartPage is gone, please call api.paginationGoToPage(${options.paginationStartPage}) instead.`);
         }
     }
 
