@@ -9,6 +9,34 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
+    <style>
+        .row-model-table .item-row {
+            border-top: 1px solid lightgray;
+        }
+        .row-model-table .first-row {
+            background-color: aliceblue;
+            font-weight: bold;
+        }
+
+        .row-model-table td {
+            padding: 4px;
+            border-left: 1px solid lightgray;
+        }
+
+        .row-model-table {
+            border-top: 1px solid lightgray;
+            border-bottom: 1px solid lightgray;
+            border-right: 1px solid lightgray;
+        }
+
+        .green-tick {
+            color: darkgreen;
+        }
+        .red-x {
+            color: darkred;
+        }
+    </style>
+
     <h1 class="first-h1" id="row-models">
         <img src="../images/svg/docs/row_models.svg" width="50" />
         Row Models
@@ -113,57 +141,236 @@ include '../documentation-main/documentation_header.php';
     <h1 id="row-model-summary">Row Model Comparisons</h1>
 
     <p>
-        The following table compares the row models highlights.
+        Below is a quick feature comparison of all the grids features across all four row models.
     </p>
 
-    <p>
     <table class="row-model-table">
         <tr class="first-row">
-            <td>Model</td>
-            <td>Sorting & Filtering</td>
-            <td>Grouping & Aggregation</td>
-            <td>Server State**</td>
-            <td>Availability</td>
+            <td>Feature</td>
+            <td>In Memory</td>
+            <td>Infinite</td>
+            <td>Enterprise</td>
+            <td>Viewport</td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-in-memory/"><b>In Memory</b></a></td>
-            <td>Inside the Grid</td>
-            <td>Inside the Grid*</td>
-            <td>Stateless</td>
-            <td>ag-Grid (Free)</td>
+            <td>All Data in Client</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-infinite-scrolling/"><b>Infinite Scrolling</b></a></td>
-            <td>Server Side</td>
-            <td>No</td>
-            <td>Stateless</td>
-            <td>ag-Grid (Free)</td>
+            <td>Fetch Data as User Scrolls</td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-viewport/"><b>Viewport</b></a></td>
-            <td>Server Side</td>
-            <td>No</td>
-            <td>Stateful</td>
-            <td>ag-Grid Enterprise</td>
+            <td>Row Sorting</td>
+            <td><span class="green-tick">&#10004;</span> (client)</td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-enterprise-model/"><b>Enterprise</b></a></td>
-            <td>Server Side</td>
-            <td>Server Side</td>
-            <td>Stateless</td>
-            <td>ag-Grid Enterprise</td>
+            <td>Row Filtering</td>
+            <td><span class="green-tick">&#10004;</span> (client)</td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+        </tr>
+        <tr class="item-row">
+            <td>Quick Filter</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Floating Filters</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Dynamic Row Height</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Row Grouping</td>
+            <td><span class="green-tick">&#10004;</span> (client)</td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Lazy Loading Row Groups</td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Value Aggregation</td>
+            <td><span class="green-tick">&#10004;</span> (client)</td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Row Selection</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Select All Checkbox</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Range Selection</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Column Spanning</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Column Pinning</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Row Pinning</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Pagination</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Customer Filters</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Cell Editors</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Cell Renderers</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Value Getter</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Value Setter</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Value Formatter</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Value Parser</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Tree Data</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Full Width Rows</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Flower Nodes</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>CSV Export</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Excel Export</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Clipboard Copy & Paste</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Value Setters</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
         </tr>
     </table>
-    </p>
 
-    <p>
-        * Grouping and Aggregation for the In Memory row model is available in ag-Grid Enterprise only.
-    </p>
-    <p>
-        ** Server State means your server is aware of client state. For viewport, the server knows exactly
-        what each user is currently looking at, whereas all other row models access the server is a stateless
-        fashion.
-    </p>
 
     <h1>Deeper Understanding of Row Models</h1>
 
@@ -212,27 +419,6 @@ include '../documentation-main/documentation_header.php';
             </li>
         </ul>
     </p>
-
-    <style>
-        .row-model-table .item-row {
-            border-top: 1px solid lightgray;
-        }
-        .row-model-table .first-row {
-            background-color: aliceblue;
-            font-weight: bold;
-        }
-
-        .row-model-table td {
-            padding: 4px;
-            border-left: 1px solid lightgray;
-        }
-
-        .row-model-table {
-            border-top: 1px solid lightgray;
-            border-bottom: 1px solid lightgray;
-            border-right: 1px solid lightgray;
-        }
-    </style>
 
     <h1 id="datasource">Pagination</h1>
 
