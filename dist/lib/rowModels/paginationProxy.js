@@ -110,8 +110,6 @@ var PaginationProxy = (function (_super) {
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
         this.onModelUpdated();
-        var paginationStartPage = this.gridOptionsWrapper.getPaginationStartPage();
-        this.currentPage = paginationStartPage ? paginationStartPage : 0;
     };
     PaginationProxy.prototype.isLastRowFound = function () {
         return this.rowModel.isLastRowFound();

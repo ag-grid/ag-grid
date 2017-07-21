@@ -123,7 +123,6 @@ export declare class GridOptionsWrapper {
     getCacheBlockSize(): number;
     getInfiniteInitialRowCount(): number;
     isPurgeClosedRowNodes(): boolean;
-    getPaginationStartPage(): number;
     isSuppressPaginationPanel(): boolean;
     getRowData(): any[];
     isGroupUseEntireRow(): boolean;

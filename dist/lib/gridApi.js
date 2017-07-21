@@ -202,7 +202,7 @@ var GridApi = (function () {
     };
     // *** deprecated
     GridApi.prototype.refreshRows = function (rowNodes) {
-        console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) instead');
+        console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) or redrawRows({rowNodes: rows}) instead');
         this.refreshCells({ rowNodes: rowNodes });
     };
     // *** deprecated
