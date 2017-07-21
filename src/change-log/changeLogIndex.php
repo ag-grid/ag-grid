@@ -19,6 +19,9 @@ include '../documentation-main/documentation_header.php';
     <h4>New Features</h4>
     <ul>
         <li>
+            New feature: <a href="../best-polymer-data-grid/">Polymer Support</a>. #UseThePlatform
+        </li>
+        <li>
             New feature: <a href="../javascript-grid-change-detection/">Change Detection</a>. Say goodbye to
             grid refreshes.
         </li>
