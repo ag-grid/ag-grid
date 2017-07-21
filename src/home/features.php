@@ -1,4 +1,4 @@
-<section class="HomeSection HomeBenefits">
+<section id="features" class="HomeSection HomeBenefits">
     <div class="container">
 
 

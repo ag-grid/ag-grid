@@ -1,49 +1,60 @@
 <?php
-$key = "columnDefs";
+$key = "ColumnDefs";
 $pageTitle = "Column Definitions";
 $pageDescription = "ag-Grid Column Definitions";
 $pageKeyboards = "ag-Grid Column Definitions";
-$pageGroup = "interfacing";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
-
-    <h2 id="columns">Columns</h2>
+    <h2 id="columnDefinitions">Columns Definitions</h2>
 
     <p>
-        Each column in the grid is defined using a column definition. Below is the set of all the
-        properties you can set for column definitions. The section
-        <a href="../javascript-grid-grouping-headers/">column groups</a>
-        details how to group columns in the headers.
+        Each column in the grid is defined using a column definition. To avoid duplicating column properties when defining
+        columns, there are also options to create a default column properties, default column group properties and specific
+        column types.
+    </p>
+
+    <ul>
+        <li><b>columnDefs:</b>  contains the columns definitions in the grid.</li>
+        <li><b>defaultColDef (Optional):</b> contains column properties all columns will inherit.</li>
+        <li><b>defaultColGroupDef (Optional):</b> contains column group properties all column groups will inherit.</li>
+        <li><b>columnTypes (Optional):</b> specific column types containing properties that column definitions can inherit.</li>
+    </ul>
+
+    <note>
+        Default columns and column types can specify any of the <a href="../javascript-grid-column-properties/">column properties</a> available on a column.
+    </note>
+
+    <p>
+        The section on <a href="../javascript-grid-grouping-headers/">column groups</a> details how to group columns in the headers.
     </p>
 
     <p>
-        Every property below is optional with the exception of <i>children</i>. For column groups, <i>children</i>
-        is mandatory and that's also how the grid is able to distinguish a column from a column group
-        (if <i>children</i> is present, it knows it's a group).
-    </p>
-
-    <h2 id="defaultProperties">Default Column Definition</h2>
-
-    <p>
-        As well as defining columns, you can define default properties for the columns, so you don't
-        have to repeat the item everywhere. Use grid property <i>defaultColDef</i> for properties common
-        to all columns and <i>defaultColGroupDef</i> for properties common to column groups.
-        For example the following provides defaults for columns and groups.
+        The column definition options listed above can be used as follows:
     </p>
 
     <pre>var gridOptions = {
     rowData: myRowData,
 
-    <span class="codeComment">// define 3 columns for this grid</span>
+    <span class="codeComment">// define columns</span>
     columnDefs: {
+        <span class="codeComment">// uses the default column properties</span>
         {headerName: 'Col A', field: 'a'}
-        {headerName: 'Col B', field: 'b'}
-        <span class="codeComment">// this column overrides the stated default, and  uses the number filter</span>
-        {headerName: 'Col C', field: 'c', filter: 'number'}
+
+        <span class="codeComment">// overrides the default with a number filter</span>
+        {headerName: 'Col B', field: 'b', filter: 'number'}
+
+        <span class="codeComment">// overrides the default using a column type</span>
+        {headerName: 'Col C', field: 'c', type: 'nonEditableColumn'}
+
+        <span class="codeComment">// overrides the default using a multiple column types</span>
+        {headerName: 'Col D', field: 'd', type: 'dateColumn,nonEditableColumn'}
     },
 
-    <span class="codeComment">// the default col def, gets applied to every col</span>
+    <span class="codeComment">// a default column definition with properties that get applied to every column</span>
     defaultColDef: {
+        <span class="codeComment">// set every column width</span>
+        width: 100,
         <span class="codeComment">// make every column editable</span>
         editable: true,
         <span class="codeComment">// make every column use 'text' filter by default</span>
@@ -52,268 +63,44 @@ include '../documentation-main/documentation_header.php';
 
     <span class="codeComment">// if we had column groups, we could provide default group items here</span>
     defaultColGroupDef: {}
+
+    <span class="codeComment">// define a column type (you can define as many as you like)</span>
+    columnTypes: {
+        "nonEditableColumn": {editable: false},
+        "dateColumn": {filter: 'date', filterParams: {comparator: myDateComparator}, suppressMenu:true}
+        }
+    }
+
+    <span class="codeComment">// other grid options here...</span>
 }</pre>
 
-    <h2 id="properties-for-column-groups-columns">Properties for Column Groups & Columns</h2>
+    <p>Columns are positioned in the order the ColDef's are specified in the grid options.</p>
 
-    <table class="table">
-        <tr>
-            <th>headerName</th>
-            <td>The name to render in the column header</td>
-        </tr>
-        <tr>
-            <th>columnGroupShow</th>
-            <td>Whether to show the column when the group is open / closed.</td>
-        </tr>
-        <tr>
-            <th>headerClass</th>
-            <td>Class to use for the header cell. Can be string, array of strings, or function.</td>
-        </tr>
-        <tr>
-            <th>toolPanelClass</th>
-            <td>Class to use for the tool panel cell. Can be string, array of strings, or function.</td>
-        </tr>
-        <tr>
-            <th>suppressToolPanel</th>
-            <td>Set to true if you do not want this column or group to appear in the tool panel.</td>
-        </tr>
-    </table>
+    <p>
+        When the grid creates a column it applies an order of precedence when selecting the properties to use.
+    </p>
+    <p>
+        Below is an outline of the steps used when creating 'Col C' shown above:
+    </p>
 
-    <h2 id="properties-for-columns">Properties for Columns</h2>
 
-    <table class="table">
-        <tr>
-            <th>field</th>
-            <td>The field of the row to get the cells data from</td>
-        </tr>
-        <tr>
-            <th>colId</th>
-            <td>The unique ID to give the column. This is optional. If missing, the ID will default to the field.
-                If both field and colId are missing, a unique ID will be generated. This ID is used to identify
-                the column in the API for sorting, filtering etc.</td>
-        </tr>
-        <tr>
-            <th>width, minWidth, maxWidth</th>
-            <td>Initial width, min width and max width for the cell. Always stated in pixels (never percentage values).</td>
-        </tr>
-        <tr>
-            <th>filter<br/>filterFramework</th>
-            <td>Filter component to use for this column.</td>
-        </tr>
-        <tr>
-            <th>floatingFilterComponent<br/>floatingFilterComponentFramework</th>
-            <td>Floating filter component to use for this column.</td>
-        </tr>
-        <tr>
-            <th>floatingFilterComponentParams</th>
-            <td>Custom params to be passed to floatingFilterComponent/floatingFilterComponentFramework </td>
-        </tr>
-        <tr>
-            <th>hide</th>
-            <td>Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field
-                'visible' and mark it false to hide, however we want all default values to be false and we want columns to be
-                visible by default.</td>
-        </tr>
-        <tr>
-            <th>pinned</th>
-            <td>Set to 'left' or 'right' to pin.</td>
-        </tr>
-        <tr>
-            <th>sort</th>
-            <td>Set to 'asc' or 'desc' to sort by this column by default.</td>
-        </tr>
-        <tr>
-            <th>sortedAt</th>
-            <td>If doing multi sort by default, this column should say when the sort for each column was done
-                in milliseconds, so the grid knows which order to execute the sort.</td>
-        </tr>
+<pre><span class="codeComment">// Step 1: start with an empty column definition</span>
+{}
 
-        <tr>
-            <th>headerTooltip</th>
-            <td>Tooltip for the column header</td>
-        </tr>
-        <tr>
-            <th>tooltipField</th>
-            <td>The field of the tooltip to apply to the cell.</td>
-        </tr>
-        <tr>
-            <th>checkboxSelection</th>
-            <td>Boolean or Function. Set to true (or return true from function) to render a selection checkbox in the column.</td>
-        </tr>
-        <tr>
-            <th>cellClass</th>
-            <td>Class to use for the cell. Can be string, array of strings, or function.</td>
-        </tr>
-        <tr>
-            <th>cellStyle</th>
-            <td>An object of css values. Or a function returning an object of css values.</td>
-        </tr>
-        <tr>
-            <th>editable</th>
-            <td>Set to true if this col is editable, otherwise false. Can also be a function
-                to have different rows editable.</td>
-        </tr>
-        <tr>
-            <th>onCellValueChanged(params)</th>
-            <td>Callback for after the value of a cell has changed, due to editing or the application calling api.setValue().</td>
-        </tr>
-        <tr>
-            <th>volatile</th>
-            <td>If true, this cell gets refreshed when api.softRefreshView() gets called.</td>
-        </tr>
-        <tr>
-            <th>cellRenderer<br/>cellRendererFramework</th>
-            <td>cellRenderer to use for this column.</td>
-        </tr>
-        <tr>
-            <th>floatingCellRenderer<br/>floatingCellRendererFramework</th>
-            <td>cellRenderer to use for floating rows in this column. Floating cells will use floatingCellRenderer if available,
-                if not then cellRenderer.</td>
-        </tr>
-        <tr>
-            <th>cellEditor<br/>cellEditorFramework</th>
-            <td>cellEditor to use for this column.</td>
-        </tr>
+<span class="codeComment">// Step 2: select the default column properties</span>
+{width: 100, editable: true, filter: 'text'}
 
-        <?php include '../javascript-grid-value-getters/valuesAndFormattersProperties.php' ?>
-        <?php printPropertiesRows($valuesAndFormattersProperties) ?>
+<span class="codeComment">// Step 3: merge the column type properties (using the 'type' property)</span>
+{width: 100, editable: false, filter: 'number'}
 
-        <?php printPropertiesRows($valuesAndFormattersMoreProperties) ?>
+<span class="codeComment">// Step 4: finally merge in the colDef properties</span>
+{headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'number'}
+    </pre>
 
-        <tr>
-            <th>keyCreator(params)</th>
-            <td>Function to return the key for a value - use this if the value is an object (not a primitive type) and you
-                want to a) use set filter on this field or b) group by this field.</td>
-        </tr>
-        <tr>
-            <th>getQuickFilterText</th>
-            <td>A function to tell the grid what quick filter text to use for this column if you don't want
-                to use the default (which is calling toString on the value).</td>
-        </tr>
-        <tr>
-            <th>aggFunc</th>
-            <td>Name of function to use for aggregation. One of [sum,min,max,first,last]. 
-                Or provide your own agg function.</td>
-        </tr>
-        <tr>
-            <th>allowedAggFuncs</th>
-            <td>
-                Aggregation functions allowed on this column eg ['sum','avg']. If missing, all installed functions are allowed.
-                This will restrict what the GUI allows to select only, does not impact when you set columns
-                function via the API.
-            </td>
-        </tr>
-        <tr>
-            <th>rowGroupIndex</th>
-            <td>Set this in columns you want to group by. If only grouping by one column, set this to any number (eg 0).
-            If grouping by multiple columns, set this to where you want this column to be in the group (eg 0 for first, 1 for second, and so on).</td>
-        </tr>
-        <tr>
-            <th>pivotIndex</th>
-            <td>Set this in columns you want to pivot by. If only pivoting by one column, set this to any number (eg 0).
-            If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (eg 0 for first, 1 for second, and so on).</td>
-        </tr>
-        <tr>
-            <th>comparator(valueA, valueB, nodeA, nodeB, isInverted)</th>
-            <td>Comparator function for custom sorting.</td>
-        </tr>
-        <tr>
-            <th>pivotComparator(valueA, valueB)</th>
-            <td>Comparator to use when ordering the pivot columns, when this column is used to pivot on. The values will
-            always be strings, as the pivot service uses strings as keys for the pivot groups.</td>
-        </tr>
-        <tr>
-            <th>unSortIcon</th>
-            <td>Set to true if you want the unsorted icon to be shown when no sort is applied to this column.</td>
-        </tr>
-        <tr>
-            <th>enableRowGroup</th>
-            <td>(ag-Grid-Enterprise only) Set to true if you want to be able to row group by this column via the GUI.
-                This will not block if the API or properties are used to achieve row grouping.</td>
-        </tr>
-        <tr>
-            <th>enablePivot</th>
-            <td>(ag-Grid-Enterprise only) Set to true if you want to be able to pivot by this column via the GUI.
-                This will not block if the API or properties are used to achieve pivot.</td>
-        </tr>
-        <tr>
-            <th>enableValue</th>
-            <td>(ag-Grid-Enterprise only) Set to true if you want to be able to aggregate by this column via the GUI.
-                This will not block if the API or properties are used to achieve aggregation.</td>
-        </tr>
-        <tr>
-            <th>enableCellChangeFlash</th>
-            <td>Set to true to get grid to flash the cell when it's refreshed.</td>
-        </tr>
-        <tr>
-            <th>menuTabs</th>
-            <td>Set to an array containing zero, one or many of the following options 'filterMenuTab', 'generalMenuTab'
-                and 'columnsMenuTab'. This is used to figure out which menu tabs and in which order the tabs are shown</td>
-        </tr>
-        <tr>
-            <th>suppressMenu</th>
-            <td>Set to true if no menu should be shown for this column header.</td>
-        </tr>
-        <tr>
-            <th>suppressSorting</th>
-            <td>Set to true if no sorting should be done for this column.</td>
-        </tr>
-        <tr>
-            <th>suppressSizeToFit</th>
-            <td>Set to true if you want this columns width to be fixed during 'size to fit' operation.</td>
-        </tr>
-        <tr>
-            <th>suppressMovable</th>
-            <td>Set to true if you do not want this column to be movable via dragging.</td>
-        </tr>
-        <tr>
-            <th>suppressFilter</th>
-            <td>Set to true to not allow filter on this column.</td>
-        </tr>
-        <tr>
-            <th>suppressResize</th>
-            <td>Set to true if you do not want this column to be resizable by dragging its edge.</td>
-        </tr>
-        <tr>
-            <th>suppressNavigable</th>
-            <td>Set to true if this col is not navigable (ie cannot be tabbed into), otherwise false.
-                Can also be a function to have different rows navigable.</td>
-        </tr>
-        <tr>
-            <th>onCellClicked(params)</th>
-            <td>Function callback, gets called when a cell is clicked.</td>
-        </tr>
-        <tr>
-            <th>onCellDoubleClicked(params)</th>
-            <td>Function callback, gets called when a cell is double clicked.</td>
-        </tr>
-        <tr>
-            <th>onCellContextMenu(params)</th>
-            <td>Function callback, gets called when a cell is right clicked.</td>
-        </tr>
-    </table>
+    <p>
+        The following examples demonstrates these column definitions in action:
+    </p>
 
-    <h2 id="properties-for-column-groups">Properties for Column Groups</h2>
-
-    <table class="table">
-        <tr>
-            <th>groupId</th>
-            <td>The unique ID to give the column. This is optional. If missing, a unique ID will be generated.
-                This ID is used to identify the column group in the column API.</td>
-        </tr>
-        <tr>
-            <th>children</th>
-            <td>A list containing a mix of columns and column groups.</td>
-        </tr>
-        <tr>
-            <th>marryChildren</th>
-            <td>Set to 'true' to keep columns in this group beside each other in the grid. Moving the columns outside
-                of the group (and hence breaking the group) is not allowed.</td>
-        </tr>
-        <tr>
-            <th>openByDefault</th>
-            <td>Set to 'true' if this group should be opened by default.</td>
-        </tr>
-    </table>
+<show-example example="columnDefinitionExample"></show-example>
 
 <?php include '../documentation-main/documentation_footer.php';?>

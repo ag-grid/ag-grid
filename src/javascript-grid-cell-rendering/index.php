@@ -1,13 +1,13 @@
 <?php
-$key = "Cell Renderer";
+$key = "Cell Rendering";
 $pageTitle = "ag-Grid Cell Rendering";
 $pageDescription = "Out of the box grid rendering components and how to configure them.";
 $pageKeyboards = "ag-Grid Rendering";
-$pageGroup = "features";
+$pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="first-h1" id="cell-editors">Cell Renderer's</h1>
+<h1 class="first-h1" id="cell-editors">Cell Rendering</h1>
 
 <p>
     By default, the grid will place the values of your data into the cells as simple strings.
@@ -49,13 +49,13 @@ var colDef3 = {
 <h2>Cell Rendering Flow</h2>
 
 <p>
-    The diagram below (which is taken from the section <a href="../javascript-grid-value-getters/">Getters & Formatters</a>)
+    The diagram below (which is taken from the section <a href="../javascript-grid-value-getters/">Value Getters & Formatters</a>)
     summarises the steps the grid takes while working out what to render and how to render.
 </p>
 
 <p>
     In short, a value is prepared. The value comes using either the <code>colDef.field</code> or the
-    <code>colDef.valueGetter</code>. The value is also optionally passed through a <code>colDef.formatter</code>
+    <code>colDef.valueGetter</code>. The value is also optionally passed through a <code>colDef.valueFormatter</code>
     if it exists. Then the value is finally placed into the DOM, either directly, or by using the chosen
     <code>colDef.cellRenderer</code>.
 </p>
@@ -66,7 +66,12 @@ var colDef3 = {
 
 <p>
     If you have no requirements for custom cells, then you should use no cell renderer.
-    By using cell renderers, you are complicating the DOM which may impact performance.
+    Having no custom cell renderers will result in the fastest possible grid (which might
+    be important to you if using Internet Explorer) as even the simpliest cell renderer
+    will result in some extra div's in the DOM.
+</p>
+
+<p>
     If you just want to do simple formatting of the data (eg currency or date formatting)
     then you can use <code>colDef.valueFormatter</code>.
 </p>
@@ -74,7 +79,7 @@ var colDef3 = {
 <h2>Grid Provided Renderer's</h2>
 
 <p>
-    The grid comes with three build in renderer's which are:
+    The grid comes with three built in renderer's which are:
     <ul>
         <li><b>group</b>: For displaying group values with expand / collapse functionality.</li>
         <li><b>animateShowChange</b> and <b>animateSlide</b>: For animating changes in data.</li>

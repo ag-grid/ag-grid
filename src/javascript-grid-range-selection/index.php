@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Likewise with floating, no row gaps will occur if a range spans into floating rows.
+        Likewise with floating, no row gaps will occur if a range spans into pinned rows.
         A range will be continuous between the floating top rows, the center, and the floating
         bottom rows.
     </p>
@@ -119,8 +119,8 @@ GridCell {
     floatingStart: string, // the starting floating ('top', 'bottom' or null/undefined)
     rowEnd: number, // the end row index
     floatingEnd: string, // the end floating ('top', 'bottom' or null/undefined)
-    columnStart: Column|ColDef|string, // colId of the starting column
-    columnEnd: Column|ColDef|string // colId of the ending column
+    columnStart: string|Column, // colId of the starting column
+    columnEnd: string|Column // colId of the ending column
 }</pre>
     </p>
 

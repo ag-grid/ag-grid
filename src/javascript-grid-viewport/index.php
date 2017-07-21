@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Viewport Row Model</h2>
+    <h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Viewport Row Model</h1>
     <p>
         A Viewport is a rowModel that allows showing a 'window' of data in your client. Typically all the data
         will reside on the server and the server will know what data is displayed in the client. This is again
@@ -51,7 +51,7 @@ include '../documentation-main/documentation_header.php';
         belongs in the client code.
     </note>
 
-    <h3>Interface IViewportDatasource</h3>
+    <h1>Interface IViewportDatasource</h1>
 
     <p>
         To use the viewportRowModel you provide the grid with a <i>viewportDatasource</i>. A viewportDatasource
@@ -87,7 +87,7 @@ interface IViewportDatasourceParams {
 }
 </pre>
 
-    <h3>Example Sequence</h3>
+    <h1>Example Sequence</h1>
 
     <p>
         Reading the interfaces will look confusing if you are looking at the for the first time as the different
@@ -130,7 +130,7 @@ interface IViewportDatasourceParams {
     </ol>
     </p>
 
-    <h3>Updating Data</h3>
+    <h1>Updating Data</h1>
 
     <p>
         If your data changes, you should get a reference to the node by calling <i>params.getRowData(rowIndex)</i>
@@ -152,7 +152,7 @@ interface IViewportDatasourceParams {
     </ul>
     </p>
 
-    <h2>Replacing Data</h2>
+    <h1>Replacing Data</h1>
 
     <p>
         You may want to completely change data in the viewport, for example if you are showing 'latest 10 trades over 10k'
@@ -166,7 +166,7 @@ interface IViewportDatasourceParams {
         call <i>setRowCount()</i> again. The grid doesn't are how many times you call <i>setRowCount()</i>.
     </p>
 
-    <h2>Sorting</h2>
+    <h1>Sorting</h1>
 
     <p>
         Only server side sorting is supported, if you want sorting you have to do it yourself on the server side.
@@ -174,7 +174,7 @@ interface IViewportDatasourceParams {
         data when it arrives.
     </p>
 
-    <h2>Filtering</h2>
+    <h1>Filtering</h1>
 
     <p>
         As with sorting, filtering also must be done on the server side. To implement, listen for the <i>filterChanged</i>
@@ -182,7 +182,7 @@ interface IViewportDatasourceParams {
         to display the new data.
     </p>
 
-    <h2>Selection</h2>
+    <h1>Selection</h1>
 
     <p>
         Selection works with viewport. It is recommended that you implement <i>getRowNodeId()</i> to give a unique
@@ -190,7 +190,11 @@ interface IViewportDatasourceParams {
         selection value. See the example below for setting up <i>getRowNodeId()</i>.
     </p>
 
-    <h2>Grouping</h2>
+    <note>
+        Performing multiple row selections using 'shift-click' is only possible for rows that are available within the viewport.
+    </note>
+
+    <h1>Grouping</h1>
 
     <p>
         And you guessed it, if you are doing grouping, you will need to implement this yourself on the server side.
@@ -199,7 +203,7 @@ interface IViewportDatasourceParams {
         if you expand a group, the number of rows increases, and likewise contracting will decrease).
     </p>
 
-    <h2>Viewport Settings</h2>
+    <h1>Viewport Settings</h1>
 
     <p>
         For simplicity the above said the viewport was the rows the grid is currently displaying. This is almost true
@@ -225,7 +229,7 @@ interface IViewportDatasourceParams {
         The default buffer size is 5. To change this, set the grid property <i>viewportRowModelBufferSize</i>.
     </p>
 
-    <h2>Example Viewport</h2>
+    <h1>Example Viewport</h1>
 
     <p>
         The example below shows a viewport in action.
@@ -256,25 +260,25 @@ interface IViewportDatasourceParams {
                           exampleheight="500px">
     </show-complex-example>
 
-    <h3 id="pagination">Example Viewport with Pagination</h3>
+    <h1 id="pagination">Example Viewport with Pagination</h1>
 
     <p>
         The example below is almost identical to the above example with the following differences:
         <ul>
             <li>
-                <b><i>pagination=true</i></b>: To enable pagination.
+                <b><i>pagination = true</i></b> To enable pagination.
             </li>
             <li>
-                <b><i>paginationAutoPageSize=true</i></b>: To set the pagination size to the height of the grid,
+                <b><i>paginationAutoPageSize = true</i></b> To set the pagination size to the height of the grid,
                 so no vertical scrolls are used.
             </li>
             <li>
-                <b><i>viewportRowModelPageSize=1</i></b>: Because we are showing exact pages, the user will not
+                <b><i>viewportRowModelPageSize = 1</i></b> Because we are showing exact pages, the user will not
                 be scrolling, so there is no need to set a minimum page size. Setting page size to 1 means the grid
                 will always ask from the top row through to the bottom row.
             </li>
             <li>
-                <b><i>viewportRowModelBufferSize=0</i></b>: Likewise because there is no scrolling, there is no
+                <b><i>viewportRowModelBufferSize = 0</i></b> Likewise because there is no scrolling, there is no
                 sense in bringing back extra rows to act as a buffer.
             </li>
         </ul>

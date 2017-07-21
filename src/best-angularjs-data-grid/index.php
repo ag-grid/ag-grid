@@ -172,6 +172,15 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
 <h2 id="basic-angularjs-1-x-example">Basic AngularJS 1.x Example</h2>
 <show-example example="example-ajs" example-height="200px"></show-example>
 
+<h2 class="components">Components</h2>
+
+<p>When using <a href="../javascript-grid-components">Components</a> within an AngularJS 1.x application you need to manage
+    both the scope yourself - the Grid does not provide the scope to the Components nor will it destroy it.</p>
+
+<p>You need to ensure provide an appropriate scope to the Components and ensure you delete it when the component is destroyed.</p>
+
+<p><code>angularCompileRows</code>, <code>angularCompileFilters</code> and <code>angularCompileHeaders</code> are not
+    supported within Components.</p>
 
 <h2 id="destroy">Destroy</h2>
 

@@ -152,7 +152,7 @@ FakeServer.prototype.filterList = function(data, filterModel) {
 
 FakeServer.prototype.buildGroupsFromData = function(filteredData, rowGroupCols, groupKeys, valueCols) {
     var rowGroupCol = rowGroupCols[groupKeys.length];
-    var field = rowGroupCol.field;
+    var field = rowGroupCol.id;
     var mappedValues = this.groupBy(filteredData, field);
     var listOfKeys = Object.keys(mappedValues);
     var groups = [];
@@ -161,7 +161,7 @@ FakeServer.prototype.buildGroupsFromData = function(filteredData, rowGroupCols, 
         groupItem[field] = key;
 
         valueCols.forEach(function(valueCol) {
-            var field = valueCol.field;
+            var field = valueCol.id;
 
             // the aggregation we do depends on which agg func the user picked
             switch (valueCol.aggFunc) {
@@ -219,7 +219,7 @@ FakeServer.prototype.filterOutOtherGroups = function(originalData, groupKeys, ro
     // part of this group
     groupKeys.forEach(function(groupKey, index) {
         var rowGroupCol = rowGroupCols[index];
-        var field = rowGroupCol.field;
+        var field = rowGroupCol.id;
 
         filteredData = that.filter(filteredData, function(item) {
             return item[field] == groupKey;

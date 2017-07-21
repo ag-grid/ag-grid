@@ -13,8 +13,8 @@ export default class FloatingRowComponentExample extends Component {
             rowData: this.createRowData(),
             columnDefs: this.createColumnDefs(),
 
-            topFloatingRowData: [{row: "Top Row", number: "Top Number"}],
-            bottomFloatingRowData: [{row: "Bottom Row", number: "Bottom Number"}]
+            pinnedTopRowData: [{row: "Top Row", number: "Top Number"}],
+            pinnedBottomRowData: [{row: "Bottom Row", number: "Bottom Number"}]
         };
 
         this.onGridReady = this.onGridReady.bind(this);
@@ -55,7 +55,7 @@ export default class FloatingRowComponentExample extends Component {
 
         for (let i = 0; i < 15; i++) {
             rowData.push({
-                row: "Row " + i,
+                row: "Rou " + i,
                 number: Math.round(Math.random() * 100)
             });
         }
@@ -67,14 +67,14 @@ export default class FloatingRowComponentExample extends Component {
         return (
             <div style={{height: 400, width: 945}}
                  className="ag-fresh">
-                <h1>Floating Row Renderer Example</h1>
+                <h1>Pinned Row Renderer Example</h1>
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}
                     rowData={this.state.rowData}
 
-                    floatingTopRowData={this.state.topFloatingRowData}
-                    floatingBottomRowData={this.state.bottomFloatingRowData}
+                    pinnedTopRowData={this.state.pinnedTopRowData}
+                    pinnedBottomRowData={this.state.pinnedBottomRowData}
 
                     // events
                     onGridReady={this.onGridReady}>

@@ -55,6 +55,83 @@ include('../includes/mediaHeader.php');
 
 <div class="weekly-news-section">
 
+    <a href="./20170718/">
+        <div class="weekly-news-title">
+            Trying to Simplify our Feature Names - Polymer Support Beta Released - Our New Emoji
+        </div>
+        <div class="weekly-news-sub-title">
+            Customer Experience Team, 18th July, 2017
+        </div>
+    </a>
+
+    <div style="clear: both;"></div>
+
+    <div class="weekly-news-paragraph">
+        This week, we will be releasing on Friday following postponing last week. We have also been working on simplifying the names of our features. We've also released our Beta of Poymer Support and will have the final version of this later in the week.
+    </div>
+
+</div>
+
+<div class="weekly-news-section">
+
+    <a href="./20170711/">
+        <div class="weekly-news-title">
+            VC Meeting - OpenFin Demo - New Value Cache
+        </div>
+        <div class="weekly-news-sub-title">
+            Customer Experience Team, 11th July, 2017
+        </div>
+    </a>
+
+    <div style="clear: both;"></div>
+
+    <div class="weekly-news-paragraph">
+        This week's update covers our first VC meeting, our Development update including a new value cache, finishing change detection, adding Shift range selection to more row models and working on dynamic row heights for the Enterprise Row Model. Our support for Polymer is gathering pace and Web Components has gone live.
+    </div>
+
+</div>
+
+<div class="weekly-news-section">
+
+    <a href="./20170704/">
+        <div class="weekly-news-title">
+            New Refresh & Change Detection - Web Components Support - Adding Polymer
+        </div>
+        <div class="weekly-news-sub-title">
+            Customer Experience Team, 4th July, 2017
+        </div>
+    </a>
+
+    <div style="clear: both;"></div>
+
+    <div class="weekly-news-paragraph">
+        This week we are improving how the grid refreshes data, scoping out change detection and improving our
+        frameowrk support - updating Web Components and starting on Polymer.
+    </div>
+
+</div>
+
+<div class="weekly-news-section">
+
+    <a href="./20170627/">
+        <div class="weekly-news-title">
+            Version 11 Released - OpenFin Integration - More JIRAs
+        </div>
+        <div class="weekly-news-sub-title">
+            Customer Experience Team, 28th June 2017
+        </div>
+    </a>
+
+    <div style="clear: both;"></div>
+
+    <div class="weekly-news-paragraph">
+        This week saw Version 11 released, we are cracking on with more JIRAs and have more new features in the pipeline.
+    </div>
+
+</div>
+
+<div class="weekly-news-section">
+
     <a href="./20170620/">
         <div class="weekly-news-title">
             Preparing for Next Release, New Team Members Settling In
@@ -71,7 +148,6 @@ include('../includes/mediaHeader.php');
     </div>
 
 </div>
-
 
 <div class="weekly-news-section">
 
@@ -111,6 +187,7 @@ include('../includes/mediaHeader.php');
 
 </div>
 
+</div>
 
 <?php include_once("../includes/footer.php"); ?>
 

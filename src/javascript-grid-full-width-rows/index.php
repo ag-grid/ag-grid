@@ -68,12 +68,12 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Below shows a basic fullWidth example. The example's data is minimalistic to focus on how
-    the fullWidth feature is configured. For demonstration, the floating rows are shaded blue (with
+    the fullWidth feature is configured. For demonstration, the pinned rows are shaded blue (with
     fullWidth a darker shade of blue) and body fullWidth rows are green.
     The following points should be noted:
 <ul>
     <li>
-        fullWidth can be applied to any row, including floating rows. The example demonstrates fullWidth in
+        fullWidth can be applied to any row, including pinned rows. The example demonstrates fullWidth in
         floating top, floating bottom and body rows.
     </li>
     <li>

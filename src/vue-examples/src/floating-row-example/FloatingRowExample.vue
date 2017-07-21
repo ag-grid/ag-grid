@@ -1,6 +1,6 @@
 <template>
     <div style="width: 800px;">
-        <h1>Floating Row Component</h1>
+        <h1>Pinned Row Component</h1>
         <ag-grid-vue style="width: 100%; height: 350px;" class="ag-fresh"
                      :gridOptions="gridOptions">
         </ag-grid-vue>
@@ -61,10 +61,10 @@
             this.gridOptions = {};
             this.gridOptions.rowData = this.createRowData();
             this.gridOptions.columnDefs = this.createColumnDefs();
-            this.gridOptions.floatingTopRowData = [
+            this.gridOptions.pinnedTopRowData = [
                 {row: "Top Row", number: "Top Number"}
             ];
-            this.gridOptions.floatingBottomRowData = [
+            this.gridOptions.pinnedBottomRowData = [
                 {row: "Bottom Row", number: "Bottom Number"}
             ];
         }

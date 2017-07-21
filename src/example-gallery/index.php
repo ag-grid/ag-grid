@@ -63,6 +63,46 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleTreeScroll"></show-example>
 
+
+    <h2>Enterprise Row Model & Complex Columns</h2>
+
+    <p>
+        This example mixes enterprise row model and complex objects. It shows how you can have value getters
+        and embedded fields (ie the field attribute has dot notation).
+    </p>
+
+    <p>
+        In the example, all rows back are modified so that the rows looks something like this:
+    </p>
+
+    <pre>row = {
+    <span class="codeComment">// country field is complex object</span>
+    country: {
+        name: 'Ireland',
+        code: 'IRE'
+    },
+    <span class="codeComment">// year field is complex object</span>
+    year: {
+        name: '2012',
+        shortName: "'12"
+    },
+    <span class="codeComment">// other fields as normal</span>
+    ...
+};</pre>
+
+    <p>
+        Then the columns are set up so that country uses a <code>valueGetter</code> and year uses a field
+        with dot notation, ie <code>year.name</code>
+    </p>
+
+    <show-complex-example example="exampleEnterpriseComplexObjects.html"
+                          sources="{
+                                [
+                                    { root: './', files: 'exampleEnterpriseComplexObjects.html,exampleEnterpriseComplexObjects.js,complexColumns.js,mockServerComplex.js' }
+                                ]
+                              }"
+                          exampleheight="500px">
+    </show-complex-example>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

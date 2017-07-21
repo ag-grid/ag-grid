@@ -1,13 +1,12 @@
-import {Component,ViewEncapsulation} from '@angular/core';
+import {Component, ViewEncapsulation} from "@angular/core";
 
-import {GridOptions} from 'ag-grid/main';
+import {GridOptions} from "ag-grid/main";
 
-import ProficiencyFilter from '../filters/proficiencyFilter';
-import SkillFilter from '../filters/skillFilter';
-import RefData from '../data/refData';
-
+import ProficiencyFilter from "../filters/proficiencyFilter";
+import SkillFilter from "../filters/skillFilter";
+import RefData from "../data/refData";
 // only import this if you are using the ag-Grid-Enterprise
-import 'ag-grid-enterprise/main';
+import "ag-grid-enterprise/main";
 import {HeaderGroupComponent} from "../header-group-component/header-group.component";
 import {DateComponent} from "../date-component/date.component";
 import {HeaderComponent} from "../header-component/header.component";
@@ -21,13 +20,13 @@ import {HeaderComponent} from "../header-component/header.component";
 })
 export class RichGridDeclarativeComponent {
 
-    public gridOptions:GridOptions;
-    public showGrid:boolean;
-    private rowData:any[];
-    public rowCount:string;
+    public gridOptions: GridOptions;
+    public showGrid: boolean;
+    private rowData: any[];
+    public rowCount: string;
     public components = {
-        headerGroupComponent:HeaderGroupComponent
-    }
+        headerGroupComponent: HeaderGroupComponent
+    };
 
     constructor() {
         // we pass an empty gridOptions in, so we can grab the api out
@@ -36,18 +35,18 @@ export class RichGridDeclarativeComponent {
         this.showGrid = true;
         this.gridOptions.dateComponentFramework = DateComponent;
         this.gridOptions.defaultColDef = {
-            headerComponentFramework : <{new():HeaderComponent}>HeaderComponent,
-            headerComponentParams : {
+            headerComponentFramework: <{ new(): HeaderComponent }>HeaderComponent,
+            headerComponentParams: {
                 menuIcon: 'fa-bars'
             }
         }
     }
 
     private createRowData() {
-        var rowData:any[] = [];
+        const rowData: any[] = [];
 
-        for (var i = 0; i < 10000; i++) {
-            var countryData = RefData.countries[i % RefData.countries.length];
+        for (let i = 0; i < 10000; i++) {
+            const countryData = RefData.countries[i % RefData.countries.length];
             rowData.push({
                 name: RefData.firstNames[i % RefData.firstNames.length] + ' ' + RefData.lastNames[i % RefData.lastNames.length],
                 skills: {
@@ -74,9 +73,9 @@ export class RichGridDeclarativeComponent {
 
     private calculateRowCount() {
         if (this.gridOptions.api && this.rowData) {
-            var model = this.gridOptions.api.getModel();
-            var totalRows = this.rowData.length;
-            var processedRows = model.getRowCount();
+            const model = this.gridOptions.api.getModel();
+            const totalRows = this.rowData.length;
+            const processedRows = model.getRowCount();
             this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
         }
     }
@@ -96,14 +95,14 @@ export class RichGridDeclarativeComponent {
     }
 
     private countryCellRenderer(params) {
-        var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
+        const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
         return flag + " " + params.value;
     }
 
     //noinspection JSUnusedLocalSymbols
     private skillsCellRenderer(params) {
-        var data = params.data;
-        var skills = [];
+        const data = params.data;
+        const skills = [];
         RefData.IT_SKILLS.forEach(function (skill) {
             if (data && data.skills && data.skills[skill]) {
                 skills.push('<img src="images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
@@ -114,9 +113,9 @@ export class RichGridDeclarativeComponent {
 
     //noinspection JSUnusedLocalSymbols
     private percentCellRenderer(params) {
-        var value = params.value;
+        const value = params.value;
 
-        var eDivPercentBar = document.createElement('div');
+        const eDivPercentBar = document.createElement('div');
         eDivPercentBar.className = 'div-percent-bar';
         eDivPercentBar.style.width = value + '%';
         if (value < 20) {
@@ -127,11 +126,11 @@ export class RichGridDeclarativeComponent {
             eDivPercentBar.style.backgroundColor = '#00A000';
         }
 
-        var eValue = document.createElement('div');
+        const eValue = document.createElement('div');
         eValue.className = 'div-percent-value';
         eValue.innerHTML = value + '%';
 
-        var eOuterDiv = document.createElement('div');
+        const eOuterDiv = document.createElement('div');
         eOuterDiv.className = 'div-outer-div';
         eOuterDiv.appendChild(eValue);
         eOuterDiv.appendChild(eDivPercentBar);
@@ -140,17 +139,17 @@ export class RichGridDeclarativeComponent {
     }
 
     //noinspection JSUnusedLocalSymbols
-    private getSkillFilter():any {
+    private getSkillFilter(): any {
         return SkillFilter;
     }
 
     //noinspection JSUnusedLocalSymbols
-    private getProficiencyFilter():any {
+    private getProficiencyFilter(): any {
         return ProficiencyFilter;
     }
 
     //noinspection JSUnusedLocalSymbols
-    private getCountryFilterParams():any {
+    private getCountryFilterParams(): any {
         return {
             cellRenderer: this.countryCellRenderer,
             cellHeight: 20
@@ -158,8 +157,8 @@ export class RichGridDeclarativeComponent {
     }
 
     private createRandomPhoneNumber() {
-        var result = '+';
-        for (var i = 0; i < 12; i++) {
+        let result = '+';
+        for (let i = 0; i < 12; i++) {
             result += Math.round(Math.random() * 10);
             if (i === 2 || i === 5 || i === 8) {
                 result += ' ';
@@ -168,9 +167,9 @@ export class RichGridDeclarativeComponent {
         return result;
     }
 
-    public parseDate (params) {
-        return  pad(params.value.getDate(), 2) + '/' +
-            pad(params.value.getMonth() + 1, 2)+ '/' +
+    public parseDate(params) {
+        return pad(params.value.getDate(), 2) + '/' +
+            pad(params.value.getMonth() + 1, 2) + '/' +
             params.value.getFullYear();
     }
 }

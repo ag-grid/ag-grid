@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1" id="value-getters">Getters, Setters, Formatters & Parsers</h1>
+    <h1 class="first-h1" id="value-getters">Value Getters and Value Formatters</h1>
 
     <p>
         The grid displays values from your data. The easiest way to configure this is to set <code>colDef.field</code>.
@@ -29,74 +29,51 @@ var countryColDef = {
         display the data 'as is'. For these reasons, the grid provides the following additional methods:
     </p>
 
-    <h3>Column Definition Properties for Getters, Setters, Formatters & Parsers</h3>
-
-    <table class="table">
-        <?php include './valuesAndFormattersProperties.php' ?>
-        <?php printPropertiesRows($valuesAndFormattersProperties) ?>
-        <?php printPropertiesRows($valuesAndFormattersMoreProperties) ?>
-    </table>
-
-    <h2 id="example-value-getter">Example - Getters, Setters, Formatters, Parsers</h2>
+    <h2>Properties for Getters and Formatters</h2>
 
     <p>
-        The example below demonstrates <code>valueGetter</code>, <code>valueSetter</code>,
-        <code>valueFormatter</code> and <code>valueParser</code> all
-        using functions (<a href="../javascript-grid-cell-expressions/">expressions</a> are explained in the next section).
-        Some of the columns are editable. When you finish editing, the row data is printed to the console so you can take
-        a look at the impact of the edits. The following should be noted from the demo:
+        Below shows the column definition properties for valueGetters and valueFormatters.
     </p>
 
-    <note>
-        You can provide all getters, setters, formatters and parsers as functions OR
-        <a href="../javascript-grid-cell-expressions/">expressions</a>. Both achieve the same
-        when added to the column definitions.
-        <a href="../javascript-grid-cell-expressions/">Expressions</a> are explained in the next section.
-    </note>
-
-    <ul>
-        <li>
-            <b>Column 'Simple':</b> This is a simple string column using field. It is a simple string column,
-            so doesn't need any special treatment.
-        </li>
-        <li>
-            <b>Column 'Bad Number':</b> This is editable. The value start as numbers. However the numbers
-            after editing are stored as strings. This is bad, we should store the values after editing
-            as numbers.
-        </li>
-        <li>
-            <b>Column 'Good Number':</b> This is editable. The number is formatted for displaying using
-            a <code>valueFormatter</code> and the result of editing is parsed to a number using <code>valueParser</code>.
-        </li>
-        <li>
-            <b>Column 'Name':</b> This is editable. The name value is a combination of <i>firstName</i> and
-            <i>lastName</i>. A <code>valueGetter</code> is used to combine the parts for display, and a
-            <code>valueSetter</code> is used for setting the parts back into the grid (eg if you type 'Sam Boots',
-            then 'Sam' gets set as the first name and 'Boots' as the last name.
-        </li>
-        <li>
-            <b>Column 'A', 'B', 'A+B':</b> Columns A and B are simple number columns. Column A+B demonstrates
-            using a <code>valueGetter</code> to calculate a value for display.
-        </li>
-    </ul>
-
-    <show-example example="exampleValuesAndFormatters"></show-example>
-
-    <h2>Value Getter Flow</h2>
+    <table class="table">
+        <?php include './gettersAndFormattersProperties.php' ?>
+        <?php printPropertiesRows($gettersAndFormattersProperties) ?>
+    </table>
 
     <p>
-        The flow diagram below shows the flow of the value getter.
+        All the above can be a function or <a href="../javascript-grid-cell-expressions/">expression</a>.
+        This page assumes functions. Once you understand this page, you can go to
+        <a href="../javascript-grid-cell-expressions/">expression</a> to learn how to specify them as
+        expressions.
+    </p>
+
+    <h2 id="example-value-getter">Example - Getters and Formatters</h2>
+
+    <p>
+        The example below demonstrates <code>valueGetter</code> and <code>valueFormatter</code>.
+        The following can be noted from the demo:
+    </p>
+
+    <ul>
+        <li>Column 'Number' is a simple column with a <code>field</code> to get the data and without formatting.</li>
+        <li>Column 'Formatted' uses the same field, however it formats the value.</li>
+        <li>Column 'A + B' uses a value getter to sum the contents of cells 'A' and 'B'.</li>
+        <li>
+            Column 'Chain' uses a value getter than references the result of the 'A + B' value
+            getter, demonstrating how the value getter's can chain result from one to the other.
+        </li>
+        <li>Column 'Const' uses a value getter to always return back the same string value.</li>
+    </ul>
+
+    <show-example example="exampleGettersAndFormatters"></show-example>
+
+    <h2>Rendering Value Flow</h2>
+
+    <p>
+        The flow diagram below shows the flow of the value to displaying it on the screen.
     </p>
 
     <img src="valueGetterFlow.svg"/>
-
-    <h2>Value Setter Flow</h2>
-
-    <p>
-        The flow diagram below shows the flow of the value setter.
-    </p>
-
-    <img src="valueSetterFlow.svg"/>
 
     <h2>Value Getter</h2>
 
@@ -125,40 +102,14 @@ colDef.valueGetter = function(params) {
     return params.data.firstName + params.data.lastName;
 }</pre>
 
-
-    <h2>Value Setter</h2>
-
-    <p>
-        A <code>valueSetter</code> is the inverse of a <code>valueGetter</code>, it allows you to put
-        values into your data in a way other than using the standard <code>colDef.field</code>.
-        The interface for <code>valueSetter</code> is as follows:
-    </p>
-
-    <pre><span class="codeComment">// function for valueSetter</span>
-function valueSetter(params: ValueSetterParams) => boolean;
-
-<span class="codeComment">// interface for params</span>
-interface ValueSetterParams {
-    oldValue: any, <span class="codeComment">// the value before the change</span>
-    newValue: any, <span class="codeComment">// the value after the change</span>
-    getValue: (colId: string) => any  <span class="codeComment">// a utility method, for getting other column values</span>
-}
-
-<span class="codeComment">// example value setter, put into a particular part of the data</span>
-colDef.valueSetter = function(params) {
-    <span class="codeComment">// see if values are different, if you have a complex object,</span>
-    <span class="codeComment">// it would be more complicated to do this.</span>
-    if (params.oldValue!==params.newValue) {
-        params.data[someField] = params.newValue;
-        <span class="codeComment">// get grid to refresh the cell</span>
-        return true;
-    } else {
-        <span class="codeComment">// no change, so no refresh needed</span>
-        return false;
-    }
-}</pre>
-
-
+    <note>
+        All valueGetter's must be pure functions. That means, given the same state of your
+        data, it should consistently return the same result. This is important as the grid will only call your
+        valueGetter once during a redraw, even though the value may be used multiple times. For example, the
+        value will be used to display the cell value, however it can additionally be used to provide values
+        to an aggregation function when grouping, or can be used as input to another valueGetter via the
+        params.getValue() function.
+    </note>
 
     <h2>Value Formatter</h2>
 
@@ -207,36 +158,6 @@ colDef.valueFormatter = function(params) {
     </p>
 
 
-    <h2>Value Parser</h2>
-
-    <p>
-        A <code>valueParser</code> allows you to parse values after an edit (or after the user sets
-        a value using the grid API).
-        The interface for <code>valueParser</code> is as follows:
-    </p>
-
-    <pre><span class="codeComment">// function for valueParser</span>
-function valueParser(params: ValueParserParams) => any;
-
-<span class="codeComment">// interface for params</span>
-interface ValueParserParams {
-    oldValue: any, <span class="codeComment">// the value before the change</span>
-    newValue: any, <span class="codeComment">// the value after the change</span>
-    data: any, <span class="codeComment">// the data you provided for this row</span>
-    node: RowNode, <span class="codeComment">// the row node for this row</span>
-    colDef: ColDef, <span class="codeComment">// the column def for this column</span>
-    column: Column, <span class="codeComment">// the column for this column</span>
-    api: GridApi, <span class="codeComment">// the grid API</span>
-    columnApi: ColumnApi, <span class="codeComment">// the grid Column API</span>
-    context: any  <span class="codeComment">// the context</span>
-}
-
-<span class="codeComment">// example value parser, convert a string to a number</span>
-colDef.valueParser = function(params) {
-    <span class="codeComment">// this is how to convert a string to a number using JavaScript</span>
-    return Number(params.value);
-}</pre>
-
 
     <h2>Header Value Getters</h2>
 
@@ -265,12 +186,12 @@ colDef.valueParser = function(params) {
 
     <p>
         Use <b>floatingCellFormatter</b> instead of <code>colDef.cellFormatter</code> to allow different formatting
-        for floating rows. If you don't specify a <code>colDef.floatingCellFormatter</code>, then <code>cellFormatter</code>
+        for pinned rows. If you don't specify a <code>colDef.floatingCellFormatter</code>, then <code>cellFormatter</code>
         will get used instead if it is present.
     </p>
 
     <note>
-        You can use the same formatter for floating rows and normal rows and check the row type.
+        You can use the same formatter for pinned rows and normal rows and check the row type.
         You can check if the row is floating by checking params.node.floating property.
     </note>
 

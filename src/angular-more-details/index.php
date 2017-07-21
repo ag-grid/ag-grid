@@ -90,7 +90,7 @@ include '../documentation-main/documentation_header.php';
 
     <h3><img src="../images/enterprise_50.png" style="height: 22px;margin-right: 5px"/>Downloading the ag-Grid Angular Enterprise Dependency</h3>
 
-    <p>If you're using the ag-Grid Enteprise features, then in addition to the ag-Grid Angular dependency above, you also require
+    <p>If you're using the ag-Grid Enterprise features, then in addition to the ag-Grid Angular dependency above, you also require
     the ag-Grid Angular Enterprise dependency:</p>
 
     <h3>Download ag-Grid-Enterprise</h3>
@@ -115,7 +115,7 @@ include '../documentation-main/documentation_header.php';
     </table>
 
     <p>The Enterprise dependency has to be made available before any Grid related component, so we suggest importing it in your
-    Angular root module if possible(typically named index.js) before kicking off the actual application - for example:</p>
+    Angular root module if possible before kicking off the actual application - for example:</p>
 
 <pre>
 <span class="codeComment">// only necessary if you're using ag-Grid-Enterprise features</span>

@@ -16,7 +16,8 @@ var gridOptions = {
     animateRows: true,
     enableRangeSelection: true,
     rowData: null,
-    enableSorting:true
+    enableSorting:true,
+    enableFilter:true
 };
 
 // setup the grid after the page has finished loading

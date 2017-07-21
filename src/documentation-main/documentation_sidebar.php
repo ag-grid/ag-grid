@@ -15,13 +15,169 @@
     .separator {
         text-align: center;
     }
+    
+    
+    .question {
+        font-weight: bold;
+        padding-top: 20px;
+        padding-bottom: 10px;
+    }
+    .answer {
+
+    }
+
 </style>
+
+<div class="news-box">
+    <div class="news-header">21st July 2017</div>
+    <div style="background-color: black; padding: 10px; position: relative;">
+        <span style="font-weight: bold; color: white; font-size: 25px; position: absolute; top: 70px; left: 110px;">
+            v12.0
+        </span>
+        <img src="../images/logo-dark-hacked.svg"
+             style="width: 100%;"/>
+    </div>
+    <br/>
+    <div>
+        Featuring:
+    </div>
+    <div>
+        <ul style="padding-left: 20px;">
+            <li>
+                <a href="../javascript-grid-column-spanning/">Column Spanning</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-enterprise-model/#enterprise-dynamic-row-height">Enterprise Row Height</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-change-detection/">Change Detection</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-refresh/">New Refresh</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-value-cache/">Value Getter Cache</a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        See the <a href="../change-log/changeLogIndex.php">Change Log</a>
+        for full release details.
+    </div>
+</div>
+
+<div class="news-box">
+    <div class="news-header">18th July 2017</div>
+    <div style="float: left; margin-right: 10px;">
+        <a href="../weekly-update/20170718/">
+            <img src="../weekly-update/20170718/images/voltage_emoji.png" style="width: 20px;"/>
+        </a>
+    </div>
+    <div style="padding-top: 5px;">
+        <a href="../weekly-update/20170718/">
+            Weekly Update
+        </a>
+    </div>
+</div>
+
+<div class="news-box">
+    <div class="news-header">11th July 2017</div>
+    <div>
+        <a href="../weekly-update/20170711/">
+            <img src="../weekly-update/20170711/images/team_photo_200.jpg" width="100%"/>
+        </a>
+    </div>
+    <div style="padding-top: 10px;">
+        <a href="../weekly-update/20170711/">
+            Weekly Update
+        </a>
+    </div>
+</div>
+
+<div class="news-box">
+    <div class="news-header">4th July 2017</div>
+    <div>
+        <a href="../weekly-update/20170704/">
+            <img src="../weekly-update/20170704/images/aggrid_npm_usage_200.png" width="100%"/>
+        </a>
+    </div>
+    <div style="padding-top: 10px;">
+        <a href="../weekly-update/20170704/">
+            This Week's Update
+        </a>
+    </div>
+</div>
+
+<div class="news-box">
+    <div class="news-header">28th June 2017</div>
+    <div>
+        <a href="../weekly-update/20170627/">
+            <img src="../weekly-update/20170627/images/MergeCells_200.png" width="100%"/>
+        </a>
+    </div>
+    <div style="padding-top: 10px;">
+        <a href="../weekly-update/20170627/">
+            This Week's Update
+        </a>
+    </div>
+</div>
+
+<div class="news-box">
+    <div class="news-header">26th Jun 2017</div>
+    <div style="background-color: black; padding: 10px; position: relative;">
+        <span style="font-weight: bold; color: white; font-size: 25px; position: absolute; top: 70px; left: 110px;">
+            v11.0
+        </span>
+        <img src="../images/logo-dark-hacked.svg"
+             style="width: 100%;"/>
+    </div>
+    <br/>
+    <div>
+        Featuring:
+    </div>
+    <div>
+        <ul style="padding-left: 20px;">
+            <li>
+                <a href="../javascript-grid-pivoting/#totalPivotColumns">Pivot Totals</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-accessibility/">Accessibility</a>.
+            </li>
+            <li>
+                <a href="../javascript-grid-refresh/#flashing">Cell Flashing</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-grouping/">Simpler Row Grouping</a>.
+            </li>
+        </ul>
+    </div>
+    <div>
+        New documentation:
+    </div>
+    <div>
+        <ul style="padding-left: 20px;">
+            <li>
+                <a href="../javascript-grid-value-getters/">Getters & Setters</a>.
+            </li>
+            <li>
+                <a href="../javascript-grid-cell-rendering/">Cell Renderer's</a>.
+            </li>
+            <li>
+                <a href="../example-angular-rxjs/">RXJS</a>.
+            </li>
+        </ul>
+    </div>
+    <div>
+        See the <a href="../change-log/changeLogIndex.php">Change Log</a>
+        for full release details.
+    </div>
+</div>
 
 <div class="news-box">
     <div class="news-header">20th Jun 2017</div>
     <div>
         <a href="../weekly-update/20170620/">
-            <img src="../weekly-update/20170620/images/DevTeam.png" width="100%"/>
+            <img src="../weekly-update/20170620/images/DevTeam_200.png" width="100%"/>
         </a>
     </div>
     <div style="padding-top: 10px;">
@@ -108,16 +264,16 @@
 </div>
 
 
-<div class="news-box">
+<!-- <div class="news-box">
     <div class="news-header">6th Jun 2017</div>
     <div style="padding-top: 10px;">
         <a href="../weekly-update/">
             Weekly News Update
         </a>
     </div>
-</div>
+</div> -->
 
-<div class="news-box">
+<!-- <div class="news-box">
     <img style="float: left; margin-right: 10px;" src="../images/svg/docs/newspaper.svg" align="left" width="50" />
     <div class="news-header">19th May 2017</div>
     <div style="padding-top: 10px;">
@@ -533,4 +689,4 @@
         ag-Grid is Agnostic, Angular 2 is just one of the
         frameworks we are integrating with.
     </div>
-</div>
+</div> -->

@@ -1,11 +1,11 @@
-.customHeaderLabel{
+.customHeaderLabel {
     margin-left: 5px;
     margin-top: 3px;
     float: left;
 }
 
-.customExpandButton{
-    float:right;
+.customExpandButton {
+    float: right;
     margin-top: 5px;
     margin-left: 3px;
 }
@@ -27,9 +27,7 @@
     transform: rotate(0deg);
 }
 
-
-
-@keyframes  toExpanded{
+@keyframes toExpanded {
     from {
         color: cornflowerblue;
         -ms-transform: rotate(0deg); /* IE 9 */
@@ -44,7 +42,7 @@
     }
 }
 
-@keyframes toCollapsed{
+@keyframes toCollapsed {
     from {
         color: black;
         -ms-transform: rotate(180deg); /* IE 9 */

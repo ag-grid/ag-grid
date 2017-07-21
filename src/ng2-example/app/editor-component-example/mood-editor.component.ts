@@ -1,13 +1,14 @@
-import {Component, ViewContainerRef, ViewChild, AfterViewInit} from '@angular/core';
+import {AfterViewInit, Component, ViewChild, ViewContainerRef} from "@angular/core";
 
-import {ICellEditorAngularComp} from 'ag-grid-angular/main';
+import {ICellEditorAngularComp} from "ag-grid-angular/main";
 
 @Component({
     selector: 'editor-cell',
     template: `
         <div #container class="mood" tabindex="0" (keydown)="onKeyDown($event)">
             <img src="images/smiley.png" (click)="onClick(true)" [ngClass]="{'selected' : happy, 'default' : !happy}">
-            <img src="images/smiley-sad.png" (click)="onClick(false)" [ngClass]="{'selected' : !happy, 'default' : happy}">
+            <img src="images/smiley-sad.png" (click)="onClick(false)"
+                 [ngClass]="{'selected' : !happy, 'default' : happy}">
         </div>
     `,
     styles: [`
@@ -16,21 +17,21 @@ import {ICellEditorAngularComp} from 'ag-grid-angular/main';
             border: 1px solid grey;
             background: #e6e6e6;
             padding: 15px;
-            text-align:center;
-            display:inline-block;
-            outline:none
+            text-align: center;
+            display: inline-block;
+            outline: none
         }
 
         .default {
-            padding-left:10px;
-            padding-right:10px;
+            padding-left: 10px;
+            padding-right: 10px;
             border: 1px solid transparent;
             padding: 4px;
         }
 
         .selected {
-            padding-left:10px;
-            padding-right:10px;
+            padding-left: 10px;
+            padding-right: 10px;
             border: 1px solid lightgreen;
             padding: 4px;
         }
@@ -68,7 +69,7 @@ export class MoodEditorComponent implements ICellEditorAngularComp, AfterViewIni
         this.setHappy(!this.happy);
     }
 
-    onClick(happy:boolean) {
+    onClick(happy: boolean) {
         this.setHappy(happy);
         this.params.api.stopEditing();
     }

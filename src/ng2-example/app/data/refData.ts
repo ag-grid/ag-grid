@@ -14,18 +14,18 @@ export default class RefData {
         "Keating", "Keegan", "Kingston", "Kobe"];
 
     static DOBs = [
-        new Date(2000, 0, 1 ),
-        new Date(2001, 1, 2 ),
-        new Date(2002, 2, 3 ),
-        new Date(2003, 3, 4 ),
-        new Date(2004, 4, 5 ),
-        new Date(2005, 5, 6 ),
-        new Date(2006, 6, 7 ),
-        new Date(2007, 7, 8 ),
-        new Date(2008, 8, 9 ),
-        new Date(2009, 9, 10 ),
-        new Date(2010, 10, 11 ),
-        new Date(2011, 11, 12 )
+        new Date(2000, 0, 1),
+        new Date(2001, 1, 2),
+        new Date(2002, 2, 3),
+        new Date(2003, 3, 4),
+        new Date(2004, 4, 5),
+        new Date(2005, 5, 6),
+        new Date(2006, 6, 7),
+        new Date(2007, 7, 8),
+        new Date(2008, 8, 9),
+        new Date(2009, 9, 10),
+        new Date(2010, 10, 11),
+        new Date(2011, 11, 12)
     ];
 
     static COUNTRY_CODES = {

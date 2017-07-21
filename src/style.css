@@ -120,8 +120,14 @@ h4 {
     padding-bottom: 2px;
 }
 
+body {
+    font-family: 'Roboto', sans-serif !important;
+}
+
 @media (min-width: 200px) and (max-width: 800px) {
     body {
+
+        font-family: 'Roboto', sans-serif;
         font-size: 20px !important;
     }
     .hide-when-small {
@@ -655,6 +661,7 @@ h1, h2, h3, h4, h5 {
     padding: 0 25px;
     text-align: center;
     display: inline-block;
+    width: 150px
 }
 
 .HomeSection-framework a, .HomeSection-framework a:hover {

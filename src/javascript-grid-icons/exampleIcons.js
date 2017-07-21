@@ -16,19 +16,21 @@ var columnDefs = [
         }
     },
     {
-        headerName: "Year", field: "year", width: 90, enableRowGroup: true,
-        // mix it up a bit, use a function to return back the icon
-        icons: {
-            sortAscending: function () {
-                return 'ASC';
-            },
-            sortDescending: function () {
-                return 'DESC';
-            }
-        }
+        headerName: "Year", field: "year", width: 90, enableRowGroup: true
     },
     {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
+    {headerName: "Sport", field: "sport", width: 110, icons: {
+        sortAscending: function () {
+            return 'ASC';
+        },
+        sortDescending: function () {
+            return 'DESC';
+        },
+        checkboxChecked: '<i class="fa fa-arrow-left"/>',
+        checkboxUnchecked: '<i class="fa fa-arrow-right"/>',
+        checkboxIndeterminate: '<i class="fa fa-arrow-up"/>'
+    }
+    },
     {headerName: "Gold", field: "gold", width: 100},
     {headerName: "Silver", field: "silver", width: 100},
     {headerName: "Bronze", field: "bronze", width: 100},
@@ -84,9 +86,9 @@ var gridOptions = {
         menuRemoveRowGroup: 'R',
         clipboardCopy: '>>',
         clipboardPaste: '>>',
-        checkboxChecked: '<i class="fa fa-arrow-left"/>',
-        checkboxUnchecked: '<i class="fa fa-arrow-right"/>',
-        checkboxIndeterminate: '<i class="fa fa-arrow-up"/>'
+        checkboxChecked: '<i class="fa fa-check-square-o"/>',
+        checkboxUnchecked: '<i class="fa fa-square-o"/>',
+        checkboxIndeterminate: '<i class="fa fa-circle-o"/>'
     },
     rowSelection: 'multiple'
 };

@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
+import {Component} from "@angular/core";
 
-import {GridOptions} from 'ag-grid/main';
+import {GridOptions} from "ag-grid/main";
 
 import {MedalRendererComponent} from "./medal-renderer.component";
 
@@ -97,6 +97,6 @@ export class GroupRowComponent {
             {country: "Brazil", name: "Bob", gold: 1, silver: 0, bronze: 1},
             {country: "Brazil", name: "Jack", gold: 1, silver: 0, bronze: 1},
             {country: "Brazil", name: "Mary", gold: 1, silver: 0, bronze: 1},
-            {country: "Brazil", name: "John", gold: 1, silver: 0, bronze: 1}        ];
+            {country: "Brazil", name: "John", gold: 1, silver: 0, bronze: 1}];
     }
 }

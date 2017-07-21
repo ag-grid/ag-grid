@@ -24,7 +24,7 @@ const routes = [
     {path: '/dynamic', component: DynamicComponentExample, name: "Dynamic Components Example"},
     {path: '/rich-dynamic', component: RichDynamicComponentExample, name: "Dynamic Components - Richer Example"},
     {path: '/editor', component: EditorComponentExample, name: "Editor Component Example"},
-    {path: '/floating', component: FloatingRowExample, name: "Floating Row Example"},
+    {path: '/floating', component: FloatingRowExample, name: "Pinned Row Example"},
     {path: '/full-width', component: FullWidthRowExample, name: "Full Width Row Example"},
     {path: '/grouped-row', component: GroupedRowExample, name: "Grouped Row Example"},
     {path: '/filter', component: FilterExample, name: "Filter Example"},

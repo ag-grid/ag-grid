@@ -13,9 +13,155 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+    <h2>Version 12.0.x</h2>
+    <h3>Version 12.0.0 [21-JUL-2017]</h3>
+
+    <h4>New Features</h4>
+    <ul>
+        <li>
+            New feature: <a href="../javascript-grid-change-detection/">Change Detection</a>. Say goodbye to
+            grid refreshes.
+        </li>
+        <li>
+            New feature: <a href="../javascript-grid-value-cache/">Value Cache</a>. Get better performance if your
+            valueGetter's are CPU intensive.
+        </li>
+        <li>
+            New feature: <a href="../javascript-grid-column-spanning/">Column Spanning</a>.
+        </li>
+        <li>
+            New feature: <a href="../javascript-grid-column-definitions/">Column Types</a>.
+        </li>
+        <li>
+            New feature: <a href="../javascript-grid-enterprise-model/#enterprise-dynamic-row-height">Dynamic Row Height on Enterprise Row Model</a>.
+        </li>
+    </ul>
+    <h4>Documentation</h4>
+    <ul>
+        <li>
+            Rewrite of <a href="../javascript-grid-refresh/">Grid Refresh</a>. There were once a few similar confusing
+            methods. There are are two clear and clean methods: cellRefresh() and redrawRows().
+            See 'Changes to Refresh' below for more details.
+        </li>
+        <li>Update Documentation: <a href="../javascript-grid-value-getters/">Getters and Formatters.</a></li>
+        <li>Update Documentation: <a href="../javascript-grid-value-setters/">Setters and Parsers.</a></li>
+        <li>Renamed 'Master / Slave' to '<a href="../javascript-grid-aligned-grids/">Aligned Grids</a>' so that it's not confused with 'Master / Detail', which is nothing to do with 'Aligned Grids'.</li>
+        <li>Renamed 'Pinned Rows' to '<a href="../javascript-grid-row-pinning/">Pinned Rows</a>' because it was confusing, now we have <a href="../javascript-grid-row-pinning/">Pinned Rows</a> and <a href="../javascript-grid-pinning/">Pinned Columns</a> which are similar, but one for rows and one for columns.</li>
+    </ul>
+    <h4>Enhancements</h4>
+    <ul>
+        <li>AG-572: For accessibility, rows in the DOM are now placed in the same order you see on the screen. To turn on, set property ensureDomOrder=true.</li>
+        <li>AG-469: Enhancement: new event for column 'menuVisibleChanged', gets fired when column menu is shown / hidden.
+        Useful if doing your own headerComponent and want the header to look different when menu is shown / hidden.</li>
+        <li>Enhancement: Now header DIV will contain class <i>ag-column-menu-visible</i> when the column menu is showing.</li>
+        <li>AG-619: New option to always show status bar</li>
+        <li>AG-523: Allow 'shift-click' selections on all row models</li>
+        <li>AG-519: ASet filter use the checkboxes specified by the user, not the browser checkboxes</li>
+    </ul>
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>Bug fix: when using multiple group auto columns and header checkbox selection,
+            the header checkbox now only appears in the first column header.</li>
+        <li>AG-592: Bugfix: Allow empty groups if the user provides empty strings, not null or undefined</li>
+        <li>AG-541/600: Bugfix: [Date component] Date component not working when specified in both filter and floating filter</li>
+        <li>AG-586/584: Bugfix: Excel and CSV export are not using the default fileName when exporting</li>
+        <li>AG-479: Bugfix: If you group dynamically in pivoting, the filter column shows an empty set</li>
+        <li>AG-366: Bugfix: Multiple sort numbers were disappearing after horizontal scrolling</li>
+        <li>AG-317: Bugfix: Agg/Pivot Display Issues With Longer Col Names</li>
+        <li>AG-578: Bugfix: Exception raised when performing range selection and filtering on the enterprise row model</li>
+        <li>AG-327: Bugfix: Cumalative sort numbers disappear when refreshHeader is called</li>
+        <li>AG-375: After calling columnApi.setState() and doing multi-column sort,
+            the sort numbers were not getting displayed beside the relevant column.</li>
+        <li>AG-602: Bugfix: Enterprise Row Model success callback interface was missing 'lastRow'.</li>
+        <li>AG-617: Buffix: Enterprise Row Model unable to perform full width groups</li>
+        <li>AG-625: Now Enterprise Row Model works with complex objects (eg valueGetters and fields with dot notation).</li>
+        <li>AG-624: 'select' editor, when you select a value, was closing 'full row edit'. Now select works fine with 'full row edit'.</li>
+        <li>AG-593: Added missing exports to exports.ts</li>
+        <li>AG-628: Bugfix: Enterprise Data Source can now be set as a grid property (previously API had to be used).</li>
+        <li>AG-629: Bugfix: Row order now maintained when using ag-Grid Enterprise and inserting with transaction using 'addIndex'.</li>
+        <li>AG-631: The internationalisation text 'drag here to aggregate' was incorrectly showing the 'drag here to pivot' message.</li>
+    </ul>
+
+
+    <h4>Breaking changes</h4>
+    <p>
+        <b>Changes to Refresh</b>
+    </p>
+    <p>
+        The multiple refresh methods in the grid were confusing. We reviewed all the methods and replaced them with
+        two simple equivalents:
+        <a href="../javascript-grid-refresh/">api.refreshCells(params)</a> and
+        <a href="../javascript-grid-refresh/">api.redrawRows(params)</a>. For 99% of the time, you will call
+        api.refreshCells(params). However - given the grid now has change detection, you may find that you don't
+        need to call refresh ever again.
+    </p>
+    <ul>
+        <li>
+            refreshView() -> use api.refreshCells(params) instead
+        </li>
+        <li>
+            softRefreshView() -> use api.refreshCells(params) instead and include (the volatile) columns in params
+        </li>
+        <li>
+            refreshRows(rowNodes) -> use api.refreshCells(params) instead and include rows in params
+        </li>
+        <li>
+            refreshCells(rowNodes, colIds) -> use api.refreshCells(params) instead and include rows and columns in params
+        </li>
+        <li>
+            refreshGroupRows() -> use api.refreshCells(params) instead and include rows and columns in params
+        </li>
+    </ul>
+
+    <p>
+        <b>Other API And Property Changes</b>
+    </p>
+    <p>
+        The following API and property changes were done around the renaming of pinned rows and aligned grids.
+        All this is done to make the grid API easier to understand and interface with.
+        <ul>
+            <li>colDef.floatingCellRenderer -> colDef.pinnedRowCellRenderer</li>
+            <li>colDef.floatingCellRendererFramework -> colDef.pinnedRowCellRendererFramework</li>
+            <li>colDef.floatingCellRendererParams -> colDef.pinnedRowCellRendererParams</li>
+            <li>colDef.floatingValueFormatter -> colDef.pinnedRowValueFormatter</li>
+            <li>gridApi.setFloatingTopRowData-> api.setPinnedTopRowData</li>
+            <li>gridApi.setFloatingBottomRowData-> api.setPinnedBottomRowData</li>
+            <li>gridApi.getFloatingTopRowCount-> api.getPinnedTopRowCount</li>
+            <li>gridApi.getFloatingBottomRowCount-> api.getPinnedBottomRowCount</li>
+            <li>gridApi.getFloatingTopRow-> api.getPinnedTopRow</li>
+            <li>gridApi.getFloatingBottomRow-> api.getPinnedBottomRow</li>
+            <li>gridOptions.floatingTopRowData -> gridOptions.pinnedTopRowData</li>
+            <li>gridOptions.floatingBottomRowData -> gridOptions.pinnedBottomRowData</li>
+            <li>gridOptions.slaveGrids -> gridOptions.alignedGrids</li>
+            <li>rowNode.floating -> rowNode.rowPinned</li>
+        </ul>
+    </p>
+
+    <p>
+        <b>AG-591: Breaking Change to Cell Renderer - To Support TypeScript 2.4</b>
+    </p>
+
+    <p>
+        cellRenderer.refresh() is now a mandatory method and returns boolean (previously it
+        was optional and returned void). This is to
+        support TypeScript 2.4 that mandated a breaking change (TypeScript 2.4 doesn't allow
+        interface with just optional methods). Check the
+        <a href="../javascript-grid-cell-rendering-components/#cell-renderer-component">cellRenderer Refresh</a>
+        documentation for details on how to now implement this method. In summary, if you implemented
+        this method before, just make sure you return true. If you did not implement this method before,
+        then implement an empty version of it that returns false.
+    </p>
+    <p>
+        <b>Breaking Changes</b>
+    </p>
+    <ul>
+        <li>cellRenderer.params.valueGetter() is now called cellRenderer.params.getValue()</li>
+        <li>Grid property slaveGrids is now called alignedGrids.</li>
+        <li>Grid property paginationStartPage is gone, use api.paginationGoToPage(x) instead.</li>
+    </ul>
+
     <h2>Version 11.0.x</h2>
     <h3>Version 11.0.0 [26-JUN-2017]</h3>
-
 
     <h4>Documentation</h4>
     <ul>
@@ -118,7 +264,7 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <LI>AG-483: <a href="../javascript-grid-data-update/">Delta updates</a> - now you can add / update / remove
         rows without having to call 'setRowData(rowData)' with new data each time. Means you can keep the grids
-        <li>AG-420: Support for <a href="../example-react-redux/?framework=react">Redux Style Immutable Stores</a>,
+        <li>AG-420: Support for <a href="../example-react-redux/">Redux Style Immutable Stores</a>,
             to work better with React applications.</li>
         state (seelction, grouping etc) while new rows are set.</li>
         <LI>AG-114: <a href="../javascript-grid-width-and-height/#autoHeight">Auto height grid</a>: Allow the grid to
@@ -698,7 +844,7 @@ include '../documentation-main/documentation_header.php';
     <li>Breaking Change: setColumnVisible() no longer accepts ColDefs as an argument. colIds or Columns are the available options now.</li>
     <li>Enhancement: Tooltips now don't show if null or undefined.</li>
     <li>Enhancement: Added api.getFloatingTopRowCount(), api.getFloatingBottomRowCount(), api.getFloatingTopRow(index),
-        api.getFloatingBottomRow(index) for accessing floating rows</li>
+        api.getFloatingBottomRow(index) for accessing pinned rows</li>
 
     <h3>2 - Improved React and Angular 2 Support</h3>
 

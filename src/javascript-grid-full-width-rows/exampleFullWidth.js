@@ -2,8 +2,8 @@
 var LETTERS_IN_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 var mainRowData = createData(100, 'body');
-var floatingTopRowData = createData(3, 'floating');
-var floatingBottomRowData = createData(3, 'floating');
+var pinnedTopRowData = createData(3, 'floating');
+var pinnedBottomRowData = createData(3, 'floating');
 
 function createData(count, prefix) {
     var rowData = [];
@@ -42,8 +42,8 @@ LETTERS_IN_ALPHABET.forEach( function(letter) {
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: mainRowData,
-    floatingTopRowData: floatingTopRowData,
-    floatingBottomRowData: floatingTopRowData,
+    pinnedTopRowData: pinnedTopRowData,
+    pinnedBottomRowData: pinnedTopRowData,
     isFullWidthCell: function(rowNode) {
         // in this example, we check the fullWidth attribute that we set
         // while creating the data. what check you do to decide if you
@@ -54,13 +54,13 @@ var gridOptions = {
     // see ag-Grid docs cellRenderer for details on how to build cellRenderers
     // this is a simple function cellRenderer, returns plain HTML, not a component
     fullWidthCellRenderer: function(params) {
-        // floating rows will have node.floating set to either 'top' or 'bottom' - see docs for floating
+        // pinned rows will have node.floating set to either 'top' or 'bottom' - see docs for floating
         var cssClass;
         var message;
 
-        if (params.node.floating) {
+        if (params.node.rowPinned) {
             cssClass = 'example-full-width-floating-row';
-            message = 'Floating full width row at index ' + params.rowIndex;
+            message = 'Pinned full width row at index ' + params.rowIndex;
         } else {
             cssClass = 'example-full-width-row';
             message = 'Normal full width row at index' + params.rowIndex;
@@ -81,7 +81,7 @@ var gridOptions = {
     },
     getRowHeight: function(params) {
         // you can have normal rows and full width rows any height that you want
-        var isBodyRow = params.node.floating===undefined;
+        var isBodyRow = params.node.rowPinned===undefined;
         var isFullWidth = params.node.data.fullWidth;
         if (isBodyRow && isFullWidth) {
             return 55;

@@ -70,7 +70,7 @@ include '../documentation-main/documentation_header.php';
 
     <h3><img src="../images/enterprise_50.png" style="height: 22px;margin-right: 5px"/>Downloading the ag-Grid React Enterprise Dependency</h3>
 
-    <p>If you're using the ag-Grid Enteprise features, then in addition to the ag-Grid React dependency above, you also require
+    <p>If you're using the ag-Grid Enterprise features, then in addition to the ag-Grid React dependency above, you also require
     the ag-Grid React Enterprise dependency:</p>
 
     <h3>Download ag-Grid-Enterprise</h3>
@@ -272,6 +272,9 @@ constructor(props) {
         be able to only apply delta updates - this means ag-Grid will only re-render the row nodes that have changed.</p>
 
     <h3>Using plain React-Redux</h3>
+
+    <note>Please take a look at our <a href="../example-react-redux/">Simple Redux Example</a> for an example of using ag-Grid
+        and Redux in practice.</note>
 
     <p>To use React and Redux we'll make use of <code>react-redux</code>. If we (in this example) only listen of rowData
         changes

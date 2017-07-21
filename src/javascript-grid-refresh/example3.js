@@ -35,7 +35,7 @@ var gridOptions = {
 };
 
 function onRefreshAll() {
-    gridOptions.api.refreshView();
+    gridOptions.api.redrawRows();
 }
 
 function onDoubleNiall() {
@@ -52,7 +52,7 @@ function onDoubleNiall() {
         }
     });
     // now tell the grid it needs refresh all these rows
-    gridOptions.api.refreshCells(updatedNodes, ['price']);
+    gridOptions.api.refreshCells({rowNodes: updatedNodes, columns: ['price']});
 }
 
 function onDoubleJillian() {
@@ -69,7 +69,7 @@ function onDoubleJillian() {
         }
     });
     // now tell the grid it needs refresh all these rows
-    gridOptions.api.refreshRows(updatedNodes);
+    gridOptions.api.refreshCells({rowNodes: updatedNodes});
 }
 
 // setup the grid after the page has finished loading

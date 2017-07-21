@@ -50,6 +50,16 @@ include '../documentation-main/documentation_header.php';
             </div>
         <?php } ?>
 
+<? if (isFrameworkPolymer()) { ?>
+    <h4>
+        <img src="/images/polymer-large.png" height="20px"/>
+        Polymer
+    </h4>
+    <p>
+        Add properties to the gridOptions or set as properties on the <code>ag-grid-polymer</code> component.
+    </p>
+<? } ?>
+
         <?php if (isFrameworkAngular2()) { ?>
             <div>
                 <h4>
@@ -348,6 +358,11 @@ include '../documentation-main/documentation_header.php';
             <td>When true, the aggregations won't be computed for root node of the grid.</td>
         </tr>
         <tr>
+            <th>aggregateOnlyChangedColumns</th>
+            <td>When using <a href="../javascript-grid-change-detection/#tree-path-selection">change detection</a>,
+                only the updated column with get re-aggregated.</td>
+        </tr>
+        <tr>
             <th>functionsReadOnly</th>
             <td>If true, then row group, pivot and value aggregation will be read only from the gui. The grid will display
                 what values are used for each, but will not allow the use to change the selection.</td>
@@ -390,12 +405,12 @@ include '../documentation-main/documentation_header.php';
             <td>InMemoryRowModel only - enables <a href="../javascript-grid-data-update/#delta-row-data">delta row data mode</a>, for compatibility with immutable stores.</td>
         </tr>
         <tr>
-            <th>floatingTopRowData</th>
-            <td>Data to be displayed as floating top rows in the table</td>
+            <th>pinnedTopRowData</th>
+            <td>Data to be displayed as pinned top rows in the table</td>
         </tr>
         <tr>
-            <th>floatingBottomRowData</th>
-            <td>Data to be displayed as floating bottom rows in the table</td>
+            <th>pinnedBottomRowData</th>
+            <td>Data to be displayed as pinned bottom rows in the table</td>
         </tr>
         <!------------------->
         <!-- Selection -->
@@ -420,8 +435,8 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>suppressHorizontalScroll</th>
-            <td>Set to true to never show the horizontal scroll. This is useful if the grid is a slave grid,
-                and will scroll with a master grid.</td>
+            <td>Set to true to never show the horizontal scroll. This is useful if the grid is aligned with
+                another grid and will scroll when the other grid scrolls.</td>
         </tr>
         <tr>
             <th>suppressColumnVirtualisation</th>
@@ -575,6 +590,8 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th colspan="2"><h2>Miscellaneous</h2></th>
         </tr>
+        <?php include '../javascript-grid-value-cache/valueCacheProperties.php' ?>
+        <?php printPropertiesRows($valueCacheProperties) ?>
         <tr>
             <th>suppressMiddleClickScrolls</th>
             <td>If true, then middle clicks will result in 'click' events for cell and row. Otherwise the browser
@@ -597,6 +614,11 @@ include '../documentation-main/documentation_header.php';
                 'forPrint', then the grid will have no scrolls (or pinned areas or tool panel) and every
                 cell will be rendered - use this if you want a printable version of the grid.
             </td>
+        </tr>
+
+        <tr>
+            <th>ensureDomOrder</th>
+            <td>When true, this property ensures the order of rows and columns, including the headers.</td>
         </tr>
 
         <tr>
@@ -696,7 +718,11 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>enableStatusBar</th>
-            <td>When true, the status bar will be displayed at the bottom of the grid.</td>
+            <td>When true, the status bar appear at the bottom of the grid when cells are selected.</td>
+        </tr>
+        <tr>
+            <th>alwaysShowStatusBar</th>
+            <td>When true, the status bar will always be displayed at the bottom of the grid, when 'enableStatusBar' is also enabled</td>
         </tr>
         <tr>
             <th>suppressTouch</th>

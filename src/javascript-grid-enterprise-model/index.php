@@ -7,10 +7,10 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2 id="enterpriseRowModel">
+<h1 class="first-h1" id="enterpriseRowModel">
     <img src="../images/enterprise_50.png" title="Enterprise Feature"/>
     Enterprise Row Model
-</h2>
+</h1>
 
 <p>
     The Enterprise Row Model is arguably the most powerful of the row models in ag-Grid
@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
     while using infinite scrolling to bring the data back in blocks to the client.
 </p>
 
-<h3>Enterprise Row Model Features</h3>
+<h1>Enterprise Row Model Features</h1>
 
 <p>
     The best way to learn what the Enterprise Model does is to break it down into the core features.
@@ -62,7 +62,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<h3>Enterprise Datasource</h3>
+<h1>Enterprise Datasource</h1>
 
 <p>
     Similar to the <a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a> and
@@ -79,10 +79,10 @@ interface IEnterpriseDatasource {
 </pre>
 
 <p>
-    Each time the grid requires more rows, it will call the <i>getRows()</i> method.
-    The method is passed a <i>params</i> object that contains two callbacks (one for
+    Each time the grid requires more rows, it will call the <code>getRows()</code> method.
+    The method is passed a <code>params</code> object that contains two callbacks (one for
     success and one for failure) and a request object with details what row the grid
-    is looking for. The interface for the <i>params</i> is as follows:
+    is looking for. The interface for the <code>params</code> is as follows:
 </p>
 
 <pre>interface IEnterpriseGetRowsParams {
@@ -90,8 +90,10 @@ interface IEnterpriseDatasource {
     <span class="codeComment">// details for the request</span>
     request: IEnterpriseGetRowsRequest;
 
-    <span class="codeComment">// success callback, pass the rows back the grid asked for</span>
-    successCallback(rowsThisPage: any[]): void;
+    <span class="codeComment">// success callback, pass the rows back the grid asked for.</span>
+    <span class="codeComment">// if the total row count is known, provide it via lastRow, so the</span>
+    <span class="codeComment">// grid can adjust the scrollbar accordingly.</span>
+    successCallback(rowsThisPage: any[], lastRow: number): void;
 
     <span class="codeComment">// fail callback, tell the grid the call failed so it can adjust its state</span>
     failCallback(): void;
@@ -138,7 +140,7 @@ export interface ColumnVO {
     passed back as you interact with the grid.
 </p>
 
-<h3>Example - Predefined Master Detail - Mocked Server</h3>
+<h1>Example - Predefined Master Detail - Mocked Server</h1>
 
 <p>
     Below shows an example of predefined master / detail using the olympic winners dataset.
@@ -187,7 +189,7 @@ export interface ColumnVO {
                       exampleheight="500px">
 </show-complex-example>
 
-<h3>Example - Slice and Dice - Mocked Server</h3>
+<h1>Example - Slice and Dice - Mocked Server</h1>
 
 <p>
     Below shows an example of slicing and dicing the olympic winners. The user
@@ -216,7 +218,7 @@ export interface ColumnVO {
                       exampleheight="500px">
 </show-complex-example>
 
-<h3>Example - Slice and Dice - Real Server</h3>
+<h1>Example - Slice and Dice - Real Server</h1>
 
 <p>
     It is not possible to put up a full end to end example of the Enterprise row model
@@ -242,7 +244,7 @@ export interface ColumnVO {
     customer demand, we may provide connectors to server sides stores.
 </note>
 
-<h3 id="selection">Selection with Enterprise Row Model</h3>
+<h1 id="selection">Selection with Enterprise Row Model</h1>
 
 <p>
     Selecting rows and groups in the enterprise row model is supported.
@@ -253,32 +255,23 @@ export interface ColumnVO {
 <h4 id="selection"><b>Selecting Group Nodes</b></h4>
 <p>
     When you select a group, the children of that group may or may not be loaded
-    into the grid. For this reason the setting <i>groupSelectsChildren=true</i> (which
+    into the grid. For this reason the setting <code>groupSelectsChildren=true</code> (which
     selects all the children of the group when you select a group) does not make
     sense. When you select a group, the group row only will be marked as selected.
 </p>
 
-<h4 id="selection"><b>Providing Node ID's</b></h4>
-<p>
-    Providing node ID's is optional. If you provide your own node id's
-    (using the <i>getRowNodeId()</i> callback)
-    then you must make sure that the rows have unique ID's across your entire data
-    set. This means all the groups and all leaf level nodes must have unique
-    id's, even if the leafs are not part of the same group. This is because
-    the grid uses node id behind the scenes to identify selected rows.
-</p>
+<h1 id="selection">Example - Click Selection</h1>
 
 <p>
-    If you do not provide node id's, the grid will provide the id's for you,
-    and will make sure they are unique.
-</p>
+    The example below shows both simple 'click' selection as well as multiple 'shift-click' selections. Selecting groups
+    is not allowed as clicking on groups is reserved for opening and closing the groups.
 
-<h3 id="selection">Example - Click Selection Selection</h3>
+<ul>
+    <li><b>Single 'Click' Selection</b> - when you click on a leaf level row, the row is selected.</li>
+    <li><b>Multiple 'Shift-Click' Selections</b> - select a leaf row (single click) and then 'shift-click' another leaf
+        row within the same group to select all rows between that range.</li>
+</ul>
 
-<p>
-    The example below shows simple click selection. When you click on a leaf level
-    row, the row is selected. Standard click selection does not allow selecting groups,
-    as clicking on groups is reserved for opening and closing the groups.
 </p>
 
 <show-complex-example example="exampleEnterpriseSelection.html"
@@ -290,7 +283,15 @@ export interface ColumnVO {
                       exampleheight="500px">
 </show-complex-example>
 
-<h3 id="selection">Example - Checkbox Selection</h3>
+<note>
+    Performing multiple row selections using 'shift-click' has the following restrictions:
+    <ul>
+        <li>Only works across rows that share the same parent.</li>
+        <li>Only works for rows that are loaded (eg a large range selection may span rows that are not loaded).</li>
+    </ul>
+</note>
+
+<h1 id="selection">Example - Checkbox Selection</h1>
 
 <p>
     Below shows another example using checkbox selection. The example shows:
@@ -316,7 +317,44 @@ export interface ColumnVO {
                       exampleheight="500px">
 </show-complex-example>
 
-<h3 id="api">Enterprise Model API</h3>
+
+<h1 id="selection">Providing Node ID's</h1>
+<p>
+    Providing node ID's is optional. If you provide your own node id's
+    (using the <code>getRowNodeId()</code> callback)
+    then you must make sure that the rows have unique ID's across your entire data
+    set. This means all the groups and all leaf level nodes must have unique
+    id's, even if the leafs are not part of the same group. This is because
+    the grid uses node id's internally and requires them to be unique.
+</p>
+
+<p>
+    If you do not provide node id's, the grid will provide the id's for you,
+    and will make sure they are unique.
+</p>
+
+<h1 id="enterprise-dynamic-row-height">Dynamic Row Height</h1>
+
+<p>
+    To enable <a href="../javascript-grid-row-height/#">Dynamic Row Height</a> when using the enterprise row model you need to provide an implementation
+    for the 'getRowHeight' Grid Options property. This is demonstrated in the example below:
+</p>
+
+<show-complex-example example="exampleEnterpriseDynamicRowHeight.html"
+                      sources="{
+                                [
+                                    { root: './', files: 'exampleEnterpriseDynamicRowHeight.html,exampleEnterpriseDynamicRowHeight.js,columns.js,mockServerComplex.js' }
+                                ]
+                              }"
+                      exampleheight="500px">
+</show-complex-example>
+
+<note>
+    Purging the cache and dynamic row heights do not work together for the Enterprise Row Model.
+    If you are using dynamic row height, ensure 'maxBlocksInCache' is not set.
+</note>
+
+<h1 id="api">Enterprise Model API</h1>
 
 <p>
     The grid has the following API to allow you to interact with the enterprise cache.
@@ -372,10 +410,10 @@ export interface ColumnVO {
                       exampleheight="500px">
 </show-complex-example>
 
-<h3 id="pagination">Pagination with Enterprise Row Model</h3>
+<h1 id="pagination">Pagination with Enterprise Row Model</h1>
 <p>
     To enable pagination when using the enterprise row model, all you have to do is turning pagination on with
-    <i>pagination=true</i>. Find below an example.
+    <code>pagination=true</code>. Find below an example.
 </p>
 
 <show-complex-example example="exampleEnterpriseSimplePagination.html"

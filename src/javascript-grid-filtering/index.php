@@ -264,11 +264,11 @@ var nameFilterInstance = api.getFilterInstance('name');</pre>
         </tr>
         <tr>
             <th>number</th>
-            <th><code>filterComponent.setFilter(null);</code></th>
+            <th><code>filterComponent.setModel(null);</code></th>
         </tr>
         <tr>
             <th>text</th>
-            <th><code>filterComponent.setFilter(null);</code></th>
+            <th><code>filterComponent.setModel(null);</code></th>
         </tr>
         <tr>
             <th>set</th>

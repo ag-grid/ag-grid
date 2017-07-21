@@ -8,6 +8,9 @@
             <?php } elseif (isFrameworkAngular2()) { ?>
                 <img src="/images/angular2_small.png" alt="Angular"/>
                 Angular
+            <?php } elseif (isFrameworkPolymer()) { ?>
+                <img src="/images/polymer-small.png" alt="Polymer"/>
+                Polymer
             <?php } elseif (isFrameworkAngular1()) { ?>
                 <img src="/images/angularjs_small.png" alt="Angular 1"/>
                 Angular JS
@@ -42,6 +45,8 @@
             <li><a class="frameworkDropdown-link" data-id="angular" href="#"><img src="/images/angularjs_small.png"
                                                                                   alt="Angular 1"/> Angular (Angular 2
                     and later)</a></li>
+            <li><a class="frameworkDropdown-link" data-id="polymer" href="#"><img src="/images/polymer-small.png"
+                                                                                  alt="Polymer 2"/> Polymer 2</a></li>
             <li><a class="frameworkDropdown-link" data-id="angularjs" href="#"><img src="/images/angularjs_small.png"
                                                                                     alt="Angular 1"/> Angular JS
                     (Angular 1)</a></li>
@@ -77,6 +82,8 @@
 <div class="docsMenu-content">
 
     <?php
+    menuItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
+
     if (isFrameworkJavaScript()) {
         menuItem(1, 'Overview JavaScript', 'Javascript', 'best-javascript-data-grid/');
         menuItem(2, 'Getting Started Javascript', 'Getting Started', 'javascript-getting-started');
@@ -87,6 +94,7 @@
         menuItem(2, 'Getting Started React', 'Getting Started', 'react-getting-started/');
         menuItem(2, 'More Detail React', 'More Details', 'react-more-details/');
     }
+
     if (isFrameworkAngular2()) {
         menuItem(1, 'Overview Angular', 'Angular 2.x/4.x', 'best-angular-2-data-grid/');
         menuItem(2, 'Getting Started Angular', 'Getting Started', 'angular-getting-started/');
@@ -98,6 +106,13 @@
         menuItemCollapsibleChild(3, 'Angular ngtools Webpack', '@ngtools', 'ag-grid-angular-ngtools-webpack/', 'angularParent', 'angularChild');
         menuItemCollapsibleChild(3, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/', 'angularParent', 'angularChild', 'end');
     }
+
+    if (isFrameworkPolymer()) {
+        menuItem(1, 'Overview Polymer', 'Polymer', 'best-polymer-data-grid/');
+        menuItem(2, 'Getting Started Polymer', 'Getting Started', 'polymer-getting-started/');
+        menuItem(2, 'More Detail Polymer', 'More Details', 'polymer-more-details/');
+    }
+
     if (isFrameworkAngular1()) {
         menuItem(1, 'Getting Started ng1', 'AngularJS 1.x', 'best-angularjs-data-grid/');
     }
@@ -135,7 +150,7 @@
     <?php
     menuItem(0, 'Interfacing Overview', 'Overview', 'javascript-grid-interfacing-overview/');
     menuItem(0, 'Properties', 'Properties', 'javascript-grid-properties/');
-    menuItem(0, 'columnDefs', 'Columns', 'javascript-grid-column-definitions/');
+    menuItem(0, 'Column Properties', 'Columns', 'javascript-grid-column-properties/');
     menuItem(0, 'Events', 'Events', 'javascript-grid-events/');
     menuItem(0, 'Callbacks', 'Callbacks', 'javascript-grid-callbacks/');
     menuItem(0, 'Grid API', 'Grid API', 'javascript-grid-api/');
@@ -157,7 +172,10 @@
     <?php
     menuItem(0, 'Features', 'Overview', 'javascript-grid-features/');
     menuItem(0, 'Width & Height', 'Grid Size', 'javascript-grid-width-and-height/');
-    menuItem(0, 'Sorting', 'Sorting', 'javascript-grid-sorting/');
+    menuItem(0, 'ColumnDefs', 'Column Definitions', 'javascript-grid-column-definitions/');
+    menuItem(0, 'Grouping Columns', 'Column Groups', 'javascript-grid-grouping-headers/');
+    menuItem(0, 'Column Header', 'Column Headers', 'javascript-grid-column-header/');
+    menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
     menuItem(0, 'Column Filter', 'Column Filter', 'javascript-grid-filtering/');
 
     menuItem(1, 'Text Filter', 'Text Filter', 'javascript-grid-filter-text/');
@@ -169,39 +187,41 @@
     menuItem(0, 'Quick Filter', 'Quick Filter', 'javascript-grid-filter-quick/');
     menuItem(0, 'External Filter', 'External Filter', 'javascript-grid-filter-external/');
 
-    menuItem(0, 'Selection', 'Selection', 'javascript-grid-selection/');
+    menuItem(0, 'Sorting', 'Row Sorting', 'javascript-grid-sorting/');
+    menuItem(0, 'Selection', 'Row Selection', 'javascript-grid-selection/');
     menuItemWithIcon('enterprise.png', 0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
-    menuItem(0, 'Resizing', 'Column Resizing', 'javascript-grid-resizing/');
+    menuItem(0, 'Column Spanning', 'Column Spanning', 'javascript-grid-column-spanning/');
     menuItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
-    menuItem(0, 'Column Header', 'Column Header', 'javascript-grid-column-header/');
-    menuItem(0, 'Grouping Columns', 'Grouping Columns', 'javascript-grid-grouping-headers/');
-    menuItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
+    menuItem(0, 'Row Pinning', 'Row Pinning', 'javascript-grid-row-pinning/');
     menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
-    menuItem(0, 'Floating', 'Floating Rows', 'javascript-grid-floating/');
-    menuItem(0, 'Getters and Formatters', 'Getters & Formatters', 'javascript-grid-value-getters/');
-    menuItem(0, 'Cell Expressions', 'Expressions', 'javascript-grid-cell-expressions/');
     menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
-    menuItem(0, 'Cell Renderer', 'Cell Renderer', 'javascript-grid-cell-rendering/');
+    menuItem(0, 'Cell Rendering', 'Cell Rendering', 'javascript-grid-cell-rendering/');
     menuItem(0, 'Cell Editing', 'Cell Editing', 'javascript-grid-cell-editing/');
-    menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
-    menuItem(0, 'Context', 'Context', 'javascript-grid-context/');
-    menuItem(0, 'AccessingData', 'Accessing Data', 'javascript-grid-accessing-data/');
-    menuItem(0, 'DataUpdate', 'Data Update', 'javascript-grid-data-update/');
-    menuItem(0, 'Refresh', 'View Refresh', 'javascript-grid-refresh/');
-    menuItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
     menuItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
+    menuItem(0, 'Touch', 'Touch Support', 'javascript-grid-touch/');
+    menuItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
+    menuItem(0, 'AccessingData', 'Accessing Data', 'javascript-grid-accessing-data/');
+
+    menuItem(0, 'Getters and Formatters', 'Getters & Formatters', 'javascript-grid-value-getters/');
+    menuItem(0, 'Setters and Parsers', 'Setters and Parsers', 'javascript-grid-value-setters/');
+    menuItem(0, 'Cell Expressions', 'Expressions', 'javascript-grid-cell-expressions/');
+    menuItem(0, 'Value Cache', 'Value Cache', 'javascript-grid-value-cache/');
+    menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
+    menuItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
+    menuItem(0, 'DataUpdate', 'Updating Data', 'javascript-grid-data-update/');
+    menuItem(0, 'Refresh', 'View Refresh', 'javascript-grid-refresh/');
+    menuItem(0, 'Change Detection', 'Change Detection', 'javascript-grid-change-detection/');
     menuItem(0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/');
     menuItemWithIcon('lab.png', 0, 'Accessibility', 'Accessibility', 'javascript-grid-accessibility/');
     menuItem(0, 'Full Width Rows', 'Full Width Rows', 'javascript-grid-full-width-rows/');
     menuItem(0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');
-    menuItem(0, 'Master / Slave', 'Master / Slave', 'javascript-grid-master-slave/');
-    menuItem(0, 'Touch', 'Touch', 'javascript-grid-touch/');
+    menuItem(0, 'Aligned Grids', 'Aligned Grids', 'javascript-grid-aligned-grids/');
     menuItem(0, 'Data Export', 'CSV Export', 'javascript-grid-export/');
     menuItemWithIcon('enterprise.png', 0, 'Excel Export', 'Excel Export', 'javascript-grid-excel/');
     menuItem(0, 'RTL', 'RTL', 'javascript-grid-rtl/');
-    menuItem(0, 'Icons', 'Icons', 'javascript-grid-icons/');
+    menuItem(0, 'Icons', 'Custom Icons', 'javascript-grid-icons/');
     menuItem(0, 'Overlays', 'Overlays', 'javascript-grid-overlays/');
-    menuItem(0, 'For Print', 'For Print', 'javascript-grid-for-print/');
+    menuItem(0, 'For Print', 'Layout For Print', 'javascript-grid-for-print/');
 
     menuItemWithIcon('enterprise.png', 0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
     menuItemWithIcon('enterprise.png', 1, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping/');
@@ -214,6 +234,8 @@
     menuItemWithIcon('enterprise.png', 0, 'Context Menu', 'Context Menu', 'javascript-grid-context-menu/');
     menuItemWithIcon('enterprise.png', 0, 'Status Bar', 'Status Bar', 'javascript-grid-status-bar/');
     menuItemWithIcon('enterprise.png', 0, 'License Key', 'License Key', 'javascript-grid-set-license/');
+
+    menuItem(0, 'Context', 'Context', 'javascript-grid-context/');
 
     ?>
 </div>
@@ -275,7 +297,7 @@
 <div class="docsMenu-content">
     <?php
     menuItem(0, 'Components', 'Overview', 'javascript-grid-components/');
-    menuItem(0, 'Cell Rendering', 'Cell Renderer', 'javascript-grid-cell-rendering-components/');
+    menuItem(0, 'Cell Rendering Components', 'Cell Renderer', 'javascript-grid-cell-rendering-components/');
     menuItem(0, 'Cell Editor', 'Cell Editor', 'javascript-grid-cell-editor/');
     menuItem(0, 'Filter Component', 'Filter Component', 'javascript-grid-filter-component/');
     menuItem(0, 'Floating Filter Component', 'Floating Filter Component', 'javascript-grid-floating-filter-component/');
@@ -304,7 +326,7 @@
         menuItem(2, 'React Dynamic', 'Cell Renderers', 'example-react-dynamic/');
         menuItem(2, 'React Editor', 'Editor Component', 'example-react-editor/');
         menuItem(2, 'React Filter', 'Filter Component', 'example-react-filter/');
-        menuItem(2, 'React Floating Row', 'Floating Rows', 'example-react-floating-row/');
+        menuItem(2, 'React Pinned Row', 'Pinned Rows', 'example-react-floating-row/');
         menuItem(2, 'React Full Width', 'Full Width Rows', 'example-react-full-width-rows/');
         menuItem(2, 'React Group Row', 'Group Rows', 'example-react-grouped-row/');
         menuItem(2, 'React MasterDetail', 'Master/Detail', 'example-react-master-detail/');
@@ -317,13 +339,25 @@
         menuItem(2, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
         menuItem(2, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
         menuItem(2, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
-        menuItem(2, 'Angular Floating Filter', 'Floating Filter', 'javascript-grid-floating-filter-component/#ng2Angular');
-        menuItem(2, 'Angular Floating Row', 'Floating Rows', 'example-angular-floating-row/');
+        menuItem(2, 'Angular Floating Filter', 'Floating Filter', 'javascript-grid-floating-filter-component#ng2Angular');
+        menuItem(2, 'Angular Pinned Row', 'Pinned Rows', 'example-angular-floating-row/');
         menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
         menuItem(2, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
         menuItem(2, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
         menuItem(2, 'Angular RxJS', 'RxJS', 'example-angular-rxjs/');
         menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
+    }
+    if (isFrameworkPolymer() || isFrameworkAll()) {
+        menuItemWithIcon('polymer-small.png', 1, 'Polymer Examples', 'Polymer Examples', 'example-polymer/', true);
+        menuItem(2, 'Polymer Rich Grid', 'Rich Grid', 'example-polymer-rich-grid/');
+        menuItem(2, 'Polymer Dynamic', 'Cell Renderers', 'example-polymer-dynamic/');
+        menuItem(2, 'Polymer Editor', 'Editor Component', 'example-polymer-editor/');
+        menuItem(2, 'Polymer Filter', 'Filter Component', 'example-polymer-filter/');
+        menuItem(2, 'Polymer Floating Filter', 'Floating Filter', 'javascript-grid-floating-filter-component#polymerFilter');
+        menuItem(2, 'Polymer Floating Row', 'Floating Rows', 'example-polymer-floating-row/');
+        menuItem(2, 'Polymer Full Width', 'Full Width Rows', 'example-polymer-full-width-rows/');
+        menuItem(2, 'Polymer Group Row', 'Group Rows', 'example-polymer-grouped-row/');
+        menuItem(2, 'Polymer MasterDetail', 'Master/Detail', 'example-polymer-master-detail/');
     }
     menuItem(1, 'Styled Report', 'Styled Report', 'example-account-report/');
     menuItem(1, 'File Browser', 'File Browser', 'example-file-browser/');
@@ -347,6 +381,7 @@
 
     menuItem(0, 'ag-Grid Third Party Examples', 'Overview', 'javascript-grid-third-party/');
     menuItem(1, 'ag-Grid OpenFin', 'OpenFin', 'javascript-grid-openfin/');
+    menuItem(2, 'ag-Grid OpenFin Dashboard', 'Trader Dashboard', 'javascript-grid-openfin-dashboard/');
     menuItem(1, 'ag-Grid Graphing', 'Graphing', 'javascript-grid-graphing/');
     ?>
 </div>

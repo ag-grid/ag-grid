@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
+import {Component} from "@angular/core";
 
-import {GridOptions} from 'ag-grid/main';
+import {GridOptions} from "ag-grid/main";
 
 import {PartialMatchFilterComponent} from "./partial-match-filter.component";
 
@@ -19,7 +19,7 @@ export class FilterComponentComponent {
         this.gridOptions.enableFilter = true;
     }
 
-    onClicked(event): void {
+    onClicked(): void {
         this.gridOptions.api.getFilterInstance("name").getFrameworkComponentInstance().componentMethod("Hello World!");
     }
 

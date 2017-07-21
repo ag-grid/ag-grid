@@ -20,8 +20,8 @@ var columnDefs = [
 
 var makes = ['Toyota','Ford','BMW','Phantom','Porsche'];
 
-var floatingTopRows = [createRow(999),createRow(998)];
-var floatingBottomRows = [createRow(997),createRow(996)];
+var pinnedTopRows = [createRow(999),createRow(998)];
+var pinnedBottomRows = [createRow(997),createRow(996)];
 
 var gridOptions = {
     defaultColDef: {
@@ -70,11 +70,11 @@ function setRowData(rowCount) {
 
 function cbFloatingRows(show) {
     if (show) {
-        gridOptions.api.setFloatingTopRowData(floatingTopRows);
-        gridOptions.api.setFloatingBottomRowData(floatingBottomRows);
+        gridOptions.api.setPinnedTopRowData(pinnedTopRows);
+        gridOptions.api.setPinnedBottomRowData(pinnedBottomRows);
     } else {
-        gridOptions.api.setFloatingTopRowData(null);
-        gridOptions.api.setFloatingBottomRowData(null);
+        gridOptions.api.setPinnedTopRowData(null);
+        gridOptions.api.setPinnedBottomRowData(null);
     }
 }
 

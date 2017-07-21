@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="data-export">Data Export</h2>
+    <h2 id="data-export">CSV Export</h2>
 
     <note>
         If you are looking to export your data formatted for Excel use the ag-Grid Enterprise feature

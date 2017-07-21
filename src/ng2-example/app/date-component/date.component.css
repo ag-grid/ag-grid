@@ -1,17 +1,13 @@
-.filter {
-    margin:2px
-}
-
 .dd {
-    width:30px
+    width: 30px
 }
 
 .mm {
-    width:30px
+    width: 30px
 }
 
 .yyyy {
-    width:60px
+    width: 40px
 }
 
 .reset {
@@ -19,6 +15,5 @@
     background-color: red;
     border-radius: 3px;
     font-size: 10px;
-    margin-right: 5px;
     color: white
 }

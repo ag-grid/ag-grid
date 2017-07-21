@@ -92,6 +92,12 @@ npm install
 
     <img width="100%" src="../images/openfin-masterdetail-graph.png"/>
 
+    <h3>A Trader Dashboard with Tear Out Windows</h3>
+
+    <p>Please see the section on <a href="../javascript-grid-openfin-dashboard/">A Trader Dashboard with Tear Out Windows</a> for
+    information about the ag-Grid OpenFin Trader Dashboard.</p>
+
+
 
 </div>
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -24,7 +24,10 @@ var gridOptions = {
     // don't show the grouping in a panel at the top
     rowGroupPanelShow: 'never',
     animateRows: true,
-    debug: true
+    debug: true,
+    icons: {
+        groupLoading: '<img src="spinner.gif" style="width:22px;height:22px;">'
+    }
 };
 
 // setup the grid after the page has finished loading

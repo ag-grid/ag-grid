@@ -12,6 +12,7 @@
     <link inline href="dist/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link inline href="style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <?php include 'includes/meta.php'; ?>
 
     <style>
@@ -35,7 +36,7 @@ include 'includes/navbar.php'; ?>
                     </h1>
                 </div>
                 <div class="col-md-8">
-                    <h1 style="padding-top: 113px;">The Best Grid In The World</h1>
+                    <h1 style="padding-top: 100px;">The Best HTML 5 Grid In The World</h1>
                 </div>
             </div>
         </div>
@@ -61,8 +62,8 @@ include 'includes/navbar.php'; ?>
                     use <b>ag-Grid Enterprise</b>.
                 </div>
                 <div class="col-md-4 info-item">
-                    Over <span class="info-item-big">50,000 Downloads</span>
-                    per month of <b>ag-Grid Free</b>.
+                    Over <span class="info-item-big">80,000 Downloads</span>
+                    per month.
                 </div>
             </div>
         </div>

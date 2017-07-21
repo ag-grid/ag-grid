@@ -9,14 +9,14 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="keyboard-navigation">Keyboard Navigation</h2>
+    <h1 id="keyboard-navigation">Keyboard Navigation</h1>
 
     <p>
         Clicking on a cell gives the cell focus. You can then navigate and interact with the grid in the
         following ways...
     </p>
 
-    <h4 id="navigation">Navigation</h4>
+    <h3 id="navigation">Navigation</h3>
 
     <p>
         Use the <b>arrow keys</b> to move focus to the selection up, down, left and right. If the selected cell is
@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
         navigating, the grouping row is skipped.
     </p>
 
-    <h4 id="groups">Groups</h4>
+    <h3 id="groups">Groups</h3>
 
     <p>
         If on a group element, hitting the <b>enter key</b> will expand or collapse the group. This only works
@@ -43,21 +43,21 @@ include '../documentation-main/documentation_header.php';
         is not selectable.
     </p>
 
-    <h4 id="editing">Editing</h4>
+    <h3 id="editing">Editing</h3>
 
     <p>
         Pressing the <b>enter key</b> on a cell will put the cell into edit mode, if editing is allowed on the cell.
         This will work for the default cell editor.
     </p>
 
-    <h4 id="selection">Selection</h4>
+    <h3 id="selection">Selection</h3>
 
     <p>
         Pressing the <b>space key</b> on a cell will select the cells row, or deselect the row if already selected.
         If multi-select is enabled, then the selection will not remove any previous selections.
     </p>
 
-    <h4 id="custom-actions">Custom Actions</h4>
+    <h3 id="custom-actions">Custom Actions</h3>
 
     <p>
         Custom cell renderers can listen to key presses on the focused div. The grid element that receives
@@ -66,20 +66,20 @@ include '../documentation-main/documentation_header.php';
         on the cell eg hitting 'x' may execute a command in your application for that cell.
     </p>
 
-    <h4 id="suppress-cell-selection">Suppress Cell Selection</h4>
+    <h3 id="suppress-cell-selection">Suppress Cell Selection</h3>
 
     <p>
         If you want keyboard navigation turned off, then set <i>suppressCellSelection=true</i> in the <i>gridOptions</i>.
     </p>
 
-    <h4>Example</h4>
+    <h3>Example</h3>
 
     <p>
         All the items above (navigation, editing, groups, selection) are observable in the test drive.
         As such, a separate example is not provided here.
     </p>
 
-    <h2 id="customNavigation">Custom Navigation</h2>
+    <h3 id="customNavigation">Custom Navigation</h3>
 
     <p>
         Most people will be happy with the default navigation the grid does when you use the arrow keys
@@ -88,14 +88,14 @@ include '../documentation-main/documentation_header.php';
         two methods: <i>navigateToNextCell</i> and <i>tabToNextCell</i>.
     </p>
 
-    <h4 id="navigate-to-next-cell">navigateToNextCell</h4>
+    <h3 id="navigate-to-next-cell">navigateToNextCell</h3>
 
     <p>
         Provide a callback <i>navigateToNextCell</i> if you want to override the arrow key navigation. The
         function signature is as follows:
     </p>
 
-    <pre>export NavigateToNextCellParams {
+    <pre>interface NavigateToNextCellParams {
 
     <span class="codeComment">// the keycode for the arrow key pressed, left = 37, up = 38, right = 39, down = 40</span>
     key: number;
@@ -107,7 +107,7 @@ include '../documentation-main/documentation_header.php';
     nextCellDef: GridCellDef;
 }</pre>
 
-     <h4 id="tab-to-next-cell">tabToNextCell</h4>
+    <h3 id="tab-to-next-cell">tabToNextCell</h3>
 
     <p>
         Provide a callback <i>tabToNextCell</i> if you want to override the tab key navigation. The
@@ -130,7 +130,7 @@ include '../documentation-main/documentation_header.php';
     nextCellDef: GridCellDef;
 }</pre>
 
-    <h4 id="grid-cell-def">GridCellDef</h4>
+    <h3 id="grid-cell-def">GridCellDef</h3>
 
     <p>
         Both functions above use GridCellDef. This is an object that represents a cell in the grid. Its

@@ -17,7 +17,6 @@ var gridOptions = {
     suppressAggFuncInHeader: true,
     defaultColDef: {
         // NEW PIECE - add headerValueGetter
-        headerValueGetter: function() { return 'bar'; }
     },
 
     // this is a callback that gets called on each column definition

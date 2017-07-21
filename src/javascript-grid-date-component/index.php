@@ -38,7 +38,7 @@ gridOptions: {
     The interface for dateComponent is like this:
 </p>
 
-<pre>interface IDate {
+<pre>interface IDateComp {
     <span class="codeComment">// mandatory methods</span>
 
     <span class="codeComment">// The init(params) method is called on the filter once. See below for details on the parameters.</span>
@@ -92,5 +92,8 @@ gridOptions: {
                       plunker="https://embed.plnkr.co/UQG80i3bRCGnkgtVwteC/"
                       exampleheight="500px">
 </show-complex-example>
+
+
+spl todo add section about using IDateAngularComp for angular
 
 <?php include '../documentation-main/documentation_footer.php';?>

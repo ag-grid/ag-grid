@@ -38,12 +38,9 @@ $linkHref = "<a href='" . $link . "'>here</a>";
 ?>
 <div>
 
-    <h1><img src="../images/svg/docs/getting_started.svg" width="50" /> JavaScript Grid</h1>
+    <h1><img src="../images/svg/docs/getting_started.svg" width="50" /> Getting Started with ag-Grid</h1>
 
-    <h3>Getting started with ag-Grid</h3>
-
-    <p>Learn how to get a simple
-        application working using ag-Grid with your preferred framework.
+    <p>
         <?php if (!isFrameworkAll()) { ?>
             Start <?= $linkHref ?> to get a simple grid working in your application, then follow on
             to further sections to understand how particular features work.
@@ -51,18 +48,16 @@ $linkHref = "<a href='" . $link . "'>here</a>";
 
     <?php if (isFrameworkAll()) { ?>
 
-        <p>On the left hand menu there are Getting Started entries for JavaScript, as well as all the major Frameworks.
-            Please select
-            the item you're interested in to get started.</p>
+        <p>
+            On the left hand menu there are Getting Started entries for JavaScript,
+            as well as all the major Frameworks.
+        </p>
 
-        <p>The suggested reading order would be:</p>
+        <p>The suggested reading order is:</p>
         <ul>
-            <li>Select the menu entry to the left under <span style="font-style: italic">Overview</span> that corresponds to your chosen framework (or just JavaScript) to Get Started.</li>
-            <li>Follow up with the <a href="../ag-grid-next-steps">Next Steps</a>, where we go into further detail, including
-            guidance on how to use and configure <img src="../images/enterprise_50.png" width="20px"> ag-Grid Enteprise.</li>
-            <li>Move onto the <a href="../javascript-grid-interfacing-overview">Interfacing</a> section to further explore the
-            available <a href="../javascript-grid-properties">Properties</a>, <a href="../javascript-grid-events">Events</a>,
-                and <a href="../javascript-grid-api">API</a> available to you.</li>
+            <li>Try and get a simple grid working using plain JavaScript - learn the very basics.</li>
+            <li>Then get a simple grid working using the framework of your choice, eg Angular or React.</li>
+            <li>Jump into the features section, to find out about the features that you are interested in.</li>
         </ul>
 
         <h2>

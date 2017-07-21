@@ -1,7 +1,7 @@
 <html>
 <head>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
-    <script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused48"></script>
+    <script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused49"></script>
     <script src="exampleSetFilterApi.js"></script>
 </head>
 <body>
@@ -14,8 +14,11 @@
             <button onClick="selectNothing()">API: Filter empty set</button>
             <button onClick="selectJohnAndKenny()">API: Filter only John Joe Nevin and Kenny Egan)</button>
             <button onClick="selectEverything()">API: Remove filter</button>
-            <button onClick="setCountriesToFranceAustralia()">API: setFilterValues, countries restricted to France and Australia</button>
-            <button onClick="setCountriesToAll()">API: resetFilterValues, all countries</button>
+        </div>
+        <div>
+            Country - available filter values
+            <button onClick="setCountriesToFranceAustralia()">Filter values restricted to France and Australia</button>
+            <button onClick="setCountriesToAll()">Make all countries available</button>
         </div>
     </div>
 </body>

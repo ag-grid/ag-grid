@@ -132,15 +132,15 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>
-                setFloatingTopRowData(rowData)<br/>
-                setFloatingBottomRowData()<br/>
-                getFloatingTopRowCount()<br/>
-                getFloatingBottomRowCount()<br/>
-                getFloatingTopRow(index)<br/>
-                getFloatingBottomRow(index)
+                setPinnedTopRowData(rowData)<br/>
+                setPinnedBottomRowData()<br/>
+                getPinnedTopRowCount()<br/>
+                getPinnedBottomRowCount()<br/>
+                getPinnedTopRow(index)<br/>
+                getPinnedBottomRow(index)
             </th>
             <td>
-                Methods for getting and setting the data and getting the Row Nodes of the floating rows.
+                Methods for getting and setting the data and getting the Row Nodes of the pinned rows.
             </td>
         </tr>
         <tr>
@@ -225,38 +225,16 @@ include '../documentation-main/documentation_header.php';
             <th colspan="2"><h2>Refresh</h2></th>
         </tr>
         <tr>
-            <th>refreshView()</th>
-            <td>Rip out and re-insert all visible rows. Handy as a blanket 'redraw all' if changes have been made to the row data.</td>
+            <th>refreshCells(params)</th>
+            <td>Gets the grid to do change detection on all cells and refresh the cell if needed.</td>
         </tr>
         <tr>
-            <th>softRefreshView()</th>
-            <td>Leave the rows intact. Each cell that has been marked as volatile (via colDef attribute) will be redrawn. Any cells that
-                are not marked as volatile will be left alone, hence keeping any context or state that they have.</td>
-        </tr>
-        <tr>
-            <th>refreshRows(rowNodes)</th>
-            <td>Rips out the virtual rows showing representing the provided list of row nodes and then redraws them.</td>
-        </tr>
-        <tr>
-            <th>refreshCells(rowNodes, colIds)</th>
-            <td>Gets the individual cells for the provided rowNodes to refresh, the row itself and all other cells stay intact.</td>
+            <th>redrawRows(params)</th>
+            <td>Gets the grid to remove a row from the DOM and recreate it again from scratch.</td>
         </tr>
         <tr>
             <th>refreshHeader()</th>
             <td>Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed.</td>
-        </tr>
-        <tr>
-            <th>refreshGroupRows()</th>
-            <td>Rip out and re-insert all visible header and footer rows only. Only need to call if update the aggregate data yourself,
-                as this gets called after <i>recomputeAggregates()</i> anyway.</td>
-        </tr>
-        <tr>
-            <th>refreshGroup()</th>
-            <td>Gets the grid to recompute the row groups.</td>
-        </tr>
-        <tr>
-            <th>getFirstRenderedRow() getLastRenderedRow()</th>
-            <td>Gets the index of the first and last rendered rows.</td>
         </tr>
 
         <!------------------->

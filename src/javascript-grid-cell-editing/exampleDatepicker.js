@@ -1,9 +1,9 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete" },
+    {headerName: "Date", field: "date", editable: true, cellEditor: Datepicker},
     {headerName: "Age", field: "age" },
     {headerName: "Country", field: "country" },
     {headerName: "Year", field: "year"},
-    {headerName: "Date", field: "date", editable: true, cellEditor: Datepicker},
     {headerName: "Sport", field: "sport"},
     {headerName: "Gold", field: "gold"},
     {headerName: "Silver", field: "silver"},
