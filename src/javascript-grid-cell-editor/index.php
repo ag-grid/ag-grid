@@ -213,6 +213,10 @@ colDef.cellEditorParams = {
     <?php include './react.php';?>
 <?php } ?>
 
+<?php if (isFrameworkPolymer()) { ?>
+    <?php include './polymer.php';?>
+<?php } ?>
+
 <?php if (isFrameworkVue()) { ?>
     <?php include './vuejs.php';?>
 <?php } ?>

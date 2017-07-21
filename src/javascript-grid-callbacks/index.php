@@ -45,6 +45,16 @@ include '../documentation-main/documentation_header.php';
         </p>
     <? } ?>
 
+    <? if (isFrameworkPolymer()) { ?>
+        <h4>
+            <img src="/images/polymer-large.png" height="20px"/>
+            Polymer
+        </h4>
+        <p>
+            Add callbacks to the gridOptions or set as properties on the <code>ag-grid-polymer</code> component.
+        </p>
+    <? } ?>
+
     <? if (isFrameworkAngular2()) { ?>
         <h4>
             <img src="/images/angular2.png" height="20px"/>

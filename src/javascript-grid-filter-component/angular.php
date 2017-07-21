@@ -168,7 +168,7 @@ laterOnInYourApplicationSomewhere() {
     <span class="codeComment">// get Angular instance from the ag-Grid instance</span>
     let ng2FilterInstance = agGridFilter.getFrameworkComponentInstance();
 
-    <span class="codeComment">// now were sucking diesel!!!</span>
+    <span class="codeComment">// now we're sucking diesel!!!</span>
     ng2FilterInstance.myMethod();
 }</pre>
     </p>

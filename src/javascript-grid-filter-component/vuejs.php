@@ -171,7 +171,7 @@ laterOnInYourApplicationSomewhere() {
     <span class="codeComment">// get VueJS instance from the ag-Grid instance</span>
     let vueFilterInstance = agGridFilter.getFrameworkComponentInstance();
 
-    <span class="codeComment">// now were sucking diesel!!!</span>
+    <span class="codeComment">// now we're sucking diesel!!!</span>
     vueFilterInstance.componentMethod();
 }</pre>
     </p>

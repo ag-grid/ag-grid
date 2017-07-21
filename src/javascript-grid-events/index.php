@@ -69,6 +69,17 @@ include '../documentation-main/documentation_header.php';
         </div>
     <?php } ?>
 
+<? if (isFrameworkPolymer()) { ?>
+    <h4>
+        <img src="/images/polymer-large.png" height="20px"/>
+        Polymer
+    </h4>
+    <p>
+        Add the relevant onXXX() method to the gridOptions or set as properties on the <code>ag-grid-polymer</code> component.
+        You can also register events on the created <code>ag-grid-polymer</code> component <i>myGrid.addEventListener('columnresized', (event) => {...})</i>
+    </p>
+<? } ?>
+
     <?php if (isFrameworkAngular2()) { ?>
         <div>
             <h4 id="angular">

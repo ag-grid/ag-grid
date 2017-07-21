@@ -106,6 +106,11 @@ function isFrameworkAngular2()
     return $GLOBALS[framework] === 'angular' || $GLOBALS[framework] === 'all';
 }
 
+function isFrameworkPolymer()
+{
+    return $GLOBALS[framework] === 'polymer' || $GLOBALS[framework] === 'all';
+}
+
 function isFrameworkJavaScript()
 {
     return $GLOBALS[framework] === 'javascript' || $GLOBALS[framework] === 'all';
