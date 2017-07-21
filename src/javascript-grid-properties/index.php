@@ -50,15 +50,15 @@ include '../documentation-main/documentation_header.php';
             </div>
         <?php } ?>
 
-<? if (isFrameworkPolymer()) { ?>
-    <h4>
-        <img src="/images/polymer-large.png" height="20px"/>
-        Polymer
-    </h4>
-    <p>
-        Add properties to the gridOptions or set as properties on the <code>ag-grid-polymer</code> component.
-    </p>
-<? } ?>
+        <? if (isFrameworkPolymer()) { ?>
+            <h4>
+                <img src="/images/polymer-large.png" height="20px"/>
+                Polymer
+            </h4>
+            <p>
+                Add properties to the gridOptions or set as properties on the <code>ag-grid-polymer</code> component.
+            </p>
+        <? } ?>
 
         <?php if (isFrameworkAngular2()) { ?>
             <div>
