@@ -1,4 +1,4 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,12 +9,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
-var AggFuncService = AggFuncService_1 = (function () {
+var AggFuncService = (function () {
     function AggFuncService() {
         this.aggFuncsMap = {};
         this.initialised = false;
     }
+    AggFuncService_1 = AggFuncService;
     AggFuncService.prototype.init = function () {
         if (this.initialised) {
             return;
@@ -74,28 +76,29 @@ var AggFuncService = AggFuncService_1 = (function () {
     AggFuncService.prototype.clear = function () {
         this.aggFuncsMap = {};
     };
+    AggFuncService.AGG_SUM = 'sum';
+    AggFuncService.AGG_FIRST = 'first';
+    AggFuncService.AGG_LAST = 'last';
+    AggFuncService.AGG_MIN = 'min';
+    AggFuncService.AGG_MAX = 'max';
+    AggFuncService.AGG_COUNT = 'count';
+    AggFuncService.AGG_AVG = 'avg';
+    __decorate([
+        main_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", main_1.GridOptionsWrapper)
+    ], AggFuncService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        main_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], AggFuncService.prototype, "init", null);
+    AggFuncService = AggFuncService_1 = __decorate([
+        main_1.Bean('aggFuncService')
+    ], AggFuncService);
     return AggFuncService;
+    var AggFuncService_1;
 }());
-AggFuncService.AGG_SUM = 'sum';
-AggFuncService.AGG_FIRST = 'first';
-AggFuncService.AGG_LAST = 'last';
-AggFuncService.AGG_MIN = 'min';
-AggFuncService.AGG_MAX = 'max';
-AggFuncService.AGG_COUNT = 'count';
-AggFuncService.AGG_AVG = 'avg';
-__decorate([
-    main_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", main_1.GridOptionsWrapper)
-], AggFuncService.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    main_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], AggFuncService.prototype, "init", null);
-AggFuncService = AggFuncService_1 = __decorate([
-    main_1.Bean('aggFuncService')
-], AggFuncService);
 exports.AggFuncService = AggFuncService;
 function aggSum(input) {
     var result = null;
@@ -191,6 +194,7 @@ function aggAvg(input) {
         if (typeof currentItem === 'number') {
             sum += currentItem;
             count++;
+            // check if it's a group (ie value is a wrapper object)
         }
         else if (itemIsGroupResult) {
             // we are aggregating groups, so we take the
@@ -223,4 +227,3 @@ function aggAvg(input) {
     };
     return result;
 }
-var AggFuncService_1;

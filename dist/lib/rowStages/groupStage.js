@@ -1,4 +1,4 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,6 +9,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var GroupStage = (function () {
     function GroupStage() {
@@ -24,7 +25,7 @@ var GroupStage = (function () {
     // rowNode.childrenMapped: string=>RowNode = children mapped by group key (when groups) or an empty map if leaf group (this is then used by pivot)
     // for leaf groups, rowNode.childrenAfterGroup = rowNode.allLeafChildren;
     GroupStage.prototype.execute = function (params) {
-        var rootNode = params.rowNode;
+        var rowNode = params.rowNode, changedPath = params.changedPath, rowNodeTransaction = params.rowNodeTransaction;
         var groupedCols = this.columnController.getRowGroupColumns();
         var expandByDefault;
         if (this.gridOptionsWrapper.isGroupSuppressRow()) {
@@ -35,29 +36,39 @@ var GroupStage = (function () {
         }
         var includeParents = !this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         var isPivot = this.columnController.isPivotMode();
-        if (params.rowNodeTransaction) {
-            this.handleTransaction(params.rowNodeTransaction, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
+        var isGrouping = groupedCols.length > 0;
+        // important not to do transaction if we are not grouping, as otherwise the 'insert index' is ignored.
+        // ie, if not grouping, then we just want to shotgun so the rootNode.allLeafChildren gets copied
+        // to rootNode.childrenAfterGroup and maintaining order (as delta transaction misses the order).
+        var doTransaction = isGrouping && main_1._.exists(rowNodeTransaction);
+        if (doTransaction) {
+            this.handleTransaction(rowNodeTransaction, changedPath, rowNode, groupedCols, expandByDefault, includeParents, isPivot);
         }
         else {
-            this.shotgunResetEverything(rootNode, groupedCols, expandByDefault, includeParents, isPivot);
+            this.shotgunResetEverything(rowNode, groupedCols, expandByDefault, includeParents, isPivot);
         }
     };
-    GroupStage.prototype.handleTransaction = function (tran, rootNode, groupedCols, expandByDefault, includeParents, isPivot) {
+    GroupStage.prototype.handleTransaction = function (tran, changedPath, rootNode, groupedCols, expandByDefault, includeParents, isPivot) {
         if (tran.add) {
-            this.insertRowNodesIntoGroups(tran.add, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
+            this.insertRowNodesIntoGroups(tran.add, changedPath, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
         }
         if (tran.update) {
             // the InMemoryNodeManager already updated the value, however we
             // need to check the grouping, in case a dimension changed.
-            this.checkParents(tran.update, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
+            this.checkParents(tran.update, changedPath, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
         }
         if (tran.remove) {
-            this.removeRowNodesFromGroups(tran.remove, rootNode);
+            this.removeRowNodesFromGroups(tran.remove, changedPath, rootNode);
         }
     };
-    GroupStage.prototype.checkParents = function (leafRowNodes, rootNode, groupColumns, expandByDefault, includeParents, isPivot) {
+    GroupStage.prototype.checkParents = function (leafRowNodes, changedPath, rootNode, groupColumns, expandByDefault, includeParents, isPivot) {
         var _this = this;
         leafRowNodes.forEach(function (nodeToPlace) {
+            // always add existing parent, as if row is moved, then old parent needs
+            // to be recomputed
+            if (changedPath) {
+                changedPath.addParentNode(nodeToPlace.parent);
+            }
             var groupKeys = groupColumns.map(function (col) { return _this.getKeyForNode(col, nodeToPlace); });
             var parent = nodeToPlace.parent;
             var keysMatch = true;
@@ -70,13 +81,20 @@ var GroupStage = (function () {
             if (!keysMatch) {
                 _this.removeRowNodeFromGroups(nodeToPlace, rootNode);
                 _this.insertRowNodeIntoGroups(nodeToPlace, rootNode, groupColumns, expandByDefault, includeParents, isPivot);
+                // add in new parent
+                if (changedPath) {
+                    changedPath.addParentNode(nodeToPlace.parent);
+                }
             }
         });
     };
-    GroupStage.prototype.removeRowNodesFromGroups = function (leafRowNodes, rootNode) {
+    GroupStage.prototype.removeRowNodesFromGroups = function (leafRowNodes, changedPath, rootNode) {
         var _this = this;
         leafRowNodes.forEach(function (leafToRemove) {
             _this.removeRowNodeFromGroups(leafToRemove, rootNode);
+            if (changedPath) {
+                changedPath.addParentNode(leafToRemove.parent);
+            }
         });
     };
     GroupStage.prototype.removeRowNodeFromGroups = function (leafToRemove, rootNode) {
@@ -106,12 +124,15 @@ var GroupStage = (function () {
         // we are going everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
         rootNode.childrenAfterGroup = [];
         rootNode.childrenMapped = {};
-        this.insertRowNodesIntoGroups(rootNode.allLeafChildren, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
+        this.insertRowNodesIntoGroups(rootNode.allLeafChildren, null, rootNode, groupedCols, expandByDefault, includeParents, isPivot);
     };
-    GroupStage.prototype.insertRowNodesIntoGroups = function (newRowNodes, rootNode, groupColumns, expandByDefault, includeParents, isPivot) {
+    GroupStage.prototype.insertRowNodesIntoGroups = function (newRowNodes, changedPath, rootNode, groupColumns, expandByDefault, includeParents, isPivot) {
         var _this = this;
         newRowNodes.forEach(function (rowNode) {
             _this.insertRowNodeIntoGroups(rowNode, rootNode, groupColumns, expandByDefault, includeParents, isPivot);
+            if (changedPath) {
+                changedPath.addParentNode(rowNode.parent);
+            }
         });
     };
     GroupStage.prototype.insertRowNodeIntoGroups = function (rowNode, rootNode, groupColumns, expandByDefault, includeParents, isPivot) {
@@ -195,37 +216,33 @@ var GroupStage = (function () {
             return level < expandByDefault;
         }
     };
+    __decorate([
+        main_1.Autowired('selectionController'),
+        __metadata("design:type", main_1.SelectionController)
+    ], GroupStage.prototype, "selectionController", void 0);
+    __decorate([
+        main_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", main_1.GridOptionsWrapper)
+    ], GroupStage.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        main_1.Autowired('columnController'),
+        __metadata("design:type", main_1.ColumnController)
+    ], GroupStage.prototype, "columnController", void 0);
+    __decorate([
+        main_1.Autowired('valueService'),
+        __metadata("design:type", main_1.ValueService)
+    ], GroupStage.prototype, "valueService", void 0);
+    __decorate([
+        main_1.Autowired('eventService'),
+        __metadata("design:type", main_1.EventService)
+    ], GroupStage.prototype, "eventService", void 0);
+    __decorate([
+        main_1.Autowired('context'),
+        __metadata("design:type", main_1.Context)
+    ], GroupStage.prototype, "context", void 0);
+    GroupStage = __decorate([
+        main_1.Bean('groupStage')
+    ], GroupStage);
     return GroupStage;
 }());
-__decorate([
-    main_1.Autowired('selectionController'),
-    __metadata("design:type", main_1.SelectionController)
-], GroupStage.prototype, "selectionController", void 0);
-__decorate([
-    main_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", main_1.GridOptionsWrapper)
-], GroupStage.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    main_1.Autowired('columnController'),
-    __metadata("design:type", main_1.ColumnController)
-], GroupStage.prototype, "columnController", void 0);
-__decorate([
-    main_1.Autowired('valueService'),
-    __metadata("design:type", main_1.ValueService)
-], GroupStage.prototype, "valueService", void 0);
-__decorate([
-    main_1.Autowired('groupValueService'),
-    __metadata("design:type", main_1.GroupValueService)
-], GroupStage.prototype, "groupValueService", void 0);
-__decorate([
-    main_1.Autowired('eventService'),
-    __metadata("design:type", main_1.EventService)
-], GroupStage.prototype, "eventService", void 0);
-__decorate([
-    main_1.Autowired('context'),
-    __metadata("design:type", main_1.Context)
-], GroupStage.prototype, "context", void 0);
-GroupStage = __decorate([
-    main_1.Bean('groupStage')
-], GroupStage);
 exports.GroupStage = GroupStage;

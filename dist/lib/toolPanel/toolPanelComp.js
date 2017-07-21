@@ -1,10 +1,15 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14,19 +19,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var columnSelectPanel_1 = require("./columnsSelect/columnSelectPanel");
 var rowGroupColumnsPanel_1 = require("./columnDrop/rowGroupColumnsPanel");
 var pivotColumnsPanel_1 = require("./columnDrop/pivotColumnsPanel");
 var pivotModePanel_1 = require("./columnDrop/pivotModePanel");
 var valueColumnsPanel_1 = require("./columnDrop/valueColumnsPanel");
-var ToolPanelComp = ToolPanelComp_1 = (function (_super) {
+var ToolPanelComp = (function (_super) {
     __extends(ToolPanelComp, _super);
     function ToolPanelComp() {
         var _this = _super.call(this, ToolPanelComp_1.TEMPLATE) || this;
         _this.initialised = false;
         return _this;
     }
+    ToolPanelComp_1 = ToolPanelComp;
     // lazy initialise the toolPanel
     ToolPanelComp.prototype.setVisible = function (visible) {
         _super.prototype.setVisible.call(this, visible);
@@ -57,20 +64,20 @@ var ToolPanelComp = ToolPanelComp_1 = (function (_super) {
             component.destroy();
         });
     };
+    ToolPanelComp.TEMPLATE = '<div class="ag-tool-panel"></div>';
+    __decorate([
+        main_1.Autowired('context'),
+        __metadata("design:type", main_1.Context)
+    ], ToolPanelComp.prototype, "context", void 0);
+    __decorate([
+        main_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", main_1.GridOptionsWrapper)
+    ], ToolPanelComp.prototype, "gridOptionsWrapper", void 0);
+    ToolPanelComp = ToolPanelComp_1 = __decorate([
+        main_1.Bean('toolPanel'),
+        __metadata("design:paramtypes", [])
+    ], ToolPanelComp);
     return ToolPanelComp;
+    var ToolPanelComp_1;
 }(main_1.Component));
-ToolPanelComp.TEMPLATE = '<div class="ag-tool-panel"></div>';
-__decorate([
-    main_1.Autowired('context'),
-    __metadata("design:type", main_1.Context)
-], ToolPanelComp.prototype, "context", void 0);
-__decorate([
-    main_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", main_1.GridOptionsWrapper)
-], ToolPanelComp.prototype, "gridOptionsWrapper", void 0);
-ToolPanelComp = ToolPanelComp_1 = __decorate([
-    main_1.Bean('toolPanel'),
-    __metadata("design:paramtypes", [])
-], ToolPanelComp);
 exports.ToolPanelComp = ToolPanelComp;
-var ToolPanelComp_1;

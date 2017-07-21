@@ -1,4 +1,4 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,6 +9,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_1 = require("ag-grid");
 var columnSelectPanel_1 = require("../toolPanel/columnsSelect/columnSelectPanel");
 var menuList_1 = require("./menuList");
@@ -57,7 +58,10 @@ var EnterpriseMenuFactory = (function () {
         var eMenuGui = menu.getGui();
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function () { return menu.destroy(); });
+        var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function () {
+            menu.destroy();
+            column.setMenuVisible(false);
+        });
         positionCallback(menu);
         menu.afterGuiAttached({
             hidePopup: hidePopup
@@ -68,27 +72,28 @@ var EnterpriseMenuFactory = (function () {
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, function (event) {
             _this.lastSelectedTab = event.key;
         });
+        column.setMenuVisible(true);
     };
     EnterpriseMenuFactory.prototype.isMenuEnabled = function (column) {
         return column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT).length > 0;
     };
+    __decorate([
+        ag_grid_1.Autowired('context'),
+        __metadata("design:type", ag_grid_1.Context)
+    ], EnterpriseMenuFactory.prototype, "context", void 0);
+    __decorate([
+        ag_grid_1.Autowired('popupService'),
+        __metadata("design:type", ag_grid_1.PopupService)
+    ], EnterpriseMenuFactory.prototype, "popupService", void 0);
+    __decorate([
+        ag_grid_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+    ], EnterpriseMenuFactory.prototype, "gridOptionsWrapper", void 0);
+    EnterpriseMenuFactory = __decorate([
+        ag_grid_1.Bean('menuFactory')
+    ], EnterpriseMenuFactory);
     return EnterpriseMenuFactory;
 }());
-__decorate([
-    ag_grid_1.Autowired('context'),
-    __metadata("design:type", ag_grid_1.Context)
-], EnterpriseMenuFactory.prototype, "context", void 0);
-__decorate([
-    ag_grid_1.Autowired('popupService'),
-    __metadata("design:type", ag_grid_1.PopupService)
-], EnterpriseMenuFactory.prototype, "popupService", void 0);
-__decorate([
-    ag_grid_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", ag_grid_1.GridOptionsWrapper)
-], EnterpriseMenuFactory.prototype, "gridOptionsWrapper", void 0);
-EnterpriseMenuFactory = __decorate([
-    ag_grid_1.Bean('menuFactory')
-], EnterpriseMenuFactory);
 exports.EnterpriseMenuFactory = EnterpriseMenuFactory;
 var EnterpriseMenu = (function () {
     function EnterpriseMenu(column, initialSelection, restrictTo) {
@@ -105,7 +110,7 @@ var EnterpriseMenu = (function () {
         this.includeChecks[EnterpriseMenu.TAB_GENERAL] = function () { return true; };
         this.includeChecks[EnterpriseMenu.TAB_FILTER] = function () {
             var isFilterEnabled = _this.gridOptionsWrapper.isEnableFilter();
-            var isFloatingFiltersEnabled = _this.gridOptionsWrapper.isFloatingFilter;
+            var isFloatingFiltersEnabled = _this.gridOptionsWrapper.isFloatingFilter();
             var isAnyFilteringEnabled = isFilterEnabled || isFloatingFiltersEnabled;
             var suppressFilterForThisColumn = _this.column.getColDef().suppressFilter;
             return isAnyFilteringEnabled && !suppressFilterForThisColumn;
@@ -321,46 +326,46 @@ var EnterpriseMenu = (function () {
     EnterpriseMenu.prototype.getGui = function () {
         return this.tabbedLayout.getGui();
     };
+    EnterpriseMenu.EVENT_TAB_SELECTED = 'tabSelected';
+    EnterpriseMenu.TAB_FILTER = 'filterMenuTab';
+    EnterpriseMenu.TAB_GENERAL = 'generalMenuTab';
+    EnterpriseMenu.TAB_COLUMNS = 'columnsMenuTab';
+    EnterpriseMenu.TABS_DEFAULT = [EnterpriseMenu.TAB_GENERAL, EnterpriseMenu.TAB_FILTER, EnterpriseMenu.TAB_COLUMNS];
+    EnterpriseMenu.MENU_ITEM_SEPARATOR = 'separator';
+    __decorate([
+        ag_grid_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_1.ColumnController)
+    ], EnterpriseMenu.prototype, "columnController", void 0);
+    __decorate([
+        ag_grid_1.Autowired('filterManager'),
+        __metadata("design:type", ag_grid_1.FilterManager)
+    ], EnterpriseMenu.prototype, "filterManager", void 0);
+    __decorate([
+        ag_grid_1.Autowired('context'),
+        __metadata("design:type", ag_grid_1.Context)
+    ], EnterpriseMenu.prototype, "context", void 0);
+    __decorate([
+        ag_grid_1.Autowired('gridApi'),
+        __metadata("design:type", ag_grid_1.GridApi)
+    ], EnterpriseMenu.prototype, "gridApi", void 0);
+    __decorate([
+        ag_grid_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+    ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        ag_grid_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_1.EventService)
+    ], EnterpriseMenu.prototype, "eventService", void 0);
+    __decorate([
+        ag_grid_1.Autowired('menuItemMapper'),
+        __metadata("design:type", menuItemMapper_1.MenuItemMapper)
+    ], EnterpriseMenu.prototype, "menuItemMapper", void 0);
+    __decorate([
+        ag_grid_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], EnterpriseMenu.prototype, "init", null);
     return EnterpriseMenu;
 }());
-EnterpriseMenu.EVENT_TAB_SELECTED = 'tabSelected';
-EnterpriseMenu.TAB_FILTER = 'filterMenuTab';
-EnterpriseMenu.TAB_GENERAL = 'generalMenuTab';
-EnterpriseMenu.TAB_COLUMNS = 'columnsMenuTab';
-EnterpriseMenu.TABS_DEFAULT = [EnterpriseMenu.TAB_GENERAL, EnterpriseMenu.TAB_FILTER, EnterpriseMenu.TAB_COLUMNS];
-EnterpriseMenu.MENU_ITEM_SEPARATOR = 'separator';
-__decorate([
-    ag_grid_1.Autowired('columnController'),
-    __metadata("design:type", ag_grid_1.ColumnController)
-], EnterpriseMenu.prototype, "columnController", void 0);
-__decorate([
-    ag_grid_1.Autowired('filterManager'),
-    __metadata("design:type", ag_grid_1.FilterManager)
-], EnterpriseMenu.prototype, "filterManager", void 0);
-__decorate([
-    ag_grid_1.Autowired('context'),
-    __metadata("design:type", ag_grid_1.Context)
-], EnterpriseMenu.prototype, "context", void 0);
-__decorate([
-    ag_grid_1.Autowired('gridApi'),
-    __metadata("design:type", ag_grid_1.GridApi)
-], EnterpriseMenu.prototype, "gridApi", void 0);
-__decorate([
-    ag_grid_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", ag_grid_1.GridOptionsWrapper)
-], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    ag_grid_1.Autowired('eventService'),
-    __metadata("design:type", ag_grid_1.EventService)
-], EnterpriseMenu.prototype, "eventService", void 0);
-__decorate([
-    ag_grid_1.Autowired('menuItemMapper'),
-    __metadata("design:type", menuItemMapper_1.MenuItemMapper)
-], EnterpriseMenu.prototype, "menuItemMapper", void 0);
-__decorate([
-    ag_grid_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], EnterpriseMenu.prototype, "init", null);
 exports.EnterpriseMenu = EnterpriseMenu;

@@ -12,7 +12,8 @@ import {
     Events,
     Utils,
     SelectionController,
-    IViewportDatasource
+    IViewportDatasource,
+    RowBounds
 } from "ag-grid/main";
 
 @Bean('rowModel')
@@ -160,7 +161,7 @@ export class ViewportRowModel implements IRowModel {
         }
     }
 
-    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
+    public getRowBounds(index: number): RowBounds {
         return {
             rowHeight: this.rowHeight,
             rowTop: this.rowHeight * index
@@ -177,6 +178,22 @@ export class ViewportRowModel implements IRowModel {
 
     public isRowsToRender(): boolean {
         return this.rowCount > 0;
+    }
+
+    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+        let firstIndex = Utils.missing(firstInRange) ? 0 : firstInRange.rowIndex;
+        let lastIndex = lastInRange.rowIndex;
+
+        let firstNodeOutOfRange = firstIndex < this.firstRow || firstIndex > this.lastRow;
+        let lastNodeOutOfRange = lastIndex < this.firstRow || lastIndex > this.lastRow;
+
+        if (firstNodeOutOfRange || lastNodeOutOfRange) { return []; }
+
+        let result: RowNode[] = [];
+        for (let i = firstIndex; i<=lastIndex; i++) {
+            result.push(this.rowNodesByIndex[i]);
+        }
+        return result;
     }
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {

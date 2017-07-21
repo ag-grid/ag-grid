@@ -1,4 +1,4 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,6 +9,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var ViewportRowModel = (function () {
     function ViewportRowModel() {
@@ -138,6 +139,20 @@ var ViewportRowModel = (function () {
     ViewportRowModel.prototype.isRowsToRender = function () {
         return this.rowCount > 0;
     };
+    ViewportRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
+        var firstIndex = main_1.Utils.missing(firstInRange) ? 0 : firstInRange.rowIndex;
+        var lastIndex = lastInRange.rowIndex;
+        var firstNodeOutOfRange = firstIndex < this.firstRow || firstIndex > this.lastRow;
+        var lastNodeOutOfRange = lastIndex < this.firstRow || lastIndex > this.lastRow;
+        if (firstNodeOutOfRange || lastNodeOutOfRange) {
+            return [];
+        }
+        var result = [];
+        for (var i = firstIndex; i <= lastIndex; i++) {
+            result.push(this.rowNodesByIndex[i]);
+        }
+        return result;
+    };
     ViewportRowModel.prototype.forEachNode = function (callback) {
         var _this = this;
         var callbackCount = 0;
@@ -188,37 +203,37 @@ var ViewportRowModel = (function () {
         console.log('not yet supported');
         return false;
     };
+    __decorate([
+        main_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", main_1.GridOptionsWrapper)
+    ], ViewportRowModel.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        main_1.Autowired('eventService'),
+        __metadata("design:type", main_1.EventService)
+    ], ViewportRowModel.prototype, "eventService", void 0);
+    __decorate([
+        main_1.Autowired('selectionController'),
+        __metadata("design:type", main_1.SelectionController)
+    ], ViewportRowModel.prototype, "selectionController", void 0);
+    __decorate([
+        main_1.Autowired('context'),
+        __metadata("design:type", main_1.Context)
+    ], ViewportRowModel.prototype, "context", void 0);
+    __decorate([
+        main_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ViewportRowModel.prototype, "init", null);
+    __decorate([
+        main_1.PreDestroy,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ViewportRowModel.prototype, "destroy", null);
+    ViewportRowModel = __decorate([
+        main_1.Bean('rowModel')
+    ], ViewportRowModel);
     return ViewportRowModel;
 }());
-__decorate([
-    main_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", main_1.GridOptionsWrapper)
-], ViewportRowModel.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    main_1.Autowired('eventService'),
-    __metadata("design:type", main_1.EventService)
-], ViewportRowModel.prototype, "eventService", void 0);
-__decorate([
-    main_1.Autowired('selectionController'),
-    __metadata("design:type", main_1.SelectionController)
-], ViewportRowModel.prototype, "selectionController", void 0);
-__decorate([
-    main_1.Autowired('context'),
-    __metadata("design:type", main_1.Context)
-], ViewportRowModel.prototype, "context", void 0);
-__decorate([
-    main_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], ViewportRowModel.prototype, "init", null);
-__decorate([
-    main_1.PreDestroy,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], ViewportRowModel.prototype, "destroy", null);
-ViewportRowModel = __decorate([
-    main_1.Bean('rowModel')
-], ViewportRowModel);
 exports.ViewportRowModel = ViewportRowModel;

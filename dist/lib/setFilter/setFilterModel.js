@@ -1,5 +1,6 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var main_2 = require("ag-grid/main");
 // we cannot have 'null' as a key in a JavaScript map,

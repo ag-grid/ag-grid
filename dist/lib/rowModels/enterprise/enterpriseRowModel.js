@@ -1,10 +1,15 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17,6 +22,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_1 = require("ag-grid");
 var enterpriseCache_1 = require("./enterpriseCache");
 var EnterpriseRowModel = (function (_super) {
@@ -27,6 +33,10 @@ var EnterpriseRowModel = (function (_super) {
     EnterpriseRowModel.prototype.postConstruct = function () {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.addEventListeners();
+        var datasource = this.gridOptionsWrapper.getEnterpriseDatasource();
+        if (ag_grid_1._.exists(datasource)) {
+            this.setDatasource(datasource);
+        }
     };
     EnterpriseRowModel.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('EnterpriseRowModel');
@@ -71,7 +81,7 @@ var EnterpriseRowModel = (function (_super) {
                 openedNode.childrenCache = null;
             }
         }
-        this.updateRowIndexes();
+        this.updateRowIndexesAndBounds();
         var modelUpdatedEvent = { animate: true, keepRenderedRows: true };
         this.eventService.dispatchEvent(ag_grid_1.Events.EVENT_MODEL_UPDATED, modelUpdatedEvent);
     };
@@ -84,7 +94,7 @@ var EnterpriseRowModel = (function (_super) {
             this.createNewRowNodeBlockLoader();
             this.cacheParams = this.createCacheParams();
             this.createNodeCache(this.rootNode);
-            this.updateRowIndexes();
+            this.updateRowIndexesAndBounds();
         }
         // this event: 1) clears selection 2) updates filters 3) shows/hides 'no rows' overlay
         this.eventService.dispatchEvent(ag_grid_1.Events.EVENT_ROW_DATA_CHANGED);
@@ -121,6 +131,13 @@ var EnterpriseRowModel = (function (_super) {
     EnterpriseRowModel.prototype.createCacheParams = function () {
         var rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
         var valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
+        var dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
+        var maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
+        if (dynamicRowHeight && maxBlocksInCache >= 0) {
+            console.warn('ag-Grid: Enterprise Row Model does not support Dynamic Row Height and Cache Purging. ' +
+                'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.');
+            maxBlocksInCache = undefined;
+        }
         var params = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
@@ -134,9 +151,10 @@ var EnterpriseRowModel = (function (_super) {
             overflowSize: 1,
             initialRowCount: 1,
             maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
-            maxBlocksInCache: this.gridOptionsWrapper.getMaxBlocksInCache(),
+            maxBlocksInCache: maxBlocksInCache,
             blockSize: this.gridOptionsWrapper.getCacheBlockSize(),
-            rowHeight: this.rowHeight
+            rowHeight: this.rowHeight,
+            dynamicRowHeight: dynamicRowHeight
         };
         // set defaults
         if (!(params.maxConcurrentRequests >= 1)) {
@@ -164,25 +182,30 @@ var EnterpriseRowModel = (function (_super) {
         cache.addEventListener(ag_grid_1.RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
         rowNode.childrenCache = cache;
     };
-    EnterpriseRowModel.prototype.getRowBounds = function (index) {
-        return {
-            rowHeight: this.rowHeight,
-            rowTop: this.rowHeight * index
-        };
-    };
     EnterpriseRowModel.prototype.onCacheUpdated = function () {
-        this.updateRowIndexes();
+        this.updateRowIndexesAndBounds();
         var modelUpdatedEvent = { animate: true, keepRenderedRows: true };
         this.eventService.dispatchEvent(ag_grid_1.Events.EVENT_MODEL_UPDATED, modelUpdatedEvent);
     };
-    EnterpriseRowModel.prototype.updateRowIndexes = function () {
+    EnterpriseRowModel.prototype.updateRowIndexesAndBounds = function () {
         var cacheExists = ag_grid_1._.exists(this.rootNode) && ag_grid_1._.exists(this.rootNode.childrenCache);
         if (cacheExists) {
             // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
             var enterpriseCache = this.rootNode.childrenCache;
-            var numberSequence = new ag_grid_1.NumberSequence();
-            enterpriseCache.setDisplayIndexes(numberSequence);
+            this.resetRowTops(enterpriseCache);
+            this.setDisplayIndexes(enterpriseCache);
         }
+    };
+    EnterpriseRowModel.prototype.setDisplayIndexes = function (cache) {
+        var numberSequence = new ag_grid_1.NumberSequence();
+        var nextRowTop = { value: 0 };
+        cache.setDisplayIndexes(numberSequence, nextRowTop);
+    };
+    // resetting row tops is needed for animation, as part of the operation is saving the old location,
+    // which is needed for rows that are transitioning in
+    EnterpriseRowModel.prototype.resetRowTops = function (cache) {
+        var numberSequence = new ag_grid_1.NumberSequence();
+        cache.forEachNodeDeep(function (rowNode) { return rowNode.clearRowTop(); }, numberSequence);
     };
     EnterpriseRowModel.prototype.getRow = function (index) {
         var cacheExists = ag_grid_1._.exists(this.rootNode) && ag_grid_1._.exists(this.rootNode.childrenCache);
@@ -202,9 +225,13 @@ var EnterpriseRowModel = (function (_super) {
         if (cacheExists) {
             // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
             var enterpriseCache = this.rootNode.childrenCache;
-            lastRow = enterpriseCache.getLastDisplayedIndex();
+            lastRow = enterpriseCache.getDisplayIndexEnd() - 1;
         }
         else {
+            lastRow = 0;
+        }
+        // this doesn't make sense, but it works, if there are now rows, then -1 is returned above
+        if (lastRow < 0) {
             lastRow = 0;
         }
         return lastRow;
@@ -212,19 +239,26 @@ var EnterpriseRowModel = (function (_super) {
     EnterpriseRowModel.prototype.getRowCount = function () {
         return this.getPageLastRow() + 1;
     };
+    EnterpriseRowModel.prototype.getRowBounds = function (index) {
+        var cacheMissing = ag_grid_1._.missing(this.rootNode) || ag_grid_1._.missing(this.rootNode.childrenCache);
+        if (cacheMissing) {
+            return {
+                rowTop: 0,
+                rowHeight: this.rowHeight
+            };
+        }
+        var enterpriseCache = this.rootNode.childrenCache;
+        return enterpriseCache.getRowBounds(index);
+    };
     EnterpriseRowModel.prototype.getRowIndexAtPixel = function (pixel) {
-        if (this.rowHeight !== 0) {
-            var rowIndexForPixel = Math.floor(pixel / this.rowHeight);
-            if (rowIndexForPixel > this.getPageLastRow()) {
-                return this.getPageLastRow();
-            }
-            else {
-                return rowIndexForPixel;
-            }
-        }
-        else {
+        if (pixel === 0)
             return 0;
-        }
+        var cacheMissing = ag_grid_1._.missing(this.rootNode) || ag_grid_1._.missing(this.rootNode.childrenCache);
+        if (cacheMissing)
+            return 0;
+        var enterpriseCache = this.rootNode.childrenCache;
+        var result = enterpriseCache.getRowIndexAtPixel(pixel);
+        return result;
     };
     EnterpriseRowModel.prototype.getCurrentPageHeight = function () {
         var pageHeight = this.rowHeight * this.getRowCount();
@@ -254,6 +288,11 @@ var EnterpriseRowModel = (function (_super) {
             }
         }
     };
+    EnterpriseRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
+        if (ag_grid_1._.exists(firstInRange) && firstInRange.parent !== lastInRange.parent)
+            return [];
+        return lastInRange.parent.childrenCache.getRowNodesInRange(firstInRange, lastInRange);
+    };
     EnterpriseRowModel.prototype.getBlockState = function () {
         if (this.rowNodeBlockLoader) {
             return this.rowNodeBlockLoader.getBlockState();
@@ -265,45 +304,45 @@ var EnterpriseRowModel = (function (_super) {
     EnterpriseRowModel.prototype.isRowPresent = function (rowNode) {
         return false;
     };
+    __decorate([
+        ag_grid_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+    ], EnterpriseRowModel.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        ag_grid_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_1.EventService)
+    ], EnterpriseRowModel.prototype, "eventService", void 0);
+    __decorate([
+        ag_grid_1.Autowired('context'),
+        __metadata("design:type", ag_grid_1.Context)
+    ], EnterpriseRowModel.prototype, "context", void 0);
+    __decorate([
+        ag_grid_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_1.ColumnController)
+    ], EnterpriseRowModel.prototype, "columnController", void 0);
+    __decorate([
+        ag_grid_1.Autowired('filterManager'),
+        __metadata("design:type", ag_grid_1.FilterManager)
+    ], EnterpriseRowModel.prototype, "filterManager", void 0);
+    __decorate([
+        ag_grid_1.Autowired('sortController'),
+        __metadata("design:type", ag_grid_1.SortController)
+    ], EnterpriseRowModel.prototype, "sortController", void 0);
+    __decorate([
+        ag_grid_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], EnterpriseRowModel.prototype, "postConstruct", null);
+    __decorate([
+        __param(0, ag_grid_1.Qualifier('loggerFactory')),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [ag_grid_1.LoggerFactory]),
+        __metadata("design:returntype", void 0)
+    ], EnterpriseRowModel.prototype, "setBeans", null);
+    EnterpriseRowModel = __decorate([
+        ag_grid_1.Bean('rowModel')
+    ], EnterpriseRowModel);
     return EnterpriseRowModel;
 }(ag_grid_1.BeanStub));
-__decorate([
-    ag_grid_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", ag_grid_1.GridOptionsWrapper)
-], EnterpriseRowModel.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    ag_grid_1.Autowired('eventService'),
-    __metadata("design:type", ag_grid_1.EventService)
-], EnterpriseRowModel.prototype, "eventService", void 0);
-__decorate([
-    ag_grid_1.Autowired('context'),
-    __metadata("design:type", ag_grid_1.Context)
-], EnterpriseRowModel.prototype, "context", void 0);
-__decorate([
-    ag_grid_1.Autowired('columnController'),
-    __metadata("design:type", ag_grid_1.ColumnController)
-], EnterpriseRowModel.prototype, "columnController", void 0);
-__decorate([
-    ag_grid_1.Autowired('filterManager'),
-    __metadata("design:type", ag_grid_1.FilterManager)
-], EnterpriseRowModel.prototype, "filterManager", void 0);
-__decorate([
-    ag_grid_1.Autowired('sortController'),
-    __metadata("design:type", ag_grid_1.SortController)
-], EnterpriseRowModel.prototype, "sortController", void 0);
-__decorate([
-    ag_grid_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], EnterpriseRowModel.prototype, "postConstruct", null);
-__decorate([
-    __param(0, ag_grid_1.Qualifier('loggerFactory')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [ag_grid_1.LoggerFactory]),
-    __metadata("design:returntype", void 0)
-], EnterpriseRowModel.prototype, "setBeans", null);
-EnterpriseRowModel = __decorate([
-    ag_grid_1.Bean('rowModel')
-], EnterpriseRowModel);
 exports.EnterpriseRowModel = EnterpriseRowModel;

@@ -1,10 +1,16 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var columnComponent_1 = require("./columnComponent");
 var AbstractColumnDropPanel = (function (_super) {
@@ -313,11 +319,11 @@ var AbstractColumnDropPanel = (function (_super) {
             this.getGui().appendChild(eArrow);
         }
     };
+    AbstractColumnDropPanel.STATE_NOT_DRAGGING = 'notDragging';
+    AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN = 'newColumnsIn';
+    AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS = 'rearrangeColumns';
+    AbstractColumnDropPanel.CHAR_LEFT_ARROW = '&#8592;';
+    AbstractColumnDropPanel.CHAR_RIGHT_ARROW = '&#8594;';
     return AbstractColumnDropPanel;
 }(main_1.Component));
-AbstractColumnDropPanel.STATE_NOT_DRAGGING = 'notDragging';
-AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN = 'newColumnsIn';
-AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS = 'rearrangeColumns';
-AbstractColumnDropPanel.CHAR_LEFT_ARROW = '&#8592;';
-AbstractColumnDropPanel.CHAR_RIGHT_ARROW = '&#8594;';
 exports.AbstractColumnDropPanel = AbstractColumnDropPanel;

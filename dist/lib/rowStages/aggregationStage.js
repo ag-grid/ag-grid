@@ -1,4 +1,4 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,6 +9,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var pivotStage_1 = require("./pivotStage");
 var aggFuncService_1 = require("../aggregation/aggFuncService");
@@ -18,7 +19,7 @@ var AggregationStage = (function () {
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
     AggregationStage.prototype.execute = function (params) {
-        var rootNode = params.rowNode;
+        var rowNode = params.rowNode, changedPath = params.changedPath;
         // we don't do aggregation if user provided the groups
         var rowsAlreadyGrouped = main_1._.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (rowsAlreadyGrouped) {
@@ -27,26 +28,33 @@ var AggregationStage = (function () {
         var pivotActive = this.columnController.isPivotActive();
         var measureColumns = this.columnController.getValueColumns();
         var pivotColumns = pivotActive ? this.columnController.getPivotColumns() : [];
-        this.recursivelyCreateAggData(rootNode, measureColumns, pivotColumns);
+        this.recursivelyCreateAggData(rowNode, changedPath, measureColumns, pivotColumns);
     };
-    AggregationStage.prototype.recursivelyCreateAggData = function (rowNode, measureColumns, pivotColumns) {
+    AggregationStage.prototype.recursivelyCreateAggData = function (rowNode, changedPath, measureColumns, pivotColumns) {
         var _this = this;
         // aggregate all children first, as we use the result in this nodes calculations
         rowNode.childrenAfterFilter.forEach(function (child) {
             if (child.group) {
-                _this.recursivelyCreateAggData(child, measureColumns, pivotColumns);
+                _this.recursivelyCreateAggData(child, changedPath, measureColumns, pivotColumns);
             }
         });
         //Optionally prevent the aggregation at the root Node
         //https://ag-grid.atlassian.net/browse/AG-388
-        var notPivoting = !this.columnController.isPivotMode();
-        var suppressAggAtRootLevel = this.gridOptionsWrapper.isSuppressAggAtRootLevel();
         var isRootNode = rowNode.level === -1;
-        if (isRootNode && suppressAggAtRootLevel && notPivoting)
+        if (isRootNode) {
+            var notPivoting = !this.columnController.isPivotMode();
+            var suppressAggAtRootLevel = this.gridOptionsWrapper.isSuppressAggAtRootLevel();
+            if (suppressAggAtRootLevel && notPivoting) {
+                return;
+            }
+        }
+        var skipBecauseNoChangedPath = changedPath && !changedPath.isInPath(rowNode);
+        if (skipBecauseNoChangedPath) {
             return;
-        this.aggregateRowNode(rowNode, measureColumns, pivotColumns);
+        }
+        this.aggregateRowNode(rowNode, changedPath, measureColumns, pivotColumns);
     };
-    AggregationStage.prototype.aggregateRowNode = function (rowNode, measureColumns, pivotColumns) {
+    AggregationStage.prototype.aggregateRowNode = function (rowNode, changedPath, measureColumns, pivotColumns) {
         var measureColumnsMissing = measureColumns.length === 0;
         var pivotColumnsMissing = pivotColumns.length === 0;
         var userProvidedGroupRowAggNodes = this.gridOptionsWrapper.getGroupRowAggNodesFunc();
@@ -58,7 +66,7 @@ var AggregationStage = (function () {
             aggResult = null;
         }
         else if (rowNode.group && pivotColumnsMissing) {
-            aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, measureColumns);
+            aggResult = this.aggregateRowNodeUsingValuesOnly(rowNode, changedPath, measureColumns);
         }
         else {
             aggResult = this.aggregateRowNodeUsingValuesAndPivot(rowNode);
@@ -104,13 +112,21 @@ var AggregationStage = (function () {
         });
         return result;
     };
-    AggregationStage.prototype.aggregateRowNodeUsingValuesOnly = function (rowNode, valueColumns) {
+    AggregationStage.prototype.aggregateRowNodeUsingValuesOnly = function (rowNode, changedPath, valueColumns) {
         var _this = this;
         var result = {};
-        var values2d = this.getValuesNormal(rowNode, valueColumns);
-        valueColumns.forEach(function (valueColumn, index) {
+        var changedValueColumns = changedPath ? changedPath.getValueColumnsForNode(rowNode, valueColumns) : valueColumns;
+        var notChangedValueColumns = changedPath ? changedPath.getNotValueColumnsForNode(rowNode, valueColumns) : null;
+        var values2d = this.getValuesNormal(rowNode, changedValueColumns);
+        var oldValues = rowNode.aggData;
+        changedValueColumns.forEach(function (valueColumn, index) {
             result[valueColumn.getId()] = _this.aggregateValues(values2d[index], valueColumn.getAggFunc());
         });
+        if (notChangedValueColumns && oldValues) {
+            notChangedValueColumns.forEach(function (valueColumn) {
+                result[valueColumn.getId()] = oldValues[valueColumn.getId()];
+            });
+        }
         return result;
     };
     AggregationStage.prototype.getValuesPivotNonLeaf = function (rowNode, colId) {
@@ -173,33 +189,29 @@ var AggregationStage = (function () {
         }
         return aggFunction(values);
     };
+    __decorate([
+        main_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", main_1.GridOptionsWrapper)
+    ], AggregationStage.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        main_1.Autowired('columnController'),
+        __metadata("design:type", main_1.ColumnController)
+    ], AggregationStage.prototype, "columnController", void 0);
+    __decorate([
+        main_1.Autowired('valueService'),
+        __metadata("design:type", main_1.ValueService)
+    ], AggregationStage.prototype, "valueService", void 0);
+    __decorate([
+        main_1.Autowired('pivotStage'),
+        __metadata("design:type", pivotStage_1.PivotStage)
+    ], AggregationStage.prototype, "pivotStage", void 0);
+    __decorate([
+        main_1.Autowired('aggFuncService'),
+        __metadata("design:type", aggFuncService_1.AggFuncService)
+    ], AggregationStage.prototype, "aggFuncService", void 0);
+    AggregationStage = __decorate([
+        main_1.Bean('aggregationStage')
+    ], AggregationStage);
     return AggregationStage;
 }());
-__decorate([
-    main_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", main_1.GridOptionsWrapper)
-], AggregationStage.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    main_1.Autowired('columnController'),
-    __metadata("design:type", main_1.ColumnController)
-], AggregationStage.prototype, "columnController", void 0);
-__decorate([
-    main_1.Autowired('valueService'),
-    __metadata("design:type", main_1.ValueService)
-], AggregationStage.prototype, "valueService", void 0);
-__decorate([
-    main_1.Autowired('groupValueService'),
-    __metadata("design:type", main_1.GroupValueService)
-], AggregationStage.prototype, "groupValueService", void 0);
-__decorate([
-    main_1.Autowired('pivotStage'),
-    __metadata("design:type", pivotStage_1.PivotStage)
-], AggregationStage.prototype, "pivotStage", void 0);
-__decorate([
-    main_1.Autowired('aggFuncService'),
-    __metadata("design:type", aggFuncService_1.AggFuncService)
-], AggregationStage.prototype, "aggFuncService", void 0);
-AggregationStage = __decorate([
-    main_1.Bean('aggregationStage')
-], AggregationStage);
 exports.AggregationStage = AggregationStage;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,6 +9,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_1 = require("ag-grid");
 var clipboardService_1 = require("../clipboardService");
 var aggFuncService_1 = require("../aggregation/aggFuncService");
@@ -164,29 +165,29 @@ var MenuItemMapper = (function () {
         });
         return result;
     };
+    __decorate([
+        ag_grid_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+    ], MenuItemMapper.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        ag_grid_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_1.ColumnController)
+    ], MenuItemMapper.prototype, "columnController", void 0);
+    __decorate([
+        ag_grid_1.Autowired('gridApi'),
+        __metadata("design:type", ag_grid_1.GridApi)
+    ], MenuItemMapper.prototype, "gridApi", void 0);
+    __decorate([
+        ag_grid_1.Autowired('clipboardService'),
+        __metadata("design:type", clipboardService_1.ClipboardService)
+    ], MenuItemMapper.prototype, "clipboardService", void 0);
+    __decorate([
+        ag_grid_1.Autowired('aggFuncService'),
+        __metadata("design:type", aggFuncService_1.AggFuncService)
+    ], MenuItemMapper.prototype, "aggFuncService", void 0);
+    MenuItemMapper = __decorate([
+        ag_grid_1.Bean('menuItemMapper')
+    ], MenuItemMapper);
     return MenuItemMapper;
 }());
-__decorate([
-    ag_grid_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", ag_grid_1.GridOptionsWrapper)
-], MenuItemMapper.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    ag_grid_1.Autowired('columnController'),
-    __metadata("design:type", ag_grid_1.ColumnController)
-], MenuItemMapper.prototype, "columnController", void 0);
-__decorate([
-    ag_grid_1.Autowired('gridApi'),
-    __metadata("design:type", ag_grid_1.GridApi)
-], MenuItemMapper.prototype, "gridApi", void 0);
-__decorate([
-    ag_grid_1.Autowired('clipboardService'),
-    __metadata("design:type", clipboardService_1.ClipboardService)
-], MenuItemMapper.prototype, "clipboardService", void 0);
-__decorate([
-    ag_grid_1.Autowired('aggFuncService'),
-    __metadata("design:type", aggFuncService_1.AggFuncService)
-], MenuItemMapper.prototype, "aggFuncService", void 0);
-MenuItemMapper = __decorate([
-    ag_grid_1.Bean('menuItemMapper')
-], MenuItemMapper);
 exports.MenuItemMapper = MenuItemMapper;

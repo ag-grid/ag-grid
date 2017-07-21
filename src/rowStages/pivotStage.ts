@@ -58,7 +58,7 @@ export class PivotStage implements IRowNodeStage {
         let aggregationFuncsHash = aggregationColumns.map( (column)=> column.getAggFunc().toString() ).join('#');
 
         let aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
-        let aggregationFuncsChanged = this.aggregationColumnsHashLastTime !== aggregationFuncsHash;
+        let aggregationFuncsChanged = this.aggregationFuncsHashLastTime !== aggregationFuncsHash;
         this.aggregationColumnsHashLastTime = aggregationColumnsHash;
         this.aggregationFuncsHashLastTime = aggregationFuncsHash;
 

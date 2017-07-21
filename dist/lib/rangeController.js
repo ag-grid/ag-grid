@@ -1,4 +1,4 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,6 +9,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var RangeController = (function () {
     function RangeController() {
@@ -239,51 +240,51 @@ var RangeController = (function () {
         }
         return columns;
     };
+    __decorate([
+        main_1.Autowired('loggerFactory'),
+        __metadata("design:type", main_1.LoggerFactory)
+    ], RangeController.prototype, "loggerFactory", void 0);
+    __decorate([
+        main_1.Autowired('gridPanel'),
+        __metadata("design:type", main_1.GridPanel)
+    ], RangeController.prototype, "gridPanel", void 0);
+    __decorate([
+        main_1.Autowired('rowModel'),
+        __metadata("design:type", Object)
+    ], RangeController.prototype, "rowModel", void 0);
+    __decorate([
+        main_1.Autowired('eventService'),
+        __metadata("design:type", main_1.EventService)
+    ], RangeController.prototype, "eventService", void 0);
+    __decorate([
+        main_1.Autowired('columnController'),
+        __metadata("design:type", main_1.ColumnController)
+    ], RangeController.prototype, "columnController", void 0);
+    __decorate([
+        main_1.Autowired('rowRenderer'),
+        __metadata("design:type", main_1.RowRenderer)
+    ], RangeController.prototype, "rowRenderer", void 0);
+    __decorate([
+        main_1.Autowired('focusedCellController'),
+        __metadata("design:type", main_1.FocusedCellController)
+    ], RangeController.prototype, "focusedCellController", void 0);
+    __decorate([
+        main_1.Autowired('mouseEventService'),
+        __metadata("design:type", main_1.MouseEventService)
+    ], RangeController.prototype, "mouseEventService", void 0);
+    __decorate([
+        main_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", main_1.GridOptionsWrapper)
+    ], RangeController.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        main_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], RangeController.prototype, "init", null);
+    RangeController = __decorate([
+        main_1.Bean('rangeController')
+    ], RangeController);
     return RangeController;
 }());
-__decorate([
-    main_1.Autowired('loggerFactory'),
-    __metadata("design:type", main_1.LoggerFactory)
-], RangeController.prototype, "loggerFactory", void 0);
-__decorate([
-    main_1.Autowired('gridPanel'),
-    __metadata("design:type", main_1.GridPanel)
-], RangeController.prototype, "gridPanel", void 0);
-__decorate([
-    main_1.Autowired('rowModel'),
-    __metadata("design:type", Object)
-], RangeController.prototype, "rowModel", void 0);
-__decorate([
-    main_1.Autowired('eventService'),
-    __metadata("design:type", main_1.EventService)
-], RangeController.prototype, "eventService", void 0);
-__decorate([
-    main_1.Autowired('columnController'),
-    __metadata("design:type", main_1.ColumnController)
-], RangeController.prototype, "columnController", void 0);
-__decorate([
-    main_1.Autowired('rowRenderer'),
-    __metadata("design:type", main_1.RowRenderer)
-], RangeController.prototype, "rowRenderer", void 0);
-__decorate([
-    main_1.Autowired('focusedCellController'),
-    __metadata("design:type", main_1.FocusedCellController)
-], RangeController.prototype, "focusedCellController", void 0);
-__decorate([
-    main_1.Autowired('mouseEventService'),
-    __metadata("design:type", main_1.MouseEventService)
-], RangeController.prototype, "mouseEventService", void 0);
-__decorate([
-    main_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", main_1.GridOptionsWrapper)
-], RangeController.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    main_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], RangeController.prototype, "init", null);
-RangeController = __decorate([
-    main_1.Bean('rangeController')
-], RangeController);
 exports.RangeController = RangeController;

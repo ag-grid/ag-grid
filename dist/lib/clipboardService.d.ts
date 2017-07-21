@@ -1,12 +1,12 @@
-// ag-grid-enterprise v11.0.0
-import { ColDef, IClipboardService, Column } from "ag-grid/main";
+// ag-grid-enterprise v12.0.0
+import { IClipboardService, Column } from "ag-grid/main";
 export declare class ClipboardService implements IClipboardService {
     private csvCreator;
     private loggerFactory;
     private selectionController;
     private rangeController;
     private rowModel;
-    private floatingRowModel;
+    private pinnedRowModel;
     private valueService;
     private focusedCellController;
     private rowRenderer;
@@ -31,7 +31,7 @@ export declare class ClipboardService implements IClipboardService {
     private dispatchFlashCells(cellsToFlash);
     private userProcessCell(rowNode, column, value, func, type);
     private getRowNode(gridRow);
-    copySelectedRowsToClipboard(includeHeaders?: boolean, columnKeys?: (string | Column | ColDef)[]): void;
+    copySelectedRowsToClipboard(includeHeaders?: boolean, columnKeys?: (string | Column)[]): void;
     private copyDataToClipboard(data);
     private executeOnTempElement(callbackNow, callbackAfter?);
     private dataToArray(strData);

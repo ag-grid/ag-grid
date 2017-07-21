@@ -1,10 +1,15 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17,6 +22,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_1 = require("ag-grid");
 var enterpriseBlock_1 = require("./enterpriseBlock");
 var EnterpriseCache = (function (_super) {
@@ -24,8 +30,11 @@ var EnterpriseCache = (function (_super) {
     function EnterpriseCache(cacheParams, parentRowNode) {
         var _this = _super.call(this, cacheParams) || this;
         // this will always be zero for the top level cache only,
-        // all the other ones chance as the groups open and close
-        _this.firstDisplayIndex = 0;
+        // all the other ones change as the groups open and close
+        _this.displayIndexStart = 0;
+        _this.displayIndexEnd = 0; // not sure if setting this one to zero is necessary
+        _this.cacheTop = 0;
+        _this.blockHeights = {};
         _this.parentRowNode = parentRowNode;
         return _this;
     }
@@ -35,9 +44,93 @@ var EnterpriseCache = (function (_super) {
     EnterpriseCache.prototype.init = function () {
         _super.prototype.init.call(this);
     };
-    EnterpriseCache.prototype.setDisplayIndexes = function (numberSequence) {
+    EnterpriseCache.prototype.getRowBounds = function (index) {
         var _this = this;
-        this.firstDisplayIndex = numberSequence.peek();
+        this.logger.log("getRowBounds(" + index + ")");
+        // we return null if row not found
+        var result;
+        var blockFound = false;
+        var lastBlock;
+        this.forEachBlockInOrder(function (block) {
+            if (blockFound)
+                return;
+            if (block.isDisplayIndexInBlock(index)) {
+                result = block.getRowBounds(index, _this.getVirtualRowCount());
+                blockFound = true;
+            }
+            else if (block.isBlockBefore(index)) {
+                lastBlock = block;
+            }
+        });
+        if (!blockFound) {
+            var nextRowTop = void 0;
+            var nextRowIndex = void 0;
+            if (lastBlock) {
+                nextRowTop = lastBlock.getBlockTop() + lastBlock.getBlockHeight();
+                nextRowIndex = lastBlock.getDisplayIndexEnd();
+            }
+            else {
+                nextRowTop = this.cacheTop;
+                nextRowIndex = this.displayIndexStart;
+            }
+            var rowsBetween = index - nextRowIndex;
+            result = {
+                rowHeight: this.cacheParams.rowHeight,
+                rowTop: nextRowTop + rowsBetween * this.cacheParams.rowHeight
+            };
+        }
+        //TODO: what about purged blocks
+        this.logger.log("getRowBounds(" + index + "), result = " + result);
+        return result;
+    };
+    EnterpriseCache.prototype.destroyBlock = function (block) {
+        _super.prototype.destroyBlock.call(this, block);
+    };
+    EnterpriseCache.prototype.getRowIndexAtPixel = function (pixel) {
+        var _this = this;
+        this.logger.log("getRowIndexAtPixel(" + pixel + ")");
+        // we return null if row not found
+        var result;
+        var blockFound = false;
+        var lastBlock;
+        this.forEachBlockInOrder(function (block) {
+            if (blockFound)
+                return;
+            if (block.isPixelInRange(pixel)) {
+                result = block.getRowIndexAtPixel(pixel, _this.getVirtualRowCount());
+                blockFound = true;
+            }
+            else if (block.getBlockTop() > pixel) {
+                lastBlock = block;
+            }
+        });
+        if (!blockFound) {
+            var nextRowTop = void 0;
+            var nextRowIndex = void 0;
+            if (lastBlock) {
+                nextRowTop = lastBlock.getBlockTop() + lastBlock.getBlockHeight();
+                nextRowIndex = lastBlock.getDisplayIndexEnd();
+            }
+            else {
+                nextRowTop = this.cacheTop;
+                nextRowIndex = this.displayIndexStart;
+            }
+            var pixelsBetween = pixel - nextRowTop;
+            var rowsBetween = (pixelsBetween / this.cacheParams.rowHeight) | 0;
+            result = nextRowIndex + rowsBetween;
+        }
+        var lastAllowedIndex = this.getDisplayIndexEnd() - 1;
+        if (result > lastAllowedIndex) {
+            result = lastAllowedIndex;
+        }
+        //TODO: purged
+        this.logger.log("getRowIndexAtPixel(" + pixel + ") result = " + result);
+        return result;
+    };
+    EnterpriseCache.prototype.setDisplayIndexes = function (displayIndexSeq, nextRowTop) {
+        var _this = this;
+        this.displayIndexStart = displayIndexSeq.peek();
+        this.cacheTop = nextRowTop.value;
         var lastBlockId = -1;
         this.forEachBlockInOrder(function (currentBlock, blockId) {
             // if we skipped blocks, then we need to skip the row indexes. we assume that all missing
@@ -46,10 +139,20 @@ var EnterpriseCache = (function (_super) {
             var blocksSkippedCount = blockId - lastBlockId - 1;
             var rowsSkippedCount = blocksSkippedCount * _this.cacheParams.blockSize;
             if (rowsSkippedCount > 0) {
-                numberSequence.skip(rowsSkippedCount);
+                displayIndexSeq.skip(rowsSkippedCount);
+            }
+            for (var i = 1; i <= blocksSkippedCount; i++) {
+                var blockToAddId = blockId - i;
+                if (ag_grid_1._.exists(_this.blockHeights[blockToAddId])) {
+                    nextRowTop.value += _this.blockHeights[blockToAddId];
+                }
+                else {
+                    nextRowTop.value += _this.cacheParams.blockSize * _this.cacheParams.rowHeight;
+                }
             }
             lastBlockId = blockId;
-            currentBlock.setDisplayIndexes(numberSequence, _this.getVirtualRowCount());
+            currentBlock.setDisplayIndexes(displayIndexSeq, _this.getVirtualRowCount(), nextRowTop);
+            _this.blockHeights[blockId] = currentBlock.getBlockHeight();
         });
         // if any blocks missing at the end, need to increase the row index for them also
         // eg if block size = 10, we have total rows of 25 (indexes 0 .. 24), but first 2 blocks loaded (because
@@ -59,22 +162,30 @@ var EnterpriseCache = (function (_super) {
         var rowCount = this.getVirtualRowCount();
         var rowsNotAccountedFor = rowCount - lastVisitedRow - 1;
         if (rowsNotAccountedFor > 0) {
-            numberSequence.skip(rowsNotAccountedFor);
+            displayIndexSeq.skip(rowsNotAccountedFor);
+            nextRowTop.value += rowsNotAccountedFor * this.cacheParams.rowHeight;
         }
-        this.lastDisplayIndex = numberSequence.peek() - 1;
+        this.displayIndexEnd = displayIndexSeq.peek();
+        this.cacheHeight = nextRowTop.value - this.cacheTop;
     };
     // gets called in a) init() above and b) by the grid
-    EnterpriseCache.prototype.getRow = function (rowIndex) {
+    EnterpriseCache.prototype.getRow = function (displayRowIndex) {
         var _this = this;
+        // this can happen if asking for a row that doesn't exist in the model,
+        // eg if a cell range is selected, and the user filters so rows no longer
+        // exist
+        if (!this.isDisplayIndexInCache(displayRowIndex)) {
+            return null;
+        }
         // if we have the block, then this is the block
         var block = null;
         // this is the last block that we have BEFORE the right block
         var beforeBlock = null;
         this.forEachBlockInOrder(function (currentBlock) {
-            if (currentBlock.isIndexInBlock(rowIndex)) {
+            if (currentBlock.isDisplayIndexInBlock(displayRowIndex)) {
                 block = currentBlock;
             }
-            else if (currentBlock.isBlockBefore(rowIndex)) {
+            else if (currentBlock.isBlockBefore(displayRowIndex)) {
                 // this will get assigned many times, but the last time will
                 // be the closest block to the required block that is BEFORE
                 beforeBlock = currentBlock;
@@ -84,49 +195,57 @@ var EnterpriseCache = (function (_super) {
         if (ag_grid_1._.missing(block)) {
             var blockNumber = void 0;
             var displayIndexStart_1;
+            var nextRowTop = void 0;
             // because missing blocks are always fully closed, we can work out
-            // the start index of the block we want by hopping from the closes block,
+            // the start index of the block we want by hopping from the closest block,
             // as we know the row count in closed blocks is equal to the page size
             if (beforeBlock) {
-                blockNumber = beforeBlock.getPageNumber() + 1;
-                displayIndexStart_1 = beforeBlock.getDisplayEndIndex();
+                blockNumber = beforeBlock.getBlockNumber() + 1;
+                displayIndexStart_1 = beforeBlock.getDisplayIndexEnd();
+                nextRowTop = beforeBlock.getBlockHeight() + beforeBlock.getBlockTop();
                 var isInRange = function () {
-                    return rowIndex >= displayIndexStart_1 && rowIndex < (displayIndexStart_1 + _this.cacheParams.blockSize);
+                    return displayRowIndex >= displayIndexStart_1 && displayRowIndex < (displayIndexStart_1 + _this.cacheParams.blockSize);
                 };
-                var count = 0;
                 while (!isInRange()) {
                     displayIndexStart_1 += this.cacheParams.blockSize;
-                    blockNumber++;
-                    count++;
-                    if (count > 1000) {
-                        debugger;
+                    var cachedBlockHeight = this.blockHeights[blockNumber];
+                    if (ag_grid_1._.exists(cachedBlockHeight)) {
+                        nextRowTop += cachedBlockHeight;
                     }
+                    else {
+                        nextRowTop += this.cacheParams.rowHeight * this.cacheParams.blockSize;
+                    }
+                    blockNumber++;
                 }
             }
             else {
-                var localIndex = rowIndex - this.firstDisplayIndex;
+                var localIndex = displayRowIndex - this.displayIndexStart;
                 blockNumber = Math.floor(localIndex / this.cacheParams.blockSize);
-                displayIndexStart_1 = this.firstDisplayIndex + (blockNumber * this.cacheParams.blockSize);
+                displayIndexStart_1 = this.displayIndexStart + (blockNumber * this.cacheParams.blockSize);
+                nextRowTop = this.cacheTop + (blockNumber * this.cacheParams.blockSize * this.cacheParams.rowHeight);
             }
-            block = this.createBlock(blockNumber, displayIndexStart_1);
-            this.logger.log("block missing, rowIndex = " + rowIndex + ", creating #" + blockNumber + ", displayIndexStart = " + displayIndexStart_1);
+            block = this.createBlock(blockNumber, displayIndexStart_1, { value: nextRowTop });
+            this.logger.log("block missing, rowIndex = " + displayRowIndex + ", creating #" + blockNumber + ", displayIndexStart = " + displayIndexStart_1);
         }
-        var rowNode = block.getRow(rowIndex);
+        var rowNode = block.getRow(displayRowIndex);
         return rowNode;
     };
-    EnterpriseCache.prototype.createBlock = function (blockNumber, displayIndex) {
+    EnterpriseCache.prototype.createBlock = function (blockNumber, displayIndex, nextRowTop) {
         var newBlock = new enterpriseBlock_1.EnterpriseBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
         this.context.wireBean(newBlock);
         var displayIndexSequence = new ag_grid_1.NumberSequence(displayIndex);
-        newBlock.setDisplayIndexes(displayIndexSequence, this.getVirtualRowCount());
+        newBlock.setDisplayIndexes(displayIndexSequence, this.getVirtualRowCount(), nextRowTop);
         this.postCreateBlock(newBlock);
         return newBlock;
     };
-    EnterpriseCache.prototype.getLastDisplayedIndex = function () {
-        return this.lastDisplayIndex;
+    EnterpriseCache.prototype.getDisplayIndexEnd = function () {
+        return this.displayIndexEnd;
     };
-    EnterpriseCache.prototype.isIndexInCache = function (index) {
-        return index >= this.firstDisplayIndex && index <= this.lastDisplayIndex;
+    EnterpriseCache.prototype.isDisplayIndexInCache = function (displayIndex) {
+        if (this.getVirtualRowCount() === 0) {
+            return false;
+        }
+        return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     };
     EnterpriseCache.prototype.getChildCache = function (keys) {
         var _this = this;
@@ -151,26 +270,32 @@ var EnterpriseCache = (function (_super) {
             return null;
         }
     };
+    EnterpriseCache.prototype.isPixelInRange = function (pixel) {
+        if (this.getVirtualRowCount() === 0) {
+            return false;
+        }
+        return pixel >= this.cacheTop && pixel < (this.cacheTop + this.cacheHeight);
+    };
+    __decorate([
+        ag_grid_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_1.EventService)
+    ], EnterpriseCache.prototype, "eventService", void 0);
+    __decorate([
+        ag_grid_1.Autowired('context'),
+        __metadata("design:type", ag_grid_1.Context)
+    ], EnterpriseCache.prototype, "context", void 0);
+    __decorate([
+        __param(0, ag_grid_1.Qualifier('loggerFactory')),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [ag_grid_1.LoggerFactory]),
+        __metadata("design:returntype", void 0)
+    ], EnterpriseCache.prototype, "setBeans", null);
+    __decorate([
+        ag_grid_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], EnterpriseCache.prototype, "init", null);
     return EnterpriseCache;
 }(ag_grid_1.RowNodeCache));
-__decorate([
-    ag_grid_1.Autowired('eventService'),
-    __metadata("design:type", ag_grid_1.EventService)
-], EnterpriseCache.prototype, "eventService", void 0);
-__decorate([
-    ag_grid_1.Autowired('context'),
-    __metadata("design:type", ag_grid_1.Context)
-], EnterpriseCache.prototype, "context", void 0);
-__decorate([
-    __param(0, ag_grid_1.Qualifier('loggerFactory')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [ag_grid_1.LoggerFactory]),
-    __metadata("design:returntype", void 0)
-], EnterpriseCache.prototype, "setBeans", null);
-__decorate([
-    ag_grid_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], EnterpriseCache.prototype, "init", null);
 exports.EnterpriseCache = EnterpriseCache;

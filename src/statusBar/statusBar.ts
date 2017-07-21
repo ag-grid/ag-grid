@@ -1,5 +1,5 @@
 import {EventService, Component, Autowired, PostConstruct, Events, _,
-    GridRow, RowNode, Constants, FloatingRowModel, IRowModel, ValueService, GridCore,
+    GridRow, RowNode, Constants, PinnedRowModel, IRowModel, ValueService, GridCore,
     CellNavigationService, Bean, Context, GridOptionsWrapper} from 'ag-grid/main';
 import {StatusItem} from "./statusItem";
 import {RangeController} from "../rangeController";
@@ -15,7 +15,7 @@ export class StatusBar extends Component {
     @Autowired('rangeController') private rangeController: RangeController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -142,14 +142,11 @@ export class StatusBar extends Component {
                     }
 
                     currentRow = this.cellNavigationService.getRowBelow(currentRow);
-
                 }
-
             });
-
         }
 
-        let gotResult = count > 1;
+        let gotResult = this.gridOptionsWrapper.isAlwaysShowStatusBar() || count > 1;
         let gotNumberResult = numberCount > 1;
 
         // we should count even if no numbers
@@ -178,10 +175,10 @@ export class StatusBar extends Component {
 
     private getRowNode(gridRow: GridRow): RowNode {
         switch (gridRow.floating) {
-            case Constants.FLOATING_TOP:
-                return this.floatingRowModel.getFloatingTopRowData()[gridRow.rowIndex];
-            case Constants.FLOATING_BOTTOM:
-                return this.floatingRowModel.getFloatingBottomRowData()[gridRow.rowIndex];
+            case Constants.PINNED_TOP:
+                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
+            case Constants.PINNED_BOTTOM:
+                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
             default:
                 return this.rowModel.getRow(gridRow.rowIndex);
         }

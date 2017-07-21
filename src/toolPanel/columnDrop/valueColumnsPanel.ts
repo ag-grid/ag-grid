@@ -41,7 +41,7 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
         });
 
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        let emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to aggregate');
+        let emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag here to aggregate');
         let title = localeTextFunc('values', 'Values');
 
         super.init({

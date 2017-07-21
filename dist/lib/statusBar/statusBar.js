@@ -1,10 +1,15 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14,10 +19,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var statusItem_1 = require("./statusItem");
 var rangeController_1 = require("../rangeController");
-var StatusBar = StatusBar_1 = (function (_super) {
+var StatusBar = (function (_super) {
     __extends(StatusBar, _super);
     function StatusBar() {
         var _this = _super.call(this, StatusBar_1.TEMPLATE) || this;
@@ -25,6 +31,7 @@ var StatusBar = StatusBar_1 = (function (_super) {
         _this.infoLabel = new main_1.Component("<div class=\"ag-status-bar-info-label\"></div>");
         return _this;
     }
+    StatusBar_1 = StatusBar;
     StatusBar.prototype.init = function () {
         // we want to hide until the first aggregation comes in
         this.setVisible(false);
@@ -111,7 +118,7 @@ var StatusBar = StatusBar_1 = (function (_super) {
                 }
             });
         }
-        var gotResult = count > 1;
+        var gotResult = this.gridOptionsWrapper.isAlwaysShowStatusBar() || count > 1;
         var gotNumberResult = numberCount > 1;
         // we should count even if no numbers
         if (gotResult) {
@@ -136,63 +143,63 @@ var StatusBar = StatusBar_1 = (function (_super) {
     };
     StatusBar.prototype.getRowNode = function (gridRow) {
         switch (gridRow.floating) {
-            case main_1.Constants.FLOATING_TOP:
-                return this.floatingRowModel.getFloatingTopRowData()[gridRow.rowIndex];
-            case main_1.Constants.FLOATING_BOTTOM:
-                return this.floatingRowModel.getFloatingBottomRowData()[gridRow.rowIndex];
+            case main_1.Constants.PINNED_TOP:
+                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
+            case main_1.Constants.PINNED_BOTTOM:
+                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
             default:
                 return this.rowModel.getRow(gridRow.rowIndex);
         }
     };
+    StatusBar.TEMPLATE = '<div class="ag-status-bar">' +
+        '</div>';
+    __decorate([
+        main_1.Autowired('eventService'),
+        __metadata("design:type", main_1.EventService)
+    ], StatusBar.prototype, "eventService", void 0);
+    __decorate([
+        main_1.Autowired('rangeController'),
+        __metadata("design:type", rangeController_1.RangeController)
+    ], StatusBar.prototype, "rangeController", void 0);
+    __decorate([
+        main_1.Autowired('valueService'),
+        __metadata("design:type", main_1.ValueService)
+    ], StatusBar.prototype, "valueService", void 0);
+    __decorate([
+        main_1.Autowired('cellNavigationService'),
+        __metadata("design:type", main_1.CellNavigationService)
+    ], StatusBar.prototype, "cellNavigationService", void 0);
+    __decorate([
+        main_1.Autowired('pinnedRowModel'),
+        __metadata("design:type", main_1.PinnedRowModel)
+    ], StatusBar.prototype, "pinnedRowModel", void 0);
+    __decorate([
+        main_1.Autowired('rowModel'),
+        __metadata("design:type", Object)
+    ], StatusBar.prototype, "rowModel", void 0);
+    __decorate([
+        main_1.Autowired('context'),
+        __metadata("design:type", main_1.Context)
+    ], StatusBar.prototype, "context", void 0);
+    __decorate([
+        main_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", main_1.GridOptionsWrapper)
+    ], StatusBar.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        main_1.Autowired('gridCore'),
+        __metadata("design:type", main_1.GridCore)
+    ], StatusBar.prototype, "gridCore", void 0);
+    __decorate([
+        main_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], StatusBar.prototype, "init", null);
+    StatusBar = StatusBar_1 = __decorate([
+        main_1.Bean('statusBar'),
+        __metadata("design:paramtypes", [])
+    ], StatusBar);
     return StatusBar;
+    var StatusBar_1;
 }(main_1.Component));
-StatusBar.TEMPLATE = '<div class="ag-status-bar">' +
-    '</div>';
-__decorate([
-    main_1.Autowired('eventService'),
-    __metadata("design:type", main_1.EventService)
-], StatusBar.prototype, "eventService", void 0);
-__decorate([
-    main_1.Autowired('rangeController'),
-    __metadata("design:type", rangeController_1.RangeController)
-], StatusBar.prototype, "rangeController", void 0);
-__decorate([
-    main_1.Autowired('valueService'),
-    __metadata("design:type", main_1.ValueService)
-], StatusBar.prototype, "valueService", void 0);
-__decorate([
-    main_1.Autowired('cellNavigationService'),
-    __metadata("design:type", main_1.CellNavigationService)
-], StatusBar.prototype, "cellNavigationService", void 0);
-__decorate([
-    main_1.Autowired('floatingRowModel'),
-    __metadata("design:type", main_1.FloatingRowModel)
-], StatusBar.prototype, "floatingRowModel", void 0);
-__decorate([
-    main_1.Autowired('rowModel'),
-    __metadata("design:type", Object)
-], StatusBar.prototype, "rowModel", void 0);
-__decorate([
-    main_1.Autowired('context'),
-    __metadata("design:type", main_1.Context)
-], StatusBar.prototype, "context", void 0);
-__decorate([
-    main_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", main_1.GridOptionsWrapper)
-], StatusBar.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    main_1.Autowired('gridCore'),
-    __metadata("design:type", main_1.GridCore)
-], StatusBar.prototype, "gridCore", void 0);
-__decorate([
-    main_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], StatusBar.prototype, "init", null);
-StatusBar = StatusBar_1 = __decorate([
-    main_1.Bean('statusBar'),
-    __metadata("design:paramtypes", [])
-], StatusBar);
 exports.StatusBar = StatusBar;
-var StatusBar_1;

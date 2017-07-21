@@ -14,7 +14,9 @@ import {
     RowNode,
     Column,
     ColumnController,
-    ValueService
+    ValueService,
+    GridOptionsWrapper,
+    RowBounds
 } from "ag-grid";
 
 import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
@@ -25,11 +27,16 @@ export class EnterpriseBlock extends RowNodeBlock {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private logger: Logger;
 
-    private displayStartIndex: number;
-    private displayEndIndex: number;
+    private displayIndexStart: number;
+    private displayIndexEnd: number;
+
+    private blockTop: number;
+    private blockHeight: number;
+
     private params: EnterpriseCacheParams;
     private parentCache: EnterpriseCache;
 
@@ -75,7 +82,7 @@ export class EnterpriseBlock extends RowNodeBlock {
         return this.nodeIdPrefix;
     }
 
-    public getRow(rowIndex: number): RowNode {
+    public getRow(displayRowIndex: number): RowNode {
 
         // do binary search of tree
         // http://oli.me.uk/2013/06/08/searching-javascript-arrays-with-a-binary-search/
@@ -90,38 +97,27 @@ export class EnterpriseBlock extends RowNodeBlock {
         let topPointer = actualEnd - 1;
 
         if (_.missing(topPointer) || _.missing(bottomPointer)) {
-            console.log(`ag-grid: error: topPointer = ${topPointer}, bottomPointer = ${bottomPointer}`);
+            console.warn(`ag-grid: error: topPointer = ${topPointer}, bottomPointer = ${bottomPointer}`);
             return null;
         }
 
-        let count = 0;
-
         while (true) {
-
-            count++;
-            if (count>1000) {
-                debugger;
-            }
 
             let midPointer = Math.floor((bottomPointer + topPointer) / 2);
             let currentRowNode = super.getRowUsingLocalIndex(midPointer);
 
-            if (!currentRowNode) {
-                console.log(`missing rowNode`);
-            }
-
-            if (currentRowNode.rowIndex === rowIndex) {
+            if (currentRowNode.rowIndex === displayRowIndex) {
                 return currentRowNode;
             }
 
             let childrenCache = <EnterpriseCache> currentRowNode.childrenCache;
-            if (currentRowNode.rowIndex === rowIndex) {
+            if (currentRowNode.rowIndex === displayRowIndex) {
                 return currentRowNode;
-            } else if (currentRowNode.expanded && childrenCache && childrenCache.isIndexInCache(rowIndex)) {
-                return childrenCache.getRow(rowIndex);
-            } else if (currentRowNode.rowIndex < rowIndex) {
+            } else if (currentRowNode.expanded && childrenCache && childrenCache.isDisplayIndexInCache(displayRowIndex)) {
+                return childrenCache.getRow(displayRowIndex);
+            } else if (currentRowNode.rowIndex < displayRowIndex) {
                 bottomPointer = midPointer + 1;
-            } else if (currentRowNode.rowIndex > rowIndex) {
+            } else if (currentRowNode.rowIndex > displayRowIndex) {
                 topPointer = midPointer - 1;
             }
         }
@@ -167,7 +163,11 @@ export class EnterpriseBlock extends RowNodeBlock {
             let idToUse = this.createIdForIndex(index);
 
             rowNode.setDataAndId(data, idToUse);
-            rowNode.key = data[this.groupField];
+            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
+
+            if (rowNode.group) {
+                rowNode.key = this.valueService.getValue(this.rowGroupColumn, rowNode);
+            }
         } else {
             rowNode.setDataAndId(undefined, undefined);
             rowNode.key = null;
@@ -186,7 +186,6 @@ export class EnterpriseBlock extends RowNodeBlock {
                 }
             });
         }
-
     }
 
     protected loadFromDatasource(): void {
@@ -210,6 +209,7 @@ export class EnterpriseBlock extends RowNodeBlock {
         if (rowNode.group) {
             rowNode.expanded = false;
             rowNode.field = this.groupField;
+            rowNode.rowGroupColumn = this.rowGroupColumn;
         }
 
         return rowNode;
@@ -229,8 +229,80 @@ export class EnterpriseBlock extends RowNodeBlock {
         return keys;
     }
 
-    public setDisplayIndexes(displayIndexSeq: NumberSequence, virtualRowCount: number): void {
-        this.displayStartIndex = displayIndexSeq.peek();
+    public isPixelInRange(pixel: number): boolean {
+        return pixel >= this.blockTop && pixel < (this.blockTop + this.blockHeight);
+    }
+
+    public getRowBounds(index: number, virtualRowCount: number): RowBounds {
+
+        let start = this.getStartRow();
+        let end = this.getEndRow();
+
+        for (let i = start; i<=end; i++) {
+            // the blocks can have extra rows in them, if they are the last block
+            // in the cache and the virtual row count doesn't divide evenly by the
+            if (i >= virtualRowCount) { continue; }
+
+            let rowNode = this.getRowUsingLocalIndex(i);
+            if (rowNode) {
+
+                if (rowNode.rowIndex === index) {
+                    return {
+                        rowHeight: rowNode.rowHeight,
+                        rowTop: rowNode.rowTop
+                    };
+                }
+
+                if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
+                    let enterpriseCache = <EnterpriseCache> rowNode.childrenCache;
+                    if (enterpriseCache.isDisplayIndexInCache(index)) {
+                        return enterpriseCache.getRowBounds(index);
+                    }
+                }
+            }
+        }
+
+        console.error(`ag-Grid: looking for invalid row index in Enterprise Row Model, index=${index}`);
+
+        return null;
+    }
+
+    public getRowIndexAtPixel(pixel: number, virtualRowCount: number): number {
+
+        let start = this.getStartRow();
+        let end = this.getEndRow();
+
+        for (let i = start; i<=end; i++) {
+            // the blocks can have extra rows in them, if they are the last block
+            // in the cache and the virtual row count doesn't divide evenly by the
+            if (i >= virtualRowCount) { continue; }
+
+            let rowNode = this.getRowUsingLocalIndex(i);
+            if (rowNode) {
+
+                if (rowNode.isPixelInRange(pixel)) {
+                    return rowNode.rowIndex;
+                }
+
+                if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
+                    let enterpriseCache = <EnterpriseCache> rowNode.childrenCache;
+                    if (enterpriseCache.isPixelInRange(pixel)) {
+                        return enterpriseCache.getRowIndexAtPixel(pixel);
+                    }
+                }
+            }
+        }
+
+        console.warn(`ag-Grid: invalid pixel range for enterprise block ${pixel}`);
+        return 0;
+    }
+
+    public setDisplayIndexes(displayIndexSeq: NumberSequence,
+                             virtualRowCount: number,
+                             nextRowTop: {value: number}): void {
+        this.displayIndexStart = displayIndexSeq.peek();
+        
+        this.blockTop = nextRowTop.value;
 
         let start = this.getStartRow();
         let end = this.getEndRow();
@@ -243,17 +315,21 @@ export class EnterpriseBlock extends RowNodeBlock {
             let rowNode = this.getRowUsingLocalIndex(i);
             if (rowNode) {
                 let rowIndex = displayIndexSeq.next();
+
                 rowNode.setRowIndex(rowIndex);
-                rowNode.rowTop = this.params.rowHeight * rowIndex;
+                rowNode.setRowTop(nextRowTop.value);
+
+                nextRowTop.value += rowNode.rowHeight;
 
                 if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
                     let enterpriseCache = <EnterpriseCache> rowNode.childrenCache;
-                    enterpriseCache.setDisplayIndexes(displayIndexSeq);
+                    enterpriseCache.setDisplayIndexes(displayIndexSeq, nextRowTop);
                 }
             }
         }
 
-        this.displayEndIndex = displayIndexSeq.peek();
+        this.displayIndexEnd = displayIndexSeq.peek();
+        this.blockHeight = nextRowTop.value - this.blockTop;
     }
 
     private createLoadParams(): IEnterpriseGetRowsParams {
@@ -278,20 +354,27 @@ export class EnterpriseBlock extends RowNodeBlock {
         return params;
     }
 
-    public isIndexInBlock(index: number): boolean {
-        return index >= this.displayStartIndex && index < this.displayEndIndex;
+    public isDisplayIndexInBlock(displayIndex: number): boolean {
+        return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     }
 
-    public isBlockBefore(index: number): boolean {
-        return index >= this.displayEndIndex;
+    public isBlockBefore(displayIndex: number): boolean {
+        return displayIndex >= this.displayIndexEnd;
     }
 
-    public getDisplayStartIndex(): number {
-        return this.displayStartIndex;
+    public getDisplayIndexStart(): number {
+        return this.displayIndexStart;
     }
 
-    public getDisplayEndIndex(): number {
-        return this.displayEndIndex;
+    public getDisplayIndexEnd(): number {
+        return this.displayIndexEnd;
     }
 
+    public getBlockHeight(): number {
+        return this.blockHeight;
+    }
+
+    public getBlockTop(): number {
+        return this.blockTop;
+    }
 }

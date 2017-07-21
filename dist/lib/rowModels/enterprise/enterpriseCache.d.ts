@@ -1,5 +1,5 @@
-// ag-grid-enterprise v11.0.0
-import { RowNode, IEnterpriseCache, IEnterpriseDatasource, NumberSequence, RowNodeCache, RowNodeCacheParams, ColumnVO } from "ag-grid";
+// ag-grid-enterprise v12.0.0
+import { ColumnVO, IEnterpriseCache, IEnterpriseDatasource, NumberSequence, RowNode, RowNodeCache, RowNodeCacheParams, RowBounds } from "ag-grid";
 import { EnterpriseBlock } from "./enterpriseBlock";
 export interface EnterpriseCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];
@@ -10,16 +10,25 @@ export interface EnterpriseCacheParams extends RowNodeCacheParams {
 export declare class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCacheParams> implements IEnterpriseCache {
     private eventService;
     private context;
-    private firstDisplayIndex;
-    private lastDisplayIndex;
+    private displayIndexStart;
+    private displayIndexEnd;
     private parentRowNode;
+    private cacheTop;
+    private cacheHeight;
+    private blockHeights;
     constructor(cacheParams: EnterpriseCacheParams, parentRowNode: RowNode);
     private setBeans(loggerFactory);
     protected init(): void;
-    setDisplayIndexes(numberSequence: NumberSequence): void;
-    getRow(rowIndex: number): RowNode;
-    private createBlock(blockNumber, displayIndex);
-    getLastDisplayedIndex(): number;
-    isIndexInCache(index: number): boolean;
+    getRowBounds(index: number): RowBounds;
+    protected destroyBlock(block: EnterpriseBlock): void;
+    getRowIndexAtPixel(pixel: number): number;
+    setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: {
+        value: number;
+    }): void;
+    getRow(displayRowIndex: number): RowNode;
+    private createBlock(blockNumber, displayIndex, nextRowTop);
+    getDisplayIndexEnd(): number;
+    isDisplayIndexInCache(displayIndex: number): boolean;
     getChildCache(keys: string[]): EnterpriseCache;
+    isPixelInRange(pixel: number): boolean;
 }

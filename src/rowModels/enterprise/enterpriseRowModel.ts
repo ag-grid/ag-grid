@@ -11,21 +11,20 @@ import {
     Events,
     EventService,
     FilterManager,
-    FlattenStage,
+    GridOptionsWrapper,
     IEnterpriseDatasource,
-    IRowModel,
+    IEnterpriseRowModel,
     Logger,
-    ModelUpdatedEvent,
     LoggerFactory,
+    ModelUpdatedEvent,
     NumberSequence,
     PostConstruct,
-    RowNodeCache,
     Qualifier,
     RowNode,
-    GridOptionsWrapper,
     RowNodeBlockLoader,
+    RowNodeCache,
     SortController,
-    IEnterpriseRowModel
+    RowBounds
 } from "ag-grid";
 import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
 
@@ -35,7 +34,6 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
-    // @Autowired('flattenStage') private flattenStage: FlattenStage;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
@@ -55,6 +53,11 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     private postConstruct(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.addEventListeners();
+
+        let datasource = this.gridOptionsWrapper.getEnterpriseDatasource();
+        if (_.exists(datasource)) {
+            this.setDatasource(datasource);
+        }
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -106,7 +109,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
                 openedNode.childrenCache = null;
             }
         }
-        this.updateRowIndexes();
+        this.updateRowIndexesAndBounds();
 
         let modelUpdatedEvent = <ModelUpdatedEvent> { animate: true, keepRenderedRows: true };
 
@@ -125,7 +128,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
             this.cacheParams = this.createCacheParams();
             this.createNodeCache(this.rootNode);
 
-            this.updateRowIndexes();
+            this.updateRowIndexesAndBounds();
         }
 
         // this event: 1) clears selection 2) updates filters 3) shows/hides 'no rows' overlay
@@ -170,6 +173,14 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         let rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
         let valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
 
+        let dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
+        let maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
+        if (dynamicRowHeight && maxBlocksInCache >= 0 ) {
+            console.warn('ag-Grid: Enterprise Row Model does not support Dynamic Row Height and Cache Purging. ' +
+                'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.');
+            maxBlocksInCache = undefined;
+        }
+
         let params: EnterpriseCacheParams = {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
@@ -186,9 +197,10 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
             overflowSize: 1,
             initialRowCount: 1,
             maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests(),
-            maxBlocksInCache: this.gridOptionsWrapper.getMaxBlocksInCache(),
+            maxBlocksInCache: maxBlocksInCache,
             blockSize: this.gridOptionsWrapper.getCacheBlockSize(),
-            rowHeight: this.rowHeight
+            rowHeight: this.rowHeight,
+            dynamicRowHeight: dynamicRowHeight
         };
 
         // set defaults
@@ -222,27 +234,33 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         rowNode.childrenCache = cache;
     }
 
-    public getRowBounds(index: number): {rowTop: number, rowHeight: number} {
-        return {
-            rowHeight: this.rowHeight,
-            rowTop: this.rowHeight * index
-        };
-    }
-
     private onCacheUpdated(): void {
-        this.updateRowIndexes();
+        this.updateRowIndexesAndBounds();
         let modelUpdatedEvent = <ModelUpdatedEvent> { animate: true, keepRenderedRows: true };
         this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, modelUpdatedEvent);
     }
 
-    public updateRowIndexes(): void {
+    public updateRowIndexesAndBounds(): void {
         let cacheExists = _.exists(this.rootNode) && _.exists(this.rootNode.childrenCache);
         if (cacheExists) {
             // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
             let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
-            let numberSequence = new NumberSequence();
-            enterpriseCache.setDisplayIndexes(numberSequence);
+            this.resetRowTops(enterpriseCache);
+            this.setDisplayIndexes(enterpriseCache);
         }
+    }
+
+    private setDisplayIndexes(cache: EnterpriseCache): void {
+        let numberSequence = new NumberSequence();
+        let nextRowTop = {value: 0};
+        cache.setDisplayIndexes(numberSequence, nextRowTop);
+    }
+
+    // resetting row tops is needed for animation, as part of the operation is saving the old location,
+    // which is needed for rows that are transitioning in
+    private resetRowTops(cache: EnterpriseCache): void {
+        let numberSequence = new NumberSequence();
+        cache.forEachNodeDeep( rowNode => rowNode.clearRowTop(), numberSequence);
     }
 
     public getRow(index: number): RowNode {
@@ -264,10 +282,16 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         if (cacheExists) {
             // todo: should not be casting here, the RowModel should use IEnterpriseRowModel interface?
             let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
-            lastRow = enterpriseCache.getLastDisplayedIndex();
+            lastRow = enterpriseCache.getDisplayIndexEnd() - 1;
         } else {
             lastRow = 0;
         }
+
+        // this doesn't make sense, but it works, if there are now rows, then -1 is returned above
+        if (lastRow < 0) {
+            lastRow = 0;
+        }
+
         return lastRow;
     }
 
@@ -275,17 +299,33 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         return this.getPageLastRow() + 1;
     }
 
-    public getRowIndexAtPixel(pixel: number): number {
-        if (this.rowHeight !== 0) { // avoid divide by zero error
-            let rowIndexForPixel = Math.floor(pixel / this.rowHeight);
-            if (rowIndexForPixel > this.getPageLastRow()) {
-                return this.getPageLastRow();
-            } else {
-                return rowIndexForPixel;
-            }
-        } else {
-            return 0;
+    public getRowBounds(index: number): RowBounds {
+
+        let cacheMissing = _.missing(this.rootNode) || _.missing(this.rootNode.childrenCache);
+
+        if (cacheMissing) {
+            return {
+                rowTop: 0,
+                rowHeight: this.rowHeight
+            };
         }
+
+        let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
+        return enterpriseCache.getRowBounds(index);
+    }
+
+    public getRowIndexAtPixel(pixel: number): number {
+
+        if (pixel === 0) return 0;
+
+        let cacheMissing = _.missing(this.rootNode) || _.missing(this.rootNode.childrenCache);
+
+        if (cacheMissing) return 0;
+
+        let enterpriseCache = <EnterpriseCache> this.rootNode.childrenCache;
+        let result = enterpriseCache.getRowIndexAtPixel(pixel);
+
+        return result;
     }
 
     public getCurrentPageHeight(): number {
@@ -321,6 +361,11 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         }
     }
 
+    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+        if (_.exists(firstInRange) && firstInRange.parent !== lastInRange.parent) return [];
+        return lastInRange.parent.childrenCache.getRowNodesInRange(firstInRange, lastInRange);
+    }
+
     public getBlockState(): any {
         if (this.rowNodeBlockLoader) {
             return this.rowNodeBlockLoader.getBlockState();
@@ -332,5 +377,4 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     public isRowPresent(rowNode: RowNode): boolean {
         return false;
     }
-
 }

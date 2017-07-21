@@ -1,10 +1,15 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17,6 +22,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_1 = require("ag-grid");
 var EnterpriseBlock = (function (_super) {
     __extends(EnterpriseBlock, _super);
@@ -51,7 +57,7 @@ var EnterpriseBlock = (function (_super) {
     EnterpriseBlock.prototype.getNodeIdPrefix = function () {
         return this.nodeIdPrefix;
     };
-    EnterpriseBlock.prototype.getRow = function (rowIndex) {
+    EnterpriseBlock.prototype.getRow = function (displayRowIndex) {
         // do binary search of tree
         // http://oli.me.uk/2013/06/08/searching-javascript-arrays-with-a-binary-search/
         var bottomPointer = this.getStartRow();
@@ -62,34 +68,26 @@ var EnterpriseBlock = (function (_super) {
         var actualEnd = (virtualRowCount < endRow) ? virtualRowCount : endRow;
         var topPointer = actualEnd - 1;
         if (ag_grid_1._.missing(topPointer) || ag_grid_1._.missing(bottomPointer)) {
-            console.log("ag-grid: error: topPointer = " + topPointer + ", bottomPointer = " + bottomPointer);
+            console.warn("ag-grid: error: topPointer = " + topPointer + ", bottomPointer = " + bottomPointer);
             return null;
         }
-        var count = 0;
         while (true) {
-            count++;
-            if (count > 1000) {
-                debugger;
-            }
             var midPointer = Math.floor((bottomPointer + topPointer) / 2);
             var currentRowNode = _super.prototype.getRowUsingLocalIndex.call(this, midPointer);
-            if (!currentRowNode) {
-                console.log("missing rowNode");
-            }
-            if (currentRowNode.rowIndex === rowIndex) {
+            if (currentRowNode.rowIndex === displayRowIndex) {
                 return currentRowNode;
             }
             var childrenCache = currentRowNode.childrenCache;
-            if (currentRowNode.rowIndex === rowIndex) {
+            if (currentRowNode.rowIndex === displayRowIndex) {
                 return currentRowNode;
             }
-            else if (currentRowNode.expanded && childrenCache && childrenCache.isIndexInCache(rowIndex)) {
-                return childrenCache.getRow(rowIndex);
+            else if (currentRowNode.expanded && childrenCache && childrenCache.isDisplayIndexInCache(displayRowIndex)) {
+                return childrenCache.getRow(displayRowIndex);
             }
-            else if (currentRowNode.rowIndex < rowIndex) {
+            else if (currentRowNode.rowIndex < displayRowIndex) {
                 bottomPointer = midPointer + 1;
             }
-            else if (currentRowNode.rowIndex > rowIndex) {
+            else if (currentRowNode.rowIndex > displayRowIndex) {
                 topPointer = midPointer - 1;
             }
         }
@@ -127,7 +125,10 @@ var EnterpriseBlock = (function (_super) {
             // rowNodes by id
             var idToUse = this.createIdForIndex(index);
             rowNode.setDataAndId(data, idToUse);
-            rowNode.key = data[this.groupField];
+            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode));
+            if (rowNode.group) {
+                rowNode.key = this.valueService.getValue(this.rowGroupColumn, rowNode);
+            }
         }
         else {
             rowNode.setDataAndId(undefined, undefined);
@@ -164,6 +165,7 @@ var EnterpriseBlock = (function (_super) {
         if (rowNode.group) {
             rowNode.expanded = false;
             rowNode.field = this.groupField;
+            rowNode.rowGroupColumn = this.rowGroupColumn;
         }
         return rowNode;
     };
@@ -177,8 +179,65 @@ var EnterpriseBlock = (function (_super) {
         keys.reverse();
         return keys;
     };
-    EnterpriseBlock.prototype.setDisplayIndexes = function (displayIndexSeq, virtualRowCount) {
-        this.displayStartIndex = displayIndexSeq.peek();
+    EnterpriseBlock.prototype.isPixelInRange = function (pixel) {
+        return pixel >= this.blockTop && pixel < (this.blockTop + this.blockHeight);
+    };
+    EnterpriseBlock.prototype.getRowBounds = function (index, virtualRowCount) {
+        var start = this.getStartRow();
+        var end = this.getEndRow();
+        for (var i = start; i <= end; i++) {
+            // the blocks can have extra rows in them, if they are the last block
+            // in the cache and the virtual row count doesn't divide evenly by the
+            if (i >= virtualRowCount) {
+                continue;
+            }
+            var rowNode = this.getRowUsingLocalIndex(i);
+            if (rowNode) {
+                if (rowNode.rowIndex === index) {
+                    return {
+                        rowHeight: rowNode.rowHeight,
+                        rowTop: rowNode.rowTop
+                    };
+                }
+                if (rowNode.group && rowNode.expanded && ag_grid_1._.exists(rowNode.childrenCache)) {
+                    var enterpriseCache = rowNode.childrenCache;
+                    if (enterpriseCache.isDisplayIndexInCache(index)) {
+                        return enterpriseCache.getRowBounds(index);
+                    }
+                }
+            }
+        }
+        console.error("ag-Grid: looking for invalid row index in Enterprise Row Model, index=" + index);
+        return null;
+    };
+    EnterpriseBlock.prototype.getRowIndexAtPixel = function (pixel, virtualRowCount) {
+        var start = this.getStartRow();
+        var end = this.getEndRow();
+        for (var i = start; i <= end; i++) {
+            // the blocks can have extra rows in them, if they are the last block
+            // in the cache and the virtual row count doesn't divide evenly by the
+            if (i >= virtualRowCount) {
+                continue;
+            }
+            var rowNode = this.getRowUsingLocalIndex(i);
+            if (rowNode) {
+                if (rowNode.isPixelInRange(pixel)) {
+                    return rowNode.rowIndex;
+                }
+                if (rowNode.group && rowNode.expanded && ag_grid_1._.exists(rowNode.childrenCache)) {
+                    var enterpriseCache = rowNode.childrenCache;
+                    if (enterpriseCache.isPixelInRange(pixel)) {
+                        return enterpriseCache.getRowIndexAtPixel(pixel);
+                    }
+                }
+            }
+        }
+        console.warn("ag-Grid: invalid pixel range for enterprise block " + pixel);
+        return 0;
+    };
+    EnterpriseBlock.prototype.setDisplayIndexes = function (displayIndexSeq, virtualRowCount, nextRowTop) {
+        this.displayIndexStart = displayIndexSeq.peek();
+        this.blockTop = nextRowTop.value;
         var start = this.getStartRow();
         var end = this.getEndRow();
         for (var i = start; i <= end; i++) {
@@ -191,14 +250,16 @@ var EnterpriseBlock = (function (_super) {
             if (rowNode) {
                 var rowIndex = displayIndexSeq.next();
                 rowNode.setRowIndex(rowIndex);
-                rowNode.rowTop = this.params.rowHeight * rowIndex;
+                rowNode.setRowTop(nextRowTop.value);
+                nextRowTop.value += rowNode.rowHeight;
                 if (rowNode.group && rowNode.expanded && ag_grid_1._.exists(rowNode.childrenCache)) {
                     var enterpriseCache = rowNode.childrenCache;
-                    enterpriseCache.setDisplayIndexes(displayIndexSeq);
+                    enterpriseCache.setDisplayIndexes(displayIndexSeq, nextRowTop);
                 }
             }
         }
-        this.displayEndIndex = displayIndexSeq.peek();
+        this.displayIndexEnd = displayIndexSeq.peek();
+        this.blockHeight = nextRowTop.value - this.blockTop;
     };
     EnterpriseBlock.prototype.createLoadParams = function () {
         var groupKeys = this.createGroupKeys(this.parentRowNode);
@@ -218,46 +279,56 @@ var EnterpriseBlock = (function (_super) {
         };
         return params;
     };
-    EnterpriseBlock.prototype.isIndexInBlock = function (index) {
-        return index >= this.displayStartIndex && index < this.displayEndIndex;
+    EnterpriseBlock.prototype.isDisplayIndexInBlock = function (displayIndex) {
+        return displayIndex >= this.displayIndexStart && displayIndex < this.displayIndexEnd;
     };
-    EnterpriseBlock.prototype.isBlockBefore = function (index) {
-        return index >= this.displayEndIndex;
+    EnterpriseBlock.prototype.isBlockBefore = function (displayIndex) {
+        return displayIndex >= this.displayIndexEnd;
     };
-    EnterpriseBlock.prototype.getDisplayStartIndex = function () {
-        return this.displayStartIndex;
+    EnterpriseBlock.prototype.getDisplayIndexStart = function () {
+        return this.displayIndexStart;
     };
-    EnterpriseBlock.prototype.getDisplayEndIndex = function () {
-        return this.displayEndIndex;
+    EnterpriseBlock.prototype.getDisplayIndexEnd = function () {
+        return this.displayIndexEnd;
     };
+    EnterpriseBlock.prototype.getBlockHeight = function () {
+        return this.blockHeight;
+    };
+    EnterpriseBlock.prototype.getBlockTop = function () {
+        return this.blockTop;
+    };
+    __decorate([
+        ag_grid_1.Autowired('context'),
+        __metadata("design:type", ag_grid_1.Context)
+    ], EnterpriseBlock.prototype, "context", void 0);
+    __decorate([
+        ag_grid_1.Autowired('rowRenderer'),
+        __metadata("design:type", ag_grid_1.RowRenderer)
+    ], EnterpriseBlock.prototype, "rowRenderer", void 0);
+    __decorate([
+        ag_grid_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_1.ColumnController)
+    ], EnterpriseBlock.prototype, "columnController", void 0);
+    __decorate([
+        ag_grid_1.Autowired('valueService'),
+        __metadata("design:type", ag_grid_1.ValueService)
+    ], EnterpriseBlock.prototype, "valueService", void 0);
+    __decorate([
+        ag_grid_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+    ], EnterpriseBlock.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        __param(0, ag_grid_1.Qualifier('loggerFactory')),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [ag_grid_1.LoggerFactory]),
+        __metadata("design:returntype", void 0)
+    ], EnterpriseBlock.prototype, "setBeans", null);
+    __decorate([
+        ag_grid_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], EnterpriseBlock.prototype, "init", null);
     return EnterpriseBlock;
 }(ag_grid_1.RowNodeBlock));
-__decorate([
-    ag_grid_1.Autowired('context'),
-    __metadata("design:type", ag_grid_1.Context)
-], EnterpriseBlock.prototype, "context", void 0);
-__decorate([
-    ag_grid_1.Autowired('rowRenderer'),
-    __metadata("design:type", ag_grid_1.RowRenderer)
-], EnterpriseBlock.prototype, "rowRenderer", void 0);
-__decorate([
-    ag_grid_1.Autowired('columnController'),
-    __metadata("design:type", ag_grid_1.ColumnController)
-], EnterpriseBlock.prototype, "columnController", void 0);
-__decorate([
-    ag_grid_1.Autowired('valueService'),
-    __metadata("design:type", ag_grid_1.ValueService)
-], EnterpriseBlock.prototype, "valueService", void 0);
-__decorate([
-    __param(0, ag_grid_1.Qualifier('loggerFactory')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [ag_grid_1.LoggerFactory]),
-    __metadata("design:returntype", void 0)
-], EnterpriseBlock.prototype, "setBeans", null);
-__decorate([
-    ag_grid_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], EnterpriseBlock.prototype, "init", null);
 exports.EnterpriseBlock = EnterpriseBlock;

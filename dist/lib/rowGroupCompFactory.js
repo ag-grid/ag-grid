@@ -1,4 +1,4 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,6 +9,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var rowGroupColumnsPanel_1 = require("./toolPanel/columnDrop/rowGroupColumnsPanel");
 var RowGroupCompFactory = (function () {
@@ -19,13 +20,13 @@ var RowGroupCompFactory = (function () {
         this.context.wireBean(rowGroupComp);
         return rowGroupComp;
     };
+    __decorate([
+        main_1.Autowired('context'),
+        __metadata("design:type", main_1.Context)
+    ], RowGroupCompFactory.prototype, "context", void 0);
+    RowGroupCompFactory = __decorate([
+        main_1.Bean('rowGroupCompFactory')
+    ], RowGroupCompFactory);
     return RowGroupCompFactory;
 }());
-__decorate([
-    main_1.Autowired('context'),
-    __metadata("design:type", main_1.Context)
-], RowGroupCompFactory.prototype, "context", void 0);
-RowGroupCompFactory = __decorate([
-    main_1.Bean('rowGroupCompFactory')
-], RowGroupCompFactory);
 exports.RowGroupCompFactory = RowGroupCompFactory;

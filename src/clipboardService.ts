@@ -11,7 +11,7 @@ import {
     LoggerFactory,
     SelectionController,
     IRowModel,
-    FloatingRowModel,
+    PinnedRowModel,
     ValueService,
     FocusedCellController,
     RowRenderer,
@@ -48,7 +48,7 @@ export class ClipboardService implements IClipboardService {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('rangeController') private rangeController: RangeController;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('floatingRowModel') private floatingRowModel: FloatingRowModel;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -122,7 +122,7 @@ export class ClipboardService implements IClipboardService {
         this.iterateActiveRanges(true, rowCallback);
 
         // this is very heavy, should possibly just refresh the specific cells?
-        this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
+        this.rowRenderer.refreshCells({rowNodes: updatedRowNodes, columns: updatedColumnIds});
 
         this.dispatchFlashCells(cellsToFlash);
     }
@@ -160,7 +160,7 @@ export class ClipboardService implements IClipboardService {
         }
 
         // this is very heavy, should possibly just refresh the specific cells?
-        this.rowRenderer.refreshCells(updatedRowNodes, updatedColumnIds);
+        this.rowRenderer.refreshCells({rowNodes: updatedRowNodes, columns: updatedColumnIds});
 
         this.dispatchFlashCells(cellsToFlash);
 
@@ -393,16 +393,16 @@ export class ClipboardService implements IClipboardService {
 
     private getRowNode(gridRow: GridRow): RowNode {
         switch (gridRow.floating) {
-            case Constants.FLOATING_TOP:
-                return this.floatingRowModel.getFloatingTopRowData()[gridRow.rowIndex];
-            case Constants.FLOATING_BOTTOM:
-                return this.floatingRowModel.getFloatingBottomRowData()[gridRow.rowIndex];
+            case Constants.PINNED_TOP:
+                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
+            case Constants.PINNED_BOTTOM:
+                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
             default:
                 return this.rowModel.getRow(gridRow.rowIndex);
         }
     }
 
-    public copySelectedRowsToClipboard(includeHeaders = false, columnKeys?: (string|Column|ColDef)[]): void {
+    public copySelectedRowsToClipboard(includeHeaders = false, columnKeys?: (string|Column)[]): void {
 
         let skipHeader = !includeHeaders;
         let deliminator = this.gridOptionsWrapper.getClipboardDeliminator();

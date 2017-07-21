@@ -1,4 +1,4 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,6 +9,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var PivotColDefService = (function () {
     function PivotColDefService() {
@@ -174,17 +175,17 @@ var PivotColDefService = (function () {
             }
         }
     };
+    __decorate([
+        main_1.Autowired('columnController'),
+        __metadata("design:type", main_1.ColumnController)
+    ], PivotColDefService.prototype, "columnController", void 0);
+    __decorate([
+        main_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", main_1.GridOptionsWrapper)
+    ], PivotColDefService.prototype, "gridOptionsWrapper", void 0);
+    PivotColDefService = __decorate([
+        main_1.Bean('pivotColDefService')
+    ], PivotColDefService);
     return PivotColDefService;
 }());
-__decorate([
-    main_1.Autowired('columnController'),
-    __metadata("design:type", main_1.ColumnController)
-], PivotColDefService.prototype, "columnController", void 0);
-__decorate([
-    main_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", main_1.GridOptionsWrapper)
-], PivotColDefService.prototype, "gridOptionsWrapper", void 0);
-PivotColDefService = __decorate([
-    main_1.Bean('pivotColDefService')
-], PivotColDefService);
 exports.PivotColDefService = PivotColDefService;

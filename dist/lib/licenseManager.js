@@ -1,4 +1,4 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,12 +9,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var main_2 = require("ag-grid/main");
 var md5_1 = require("./license/md5");
-var LicenseManager = LicenseManager_1 = (function () {
+var LicenseManager = (function () {
     function LicenseManager() {
     }
+    LicenseManager_1 = LicenseManager;
     LicenseManager.prototype.validateLicense = function () {
         var gridReleaseDate = LicenseManager_1.getGridReleaseDate();
         var valid = false;
@@ -137,15 +139,15 @@ var LicenseManager = LicenseManager_1 = (function () {
     LicenseManager.setLicenseKey = function (licenseKey) {
         LicenseManager_1.licenseKey = licenseKey;
     };
+    LicenseManager.RELEASE_INFORMATION = 'MTUwMDYzOTg4NDAwNA==';
+    __decorate([
+        main_1.Autowired('md5'),
+        __metadata("design:type", md5_1.MD5)
+    ], LicenseManager.prototype, "md5", void 0);
+    LicenseManager = LicenseManager_1 = __decorate([
+        main_1.Bean('licenseManager')
+    ], LicenseManager);
     return LicenseManager;
+    var LicenseManager_1;
 }());
-LicenseManager.RELEASE_INFORMATION = 'MTQ5ODQ4NjYzMTUwNA==';
-__decorate([
-    main_1.Autowired('md5'),
-    __metadata("design:type", md5_1.MD5)
-], LicenseManager.prototype, "md5", void 0);
-LicenseManager = LicenseManager_1 = __decorate([
-    main_1.Bean('licenseManager')
-], LicenseManager);
 exports.LicenseManager = LicenseManager;
-var LicenseManager_1;

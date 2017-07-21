@@ -1,5 +1,5 @@
-// ag-grid-enterprise v11.0.0
-import { IRowModel, RowNode, IViewportDatasource } from "ag-grid/main";
+// ag-grid-enterprise v12.0.0
+import { IRowModel, RowNode, IViewportDatasource, RowBounds } from "ag-grid/main";
 export declare class ViewportRowModel implements IRowModel {
     private gridOptionsWrapper;
     private eventService;
@@ -26,13 +26,11 @@ export declare class ViewportRowModel implements IRowModel {
     getPageLastRow(): number;
     getRowCount(): number;
     getRowIndexAtPixel(pixel: number): number;
-    getRowBounds(index: number): {
-        rowTop: number;
-        rowHeight: number;
-    };
+    getRowBounds(index: number): RowBounds;
     getCurrentPageHeight(): number;
     isEmpty(): boolean;
     isRowsToRender(): boolean;
+    getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
     forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
     private setRowData(rowData);
     private createBlankRowNode(rowIndex);

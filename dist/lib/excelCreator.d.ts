@@ -1,5 +1,5 @@
-// ag-grid-enterprise v11.0.0
-import { BaseGridSerializingSession, Column, ColumnController, ExcelCell, ExcelExportParams, ExcelStyle, GridOptionsWrapper, IExcelCreator, ProcessCellForExportParams, ProcessHeaderForExportParams, RowAccumulator, RowNode, RowSpanningAccumulator, RowType, ValueService } from "ag-grid/main";
+// ag-grid-enterprise v12.0.0
+import { BaseCreator, BaseGridSerializingSession, Column, ColumnController, ExcelCell, ExcelExportParams, ExcelStyle, GridOptionsWrapper, IExcelCreator, ProcessCellForExportParams, ProcessHeaderForExportParams, RowAccumulator, RowNode, RowSpanningAccumulator, RowType, ValueService } from "ag-grid/main";
 import { ExcelXmlFactory } from "./excelXmlFactory";
 export interface ExcelMixedStyle {
     key: string;
@@ -33,16 +33,17 @@ export declare class ExcelGridSerializingSession extends BaseGridSerializingSess
     private createCell(styleId, type, value);
     private createMergedCell(styleId, type, value, numOfCells);
 }
-export declare class ExcelCreator implements IExcelCreator {
+export declare class ExcelCreator extends BaseCreator<ExcelCell[][], ExcelGridSerializingSession, ExcelExportParams> implements IExcelCreator {
     private excelXmlFactory;
-    private downloader;
     private columnController;
     private valueService;
-    private gridSerializer;
-    private gridOptionsWrapper;
     private gridOptions;
     private stylingService;
-    exportDataAsExcel(params?: ExcelExportParams): void;
+    exportDataAsExcel(params?: ExcelExportParams): string;
     getDataAsExcelXml(params?: ExcelExportParams): string;
+    getMimeType(): string;
+    getDefaultFileName(): string;
+    getDefaultFileExtension(): string;
+    createSerializingSession(params?: ExcelExportParams): ExcelGridSerializingSession;
     private styleLinker(rowType, rowIndex, colIndex, value, column, node);
 }

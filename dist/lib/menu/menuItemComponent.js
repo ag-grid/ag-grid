@@ -1,10 +1,15 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14,6 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_1 = require("ag-grid");
 var svgFactory = ag_grid_1.SvgFactory.getInstance();
 var MenuItemComponent = (function (_super) {
@@ -85,24 +91,24 @@ var MenuItemComponent = (function (_super) {
         // console.log('MenuItemComponent->destroy() ' + this.instance);
         _super.prototype.destroy.call(this);
     };
+    // private instance = Math.random();
+    MenuItemComponent.TEMPLATE = '<div class="ag-menu-option">' +
+        '  <span id="eIcon" class="ag-menu-option-icon"></span>' +
+        '  <span id="eName" class="ag-menu-option-text"></span>' +
+        '  <span id="eShortcut" class="ag-menu-option-shortcut"></span>' +
+        '  <span id="ePopupPointer" class="ag-menu-option-popup-pointer"></span>' +
+        '</div>';
+    MenuItemComponent.EVENT_ITEM_SELECTED = 'itemSelected';
+    __decorate([
+        ag_grid_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+    ], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        ag_grid_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], MenuItemComponent.prototype, "init", null);
     return MenuItemComponent;
 }(ag_grid_1.Component));
-// private instance = Math.random();
-MenuItemComponent.TEMPLATE = '<div class="ag-menu-option">' +
-    '  <span id="eIcon" class="ag-menu-option-icon"></span>' +
-    '  <span id="eName" class="ag-menu-option-text"></span>' +
-    '  <span id="eShortcut" class="ag-menu-option-shortcut"></span>' +
-    '  <span id="ePopupPointer" class="ag-menu-option-popup-pointer"></span>' +
-    '</div>';
-MenuItemComponent.EVENT_ITEM_SELECTED = 'itemSelected';
-__decorate([
-    ag_grid_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", ag_grid_1.GridOptionsWrapper)
-], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    ag_grid_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], MenuItemComponent.prototype, "init", null);
 exports.MenuItemComponent = MenuItemComponent;

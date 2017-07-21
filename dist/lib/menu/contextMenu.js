@@ -1,10 +1,15 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14,6 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_1 = require("ag-grid");
 var clipboardService_1 = require("../clipboardService");
 var menuItemComponent_1 = require("./menuItemComponent");
@@ -30,7 +36,7 @@ var ContextMenuFactory = (function () {
             // if user clicks a cell
             defaultMenuOptions = ['copy', 'copyWithHeaders', 'paste', 'separator', 'toolPanel'];
             // only put in the export if normal row model, other row models confuse things with export.
-            if (this.rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_NORMAL) {
+            if (this.rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
                 defaultMenuOptions.push('export');
             }
         }
@@ -76,33 +82,33 @@ var ContextMenuFactory = (function () {
         });
         menu.afterGuiAttached(hidePopup);
     };
+    __decorate([
+        ag_grid_1.Autowired('context'),
+        __metadata("design:type", ag_grid_1.Context)
+    ], ContextMenuFactory.prototype, "context", void 0);
+    __decorate([
+        ag_grid_1.Autowired('popupService'),
+        __metadata("design:type", ag_grid_1.PopupService)
+    ], ContextMenuFactory.prototype, "popupService", void 0);
+    __decorate([
+        ag_grid_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+    ], ContextMenuFactory.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        ag_grid_1.Autowired('rowModel'),
+        __metadata("design:type", Object)
+    ], ContextMenuFactory.prototype, "rowModel", void 0);
+    __decorate([
+        ag_grid_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ContextMenuFactory.prototype, "init", null);
+    ContextMenuFactory = __decorate([
+        ag_grid_1.Bean('contextMenuFactory')
+    ], ContextMenuFactory);
     return ContextMenuFactory;
 }());
-__decorate([
-    ag_grid_1.Autowired('context'),
-    __metadata("design:type", ag_grid_1.Context)
-], ContextMenuFactory.prototype, "context", void 0);
-__decorate([
-    ag_grid_1.Autowired('popupService'),
-    __metadata("design:type", ag_grid_1.PopupService)
-], ContextMenuFactory.prototype, "popupService", void 0);
-__decorate([
-    ag_grid_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", ag_grid_1.GridOptionsWrapper)
-], ContextMenuFactory.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    ag_grid_1.Autowired('rowModel'),
-    __metadata("design:type", Object)
-], ContextMenuFactory.prototype, "rowModel", void 0);
-__decorate([
-    ag_grid_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], ContextMenuFactory.prototype, "init", null);
-ContextMenuFactory = __decorate([
-    ag_grid_1.Bean('contextMenuFactory')
-], ContextMenuFactory);
 exports.ContextMenuFactory = ContextMenuFactory;
 var ContextMenu = (function (_super) {
     __extends(ContextMenu, _super);
@@ -124,35 +130,35 @@ var ContextMenu = (function (_super) {
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     };
+    __decorate([
+        ag_grid_1.Autowired('context'),
+        __metadata("design:type", ag_grid_1.Context)
+    ], ContextMenu.prototype, "context", void 0);
+    __decorate([
+        ag_grid_1.Autowired('clipboardService'),
+        __metadata("design:type", clipboardService_1.ClipboardService)
+    ], ContextMenu.prototype, "clipboardService", void 0);
+    __decorate([
+        ag_grid_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_1.GridOptionsWrapper)
+    ], ContextMenu.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        ag_grid_1.Autowired('gridApi'),
+        __metadata("design:type", ag_grid_1.GridApi)
+    ], ContextMenu.prototype, "gridApi", void 0);
+    __decorate([
+        ag_grid_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_1.EventService)
+    ], ContextMenu.prototype, "eventService", void 0);
+    __decorate([
+        ag_grid_1.Autowired('menuItemMapper'),
+        __metadata("design:type", menuItemMapper_1.MenuItemMapper)
+    ], ContextMenu.prototype, "menuItemMapper", void 0);
+    __decorate([
+        ag_grid_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ContextMenu.prototype, "addMenuItems", null);
     return ContextMenu;
 }(ag_grid_1.Component));
-__decorate([
-    ag_grid_1.Autowired('context'),
-    __metadata("design:type", ag_grid_1.Context)
-], ContextMenu.prototype, "context", void 0);
-__decorate([
-    ag_grid_1.Autowired('clipboardService'),
-    __metadata("design:type", clipboardService_1.ClipboardService)
-], ContextMenu.prototype, "clipboardService", void 0);
-__decorate([
-    ag_grid_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", ag_grid_1.GridOptionsWrapper)
-], ContextMenu.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    ag_grid_1.Autowired('gridApi'),
-    __metadata("design:type", ag_grid_1.GridApi)
-], ContextMenu.prototype, "gridApi", void 0);
-__decorate([
-    ag_grid_1.Autowired('eventService'),
-    __metadata("design:type", ag_grid_1.EventService)
-], ContextMenu.prototype, "eventService", void 0);
-__decorate([
-    ag_grid_1.Autowired('menuItemMapper'),
-    __metadata("design:type", menuItemMapper_1.MenuItemMapper)
-], ContextMenu.prototype, "menuItemMapper", void 0);
-__decorate([
-    ag_grid_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], ContextMenu.prototype, "addMenuItems", null);

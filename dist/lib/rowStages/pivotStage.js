@@ -1,4 +1,4 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,6 +9,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var pivotColDefService_1 = require("./pivotColDefService");
 var PivotStage = (function () {
@@ -36,7 +37,7 @@ var PivotStage = (function () {
         var aggregationColumnsHash = aggregationColumns.map(function (column) { return column.getId(); }).join('#');
         var aggregationFuncsHash = aggregationColumns.map(function (column) { return column.getAggFunc().toString(); }).join('#');
         var aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
-        var aggregationFuncsChanged = this.aggregationColumnsHashLastTime !== aggregationFuncsHash;
+        var aggregationFuncsChanged = this.aggregationFuncsHashLastTime !== aggregationFuncsHash;
         this.aggregationColumnsHashLastTime = aggregationColumnsHash;
         this.aggregationFuncsHashLastTime = aggregationFuncsHash;
         if (uniqueValuesChanged || aggregationColumnsChanged || aggregationFuncsChanged) {
@@ -120,29 +121,29 @@ var PivotStage = (function () {
     PivotStage.prototype.getPivotColumnDefs = function () {
         return this.pivotColumnDefs;
     };
+    __decorate([
+        main_1.Autowired('rowModel'),
+        __metadata("design:type", Object)
+    ], PivotStage.prototype, "rowModel", void 0);
+    __decorate([
+        main_1.Autowired('valueService'),
+        __metadata("design:type", main_1.ValueService)
+    ], PivotStage.prototype, "valueService", void 0);
+    __decorate([
+        main_1.Autowired('columnController'),
+        __metadata("design:type", main_1.ColumnController)
+    ], PivotStage.prototype, "columnController", void 0);
+    __decorate([
+        main_1.Autowired('eventService'),
+        __metadata("design:type", main_1.EventService)
+    ], PivotStage.prototype, "eventService", void 0);
+    __decorate([
+        main_1.Autowired('pivotColDefService'),
+        __metadata("design:type", pivotColDefService_1.PivotColDefService)
+    ], PivotStage.prototype, "pivotColDefService", void 0);
+    PivotStage = __decorate([
+        main_1.Bean('pivotStage')
+    ], PivotStage);
     return PivotStage;
 }());
-__decorate([
-    main_1.Autowired('rowModel'),
-    __metadata("design:type", Object)
-], PivotStage.prototype, "rowModel", void 0);
-__decorate([
-    main_1.Autowired('valueService'),
-    __metadata("design:type", main_1.ValueService)
-], PivotStage.prototype, "valueService", void 0);
-__decorate([
-    main_1.Autowired('columnController'),
-    __metadata("design:type", main_1.ColumnController)
-], PivotStage.prototype, "columnController", void 0);
-__decorate([
-    main_1.Autowired('eventService'),
-    __metadata("design:type", main_1.EventService)
-], PivotStage.prototype, "eventService", void 0);
-__decorate([
-    main_1.Autowired('pivotColDefService'),
-    __metadata("design:type", pivotColDefService_1.PivotColDefService)
-], PivotStage.prototype, "pivotColDefService", void 0);
-PivotStage = __decorate([
-    main_1.Bean('pivotStage')
-], PivotStage);
 exports.PivotStage = PivotStage;

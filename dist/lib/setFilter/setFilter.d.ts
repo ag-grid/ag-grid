@@ -1,14 +1,20 @@
-// ag-grid-enterprise v11.0.0
-import { IDoesFilterPassParams, BaseFilter, ISetFilterParams } from "ag-grid/main";
+// ag-grid-enterprise v12.0.0
+import { BaseFilter, IDoesFilterPassParams, ISetFilterParams } from "ag-grid/main";
 export declare class SetFilter extends BaseFilter<string, ISetFilterParams, string[]> {
     private model;
     private suppressSorting;
     private eSelectAll;
+    private eSelectAllContainer;
     private eMiniFilter;
     private virtualList;
     private debounceFilterChanged;
+    private eCheckedIcon;
+    private eUncheckedIcon;
+    private eIndeterminateCheckedIcon;
+    private selected;
     constructor();
     customInit(): void;
+    private updateCheckboxIcon();
     initialiseFilterBodyUi(): void;
     modelFromFloatingFilter(from: string): string[];
     refreshFilterBodyUi(): void;

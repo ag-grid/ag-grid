@@ -1,10 +1,15 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14,6 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var RichSelectRow = (function (_super) {
     __extends(RichSelectRow, _super);
@@ -48,10 +54,10 @@ var RichSelectRow = (function (_super) {
             this.addDestroyFunc(childComponent.destroy.bind(childComponent));
         }
     };
+    __decorate([
+        main_1.Autowired('cellRendererService'),
+        __metadata("design:type", main_1.CellRendererService)
+    ], RichSelectRow.prototype, "cellRendererService", void 0);
     return RichSelectRow;
 }(main_1.Component));
-__decorate([
-    main_1.Autowired('cellRendererService'),
-    __metadata("design:type", main_1.CellRendererService)
-], RichSelectRow.prototype, "cellRendererService", void 0);
 exports.RichSelectRow = RichSelectRow;

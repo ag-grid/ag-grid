@@ -80,7 +80,10 @@ export class EnterpriseMenuFactory implements IMenuFactory {
         let hidePopup = this.popupService.addAsModalPopup(
             eMenuGui,
             true,
-            ()=> menu.destroy()
+            () => { // menu closed callback
+                menu.destroy();
+                column.setMenuVisible(false);
+            }
         );
 
         positionCallback(menu);
@@ -96,6 +99,8 @@ export class EnterpriseMenuFactory implements IMenuFactory {
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, (event: any) => {
             this.lastSelectedTab = event.key
         } );
+
+        column.setMenuVisible(true);
     }
 
     public isMenuEnabled(column: Column): boolean {
@@ -152,8 +157,8 @@ export class EnterpriseMenu {
 
         this.includeChecks[EnterpriseMenu.TAB_GENERAL] = ()=> true;
         this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => {
-            let isFilterEnabled = this.gridOptionsWrapper.isEnableFilter();
-            let isFloatingFiltersEnabled = this.gridOptionsWrapper.isFloatingFilter;
+            let isFilterEnabled: boolean = this.gridOptionsWrapper.isEnableFilter();
+            let isFloatingFiltersEnabled: boolean = this.gridOptionsWrapper.isFloatingFilter();
             let isAnyFilteringEnabled = isFilterEnabled || isFloatingFiltersEnabled;
 
             let suppressFilterForThisColumn = this.column.getColDef().suppressFilter;

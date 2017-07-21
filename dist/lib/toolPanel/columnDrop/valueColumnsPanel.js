@@ -1,10 +1,15 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14,6 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var abstractColumnDropPanel_1 = require("./abstractColumnDropPanel");
 var svgFactory = main_1.SvgFactory.getInstance();
@@ -31,7 +37,7 @@ var ValuesColumnPanel = (function (_super) {
             dragAndDropService: this.dragAndDropService
         });
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to aggregate');
+        var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag here to aggregate');
         var title = localeTextFunc('values', 'Values');
         _super.prototype.init.call(this, {
             dragAndDropIcon: main_1.DragAndDropService.ICON_AGGREGATE,
@@ -59,6 +65,7 @@ var ValuesColumnPanel = (function (_super) {
     ValuesColumnPanel.prototype.updateColumns = function (columns) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
             this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST, { columns: columns });
+            // this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_UPDATED, {columns: columns} );
         }
         else {
             this.columnController.setValueColumns(columns);
@@ -67,36 +74,36 @@ var ValuesColumnPanel = (function (_super) {
     ValuesColumnPanel.prototype.getExistingColumns = function () {
         return this.columnController.getValueColumns();
     };
+    __decorate([
+        main_1.Autowired('columnController'),
+        __metadata("design:type", main_1.ColumnController)
+    ], ValuesColumnPanel.prototype, "columnController", void 0);
+    __decorate([
+        main_1.Autowired('eventService'),
+        __metadata("design:type", main_1.EventService)
+    ], ValuesColumnPanel.prototype, "eventService", void 0);
+    __decorate([
+        main_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", main_1.GridOptionsWrapper)
+    ], ValuesColumnPanel.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        main_1.Autowired('context'),
+        __metadata("design:type", main_1.Context)
+    ], ValuesColumnPanel.prototype, "context", void 0);
+    __decorate([
+        main_1.Autowired('loggerFactory'),
+        __metadata("design:type", main_1.LoggerFactory)
+    ], ValuesColumnPanel.prototype, "loggerFactory", void 0);
+    __decorate([
+        main_1.Autowired('dragAndDropService'),
+        __metadata("design:type", main_1.DragAndDropService)
+    ], ValuesColumnPanel.prototype, "dragAndDropService", void 0);
+    __decorate([
+        main_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ValuesColumnPanel.prototype, "passBeansUp", null);
     return ValuesColumnPanel;
 }(abstractColumnDropPanel_1.AbstractColumnDropPanel));
-__decorate([
-    main_1.Autowired('columnController'),
-    __metadata("design:type", main_1.ColumnController)
-], ValuesColumnPanel.prototype, "columnController", void 0);
-__decorate([
-    main_1.Autowired('eventService'),
-    __metadata("design:type", main_1.EventService)
-], ValuesColumnPanel.prototype, "eventService", void 0);
-__decorate([
-    main_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", main_1.GridOptionsWrapper)
-], ValuesColumnPanel.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    main_1.Autowired('context'),
-    __metadata("design:type", main_1.Context)
-], ValuesColumnPanel.prototype, "context", void 0);
-__decorate([
-    main_1.Autowired('loggerFactory'),
-    __metadata("design:type", main_1.LoggerFactory)
-], ValuesColumnPanel.prototype, "loggerFactory", void 0);
-__decorate([
-    main_1.Autowired('dragAndDropService'),
-    __metadata("design:type", main_1.DragAndDropService)
-], ValuesColumnPanel.prototype, "dragAndDropService", void 0);
-__decorate([
-    main_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], ValuesColumnPanel.prototype, "passBeansUp", null);
 exports.ValuesColumnPanel = ValuesColumnPanel;

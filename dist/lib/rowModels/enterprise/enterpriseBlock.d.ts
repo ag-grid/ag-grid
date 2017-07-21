@@ -1,14 +1,17 @@
-// ag-grid-enterprise v11.0.0
-import { NumberSequence, RowNodeBlock, RowNode } from "ag-grid";
+// ag-grid-enterprise v12.0.0
+import { NumberSequence, RowNodeBlock, RowNode, RowBounds } from "ag-grid";
 import { EnterpriseCache, EnterpriseCacheParams } from "./enterpriseCache";
 export declare class EnterpriseBlock extends RowNodeBlock {
     private context;
     private rowRenderer;
     private columnController;
     private valueService;
+    private gridOptionsWrapper;
     private logger;
-    private displayStartIndex;
-    private displayEndIndex;
+    private displayIndexStart;
+    private displayIndexEnd;
+    private blockTop;
+    private blockHeight;
     private params;
     private parentCache;
     private parentRowNode;
@@ -21,17 +24,24 @@ export declare class EnterpriseBlock extends RowNodeBlock {
     private createNodeIdPrefix();
     protected createIdForIndex(index: number): string;
     getNodeIdPrefix(): string;
-    getRow(rowIndex: number): RowNode;
+    getRow(displayRowIndex: number): RowNode;
     private setBeans(loggerFactory);
     protected init(): void;
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void;
     protected loadFromDatasource(): void;
     protected createBlankRowNode(rowIndex: number): RowNode;
     private createGroupKeys(groupNode);
-    setDisplayIndexes(displayIndexSeq: NumberSequence, virtualRowCount: number): void;
+    isPixelInRange(pixel: number): boolean;
+    getRowBounds(index: number, virtualRowCount: number): RowBounds;
+    getRowIndexAtPixel(pixel: number, virtualRowCount: number): number;
+    setDisplayIndexes(displayIndexSeq: NumberSequence, virtualRowCount: number, nextRowTop: {
+        value: number;
+    }): void;
     private createLoadParams();
-    isIndexInBlock(index: number): boolean;
-    isBlockBefore(index: number): boolean;
-    getDisplayStartIndex(): number;
-    getDisplayEndIndex(): number;
+    isDisplayIndexInBlock(displayIndex: number): boolean;
+    isBlockBefore(displayIndex: number): boolean;
+    getDisplayIndexStart(): number;
+    getDisplayIndexEnd(): number;
+    getBlockHeight(): number;
+    getBlockTop(): number;
 }

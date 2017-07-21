@@ -1,18 +1,18 @@
 import {
-    IFilterParams,
-    IDoesFilterPassParams,
-    Utils,
     _,
-    ICellRendererComp,
-    ICellRendererFunc,
-    Component,
     BaseFilter,
+    Component,
+    IDoesFilterPassParams,
+    ISetFilterParams,
     QuerySelector,
-    ISetFilterParams
+    SvgFactory,
+    Utils
 } from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
+
+let svgFactory = SvgFactory.getInstance();
 
 export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     private model: SetFilterModel;
@@ -20,11 +20,20 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
     @QuerySelector('#selectAll')
     private eSelectAll: HTMLInputElement;
+    @QuerySelector('#selectAllContainer')
+    private eSelectAllContainer: HTMLElement;
     @QuerySelector('.ag-filter-filter')
     private eMiniFilter: HTMLInputElement;
 
+
     private virtualList: VirtualList;
     private debounceFilterChanged:()=>void;
+
+    private eCheckedIcon: HTMLElement;
+    private eUncheckedIcon: HTMLElement;
+    private eIndeterminateCheckedIcon: HTMLElement;
+
+    private selected: boolean = true;
     
     constructor() {
         super();
@@ -37,7 +46,29 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         let debounceMs: number = this.filterParams && this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 0;
         this.debounceFilterChanged = _.debounce(changeFilter, debounceMs);
 
+
+        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.filterParams.column, svgFactory.createCheckboxCheckedIcon);
+        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column, svgFactory.createCheckboxUncheckedIcon);
+        this.eIndeterminateCheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column, svgFactory.createCheckboxIndeterminateIcon);
+
     }
+
+    private updateCheckboxIcon (){
+        if (this.eSelectAll.children){
+            for (let i=0; i<this.eSelectAll.children.length; i++){
+                this.eSelectAll.removeChild(this.eSelectAll.children.item(i));
+            }
+        }
+
+        if (this.eSelectAll.indeterminate){
+            this.eSelectAll.appendChild(this.eIndeterminateCheckedIcon);
+        }else if (this.eSelectAll.checked){
+            this.eSelectAll.appendChild(this.eCheckedIcon);
+        }else{
+            this.eSelectAll.appendChild(this.eUncheckedIcon);
+        }
+    }
+
 
     public initialiseFilterBodyUi(): void {
         this.virtualList = new VirtualList();
@@ -56,7 +87,9 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         this.eMiniFilter.value = this.model.getMiniFilter();
         this.addDestroyableEventListener(this.eMiniFilter, 'input', () => this.onMiniFilterChanged());
 
-        this.eSelectAll.onclick = this.onSelectAll.bind(this);
+        this.updateCheckboxIcon();
+
+        this.eSelectAllContainer.onclick = this.onSelectAll.bind(this);
         this.updateSelectAll();
         this.virtualList.refresh();
     }
@@ -72,7 +105,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     private createSetListItem(value: any): Component {
         let cellRenderer = this.filterParams.cellRenderer;
 
-        let listItem = new SetFilterListItem(value, cellRenderer);
+        let listItem = new SetFilterListItem(value, cellRenderer, this.filterParams.column);
         this.context.wireBean(listItem);
         listItem.setSelected(this.model.isValueSelected(value));
 
@@ -171,8 +204,8 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
                         <input class="ag-filter-filter" type="text" placeholder="${translate('searchOoo')}"/>
                     </div>
                     <div class="ag-filter-header-container">
-                        <label>
-                            <input id="selectAll" type="checkbox" class="ag-filter-checkbox"/>
+                        <label id="selectAllContainer">
+                            <div id="selectAll" class="ag-filter-checkbox"></div>
                             <span class="ag-filter-value">(${translate('selectAll')})</span>
                         </label>
                     </div>
@@ -190,6 +223,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         } else {
             this.eSelectAll.indeterminate = true;
         }
+        this.updateCheckboxIcon();
     }
 
     private onMiniFilterChanged() {
@@ -201,6 +235,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     }
 
     private onSelectAll() {
+        this.eSelectAll.checked = !this.eSelectAll.checked;
         let checked = this.eSelectAll.checked;
         if (checked) {
             this.model.selectEverything();
@@ -209,6 +244,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         }
         this.virtualList.refresh();
         this.debounceFilterChanged();
+        this.updateSelectAll();
     }
 
     private onItemSelected(value: any, selected: boolean) {

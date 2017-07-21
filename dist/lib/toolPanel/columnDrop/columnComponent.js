@@ -1,10 +1,15 @@
-// ag-grid-enterprise v11.0.0
+// ag-grid-enterprise v12.0.0
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14,6 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var virtualList_1 = require("../../rendering/virtualList");
 var aggFuncService_1 = require("../../aggregation/aggFuncService");
@@ -136,56 +142,56 @@ var ColumnComponent = (function (_super) {
         var comp = new AggItemComp(itemSelected, value.toString());
         return comp;
     };
+    ColumnComponent.EVENT_COLUMN_REMOVE = 'columnRemove';
+    ColumnComponent.TEMPLATE = "<span class=\"ag-column-drop-cell\">\n          <span class=\"ag-column-drop-cell-text\"></span>\n          <span class=\"ag-column-drop-cell-button\">&#10006;</span>\n        </span>";
+    __decorate([
+        main_1.Autowired('dragAndDropService'),
+        __metadata("design:type", main_1.DragAndDropService)
+    ], ColumnComponent.prototype, "dragAndDropService", void 0);
+    __decorate([
+        main_1.Autowired('columnController'),
+        __metadata("design:type", main_1.ColumnController)
+    ], ColumnComponent.prototype, "columnController", void 0);
+    __decorate([
+        main_1.Autowired('gridPanel'),
+        __metadata("design:type", main_1.GridPanel)
+    ], ColumnComponent.prototype, "gridPanel", void 0);
+    __decorate([
+        main_1.Autowired('context'),
+        __metadata("design:type", main_1.Context)
+    ], ColumnComponent.prototype, "context", void 0);
+    __decorate([
+        main_1.Autowired('popupService'),
+        __metadata("design:type", main_1.PopupService)
+    ], ColumnComponent.prototype, "popupService", void 0);
+    __decorate([
+        main_1.Autowired('aggFuncService'),
+        __metadata("design:type", aggFuncService_1.AggFuncService)
+    ], ColumnComponent.prototype, "aggFuncService", void 0);
+    __decorate([
+        main_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", main_1.GridOptionsWrapper)
+    ], ColumnComponent.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        main_1.Autowired('eventService'),
+        __metadata("design:type", main_1.EventService)
+    ], ColumnComponent.prototype, "eventService", void 0);
+    __decorate([
+        main_1.QuerySelector('.ag-column-drop-cell-text'),
+        __metadata("design:type", HTMLElement)
+    ], ColumnComponent.prototype, "eText", void 0);
+    __decorate([
+        main_1.QuerySelector('.ag-column-drop-cell-button'),
+        __metadata("design:type", HTMLElement)
+    ], ColumnComponent.prototype, "btRemove", void 0);
+    __decorate([
+        main_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ColumnComponent.prototype, "init", null);
     return ColumnComponent;
 }(main_1.Component));
-ColumnComponent.EVENT_COLUMN_REMOVE = 'columnRemove';
-ColumnComponent.TEMPLATE = "<span class=\"ag-column-drop-cell\">\n          <span class=\"ag-column-drop-cell-text\"></span>\n          <span class=\"ag-column-drop-cell-button\">&#10006;</span>\n        </span>";
-__decorate([
-    main_1.Autowired('dragAndDropService'),
-    __metadata("design:type", main_1.DragAndDropService)
-], ColumnComponent.prototype, "dragAndDropService", void 0);
-__decorate([
-    main_1.Autowired('columnController'),
-    __metadata("design:type", main_1.ColumnController)
-], ColumnComponent.prototype, "columnController", void 0);
-__decorate([
-    main_1.Autowired('gridPanel'),
-    __metadata("design:type", main_1.GridPanel)
-], ColumnComponent.prototype, "gridPanel", void 0);
-__decorate([
-    main_1.Autowired('context'),
-    __metadata("design:type", main_1.Context)
-], ColumnComponent.prototype, "context", void 0);
-__decorate([
-    main_1.Autowired('popupService'),
-    __metadata("design:type", main_1.PopupService)
-], ColumnComponent.prototype, "popupService", void 0);
-__decorate([
-    main_1.Autowired('aggFuncService'),
-    __metadata("design:type", aggFuncService_1.AggFuncService)
-], ColumnComponent.prototype, "aggFuncService", void 0);
-__decorate([
-    main_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", main_1.GridOptionsWrapper)
-], ColumnComponent.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    main_1.Autowired('eventService'),
-    __metadata("design:type", main_1.EventService)
-], ColumnComponent.prototype, "eventService", void 0);
-__decorate([
-    main_1.QuerySelector('.ag-column-drop-cell-text'),
-    __metadata("design:type", HTMLElement)
-], ColumnComponent.prototype, "eText", void 0);
-__decorate([
-    main_1.QuerySelector('.ag-column-drop-cell-button'),
-    __metadata("design:type", HTMLElement)
-], ColumnComponent.prototype, "btRemove", void 0);
-__decorate([
-    main_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], ColumnComponent.prototype, "init", null);
 exports.ColumnComponent = ColumnComponent;
 var AggItemComp = (function (_super) {
     __extends(AggItemComp, _super);
