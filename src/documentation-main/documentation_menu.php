@@ -9,7 +9,7 @@
                 <img src="/images/angular2_small.png" alt="Angular"/>
                 Angular
             <?php } elseif (isFrameworkPolymer()) { ?>
-                <img src="/images/polymer-small.png.png" alt="Polymer"/>
+                <img src="/images/polymer-small.png" alt="Polymer"/>
                 Polymer
             <?php } elseif (isFrameworkAngular1()) { ?>
                 <img src="/images/angularjs_small.png" alt="Angular 1"/>

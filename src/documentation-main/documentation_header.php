@@ -16,7 +16,7 @@ $cookieKey_expandAll = 'agGridExpandAll';
 $expandAll = $_COOKIE[$cookieKey_expandAll];
 
 // if framework url was not passed, or is invalid, set framework to all
-$allFrameworks = array('javascript', 'angular', 'angularjs', 'react', 'vue', 'aurelia', 'webcomponents', 'all');
+$allFrameworks = array('javascript', 'angular', 'angularjs', 'polymer', 'react', 'vue', 'aurelia', 'webcomponents', 'all');
 
 // check if framework exists
 if (!in_array($framework, $allFrameworks)) {
