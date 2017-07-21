@@ -73,7 +73,7 @@ var RowRenderer = (function (_super) {
         this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
         this.rowContainers = this.gridPanel.getRowContainers();
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.redrawAfterModelUpdate();
     };
     RowRenderer.prototype.onPageLoaded = function (refreshEvent) {
@@ -116,7 +116,7 @@ var RowRenderer = (function (_super) {
             });
         }
     };
-    RowRenderer.prototype.onFloatingRowDataChanged = function () {
+    RowRenderer.prototype.onPinnedRowDataChanged = function () {
         this.redrawAfterModelUpdate();
     };
     RowRenderer.prototype.onModelUpdated = function (refreshEvent) {

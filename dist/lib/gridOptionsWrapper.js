@@ -562,7 +562,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getRowHeightForNode = function (rowNode) {
         // check the function first, in case use set both function and
         // number, when using virtual pagination then function can be
-        // used for floating rows and the number for the body rows.
+        // used for pinned rows and the number for the body rows.
         if (typeof this.gridOptions.getRowHeight === 'function') {
             var params = {
                 node: rowNode,

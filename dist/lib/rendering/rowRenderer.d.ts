@@ -41,7 +41,7 @@ export declare class RowRenderer extends BeanStub {
     getAllCellsForColumn(column: Column): HTMLElement[];
     refreshFloatingRowComps(): void;
     private refreshFloatingRows(renderedRows, rowNodes, pinnedLeftContainerComp, pinnedRightContainerComp, bodyContainerComp, fullWidthContainerComp);
-    private onFloatingRowDataChanged();
+    private onPinnedRowDataChanged();
     private onModelUpdated(refreshEvent);
     private getRenderedIndexesForRowNodes(rowNodes);
     redrawRows(rowNodes: RowNode[]): void;

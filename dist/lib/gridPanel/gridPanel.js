@@ -1312,10 +1312,10 @@ var GridPanel = (function (_super) {
         if (this.autoHeight) {
             return;
         }
-        // padding top covers the header and the floating rows on top
+        // padding top covers the header and the pinned rows on top
         var floatingTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
         var paddingTop = totalHeaderHeight + floatingTopHeight;
-        // bottom is just the bottom floating rows
+        // bottom is just the bottom pinned rows
         var floatingBottomHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
         var floatingBottomTop = heightOfContainer - floatingBottomHeight;
         var bodyHeight = heightOfContainer - totalHeaderHeight - floatingBottomHeight - floatingTopHeight;

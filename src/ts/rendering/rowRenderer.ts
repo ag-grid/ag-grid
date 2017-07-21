@@ -79,7 +79,7 @@ export class RowRenderer extends BeanStub {
 
         this.rowContainers = this.gridPanel.getRowContainers();
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onFloatingRowDataChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.redrawAfterModelUpdate();
     }
 
@@ -151,7 +151,7 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    private onFloatingRowDataChanged(): void {
+    private onPinnedRowDataChanged(): void {
         this.redrawAfterModelUpdate();
     }
 

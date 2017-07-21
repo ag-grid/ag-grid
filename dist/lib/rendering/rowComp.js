@@ -982,7 +982,7 @@ var RowComp = (function (_super) {
         if (this.rowNode.group) {
             return;
         }
-        // we also don't allow selection of floating rows
+        // we also don't allow selection of pinned rows
         if (this.rowNode.rowPinned) {
             return;
         }

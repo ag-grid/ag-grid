@@ -143,7 +143,7 @@ var CellComp = (function (_super) {
     CellComp.prototype.setupCheckboxSelection = function () {
         // if boolean set, then just use it
         var colDef = this.column.getColDef();
-        // never allow selection on floating rows
+        // never allow selection on pinned rows
         if (this.node.rowPinned) {
             this.usingWrapper = false;
         }
