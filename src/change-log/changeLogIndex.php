@@ -62,6 +62,7 @@ include '../documentation-main/documentation_header.php';
         <li>AG-593: Added missing exports to exports.ts</li>
         <li>AG-628: Bugfix: Enterprise Data Source can now be set as a grid property (previously API had to be used).</li>
         <li>AG-629: Bugfix: Row order now maintained when using ag-Grid Enterprise and inserting with transaction using 'addIndex'.</li>
+        <li>AG-631: The internationalisation text 'drag here to aggregate' was incorrectly showing the 'drag here to pivot' message.</li>
     </ul>
 
     <p>
