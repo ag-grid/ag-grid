@@ -271,7 +271,7 @@ export class GridApi {
 
     // *** deprecated
     public refreshRows(rowNodes: RowNode[]): void {
-        console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) instead');
+        console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) or redrawRows({rowNodes: rows}) instead');
         this.refreshCells({rowNodes: rowNodes});
     }
 

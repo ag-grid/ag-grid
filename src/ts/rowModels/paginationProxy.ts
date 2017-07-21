@@ -86,9 +86,6 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
 
         this.onModelUpdated();
-
-        let paginationStartPage = this.gridOptionsWrapper.getPaginationStartPage();
-        this.currentPage = paginationStartPage ? paginationStartPage : 0;
     }
 
     public isLastRowFound(): boolean {
