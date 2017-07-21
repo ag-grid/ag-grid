@@ -138,6 +138,7 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li>cellRenderer.params.valueGetter() is now called cellRenderer.params.getValue()</li>
         <li>Grid property slaveGrids is now called alignedGrids.</li>
+        <li>Grid property paginationStartPage is gone, use api.paginationGoToPage(x) instead.</li>
     </ul>
 
     <h2>Version 11.0.x</h2>

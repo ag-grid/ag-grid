@@ -16,10 +16,7 @@ $paginationProperties = [
     '<p>True - The out of the box ag-Grid controls for navigation are hidden. This is useful if
     <i>pagination=true</i> and you want to provide your own pagination controls.</p>
     <p>False (Default) - when <i>pagination=true</i> It automatically shows at the bottom the necessary
-    controls so that the user can navigate through the different pages.</p>'],
-    ['paginationStartPage',
-    '<p>Number. The starting page that will be shown by ag-Grid. If this number
-    is greater than the maximum number of pages, ag-Grid will place the user in the last page.</p>']
+    controls so that the user can navigate through the different pages.</p>']
 ];
 
 
