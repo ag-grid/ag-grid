@@ -435,8 +435,8 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>suppressHorizontalScroll</th>
-            <td>Set to true to never show the horizontal scroll. This is useful if the grid is a slave grid,
-                and will scroll with a master grid.</td>
+            <td>Set to true to never show the horizontal scroll. This is useful if the grid is aligned with
+                another grid and will scroll when the other grid scrolls.</td>
         </tr>
         <tr>
             <th>suppressColumnVirtualisation</th>
