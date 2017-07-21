@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { SerializedTextFilter } from "./textFilter";
@@ -47,8 +47,11 @@ export declare class DateFloatingFilterComp extends Component implements IFloati
     private dateComponent;
     onFloatingFilterChanged: (change: BaseFloatingFilterChange<SerializedDateFilter>) => void;
     currentParentModel: () => SerializedDateFilter;
+    lastKnownModel: SerializedDateFilter;
     init(params: IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>): void;
     private onDateChanged();
+    equalModels(left: SerializedDateFilter, right: SerializedDateFilter): boolean;
+    asParentModel(): SerializedDateFilter;
     onParentModelChanged(parentModel: SerializedDateFilter): void;
 }
 export declare class NumberFloatingFilterComp extends InputTextFloatingFilterComp<SerializedNumberFilter, IFloatingFilterParams<SerializedNumberFilter, BaseFloatingFilterChange<SerializedNumberFilter>>> {

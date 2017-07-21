@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,9 +19,10 @@ var context_1 = require("../context/context");
 var column_1 = require("../entities/column");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var utils_1 = require("../utils");
-var AutoGroupColService = AutoGroupColService_1 = (function () {
+var AutoGroupColService = (function () {
     function AutoGroupColService() {
     }
+    AutoGroupColService_1 = AutoGroupColService;
     AutoGroupColService.prototype.createAutoGroupColumns = function (rowGroupColumns) {
         var _this = this;
         var groupAutoColumns = [];
@@ -52,6 +53,16 @@ var AutoGroupColService = AutoGroupColService_1 = (function () {
         }
         utils_1._.mergeDeep(defaultAutoColDef, userAutoColDef);
         defaultAutoColDef.colId = colId;
+        //If the user is not telling us his preference with regards wether the filtering
+        //should be suppressed, we suppress it if there are no leaf nodes
+        if (userAutoColDef == null || userAutoColDef.suppressFilter == null) {
+            var produceLeafNodeValues = defaultAutoColDef.field != null || defaultAutoColDef.valueGetter != null;
+            defaultAutoColDef.suppressFilter = !produceLeafNodeValues;
+        }
+        // if showing many cols, we don't want to show more than one with a checkbox for selection
+        if (index > 0) {
+            defaultAutoColDef.headerCheckboxSelection = false;
+        }
         var newCol = new column_1.Column(defaultAutoColDef, colId, true);
         this.context.wireBean(newCol);
         return newCol;
@@ -71,13 +82,6 @@ var AutoGroupColService = AutoGroupColService_1 = (function () {
                 headerName: rowGroupColDef.headerName,
                 headerValueGetter: rowGroupColDef.headerValueGetter
             });
-            // if showing many cols, we don't want to show more than one with a checkbox for selection
-            if (index > 0) {
-                defaultAutoColDef.headerCheckboxSelection = false;
-                defaultAutoColDef.cellRendererParams = {
-                    checkbox: false
-                };
-            }
             defaultAutoColDef.showRowGroup = rowGroupCol.getColId();
         }
         else {
@@ -85,20 +89,20 @@ var AutoGroupColService = AutoGroupColService_1 = (function () {
         }
         return defaultAutoColDef;
     };
+    AutoGroupColService.GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
+    AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID = AutoGroupColService_1.GROUP_AUTO_COLUMN_ID;
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], AutoGroupColService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], AutoGroupColService.prototype, "context", void 0);
+    AutoGroupColService = AutoGroupColService_1 = __decorate([
+        context_1.Bean('autoGroupColService')
+    ], AutoGroupColService);
     return AutoGroupColService;
+    var AutoGroupColService_1;
 }());
-AutoGroupColService.GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
-AutoGroupColService.GROUP_AUTO_COLUMN_BUNDLE_ID = AutoGroupColService_1.GROUP_AUTO_COLUMN_ID;
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], AutoGroupColService.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], AutoGroupColService.prototype, "context", void 0);
-AutoGroupColService = AutoGroupColService_1 = __decorate([
-    context_1.Bean('autoGroupColService')
-], AutoGroupColService);
 exports.AutoGroupColService = AutoGroupColService;
-var AutoGroupColService_1;

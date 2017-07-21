@@ -1,6 +1,6 @@
 import {SvgFactory} from "../../svgFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {ExpressionService} from "../../expressionService";
+import {ExpressionService} from "../../valueService/expressionService";
 import {EventService} from "../../eventService";
 import {Constants} from "../../constants";
 import {Utils as _} from "../../utils";
@@ -75,7 +75,9 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let embeddedRowMismatch = this.embeddedRowMismatch();
         if (embeddedRowMismatch) { return; }
 
-        if (_.missing(params.value)) {
+        //This allows for empty strings to appear as groups since
+        //it will only return for null or undefined.
+        if (params.value==null) {
             return;
         }
 
@@ -167,7 +169,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private addValueElement(): void {
         let params = this.params;
-        let rowNode = this.params.node;
+        let rowNode = this.displayedGroup;
         if (params.innerRenderer) {
             this.createFromInnerRenderer();
         } else if (rowNode.footer) {
@@ -212,9 +214,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private createGroupCell(): void {
         let params = this.params;
+        let rowGroupColumn = this.displayedGroup.rowGroupColumn;
 
         // we try and use the cellRenderer of the column used for the grouping if we can
-        let columnToUse: Column = params.node.rowGroupColumn ? params.node.rowGroupColumn : params.column;
+        let columnToUse: Column = rowGroupColumn ? rowGroupColumn : params.column;
 
         let groupName = this.params.value;
         let valueFormatted = this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName);
@@ -258,8 +261,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private updateChildCount(): void {
         let allChildrenCount = this.displayedGroup.allChildrenCount;
-        let text = allChildrenCount >= 0 ? `(${allChildrenCount})` : '';
-        this.eChildCount.innerHTML = text;
+        this.eChildCount.innerHTML = allChildrenCount >= 0 ? `(${allChildrenCount})` : ``;
     }
 
     private createLeafCell(): void {
@@ -282,8 +284,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let checkboxNeeded = this.isUserWantsSelected()
                 // footers cannot be selected
                 && !rowNode.footer
-                // floating rows cannot be selected
-                && !rowNode.floating
+                // pinned rows cannot be selected
+                && !rowNode.rowPinned
                 // flowers cannot be selected
                 && !rowNode.flower;
         if (checkboxNeeded) {
@@ -399,4 +401,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
+    public refresh(): boolean {
+        return false;
+    }
 }

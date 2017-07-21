@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -281,47 +281,47 @@ var HeaderGroupWrapperComp = (function (_super) {
         }
         return result;
     };
+    HeaderGroupWrapperComp.TEMPLATE = '<div class="ag-header-group-cell">' +
+        '<div ref="agResize" class="ag-header-cell-resize"></div>' +
+        '</div>';
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], HeaderGroupWrapperComp.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], HeaderGroupWrapperComp.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('horizontalDragService'),
+        __metadata("design:type", horizontalDragService_1.HorizontalDragService)
+    ], HeaderGroupWrapperComp.prototype, "dragService", void 0);
+    __decorate([
+        context_1.Autowired('dragAndDropService'),
+        __metadata("design:type", dragAndDropService_1.DragAndDropService)
+    ], HeaderGroupWrapperComp.prototype, "dragAndDropService", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], HeaderGroupWrapperComp.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('componentProvider'),
+        __metadata("design:type", componentProvider_1.ComponentProvider)
+    ], HeaderGroupWrapperComp.prototype, "componentProvider", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], HeaderGroupWrapperComp.prototype, "gridApi", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], HeaderGroupWrapperComp.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], HeaderGroupWrapperComp.prototype, "postConstruct", null);
     return HeaderGroupWrapperComp;
 }(component_1.Component));
-HeaderGroupWrapperComp.TEMPLATE = '<div class="ag-header-group-cell">' +
-    '<div ref="agResize" class="ag-header-cell-resize"></div>' +
-    '</div>';
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], HeaderGroupWrapperComp.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], HeaderGroupWrapperComp.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('horizontalDragService'),
-    __metadata("design:type", horizontalDragService_1.HorizontalDragService)
-], HeaderGroupWrapperComp.prototype, "dragService", void 0);
-__decorate([
-    context_1.Autowired('dragAndDropService'),
-    __metadata("design:type", dragAndDropService_1.DragAndDropService)
-], HeaderGroupWrapperComp.prototype, "dragAndDropService", void 0);
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], HeaderGroupWrapperComp.prototype, "context", void 0);
-__decorate([
-    context_1.Autowired('componentProvider'),
-    __metadata("design:type", componentProvider_1.ComponentProvider)
-], HeaderGroupWrapperComp.prototype, "componentProvider", void 0);
-__decorate([
-    context_1.Autowired('gridApi'),
-    __metadata("design:type", gridApi_1.GridApi)
-], HeaderGroupWrapperComp.prototype, "gridApi", void 0);
-__decorate([
-    context_1.Autowired('columnApi'),
-    __metadata("design:type", columnController_1.ColumnApi)
-], HeaderGroupWrapperComp.prototype, "columnApi", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], HeaderGroupWrapperComp.prototype, "postConstruct", null);
 exports.HeaderGroupWrapperComp = HeaderGroupWrapperComp;

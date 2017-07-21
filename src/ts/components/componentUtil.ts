@@ -20,12 +20,14 @@ export class ComponentUtil {
     public static OBJECT_PROPERTIES = [
         'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText', 'icons', 'datasource',
         'enterpriseDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
-        'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams'
+        'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes'
         //,'cellRenderers','cellEditors'
     ];
 
     public static ARRAY_PROPERTIES = [
-        'slaveGrids', 'rowData', 'floatingTopRowData', 'floatingBottomRowData', 'columnDefs', 'excelStyles'
+        'slaveGrids', 'alignedGrids', 'rowData',
+        'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData'
+        // deprecated
     ];
 
     public static NUMBER_PROPERTIES = [
@@ -33,8 +35,8 @@ export class ComponentUtil {
         'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded',
         'minColWidth', 'maxColWidth', 'viewportRowModelPageSize', 'viewportRowModelBufferSize',
         'layoutInterval', 'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests',
-        'cacheOverflowSize', 'paginationPageSize', 'infiniteBlockSize', 'infiniteInitialRowCount',
-        'scrollbarWidth', 'paginationStartPage', 'infiniteBlockSize'
+        'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount',
+        'scrollbarWidth', 'paginationStartPage','infiniteBlockSize'
     ];
 
     public static BOOLEAN_PROPERTIES = [
@@ -50,15 +52,16 @@ export class ComponentUtil {
         'suppressFieldDotNotation', 'enableRangeSelection', 'suppressEnterprise',
         'pivotPanelShow', 'suppressTouch', 'suppressAsyncEvents', 'allowContextMenuWithControlKey',
         'suppressContextMenu', 'suppressMenuFilterPanel', 'suppressMenuMainPanel', 'suppressMenuColumnPanel',
-        'enableStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
+        'enableStatusBar', 'alwaysShowStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
         'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
-        'suppressCopyRowsToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressAggFuncInHeader', 'suppressAggAtRootLevel',
+        'suppressCopyRowsToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation', 'suppressAggAtRootLevel',
         'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly', 'suppressRowHoverClass',
         'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'enableRtl', 'suppressClickEdit',
         'enableGroupEdit', 'embedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter',
         'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus',
         'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
-        'deltaRowDataMode', 'enforceRowDomOrder', 'accentedSort', 'pivotTotals'
+        'deltaRowDataMode', 'ensureDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection',
+        'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
@@ -245,9 +248,6 @@ _.iterateObject(Events, function (key, value) {
 });
 
 function checkForDeprecated(changes: any): void {
-    if (changes.ready || changes.onReady) {
-        console.warn('ag-grid: as of v3.3 ready event is now called gridReady, so the callback should be onGridReady');
-    }
     if (changes.rowDeselected || changes.onRowDeselected) {
         console.warn('ag-grid: as of v3.4 rowDeselected no longer exists. Please check the docs.');
     }

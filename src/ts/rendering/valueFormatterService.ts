@@ -3,7 +3,7 @@ import {Bean, Autowired} from "../context/context";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ExpressionService} from "../expressionService";
+import {ExpressionService} from "../valueService/expressionService";
 import {ValueFormatterParams} from "../entities/colDef";
 
 @Bean('valueFormatterService')
@@ -19,8 +19,8 @@ export class ValueFormatterService {
         let formatter: (value:any)=>string;
         let colDef = column.getColDef();
         // if floating, give preference to the floating formatter
-        if (rowNode.floating) {
-            formatter = colDef.floatingValueFormatter ? colDef.floatingValueFormatter : colDef.valueFormatter;
+        if (rowNode.rowPinned) {
+            formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
         } else {
             formatter = colDef.valueFormatter;
         }

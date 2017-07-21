@@ -7,18 +7,17 @@ import {RowRenderer} from "./rowRenderer";
 import {Column} from "../entities/column";
 import {Events} from "../events";
 import {EventService} from "../eventService";
-import {Context, Autowired, PostConstruct} from "../context/context";
+import {Autowired, Context, PostConstruct} from "../context/context";
 import {ColumnChangeEvent} from "../columnChangeEvent";
 import {FocusedCellController} from "../focusedCellController";
 import {Constants} from "../constants";
 import {CellRendererService} from "./cellRendererService";
 import {CellRendererFactory} from "./cellRendererFactory";
-import {ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {BeanStub} from "../context/beanStub";
 import {RowContainerComponent} from "./rowContainerComponent";
 import {ColumnAnimationService} from "./columnAnimationService";
-import {ColDef} from "../entities/colDef";
 import {PaginationProxy} from "../rowModels/paginationProxy";
 import {Component} from "../widgets/component";
 import {SvgFactory} from "../svgFactory";
@@ -44,13 +43,27 @@ class TempStubCell extends Component {
     }
 
     public init(params: ICellRendererParams): void {
-
         let eLoadingIcon = _.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null, svgFactory.createGroupLoadingIcon);
         this.eLoadingIcon.appendChild(eLoadingIcon);
 
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
     }
+
+    public refresh(params: any): boolean {
+        return false;
+    }
+}
+
+// used when we want to ensure order in the DOM - for accessibility reasons.
+// when inserting element, we go from left to right, and this object keeps
+// track of the last inserted element, so the next element can be placed
+// beside it.
+export interface LastPlacedElements {
+    eLeft: HTMLElement;
+    eRight: HTMLElement;
+    eBody: HTMLElement;
+    eFullWidth: HTMLElement;
 }
 
 export class RowComp extends BeanStub {
@@ -129,6 +142,10 @@ export class RowComp extends BeanStub {
 
     private rowFocusedLastTime: boolean;
 
+    private lastPlacedElements: LastPlacedElements;
+
+    private forPrint: boolean;
+
     constructor(parentScope: any,
                 rowRenderer: RowRenderer,
                 bodyContainerComp: RowContainerComponent,
@@ -136,7 +153,8 @@ export class RowComp extends BeanStub {
                 pinnedLeftContainerComp: RowContainerComponent,
                 pinnedRightContainerComp: RowContainerComponent,
                 node: RowNode,
-                animateIn: boolean) {
+                animateIn: boolean,
+                lastPlacedElements: LastPlacedElements) {
         super();
         this.parentScope = parentScope;
         this.rowRenderer = rowRenderer;
@@ -148,6 +166,7 @@ export class RowComp extends BeanStub {
 
         this.rowNode = node;
         this.animateIn = animateIn;
+        this.lastPlacedElements = lastPlacedElements;
     }
 
     private setupRowStub(animateInRowTop: boolean): void {
@@ -205,6 +224,30 @@ export class RowComp extends BeanStub {
         );
     }
 
+    public ensureInDomAfter(previousElement: LastPlacedElements): void {
+        if (_.missing(previousElement)) { return; }
+
+        let body = this.getBodyRowElement();
+        if (body) {
+            this.bodyContainerComp.ensureDomOrder(body, previousElement.eBody);
+        }
+
+        let left = this.getPinnedLeftRowElement();
+        if (left) {
+            this.pinnedLeftContainerComp.ensureDomOrder(left, previousElement.eLeft);
+        }
+
+        let right = this.getPinnedRightRowElement();
+        if (right) {
+            this.pinnedRightContainerComp.ensureDomOrder(right, previousElement.eRight);
+        }
+
+        let fullWidth = this.getFullWidthRowElement();
+        if (fullWidth) {
+            this.fullWidthContainerComp.ensureDomOrder(fullWidth, previousElement.eFullWidth);
+        }
+    }
+
     private setupFullWidthContainers(animateInRowTop: boolean): void {
         this.fullWidthRow = true;
         this.fullWidthCellRenderer = this.gridOptionsWrapper.getFullWidthCellRenderer();
@@ -242,12 +285,18 @@ export class RowComp extends BeanStub {
     private createFullWidthRow(animateInRowTop: boolean): void {
         let embedFullWidthRows = this.gridOptionsWrapper.isEmbedFullWidthRows();
 
+        let ensureDomOrder = _.exists(this.lastPlacedElements);
+
         if (embedFullWidthRows) {
 
             // if embedding the full width, it gets added to the body, left and right
-            this.eFullWidthRowBody = this.createRowContainer(this.bodyContainerComp, animateInRowTop);
-            this.eFullWidthRowLeft = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop);
-            this.eFullWidthRowRight = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop);
+            let previousBody = ensureDomOrder ? this.lastPlacedElements.eBody : null;
+            let previousLeft = ensureDomOrder ? this.lastPlacedElements.eLeft : null;
+            let previousRight = ensureDomOrder ? this.lastPlacedElements.eRight : null;
+
+            this.eFullWidthRowBody = this.createRowContainer(this.bodyContainerComp, animateInRowTop, previousBody, ensureDomOrder);
+            this.eFullWidthRowLeft = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop, previousLeft, ensureDomOrder);
+            this.eFullWidthRowRight = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop, previousRight, ensureDomOrder);
 
             _.addCssClass(this.eFullWidthRowLeft, 'ag-cell-last-left-pinned');
             _.addCssClass(this.eFullWidthRowRight, 'ag-cell-first-right-pinned');
@@ -255,7 +304,8 @@ export class RowComp extends BeanStub {
         } else {
 
             // otherwise we add to the fullWidth container as normal
-            this.eFullWidthRow = this.createRowContainer(this.fullWidthContainerComp, animateInRowTop);
+            let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
+            this.eFullWidthRow = this.createRowContainer(this.fullWidthContainerComp, animateInRowTop, previousFullWidth, ensureDomOrder);
 
             // and fake the mouse wheel for the fullWidth container
             if (!this.gridOptionsWrapper.isForPrint()) {
@@ -267,16 +317,24 @@ export class RowComp extends BeanStub {
     private setupNormalContainers(animateInRowTop: boolean): void {
         this.fullWidthRow = false;
 
-        this.eBodyRow = this.createRowContainer(this.bodyContainerComp, animateInRowTop);
+        let ensureDomOrder = _.exists(this.lastPlacedElements);
+
+        let previousBody = ensureDomOrder ? this.lastPlacedElements.eBody : null;
+        let previousLeft = ensureDomOrder ? this.lastPlacedElements.eLeft : null;
+        let previousRight = ensureDomOrder ? this.lastPlacedElements.eRight : null;
+
+        this.eBodyRow = this.createRowContainer(this.bodyContainerComp, animateInRowTop, previousBody, ensureDomOrder);
 
         if (!this.gridOptionsWrapper.isForPrint()) {
-            this.ePinnedLeftRow = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop);
-            this.ePinnedRightRow = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop);
+            this.ePinnedLeftRow = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop, previousLeft, ensureDomOrder);
+            this.ePinnedRightRow = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop, previousRight, ensureDomOrder);
         }
     }
 
     @PostConstruct
     public init(): void {
+
+        this.forPrint = this.gridOptionsWrapper.isForPrint();
 
         let animateInRowTop = this.animateIn && _.exists(this.rowNode.oldRowTop);
         
@@ -342,7 +400,7 @@ export class RowComp extends BeanStub {
     }
 
     public stopEditing(cancel = false): void {
-        this.forEachRenderedCell( renderedCell => {
+        this.forEachCellComp(renderedCell => {
             renderedCell.stopEditing(cancel);
         });
         if (this.editingRow) {
@@ -363,7 +421,7 @@ export class RowComp extends BeanStub {
         // don't do it if already editing
         if (this.editingRow) { return; }
 
-        this.forEachRenderedCell( renderedCell => {
+        this.forEachCellComp(renderedCell => {
             let cellStartedEdit = renderedCell === sourceRenderedCell;
             if (cellStartedEdit) {
                 renderedCell.startEditingIfEnabled(keyPress, charPress, cellStartedEdit)
@@ -433,7 +491,7 @@ export class RowComp extends BeanStub {
 
     private isCellInWrongRow(renderedCell: CellComp): boolean {
         let column = renderedCell.getColumn();
-        let rowWeWant = this.getRowForColumn(column);
+        let rowWeWant = this.getContainerForCell(column.getPinned());
 
         // if in wrong container, remove it
         let oldRow = renderedCell.getParentRow();
@@ -444,47 +502,58 @@ export class RowComp extends BeanStub {
     // the first time, it sets up all the cells. but then over time the cells might appear / dissappear or move
     // container (ie into pinned)
     private refreshCellsIntoRow() {
-
-        let displayedVirtualColumns = this.columnController.getAllDisplayedVirtualColumns();
-        let displayedColumns = this.columnController.getAllDisplayedColumns();
+        let centerCols = this.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
+        let leftColumns = this.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
+        let rightCols = this.columnController.getDisplayedRightColumnsForRow(this.rowNode);
 
         let cellsToRemove = Object.keys(this.renderedCells);
 
-        displayedVirtualColumns.forEach( (column: Column) => {
+        let ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder() && !this.forPrint;
+        let lastPlacedCells: LastPlacedElements = ensureDomOrder ? {eLeft: null, eRight: null, eBody: null, eFullWidth: null} : null;
+
+        let addColFunc = (column: Column) => {
             let renderedCell = this.getOrCreateCell(column);
-            this.ensureCellInCorrectRow(renderedCell);
+            this.ensureCellInCorrectContainer(renderedCell, lastPlacedCells);
             _.removeFromArray(cellsToRemove, column.getColId());
-        });
+        };
 
-        // we never remove rendered ones, as this would cause the cells to loose their values while editing
-        // as the grid is scrolling horizontally
-        cellsToRemove = _.filter(cellsToRemove, indexStr => {
-            let REMOVE_CELL : boolean = true;
-            let KEEP_CELL : boolean = false;
-            let renderedCell = this.renderedCells[indexStr];
+        centerCols.forEach(addColFunc);
+        leftColumns.forEach(addColFunc);
+        rightCols.forEach(addColFunc);
 
-            if (!renderedCell) { return REMOVE_CELL; }
-
-            // always remove the cell if it's in the wrong pinned location
-            if (this.isCellInWrongRow(renderedCell)) { return REMOVE_CELL; }
-
-            // we want to try and keep editing and focused cells
-            let editing = renderedCell.isEditing();
-            let focused = this.focusedCellController.isCellFocused(renderedCell.getGridCell());
-
-            let mightWantToKeepCell = editing || focused;
-
-            if (mightWantToKeepCell) {
-                let column = renderedCell.getColumn();
-                let cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
-                return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
-            } else {
-                return REMOVE_CELL;
-            }
-        });
+        // we never remove editing cells, as this would cause the cells to loose their values while editing
+        // as the grid is scrolling horizontally.
+        cellsToRemove = _.filter(cellsToRemove, this.isCellEligibleToBeRemoved.bind(this));
 
         // remove old cells from gui, but we don't destroy them, we might use them again
         this.removeRenderedCells(cellsToRemove);
+    }
+
+    private isCellEligibleToBeRemoved(indexStr: string): boolean {
+        let displayedColumns = this.columnController.getAllDisplayedColumns();
+
+        let REMOVE_CELL : boolean = true;
+        let KEEP_CELL : boolean = false;
+        let renderedCell = this.renderedCells[indexStr];
+
+        if (!renderedCell) { return REMOVE_CELL; }
+
+        // always remove the cell if it's in the wrong pinned location
+        if (this.isCellInWrongRow(renderedCell)) { return REMOVE_CELL; }
+
+        // we want to try and keep editing and focused cells
+        let editing = renderedCell.isEditing();
+        let focused = this.focusedCellController.isCellFocused(renderedCell.getGridCell());
+
+        let mightWantToKeepCell = editing || focused;
+
+        if (mightWantToKeepCell) {
+            let column = renderedCell.getColumn();
+            let cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
+            return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
+        } else {
+            return REMOVE_CELL;
+        }
     }
 
     private removeRenderedCells(colIds: string[]): void {
@@ -498,31 +567,74 @@ export class RowComp extends BeanStub {
         });
     }
 
-    private getRowForColumn(column: Column): HTMLElement {
-        switch (column.getPinned()) {
+    private getContainerForCell(pinnedType: string): HTMLElement {
+        switch (pinnedType) {
             case Column.PINNED_LEFT: return this.ePinnedLeftRow;
             case Column.PINNED_RIGHT: return this.ePinnedRightRow;
             default: return this.eBodyRow;
         }
     }
 
-    private ensureCellInCorrectRow(renderedCell: CellComp): void {
-        let eRowGui = renderedCell.getGui();
-        let column = renderedCell.getColumn();
+    private ensureCellInCorrectContainer(cellComp: CellComp, lastPlacedCells: LastPlacedElements): void {
+        let eCell = cellComp.getGui();
+        let column = cellComp.getColumn();
+        let pinnedType = column.getPinned();
 
-        let rowWeWant = this.getRowForColumn(column);
+        let eContainer = this.getContainerForCell(pinnedType);
+
+        let eCellBefore = this.getLastPlacedCell(lastPlacedCells, pinnedType);
+
+        let forcingOrder = _.exists(lastPlacedCells);
 
         // if in wrong container, remove it
-        let oldRow = renderedCell.getParentRow();
-        let inWrongRow = oldRow !== rowWeWant;
+        let eOldContainer = cellComp.getParentRow();
+        let inWrongRow = eOldContainer !== eContainer;
         if (inWrongRow) {
             // take out from old row
-            if (oldRow) {
-                oldRow.removeChild(eRowGui);
+            if (eOldContainer) {
+                eOldContainer.removeChild(eCell);
             }
 
-            rowWeWant.appendChild(eRowGui);
-            renderedCell.setParentRow(rowWeWant);
+            cellComp.setParentRow(eContainer);
+
+            eContainer.appendChild(eCell);
+
+            if (forcingOrder) {
+                _.insertWithDomOrder(eContainer, eCell, eCellBefore);
+            } else {
+                eContainer.appendChild(eCell);
+            }
+        } else {
+            // ensure it is in the right order
+            if (forcingOrder) {
+                _.ensureDomOrder(eContainer, eCell, eCellBefore);
+            }
+        }
+
+        this.addToLastPlacedCells(eCell, lastPlacedCells, pinnedType);
+    }
+
+    private getLastPlacedCell(lastPlacedCells: LastPlacedElements, pinned: string): HTMLElement {
+        if (!lastPlacedCells) { return null; }
+        switch (pinned) {
+            case Column.PINNED_LEFT: return lastPlacedCells.eLeft;
+            case Column.PINNED_RIGHT: return lastPlacedCells.eRight;
+            default: return lastPlacedCells.eBody;
+        }
+    }
+
+    private addToLastPlacedCells(eCell: HTMLElement, lastPlacedCells: LastPlacedElements, pinned: string): void {
+        if (!lastPlacedCells) { return; }
+        switch (pinned) {
+            case Column.PINNED_LEFT:
+                lastPlacedCells.eLeft = eCell;
+                break;
+            case Column.PINNED_RIGHT:
+                lastPlacedCells.eRight = eCell;
+                break;
+            default:
+                lastPlacedCells.eBody = eCell;
+                break;
         }
     }
 
@@ -591,7 +703,7 @@ export class RowComp extends BeanStub {
     }
 
     private setRowFocusClasses(): void {
-        let rowFocused = this.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.floating);
+        let rowFocused = this.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
         if (rowFocused !== this.rowFocusedLastTime) {
             this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
             this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
@@ -616,7 +728,7 @@ export class RowComp extends BeanStub {
         this.onTopChanged();
     }
 
-    public forEachRenderedCell(callback: (renderedCell: CellComp)=>void): void {
+    public forEachCellComp(callback: (renderedCell: CellComp)=>void): void {
         _.iterateObject(this.renderedCells, (key: any, renderedCell: CellComp)=> {
             if (renderedCell) {
                 callback(renderedCell);
@@ -628,9 +740,9 @@ export class RowComp extends BeanStub {
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells
-        this.forEachRenderedCell( cellComp =>
+        this.forEachCellComp(cellComp =>
             cellComp.refreshCell({
-                animate: event.update,
+                suppressFlash: !event.update,
                 newData: !event.update
             })
         );
@@ -666,7 +778,7 @@ export class RowComp extends BeanStub {
         if (_.exists(pixels)) {
 
             let pixelsWithOffset: number;
-            if (this.rowNode.isFloating()) {
+            if (this.rowNode.isRowPinned()) {
                 pixelsWithOffset = pixels;
             } else {
                 pixelsWithOffset = pixels - this.paginationProxy.getPixelOffset();
@@ -708,9 +820,9 @@ export class RowComp extends BeanStub {
     private addRowIndexes(): void {
         let rowIndexListener = () => {
             let rowStr = this.rowNode.rowIndex.toString();
-            if (this.rowNode.floating===Constants.FLOATING_BOTTOM) {
+            if (this.rowNode.rowPinned===Constants.PINNED_BOTTOM) {
                 rowStr = 'fb-' + rowStr;
-            } else if (this.rowNode.floating===Constants.FLOATING_TOP) {
+            } else if (this.rowNode.rowPinned===Constants.PINNED_TOP) {
                 rowStr = 'ft-' + rowStr;
             }
             this.eAllRowContainers.forEach( eRow => {
@@ -775,12 +887,18 @@ export class RowComp extends BeanStub {
 
         this.destroyScope();
         this.destroyFullWidthComponent();
-        this.forEachRenderedCell( renderedCell => renderedCell.destroy() );
 
 
         if (animate) {
             this.startRemoveAnimationFunctions.forEach( func => func() );
+
+            this.delayedDestroyFunctions.push( ()=> {
+                this.forEachCellComp(renderedCell => renderedCell.destroy() );
+            });
+
         } else {
+            this.forEachCellComp(renderedCell => renderedCell.destroy() );
+
             // we are not animating, so execute the second stage of removal now.
             // we call getAndClear, so that they are only called once
             let delayedDestroyFunctions = this.getAndClearDelayedDestroyFunctions();
@@ -969,13 +1087,13 @@ export class RowComp extends BeanStub {
         return agEvent;
     }
 
-    private createRowContainer(rowContainerComp: RowContainerComponent, slideRowIn: boolean): HTMLElement {
+    private createRowContainer(rowContainerComp: RowContainerComponent, slideRowIn: boolean, eElementBefore: HTMLElement, ensureDomOrder: boolean): HTMLElement {
         let eRow = document.createElement('div');
         eRow.setAttribute('role', 'row');
 
         this.addDomData(eRow);
 
-        rowContainerComp.appendRowElement(eRow);
+        rowContainerComp.appendRowElement(eRow, eElementBefore, ensureDomOrder);
 
         this.eAllRowContainers.push(eRow);
 
@@ -988,7 +1106,6 @@ export class RowComp extends BeanStub {
                 let rowTop = this.roundRowTopToBounds(this.rowNode.rowTop);
                 this.setRowTop(rowTop);
             }
-            // _.prepend(eParent, eRow);
         });
 
         if (this.animateIn) {
@@ -1056,8 +1173,8 @@ export class RowComp extends BeanStub {
             return;
         }
 
-        // we also don't allow selection of floating rows
-        if (this.rowNode.floating) {
+        // we also don't allow selection of pinned rows
+        if (this.rowNode.rowPinned) {
             return;
         }
 
@@ -1087,20 +1204,6 @@ export class RowComp extends BeanStub {
 
     public getRowNode(): RowNode {
         return this.rowNode;
-    }
-
-    public refreshCells(cols: (string|ColDef|Column)[], animate: boolean): void {
-        if (!cols) {
-            return;
-        }
-        let columnsToRefresh = this.columnController.getGridColumns(cols);
-
-        this.forEachRenderedCell( renderedCell => {
-            let colForCel = renderedCell.getColumn();
-            if (columnsToRefresh.indexOf(colForCel)>=0) {
-                renderedCell.refreshCell({animate: animate});
-            }
-        });
     }
 
     private addClassesFromRowClassFunc(): void {
@@ -1215,4 +1318,25 @@ export class RowComp extends BeanStub {
             this.eAllRowContainers.forEach( row => _.addCssClass(row, classStr));
         });
     }
+
+    // returns the pinned left container, either the normal one, or the embedded full with one if exists
+    public getPinnedLeftRowElement(): HTMLElement {
+        return this.ePinnedLeftRow ? this.ePinnedLeftRow : this.eFullWidthRowLeft;
+    }
+
+    // returns the pinned right container, either the normal one, or the embedded full with one if exists
+    public getPinnedRightRowElement(): HTMLElement {
+        return this.ePinnedRightRow ? this.ePinnedRightRow : this.eFullWidthRowRight;
+    }
+
+    // returns the body container, either the normal one, or the embedded full with one if exists
+    public getBodyRowElement(): HTMLElement {
+        return this.eBodyRow ? this.eBodyRow : this.eFullWidthRowBody;
+    }
+
+    // returns the full width container
+    public getFullWidthRowElement(): HTMLElement {
+        return this.eFullWidthRow;
+    }
+
 }

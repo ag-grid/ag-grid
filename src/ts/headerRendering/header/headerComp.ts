@@ -82,8 +82,6 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.setupSort();
         this.setupFilterIcon();
         this.setupText(params.displayName);
-
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.setMultiSortOrder.bind(this));
     }
 
     private setupText(displayName: string): void {
@@ -158,26 +156,33 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource);
     }
 
+    private removeSortIcons(): void {
+        _.removeFromParent(this.eSortAsc);
+        _.removeFromParent(this.eSortDesc);
+        _.removeFromParent(this.eSortNone);
+        _.removeFromParent(this.eSortOrder);
+    }
+
     public setupSort(): void {
         let enableSorting = this.params.enableSorting;
 
         if (!enableSorting) {
-            _.removeFromParent(this.eSortAsc);
-            _.removeFromParent(this.eSortDesc);
-            _.removeFromParent(this.eSortNone);
-            _.removeFromParent(this.eSortOrder);
+            this.removeSortIcons();
             return;
         }
 
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
-            this.eLabel.addEventListener('click', (event:MouseEvent) => {
+            this.addDestroyableEventListener(this.eLabel, 'click', (event:MouseEvent) => {
                 this.params.progressSort(event.shiftKey);
             });
         }
 
         this.addDestroyableEventListener(this.params.column, Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.onSortChanged();
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.setMultiSortOrder.bind(this));
+        this.setMultiSortOrder();
     }
 
     private onSortChanged(): void {

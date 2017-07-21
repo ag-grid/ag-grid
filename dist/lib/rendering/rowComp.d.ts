@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { CellComp } from "./cellComp";
@@ -7,7 +7,12 @@ import { RowRenderer } from "./rowRenderer";
 import { Column } from "../entities/column";
 import { BeanStub } from "../context/beanStub";
 import { RowContainerComponent } from "./rowContainerComponent";
-import { ColDef } from "../entities/colDef";
+export interface LastPlacedElements {
+    eLeft: HTMLElement;
+    eRight: HTMLElement;
+    eBody: HTMLElement;
+    eFullWidth: HTMLElement;
+}
 export declare class RowComp extends BeanStub {
     static EVENT_ROW_REMOVED: string;
     static DOM_DATA_KEY_RENDERED_ROW: string;
@@ -55,12 +60,15 @@ export declare class RowComp extends BeanStub {
     private initialised;
     private animateIn;
     private rowFocusedLastTime;
-    constructor(parentScope: any, rowRenderer: RowRenderer, bodyContainerComp: RowContainerComponent, fullWidthContainerComp: RowContainerComponent, pinnedLeftContainerComp: RowContainerComponent, pinnedRightContainerComp: RowContainerComponent, node: RowNode, animateIn: boolean);
+    private lastPlacedElements;
+    private forPrint;
+    constructor(parentScope: any, rowRenderer: RowRenderer, bodyContainerComp: RowContainerComponent, fullWidthContainerComp: RowContainerComponent, pinnedLeftContainerComp: RowContainerComponent, pinnedRightContainerComp: RowContainerComponent, node: RowNode, animateIn: boolean, lastPlacedElements: LastPlacedElements);
     private setupRowStub(animateInRowTop);
     private setupRowContainers(animateInRowTop);
     getAndClearDelayedDestroyFunctions(): Function[];
     getAndClearNextVMTurnFunctions(): Function[];
     private addDomData(eRowContainer);
+    ensureInDomAfter(previousElement: LastPlacedElements): void;
     private setupFullWidthContainers(animateInRowTop);
     private addMouseWheelListenerToFullWidthRow();
     private setupFullWidthGroupContainers(animateInRowTop);
@@ -79,9 +87,12 @@ export declare class RowComp extends BeanStub {
     private onGridColumnsChanged();
     private isCellInWrongRow(renderedCell);
     private refreshCellsIntoRow();
+    private isCellEligibleToBeRemoved(indexStr);
     private removeRenderedCells(colIds);
-    private getRowForColumn(column);
-    private ensureCellInCorrectRow(renderedCell);
+    private getContainerForCell(pinnedType);
+    private ensureCellInCorrectContainer(cellComp, lastPlacedCells);
+    private getLastPlacedCell(lastPlacedCells, pinned);
+    private addToLastPlacedCells(eCell, lastPlacedCells, pinned);
     private getOrCreateCell(column);
     private onRowSelected();
     private addRowSelectedListener();
@@ -91,7 +102,7 @@ export declare class RowComp extends BeanStub {
     private setRowFocusClasses();
     private addCellFocusedListener();
     private onPaginationChanged();
-    forEachRenderedCell(callback: (renderedCell: CellComp) => void): void;
+    forEachCellComp(callback: (renderedCell: CellComp) => void): void;
     private onNodeDataChanged(event);
     private addNodeDataChangedListener();
     private onTopChanged();
@@ -116,15 +127,18 @@ export declare class RowComp extends BeanStub {
     private addStyleFromRowStyleFunc();
     private createParams();
     private createEvent(event, eventSource);
-    private createRowContainer(rowContainerComp, slideRowIn);
+    private createRowContainer(rowContainerComp, slideRowIn, eElementBefore, ensureDomOrder);
     private animateRowIn(eRow, slideRowIn);
     private roundRowTopToBounds(rowTop);
     private onRowDblClick(event);
     onRowClick(event: MouseEvent): void;
     getRowNode(): RowNode;
-    refreshCells(cols: (string | ColDef | Column)[], animate: boolean): void;
     private addClassesFromRowClassFunc();
     private addGridClasses();
     private addExpandedAndContractedClasses();
     private addClassesFromRowClass();
+    getPinnedLeftRowElement(): HTMLElement;
+    getPinnedRightRowElement(): HTMLElement;
+    getBodyRowElement(): HTMLElement;
+    getFullWidthRowElement(): HTMLElement;
 }

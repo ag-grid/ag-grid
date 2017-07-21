@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -79,7 +79,7 @@ var SelectionController = (function () {
     };
     // should only be called if groupSelectsChildren=true
     SelectionController.prototype.updateGroupsFromChildrenSelections = function () {
-        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
+        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             console.warn('updateGroupsFromChildrenSelections not available when rowModel is not normal');
         }
         var inMemoryRowModel = this.rowModel;
@@ -169,7 +169,7 @@ var SelectionController = (function () {
     // Designed for use with 'children' as the group selection type,
     // where groups don't actually appear in the selection normally.
     SelectionController.prototype.getBestCostNodeSelection = function () {
-        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
+        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             console.warn('getBestCostNodeSelection is only avilable when using normal row model');
         }
         var inMemoryRowModel = this.rowModel;
@@ -212,26 +212,35 @@ var SelectionController = (function () {
     };
     SelectionController.prototype.deselectAllRowNodes = function (justFiltered) {
         if (justFiltered === void 0) { justFiltered = false; }
-        var inMemoryRowModel = this.rowModel;
         var callback = function (rowNode) { return rowNode.selectThisNode(false); };
-        // execute on all nodes in the model. if we are doing pagination, only
-        // the current page is used, thus if we 'deselect all' while on page 2,
-        // any selections on page 1 are left as is.
+        var rowModelInMemory = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY;
         if (justFiltered) {
+            if (!rowModelInMemory) {
+                console.error('ag-Grid: selecting just filtered only works with In Memory Row Model');
+                return;
+            }
+            var inMemoryRowModel = this.rowModel;
             inMemoryRowModel.forEachNodeAfterFilter(callback);
         }
         else {
-            inMemoryRowModel.forEachNode(callback);
+            utils_1.Utils.iterateObject(this.selectedNodes, function (id, rowNode) {
+                // remember the reference can be to null, as we never 'delete' from the map
+                if (rowNode) {
+                    callback(rowNode);
+                }
+            });
         }
+        // this clears down the map (whereas above only sets the items in map to 'undefined')
+        this.reset();
         // the above does not clean up the parent rows if they are selected
-        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL && this.groupSelectsChildren) {
+        if (rowModelInMemory && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
         }
         this.eventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
     };
     SelectionController.prototype.selectAllRowNodes = function (justFiltered) {
         if (justFiltered === void 0) { justFiltered = false; }
-        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_NORMAL) {
+        if (this.rowModel.getType() !== constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             throw "selectAll only available with normal row model, ie not " + this.rowModel.getType();
         }
         var inMemoryRowModel = this.rowModel;
@@ -243,7 +252,7 @@ var SelectionController = (function () {
             inMemoryRowModel.forEachNode(callback);
         }
         // the above does not clean up the parent rows if they are selected
-        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_NORMAL && this.groupSelectsChildren) {
+        if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
         }
         this.eventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
@@ -266,33 +275,33 @@ var SelectionController = (function () {
         var node = this.rowModel.getRow(index);
         this.selectNode(node, tryMulti);
     };
+    __decorate([
+        context_3.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], SelectionController.prototype, "eventService", void 0);
+    __decorate([
+        context_3.Autowired('rowModel'),
+        __metadata("design:type", Object)
+    ], SelectionController.prototype, "rowModel", void 0);
+    __decorate([
+        context_3.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], SelectionController.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        __param(0, context_2.Qualifier('loggerFactory')),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [logger_1.LoggerFactory]),
+        __metadata("design:returntype", void 0)
+    ], SelectionController.prototype, "setBeans", null);
+    __decorate([
+        context_4.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], SelectionController.prototype, "init", null);
+    SelectionController = __decorate([
+        context_1.Bean('selectionController')
+    ], SelectionController);
     return SelectionController;
 }());
-__decorate([
-    context_3.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], SelectionController.prototype, "eventService", void 0);
-__decorate([
-    context_3.Autowired('rowModel'),
-    __metadata("design:type", Object)
-], SelectionController.prototype, "rowModel", void 0);
-__decorate([
-    context_3.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], SelectionController.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    __param(0, context_2.Qualifier('loggerFactory')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [logger_1.LoggerFactory]),
-    __metadata("design:returntype", void 0)
-], SelectionController.prototype, "setBeans", null);
-__decorate([
-    context_4.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], SelectionController.prototype, "init", null);
-SelectionController = __decorate([
-    context_1.Bean('selectionController')
-], SelectionController);
 exports.SelectionController = SelectionController;

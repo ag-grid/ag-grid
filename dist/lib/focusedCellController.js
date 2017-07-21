@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -94,11 +94,11 @@ var FocusedCellController = (function () {
             var rowId = utils_1.Utils.getElementAttribute(eTarget, 'row');
             if (utils_1.Utils.exists(rowId) && utils_1.Utils.containsClass(eTarget, 'ag-row')) {
                 if (rowId.indexOf('ft') === 0) {
-                    floating = constants_1.Constants.FLOATING_TOP;
+                    floating = constants_1.Constants.PINNED_TOP;
                     rowId = rowId.substr(3);
                 }
                 else if (rowId.indexOf('fb') === 0) {
-                    floating = constants_1.Constants.FLOATING_BOTTOM;
+                    floating = constants_1.Constants.PINNED_BOTTOM;
                     rowId = rowId.substr(3);
                 }
                 else {
@@ -136,7 +136,7 @@ var FocusedCellController = (function () {
         return this.focusedCell.column === gridCell.column && this.isRowFocused(gridCell.rowIndex, gridCell.floating);
     };
     FocusedCellController.prototype.isRowNodeFocused = function (rowNode) {
-        return this.isRowFocused(rowNode.rowIndex, rowNode.floating);
+        return this.isRowFocused(rowNode.rowIndex, rowNode.rowPinned);
     };
     FocusedCellController.prototype.isAnyCellFocused = function () {
         return !!this.focusedCell;
@@ -162,27 +162,27 @@ var FocusedCellController = (function () {
         }
         this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_FOCUSED, event);
     };
+    __decorate([
+        context_1.Autowired('eventService'),
+        __metadata("design:type", eventService_1.EventService)
+    ], FocusedCellController.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], FocusedCellController.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], FocusedCellController.prototype, "columnController", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], FocusedCellController.prototype, "init", null);
+    FocusedCellController = __decorate([
+        context_1.Bean('focusedCellController')
+    ], FocusedCellController);
     return FocusedCellController;
 }());
-__decorate([
-    context_1.Autowired('eventService'),
-    __metadata("design:type", eventService_1.EventService)
-], FocusedCellController.prototype, "eventService", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], FocusedCellController.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], FocusedCellController.prototype, "columnController", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], FocusedCellController.prototype, "init", null);
-FocusedCellController = __decorate([
-    context_1.Bean('focusedCellController')
-], FocusedCellController);
 exports.FocusedCellController = FocusedCellController;

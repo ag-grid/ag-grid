@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,9 +18,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var sortController_1 = require("../sortController");
 var utils_1 = require("../utils");
-var valueService_1 = require("../valueService");
+var valueService_1 = require("../valueService/valueService");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var groupValueService_1 = require("../groupValueService");
 var columnController_1 = require("../columnController/columnController");
 var SortService = (function () {
     function SortService() {
@@ -133,29 +132,25 @@ var SortService = (function () {
             });
         });
     };
+    __decorate([
+        context_1.Autowired('sortController'),
+        __metadata("design:type", sortController_1.SortController)
+    ], SortService.prototype, "sortController", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], SortService.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('valueService'),
+        __metadata("design:type", valueService_1.ValueService)
+    ], SortService.prototype, "valueService", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], SortService.prototype, "gridOptionsWrapper", void 0);
+    SortService = __decorate([
+        context_1.Bean('sortService')
+    ], SortService);
     return SortService;
 }());
-__decorate([
-    context_1.Autowired('sortController'),
-    __metadata("design:type", sortController_1.SortController)
-], SortService.prototype, "sortController", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], SortService.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('valueService'),
-    __metadata("design:type", valueService_1.ValueService)
-], SortService.prototype, "valueService", void 0);
-__decorate([
-    context_1.Autowired('groupValueService'),
-    __metadata("design:type", groupValueService_1.GroupValueService)
-], SortService.prototype, "groupValueService", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], SortService.prototype, "gridOptionsWrapper", void 0);
-SortService = __decorate([
-    context_1.Bean('sortService')
-], SortService);
 exports.SortService = SortService;

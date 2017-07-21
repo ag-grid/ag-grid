@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -52,6 +52,8 @@ export declare class CellComp extends Component {
     private rowComp;
     private firstRightPinned;
     private lastLeftPinned;
+    private colsSpanning;
+    private setLeftFeature;
     constructor(column: Column, node: RowNode, scope: any, renderedRow: RowComp);
     private createGridCell();
     private addIndexChangeListener();
@@ -70,13 +72,16 @@ export declare class CellComp extends Component {
     private onRangeSelectionChanged();
     private addHighlightListener();
     private addChangeListener();
-    private animateCellWithDataChanged();
     private animateCellWithHighlight();
     private animateCell(cssName);
     private addCellFocusedListener();
     private checkCellFocused(event?);
+    private getCellWidth();
     private setWidthOnCell();
     init(): void;
+    private setupColSpan();
+    private checkColSpan();
+    private setColsSpanning(colsSpanning);
     private addColumnHoverListener();
     private onColumnHover();
     private addDomData();
@@ -101,7 +106,7 @@ export declare class CellComp extends Component {
     focusCell(forceBrowserFocus?: boolean): void;
     stopRowOrCellEdit(cancel?: boolean): void;
     stopEditing(cancel?: boolean): void;
-    private createParams();
+    private createParamsWithValue();
     private createEvent(event);
     getRenderedRow(): RowComp;
     isSuppressNavigable(): boolean;
@@ -121,11 +126,14 @@ export declare class CellComp extends Component {
     private createParentOfValue();
     isVolatile(): boolean;
     attemptCellRendererRefresh(): boolean;
+    private valuesAreEqual(val1, val2);
     refreshCell(params?: {
-        animate?: boolean;
+        suppressFlash?: boolean;
         newData?: boolean;
-        dontSkipRefresh?: boolean;
+        forceRefresh?: boolean;
+        volatile?: boolean;
     }): void;
+    private flashCell();
     private replaceCellContent();
     private addClassesFromRules();
     private putDataIntoCell();

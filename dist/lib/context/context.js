@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -86,18 +86,19 @@ var Context = (function () {
         utils_1.Utils.iterateObject(this.beans, function (key, beanEntry) {
             var constructorParamsMeta;
             if (beanEntry.bean.prototype.__agBeanMetaData
-                && beanEntry.bean.prototype.__agBeanMetaData.autowireMethods
-                && beanEntry.bean.prototype.__agBeanMetaData.autowireMethods.agConstructor) {
-                constructorParamsMeta = beanEntry.bean.prototype.__agBeanMetaData.autowireMethods.agConstructor;
+                && beanEntry.bean.prototype.__agBeanMetaData[beanEntry.bean.name]
+                && beanEntry.bean.prototype.__agBeanMetaData[beanEntry.bean.name].autowireMethods
+                && beanEntry.bean.prototype.__agBeanMetaData[beanEntry.bean.name].autowireMethods.agConstructor) {
+                constructorParamsMeta = beanEntry.bean.prototype.__agBeanMetaData[beanEntry.bean.name].autowireMethods.agConstructor;
             }
-            var constructorParams = _this.getBeansForParameters(constructorParamsMeta, beanEntry.beanName);
+            var constructorParams = _this.getBeansForParameters(constructorParamsMeta, beanEntry.bean.name);
             var newInstance = applyToConstructor(beanEntry.bean, constructorParams);
             beanEntry.beanInstance = newInstance;
             _this.logger.log('bean ' + _this.getBeanName(newInstance) + ' created');
         });
     };
     Context.prototype.createBeanEntry = function (Bean) {
-        var metaData = Bean.prototype.__agBeanMetaData;
+        var metaData = Bean.prototype.__agBeanMetaData[Bean.name];
         if (!metaData) {
             var beanName = void 0;
             if (Bean.prototype.constructor) {
@@ -130,20 +131,31 @@ var Context = (function () {
     };
     Context.prototype.autoWireBean = function (bean) {
         var _this = this;
-        if (!bean
-            || !bean.__agBeanMetaData
-            || !bean.__agBeanMetaData.agClassAttributes) {
-            return;
+        var currentProto = bean.__proto__;
+        var _loop_1 = function () {
+            var protoName = currentProto.constructor.name;
+            if (bean
+                && bean.__agBeanMetaData
+                && bean.__agBeanMetaData[protoName]
+                && bean.__agBeanMetaData[protoName].agClassAttributes) {
+                var attributes = bean.__agBeanMetaData[protoName].agClassAttributes;
+                if (!attributes) {
+                    return { value: void 0 };
+                }
+                var beanName_1 = this_1.getBeanName(currentProto);
+                attributes.forEach(function (attribute) {
+                    var otherBean = _this.lookupBeanInstance(beanName_1, attribute.beanName, attribute.optional);
+                    bean[attribute.attributeName] = otherBean;
+                });
+            }
+            currentProto = currentProto.__proto__;
+        };
+        var this_1 = this;
+        while (currentProto != null) {
+            var state_1 = _loop_1();
+            if (typeof state_1 === "object")
+                return state_1.value;
         }
-        var attributes = bean.__agBeanMetaData.agClassAttributes;
-        if (!attributes) {
-            return;
-        }
-        var beanName = this.getBeanName(bean);
-        attributes.forEach(function (attribute) {
-            var otherBean = _this.lookupBeanInstance(beanName, attribute.beanName, attribute.optional);
-            bean[attribute.attributeName] = otherBean;
-        });
     };
     Context.prototype.getBeanName = function (bean) {
         var constructorString = bean.constructor.toString();
@@ -153,8 +165,8 @@ var Context = (function () {
     Context.prototype.methodWireBean = function (bean) {
         var _this = this;
         var autowiredMethods;
-        if (bean.__agBeanMetaData) {
-            autowiredMethods = bean.__agBeanMetaData.autowireMethods;
+        if (bean.__agBeanMetaData && bean.__agBeanMetaData[bean.constructor.name]) {
+            autowiredMethods = bean.__agBeanMetaData[bean.constructor.name].autowireMethods;
         }
         utils_1.Utils.iterateObject(autowiredMethods, function (methodName, wireParams) {
             // skip constructor, as this is dealt with elsewhere
@@ -199,16 +211,16 @@ var Context = (function () {
     Context.prototype.postConstruct = function (beans) {
         beans.forEach(function (bean) {
             // try calling init methods
-            if (bean.__agBeanMetaData && bean.__agBeanMetaData.postConstructMethods) {
-                bean.__agBeanMetaData.postConstructMethods.forEach(function (methodName) { return bean[methodName](); });
+            if (bean.__agBeanMetaData && bean.__agBeanMetaData[bean.constructor.name] && bean.__agBeanMetaData[bean.constructor.name].postConstructMethods) {
+                bean.__agBeanMetaData[bean.constructor.name].postConstructMethods.forEach(function (methodName) { return bean[methodName](); });
             }
         });
     };
     Context.prototype.preConstruct = function (beans) {
         beans.forEach(function (bean) {
             // try calling init methods
-            if (bean.__agBeanMetaData && bean.__agBeanMetaData.preConstructMethods) {
-                bean.__agBeanMetaData.preConstructMethods.forEach(function (methodName) { return bean[methodName](); });
+            if (bean.__agBeanMetaData && bean.__agBeanMetaData[bean.constructor.name] && bean.__agBeanMetaData[bean.constructor.name].preConstructMethods) {
+                bean.__agBeanMetaData[bean.constructor.name].preConstructMethods.forEach(function (methodName) { return bean[methodName](); });
             }
         });
     };
@@ -224,8 +236,8 @@ var Context = (function () {
         // try calling destroy methods
         utils_1.Utils.iterateObject(this.beans, function (key, beanEntry) {
             var bean = beanEntry.beanInstance;
-            if (bean.__agBeanMetaData && bean.__agBeanMetaData.preDestroyMethods) {
-                bean.__agBeanMetaData.preDestroyMethods.forEach(function (methodName) { return bean[methodName](); });
+            if (bean.__agBeanMetaData && bean.__agBeanMetaData[bean.constructor.name] && bean.__agBeanMetaData[bean.constructor.name].preDestroyMethods) {
+                bean.__agBeanMetaData[bean.constructor.name].preDestroyMethods.forEach(function (methodName) { return bean[methodName](); });
             }
         });
         this.destroyed = true;
@@ -242,7 +254,7 @@ function applyToConstructor(constructor, argArray) {
     return new factoryFunction();
 }
 function PreConstruct(target, methodName, descriptor) {
-    var props = getOrCreateProps(target);
+    var props = getOrCreateProps(target, target.constructor.name);
     if (!props.postConstructMethods) {
         props.preConstructMethods = [];
     }
@@ -250,7 +262,7 @@ function PreConstruct(target, methodName, descriptor) {
 }
 exports.PreConstruct = PreConstruct;
 function PostConstruct(target, methodName, descriptor) {
-    var props = getOrCreateProps(target);
+    var props = getOrCreateProps(target, target.constructor.name);
     if (!props.postConstructMethods) {
         props.postConstructMethods = [];
     }
@@ -258,7 +270,7 @@ function PostConstruct(target, methodName, descriptor) {
 }
 exports.PostConstruct = PostConstruct;
 function PreDestroy(target, methodName, descriptor) {
-    var props = getOrCreateProps(target);
+    var props = getOrCreateProps(target, target.constructor.name);
     if (!props.preDestroyMethods) {
         props.preDestroyMethods = [];
     }
@@ -267,20 +279,24 @@ function PreDestroy(target, methodName, descriptor) {
 exports.PreDestroy = PreDestroy;
 function Bean(beanName) {
     return function (classConstructor) {
-        var props = getOrCreateProps(classConstructor.prototype);
+        var props = getOrCreateProps(classConstructor.prototype, classConstructor.name);
         props.beanName = beanName;
     };
 }
 exports.Bean = Bean;
 function Autowired(name) {
-    return autowiredFunc.bind(this, name, false);
+    return function (target, propertyKey, descriptor) {
+        autowiredFunc(target, name, false, target, propertyKey, null);
+    };
 }
 exports.Autowired = Autowired;
 function Optional(name) {
-    return autowiredFunc.bind(this, name, true);
+    return function (target, propertyKey, descriptor) {
+        autowiredFunc(target, name, true, target, propertyKey, null);
+    };
 }
 exports.Optional = Optional;
-function autowiredFunc(name, optional, classPrototype, methodOrAttributeName, index) {
+function autowiredFunc(target, name, optional, classPrototype, methodOrAttributeName, index) {
     if (name === null) {
         console.error('ag-Grid: Autowired name should not be null');
         return;
@@ -290,7 +306,7 @@ function autowiredFunc(name, optional, classPrototype, methodOrAttributeName, in
         return;
     }
     // it's an attribute on the class
-    var props = getOrCreateProps(classPrototype);
+    var props = getOrCreateProps(classPrototype, target.constructor.name);
     if (!props.agClassAttributes) {
         props.agClassAttributes = [];
     }
@@ -307,11 +323,11 @@ function Qualifier(name) {
             // it's a parameter on a method
             var methodName = void 0;
             if (methodOrAttributeName) {
-                props = getOrCreateProps(classPrototype);
+                props = getOrCreateProps(classPrototype, classPrototype.constructor.name);
                 methodName = methodOrAttributeName;
             }
             else {
-                props = getOrCreateProps(classPrototype.prototype);
+                props = getOrCreateProps(classPrototype.prototype, classPrototype.prototype.constructor.name);
                 methodName = 'agConstructor';
             }
             if (!props.autowireMethods) {
@@ -325,11 +341,12 @@ function Qualifier(name) {
     };
 }
 exports.Qualifier = Qualifier;
-function getOrCreateProps(target) {
-    var props = target.__agBeanMetaData;
-    if (!props) {
-        props = {};
-        target.__agBeanMetaData = props;
+function getOrCreateProps(target, instanceName) {
+    if (!target.__agBeanMetaData) {
+        target.__agBeanMetaData = {};
     }
-    return props;
+    if (!target.__agBeanMetaData[instanceName]) {
+        target.__agBeanMetaData[instanceName] = {};
+    }
+    return target.__agBeanMetaData[instanceName];
 }

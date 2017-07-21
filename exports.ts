@@ -23,7 +23,7 @@ export {
     Qualifier,
     PreDestroy
 } from "./dist/lib/context/context";
-export {QuerySelector, Listener} from "./dist/lib/widgets/componentAnnotations";
+export {QuerySelector, Listener, RefSelector} from "./dist/lib/widgets/componentAnnotations";
 
 // excel
 export {
@@ -92,7 +92,6 @@ export {TabbedItem} from "./dist/lib/layout/tabbedLayout"
 
 // misc
 export {FocusService} from "./dist/lib/misc/focusService";
-export {MethodNotImplementedException} from "./dist/lib/misc/methodNotImplementedException";
 export {simpleHttpRequest} from "./dist/lib/misc/simpleHttpRequest";
 
 // editing / cellEditors
@@ -131,8 +130,9 @@ export {FlattenStage} from "./dist/lib/rowModels/inMemory/flattenStage";
 export {SortStage} from "./dist/lib/rowModels/inMemory/sortStage";
 
 // row models
-export {FloatingRowModel} from "./dist/lib/rowModels/floatingRowModel";
+export {PinnedRowModel} from "./dist/lib/rowModels/pinnedRowModel";
 export {InMemoryRowModel, RowNodeTransaction} from "./dist/lib/rowModels/inMemory/inMemoryRowModel";
+export {ChangedPath} from "./dist/lib/rowModels/inMemory/changedPath";
 export {InMemoryNodeManager} from "./dist/lib/rowModels/inMemory/inMemoryNodeManager";
 export {InfiniteRowModel} from "./dist/lib/rowModels/infinite/infiniteRowModel";
 export {IEnterpriseGetRowsParams} from "./dist/lib/interfaces/iEnterpriseDatasource";
@@ -163,8 +163,9 @@ export {IRangeController} from "./dist/lib/interfaces/iRangeController"
 export {BaseFrameworkFactory} from "./dist/lib/baseFrameworkFactory";
 export {CellNavigationService} from "./dist/lib/cellNavigationService";
 export {ColumnChangeEvent} from "./dist/lib/columnChangeEvent";
+export {AlignedGridsService} from "./dist/lib/alignedGridsService";
 export {Constants} from "./dist/lib/constants";
-export {CsvCreator} from "./dist/lib/csvCreator";
+export {CsvCreator, BaseCreator} from "./dist/lib/csvCreator";
 export {Downloader} from "./dist/lib/downloader";
 export {Grid, GridParams} from "./dist/lib/grid";
 export {GridApi} from "./dist/lib/gridApi";
@@ -173,19 +174,15 @@ export {FocusedCellController} from "./dist/lib/focusedCellController";
 export {defaultGroupComparator} from "./dist/lib/functions";
 export {GridOptionsWrapper} from "./dist/lib/gridOptionsWrapper";
 export {EventService} from "./dist/lib/eventService";
-export {ExpressionService} from "./dist/lib/expressionService";
 export {GridCore} from "./dist/lib/gridCore";
 export {Logger} from "./dist/lib/logger";
-export {MasterSlaveService} from "./dist/lib/masterSlaveService";
 export {SelectionController} from "./dist/lib/selectionController";
 export {SortController} from "./dist/lib/sortController";
 export {SvgFactory} from "./dist/lib/svgFactory";
 export {TemplateService} from "./dist/lib/templateService";
 export {Utils, NumberSequence, _} from "./dist/lib/utils";
-export {ValueService} from "./dist/lib/valueService";
-export {GroupValueService} from "./dist/lib/groupValueService";
-export {GroupNameInfoParams} from "./dist/lib/groupValueService";
-export {GroupNameInfo} from "./dist/lib/groupValueService";
+export {ValueService} from "./dist/lib/valueService/valueService";
+export {ExpressionService} from "./dist/lib/valueService/expressionService";
 export {XmlFactory} from "./dist/lib/xmlFactory";
 export {GridSerializer, BaseGridSerializingSession, RowType} from "./dist/lib/gridSerializer";
 export {CsvExportParams, ExportParams} from "./dist/lib/exportParams"
@@ -195,7 +192,7 @@ export {RowAccumulator, RowSpanningAccumulator} from "./dist/lib/gridSerializer"
 export {ModelUpdatedEvent} from "./dist/lib/events"
 
 // uncatalogued
-export {IRowModel} from "./dist/lib/interfaces/iRowModel"
+export {IRowModel, RowBounds} from "./dist/lib/interfaces/iRowModel"
 export {IAggFuncService} from "./dist/lib/interfaces/iAggFuncService"
 export {IClipboardService} from "./dist/lib/interfaces/iClipboardService"
 export {IExcelCreator} from "./dist/lib/interfaces/iExcelCreator"
@@ -208,16 +205,25 @@ export {
     GridOptions,
     GetContextMenuItemsParams,
     GetContextMenuItems,
-    MenuItemDef
+    MenuItemDef,
+    GetNodeChildDetails,
+    NodeChildDetails,
+    GetMainMenuItemsParams,
+    GetMainMenuItems,
+    GetRowNodeIdFunc,
+    ProcessRowParams,
+    NavigateToNextCellParams,
+    TabToNextCellParams,
+    PostProcessPopupParams
 } from "./dist/lib/entities/gridOptions"
 export {OriginalColumnGroupChild} from "./dist/lib/entities/originalColumnGroupChild"
-export {IViewportDatasource} from "./dist/lib/interfaces/iViewportDatasource"
+export {IViewportDatasource, IViewportDatasourceParams} from "./dist/lib/interfaces/iViewportDatasource"
 export {IContextMenuFactory} from "./dist/lib/interfaces/iContextMenuFactory"
 export {ICompFactory} from "./dist/lib/interfaces/iCompFactory"
 export {IRowNodeStage, StageExecuteParams} from "./dist/lib/interfaces/iRowNodeStage"
 export {IFilterParams, IDoesFilterPassParams} from "./dist/lib/interfaces/iFilter"
 export {ISetFilterParams} from "./dist/lib/interfaces/iSetFilterParams"
-export {IDateParams, IDate} from "./dist/lib/rendering/dateComponent";
+export {IDateParams, IDate, IDateComp} from "./dist/lib/rendering/dateComponent";
 export {IAfterGuiAttachedParams, IComponent} from "./dist/lib/interfaces/iComponent";
 export {IFilter, IFilterComp} from "./dist/lib/interfaces/iFilter";
 export {IHeaderParams} from "./dist/lib/headerRendering/header/headerComp";
@@ -228,6 +234,8 @@ export {IsColumnFunc} from "./dist/lib/entities/colDef";
 export {ColumnApi} from "./dist/lib/columnController/columnController";
 export {IHeader} from "./dist/lib/headerRendering/header/headerComp";
 export {ICellRendererParams} from "./dist/lib/rendering/cellRenderers/iCellRenderer";
+export {WrapableInterface} from "./dist/lib/baseComponentWrapper";
+export {BaseComponentWrapper} from "./dist/lib/baseComponentWrapper";
 export {FrameworkComponentWrapper} from "./dist/lib/componentProvider";
 export {IFrameworkFactory} from "./dist/lib/interfaces/iFrameworkFactory";
 export {SerializedNumberFilter} from "./dist/lib/filter/numberFilter";

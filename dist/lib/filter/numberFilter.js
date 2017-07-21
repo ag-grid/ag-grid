@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -145,15 +145,15 @@ var NumberFilter = (function (_super) {
     NumberFilter.prototype.setType = function (filterType) {
         this.setFilterType(filterType);
     };
+    NumberFilter.LESS_THAN = 'lessThan'; //3;
+    __decorate([
+        componentAnnotations_1.QuerySelector('#filterNumberToPanel'),
+        __metadata("design:type", HTMLElement)
+    ], NumberFilter.prototype, "eNumberToPanel", void 0);
+    __decorate([
+        componentAnnotations_1.QuerySelector('#filterToText'),
+        __metadata("design:type", HTMLInputElement)
+    ], NumberFilter.prototype, "eFilterToTextField", void 0);
     return NumberFilter;
 }(baseFilter_1.ScalarBaseFilter));
-NumberFilter.LESS_THAN = 'lessThan'; //3;
-__decorate([
-    componentAnnotations_1.QuerySelector('#filterNumberToPanel'),
-    __metadata("design:type", HTMLElement)
-], NumberFilter.prototype, "eNumberToPanel", void 0);
-__decorate([
-    componentAnnotations_1.QuerySelector('#filterToText'),
-    __metadata("design:type", HTMLInputElement)
-], NumberFilter.prototype, "eFilterToTextField", void 0);
 exports.NumberFilter = NumberFilter;

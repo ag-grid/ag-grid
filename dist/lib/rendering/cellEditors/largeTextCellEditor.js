@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58,11 +58,11 @@ var LargeTextCellEditor = (function (_super) {
     LargeTextCellEditor.prototype.isPopup = function () {
         return true;
     };
+    LargeTextCellEditor.TEMPLATE = 
+    // tab index is needed so we can focus, which is needed for keyboard events
+    '<div class="ag-large-text" tabindex="0">' +
+        '<div class="ag-large-textarea"></div>' +
+        '</div>';
     return LargeTextCellEditor;
 }(component_1.Component));
-LargeTextCellEditor.TEMPLATE = 
-// tab index is needed so we can focus, which is needed for keyboard events
-'<div class="ag-large-text" tabindex="0">' +
-    '<div class="ag-large-textarea"></div>' +
-    '</div>';
 exports.LargeTextCellEditor = LargeTextCellEditor;

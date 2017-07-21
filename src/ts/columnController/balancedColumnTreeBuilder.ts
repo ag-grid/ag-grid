@@ -121,7 +121,6 @@ export class BalancedColumnTreeBuilder {
     }
 
     private createColumnGroup(columnKeyCreator: ColumnKeyCreator,  primaryColumns: boolean, colGroupDef: ColGroupDef, level: number): OriginalColumnGroup {
-
         let colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
 
         let groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
@@ -141,10 +140,25 @@ export class BalancedColumnTreeBuilder {
         return colGroupDefMerged;
     }
 
-    private createColumn(columnKeyCreator: ColumnKeyCreator,  primaryColumns: boolean, colDef3: ColDef): Column {
+    private createColumn(columnKeyCreator: ColumnKeyCreator,  primaryColumns: boolean, colDef: ColDef): Column {
         let colDefMerged: ColDef = <ColDef> {};
+
         _.assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
-        _.assign(colDefMerged, colDef3);
+
+        if(colDef.type) {
+            let typeNames = colDef.type.split(',');
+            typeNames.forEach((t) => {
+                let typeColDef = this.gridOptionsWrapper.getColumnTypes()[t.trim()];
+                if(typeColDef) {
+                    _.assign(colDefMerged, typeColDef);
+                } else {
+                    console.warn("ag-grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
+                }
+            });
+        }
+
+        _.assign(colDefMerged, colDef);
+
         this.checkForDeprecatedItems(colDefMerged);
 
         let colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);

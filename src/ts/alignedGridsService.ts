@@ -14,8 +14,8 @@ import {Qualifier} from "./context/context";
 import {Autowired} from "./context/context";
 import {PostConstruct} from "./context/context";
 
-@Bean('masterSlaveService')
-export class MasterSlaveService {
+@Bean('alignedGridsService')
+export class AlignedGridsService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
@@ -43,7 +43,7 @@ export class MasterSlaveService {
     }
 
     // common logic across all the fire methods
-    private fireEvent(callback: (slaveService: MasterSlaveService)=>void): void {
+    private fireEvent(callback: (alignedGridService: AlignedGridsService)=>void): void {
         // if we are already consuming, then we are acting on an event from a master,
         // so we don't cause a cyclic firing of events
         if (this.consuming) {
@@ -51,12 +51,12 @@ export class MasterSlaveService {
         }
 
         // iterate through the slave grids, and pass each slave service to the callback
-        let slaveGrids = this.gridOptionsWrapper.getSlaveGrids();
-        if (slaveGrids) {
-            slaveGrids.forEach( (slaveGridOptions: GridOptions) => {
-                if (slaveGridOptions.api) {
-                    let slaveService = slaveGridOptions.api.__getMasterSlaveService();
-                    callback(slaveService);
+        let otherGrids = this.gridOptionsWrapper.getAlignedGrids();
+        if (otherGrids) {
+            otherGrids.forEach( (otherGridOptions: GridOptions) => {
+                if (otherGridOptions.api) {
+                    let alignedGridService = otherGridOptions.api.__getAlignedGridService();
+                    callback(alignedGridService);
                 }
             });
         }
@@ -71,13 +71,13 @@ export class MasterSlaveService {
     }
 
     private fireColumnEvent(event: ColumnChangeEvent): void {
-        this.fireEvent( (slaveService: MasterSlaveService)=> {
+        this.fireEvent( (slaveService: AlignedGridsService)=> {
             slaveService.onColumnEvent(event);
         });
     }
 
     public fireHorizontalScrollEvent(horizontalScroll: number): void {
-        this.fireEvent( (slaveService: MasterSlaveService)=> {
+        this.fireEvent( (slaveService: AlignedGridsService)=> {
             slaveService.onScrollEvent(horizontalScroll);
         });
     }

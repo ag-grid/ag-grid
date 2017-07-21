@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,7 @@ exports.PreDestroy = context_1.PreDestroy;
 var componentAnnotations_1 = require("./dist/lib/widgets/componentAnnotations");
 exports.QuerySelector = componentAnnotations_1.QuerySelector;
 exports.Listener = componentAnnotations_1.Listener;
+exports.RefSelector = componentAnnotations_1.RefSelector;
 // dragAndDrop
 var dragAndDropService_1 = require("./dist/lib/dragAndDrop/dragAndDropService");
 exports.DragAndDropService = dragAndDropService_1.DragAndDropService;
@@ -113,8 +114,6 @@ exports.VerticalStack = verticalStack_1.VerticalStack;
 // misc
 var focusService_1 = require("./dist/lib/misc/focusService");
 exports.FocusService = focusService_1.FocusService;
-var methodNotImplementedException_1 = require("./dist/lib/misc/methodNotImplementedException");
-exports.MethodNotImplementedException = methodNotImplementedException_1.MethodNotImplementedException;
 var simpleHttpRequest_1 = require("./dist/lib/misc/simpleHttpRequest");
 exports.simpleHttpRequest = simpleHttpRequest_1.simpleHttpRequest;
 var largeTextCellEditor_1 = require("./dist/lib/rendering/cellEditors/largeTextCellEditor");
@@ -165,10 +164,12 @@ exports.FlattenStage = flattenStage_1.FlattenStage;
 var sortStage_1 = require("./dist/lib/rowModels/inMemory/sortStage");
 exports.SortStage = sortStage_1.SortStage;
 // row models
-var floatingRowModel_1 = require("./dist/lib/rowModels/floatingRowModel");
-exports.FloatingRowModel = floatingRowModel_1.FloatingRowModel;
+var pinnedRowModel_1 = require("./dist/lib/rowModels/pinnedRowModel");
+exports.PinnedRowModel = pinnedRowModel_1.PinnedRowModel;
 var inMemoryRowModel_1 = require("./dist/lib/rowModels/inMemory/inMemoryRowModel");
 exports.InMemoryRowModel = inMemoryRowModel_1.InMemoryRowModel;
+var changedPath_1 = require("./dist/lib/rowModels/inMemory/changedPath");
+exports.ChangedPath = changedPath_1.ChangedPath;
 var inMemoryNodeManager_1 = require("./dist/lib/rowModels/inMemory/inMemoryNodeManager");
 exports.InMemoryNodeManager = inMemoryNodeManager_1.InMemoryNodeManager;
 var infiniteRowModel_1 = require("./dist/lib/rowModels/infinite/infiniteRowModel");
@@ -198,10 +199,13 @@ var cellNavigationService_1 = require("./dist/lib/cellNavigationService");
 exports.CellNavigationService = cellNavigationService_1.CellNavigationService;
 var columnChangeEvent_1 = require("./dist/lib/columnChangeEvent");
 exports.ColumnChangeEvent = columnChangeEvent_1.ColumnChangeEvent;
+var alignedGridsService_1 = require("./dist/lib/alignedGridsService");
+exports.AlignedGridsService = alignedGridsService_1.AlignedGridsService;
 var constants_1 = require("./dist/lib/constants");
 exports.Constants = constants_1.Constants;
 var csvCreator_1 = require("./dist/lib/csvCreator");
 exports.CsvCreator = csvCreator_1.CsvCreator;
+exports.BaseCreator = csvCreator_1.BaseCreator;
 var downloader_1 = require("./dist/lib/downloader");
 exports.Downloader = downloader_1.Downloader;
 var grid_1 = require("./dist/lib/grid");
@@ -218,14 +222,10 @@ var gridOptionsWrapper_1 = require("./dist/lib/gridOptionsWrapper");
 exports.GridOptionsWrapper = gridOptionsWrapper_1.GridOptionsWrapper;
 var eventService_1 = require("./dist/lib/eventService");
 exports.EventService = eventService_1.EventService;
-var expressionService_1 = require("./dist/lib/expressionService");
-exports.ExpressionService = expressionService_1.ExpressionService;
 var gridCore_1 = require("./dist/lib/gridCore");
 exports.GridCore = gridCore_1.GridCore;
 var logger_1 = require("./dist/lib/logger");
 exports.Logger = logger_1.Logger;
-var masterSlaveService_1 = require("./dist/lib/masterSlaveService");
-exports.MasterSlaveService = masterSlaveService_1.MasterSlaveService;
 var selectionController_1 = require("./dist/lib/selectionController");
 exports.SelectionController = selectionController_1.SelectionController;
 var sortController_1 = require("./dist/lib/sortController");
@@ -238,10 +238,10 @@ var utils_1 = require("./dist/lib/utils");
 exports.Utils = utils_1.Utils;
 exports.NumberSequence = utils_1.NumberSequence;
 exports._ = utils_1._;
-var valueService_1 = require("./dist/lib/valueService");
+var valueService_1 = require("./dist/lib/valueService/valueService");
 exports.ValueService = valueService_1.ValueService;
-var groupValueService_1 = require("./dist/lib/groupValueService");
-exports.GroupValueService = groupValueService_1.GroupValueService;
+var expressionService_1 = require("./dist/lib/valueService/expressionService");
+exports.ExpressionService = expressionService_1.ExpressionService;
 var xmlFactory_1 = require("./dist/lib/xmlFactory");
 exports.XmlFactory = xmlFactory_1.XmlFactory;
 var gridSerializer_1 = require("./dist/lib/gridSerializer");
@@ -252,3 +252,5 @@ var logger_2 = require("./dist/lib/logger");
 exports.LoggerFactory = logger_2.LoggerFactory;
 var columnController_2 = require("./dist/lib/columnController/columnController");
 exports.ColumnApi = columnController_2.ColumnApi;
+var baseComponentWrapper_1 = require("./dist/lib/baseComponentWrapper");
+exports.BaseComponentWrapper = baseComponentWrapper_1.BaseComponentWrapper;

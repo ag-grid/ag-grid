@@ -64,6 +64,9 @@ export interface ColDef extends AbstractColDef {
     /** The field of the row to get the cells data from */
     field?: string;
 
+    /** A comma separated list of ColumnTypes to use as a template for this ColDef */
+    type?: string;
+
     /** Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field 'visible' and mark it false to hide,
      *  however we want all default values to be false and we want columns to be visible by default. */
     hide?: boolean;
@@ -118,20 +121,15 @@ export interface ColDef extends AbstractColDef {
     cellEditorFramework?: any;
     cellEditorParams?: any;
 
-    /** A function for rendering a floating cell. */
-    floatingCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
-    floatingCellRendererFramework?: any;
-    floatingCellRendererParams?: any;
-
-    /** DEPRECATED - A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    cellFormatter?: (params: any) => string;
-    /** DEPRECATED - A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    floatingCellFormatter?: (params: any) => string;
+    /** A function for rendering a pinned row cell. */
+    pinnedRowCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
+    pinnedRowCellRendererFramework?: any;
+    pinnedRowCellRendererParams?: any;
 
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     valueFormatter?: (params: ValueFormatterParams) => string | string;
-    /** A function to format a floating value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    floatingValueFormatter?: (params: ValueFormatterParams) => string | string;
+    /** A function to format a pinned row value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    pinnedRowValueFormatter?: (params: ValueFormatterParams) => string | string;
 
     /** Gets called after editing, converts the value in the cell. */
     valueParser?: (params: ValueParserParams) => any | string;
@@ -156,6 +154,9 @@ export interface ColDef extends AbstractColDef {
 
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA?: RowNode, nodeB?: RowNode, isInverted?: boolean) => number;
+
+    /** Comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed. */
+    equals?: (valueA: any, valueB: any) => boolean;
 
     /** Comparator for ordering the pivot columns */
     pivotComparator?: (valueA: string, valueB: string) => number;
@@ -208,6 +209,8 @@ export interface ColDef extends AbstractColDef {
 
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
     editable?: boolean | IsColumnFunc;
+
+    colSpan?: (params: ColSpanParams) => number;
 
     /** Set to true if this col should not be allowed take new values from teh clipboard . */
     suppressPaste?: boolean | IsColumnFunc;
@@ -303,13 +306,17 @@ export interface GetQuickFilterTextParams {
 }
 
 export interface BaseColDefParams {
-    node: any,
-    data: RowNode,
-    colDef: ColDef,
-    column: Column,
-    api: GridApi,
-    columnApi: ColumnApi,
-    context: any
+    node: RowNode;
+    data: any;
+    colDef: ColDef;
+    column: Column;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
+}
+
+export interface BaseWithValueColDefParams extends BaseColDefParams {
+    value: any;
 }
 
 export interface ValueGetterParams extends BaseColDefParams {
@@ -325,6 +332,6 @@ export interface ValueSetterParams extends NewValueParams {}
 
 export interface ValueParserParams extends NewValueParams {}
 
-export interface ValueFormatterParams extends BaseColDefParams {
-    value: any;
-}
+export interface ValueFormatterParams extends BaseWithValueColDefParams {}
+
+export interface ColSpanParams extends BaseColDefParams {}

@@ -16,6 +16,7 @@ export interface RowNodeCacheParams {
     lastAccessedSequence: NumberSequence;
     maxConcurrentRequests: number;
     rowNodeBlockLoader: RowNodeBlockLoader;
+    dynamicRowHeight: boolean;
 }
 
 export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCacheParams> extends BeanStub {
@@ -29,7 +30,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
     private active: boolean;
 
-    private blocks: {[blockNumber: string]: T} = {};
+    public blocks: {[blockNumber: string]: T} = {};
     private blockCount = 0;
 
     protected logger: Logger;
@@ -76,7 +77,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
             return;
         }
 
-        this.logger.log(`onPageLoaded: page = ${event.page.getPageNumber()}, lastRow = ${event.lastRow}`);
+        this.logger.log(`onPageLoaded: page = ${event.page.getBlockNumber()}, lastRow = ${event.lastRow}`);
         this.cacheParams.rowNodeBlockLoader.loadComplete();
         this.checkBlockToLoad();
 
@@ -127,7 +128,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
     protected postCreateBlock(newBlock: T): void {
         newBlock.addEventListener(RowNodeBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
-        this.setBlock(newBlock.getPageNumber(), newBlock);
+        this.setBlock(newBlock.getBlockNumber(), newBlock);
         this.purgeBlocksIfNeeded(newBlock);
         this.checkBlockToLoad();
     }
@@ -158,11 +159,16 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
             this.onCacheUpdated();
         } else if (!this.maxRowFound) {
             // otherwise, see if we need to add some virtual rows
-            let lastRowIndex = (block.getPageNumber() + 1) * this.cacheParams.blockSize;
+            let lastRowIndex = (block.getBlockNumber() + 1) * this.cacheParams.blockSize;
             let lastRowIndexPlusOverflow = lastRowIndex + this.cacheParams.overflowSize;
 
             if (this.virtualRowCount < lastRowIndexPlusOverflow) {
                 this.virtualRowCount = lastRowIndexPlusOverflow;
+                this.onCacheUpdated();
+            } else if (this.cacheParams.dynamicRowHeight) {
+                // the only other time is if dynamic row height, as loading rows
+                // will change the height of the block, given the height of the rows
+                // is only known after the row is loaded.
                 this.onCacheUpdated();
             }
         }
@@ -229,7 +235,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
     }
 
     protected destroyBlock(block: T): void {
-        delete this.blocks[block.getPageNumber()];
+        delete this.blocks[block.getBlockNumber()];
         block.destroy();
         this.blockCount--;
         this.cacheParams.rowNodeBlockLoader.removeBlock(block);
@@ -249,4 +255,45 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         this.onCacheUpdated();
     }
 
+    public getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
+        let result: RowNode[] = [];
+
+        let lastBlockId = -1;
+        let inActiveRange = false;
+        let numberSequence: NumberSequence = new NumberSequence();
+
+        // if only one node passed, we start the selection at the top
+        if (_.missing(firstInRange)) {
+            inActiveRange = true;
+        }
+
+        let foundGapInSelection = false;
+
+        this.forEachBlockInOrder((block: RowNodeBlock, id: number) => {
+            if (foundGapInSelection) return;
+
+            if (inActiveRange && (lastBlockId + 1 !== id)) {
+                foundGapInSelection = true;
+                return;
+            }
+
+            lastBlockId = id;
+
+            block.forEachNodeShallow(rowNode => {
+                let hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
+                if (inActiveRange || hitFirstOrLast) {
+                    result.push(rowNode);
+                }
+
+                if (hitFirstOrLast) {
+                    inActiveRange = !inActiveRange;
+                }
+
+            }, numberSequence, this.virtualRowCount);
+        });
+
+        // inActiveRange will be still true if we never hit the second rowNode
+        let invalidRange = foundGapInSelection || inActiveRange;
+        return invalidRange ? [] : result;
+    }
 }

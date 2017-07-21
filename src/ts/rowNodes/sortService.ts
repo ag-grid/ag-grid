@@ -3,10 +3,8 @@ import {Column} from "../entities/column";
 import {Autowired, Bean} from "../context/context";
 import {SortController} from "../sortController";
 import {_} from "../utils";
-import {ValueService} from "../valueService";
+import {ValueService} from "../valueService/valueService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {GroupNameInfoParams, GroupValueService} from "../groupValueService";
-import {AutoGroupColService} from "../columnController/autoGroupColService";
 import {ColumnController} from "../columnController/columnController";
 
 export interface SortOption {
@@ -25,7 +23,6 @@ export class SortService {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('groupValueService') private groupValueService: GroupValueService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public sortAccordingToColumnsState(rowNode: RowNode) {

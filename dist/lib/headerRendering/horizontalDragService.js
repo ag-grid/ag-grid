@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,15 +28,15 @@ var HorizontalDragService = (function () {
             new DragInstance(params, startEvent, eBody);
         });
     };
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], HorizontalDragService.prototype, "gridOptionsWrapper", void 0);
+    HorizontalDragService = __decorate([
+        context_1.Bean('horizontalDragService')
+    ], HorizontalDragService);
     return HorizontalDragService;
 }());
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], HorizontalDragService.prototype, "gridOptionsWrapper", void 0);
-HorizontalDragService = __decorate([
-    context_1.Bean('horizontalDragService')
-], HorizontalDragService);
 exports.HorizontalDragService = HorizontalDragService;
 var DragInstance = (function () {
     function DragInstance(params, startEvent, eBody) {

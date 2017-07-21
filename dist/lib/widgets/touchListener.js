@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,13 +18,13 @@ var TouchListener = (function () {
         var startListener = this.onTouchStart.bind(this);
         var moveListener = this.onTouchMove.bind(this);
         var endListener = this.onTouchEnd.bind(this);
-        this.eElement.addEventListener('touchstart', startListener);
-        this.eElement.addEventListener('touchmove', moveListener);
-        this.eElement.addEventListener('touchend', endListener);
+        this.eElement.addEventListener('touchstart', startListener, { passive: true });
+        this.eElement.addEventListener('touchmove', moveListener, { passive: true });
+        this.eElement.addEventListener('touchend', endListener, { passive: true });
         this.destroyFuncs.push(function () {
-            _this.eElement.addEventListener('touchstart', startListener);
-            _this.eElement.addEventListener('touchmove', moveListener);
-            _this.eElement.addEventListener('touchend', endListener);
+            _this.eElement.addEventListener('touchstart', startListener, { passive: true });
+            _this.eElement.addEventListener('touchmove', moveListener, { passive: true });
+            _this.eElement.addEventListener('touchend', endListener, { passive: true });
         });
     }
     TouchListener.prototype.getActiveTouch = function (touchList) {
@@ -85,9 +85,9 @@ var TouchListener = (function () {
     TouchListener.prototype.destroy = function () {
         this.destroyFuncs.forEach(function (func) { return func(); });
     };
+    // private mostRecentTouch: Touch;
+    TouchListener.EVENT_TAP = 'tap';
+    TouchListener.EVENT_LONG_TAP = 'longTap';
     return TouchListener;
 }());
-// private mostRecentTouch: Touch;
-TouchListener.EVENT_TAP = 'tap';
-TouchListener.EVENT_LONG_TAP = 'longTap';
 exports.TouchListener = TouchListener;

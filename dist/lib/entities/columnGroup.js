@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,6 +47,9 @@ var ColumnGroup = (function () {
     };
     ColumnGroup.prototype.getUniqueId = function () {
         return ColumnGroup.createUniqueId(this.groupId, this.instanceId);
+    };
+    ColumnGroup.prototype.isEmptyGroup = function () {
+        return this.displayedChildren.length === 0;
     };
     ColumnGroup.prototype.checkLeft = function () {
         // first get all children to setLeft, as it impacts our decision below
@@ -242,14 +245,14 @@ var ColumnGroup = (function () {
         }
         this.localEventService.dispatchEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED);
     };
+    ColumnGroup.HEADER_GROUP_SHOW_OPEN = 'open';
+    ColumnGroup.HEADER_GROUP_SHOW_CLOSED = 'closed';
+    ColumnGroup.EVENT_LEFT_CHANGED = 'leftChanged';
+    ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED = 'leftChanged';
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], ColumnGroup.prototype, "gridOptionsWrapper", void 0);
     return ColumnGroup;
 }());
-ColumnGroup.HEADER_GROUP_SHOW_OPEN = 'open';
-ColumnGroup.HEADER_GROUP_SHOW_CLOSED = 'closed';
-ColumnGroup.EVENT_LEFT_CHANGED = 'leftChanged';
-ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED = 'leftChanged';
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], ColumnGroup.prototype, "gridOptionsWrapper", void 0);
 exports.ColumnGroup = ColumnGroup;

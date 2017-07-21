@@ -1,7 +1,9 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "../../entities/rowNode";
+import { ChangedPath } from "./changedPath";
+import { RowBounds } from "../../interfaces/iRowModel";
 export interface RefreshModelParams {
     step: number;
     groupState?: any;
@@ -18,7 +20,6 @@ export interface RowDataTransaction {
     update?: any[];
 }
 export interface RowNodeTransaction {
-    addIndex: number;
     add: RowNode[];
     remove: RowNode[];
     update: RowNode[];
@@ -31,6 +32,8 @@ export declare class InMemoryRowModel {
     private selectionController;
     private eventService;
     private context;
+    private valueService;
+    private valueCache;
     private filterStage;
     private sortStage;
     private flattenStage;
@@ -43,18 +46,17 @@ export declare class InMemoryRowModel {
     init(): void;
     isLastRowFound(): boolean;
     getRowCount(): number;
-    getRowBounds(index: number): {
-        rowTop: number;
-        rowHeight: number;
-    };
+    getRowBounds(index: number): RowBounds;
     private onRowGroupOpened();
     private onFilterChanged();
     private onSortChanged();
     getType(): string;
     private onValueChanged();
+    private createChangePath(transaction);
     refreshModel(params: RefreshModelParams): void;
     isEmpty(): boolean;
     isRowsToRender(): boolean;
+    getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
     setDatasource(datasource: any): void;
     getTopLevelNodes(): RowNode[];
     getRootNode(): RowNode;
@@ -72,10 +74,10 @@ export declare class InMemoryRowModel {
     forEachNodeAfterFilterAndSort(callback: Function): void;
     forEachPivotNode(callback: Function): void;
     private recursivelyWalkNodesAndCallback(nodes, callback, recursionType, index);
-    doAggregate(): void;
+    doAggregate(changedPath?: ChangedPath): void;
     expandOrCollapseAll(expand: boolean): void;
     private doSort();
-    private doRowGrouping(groupState, rowNodeTransaction);
+    private doRowGrouping(groupState, rowNodeTransaction, changedPath);
     private restoreGroupState(groupState);
     private doFilter();
     private doPivot();
@@ -84,7 +86,7 @@ export declare class InMemoryRowModel {
         [id: string]: RowNode;
     };
     getRowNode(id: string): RowNode;
-    setRowData(rowData: any[], refresh: boolean): void;
+    setRowData(rowData: any[]): void;
     updateRowData(rowDataTran: RowDataTransaction): void;
     private doRowsToDisplay();
     insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void;

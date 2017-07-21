@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -136,36 +136,36 @@ var TextFilter = (function (_super) {
     TextFilter.prototype.setType = function (filterType) {
         this.setFilterType(filterType);
     };
+    TextFilter.DEFAULT_FORMATTER = function (from) {
+        if (from == null)
+            return null;
+        return from.toString().toLowerCase();
+    };
+    TextFilter.DEFAULT_COMPARATOR = function (filter, value, filterText) {
+        switch (filter) {
+            case TextFilter.CONTAINS:
+                return value.indexOf(filterText) >= 0;
+            case TextFilter.NOT_CONTAINS:
+                return value.indexOf(filterText) === -1;
+            case TextFilter.EQUALS:
+                return value === filterText;
+            case TextFilter.NOT_EQUAL:
+                return value != filterText;
+            case TextFilter.STARTS_WITH:
+                return value.indexOf(filterText) === 0;
+            case TextFilter.ENDS_WITH:
+                var index = value.lastIndexOf(filterText);
+                return index >= 0 && index === (value.length - filterText.length);
+            default:
+                // should never happen
+                console.warn('invalid filter type ' + filter);
+                return false;
+        }
+    };
+    __decorate([
+        componentAnnotations_1.QuerySelector('#filterText'),
+        __metadata("design:type", HTMLInputElement)
+    ], TextFilter.prototype, "eFilterTextField", void 0);
     return TextFilter;
 }(baseFilter_1.ComparableBaseFilter));
-TextFilter.DEFAULT_FORMATTER = function (from) {
-    if (from == null)
-        return null;
-    return from.toString().toLowerCase();
-};
-TextFilter.DEFAULT_COMPARATOR = function (filter, value, filterText) {
-    switch (filter) {
-        case TextFilter.CONTAINS:
-            return value.indexOf(filterText) >= 0;
-        case TextFilter.NOT_CONTAINS:
-            return value.indexOf(filterText) === -1;
-        case TextFilter.EQUALS:
-            return value === filterText;
-        case TextFilter.NOT_EQUAL:
-            return value != filterText;
-        case TextFilter.STARTS_WITH:
-            return value.indexOf(filterText) === 0;
-        case TextFilter.ENDS_WITH:
-            var index = value.lastIndexOf(filterText);
-            return index >= 0 && index === (value.length - filterText.length);
-        default:
-            // should never happen
-            console.warn('invalid filter type ' + filter);
-            return false;
-    }
-};
-__decorate([
-    componentAnnotations_1.QuerySelector('#filterText'),
-    __metadata("design:type", HTMLInputElement)
-], TextFilter.prototype, "eFilterTextField", void 0);
 exports.TextFilter = TextFilter;

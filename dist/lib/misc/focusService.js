@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -72,11 +72,11 @@ var FocusService = (function () {
             var rowId = utils_1.Utils.getElementAttribute(eTarget, 'row');
             if (utils_1.Utils.exists(rowId) && utils_1.Utils.containsClass(eTarget, 'ag-row')) {
                 if (rowId.indexOf('ft') === 0) {
-                    floating = constants_1.Constants.FLOATING_TOP;
+                    floating = constants_1.Constants.PINNED_TOP;
                     rowId = rowId.substr(3);
                 }
                 else if (rowId.indexOf('fb') === 0) {
-                    floating = constants_1.Constants.FLOATING_BOTTOM;
+                    floating = constants_1.Constants.PINNED_BOTTOM;
                     rowId = rowId.substr(3);
                 }
                 else {
@@ -102,29 +102,29 @@ var FocusService = (function () {
     FocusService.prototype.destroy = function () {
         this.destroyMethods.forEach(function (destroyMethod) { return destroyMethod(); });
     };
+    __decorate([
+        context_1.Autowired('gridCore'),
+        __metadata("design:type", gridCore_1.GridCore)
+    ], FocusService.prototype, "gridCore", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], FocusService.prototype, "columnController", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], FocusService.prototype, "init", null);
+    __decorate([
+        context_1.PreDestroy,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], FocusService.prototype, "destroy", null);
+    FocusService = __decorate([
+        context_1.Bean('focusService')
+    ], FocusService);
     return FocusService;
 }());
-__decorate([
-    context_1.Autowired('gridCore'),
-    __metadata("design:type", gridCore_1.GridCore)
-], FocusService.prototype, "gridCore", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], FocusService.prototype, "columnController", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], FocusService.prototype, "init", null);
-__decorate([
-    context_1.PreDestroy,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], FocusService.prototype, "destroy", null);
-FocusService = __decorate([
-    context_1.Bean('focusService')
-], FocusService);
 exports.FocusService = FocusService;

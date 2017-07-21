@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -88,14 +88,14 @@ var BodyDropPivotTarget = (function () {
             this.columnController.addPivotColumns(this.columnsToPivot);
         }
     };
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], BodyDropPivotTarget.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], BodyDropPivotTarget.prototype, "gridOptionsWrapper", void 0);
     return BodyDropPivotTarget;
 }());
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], BodyDropPivotTarget.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], BodyDropPivotTarget.prototype, "gridOptionsWrapper", void 0);
 exports.BodyDropPivotTarget = BodyDropPivotTarget;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62,7 +62,7 @@ var RowNodeBlockLoader = (function () {
         if (blockToLoad) {
             blockToLoad.load();
             this.activeBlockLoadsCount++;
-            this.logger.log("checkBlockToLoad: loading page " + blockToLoad.getPageNumber());
+            this.logger.log("checkBlockToLoad: loading page " + blockToLoad.getBlockNumber());
             this.printCacheStatus();
         }
         else {
@@ -74,16 +74,16 @@ var RowNodeBlockLoader = (function () {
         this.blocks.forEach(function (block) {
             var nodeIdPrefix = block.getNodeIdPrefix();
             var stateItem = {
-                blockNumber: block.getPageNumber(),
+                blockNumber: block.getBlockNumber(),
                 startRow: block.getStartRow(),
                 endRow: block.getEndRow(),
                 pageStatus: block.getState()
             };
             if (utils_1._.exists(nodeIdPrefix)) {
-                result[nodeIdPrefix + block.getPageNumber()] = stateItem;
+                result[nodeIdPrefix + block.getBlockNumber()] = stateItem;
             }
             else {
-                result[block.getPageNumber()] = stateItem;
+                result[block.getBlockNumber()] = stateItem;
             }
         });
         return result;
@@ -94,12 +94,12 @@ var RowNodeBlockLoader = (function () {
                 + (" blocks = " + JSON.stringify(this.getBlockState())));
         }
     };
+    __decorate([
+        __param(0, context_1.Qualifier('loggerFactory')),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [logger_1.LoggerFactory]),
+        __metadata("design:returntype", void 0)
+    ], RowNodeBlockLoader.prototype, "setBeans", null);
     return RowNodeBlockLoader;
 }());
-__decorate([
-    __param(0, context_1.Qualifier('loggerFactory')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [logger_1.LoggerFactory]),
-    __metadata("design:returntype", void 0)
-], RowNodeBlockLoader.prototype, "setBeans", null);
 exports.RowNodeBlockLoader = RowNodeBlockLoader;

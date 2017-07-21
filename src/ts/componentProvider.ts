@@ -69,7 +69,7 @@ export class ComponentProvider {
     @Optional ("frameworkComponentWrapper")
     private frameworkComponentWrapper: FrameworkComponentWrapper;
 
-    private allComponentConfig :{[key:string]:ComponentConfig}
+    private allComponentConfig :{[key:string]:ComponentConfig};
 
     @PostConstruct
     public postContruct (){

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ICellRenderer } from "./iCellRenderer";
@@ -14,5 +14,5 @@ export declare class AnimateShowChangeCellRenderer extends Component implements 
     private showDelta(params, delta);
     private setTimerToRemoveDelta();
     private hideDeltaValue();
-    refresh(params: any): void;
+    refresh(params: any): boolean;
 }

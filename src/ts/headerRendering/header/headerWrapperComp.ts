@@ -79,6 +79,7 @@ export class HeaderWrapperComp extends Component {
         this.setupMovingCss();
         this.setupTooltip();
         this.setupResize();
+        this.setupMenuClass();
         this.setupMove(headerComp.getGui(), displayName);
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
@@ -233,6 +234,15 @@ export class HeaderWrapperComp extends Component {
     private setupWidth(): void {
         this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
         this.onColumnWidthChanged();
+    }
+
+    private setupMenuClass(): void {
+        this.addDestroyableEventListener(this.column, Column.EVENT_MENU_VISIBLE_CHANGED, this.onMenuVisible.bind(this));
+        this.onColumnWidthChanged();
+    }
+
+    private onMenuVisible(): void {
+        this.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
     }
 
     private onColumnWidthChanged(): void {

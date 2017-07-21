@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { GridOptions } from "./entities/gridOptions";
@@ -21,6 +21,8 @@ export declare class Grid {
     static setEnterpriseBeans(enterpriseBeans: any[], rowModelClasses: any): void;
     static setFrameworkBeans(frameworkBeans: any[]): void;
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams);
+    private setColumnsAndData();
+    private dispatchGridReadyEvent(gridOptions);
     private getRowModelClass(gridOptions);
     destroy(): void;
 }

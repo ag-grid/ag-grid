@@ -1,6 +1,6 @@
-import {Logger, LoggerFactory} from "./logger";
-import {Bean} from "./context/context";
-import {Qualifier} from "./context/context";
+import {Logger, LoggerFactory} from "../logger";
+import {Bean} from "../context/context";
+import {Qualifier} from "../context/context";
 
 @Bean('expressionService')
 export class ExpressionService {

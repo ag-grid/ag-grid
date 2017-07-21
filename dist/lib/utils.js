@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -257,6 +257,13 @@ var Utils = (function () {
         }
         source.forEach(function (func) { return target.push(func); });
     };
+    Utils.createArrayOfNumbers = function (first, last) {
+        var result = [];
+        for (var i = first; i <= last; i++) {
+            result.push(i);
+        }
+        return result;
+    };
     Utils.getFunctionParameters = function (func) {
         var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
         var result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);
@@ -337,15 +344,6 @@ var Utils = (function () {
             // otherwise, for older browsers, we test against a list of characters, which doesn't include
             // accents for non-English, but don't care much, as most users are on modern browsers
             return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
-        }
-    };
-    // returns true if values are string, number or boolean, and both values are equal
-    Utils.valuesSimpleAndSame = function (val1, val2) {
-        if (typeof val1 === 'string' || typeof val1 === 'number' || typeof val1 === 'boolean') {
-            return val1 === val2;
-        }
-        else {
-            return false;
         }
     };
     //adds all type of change listeners to an element, intended to be a text field
@@ -621,6 +619,51 @@ var Utils = (function () {
             }
         }
         return true;
+    };
+    Utils.ensureDomOrder = function (eContainer, eChild, eChildBefore) {
+        // if already in right order, do nothing
+        if (eChildBefore && eChildBefore.nextSibling === eChild) {
+            return;
+        }
+        if (eChildBefore) {
+            if (eChildBefore.nextSibling) {
+                // insert between the eRowBefore and the row after it
+                eContainer.insertBefore(eChild, eChildBefore.nextSibling);
+            }
+            else {
+                // if nextSibling is missing, means other row is at end, so just append new row at the end
+                eContainer.appendChild(eChild);
+            }
+        }
+        else {
+            // otherwise put at start
+            if (eContainer.firstChild) {
+                // insert it at the first location
+                eContainer.insertBefore(eChild, eContainer.firstChild);
+            }
+        }
+    };
+    Utils.insertWithDomOrder = function (eContainer, eChild, eChildBefore) {
+        if (eChildBefore) {
+            if (eChildBefore.nextSibling) {
+                // insert between the eRowBefore and the row after it
+                eContainer.insertBefore(eChild, eChildBefore.nextSibling);
+            }
+            else {
+                // if nextSibling is missing, means other row is at end, so just append new row at the end
+                eContainer.appendChild(eChild);
+            }
+        }
+        else {
+            if (eContainer.firstChild) {
+                // insert it at the first location
+                eContainer.insertBefore(eChild, eContainer.firstChild);
+            }
+            else {
+                // otherwise eContainer is empty, so just append it
+                eContainer.appendChild(eChild);
+            }
+        }
     };
     Utils.toStringOrNull = function (value) {
         if (this.exists(value) && value.toString) {
@@ -1074,6 +1117,19 @@ var Utils = (function () {
         };
     };
     ;
+    Utils.executeInAWhile = function (funcs) {
+        this.executeAfter(funcs, 400);
+    };
+    Utils.executeNextVMTurn = function (funcs) {
+        this.executeAfter(funcs, 0);
+    };
+    Utils.executeAfter = function (funcs, millis) {
+        if (funcs.length > 0) {
+            setTimeout(function () {
+                funcs.forEach(function (func) { return func(); });
+            }, millis);
+        }
+    };
     Utils.referenceCompare = function (left, right) {
         if (left == null && right == null)
             return true;
@@ -1102,9 +1158,13 @@ var Utils = (function () {
             return nextValue != null ? nextValue : defaultValue;
         }
     };
+    Utils.addSafePassiveEventListener = function (eElement, event, listener) {
+        eElement.addEventListener(event, listener, (Utils.passiveEvents.indexOf(event) > -1 ? { passive: true } : null));
+    };
+    Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
+    Utils.passiveEvents = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
     return Utils;
 }());
-Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 exports.Utils = Utils;
 var NumberSequence = (function () {
     function NumberSequence(initValue, step) {

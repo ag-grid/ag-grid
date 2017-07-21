@@ -50,14 +50,14 @@ export class Constants {
 
     static ROW_MODEL_TYPE_INFINITE = 'infinite';
     static ROW_MODEL_TYPE_VIEWPORT = 'viewport';
-    static ROW_MODEL_TYPE_NORMAL = 'normal';
+    static ROW_MODEL_TYPE_IN_MEMORY = 'inMemory';
     static ROW_MODEL_TYPE_ENTERPRISE = 'enterprise';
 
     static ALWAYS = 'always';
     static ONLY_WHEN_GROUPING = 'onlyWhenGrouping';
 
-    static FLOATING_TOP = 'top';
-    static FLOATING_BOTTOM = 'bottom';
+    static PINNED_TOP = 'top';
+    static PINNED_BOTTOM = 'bottom';
     
     static VERTICAL_SCROLL_KEYS_ID = 'verticalScrollKeys';
     static HORIZONTAL_SCROLL_KEYS_ID = 'horizontalScrollKeys';

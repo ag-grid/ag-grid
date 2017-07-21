@@ -28,7 +28,7 @@ export class Component extends BeanStub implements IComponent<any> {
 
     private instantiateRecurse(parentNode: Element, context: Context): void {
         let childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
-        for (let i = 0; i<childCount; i++) {
+        for (let i = 0; i < childCount; i++) {
             let childNode = parentNode.childNodes[i];
             let newComponent = context.createComponent(<Element>childNode);
             if (newComponent) {
@@ -48,15 +48,22 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     private swapInComponentForQuerySelectors(newComponent: Component, childNode: Node): void {
-        let metaData = (<any>this).__agComponentMetaData;
-        if (!metaData || !metaData.querySelectors) { return; }
-
+        let thisProto: any = (<any>this).__proto__;
         let thisNoType = <any> this;
-        metaData.querySelectors.forEach( (querySelector: any) => {
-            if (thisNoType[querySelector.attributeName]===childNode) {
-                thisNoType[querySelector.attributeName] = newComponent;
+        while (thisProto != null) {
+            let metaData = thisProto.__agComponentMetaData;
+            let currentProtoName = (thisProto.constructor).name;
+
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
+                metaData[currentProtoName].querySelectors.forEach((querySelector: any) => {
+                    if (thisNoType[querySelector.attributeName] === childNode) {
+                        thisNoType[querySelector.attributeName] = newComponent;
+                    }
+                });
             }
-        } );
+
+            thisProto = thisProto.__proto__
+        }
     }
 
     public setTemplate(template: string): void {
@@ -75,50 +82,73 @@ export class Component extends BeanStub implements IComponent<any> {
     }
 
     private wireQuerySelectors(): void {
-        let metaData = (<any>this).__agComponentMetaData;
-        if (!metaData || !metaData.querySelectors) { return; }
+        if (!this.eGui) {
+            return;
+        }
+        let thisProto: any = (<any>this).__proto__;
 
-        if (!this.eGui) { return; }
+        while (thisProto != null) {
+            let metaData = thisProto.__agComponentMetaData;
+            let currentProtoName = (thisProto.constructor).name;
 
-        let thisNoType = <any> this;
-        metaData.querySelectors.forEach( (querySelector: any) => {
-            let resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
-            if (resultOfQuery) {
-                let backingComponent = (<any>resultOfQuery).__agComponent;
-                if (backingComponent) {
-                    thisNoType[querySelector.attributeName] = backingComponent;
-                } else {
-                    thisNoType[querySelector.attributeName] = resultOfQuery;
-                }
-            } else {
-                // put debug msg in here if query selector fails???
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
+                let thisNoType = <any> this;
+                metaData[currentProtoName].querySelectors.forEach((querySelector: any) => {
+                    let resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
+                    if (resultOfQuery) {
+                        let backingComponent = (<any>resultOfQuery).__agComponent;
+                        if (backingComponent) {
+                            thisNoType[querySelector.attributeName] = backingComponent;
+                        } else {
+                            thisNoType[querySelector.attributeName] = resultOfQuery;
+                        }
+                    } else {
+                        // put debug msg in here if query selector fails???
+                    }
+                });
             }
-        } );
+
+            thisProto = thisProto.__proto__
+        }
     }
 
     private addAnnotatedEventListeners(): void {
         this.removeAnnotatedEventListeners();
-
-        let metaData = (<any>this).__agComponentMetaData;
-        if (!metaData || !metaData.listenerMethods) { return; }
-
-        if (!this.eGui) { return; }
-
-        if (!this.annotatedEventListeners) {
-            this.annotatedEventListeners = [];
+        if (!this.eGui) {
+            return;
         }
 
-        metaData.listenerMethods.forEach( (eventListener: any) => {
-            let listener = (<any>this)[eventListener.methodName].bind(this);
-            this.eGui.addEventListener(eventListener.eventName, listener);
-            this.annotatedEventListeners.push({eventName: eventListener.eventName, listener: listener});
-        });
+        let thisProto: any = (<any>this).__proto__;
+
+        while (thisProto != null) {
+            let metaData = thisProto.__agComponentMetaData;
+            let currentProtoName = (thisProto.constructor).name;
+
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].listenerMethods) {
+
+                if (!this.annotatedEventListeners) {
+                    this.annotatedEventListeners = [];
+                }
+
+                metaData[currentProtoName].listenerMethods.forEach((eventListener: any) => {
+                    let listener = (<any>this)[eventListener.methodName].bind(this);
+                    this.eGui.addEventListener(eventListener.eventName, listener);
+                    this.annotatedEventListeners.push({eventName: eventListener.eventName, listener: listener});
+                });
+            }
+
+            thisProto = thisProto.__proto__
+        }
     }
 
     private removeAnnotatedEventListeners(): void {
-        if (!this.annotatedEventListeners) { return; }
-        if (!this.eGui) { return; }
-        this.annotatedEventListeners.forEach( (eventListener: any) => {
+        if (!this.annotatedEventListeners) {
+            return;
+        }
+        if (!this.eGui) {
+            return;
+        }
+        this.annotatedEventListeners.forEach((eventListener: any) => {
             this.eGui.removeEventListener(eventListener.eventName, eventListener.listener);
         });
         this.annotatedEventListeners = null;
@@ -142,7 +172,7 @@ export class Component extends BeanStub implements IComponent<any> {
         return <HTMLInputElement> this.eGui.querySelector(cssSelector);
     }
 
-    public appendChild(newChild: Node|IComponent<any>): void {
+    public appendChild(newChild: Node | IComponent<any>): void {
         if (_.isNodeOrElement(newChild)) {
             this.eGui.appendChild(<Node>newChild);
         } else {
@@ -174,18 +204,18 @@ export class Component extends BeanStub implements IComponent<any> {
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
         _.addOrRemoveCssClass(this.eGui, className, addOrRemove);
     }
-    
+
     public destroy(): void {
         super.destroy();
-        this.childComponents.forEach( childComponent => childComponent.destroy() );
+        this.childComponents.forEach(childComponent => childComponent.destroy());
         this.childComponents.length = 0;
 
         this.removeAnnotatedEventListeners();
     }
 
-    public addGuiEventListener(event: string, listener: (event: any)=>void): void {
+    public addGuiEventListener(event: string, listener: (event: any) => void): void {
         this.getGui().addEventListener(event, listener);
-        this.addDestroyFunc( ()=> this.getGui().removeEventListener(event, listener));
+        this.addDestroyFunc(() => this.getGui().removeEventListener(event, listener));
     }
 
     public addCssClass(className: string): void {

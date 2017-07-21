@@ -1,12 +1,12 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { RowAccumulator, BaseGridSerializingSession, RowSpanningAccumulator } from "./gridSerializer";
+import { RowAccumulator, BaseGridSerializingSession, RowSpanningAccumulator, GridSerializingSession } from "./gridSerializer";
 import { Column } from "./entities/column";
 import { ColumnController } from "./columnController/columnController";
-import { ValueService } from "./valueService";
+import { ValueService } from "./valueService/valueService";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exportParams";
+import { CsvExportParams, ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exportParams";
 export declare class CsvSerializingSession extends BaseGridSerializingSession<string> {
     private suppressQuotes;
     private columnSeparator;
@@ -25,12 +25,26 @@ export declare class CsvSerializingSession extends BaseGridSerializingSession<st
     private putInQuotes(value, suppressQuotes);
     parse(): string;
 }
-export declare class CsvCreator {
+export declare abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> {
     private downloader;
     private gridSerializer;
+    gridOptionsWrapper: GridOptionsWrapper;
+    export(userParams?: P): string;
+    getData(params: P): string;
+    private getMergedParamsAndData(userParams);
+    private mergeDefaultParams(userParams);
+    abstract createSerializingSession(params?: P): S;
+    abstract getMimeType(): string;
+    abstract getDefaultFileName(): string;
+    abstract getDefaultFileExtension(): string;
+}
+export declare class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvExportParams> {
     private columnController;
     private valueService;
-    private gridOptionsWrapper;
     exportDataAsCsv(params?: CsvExportParams): string;
     getDataAsCsv(params?: CsvExportParams): string;
+    getMimeType(): string;
+    getDefaultFileName(): string;
+    getDefaultFileExtension(): string;
+    createSerializingSession(params?: CsvExportParams): CsvSerializingSession;
 }

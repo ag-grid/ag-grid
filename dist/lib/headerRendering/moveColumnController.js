@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -303,32 +303,32 @@ var MoveColumnController = (function () {
             }
         }
     };
+    __decorate([
+        context_1.Autowired('loggerFactory'),
+        __metadata("design:type", logger_1.LoggerFactory)
+    ], MoveColumnController.prototype, "loggerFactory", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], MoveColumnController.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('gridPanel'),
+        __metadata("design:type", gridPanel_1.GridPanel)
+    ], MoveColumnController.prototype, "gridPanel", void 0);
+    __decorate([
+        context_1.Autowired('dragAndDropService'),
+        __metadata("design:type", dragAndDropService_1.DragAndDropService)
+    ], MoveColumnController.prototype, "dragAndDropService", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], MoveColumnController.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], MoveColumnController.prototype, "init", null);
     return MoveColumnController;
 }());
-__decorate([
-    context_1.Autowired('loggerFactory'),
-    __metadata("design:type", logger_1.LoggerFactory)
-], MoveColumnController.prototype, "loggerFactory", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], MoveColumnController.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('gridPanel'),
-    __metadata("design:type", gridPanel_1.GridPanel)
-], MoveColumnController.prototype, "gridPanel", void 0);
-__decorate([
-    context_1.Autowired('dragAndDropService'),
-    __metadata("design:type", dragAndDropService_1.DragAndDropService)
-], MoveColumnController.prototype, "dragAndDropService", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], MoveColumnController.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], MoveColumnController.prototype, "init", null);
 exports.MoveColumnController = MoveColumnController;

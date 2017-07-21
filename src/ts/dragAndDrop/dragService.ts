@@ -52,7 +52,7 @@ export class DragService {
         // remove touch listener only if it exists
         if (dragSourceAndListener.touchEnabled) {
             let touchStartListener = dragSourceAndListener.touchStartListener;
-            element.removeEventListener('touchstart', touchStartListener);
+            element.removeEventListener('touchstart', touchStartListener, <any>{passive:true});
         }
     }
 
@@ -86,7 +86,7 @@ export class DragService {
 
         if (reallyIncludeTouch) {
             touchListener = this.onTouchStart.bind(this, params);
-            params.eElement.addEventListener('touchstart', touchListener);
+            params.eElement.addEventListener('touchstart', touchListener, <any>{passive:true});
         }
 
         this.dragSources.push({
@@ -112,14 +112,14 @@ export class DragService {
 
         // we temporally add these listeners, for the duration of the drag, they
         // are removed in touch end handling.
-        params.eElement.addEventListener('touchmove', this.onTouchMoveListener);
-        params.eElement.addEventListener('touchend', this.onTouchEndListener);
-        params.eElement.addEventListener('touchcancel', this.onTouchEndListener);
+        params.eElement.addEventListener('touchmove', this.onTouchMoveListener, <any>{passive:true});
+        params.eElement.addEventListener('touchend', this.onTouchEndListener, <any>{passive:true});
+        params.eElement.addEventListener('touchcancel', this.onTouchEndListener, <any>{passive:true});
 
         this.dragEndFunctions.push( ()=> {
-            params.eElement.removeEventListener('touchmove', this.onTouchMoveListener);
-            params.eElement.removeEventListener('touchend', this.onTouchEndListener);
-            params.eElement.removeEventListener('touchcancel', this.onTouchEndListener);
+            params.eElement.removeEventListener('touchmove', this.onTouchMoveListener, <any>{passive:true});
+            params.eElement.removeEventListener('touchend', this.onTouchEndListener, <any>{passive:true});
+            params.eElement.removeEventListener('touchcancel', this.onTouchEndListener, <any>{passive:true});
         });
 
         // see if we want to start dragging straight away

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -244,33 +244,33 @@ var BorderLayout = (function () {
             this.hideOverlay();
         }
     };
+    // this is used if there user has not specified any north or south parts
+    BorderLayout.TEMPLATE_FULL_HEIGHT = '<div class="ag-bl ag-bl-full-height">' +
+        '  <div class="ag-bl-west ag-bl-full-height-west" ref="west"></div>' +
+        '  <div class="ag-bl-east ag-bl-full-height-east" ref="east"></div>' +
+        '  <div class="ag-bl-center ag-bl-full-height-center" ref="center"></div>' +
+        '  <div class="ag-bl-overlay" ref="overlay"></div>' +
+        '</div>';
+    BorderLayout.TEMPLATE_NORMAL = '<div class="ag-bl ag-bl-normal">' +
+        '  <div ref="north"></div>' +
+        '  <div class="ag-bl-center-row ag-bl-normal-center-row" ref="centerRow">' +
+        '    <div class="ag-bl-west ag-bl-normal-west" ref="west"></div>' +
+        '    <div class="ag-bl-east ag-bl-normal-east" ref="east"></div>' +
+        '    <div class="ag-bl-center ag-bl-normal-center" ref="center"></div>' +
+        '  </div>' +
+        '  <div ref="south"></div>' +
+        '  <div class="ag-bl-overlay" ref="overlay"></div>' +
+        '</div>';
+    BorderLayout.TEMPLATE_DONT_FILL = '<div class="ag-bl ag-bl-dont-fill">' +
+        '  <div ref="north"></div>' +
+        '  <div ref="centerRow" class="ag-bl-center-row ag-bl-dont-fill-center-row">' +
+        '    <div ref="west" class="ag-bl-west ag-bl-dont-fill-west"></div>' +
+        '    <div ref="east" class="ag-bl-east ag-bl-dont-fill-east"></div>' +
+        '    <div ref="center" class="ag-bl-center ag-bl-dont-fill-center"></div>' +
+        '  </div>' +
+        '  <div ref="south"></div>' +
+        '  <div class="ag-bl-overlay" ref="overlay"></div>' +
+        '</div>';
     return BorderLayout;
 }());
-// this is used if there user has not specified any north or south parts
-BorderLayout.TEMPLATE_FULL_HEIGHT = '<div class="ag-bl ag-bl-full-height">' +
-    '  <div class="ag-bl-west ag-bl-full-height-west" ref="west"></div>' +
-    '  <div class="ag-bl-east ag-bl-full-height-east" ref="east"></div>' +
-    '  <div class="ag-bl-center ag-bl-full-height-center" ref="center"></div>' +
-    '  <div class="ag-bl-overlay" ref="overlay"></div>' +
-    '</div>';
-BorderLayout.TEMPLATE_NORMAL = '<div class="ag-bl ag-bl-normal">' +
-    '  <div ref="north"></div>' +
-    '  <div class="ag-bl-center-row ag-bl-normal-center-row" ref="centerRow">' +
-    '    <div class="ag-bl-west ag-bl-normal-west" ref="west"></div>' +
-    '    <div class="ag-bl-east ag-bl-normal-east" ref="east"></div>' +
-    '    <div class="ag-bl-center ag-bl-normal-center" ref="center"></div>' +
-    '  </div>' +
-    '  <div ref="south"></div>' +
-    '  <div class="ag-bl-overlay" ref="overlay"></div>' +
-    '</div>';
-BorderLayout.TEMPLATE_DONT_FILL = '<div class="ag-bl ag-bl-dont-fill">' +
-    '  <div ref="north"></div>' +
-    '  <div ref="centerRow" class="ag-bl-center-row ag-bl-dont-fill-center-row">' +
-    '    <div ref="west" class="ag-bl-west ag-bl-dont-fill-west"></div>' +
-    '    <div ref="east" class="ag-bl-east ag-bl-dont-fill-east"></div>' +
-    '    <div ref="center" class="ag-bl-center ag-bl-dont-fill-center"></div>' +
-    '  </div>' +
-    '  <div ref="south"></div>' +
-    '  <div class="ag-bl-overlay" ref="overlay"></div>' +
-    '</div>';
 exports.BorderLayout = BorderLayout;

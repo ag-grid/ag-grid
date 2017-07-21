@@ -1,8 +1,8 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "../../entities/rowNode";
-import { IRowModel } from "../../interfaces/iRowModel";
+import { IRowModel, RowBounds } from "../../interfaces/iRowModel";
 import { IDatasource } from "../iDatasource";
 import { BeanStub } from "../../context/beanStub";
 import { RowDataTransaction } from "../inMemory/inMemoryRowModel";
@@ -17,10 +17,7 @@ export declare class InfiniteRowModel extends BeanStub implements IRowModel {
     private rowNodeBlockLoader;
     private datasource;
     private rowHeight;
-    getRowBounds(index: number): {
-        rowTop: number;
-        rowHeight: number;
-    };
+    getRowBounds(index: number): RowBounds;
     init(): void;
     isLastRowFound(): boolean;
     private addEventListeners();
@@ -32,6 +29,7 @@ export declare class InfiniteRowModel extends BeanStub implements IRowModel {
     private checkForDeprecated();
     isEmpty(): boolean;
     isRowsToRender(): boolean;
+    getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
     private reset();
     private resetCache();
     private destroyCache();

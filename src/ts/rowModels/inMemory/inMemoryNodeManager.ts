@@ -6,6 +6,7 @@ import {Context} from "../../context/context";
 import {GetNodeChildDetails} from "../../entities/gridOptions";
 import {EventService} from "../../eventService";
 import {RowDataTransaction, RowNodeTransaction} from "./inMemoryRowModel";
+import {ColumnController} from "../../columnController/columnController";
 
 export class InMemoryNodeManager {
 
@@ -15,6 +16,7 @@ export class InMemoryNodeManager {
     private gridOptionsWrapper: GridOptionsWrapper;
     private context: Context;
     private eventService: EventService;
+    private columnController: ColumnController;
 
     private nextId = 0;
 
@@ -27,11 +29,12 @@ export class InMemoryNodeManager {
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: {[id:string]: RowNode} = {};
 
-    constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService) {
+    constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService, columnController: ColumnController) {
         this.rootNode = rootNode;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.context = context;
         this.eventService = eventService;
+        this.columnController = columnController;
 
         this.rootNode.group = true;
         this.rootNode.level = -1;
@@ -93,8 +96,7 @@ export class InMemoryNodeManager {
         let rowNodeTransaction: RowNodeTransaction = {
             remove: [],
             update: [],
-            add: [],
-            addIndex: null
+            add: []
         };
 
         if (_.exists(add)) {

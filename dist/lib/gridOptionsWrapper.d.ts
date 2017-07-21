@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { RowNode } from "./entities/rowNode";
@@ -85,11 +85,12 @@ export declare class GridOptionsWrapper {
     isSuppressLoadingOverlay(): boolean;
     isSuppressNoRowsOverlay(): boolean;
     isSuppressFieldDotNotation(): boolean;
-    getFloatingTopRowData(): any[];
-    getFloatingBottomRowData(): any[];
+    getPinnedTopRowData(): any[];
+    getPinnedBottomRowData(): any[];
     isFunctionsPassive(): boolean;
     isSuppressRowHoverClass(): boolean;
     isSuppressTabbing(): boolean;
+    isSuppressChangeDetection(): boolean;
     getQuickFilterText(): string;
     isCacheQuickFilter(): boolean;
     isUnSortIcon(): boolean;
@@ -108,7 +109,7 @@ export declare class GridOptionsWrapper {
     getApi(): GridApi;
     getColumnApi(): ColumnApi;
     isDeltaRowDataMode(): boolean;
-    isEnforceRowDomOrder(): boolean;
+    isEnsureDomOrder(): boolean;
     isEnableColResize(): boolean;
     isSingleClickEdit(): boolean;
     isSuppressClickEdit(): boolean;
@@ -122,7 +123,6 @@ export declare class GridOptionsWrapper {
     getCacheBlockSize(): number;
     getInfiniteInitialRowCount(): number;
     isPurgeClosedRowNodes(): boolean;
-    getPaginationStartPage(): number;
     isSuppressPaginationPanel(): boolean;
     getRowData(): any[];
     isGroupUseEntireRow(): boolean;
@@ -136,6 +136,9 @@ export declare class GridOptionsWrapper {
     isAngularCompileHeaders(): boolean;
     isDebug(): boolean;
     getColumnDefs(): (ColGroupDef | ColDef)[];
+    getColumnTypes(): {
+        [key: string]: ColDef;
+    };
     getDatasource(): IDatasource;
     getViewportDatasource(): IViewportDatasource;
     getEnterpriseDatasource(): IEnterpriseDatasource;
@@ -168,13 +171,14 @@ export declare class GridOptionsWrapper {
     };
     getIsScrollLag(): () => boolean;
     getSortingOrder(): string[];
-    getSlaveGrids(): GridOptions[];
+    getAlignedGrids(): GridOptions[];
     getGroupRowRendererParams(): any;
     getOverlayLoadingTemplate(): string;
     getOverlayNoRowsTemplate(): string;
     isSuppressAutoSize(): boolean;
     isSuppressParentsInRowNodes(): boolean;
     isEnableStatusBar(): boolean;
+    isAlwaysShowStatusBar(): boolean;
     isFunctionsReadOnly(): boolean;
     isFloatingFilter(): boolean;
     getDefaultColDef(): ColDef;
@@ -189,6 +193,9 @@ export declare class GridOptionsWrapper {
     getRowNodeIdFunc(): GetRowNodeIdFunc;
     getNavigateToNextCellFunc(): (params: NavigateToNextCellParams) => GridCellDef;
     getTabToNextCellFunc(): (params: TabToNextCellParams) => GridCellDef;
+    isValueCache(): boolean;
+    isValueCacheNeverExpires(): boolean;
+    isAggregateOnlyChangedColumns(): boolean;
     getProcessSecondaryColDefFunc(): (colDef: ColDef) => void;
     getProcessSecondaryColGroupDefFunc(): (colGroupDef: ColGroupDef) => void;
     getSendToClipboardFunc(): (params: any) => void;
@@ -220,5 +227,6 @@ export declare class GridOptionsWrapper {
     globalEventHandler(eventName: string, event?: any): void;
     getRowHeightAsNumber(): number;
     getRowHeightForNode(rowNode: RowNode): number;
+    isDynamicRowHeight(): boolean;
     private isNumeric(value);
 }

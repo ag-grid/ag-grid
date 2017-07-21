@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,9 +29,10 @@ var context_1 = require("./context/context");
 var gridSerializer_1 = require("./gridSerializer");
 var downloader_1 = require("./downloader");
 var columnController_1 = require("./columnController/columnController");
-var valueService_1 = require("./valueService");
+var valueService_1 = require("./valueService/valueService");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var constants_1 = require("./constants");
+var utils_1 = require("./utils");
 var LINE_SEPARATOR = '\r\n';
 var CsvSerializingSession = (function (_super) {
     __extends(CsvSerializingSession, _super);
@@ -128,42 +129,83 @@ var CsvSerializingSession = (function (_super) {
     return CsvSerializingSession;
 }(gridSerializer_1.BaseGridSerializingSession));
 exports.CsvSerializingSession = CsvSerializingSession;
-var CsvCreator = (function () {
+var BaseCreator = (function () {
+    function BaseCreator() {
+    }
+    BaseCreator.prototype.export = function (userParams) {
+        var _a = this.getMergedParamsAndData(userParams), mergedParams = _a.mergedParams, data = _a.data;
+        var fileNamePresent = mergedParams && mergedParams.fileName && mergedParams.fileName.length !== 0;
+        var fileName = fileNamePresent ? mergedParams.fileName : this.getDefaultFileName();
+        if (fileName.indexOf(".") === -1) {
+            fileName = fileName + "." + this.getDefaultFileExtension();
+        }
+        this.downloader.download(fileName, data, this.getMimeType());
+        return data;
+    };
+    BaseCreator.prototype.getData = function (params) {
+        return this.getMergedParamsAndData(params).data;
+    };
+    BaseCreator.prototype.getMergedParamsAndData = function (userParams) {
+        var mergedParams = this.mergeDefaultParams(userParams);
+        var data = this.gridSerializer.serialize(this.createSerializingSession(mergedParams), mergedParams);
+        return { mergedParams: mergedParams, data: data };
+    };
+    BaseCreator.prototype.mergeDefaultParams = function (userParams) {
+        var baseParams = this.gridOptionsWrapper.getDefaultExportParams();
+        var params = {};
+        utils_1._.assign(params, baseParams);
+        utils_1._.assign(params, userParams);
+        return params;
+    };
+    __decorate([
+        context_1.Autowired('downloader'),
+        __metadata("design:type", downloader_1.Downloader)
+    ], BaseCreator.prototype, "downloader", void 0);
+    __decorate([
+        context_1.Autowired('gridSerializer'),
+        __metadata("design:type", gridSerializer_1.GridSerializer)
+    ], BaseCreator.prototype, "gridSerializer", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], BaseCreator.prototype, "gridOptionsWrapper", void 0);
+    return BaseCreator;
+}());
+exports.BaseCreator = BaseCreator;
+var CsvCreator = (function (_super) {
+    __extends(CsvCreator, _super);
     function CsvCreator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     CsvCreator.prototype.exportDataAsCsv = function (params) {
-        var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
-        var fileName = fileNamePresent ? params.fileName : 'export.csv';
-        var dataAsCsv = this.getDataAsCsv(params);
-        this.downloader.download(fileName, dataAsCsv, "text/csv;charset=utf-8;");
-        return dataAsCsv;
+        return this.export(params);
     };
     CsvCreator.prototype.getDataAsCsv = function (params) {
-        return this.gridSerializer.serialize(new CsvSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params ? params.processCellCallback : null, params ? params.processHeaderCallback : null, params && params.suppressQuotes, (params && params.columnSeparator) || ','), params);
+        return this.getData(params);
     };
+    CsvCreator.prototype.getMimeType = function () {
+        return "text/csv;charset=utf-8;";
+    };
+    CsvCreator.prototype.getDefaultFileName = function () {
+        return 'export.csv';
+    };
+    CsvCreator.prototype.getDefaultFileExtension = function () {
+        return 'csv';
+    };
+    CsvCreator.prototype.createSerializingSession = function (params) {
+        return new CsvSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params ? params.processCellCallback : null, params ? params.processHeaderCallback : null, params && params.suppressQuotes, (params && params.columnSeparator) || ',');
+    };
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], CsvCreator.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('valueService'),
+        __metadata("design:type", valueService_1.ValueService)
+    ], CsvCreator.prototype, "valueService", void 0);
+    CsvCreator = __decorate([
+        context_1.Bean('csvCreator')
+    ], CsvCreator);
     return CsvCreator;
-}());
-__decorate([
-    context_1.Autowired('downloader'),
-    __metadata("design:type", downloader_1.Downloader)
-], CsvCreator.prototype, "downloader", void 0);
-__decorate([
-    context_1.Autowired('gridSerializer'),
-    __metadata("design:type", gridSerializer_1.GridSerializer)
-], CsvCreator.prototype, "gridSerializer", void 0);
-__decorate([
-    context_1.Autowired('columnController'),
-    __metadata("design:type", columnController_1.ColumnController)
-], CsvCreator.prototype, "columnController", void 0);
-__decorate([
-    context_1.Autowired('valueService'),
-    __metadata("design:type", valueService_1.ValueService)
-], CsvCreator.prototype, "valueService", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], CsvCreator.prototype, "gridOptionsWrapper", void 0);
-CsvCreator = __decorate([
-    context_1.Bean('csvCreator')
-], CsvCreator);
+}(BaseCreator));
 exports.CsvCreator = CsvCreator;

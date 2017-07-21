@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,7 +24,7 @@ function querySelectorFunc(selector, classPrototype, methodOrAttributeName, inde
         return;
     }
     // it's an attribute on the class
-    var props = getOrCreateProps(classPrototype);
+    var props = getOrCreateProps(classPrototype, classPrototype.constructor.name);
     if (!props.querySelectors) {
         props.querySelectors = [];
     }
@@ -43,7 +43,7 @@ function listenerFunc(eventName, target, methodName, descriptor) {
         return;
     }
     // it's an attribute on the class
-    var props = getOrCreateProps(target);
+    var props = getOrCreateProps(target, target.constructor.name);
     if (!props.listenerMethods) {
         props.listenerMethods = [];
     }
@@ -52,11 +52,12 @@ function listenerFunc(eventName, target, methodName, descriptor) {
         eventName: eventName
     });
 }
-function getOrCreateProps(target) {
-    var props = target.__agComponentMetaData;
-    if (!props) {
-        props = {};
-        target.__agComponentMetaData = props;
+function getOrCreateProps(target, instanceName) {
+    if (!target.__agComponentMetaData) {
+        target.__agComponentMetaData = {};
     }
-    return props;
+    if (!target.__agComponentMetaData[instanceName]) {
+        target.__agComponentMetaData[instanceName] = {};
+    }
+    return target.__agComponentMetaData[instanceName];
 }

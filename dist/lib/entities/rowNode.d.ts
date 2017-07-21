@@ -1,7 +1,6 @@
-// Type definitions for ag-grid v11.0.0
+// Type definitions for ag-grid v12.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
-import { ColDef } from "./colDef";
 import { Column } from "./column";
 import { RowNodeCache, RowNodeCacheParams } from "../rowModels/cache/rowNodeCache";
 import { RowNodeBlock } from "../rowModels/cache/rowNodeBlock";
@@ -35,6 +34,7 @@ export declare class RowNode implements IEventEmitter {
     private valueService;
     private rowModel;
     private context;
+    private valueCache;
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
     id: string;
@@ -71,8 +71,8 @@ export declare class RowNode implements IEventEmitter {
     childIndex: number;
     /** The index of this node in the grid, only valid if node is displayed in the grid, otherwise it should be ignored as old index may be present */
     rowIndex: number;
-    /** Either 'top' or 'bottom' if floating, otherwise undefined or null */
-    floating: string;
+    /** Either 'top' or 'bottom' if row pinned, otherwise undefined or null */
+    rowPinned: string;
     /** If using quick filter, stores a string representation of the row for searching against */
     quickFilterAggregateText: string;
     /** Groups only - True if row is a footer. Footers  have group = true and footer = true */
@@ -117,6 +117,11 @@ export declare class RowNode implements IEventEmitter {
      * representing a different entity, so the selection controller, if the node is selected, takes
      * a copy where daemon=true. */
     daemon: boolean;
+    /** Used by the value service, stores values for a particular change detection turn. */
+    __cacheData: {
+        [colId: string]: any;
+    };
+    __cacheVersion: number;
     private selected;
     private eventService;
     setData(data: any): void;
@@ -124,6 +129,7 @@ export declare class RowNode implements IEventEmitter {
     private createDaemonNode();
     setDataAndId(data: any, id: string): void;
     setId(id: string): void;
+    isPixelInRange(pixel: number): boolean;
     clearRowTop(): void;
     setFirstChild(firstChild: boolean): void;
     setLastChild(lastChild: boolean): void;
@@ -135,8 +141,8 @@ export declare class RowNode implements IEventEmitter {
     setUiLevel(uiLevel: number): void;
     setExpanded(expanded: boolean): void;
     private dispatchLocalEvent(eventName, event?);
-    setDataValue(colKey: string | ColDef | Column, newValue: any): void;
-    setGroupValue(colKey: string | ColDef | Column, newValue: any): void;
+    setDataValue(colKey: string | Column, newValue: any): void;
+    setGroupValue(colKey: string | Column, newValue: any): void;
     setAggData(newAggData: any): void;
     private dispatchCellChangedEvent(column, newValue);
     resetQuickFilterAggregateText(): void;
@@ -147,10 +153,10 @@ export declare class RowNode implements IEventEmitter {
     private calculateSelectedFromChildrenBubbleUp();
     setSelectedInitialValue(selected: boolean): void;
     setSelected(newValue: boolean, clearSelection?: boolean, tailingNodeInSequence?: boolean): void;
-    isFloating(): boolean;
+    isRowPinned(): boolean;
     setSelectedParams(params: SetSelectedParams): number;
     private doRowRangeSelection();
-    private isParentOfNode(potentialParent);
+    isParentOfNode(potentialParent: RowNode): boolean;
     private calculatedSelectedForAllGroupNodes();
     selectThisNode(newValue: boolean): boolean;
     private selectChildNodes(newValue, groupSelectsFiltered);

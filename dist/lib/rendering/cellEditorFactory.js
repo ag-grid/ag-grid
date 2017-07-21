@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,10 +24,11 @@ var popupTextCellEditor_1 = require("./cellEditors/popupTextCellEditor");
 var popupSelectCellEditor_1 = require("./cellEditors/popupSelectCellEditor");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var largeTextCellEditor_1 = require("./cellEditors/largeTextCellEditor");
-var CellEditorFactory = CellEditorFactory_1 = (function () {
+var CellEditorFactory = (function () {
     function CellEditorFactory() {
         this.cellEditorMap = {};
     }
+    CellEditorFactory_1 = CellEditorFactory;
     CellEditorFactory.prototype.init = function () {
         this.cellEditorMap[CellEditorFactory_1.TEXT] = textCellEditor_1.TextCellEditor;
         this.cellEditorMap[CellEditorFactory_1.SELECT] = selectCellEditor_1.SelectCellEditor;
@@ -77,29 +78,29 @@ var CellEditorFactory = CellEditorFactory_1 = (function () {
         }
         return cellEditor;
     };
+    CellEditorFactory.TEXT = 'text';
+    CellEditorFactory.SELECT = 'select';
+    CellEditorFactory.POPUP_TEXT = 'popupText';
+    CellEditorFactory.POPUP_SELECT = 'popupSelect';
+    CellEditorFactory.LARGE_TEXT = 'largeText';
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], CellEditorFactory.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], CellEditorFactory.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], CellEditorFactory.prototype, "init", null);
+    CellEditorFactory = CellEditorFactory_1 = __decorate([
+        context_1.Bean('cellEditorFactory')
+    ], CellEditorFactory);
     return CellEditorFactory;
+    var CellEditorFactory_1;
 }());
-CellEditorFactory.TEXT = 'text';
-CellEditorFactory.SELECT = 'select';
-CellEditorFactory.POPUP_TEXT = 'popupText';
-CellEditorFactory.POPUP_SELECT = 'popupSelect';
-CellEditorFactory.LARGE_TEXT = 'largeText';
-__decorate([
-    context_1.Autowired('context'),
-    __metadata("design:type", context_1.Context)
-], CellEditorFactory.prototype, "context", void 0);
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], CellEditorFactory.prototype, "gridOptionsWrapper", void 0);
-__decorate([
-    context_1.PostConstruct,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], CellEditorFactory.prototype, "init", null);
-CellEditorFactory = CellEditorFactory_1 = __decorate([
-    context_1.Bean('cellEditorFactory')
-], CellEditorFactory);
 exports.CellEditorFactory = CellEditorFactory;
-var CellEditorFactory_1;

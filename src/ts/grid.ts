@@ -1,20 +1,18 @@
 import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {FloatingRowModel} from "./rowModels/floatingRowModel";
 import {SelectionController} from "./selectionController";
 import {ColumnController, ColumnApi} from "./columnController/columnController";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {HeaderRenderer} from "./headerRendering/headerRenderer";
 import {FilterManager} from "./filter/filterManager";
-import {ValueService} from "./valueService";
-import {MasterSlaveService} from "./masterSlaveService";
+import {ValueService} from "./valueService/valueService";
 import {EventService} from "./eventService";
 import {GridPanel} from "./gridPanel/gridPanel";
 import {GridApi} from "./gridApi";
 import {HeaderTemplateLoader} from "./headerRendering/deprecated/headerTemplateLoader";
 import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
-import {ExpressionService} from "./expressionService";
+import {ExpressionService} from "./valueService/expressionService";
 import {TemplateService} from "./templateService";
 import {PopupService} from "./widgets/popupService";
 import {LoggerFactory, Logger} from "./logger";
@@ -60,8 +58,12 @@ import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
 import {AutoGroupColService} from "./columnController/autoGroupColService";
 import {PaginationAutoPageSizeService, PaginationProxy} from "./rowModels/paginationProxy";
 import {ImmutableService} from "./rowModels/inMemory/immutableService";
-import {GroupValueService} from "./groupValueService";
-
+import {IRowModel} from "./interfaces/iRowModel";
+import {Constants} from "./constants";
+import {ValueCache} from "./valueService/valueCache";
+import {ChangeDetectionService} from "./valueService/changeDetectionService";
+import {AlignedGridsService} from "./alignedGridsService";
+import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 
 export interface GridParams {
     // used by Web Components
@@ -148,16 +150,18 @@ export class Grid {
         let contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
-            beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, FloatingRowModel, DragService,
+            beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, CellRendererFactory,
+                HorizontalDragService, HeaderTemplateLoader, PinnedRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
-                FilterManager, ColumnController, PaginationProxy, RowRenderer,
-                HeaderRenderer, ExpressionService, BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory,
-                GridSerializer, TemplateService, GridPanel, PopupService, ValueService, GroupValueService, MasterSlaveService,
+                FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,
+                BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
+                GridPanel, PopupService, ValueCache, ValueService, AlignedGridsService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService, FilterService, RowNodeFactory,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
-                ColumnHoverService, ColumnAnimationService, SortService, AutoGroupColService, ImmutableService],
+                ColumnHoverService, ColumnAnimationService, SortService, AutoGroupColService, ImmutableService,
+                ChangeDetectionService],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],
@@ -167,16 +171,47 @@ export class Grid {
         let isLoggingFunc = ()=> contextParams.debug;
         this.context = new Context(contextParams, new Logger('Context', isLoggingFunc));
 
-        let eventService = this.context.getBean('eventService');
+        // we do this at the end, after the boot sequence is complete
+        this.setColumnsAndData();
+
+        this.dispatchGridReadyEvent(gridOptions);
+
+        if (gridOptions.debug) {
+            console.log('ag-Grid -> initialised successfully, enterprise = ' + enterprise);
+        }
+    }
+
+    private setColumnsAndData(): void {
+
+        let gridOptionsWrapper: GridOptionsWrapper = this.context.getBean('gridOptionsWrapper');
+        let columnController: ColumnController = this.context.getBean('columnController');
+        let rowModel: IRowModel = this.context.getBean('rowModel');
+
+        let columnDefs = gridOptionsWrapper.getColumnDefs();
+        let rowData = gridOptionsWrapper.getRowData();
+
+        let nothingToSet = _.missing(columnDefs) && _.missing(rowData);
+        if (nothingToSet) { return; }
+
+        let valueService: ValueService = this.context.getBean('valueService');
+
+        if (_.exists(columnDefs)) {
+            columnController.setColumnDefs(columnDefs);
+        }
+
+        if (_.exists(rowData) && rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
+            let inMemoryRowModel = <InMemoryRowModel> rowModel;
+            inMemoryRowModel.setRowData(rowData);
+        }
+    }
+
+    private dispatchGridReadyEvent(gridOptions: GridOptions): void {
+        let eventService: EventService = this.context.getBean('eventService');
         let readyEvent = {
             api: gridOptions.api,
             columnApi: gridOptions.columnApi
         };
         eventService.dispatchEvent(Events.EVENT_GRID_READY, readyEvent);
-
-        if (gridOptions.debug) {
-            console.log('ag-Grid -> initialised successfully, enterprise = ' + enterprise);
-        }
     }
 
     private getRowModelClass(gridOptions: GridOptions): any {

@@ -24,6 +24,7 @@ export enum HeaderRowType {
 }
 
 export class HeaderRowComp extends Component {
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('context') private context: Context;
@@ -34,7 +35,7 @@ export class HeaderRowComp extends Component {
     private dept: number;
     private pinned: string;
 
-    private headerElements: {[key: string]: IComponent<any>} = {};
+    private headerComps: {[key: string]: IComponent<any>} = {};
 
     private eRoot: HTMLElement;
     private dropTarget: DropTarget;
@@ -51,26 +52,26 @@ export class HeaderRowComp extends Component {
     }
 
     public forEachHeaderElement(callback: (comp: IComponent<any>)=>void): void {
-        Object.keys(this.headerElements).forEach( key => {
-            let headerElement = this.headerElements[key];
+        Object.keys(this.headerComps).forEach( key => {
+            let headerElement = this.headerComps[key];
             callback(headerElement);
         });
     }
 
     public destroy(): void {
-        let idsOfAllChildren = Object.keys(this.headerElements);
+        let idsOfAllChildren = Object.keys(this.headerComps);
         this.removeAndDestroyChildComponents(idsOfAllChildren);
         super.destroy();
     }
 
     private removeAndDestroyChildComponents(idsToDestroy: string[]): void {
         idsToDestroy.forEach( id => {
-            let child = this.headerElements[id];
+            let child = this.headerComps[id];
             this.getGui().removeChild(child.getGui());
             if (child.destroy){
                 child.destroy();
             }
-            delete this.headerElements[id];
+            delete this.headerComps[id];
         });
     }
 
@@ -143,7 +144,7 @@ export class HeaderRowComp extends Component {
     }
 
     private removeAndDestroyAllChildComponents(): void {
-        let idsOfAllChildren = Object.keys(this.headerElements);
+        let idsOfAllChildren = Object.keys(this.headerComps);
         this.removeAndDestroyChildComponents(idsOfAllChildren);
     }
 
@@ -154,7 +155,7 @@ export class HeaderRowComp extends Component {
     
     private onVirtualColumnsChanged(): void {
 
-        let currentChildIds = Object.keys(this.headerElements);
+        let currentChildIds = Object.keys(this.headerComps);
 
         let itemsAtDepth = this.columnController.getVirtualHeaderGroupRow(
             this.pinned,
@@ -163,26 +164,38 @@ export class HeaderRowComp extends Component {
                 this.dept
         );
 
+        let ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        let eBefore: HTMLElement;
+
         itemsAtDepth.forEach( (child: ColumnGroupChild) => {
-            let idOfChild = child.getUniqueId();
-
-            // if we already have this cell rendered, do nothing
-            if (currentChildIds.indexOf(idOfChild) >= 0) {
-                _.removeFromArray(currentChildIds, idOfChild);
-                return;
-            }
-
             // skip groups that have no displayed children. this can happen when the group is broken,
             // and this section happens to have nothing to display for the open / closed state.
             // (a broken group is one that is split, ie columns in the group have a non-group column
             // in between them)
-            if (child instanceof ColumnGroup && (<ColumnGroup>child).getDisplayedChildren().length === 0) {
-                return;
-            }
+            if (child.isEmptyGroup()) { return; }
 
-            let renderedHeaderElement = this.createHeaderElement(child);
-            this.headerElements[idOfChild] = renderedHeaderElement;
-            this.getGui().appendChild(renderedHeaderElement.getGui());
+            let idOfChild = child.getUniqueId();
+            let eParentContainer = this.getGui();
+
+            // if we already have this cell rendered, do nothing
+            let colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
+            let headerComp: IComponent<any>;
+            if (colAlreadyInDom) {
+                _.removeFromArray(currentChildIds, idOfChild);
+                headerComp = this.headerComps[idOfChild];
+                if (ensureDomOrder) {
+                    _.ensureDomOrder(eParentContainer, headerComp.getGui(), eBefore);
+                }
+            } else {
+                headerComp = this.createHeaderComp(child);
+                this.headerComps[idOfChild] = headerComp;
+                if (ensureDomOrder) {
+                    _.insertWithDomOrder(eParentContainer, headerComp.getGui(), eBefore);
+                } else {
+                    eParentContainer.appendChild(headerComp.getGui());
+                }
+            }
+            eBefore = headerComp.getGui();
         });
 
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
@@ -205,7 +218,7 @@ export class HeaderRowComp extends Component {
 
     }
 
-    private createHeaderElement(columnGroupChild:ColumnGroupChild): IComponent<any> {
+    private createHeaderComp(columnGroupChild:ColumnGroupChild): IComponent<any> {
         let result: IComponent<any>;
 
         switch (this.type) {
@@ -250,11 +263,11 @@ export class HeaderRowComp extends Component {
     }
 
     private createFloatingFilterParams<M, F extends FloatingFilterChange>(column: Column):IFloatingFilterParams<M, F> {
-        /** We always get the freshest reference to the baseFilter because the filters get sometimes created
-         * and destroyed beetwen calls
-         *
-         *let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
-         */
+        // We always get the freshest reference to the baseFilter because the filters get sometimes created
+        // and destroyed between calls
+        //
+        // let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
+        //
         let baseParams:IFloatingFilterParams<M, F> = {
             column:column,
             currentParentModel: (): M => {

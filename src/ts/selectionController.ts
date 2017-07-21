@@ -84,7 +84,7 @@ export class SelectionController {
 
     // should only be called if groupSelectsChildren=true
     public updateGroupsFromChildrenSelections(): void {
-        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             console.warn('updateGroupsFromChildrenSelections not available when rowModel is not normal');
         }
         let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
@@ -180,7 +180,7 @@ export class SelectionController {
     // where groups don't actually appear in the selection normally.
     public getBestCostNodeSelection() {
 
-        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             console.warn('getBestCostNodeSelection is only avilable when using normal row model');
         }
 
@@ -232,20 +232,30 @@ export class SelectionController {
 
     public deselectAllRowNodes(justFiltered = false) {
 
-        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
         let callback = (rowNode: RowNode) => rowNode.selectThisNode(false);
+        let rowModelInMemory = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_IN_MEMORY;
 
-        // execute on all nodes in the model. if we are doing pagination, only
-        // the current page is used, thus if we 'deselect all' while on page 2,
-        // any selections on page 1 are left as is.
         if (justFiltered) {
+            if (!rowModelInMemory) {
+                console.error('ag-Grid: selecting just filtered only works with In Memory Row Model');
+                return;
+            }
+            let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
             inMemoryRowModel.forEachNodeAfterFilter(callback);
         } else {
-            inMemoryRowModel.forEachNode(callback);
+            _.iterateObject(this.selectedNodes, (id: string, rowNode: RowNode) => {
+                // remember the reference can be to null, as we never 'delete' from the map
+                if (rowNode) {
+                    callback(rowNode);
+                }
+            });
         }
 
+        // this clears down the map (whereas above only sets the items in map to 'undefined')
+        this.reset();
+
         // the above does not clean up the parent rows if they are selected
-        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL && this.groupSelectsChildren) {
+        if (rowModelInMemory && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
         }
 
@@ -253,7 +263,7 @@ export class SelectionController {
     }
 
     public selectAllRowNodes(justFiltered = false) {
-        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_NORMAL) {
+        if (this.rowModel.getType()!==Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             throw `selectAll only available with normal row model, ie not ${this.rowModel.getType()}`;
         }
 
@@ -267,7 +277,7 @@ export class SelectionController {
         }
 
         // the above does not clean up the parent rows if they are selected
-        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_NORMAL && this.groupSelectsChildren) {
+        if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
         }
 

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -214,9 +214,9 @@ var SvgFactory = (function () {
     SvgFactory.prototype.createGroupLoadingIcon = function () {
         return SvgFactory.getFromCacheOrCreate('GroupLoadingIcon', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6M0I3QUY0MjAwQTM2MTFFNzkzQzNGQUI2NDhCM0RBRTEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6M0I3QUY0MjEwQTM2MTFFNzkzQzNGQUI2NDhCM0RBRTEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDozQjdBRjQxRTBBMzYxMUU3OTNDM0ZBQjY0OEIzREFFMSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDozQjdBRjQxRjBBMzYxMUU3OTNDM0ZBQjY0OEIzREFFMSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Ps9zjP8AAADESURBVHjadNDJCoFRGMbxj4xlyhBJGSNla+0KLNhKYaXIwsbKXbgDd2PjHtjYYUVS/I+exdfBqV9neN8zvMdxvlsOOzTsgFf9BGONQ2gjofkAM/emBV4YwY87UuhpfW3f0legjBYymo/dSVkUNDaJUY2DqMKjuKnlU8wZJ0R+FHxUfG921VXUQf0VN709rfebkx/uEzp4ooKS3mw2de2rpipmjgAuSGKo9ZVJ8rn+e4kNioijhi1iCDt/Wt4Ug6YdeAswAEquIINwlr6iAAAAAElFTkSuQmCC');
     };
+    SvgFactory.imageCache = {};
     return SvgFactory;
 }());
-SvgFactory.imageCache = {};
 exports.SvgFactory = SvgFactory;
 // i couldn't figure out how to not make these blurry
 /*function createPlusMinus(plus: boolean) {

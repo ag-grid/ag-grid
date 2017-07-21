@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v11.0.0
+ * @version v12.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,9 +20,10 @@ var svgFactory_1 = require("../../svgFactory");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var context_1 = require("../../context/context");
 var svgFactory = svgFactory_1.SvgFactory.getInstance();
-var HeaderTemplateLoader = HeaderTemplateLoader_1 = (function () {
+var HeaderTemplateLoader = (function () {
     function HeaderTemplateLoader() {
     }
+    HeaderTemplateLoader_1 = HeaderTemplateLoader;
     HeaderTemplateLoader.prototype.createHeaderElement = function (column) {
         var params = {
             column: column,
@@ -75,25 +76,25 @@ var HeaderTemplateLoader = HeaderTemplateLoader_1 = (function () {
         var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
         eTemplate.querySelector(cssSelector).appendChild(eIcon);
     };
+    HeaderTemplateLoader.HEADER_CELL_TEMPLATE = '<div class="ag-header-cell">' +
+        '  <div id="agResizeBar" class="ag-header-cell-resize"></div>' +
+        '  <span id="agMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
+        '  <div id="agHeaderCellLabel" class="ag-header-cell-label">' +
+        '    <span id="agSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
+        '    <span id="agSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
+        '    <span id="agNoSort" class="ag-header-icon ag-sort-none-icon"></span>' +
+        '    <span id="agFilter" class="ag-header-icon ag-filter-icon"></span>' +
+        '    <span id="agText" class="ag-header-cell-text"></span>' +
+        '  </div>' +
+        '</div>';
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], HeaderTemplateLoader.prototype, "gridOptionsWrapper", void 0);
+    HeaderTemplateLoader = HeaderTemplateLoader_1 = __decorate([
+        context_1.Bean('headerTemplateLoader')
+    ], HeaderTemplateLoader);
     return HeaderTemplateLoader;
+    var HeaderTemplateLoader_1;
 }());
-HeaderTemplateLoader.HEADER_CELL_TEMPLATE = '<div class="ag-header-cell">' +
-    '  <div id="agResizeBar" class="ag-header-cell-resize"></div>' +
-    '  <span id="agMenu" class="ag-header-icon ag-header-cell-menu-button"></span>' +
-    '  <div id="agHeaderCellLabel" class="ag-header-cell-label">' +
-    '    <span id="agSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>' +
-    '    <span id="agSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>' +
-    '    <span id="agNoSort" class="ag-header-icon ag-sort-none-icon"></span>' +
-    '    <span id="agFilter" class="ag-header-icon ag-filter-icon"></span>' +
-    '    <span id="agText" class="ag-header-cell-text"></span>' +
-    '  </div>' +
-    '</div>';
-__decorate([
-    context_1.Autowired('gridOptionsWrapper'),
-    __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-], HeaderTemplateLoader.prototype, "gridOptionsWrapper", void 0);
-HeaderTemplateLoader = HeaderTemplateLoader_1 = __decorate([
-    context_1.Bean('headerTemplateLoader')
-], HeaderTemplateLoader);
 exports.HeaderTemplateLoader = HeaderTemplateLoader;
-var HeaderTemplateLoader_1;
