@@ -324,6 +324,8 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public pinnedTopRowData: any = undefined;
     @Input() public pinnedBottomRowData: any = undefined;
     @Input() public pinnedRowDataChanged: any = undefined;
+    @Input() public alwaysShowStatusBar: any = undefined;
+    @Input() public ensureDomOrder: any = undefined;
 
 
     /**
