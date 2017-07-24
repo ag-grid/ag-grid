@@ -85,6 +85,9 @@ export class AureliaComponentFactory {
             }
 
             public afterGuiAttached() {
+                if (this.editorVm.afterGuiAttached) {
+                    this.editorVm.afterGuiAttached();
+                }
                 this.view.attached();
             }
 
