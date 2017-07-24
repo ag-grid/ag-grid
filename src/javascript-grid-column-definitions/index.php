@@ -144,10 +144,10 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <pre>
-<span class="codeComment">// get a reference to column</span>
+<span class="codeComment">// get a reference to the column</span>
 var col = gridOptions.columnApi.getColumn("colId");
 
-<span class="codeComment">// then obtain the copied column definition</span>
+<span class="codeComment">// obtain the column definition from the column</span>
 var colDef = col.getColDef();
 
 <span class="codeComment">// update the header name</span>
@@ -157,34 +157,32 @@ colDef.headerName = "New Header";
 gridOptions.api.refreshHeader();
 </pre>
 
-<h2 id="deep-dive-save-restore-full-state">Deep Dive - Save / Restore Full State</h2>
+
+
+<h2 id="saving-and-restoring-column-state">Saving and Restoring Column State</h2>
 
 <p>
-    It is also possible to store the entire state of the columns and restore them again via
-    the API. This includes visibility, width, row groups and values.
+It is possible to save and subsequently restore the column state via the <a href="../javascript-column-api/">Column API</a>.
+Examples of state include column visibility, width, row groups and values.
 </p>
-
+<p>
+    This is primarily achieved using the following methods:
+</p>
 <ul>
     <li><b>columnApi.getColumnState()</b>: Returns the state of a particular column.</li>
     <li><b>columnApi.setColumnState(state)</b>: To set the state of a particular column.</li>
 </ul>
 
 <p>
-    The methods above get and set the state. The result is a Javascript array object that
-    can be converted to / from JSON. An example of what the JSON might look like is as follows:
+    The column state used by the above methods is an array of objects that mimic the colDef's which can be converted to and from JSON.
+    An example is shown below:
 </p>
 
 <pre>[
-{colId: "athlete", aggFunc: "sum",  hide: false, rowGroupIndex: 0,    width: 150, pinned: null},
-{colId: "age",     aggFunc: null,   hide: true,  rowGroupIndex: null, width: 90,  pinned: 'left'}
+  {colId: "athlete", aggFunc: "sum",  hide: false, rowGroupIndex: 0,    width: 150, pinned: null},
+  {colId: "age",     aggFunc: null,   hide: true,  rowGroupIndex: null, width: 90,  pinned: 'left'}
 ]
 </pre>
-
-<p>
-    It is intended that the values in the json mimic the values in the column definitions.
-    So if you want to re-apply the state to a set of column definitions as the default
-    values, override the values of the same name in the corresponding column definition.
-</p>
 
 <p>
     The values have the following meaning:
@@ -205,10 +203,15 @@ gridOptions.api.refreshHeader();
 </ul>
 </p>
 
-<p>
-    The example below shows hiding / showing columns as well as saving / restoring the entire state.
-    The example also registers for column events, the result of which are printed to the console.
+
+<h2 id="column-api-example">Column API Example</h2>
+<p>This section illustrates how to store and restore column state using the <a href="../javascript-column-api/">Column API</a>.
 </p>
+
+<ul>
+    <li>hiding / showing columns as well as saving / restoring the entire state</li>
+    <li><b>registering for column events, the result of which are printed to the console.</b></li>
+</ul>
 
 <show-example example="columnStateExample"></show-example>
 
