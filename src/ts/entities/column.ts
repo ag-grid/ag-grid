@@ -237,6 +237,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
         }
 
+        if (_.get(this, 'colDef.cellRendererParams.keyMap', null)) {
+            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
+        }
+
         let colDefAny: any = this.colDef;
         if (colDefAny.floatingCellRenderer) {
             console.warn('ag-Grid: since v11, floatingCellRenderer is now pinnedRowCellRenderer');
