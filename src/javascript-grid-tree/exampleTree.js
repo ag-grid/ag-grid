@@ -8,22 +8,22 @@ var columnDefs = [
 var rowData = [
     {group: 'Group A',
         participants: [
-        {athlete: 'Michael Phelps', year: '2008', country: 'United States'},
-        {athlete: 'Michael Phelps', year: '2008', country: 'United States'},
-        {athlete: 'Michael Phelps', year: '2008', country: 'United States'}
+        {group: 'A.1', athlete: 'Michael Phelps', year: '2008', country: 'United States'},
+        {group: 'A.2', athlete: 'Michael Phelps', year: '2008', country: 'United States'},
+        {group: 'A.3', athlete: 'Michael Phelps', year: '2008', country: 'United States'}
     ]},
     {group: 'Group B', athlete: 'Mix of Names', year: '2000..2012', country: 'Group Country',
         participants: [
-        {athlete: 'Natalie Coughlin', year: '2008', country: 'United States'},
-        {athlete: 'Missy Franklin ', year: '2012', country: 'United States'},
-        {athlete: 'Ole Einar Qjorndalen', year: '2002', country: 'Norway'},
-        {athlete: 'Marit Bjorgen', year: '2010', country: 'Norway'},
-        {athlete: 'Ian Thorpe', year: '2000', country: 'Australia'}
+        {group: 'B.1', athlete: 'Natalie Coughlin', year: '2008', country: 'United States'},
+        {group: 'B.2', athlete: 'Missy Franklin ', year: '2012', country: 'United States'},
+        {group: 'B.3', athlete: 'Ole Einar Qjorndalen', year: '2002', country: 'Norway'},
+        {group: 'B.4', athlete: 'Marit Bjorgen', year: '2010', country: 'Norway'},
+        {group: 'B.5', athlete: 'Ian Thorpe', year: '2000', country: 'Australia'}
     ]},
     {group: 'Group C',
         participants: [
-        {athlete: 'Janica Kostelic', year: '2002', country: 'Crotia'},
-        {athlete: 'An Hyeon-Su', year: '2006', country: 'South Korea'}
+        {group: 'C.1', athlete: 'Janica Kostelic', year: '2002', country: 'Crotia'},
+        {group: 'C.2', athlete: 'An Hyeon-Su', year: '2006', country: 'South Korea'}
     ]}
 ];
 
@@ -38,7 +38,7 @@ var gridOptions = {
 };
 
 function getNodeChildDetails(rowItem) {
-    if (rowItem.group) {
+    if (rowItem.participants) {
         return {
             group: true,
             // open C be default
