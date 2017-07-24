@@ -1,7 +1,7 @@
 // ag-grid-react v12.0.0
-import { IComponent, FrameworkComponentWrapper } from 'ag-grid';
-export declare class ReactFrameworkComponentWrapper implements FrameworkComponentWrapper {
-    wrap<A extends IComponent<any>>(ReactComponent: {
+import { FrameworkComponentWrapper, BaseComponentWrapper, WrapableInterface } from 'ag-grid';
+export declare class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
+    createWrapper(ReactComponent: {
         new (): any;
-    }, methodList: string[]): A;
+    }): WrapableInterface;
 }
