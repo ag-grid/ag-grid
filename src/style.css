@@ -1,3 +1,13 @@
+.table .title-row td {
+    border: none;
+    font-weight: bold;
+    font-size: 20px;
+    background-color: #eee;
+}
+
+.table .title-row {
+}
+
 .code-highlight-blue {color: #a3b9a3}
 .code-highlight-yellow {color: #e8bf6a}
 .code-highlight-green {color: #a5c261}

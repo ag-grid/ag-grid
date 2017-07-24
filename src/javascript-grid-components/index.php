@@ -47,23 +47,6 @@ include '../documentation-main/documentation_header.php';
             on what you learn from the JavaScript component.
         </p>
 
-        <?php if (isFrameworkAngular1()) { ?>
-            <h2 id="ng1Components">
-                <img src="../images/angularjs.png" style="width: 25px;"/> AngularJS 1.x
-            </h2>
-            <p>
-                ag-Grid does not provide direct support for it's components and AngularJS 1.x. If you want to put custom
-                AngularJS 1.x components into ag-Grid, follow the instructions for plain JavaScript component. You will
-                then need to manage creating and destroying child scopes yourself inside the <i>init()</i> and
-                <i>destroy()</i> methods.
-
-            </p>
-
-            <p><code>angularCompileRows</code>, <code>angularCompileFilters</code> and <code>angularCompileHeaders</code> are not
-                supported within Components.</p>
-
-        <?php } ?>
-
     </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

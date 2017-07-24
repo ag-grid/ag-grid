@@ -103,4 +103,59 @@ include '../documentation-main/documentation_header.php';
 
 <show-example example="columnDefinitionExample"></show-example>
 
+<h2 id="deep-dive-save-restore-full-state">Deep Dive - Save / Restore Full State</h2>
+
+<p>
+    It is also possible to store the entire state of the columns and restore them again via
+    the API. This includes visibility, width, row groups and values.
+</p>
+
+<ul>
+    <li><b>columnApi.getColumnState()</b>: Returns the state of a particular column.</li>
+    <li><b>columnApi.setColumnState(state)</b>: To set the state of a particular column.</li>
+</ul>
+
+<p>
+    The methods above get and set the state. The result is a Javascript array object that
+    can be converted to / from JSON. An example of what the JSON might look like is as follows:
+</p>
+
+<pre>[
+{colId: "athlete", aggFunc: "sum",  hide: false, rowGroupIndex: 0,    width: 150, pinned: null},
+{colId: "age",     aggFunc: null,   hide: true,  rowGroupIndex: null, width: 90,  pinned: 'left'}
+]
+</pre>
+
+<p>
+    It is intended that the values in the json mimic the values in the column definitions.
+    So if you want to re-apply the state to a set of column definitions as the default
+    values, override the values of the same name in the corresponding column definition.
+</p>
+
+<p>
+    The values have the following meaning:
+<ul>
+    <li><b>colId</b>: The ID of the column. See
+        <a href="../javascript-grid-column-definitions/">column definitions</a> for explanation
+        of column ID
+    </li>
+    <li><b>aggFunc</b>: If this column is a value column, this field specifies the aggregation function.
+        If the column is not a value column, this field is null.
+    </li>
+    <li><b>hide</b>: True if the column is hidden, otherwise false.</li>
+    <li><b>rowGroupIndex</b>: The index of the row group. If the column is not grouped, this field is null.
+        If multiple columns are used to group, this index provides the order of the grouping.
+    </li>
+    <li><b>width</b>: The width of the column. If the column was resized, this reflects the new value.</li>
+    <li><b>pinned</b>: The pinned state of the column. Can be either 'left' or 'right'</li>
+</ul>
+</p>
+
+<p>
+    The example below shows hiding / showing columns as well as saving / restoring the entire state.
+    The example also registers for column events, the result of which are printed to the console.
+</p>
+
+<show-example example="columnStateExample"></show-example>
+
 <?php include '../documentation-main/documentation_footer.php';?>
