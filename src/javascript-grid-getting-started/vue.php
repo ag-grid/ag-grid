@@ -63,7 +63,7 @@ import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
         <li>A Cell Editor example - one with a popup editor, and another with a numeric editor. Each demonstrates different editor related features
             <a href="https://github.com/ceolter/ag-grid-vue-example/blob/master/src/editor-component-example/EditorComponentExample.vue" target="_blank" class="fa fa-external-link"> Vue</a>
         </li>
-        <li>A Floating Row Renderer Example
+        <li>A Pinned Row Renderer Example
             <a href="https://github.com/ceolter/ag-grid-vue-example/blob/master/src/floating-row-example/FloatingRowExample.vue" target="_blank" class="fa fa-external-link"> Vue</a>
         </li>
         <li>A Full Width Renderer Example

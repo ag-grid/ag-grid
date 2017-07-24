@@ -1,12 +1,11 @@
 import {Component, ViewEncapsulation} from "@angular/core";
 import {GridOptions} from "ag-grid/main";
 
-import ProficiencyFilter from '../filters/proficiencyFilter';
-import SkillFilter from '../filters/skillFilter';
-import RefData from '../data/refData';
-
+import ProficiencyFilter from "../filters/proficiencyFilter";
+import SkillFilter from "../filters/skillFilter";
+import RefData from "../data/refData";
 // only import this if you are using the ag-Grid-Enterprise
-import 'ag-grid-enterprise/main';
+import "ag-grid-enterprise/main";
 
 import {HeaderGroupComponent} from "../header-group-component/header-group.component";
 import {DateComponent} from "../date-component/date.component";
@@ -21,21 +20,13 @@ import {HeaderComponent} from "../header-component/header.component";
 })
 export class RichGridComponent {
 
-    private gridOptions:GridOptions;
-    public showGrid:boolean;
-    public rowData:any[];
-    private columnDefs:any[];
-    public rowCount:string;
-    public dateComponentFramework:DateComponent;
+    private gridOptions: GridOptions;
+    public showGrid: boolean;
+    public rowData: any[];
+    private columnDefs: any[];
+    public rowCount: string;
+    public dateComponentFramework: DateComponent;
     public HeaderGroupComponent = HeaderGroupComponent;
-
-    dobFilter() {
-        // spl todo - remove any cast once AG-546 done
-        let dateFilterComponent = <any>this.gridOptions.api.getFilterInstance('dob');
-        dateFilterComponent.setFilterType('equals');
-        dateFilterComponent.setDateFrom('2000-01-01');
-        this.gridOptions.api.onFilterChanged();
-    }
 
     constructor() {
         // we pass an empty gridOptions in, so we can grab the api out
@@ -45,18 +36,32 @@ export class RichGridComponent {
         this.showGrid = true;
         this.gridOptions.dateComponentFramework = DateComponent;
         this.gridOptions.defaultColDef = {
-            headerComponentFramework : <{new():HeaderComponent}>HeaderComponent,
-            headerComponentParams : {
+            headerComponentFramework: <{ new(): HeaderComponent }>HeaderComponent,
+            headerComponentParams: {
                 menuIcon: 'fa-bars'
             }
-        }
+        };
+        this.gridOptions.getContextMenuItems = this.getContextMenuItems.bind(this);
+        this.gridOptions.floatingFilter = true;
+    }
+
+    private getContextMenuItems(): any {
+        let result: any = [
+            { // custom item
+                name: 'Alert ',
+                action: function () {
+                    window.alert('Alerting about ');
+                },
+                cssClasses: ['redFont', 'bold']
+            }];
+        return result;
     }
 
     private createRowData() {
-        var rowData:any[] = [];
+        const rowData: any[] = [];
 
-        for (var i = 0; i < 200; i++) {
-            var countryData = RefData.countries[i % RefData.countries.length];
+        for (let i = 0; i < 200; i++) {
+            const countryData = RefData.countries[i % RefData.countries.length];
             rowData.push({
                 name: RefData.firstNames[i % RefData.firstNames.length] + ' ' + RefData.lastNames[i % RefData.lastNames.length],
                 skills: {
@@ -92,20 +97,35 @@ export class RichGridComponent {
                 headerGroupComponentFramework: HeaderGroupComponent,
                 children: [
                     {
-                        headerName: "Name", field: "name",
-                        width: 150, pinned: true
+                        headerName: "Name",
+                        field: "name",
+                        width: 150,
+                        pinned: true
                     },
                     {
-                        headerName: "Country", field: "country", width: 150,
-                        cellRenderer: countryCellRenderer, pinned: true,
-                        filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}, columnGroupShow: 'open'
+                        headerName: "Country",
+                        field: "country",
+                        width: 150,
+                        cellRenderer: countryCellRenderer,
+                        pinned: true,
+                        filterParams: {
+                            cellRenderer: countryCellRenderer,
+                            cellHeight: 20
+                        },
+                        columnGroupShow: 'open'
                     },
                     {
-                        headerName: "DOB", field: "dob", width: 120, pinned: true, cellRenderer: function(params) {
-                        return  pad(params.value.getDate(), 2) + '/' +
-                            pad(params.value.getMonth() + 1, 2)+ '/' +
-                            params.value.getFullYear();
-                        }, filter: 'date', columnGroupShow: 'open'
+                        headerName: "DOB",
+                        field: "dob",
+                        width: 170,
+                        pinned: true,
+                        cellRenderer: function (params) {
+                            return pad(params.value.getDate(), 2) + '/' +
+                                pad(params.value.getMonth() + 1, 2) + '/' +
+                                params.value.getFullYear();
+                        },
+                        filter: 'date',
+                        columnGroupShow: 'open'
                     }
                 ]
             },
@@ -141,9 +161,9 @@ export class RichGridComponent {
 
     private calculateRowCount() {
         if (this.gridOptions.api && this.rowData) {
-            var model = this.gridOptions.api.getModel();
-            var totalRows = this.rowData.length;
-            var processedRows = model.getRowCount();
+            const model = this.gridOptions.api.getModel();
+            const totalRows = this.rowData.length;
+            const processedRows = model.getRowCount();
             this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
         }
     }
@@ -211,11 +231,19 @@ export class RichGridComponent {
         console.log('onColumnEvent: ' + $event);
     }
 
+    public dobFilter() {
+        let dateFilterComponent = this.gridOptions.api.getFilterInstance('dob');
+        dateFilterComponent.setModel({
+            type: 'equals',
+            dateFrom: '2000-01-01'
+        });
+        this.gridOptions.api.onFilterChanged();
+    }
 }
 
 function skillsCellRenderer(params) {
-    var data = params.data;
-    var skills = [];
+    const data = params.data;
+    const skills = [];
     RefData.IT_SKILLS.forEach(function (skill) {
         if (data && data.skills && data.skills[skill]) {
             skills.push('<img src="images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
@@ -225,13 +253,13 @@ function skillsCellRenderer(params) {
 }
 
 function countryCellRenderer(params) {
-    var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
+    const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
     return flag + " " + params.value;
 }
 
 function createRandomPhoneNumber() {
-    var result = '+';
-    for (var i = 0; i < 12; i++) {
+    let result = '+';
+    for (let i = 0; i < 12; i++) {
         result += Math.round(Math.random() * 10);
         if (i === 2 || i === 5 || i === 8) {
             result += ' ';
@@ -241,9 +269,9 @@ function createRandomPhoneNumber() {
 }
 
 function percentCellRenderer(params) {
-    var value = params.value;
+    const value = params.value;
 
-    var eDivPercentBar = document.createElement('div');
+    const eDivPercentBar = document.createElement('div');
     eDivPercentBar.className = 'div-percent-bar';
     eDivPercentBar.style.width = value + '%';
     if (value < 20) {
@@ -254,11 +282,11 @@ function percentCellRenderer(params) {
         eDivPercentBar.style.backgroundColor = '#00A000';
     }
 
-    var eValue = document.createElement('div');
+    const eValue = document.createElement('div');
     eValue.className = 'div-percent-value';
     eValue.innerHTML = value + '%';
 
-    var eOuterDiv = document.createElement('div');
+    const eOuterDiv = document.createElement('div');
     eOuterDiv.className = 'div-outer-div';
     eOuterDiv.appendChild(eValue);
     eOuterDiv.appendChild(eDivPercentBar);

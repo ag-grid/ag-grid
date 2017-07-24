@@ -234,7 +234,13 @@
 .ag-fresh .ag-stub-cell {
   padding: 2px 2px 2px 10px;
 }
+.ag-fresh .ag-floating-top {
+  background-color: #f0f0f0;
+}
 .ag-fresh .ag-floating-top .ag-row {
+  background-color: #f0f0f0;
+}
+.ag-fresh .ag-floating-bottom {
   background-color: #f0f0f0;
 }
 .ag-fresh .ag-floating-bottom .ag-row {
@@ -361,8 +367,9 @@
 }
 .ag-fresh .ag-filter-checkbox {
   position: relative;
-  top: 2px;
   left: 2px;
+  display: inline-block;
+  margin-right: 5px;
 }
 .ag-fresh .ag-filter-header-container {
   border-bottom: 1px solid #d3d3d3;
@@ -466,6 +473,7 @@
 .ag-fresh .ag-column-drop-vertical {
   padding: 4px 4px 10px 4px;
   border-bottom: 1px solid #808080;
+  overflow: auto;
 }
 .ag-fresh .ag-column-drop-vertical .ag-column-drop-cell {
   margin-top: 2px;
@@ -481,6 +489,7 @@
 }
 .ag-fresh .ag-tool-panel .ag-column-select-panel {
   border-bottom: 1px solid #808080;
+  overflow: auto;
 }
 .ag-fresh .ag-select-agg-func-popup {
   cursor: default;

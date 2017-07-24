@@ -5,7 +5,7 @@ import {IDateAngularComp} from "ag-grid-angular/main";
 
 @Component({
     moduleId: module.id,
-    selector: 'ag-full-width-grid',
+    selector: 'ag-date-component',
     templateUrl: 'date.component.html',
     styleUrls: ['date.component.css'],
 })
@@ -24,6 +24,8 @@ export class DateComponent implements IDateAngularComp {
         console.log(`Destroying DateComponent`);
     }
 
+    // when the date filter X is clicked on the date fields clear as expected, but the filter doesn't update
+    // how should this work? todo alboert
     onResetDate() {
         this.dd = '';
         this.mm = '';
@@ -46,19 +48,18 @@ export class DateComponent implements IDateAngularComp {
     }
 
     setDate(date: Date): void {
-        if (date == null){
-            this.dd = '';
-            this.mm = '';
-            this.yyyy = '';
-            this.date = null;
+        if (date == null) {
+            // this doesn't work - the associated date filter will throw an error as the date will be null
+            // test case: expand employee then click refresh data
+            // what do we do here? todo alberto
+            // this.onResetDate();
         } else {
             this.dd = date.getDate() + '';
             this.mm = (date.getMonth() + 1) + '';
             this.yyyy = date.getFullYear() + '';
             this.date = date;
-
+            this.params.onDateChanged();
         }
-        this.params.onDateChanged();
     }
 
     //*********************************************************************************

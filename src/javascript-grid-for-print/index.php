@@ -51,7 +51,7 @@ include '../documentation-main/documentation_header.php';
     <h3 id="complex-example">Complex Example</h3>
 
     <p>
-        The following example demonstrates for print when used in combination with floating rows,
+        The following example demonstrates for print when used in combination with pinned rows,
         pinned columns and fullWidth rows. For each of these, the grid should flatten out all the
         rows so all are printed and none hidden. This is the same as the first example is the
         section on <a href="../javascript-grid-master-detail/">full width rows</a> with the exception of for print is turned on.

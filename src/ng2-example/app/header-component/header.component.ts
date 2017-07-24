@@ -2,7 +2,7 @@ import {Component, ElementRef} from "@angular/core";
 import {IHeaderParams} from "ag-grid/main";
 import {IHeaderAngularComp} from "ag-grid-angular/main";
 
-interface MyParams extends IHeaderParams {
+export interface MyParams extends IHeaderParams {
     menuIcon: string;
 }
 

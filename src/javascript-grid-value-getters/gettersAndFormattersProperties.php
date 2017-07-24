@@ -11,7 +11,7 @@ $gettersAndFormattersProperties = [
         'Function or expression. Gets the value for display in the header.'
     ],
     ['floatingCellFormatter(params)',
-        'Function or expression. Formatter to use for a floating row. If missing, the normal valueFormatter will be used.'
+        'Function or expression. Formatter to use for a pinned row. If missing, the normal valueFormatter will be used.'
     ]
 ];
 

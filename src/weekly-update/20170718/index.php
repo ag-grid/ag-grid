@@ -121,7 +121,7 @@ include('../../includes/mediaHeader.php');
         <p>
             We want to make the grid easier to understand. With this in mind,
             Niall has renamed 'Master / Slave' to 'Aligned Grids' (so not to be confused with Master / Detail)
-            and 'Floating Rows' to 'Pinned Rows' (so pinned rows and pinned columns go hand in hand).
+            and 'Pinned Rows' to 'Pinned Rows' (so pinned rows and pinned columns go hand in hand).
             This is to provide meaningful names for the features.
         </p>
 

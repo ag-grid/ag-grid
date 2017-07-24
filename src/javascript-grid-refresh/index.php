@@ -110,8 +110,8 @@ interface RefreshCellsParams {
             The grid has <code>enableCellChangeFlash=true</code>, so cells that are refreshed will be flashed.
         </li>
         <li>
-            The grid has two floating rows at the top and two floating rows at the bottom. This is to demonstrate
-            that cell refreshing works for floating rows also.
+            The grid has two pinned rows at the top and two pinned rows at the bottom. This is to demonstrate
+            that cell refreshing works for pinned rows also.
         </li>
         <li>
             The three buttons each make use of a <b>scramble</b> operation. The scramble operation selects
@@ -131,7 +131,7 @@ interface RefreshCellsParams {
         </li>
         <li>
             The <b>Scramble & Refresh Top to Bottom</b> button will scramble as before, then call
-            <code>api.refreshCells({rowNodes})</code> 20 times, 100ms apart, once for each row (including floating rows).
+            <code>api.refreshCells({rowNodes})</code> 20 times, 100ms apart, once for each row (including pinned rows).
             This will show the grid refreshing one row at a time from top to bottom.
         </li>
         <li>

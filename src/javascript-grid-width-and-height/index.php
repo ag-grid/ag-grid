@@ -105,7 +105,7 @@ include '../documentation-main/documentation_header.php';
             <li>As the grid height exceeds the height of the browser, you will need to use the browser vertical scroll
             to view data (or the iFrames scroll if you are looking at the example embedded below).</li>
             <li>The height will also adjust as you filter, to add and remove rows.</li>
-            <li>If you have floating rows, the grid will size to accommodate the floating rows.</li>
+            <li>If you have pinned rows, the grid will size to accommodate the pinned rows.</li>
             <li>Vertical scrolling will not happen, however horizontal scrolling, including pinned columns, will work as normal.</li>
         </ul>
     </p>

@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Likewise with floating, no row gaps will occur if a range spans into floating rows.
+        Likewise with floating, no row gaps will occur if a range spans into pinned rows.
         A range will be continuous between the floating top rows, the center, and the floating
         bottom rows.
     </p>

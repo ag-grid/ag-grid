@@ -4,6 +4,12 @@ ag-grid-angular {
 ag-grid-ng2 {
   display: inline-block;
 }
+ag-grid {
+  display: block;
+}
+ag-grid-polymer {
+  display: block;
+}
 .ag-rtl {
   direction: rtl;
 }

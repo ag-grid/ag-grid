@@ -136,7 +136,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>floatingCellRenderer<br/>floatingCellRendererFramework</th>
-            <td>cellRenderer to use for floating rows in this column. Floating cells will use floatingCellRenderer if available,
+            <td>cellRenderer to use for pinned rows in this column. Floating cells will use floatingCellRenderer if available,
                 if not then cellRenderer.</td>
         </tr>
         <tr>

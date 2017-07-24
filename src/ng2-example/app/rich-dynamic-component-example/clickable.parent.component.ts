@@ -6,7 +6,7 @@ import {ICellRendererAngularComp} from "ag-grid-angular/main";
 @Component({
     selector: 'clickable-cell',
     template: `
-    <ag-clickable (onClicked)="clicked($event)" [cell]="cell"></ag-clickable>
+        <ag-clickable (onClicked)="clicked($event)" [cell]="cell"></ag-clickable>
     `
 })
 export class ClickableParentComponent implements ICellRendererAngularComp {
@@ -20,6 +20,10 @@ export class ClickableParentComponent implements ICellRendererAngularComp {
 
     public clicked(cell: any): void {
         console.log("Child Cell Clicked: " + JSON.stringify(cell));
+    }
+
+    refresh(): boolean {
+        return false;
     }
 }
 

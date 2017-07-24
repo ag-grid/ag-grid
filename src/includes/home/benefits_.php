@@ -25,7 +25,7 @@
                 <li><span class="glyphicon glyphicon glyphicon-ok"></span> Cell Styling</li>
                 <li><span class="glyphicon glyphicon glyphicon-ok"></span> CSS Themes</li>
                 <li><span class="glyphicon glyphicon glyphicon-ok"></span> Custom Rendering</li>
-                <li><span class="glyphicon glyphicon glyphicon-ok"></span> Frozen / Floating Rows</li>
+                <li><span class="glyphicon glyphicon glyphicon-ok"></span> Frozen / Pinned Rows</li>
                 <li><span class="glyphicon glyphicon glyphicon-ok"></span> Multi Level Header Grouping</li>
                 <li><span class="glyphicon glyphicon glyphicon-ok"></span> Header Templates</li>
                 <li><span class="glyphicon glyphicon glyphicon-ok"></span> Events</li>

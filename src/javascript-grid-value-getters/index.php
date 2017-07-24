@@ -186,12 +186,12 @@ colDef.valueFormatter = function(params) {
 
     <p>
         Use <b>floatingCellFormatter</b> instead of <code>colDef.cellFormatter</code> to allow different formatting
-        for floating rows. If you don't specify a <code>colDef.floatingCellFormatter</code>, then <code>cellFormatter</code>
+        for pinned rows. If you don't specify a <code>colDef.floatingCellFormatter</code>, then <code>cellFormatter</code>
         will get used instead if it is present.
     </p>
 
     <note>
-        You can use the same formatter for floating rows and normal rows and check the row type.
+        You can use the same formatter for pinned rows and normal rows and check the row type.
         You can check if the row is floating by checking params.node.floating property.
     </note>
 

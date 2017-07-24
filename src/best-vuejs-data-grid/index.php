@@ -122,7 +122,7 @@ import "ag-grid-enterprise/main";
             <a href="https://github.com/ceolter/ag-grid-vue-example/blob/master/src/editor-component-example/EditorComponentExample.vue"
                target="_blank" class="fa fa-external-link"> Vue</a>
         </li>
-        <li>A Floating Row Renderer Example
+        <li>A Pinned Row Renderer Example
             <a href="https://github.com/ceolter/ag-grid-vue-example/blob/master/src/floating-row-example/FloatingRowExample.vue"
                target="_blank" class="fa fa-external-link"> Vue</a>
         </li>

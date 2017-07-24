@@ -1,4 +1,4 @@
-import {Component,AfterViewInit} from "@angular/core";
+import {AfterViewInit, Component} from "@angular/core";
 import {GridOptions} from "ag-grid/main";
 import {DetailPanelComponent} from "./detail-panel.component";
 
@@ -7,7 +7,7 @@ import {DetailPanelComponent} from "./detail-panel.component";
     selector: 'ag-masterdetail-master',
     templateUrl: 'masterdetail-master.component.html'
 })
-export class MasterComponent implements AfterViewInit{
+export class MasterComponent implements AfterViewInit {
     public gridOptions: GridOptions;
 
     constructor() {

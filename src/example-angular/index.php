@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         <div class="col-sm-6">
             <a href="../example-angular-filter/" class="column-links column-items">Filter Component</a>
             <a href="../javascript-grid-floating-filter-component/#ng2Angular" class="column-links column-items">Floating Filter Component</a>
-            <a href="../example-angular-floating-row/" class="column-links column-items">Floating Row Renderer</a>
+            <a href="../example-angular-floating-row/" class="column-links column-items">Pinned Row Renderer</a>
             <a href="../example-angular-full-width-rows/" class="column-links column-items">Full Width Renderer</a>
             <a href="../example-angular-grouped-row/" class="column-links column-items">Group Row Inner Renderer</a>
             <a href="../example-angular-master-detail/" class="column-links column-items">Master/Detail Components</a>
@@ -68,8 +68,8 @@ include '../documentation-main/documentation_header.php';
     <!--            <h4>Filter Component</h4>-->
     <!--            <p>A Filter Example, with the Filter written as a Angular Component.</p>-->
 
-    <!--            <h4>Floating Row Renderer</h4>-->
-    <!--            <p>A Floating Row Renderer Example</p>-->
+    <!--            <h4>Pinned Row Renderer</h4>-->
+    <!--            <p>A Pinned Row Renderer Example</p>-->
 
     <!--            <h4>Full Width Renderer</h4>-->
     <!--            <p>A Full Width Renderer Example</p>-->

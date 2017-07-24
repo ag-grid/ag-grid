@@ -1,6 +1,6 @@
-import {Component, OnDestroy} from '@angular/core';
+import {Component} from "@angular/core";
 
-import {ICellRendererAngularComp} from 'ag-grid-angular/main';
+import {ICellRendererAngularComp} from "ag-grid-angular/main";
 
 @Component({
     selector: 'params-cell',
@@ -11,5 +11,9 @@ export class ParamsComponent implements ICellRendererAngularComp {
 
     agInit(params: any): void {
         this.params = params;
+    }
+
+    refresh(): boolean {
+        return false;
     }
 }

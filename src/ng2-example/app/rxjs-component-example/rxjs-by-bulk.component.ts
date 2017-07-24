@@ -34,12 +34,18 @@ export class RxJsComponentByFullSet {
                     rowData => {
                         // the initial full set of data
                         // note that we don't need to un-subscribe here as it's a one off data load
-                        this.gridOptions.api.setRowData(rowData);
+                        if (this.gridOptions.api) { // can be null when tabbing between the examples
+                            this.gridOptions.api.setRowData(rowData);
+                        }
 
                         // now listen for updates
                         // we're using deltaRowDataMode this time, so although we're setting the entire
                         // data set here, the grid will only re-render changed rows, improving performance
-                        this.rowDataUpdates$.subscribe((newRowData) => this.gridOptions.api.setRowData(newRowData));
+                        this.rowDataUpdates$.subscribe((newRowData) => {
+                            if (this.gridOptions.api) { // can be null when tabbing between the examples
+                                this.gridOptions.api.setRowData(newRowData)
+                            }
+                        });
                     }
                 );
                 this.gridOptions.api.sizeColumnsToFit();

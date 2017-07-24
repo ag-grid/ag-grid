@@ -140,7 +140,7 @@ include '../documentation-main/documentation_header.php';
                 getPinnedBottomRow(index)
             </th>
             <td>
-                Methods for getting and setting the data and getting the Row Nodes of the floating rows.
+                Methods for getting and setting the data and getting the Row Nodes of the pinned rows.
             </td>
         </tr>
         <tr>

@@ -49,7 +49,7 @@ include '../documentation-main/documentation_header.php';
         <li>Update Documentation: <a href="../javascript-grid-value-getters/">Getters and Formatters.</a></li>
         <li>Update Documentation: <a href="../javascript-grid-value-setters/">Setters and Parsers.</a></li>
         <li>Renamed 'Master / Slave' to '<a href="../javascript-grid-aligned-grids/">Aligned Grids</a>' so that it's not confused with 'Master / Detail', which is nothing to do with 'Aligned Grids'.</li>
-        <li>Renamed 'Floating Rows' to '<a href="../javascript-grid-row-pinning/">Pinned Rows</a>' because it was confusing, now we have <a href="../javascript-grid-row-pinning/">Pinned Rows</a> and <a href="../javascript-grid-pinning/">Pinned Columns</a> which are similar, but one for rows and one for columns.</li>
+        <li>Renamed 'Pinned Rows' to '<a href="../javascript-grid-row-pinning/">Pinned Rows</a>' because it was confusing, now we have <a href="../javascript-grid-row-pinning/">Pinned Rows</a> and <a href="../javascript-grid-pinning/">Pinned Columns</a> which are similar, but one for rows and one for columns.</li>
     </ul>
     <h4>Enhancements</h4>
     <ul>
@@ -847,7 +847,7 @@ include '../documentation-main/documentation_header.php';
     <li>Breaking Change: setColumnVisible() no longer accepts ColDefs as an argument. colIds or Columns are the available options now.</li>
     <li>Enhancement: Tooltips now don't show if null or undefined.</li>
     <li>Enhancement: Added api.getFloatingTopRowCount(), api.getFloatingBottomRowCount(), api.getFloatingTopRow(index),
-        api.getFloatingBottomRow(index) for accessing floating rows</li>
+        api.getFloatingBottomRow(index) for accessing pinned rows</li>
 
     <h3>2 - Improved React and Angular 2 Support</h3>
 

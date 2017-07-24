@@ -31,7 +31,7 @@ var gridOptions = {
         return rowNode.data.fullWidth;
     },
     fullWidthCellRenderer: function(params) {
-        // floating rows will have node.floating set to either 'top' or 'bottom' - see docs for floating
+        // pinned rows will have node.floating set to either 'top' or 'bottom' - see docs for floating
         var cssClass;
         var message;
 

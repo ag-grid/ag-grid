@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
+import {Component} from "@angular/core";
 
-import {GridOptions,RowNode} from 'ag-grid/main';
+import {GridOptions, RowNode} from "ag-grid/main";
 
 import {NameAndAgeRendererComponent} from "./name-age-renderer.component";
 
@@ -10,13 +10,13 @@ import {NameAndAgeRendererComponent} from "./name-age-renderer.component";
     templateUrl: 'full-width-renderer.component.html'
 })
 export class FullWidthComponent {
-    public gridOptions:GridOptions;
+    public gridOptions: GridOptions;
 
     constructor() {
         this.gridOptions = <GridOptions>{};
         this.gridOptions.rowData = this.createRowData();
         this.gridOptions.columnDefs = this.createColumnDefs();
-        this.gridOptions.isFullWidthCell = (rowNode:RowNode)=> {
+        this.gridOptions.isFullWidthCell = (rowNode: RowNode) => {
             return (rowNode.id === "0") || (parseInt(rowNode.id) % 2 === 0);
         };
         this.gridOptions.fullWidthCellRendererFramework = NameAndAgeRendererComponent;

@@ -57,7 +57,7 @@ var gridOptions = {
     // see ag-Grid docs cellRenderer for details on how to build cellRenderers
     // this is a simple function cellRenderer, returns plain HTML, not a component
     fullWidthCellRenderer: function(params) {
-        // floating rows will have node.floating set to either 'top' or 'bottom' - see docs for floating
+        // pinned rows will have node.floating set to either 'top' or 'bottom' - see docs for floating
         var cssClass;
         var message;
 
