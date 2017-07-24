@@ -6,7 +6,7 @@ $pageKeyboards = "ag-Grid Column Definitions";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
-    <h2 id="columnDefinitions">Columns Definitions</h2>
+    <h2 id="columnDefinitions">Column Definitions</h2>
 
     <p>
         Each column in the grid is defined using a column definition. Columns are positioned in the grid according to the order
@@ -130,21 +130,32 @@ include '../documentation-main/documentation_header.php';
 
 <show-example example="columnDefinitionExample"></show-example>
 
-
-<h2 id="changing-column-headers">Changing Column Headers</h2>
+<h2 id="changing-column-headers">Updating Column Definitions</h2>
 
 <p>
-    After the grid has been initialised it may be necessary to change the column header name. Use the
-    <a href="../javascript-grid-column-api/">Column API</a> to obtain a reference to the column, and once modified refresh
-    the column via the <a href="../javascript-grid-api/">Grid API</a> as follows:
+    After the grid has been initialised it may be necessary to update the column definition. It is important to understand
+    that when a column is created it is assigned a copy of the column definition defined in the GridOptions. For this reason
+    it is necessary to obtain the column definition directly from the column.
+</p>
+
+<p>
+    The following example shows how to update a column header name after the grid has been initialised. As we want to update
+    the header name immediately we explicitly invoke <i>refreshHeader()</i> via the <a href="../javascript-grid-api/">Grid API</a>.
 </p>
 
 <pre>
-    var col = gridOptions.columnApi.getColumn("colId");
-    col.headerName = 'New Header';
-    gridOptions.api.refreshHeader();
-</pre>
+<span class="codeComment">// get a reference to column</span>
+var col = gridOptions.columnApi.getColumn("colId");
 
+<span class="codeComment">// then obtain the copied column definition</span>
+var colDef = col.getColDef();
+
+<span class="codeComment">// update the header name</span>
+colDef.headerName = "New Header";
+
+<span class="codeComment">// then force the grid to update the header</span>
+gridOptions.api.refreshHeader();
+</pre>
 
 <h2 id="deep-dive-save-restore-full-state">Deep Dive - Save / Restore Full State</h2>
 
