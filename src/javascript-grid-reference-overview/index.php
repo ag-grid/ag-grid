@@ -14,30 +14,36 @@ include '../documentation-main/documentation_header.php';
         Reference
     </h1>
 
+<!--    The interface to ag-Grid is modelled around standard DOM elements. This gives ag-Grid a consistent
+    feel to already existing DOM elements (nice for everyone). It also has the added benefit
+    of fitting nicely into Web Components and your framework.
+-->
     <p>
-        The interface to ag-Grid is modelled around standard DOM elements. This gives ag-Grid a consistent
-        feel to already existing DOM elements (nice for everyone). It also has the added benefit
-        of fitting nicely into Web Components and your framework.
-    </p>
-    <p>
-        Each interaction with the grid can be broken down into the following categories:
+        The interface to the grid is split into the following:
     </p>
     <ul>
-        <li><b>Properties</b>: Properties are for changing the state inside the grid. These are
-            analogous to properties on a DOM object.
+        <li>
+            <b>Grid Properties</b>: Properties for configuring the grid.
         </li>
-        <li><b>Events</b>: Events are for handling changes from the grid. These are analogous
-            to events in the DOM.
+        <li>
+            <b>Grid Events</b>: Events emitted by the grid.
         </li>
-        <li><b>Callbacks</b>: Functions that you provide that the grid calls, as a way of
-            modifying behaviour of the grid. This is the grid asking the application a question
-            such as 'what color should this cell be', it is not a means to pass state into or
-            out of the grid.
+        <li>
+            <b>Grid Callbacks</b>: Functions to allow the grid query the application.
         </li>
-        <li><b>API</b>: API into the grid, to provide features that are not representable
-            via properties and events.
+        <li>
+            <b>Grid API</b>: Runtime API into the grid.
+        </li>
+        <li>
+            <b>Column Properties</b>: Properties for configuring grid columns.
+        </li>
+        <li>
+            <b>Column API</b>: Runtime API for managing the grid's columns.
         </li>
     </ul>
+    <p>
+        This section explains how to configure the the grid's properties, events, callbacks and API.
+    </p>
 
     <h2>
         <?php if (isFrameworkJavaScript()) { ?><img src="/images/javascript.png" height="50"/><?php } ?>
@@ -53,8 +59,9 @@ include '../documentation-main/documentation_header.php';
     <p>
         The gridOptions is a 'one stop shop' for the entire interface into the grid. The
         grid options can be used regardless of the framework you are using, however if you
-        are using React, Angular or Web Components, you can achieve what grid options
-        provides you with in other ways.
+        are using a framework, you can additionally achieve what grid options provides with
+        your frameworks bindings. How to configure for the particular framework is explained
+        further down this page.
     </p>
 
     <p>

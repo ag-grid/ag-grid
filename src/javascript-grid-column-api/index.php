@@ -25,9 +25,11 @@ include '../documentation-main/documentation_header.php';
             create one for you (first by trying to use the field if it is unique, otherwise it will generate and ID).
         </p>
 
-        <h2 id="list-of-column-api-functions">List of Column API Functions</h2>
-
         <table class="table">
+            <tr class="title-row">
+                <!-- TITLE ROW -->
+                <td colspan="2">Column API</td>
+            </tr>
             <tr>
                 <th>sizeColumnsToFit(width)</th>
                 <td>

@@ -319,7 +319,7 @@
 <div class="docsMenu-examples">
     <?php
 
-    menuItem(0, 'ag-Grid Examples', 'ag-Grid Examples', 'javascript-grid-examples/');
+    menuItem(0, 'Examples Overview', 'Overview', 'javascript-grid-examples/');
     if (isFrameworkReact() || isFrameworkAll()) {
         menuItemWithIcon('react_small.png', 1, 'React Examples', 'React Examples', 'example-react/', true);
         menuItem(2, 'React Rich Grid', 'Rich Grid', 'example-react-rich-grid/');
@@ -359,10 +359,11 @@
         menuItem(2, 'Polymer Group Row', 'Group Rows', 'example-polymer-grouped-row/');
         menuItem(2, 'Polymer MasterDetail', 'Master/Detail', 'example-polymer-master-detail/');
     }
-    menuItem(1, 'Styled Report', 'Styled Report', 'example-account-report/');
-    menuItem(1, 'File Browser', 'File Browser', 'example-file-browser/');
-    menuItem(1, 'Expressions and Context', 'Expressions', 'example-expressions-and-context/');
-    menuItem(1, 'Gallery', 'Gallery', 'example-gallery/');
+    menuItemWithIcon('javascript_small.png', 1, 'JavaScript Examples', 'Plain JavaScript', 'example-javascript/', true);
+    menuItem(2, 'Styled Report', 'Styled Report', 'example-account-report/');
+    menuItem(2, 'File Browser', 'File Browser', 'example-file-browser/');
+    menuItem(2, 'Expressions and Context', 'Expressions', 'example-expressions-and-context/');
+    menuItem(2, 'Gallery', 'Gallery', 'example-gallery/');
     ?>
 </div>
 
