@@ -9,9 +9,38 @@ include '../documentation-main/documentation_header.php';
     <h2 id="columnDefinitions">Columns Definitions</h2>
 
     <p>
-        Each column in the grid is defined using a column definition. To avoid duplicating column properties when defining
-        columns, there are also options to create a default column properties, default column group properties and specific
+        Each column in the grid is defined using a column definition. Columns are positioned in the grid according to the order
+        the ColDef's are specified in the grid options. The following example shows a simple grid with 3 columns defined:
+    </p>
+
+<pre>var gridOptions = {
+    rowData: myRowData,
+
+    <span class="codeComment">// define 3 columns</span>
+    columnDefs: [
+        {headerName: 'Athlete', field: 'athlete', width: 200, filter: 'text'},
+        {headerName: 'Sport', field: 'sport', width: 150, filter: 'text'},
+        {headerName: 'Age', field: 'age', width: 80, filter: 'number'}
+    ],
+
+    <span class="codeComment">// other grid options here...</span>
+}</pre>
+
+    <p>See <a href="../javascript-grid-column-properties/">Column Properties</a> for a list of all properties that can be
+       applied to a column.
+    </p>
+
+
+    <h2 id="managing-column-definitions">Managing Column Definitions</h2>
+
+    <p>
+        In addition to the simple <i>columnDefs</i> shown above, ag-Grid provides additional ways to help simplify and avoid duplication
+        of column properties when defining columns. It is possible to create default column properties, default column group properties and specific
         column types.
+    </p>
+
+    <p>
+        The following list shows all the column definition options that are available:
     </p>
 
     <ul>
@@ -37,19 +66,19 @@ include '../documentation-main/documentation_header.php';
     rowData: myRowData,
 
     <span class="codeComment">// define columns</span>
-    columnDefs: {
+    columnDefs: [
         <span class="codeComment">// uses the default column properties</span>
-        {headerName: 'Col A', field: 'a'}
+        {headerName: 'Col A', field: 'a'},
 
         <span class="codeComment">// overrides the default with a number filter</span>
-        {headerName: 'Col B', field: 'b', filter: 'number'}
+        {headerName: 'Col B', field: 'b', filter: 'number'},
 
         <span class="codeComment">// overrides the default using a column type</span>
-        {headerName: 'Col C', field: 'c', type: 'nonEditableColumn'}
+        {headerName: 'Col C', field: 'c', type: 'nonEditableColumn'},
 
         <span class="codeComment">// overrides the default using a multiple column types</span>
         {headerName: 'Col D', field: 'd', type: 'dateColumn,nonEditableColumn'}
-    },
+    ],
 
     <span class="codeComment">// a default column definition with properties that get applied to every column</span>
     defaultColDef: {
@@ -73,8 +102,6 @@ include '../documentation-main/documentation_header.php';
 
     <span class="codeComment">// other grid options here...</span>
 }</pre>
-
-    <p>Columns are positioned in the order the ColDef's are specified in the grid options.</p>
 
     <p>
         When the grid creates a column it applies an order of precedence when selecting the properties to use.
@@ -102,6 +129,22 @@ include '../documentation-main/documentation_header.php';
     </p>
 
 <show-example example="columnDefinitionExample"></show-example>
+
+
+<h2 id="changing-column-headers">Changing Column Headers</h2>
+
+<p>
+    After the grid has been initialised it may be necessary to change the column header name. Use the
+    <a href="../javascript-grid-column-api/">Column API</a> to obtain a reference to the column, and once modified refresh
+    the column via the <a href="../javascript-grid-api/">Grid API</a> as follows:
+</p>
+
+<pre>
+    var col = gridOptions.columnApi.getColumn("colId");
+    col.headerName = 'New Header';
+    gridOptions.api.refreshHeader();
+</pre>
+
 
 <h2 id="deep-dive-save-restore-full-state">Deep Dive - Save / Restore Full State</h2>
 
