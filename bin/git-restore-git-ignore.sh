@@ -33,11 +33,6 @@ do
             ;;
          "ag-grid-vue")
             ;;
-        "ag-grid-docs")
-            git checkout 55f213cf29374e4dbd8efa7b6f3f285ea3b119e9 .gitignore
-            rm -rf src/react-examples/examples/dist
-            rm -rf src/react-examples/trader/dist
-            ;;
         "ag-grid-react-example")
             ;;
         "ag-grid-vue-example")
