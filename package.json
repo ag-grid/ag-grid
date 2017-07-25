@@ -33,8 +33,9 @@
     "gulp-typescript": "3.1.x",
     "merge2": "1.0.x",
     "prop-types": "15.5.x",
-    "react": "15.5.x",
-    "react-dom": "15.5.x",
+    "react": "^15.5.x",
+    "react-dom": "^15.5.x",
+    "react-dom-factories" : "^1.0.0",
     "typescript": "2.3.x"
   },
   "peerDependencies": {

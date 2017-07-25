@@ -1,7 +1,7 @@
 import {ReactFrameworkFactory} from "./reactFrameworkFactory";
 import {ReactFrameworkComponentWrapper} from "./reactFrameworkComponentWrapper";
 
-import * as React from "react";
+import * as DOM from 'react-dom-factories';
 import {Component} from "react";
 import * as PropTypes from "prop-types";
 import * as AgGrid from "ag-grid";
@@ -21,7 +21,7 @@ export class AgGridReact extends Component<any, any> {
     }
 
     render() {
-        return React.DOM.div({
+        return DOM.div({
             style: this.createStyleForDiv(),
             ref: e => {
                 this.eGridDiv = e;
@@ -138,7 +138,8 @@ export class AgGridReact extends Component<any, any> {
 
             const tmp = {};
             for (prop in a)
-                if (prop != "areEquivalent_Eq_91_2_34")
+                if (prop !=
+                    "areEquivalent_Eq_91_2_34")
                     tmp[prop] = null;
             for (prop in b)
                 if (prop != "areEquivalent_Eq_91_2_34")
