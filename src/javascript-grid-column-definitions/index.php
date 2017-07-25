@@ -6,7 +6,7 @@ $pageKeyboards = "ag-Grid Column Definitions";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
-    <h2 id="columnDefinitions">Column Definitions</h2>
+    <h1 id="columnDefinitions" class="first-h1">Column Definitions</h1>
 
     <p>
         Each column in the grid is defined using a column definition. Columns are positioned in the grid according to the order
@@ -14,40 +14,57 @@ include '../documentation-main/documentation_header.php';
     </p>
 
 <pre>var gridOptions = {
-    rowData: myRowData,
-
     <span class="codeComment">// define 3 columns</span>
     columnDefs: [
-        {headerName: 'Athlete', field: 'athlete', width: 200, filter: 'text'},
-        {headerName: 'Sport', field: 'sport', width: 150, filter: 'text'},
-        {headerName: 'Age', field: 'age', width: 80, filter: 'number'}
+        {headerName: 'Athlete', field: 'athlete'},
+        {headerName: 'Sport', field: 'sport'},
+        {headerName: 'Age', field: 'age'}
     ],
 
     <span class="codeComment">// other grid options here...</span>
 }</pre>
 
-    <p>See <a href="../javascript-grid-column-properties/">Column Properties</a> for a list of all properties that can be
-       applied to a column.
-    </p>
-
-
-    <h2 id="managing-column-definitions">Managing Column Definitions</h2>
-
     <p>
-        In addition to the simple <i>columnDefs</i> shown above, ag-Grid provides additional ways to help simplify and avoid duplication
-        of column properties when defining columns. It is possible to create default column properties, default column group properties and specific
-        column types.
+        See <a href="../javascript-grid-column-properties/">Column Properties</a> for a
+        list of all properties that can be applied to a column.
     </p>
 
     <p>
-        The following list shows all the column definition options that are available:
+        If you want the columns to be grouped, then you include them as groups like
+        the following:
+    </p>
+
+<pre>var gridOptions = {
+    columnDefs: [
+        <span class="codeComment">// put the three columns into a group</span>
+        {headerName: 'Group A',
+            children: [
+                {headerName: 'Athlete', field: 'athlete'},
+                {headerName: 'Sport', field: 'sport'},
+                {headerName: 'Age', field: 'age'}
+            ]
+        }
+    ],
+
+    <span class="codeComment">// other grid options here...</span>
+}</pre>
+
+    <p>
+        Groups are explained in more detail in the section
+        <a href="../javascript-grid-grouping-headers/">Column Groups</a>.
+    </p>
+
+    <h1 id="default-column-definitions">Default Column Types</h1>
+
+    <p>
+        In addition to the above, the grid provides additional ways to
+        help simplify and avoid duplication of column definitions. This is done through the following:
     </p>
 
     <ul>
-        <li><b>columnDefs:</b>  contains the columns definitions in the grid.</li>
-        <li><b>defaultColDef (Optional):</b> contains column properties all columns will inherit.</li>
-        <li><b>defaultColGroupDef (Optional):</b> contains column group properties all column groups will inherit.</li>
-        <li><b>columnTypes (Optional):</b> specific column types containing properties that column definitions can inherit.</li>
+        <li><b>defaultColDef:</b> contains column properties all columns will inherit.</li>
+        <li><b>defaultColGroupDef:</b> contains column group properties all column groups will inherit.</li>
+        <li><b>columnTypes:</b> specific column types containing properties that column definitions can inherit.</li>
     </ul>
 
     <note>
@@ -55,11 +72,7 @@ include '../documentation-main/documentation_header.php';
     </note>
 
     <p>
-        The section on <a href="../javascript-grid-grouping-headers/">column groups</a> details how to group columns in the headers.
-    </p>
-
-    <p>
-        The column definition options listed above can be used as follows:
+        The following code snipped shows these three properties configures:
     </p>
 
     <pre>var gridOptions = {
@@ -104,33 +117,34 @@ include '../documentation-main/documentation_header.php';
 }</pre>
 
     <p>
-        When the grid creates a column it applies an order of precedence when selecting the properties to use.
+        When the grid creates a column it starts with the default column, then adds in anything from the column
+        type, then finally adds in items from the column definition.
     </p>
     <p>
-        Below is an outline of the steps used when creating 'Col C' shown above:
+        For example, the following is an outline of the steps used when creating 'Col C' shown above:
     </p>
 
 
-<pre><span class="codeComment">// Step 1: start with an empty column definition</span>
+<pre><span class="codeComment">// Step 1: the grid starts with an empty merged definition</span>
 {}
 
-<span class="codeComment">// Step 2: select the default column properties</span>
+<span class="codeComment">// Step 2: default column properties are merged in</span>
 {width: 100, editable: true, filter: 'text'}
 
-<span class="codeComment">// Step 3: merge the column type properties (using the 'type' property)</span>
+<span class="codeComment">// Step 3: column type properties are merged in (using the 'type' property)</span>
 {width: 100, editable: false, filter: 'number'}
 
-<span class="codeComment">// Step 4: finally merge in the colDef properties</span>
+<span class="codeComment">// Step 4: finally column definition properties are merged in</span>
 {headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'number'}
     </pre>
 
     <p>
-        The following examples demonstrates these column definitions in action:
+        The following examples demonstrates this configuration.
     </p>
 
 <show-example example="columnDefinitionExample"></show-example>
 
-<h2 id="changing-column-headers">Updating Column Definitions</h2>
+<h1 id="changing-column-headers">Updating Column Definitions</h1>
 
 <p>
     After the grid has been initialised it may be necessary to update the column definition. It is important to understand
@@ -153,13 +167,13 @@ var colDef = col.getColDef();
 <span class="codeComment">// update the header name</span>
 colDef.headerName = "New Header";
 
-<span class="codeComment">// then force the grid to update the header</span>
+<span class="codeComment">// the column is now updated. to reflect the header change, get the grid refresh the header</span>
 gridOptions.api.refreshHeader();
 </pre>
 
 
 
-<h2 id="saving-and-restoring-column-state">Saving and Restoring Column State</h2>
+<h1 id="saving-and-restoring-column-state">Saving and Restoring Column State</h1>
 
 <p>
 It is possible to save and subsequently restore the column state via the <a href="../javascript-column-api/">Column API</a>.
@@ -204,7 +218,7 @@ Examples of state include column visibility, width, row groups and values.
 </p>
 
 
-<h2 id="column-api-example">Column API Example</h2>
+<h1 id="column-api-example">Column API Example</h1>
 <p>This section illustrates how to store and restore column state using the <a href="../javascript-column-api/">Column API</a>.
 </p>
 
