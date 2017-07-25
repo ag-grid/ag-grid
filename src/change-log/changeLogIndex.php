@@ -13,16 +13,17 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h2>Version NEXT</h2>
-    <h3>Version next</h3>
 
-    <h4>Bug Fixes</h4>
-    <li>AG-633: Bugfix: Fixed bug where "not contains" filter would not work with emtpy strings</li>
-    <ul>
-
-    </ul>
 
     <h2>Version 12.0.x</h2>
+    <h3>Version 12.0.1 [25-JUL-2017]</h3>
+
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>AG-639: Bugfix: Date component was still broken after previous fix AG-541/600</li>
+        <li>AG-633: Bugfix: Fixed bug where "not contains" filter would not work with emtpy strings</li>
+    </ul>
+
     <h3>Version 12.0.0 [21-JUL-2017]</h3>
 
     <h4>New Features</h4>
