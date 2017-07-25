@@ -1,29 +1,29 @@
-var gulp = require('gulp');
-var path = require('path');
-var clean = require('gulp-clean');
-var uglify = require('gulp-uglify');
-var foreach = require('gulp-foreach');
-var rename = require("gulp-rename");
-var stylus = require('gulp-stylus');
-var buffer = require('vinyl-buffer');
-var nib = require('nib');
-var gulpTypescript = require('gulp-typescript');
-var typescript = require('typescript');
-var sourcemaps = require('gulp-sourcemaps');
-var header = require('gulp-header');
-var merge = require('merge2');
-var pkg = require('./package.json');
-var tsd = require('gulp-tsd');
-var webpack = require('webpack');
-var webpackStream = require('webpack-stream');
-var replace = require('gulp-replace');
-var gulpIf = require('gulp-if');
+const gulp = require('gulp');
+const path = require('path');
+const clean = require('gulp-clean');
+const uglify = require('gulp-uglify');
+const foreach = require('gulp-foreach');
+const rename = require("gulp-rename");
+const stylus = require('gulp-stylus');
+const buffer = require('vinyl-buffer');
+const nib = require('nib');
+const gulpTypescript = require('gulp-typescript');
+const typescript = require('typescript');
+const sourcemaps = require('gulp-sourcemaps');
+const header = require('gulp-header');
+const merge = require('merge2');
+const pkg = require('./package.json');
+const tsd = require('gulp-tsd');
+const webpack = require('webpack');
+const webpackStream = require('webpack-stream');
+const replace = require('gulp-replace');
+const del = require('del');
 
-var jasmine = require('gulp-jasmine');
+const jasmine = require('gulp-jasmine');
 
-var bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
+const bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
-var headerTemplate = ['/**',
+const headerTemplate = ['/**',
     ' * <%= pkg.name %> - <%= pkg.description %>',
     ' * @version v<%= pkg.version %>',
     ' * @link <%= pkg.homepage %>',
@@ -31,7 +31,7 @@ var headerTemplate = ['/**',
     ' */',
     ''].join('\n');
 
-var dtsHeaderTemplate =
+const dtsHeaderTemplate =
     '// Type definitions for <%= pkg.name %> v<%= pkg.version %>\n' +
     '// Project: <%= pkg.homepage %>\n' +
     '// Definitions by: Niall Crosby <https://github.com/ceolter/>\n';
@@ -57,6 +57,10 @@ gulp.task('stylus', ['cleanDist'], stylusTask);
 gulp.task('cleanDist', cleanDist);
 gulp.task('cleanExports', cleanExports);
 
+gulp.task('cleanForCI', ['cleanDist', 'cleanExports'], () => {
+    return del('ag-grid*.tgz');
+});
+
 function stylusWatch() {
     gulp.watch('./src/styles/!**/!*', ['stylus-no-clean']);
 }
@@ -74,9 +78,9 @@ function cleanExports() {
 }
 
 function tscTask() {
-    var project = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
+    const project = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
 
-    var tsResult = gulp
+    const tsResult = gulp
         .src('src/ts/**/*.ts')
         .pipe(gulpTypescript(project));
 
@@ -91,9 +95,9 @@ function tscTask() {
 }
 
 function tscExportsTask() {
-    var project = gulpTypescript.createProject('./tsconfig-exports.json', {typescript: typescript});
+    const project = gulpTypescript.createProject('./tsconfig-exports.json', {typescript: typescript});
 
-    var tsResult = gulp
+    const tsResult = gulp
         .src('./exports.ts')
         .pipe(gulpTypescript(project));
 
@@ -111,13 +115,13 @@ function tscExportsTask() {
 
 function webpackTask(minify, styles) {
 
-    var plugins = [];
+    const plugins = [];
     if (minify) {
         plugins.push(new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}}));
     }
-    var mainFile = styles ? './main-with-styles.js' : './main.js';
+    const mainFile = styles ? './main-with-styles.js' : './main.js';
 
-    var fileName = 'ag-grid';
+    let fileName = 'ag-grid';
     fileName += minify ? '.min' : '';
     fileName += styles ? '' : '.noStyle';
     fileName += '.js';
