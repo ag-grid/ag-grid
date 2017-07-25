@@ -127,10 +127,6 @@ columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;
         <li>Hyphenated Lowercase: ie: <code>enable-sorting</code></li>
     </ul>
 
-    <p>You can configure the grid in the following ways through Polymer:</p>
-
-    <h3>Properties</h3>
-
     <p>You can specify the properties in the following ways:</p>
 
     <ul>

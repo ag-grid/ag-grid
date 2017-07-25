@@ -49,6 +49,7 @@ include '../documentation-main/documentation_header.php';
         <?php if (isFrameworkJavaScript()) { ?><img src="/images/javascript.png" height="50"/><?php } ?>
         <?php if (isFrameworkReact()) { ?><img src="/images/react.png" height="50"/><?php } ?>
         <?php if (isFrameworkAngular1()) { ?><img src="/images/angularjs.png" height="50"/><?php } ?>
+        <?php if (isFrameworkPolymer()) { ?><img src="/images/polymer-large.png" height="50"/><?php } ?>
         <?php if (isFrameworkAngular2()) { ?><img src="/images/angular2.png" height="50"/><?php } ?>
         <?php if (isFrameworkVue()) { ?><img src="/images/vue_large.png" height="50"/><?php } ?>
         <?php if (isFrameworkWebComponents()) { ?><img src="../images/webComponents.png" height="50"/><?php } ?>
@@ -269,6 +270,143 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
             </p>
 
             <pre><code>&lt;button (click)="<b>myGrid</b>.api.deselectAll()">Clear Selection&lt;/button></code></pre>
+        </div>
+    <?php } ?>
+
+    <?php if (isFrameworkPolymer()) { ?>
+        <div>
+            <h2>
+                <img src="/images/polymer-large.png" height="50px"/>
+                Polymer
+            </h2>
+
+            <p>
+                The gridOptions are fully available, you can however you can take
+                advantage of Polymers properties and events provided by ag-Grids Polymer Component.
+                This is done as follows:
+            </p>
+
+            <h3>Properties</h3>
+
+            <p>Properties on <code>ag-grid-polymer</code> can be provided in the following three ways:</p>
+
+            <ul>
+                <li>LowerCase: ie: <code>enablesorting</code></li>
+                <li>CamelCase: ie: <code>enableSorting</code></li>
+                <li>Hyphenated Lowercase: ie: <code>enable-sorting</code></li>
+            </ul>
+
+            <p>You can specify the properties in the following ways:</p>
+
+            <ul>
+                <li>On the <code>ag-grid-polymer</code>component at declaration time</li>
+                <li>On the <code>gridOptions</code> property</li>
+            </ul>
+
+            <h4>Properties on <code>ag-grid-polymer</code></h4>
+
+            <pre ng-non-bindable>
+<span class="codeComment">// Grid Definition</span>
+&lt;ag-grid-polymer rowData="{{rowData}}"
+                 enableSorting
+                 enable-filtering
+                 ...other properties&gt;&lt;/ag-grid-polymer&gt;
+</pre>
+
+            <p>Here we've specified 3 properties: <code>rowData</code> is provided with two-way binding. <code>enableSorting</code>
+                and <code>enable-filtering</code> illustrate how you can specify properties in different cases.</p>
+
+            <h3>Events</h3>
+
+            <p>All data out of the grid comes through events. You can specify the events you want to listen to in the following ways:</p>
+
+            <ul>
+                <li>On the <code>ag-grid-polymer</code>component at declaration time</li>
+                <li>On the <code>gridOptions</code> property</li>
+                <li>On the <code>ag-grid-polymer</code>component post creation time, via event listeners</li>
+                <li>On the <code>ag-grid-polymer</code>component post creation time, via direct property access</li>
+            </ul>
+
+            <h4>Events on <code>ag-grid-polymer</code></h4>
+
+            <pre ng-non-bindable>
+<span class="codeComment">// Grid Definition</span>
+&lt;ag-grid-polymer onGridReady="{{onGridReady}}"
+                 ...other properties&gt;&lt;/ag-grid-polymer&gt;
+</pre>
+
+            <p>Here we're listening to the <code>gridReady</code> event - as with most events we need to add the "on" prefix.</p>
+
+            <note>When defining event listeners in this way it's important to note that the <code>this</code> context will be <code>ag-grid-polymer</code>,
+                <span>not</span> the containing application element. You will have access to the grids properties directly, but not the application element itself.
+                The <code>api</code> and <code>columnApi</code> are available directly via <code>this.api</code> and <code>this.columnApi</code>.</note>
+
+
+            <h4>Events via the <code>gridOptions</code> property</h4>
+
+            <pre ng-non-bindable>
+<span class="codeComment">// Grid Definition</span>
+&lt;ag-grid-polymer gridOptions="{{gridOptions}}"
+                 ...other properties&gt;&lt;/ag-grid-polymer&gt;
+
+<span class="codeComment">// Application Code </span>
+this.gridOptions.onColumnResized = (event) => {
+    console.log('event via option 3: ' + event);
+};
+</pre>
+
+            <h4>Events via Event Listeners on an instance of <code>ag-grid-polymer</code></h4>
+
+            <pre ng-non-bindable>
+<span class="codeComment">// Grid Definition</span>
+&lt;ag-grid-polymer id="myGrid"
+                 ...other properties&gt;&lt;/ag-grid-polymer&gt;
+
+<span class="codeComment">// Application Code </span>
+this.$.myGrid.addEventListener('columnresized', (event) => {
+    console.log('event via option 1: ' + event.agGridDetails);
+})
+</pre>
+
+            <p>In this case we need to specify an id on the <code>ag-grid-polymer</code> component in order to access it.</p>
+            <p>The grid's payload will be available on the events <code>agGridDetails</code> property.</p>
+
+            <h4>Events via direct property access on an instance of <code>ag-grid-polymer</code></h4>
+
+            <pre ng-non-bindable>
+<span class="codeComment">// Grid Definition</span>
+&lt;ag-grid-polymer id="myGrid"
+                 ...other properties&gt;&lt;/ag-grid-polymer&gt;
+
+<span class="codeComment">// Application Code </span>
+this.$.myGrid.oncolumnresized = (event) => {
+    console.log('event via option 2: ' + event.agGridDetails);
+}
+</pre>
+
+            <p>In this case we need to specify an id on the <code>ag-grid-polymer</code> component in order to access it.</p>
+            <p>The grid's payload will be available on the events <code>agGridDetails</code> property.</p>
+
+            <h3>Grid Api</h3>
+
+            <p>The Grid API (both <code>api</code> and <code>columnApi</code>) will only be available after the <code>gridReady</code>
+                event has been fired.</p>
+
+            <p>You can access the APIs in the following ways</p>
+            <ul>
+                <li>Store them in the <code>gridReady</code> event - they'll be available via the params argument passed into the event</li>
+                <li>Provide a <code>gridOptions</code> object to the grid pre-creation time. Post creation the APIs will be available on the
+                    <code>gridOptions</code> object.</li>
+            </ul>
+
+            <h3>Cell Editors, Cell Renderers, Filters etc</h3>
+
+            <p>Please see the relevant sections on <a
+                        href="../javascript-grid-cell-rendering-components/#polymerCellRendering">cellRenderers</a>,
+                <a href="../javascript-grid-cell-editing/#polymerCellEditing">cellEditors</a> and
+                <a href="../javascript-grid-filtering/#polymerFiltering">filters</a> for configuring and using Polymer
+                Components in ag-Grid.</p>
+
         </div>
     <?php } ?>
 
