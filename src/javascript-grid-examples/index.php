@@ -51,7 +51,7 @@ include '../documentation-main/documentation_header.php';
         <div class="col-md-6">
             <div class="list-group">
 
-                <a href="../example-angular/" class="list-group-item">
+                <a href="../example-polymer/" class="list-group-item">
                     <div class="float-parent">
                         <div class="section-icon-container">
                             <img src="../images/polymer-large.png" width="50" />
