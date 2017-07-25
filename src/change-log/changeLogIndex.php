@@ -22,6 +22,7 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li>AG-639: Bugfix: Date component was still broken after previous fix AG-541/600</li>
         <li>AG-633: Bugfix: Fixed bug where "not contains" filter would not work with emtpy strings</li>
+        <li>AG-641: Bugfix: When using row groups and footer rows, deprecation warning message was printed to the console, fixed it so it is now (internally grid was using a deprecate method).</li>
     </ul>
 
     <h3>Version 12.0.0 [21-JUL-2017]</h3>
