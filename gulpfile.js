@@ -63,6 +63,9 @@ function webpackTask(minify, styles) {
                     },
                     compress: {
                         warnings: false
+                    },
+                    mangle: {
+                        except:['csvCreator','CsvCreator']
                     }
                 }
             )
