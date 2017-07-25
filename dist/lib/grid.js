@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.0
+ * @version v12.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -175,7 +175,11 @@ var Grid = (function () {
                 return rowModelClass;
             }
             else {
-                console.error('ag-Grid: count not find matching row model for rowModelType ' + rowModelType);
+                if (rowModelType === 'normal') {
+                    console.warn("ag-Grid: normal rowModel deprecated. Should now be called inMemory rowModel instead.");
+                    return inMemoryRowModel_1.InMemoryRowModel;
+                }
+                console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
                 if (rowModelType === 'viewport') {
                     console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
                 }
@@ -194,7 +198,7 @@ var Grid = (function () {
     // the enterprise adds viewport to this list.
     Grid.RowModelClasses = {
         infinite: infiniteRowModel_1.InfiniteRowModel,
-        normal: inMemoryRowModel_1.InMemoryRowModel
+        inMemory: inMemoryRowModel_1.InMemoryRowModel
     };
     return Grid;
 }());

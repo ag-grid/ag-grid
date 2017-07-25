@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.0
+ * @version v12.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -422,14 +422,19 @@ var RowRenderer = (function (_super) {
         // will end up going through each index and drawing only if the row doesn't already exist
         var indexesToDraw = this.calculateIndexesToDraw();
         this.removeRowCompsNotToDraw(indexesToDraw);
+        // we always ensure dom order for inserts, as this doesn't impact our animation. however our animation
+        // gets messed up when we rearrange the rows (for updates). so we only maintain order for updates
+        // when the user explicitly asks for it.
+        var ensureDomOrderForInsert = !this.forPrint;
+        var ensureDomOrderForUpdate = this.gridOptionsWrapper.isEnsureDomOrder() && !this.forPrint;
+        var ensureDomOrder = ensureDomOrderForInsert || ensureDomOrderForUpdate;
         // this keeps track of the last inserted element in each container, so when rows are getting
         // inserted or repositioned, they can be done relative to the previous DOM element
-        var ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder() && !this.forPrint;
         var previousElements = ensureDomOrder ? { eBody: null, eLeft: null, eRight: null, eFullWidth: null } : null;
         // add in new rows
         var nextVmTurnFunctions = [];
         indexesToDraw.forEach(function (rowIndex) {
-            var rowComp = _this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, previousElements);
+            var rowComp = _this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, previousElements, ensureDomOrderForUpdate);
             if (utils_1.Utils.exists(rowComp)) {
                 utils_1.Utils.pushAll(nextVmTurnFunctions, rowComp.getAndClearNextVMTurnFunctions());
             }
@@ -438,7 +443,7 @@ var RowRenderer = (function (_super) {
         this.destroyRowComps(rowsToRecycle, animate);
         this.checkAngularCompile();
     };
-    RowRenderer.prototype.createOrUpdateRowComp = function (rowIndex, rowsToRecycle, animate, previousElements) {
+    RowRenderer.prototype.createOrUpdateRowComp = function (rowIndex, rowsToRecycle, animate, previousElements, ensureDomOrderForUpdate) {
         var rowNode;
         var rowComp = this.rowCompsByIndex[rowIndex];
         // if no row comp, see if we can get it from the previous rowComps
@@ -466,7 +471,9 @@ var RowRenderer = (function (_super) {
         }
         else {
             // ensure row comp is in right position in DOM
-            rowComp.ensureInDomAfter(previousElements);
+            if (ensureDomOrderForUpdate) {
+                rowComp.ensureInDomAfter(previousElements);
+            }
         }
         this.updatePreviousElements(previousElements, rowComp);
         this.rowCompsByIndex[rowIndex] = rowComp;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.0
+ * @version v12.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -141,35 +141,17 @@ var DateFloatingFilterComp = (function (_super) {
         var body = utils_1._.loadTemplate("<div></div>");
         body.appendChild(this.dateComponent.getGui());
         this.setTemplateFromElement(body);
-        this.lastKnownModel = this.asParentModel();
     };
     DateFloatingFilterComp.prototype.onDateChanged = function () {
         var parentModel = this.currentParentModel();
         var model = this.asParentModel();
-        if (this.equalModels(this.lastKnownModel, model))
+        if (this.equalModels(parentModel, model))
             return;
-        var rawDate = this.dateComponent.getDate();
-        if (!rawDate || typeof rawDate.getMonth !== 'function') {
-            this.onFloatingFilterChanged(null);
-            return;
-        }
-        var date = utils_1._.serializeDateToYyyyMmDd(dateFilter_1.DateFilter.removeTimezone(rawDate), "-");
-        var dateTo = null;
-        var type = parentModel.type;
-        if (parentModel) {
-            dateTo = parentModel.dateTo;
-        }
-        var newModel = {
-            type: type,
-            dateFrom: date,
-            dateTo: dateTo,
-            filterType: 'date'
-        };
         this.onFloatingFilterChanged({
-            model: newModel,
+            model: model,
             apply: true
         });
-        this.lastKnownModel = newModel;
+        this.lastKnownModel = model;
     };
     DateFloatingFilterComp.prototype.equalModels = function (left, right) {
         if (utils_1._.referenceCompare(left, right))
@@ -189,12 +171,13 @@ var DateFloatingFilterComp = (function (_super) {
         var filterValueText = utils_1._.serializeDateToYyyyMmDd(dateFilter_1.DateFilter.removeTimezone(filterValueDate), "-");
         return {
             type: currentParentModel.type,
-            dateFrom: filterValueText ? filterValueText : currentParentModel.dateFrom,
-            dateTo: null,
+            dateFrom: filterValueText,
+            dateTo: currentParentModel ? currentParentModel.dateTo : null,
             filterType: 'date'
         };
     };
     DateFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
+        this.lastKnownModel = parentModel;
         if (!parentModel || !parentModel.dateFrom) {
             this.dateComponent.setDate(null);
             return;

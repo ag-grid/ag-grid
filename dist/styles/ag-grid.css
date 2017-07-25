@@ -10,6 +10,9 @@ ag-grid {
 ag-grid-polymer {
   display: block;
 }
+ag-grid-aurelia {
+  display: block;
+}
 .ag-rtl {
   direction: rtl;
 }

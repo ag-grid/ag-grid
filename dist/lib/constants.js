@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.0
+ * @version v12.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -53,6 +53,7 @@ var Constants = (function () {
     Constants.ROW_MODEL_TYPE_VIEWPORT = 'viewport';
     Constants.ROW_MODEL_TYPE_IN_MEMORY = 'inMemory';
     Constants.ROW_MODEL_TYPE_ENTERPRISE = 'enterprise';
+    Constants.DEPRECATED_ROW_MODEL_TYPE_NORMAL = 'normal';
     Constants.ALWAYS = 'always';
     Constants.ONLY_WHEN_GROUPING = 'onlyWhenGrouping';
     Constants.PINNED_TOP = 'top';

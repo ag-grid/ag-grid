@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.0
+ * @version v12.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -75,7 +75,7 @@ var TextFilter = (function (_super) {
         }
         var value = this.filterParams.valueGetter(params.node);
         if (!value) {
-            if (this.filter === baseFilter_1.BaseFilter.NOT_EQUAL) {
+            if (this.filter === baseFilter_1.BaseFilter.NOT_EQUAL || this.filter === baseFilter_1.BaseFilter.NOT_CONTAINS) {
                 // if there is no value, but the filter type was 'not equals',
                 // then it should pass, as a missing value is not equal whatever
                 // the user is filtering on

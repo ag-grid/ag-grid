@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v12.0.0
+// Type definitions for ag-grid v12.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
@@ -210,7 +210,9 @@ export declare class GridApi {
     getInfinitePageState(): any;
     getCacheBlockState(): any;
     checkGridSize(): void;
+    getFirstRenderedRow(): number;
     getFirstDisplayedRow(): number;
+    getLastRenderedRow(): number;
     getLastDisplayedRow(): number;
     getDisplayedRowAtIndex(index: number): RowNode;
     getDisplayedRowCount(): number;

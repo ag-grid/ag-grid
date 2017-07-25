@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v12.0.0
+// Type definitions for ag-grid v12.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ceolter/>
 import { Column } from "../entities/column";
@@ -64,7 +64,7 @@ export declare class RowRenderer extends BeanStub {
     private removeRowCompsNotToDraw(indexesToDraw);
     private calculateIndexesToDraw();
     private redraw(rowsToRecycle?, animate?);
-    private createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, previousElements);
+    private createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, previousElements, ensureDomOrderForUpdate);
     private destroyRowComps(rowCompsMap, animate);
     private checkAngularCompile();
     private workOutFirstAndLastRowsToRender();

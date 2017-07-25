@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.0
+ * @version v12.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -783,8 +783,16 @@ var GridApi = (function () {
     GridApi.prototype.checkGridSize = function () {
         this.gridPanel.setBodyAndHeaderHeights();
     };
+    GridApi.prototype.getFirstRenderedRow = function () {
+        console.log('in ag-Grid v12, getFirstRenderedRow() was renamed to getFirstDisplayedRow()');
+        return this.getFirstDisplayedRow();
+    };
     GridApi.prototype.getFirstDisplayedRow = function () {
         return this.rowRenderer.getFirstVirtualRenderedRow();
+    };
+    GridApi.prototype.getLastRenderedRow = function () {
+        console.log('in ag-Grid v12, getLastRenderedRow() was renamed to getLastDisplayedRow()');
+        return this.getLastDisplayedRow();
     };
     GridApi.prototype.getLastDisplayedRow = function () {
         return this.rowRenderer.getLastVirtualRenderedRow();
