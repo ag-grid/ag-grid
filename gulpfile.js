@@ -8,6 +8,7 @@ var clean = require('gulp-clean');
 var webpack = require('webpack');
 var webpackStream = require('webpack-stream');
 var path = require('path');
+const rename = require("gulp-rename");
 
 var headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
