@@ -3,101 +3,17 @@ $key = "Callbacks";
 $pageTitle = "ag-Grid Callbacks";
 $pageDescription = "Learn how each callbacks impacts ag-Grid.";
 $pageKeyboards = "javascript data grid ag-Grid Callbacks";
-$pageGroup = "interfacing";
+$pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h2 id="callbacks">Callbacks</h2>
-
-    <p>
-        Callbacks are used by the grid for contacting your client application and asking it questions.
-        It is not intended to inform your application of anything.
-    <p>
-
-    <? if (isFrameworkAngular1()) { ?>
-        <h4 id="angularjs">
-            <img src="/images/javascript.png" height="20"/>
-            <img src="/images/angularjs.png" height="20px"/>
-            Javascript and AngularJS 1.x
-        </h4>
-        <p>
-            Add callbacks to the gridOptions.
-        </p>
-    <? } ?>
-
-    <? if (isFrameworkJavaScript()) { ?>
-        <h4 id="javascript">
-            <img src="/images/javascript.png" height="20"/>
-            Javascript
-        </h4>
-        <p>
-            Add callbacks to the gridOptions.
-        </p>
-    <? } ?>
-
-    <? if (isFrameworkReact()) { ?>
-        <h4>
-            <img src="/images/react.png" height="20px"/>
-            React
-        </h4>
-        <p>
-            Add callbacks to the gridOptions or set as React JSX props.
-        </p>
-    <? } ?>
-
-    <? if (isFrameworkPolymer()) { ?>
-        <h4>
-            <img src="/images/polymer-large.png" height="20px"/>
-            Polymer
-        </h4>
-        <p>
-            Add callbacks to the gridOptions or set as properties on the <code>ag-grid-polymer</code> component.
-        </p>
-    <? } ?>
-
-    <? if (isFrameworkAngular2()) { ?>
-        <h4>
-            <img src="/images/angular2.png" height="20px"/>
-            Angular
-        </h4>
-        <p>
-            Add callbacks to the gridOptions or set as Angular properties.
-        </p>
-    <? } ?>
-
-    <? if (isFrameworkVue()) { ?>
-        <h4>
-            <img src="/images/vue_large.png" height="20px"/>
-            VueJS
-        </h4>
-        <p>
-            Add callbacks to the gridOptions or set as VueJS properties.
-        </p>
-    <? } ?>
-
-    <? if (isFrameworkWebComponents()) { ?>
-        <h4>
-            <img src="/images/webComponents.png" height="20px"/>
-            Web Components
-        </h4>
-        <p>
-            Add callbacks to the gridOptions or set as component properties.
-        </p>
-    <? } ?>
-
-    <? if (isFrameworkAurelia()) { ?>
-        <h4>
-            <img src="/images/aurelia.png" height="20px"/>
-            Aurelia
-        </h4>
-        <p>
-            Add callbacks to the gridOptions or set as component properties.
-        </p>
-    <? } ?>
-
-    <h2 id="list-of-callbacks">List of Callbacks</h2>
+    <h1 id="callbacks" class="first-h1">Grid Callbacks</h1>
 
     <table class="table">
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">All Callbacks</td>
+        </tr>
         <tr>
             <th>isExternalFilterPresent()</th>
             <td>Grid calls this method to know if external filter is present.</td>

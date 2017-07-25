@@ -435,7 +435,7 @@ class TopMoversGrid extends Component {
     <h2 id="next-steps">Next Steps...</h2>
 
     <p>
-        Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>
+        Now you can go to <a href="../javascript-grid-reference-overview/">reference</a>
         to learn about accessing all the features of the grid.
     </p>
 

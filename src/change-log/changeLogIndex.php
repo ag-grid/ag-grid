@@ -13,11 +13,27 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+
+
     <h2>Version 12.0.x</h2>
+    <h3>Version 12.0.1 [25-JUL-2017]</h3>
+
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>AG-645: Bugfix: Error creating bean CsvCreator due to minimifying issues.</li>
+        <li>AG-636: Bugfix: Normal rowModelType was not deprecated properly.</li>
+        <li>AG-639: Bugfix: Date component was still broken after previous fix AG-541/600</li>
+        <li>AG-633: Bugfix: Fixed bug where "not contains" filter would not work with emtpy strings</li>
+        <li>AG-641: Bugfix: When using row groups and footer rows, deprecation warning message was printed to the console, fixed it so it is now (internally grid was using a deprecate method).</li>
+    </ul>
+
     <h3>Version 12.0.0 [21-JUL-2017]</h3>
 
     <h4>New Features</h4>
     <ul>
+        <li>
+            New feature: <a href="../best-polymer-data-grid/">Polymer Support</a>. #UseThePlatform
+        </li>
         <li>
             New feature: <a href="../javascript-grid-change-detection/">Change Detection</a>. Say goodbye to
             grid refreshes.
@@ -130,6 +146,8 @@ include '../documentation-main/documentation_header.php';
             <li>gridApi.getFloatingBottomRowCount-> api.getPinnedBottomRowCount</li>
             <li>gridApi.getFloatingTopRow-> api.getPinnedTopRow</li>
             <li>gridApi.getFloatingBottomRow-> api.getPinnedBottomRow</li>
+            <li>gridApi.getFirstRenderedRow-> api.getFirstDisplayedRow</li>
+            <li>gridApi.getLastRenderedRow-> api.getLastDisplayedRow</li>
             <li>gridOptions.floatingTopRowData -> gridOptions.pinnedTopRowData</li>
             <li>gridOptions.floatingBottomRowData -> gridOptions.pinnedBottomRowData</li>
             <li>gridOptions.slaveGrids -> gridOptions.alignedGrids</li>

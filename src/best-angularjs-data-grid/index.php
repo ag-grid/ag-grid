@@ -295,6 +295,27 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
 
 <show-example example="exampleCellTemplates-ajs"></show-example>
 
+<h2 id="ng1Components">Angular 1.x and ag-Grid Components</h2>
+
+<p>
+    ag-Grid does not provide direct support for it's <a href="../javascript-grid-components/">components</a> and AngularJS 1.x. If you want to put custom
+    AngularJS 1.x components into ag-Grid, follow the instructions for plain JavaScript component. You will
+    then need to manage creating and destroying child scopes yourself inside the <i>init()</i> and
+    <i>destroy()</i> methods.
+</p>
+
+<p><code>angularCompileRows</code>, <code>angularCompileFilters</code> and <code>angularCompileHeaders</code> are not
+    supported within Components.</p>
+
+
+<h2>Events & Digest Cycle</h2>
+
+<p>
+    For AngularJS 1.x - ag-Grid does not not fire events inside an Angular JS digest cycle. This is done on purpose
+    for performance reasons, as there are many events fired, even if you don't listen to them. Firing the digest
+    cycle for each one would kill performance. So you may want to $scope.$apply() after you handle the event.
+</p>
+
 <h2 id="next-steps">Next Steps...</h2>
 
 <p>

@@ -44,6 +44,9 @@
     <div>
         <ul style="padding-left: 20px;">
             <li>
+                <a href="../best-polymer-data-grid/">Polymer Support</a>
+            </li>
+            <li>
                 <a href="../javascript-grid-column-spanning/">Column Spanning</a>
             </li>
             <li>

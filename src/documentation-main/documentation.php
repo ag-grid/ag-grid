@@ -27,16 +27,16 @@ include 'documentation_header.php';
                     </p>
                 </div>
             </a>
-            <a href="/javascript-grid-interfacing-overview/" class="list-group-item">
+            <a href="/javascript-grid-reference-overview/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/interfacing.svg" width="50" />
                     </div>
-                    <h4 class="list-group-item-heading">Interfacing</h4>
+                    <h4 class="list-group-item-heading">Reference</h4>
                     <p class="list-group-item-text">
 
                         <!--                        Once you have <span style="font-style: italic">The Basics</span> covered, we suggest you take a look at the
-                                                <a href="../javascript-grid-interfacing-overview/">Interfacing Overview</a> next.
+                                                <a href="../javascript-grid-reference-overview/">Interfacing Overview</a> next.
                         -->
                         Lists all the configuration options (properties, events, api etc) for ag-Grid.
                         Use this as a quick reference to look all available options.

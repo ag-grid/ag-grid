@@ -31,12 +31,52 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
+    <h3 id="default-editing">Enabling editing in a column</h3>
+
+    <p>
+        The simplest way to enable editing is by providing <i>colDef.editable=true</i> by doing so all the cells
+        in the column will be editable.
+    </p>
+
+    <p>
+        It is possible to have only a few cells in a column editable, to do so, instead of <i>colDef.editable=true</i>,
+        you can specify a callback that will get called for each cell displayed for that column. If you return true the
+        cell will be editable. The params for the callback are:
+
+    <table class="table">
+    <tr>
+        <th>node</th>
+        <td>The RowNode of the row being rendered.</td>
+    </tr>
+    <tr>
+        <th>column</th>
+        <td>The column been rendered (in ag-Grid, each colDef is wrapped by a Column).</td>
+    </tr>
+    <tr>
+        <th>colDef</th>
+        <td>The colDef been rendered.</td>
+    </tr>
+    <tr>
+        <th>context</th>
+        <td>The context as set on the gridOptions.</td>
+    </tr>
+    <tr>
+        <th>api</th>
+        <td>A reference to the grid api.</td>
+    </tr>
+    <tr>
+        <th>columnApi</th>
+        <td>A reference to the column api.</td>
+    </tr>
+
+    </table>
+    </p>
+
     <h3 id="default-editing">Default Editing</h3>
 
     <p>
         To get simple string editing, you do not need to provide an editor. The grid by default allows simple
-        string editing on cells. The default editor is used if you have <i>colDef.editable=true</i> but do
-        not provide a cellEditor.
+        string editing on cells. The default editor is used if you do not provide a cellEditor.
     </p>
 
     <h3 id="start-editing">Start Editing</h3>

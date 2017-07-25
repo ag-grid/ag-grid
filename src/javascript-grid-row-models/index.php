@@ -9,6 +9,34 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
+    <style>
+        .row-model-table .item-row {
+            border-top: 1px solid lightgray;
+        }
+        .row-model-table .first-row {
+            background-color: aliceblue;
+            font-weight: bold;
+        }
+
+        .row-model-table td {
+            padding: 4px;
+            border-left: 1px solid lightgray;
+        }
+
+        .row-model-table {
+            border-top: 1px solid lightgray;
+            border-bottom: 1px solid lightgray;
+            border-right: 1px solid lightgray;
+        }
+
+        .green-tick {
+            color: darkgreen;
+        }
+        .red-x {
+            color: darkred;
+        }
+    </style>
+
     <h1 class="first-h1" id="row-models">
         <img src="../images/svg/docs/row_models.svg" width="50" />
         Row Models
@@ -30,13 +58,12 @@ include '../documentation-main/documentation_header.php';
             <li>
                 <a href="../javascript-grid-infinite-scrolling/"><b>Infinite:</b></a> This will present the data to
                 the user and load more data as the user scrolls down.
-                Use this if you want to display a large (to large to bring back from the server
-                in one go) flat list (not grouped) of data.
+                Use this if you want to display a large flat (not grouped) list of data.
             </li>
             <li>
                 <a href="../javascript-grid-enterprise-model/"><b>Enterprise:</b></a>
-                Enterprise builds on Infinite, is also lazy loads the data as teh user scrolls down. In addition it
-                also allows lazy loading of grouped data with server side grouping and aggregation.
+                Enterprise builds on Infinite. It also lazy loads the data as the user scrolls down. In addition it
+                allows lazy loading of grouped data with server side grouping and aggregation.
                 Advanced users will use Enterprise Row Model to do ad-hoc slice and dice of data with server side aggregations.
             </li>
             <li>
@@ -90,7 +117,7 @@ include '../documentation-main/documentation_header.php';
             </li>
             <li>
                 If you do not want to shift all the data from your server to your client, as the amount of data is too
-                large to shift over the network or to extract from the underlying datasource, then use on of infinite,
+                large to shift over the network or to extract from the underlying datasource, then use one of infinite,
                 enterprise or viewport. Each one takes data from the server in different ways.
             </li>
             <li>
@@ -105,7 +132,9 @@ include '../documentation-main/documentation_header.php';
                 Use <b><a href="../javascript-grid-viewport/">Viewport</a></b> if you want the server to know exactly what the user is looking at.
                 This is best when you have a large amount of changing data and want to push updates
                 to the client when the server side data changes. Knowing exactly what the user is looking
-                at means you only have to push updates to the relevant users.</li>
+                at means you only have to push updates to the relevant users. All the row models can receive
+                updates, however only the Viewport row model provides the server with the information of the rows
+                the users currently sees on screen without scrolling.</li>
             </li>
         </ul>
     </p>
@@ -113,57 +142,229 @@ include '../documentation-main/documentation_header.php';
     <h1 id="row-model-summary">Row Model Comparisons</h1>
 
     <p>
-        The following table compares the row models highlights.
+        Below is a quick feature comparison of all the grids features across all four row models.
     </p>
 
-    <p>
     <table class="row-model-table">
         <tr class="first-row">
-            <td>Model</td>
-            <td>Sorting & Filtering</td>
-            <td>Grouping & Aggregation</td>
-            <td>Server State**</td>
-            <td>Availability</td>
+            <td>Feature</td>
+            <td>In Memory</td>
+            <td>Infinite</td>
+            <td>Enterprise</td>
+            <td>Viewport</td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-in-memory/"><b>In Memory</b></a></td>
-            <td>Inside the Grid</td>
-            <td>Inside the Grid*</td>
-            <td>Stateless</td>
-            <td>ag-Grid (Free)</td>
+            <td>All Data in Client</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-infinite-scrolling/"><b>Infinite Scrolling</b></a></td>
-            <td>Server Side</td>
-            <td>No</td>
-            <td>Stateless</td>
-            <td>ag-Grid (Free)</td>
+            <td>Fetch Data as User Scrolls</td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-viewport/"><b>Viewport</b></a></td>
-            <td>Server Side</td>
-            <td>No</td>
-            <td>Stateful</td>
-            <td>ag-Grid Enterprise</td>
+            <td><a href="../javascript-grid-sorting/">Row Sorting</a></td>
+            <td><span class="green-tick">&#10004;</span> (client)</td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-enterprise-model/"><b>Enterprise</b></a></td>
-            <td>Server Side</td>
-            <td>Server Side</td>
-            <td>Stateless</td>
-            <td>ag-Grid Enterprise</td>
+            <td><a href="../javascript-grid-filtering/">Row Filtering</a></td>
+            <td><span class="green-tick">&#10004;</span> (client)</td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-filter-quick/">Quick Filter</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-filtering/#floatingFilter">Floating Filters</td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-row-height/">Dynamic Row Height</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-grouping/">Row Grouping</a></td>
+            <td><span class="green-tick">&#10004;</span> (client)</td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td>Lazy Loading Row Groups</td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-aggregation/">Value Aggregation</a></td>
+            <td><span class="green-tick">&#10004;</span> (client)</td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-selection/">Row Selection</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-selection/#headerCheckboxSelection">Header Checkbox Selection</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-range-selection/">Range Selection</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-column-spanning/">Column Spanning</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-pinning/">Column Pinning</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-row-pinning/">Row Pinning</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-pagination/">Pagination</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-filter-component/">Customer Filters</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-cell-editor/">Cell Editors</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-cell-rendering-components/">Cell Renderers</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-value-getters/">Value Getter</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-value-setters/">Value Setter</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-value-getters/">Value Formatter</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-value-setters/">Value Parser</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-tree/">Tree Data</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-full-width-rows/">Full Width Rows</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-full-width-rows/#flowerNodes">Flower Nodes</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-export/">CSV Export</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-excel/">Excel Export</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
+            <td><a href="../javascript-grid-clipboard/">Clipboard Copy & Paste</a></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
+            <td><span class="green-tick">&#10004;</span></td>
         </tr>
     </table>
-    </p>
 
-    <p>
-        * Grouping and Aggregation for the In Memory row model is available in ag-Grid Enterprise only.
-    </p>
-    <p>
-        ** Server State means your server is aware of client state. For viewport, the server knows exactly
-        what each user is currently looking at, whereas all other row models access the server is a stateless
-        fashion.
-    </p>
 
     <h1>Deeper Understanding of Row Models</h1>
 
@@ -212,27 +413,6 @@ include '../documentation-main/documentation_header.php';
             </li>
         </ul>
     </p>
-
-    <style>
-        .row-model-table .item-row {
-            border-top: 1px solid lightgray;
-        }
-        .row-model-table .first-row {
-            background-color: aliceblue;
-            font-weight: bold;
-        }
-
-        .row-model-table td {
-            padding: 4px;
-            border-left: 1px solid lightgray;
-        }
-
-        .row-model-table {
-            border-top: 1px solid lightgray;
-            border-bottom: 1px solid lightgray;
-            border-right: 1px solid lightgray;
-        }
-    </style>
 
     <h1 id="datasource">Pagination</h1>
 

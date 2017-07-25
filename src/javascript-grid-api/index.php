@@ -3,101 +3,17 @@ $key = "Grid API";
 $pageTitle = "ag-Grid API";
 $pageDescription = "ag-Grid API";
 $pageKeyboards = "ag-Grid API";
-$pageGroup = "interfacing";
+$pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-    <h2 id="grid-api">Grid API</h2>
+    <h1 id="grid-api" class="first-h1">Grid API</h1>
 
-    <p>
-        The grid API exposes functions that go beyond events and properties that
-        your application can call. The grid needs to be initialised before the API
-        can be accessed.
-    </p>
-
-    <? if (isFrameworkJavaScript()) { ?>
-        <h4>
-            <img src="/images/javascript.png" height="20"/>
-            Javascript
-        </h4>
-        <p>
-            Use api placed inside gridOptions by the grid during initialisation.
-        </p>
-    <? } ?>
-
-    <? if (isFrameworkAngular1()) { ?>
-        <h4>
-            <img src="/images/angularjs.png" height="20px"/>
-            AngularJS 1.x
-        </h4>
-        <p>
-            Use api placed inside gridOptions by the grid during initialisation.
-        </p>
-    <? } ?>
-
-    <? if (isFrameworkReact()) { ?>
-        <h4>
-            <img src="/images/react.png" height="20px"/>
-            React
-        </h4>
-        <p>
-            The API is provided to you in the onGridReady callback of the React component.
-            Or if you are providing gridOptions object, you can use the API attached
-            to this after the grid has initialised.
-        </p>
-    <? } ?>
-
-    <? if (isFrameworkAngular2()) { ?>
-        <h4>
-            <img src="/images/angular2.png" height="20px"/>
-            Angular
-        </h4>
-        <p>
-            Use api placed inside gridOptions by the grid during initialisation. You can also
-            use api directly on the Angular grid component.
-        </p>
-    <? } ?>
-
-    <? if (isFrameworkVue()) { ?>
-        <h4>
-            <img src="/images/vue_large.png" height="20px"/>
-            VueJS
-        </h4>
-        <p>
-            Use api placed inside gridOptions by the grid during initialisation. You can also
-            use api directly on the VueJS grid component.
-        </p>
-    <? } ?>
-
-    <? if (isFrameworkWebComponents()) { ?>
-        <h4>
-            <img src="/images/webComponents.png" height="20px"/>
-            Web Components
-        </h4>
-        <p>
-            Use api placed inside gridOptions by the grid during initialisation. You can also
-            use api directly on the DOM element.
-        </p>
-    <? } ?>
-
-    <? if (isFrameworkAurelia()) { ?>
-    <h4>
-        <img src="/images/aurelia.png" height="20px"/>
-        Aurelia Components
-    </h4>
-    <p>
-        Use api placed inside gridOptions by the grid during initialisation. You can also
-        use api directly on the DOM element.
-    </p>
-    <? } ?>
-
-    <table id="list-of-api-functions" class="table">
-        <!------------------->
-        <!-- Columns -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Columns</h2></th>
+    <table class="table">
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Columns</td>
         </tr>
         <tr>
             <th>sizeColumnsToFit()</th>
@@ -109,13 +25,11 @@ include '../documentation-main/documentation_header.php';
                 and then redraw all of the rows. The rows will not be discarded, so any selections, scrolling or groups
                 open, will stay.</td>
         </tr>
-
-        <!------------------->
-        <!-- Data -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Data</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Data</td>
         </tr>
+
         <tr>
             <th>setRowData(rows)</th>
             <td>Set new rows into the grid.</td>
@@ -156,13 +70,11 @@ include '../documentation-main/documentation_header.php';
                 Gets the In Memory Row Model to refresh, executing the grouping, filtering and sorting again.
             </td>
         </tr>
-
-        <!------------------->
-        <!-- Looping Through Data -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Accessing Row Nodes</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Accessing Row Nodes</td>
         </tr>
+
         <?php include '../javascript-grid-accessing-data/accessingDataProperties.php' ?>
         <?php printPropertiesRows($getRowNodeApi) ?>
 
@@ -218,12 +130,11 @@ include '../documentation-main/documentation_header.php';
             <td>Clears the selected range.</td>
         </tr>
 
-        <!------------------->
-        <!-- Refresh -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Refresh</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Refresh</td>
         </tr>
+
         <tr>
             <th>refreshCells(params)</th>
             <td>Gets the grid to do change detection on all cells and refresh the cell if needed.</td>
@@ -236,13 +147,11 @@ include '../documentation-main/documentation_header.php';
             <th>refreshHeader()</th>
             <td>Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed.</td>
         </tr>
-
-        <!------------------->
-        <!-- Sort / Filter -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Sort / Filter</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Sort & Filter</td>
         </tr>
+
         <tr>
             <th>setQuickFilter(quickFilter)</th>
             <td>Pass a quick filter text into ag-Grid for filtering. If using Angular, the grid watched the 'quickFilterText'
@@ -311,13 +220,11 @@ include '../documentation-main/documentation_header.php';
             <td>Returns the sort state of the grid.
             </td>
         </tr>
-
-        <!------------------->
-        <!-- Navigation -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Navigation</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Navigation</td>
         </tr>
+
         <tr>
             <th>getFocusedCell()</th>
             <td>Returns the focused cell as an object containing the rowIndex, column and floating (top, bottom or null).</td>
@@ -339,12 +246,11 @@ include '../documentation-main/documentation_header.php';
             <td>Navigates the grid focus to the previous cell, as if shift-tabbing.</td>
         </tr>
 
-        <!------------------->
-        <!-- Editing -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Editing</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Editing</td>
         </tr>
+
         <tr>
             <th>stopEditing(cancel?)</th>
             <td>If a cell is editing, it stops the editing. Pass 'true' if you want to cancel the editing
@@ -355,12 +261,11 @@ include '../documentation-main/documentation_header.php';
             <td>Gets the grid to start editing on a particular cell.</td>
         </tr>
 
-        <!------------------->
-        <!-- Export -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Export</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Export</td>
         </tr>
+
         <tr>
             <th>exportDataAsCsv(params)</th>
             <td>Does a CSV export of the grid's data.</td>
@@ -378,12 +283,11 @@ include '../documentation-main/documentation_header.php';
             <td>Similar to exportDataAsExcel, except returns result as a string rather than export it.</td>
         </tr>
 
-        <!------------------->
-        <!-- Events -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Events</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Events</td>
         </tr>
+
         <tr>
             <th>addEventListener(eventType, listener)</th>
             <td>Add an event listener for the said event type. Works similar to addEventListener for a browser DOM element.</td>
@@ -406,12 +310,11 @@ include '../documentation-main/documentation_header.php';
                 to fire events such as 'cellValueChanged'.</td>
         </tr>
 
-        <!------------------->
-        <!-- Groups -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Groups</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Row Groups</td>
         </tr>
+
         <tr>
             <th>expandAll()</th>
             <td>Expand all groups.</td>
@@ -433,12 +336,11 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        <!------------------->
-        <!-- Rendering -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Rendering</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Rendering</td>
         </tr>
+
         <tr>
             <th>getRenderedNodes()</th>
             <td>Retrieve rendered nodes. Due to virtualisation this will contain only the current
@@ -446,12 +348,11 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        <!------------------->
-        <!-- Scrolling -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Scrolling</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Scrolling</td>
         </tr>
+
         <tr>
             <th>ensureIndexVisible(index)</th>
             <td>Ensures the index is visible, scrolling the table if needed.</td>
@@ -481,12 +382,11 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        <!------------------->
-        <!-- Overlays -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Overlays</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Overlays</td>
         </tr>
+
         <tr>
             <th>showLoadingOverlay()</th>
             <td>Show the loading overlay.</td>
@@ -500,13 +400,11 @@ include '../documentation-main/documentation_header.php';
             <td>Hides the overlay if showing.</td>
         </tr>
 
-
-        <!------------------->
-        <!-- Clipboard -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Clipboard</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Clipboard</td>
         </tr>
+
         <tr>
             <th>copySelectedRangeToClipboard(includeHeaders)</th>
             <td>Copies the selected ranges to the clipboard.</td>
@@ -516,30 +414,25 @@ include '../documentation-main/documentation_header.php';
             <td>Copies the selected range down, similar to Ctrl+D in Excel.</td>
         </tr>
 
-        <!------------------->
-        <!-- Pagination -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Pagination</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Pagination</td>
         </tr>
+
         <?php include '../javascript-grid-pagination/paginationProperties.php' ?>
         <?php printPropertiesRows($paginationApi) ?>
 
-        <!------------------->
-        <!-- Pagination -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Headers</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Headers</td>
         </tr>
+
         <?php include '../javascript-grid-column-header/headerHeightProperties.php' ?>
         <?php printPropertiesRows($headerHeightApi) ?>
 
-
-        <!------------------->
-        <!-- Miscellaneous -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Miscellaneous</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Miscellaneous</td>
         </tr>
 
         <tr>

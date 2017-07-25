@@ -286,27 +286,34 @@ colDef = {
 
     <show-example example="exampleChangeDetectionFilterSortGroup"></show-example>
 
-    <h2 id="path-selection">Aggregation Path Selection</h2>
+    <h1 id="path-selection">Aggregation Path Selection</h1>
 
     <p>
-        When the grid needs to update aggregations, it will only update aggregations that are
-        impacted by the changed values. This is done using path selection.
+        When data in the grid updates and aggregations are active, the grid will not recompute
+        all aggregations again from scratch. Instead it will be selective as to what aggregations
+        need to be re-computed.
     </p>
 
     <h3 id="tree-path-selection">Tree Path Selection</h3>
 
     <p>
-        Tree path selection means when a value is changed, the aggregation will only
-        update the parent group(s) of the value.
+        When a value changes, the grid will recompute the immediate group the row is in, and then any parent
+        group, all the way to the root. This is known as 'tree path selection' - only the part of the tree
+        that need to be recalculated are recalculated.
+    </p>
+
+    <p>
+        If you are updating many rows at the same time using an <a href="../javascript-grid-data-update/">update
+        transaction</a>, the grid will do all updates first, then recompute all aggregations against the combined
+        impacted paths only.
     </p>
 
     <h3>Column Path Selection</h3>
 
     <p>
         By default, the grid will recalculate aggregations on all columns for the updated tree path,
-        even if only one of the columns were updated.
-        This is because the grid assumes any column has the potential to impact any other column,
-        should the column be referenced in a valueGetter.
+        even if only one of the columns values were changed. This is because the grid assumes any column has
+        the potential to impact any other column, should the column be referenced in a valueGetter.
     </p>
 
     <p>
@@ -318,14 +325,19 @@ colDef = {
     <h2>Example - Tree Path & Column Path Selection</h2>
 
     <p>
-        This is easiest explained with an example. Consider the example below and you edit
-        a cell value under "Bottom" -> "Group B2" -> "Column C". Then the grid will only
-        recompute column C aggregations for "Group B2" and "Bottom". It will not recompute
-        any aggregates for any other groups or for any other columns.
+        Consider the example below and you edit a cell value under under the groups "Bottom" -> "Group B2"
+        and column "Column C". The grid will only recompute column C aggregations for "Group B2" and "Bottom".
+        It will not recompute any aggregates for any other groups or for any other columns.
     </p>
 
     <p>
-        The path selection ensures only the minimal amount of recalculations are done.
+        The tree path selection (ie not updating anything in the group "Top") is active always in the grid
+        and the column selection (only updating column "Column C") is active because of the grid property
+        <code>aggregateOnlyChangedColumns=true</code>.
+    </p>
+
+    <p>
+        The path selections ensure only the minimal amount of recalculations are done.
     </p>
 
     <p>

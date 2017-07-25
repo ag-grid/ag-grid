@@ -136,24 +136,24 @@
 
 </div>
 
-<div class="docsMenu-header <?php if ($pageGroup == "interfacing" || $expandAll == "true") { ?> active<?php } ?>"
+<div class="docsMenu-header <?php if ($pageGroup == "reference" || $expandAll == "true") { ?> active<?php } ?>"
      data-id="interfacing">
     <h4>
         <img src="../images/svg/docs/interfacing.svg"/>
         &nbsp;
-        Interfacing
+        Reference
     </h4>
     <i class="fa fa-arrow-right" aria-hidden="true"></i>
 </div>
 
 <div class="docsMenu-content">
     <?php
-    menuItem(0, 'Interfacing Overview', 'Overview', 'javascript-grid-interfacing-overview/');
-    menuItem(0, 'Properties', 'Properties', 'javascript-grid-properties/');
-    menuItem(0, 'Column Properties', 'Columns', 'javascript-grid-column-properties/');
-    menuItem(0, 'Events', 'Events', 'javascript-grid-events/');
-    menuItem(0, 'Callbacks', 'Callbacks', 'javascript-grid-callbacks/');
+    menuItem(0, 'Reference Overview', 'Overview', 'javascript-grid-reference-overview/');
+    menuItem(0, 'Properties', 'Grid Properties', 'javascript-grid-properties/');
+    menuItem(0, 'Events', 'Grid Events', 'javascript-grid-events/');
+    menuItem(0, 'Callbacks', 'Grid Callbacks', 'javascript-grid-callbacks/');
     menuItem(0, 'Grid API', 'Grid API', 'javascript-grid-api/');
+    menuItem(0, 'Column Properties', 'Column Properties', 'javascript-grid-column-properties/');
     menuItem(0, 'Column API', 'Column API', 'javascript-grid-column-api/');
     ?>
 </div>
@@ -319,7 +319,7 @@
 <div class="docsMenu-examples">
     <?php
 
-    menuItem(0, 'ag-Grid Examples', 'ag-Grid Examples', 'javascript-grid-examples/');
+    menuItem(0, 'Examples Overview', 'Overview', 'javascript-grid-examples/');
     if (isFrameworkReact() || isFrameworkAll()) {
         menuItemWithIcon('react_small.png', 1, 'React Examples', 'React Examples', 'example-react/', true);
         menuItem(2, 'React Rich Grid', 'Rich Grid', 'example-react-rich-grid/');
@@ -359,10 +359,11 @@
         menuItem(2, 'Polymer Group Row', 'Group Rows', 'example-polymer-grouped-row/');
         menuItem(2, 'Polymer MasterDetail', 'Master/Detail', 'example-polymer-master-detail/');
     }
-    menuItem(1, 'Styled Report', 'Styled Report', 'example-account-report/');
-    menuItem(1, 'File Browser', 'File Browser', 'example-file-browser/');
-    menuItem(1, 'Expressions and Context', 'Expressions', 'example-expressions-and-context/');
-    menuItem(1, 'Gallery', 'Gallery', 'example-gallery/');
+    menuItemWithIcon('javascript_small.png', 1, 'JavaScript Examples', 'Plain JavaScript', 'example-javascript/', true);
+    menuItem(2, 'Styled Report', 'Styled Report', 'example-account-report/');
+    menuItem(2, 'File Browser', 'File Browser', 'example-file-browser/');
+    menuItem(2, 'Expressions and Context', 'Expressions', 'example-expressions-and-context/');
+    menuItem(2, 'Gallery', 'Gallery', 'example-gallery/');
     ?>
 </div>
 

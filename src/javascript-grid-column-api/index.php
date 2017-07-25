@@ -3,162 +3,39 @@ $key = "Column API";
 $pageTitle = "ag-Grid Column API";
 $pageDescription = "ag-Grid allows you to save and restore the column state. This includes column widths, agg fields and visibility.";
 $pageKeyboards = "ag-Grid Column API";
-$pageGroup = "interfacing";
+$pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
 
     <div>
 
-        <h2 id="column-api">Column API</h2>
+        <h1 id="column-api" class="first-h1">Column API</h1>
 
         <p>
-            The column api has methods for interacting with the columns of the grid. Using the column API, you
-            have FULL control of how the columns are displayed. It has everything you need should you wish
-            to build your own column management GUI (instead of what's provided in the tool panel).
+            Below are listed all the column API methods.
         </p>
-
-        <pre><code>gridOptions.columnApi.setColumnVisible('country', false);</code></pre>
-
-        <note>
-            It is important to NEVER update the details of a column directly (I'm talking about a Column,
-            not a colDef). The grid should be left to update the attributes of the column. For example, if
-            you want to change a columns width, do NOT change the width on the Column object, use the
-            columnApi.setColumnWidth() method instead.
-        </note>
-
-        <p>
-            Below lists all the methods on the column API. At the bottom of this page there is an example.
-            Note that when talking about columns, a Column Group refers to grouping of the columns in
-            the header, a Row Group refers to grouping of the data when doing aggregation and grouping
-            of rows.
-        </p>
-
-        <p>
-            Most of the methods below work with Columns, not colDef's. A Column is a grid internal
-            representation for a column. When you pass a list of colDefs to the grid (via gridOptions.colDefs)
-            the grid wraps each of these colDefs in a Column object. It is the Column object that
-            contains the run-time information about the column. For example, if the column width changes,
-            the actual column width is updated in the Column object, the colDef never has its details changed.
-            The fact that the colDef is never changed allows you to use the same colDef across many grids
-            (probably only useful to a select few of you).
-        </p>
-
-        <p>
-            The grid API exposes functions that go beyond events and properties that
-            you application can call. The grid needs to be initialised before the API
-            can be accessed.
-        </p>
-
-        <?php if (isFrameworkJavaScript()) { ?>
-            <div>
-                <h4>
-                    <img  src="/images/javascript.png" height="20"/>
-                    Javascript
-                </h4>
-                <p>
-                    Use columnApi placed inside gridOptions by the grid during initialisation.
-                </p>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkAngular1()) { ?>
-            <div>
-                <h4>
-                    <img src="/images/angularjs.png" height="20px"/>
-                    AngularJS 1.x
-                </h4>
-                <p>
-                    Use columnApi placed inside gridOptions by the grid during initialisation.
-                </p>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkReact()) { ?>
-            <div>
-                <h4>
-                    <img src="/images/react.png" height="20px"/>
-                    React
-                </h4>
-                <p>
-                    Use the column API passed to you via the onGridReady callback of the React component. You can also
-                    use the columnApi placed inside gridOptions by the grid during initialisation.
-                </p>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkAngular2()) { ?>
-            <div>
-                <h4>
-                    <img src="/images/angular2.png" height="20px"/>
-                    Angular 2
-                </h4>
-                <p>
-                    Use columnApi placed inside gridOptions by the grid during initialisation. You can also
-                    use columnApi directly on the Angular grid component.
-                </p>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkVue()) { ?>
-            <div>
-                <h4>
-                    <img src="/images/vue_large.png" height="20px"/>
-                    VueJS
-                </h4>
-                <p>
-                    Use columnApi placed inside gridOptions by the grid during initialisation. You can also
-                    use columnApi directly on the VueJS grid component.
-                </p>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkAurelia()) { ?>
-            <div>
-                <h4>
-                    <img src="/images/aurelia.png" height="20px"/>
-                    Aurelia Components
-                </h4>
-                <p>
-                    Use columnApi placed inside gridOptions by the grid during initialisation. You can also
-                    use columnApi directly on the DOM element.
-                </p>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkWebComponents()) { ?>
-            <div>
-                <h4>
-                    <img src="../images/webComponents.png" height="20px"/>
-                    Web Components
-                </h4>
-                <p>
-                    Use columnApi placed inside gridOptions by the grid during initialisation. You can also
-                    use columnApi directly on the DOM element.
-                </p>
-            </div>
-        <?php } ?>
 
         <h2 id="column-keys">Column Keys</h2>
 
         <p>
-            Some of the API methods take Column Key (named colKey). This means you can pass either a column object (that
-            you receive from calling one of the other methods) or you pass in the Column ID. The Column ID is either the
-            id you provide in the column definition, the field of the columns, or a generated ID if both are missing.
-            The grid also ensures column ID's are unique.
+            Some of the API methods take Column Key (named colKey) which has type <code>Column|string</code>.
+            This means you can pass either a Column object (that
+            you receive from calling one of the other methods) or you pass in the Column ID (which is a string).
+            The Column ID is a property of the column definition. If you do not provide the Column ID, the grid will
+            create one for you (first by trying to use the field if it is unique, otherwise it will generate and ID).
         </p>
 
-        <h2 id="list-of-column-api-functions">List of Column API Functions</h2>
-
         <table class="table">
-            <tr>
-                <th>Function</th>
-                <th>Description</th>
+            <tr class="title-row">
+                <!-- TITLE ROW -->
+                <td colspan="2">Column API</td>
             </tr>
             <tr>
                 <th>sizeColumnsToFit(width)</th>
-                <td>Don't use this! You are better off using gridApi.sizeColumnsToFit(), which first
-                    works out the available width, and then calls this method. Only use this method if you
-                    want to size to something other than the available width.
+                <td>
+                    Gets the grid to size the columns to the specified with, eg sizeColumnsToFix(900).
+                    To have the grid fit the columns to the grid's width, use the Grid API
+                    <code>gridApi.sizeColumnsToFit()</code> instead.
                 </td>
             </tr>
             <tr>
@@ -368,61 +245,6 @@ include '../documentation-main/documentation_header.php';
                 </td>
             </tr>
         </table>
-
-        <h2 id="deep-dive-save-restore-full-state">Deep Dive - Save / Restore Full State</h2>
-
-        <p>
-            It is also possible to store the entire state of the columns and restore them again via
-            the API. This includes visibility, width, row groups and values.
-        </p>
-
-        <ul>
-            <li><b>columnApi.getColumnState()</b>: Returns the state of a particular column.</li>
-            <li><b>columnApi.setColumnState(state)</b>: To set the state of a particular column.</li>
-        </ul>
-
-        <p>
-            The methods above get and set the state. The result is a Javascript array object that
-            can be converted to / from JSON. An example of what the JSON might look like is as follows:
-        </p>
-
-        <pre>[
-{colId: "athlete", aggFunc: "sum",  hide: false, rowGroupIndex: 0,    width: 150, pinned: null},
-{colId: "age",     aggFunc: null,   hide: true,  rowGroupIndex: null, width: 90,  pinned: 'left'}
-]
-</pre>
-
-        <p>
-            It is intended that the values in the json mimic the values in the column definitions.
-            So if you want to re-apply the state to a set of column definitions as the default
-            values, override the values of the same name in the corresponding column definition.
-        </p>
-
-        <p>
-            The values have the following meaning:
-        <ul>
-            <li><b>colId</b>: The ID of the column. See
-                <a href="../javascript-grid-column-definitions/">column definitions</a> for explanation
-                of column ID
-            </li>
-            <li><b>aggFunc</b>: If this column is a value column, this field specifies the aggregation function.
-                If the column is not a value column, this field is null.
-            </li>
-            <li><b>hide</b>: True if the column is hidden, otherwise false.</li>
-            <li><b>rowGroupIndex</b>: The index of the row group. If the column is not grouped, this field is null.
-                If multiple columns are used to group, this index provides the order of the grouping.
-            </li>
-            <li><b>width</b>: The width of the column. If the column was resized, this reflects the new value.</li>
-            <li><b>pinned</b>: The pinned state of the column. Can be either 'left' or 'right'</li>
-        </ul>
-        </p>
-
-        <p>
-            The example below shows hiding / showing columns as well as saving / restoring the entire state.
-            The example also registers for column events, the result of which are printed to the console.
-        </p>
-
-        <show-example example="columnStateExample"></show-example>
 
     </div>
 

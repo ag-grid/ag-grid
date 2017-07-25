@@ -76,7 +76,7 @@ include '../documentation-main/documentation_header.php';
             As you <b>open and close groups</b>, the valueGetters are executed, as the DOM needs values for rendering.
         </li>
         <li>
-            Now turn the value <b>cache off</b> by selecting the radio button at the top. The grid gets reset and then
+            Now turn the value cache <b>on</b> by selecting the radio button at the top. The grid gets reset and then
             works with the value cache on. Notice in the console that the valueGetter gets executed exactly 100 times,
             once for each row. Even through the valueGetter result is used in two places (aggregation and rendering
             the row), the valueGetter is only called once. Even scrolling and opening / closing the groups does not

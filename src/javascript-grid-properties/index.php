@@ -3,119 +3,18 @@ $key = "Properties";
 $pageTitle = "ag-Grid Properties";
 $pageDescription = "Learn how each property impacts ag-Grid.";
 $pageKeyboards = "javascript data grid ag-Grid properties";
-$pageGroup = "interfacing";
+$pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <div>
-        <h2 id="properties">Properties</h2>
+<div>
 
-        <p>
-            Below are listed all the properties of the grid you can add.
-        <p>
+    <h1 id="properties" class="first-h1">Grid Properties</h1>
 
-        <?php if (isFrameworkJavaScript()) { ?>
-            <div>
-                <h4>
-                    <img src="/images/javascript.png" height="20"/>
-                    Javascript
-                </h4>
-                <p>
-                Add properties to the gridOptions object.
-                </p>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkAngular1()) { ?>
-            <div>
-                <h4>
-                    <img src="/images/angularjs.png" height="20px"/>
-                    AngularJS 1.x</span>
-                </h4>
-                <p>
-                Add properties to the gridOptions object.
-                </p>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkReact()) { ?>
-            <div>
-                <h4>
-                    <img src="/images/react.png" height="20px"/>
-                    React
-                </h4>
-                <p>
-                    Add properties to the gridOptions object, <b>or</b> you can also add as React props inside your JSX markup.
-                </p>
-            </div>
-        <?php } ?>
-
-<? if (isFrameworkPolymer()) { ?>
-    <h4>
-        <img src="/images/polymer-large.png" height="20px"/>
-        Polymer
-    </h4>
-    <p>
-        Add properties to the gridOptions or set as properties on the <code>ag-grid-polymer</code> component.
-    </p>
-<? } ?>
-
-        <?php if (isFrameworkAngular2()) { ?>
-            <div>
-                <h4>
-                    <img src="/images/angular2.png" height="20px"/>
-                    Angular
-                </h4>
-                <p>
-                    Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or Angular bound
-                    properties.
-                </p>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkVue()) { ?>
-            <div>
-                <h4>
-                    <img src="/images/vue_large.png" height="20px"/>
-                    VueJS
-                </h4>
-                <p>
-                    Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or VueJS bound
-                    properties.
-                </p>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkWebComponents()) { ?>
-            <div>
-                <h4>
-                    <img src="../images/webComponents.png" height="20px"/>
-                    Web Components
-                </h4>
-                <p>
-                    Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or set directly onto the
-                    DOM element.
-                </p>
-            </div>
-        <?php } ?>
-
-        <?php if (isFrameworkAurelia()) { ?>
-            <div>
-                <h4>
-                    <img src="/images/aurelia.png" height="20px"/>
-                    Aurelia Components
-                </h4>
-                <p>
-                    Add properties to the gridOptions object, <b>or</b> you can also add as HTML attributes or set directly onto the
-                    DOM element.
-                </p>
-            </div>
-        <?php } ?>
-
-    <table id="list-of-properties" class="table">
-        <!-- Columns -->
-        <tr>
-            <th colspan="2"><h2>Columns</h2></th>
+    <table class="table">
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Columns</td>
         </tr>
         <tr>
             <th>columnDefs</th>
@@ -197,14 +96,10 @@ include '../documentation-main/documentation_header.php';
             <td>Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping,
                 this column is not included.</td>
         </tr>
-
-        <!------------------->
-        <!-- Sort & Filter -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Sort & Filter</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Sort & Filter</td>
         </tr>
-
         <tr>
             <th>enableSorting, enableServerSideSorting</th>
             <td>Set one of these to true to enable sorting. <i>enableSorting</i> will allow header clicks and show
@@ -236,12 +131,9 @@ include '../documentation-main/documentation_header.php';
                 should take into account accented characters, if this feature is turned on the sort will perform slower.</td>
         </tr>
 
-
-        <!------------------->
-        <!-- Selection     -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Selection</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Selection</td>
         </tr>
 
         <tr>
@@ -257,12 +149,9 @@ include '../documentation-main/documentation_header.php';
             <th>enableRangeSelection</th>
             <td>Set to true to enable range selection.</td>
         </tr>
-
-        <!------------------->
-        <!-- Editing       -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Editing</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Editing</td>
         </tr>
         <tr>
             <th>singleClickEdit</th>
@@ -291,20 +180,15 @@ include '../documentation-main/documentation_header.php';
             <td>Set this to true to stop cell editing when focus leaves the grid. The default is the grid stays editing
             until focus goes onto another cell. For inline (non-popup) editors only.</td>
         </tr>
-
-        <!------------------->
-        <!-- Headers       -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Headers</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Headers</td>
         </tr>
         <?php include '../javascript-grid-column-header/headerHeightProperties.php' ?>
         <?php printPropertiesRows($headerHeightProperties) ?>
-        <!------------------->
-        <!-- Row Grouping & Pivoting       -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Row Grouping & Pivoting</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Row Grouping & Pivoting</td>
         </tr>
         <tr>
             <th>groupUseEntireRow<br/> groupDefaultExpanded<br/>
@@ -371,11 +255,9 @@ include '../documentation-main/documentation_header.php';
             <th>aggFuncs</th>
             <td>Adding and clearing of aggregation functions.</td>
         </tr>
-        <!------------------->
-        <!-- Tool Panel -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Tool Panel</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Tool Panel</td>
         </tr>
         <tr>
             <th>toolPanelSuppressRowGroups, toolPanelSuppressValues, toolPanelSuppressPivots, toolPanelSuppressPivotMode</th>
@@ -385,13 +267,10 @@ include '../documentation-main/documentation_header.php';
             <th>showToolPanel</th>
             <td>Set to true to show the tool panel by default.</td>
         </tr>
-        <!------------------->
-        <!-- Data & Row Models -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Data & Row Models</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Data & Row Models</td>
         </tr>
-
         <tr>
             <th>rowModelType</th>
             <td>Sets the row model type - enabled Virtual Scrolling, Pagination and ViewPort functionality. Defaults to 'normal'. Valid options are [pagination,virtual,viewport,normal]</td>
@@ -412,11 +291,9 @@ include '../documentation-main/documentation_header.php';
             <th>pinnedBottomRowData</th>
             <td>Data to be displayed as pinned bottom rows in the table</td>
         </tr>
-        <!------------------->
-        <!-- Selection -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Selection</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Selection</td>
         </tr>
         <tr>
             <th>rowSelection</th>
@@ -427,11 +304,9 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true or false. If true, then rows will be deselected if you
                 hold down ctrl + click the row.</td>
         </tr>
-        <!------------------->
-        <!-- Scrolling -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Scrolling</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Scrolling</td>
         </tr>
         <tr>
             <th>suppressHorizontalScroll</th>
@@ -461,21 +336,16 @@ include '../documentation-main/documentation_header.php';
             <td>When true, the grid will not scroll to the top when new row data is provided. Use this
             if you don't want the default behaviour of scrolling to the top every time you load new data.</td>
         </tr>
-
-        <!------------------->
-        <!-- Row Model: Pagination -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Pagination</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Pagination</td>
         </tr>
         <?php include '../javascript-grid-pagination/paginationProperties.php'?>
         <?php printPropertiesRows($paginationProperties) ?>
 
-        <!------------------->
-        <!-- Row Model: Infinite Scrolling -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Row Model: Infinite Scrolling</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Row Model: Infinite Scrolling</td>
         </tr>
         <tr>
             <th>maxConcurrentDatasourceRequests</th>
@@ -495,11 +365,9 @@ include '../documentation-main/documentation_header.php';
         </tr>
 
 
-        <!------------------->
-        <!-- Row Model: Viewport -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Row Model: Viewport</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Row Model: Viewport</td>
         </tr>
         <tr>
             <th>viewportRowModelPageSize</th>
@@ -514,12 +382,9 @@ include '../documentation-main/documentation_header.php';
             <td>To use the viewportRowModel you provide the grid with a viewportDatasource. See <a href="../javascript-grid-viewport/">Viewport</a> for more information.</td>
         </tr>
 
-
-        <!------------------->
-        <!-- Rendering & Styling -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Rendering & Styling</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Rendering & Styling</td>
         </tr>
         <tr>
             <th>groupRowInnerRenderer<br/> groupRowInnerRendererFramework<br/> groupRowRenderer <br/>groupRowRendererFramework <br/>groupRowRendererParams</th>
@@ -573,23 +438,21 @@ include '../documentation-main/documentation_header.php';
                 its calculations.
             </td>
         </tr>
-        <!------------------->
-        <!-- Localisation -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Localisation</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Localisation</td>
         </tr>
+
         <tr>
             <th>localeText, localeTextFunc</th>
             <td>You can change the text in the paging panels and the default filters by providing a <i>localeText</i> or
                 a <i>localeTextFunc</i> (see below). See <a href="../javascript-grid-internationalisation/">Internationalisation</a> for more information. </td>
         </tr>
-        <!------------------->
-        <!-- Miscellaneous -->
-        <!------------------->
-        <tr>
-            <th colspan="2"><h2>Miscellaneous</h2></th>
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Miscellaneous</td>
         </tr>
+
         <?php include '../javascript-grid-value-cache/valueCacheProperties.php' ?>
         <?php printPropertiesRows($valueCacheProperties) ?>
         <tr>
