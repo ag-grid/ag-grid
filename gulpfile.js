@@ -1,12 +1,12 @@
 const headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
 const gulp = require('gulp');
-
 const header = require('gulp-header');
 const pkg = require('./package.json');
 const del = require('del');
 const ngc = require('gulp-ngc');
 const runSequence = require('run-sequence');
+const rename = require("gulp-rename");
 
 gulp.task('clean', function () {
     return del(['aot/**', '!aot',
