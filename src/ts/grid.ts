@@ -92,7 +92,7 @@ export class Grid {
     // the enterprise adds viewport to this list.
     private static RowModelClasses: any = {
         infinite: InfiniteRowModel,
-        normal: InMemoryRowModel
+        inMemory: InMemoryRowModel
     };
 
     public static setEnterpriseBeans(enterpriseBeans: any[], rowModelClasses: any): void {
@@ -221,6 +221,10 @@ export class Grid {
             if (_.exists(rowModelClass)) {
                 return rowModelClass;
             } else {
+                if (rowModelType==='normal') {
+                    console.warn(`ag-Grid: normal rowModel deprecated. Should now be called inMemory rowModel instead.`);
+                    return InMemoryRowModel;
+                }
                 console.error('ag-Grid: count not find matching row model for rowModelType ' + rowModelType);
                 if (rowModelType==='viewport') {
                     console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
