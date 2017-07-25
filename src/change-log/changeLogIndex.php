@@ -142,6 +142,8 @@ include '../documentation-main/documentation_header.php';
             <li>gridApi.getFloatingBottomRowCount-> api.getPinnedBottomRowCount</li>
             <li>gridApi.getFloatingTopRow-> api.getPinnedTopRow</li>
             <li>gridApi.getFloatingBottomRow-> api.getPinnedBottomRow</li>
+            <li>gridApi.getFirstRenderedRow-> api.getFirstDisplayedRow</li>
+            <li>gridApi.getLastRenderedRow-> api.getLastDisplayedRow</li>
             <li>gridOptions.floatingTopRowData -> gridOptions.pinnedTopRowData</li>
             <li>gridOptions.floatingBottomRowData -> gridOptions.pinnedBottomRowData</li>
             <li>gridOptions.slaveGrids -> gridOptions.alignedGrids</li>
