@@ -97,3 +97,10 @@ function webpackTask(minify, styles) {
         .pipe(header(bundleTemplate, {pkg: pkg}))
         .pipe(gulp.dest('./dist/'));
 }
+
+gulp.task('publishForCI', () => {
+    return gulp.src("./ag-grid-enterprise*.tgz")
+        .pipe(rename("ag-grid-enterprise.tgz"))
+        .pipe(gulp.dest("/Users/seanlandsman/artifacts/ag-grid-enterprise/"));
+
+});
