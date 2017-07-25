@@ -35,6 +35,7 @@
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
     "css-loader": "0.23.1",
+    "cp":"0.2.0",
     "del": "^3.0.0",
     "gulp": "3.9.0",
     "gulp-clean": "0.3.1",

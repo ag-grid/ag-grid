@@ -18,6 +18,7 @@ const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 const replace = require('gulp-replace');
 const del = require('del');
+const cp = require('del');
 
 const jasmine = require('gulp-jasmine');
 
@@ -57,8 +58,11 @@ gulp.task('stylus', ['cleanDist'], stylusTask);
 gulp.task('cleanDist', cleanDist);
 gulp.task('cleanExports', cleanExports);
 
-gulp.task('cleanForCI', ['cleanDist', 'cleanExports'], () => {
-    return del('ag-grid*.tgz');
+gulp.task('cleanForCI', ['cleanDist', 'cleanExports']);
+
+gulp.task('publishForCI', (callback) => {
+    cp.sync("./ag-grid-*.tgz", "/Users/seanlandsman/artifacts/ag-grid")
+
 });
 
 function stylusWatch() {
