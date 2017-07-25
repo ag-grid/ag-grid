@@ -53,6 +53,8 @@ export class Constants {
     static ROW_MODEL_TYPE_IN_MEMORY = 'inMemory';
     static ROW_MODEL_TYPE_ENTERPRISE = 'enterprise';
 
+    static DEPRECATED_ROW_MODEL_TYPE_NORMAL= 'normal';
+
     static ALWAYS = 'always';
     static ONLY_WHEN_GROUPING = 'onlyWhenGrouping';
 

@@ -377,7 +377,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         rowNode.setExpanded(!rowNode.expanded);
 
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            this.params.api.refreshRows([rowNode]);
+            this.params.api.redrawRows({rowNodes: [rowNode]});
         }
     }
 

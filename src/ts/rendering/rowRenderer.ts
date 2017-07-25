@@ -495,16 +495,22 @@ export class RowRenderer extends BeanStub {
 
         this.removeRowCompsNotToDraw(indexesToDraw);
 
+        // we always ensure dom order for inserts, as this doesn't impact our animation. however our animation
+        // gets messed up when we rearrange the rows (for updates). so we only maintain order for updates
+        // when the user explicitly asks for it.
+        let ensureDomOrderForInsert = !this.forPrint;
+        let ensureDomOrderForUpdate = this.gridOptionsWrapper.isEnsureDomOrder() && !this.forPrint;
+        let ensureDomOrder = ensureDomOrderForInsert || ensureDomOrderForUpdate;
+
         // this keeps track of the last inserted element in each container, so when rows are getting
         // inserted or repositioned, they can be done relative to the previous DOM element
-        let ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder() && !this.forPrint;
         let previousElements: LastPlacedElements = ensureDomOrder ? {eBody: null, eLeft: null, eRight: null, eFullWidth: null} : null;
 
         // add in new rows
         let nextVmTurnFunctions: Function[] = [];
 
         indexesToDraw.forEach( rowIndex => {
-            let rowComp = this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, previousElements);
+            let rowComp = this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, previousElements, ensureDomOrderForUpdate);
             if (_.exists(rowComp)) {
                 _.pushAll(nextVmTurnFunctions, rowComp.getAndClearNextVMTurnFunctions());
             }
@@ -518,7 +524,8 @@ export class RowRenderer extends BeanStub {
     }
 
     private createOrUpdateRowComp(rowIndex: number, rowsToRecycle: {[key: string]: RowComp},
-                                 animate: boolean, previousElements: LastPlacedElements): RowComp {
+                                  animate: boolean, previousElements: LastPlacedElements,
+                                  ensureDomOrderForUpdate: boolean): RowComp {
 
         let rowNode: RowNode;
 
@@ -549,7 +556,9 @@ export class RowRenderer extends BeanStub {
             }
         } else {
             // ensure row comp is in right position in DOM
-            rowComp.ensureInDomAfter(previousElements);
+            if (ensureDomOrderForUpdate) {
+                rowComp.ensureInDomAfter(previousElements);
+            }
         }
 
         this.updatePreviousElements(previousElements, rowComp);

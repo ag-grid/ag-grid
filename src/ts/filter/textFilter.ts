@@ -112,7 +112,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         }
         let value = this.filterParams.valueGetter(params.node);
         if (!value) {
-            if (this.filter === BaseFilter.NOT_EQUAL) {
+            if (this.filter === BaseFilter.NOT_EQUAL || this.filter === BaseFilter.NOT_CONTAINS) {
                 // if there is no value, but the filter type was 'not equals',
                 // then it should pass, as a missing value is not equal whatever
                 // the user is filtering on

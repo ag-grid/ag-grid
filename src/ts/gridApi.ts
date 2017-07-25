@@ -919,8 +919,18 @@ export class GridApi {
         this.gridPanel.setBodyAndHeaderHeights();
     }
 
+    public getFirstRenderedRow(): number {
+        console.log('in ag-Grid v12, getFirstRenderedRow() was renamed to getFirstDisplayedRow()');
+        return this.getFirstDisplayedRow();
+    }
+
     public getFirstDisplayedRow(): number {
         return this.rowRenderer.getFirstVirtualRenderedRow();
+    }
+
+    public getLastRenderedRow(): number {
+        console.log('in ag-Grid v12, getLastRenderedRow() was renamed to getLastDisplayedRow()');
+        return this.getLastDisplayedRow();
     }
 
     public getLastDisplayedRow(): number {

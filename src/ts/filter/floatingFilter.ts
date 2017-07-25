@@ -11,71 +11,73 @@ import {Component} from "../widgets/component";
 import {Constants} from "../constants";
 import {Column} from "../entities/column";
 
-export interface FloatingFilterChange{
+export interface FloatingFilterChange {
 }
 
 export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
-    column:Column,
-    onFloatingFilterChanged:(change:F|M)=>boolean;
-    currentParentModel:()=>M;
+    column: Column,
+    onFloatingFilterChanged: (change: F | M) => boolean;
+    currentParentModel: () => M;
     suppressFilterButton: boolean;
-    debounceMs?:number;
+    debounceMs?: number;
 }
 
-export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>>{
-    onParentModelChanged(parentModel:M):void;
+export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
+    onParentModelChanged(parentModel: M): void;
 }
 
-export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> extends IFloatingFilter<M, F, P>, IComponent<P> {}
-
-export interface BaseFloatingFilterChange<M> extends FloatingFilterChange{
-    model:M
-    apply:boolean
+export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> extends IFloatingFilter<M, F, P>, IComponent<P> {
 }
 
-export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterParams<M, BaseFloatingFilterChange<M>>> extends Component implements IFloatingFilter <M, BaseFloatingFilterChange<M>, P>{
+export interface BaseFloatingFilterChange<M> extends FloatingFilterChange {
+    model: M
+    apply: boolean
+}
+
+export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterParams<M, BaseFloatingFilterChange<M>>> extends Component implements IFloatingFilter <M, BaseFloatingFilterChange<M>, P> {
     @RefSelector('eColumnFloatingFilter')
     eColumnFloatingFilter: HTMLInputElement;
 
-    onFloatingFilterChanged:(change:BaseFloatingFilterChange<M>)=>boolean;
-    currentParentModel:()=>M;
-    lastKnownModel:M = null;
+    onFloatingFilterChanged: (change: BaseFloatingFilterChange<M>) => boolean;
+    currentParentModel: () => M;
+    lastKnownModel: M = null;
 
-    constructor(){
+    constructor() {
         super(`<div><input  ref="eColumnFloatingFilter" class="ag-floating-filter-input"></div>`)
     }
 
-    init (params:P):void{
+    init(params: P): void {
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.currentParentModel = params.currentParentModel;
         let debounceMs: number = params.debounceMs != null ? params.debounceMs : 500;
-        let toDebounce:()=>void = _.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
+        let toDebounce: () => void = _.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'input', toDebounce);
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'keypress', toDebounce);
         this.addDestroyableEventListener(this.eColumnFloatingFilter, 'keydown', toDebounce);
         let columnDef = (<any>params.column.getDefinition());
-        if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange'){
+        if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange') {
             this.eColumnFloatingFilter.readOnly = true;
         }
     }
 
-    abstract asParentModel ():M;
-    abstract asFloatingFilterText (parentModel:M):string;
+    abstract asParentModel(): M;
 
-    onParentModelChanged(parentModel:M):void{
+    abstract asFloatingFilterText(parentModel: M): string;
+
+    onParentModelChanged(parentModel: M): void {
         if (this.equalModels(this.lastKnownModel, parentModel)) return;
         this.lastKnownModel = parentModel;
-        let incomingTextValue = this.asFloatingFilterText (parentModel);
+        let incomingTextValue = this.asFloatingFilterText(parentModel);
         if (incomingTextValue === this.eColumnFloatingFilter.value) return;
 
         this.eColumnFloatingFilter.value = incomingTextValue;
     }
 
-    syncUpWithParentFilter (e:KeyboardEvent):void{
+    syncUpWithParentFilter(e: KeyboardEvent): void {
         let model = this.asParentModel();
         if (this.equalModels(this.lastKnownModel, model)) return;
 
-        let modelUpdated:boolean = null;
+        let modelUpdated: boolean = null;
         if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
             modelUpdated = this.onFloatingFilterChanged({
                 model: model,
@@ -88,12 +90,12 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
             });
         }
 
-        if (modelUpdated){
+        if (modelUpdated) {
             this.lastKnownModel = model;
         }
     }
 
-    equalModels (left:any, right:any):boolean{
+    equalModels(left: any, right: any): boolean {
         if (_.referenceCompare(left, right)) return true;
         if (!left || !right) return false;
 
@@ -102,13 +104,13 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
         return (
             _.referenceCompare(left.type, right.type) &&
             _.referenceCompare(left.filter, right.filter) &&
-            _.referenceCompare(left.filterTo, right.filterTo)  &&
+            _.referenceCompare(left.filterTo, right.filterTo) &&
             _.referenceCompare(left.filterType, right.filterType)
         )
     }
 }
 
-export class TextFloatingFilterComp extends InputTextFloatingFilterComp<SerializedTextFilter, IFloatingFilterParams<SerializedTextFilter, BaseFloatingFilterChange<SerializedTextFilter>>>{
+export class TextFloatingFilterComp extends InputTextFloatingFilterComp<SerializedTextFilter, IFloatingFilterParams<SerializedTextFilter, BaseFloatingFilterChange<SerializedTextFilter>>> {
     asFloatingFilterText(parentModel: SerializedTextFilter): string {
         if (!parentModel) return '';
         return parentModel.filter;
@@ -124,20 +126,20 @@ export class TextFloatingFilterComp extends InputTextFloatingFilterComp<Serializ
     }
 }
 
-export class DateFloatingFilterComp extends Component implements IFloatingFilter <SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>, IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>>{
+export class DateFloatingFilterComp extends Component implements IFloatingFilter <SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>, IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>> {
     @Autowired('componentProvider')
-    private componentProvider:ComponentProvider;
-    private dateComponent:IDateComp;
+    private componentProvider: ComponentProvider;
+    private dateComponent: IDateComp;
 
-    onFloatingFilterChanged:(change:BaseFloatingFilterChange<SerializedDateFilter>)=>void;
-    currentParentModel:()=>SerializedDateFilter;
-    lastKnownModel:SerializedDateFilter = null;
+    onFloatingFilterChanged: (change: BaseFloatingFilterChange<SerializedDateFilter>) => void;
+    currentParentModel: () => SerializedDateFilter;
+    lastKnownModel: SerializedDateFilter = null;
 
-    init (params:IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>){
+    init(params: IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>) {
         this.onFloatingFilterChanged = params.onFloatingFilterChanged;
         this.currentParentModel = params.currentParentModel;
         let debounceMs: number = params.debounceMs != null ? params.debounceMs : 500;
-        let toDebounce:()=>void = _.debounce(this.onDateChanged.bind(this), debounceMs);
+        let toDebounce: () => void = _.debounce(this.onDateChanged.bind(this), debounceMs);
         let dateComponentParams: IDateParams = {
             onDateChanged: toDebounce
         };
@@ -145,41 +147,24 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         let body: HTMLElement = _.loadTemplate(`<div></div>`);
         body.appendChild(this.dateComponent.getGui());
         this.setTemplateFromElement(body);
-        this.lastKnownModel = this.asParentModel();
     }
 
     private onDateChanged(): void {
-        let parentModel:SerializedDateFilter = this.currentParentModel();
-
+        let parentModel: SerializedDateFilter = this.currentParentModel();
         let model = this.asParentModel();
-        if (this.equalModels(this.lastKnownModel, model)) return;
 
-        let rawDate:Date = this.dateComponent.getDate();
-        if (!rawDate || typeof rawDate.getMonth !== 'function'){
-            this.onFloatingFilterChanged(null);
-            return;
-        }
+        if (this.equalModels(parentModel, model)) return;
 
-        let date:string = _.serializeDateToYyyyMmDd(DateFilter.removeTimezone(rawDate), "-");
-        let dateTo:string = null;
-        let type:string = parentModel.type;
-        if (parentModel){
-            dateTo = parentModel.dateTo;
-        }
-        let newModel = {
-            type: type,
-            dateFrom: date,
-            dateTo: dateTo,
-            filterType: 'date'
-        };
+
         this.onFloatingFilterChanged({
-            model: newModel,
-            apply:true
+            model: model,
+            apply: true
         });
-        this.lastKnownModel = newModel;
+
+        this.lastKnownModel = model;
     }
 
-    equalModels (left:SerializedDateFilter, right:SerializedDateFilter):boolean{
+    equalModels(left: SerializedDateFilter, right: SerializedDateFilter): boolean {
         if (_.referenceCompare(left, right)) return true;
         if (!left || !right) return false;
 
@@ -188,7 +173,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         return (
             _.referenceCompare(left.type, right.type) &&
             _.referenceCompare(left.dateFrom, right.dateFrom) &&
-            _.referenceCompare(left.dateTo, right.dateTo)  &&
+            _.referenceCompare(left.dateTo, right.dateTo) &&
             _.referenceCompare(left.filterType, right.filterType)
         )
     }
@@ -196,20 +181,21 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
 
     asParentModel(): SerializedDateFilter {
         let currentParentModel = this.currentParentModel();
-        let filterValueDate:Date = this.dateComponent.getDate();
-        let filterValueText:string = _.serializeDateToYyyyMmDd(DateFilter.removeTimezone(filterValueDate), "-");
+        let filterValueDate: Date = this.dateComponent.getDate();
+        let filterValueText: string = _.serializeDateToYyyyMmDd(DateFilter.removeTimezone(filterValueDate), "-");
 
         return {
             type: currentParentModel.type,
-            dateFrom: filterValueText ? filterValueText : currentParentModel.dateFrom,
-            dateTo: null,
+            dateFrom: filterValueText,
+            dateTo: currentParentModel ? currentParentModel.dateTo : null,
             filterType: 'date'
         };
     }
 
 
     onParentModelChanged(parentModel: SerializedDateFilter): void {
-        if (!parentModel || !parentModel.dateFrom){
+        this.lastKnownModel = parentModel;
+        if (!parentModel || !parentModel.dateFrom) {
             this.dateComponent.setDate(null);
             return;
         }
@@ -217,29 +203,29 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
     }
 }
 
-export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<SerializedNumberFilter, IFloatingFilterParams<SerializedNumberFilter, BaseFloatingFilterChange<SerializedNumberFilter>>>{
+export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<SerializedNumberFilter, IFloatingFilterParams<SerializedNumberFilter, BaseFloatingFilterChange<SerializedNumberFilter>>> {
 
 
     asFloatingFilterText(parentModel: SerializedNumberFilter): string {
         let rawParentModel = this.currentParentModel();
-        if (parentModel == null && rawParentModel==null) return '';
+        if (parentModel == null && rawParentModel == null) return '';
         if (parentModel == null && rawParentModel != null && rawParentModel.type !== 'inRange') {
             this.eColumnFloatingFilter.readOnly = false;
             return '';
         }
 
 
-        if (rawParentModel != null && rawParentModel.type === 'inRange'){
+        if (rawParentModel != null && rawParentModel.type === 'inRange') {
             this.eColumnFloatingFilter.readOnly = true;
-            let number:number = this.asNumber(rawParentModel.filter);
-            let numberTo:number = this.asNumber(rawParentModel.filterTo);
+            let number: number = this.asNumber(rawParentModel.filter);
+            let numberTo: number = this.asNumber(rawParentModel.filterTo);
             return (number ? number + '' : '') +
-                    '-' +
+                '-' +
                 (numberTo ? numberTo + '' : '');
         }
 
 
-        let number:number = this.asNumber(parentModel.filter);
+        let number: number = this.asNumber(parentModel.filter);
         this.eColumnFloatingFilter.readOnly = false;
         return number != null ? number + '' : '';
 
@@ -248,12 +234,12 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
     asParentModel(): SerializedNumberFilter {
         let currentParentModel = this.currentParentModel();
         let filterValueNumber = this.asNumber(this.eColumnFloatingFilter.value);
-        let filterValueText:string = this.eColumnFloatingFilter.value;
+        let filterValueText: string = this.eColumnFloatingFilter.value;
 
         let modelFilterValue: number = null;
         if (filterValueNumber == null && filterValueText === '') {
             modelFilterValue = null;
-        } else if (filterValueNumber == null){
+        } else if (filterValueNumber == null) {
             modelFilterValue = currentParentModel.filter;
         } else {
             modelFilterValue = filterValueNumber;
@@ -262,12 +248,12 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
         return {
             type: currentParentModel.type,
             filter: modelFilterValue,
-            filterTo: !currentParentModel ? null: currentParentModel.filterTo,
+            filterTo: !currentParentModel ? null : currentParentModel.filterTo,
             filterType: 'number'
         };
     }
 
-    private asNumber(value: any):number {
+    private asNumber(value: any): number {
         if (value == null) return null;
         if (value === '') return null;
 
@@ -277,8 +263,8 @@ export class NumberFloatingFilterComp extends InputTextFloatingFilterComp<Serial
     }
 }
 
-export class SetFloatingFilterComp extends InputTextFloatingFilterComp<string[], IFloatingFilterParams<string[], BaseFloatingFilterChange<string[]>>>{
-    init (params:IFloatingFilterParams<string[], BaseFloatingFilterChange<string[]>>):void{
+export class SetFloatingFilterComp extends InputTextFloatingFilterComp<string[], IFloatingFilterParams<string[], BaseFloatingFilterChange<string[]>>> {
+    init(params: IFloatingFilterParams<string[], BaseFloatingFilterChange<string[]>>): void {
         super.init(params);
         this.eColumnFloatingFilter.readOnly = true;
     }
@@ -286,7 +272,7 @@ export class SetFloatingFilterComp extends InputTextFloatingFilterComp<string[],
     asFloatingFilterText(parentModel: string[]): string {
         if (!parentModel || parentModel.length === 0) return '';
 
-        let arrayToDisplay = parentModel.length > 10? parentModel.slice(0, 10).concat(['...']) : parentModel;
+        let arrayToDisplay = parentModel.length > 10 ? parentModel.slice(0, 10).concat(['...']) : parentModel;
         return `(${parentModel.length}) ${arrayToDisplay.join(",")}`;
     }
 
@@ -296,14 +282,14 @@ export class SetFloatingFilterComp extends InputTextFloatingFilterComp<string[],
     }
 }
 
-export class ReadModelAsStringFloatingFilterComp extends InputTextFloatingFilterComp<string, IFloatingFilterParams<string, BaseFloatingFilterChange<string>>>{
-    init (params:IFloatingFilterParams<string, BaseFloatingFilterChange<string>>):void{
+export class ReadModelAsStringFloatingFilterComp extends InputTextFloatingFilterComp<string, IFloatingFilterParams<string, BaseFloatingFilterChange<string>>> {
+    init(params: IFloatingFilterParams<string, BaseFloatingFilterChange<string>>): void {
         super.init(params);
         this.eColumnFloatingFilter.readOnly = true;
     }
 
-    onParentModelChanged(parentModel:any):void{
-        this.eColumnFloatingFilter.value = this.asFloatingFilterText (this.currentParentModel());
+    onParentModelChanged(parentModel: any): void {
+        this.eColumnFloatingFilter.value = this.asFloatingFilterText(this.currentParentModel());
     }
 
     asFloatingFilterText(parentModel: string): string {
