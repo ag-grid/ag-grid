@@ -20,6 +20,7 @@ include '../documentation-main/documentation_header.php';
 
     <h4>Bug Fixes</h4>
     <ul>
+        <li>AG-645: Bugfix: Error creating bean CsvCreator due to minimifying issues.</li>
         <li>AG-636: Bugfix: Normal rowModelType was not deprecated properly.</li>
         <li>AG-639: Bugfix: Date component was still broken after previous fix AG-541/600</li>
         <li>AG-633: Bugfix: Fixed bug where "not contains" filter would not work with emtpy strings</li>
