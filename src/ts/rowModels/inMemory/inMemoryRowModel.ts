@@ -566,7 +566,7 @@ export class InMemoryRowModel {
             newData: true});
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction) {
+    public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction {
 
         this.valueCache.onDataChanged();
 
@@ -581,6 +581,8 @@ export class InMemoryRowModel {
         });
 
         this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_UPDATED);
+
+        return rowNodeTran;
     }
 
     private doRowsToDisplay() {

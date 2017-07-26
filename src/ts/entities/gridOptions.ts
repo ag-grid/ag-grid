@@ -51,9 +51,6 @@ export interface GridOptions {
     suppressMiddleClickScrolls?: boolean;
     suppressPreventDefaultOnMouseWheel?: boolean;
     suppressScrollOnNewData?: boolean;
-    colWidth?: number;
-    minColWidth?: number;
-    maxColWidth?: number;
     suppressMenuHide?: boolean;
     singleClickEdit?: boolean;
     suppressClickEdit?: boolean;
@@ -124,6 +121,12 @@ export interface GridOptions {
     //This is an array of ExcelStyle, but because that class lives on the enterprise project is referenced as any from the client project
     excelStyles?: any[];
     floatingFilter?: boolean;
+
+    // these should really be deprecated, as the user should be using the default
+    // column definitions for specifying column defaults.
+    colWidth?: number;
+    minColWidth?: number;
+    maxColWidth?: number;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. GOD DAMN IT!*

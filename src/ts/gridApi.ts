@@ -34,7 +34,10 @@ import {IDatasource} from "./rowModels/iDatasource";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
 import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
-import {InMemoryRowModel, RefreshModelParams, RowDataTransaction} from "./rowModels/inMemory/inMemoryRowModel";
+import {
+    InMemoryRowModel, RefreshModelParams, RowDataTransaction,
+    RowNodeTransaction
+} from "./rowModels/inMemory/inMemoryRowModel";
 import {ImmutableService} from "./rowModels/inMemory/immutableService";
 import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
@@ -783,12 +786,10 @@ export class GridApi {
         }
     }
 
-    public updateRowData(rowDataTransaction: RowDataTransaction): void {
+    public updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
+        let res: RowNodeTransaction = null;
         if (this.inMemoryRowModel) {
-            this.inMemoryRowModel.updateRowData(rowDataTransaction);
-            if (!this.gridOptionsWrapper.isSuppressChangeDetection()) {
-                this.rowRenderer.refreshCells();
-            }
+            res = this.inMemoryRowModel.updateRowData(rowDataTransaction);
         } else if (this.infinitePageRowModel) {
             this.infinitePageRowModel.updateRowData(rowDataTransaction);
         } else {
@@ -799,6 +800,8 @@ export class GridApi {
         if (!this.gridOptionsWrapper.isSuppressChangeDetection()) {
             this.rowRenderer.refreshCells();
         }
+
+        return res;
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh = false): void {
