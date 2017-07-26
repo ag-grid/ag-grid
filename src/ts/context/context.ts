@@ -142,7 +142,6 @@ export class Context {
     }
 
     private createBeanEntry(Bean: new()=>Object): void {
-
         let metaData = Bean.prototype.__agBeanMetaData[(<any>Bean).name];
 
         if (!metaData) {
