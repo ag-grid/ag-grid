@@ -10,12 +10,14 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     Events,
-    Column
+    Column,
+    Bean
 } from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
 let svgFactory = SvgFactory.getInstance();
 
+@Bean("pivotColumnsPanel")
 export class PivotColumnsPanel extends AbstractColumnDropPanel {
 
     @Autowired('columnController') private columnController: ColumnController;
