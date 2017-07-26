@@ -398,38 +398,55 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Rendering & Styling</td>
+            <td colspan="2">Full Width Renderers</td>
         </tr>
         <tr>
-            <th>groupRowInnerRenderer<br/> groupRowInnerRendererFramework<br/> groupRowRenderer <br/>groupRowRendererFramework <br/>groupRowRendererParams</th>
-            <td>Sets grouping row cell renderer. See the section on <a href="../javascript-grid-grouping/#groupingCallbacks">row grouping</a> for detailed explanation.</td>
+            <th>groupRowRenderer <br/>groupRowRendererFramework <br/>groupRowRendererParams</th>
+            <td>
+                Sets the <a href="../javascript-grid-cell-rendering-components">Cell Renderer</a> to use when
+                <code>groupUseEntireRow=true</code>. See
+                <a href="../javascript-grid-grouping/#groupingCallbacks">row grouping</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>groupRowInnerRenderer<br/> groupRowInnerRendererFramework</th>
+            <td>
+                Sets the inner <a href="../javascript-grid-cell-rendering-components">Cell Renderer</a> to use when
+                <code>groupUseEntireRow=true</code>. See
+                <a href="../javascript-grid-grouping/#groupingCallbacks">row grouping</a>.
+            </td>
         </tr>
         <tr>
             <th>fullWidthCellRenderer, fullWidthCellRendererFramework, fullWidthCellRendererParams</th>
-            <td>For rendering <a href="../javascript-grid-master-detail/">fullWidth</a> rows.</td>
+            <td>Sets the <a href="../javascript-grid-cell-rendering-components">Cell Renderer</a> to use for
+                <a href="../javascript-grid-full-width-rows/">Full Width Rows</a>.</td>
+        </tr>
+
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Rendering & Styling</td>
         </tr>
         <tr>
             <th>icons</th>
-            <td>ag-Grid comes with default icons that are created using SVG. You can provide your own icons for the grid to use.
-                See <a href="../javascript-grid-icons/">Icons</a> for more information.</td>
+            <td>
+                <a href="../javascript-grid-icons/">Icons</a> to use inside the grid instead of the grid's default icons.
+            </td>
         </tr>
         <tr>
             <th>rowHeight</th>
-            <td>Height of rows, in pixels. Default is 25 pixels.</td>
+            <td>Default <a href="../javascript-grid-row-height/">Row Height</a> in pixels. Default is 25 pixels.</td>
         </tr>
         <tr>
             <th>animateRows</th>
-            <td>Enable row animations by setting this to true.</td>
+            <td>Set to true to enable <a href="../javascript-grid-animation/#row-animations">Row Animation</a>.</td>
         </tr>
         <tr>
             <th>rowClass</th>
-            <td>The class to give a particular row. Provide either a string (class name) or array of string (array
-                of class names). If you want a different class per row, then use the callback getRowClass(params) instead.</td>
+            <td>The class to give a particular row. See <a href="../javascript-grid-cell-styling/#rowStyling">Row Styling</a>.</td>
         </tr>
         <tr>
             <th>rowStyle</th>
-            <td>The style for a particular row. Provide an array of CSS key / value pairs eg {color: 'red'}.
-                If you a different style per row, then use the callback getRowStyle(params) instead.</td>
+            <td>The style to give a particular row. See <a href="../javascript-grid-cell-styling/#rowStyling">Row Styling</a>.</td>
         </tr>
         <tr>
             <th>suppressRowHoverClass</th>

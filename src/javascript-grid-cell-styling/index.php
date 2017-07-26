@@ -109,20 +109,6 @@ var colDef4 = {
         $scope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
     </p>
 
-    <h3 id="rowStyling">Row Styles</h3>
-    <p>You can provide a style to be applied across the row by using the <code>getRowStye</code> or <code>getRowClass</code> callbacks.</p>
-    <p>For example, if you wanted to apply a bottom border across each cell you could do something like this:</p>
-<pre>
-<span class="codeComment">// with a row style</span>
-gridOptions.getRowStyle = function(params) {
-    return { borderStyle: 'solid' }
-}
-<span class="codeComment">// with a row class</span>
-gridOptions.getRowClass = function(params) {
-    return 'my-class';
-}
-</pre>
-
     <h3 id="cellClassRules">Column Definition cellClassRules</h3>
 
     <p>
@@ -191,6 +177,45 @@ gridOptions.getRowClass = function(params) {
         are applied again. If a rules executes a second time and returns true, where
         previously it returned false, then the CSS class is removed.
     </p>
+
+
+    <h1 id="rowStyling">Row Styling</h1>
+
+    <p>
+        You can add CSS styles and classes to each row. This is done with with the following:
+
+        <ul>
+        <li><b>rowStyle</b>: Property to set style for all rows. Set to an object of key (style names) and values (style values).</li>
+        <li><b>getRowStyle</b>: Callback to set style for each row individually.</li>
+        <li><b>rowClass</b>: Property to set CSS class for all rows. Provide either a string (class name) or array of string (array
+            of class names).</li>
+        <li><b>getRowClass</b>: Callback to set class for each row individually.</li>
+    </ul>
+    </p>
+
+    <pre>
+<span class="codeComment">// set background color on every row</span>
+<span class="codeComment">// this is probably bad, should be using CSS classes</span>
+gridOptions.rowStyle = {background: 'black'};
+
+<span class="codeComment">// set background color on odd rows</span>
+<span class="codeComment">// again, this looks bad, should be using CSS classes</span>
+gridOptions.getRowStyle = function(params) {
+    if (params.node.rowIndex % 2 === 0) {
+    return { background: 'red' }
+    }
+}
+
+<span class="codeComment">// all rows assigned CSS class 'my-green-class'</span>
+gridOptions.rowClass = 'my-green-class';
+
+<span class="codeComment">// all odd rows assigned 'my-shaded-effect'</span>
+gridOptions.getRowClass = function(params) {
+    if (params.node.rowIndex % 2 === 0) {
+        return 'my-shaded-effect';
+    }
+}
+</pre>
 
 </div>
 
