@@ -39,7 +39,7 @@ Params contains {value, node, data, column, colDef}.
     problem, you don't need to use it, quick filter will work 'out of the box' in most cases.
 </note>
 
-<h3 id="how-it-works">Quick Filter Cache</h3>
+<h3 id="quick-filter-cache">Quick Filter Cache</h3>
 
 <p>
     By default, the quick filter checks each columns value, including running it's value getters

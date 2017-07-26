@@ -77,7 +77,7 @@ gridOptionsSecond = {
         the same set of columns.
     </p>
 
-    <h2 id="a-wee-more-useful-example">Example - Aligned Grid as Footer</h2>
+    <h2 id="aligned-grid-as-footer">Example - Aligned Grid as Footer</h2>
 
     <p>
         So why would you want to align grids like this? It's great for aligning grids that have

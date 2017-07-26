@@ -2,21 +2,31 @@
 
 $paginationProperties = [
     ['pagination',
-    '<p>True - Pagination is enabled.</p><p>False (Default) - Pagination is disabled.</p>'
+        'True - <a href="../javascript-grid-pagination/">Pagination</a> is enabled.<br/>
+         False (Default) - <a href="../javascript-grid-pagination/">Pagination</a> is disabled.'
     ],
-    ['paginationPageSize',
-    '<p>Number. How many rows to load per page. Default value = 100. If <i>paginationAutoPageSize</i>
-    is specified, this property is ignored</p>'],
-    ['paginationAutoPageSize',
-    '<p>True - The number of rows to load per page is automatically adjusted by ag-Grid so each page
-    shows enough rows to just fill the area designated for the grid.</p>
-    
-    <p>False (Default) - paginationPageSize is used.</p>'],
-    ['suppressPaginationPanel',
-    '<p>True - The out of the box ag-Grid controls for navigation are hidden. This is useful if
-    <i>pagination=true</i> and you want to provide your own pagination controls.</p>
-    <p>False (Default) - when <i>pagination=true</i> It automatically shows at the bottom the necessary
-    controls so that the user can navigate through the different pages.</p>']
+    [
+        'paginationPageSize',
+        'Number. How many rows to load per page. Default value = 100. If <code>paginationAutoPageSize</code>
+         is specified, this property is ignored.',
+        'See example <a href="../javascript-grid-pagination/#customising-pagination">Customising Pagination</a>.'
+    ]
+    ,
+    [
+        'paginationAutoPageSize',
+        'True - The number of rows to load per page is automatically adjusted by ag-Grid so each page
+         shows enough rows to just fill the area designated for the grid.<br/>
+         False (Default) - paginationPageSize is used.',
+        'See example <a href="../javascript-grid-pagination/#auto-page-size">Auto Page Size</a>.'
+    ],
+    [
+        'suppressPaginationPanel',
+        'True - The out of the box ag-Grid controls for navigation are hidden. This is useful if
+         <code>pagination=true</code> and you want to provide your own pagination controls.<br/>
+         False (Default) - when <code>pagination=true</code> It automatically shows at the bottom the necessary
+         controls so that the user can navigate through the different pages.',
+        'See example <a href="../javascript-grid-pagination/#custom-pagination-controls">Custom Pagination Controls</a>.'
+    ]
 ];
 
 

@@ -21,70 +21,59 @@ include '../documentation-main/documentation_header.php';
             <td>Array of <a href="../javascript-grid-column-definitions/">Column Definitions</a>.</td>
         </tr>
         <tr>
-            <th>defaultExportParams</th>
-            <td>A default configuration object used to export to <a href="../javascript-grid-export/">csv</a> or
-                <a href="../javascript-grid-excel/">excel</a></td>
-        </tr>
-        <tr>
             <th>defaultColDef</th>
-            <td>A <a href="../javascript-grid-column-definitions/#defaultProperties">default column</a> definition.
-                All column definitions will use these properties. Items defined in the
-                actual column definition get precedence.</td>
+            <td>A <a href="../javascript-grid-column-definitions/#default-column-definitions">default column</a>
+                definition.</td>
         </tr>
         <tr>
             <th>defaultColGroupDef</th>
-            <td>A <a href="../javascript-grid-column-definitions/#defaultProperties">default column group</a> definition.
-                All column group definitions will use these properties. Items defined in the
+            <td>A <a href="../javascript-grid-column-definitions/#default-column-definitions">default column group</a>
+                definition. All column group definitions will use these properties. Items defined in the
                 actual column group definition get precedence.</td>
         </tr>
         <tr>
             <th>enableColResize</th>
-            <td>Set to true or false.</td>
+            <td>Set to true to allow <a href="../javascript-grid-resizing/">column resizing</a> by dragging the mouse
+                at a columns headers edge.</td>
         </tr>
         <tr>
             <th>suppressAutoSize</th>
-            <td>If enableColResize=true suppressAutoSize and suppressAutoSize=false, then double clicking the resize
-                bar in the header will not auto-size the column.</td>
+            <td>Suppresses <a href="../javascript-grid-resizing/#auto-size-columns">auto-sizing columns</a> for columns.
+                In other words, double clicking a columns headers edge will not auto-size.</td>
         </tr>
         <tr>
             <th>autoSizePadding</th>
-            <td>How many pixels to add to the column width after the autosize calculation. Default is 4px. Set this
-                if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature
-                of the header.</td>
+            <td>How many pixels to add to a column width after the <a href="../javascript-grid-resizing/#auto-size-columns">
+                auto-sizing</a> calculation. The default is 4 pixels. Set this if you want to add extra room to accommodate
+                (for example) sort icons, or some other dynamic nature of the header.</td>
         </tr>
         <tr>
             <th>suppressColumnMoveAnimation</th>
-            <td>If true, the <i>ag-column-moving</i> class is not added to the grid while columns are moving.
-                In the default themes, this transpires to no animation for moving columns.</td>
+            <td>If true, the <code>ag-column-moving</code> class is not added to the grid while columns are moving.
+                In the default <a href="../javascript-grid-styling/">themes</a>, this transpires to no animation for
+                moving columns.</td>
         </tr>
         <tr>
             <th>suppressMovableColumns</th>
-            <td>If true, you cannot drag the columns to move them.</td>
+            <td>
+                Set to true to suppress column moving. In other words, set to true to make the columns fixed position.
+            </td>
         </tr>
         <tr>
             <th>suppressFieldDotNotation</th>
-            <td>If true, then dots (eg address.firstline) in field names are not treated as deep references.
+            <td>If true, then dots (eg <code>address.firstline</code>) in field names are not treated as deep references.
                 Allows you to use dots in your field name if you prefer.</td>
         </tr>
         <tr>
             <th>unSortIcon</th>
-            <td>Set to true to show the 'no sort' icon.</td>
+            <td>
+                Set to true to show the 'no sort' icon. See
+                <a href="../javascript-grid-sorting/#example-custom-sorting">Example Custom Sorting</a>.
+            </td>
         </tr>
         <tr>
             <th>suppressMultiSort</th>
-            <td>Set to true or false. If true, shift-clicking column header doesn't multi sort.</td>
-        </tr>
-        <tr>
-            <th>colWidth</th>
-            <td>The default width for each col. Widths specified in column definitions get preference over this.</td>
-        </tr>
-        <tr>
-            <th>minColWidth</th>
-            <td>The default min width for each col. Min widths specified in column definitions get preference, otherwise 20px is the default.</td>
-        </tr>
-        <tr>
-            <th>maxColWidth</th>
-            <td>The default max width for each col. Max widths specified in column definitions get preference, otherwise no max is set.</td>
+            <td>Set to true to suppress multi-sort when the user shift-clicks a column header.</td>
         </tr>
         <tr>
             <th>suppressMenuHide</th>
@@ -96,39 +85,64 @@ include '../documentation-main/documentation_header.php';
             <td>Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping,
                 this column is not included.</td>
         </tr>
+
         <tr class="title-row">
             <!-- TITLE ROW -->
             <td colspan="2">Sort & Filter</td>
         </tr>
         <tr>
-            <th>enableSorting, enableServerSideSorting</th>
-            <td>Set one of these to true to enable sorting. <i>enableSorting</i> will allow header clicks and show
-                sort icons and sort within the grid. <i>enableServerSideSorting</i> will allow header clicks
-                and show sort icons, but the sorting will be deferred to your datasource.</td>
+            <th>enableSorting</th>
+            <td>Set to true when using <a href="../javascript-grid-in-memory/">In Memory</a> Row Model to enable
+                <a href="../javascript-grid-sorting/">Row Sorting</a>. Clicking a column header will cause the grid
+                to sort the data.</td>
         </tr>
         <tr>
-            <th>enableFilter, enableServerSideFilter</th>
-            <td>Set one of these to true to enable filtering. <i>enableFilter</i> will present filters
-                and do the filtering within the grid. <i>enableServerSideFilter</i> will present filters
-                but defer the filtering to your datasource.</td>
+            <th>enableServerSideSorting</th>
+            <td>Set to true when using <a href="../javascript-grid-in-memory/">Infinite</a>,
+                <a href="../javascript-grid-in-memory/">Enterprise</a> or
+                <a href="../javascript-grid-viewport/">Viewport</a> Row Models to enable
+                <a href="../javascript-grid-sorting/">Row Sorting</a>. Clicking a column header will
+                result in your datasource getting asked for the data again with the new sort order.</td>
+        </tr>
+        <tr>
+            <th>enableFilter</th>
+            <td>Set to true when using <a href="../javascript-grid-in-memory/">In Memory</a> Row Model to enable
+                <a href="../javascript-grid-filtering/">Row Filtering</a>.</td>
+        </tr>
+        <tr>
+            <th>enableServerSideFilter</th>
+            <td>Set to true when using <a href="../javascript-grid-in-memory/">Infinite</a>,
+                <a href="../javascript-grid-in-memory/">Enterprise</a> or
+                <a href="../javascript-grid-viewport/">Viewport</a> Row Models to enable
+                <a href="../javascript-grid-filtering/">Row Filtering</a>.
+                A change in filter will result in your datasource getting asked for the
+                data again with the new filter.</td>
         </tr>
         <tr>
             <th>quickFilterText</th>
-            <td>Rows are filtered using this text as a 'quick filter'.</td>
+            <td>Rows are filtered using this text as a <a href="../javascript-grid-filter-quick/">quick filter</a>.</td>
         </tr>
         <tr>
             <th>cacheQuickFilter</th>
-            <td>Set to true to turn on the quick filter cache, used for a performance gain.</td>
+            <td>Set to true to turn on the <a href="../javascript-grid-filter-quick/#quick-filter-cache">
+                    quick filter cache</a>, used for a performance gain when using the quick filter.</td>
         </tr>
         <tr>
             <th>sortingOrder</th>
-            <td>Array defining the order in which sorting occurs (if sorting is enabled). Values can be <code>asc</code>,
-                <code>desc</code> or <code>null</code>. For example: <code>sortingOrder: ['asc', 'desc']</code>.</td>
+            <td>
+                Array defining the order in which sorting occurs (if sorting is enabled). Values can be <code>asc</code>,
+                <code>desc</code> or <code>null</code>. For example: <code>sortingOrder: ['asc', 'desc']</code>.
+                See <a href="../javascript-grid-sorting/#example-sorting-order-and-animation">Example
+                Sorting Order and Animation</a>.
+            </td>
         </tr>
         <tr>
             <th>accentedSort</th>
-            <td>Set to true to specify that the sort
-                should take into account accented characters, if this feature is turned on the sort will perform slower.</td>
+            <td>
+                Set to true to specify that the sort should take into account accented characters, if this feature is
+                turned on the sort will perform slower. See
+                <a href="../javascript-grid-sorting/#accentedSort">Accented Sort</a>
+            </td>
         </tr>
 
         <tr class="title-row">
@@ -138,7 +152,10 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>suppressRowClickSelection</th>
-            <td>If true, rows won't be selected when clicked. Use when you want checkbox selection exclusively.</td>
+            <td>
+                If true, <a href="../javascript-grid-selection/">row selection</a>
+                won't happen when rows are clicked. Use when you want checkbox selection exclusively.
+            </td>
         </tr>
         <tr>
             <th>suppressCellSelection</th>
@@ -147,7 +164,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>enableRangeSelection</th>
-            <td>Set to true to enable range selection.</td>
+            <td>Set to true to enable <a href="../javascript-grid-range-selection/">Range Selection</a>.</td>
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
@@ -155,72 +172,59 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>singleClickEdit</th>
-            <td>Set to true to allow editable cells to start editing with a single click.</td>
-        </tr>
-        <tr>
-            <th>enableGroupEdit</th>
-            <td>Set to true to allow editing of the group rows.</td>
-        </tr>
-        <tr>
-            <th>editType</th>
-            <td>Set to 'fullRow' to enable full row editing. Otherwise leave blank to edit one
-                cell at a time.</td>
-        </tr>
-        <tr>
-            <th>enableCellChangeFlash</th>
-            <td>Set to true to have cells flash after data changes.</td>
+            <td>Set to true to enable <a href="../javascript-grid-cell-editing/#singleClickEditing">Single
+                Click Editing</a> for cells, to start editing with a single click.</td>
         </tr>
         <tr>
             <th>suppressClickEdit</th>
-            <td>Set this to true so that neither single or double click starts editing. This is useful when you want to
-                start the editing in another way, such as including a button in your cellRenderer.</td>
+            <td>
+                Set to true so that neither single or double click starts editing.
+                See <a href="../javascript-grid-cell-editing/#singleClickEditing">Single Click, Double Click,
+                    No Click Editing</a>
+            </td>
+        </tr>
+        <tr>
+            <th>enableGroupEdit</th>
+            <td>
+                Set to true to enable <a href="../javascript-grid-cell-editing/#groupEditing">Group Editing</a>,
+                otherwise by default, row groups cannot be edited.
+            </td>
+        </tr>
+        <tr>
+            <th>editType</th>
+            <td>
+                Set to 'fullRow' to enable <a href="../javascript-grid-cell-editing/#fullRowEdit">Full Row Editing</a>.
+                Otherwise leave blank to edit one cell at a time.
+            </td>
+        </tr>
+        <tr>
+            <th>enableCellChangeFlash</th>
+            <td>Set to true to have cells flash after data changes.
+                See <a href="../javascript-grid-data-update/#flashing">Flashing Data Changes</a>.</td>
         </tr>
         <tr>
             <th>stopEditingWhenGridLosesFocus</th>
-            <td>Set this to true to stop cell editing when focus leaves the grid. The default is the grid stays editing
-            until focus goes onto another cell. For inline (non-popup) editors only.</td>
+            <td>
+                Set this to true to <a href="../javascript-grid-cell-editing/#losingFocusStopsEditing">
+                stop cell editing when grid loses focus</a>. The default is the grid stays editing
+                until focus goes onto another cell. For inline (non-popup) editors only.
+            </td>
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
             <td colspan="2">Headers</td>
         </tr>
         <?php include '../javascript-grid-column-header/headerHeightProperties.php' ?>
-        <?php printPropertiesRows($headerHeightProperties) ?>
+        <?php printPropertiesRowsWithHelp($headerHeightProperties) ?>
         <tr class="title-row">
             <!-- TITLE ROW -->
             <td colspan="2">Row Grouping & Pivoting</td>
         </tr>
-        <tr>
-            <th>groupUseEntireRow<br/> groupDefaultExpanded<br/>
-                groupSelectsChildren<br/> groupSelectsFiltered<br/>
-                groupSuppressAutoColumn <br/> groupSuppressBlankHeader <br/>
-                groupRemoveSingleChildren <br/> groupRemoveSingleChildren <br/>
-                groupMultiAutoColumn
-            </th>
-            <td>Parameters for grouping. See the section on grouping for details explanation.</td>
-        </tr>
-        <tr>
-            <th>groupIncludeFooter</th>
-            <td>If grouping, whether to show a group footer when the group is expanded. If true, then by default, the footer
-                will contain aggregate data (if any) when shown and the header will be black. When closed, the header will
-                contain the aggregate data regardless of this setting (as footer is hidden anyway). This is handy for
-                'total' rows, that are displayed below the data when the group is open, and alongside the group when
-                it is closed.</td>
-        </tr>
-        <tr>
-            <th>groupSuppressRow</th>
-            <td>If true, the group row won't be displayed and the groups will be expanded by default
-                with no ability to expand / contract the groups. Useful when you want to just 'group'
-                the rows, but not add parent group row to each group.</td>
-        </tr>
-        <tr>
-            <th>rowGroupPanelShow</th>
-            <td>When to show the 'row group panel' (where you drag rows to group)  at the top. Default
-                is never. Set to either 'always' or 'onlyWhenGrouping'.</td>
-        </tr>
+        <?php include '../javascript-grid-grouping/rowGroupingProperties.php' ?>
+        <?php printPropertiesRowsWithHelp($rowGroupingProperties) ?>
         <tr>
             <th>pivotMode</th>
-            <td>Set to true to enable pivot mode. See <a href="../javascript-grid-pivoting/">Pivoting</a> for more information.</td>
+            <td>Set to true to enable pivot mode. See <a href="../javascript-grid-pivoting/">Pivoting</a>.</td>
         </tr>
         <tr>
             <th>pivotPanelShow</th>
@@ -231,11 +235,13 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>rememberGroupStateWhenNewData</th>
             <td>When true, if you set new data into the grid and have groups open, the grid will keep
-                groups open if they exist in the new dataset.</td>
+                groups open if they exist in the new dataset.
+                See <a href="../javascript-grid-grouping/#keeping-group-state">Keeping Group State</a>.</td>
         </tr>
         <tr>
             <th>suppressAggFuncInHeader</th>
-            <td>When true, column headers won't include the aggFunc, eg 'sum(Bank Balance)' will just be 'Bank Balance'.</td>
+            <td>When true, column headers won't include the aggFunc, eg 'sum(Bank Balance)' will
+                just be 'Bank Balance'.</td>
         </tr>
         <tr>
             <th>suppressAggAtRootLevel</th>
@@ -249,11 +255,14 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>functionsReadOnly</th>
             <td>If true, then row group, pivot and value aggregation will be read only from the gui. The grid will display
-                what values are used for each, but will not allow the use to change the selection.</td>
+                what values are used for each, but will not allow the use to change the selection. See
+            <a href="../javascript-grid-tool-panel/#read-only-functions">Read Only Functions</a>.</td>
         </tr>
         <tr>
             <th>aggFuncs</th>
-            <td>Adding and clearing of aggregation functions.</td>
+            <td>A map of 'function name' to 'function' for custom aggregation functions.
+                See example <a href="../javascript-grid-aggregation/#custom-aggregation-functions">Custom Aggregation Functions</a>.
+            </td>
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
@@ -261,11 +270,12 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>toolPanelSuppressRowGroups, toolPanelSuppressValues, toolPanelSuppressPivots, toolPanelSuppressPivotMode</th>
-            <td>Set to true to hide the relevant sections in the tool panel.</td>
+            <td>Set to true to hide the relevant sections in the <a href="../javascript-grid-tool-panel">Tool Panel</a>.
+            See example <a href="../javascript-grid-tool-panel/#suppressExample">Suppress Panels</a></td>
         </tr>
         <tr>
             <th>showToolPanel</th>
-            <td>Set to true to show the tool panel by default.</td>
+            <td>Set to true to show the <a href="../javascript-grid-tool-panel">Tool Panel</a> by default.</td>
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
@@ -273,23 +283,24 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>rowModelType</th>
-            <td>Sets the row model type - enabled Virtual Scrolling, Pagination and ViewPort functionality. Defaults to 'normal'. Valid options are [pagination,virtual,viewport,normal]</td>
+            <td>Sets the <a href="../javascript-grid-row-models/">Row Model</a> type.
+                Defaults to 'inMemory'. Valid options are [inMemory,infinite,viewport,enterprise].</td>
         </tr>
         <tr>
             <th>rowData</th>
-            <td>InMemoryRowModel only - set the data to be displayed as rows in the grid.</td>
+            <td><a href="../javascript-grid-in-memory/">In Memory</a> row model only - set the data to be displayed as rows in the grid.</td>
         </tr>
         <tr>
             <th>deltaRowDataMode</th>
-            <td>InMemoryRowModel only - enables <a href="../javascript-grid-data-update/#delta-row-data">delta row data mode</a>, for compatibility with immutable stores.</td>
+            <td><a href="../javascript-grid-in-memory/">In Memory</a> row model only - enables <a href="../javascript-grid-data-update/#delta-row-data">delta row data mode</a>, for compatibility with immutable stores.</td>
         </tr>
         <tr>
             <th>pinnedTopRowData</th>
-            <td>Data to be displayed as pinned top rows in the table</td>
+            <td>Data to be displayed as <a href="../javascript-grid-row-pinning/">Pinned Top Rows</a> in the grid.</td>
         </tr>
         <tr>
             <th>pinnedBottomRowData</th>
-            <td>Data to be displayed as pinned bottom rows in the table</td>
+            <td>Data to be displayed as <a href="../javascript-grid-row-pinning/">Pinned Bottom Rows</a> in the grid.</td>
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
@@ -297,12 +308,11 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>rowSelection</th>
-            <td>Type of row selection, set to either 'single' or 'multiple' to enable selection.</td>
+            <td>Type of <a href="../javascript-grid-selection/">Row Selection</a>, set to either 'single' or 'multiple'.</td>
         </tr>
         <tr>
             <th>rowDeselection</th>
-            <td>Set to true or false. If true, then rows will be deselected if you
-                hold down ctrl + click the row.</td>
+            <td>If true then rows will be deselected if you hold down ctrl + click the row.</td>
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
@@ -310,8 +320,11 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>suppressHorizontalScroll</th>
-            <td>Set to true to never show the horizontal scroll. This is useful if the grid is aligned with
-                another grid and will scroll when the other grid scrolls.</td>
+            <td>
+                Set to true to never show the horizontal scroll. This is useful if the grid is aligned with
+                another grid and will scroll when the other grid scrolls. See example
+                <a href="../javascript-grid-aligned-grids/#aligned-grid-as-footer">Aligned Grid as Footer</a>
+            </td>
         </tr>
         <tr>
             <th>suppressColumnVirtualisation</th>
@@ -319,9 +332,10 @@ include '../documentation-main/documentation_header.php';
                 only 10 visible due to scrolling, all 100 will always be rendered.</td>
         </tr>
         <tr>
-            <th>suppressRowVirtualisation</th>
-            <td>This is no property suppressRowVirtualisation - if you want to do this, then set the rowBuffer
-            property to be very large, eg 9999.</td>
+            <th style="text-decoration: line-through">suppressRowVirtualisation</th>
+            <td>There is no property suppressRowVirtualisation - if you want to do this, then set the rowBuffer
+            property to be very large, eg 9999. But be careful, lots of rendered ros will mean a very large amount
+            of rendering in the DOM which will slow things down.</td>
         </tr>
         <tr>
             <th>suppressScrollLag</th>
@@ -341,7 +355,7 @@ include '../documentation-main/documentation_header.php';
             <td colspan="2">Pagination</td>
         </tr>
         <?php include '../javascript-grid-pagination/paginationProperties.php'?>
-        <?php printPropertiesRows($paginationProperties) ?>
+        <?php printPropertiesRowsWithHelp($paginationProperties) ?>
 
         <tr class="title-row">
             <!-- TITLE ROW -->
@@ -455,6 +469,11 @@ include '../documentation-main/documentation_header.php';
 
         <?php include '../javascript-grid-value-cache/valueCacheProperties.php' ?>
         <?php printPropertiesRows($valueCacheProperties) ?>
+        <tr>
+            <th>defaultExportParams</th>
+            <td>A default configuration object used to export to <a href="../javascript-grid-export/">csv</a> or
+                <a href="../javascript-grid-excel/">excel</a></td>
+        </tr>
         <tr>
             <th>suppressMiddleClickScrolls</th>
             <td>If true, then middle clicks will result in 'click' events for cell and row. Otherwise the browser

@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleSimpleRowGroup"></show-example>
 
-    <h2>Multi Auto Column Group</h2>
+    <h2 id="multi-auto-column-group">Multi Auto Column Group</h2>
     <p>
         The grid also lets you automatically create one column for each individual group.
         This is achieved by setting <code>gridOptions.groupMultiAutoColumn = true</code>.
@@ -62,7 +62,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleSimpleRowMultiGroup"></show-example>
 
-    <h2>Configuring the Auto Group Columns</h2>
+    <h2 id="configuring-auto-column">Configuring the Auto Group Column</h2>
 
     <p>
         You can specify your own configuration used by the auto group columns by providing a <code>gridOptions.autoGroupColumnDef</code>.
@@ -440,7 +440,7 @@ gridOptions.groupRowRendererParams: {
 }</pre>
 
 
-    <h2>Grouping Footers</h2>
+    <h2 id="grouping-footers">Grouping Footers</h2>
 
     <p>
         If you want to include a footer with each group, set the property <i>groupIncludeFooter</i> to true.
@@ -479,7 +479,7 @@ cellRendererParams: {
 
     </p>
 
-    <h2>Keeping Group State</h2>
+    <h2 id="keeping-group-state">Keeping Group State</h2>
 
     <p>
         <note>This section only applies if you don't have <a href="../javascript-grid-data-update/#delta-row-data">delta
@@ -533,7 +533,7 @@ cellRendererParams: {
         even Stephen Hawking will be able to save you.
     </note>
 
-    <h2>Suppress Group Row</h2>
+    <h2 id="suppress-group-row">Suppress Group Row</h2>
 
     <p>
         By suppressing the group row you don't give users the ability to close the groups by themselves,
@@ -627,84 +627,8 @@ coldefs:[
             <th>Property</th>
             <th>Description</th>
         </tr>
-        <tr>
-            <th>groupUseEntireRow</th>
-            <td>If grouping, set to true or false (default is false). If true, a group row will span all columns across the entire
-                width of the table. If false, the cells will be rendered as normal and you will have the opportunity to include
-                a grouping column (normally the first on the left) to show the group.</td>
-        </tr>
-        <tr>
-            <th>groupDefaultExpanded</th>
-            <td>If grouping, set to the number of levels to expand by default.
-                Eg 0 for none, 1 first level only, etc. Default is 0 (expand none).
-                Set to -1 for expand everything.
-            </td>
-        </tr>
-        <tr>
-            <th>groupIncludeFooter</th>
-            <td>If grouping, whether to show a group footer when the group is expanded. If true, then by default, the footer
-                will contain aggregate data (if any) when shown and the header will be black. When closed, the header will
-                contain the aggregate data regardless of this setting (as footer is hidden anyway). This is handy for
-                'total' rows, that are displayed below the data when the group is open, and alongside the group when
-                it is closed.
-            </td>
-        </tr>
-        <tr>
-            <th>autoGroupColumnDef</th>
-            <td>Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping,
-                this column is not included.
-            </td>
-        </tr>
-        <tr>
-            <th>groupSuppressAutoColumn</th>
-            <td>If true, the grid will not swap in the grouping column when grouping is enabled. Use this if you
-                want complete control on the column displayed and don't want the grids help. In other words,
-                you already have a column in your column definitions that is responsible for displaying the groups.
-            </td>
-        </tr>
-        <tr>
-            <th>groupMultiAutoColumn</th>
-            <td>If using auto column, set to true to have each group in its own column separate column, eg
-                if group by Country then Year, two auto columns will be created, one for country and one for year.</td>
-        </tr>
-        <tr>
-            <th>groupSuppressRow</th>
-            <td>If true, the group row won't be displayed and the groups will be expanded by default
-                with no ability to expand / contract the groups. Useful when you want to just 'group'
-                the rows, but not add parent group row to each group.
-            </td>
-        </tr>
-        <tr>
-            <th>groupSuppressBlankHeader</th>
-            <td>If true, and showing footer, aggregate data will be displayed at both the header and footer
-                levels always. This stops the possibly undesirable behaviour of the header details 'jumping'
-                to the footer on expand.
-            </td>
-        </tr>
-        <tr>
-            <th>groupSelectsChildren</th>
-            <td>When true, if you select a group, the the children of the group will also get selected.</td>
-        </tr>
-        <tr>
-            <th>groupSelectsFiltered</th>
-            <td>If using groupSelectsChildren, then only the children that pass the current filter will get selected.</td>
-        </tr>
-        <tr>
-            <th>groupRemoveSingleChildren</th>
-            <td>Set to true to collapse groups that only have one child.</td>
-        </tr>
-        <tr>
-            <th>groupHideOpenParents</th>
-            <td>Set to true to hide parents that are open. When used with multiple columns for showing
-                groups, it can give more pleasing user experience.</td>
-        </tr>
-        <tr>
-            <th>animateRows</th>
-            <td>
-                Set to true to enable animation of the rows after group is opened and closed.
-            </td>
-        </tr>
-
+        <?php include '../javascript-grid-grouping/rowGroupingProperties.php' ?>
+        <?php printPropertiesRowsWithHelp($rowGroupingProperties) ?>
     </table>
 
     <table class="table">

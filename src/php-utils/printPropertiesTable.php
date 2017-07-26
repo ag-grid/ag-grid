@@ -17,4 +17,18 @@
                 ";
         }
     }
+
+    function printPropertiesRowsWithHelp ($properties){
+        foreach ($properties as $property) {
+            print "     
+                    <tr>
+                        <th>$property[0]</th>
+                        <td>
+                            $property[1]
+                            $property[2]
+                        </td>
+                    </tr>
+                ";
+        }
+    }
 ?>

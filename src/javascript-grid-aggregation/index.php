@@ -109,7 +109,7 @@ colDef = {
 
     <show-example example="exampleAggregation"></show-example>
 
-    <h3>Example 2 - Custom Aggregation Functions</h3>
+    <h3 id="custom-aggregation-functions">Example 2 - Custom Aggregation Functions</h3>
 
     <p>
         The next example shows many custom aggregation functions configured in a variety

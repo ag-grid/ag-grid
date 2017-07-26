@@ -101,7 +101,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="toolPanelExample"></show-example>
 
-    <h3 id="suppressExample">Suppress Example</h3>
+    <h3 id="suppressExample">Suppress Panels</h3>
 
     <p>
         Below shows using the suppress properties that can be used with the toolpanel as follows:
@@ -117,7 +117,7 @@ include '../documentation-main/documentation_header.php';
     
     <show-example example="exampleToolPanelSuppress"></show-example>
 
-    <h3>Read Only Functions</h3>
+    <h3 id="read-only-functions">Read Only Functions</h3>
 
     <p>
         By setting the property <i>functionsReadOnly=true</i>, the grid will prevent changes to group, pivot or

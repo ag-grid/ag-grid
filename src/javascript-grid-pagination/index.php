@@ -38,7 +38,7 @@ include '../documentation-main/documentation_header.php';
         if the row model supports it, it's available through pagination and that row model.
     </p>
 
-    <h2 id="simplePagination">Example: Auto Page Size</h2>
+    <h2 id="auto-page-size">Example: Auto Page Size</h2>
 
     <p>
         If you set <i>paginationAutoPageSize=true</i> the grid will automatically show as many rows in each page as it can
@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="autoPageSize"></show-example>
 
-    <h2 id="simplePagination">Example: Customising Pagination</h2>
+    <h2 id="customising-pagination">Example: Customising Pagination</h2>
 
     <p>In this example the default pagination settings are changed. Note the following:</p>
 
@@ -61,7 +61,7 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="customPaging"></show-example>
 
-    <h2 id="simplePagination">Example: Custom Pagination Controls</h2>
+    <h2 id="custom-pagination-controls">Example: Custom Pagination Controls</h2>
 
     <p>If you set <i>suppressPaginationPanel=true</i>, the grid will not show the standard navigation controls for
         pagination. This is useful is you want to provide your own navigation controls. </p>
