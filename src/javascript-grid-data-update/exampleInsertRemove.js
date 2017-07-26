@@ -50,17 +50,20 @@ function clearData() {
 
 function onAddRow() {
     var newItem = createNewRowData();
-    gridOptions.api.updateRowData({add: [newItem]});
+    var res = gridOptions.api.updateRowData({add: [newItem]});
+    printResult(res);
 }
 
 function addItems() {
     var newItems = [createNewRowData(), createNewRowData(), createNewRowData()];
-    gridOptions.api.updateRowData({add: newItems});
+    var res = gridOptions.api.updateRowData({add: newItems});
+    printResult(res);
 }
 
 function addItemsAtIndex() {
     var newItems = [createNewRowData(), createNewRowData(), createNewRowData()];
-    gridOptions.api.updateRowData({add: newItems, addIndex: 2});
+    var res = gridOptions.api.updateRowData({add: newItems, addIndex: 2});
+    printResult(res);
 }
 
 function updateItems() {
@@ -74,17 +77,39 @@ function updateItems() {
         data.price = Math.floor((Math.random()*20000) + 20000);
         itemsToUpdate.push(data);
     });
-    gridOptions.api.updateRowData({update: itemsToUpdate});
+    var res = gridOptions.api.updateRowData({update: itemsToUpdate});
+    printResult(res);
 }
 
 function onInsertRowAt2() {
     var newItem = createNewRowData();
-    gridOptions.api.updateRowData({add: [newItem], addIndex: 2});
+    var res = gridOptions.api.updateRowData({add: [newItem], addIndex: 2});
+    printResult(res);
 }
 
 function onRemoveSelected() {
     var selectedData = gridOptions.api.getSelectedRows();
-    gridOptions.api.updateRowData({remove: selectedData});
+    var res = gridOptions.api.updateRowData({remove: selectedData});
+    printResult(res);
+}
+
+function printResult(res) {
+    console.log('---------------------------------------')
+    if (res.add) {
+        res.add.forEach( function(rowNode) {
+            console.log('Added Row Node', rowNode);
+        });
+    }
+    if (res.remove) {
+        res.remove.forEach( function(rowNode) {
+            console.log('Removed Row Node', rowNode);
+        });
+    }
+    if (res.update) {
+        res.update.forEach( function(rowNode) {
+            console.log('Updated Row Node', rowNode);
+        });
+    }
 }
 
 // wait for the document to be loaded, otherwise

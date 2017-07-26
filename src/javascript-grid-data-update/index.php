@@ -167,11 +167,14 @@ include '../documentation-main/documentation_header.php';
     <h2>Bulk Method 1 - Transaction</h2>
 
     <p>
-        The <code>api.updateRowData(transaction)</code> method takes a transaction as a parameter.
-        The transaction has the following interface:
+        The <code>api.updateRowData(transaction)</code> takes details of what data items to update
+        and then returns all the impacted row nodes.
     </p>
 
-    <pre><span class="codeComment">// interface for transaction for updating data</span>
+    <pre><span class="codeComment">// API method for updating data</span>
+function updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
+
+<span class="codeComment">// params for above</span>
 interface RowDataTransaction {
 
     <span class="codeComment">// rows to add</span>
@@ -184,6 +187,19 @@ interface RowDataTransaction {
 
     <span class="codeComment">// rows to update</span>
     update?: any[];
+}
+
+<span class="codeComment">// result for above</span>
+interface RowDataTransaction {
+
+    <span class="codeComment">// Row Nodes added</span>
+    add: RowNode[];
+
+    <span class="codeComment">// Row Nodes removed</span>
+    remove: RowNode[];
+
+    <span class="codeComment">// Row Nodes updated</span>
+    update: RowNode[];
 }
 </pre>
 
@@ -242,7 +258,8 @@ interface RowDataTransaction {
     <h3 id="example-updating-with-transaction">Example - Updating with Transaction</h3>
 
     <p>
-        The example below demonstrates the following:
+        The example uses the <code>updateRowData</code> method in different ways and prints
+        the results of the call to the console. The following can be noted:
     </p>
 
     <ul>
