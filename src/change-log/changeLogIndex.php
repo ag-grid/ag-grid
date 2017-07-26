@@ -16,6 +16,14 @@ include '../documentation-main/documentation_header.php';
 
 
     <h2>Version 12.0.x</h2>
+    <h3>Version 12.0.2 [26-JUL-2017]</h3>
+
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>AG-646: Enhancement: updateRowData now <a href="../javascript-grid-data-update/#bulk-updating">returns the rows updated</a>.</li>
+        <li>AG-645: Bugfix: Error creating bean CsvCreator due to minimifying issues. Still causing issues after 12.0.1</li>
+    </ul>
+
     <h3>Version 12.0.1 [25-JUL-2017]</h3>
 
     <h4>Bug Fixes</h4>
