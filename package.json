@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-enterprise",
-  "version": "12.0.1",
+  "version": "12.0.2",
   "description": "ag-Grid Enterprise Features",
   "main": "main.js",
   "scripts": {
@@ -36,7 +36,7 @@
     "css-loader": "0.23.1"
   },
   "peerDependencies": {
-    "ag-grid": "12.0.1"
+    "ag-grid": "12.0.x"
   },
   "dependencies": {}
 }
