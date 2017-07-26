@@ -29,6 +29,15 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">26th July 2017</div>
+    <div style="padding-top: 5px; text-align: center;">
+        <a href="../weekly-update/20170726/">
+            Weekly Update
+        </a>
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header">21st July 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
         <span style="font-weight: bold; color: white; font-size: 25px; position: absolute; top: 70px; left: 110px;">

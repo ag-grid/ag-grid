@@ -55,6 +55,25 @@ include('../includes/mediaHeader.php');
 
 <div class="weekly-news-section">
 
+    <a href="./20170726/">
+        <div class="weekly-news-title">
+            Version 12 released – New Documentation – React Fibre Support
+        </div>
+        <div class="weekly-news-sub-title">
+            Customer Experience Team, 26th July, 2017
+        </div>
+    </a>
+
+    <div style="clear: both;"></div>
+
+    <div class="weekly-news-paragraph">
+        This week, we will be releasing on Friday following postponing last week. We have also been working on simplifying the names of our features. We've also released our Beta of Poymer Support and will have the final version of this later in the week.
+    </div>
+
+</div>
+
+<div class="weekly-news-section">
+
     <a href="./20170718/">
         <div class="weekly-news-title">
             Trying to Simplify our Feature Names - Polymer Support Beta Released - Our New Emoji
