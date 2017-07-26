@@ -1,4 +1,4 @@
-ag-Grid-Enterprise Software Licence Agreement Version 1.5
+ag-Grid-Enterprise Software Licence Agreement Version 1.6
 
 THIS DOCUMENT IS A LEGAL AGREEMENT (the “Agreement”) BETWEEN AG GRID LTD. (“We,” “Us”) AND YOU OR THE ORGANISATION ON WHOSE BEHALF YOU ARE ENTERING INTO THIS AGREEMENT (“You”) IN RELATION TO AG-GRID-ENTERPRISE SOFTWARE. RIGHTS GRANTED HEREIN APPLY ONLY TO SOFTWARE FOR WHICH YOU HAVE PAID THE APPLICABLE FEE (AS INVOICED BY US TO YOU).
 
@@ -115,7 +115,7 @@ It is the Your responsibility that queries are raised by suitably trained indivi
 
 (C) Limitation of Liability
 
-We shall not be responsible for providing support via the Support Services to the extent that the issue is caused by: (a) Your misuse, improper use, mis-configuration, alteration, or damage to the Software; (b) Your use of the Software with any hardware or software not supplied or supported by Us; (c) Your failure to install an update to the Software if such update would have resolved the issue; or (d) any uses of the Software that are not in accordance with the Agreement.
+We shall not be responsible for providing support via the Support Services to the extent that the issue is caused by: (a) Your misuse, improper use, mis-configuration, alteration, or damage to the Software; (b) Your failure to install an update to the Software if such update would have resolved the issue; or (c) any uses of the Software that are not in accordance with the Agreement.
 
 (d) Fair Usage Policy
 
