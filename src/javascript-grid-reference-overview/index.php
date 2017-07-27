@@ -174,6 +174,9 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
             <pre><code>&lt;ag-grid-react-component
 
+        <span class="codeComment">// useful for accessing the component directly via ref</span>
+        ref="agGrid"
+
         <span class="codeComment">// these are simple attributes, not bound to any state or prop</span>
         rowHeight="22"
         rowSelection="multiple"
@@ -190,6 +193,14 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         onColumnResized={this.onColumnEvent.bind(this)}"
         onGridReady={this.onGridReady.bind(this)}" <span class="codeComment">// inside onGridReady, you receive the grid API's if you want them</span>
     /></code></pre>
+
+            <p>
+                The API's are accessible through the component itself. This is useful in two situations.
+                The first is by using an <code>ref</code>. In the example above, the <code>ref</code> is given
+                as 'myGrid' which then allows something like this:
+            </p>
+
+            <pre><code>&lt;button onClick={() => {this.refs.<b>agGrid</b>.api.deselectAll()}}>Clear Selection&lt;/button></code></pre>
         </div>
     <?php } ?>
 
