@@ -190,14 +190,6 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         onColumnResized={this.onColumnEvent.bind(this)}"
         onGridReady={this.onGridReady.bind(this)}" <span class="codeComment">// inside onGridReady, you receive the grid API's if you want them</span>
     /></code></pre>
-
-            <p>
-                The API's are accessible through the component. This is useful in two situations.
-                The first is by using an ID. In the example above, the ID is given
-                as '#myGrid' which then allows something like this:
-            </p>
-
-            <pre><code>&lt;button (click)="<b>agGrid</b>.api.deselectAll()">Clear Selection&lt;/button></code></pre>
         </div>
     <?php } ?>
 
