@@ -558,13 +558,13 @@ export class GridOptionsWrapper {
             console.warn('ag-grid: since version 10.1.x, use property domLayout="forPrint" instead of forPrint=true');
         }
         if (options.suppressMenuFilterPanel) {
-            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['filterMenuTab'] instead of suppressMenuFilterPanel=true`);
+            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['generalMenuTab','columnsMenuTab'] instead of suppressMenuFilterPanel=true`);
         }
         if (options.suppressMenuMainPanel) {
-            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['generalMenuTab'] instead of suppressMenuMainPanel=true`);
+            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['filterMenuTab','columnsMenuTab'] instead of suppressMenuMainPanel=true`);
         }
         if (options.suppressMenuColumnPanel) {
-            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['columnsMenuTab'] instead of suppressMenuColumnPanel=true`);
+            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['generalMenuTab','filterMenuTab'] instead of suppressMenuColumnPanel=true`);
         }
         if (options.suppressUseColIdForGroups) {
             console.warn(`ag-grid: since version 11.0.x, this is not in use anymore. You should be able to remove it from your definition`);
