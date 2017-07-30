@@ -102,6 +102,6 @@ function webpackTask(minify, styles) {
 gulp.task('publishForCI', () => {
     return gulp.src("./ag-grid-enterprise*.tgz")
         .pipe(rename("ag-grid-enterprise.tgz"))
-        .pipe(gulp.dest("/Users/seanlandsman/artifacts/ag-grid-enterprise/"));
+        .pipe(gulp.dest("c:/ci/ag-grid-enterprise/"));
 
 });
