@@ -52,6 +52,6 @@ gulp.task('watch', ['clean-ngc'], () => {
 gulp.task('publishForCI', () => {
     return gulp.src("./ag-grid-angular*.tgz")
         .pipe(rename("ag-grid-angular.tgz"))
-        .pipe(gulp.dest("/Users/seanlandsman/artifacts/ag-grid-angular/"));
+        .pipe(gulp.dest("c:/ci/ag-grid-angular/"));
 
 });
