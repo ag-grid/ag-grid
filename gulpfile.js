@@ -62,7 +62,7 @@ gulp.task('cleanForCI', ['cleanDist', 'cleanExports']);
 gulp.task('publishForCI', () => {
     return gulp.src("./ag-grid-*.tgz")
         .pipe(rename("ag-grid.tgz"))
-        .pipe(gulp.dest("/Users/seanlandsman/artifacts/ag-grid/"));
+        .pipe(gulp.dest("c:/ci/ag-grid/"));
 
 });
 
