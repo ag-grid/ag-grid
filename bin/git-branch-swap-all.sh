@@ -20,7 +20,6 @@ do
 
     cd $module
     git branch $1
-    git push origin $1
     git branch --set-upstream-to=origin/$1
 
     cd ..
