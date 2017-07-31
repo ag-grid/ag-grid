@@ -1,12 +1,12 @@
 const headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
 const gulp = require('gulp');
-
 const header = require('gulp-header');
 const pkg = require('./package.json');
 const del = require('del');
 const ngc = require('gulp-ngc');
 const runSequence = require('run-sequence');
+const rename = require("gulp-rename");
 
 gulp.task('clean', function () {
     return del(['aot/**', '!aot',
@@ -47,4 +47,11 @@ gulp.task('watch', ['clean-ngc'], () => {
         './node_modules/ag-grid-enterprise/dist/**/*', './node_modules/ag-grid-enterprise/main.js',
         './src/**/*'
     ], ['clean-ngc']);
+});
+
+gulp.task('publishForCI', () => {
+    return gulp.src("./ag-grid-angular*.tgz")
+        .pipe(rename("ag-grid-angular.tgz"))
+        .pipe(gulp.dest("c:/ci/ag-grid-angular/"));
+
 });
