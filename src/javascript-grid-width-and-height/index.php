@@ -57,22 +57,22 @@ include '../documentation-main/documentation_header.php';
 
     <show-example example="exampleWidthAndHeight"></show-example>
 
-    <h2>Grid Layout</h2>
+    <h2 id="dom-layout">DOM Layout</h2>
 
     <p>
-        There is a property <i>gridLayout</i> which changes how the grid is laid into the DOM.
+        The property <code>domLayout</code> changes how the grid is laid into the DOM.
         By default the grid will have horizontal and vertical scrolls which will meet your needs
-        95 of the time. So don't change the <i>gridLayout</i> property unless you want one
+        95 of the time. So don't set the <code>domLayout</code> property unless you want one
         of the following:
     </p>
 
     <p>
         <ul>
-            <li><b>Auto Height: </b>The auto height (explained below) allows the grid to resize based
+            <li><b>Auto Height: </b>Auto height (explained below) allows the grid to resize based
             on the number of rows so that there is no vertical scrolls. Use this if you have relatively
-            few rows in your grid and want to pack them into your webpage (so that there is no blank
-            area in the screen where the grid is bigger than needed for the rows that you have).</li>
-            <li><b>For Print: </b>The <a href="../javascript-grid-for-print/">for print</a> will have
+            few rows in your grid and want to pack them into your web-page (so that there is no blank
+            space in the grid after the last row).</li>
+            <li><b>For Print: </b><a href="../javascript-grid-for-print/">For print</a> will have
             no scrolls, very bad for performance (as a large grid will create a lot of DOM) however
             ideal if you want to print the grid, as it will remove all scrolls and pinned areas,
             so that every element is rendered into the DOM.</li>
