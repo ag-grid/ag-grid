@@ -178,7 +178,7 @@ export class AppModule {
     quick
     and easy it is to get up and running with Angular and ag-Grid in very few steps.</p>
 
-<p>Please take a look at the <a href="../ag-grid-next-steps">Next Steps</a> section next for more detailed information on
+<p>Please take a look at the <a href="../angular-more-details">More Details</a> section next for more detailed information on
     using Angular with ag-Grid.</p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
