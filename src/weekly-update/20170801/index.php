@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "ag-Grid Weekly Update 26th July 2017";
-$pageDescription = "ag-Grid Weekly Update 26th July 2017";
+$pageTitle = "ag-Grid Weekly Update 1st August 2017";
+$pageDescription = "ag-Grid Weekly Update 1st August 2017";
 $pageKeyboards = "ag-Grid Weekly Update";
 
 include('../../includes/mediaHeader.php');
@@ -95,14 +95,14 @@ include('../../includes/mediaHeader.php');
 </style>
 
 <div class="weekly-news-section">
-    View the <a href="../">full list of weekly updates</a> to see other progress reports.
+    View the <a href="../">full list of updates</a> to see other progress reports.
 </div>
 
 <div class="container" style="margin-top: 50px;">
 
     <div class="row">
         <div class="col-md-12">
-            <h2>Version 12 Released – New Documentation – React Fiber Support</h2>
+            <h2>A New Team Member - React Fiber Update</h2>
         </div>
     </div>
 
@@ -110,62 +110,40 @@ include('../../includes/mediaHeader.php');
 
         <hr/>
         <h3>
+            Company Update
+        </h3>
+        <hr/>
+
+        <h4>A New Team Member</h4>
+
+        <p>
+            We are delighted to welcome the latest addition to our team - Petyo Ivanov. Petyo joins having worked
+            for Telerik for many years and brings a wealth of experience and knowledge to bear. He will be working 
+            with the technical team and has already started on the look and feel of the grid. He has settled in nicely
+            and you can expect to hear lots from him in the coming months.
+        </p>
+
+        <hr/>
+        <h3>
             The Latest from the Development Team
         </h3>
         <hr/>
 
+        <h4>Framework Support</h4>
+
         <p>
-            Last Friday, we released v12 with Polymer Support, Column Spanning and Enterprise Row Height among other items.
+            Sean has completed his work to ensure that ag-Grid is compatible with React Fiber following its Beta release. 
+            He is now turning his attention to getting RollupJS working with ag-Grid. Stay tuned for updates.
         </p>
 
-        <h4>Trying to Simplify</h4>
-
         <p>
-            We continue to try to simplify the documentation. In particular, we want to make the documentation
-            easier to navigate and find what you are looking for. We are in the process of putting links into
-            the reference section - so it will take you to the part of the documentation that explains the item.
-        </p>
-
-        <h4>Accessibility</h4>
-
-        <p>
-            Rob is continuing his work on our Accessibility.
-        </p>
-
-        <h4>Ongoing Improvements</h4>
-
-        <p>
-            Alberto is perfecting our components and frameworks, paying particular attention to cell renderers
-            for Angular and React.
-        </p>
-
-        <h4>Framework Updates</h4>
-
-        <p>
-            Sean is now turning his attention to React 16 and React Fibre support to ensure that we have the
-            best compatibility possible.
-        </p>
-
-        <h4>
-            GitHub Stars
-        </h4>
-        <p>
-            We managed to hit over 3,000 Github stars, whoop whoop!
-        </p>
-
-        <h4>
-            <img src="./images/week30.jpg" style="float: left; margin-right: 20px; margin-bottom: 20px;"/>
-            Rob's Birthday</h4>
-
-        <p>
-            It was also Rob’s birthday, so we bought him a figurine of his favourite boxer
-            – he invaded our JIRA meeting as you can see. Happy birthday Rob!
+            Alberto is working to improve how components are registered for the frameworks to make it all easier.
         </p>
 
         <h4>JIRA Update</h4>
 
         <p>
-            We are ploughing through our JIRAs with 143 tickets left in the queue.
+            The current JIRA tally is 148 - headway is being made as more are added in.
         </p>
 
         <div style="clear: both;"/>
@@ -175,16 +153,26 @@ include('../../includes/mediaHeader.php');
         <hr/>
 
         <p>
-            Our next release will be a minor release, looking mainly at lots of small changes and documentation improvements.
-            We don't plan any breaking changes.
+            Our next release will be a minor release, looking mainly at lots of small changes and documentation improvements. This is 
+            currently pencilled in for XXX.
         </p>
+
+        <hr/>
+        <h3>Customer Survey</h3>
+        <hr/>
+
+        <p>
+            We will be sending out a customer survey to all the users of ag-Grid Enterprise today. Please take a few minutes to reply
+            and give us your feedback.
+        </p>
+
 
         <hr/>
         <h3>Spread the Word</h3>
         <hr/>
 
             <p>
-            If you’re not following us on Twitter, please click below to keep up to date. We appreciate all shares through social media.
+            As always, you can catch the latest information on Twitter. We will be launching our other social media sites soon, we'll share those once they are ready to go.
             </p>
         </div>
         
@@ -207,7 +195,7 @@ include('../../includes/mediaHeader.php');
                 </td>
                 <td>
                     <a href="https://twitter.com/share" class="twitter-share-button"
-                       data-url="https://www.ag-grid.com/weekly-update/20170726/"
+                       data-url="https://www.ag-grid.com/weekly-update/20170801/"
                        data-text="ag-Grid Weekly Update #javascript #angularjs #react" data-via="ceolter"
                        data-size="large">Tweet</a>
                     <script>!function (d, s, id) {

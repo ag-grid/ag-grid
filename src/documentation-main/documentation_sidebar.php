@@ -29,10 +29,20 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">1st August 2017</div>
+    <div style="padding-top: 5px; text-align: center;">
+        <a href="../weekly-update/20170801/">
+            ag-Grid Update
+        </a>
+    </div>
+</div>
+
+
+<div class="news-box">
     <div class="news-header">26th July 2017</div>
     <div style="padding-top: 5px; text-align: center;">
         <a href="../weekly-update/20170726/">
-            Weekly Update
+            ag-Grid Update
         </a>
     </div>
 </div>

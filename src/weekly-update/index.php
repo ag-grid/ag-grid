@@ -55,6 +55,26 @@ include('../includes/mediaHeader.php');
 
 <div class="weekly-news-section">
 
+    <a href="./20170801/">
+        <div class="weekly-news-title">
+            New Team Member - React Fiber Update
+        </div>
+        <div class="weekly-news-sub-title">
+            Customer Experience Team, 1st August, 2017
+        </div>
+    </a>
+
+    <div style="clear: both;"></div>
+
+    <div class="weekly-news-paragraph">
+        We have another new person joining the team and we give an update on React Fiber, as well as the other goings on at Grid HQ.
+    </div>
+
+</div>
+
+
+<div class="weekly-news-section">
+
     <a href="./20170726/">
         <div class="weekly-news-title">
             Version 12 released – New Documentation – React Fibre Support
