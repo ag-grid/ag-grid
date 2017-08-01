@@ -25,7 +25,7 @@ include '../documentation-main/documentation_header.php';
     date filter parameters below</li>
 </ol>
 
-<p>In order to set the filter type to text you need to add the following to your column definition</p>
+<p>In order to set the filter type to <code>date</code> you need to add the following to your column definition</p>
 
 <p><pre>colDef:{
     filter:'date'
