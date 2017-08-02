@@ -36,7 +36,8 @@
     "react": "^15.5.x",
     "react-dom": "^15.5.x",
     "react-dom-factories" : "^1.0.0",
-    "typescript": "2.3.x"
+    "typescript": "2.3.x",
+    "gulp-rename": "1.2.2"
   },
   "peerDependencies": {
     "ag-grid": "12.0.x"
