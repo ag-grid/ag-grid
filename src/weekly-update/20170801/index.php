@@ -108,11 +108,26 @@ include('../../includes/mediaHeader.php');
 
     <div class="row">
 
+    <div class="weekly-news-image-right" style="width: unset;">
+        <img src="./images/petyo.png"
+             style="border: 1px solid #eee; padding: 10px; margin-bottom: 10px;"/>
+        <br/>
+        Petyo Ivanov joins the team.
+    </div>
+
         <hr/>
         <h3>
             Company Update
         </h3>
         <hr/>
+        
+        <div class="weekly-news-image-right" style="width: unset;">
+            <img src="./images/petyo.png"
+                 style="border: 1px solid #eee; padding: 10px; margin-bottom: 10px;"/>
+            <br/>
+            Petyo Ivanov joins the team.
+        </div>
+
 
         <h4>A New Team Member</h4>
 
