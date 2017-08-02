@@ -101,49 +101,48 @@ include('../../includes/mediaHeader.php');
 <div class="container" style="margin-top: 50px;">
 
     <div class="row">
-        <div class="col-md-12">
-            <h2>A New Team Member - React Fiber Update</h2>
-        </div>
-    </div>
-
-    <div class="row">
 
         <hr/>
         <h3>
-            Company Update
+            Welcome Petyo Ivanov
         </h3>
         <hr/>
 
-        <h4>A New Team Member</h4>
-
         <p>
-            We are delighted to welcome the latest addition to our team - Petyo Ivanov. Petyo joins having worked
-            for Telerik for many years and brings a wealth of experience and knowledge to bear. He will be working 
-            with the technical team and has already started on the look and feel of the grid. He has settled in nicely
-            and you can expect to hear lots from him in the coming months.
+            We are delighted to welcome Petyo Ivanov to the team. Petyo joins having worked as Kendo UI Product Manager
+            for Progress, which is very relevant experience for ag-Grid. He is currently looking at the ag-Grid themes,
+            in particular improving our Material Design offering.
         </p>
 
         <hr/>
         <h3>
-            The Latest from the Development Team
+            Development Update
         </h3>
         <hr/>
-
-        <h4>Framework Support</h4>
 
         <p>
             Sean has completed his work to ensure that ag-Grid is compatible with React Fiber following its Beta release. 
-            He is now turning his attention to getting RollupJS working with ag-Grid. Stay tuned for updates.
+            He is now turning his attention to getting RollupJS working with ag-Grid.
         </p>
 
         <p>
-            Alberto is working to improve how components are registered for the frameworks to make it all easier.
+            Alberto is working on how components (cell renderer, filter etc) are registered with ag-Grid. In the
+            future you will be able to register components and then refer to them by name. This will make using
+            framework components easier to configure.
         </p>
 
-        <h4>JIRA Update</h4>
+        <p>
+            Rob is looking at how <code>value getter</code>, <code>value setter</code>, <code>value formatter</code>
+            and <code>value parser</code> and creating examples and enhancing the documentation.
+        </p>
 
         <p>
-            The current JIRA tally is 148 - headway is being made as more are added in.
+            Niall is working on simplifying the documentation, including putting types onto all events (good for TypeScript)
+            and listing all items in each event (good for everyone).
+        </p>
+
+        <p>
+            Petyo, as above, is looking at the themes.
         </p>
 
         <div style="clear: both;"/>
@@ -153,8 +152,9 @@ include('../../includes/mediaHeader.php');
         <hr/>
 
         <p>
-            Our next release will be a minor release, looking mainly at lots of small changes and documentation improvements. This is 
-            currently pencilled in for XXX.
+            We know we had a lot of breaking changes in our last release. So for the next one we are going to focus on
+            fixing things rather than creating new features. Thus our next release will be a minor one. Our current
+            date for the next release is 24th Aug.
         </p>
 
         <hr/>
@@ -162,7 +162,7 @@ include('../../includes/mediaHeader.php');
         <hr/>
 
         <p>
-            We will be sending out a customer survey to all the users of ag-Grid Enterprise today. Please take a few minutes to reply
+            We have sent out a customer survey to all the users of ag-Grid Enterprise today. Please take a few minutes to reply
             and give us your feedback.
         </p>
 
