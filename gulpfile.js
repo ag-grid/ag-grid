@@ -25,3 +25,10 @@ function tscTask() {
             .pipe(gulp.dest('lib'))
     ]);
 }
+
+gulp.task('publishForCI', () => {
+    return gulp.src("./ag-grid-react*.tgz")
+        .pipe(rename("ag-grid-react.tgz"))
+        .pipe(gulp.dest("c:/ci/ag-grid-react/"));
+
+});
