@@ -51,7 +51,6 @@ import {GridSerializer} from "./gridSerializer";
 import {StylingService} from "./styling/stylingService";
 import {ColumnHoverService} from "./rendering/columnHoverService";
 import {ColumnAnimationService} from "./rendering/columnAnimationService";
-import {ComponentProvider} from "./componentProvider";
 import {SortService} from "./rowNodes/sortService";
 import {FilterService} from "./rowNodes/filterService";
 import {RowNodeFactory} from "./rowNodes/rowNodeFactory";
@@ -64,6 +63,9 @@ import {ValueCache} from "./valueService/valueCache";
 import {ChangeDetectionService} from "./valueService/changeDetectionService";
 import {AlignedGridsService} from "./alignedGridsService";
 import {PinnedRowModel} from "./rowModels/pinnedRowModel";
+import {ComponentResolver} from "./components/framework/componentResolver";
+import {ComponentRecipes} from "./components/framework/componentRecipes";
+import {ComponentProvider} from "./components/framework/componentProvider";
 
 export interface GridParams {
     // used by Web Components
@@ -150,8 +152,8 @@ export class Grid {
         let contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
-            beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, CellRendererFactory,
-                HorizontalDragService, HeaderTemplateLoader, PinnedRowModel, DragService,
+            beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, ComponentResolver, ComponentRecipes,
+                CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, PinnedRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,
                 BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
@@ -172,6 +174,7 @@ export class Grid {
         this.context = new Context(contextParams, new Logger('Context', isLoggingFunc));
 
         // we do this at the end, after the boot sequence is complete
+        this.registerComponents(gridOptions);
         this.setColumnsAndData();
 
         this.dispatchGridReadyEvent(gridOptions);
@@ -179,6 +182,16 @@ export class Grid {
         if (gridOptions.debug) {
             console.log('ag-Grid -> initialised successfully, enterprise = ' + enterprise);
         }
+    }
+
+    private registerComponents(gridOptions: GridOptions): void {
+        if (gridOptions.components == null) return;
+
+        let componentProvider: ComponentProvider = this.context.getBean('componentProvider');
+
+        Object.keys(gridOptions.components).forEach(it=>{
+            componentProvider.registerComponent<any>(it, gridOptions.components[it]);
+        })
     }
 
     private setColumnsAndData(): void {

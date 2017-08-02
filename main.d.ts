@@ -155,6 +155,6 @@ export { IHeader } from "./dist/lib/headerRendering/header/headerComp";
 export { ICellRendererParams } from "./dist/lib/rendering/cellRenderers/iCellRenderer";
 export { WrapableInterface } from "./dist/lib/baseComponentWrapper";
 export { BaseComponentWrapper } from "./dist/lib/baseComponentWrapper";
-export { FrameworkComponentWrapper } from "./dist/lib/componentProvider";
+export { FrameworkComponentWrapper } from "./dist/lib/components/framework/frameworkComponentWrapper";
 export { IFrameworkFactory } from "./dist/lib/interfaces/iFrameworkFactory";
 export { SerializedNumberFilter } from "./dist/lib/filter/numberFilter";

@@ -14,7 +14,7 @@ import {IMenuFactory} from "../../interfaces/iMenuFactory";
 import {GridApi} from "../../gridApi";
 import {SortController} from "../../sortController";
 import {EventService} from "../../eventService";
-import {ComponentProvider} from "../../componentProvider";
+import {ComponentRecipes} from "../../components/framework/componentRecipes";
 import {AgCheckbox} from "../../widgets/agCheckbox";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {SelectAllFeature} from "./selectAllFeature";
@@ -40,7 +40,7 @@ export class HeaderWrapperComp extends Component {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('componentProvider') private componentProvider: ComponentProvider;
+    @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
 
     @RefSelector('eResize') private eResize: HTMLElement;
@@ -135,7 +135,7 @@ export class HeaderWrapperComp extends Component {
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
         };
-        let headerComp: IHeaderComp = this.componentProvider.newHeaderComponent(params);
+        let headerComp: IHeaderComp = this.componentRecipes.newHeaderComponent(params);
 
 
         this.appendChild(headerComp);

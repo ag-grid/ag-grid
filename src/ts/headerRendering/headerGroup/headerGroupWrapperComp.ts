@@ -1,4 +1,3 @@
-
 import {Component} from "../../widgets/component";
 import {Column} from "../../entities/column";
 import {Utils as _} from "../../utils";
@@ -6,14 +5,13 @@ import {ColumnGroup} from "../../entities/columnGroup";
 import {ColumnApi, ColumnController} from "../../columnController/columnController";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {HorizontalDragService} from "../horizontalDragService";
-import {Autowired, PostConstruct, Context} from "../../context/context";
+import {Autowired, Context, PostConstruct} from "../../context/context";
 import {CssClassApplier} from "../cssClassApplier";
-import {DragSource, DropTarget, DragAndDropService, DragSourceType} from "../../dragAndDrop/dragAndDropService";
+import {DragAndDropService, DragSource, DragSourceType, DropTarget} from "../../dragAndDrop/dragAndDropService";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
-import {IHeaderGroupParams, IHeaderGroupComp} from "./headerGroupComp";
-import {IComponent} from "../../interfaces/iComponent";
-import {ComponentProvider} from "../../componentProvider";
+import {IHeaderGroupComp, IHeaderGroupParams} from "./headerGroupComp";
 import {GridApi} from "../../gridApi";
+import {ComponentRecipes} from "../../components/framework/componentRecipes";
 
 export class HeaderGroupWrapperComp extends Component {
 
@@ -27,7 +25,7 @@ export class HeaderGroupWrapperComp extends Component {
     @Autowired('horizontalDragService') private dragService: HorizontalDragService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('context') private context: Context;
-    @Autowired('componentProvider') private componentProvider:ComponentProvider;
+    @Autowired('componentRecipes') private componentRecipes:ComponentRecipes;
     @Autowired('gridApi') private gridApi:GridApi;
     @Autowired('columnApi') private columnApi:ColumnApi;
 
@@ -84,7 +82,7 @@ export class HeaderGroupWrapperComp extends Component {
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
         };
-        let headerComp = this.componentProvider.newHeaderGroupComponent(params);
+        let headerComp = this.componentRecipes.newHeaderGroupComponent(params);
         this.appendChild(headerComp);
         return headerComp;
     }

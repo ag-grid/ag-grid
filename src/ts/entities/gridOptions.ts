@@ -3,13 +3,14 @@ import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
 import {Column} from "./column";
 import {IViewportDatasource} from "../interfaces/iViewportDatasource";
-import {ICellRendererFunc, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
-import {IAggFunc, ColGroupDef, ColDef} from "./colDef";
+import {ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
+import {ColDef, ColGroupDef, IAggFunc} from "./colDef";
 import {IDatasource} from "../rowModels/iDatasource";
 import {GridCellDef} from "./gridCell";
 import {IDateComp} from "../rendering/dateComponent";
 import {IEnterpriseDatasource} from "../interfaces/iEnterpriseDatasource";
 import {CsvExportParams, ProcessCellForExportParams} from "../exportParams";
+import {IComponent} from "../interfaces/iComponent";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -209,6 +210,7 @@ export interface GridOptions {
 
     // callbacks
     postProcessPopup?:(params: PostProcessPopupParams)=>void;
+    components?:{[p:string]:{new(): IComponent<any>}}
     dateComponent?:{new(): IDateComp};
     dateComponentFramework?: any;
     groupRowRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;

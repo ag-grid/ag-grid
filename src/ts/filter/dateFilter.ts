@@ -5,7 +5,7 @@ import {QuerySelector} from "../widgets/componentAnnotations";
 import {Utils} from "../utils";
 import {BaseFilter, Comparator, ScalarBaseFilter} from "./baseFilter";
 import {Autowired} from "../context/context";
-import {ComponentProvider} from "../componentProvider";
+import {ComponentRecipes} from "../components/framework/componentRecipes";
 
 export interface IDateFilterParams extends IFilterParams {
     comparator?: IDateComparatorFunc;
@@ -25,8 +25,8 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     private dateToComponent:IDateComp;
     private dateFromComponent:IDateComp;
 
-    @Autowired('componentProvider')
-    private componentProvider:ComponentProvider;
+    @Autowired('componentRecipes')
+    private componentRecipes:ComponentRecipes;
 
     @QuerySelector('#filterDateFromPanel')
     private eDateFromPanel: HTMLElement;
@@ -66,8 +66,8 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
             onDateChanged: this.onDateChanged.bind(this)
         };
 
-        this.dateToComponent = this.componentProvider.newDateComponent(dateComponentParams);
-        this.dateFromComponent = this.componentProvider.newDateComponent(dateComponentParams);
+        this.dateToComponent = this.componentRecipes.newDateComponent(dateComponentParams);
+        this.dateFromComponent = this.componentRecipes.newDateComponent(dateComponentParams);
 
 
         this.eDateFromPanel.appendChild(this.dateFromComponent.getGui());

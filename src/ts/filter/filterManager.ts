@@ -14,7 +14,6 @@ import {Events} from "../events";
 import {IFilter, IFilterParams, IDoesFilterPassParams, IFilterComp} from "../interfaces/iFilter";
 import {GetQuickFilterTextParams} from "../entities/colDef";
 import {DateFilter} from "./dateFilter";
-import {ComponentProvider} from "../componentProvider";
 
 @Bean('filterManager')
 export class FilterManager {
@@ -30,7 +29,6 @@ export class FilterManager {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('enterprise') private enterprise: boolean;
     @Autowired('context') private context: Context;
-    @Autowired('componentProvider') private componentProvider: ComponentProvider;
 
     public static QUICK_FILTER_SEPARATOR = '\n';
 

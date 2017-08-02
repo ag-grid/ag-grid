@@ -14,10 +14,10 @@ import {HeaderWrapperComp} from "./header/headerWrapperComp";
 import {HeaderGroupWrapperComp} from "./headerGroup/headerGroupWrapperComp";
 import {FilterManager} from "../filter/filterManager";
 import {BaseFilter} from "../filter/baseFilter";
-import {ComponentProvider} from "../componentProvider";
 import {IFloatingFilterWrapperComp} from "../filter/floatingFilterWrapper";
 import {IComponent} from "../interfaces/iComponent";
 import {FloatingFilterChange, IFloatingFilterParams} from "../filter/floatingFilter";
+import {ComponentRecipes} from "../components/framework/componentRecipes";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -30,7 +30,7 @@ export class HeaderRowComp extends Component {
     @Autowired('context') private context: Context;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('componentProvider') private componentProvider: ComponentProvider;
+    @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
 
     private dept: number;
     private pinned: string;
@@ -246,7 +246,7 @@ export class HeaderRowComp extends Component {
     private createFloatingFilterWrapper(column: Column):IFloatingFilterWrapperComp<any, any, any, any> {
         let floatingFilterParams: IFloatingFilterParams<any, any> = this.createFloatingFilterParams(column);
 
-        let floatingFilterWrapper: IFloatingFilterWrapperComp<any, any, any, any> = this.componentProvider.newFloatingFilterWrapperComponent(
+        let floatingFilterWrapper: IFloatingFilterWrapperComp<any, any, any, any> = this.componentRecipes.newFloatingFilterWrapperComponent(
             column,
             <null>floatingFilterParams
         );
