@@ -4,7 +4,7 @@ const header = require('gulp-header');
 const merge = require('merge2');
 const pkg = require('./package.json');
 const tsConfig = 'tsconfig.json';
-const rename = 'gulp-rename';
+const rename = require('gulp-rename');
 
 const headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
