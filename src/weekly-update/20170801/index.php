@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "ag-Grid Weekly Update 1st August 2017";
-$pageDescription = "ag-Grid Weekly Update 1st August 2017";
+$pageTitle = "ag-Grid Weekly Update 3rd August 2017";
+$pageDescription = "ag-Grid Weekly Update 3rd August 2017";
 $pageKeyboards = "ag-Grid Weekly Update";
 
 include('../../includes/mediaHeader.php');
@@ -115,14 +115,6 @@ include('../../includes/mediaHeader.php');
         </h3>
         <hr/>
         
-        <div class="weekly-news-image-right" style="width: unset;">
-            <img src="./images/petyo.png"
-                 style="border: 1px solid #eee; padding: 10px; margin-bottom: 10px;"/>
-            <br/>
-            Petyo Ivanov joins the team.
-        </div>
-
-
         <p>
             We are delighted to welcome Petyo Ivanov to the team. Petyo joins having worked as Kendo UI Product Manager
             for Progress, which is very relevant experience for ag-Grid. He is currently looking at the ag-Grid themes,

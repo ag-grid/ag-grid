@@ -57,10 +57,10 @@ include('../includes/mediaHeader.php');
 
     <a href="./20170801/">
         <div class="weekly-news-title">
-            New Team Member - React Fiber Update
+            Welcome Petyo Ivanov
         </div>
         <div class="weekly-news-sub-title">
-            Customer Experience Team, 1st August, 2017
+            Customer Experience Team, 3rd August, 2017
         </div>
     </a>
 

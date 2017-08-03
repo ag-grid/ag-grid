@@ -29,10 +29,15 @@
 </style>
 
 <div class="news-box">
-    <div class="news-header">1st August 2017</div>
+    <div class="news-header">3rd August 2017</div>
+    <div style="float: left; margin-right: 10px;">
+        <a href="../weekly-update/20170801/">
+            <img src="../weekly-update/20170801/images/petyo_200.png" style="width: 200px;"/>
+        </a>
+    </div>
     <div style="padding-top: 5px; text-align: center;">
         <a href="../weekly-update/20170801/">
-            ag-Grid Update
+            Welcome Petyo Ivanov
         </a>
     </div>
 </div>
