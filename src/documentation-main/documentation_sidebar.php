@@ -199,7 +199,7 @@
         for full release details.
     </div>
 </div>
-
+<!-- 
 <div class="news-box">
     <div class="news-header">20th Jun 2017</div>
     <div>
@@ -288,7 +288,7 @@
         See the <a href="../change-log/changeLogIndex.php">Change Log</a>
         for full release details.
     </div>
-</div>
+</div> -->
 
 
 <!-- <div class="news-box">
