@@ -82,6 +82,9 @@ include '../documentation-main/documentation_header.php';
         expandAll: 'laOpen-em-up',
         collapseAll: 'laClose-em-up',
         toolPanel: 'laTool Panelo',
+        export: 'laExporto',
+        csvExport: 'la CSV Exportp',
+        excelExport: 'la Excel Exporto',
 
         <span class="codeComment">// enterprise menu pinning</span>
         pinLeft: 'laPin <<',
