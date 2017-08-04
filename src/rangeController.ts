@@ -20,7 +20,8 @@ import {
     AddRangeSelectionParams,
     GridRow,
     Column,
-    GridOptionsWrapper
+    GridOptionsWrapper,
+    RangeSelectionChangedEvent
 } from "ag-grid/main";
 
 @Bean('rangeController')
@@ -242,7 +243,12 @@ export class RangeController implements IRangeController {
     }
 
     private dispatchChangedEvent(finished: boolean, started: boolean): void {
-        this.eventService.dispatchEvent(Events.EVENT_RANGE_SELECTION_CHANGED, {finished: finished, started: started});
+        let event: RangeSelectionChangedEvent = {
+            type: Events.EVENT_RANGE_SELECTION_CHANGED,
+            finished: finished,
+            started: started
+        };
+        this.eventService.dispatchEvent(event.type, event);
     }
 
     public onDragStop(): void {
