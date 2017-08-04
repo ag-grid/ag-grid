@@ -13,7 +13,9 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+    <h2>Version NEXT</h2>
 
+    <li>The event 'itemsAdded' didn't make sense any more since introducing transaction updates in v11. So now the grid fires rowDataUpdated instead.</li>
 
     <h2>Version 12.0.x</h2>
     <h3>Version 12.0.2 [26-JUL-2017]</h3>
