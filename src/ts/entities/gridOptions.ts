@@ -10,6 +10,14 @@ import {GridCellDef} from "./gridCell";
 import {IDateComp} from "../rendering/dateComponent";
 import {IEnterpriseDatasource} from "../interfaces/iEnterpriseDatasource";
 import {CsvExportParams, ProcessCellForExportParams} from "../exportParams";
+import {
+    ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent,
+    ColumnPivotModeChangedEvent, ColumnResizedEvent,
+    ColumnRowGroupChangedEvent,
+    ColumnValueChangedEvent, ColumnVisibleEvent, DisplayedColumnsChangedEvent,
+    GridColumnsChangedEvent,
+    NewColumnsLoadedEvent, VirtualColumnsChangedEvent
+} from "../events";
 import {IComponent} from "../interfaces/iComponent";
 
 /****************************************************************
@@ -254,20 +262,20 @@ export interface GridOptions {
      ****************************************************************/
 
     // events
-    onColumnEverythingChanged?(event?: any): void;
-    onNewColumnsLoaded?(event?: any): void;
-    onColumnPivotModeChanged?(event?: any): void;
-    onColumnRowGroupChanged?(event?: any): void;
-    onColumnPivotChanged?(event?: any): void;
-    onGridColumnsChanged?(event?: any): void;
-    onColumnValueChanged?(event?: any): void;
-    onColumnMoved?(event?: any): void;
-    onColumnVisible?(event?: any): void;
-    onColumnPinned?(event?: any): void;
-    onColumnGroupOpened?(event?: any): void;
-    onColumnResized?(event?: any): void;
-    onDisplayedColumnsChanged?(event?: any): void;
-    onVirtualColumnsChanged?(event?: any): void;
+    onColumnEverythingChanged?(event?: ColumnEverythingChangedEvent): void;
+    onNewColumnsLoaded?(event?: NewColumnsLoadedEvent): void;
+    onColumnPivotModeChanged?(event?: ColumnPivotModeChangedEvent): void;
+    onColumnRowGroupChanged?(event?: ColumnRowGroupChangedEvent): void;
+    onColumnPivotChanged?(event?: ColumnPivotChangedEvent): void;
+    onGridColumnsChanged?(event?: GridColumnsChangedEvent): void;
+    onColumnValueChanged?(event?: ColumnValueChangedEvent): void;
+    onColumnMoved?(event?: ColumnMovedEvent): void;
+    onColumnVisible?(event?: ColumnVisibleEvent): void;
+    onColumnPinned?(event?: ColumnPinnedEvent): void;
+    onColumnGroupOpened?(event?: ColumnGroupOpenedEvent): void;
+    onColumnResized?(event?: ColumnResizedEvent): void;
+    onDisplayedColumnsChanged?(event?: DisplayedColumnsChangedEvent): void;
+    onVirtualColumnsChanged?(event?: VirtualColumnsChangedEvent): void;
     onRowGroupOpened?(event?: any): void;
     onRowDataChanged?(event?: any): void;
     onPinnedRowDataChanged?(event?: any): void;
@@ -294,13 +302,9 @@ export interface GridOptions {
     onCellFocused?(event?: any): void;
     onRowSelected?(event?: any): void;
     onSelectionChanged?(event?: any): void;
-    onBeforeFilterChanged?(event?: any): void;
     onFilterChanged?(event?: any): void;
-    onAfterFilterChanged?(event?: any): void;
     onFilterModified?(event?: any): void;
-    onBeforeSortChanged?(): void;
     onSortChanged?(): void;
-    onAfterSortChanged?(): void;
     onVirtualRowRemoved?(event?: any): void;
     onRowClicked?(event?: any): void;
     onRowDoubleClicked?(event?: any): void;
@@ -311,13 +315,7 @@ export interface GridOptions {
     onDragStopped?(event?: any): void;
     onItemsAdded?(event?: any): void;
     onItemsRemoved?(event?: any): void;
-
-
-
-
-    onPaginationReset?(event?: any): void;
-    onPaginationPageLoaded?(event?: any): void;
-    onPaginationPageRequested?(event?: any): void;
+    onPaginationChanged?(event?: any): void;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *

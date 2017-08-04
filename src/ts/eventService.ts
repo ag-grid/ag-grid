@@ -103,7 +103,7 @@ export class EventService implements IEventEmitter {
     // type is not in other types of events???
     public dispatchEvent(eventType: string, event?: any): void {
         if (!event) {
-            event = {};
+            event = {type: eventType};
         }
         // console.log(`dispatching ${eventType}: ${event}`);
         this.dispatchToListeners(eventType, event, true);
