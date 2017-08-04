@@ -28,7 +28,8 @@ import {
     Events,
     RowNode,
     Column,
-    Constants
+    Constants,
+    FlashCellsEvent
 } from "ag-grid/main";
 import {RangeController} from "./rangeController";
 
@@ -370,7 +371,8 @@ export class ClipboardService implements IClipboardService {
 
     private dispatchFlashCells(cellsToFlash: {}): void {
         setTimeout( ()=> {
-            this.eventService.dispatchEvent(Events.EVENT_FLASH_CELLS, {cells: cellsToFlash});
+            let event: FlashCellsEvent = {type: Events.EVENT_FLASH_CELLS, cells: cellsToFlash};
+            this.eventService.dispatchEvent(event.type, event);
         }, 0);
     }
 

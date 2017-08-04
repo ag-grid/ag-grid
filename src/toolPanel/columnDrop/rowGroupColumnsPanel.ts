@@ -10,7 +10,8 @@ import {
     PostConstruct,
     Utils,
     Events,
-    Column
+    Column,
+    ColumnRowGroupChangeRequestEvent
 } from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
@@ -67,7 +68,8 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
 
     protected updateColumns(columns:Column[]) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST, {columns: columns});
+            let event: ColumnRowGroupChangeRequestEvent = {type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST, columns: columns};
+            this.eventService.dispatchEvent(event.type, event);
         } else {
             this.columnController.setRowGroupColumns(columns);
         }
