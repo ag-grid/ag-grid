@@ -103,9 +103,9 @@ var gridOptions = {
         countryCellRenderer: CountryCellRenderer,
         languageCellRenderer: languageCellRenderer,
         personFloatingFilterComponent: PersonFloatingFilterComponent,
-        countryFloatingFilterComponent: CountryFloatingFilterComponent,
+        countryFloatingFilterComponent: CountryFloatingFilterComponent
         // cellRenderer: function (params) {return params.node.group ? params.value : "HAHA: " + params.value},
-        innerRenderer: function (params) {return "INNER: " + params.value}
+        // innerRenderer: function (params) {return "INNER: " + params.value}
     },
     defaultColDef: {
         minWidth: 50
