@@ -68,6 +68,14 @@ include '../documentation-main/documentation_header.php';
             <td>A cells value within a row has changed.</td>
         </tr>
         <tr>
+            <th>cellEditingStarted</th>
+            <td>Editing a cell has started.</td>
+        </tr>
+        <tr>
+            <th>cellEditingStopped</th>
+            <td>Editing a cell has stopped.</td>
+        </tr>
+        <tr>
             <th>rowEditingStarted</th>
             <td>Editing a row has started (when row editing is enabled). When row editing, this event will be fired
                 once, and <code>cellEditingStarted</code> will be fired for each cell being edited.
@@ -78,22 +86,6 @@ include '../documentation-main/documentation_header.php';
             <td>Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired
                 once, and <code>cellEditingStopped</code> will be fired for each cell being edited.
             </td>
-        </tr>
-        <tr>
-            <th>cellEditingStarted</th>
-            <td>Editing a cell has started.</td>
-        </tr>
-        <tr>
-            <th>cellEditingStopped</th>
-            <td>Editing a cell has stopped.</td>
-        </tr>
-        <tr>
-            <th>itemsAdded</th>
-            <td>Client added a new row.</td>
-        </tr>
-        <tr>
-            <th>itemsRemoved</th>
-            <td>Client removed a row.</td>
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
