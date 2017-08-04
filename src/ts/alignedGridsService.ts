@@ -176,7 +176,7 @@ export class AlignedGridsService {
         let columnIds = this.getColumnIds(colEvent);
         let masterColumns = this.getMasterColumns(colEvent);
 
-        switch (event.type) {
+        switch (colEvent.type) {
             case Events.EVENT_COLUMN_MOVED:
                 let movedEvent = <ColumnMovedEvent> colEvent;
                 this.logger.log('onColumnEvent-> processing '+event+' toIndex = ' + movedEvent.toIndex);

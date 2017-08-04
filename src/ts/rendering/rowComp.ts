@@ -5,7 +5,11 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnController} from "../columnController/columnController";
 import {RowRenderer} from "./rowRenderer";
 import {Column} from "../entities/column";
-import {Events} from "../events";
+import {
+    Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent,
+    RowValueChangedEvent,
+    VirtualRowRemovedEvent
+} from "../events";
 import {EventService} from "../eventService";
 import {Autowired, Context, PostConstruct} from "../context/context";
 import {FocusedCellController} from "../focusedCellController";
@@ -404,15 +408,23 @@ export class RowComp extends BeanStub {
         });
         if (this.editingRow) {
             if (!cancel) {
-                let event = {
-                    node: this.rowNode,
-                    data: this.rowNode.data,
-                    api: this.gridOptionsWrapper.getApi(),
-                    context: this.gridOptionsWrapper.getContext()
-                };
-                this.mainEventService.dispatchEvent(Events.EVENT_ROW_VALUE_CHANGED, event);
+                let event: RowValueChangedEvent = this.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
+                this.mainEventService.dispatchEvent(event.type, event);
             }
             this.setEditingRow(false);
+        }
+    }
+
+    private createRowEvent(type: string, domEvent?: Event): RowEvent {
+        return {
+            type: type,
+            node: this.rowNode,
+            data: this.rowNode.data,
+            rowIndex: this.rowNode.rowIndex,
+            context: this.gridOptionsWrapper.getContext(),
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            event: domEvent
         }
     }
 
@@ -434,8 +446,12 @@ export class RowComp extends BeanStub {
     private setEditingRow(value: boolean): void {
         this.editingRow = value;
         this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-editing', value) );
-        let event = value ? Events.EVENT_ROW_EDITING_STARTED : Events.EVENT_ROW_EDITING_STOPPED;
-        this.mainEventService.dispatchEvent(event, {node: this.rowNode});
+
+        let event: RowEvent = value ?
+            <RowEditingStartedEvent> this.createRowEvent(Events.EVENT_ROW_EDITING_STARTED)
+            : <RowEditingStoppedEvent> this.createRowEvent(Events.EVENT_ROW_EDITING_STOPPED);
+
+        this.mainEventService.dispatchEvent(event.type, event);
     }
 
     private angular1Compile(element: Element): void {
@@ -908,8 +924,8 @@ export class RowComp extends BeanStub {
             this.renderedRowEventService.dispatchEvent(RowComp.EVENT_ROW_REMOVED, {node: this.rowNode});
         }
 
-        let event = {node: this.rowNode, rowIndex: this.rowNode.rowIndex};
-        this.mainEventService.dispatchEvent(Events.EVENT_VIRTUAL_ROW_REMOVED, event);
+        let event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
+        this.mainEventService.dispatchEvent(event.type, event);
     }
 
     private destroyScope(): void {
@@ -1063,22 +1079,22 @@ export class RowComp extends BeanStub {
         }
     }
 
-    private createParams(): any {
-        let params = {
+    private createEvent(event: any, eventSource: any): any {
+
+        let agEvent = {
             node: this.rowNode,
             data: this.rowNode.data,
             rowIndex: this.rowNode.rowIndex,
             $scope: this.scope,
             context: this.gridOptionsWrapper.getContext(),
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridOptionsWrapper.getApi(),
+            event: <any> null,
+            eventSource: <any> null
         };
-        return params;
-    }
 
-    private createEvent(event: any, eventSource: any): any {
-        let agEvent = this.createParams();
         agEvent.event = event;
         agEvent.eventSource = eventSource;
+
         return agEvent;
     }
 
@@ -1147,20 +1163,35 @@ export class RowComp extends BeanStub {
         }
     }
 
-    private onRowDblClick(event: MouseEvent): void {
-        let agEvent = this.createEvent(event, this);
+    private createRowEventWithSource(type: string, domEvent: Event): RowEvent {
+        let event = this.createRowEvent(type, domEvent);
+        // when first developing this, we included the rowComp in the event.
+        // this seems very weird. so when introducing the event types, i left the 'source'
+        // out of the type, and just include the source in the two places where this event
+        // was fired (rowClicked and rowDoubleClicked). it doesn't make sense for any
+        // users to be using this, as the rowComp isn't an object we expose, so would be
+        // very surprising if a user was using it.
+        (<any>event).source = this;
+        return event
+    }
+
+    private onRowDblClick(mouseEvent: MouseEvent): void {
+
+        let agEvent: RowDoubleClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_DOUBLE_CLICKED, mouseEvent);
+
         this.mainEventService.dispatchEvent(Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
     }
 
-    public onRowClick(event: MouseEvent) {
+    public onRowClick(mouseEvent: MouseEvent) {
 
-        let agEvent = this.createEvent(event, this);
+        let agEvent: RowClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_CLICKED, mouseEvent);
+
         this.mainEventService.dispatchEvent(Events.EVENT_ROW_CLICKED, agEvent);
 
         // ctrlKey for windows, metaKey for Apple
-        let multiSelectKeyPressed = event.ctrlKey || event.metaKey;
+        let multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
 
-        let shiftKeyPressed = event.shiftKey;
+        let shiftKeyPressed = mouseEvent.shiftKey;
 
         // we do not allow selecting groups by clicking (as the click here expands the group)
         // so return if it's a group row

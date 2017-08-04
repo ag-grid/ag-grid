@@ -34,7 +34,7 @@ const headerTemplate = ['/**',
 const dtsHeaderTemplate =
     '// Type definitions for <%= pkg.name %> v<%= pkg.version %>\n' +
     '// Project: <%= pkg.homepage %>\n' +
-    '// Definitions by: Niall Crosby <https://github.com/ceolter/>\n';
+    '// Definitions by: Niall Crosby <https://github.com/ag-grid/>\n';
 
 gulp.task('default', ['webpack-all']);
 gulp.task('release', ['webpack-all']);

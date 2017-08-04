@@ -10,7 +10,7 @@ import {NumberFilter} from "./numberFilter";
 import {Bean, PreDestroy, Autowired, PostConstruct, Context} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {EventService} from "../eventService";
-import {Events} from "../events";
+import {Events, FilterChangedEvent, FilterModifiedEvent} from "../events";
 import {IFilter, IFilterParams, IDoesFilterPassParams, IFilterComp} from "../interfaces/iFilter";
 import {GetQuickFilterTextParams} from "../entities/colDef";
 import {DateFilter} from "./dateFilter";
@@ -213,7 +213,8 @@ export class FilterManager {
             }
         });
 
-        this.eventService.dispatchEvent(Events.EVENT_FILTER_CHANGED);
+        let event: FilterChangedEvent = {type: Events.EVENT_FILTER_CHANGED};
+        this.eventService.dispatchEvent(event.type, event);
     }
 
     public isQuickFilterPresent(): boolean {
@@ -399,7 +400,10 @@ export class FilterManager {
 
     private createParams(filterWrapper: FilterWrapper): IFilterParams {
         let filterChangedCallback = this.onFilterChanged.bind(this);
-        let filterModifiedCallback = () => this.eventService.dispatchEvent(Events.EVENT_FILTER_MODIFIED);
+
+        let event: FilterModifiedEvent = {type: Events.EVENT_FILTER_MODIFIED};
+        let filterModifiedCallback = () => this.eventService.dispatchEvent(event.type, event);
+
         let doesRowPassOtherFilters = this.doesRowPassOtherFilters.bind(this, filterWrapper.filter);
 
         let colDef = filterWrapper.column.getColDef();

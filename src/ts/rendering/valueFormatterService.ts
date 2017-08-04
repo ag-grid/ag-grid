@@ -16,10 +16,11 @@ export class ValueFormatterService {
                        rowNode: RowNode,
                        $scope: any,
                        value: any): string {
+
         let formatter: (value:any)=>string;
         let colDef = column.getColDef();
         // if floating, give preference to the floating formatter
-        if (rowNode.rowPinned) {
+        if (rowNode && rowNode.rowPinned) {
             formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
         } else {
             formatter = colDef.valueFormatter;
@@ -29,7 +30,7 @@ export class ValueFormatterService {
             let params: ValueFormatterParams = {
                 value: value,
                 node: rowNode,
-                data: rowNode.data,
+                data: rowNode ? rowNode.data : null,
                 colDef: column.getColDef(),
                 column: column,
                 api: this.gridOptionsWrapper.getApi(),

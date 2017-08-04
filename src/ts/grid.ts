@@ -35,7 +35,7 @@ import {SortStage} from "./rowModels/inMemory/sortStage";
 import {FlattenStage} from "./rowModels/inMemory/flattenStage";
 import {FocusService} from "./misc/focusService";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
-import {Events} from "./events";
+import {Events, GridReadyEvent} from "./events";
 import {InfiniteRowModel} from "./rowModels/infinite/infiniteRowModel";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
@@ -224,11 +224,12 @@ export class Grid {
 
     private dispatchGridReadyEvent(gridOptions: GridOptions): void {
         let eventService: EventService = this.context.getBean('eventService');
-        let readyEvent = {
+        let readyEvent: GridReadyEvent = {
+            type: Events.EVENT_GRID_READY,
             api: gridOptions.api,
             columnApi: gridOptions.columnApi
         };
-        eventService.dispatchEvent(Events.EVENT_GRID_READY, readyEvent);
+        eventService.dispatchEvent(readyEvent.type, readyEvent);
     }
 
     private getRowModelClass(gridOptions: GridOptions): any {

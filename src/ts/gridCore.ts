@@ -9,7 +9,7 @@ import {GridPanel} from "./gridPanel/gridPanel";
 import {Logger, LoggerFactory} from "./logger";
 import {Constants} from "./constants";
 import {PopupService} from "./widgets/popupService";
-import {Events} from "./events";
+import {Events, GridSizeChangedEvent} from "./events";
 import {Utils as _} from "./utils";
 import {BorderLayout} from "./layout/borderLayout";
 import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional, Context} from "./context/context";
@@ -329,11 +329,12 @@ export class GridCore {
         // both of the two below should be done in gridPanel, the gridPanel should register 'resize' to the panel
         if (sizeChanged) {
             this.rowRenderer.redrawAfterScroll();
-            let event = {
+            let event: GridSizeChangedEvent = {
+                type: Events.EVENT_GRID_SIZE_CHANGED,
                 clientWidth: this.eRootPanel.getGui().clientWidth,
                 clientHeight: this.eRootPanel.getGui().clientHeight
             };
-            this.eventService.dispatchEvent(Events.EVENT_GRID_SIZE_CHANGED, event);
+            this.eventService.dispatchEvent(event.type, event);
         }
     }
 }

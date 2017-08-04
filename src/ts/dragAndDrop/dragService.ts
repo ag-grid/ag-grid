@@ -2,7 +2,7 @@ import {Bean, PreDestroy, Autowired, PostConstruct, Optional} from "../context/c
 import {LoggerFactory, Logger} from "../logger";
 import {Utils as _} from "../utils";
 import {EventService} from "../eventService";
-import {Events} from "../events";
+import {DragStartedEvent, DragStoppedEvent, Events} from "../events";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
@@ -187,7 +187,10 @@ export class DragService {
             } else {
                 // alert(`started`);
                 this.dragging = true;
-                this.eventService.dispatchEvent(Events.EVENT_DRAG_STARTED);
+                let event: DragStartedEvent = {
+                    type: Events.EVENT_DRAG_STARTED
+                };
+                this.eventService.dispatchEvent(event.type, event);
                 this.currentDragParams.onDragStart(startEvent);
                 this.setNoSelectToBody(true);
             }
@@ -247,7 +250,10 @@ export class DragService {
         if (this.dragging) {
             this.dragging = false;
             this.currentDragParams.onDragStop(eventOrTouch);
-            this.eventService.dispatchEvent(Events.EVENT_DRAG_STOPPED);
+            let event: DragStoppedEvent = {
+                type: Events.EVENT_DRAG_STOPPED
+            };
+            this.eventService.dispatchEvent(event.type, event);
         }
 
         this.setNoSelectToBody(false);

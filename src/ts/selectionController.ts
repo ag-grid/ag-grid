@@ -5,7 +5,7 @@ import {Qualifier} from "./context/context";
 import {Logger} from "./logger";
 import {LoggerFactory} from "./logger";
 import {EventService} from "./eventService";
-import {Events} from "./events";
+import {Events, SelectionChangedEvent} from "./events";
 import {Autowired} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
@@ -259,7 +259,11 @@ export class SelectionController {
             this.updateGroupsFromChildrenSelections();
         }
 
-        this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
+        let event: SelectionChangedEvent = {
+            type: Events.EVENT_SELECTION_CHANGED
+        };
+
+        this.eventService.dispatchEvent(event.type, event);
     }
 
     public selectAllRowNodes(justFiltered = false) {
@@ -281,7 +285,10 @@ export class SelectionController {
             this.updateGroupsFromChildrenSelections();
         }
 
-        this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
+        let event: SelectionChangedEvent = {
+            type: Events.EVENT_SELECTION_CHANGED
+        };
+        this.eventService.dispatchEvent(event.type, event);
     }
 
     // Deprecated method

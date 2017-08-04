@@ -1,5 +1,5 @@
 import {EventService} from "../eventService";
-import {Events} from "../events";
+import {Events, RowEvent, RowGroupOpenedEvent, RowSelectedEvent, SelectionChangedEvent} from "../events";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {SelectionController} from "../selectionController";
 import {ColDef} from "./colDef";
@@ -299,8 +299,22 @@ export class RowNode implements IEventEmitter {
             this.eventService.dispatchEvent(RowNode.EVENT_EXPANDED_CHANGED);
         }
 
-        let event: any = {node: this};
+        let event: RowGroupOpenedEvent = this.createRowEvent(Events.EVENT_ROW_GROUP_OPENED);
+
         this.mainEventService.dispatchEvent(Events.EVENT_ROW_GROUP_OPENED, event)
+    }
+
+    private createRowEvent(type: string): RowEvent {
+        let event: RowGroupOpenedEvent = {
+            type: type,
+            node: this,
+            data: this.data,
+            rowIndex: this.rowIndex,
+            context: this.gridOptionsWrapper.getContext(),
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+        return event;
     }
 
     private dispatchLocalEvent(eventName: string, event?: any): void {
@@ -520,7 +534,10 @@ export class RowNode implements IEventEmitter {
 
                 // this is the very end of the 'action node', so we are finished all the updates,
                 // include any parent / child changes that this method caused
-                this.mainEventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
+                let event: SelectionChangedEvent = {
+                    type: Events.EVENT_SELECTION_CHANGED
+                };
+                this.mainEventService.dispatchEvent(event.type, event);
             }
 
             // so if user next does shift-select, we know where to start the selection from
@@ -556,7 +573,10 @@ export class RowNode implements IEventEmitter {
             this.calculatedSelectedForAllGroupNodes();
         }
 
-        this.mainEventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
+        let event: SelectionChangedEvent = {
+            type: Events.EVENT_SELECTION_CHANGED
+        };
+        this.mainEventService.dispatchEvent(event.type, event);
 
         return updatedCount;
     }
@@ -597,7 +617,7 @@ export class RowNode implements IEventEmitter {
             this.dispatchLocalEvent(RowNode.EVENT_ROW_SELECTED);
         }
 
-        let event: any = {node: this};
+        let event: RowSelectedEvent = this.createRowEvent(Events.EVENT_ROW_SELECTED);
         this.mainEventService.dispatchEvent(Events.EVENT_ROW_SELECTED, event);
 
         return true;

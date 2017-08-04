@@ -1,6 +1,6 @@
 import {EventService} from "../eventService";
 import {Autowired, Bean, PostConstruct} from "../context/context";
-import {Events, CellEvent} from "../events";
+import {Events, CellEvent, ColumnHoverChangedEvent} from "../events";
 import {Column} from "../entities/column";
 import {BeanStub} from "../context/beanStub";
 
@@ -19,12 +19,14 @@ export class ColumnHoverService extends BeanStub {
 
     private onCellMouseOver(cellEvent:CellEvent): void {
         this.currentlySelectedColumn = cellEvent.column;
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_HOVER_CHANGED);
+        let event: ColumnHoverChangedEvent = {type: Events.EVENT_COLUMN_HOVER_CHANGED};
+        this.eventService.dispatchEvent(event.type, event);
     }
 
     private onCellMouseOut(): void {
         this.currentlySelectedColumn = null;
-        this.eventService.dispatchEvent(Events.EVENT_COLUMN_HOVER_CHANGED);
+        let event: ColumnHoverChangedEvent = {type: Events.EVENT_COLUMN_HOVER_CHANGED};
+        this.eventService.dispatchEvent(event.type, event);
     }
 
     public isHovered(column:Column): boolean{

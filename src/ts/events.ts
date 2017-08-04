@@ -142,11 +142,9 @@ export class Events {
     public static EVENT_COLUMN_PIVOT_CHANGE_REQUEST = 'columnPivotChangeRequest';
     public static EVENT_COLUMN_VALUE_CHANGE_REQUEST = 'columnValueChangeRequest';
     public static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
-
-
 }
 
-export interface ModelUpdatedEvent {
+export interface ModelUpdatedEvent extends AgEvent {
     /** If true, the grid will try and animate the rows to the new positions */
     animate: boolean;
     /** If true, the grid has new data loaded, eg user called setRowData(), otherwise
@@ -158,20 +156,6 @@ export interface ModelUpdatedEvent {
     newData: boolean;
     /** True when pagination and a new page is navigated to. */
     newPage: boolean;
-}
-
-export interface CellEvent {
-    node: RowNode;
-    data: any;
-    value: any;
-    rowIndex: number;
-    column: Column;
-    colDef: ColDef;
-    $scope: any;
-    context: any;
-    api: GridApi;
-    columnApi: ColumnApi;
-    event: Event;
 }
 
 export interface AgEvent {
@@ -222,3 +206,96 @@ export interface ColumnVisibleEvent extends ColumnEvent {
 export interface ColumnPinnedEvent extends ColumnEvent {
     pinned: string;
 }
+
+export interface RowEvent extends AgEvent {
+    node: RowNode;
+    data: any;
+    rowIndex: number;
+    context: any;
+    api: GridApi;
+    columnApi: ColumnApi;
+    event?: Event;
+}
+
+export interface CellEvent extends RowEvent {
+    column: Column;
+    colDef: ColDef;
+    value: any;
+}
+
+export interface CellClickedEvent extends CellEvent {}
+
+export interface CellDoubleClickedEvent extends CellEvent {}
+
+export interface CellMouseOverEvent extends CellEvent {}
+
+export interface CellMouseOutEvent extends CellEvent {}
+
+export interface CellContextMenuEvent extends CellEvent {}
+
+export interface RowGroupOpenedEvent extends RowEvent {}
+
+export interface RowDataChangedEvent extends AgEvent {}
+
+export interface RowDataUpdatedEvent extends AgEvent {}
+
+export interface PinnedRowDataChangedEvent extends AgEvent {}
+
+export interface RangeSelectionChangedEvent extends AgEvent {
+    finished: boolean;
+    started: boolean;
+}
+
+export interface RowValueChangedEvent extends RowEvent {}
+
+export interface CellFocusedEvent extends AgEvent {
+    rowIndex: number;
+    column: Column;
+    floating: string;
+    forceBrowserFocus: boolean;
+}
+
+export interface RowSelectedEvent extends RowEvent {}
+
+export interface SelectionChangedEvent extends AgEvent {}
+
+export interface ColumnHoverChangedEvent extends AgEvent {}
+
+export interface FilterChangedEvent extends AgEvent {}
+
+export interface FilterModifiedEvent extends AgEvent {}
+
+export interface SortChangedEvent extends AgEvent {}
+
+export interface VirtualRowRemovedEvent extends RowEvent {}
+
+export interface RowClickedEvent extends RowEvent {}
+
+export interface RowDoubleClickedEvent extends RowEvent {}
+
+export interface GridReadyEvent extends AgEvent {
+    api: GridApi;
+    columnApi: ColumnApi;
+}
+
+export interface GridSizeChangedEvent extends AgEvent {
+    clientWidth: number;
+    clientHeight: number;
+}
+
+export interface ViewportChangedEvent extends AgEvent {
+    firstRow: number;
+    lastRow: number;
+}
+
+export interface DragStartedEvent extends AgEvent {
+}
+
+export interface DragStoppedEvent extends AgEvent {
+}
+
+export interface RowEditingStartedEvent extends RowEvent {}
+export interface RowEditingStoppedEvent extends RowEvent {}
+
+// export interface CellEditingStartedEvent extends RowEvent {}
+// export interface CellEditingStoppedEvent extends RowEvent {}

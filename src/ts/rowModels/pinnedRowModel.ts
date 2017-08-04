@@ -2,10 +2,9 @@
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {RowNode} from "../entities/rowNode";
 import {Bean, Context} from "../context/context";
-import {Qualifier} from "../context/context";
 import {EventService} from "../eventService";
 import {Autowired} from "../context/context";
-import {Events} from "../events";
+import {Events, PinnedRowDataChangedEvent} from "../events";
 import {PostConstruct} from "../context/context";
 import {Constants} from "../constants";
 import {Utils as _} from '../utils';
@@ -54,12 +53,14 @@ export class PinnedRowModel {
 
     public setPinnedTopRowData(rowData: any[]): void {
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
-        this.eventService.dispatchEvent(Events.EVENT_PINNED_ROW_DATA_CHANGED);
+        let event: PinnedRowDataChangedEvent = {type: Events.EVENT_PINNED_ROW_DATA_CHANGED};
+        this.eventService.dispatchEvent(event.type, event);
     }
 
     public setPinnedBottomRowData(rowData: any[]): void {
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
-        this.eventService.dispatchEvent(Events.EVENT_PINNED_ROW_DATA_CHANGED);
+        let event: PinnedRowDataChangedEvent = {type: Events.EVENT_PINNED_ROW_DATA_CHANGED};
+        this.eventService.dispatchEvent(event.type, event);
     }
 
     private createNodesFromData(allData: any[], isTop: boolean): RowNode[] {

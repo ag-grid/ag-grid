@@ -4,6 +4,7 @@ import {Utils as _} from '../../utils';
 import {Constants} from "../../constants";
 import {Autowired} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {ValueFormatterService} from "../valueFormatterService";
 
 export class SelectCellEditor extends Component implements ICellEditorComp {
 
@@ -11,6 +12,7 @@ export class SelectCellEditor extends Component implements ICellEditorComp {
     private eSelect: HTMLSelectElement;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
     constructor() {
         super('<div class="ag-cell-edit-input"><select class="ag-cell-edit-input"/></div>');
@@ -24,10 +26,15 @@ export class SelectCellEditor extends Component implements ICellEditorComp {
             console.log('ag-Grid: no values found for select cellEditor');
             return;
         }
+
         params.values.forEach( (value: any)=> {
             let option = document.createElement('option');
             option.value = value;
-            option.text = value;
+
+            let valueFormatted = this.valueFormatterService.formatValue(params.column, null, null, value);
+            let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
+            option.text = valueFormattedExits ? valueFormatted : value;
+
             if (params.value === value) {
                 option.selected = true;
             }

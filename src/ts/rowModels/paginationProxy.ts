@@ -92,16 +92,22 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         return this.rowModel.isLastRowFound();
     }
 
-    private onModelUpdated(refreshEvent?: ModelUpdatedEvent): void {
+    private onModelUpdated(modelUpdatedEvent?: ModelUpdatedEvent): void {
         this.setIndexesAndBounds();
-        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_CHANGED, refreshEvent);
+        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_CHANGED, modelUpdatedEvent);
     }
 
     public goToPage(page: number): void {
         if (!this.active) { return; }
         if (this.currentPage === page) { return; }
         this.currentPage = page;
-        let event: ModelUpdatedEvent = { animate: false, keepRenderedRows: false, newData: false, newPage: true };
+        let event: ModelUpdatedEvent = {
+            type: Events.EVENT_MODEL_UPDATED,
+            animate: false,
+            keepRenderedRows: false,
+            newData: false,
+            newPage: true
+        };
         this.onModelUpdated(event);
     }
 

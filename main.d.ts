@@ -1,6 +1,6 @@
 // Type definitions for ag-grid v12.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { BalancedColumnTreeBuilder } from "./dist/lib/columnController/balancedColumnTreeBuilder";
 export { ColumnController } from "./dist/lib/columnController/columnController";
 export { ColumnKeyCreator } from "./dist/lib/columnController/columnKeyCreator";
@@ -97,7 +97,6 @@ export { RangeSelection, AddRangeSelectionParams } from "./dist/lib/interfaces/i
 export { IRangeController } from "./dist/lib/interfaces/iRangeController";
 export { BaseFrameworkFactory } from "./dist/lib/baseFrameworkFactory";
 export { CellNavigationService } from "./dist/lib/cellNavigationService";
-export { ColumnChangeEvent } from "./dist/lib/columnChangeEvent";
 export { AlignedGridsService } from "./dist/lib/alignedGridsService";
 export { Constants } from "./dist/lib/constants";
 export { CsvCreator, BaseCreator } from "./dist/lib/csvCreator";
@@ -158,3 +157,4 @@ export { BaseComponentWrapper } from "./dist/lib/baseComponentWrapper";
 export { FrameworkComponentWrapper } from "./dist/lib/components/framework/frameworkComponentWrapper";
 export { IFrameworkFactory } from "./dist/lib/interfaces/iFrameworkFactory";
 export { SerializedNumberFilter } from "./dist/lib/filter/numberFilter";
+export { RangeSelectionChangedEvent } from "./dist/lib/events";

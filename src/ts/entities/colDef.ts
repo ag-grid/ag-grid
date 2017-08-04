@@ -7,6 +7,7 @@ import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
 import {IHeaderGroupComp} from "../headerRendering/headerGroup/headerGroupComp";
 import {IFloatingFilterComp} from "../filter/floatingFilter";
+import {CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent} from "../events";
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
@@ -251,13 +252,13 @@ export interface ColDef extends AbstractColDef {
     onCellValueChanged?: Function;
 
     /** Function callback, gets called when a cell is clicked. */
-    onCellClicked?: Function;
+    onCellClicked?: (event: CellClickedEvent) => void;
 
     /** Function callback, gets called when a cell is double clicked. */
-    onCellDoubleClicked?: Function;
+    onCellDoubleClicked?: (event: CellDoubleClickedEvent) => void;
 
     /** Function callback, gets called when a cell is right clicked. */
-    onCellContextMenu?: Function;
+    onCellContextMenu?: (event: CellContextMenuEvent) => void;
 
     /** Icons for this column. Leave blank to use default. */
     icons?: {[key: string]: string};

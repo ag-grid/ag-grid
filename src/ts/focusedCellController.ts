@@ -1,7 +1,7 @@
 import {Bean, Autowired, PostConstruct} from "./context/context";
 import {EventService} from "./eventService";
 import {Column} from "./entities/column";
-import {Events} from "./events";
+import {CellFocusedEvent, Events} from "./events";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {ColumnController} from "./columnController/columnController";
 import {Utils as _} from "./utils";
@@ -154,12 +154,14 @@ export class FocusedCellController {
     }
 
     private onCellFocused(forceBrowserFocus: boolean): void {
-        let event = {
+        let event: CellFocusedEvent = {
+            type: Events.EVENT_CELL_FOCUSED,
+            forceBrowserFocus: forceBrowserFocus,
             rowIndex: <number> null,
             column: <Column> null,
-            floating: <string> null,
-            forceBrowserFocus: forceBrowserFocus
+            floating: <string> null
         };
+
         if (this.focusedCell) {
             event.rowIndex = this.focusedCell.rowIndex;
             event.column = this.focusedCell.column;
