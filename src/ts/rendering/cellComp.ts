@@ -773,12 +773,7 @@ export class CellComp extends Component {
                 // if wrapper, then put the wrapper back
                 this.eGridCell.appendChild(this.eCellWrapper);
             } else {
-                // if cellRenderer, then put the gui back in. if the renderer has
-                // a refresh, it will be called. however if it doesn't, then later
-                // the renderer will be destroyed and a new one will be created.
-                if (this.cellRenderer) {
-                    this.eGridCell.appendChild(this.cellRenderer.getGui());
-                }
+                this.cellRendererService.bindToHtml(this.cellRenderer, this.eGridCell);
             }
         }
 
@@ -1203,18 +1198,11 @@ export class CellComp extends Component {
         } else if (floatingCellRenderer && this.node.rowPinned) {
             // if floating, then give preference to floating cell renderer
             this.useCellRenderer(floatingCellRenderer, colDef.pinnedRowCellRendererParams, valueFormatted);
-        } else if (cellRenderer) {
-            // use normal cell renderer
-            this.useCellRenderer(cellRenderer, colDef.cellRendererParams, valueFormatted);
         } else {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
             let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             let valueToRender = valueFormattedExits ? valueFormatted : this.value;
-            if (_.exists(valueToRender) && valueToRender !== '') {
-                // not using innerHTML to prevent injection of HTML
-                // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
-                this.eParentOfValue.textContent = valueToRender.toString();
-            }
+            this.useCellRenderer(cellRenderer, colDef.cellRendererParams, valueToRender);
         }
         if (colDef.tooltipField) {
             let data = this.node.data;
@@ -1275,7 +1263,7 @@ export class CellComp extends Component {
 
         let params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
 
-        this.cellRenderer = this.cellRendererService.useCellRenderer(cellRendererKey, this.eParentOfValue, params);
+        this.cellRenderer = this.cellRendererService.useCellRenderer(this.column.getColDef(), this.eParentOfValue, params);
     }
 
     private addClasses() {

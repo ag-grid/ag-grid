@@ -935,29 +935,25 @@ export class RowComp extends BeanStub {
 
         if (this.eFullWidthRow) {
             let params = this.createFullWidthParams(this.eFullWidthRow, null);
-            this.fullWidthRowComponent = this.cellRendererService.useCellRenderer(
-                this.fullWidthCellRenderer, this.eFullWidthRow, params);
+            this.fullWidthRowComponent = this.cellRendererService.useFullRowGroupRenderer(this.eFullWidthRow, params);
             this.angular1Compile(this.eFullWidthRow);
         }
 
         if (this.eFullWidthRowBody) {
             let params = this.createFullWidthParams(this.eFullWidthRowBody, null);
-            this.fullWidthRowComponentBody = this.cellRendererService.useCellRenderer(
-                this.fullWidthCellRenderer, this.eFullWidthRowBody, params);
+            this.fullWidthRowComponentBody = this.cellRendererService.useFullRowGroupRenderer(this.eFullWidthRowBody, params);
             this.angular1Compile(this.eFullWidthRowBody);
         }
 
         if (this.eFullWidthRowLeft) {
             let params = this.createFullWidthParams(this.eFullWidthRowLeft, Column.PINNED_LEFT);
-            this.fullWidthRowComponentLeft = this.cellRendererService.useCellRenderer(
-                this.fullWidthCellRenderer, this.eFullWidthRowLeft, params);
+            this.fullWidthRowComponentLeft = this.cellRendererService.useFullRowGroupRenderer(this.eFullWidthRowLeft, params);
             this.angular1Compile(this.eFullWidthRowLeft);
         }
 
         if (this.eFullWidthRowRight) {
             let params = this.createFullWidthParams(this.eFullWidthRowRight, Column.PINNED_RIGHT);
-            this.fullWidthRowComponentRight = this.cellRendererService.useCellRenderer(
-                this.fullWidthCellRenderer, this.eFullWidthRowRight, params);
+            this.fullWidthRowComponentRight = this.cellRendererService.useFullRowGroupRenderer(this.eFullWidthRowRight, params);
             this.angular1Compile(this.eFullWidthRowRight);
         }
 

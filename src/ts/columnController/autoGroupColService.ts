@@ -19,7 +19,7 @@ export class AutoGroupColService {
         // if doing groupMultiAutoColumn, then we call the method multiple times, once
         // for each column we are grouping by
         if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
-            rowGroupColumns.forEach( (rowGroupCol: Column, index: number) => {
+            rowGroupColumns.forEach((rowGroupCol: Column, index: number) => {
                 groupAutoColumns.push(this.createOneAutoGroupColumn(rowGroupCol, index));
             });
         } else {
@@ -34,7 +34,7 @@ export class AutoGroupColService {
         // if one provided by user, use it, otherwise create one
         let defaultAutoColDef: ColDef = this.generateDefaultColDef(rowGroupCol, index);
         let userAutoColDef: ColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
-       // if doing multi, set the field
+        // if doing multi, set the field
         let colId: string;
 
         if (rowGroupCol) {
@@ -48,17 +48,15 @@ export class AutoGroupColService {
 
         //If the user is not telling us his preference with regards wether the filtering
         //should be suppressed, we suppress it if there are no leaf nodes
-        if (userAutoColDef == null || userAutoColDef.suppressFilter == null){
+        if (userAutoColDef == null || userAutoColDef.suppressFilter == null) {
             let produceLeafNodeValues = defaultAutoColDef.field != null || defaultAutoColDef.valueGetter != null;
             defaultAutoColDef.suppressFilter = !produceLeafNodeValues;
         }
 
         // if showing many cols, we don't want to show more than one with a checkbox for selection
-        if (index>0) {
+        if (index > 0) {
             defaultAutoColDef.headerCheckboxSelection = false;
         }
-
-
 
 
         let newCol = new Column(defaultAutoColDef, colId, true);
@@ -67,12 +65,12 @@ export class AutoGroupColService {
         return newCol;
     }
 
-    private generateDefaultColDef (rowGroupCol?: Column, index?: number):ColDef {
-            let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            let defaultAutoColDef: ColDef = {
-                headerName: localeTextFunc('group', 'Group'),
-                cellRenderer: 'group'
-            };
+    private generateDefaultColDef(rowGroupCol?: Column, index?: number): ColDef {
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        let defaultAutoColDef: ColDef = {
+            headerName: localeTextFunc('group', 'Group'),
+            cellRenderer: 'group'
+        };
 
         // we never allow moving the group column
         defaultAutoColDef.suppressMovable = true;
@@ -85,6 +83,14 @@ export class AutoGroupColService {
                 headerValueGetter: rowGroupColDef.headerValueGetter
             });
 
+            if (rowGroupColDef.cellRenderer){
+                _.assign(defaultAutoColDef, {
+                    cellRendererParams:{
+                        innerRenderer: rowGroupColDef.cellRenderer,
+                        innerRendererParams: rowGroupColDef.cellRendererParams
+                    }
+                })
+            }
 
             defaultAutoColDef.showRowGroup = rowGroupCol.getColId();
         } else {

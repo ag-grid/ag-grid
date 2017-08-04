@@ -1,30 +1,36 @@
-import {Autowired, Bean, Context, Optional, PostConstruct} from "../../context/context";
+import {Autowired, Bean, Context, Optional} from "../../context/context";
 import {GridOptions} from "../../entities/gridOptions";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {FrameworkComponentWrapper} from "./frameworkComponentWrapper";
 import {IComponent} from "../../interfaces/iComponent";
 import {ColDef, ColGroupDef} from "../../entities/colDef";
 import {_} from "../../utils";
-import {ComponentProvider} from "./componentProvider";
+import {NamedComponentResolver} from "./namedComponentResolver";
+import {AgGridComponentFunctionInput, AgGridRegisteredComponentInput} from "./componentProvider";
+import {AgComponentUtils} from "./agComponentUtils";
+import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
 
-export interface ComponentConfig {
-    mandatoryMethodList:string[],
-    optionalMethodList:string[]
-}
 
 export type ComponentHolder = GridOptions | ColDef | ColGroupDef;
 
+export type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string;
+
 export enum ComponentType {
     AG_GRID, FRAMEWORK
+}
+
+export enum ComponentSource {
+    DEFAULT, REGISTERED_BY_NAME, HARDCODED
 }
 
 /**
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
-export interface ComponentToUse<A extends IComponent<any> & B, B> {
+export interface ResolvedComponent<A extends IComponent<any> & B, B> {
     component:{new(): A}|{new(): B},
-    type:ComponentType
+    type:ComponentType,
+    source:ComponentSource
 }
 
 @Bean('componentResolver')
@@ -35,48 +41,23 @@ export class ComponentResolver {
     @Autowired("gridOptionsWrapper")
     private gridOptionsWrapper: GridOptionsWrapper;
 
-
     @Autowired("context")
     private context: Context;
 
-    @Autowired("componentProvider")
-    private componentProvider: ComponentProvider;
+    @Autowired("namedComponentResolver")
+    private namedComponentResolver: NamedComponentResolver;
+
+    @Autowired ("agComponentUtils")
+    private agComponentUtils: AgComponentUtils;
+
+    @Autowired ("componentMetadataProvider")
+    private componentMetadataProvider: ComponentMetadataProvider;
+
 
 
     @Optional ("frameworkComponentWrapper")
     private frameworkComponentWrapper: FrameworkComponentWrapper;
 
-    private componentMetaData :{[key:string]:ComponentConfig};
-
-    @PostConstruct
-    public postConstruct (){
-        this.componentMetaData = {
-            dateComponent: {
-                mandatoryMethodList: ['getDate', 'setDate'],
-                optionalMethodList: []
-            },
-            headerComponent: {
-                mandatoryMethodList: [],
-                optionalMethodList: []
-            },
-            headerGroupComponent: {
-                mandatoryMethodList: [],
-                optionalMethodList: []
-            },
-            floatingFilterComponent: {
-                mandatoryMethodList: ['onParentModelChanged'],
-                optionalMethodList: ['afterGuiAttached']
-            },
-            floatingFilterWrapperComponent: {
-                mandatoryMethodList: [],
-                optionalMethodList: []
-            },
-            filterComponent:{
-                mandatoryMethodList: ['isFilterActive','doesFilterPass','getModel','setModel'],
-                optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged']
-            }
-        }
-    }
 
     /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
@@ -136,28 +117,31 @@ export class ComponentResolver {
         holder:ComponentHolder,
         propertyName:string,
         componentNameOpt?:string
-    ):ComponentToUse<A, B>{
+    ):ResolvedComponent<A, B>{
         let componentName:string = componentNameOpt == null ? propertyName : componentNameOpt;
 
         /**
-         * There are four things that can happen when resolving a component.
+         * There are five things that can happen when resolving a component.
          *  a) HardcodedFwComponent: That holder[propertyName]Framework has associated a Framework native component
          *  b) HardcodedJsComponent: That holder[propertyName] has associate a JS component
-         *  c) hardcodedNameComponent: That holder[propertyName] has associate a string that represents a component to load
-         *  d) That none of the three previous are specified, then we need to use the DefaultRegisteredComponent
+         *  c) hardcodedJsFunction: That holder[propertyName] has associate a JS function
+         *  d) hardcodedNameComponent: That holder[propertyName] has associate a string that represents a component to load
+         *  e) That none of the three previous are specified, then we need to use the DefaultRegisteredComponent
          */
-        let RegisteredDefaultComponent : ComponentToUse<A, B>  = this.componentProvider.retrieve<A,B>(componentName);
         let hardcodedNameComponent : string = null;
         let HardcodedJsComponent : {new(): A} = null;
+        let hardcodedJsFunction : AgGridComponentFunctionInput = null;
         let HardcodedFwComponent : {new(): B} = null;
 
         if (holder != null){
-            let componentPropertyValue : {new(): A} | string = (<any>holder)[propertyName];
+            let componentPropertyValue : AgComponentPropertyInput<IComponent<any>> = (<any>holder)[propertyName];
             if (componentPropertyValue != null){
                 if (typeof componentPropertyValue === 'string'){
                     hardcodedNameComponent = componentPropertyValue;
+                } else if (this.agComponentUtils.doesImplementIComponent(componentPropertyValue)){
+                    HardcodedJsComponent = <{new(): A}>componentPropertyValue;
                 } else {
-                    HardcodedJsComponent = componentPropertyValue;
+                    hardcodedJsFunction = <AgGridComponentFunctionInput>componentPropertyValue;
                 }
             }
             HardcodedFwComponent = (<any>holder)[propertyName + "Framework"];
@@ -168,11 +152,11 @@ export class ComponentResolver {
          * combination
          */
 
-        if (HardcodedJsComponent && HardcodedFwComponent){
-            throw Error("You are trying to specify: " + propertyName + " twice as a component.")
-        }
-
-        if (hardcodedNameComponent && HardcodedFwComponent){
+        if (
+            (HardcodedJsComponent && this.frameworkComponentWrapper) ||
+            (hardcodedNameComponent && this.frameworkComponentWrapper) ||
+            (hardcodedJsFunction && this.frameworkComponentWrapper)
+        ){
             throw Error("You are trying to specify: " + propertyName + " twice as a component.")
         }
 
@@ -183,33 +167,52 @@ export class ComponentResolver {
 
         /**
          * At this stage we are guaranteed to either have,
+         * DEPRECATED
          * - A unique HardcodedFwComponent
          * - A unique HardcodedJsComponent
+         * - A unique hardcodedJsFunction
+         * BY NAME- FAVOURED APPROACH
          * - A unique hardcodedNameComponent
          * - None of the previous, hence we revert to: RegisteredComponent
          */
         if (HardcodedFwComponent) {
+            console.warn(`ag-grid: Since version 12.1.0 specifying a component directly is deprecated, you should register the component by name`);
+            console.warn(`${HardcodedFwComponent}`);
             return {
                 type: ComponentType.FRAMEWORK,
-                component: HardcodedFwComponent
+                component: HardcodedFwComponent,
+                source: ComponentSource.HARDCODED
             }
         }
 
         if (HardcodedJsComponent) {
+            console.warn(`ag-grid: Since version 12.1.0 specifying a component directly is deprecated, you should register the component by name`);
+            console.warn(`${HardcodedJsComponent}`);
             return {
                 type: ComponentType.AG_GRID,
-                component: HardcodedJsComponent
+                component: HardcodedJsComponent,
+                source: ComponentSource.HARDCODED
             }
         }
 
-        if (hardcodedNameComponent){
-            return this.componentProvider.retrieve<A,B>(hardcodedNameComponent);
+        if (hardcodedJsFunction){
+            console.warn(`ag-grid: Since version 12.1.0 specifying a function directly is deprecated, you should register the component by name`);
+            console.warn(`${hardcodedJsFunction}`);
+            return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.AG_GRID, ComponentSource.HARDCODED);
         }
 
-        return RegisteredDefaultComponent;
 
+        //^^^^^ABOVE DEPRECATED
+        let componentNameToUse: string;
+        if (hardcodedNameComponent){
+            componentNameToUse = hardcodedNameComponent;
+        } else{
+            componentNameToUse = componentName;
+        }
 
+        return this.namedComponentResolver.resolve(propertyName, componentNameToUse);
     }
+
 
     /**
      * Useful to check what would be the resultant params for a given object
@@ -244,7 +247,7 @@ export class ComponentResolver {
         componentName:string,
         mandatory:boolean = true
     ): A{
-        let componentToUse:ComponentToUse<A,B> = <ComponentToUse<A,B>>this.getComponentToUse(holder, propertyName, componentName);
+        let componentToUse:ResolvedComponent<A,B> = <ResolvedComponent<A,B>>this.getComponentToUse(holder, propertyName, componentName);
 
 
         if (!componentToUse || !componentToUse.component) {
@@ -261,7 +264,8 @@ export class ComponentResolver {
         //Using framework component
         let FrameworkComponentRaw: {new(): B} = componentToUse.component;
 
-        let thisComponentConfig: ComponentConfig= this.componentMetaData[propertyName];
+        let thisComponentConfig: ComponentMetadata= this.componentMetadataProvider.retrieve(propertyName);
         return <A>this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList);
     }
+
 }

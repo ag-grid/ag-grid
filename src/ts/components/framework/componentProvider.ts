@@ -4,36 +4,83 @@ import {DefaultDateComponent} from "../../filter/dateFilter";
 import {HeaderComp} from "../../headerRendering/header/headerComp";
 import {HeaderGroupComp} from "../../headerRendering/headerGroup/headerGroupComp";
 import {
-    SetFloatingFilterComp, TextFloatingFilterComp, NumberFloatingFilterComp,
-    DateFloatingFilterComp, ReadModelAsStringFloatingFilterComp
+    DateFloatingFilterComp,
+    NumberFloatingFilterComp,
+    ReadModelAsStringFloatingFilterComp,
+    SetFloatingFilterComp,
+    TextFloatingFilterComp
 } from "../../filter/floatingFilter";
 import {EmptyFloatingFilterWrapperComp, FloatingFilterWrapperComp} from "../../filter/floatingFilterWrapper";
-import {ComponentToUse, ComponentType} from "./componentResolver";
+import {ComponentType} from "./componentResolver";
+import {ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
+import {GroupCellRenderer} from "../../rendering/cellRenderers/groupCellRenderer";
+import {AnimateShowChangeCellRenderer} from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
+import {AnimateSlideCellRenderer} from "../../rendering/cellRenderers/animateSlideCellRenderer";
+import {DefaultCellRenderer} from "./agComponentUtils";
+
+
+export enum RegisteredComponentSource {
+    DEFAULT, REGISTERED
+}
+
+/**
+ * B the business interface (ie IHeader)
+ * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
+ */
+export interface RegisteredComponent<A extends IComponent<any> & B, B> {
+    component: RegisteredComponentInput<A, B>,
+    type:ComponentType,
+    source:RegisteredComponentSource
+}
+
+export type RegisteredComponentInput<A extends IComponent<any> & B, B> = AgGridRegisteredComponentInput<A>| {new(): B};
+export type AgGridRegisteredComponentInput<A extends IComponent<any>> = AgGridComponentFunctionInput | {new(): A}
+export type AgGridComponentFunctionInput = (params:any)=>string | HTMLElement ;
+
 
 @Bean('componentProvider')
 export class ComponentProvider {
 
-    private agGridDefaults :{[key:string]:{new(): IComponent<any>}};
-    private jsComponents :{[key:string]:{new(): IComponent<any>}} = {};
+    private agGridDefaults :{[key:string]:AgGridRegisteredComponentInput<any>};
+    private jsComponents :{[key:string]:AgGridRegisteredComponentInput<any>} = {};
     private frameworkComponents :{[key:string]:{new(): any}} = {};
 
     @PostConstruct
     public postConstruct (){
         this.agGridDefaults = {
+            //THE FOLLOWING COMPONENTS HAVE NO DEFAULTS, THEY NEED TO BE SPECIFIED AS AN SPECIFIC FLAVOUR
+            //THERE ARE NO DEFAULTS THAT FIT ALL PURPOSES
+            //THEY ARE ADDED HERE TO AVOID THE NOT FOUND WARNING.
+            filterComponent:null,
+            customFloatingFilterComponent:null,
+
+            //date
             dateComponent: DefaultDateComponent,
+
+            //header
             headerComponent: HeaderComp,
             headerGroupComponent: HeaderGroupComp,
+
+            //floating filters
             setFloatingFilterComponent: SetFloatingFilterComp,
             textFloatingFilterComponent: TextFloatingFilterComp,
             numberFloatingFilterComponent:NumberFloatingFilterComp,
             dateFloatingFilterComponent: DateFloatingFilterComp,
             readModelAsStringFloatingFilterComponent: ReadModelAsStringFloatingFilterComp,
             floatingFilterWrapperComponent: FloatingFilterWrapperComp,
-            emptyFloatingFilterWrapperComponent: EmptyFloatingFilterWrapperComp
+            emptyFloatingFilterWrapperComponent: EmptyFloatingFilterWrapperComp,
+
+            //renderers
+            cellRenderer: DefaultCellRenderer,
+            fullWidthCellRenderer: GroupCellRenderer,
+            innerRenderer: DefaultCellRenderer,
+            animateShowChange: AnimateShowChangeCellRenderer,
+            animateSlide: AnimateSlideCellRenderer,
+            group: GroupCellRenderer
         }
     }
 
-    public registerComponent<A extends IComponent<any>> (name:string, component:{new(): IComponent<A>}){
+    public registerComponent<A extends IComponent<any>> (name:string, component:AgGridRegisteredComponentInput<A>){
         if (this.frameworkComponents[name]){
             console.error(`Trying to register a component that you have already registered for frameworks: ${name}`);
             return;
@@ -60,24 +107,31 @@ export class ComponentProvider {
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    public retrieve <A extends IComponent<any> & B, B> (name:string): ComponentToUse<A, B>{
+    public retrieve <A extends IComponent<any> & B, B> (name:string): RegisteredComponent<A, B>{
         if (this.frameworkComponents[name]){
             return {
                 type: ComponentType.FRAMEWORK,
-                component: <{new(): B}>this.frameworkComponents[name]
+                component: <{new(): B}>this.frameworkComponents[name],
+                source: RegisteredComponentSource.REGISTERED
             }
         }
         if (this.jsComponents[name]){
             return {
                 type: ComponentType.AG_GRID,
-                component: <{new(): A}>this.jsComponents[name]
+                component: <{new(): A}>this.jsComponents[name],
+                source: RegisteredComponentSource.REGISTERED
             }
         }
         if (this.agGridDefaults[name]){
             return {
                 type: ComponentType.AG_GRID,
-                component: <{new(): A}>this.agGridDefaults[name]
+                component: <{new(): A}>this.agGridDefaults[name],
+                source: RegisteredComponentSource.DEFAULT
             }
+        }
+
+        if (Object.keys(this.agGridDefaults).indexOf(name) < 0){
+            console.warn(`ag-grid: Looking for component [${name}] but it wasn't found.`);
         }
         return null;
     }

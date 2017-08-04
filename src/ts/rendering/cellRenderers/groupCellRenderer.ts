@@ -170,9 +170,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private addValueElement(): void {
         let params = this.params;
         let rowNode = this.displayedGroup;
-        if (params.innerRenderer) {
-            this.createFromInnerRenderer();
-        } else if (rowNode.footer) {
+        if (rowNode.footer) {
             this.createFooterCell();
         } else if (rowNode.group) {
             this.createGroupCell();
@@ -180,15 +178,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         } else {
             this.createLeafCell();
         }
-    }
-
-    private createFromInnerRenderer(): void {
-        let innerComponent = this.cellRendererService.useCellRenderer(this.params.innerRenderer, this.eValue, this.params);
-        this.addDestroyFunc( ()=> {
-            if (innerComponent && innerComponent.destroy) {
-                innerComponent.destroy();
-            }
-        });
     }
 
     private createFooterCell(): void {
@@ -222,29 +211,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let groupName = this.params.value;
         let valueFormatted = this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName);
 
-        let groupedColCellRenderer = columnToUse.getCellRenderer();
-
-        // reuse the params but change the value
-        if (typeof groupedColCellRenderer === 'function') {
-            // reuse the params but change the value
-            params.value = groupName;
-            params.valueFormatted = valueFormatted;
-
-            let colDefOfGroupedCol = columnToUse.getColDef();
-            let groupedColCellRendererParams = colDefOfGroupedCol ? colDefOfGroupedCol.cellRendererParams : null;
-
-            // because we are talking about the different column to the original, any user provided params
-            // are for the wrong column, so need to copy them in again.
-            if (groupedColCellRendererParams) {
-                _.assign(params, groupedColCellRenderer);
-            }
-            this.cellRendererService.useCellRenderer(colDefOfGroupedCol.cellRenderer, this.eValue, params);
-        } else {
-            let valueToRender = _.exists(valueFormatted) ? valueFormatted : groupName;
-            if (_.exists(valueToRender) && valueToRender !== '') {
-                this.eValue.appendChild(document.createTextNode(valueToRender));
-            }
-        }
+        params.valueFormatted = valueFormatted;
+        this.cellRendererService.useInnerCellRenderer(this.params, columnToUse.getColDef(), this.eValue, params);
     }
 
     private addChildCount(): void {

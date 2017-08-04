@@ -12,6 +12,8 @@ import {Column} from "../../entities/column";
 import {IFilterComp} from "../../interfaces/iFilter";
 import {FilterManager} from "../../filter/filterManager";
 import {ComponentResolver} from "./componentResolver";
+import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
+import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRenderer";
 
 
 
@@ -60,11 +62,14 @@ export class ComponentRecipes {
 
     private newFloatingFilterComponent<M> (type:string, colDef:ColDef, params:IFloatingFilterParams<M, any>):IFloatingFilterComp<M, any, any>{
         //type if populated must be one of ['set','number','text','date']
-        let floatingFilterName: string = type === 'custom' ?
-                'floatingFilterComponent' :
-                type + "FloatingFilterComponent";
-
-        return <IFloatingFilterComp<M, any, any>> this.componentResolver.createAgGridComponent(colDef, params, "floatingFilterComponent", floatingFilterName, false);
+        let floatingFilterName: string = type + "FloatingFilterComponent";
+        return <IFloatingFilterComp<M, any, any>> this.componentResolver.createAgGridComponent(
+            colDef,
+            params,
+            "floatingFilterComponent",
+            floatingFilterName,
+            false
+        );
     }
 
     public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M, any>> (column:Column, params:IFloatingFilterParams<M, any>):IFloatingFilterWrapperComp<M, any, any, any>{
@@ -112,6 +117,18 @@ export class ComponentRecipes {
             floatingFilterWrapperComponentParams,
             "floatingFilterWrapperComponent"
         );
+    }
+
+    public newCellRenderer (target: ColDef, params:ICellRendererParams):ICellRendererComp{
+        return <ICellRendererComp>this.componentResolver.createAgGridComponent(target, params, "cellRenderer");
+    }
+
+    public newInnerCellRenderer (target: GroupCellRendererParams, params:ICellRendererParams):ICellRendererComp{
+        return <ICellRendererComp>this.componentResolver.createAgGridComponent(target, params, "innerRenderer");
+    }
+
+    public newFullRowGroupRenderer (params:ICellRendererParams):ICellRendererComp{
+        return <ICellRendererComp>this.componentResolver.createAgGridComponent(this.gridOptionsWrapper, params, "fullWidthCellRenderer");
     }
 
     private getFilterComponentPrototype<A extends IComponent<any> & B, B>

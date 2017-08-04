@@ -19,6 +19,7 @@ import {
     NewColumnsLoadedEvent, VirtualColumnsChangedEvent
 } from "../events";
 import {IComponent} from "../interfaces/iComponent";
+import {AgGridRegisteredComponentInput} from "../components/framework/componentProvider";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -218,7 +219,7 @@ export interface GridOptions {
 
     // callbacks
     postProcessPopup?:(params: PostProcessPopupParams)=>void;
-    components?:{[p:string]:{new(): IComponent<any>}}
+    components?:{[p:string]:AgGridRegisteredComponentInput<IComponent<any>>}
     dateComponent?:{new(): IDateComp};
     dateComponentFramework?: any;
     groupRowRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;

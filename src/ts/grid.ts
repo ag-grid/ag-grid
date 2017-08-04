@@ -66,6 +66,9 @@ import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 import {ComponentResolver} from "./components/framework/componentResolver";
 import {ComponentRecipes} from "./components/framework/componentRecipes";
 import {ComponentProvider} from "./components/framework/componentProvider";
+import {AgComponentUtils} from "./components/framework/agComponentUtils";
+import {ComponentMetadataProvider} from "./components/framework/componentMetadataProvider";
+import {NamedComponentResolver} from "./components/framework/namedComponentResolver";
 
 export interface GridParams {
     // used by Web Components
@@ -152,7 +155,8 @@ export class Grid {
         let contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
-            beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, ComponentResolver, ComponentRecipes,
+            beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils, ComponentMetadataProvider,
+                ComponentProvider, ComponentResolver, ComponentRecipes, NamedComponentResolver,
                 CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, PinnedRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,
@@ -190,7 +194,7 @@ export class Grid {
         let componentProvider: ComponentProvider = this.context.getBean('componentProvider');
 
         Object.keys(gridOptions.components).forEach(it=>{
-            componentProvider.registerComponent<any>(it, gridOptions.components[it]);
+            componentProvider.registerComponent(it, gridOptions.components[it]);
         })
     }
 
