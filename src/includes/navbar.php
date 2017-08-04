@@ -23,7 +23,7 @@ if (!isset($rootFolder)) {
             <?php } ?>
             <div class="Header-share col-md-2 col-sm-3 col-xs-6">
                <span class="pull-left">
-                   <iframe src="https://ghbtns.com/github-btn.html?user=ceolter&repo=ag-grid&type=star&count=true"
+                   <iframe src="https://ghbtns.com/github-btn.html?user=ag-grid&repo=ag-grid&type=star&count=true"
                             frameborder="0" scrolling="0" width="120px" height="20px"
                             style="position: relative; top: 3px;" class="hide-when-medium">
                     </iframe>

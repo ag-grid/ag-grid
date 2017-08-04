@@ -147,7 +147,7 @@ include 'includes/navbar.php'; ?>
 <?php $navKey = "home";
 include './includes/footer.php'; ?>
 
-<script src="dist/ag-grid-enterprise/ag-grid-enterprise.min.js"></script>
+<script src="dist/ag-grid-enterprise/ag-grid-enterprise.js"></script>
 
 <link inline href="example-file-browser/fileBrowser.css" rel="stylesheet">
 <link inline href="best-angularjs-data-grid/basic.css" rel="stylesheet">

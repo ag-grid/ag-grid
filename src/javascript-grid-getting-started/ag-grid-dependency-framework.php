@@ -43,10 +43,10 @@
                     <td><b>Github</b><br/></td>
                 </tr>
                 <tr>
-                    <td>Download ag-grid from <a href="https://github.com/ceolter/ag-grid">Github</a></td>
+                    <td>Download ag-grid from <a href="https://github.com/ag-grid/ag-grid">Github</a></td>
                 </tr>
                 <tr>
-                    <td>Download ag-grid-<?= $frameworkChild ?> from <a href="https://github.com/ceolter/ag-grid-<?= $frameworkChild ?>">Github</a></td>
+                    <td>Download ag-grid-<?= $frameworkChild ?> from <a href="https://github.com/ag-grid/ag-grid-<?= $frameworkChild ?>">Github</a></td>
                 </tr>
             </table>
         </td>

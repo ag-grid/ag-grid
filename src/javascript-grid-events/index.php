@@ -183,39 +183,22 @@ include '../documentation-main/documentation_header.php';
             <th>gridColumnsChanged</th>
             <td>The list of grid columns has changed.</td>
         </tr>
-        <tr>
-            <th>displayedColumnsChanged</th>
-            <td>The list of displayed columns has changed, can result from columns open / close, column move, pivot,
-                group, etc
-            </td>
-        </tr>
 
         <tr class="title-row">
             <!-- TITLE ROW -->
             <td colspan="2">Pagination</td>
         </tr>
-        <tr>
-            <th>paginationReset</th>
-            <td>
-                Pagination service is reset.
-            </td>
-        </tr>
-        <tr>
-            <th>paginationPageLoaded</th>
-            <td>
-                Pagination page load is finished.
-            </td>
-        </tr>
-        <tr>
-            <th>paginationPageRequested</th>
-            <td>
-                Pagination page load is requested.
-            </td>
-        </tr>
 
         <tr class="title-row">
             <!-- TITLE ROW -->
             <td colspan="2">Miscellaneous</td>
+        </tr>
+        <tr>
+            <th>paginationChanged</th>
+            <td>
+                The displayed page for pagination has changed. For example the data was filtered or sorted, or the user
+                has moved to a different page.
+            </td>
         </tr>
         <tr>
             <th>gridReady</th>

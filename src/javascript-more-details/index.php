@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
             <td style="padding: 10px;"><img src="../images/github.png"/></td>
             <td>
                 <b>Github</b><br/>
-                Download from <a href="https://github.com/ceolter/ag-grid">Github</a>
+                Download from <a href="https://github.com/ag-grid/ag-grid">Github</a>
             </td>
         </tr>
     </table>
@@ -122,7 +122,7 @@ import {Grid} from 'ag-grid/main';
             <td style="padding: 10px;"><img src="../images/github.png"/></td>
             <td>
                 <b>Github</b><br/>
-                Download from <a href="https://github.com/ceolter/ag-grid-enterprise">Github</a>
+                Download from <a href="https://github.com/ag-grid/ag-grid-enterprise">Github</a>
             </td>
         </tr>
     </table>
@@ -192,7 +192,7 @@ import 'ag-grid-enterprise/main';
 
     <h2 id="aggrid-javascript-testing">Testing ag-Grid Applications with Jasmine</h2>
 
-    <p>In our <a href="https://github.com/ceolter/ag-grid-seed">Javascript Seed Repo</a> we provide working
+    <p>In our <a href="https://github.com/ag-grid/ag-grid-seed">Javascript Seed Repo</a> we provide working
         examples of how to test your project with Jasmine (under the <code>javascript</code> project).</p>
 
     <p>In order to test your application you need to ensure that the Grid API is available - the best way to do this

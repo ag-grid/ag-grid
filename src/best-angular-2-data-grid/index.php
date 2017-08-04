@@ -94,7 +94,7 @@ include '../documentation-main/documentation_header.php';
 <p>You may also want to take a look at the live <a href="../example-angular">Angular Examples</a> we provide, including
 using Third-Party libraries such as <code>nrx-bootstrap</code>, <code>Material Design Components</code> and <code>ng2-typeahead</code>.</p>
 
-<note>Full working examples using all of the above build tools can be found <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub.</note>
+<note>Full working examples using all of the above build tools can be found <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub.</note>
 
 <p>Once you've gone through the Getting Started section of your favourite build tool, we suggest taking a look at
     <a href="../ag-grid-next-steps">Next Steps</a> next for more detailed information on using Angular with ag-Grid.</p>

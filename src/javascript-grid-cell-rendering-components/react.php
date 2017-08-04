@@ -18,7 +18,7 @@
 
 <p>
     For examples on React cellRendering, see the
-    <a href="https://github.com/ceolter/ag-grid-react-example">ag-grid-react-example</a> on Github.
+    <a href="https://github.com/ag-grid/ag-grid-react-example">ag-grid-react-example</a> on Github.
     In the example, both 'Skills' and 'Proficiency' columns use React cellRenderers. The Country column
     uses a standard ag-Grid cellRenderer, to demonstrate both working side by side.</p>
 </p>

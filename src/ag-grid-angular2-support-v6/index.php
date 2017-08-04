@@ -118,7 +118,7 @@ cellRendererFramework: {
 },
 </pre>
         <p>In this case we need to tell Angular that we need RatioComponent too - we need to do this as the component creation is dynamically!</p>
-        <p>The result would be something like this (taken from our <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> project):</p>
+        <p>The result would be something like this (taken from our <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> project):</p>
 
         <img src="/images/ng2-renderer-example.png"/>
 
@@ -192,7 +192,7 @@ cellEditorFramework: {
 </pre>
         <p>In this case we tell ag-Grid that we need the <code>CommonModule</code> too - we need it for this Component as we're using some of the built in directives (<code>ngClass</code> etc).</p>
 
-        <p>The result would be something like this (again taken from our <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> project):</p>
+        <p>The result would be something like this (again taken from our <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> project):</p>
 
         <img src="../images/ng2-editor-example.png"/>
 

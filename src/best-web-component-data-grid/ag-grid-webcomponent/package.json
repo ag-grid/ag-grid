@@ -50,7 +50,7 @@
     "email": "sean@thelandsmans.com"
   },
   "bugs": {
-    "url": "https://github.com/ceolter/ag-grid-webcomponent/issues"
+    "url": "https://github.com/ag-grid/ag-grid-webcomponent/issues"
   },
   "dependencies": {},
   "description": "ag-Grid Web Component",
@@ -61,7 +61,7 @@
     "tarball": "https://registry.npmjs.org/ag-grid-webcomponent/-/ag-grid-webcomponent-1.0.0.tgz"
   },
   "gitHead": "e64a047f2036120857250ee1a2d1a326a15cb077",
-  "homepage": "https://github.com/ceolter/ag-grid-webcomponent#readme",
+  "homepage": "https://github.com/ag-grid/ag-grid-webcomponent#readme",
   "keywords": [
     "aggrid",
     "grid",
@@ -82,7 +82,7 @@
   "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ceolter/ag-grid-webcomponent.git"
+    "url": "git+https://github.com/ag-grid/ag-grid-webcomponent.git"
   },
   "scripts": {},
   "version": "1.0.0"

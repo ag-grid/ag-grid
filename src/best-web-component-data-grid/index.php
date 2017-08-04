@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
         yourself.
     </note>
 
-    <note>Full working examples of the ag-Grid Web Component can be found in <a href="https://github.com/ceolter/ag-grid-webcomponent">Github</a>,
+    <note>Full working examples of the ag-Grid Web Component can be found in <a href="https://github.com/ag-grid/ag-grid-webcomponent">Github</a>,
         illustrating both a Simple Grid and a Rich Grid.</note>
 
     <h3>Dependencies</h3>
@@ -72,7 +72,7 @@ include '../documentation-main/documentation_header.php';
             <td style="padding: 10px;"><img src="../images/github.png"/></td>
             <td>
                 <b>Github</b><br/>
-                Download from <a href="https://github.com/ceolter/ag-grid-webcomponent">Github</a>
+                Download from <a href="https://github.com/ag-grid/ag-grid-webcomponent">Github</a>
             </td>
         </tr>
     </table>
@@ -109,7 +109,7 @@ include '../documentation-main/documentation_header.php';
             <td style="padding: 10px;"><img src="../images/github.png"/></td>
             <td>
                 <b>Github</b><br/>
-                Download from <a href="https://github.com/ceolter/ag-grid">Github</a>
+                Download from <a href="https://github.com/ag-grid/ag-grid">Github</a>
             </td>
         </tr>
     </table>
@@ -149,7 +149,7 @@ include '../documentation-main/documentation_header.php';
             <td style="padding: 10px;"><img src="../images/github.png"/></td>
             <td>
                 <b>Github</b><br/>
-                Download from <a href="https://github.com/ceolter/ag-grid-enterprise">Github</a>
+                Download from <a href="https://github.com/ag-grid/ag-grid-enterprise">Github</a>
             </td>
         </tr>
     </table>

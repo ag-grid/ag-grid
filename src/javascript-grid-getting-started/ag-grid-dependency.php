@@ -21,7 +21,7 @@
         <td style="padding: 10px;"><img src="../images/github.png"/></td>
         <td>
             <b>Github</b><br/>
-            Download from <a href="https://github.com/ceolter/ag-grid">Github</a>
+            Download from <a href="https://github.com/ag-grid/ag-grid">Github</a>
         </td>
     </tr>
 </table>

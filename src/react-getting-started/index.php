@@ -38,7 +38,7 @@ include '../documentation-main/documentation_header.php';
 
     <pre>
 <span class="codeComment">// clone the ag-Grid React seed project</span>
-git clone https://github.com/ceolter/ag-grid-react-seed
+git clone https://github.com/ag-grid/ag-grid-react-seed
 cd ag-grid-react-seed
 
 <span class="codeComment">// install the project dependencies</span>

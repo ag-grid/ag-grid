@@ -17,7 +17,7 @@
 
     <p>
         For an example of Angular cellEditing, see the
-        <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on Github.
+        <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on Github.
     </p>
 
     <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular cellEditor</h3>

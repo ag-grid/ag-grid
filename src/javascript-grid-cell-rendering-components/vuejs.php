@@ -18,7 +18,7 @@
 
 <p>
     For examples on VueJS cellRendering, see the
-    <a href="https://github.com/ceolter/ag-grid-vue-example">ag-grid-vue-example</a> on Github.
+    <a href="https://github.com/ag-grid/ag-grid-vue-example">ag-grid-vue-example</a> on Github.
     VueJS Renderers are used on all but the first Grid on this example page (the first grid uses plain JavaScript Renderers)</p>
 </p>
 
@@ -138,5 +138,5 @@ the grid will know the framework to use is VueJS.
               jsfile="../vue-examples/src/rich-dynamic-component-example/RichDynamicComponentExample.vue"
               exampleHeight="525px"></show-example>
 
-<note>The full <a href="https://github.com/ceolter/ag-grid-vue-example">ag-grid-vue-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers
+<note>The full <a href="https://github.com/ag-grid/ag-grid-vue-example">ag-grid-vue-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers
     and so on, as well as examples on using VueJS Components with both CellEditors and Filters</note>

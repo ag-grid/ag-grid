@@ -13,4 +13,4 @@
 <p>All you need to do is implement your VueJS component as normal, and provide it to the grid as documented above. Easy!</p>
 
 <p>For a full working example of Header Components in VueJS see
-<a href="https://github.com/ceolter/ag-grid-vue-example">VueJS Example</a>.
+<a href="https://github.com/ag-grid/ag-grid-vue-example">VueJS Example</a>.

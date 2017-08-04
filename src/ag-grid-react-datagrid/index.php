@@ -65,10 +65,10 @@ include('../includes/mediaHeader.php');
 
             <img src="../images/react-redux.png" style="width: 100%">
 
-            <p>We'll start off with our <a href="https://github.com/ceolter/ag-grid-react-seed">ag-Grid React</a> Seed project to get us up and running with a simple skeleton application:</p>
+            <p>We'll start off with our <a href="https://github.com/ag-grid/ag-grid-react-seed">ag-Grid React</a> Seed project to get us up and running with a simple skeleton application:</p>
 
 <pre>
-git clone https://github.com/ceolter/ag-grid-react-seed.git
+git clone https://github.com/ag-grid/ag-grid-react-seed.git
 cd ag-grid-react-seed
 npm install
 </pre>

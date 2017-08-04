@@ -229,7 +229,7 @@ export class AppComponent implements OnInit {
 
         <h2>Benefits of using AOT</h2>
 
-        <p>The speed and size of the resulting application when using AOT can be significant. In our <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> project, we estimate the size of the resulting application
+        <p>The speed and size of the resulting application when using AOT can be significant. In our <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> project, we estimate the size of the resulting application
             went from 3.9Mb down to 2.4Mb - a reduction of just under 40%, without optimising for size or being particularly aggressive with rollup.</p>
 
         <p>Speed-wise, the loading time when using AOT is significantly more responsive on startup - this makes sense given that Angular doesn't have to compile all the code once again. Take a look at the examples project and try both the JIT and AOT versions out for yourself!</p>
