@@ -8,7 +8,6 @@ import {Column} from "../entities/column";
 import {Events} from "../events";
 import {EventService} from "../eventService";
 import {Autowired, Context, PostConstruct} from "../context/context";
-import {ColumnChangeEvent} from "../columnChangeEvent";
 import {FocusedCellController} from "../focusedCellController";
 import {Constants} from "../constants";
 import {CellRendererService} from "./cellRendererService";
@@ -475,7 +474,7 @@ export class RowComp extends BeanStub {
         }
     }
 
-    private onVirtualColumnsChanged(event: ColumnChangeEvent): void {
+    private onVirtualColumnsChanged(): void {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
         if (!this.fullWidthRow) {
             this.refreshCellsIntoRow();

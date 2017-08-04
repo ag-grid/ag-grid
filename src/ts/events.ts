@@ -3,6 +3,7 @@ import {Column} from "./entities/column";
 import {ColDef} from "./entities/colDef";
 import {GridApi} from "./gridApi";
 import {ColumnApi} from "./columnController/columnController";
+import {ColumnGroup} from "./entities/columnGroup";
 
 export class Events {
 
@@ -171,4 +172,53 @@ export interface CellEvent {
     api: GridApi;
     columnApi: ColumnApi;
     event: Event;
+}
+
+export interface AgEvent {
+    type: string;
+}
+
+export interface ColumnPivotModeChangedEvent extends AgEvent {}
+
+export interface VirtualColumnsChangedEvent extends AgEvent {}
+
+export interface ColumnEverythingChangedEvent extends AgEvent {}
+
+export interface NewColumnsLoadedEvent extends AgEvent {}
+
+export interface GridColumnsChangedEvent extends AgEvent {}
+
+export interface DisplayedColumnsWidthChangedEvent extends AgEvent {}
+
+export interface DisplayedColumnsChangedEvent extends AgEvent {}
+
+export interface ColumnGroupOpenedEvent extends AgEvent {
+    columnGroup: ColumnGroup
+}
+
+export interface ColumnEvent extends AgEvent {
+    column: Column;
+    columns: Column[];
+}
+
+export interface ColumnResizedEvent extends ColumnEvent {
+    finished: boolean;
+}
+
+export interface ColumnPivotChangedEvent extends ColumnEvent {}
+
+export interface ColumnRowGroupChangedEvent extends ColumnEvent {}
+
+export interface ColumnValueChangedEvent extends ColumnEvent {}
+
+export interface ColumnMovedEvent extends ColumnEvent {
+    toIndex: number;
+}
+
+export interface ColumnVisibleEvent extends ColumnEvent {
+    visible: boolean;
+}
+
+export interface ColumnPinnedEvent extends ColumnEvent {
+    pinned: string;
 }
