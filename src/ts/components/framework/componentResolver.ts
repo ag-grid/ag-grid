@@ -153,9 +153,9 @@ export class ComponentResolver {
          */
 
         if (
-            (HardcodedJsComponent && this.frameworkComponentWrapper) ||
-            (hardcodedNameComponent && this.frameworkComponentWrapper) ||
-            (hardcodedJsFunction && this.frameworkComponentWrapper)
+            (HardcodedJsComponent && HardcodedFwComponent) ||
+            (hardcodedNameComponent && HardcodedFwComponent) ||
+            (hardcodedJsFunction && HardcodedFwComponent)
         ){
             throw Error("You are trying to specify: " + propertyName + " twice as a component.")
         }
