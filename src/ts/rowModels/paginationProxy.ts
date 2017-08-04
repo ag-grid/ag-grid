@@ -2,7 +2,7 @@
 import {BeanStub} from "../context/beanStub";
 import {IRowModel, RowBounds} from "../interfaces/iRowModel";
 import {EventService} from "../eventService";
-import {Events, ModelUpdatedEvent} from "../events";
+import {Events, ModelUpdatedEvent, PaginationChangedEvent} from "../events";
 import {RowNode} from "../entities/rowNode";
 import {_} from "../utils";
 import {Bean, Autowired, PostConstruct} from "../context/context";
@@ -94,7 +94,14 @@ export class PaginationProxy extends BeanStub implements IRowModel {
 
     private onModelUpdated(modelUpdatedEvent?: ModelUpdatedEvent): void {
         this.setIndexesAndBounds();
-        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_CHANGED, modelUpdatedEvent);
+        let paginationChangedEvent: PaginationChangedEvent = {
+            type: Events.EVENT_PAGINATION_CHANGED,
+            animate: modelUpdatedEvent ? modelUpdatedEvent.animate : false,
+            newData: modelUpdatedEvent ? modelUpdatedEvent.newData : false,
+            newPage: modelUpdatedEvent ? modelUpdatedEvent.newPage : false,
+            keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false
+        };
+        this.eventService.dispatchEvent(paginationChangedEvent.type, paginationChangedEvent);
     }
 
     public goToPage(page: number): void {

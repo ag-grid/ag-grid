@@ -1,7 +1,7 @@
 import {Bean, Autowired} from "../context/context";
 import {Utils as _} from "../utils";
 import {EventService} from "../eventService";
-import {Events} from "../events";
+import {Events, ScrollVisibilityChangedEvent} from "../events";
 import {ColumnController} from "../columnController/columnController";
 
 export interface SetScrollsVisibleParams {
@@ -37,7 +37,8 @@ export class ScrollVisibleService {
             this.vPinnedLeft = params.vPinnedLeft;
             this.vPinnedRight = params.vPinnedRight;
 
-            this.eventService.dispatchEvent(Events.EVENT_SCROLL_VISIBILITY_CHANGED);
+            let event: ScrollVisibilityChangedEvent = {type: Events.EVENT_SCROLL_VISIBILITY_CHANGED};
+            this.eventService.dispatchEvent(event.type, event);
         }
 
     }

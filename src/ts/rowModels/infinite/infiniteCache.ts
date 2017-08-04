@@ -2,7 +2,7 @@ import {Utils as _} from "../../utils";
 import {RowNode} from "../../entities/rowNode";
 import {Autowired, Context, PostConstruct, Qualifier} from "../../context/context";
 import {EventService} from "../../eventService";
-import {Events} from "../../events";
+import {Events, ItemsAddedEvent, RowDataUpdatedEvent} from "../../events";
 import {Logger, LoggerFactory} from "../../logger";
 import {IDatasource} from "../iDatasource";
 import {InfiniteBlock} from "./infiniteBlock";
@@ -100,7 +100,12 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
         }
 
         this.onCacheUpdated();
-        this.eventService.dispatchEvent(Events.EVENT_ITEMS_ADDED, newNodes);
+
+        let event: RowDataUpdatedEvent = {
+            type: Events.EVENT_ROW_DATA_UPDATED
+        };
+
+        this.eventService.dispatchEvent(event.type, event);
     }
 
     // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,
