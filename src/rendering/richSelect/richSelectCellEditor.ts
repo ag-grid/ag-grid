@@ -1,5 +1,16 @@
 
-import {ICellEditor, ICellEditorParams, Component, Autowired, Context, Utils, Constants, ICellRendererComp, ICellRendererFunc, CellRendererService} from "ag-grid/main";
+import {
+    ICellEditor,
+    ICellEditorParams,
+    Component,
+    Autowired,
+    Context,
+    Utils,
+    Constants,
+    ICellRendererComp,
+    ICellRendererFunc,
+    CellRendererService
+} from "ag-grid/main";
 import {RichSelectRow} from "./richSelectRow";
 import {VirtualList} from "../virtualList";
 
@@ -99,14 +110,16 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     private renderSelectedValue(): void {
         let eValue = <HTMLElement> this.getGui().querySelector('.ag-rich-select-value');
 
+        let valueFormatted = this.params.formatValue(this.selectedValue);
+
         if (this.cellRenderer) {
-            let result = this.cellRendererService.useCellRenderer(this.cellRenderer, eValue, {value: this.selectedValue});
+            let result = this.cellRendererService.useCellRenderer(this.cellRenderer, eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
             if (result && result.destroy) {
                 this.addDestroyFunc( ()=> result.destroy() );
             }
         } else {
             if (Utils.exists(this.selectedValue)) {
-                eValue.innerHTML = this.selectedValue.toString();
+                eValue.innerHTML = valueFormatted;
             } else {
                 eValue.innerHTML = '';
             }
@@ -124,15 +137,14 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
             this.selectedValue = value;
             this.virtualList.ensureIndexVisible(index);
             this.virtualList.refresh();
-
-            // this.renderSelectedValue();
         }
     }
 
     private createRowComponent(value: any): Component {
+        let valueFormatted = this.params.formatValue(value);
         let row = new RichSelectRow(this.cellRenderer);
         this.context.wireBean(row);
-        row.setState(value, value===this.selectedValue);
+        row.setState(value, valueFormatted,value===this.selectedValue);
         return row;
     }
 

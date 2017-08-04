@@ -2,6 +2,7 @@ import {
     Component,
     ICellRendererFunc,
     CellRendererService,
+    ValueFormatterService,
     Autowired,
     PostConstruct,
     GridOptionsWrapper,
@@ -19,6 +20,7 @@ export class SetFilterListItem extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
+    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
     private static TEMPLATE =
         '<label class="ag-set-filter-item">'+
@@ -42,6 +44,7 @@ export class SetFilterListItem extends Component {
         this.value = value;
         this.cellRenderer = cellRenderer;
         this.column = column;
+
     }
 
     @PostConstruct
@@ -53,7 +56,6 @@ export class SetFilterListItem extends Component {
 
         this.updateCheckboxIcon();
         this.render();
-
 
         let listener = () => {
             this.selected = !this.selected;
@@ -90,9 +92,12 @@ export class SetFilterListItem extends Component {
 
         let valueElement = this.queryForHtmlElement(".ag-filter-value");
 
-        // let valueElement = eFilterValue.querySelector(".ag-filter-value");
+        let valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
+        let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
+        let valueToRender = valueFormattedExits ? valueFormatted : this.value;
+
         if (this.cellRenderer) {
-            let component = this.cellRendererService.useCellRenderer(this.cellRenderer, valueElement, {value: this.value});
+            let component = this.cellRendererService.useCellRenderer(this.cellRenderer, valueElement, {value: this.value, valueFormatted: valueFormatted});
             if (component && component.destroy) {
                 this.addDestroyFunc( component.destroy.bind(component) );
             }
@@ -100,10 +105,8 @@ export class SetFilterListItem extends Component {
             // otherwise display as a string
             let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             let blanksText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
-            let displayNameOfValue = this.value === null ? blanksText : this.value;
-            valueElement.innerHTML = displayNameOfValue;
+
+            valueElement.innerHTML = valueToRender === null ? blanksText : valueToRender;
         }
-
     }
-
 }
