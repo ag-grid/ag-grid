@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ceolter/ag-grid-react.git"
+    "url": "https://github.com/ag-grid/ag-grid-react.git"
   },
   "keywords": [
     "react-component",
@@ -21,7 +21,7 @@
   "author": "Niall Crosby <niall.crosby@ag-grid.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ceolter/ag-grid-react/issues"
+    "url": "https://github.com/ag-grid/ag-grid-react/issues"
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
