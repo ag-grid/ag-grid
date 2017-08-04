@@ -6,7 +6,7 @@ import {Autowired, Bean, PostConstruct} from "../context/context";
 import {RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
 import {_} from "../utils";
-import {Events} from "../events";
+import {CellValueChangedEvent, Events} from "../events";
 import {EventService} from "../eventService";
 import {ValueCache} from "./valueCache";
 
@@ -136,7 +136,24 @@ export class ValueService {
         if (typeof column.getColDef().onCellValueChanged === 'function') {
             column.getColDef().onCellValueChanged(params);
         }
-        this.eventService.dispatchEvent(Events.EVENT_CELL_VALUE_CHANGED, params);
+
+        let event: CellValueChangedEvent = {
+            type: Events.EVENT_CELL_VALUE_CHANGED,
+            event: null,
+            rowIndex: rowNode.rowIndex,
+            column: params.column,
+            api: params.api,
+            colDef: params.colDef,
+            columnApi: params.columnApi,
+            context: params.context,
+            data: rowNode.data,
+            node: rowNode,
+            oldValue: params.oldValue,
+            newValue: params.newValue,
+            value: params.newValue
+        };
+
+        this.eventService.dispatchEvent(event.type, event);
     }
 
     private setValueUsingField(data: any, field: string, newValue: any, isFieldContainsDots: boolean): boolean {

@@ -233,11 +233,12 @@ export {IsColumnFunc} from "./dist/lib/entities/colDef";
 export {ColumnApi} from "./dist/lib/columnController/columnController";
 export {IHeader} from "./dist/lib/headerRendering/header/headerComp";
 export {ICellRendererParams} from "./dist/lib/rendering/cellRenderers/iCellRenderer";
-export {WrapableInterface} from "./dist/lib/baseComponentWrapper";
-export {BaseComponentWrapper} from "./dist/lib/baseComponentWrapper";
+export {WrapableInterface} from "./dist/lib/components/framework/frameworkComponentWrapper";
+export {BaseComponentWrapper} from "./dist/lib/components/framework/frameworkComponentWrapper";
 export {FrameworkComponentWrapper} from "./dist/lib/components/framework/frameworkComponentWrapper";
 export {IFrameworkFactory} from "./dist/lib/interfaces/iFrameworkFactory";
 export {SerializedNumberFilter} from "./dist/lib/filter/numberFilter";
 
 // events
-export {RangeSelectionChangedEvent} from "./dist/lib/events";
+export {RangeSelectionChangedEvent, FlashCellsEvent, ColumnRowGroupChangeRequestEvent,
+    ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent} from "./dist/lib/events";

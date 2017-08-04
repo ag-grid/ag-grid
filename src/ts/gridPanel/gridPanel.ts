@@ -6,7 +6,7 @@ import {BorderLayout} from "../layout/borderLayout";
 import {Logger, LoggerFactory} from "../logger";
 import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy, Context} from "../context/context";
 import {EventService} from "../eventService";
-import {Events} from "../events";
+import {BodyHeightChangedEvent, BodyScrollEvent, Events} from "../events";
 import {DragService, DragListenerParams} from "../dragAndDrop/dragService";
 import {IRangeController} from "../interfaces/iRangeController";
 import {Constants, KeyboardBinding, KeyboardBindingGroup} from "../constants";
@@ -374,8 +374,6 @@ export class GridPanel extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_ITEMS_ADDED, this.onRowDataChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_ITEMS_REMOVED, this.onRowDataChanged.bind(this));
 
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
@@ -1603,7 +1601,8 @@ export class GridPanel extends BeanStub {
         // in this page based on the height of the grid
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
-            this.eventService.dispatchEvent(Events.EVENT_BODY_HEIGHT_CHANGED);
+            let event: BodyHeightChangedEvent = {type: Events.EVENT_BODY_HEIGHT_CHANGED};
+            this.eventService.dispatchEvent(event.type, event);
         }
     }
 
@@ -1681,7 +1680,8 @@ export class GridPanel extends BeanStub {
     private onBodyHorizontalScroll(): void {
         let newLeftPosition = this.eBodyViewport.scrollLeft;
         if (newLeftPosition !== this.lastLeftPosition) {
-            this.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL, {direction: 'horizontal'});
+            let event: BodyScrollEvent = {type: Events.EVENT_BODY_SCROLL, direction: 'horizontal'};
+            this.eventService.dispatchEvent(event.type, event);
             this.lastLeftPosition = newLeftPosition;
             this.horizontallyScrollHeaderCenterAndFloatingCenter();
             this.alignedGridsService.fireHorizontalScrollEvent(newLeftPosition);
@@ -1700,7 +1700,8 @@ export class GridPanel extends BeanStub {
     private onVerticalScroll(sourceElement: HTMLElement): void {
         let newTopPosition = sourceElement.scrollTop;
         if (newTopPosition !== this.lastTopPosition) {
-            this.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL, {direction: 'vertical'});
+            let event: BodyScrollEvent = {type: Events.EVENT_BODY_SCROLL, direction: 'vertical'};
+            this.eventService.dispatchEvent(event.type, event);
             this.lastTopPosition = newTopPosition;
 
             this.fakeVerticalScroll(newTopPosition);

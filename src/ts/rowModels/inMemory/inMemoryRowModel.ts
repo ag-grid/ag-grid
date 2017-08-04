@@ -592,15 +592,6 @@ export class InMemoryRowModel {
         this.rowsToDisplay = <RowNode[]> this.flattenStage.execute({rowNode: this.rootNode});
     }
 
-    public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {
-        // remember group state, so we can expand groups that should be expanded
-        let groupState = this.getGroupState();
-        let newNodes = this.nodeManager.insertItemsAtIndex(index, items);
-        if (!skipRefresh) {
-            this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes, groupState);
-        }
-    }
-
     public onRowHeightChanged(): void {
         this.refreshModel({step: Constants.STEP_MAP, keepRenderedRows: true, keepEditingRows: true});
     }
@@ -608,35 +599,6 @@ export class InMemoryRowModel {
     public resetRowHeights(): void {
         this.forEachNode( (rowNode: RowNode) => rowNode.setRowHeight(null) );
         this.onRowHeightChanged();
-    }
-
-    public removeItems(rowNodes: RowNode[], skipRefresh: boolean): void {
-        let groupState = this.getGroupState();
-        let removedNodes = this.nodeManager.removeItems(rowNodes);
-        if (!skipRefresh) {
-            this.refreshAndFireEvent(Events.EVENT_ITEMS_REMOVED, removedNodes, groupState);
-        }
-    }
-
-    public addItems(items: any[], skipRefresh: boolean): void {
-        let groupState = this.getGroupState();
-        let newNodes = this.nodeManager.addItems(items);
-
-        if (!skipRefresh) {
-            this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes, groupState);
-        }
-
-        // if (newNodes) {
-        //     this.refreshModel({step: Constants.STEP_EVERYTHING, groupState: groupState, newRowNodes: newNodes});
-        //     this.eventService.dispatchEvent(Events.EVENT_ITEMS_ADDED, {rowNodes: newNodes})
-        // }
-    }
-
-    private refreshAndFireEvent(eventName: string, rowNodes: RowNode[], groupState: any): void {
-        if (rowNodes) {
-            this.refreshModel({step: Constants.STEP_EVERYTHING, groupState: groupState});
-            this.eventService.dispatchEvent(eventName, {rowNodes: rowNodes})
-        }
     }
 
 }

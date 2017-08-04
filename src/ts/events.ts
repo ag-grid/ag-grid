@@ -97,7 +97,7 @@ export class Events {
     /** Gets called once after the grid has finished initialising. */
     public static EVENT_GRID_READY = 'gridReady';
     /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
-     * changed, so always filling the space it was given.  */
+     * changed, so always filling the space it was given. */
     public static EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
     /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
     public static EVENT_VIEWPORT_CHANGED = 'viewportChanged';
@@ -111,11 +111,6 @@ export class Events {
 
     public static EVENT_CELL_EDITING_STARTED = 'cellEditingStarted';
     public static EVENT_CELL_EDITING_STOPPED = 'cellEditingStopped';
-
-    /** Client added a new row. */
-    public static EVENT_ITEMS_ADDED = 'itemsAdded';
-    /** Client removed a row. */
-    public static EVENT_ITEMS_REMOVED = 'itemsRemoved';
 
     /** Main body of grid has scrolled, either horizontally or vertically */
     public static EVENT_BODY_SCROLL = 'bodyScroll';
@@ -297,5 +292,46 @@ export interface DragStoppedEvent extends AgEvent {
 export interface RowEditingStartedEvent extends RowEvent {}
 export interface RowEditingStoppedEvent extends RowEvent {}
 
-// export interface CellEditingStartedEvent extends RowEvent {}
-// export interface CellEditingStoppedEvent extends RowEvent {}
+export interface CellEditingStartedEvent extends CellEvent {}
+export interface CellEditingStoppedEvent extends CellEvent {}
+
+export interface CellValueChangedEvent extends CellEvent {
+    oldValue: any;
+    newValue: any;
+}
+
+export interface ItemsEvent extends AgEvent {
+    items: RowNode[]
+}
+
+export interface ItemsAddedEvent extends ItemsEvent {}
+
+export interface BodyScrollEvent extends AgEvent {
+    direction: string;
+}
+
+export interface FlashCellsEvent extends AgEvent {
+    cells: any;
+}
+
+export interface PaginationChangedEvent extends AgEvent {
+    animate: boolean;
+    keepRenderedRows: boolean;
+    newData: boolean;
+    newPage: boolean;
+}
+
+export interface BodyHeightChangedEvent extends AgEvent {}
+
+export interface ScrollVisibilityChangedEvent extends AgEvent {}
+
+export interface ColumnRequestEvent extends AgEvent {
+    columns: Column[]
+}
+
+export interface ColumnRowGroupChangeRequestEvent extends ColumnRequestEvent {}
+export interface ColumnPivotChangeRequestEvent extends ColumnRequestEvent {}
+export interface ColumnValueChangeRequestEvent extends ColumnRequestEvent {}
+export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
+    aggFunc: any
+}

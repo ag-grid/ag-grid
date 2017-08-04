@@ -10,7 +10,9 @@ import {ValueService} from "../valueService/valueService";
 import {EventService} from "../eventService";
 import {Constants} from "../constants";
 import {
-    CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEvent, CellMouseOutEvent, CellMouseOverEvent,
+    CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent,
+    CellEvent,
+    CellMouseOutEvent, CellMouseOverEvent,
     Events
 } from "../events";
 import {RowComp} from "./rowComp";
@@ -705,7 +707,8 @@ export class CellComp extends Component {
             cellEditor.afterGuiAttached();
         }
 
-        this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STARTED, this.createParamsWithValue());
+        let event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
+        this.eventService.dispatchEvent(event.type, event);
 
         return true;
     }
@@ -806,22 +809,8 @@ export class CellComp extends Component {
         // (as the flash is meant to draw the user to a change that they didn't manually do themselves).
         this.refreshCell({forceRefresh: true, suppressFlash: true});
 
-        this.eventService.dispatchEvent(Events.EVENT_CELL_EDITING_STOPPED, this.createParamsWithValue());
-    }
-
-    private createParamsWithValue(): any {
-        let params: BaseWithValueColDefParams = {
-            node: this.node,
-            data: this.node.data,
-            value: this.value,
-            column: this.column,
-            colDef: this.column.getColDef(),
-            context: this.gridOptionsWrapper.getContext(),
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        (<any>params).$scope = this.scope;
-        return params;
+        let event: CellEditingStoppedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED);
+        this.eventService.dispatchEvent(event.type, event);
     }
 
     private createEvent(domEvent: Event, eventType: string): CellEvent {
@@ -840,7 +829,9 @@ export class CellComp extends Component {
         };
 
         // because we are hacking in $scope for angular 1, we have to de-reference
-        (<any>event).$scope = this.scope;
+        if (this.scope) {
+            (<any>event).$scope = this.scope;
+        }
 
         return event;
     }
