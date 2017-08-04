@@ -34,7 +34,7 @@ import {SetLeftFeature} from "./features/setLeftFeature";
 import {StylingService} from "../styling/stylingService";
 import {ColumnHoverService} from "./columnHoverService";
 import {ColumnAnimationService} from "./columnAnimationService";
-import {BaseWithValueColDefParams} from "../entities/colDef";
+import {BaseWithValueColDefParams, NewValueParams} from "../entities/colDef";
 
 export class CellComp extends Component {
 
@@ -606,7 +606,9 @@ export class CellComp extends Component {
             $scope: this.scope,
             onKeyDown: this.onKeyDown.bind(this),
             stopEditing: this.stopEditingAndFocus.bind(this),
-            eGridCell: this.eGridCell
+            eGridCell: this.eGridCell,
+            parseValue: this.parseValue.bind(this),
+            formatValue: this.formatValue.bind(this)
         };
 
         let colDef = this.column.getColDef();
@@ -615,6 +617,23 @@ export class CellComp extends Component {
         }
 
         return params;
+    }
+
+    private parseValue(newValue: any): any {
+        let params: NewValueParams = {
+            node: this.node,
+            data: this.node.data,
+            oldValue: this.value,
+            newValue: newValue,
+            colDef: this.column.getColDef(),
+            column: this.column,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            context: this.gridOptionsWrapper.getContext()
+        };
+
+        let valueParser = this.column.getColDef().valueParser;
+        return _.exists(valueParser) ? this.expressionService.evaluate(valueParser, params) : newValue;
     }
 
     private createCellEditor(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorComp {
@@ -1246,7 +1265,9 @@ export class CellComp extends Component {
     }
 
     private formatValue(value: any): any {
-        return this.valueFormatterService.formatValue(this.column, this.node, this.scope, value);
+        let valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, value);
+        let valueFormattedExists = valueFormatted !== null && valueFormatted !== undefined;
+        return valueFormattedExists ? valueFormatted : value;
     }
 
     private createRendererAndRefreshParams(valueFormatted: string, cellRendererParams: {}): ICellRendererParams {

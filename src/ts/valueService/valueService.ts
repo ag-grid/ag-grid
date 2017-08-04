@@ -1,18 +1,13 @@
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ExpressionService} from "./expressionService";
 import {ColumnController} from "../columnController/columnController";
-import {ColDef, NewValueParams, ValueGetterParams} from "../entities/colDef";
+import {NewValueParams, ValueGetterParams} from "../entities/colDef";
 import {Autowired, Bean, PostConstruct} from "../context/context";
 import {RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
 import {_} from "../utils";
 import {Events} from "../events";
 import {EventService} from "../eventService";
-import {IRowModel} from "../interfaces/iRowModel";
-import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
-import {Constants} from "../constants";
-import {RowRenderer} from "../rendering/rowRenderer";
-import {ChangedPath} from "../rowModels/inMemory/changedPath";
 import {ValueCache} from "./valueCache";
 
 @Bean('valueService')
@@ -87,7 +82,7 @@ export class ValueService {
             rowNode.data = {};
         }
 
-        let {field, newValueHandler, valueSetter, valueParser} = column.getColDef();
+        let {field, newValueHandler, valueSetter} = column.getColDef();
 
         // need either a field or a newValueHandler for this to work
         if (_.missing(field) && _.missing(newValueHandler) && _.missing(valueSetter)) {
@@ -108,8 +103,7 @@ export class ValueService {
             context: this.gridOptionsWrapper.getContext()
         };
 
-        let parsedValue = _.exists(valueParser) ? this.expressionService.evaluate(valueParser, params) : newValue;
-        params.newValue = parsedValue;
+        params.newValue = newValue;
 
         let valueWasDifferent: boolean;
         if (_.exists(newValueHandler)) {
@@ -117,7 +111,7 @@ export class ValueService {
         } else if (_.exists(valueSetter)) {
             valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
         } else {
-            valueWasDifferent = this.setValueUsingField(data, field, parsedValue, column.isFieldContainsDots());
+            valueWasDifferent = this.setValueUsingField(data, field, newValue, column.isFieldContainsDots());
         }
 
         // in case user forgot to return something (possible if they are not using TypeScript
