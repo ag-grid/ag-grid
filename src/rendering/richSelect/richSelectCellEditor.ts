@@ -113,7 +113,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         let valueFormatted = this.params.formatValue(this.selectedValue);
 
         if (this.cellRenderer) {
-            let result = this.cellRendererService.useCellRenderer(this.cellRenderer, eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
+            let result = this.cellRendererService.useCellRenderer(this.params.column.getColDef(), eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
             if (result && result.destroy) {
                 this.addDestroyFunc( ()=> result.destroy() );
             }
@@ -142,7 +142,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
 
     private createRowComponent(value: any): Component {
         let valueFormatted = this.params.formatValue(value);
-        let row = new RichSelectRow(this.cellRenderer);
+        let row = new RichSelectRow(this.params.column.getColDef());
         this.context.wireBean(row);
         row.setState(value, valueFormatted,value===this.selectedValue);
         return row;

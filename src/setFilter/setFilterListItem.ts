@@ -97,7 +97,7 @@ export class SetFilterListItem extends Component {
         let valueToRender = valueFormattedExits ? valueFormatted : this.value;
 
         if (this.cellRenderer) {
-            let component = this.cellRendererService.useCellRenderer(this.cellRenderer, valueElement, {value: this.value, valueFormatted: valueFormatted});
+            let component = this.cellRendererService.useCellRenderer(this.column.getColDef(), valueElement, {value: this.value, valueFormatted: valueFormatted});
             if (component && component.destroy) {
                 this.addDestroyFunc( component.destroy.bind(component) );
             }
