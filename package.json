@@ -4,7 +4,7 @@
   "description": "Development project for all the other projects, contains a master gulp build file for dev purposes",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ceolter/ag-grid-parent.git"
+    "url": "https://github.com/ag-grid/ag-grid-parent.git"
   },
   "keywords": [],
   "author": "Niall Crosby <niall.crosby@ag-grid.com>",

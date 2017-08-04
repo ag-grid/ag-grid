@@ -19,7 +19,7 @@ do
     echo "CHECKING OUT MODULE  $module to branch $1"
     echo =============================================================================================
 
-    git clone https://github.com/ceolter/$module.git
+    git clone https://github.com/ag-grid/$module.git
     cd $module
     git checkout -b $1
     cd ..
