@@ -97,7 +97,7 @@ export class Events {
     /** Gets called once after the grid has finished initialising. */
     public static EVENT_GRID_READY = 'gridReady';
     /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
-     * changed, so always filling the space it was given.  */
+     * changed, so always filling the space it was given. */
     public static EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
     /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
     public static EVENT_VIEWPORT_CHANGED = 'viewportChanged';
@@ -295,6 +295,11 @@ export interface RowEditingStoppedEvent extends RowEvent {}
 export interface CellEditingStartedEvent extends CellEvent {}
 export interface CellEditingStoppedEvent extends CellEvent {}
 
+export interface CellValueChangedEvent extends CellEvent {
+    oldValue: any;
+    newValue: any;
+}
+
 export interface ItemsEvent extends AgEvent {
     items: RowNode[]
 }
@@ -327,4 +332,6 @@ export interface ColumnRequestEvent extends AgEvent {
 export interface ColumnRowGroupChangeRequestEvent extends ColumnRequestEvent {}
 export interface ColumnPivotChangeRequestEvent extends ColumnRequestEvent {}
 export interface ColumnValueChangeRequestEvent extends ColumnRequestEvent {}
-export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {}
+export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
+    aggFunc: any
+}
