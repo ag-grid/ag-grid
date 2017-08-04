@@ -186,11 +186,6 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Pagination</td>
-        </tr>
-
-        <tr class="title-row">
-            <!-- TITLE ROW -->
             <td colspan="2">Miscellaneous</td>
         </tr>
         <tr>

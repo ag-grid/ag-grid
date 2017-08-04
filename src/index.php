@@ -53,7 +53,7 @@ include 'includes/navbar.php'; ?>
         <div class="container">
             <div class="row text-center">
                 <div class="col-md-4 info-item">
-                    Over <span class="info-item-big">750 Companies</span><br/>
+                    Over <span class="info-item-big">800 Companies</span><br/>
                     use <b>ag-Grid Enterprise</b>.
                 </div>
                 <div class="col-md-4 info-item">
