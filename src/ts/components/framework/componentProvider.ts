@@ -12,7 +12,6 @@ import {
 } from "../../filter/floatingFilter";
 import {EmptyFloatingFilterWrapperComp, FloatingFilterWrapperComp} from "../../filter/floatingFilterWrapper";
 import {ComponentType} from "./componentResolver";
-import {ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
 import {GroupCellRenderer} from "../../rendering/cellRenderers/groupCellRenderer";
 import {AnimateShowChangeCellRenderer} from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
 import {AnimateSlideCellRenderer} from "../../rendering/cellRenderers/animateSlideCellRenderer";
