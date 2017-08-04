@@ -1,6 +1,6 @@
 // Type definitions for ag-grid v12.0.1
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { BalancedColumnTreeBuilder } from "./dist/lib/columnController/balancedColumnTreeBuilder";
 export { ColumnController } from "./dist/lib/columnController/columnController";
 export { ColumnKeyCreator } from "./dist/lib/columnController/columnKeyCreator";
