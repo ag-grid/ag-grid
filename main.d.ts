@@ -97,7 +97,6 @@ export { RangeSelection, AddRangeSelectionParams } from "./dist/lib/interfaces/i
 export { IRangeController } from "./dist/lib/interfaces/iRangeController";
 export { BaseFrameworkFactory } from "./dist/lib/baseFrameworkFactory";
 export { CellNavigationService } from "./dist/lib/cellNavigationService";
-export { ColumnChangeEvent } from "./dist/lib/columnChangeEvent";
 export { AlignedGridsService } from "./dist/lib/alignedGridsService";
 export { Constants } from "./dist/lib/constants";
 export { CsvCreator, BaseCreator } from "./dist/lib/csvCreator";
@@ -158,3 +157,4 @@ export { BaseComponentWrapper } from "./dist/lib/baseComponentWrapper";
 export { FrameworkComponentWrapper } from "./dist/lib/componentProvider";
 export { IFrameworkFactory } from "./dist/lib/interfaces/iFrameworkFactory";
 export { SerializedNumberFilter } from "./dist/lib/filter/numberFilter";
+export { RangeSelectionChangedEvent } from "./dist/lib/events";

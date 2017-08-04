@@ -9,7 +9,10 @@ import {ColumnApi, ColumnController} from "../columnController/columnController"
 import {ValueService} from "../valueService/valueService";
 import {EventService} from "../eventService";
 import {Constants} from "../constants";
-import {CellEvent, Events} from "../events";
+import {
+    CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEvent, CellMouseOutEvent, CellMouseOverEvent,
+    Events
+} from "../events";
 import {RowComp} from "./rowComp";
 import {Autowired, Context, Optional, PostConstruct} from "../context/context";
 import {GridApi} from "../gridApi";
@@ -807,10 +810,25 @@ export class CellComp extends Component {
         return params;
     }
 
-    private createEvent(event: any): CellEvent {
-        let agEvent = this.createParamsWithValue();
-        agEvent.event = event;
-        return agEvent;
+    private createEvent(domEvent: Event, eventType: string): CellEvent {
+        let event: CellEvent = {
+            node: this.node,
+            data: this.node.data,
+            value: this.value,
+            column: this.column,
+            colDef: this.column.getColDef(),
+            context: this.gridOptionsWrapper.getContext(),
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            event: domEvent,
+            type: eventType,
+            rowIndex: this.node.rowIndex
+        };
+
+        // because we are hacking in $scope for angular 1, we have to de-reference
+        (<any>event).$scope = this.scope;
+
+        return event;
     }
 
     public getRenderedRow(): RowComp {
@@ -837,13 +855,13 @@ export class CellComp extends Component {
     }
 
     private onMouseOut(mouseEvent: MouseEvent): void {
-        let agEvent = this.createEvent(mouseEvent);
-        this.eventService.dispatchEvent(Events.EVENT_CELL_MOUSE_OUT, agEvent);
+        let cellMouseOutEvent: CellMouseOutEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OUT);
+        this.eventService.dispatchEvent(Events.EVENT_CELL_MOUSE_OUT, cellMouseOutEvent);
     }
 
     private onMouseOver(mouseEvent: MouseEvent): void {
-        let agEvent = this.createEvent(mouseEvent);
-        this.eventService.dispatchEvent(Events.EVENT_CELL_MOUSE_OVER, agEvent);
+        let cellMouseOverEvent: CellMouseOverEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OVER);
+        this.eventService.dispatchEvent(Events.EVENT_CELL_MOUSE_OVER, cellMouseOverEvent);
     }
 
     private onContextMenu(mouseEvent: MouseEvent): void {
@@ -859,11 +877,11 @@ export class CellComp extends Component {
 
 
         let colDef = this.column.getColDef();
-        let agEvent: any = this.createEvent(mouseEvent);
-        this.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, agEvent);
+        let cellContextMenuEvent: CellContextMenuEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CONTEXT_MENU);
+        this.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, cellContextMenuEvent);
 
         if (colDef.onCellContextMenu) {
-            colDef.onCellContextMenu(agEvent);
+            colDef.onCellContextMenu(cellContextMenuEvent);
         }
 
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
@@ -875,12 +893,12 @@ export class CellComp extends Component {
     private onCellDoubleClicked(mouseEvent: MouseEvent) {
         let colDef = this.column.getColDef();
         // always dispatch event to eventService
-        let agEvent: any = this.createEvent(mouseEvent);
-        this.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, agEvent);
+        let cellDoubleClickedEvent: CellDoubleClickedEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_DOUBLE_CLICKED);
+        this.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, cellDoubleClickedEvent);
 
         // check if colDef also wants to handle event
         if (typeof colDef.onCellDoubleClicked === 'function') {
-            colDef.onCellDoubleClicked(agEvent);
+            colDef.onCellDoubleClicked(cellDoubleClickedEvent);
         }
 
         let editOnDoubleClick = !this.gridOptionsWrapper.isSingleClickEdit()
@@ -912,13 +930,13 @@ export class CellComp extends Component {
     }
 
     private onCellClicked(mouseEvent: MouseEvent): void {
-        let agEvent = this.createEvent(mouseEvent);
-        this.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, agEvent);
+        let cellClickedEvent: CellClickedEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CLICKED);
+        this.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, cellClickedEvent);
 
         let colDef = this.column.getColDef();
 
         if (colDef.onCellClicked) {
-            colDef.onCellClicked(agEvent);
+            colDef.onCellClicked(cellClickedEvent);
         }
 
         let editOnSingleClick = this.gridOptionsWrapper.isSingleClickEdit()

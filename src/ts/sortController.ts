@@ -3,7 +3,7 @@ import {Autowired} from "./context/context";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {ColumnController} from "./columnController/columnController";
 import {EventService} from "./eventService";
-import {Events} from "./events";
+import {Events, SortChangedEvent} from "./events";
 import {Bean} from "./context/context";
 import {Utils as _} from './utils';
 
@@ -54,7 +54,8 @@ export class SortController {
     }
 
     private dispatchSortChangedEvents(): void {
-        this.eventService.dispatchEvent(Events.EVENT_SORT_CHANGED);
+        let event: SortChangedEvent = {type: Events.EVENT_SORT_CHANGED};
+        this.eventService.dispatchEvent(event.type, event);
     }
 
     private clearSortBarThisColumn(columnToSkip: Column): void {

@@ -5,7 +5,7 @@ import {ColumnController} from "../../columnController/columnController";
 import {FilterManager} from "../../filter/filterManager";
 import {RowNode} from "../../entities/rowNode";
 import {EventService} from "../../eventService";
-import {Events, ModelUpdatedEvent} from "../../events";
+import {Events, ModelUpdatedEvent, RowDataChangedEvent, RowDataUpdatedEvent} from "../../events";
 import {Autowired, Bean, Context, Optional, PostConstruct} from "../../context/context";
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
@@ -219,6 +219,7 @@ export class InMemoryRowModel {
         }
 
         let event: ModelUpdatedEvent = {
+            type: Events.EVENT_MODEL_UPDATED,
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
             newData: params.newData,
@@ -558,7 +559,8 @@ export class InMemoryRowModel {
         // - clears selection
         // - updates filters
         // - shows 'no rows' overlay if needed
-        this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED);
+        let rowDataChangedEvent: RowDataChangedEvent = {type: Events.EVENT_ROW_DATA_CHANGED};
+        this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED, rowDataChangedEvent);
 
         this.refreshModel({
             step: Constants.STEP_EVERYTHING,
@@ -580,7 +582,8 @@ export class InMemoryRowModel {
             keepEditingRows: true
         });
 
-        this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_UPDATED);
+        let event: RowDataUpdatedEvent = {type: Events.EVENT_ROW_DATA_UPDATED};
+        this.eventService.dispatchEvent(event.type, event);
 
         return rowNodeTran;
     }

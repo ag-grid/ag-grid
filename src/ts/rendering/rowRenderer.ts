@@ -8,7 +8,7 @@ import {EventService} from "../eventService";
 import {LastPlacedElements, RowComp} from "./rowComp";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
-import {Events, ModelUpdatedEvent} from "../events";
+import {Events, ModelUpdatedEvent, ViewportChangedEvent} from "../events";
 import {Constants} from "../constants";
 import {CellComp} from "./cellComp";
 import {Autowired, Bean, Context, Optional, PostConstruct, PreDestroy, Qualifier} from "../context/context";
@@ -83,7 +83,7 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterModelUpdate();
     }
 
-    private onPageLoaded(refreshEvent: ModelUpdatedEvent = {animate: false, keepRenderedRows: false, newData: false, newPage: false}): void {
+    private onPageLoaded(refreshEvent: ModelUpdatedEvent = {type: Events.EVENT_MODEL_UPDATED, animate: false, keepRenderedRows: false, newData: false, newPage: false}): void {
         this.onModelUpdated(refreshEvent);
     }
 
@@ -639,8 +639,13 @@ export class RowRenderer extends BeanStub {
             this.firstRenderedRow = newFirst;
             this.lastRenderedRow = newLast;
 
-            let event = {firstRow: newFirst, lastRow: newLast};
-            this.eventService.dispatchEvent(Events.EVENT_VIEWPORT_CHANGED, event);
+            let event: ViewportChangedEvent = {
+                type: Events.EVENT_VIEWPORT_CHANGED,
+                firstRow: newFirst,
+                lastRow: newLast
+            };
+
+            this.eventService.dispatchEvent(event.type, event);
         }
     }
 

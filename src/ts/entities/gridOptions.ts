@@ -11,12 +11,13 @@ import {IDateComp} from "../rendering/dateComponent";
 import {IEnterpriseDatasource} from "../interfaces/iEnterpriseDatasource";
 import {CsvExportParams, ProcessCellForExportParams} from "../exportParams";
 import {
+    CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent,
     ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent,
     ColumnPivotModeChangedEvent, ColumnResizedEvent,
     ColumnRowGroupChangedEvent,
     ColumnValueChangedEvent, ColumnVisibleEvent, DisplayedColumnsChangedEvent,
     GridColumnsChangedEvent,
-    NewColumnsLoadedEvent, VirtualColumnsChangedEvent
+    NewColumnsLoadedEvent, RowDataChangedEvent, RowGroupOpenedEvent, VirtualColumnsChangedEvent
 } from "../events";
 
 /****************************************************************
@@ -274,8 +275,8 @@ export interface GridOptions {
     onColumnResized?(event?: ColumnResizedEvent): void;
     onDisplayedColumnsChanged?(event?: DisplayedColumnsChangedEvent): void;
     onVirtualColumnsChanged?(event?: VirtualColumnsChangedEvent): void;
-    onRowGroupOpened?(event?: any): void;
-    onRowDataChanged?(event?: any): void;
+    onRowGroupOpened?(event?: RowGroupOpenedEvent): void;
+    onRowDataChanged?(event?: RowDataChangedEvent): void;
     onPinnedRowDataChanged?(event?: any): void;
     onRangeSelectionChanged?(event?: any): void;
     onColumnRowGroupAddRequest?(event?: any): void;
@@ -288,10 +289,12 @@ export interface GridOptions {
     onClipboardPaste?(event?: any): void;
     onHeaderHeightChanged?(event?: any): void;
     onModelUpdated?(event?: any): void;
-    onCellClicked?(event?: any): void;
-    onCellDoubleClicked?(event?: any): void;
-    onCellContextMenu?(event?: any): void;
+    onCellClicked?(event?: CellClickedEvent): void;
+    onCellDoubleClicked?(event?: CellDoubleClickedEvent): void;
+    onCellContextMenu?(event?: CellContextMenuEvent): void;
     onCellValueChanged?(event?: any): void;
+    onCellMouseOver?(event?: CellMouseOverEvent): void;
+    onCellMouseOut?(event?: CellMouseOutEvent): void;
     onRowValueChanged?(event?: any): void;
     onRowEditingStarted?(event?: any): void;
     onRowEditingStopped?(event?: any): void;
