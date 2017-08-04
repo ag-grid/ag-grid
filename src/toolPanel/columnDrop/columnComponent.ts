@@ -16,7 +16,8 @@ import {
     PostConstruct,
     QuerySelector,
     Column,
-    DragSource
+    DragSource,
+    ColumnAggFuncChangeRequestEvent
 } from "ag-grid/main";
 import {VirtualList} from "../../rendering/virtualList";
 import {AggFuncService} from "../../aggregation/aggFuncService";
@@ -182,11 +183,12 @@ export class ColumnComponent extends Component {
         let itemSelected = ()=> {
             hidePopup();
             if (this.gridOptionsWrapper.isFunctionsPassive()) {
-                let event = {
+                let event: ColumnAggFuncChangeRequestEvent = {
+                    type: Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
                     columns: [this.column],
                     aggFunc: value
                 };
-                this.eventService.dispatchEvent(Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST, event);
+                this.eventService.dispatchEvent(event.type, event);
             } else {
                 this.columnController.setColumnAggFunc(this.column, value);
             }

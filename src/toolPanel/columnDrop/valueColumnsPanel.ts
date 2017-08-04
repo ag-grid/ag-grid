@@ -10,7 +10,8 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     Events,
-    Column
+    Column,
+    ColumnValueChangeRequestEvent
 } from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
@@ -71,8 +72,8 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
 
     protected updateColumns(columns: Column[]): void {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST, {columns: columns} );
-            // this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_UPDATED, {columns: columns} );
+            let event: ColumnValueChangeRequestEvent = {type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST, columns: columns};
+            this.eventService.dispatchEvent(event.type, event);
         } else {
             this.columnController.setValueColumns(columns);
         }

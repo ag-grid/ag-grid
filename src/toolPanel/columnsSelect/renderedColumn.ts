@@ -16,7 +16,10 @@ import {
     EventService,
     Utils,
     AgCheckbox,
-    DragSource
+    DragSource,
+    ColumnRowGroupChangeRequestEvent,
+    ColumnPivotChangeRequestEvent,
+    ColumnValueChangeRequestEvent
 } from "ag-grid/main";
 
 export class RenderedColumn extends Component {
@@ -128,7 +131,8 @@ export class RenderedColumn extends Component {
             if (functionPassive) {
                 let copyOfPivotColumns = this.columnController.getPivotColumns().slice();
                 copyOfPivotColumns.push(column);
-                this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST, {columns: copyOfPivotColumns});
+                let event: ColumnPivotChangeRequestEvent = {type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST, columns: copyOfPivotColumns};
+                this.eventService.dispatchEvent(event.type, event);
             } else {
                 columnController.removePivotColumn(column);
             }
@@ -138,7 +142,8 @@ export class RenderedColumn extends Component {
             if (functionPassive) {
                 let copyOfValueColumns = this.columnController.getValueColumns().slice();
                 copyOfValueColumns.push(column);
-                this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST, {columns: copyOfValueColumns});
+                let event: ColumnValueChangeRequestEvent = {type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST, columns: copyOfValueColumns};
+                this.eventService.dispatchEvent(event.type, event);
             } else {
                 columnController.removeValueColumn(column);
             }
@@ -148,7 +153,8 @@ export class RenderedColumn extends Component {
             if (functionPassive) {
                 let copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
                 copyOfRowGroupColumns.push(column);
-                this.eventService.dispatchEvent(Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST, {columns: copyOfRowGroupColumns});
+                let event: ColumnRowGroupChangeRequestEvent = {type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST, columns: copyOfRowGroupColumns};
+                this.eventService.dispatchEvent(event.type, event);
             } else {
                 columnController.removeRowGroupColumn(column);
             }
