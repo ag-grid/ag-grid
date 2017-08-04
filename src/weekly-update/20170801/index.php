@@ -139,13 +139,12 @@ include('../../includes/mediaHeader.php');
         </p>
 
         <p>
-            Rob is looking at how <code>value getter</code>, <code>value setter</code>, <code>value formatter</code>
+            Rob is working on <code>value getter</code>, <code>value setter</code>, <code>value formatter</code>
             and <code>value parser</code> and creating examples and enhancing the documentation.
         </p>
 
         <p>
-            Niall is working on simplifying the documentation, including putting types onto all events (good for TypeScript)
-            and listing all items in each event (good for everyone).
+            Niall is working on simplifying the documentation This includes putting types on all events - good for TypeScript - and listing all items in each event - good for everyone.
         </p>
 
         <p>
@@ -159,7 +158,7 @@ include('../../includes/mediaHeader.php');
         <hr/>
 
         <p>
-            We know we had a lot of breaking changes in our last release. So for the next one we are going to focus on
+            We had a lot of breaking changes in our last release. So for the next one we are going to focus on
             fixing things rather than creating new features. Thus our next release will be a minor one. Our current
             date for the next release is 24th Aug.
         </p>
@@ -169,7 +168,7 @@ include('../../includes/mediaHeader.php');
         <hr/>
 
         <p>
-            We have sent out a customer survey to all the users of ag-Grid Enterprise today. Please take a few minutes to reply
+            We have sent out a customer survey to all the users of ag-Grid Enterprise. Please take a few minutes to reply
             and give us your feedback.
         </p>
 
