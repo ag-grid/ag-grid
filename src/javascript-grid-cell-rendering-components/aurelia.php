@@ -18,7 +18,7 @@
 
 <p>
     For examples on Aurelia cellRendering, see the
-    <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-aurelia-example</a> on Github.</p>
+    <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-aurelia-example</a> on Github.</p>
 </p>
 
 <h3 id="specifying-a-aurelia-cell-renderer"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia cellRenderer</h3>
@@ -72,4 +72,4 @@
 <!--          exampleHeight="525px"></show-example>-->
 <!---->
 <br/>
-<note>The full <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers and filters.</note>
+<note>The full <a href="https://github.com/ag-grid/ag-grid-aurelia-example">ag-grid-aurelia-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers and filters.</note>

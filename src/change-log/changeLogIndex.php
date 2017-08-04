@@ -1580,10 +1580,10 @@ params = {
 
     <p>
         <b>25 April</b> - Bug fixes:
-        <a href="https://github.com/ceolter/angular-grid/issues/35">Pinned Blank Space</a>,
-        <a href="https://github.com/ceolter/angular-grid/issues/91">Group Sorting</a>,
-        <a href="https://github.com/ceolter/angular-grid/issues/90">Cell Templates</a>,
-        <a href="https://github.com/ceolter/angular-grid/issues/29">Expand / Collapse</a>
+        <a href="https://github.com/ag-grid/angular-grid/issues/35">Pinned Blank Space</a>,
+        <a href="https://github.com/ag-grid/angular-grid/issues/91">Group Sorting</a>,
+        <a href="https://github.com/ag-grid/angular-grid/issues/90">Cell Templates</a>,
+        <a href="https://github.com/ag-grid/angular-grid/issues/29">Expand / Collapse</a>
     </p>
 
     <hr/>

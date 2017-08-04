@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ceolter/ag-grid-docs.git"
+    "url": "https://github.com/ag-grid/ag-grid-docs.git"
   },
   "keywords": [
     "web-components",
@@ -26,7 +26,7 @@
   "author": "Niall Crosby <niall.crosby@ag-grid.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ceolter/ag-grid-docs/issues"
+    "url": "https://github.com/ag-grid/ag-grid-docs/issues"
   },
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {},

@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
 
     <h3><img src="../images/openfin.png" width="50"  /> ag-Grid <a href="https://openfin.co/">OpenFin</a> Trader Dashboard</h3>
 
-    <note>You can try this example live using the following <a href="https://dl.openfin.co/services/download?fileName=aggrid_openfin_traderdashboard&config=https://ceolter.github.io/ag-grid-openfin-example/app-trader-remote.json">Link</a>.
+    <note>You can try this example live using the following <a href="https://dl.openfin.co/services/download?fileName=aggrid_openfin_traderdashboard&config=https://ag-grid.github.io/ag-grid-openfin-example/app-trader-remote.json">Link</a>.
     This will download a Zip file with a Windows executable within - if you run this executable the Trader Dashboard will install and run on your computer.</note>
 
     <h3>A Trader Dashboard with Tear Out Windows</h3>

@@ -17,7 +17,7 @@
 
     <p>
         For examples on React filtering, see the
-        <a href="https://github.com/ceolter/ag-grid-react-example">ag-grid-react-example</a> on Github.
+        <a href="https://github.com/ag-grid/ag-grid-react-example">ag-grid-react-example</a> on Github.
         In the example, 'Skills' , 'DOB' and 'Proficiency' columns use React filters.</p>
     </p>
 

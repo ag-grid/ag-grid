@@ -18,7 +18,7 @@
 
     <p>
         For an example on Polymer filtering, see the
-        <a href="https://github.com/ceolter/ag-grid-polymer-example">ag-grid-polymer-example</a> on Github.</p>
+        <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> on Github.</p>
     </p>
 
     <h3 id="specifying-a-polymer-filter"><img src="../images/polymer-large.png" style="width: 20px;"/> Specifying a Polymer Filter</h3>

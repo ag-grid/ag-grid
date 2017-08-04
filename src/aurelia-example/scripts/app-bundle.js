@@ -3993,7 +3993,7 @@ var Utils = (function () {
     Utils.isBrowserSafari = function () {
         if (this.isSafari === undefined) {
             var anyWindow = window;
-            // taken from https://github.com/ceolter/ag-grid/issues/550
+            // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
                 || (function (p) {
                     return p.toString() === "[object SafariRemoteNotification]";
@@ -11753,7 +11753,7 @@ var GridPanel = (function (_super) {
             targetPanel.scrollTop = newTopPosition;
         }
         // allow the option to pass mouse wheel events to the browser
-        // https://github.com/ceolter/ag-grid/issues/800
+        // https://github.com/ag-grid/ag-grid/issues/800
         // in the future, this should be tied in with 'forPrint' option, or have an option 'no vertical scrolls'
         if (!this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel()) {
             // if we don't prevent default, then the whole browser will scroll also as well as the grid

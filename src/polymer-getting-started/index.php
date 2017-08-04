@@ -37,7 +37,7 @@ include '../documentation-main/documentation_header.php';
 
     <pre>
 <span class="codeComment">// clone the ag-Grid Polymer seed project</span>
-git clone https://github.com/ceolter/ag-grid-polymer-seed
+git clone https://github.com/ag-grid/ag-grid-polymer-seed
 cd ag-grid-polymer-seed
 
 <span class="codeComment">// install the project dependencies</span>

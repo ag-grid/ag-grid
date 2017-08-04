@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
     </h1>
     <h2>More Details</h2>
 
-    <note>Full working examples of ag-Grid and Angular can be found in <a href="https://github.com/ceolter/ag-grid-angular-example">Github</a>, illustrating
+    <note>Full working examples of ag-Grid and Angular can be found in <a href="https://github.com/ag-grid/ag-grid-angular-example">Github</a>, illustrating
         (amongst others) Rich Grids, Filtering with Angular Components, Master/Detail Grid and so on.</note>
 
     <h3>Downloading the ag-Grid Angular Component</h3>
@@ -298,10 +298,10 @@ this.params.context.componentParent
         above illustrates this in the Child/Parent column:</p>
     <ul>
         <li>
-            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/from-component.component.ts"
+            <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/from-component.component.ts"
                target="_blank" class="fa fa-external-link"> Parent Component</a></li>
         <li>
-            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/child-message.component.ts"
+            <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/child-message.component.ts"
                target="_blank" class="fa fa-external-link"> Child Component</a></li>
     </ul>
 
@@ -313,7 +313,7 @@ this.params.context.componentParent
         examples
         using
         either SystemJS, Webpack or Webpack 2 as part of the <a
-                href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> project on
+                href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> project on
         GitHub.
     </p>
     <p>We document the main parts of these tools below, but please refer to the examples for more detail.</p>
@@ -442,7 +442,7 @@ private getCountryFilterParams():any {
 
     <h2 id="aggrid-angular-testing">Testing ag-Grid Angular Applications with Karma & Jasmine</h2>
 
-    <p>In our <a href="https://github.com/ceolter/ag-grid-angular-seed">Angular Seed Repo</a> we provide working
+    <p>In our <a href="https://github.com/ag-grid/ag-grid-angular-seed">Angular Seed Repo</a> we provide working
         examples of how to test your Angular project with Karma & Jasmine.</p>
 
     <p>As with your actual application, you need to ensure you <code>import</code> the <code>AgGridModule</code> when

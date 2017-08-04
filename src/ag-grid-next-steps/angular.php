@@ -8,7 +8,7 @@
     <h2 id="ag-grid-angular-features"><img style="vertical-align: middle" src="/images/angular2_small.png"
                                            height="25px"/> ag-Grid Angular Features</h2>
 
-    <note>Please use the github project <a href="https://github.com/ceolter/ag-grid-angular">ag-grid-angular</a>
+    <note>Please use the github project <a href="https://github.com/ag-grid/ag-grid-angular">ag-grid-angular</a>
         for feedback or issue reporting around ag-Grid's support for Angular.
     </note>
 
@@ -230,10 +230,10 @@ this.params.context.componentParent
         above illustrates this in the Child/Parent column:</p>
     <ul>
         <li>
-            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/from-component.component.ts"
+            <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/from-component.component.ts"
                target="_blank" class="fa fa-external-link"> Parent Component</a></li>
         <li>
-            <a href="https://github.com/ceolter/ag-grid-angular-example/blob/master/systemjs_aot/app/child-message.component.ts"
+            <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/child-message.component.ts"
                target="_blank" class="fa fa-external-link"> Child Component</a></li>
     </ul>
 
@@ -245,7 +245,7 @@ this.params.context.componentParent
         examples
         using
         either SystemJS, Webpack or Webpack 2 as part of the <a
-                href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> project on
+                href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> project on
         GitHub.
     </p>
     <p>We document the main parts of these tools below, but please refer to the examples for more detail.</p>

@@ -159,7 +159,7 @@ include 'includes/headerRow.php'; ?>
                                 <span class="price-sub">per Developer</span>
                             </div>
                             <div class="extra">
-                                <p>Released under <a href="https://github.com/ceolter/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
+                                <p>Released under <a href="https://github.com/ag-grid/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
                             </div>
                             <ul>
                                 <li><span>Usage of ag-Grid Enterprise in a single Application</span></li>
@@ -179,7 +179,7 @@ include 'includes/headerRow.php'; ?>
                                 <span class="price-sub">per Developer</span>
                             </div>
                             <div class="extra">
-                                <p>Released under <a href="https://github.com/ceolter/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
+                                <p>Released under <a href="https://github.com/ag-grid/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
                             </div>
                             <ul>
                                 <li><span>Usage of ag-Grid Enterprise in multiple Applications</span></li>
@@ -198,7 +198,7 @@ include 'includes/headerRow.php'; ?>
                                 <span class="price-sub">price on asking</span>
                             </div>
                             <div class="extra">
-                                <p>Released under <a href="https://github.com/ceolter/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
+                                <p>Released under <a href="https://github.com/ag-grid/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
                             </div>
                             <ul>
                                 <li><span>Usage of ag-Grid Enterprise in SaaS/OEM Applications</span></li>

@@ -12,7 +12,7 @@
     "web",
     "component"
   ],
-  "homepage": "https://github.com/ceolter/ag-grid-polymer",
+  "homepage": "https://github.com/ag-grid/ag-grid-polymer",
   "ignore": [
     "**/.*",
     "node_modules",

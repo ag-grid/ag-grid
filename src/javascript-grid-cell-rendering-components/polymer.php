@@ -17,7 +17,7 @@
 
 <p>
     For examples on Polymer cellRendering, see the
-    <a href="https://github.com/ceolter/ag-grid-polymer-example">ag-grid-polymer-example</a> on Github.
+    <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> on Github.
     Polymer Renderers are used on all but the first Grid on this example page (the first grid uses plain JavaScript
     Renderers)</p>
 </p>
@@ -151,7 +151,7 @@ the grid will know the framework to use is Polymer.
                       exampleHeight="525px">
 </show-complex-example>
 
-<note>The full <a href="https://github.com/ceolter/ag-grid-polymer-example">ag-grid-polymer-example</a> repo shows many
+<note>The full <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> repo shows many
     more examples for rendering, including grouped rows, full width renderers
     and so on, as well as examples on using Polymer Components with both CellEditors and Filters
 </note>
