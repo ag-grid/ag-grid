@@ -96,6 +96,17 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
+    components:{
+        currencyRenderer: currencyRenderer,
+        ratingRenderer: ratingRenderer,
+        booleanCellRenderer: booleanCellRenderer,
+        countryCellRenderer: CountryCellRenderer,
+        languageCellRenderer: languageCellRenderer,
+        personFloatingFilterComponent: PersonFloatingFilterComponent,
+        countryFloatingFilterComponent: CountryFloatingFilterComponent,
+        // cellRenderer: function (params) {return params.node.group ? params.value : "HAHA: " + params.value},
+        innerRenderer: function (params) {return "INNER: " + params.value}
+    },
     defaultColDef: {
         minWidth: 50
     },
@@ -113,14 +124,14 @@ var gridOptions = {
     floatingFilter:true,
 //debug: true,
 //     editType: 'fullRow',
-suppressEnterprise: true,
+    suppressEnterprise: true,
 //     debug: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     pivotTotals: true,
 //minColWidth: 50,
 //maxColWidth: 300,
-rowBuffer: 0,
+    rowBuffer: 0,
 //columnDefs: [],
 //singleClickEdit: true,
 // suppressClickEdit: true,
@@ -329,7 +340,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 // enablePivot: true,
                 filter: PersonFilter,
-                floatingFilterComponent: PersonFloatingFilterComponent,
+                floatingFilterComponent: 'personFloatingFilterComponent',
                 checkboxSelection: function (params) {
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
@@ -346,7 +357,7 @@ var defaultCols = [
             },
             {
                 headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
-                cellRenderer: languageCellRenderer,
+                cellRenderer: 'languageCellRenderer',
                 cellEditor: 'select',
                 enableRowGroup: true,
                 enablePivot: true,
@@ -370,14 +381,14 @@ var defaultCols = [
             },
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
-                cellRenderer: CountryCellRenderer,
+                cellRenderer: 'countryCellRenderer',
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
                 cellEditor: 'richSelect',
                 cellEditorParams: {
-                    cellRenderer: CountryCellRenderer,
+                    cellRenderer: 'countryCellRenderer',
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
                         "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
                         "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
@@ -385,13 +396,13 @@ var defaultCols = [
                 // pinned: 'left',
                 floatCell: true,
                 filterParams: {
-                    cellRenderer: CountryCellRenderer,
+                    cellRenderer: 'countryCellRenderer',
                     cellHeight: 20,
                     newRowsAction: 'keep',
                     selectAllOnMiniFilter: true,
                     clearButton: true
                 },
-                floatingFilterComponent: CountryFloatingFilterComponent,
+                floatingFilterComponent: 'countryFloatingFilterComponent',
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -431,7 +442,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 enablePivot: true,
                 enableValue: true,
-                cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                cellRenderer: 'booleanCellRenderer', cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 floatCell: true,
                 filterParams: {
                     cellRenderer: booleanFilterCellRenderer,
@@ -448,8 +459,8 @@ var defaultCols = [
         groupId: 'performance',
         children: [
             {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
-                filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
-                filterParams: {cellRenderer: currencyRenderer},
+                filter: WinningsFilter, cellRenderer: 'currencyRenderer', cellStyle: currencyCssFunc,
+                filterParams: {cellRenderer: 'currencyRenderer'},
                 enableValue: true,
                 // colId: 'sf',
                 // valueGetter: '55',
@@ -472,7 +483,7 @@ var defaultCols = [
         ]
     },
     {
-        headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
+        headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: 'ratingRenderer',
         floatCell: true,
         enableRowGroup: true,
         enablePivot: true,
@@ -484,7 +495,7 @@ var defaultCols = [
         editable: true, valueParser: numberParser, width: 150,
         // aggFunc: 'sum',
         enableValue: true,
-        cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
+        cellRenderer: 'currencyRenderer', cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-asc"/>',
             sortDescending: '<i class="fa fa-sort-amount-desc"/>'
@@ -508,8 +519,8 @@ months.forEach(function (month) {
             'good-score': 'typeof x === "number" && x > 50000',
             'bad-score': 'typeof x === "number" && x < 10000'
         },
-        valueParser: numberParser, cellRenderer: currencyRenderer,
-        filterCellRenderer: currencyRenderer,
+        valueParser: numberParser, cellRenderer: 'currencyRenderer',
+        filterCellRenderer: 'currencyRenderer',
         filterParams:{
             clearButton: true
         },

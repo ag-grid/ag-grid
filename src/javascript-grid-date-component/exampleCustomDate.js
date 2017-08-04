@@ -35,7 +35,9 @@ var gridOptions = {
     rowData: null,
     enableFilter: true,
     // Here is where we specify the component to be used as the date picker widget
-    dateComponent: MyDateEditor
+    components:{
+        dateComponent: MyDateEditor
+    }
 };
 
 function MyDateEditor () {
