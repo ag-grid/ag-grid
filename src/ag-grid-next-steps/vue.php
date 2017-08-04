@@ -30,12 +30,12 @@ this.params.context.componentParent
 
 <p>The <span style="font-style: italic">"A Simple Example, using CellRenderers created from VueJS Components"</span> above illustrates this in the Child/Parent column:</p>
 <ul>
-    <li><a href="https://github.com/ceolter/ag-grid-vue-example/blob/master/src/dynamic-component-example/DynamicComponentExample.vue" target="_blank" class="fa fa-external-link"> Parent & Child Component</a></li>
+    <li><a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/dynamic-component-example/DynamicComponentExample.vue" target="_blank" class="fa fa-external-link"> Parent & Child Component</a></li>
 </ul>
 
 <h3 id="building-bundling">Building & Bundling</h3>
 <p>There are many ways to build and/or bundle an VueJS Application. We provide fully working examples using a simplified
-    Webpack build as part of the <a href="https://github.com/ceolter/ag-grid-vue-example">ag-grid-vue-example</a> on GitHub.</p>
+    Webpack build as part of the <a href="https://github.com/ag-grid/ag-grid-vue-example">ag-grid-vue-example</a> on GitHub.</p>
 
 <?php
 $framework_enterprise = 'import Vue from "vue";

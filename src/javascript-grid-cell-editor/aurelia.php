@@ -18,7 +18,7 @@
 
     <p>
         For an example of Aurelia cellEditing, see the
-        <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.
+        <a href="https://github.com/ag-grid/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.
     </p>
 
     <h3 id="specifying-a-aurelia-cell-editor"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia cellEditor</h3>

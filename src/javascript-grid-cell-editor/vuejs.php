@@ -18,7 +18,7 @@
 
     <p>
         For an example of VueJS cellEditing, see the
-        <a href="https://github.com/ceolter/ag-grid-vue-example">ag-grid-vue-example</a> on Github.
+        <a href="https://github.com/ag-grid/ag-grid-vue-example">ag-grid-vue-example</a> on Github.
     </p>
 
     <h3><img src="../images/vue_large.png" style="width: 20px;"/> Specifying a VueJS cellEditor</h3>

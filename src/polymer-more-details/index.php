@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
     </h1>
     <h2>More Details</h2>
 
-    <note>Full working examples of ag-Grid and Polymer can be found in <a href="https://github.com/ceolter/ag-grid-polymer-example">Github</a>, illustrating
+    <note>Full working examples of ag-Grid and Polymer can be found in <a href="https://github.com/ag-grid/ag-grid-polymer-example">Github</a>, illustrating
         (amongst others) Rich Grids, Filtering with Polymer Components, Master/Detail Grid and so on.</note>
 
     <h3>Downloading the ag-Grid Polymer Component</h3>

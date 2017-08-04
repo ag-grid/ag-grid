@@ -26,7 +26,7 @@
                           }">
 </show-complex-example>
 
-<note>The full <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> repo shows many
+<note>The full <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> repo shows many
     more examples for rendering, including grouped rows, full width renderers
     and so on, as well as examples on using Angular Components with both CellEditors and Filters
 </note>

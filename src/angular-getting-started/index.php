@@ -37,7 +37,7 @@ include '../documentation-main/documentation_header.php';
 
     <pre>
 <span class="codeComment">// clone the ag-Grid Angular seed project</span>
-git clone https://github.com/ceolter/ag-grid-angular-seed
+git clone https://github.com/ag-grid/ag-grid-angular-seed
 cd ag-grid-angular-seed/angular-cli
 
 <span class="codeComment">// install the project dependencies</span>

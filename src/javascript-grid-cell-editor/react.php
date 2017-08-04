@@ -17,7 +17,7 @@
 
     <p>
         For an example of React cellEditing, see the
-        <a href="https://github.com/ceolter/ag-grid-react-example">ag-grid-react-example</a> on Github.
+        <a href="https://github.com/ag-grid/ag-grid-react-example">ag-grid-react-example</a> on Github.
         In the example, the 'name' column uses a React cellEditor.</p>
     </p>
 

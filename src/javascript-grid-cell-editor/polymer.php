@@ -17,7 +17,7 @@
 
     <p>
         For an example of Polymer cellEditing, see the
-        <a href="https://github.com/ceolter/ag-grid-polymer-example">ag-grid-polymer-example</a> on Github.
+        <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> on Github.
     </p>
 
     <h3><img src="../images/polymer-large.png" style="width: 20px;"/> Specifying a Polymer cellEditor</h3>

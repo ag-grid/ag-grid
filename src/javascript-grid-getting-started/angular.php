@@ -15,7 +15,7 @@
 </p>
 
 <p>We document the main steps required when using Angular-CLI below, but please refer to
-    <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working
+    <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working
     example of this.</p>
 
 <note>Full Working Examples can be found in the <a href="../example-angular">Angular Examples</a> section.</note>

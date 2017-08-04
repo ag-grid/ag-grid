@@ -18,7 +18,7 @@
 
     <p>
         For an example on Aurelia filtering, see the
-        <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.</p>
+        <a href="https://github.com/ag-grid/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.</p>
     </p>
 
     <h3 id="specifying-a-filter-in-an-aurelia-project"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Filter in an Aurelia project</h3>

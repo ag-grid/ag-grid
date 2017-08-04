@@ -14,10 +14,10 @@ include '../documentation-main/documentation_header.php';
 <h2>Building an ag-Grid Application with Angular CLI</h2>
 
 <p>We walk through the main steps required when using ag-Grid, Angular and Angular CLI below, but please refer to
-    <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>
+    <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>
 
 <p>We document the main steps required when using Angular-CLI below, but please refer to
-    <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working
+    <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working
     example of this.</p>
 
 <h2 id="pre-requisites">Pre-requisites</h2>
@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
 
 <h2 id="creating-a-angular-project-with-ag-grid">Creating a Angular Project with ag-Grid</h2>
 
-<note>You can either create the project by hand, or check it out from our Angular Seed Repo in <a href="https://github.com/ceolter/ag-grid-angular-seed">GitHub.</a></note>
+<note>You can either create the project by hand, or check it out from our Angular Seed Repo in <a href="https://github.com/ag-grid/ag-grid-angular-seed">GitHub.</a></note>
 
 <p>
     First we'll create a new project - lets call it <code>ag-grid-cli</code>:

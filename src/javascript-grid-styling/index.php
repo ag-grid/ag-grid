@@ -50,7 +50,7 @@ include '../documentation-main/documentation_header.php';
         the most difficult.
         If you do decide to create your own theme, then you can use one of the provided themes and
         use that as a template. They can be found on GitHub here:
-        <a href="https://github.com/ceolter/ag-grid/tree/master/src/styles">https://github.com/ceolter/ag-grid/tree/master/src/styles</a>
+        <a href="https://github.com/ag-grid/ag-grid/tree/master/src/styles">https://github.com/ceolter/ag-grid/tree/master/src/styles</a>
     </p>
 
 

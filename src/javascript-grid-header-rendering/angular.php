@@ -52,5 +52,5 @@
 }</pre>
 
 <p>For a full working example of Header Components in Angular see
-    <a href="https://github.com/ceolter/ag-grid-angular-example">Angular Example</a>.
+    <a href="https://github.com/ag-grid/ag-grid-angular-example">Angular Example</a>.
 </p>

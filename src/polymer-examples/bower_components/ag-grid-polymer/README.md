@@ -355,12 +355,12 @@ $ bower install ag-grid-polymer
 
 ## Examples
 
-See the [https://github.com/ceolter/ag-grid-polymer-example](https://github.com/ceolter/ag-grid-polymer-example) for full 
+See the [https://github.com/ag-grid/ag-grid-polymer-example](https://github.com/ceolter/ag-grid-polymer-example) for full 
 working examples of what you can do with ag-Grid and Polymer.
 
 Examples included are:
 
 ## Simple Grid 
-![Simple Grid](https://github.com/ceolter/ag-grid-polymer-example/blob/master/docs/simple.png?raw=true "Rich Grid")
+![Simple Grid](https://github.com/ag-grid/ag-grid-polymer-example/blob/master/docs/simple.png?raw=true "Rich Grid")
 ## Rich Grid 
-![Rich Grid](https://github.com/ceolter/ag-grid-polymer-example/blob/master/docs/rich.png?raw=true "Rich Grid")
+![Rich Grid](https://github.com/ag-grid/ag-grid-polymer-example/blob/master/docs/rich.png?raw=true "Rich Grid")

@@ -38,7 +38,7 @@ include '../documentation-main/documentation_header.php';
 
     <pre>
 <span class="codeComment">// clone the ag-Grid React seed project</span>
-git clone https://github.com/ceolter/ag-grid-seed
+git clone https://github.com/ag-grid/ag-grid-seed
 cd ag-grid-react-seed/javascript
 
 <span class="codeComment">// Now either open index.html from the browser of your choice, or from the command line:</span>

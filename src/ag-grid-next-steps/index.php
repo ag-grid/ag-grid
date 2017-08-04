@@ -226,17 +226,17 @@ include '../documentation-main/documentation_header.php';
                 together.
             </p>
             <ul>
-                <li><a href="https://github.com/ceolter/ag-grid-commonjs-example">CommonJS, Gulp and
+                <li><a href="https://github.com/ag-grid/ag-grid-commonjs-example">CommonJS, Gulp and
                         Browersify</a>
                     -
                     Project on Github
                 </li>
-                <li><a href="https://github.com/ceolter/ag-grid-react-example">React, Webpack, Babel</a> -
+                <li><a href="https://github.com/ag-grid/ag-grid-react-example">React, Webpack, Babel</a> -
                     Project
                     on
                     Github
                 </li>
-                <li><a href="https://github.com/ceolter/ag-grid-angular-example">Angular & Typescript - with
+                <li><a href="https://github.com/ag-grid/ag-grid-angular-example">Angular & Typescript - with
                         examples
                         using
                         SystemJS, Webpack and Angular-CLI</a> - Project on Github

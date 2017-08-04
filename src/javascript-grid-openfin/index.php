@@ -14,12 +14,12 @@ include '../documentation-main/documentation_header.php';
     <p><a href="https://openfin.co/">OpenFin</a> provides runtime technology solutions for financial desktops. Below we document and illustrate how you can use
     ag-Grid within the <a href="https://openfin.co/">OpenFin</a> platform.</p>
 
-    <note>Full working examples can be found <a href="https://github.com/ceolter/ag-grid-openfin-example"> in GitHub</a></note>
+    <note>Full working examples can be found <a href="https://github.com/ag-grid/ag-grid-openfin-example"> in GitHub</a></note>
 
     <h3>Installation</h3>
 
 <pre>
-git clone https://github.com/ceolter/ag-grid-openfin-example
+git clone https://github.com/ag-grid/ag-grid-openfin-example
 cd ag-grid-openfin-example
 npm install
 </pre>

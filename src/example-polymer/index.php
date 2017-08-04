@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         This page goes through the
-        <a href="https://github.com/ceolter/ag-grid-Polymer-example">ag-grid-Polymer-example</a>
+        <a href="https://github.com/ag-grid/ag-grid-Polymer-example">ag-grid-Polymer-example</a>
         on Github.</p>
 
     <p>The example project includes a number of separate grids on a page, with each section demonstrating a

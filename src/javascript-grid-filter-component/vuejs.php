@@ -19,7 +19,7 @@
 
     <p>
         For an example on VueJS filtering, see the
-        <a href="https://github.com/ceolter/ag-grid-vue-example">ag-grid-vue-example</a> on Github.</p>
+        <a href="https://github.com/ag-grid/ag-grid-vue-example">ag-grid-vue-example</a> on Github.</p>
     </p>
 
     <h3 id="specifying-a-vuejs-filter"><img src="../images/vue_large.png" style="width: 20px;"/> Specifying a VueJS Filter</h3>
