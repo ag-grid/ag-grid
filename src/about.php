@@ -142,7 +142,7 @@
 
     <div class="row" style="margin-top: 50px;">
 
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div>
                 <img src='images/team/niall.png'/>
             </div>
@@ -153,7 +153,7 @@
             </p>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div>
                 <img src='images/team/sean.png'/>
             </div>
@@ -164,7 +164,7 @@
             </p>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div>
                 <img src='images/team/alberto.png'/>
             </div>
@@ -175,7 +175,11 @@
             </p>
         </div>
 
-        <div class="col-md-3">
+    </div>
+
+    <div class="row" style="margin-top: 50px;">
+
+        <div class="col-md-4">
             <div>
                 <img src='images/team/rob.jpg'/>
             </div>
@@ -183,6 +187,17 @@
             <h4>Lead Developer - Enterprise Applications</h4>
             <p>
                 Rob is a Software Architect and Developer who specialises in complex data-centric enterprise applications within Finance. He is expert in numerous server and client side programming languages and technologies which he uses to drive forward the core engine of ag-Grid.
+            </p>
+        </div>
+
+        <div class="col-md-4">
+            <div>
+                <img src='images/team/petyo.png'/>
+            </div>
+            <h3>Petyo Ivanov</h3>
+            <h4>Lead Developer - UI</h4>
+            <p>
+                With more than a decade of experience in front-end web technologies, Petyo ensures that ag-Grid takes advantage of industry best practice. He is also charged with improving the look and feel of the grid and the overall user experience.
             </p>
         </div>
 
@@ -203,7 +218,7 @@
 
     <div class="row" style="margin-top: 50px;">
     
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div>
                 <img src='images/team/john.jpg'/>
             </div>
@@ -214,7 +229,7 @@
             </p>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div>
                 <img src='images/team/bas.jpg'/>
             </div>
@@ -226,7 +241,7 @@
             </p>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div>
                 <img src='images/team/dimple.jpg'/>
             </div>
