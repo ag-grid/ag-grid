@@ -234,6 +234,7 @@ export interface GridOptions {
 
     // callbacks
     postProcessPopup?:(params: PostProcessPopupParams)=>void;
+    frameworkComponents?:{[p:string]:{new(): any}}
     components?:{[p:string]:AgGridRegisteredComponentInput<IComponent<any>>}
     dateComponent?:{new(): IDateComp};
     dateComponentFramework?: any;

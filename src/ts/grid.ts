@@ -189,13 +189,17 @@ export class Grid {
     }
 
     private registerComponents(gridOptions: GridOptions): void {
-        if (gridOptions.components == null) return;
-
         let componentProvider: ComponentProvider = this.context.getBean('componentProvider');
-
-        Object.keys(gridOptions.components).forEach(it=>{
-            componentProvider.registerComponent(it, gridOptions.components[it]);
-        })
+        if (gridOptions.components != null) {
+            Object.keys(gridOptions.components).forEach(it=>{
+                componentProvider.registerComponent(it, gridOptions.components[it]);
+            });
+        }
+        if (gridOptions.frameworkComponents != null) {
+            Object.keys(gridOptions.frameworkComponents).forEach(it=>{
+                componentProvider.registerFwComponent(it, gridOptions.frameworkComponents[it]);
+            });
+        }
     }
 
     private setColumnsAndData(): void {
