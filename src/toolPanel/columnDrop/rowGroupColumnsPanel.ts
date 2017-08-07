@@ -11,7 +11,9 @@ import {
     Utils,
     Events,
     Column,
-    ColumnRowGroupChangeRequestEvent
+    ColumnRowGroupChangeRequestEvent,
+    ColumnApi,
+    GridApi
 } from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
@@ -26,6 +28,8 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
     @Autowired('context') private context:Context;
     @Autowired('loggerFactory') private loggerFactory:LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService:DragAndDropService;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     constructor(horizontal:boolean) {
         super(horizontal, false, 'row-group');
@@ -68,7 +72,12 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
 
     protected updateColumns(columns:Column[]) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            let event: ColumnRowGroupChangeRequestEvent = {type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST, columns: columns};
+            let event: ColumnRowGroupChangeRequestEvent = {
+                type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
+                columns: columns,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
             this.eventService.dispatchEvent(event.type, event);
         } else {
             this.columnController.setRowGroupColumns(columns);

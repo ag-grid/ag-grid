@@ -29,7 +29,9 @@ import {
     RowNode,
     Column,
     Constants,
-    FlashCellsEvent
+    FlashCellsEvent,
+    ColumnApi,
+    GridApi
 } from "ag-grid/main";
 import {RangeController} from "./rangeController";
 
@@ -58,6 +60,8 @@ export class ClipboardService implements IClipboardService {
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridCore') private gridCore: GridCore;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private logger: Logger;
 
@@ -371,7 +375,12 @@ export class ClipboardService implements IClipboardService {
 
     private dispatchFlashCells(cellsToFlash: {}): void {
         setTimeout( ()=> {
-            let event: FlashCellsEvent = {type: Events.EVENT_FLASH_CELLS, cells: cellsToFlash};
+            let event: FlashCellsEvent = {
+                type: Events.EVENT_FLASH_CELLS,
+                cells: cellsToFlash,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
             this.eventService.dispatchEvent(event.type, event);
         }, 0);
     }

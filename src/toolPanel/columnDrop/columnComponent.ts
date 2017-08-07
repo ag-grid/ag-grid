@@ -17,7 +17,9 @@ import {
     QuerySelector,
     Column,
     DragSource,
-    ColumnAggFuncChangeRequestEvent
+    ColumnAggFuncChangeRequestEvent,
+    ColumnApi,
+    GridApi
 } from "ag-grid/main";
 import {VirtualList} from "../../rendering/virtualList";
 import {AggFuncService} from "../../aggregation/aggFuncService";
@@ -40,6 +42,8 @@ export class ColumnComponent extends Component {
     @Autowired('aggFuncService') aggFuncService: AggFuncService;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') eventService: EventService;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     @QuerySelector('.ag-column-drop-cell-text') private eText: HTMLElement;
     @QuerySelector('.ag-column-drop-cell-button') private btRemove: HTMLElement;
@@ -186,7 +190,9 @@ export class ColumnComponent extends Component {
                 let event: ColumnAggFuncChangeRequestEvent = {
                     type: Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
                     columns: [this.column],
-                    aggFunc: value
+                    aggFunc: value,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
                 };
                 this.eventService.dispatchEvent(event.type, event);
             } else {

@@ -12,7 +12,9 @@ import {
     Events,
     Column,
     Bean,
-    ColumnPivotChangeRequestEvent
+    ColumnPivotChangeRequestEvent,
+    ColumnApi,
+    GridApi
 } from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
 
@@ -28,6 +30,8 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
     @Autowired('context') private context: Context;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     constructor(horizontal: boolean) {
         super(horizontal, false, 'pivot');
@@ -104,7 +108,12 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
 
     protected updateColumns(columns: Column[]): void {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            let event: ColumnPivotChangeRequestEvent = {type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST, columns: columns};
+            let event: ColumnPivotChangeRequestEvent = {
+                type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
+                columns: columns,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
             this.eventService.dispatchEvent(event.type, event);
         } else {
             this.columnController.setPivotColumns(columns);

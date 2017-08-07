@@ -21,7 +21,9 @@ import {
     GridRow,
     Column,
     GridOptionsWrapper,
-    RangeSelectionChangedEvent
+    RangeSelectionChangedEvent,
+    ColumnApi,
+    GridApi
 } from "ag-grid/main";
 
 @Bean('rangeController')
@@ -36,6 +38,8 @@ export class RangeController implements IRangeController {
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private logger: Logger;
 
@@ -245,6 +249,8 @@ export class RangeController implements IRangeController {
     private dispatchChangedEvent(finished: boolean, started: boolean): void {
         let event: RangeSelectionChangedEvent = {
             type: Events.EVENT_RANGE_SELECTION_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
             finished: finished,
             started: started
         };
