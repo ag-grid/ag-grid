@@ -6,8 +6,10 @@ var webpack = require('webpack');
 var webpackStream = require('webpack-stream');
 var path = require('path');
 var foreach = require('gulp-foreach');
-var stylus = require('gulp-stylus');
-var nib = require('nib');
+var sass = require('gulp-sass');
+var postcss = require('gulp-postcss');
+var postcssScss = require('postcss-scss');
+var autoprefixer = require('autoprefixer');
 var liveReload = require('gulp-livereload');
 var replace = require('gulp-replace');
 var gulpIf = require('gulp-if');
@@ -151,15 +153,13 @@ function tscReactExample() {
 
 function stylusGrid() {
     // Uncompressed
-    gulp.src(['../ag-grid/src/styles/*.styl', '!../ag-grid/src/styles/theme-common.styl'])
+    gulp.src(['../ag-grid/src/styles/*.scss', '!../ag-grid/src/styles/theme-common.scss'])
         .pipe(foreach(function(stream, file) {
-            var currentTheme = path.basename(file.path, '.styl');
+            var currentTheme = path.basename(file.path, '.scss');
             var themeName = currentTheme.replace('theme-','');
             return stream
-                .pipe(stylus({
-                    use: nib(),
-                    compress: false
-                }))
+                .pipe(postcss([ autoprefixer() ], { syntax: postcssScss }))
+                .pipe(sass())
                 .pipe(gulpIf(currentTheme !== 'ag-grid', replace('ag-common','ag-' + themeName)))
                 .pipe(gulp.dest('../ag-grid/dist/styles/'));
         }));

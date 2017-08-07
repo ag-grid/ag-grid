@@ -10,6 +10,7 @@
   "author": "Niall Crosby <niall.crosby@ag-grid.com>",
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
+    "autoprefixer": "^7.1.2",
     "bootstrap": "3.3.6",
     "css-loader": "0.23.1",
     "font-awesome": "4.5.0",
@@ -21,8 +22,10 @@
     "gulp-if": "latest",
     "gulp-jasmine": "2.2.1",
     "gulp-livereload": "3.8.1",
+    "gulp-postcss": "^7.0.0",
     "gulp-rename": "1.2.2",
     "gulp-replace": "latest",
+    "gulp-sass": "^3.1.0",
     "gulp-sourcemaps": "1.5.2",
     "gulp-stylus": "2.2.0",
     "gulp-task-listing": "latest",
@@ -33,6 +36,7 @@
     "json-stable-stringify": "1.0.0",
     "merge2": "0.3.6",
     "nib": "^1.1.0",
+    "postcss-comment": "^1.0.3",
     "style-loader": "0.13.0",
     "stylus": "0.53.0",
     "typescript": "2.4.1",
@@ -41,6 +45,7 @@
     "webpack-stream": "3.1.0"
   },
   "dependencies": {
-    "@types/node": "^8.0.13"
+    "@types/node": "^8.0.13",
+    "postcss-scss": "^1.0.2"
   }
 }
