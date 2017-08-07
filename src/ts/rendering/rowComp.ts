@@ -421,6 +421,7 @@ export class RowComp extends BeanStub {
             node: this.rowNode,
             data: this.rowNode.data,
             rowIndex: this.rowNode.rowIndex,
+            rowPinned: this.rowNode.rowPinned,
             context: this.gridOptionsWrapper.getContext(),
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),

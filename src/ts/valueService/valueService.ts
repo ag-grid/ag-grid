@@ -141,6 +141,7 @@ export class ValueService {
             type: Events.EVENT_CELL_VALUE_CHANGED,
             event: null,
             rowIndex: rowNode.rowIndex,
+            rowPinned: rowNode.rowPinned,
             column: params.column,
             api: params.api,
             colDef: params.colDef,

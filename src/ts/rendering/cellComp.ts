@@ -823,6 +823,7 @@ export class CellComp extends Component {
             context: this.gridOptionsWrapper.getContext(),
             api: this.gridApi,
             columnApi: this.columnApi,
+            rowPinned: this.node.rowPinned,
             event: domEvent,
             type: eventType,
             rowIndex: this.node.rowIndex

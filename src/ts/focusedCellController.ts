@@ -164,13 +164,14 @@ export class FocusedCellController {
             column: <Column> null,
             floating: <string> null,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            rowPinned: <string> null
         };
 
         if (this.focusedCell) {
             event.rowIndex = this.focusedCell.rowIndex;
             event.column = this.focusedCell.column;
-            event.floating = this.focusedCell.floating;
+            event.rowPinned = this.focusedCell.floating;
         }
 
         this.eventService.dispatchEvent(Events.EVENT_CELL_FOCUSED, event);

@@ -313,6 +313,7 @@ export class RowNode implements IEventEmitter {
             node: this,
             data: this.data,
             rowIndex: this.rowIndex,
+            rowPinned: this.rowPinned,
             context: this.gridOptionsWrapper.getContext(),
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi()
