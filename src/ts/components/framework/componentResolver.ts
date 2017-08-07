@@ -176,8 +176,8 @@ export class ComponentResolver {
          * - None of the previous, hence we revert to: RegisteredComponent
          */
         if (HardcodedFwComponent) {
-            console.warn(`ag-grid: Since version 12.1.0 specifying a component directly is deprecated, you should register the component by name`);
-            console.warn(`${HardcodedFwComponent}`);
+            // console.warn(`ag-grid: Since version 12.1.0 specifying a component directly is deprecated, you should register the component by name`);
+            // console.warn(`${HardcodedFwComponent}`);
             return {
                 type: ComponentType.FRAMEWORK,
                 component: HardcodedFwComponent,
@@ -186,8 +186,8 @@ export class ComponentResolver {
         }
 
         if (HardcodedJsComponent) {
-            console.warn(`ag-grid: Since version 12.1.0 specifying a component directly is deprecated, you should register the component by name`);
-            console.warn(`${HardcodedJsComponent}`);
+            // console.warn(`ag-grid: Since version 12.1.0 specifying a component directly is deprecated, you should register the component by name`);
+            // console.warn(`${HardcodedJsComponent}`);
             return {
                 type: ComponentType.AG_GRID,
                 component: HardcodedJsComponent,
@@ -196,8 +196,8 @@ export class ComponentResolver {
         }
 
         if (hardcodedJsFunction){
-            console.warn(`ag-grid: Since version 12.1.0 specifying a function directly is deprecated, you should register the component by name`);
-            console.warn(`${hardcodedJsFunction}`);
+            // console.warn(`ag-grid: Since version 12.1.0 specifying a function directly is deprecated, you should register the component by name`);
+            // console.warn(`${hardcodedJsFunction}`);
             return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.AG_GRID, ComponentSource.HARDCODED);
         }
 
