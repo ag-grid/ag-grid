@@ -164,7 +164,7 @@ include '../documentation-main/documentation_header.php';
         what changes are needed to keep the grid's version of the data up to date.
     </p>
 
-    <h2>Bulk Method 1 - Transaction</h2>
+    <h2 id="transactions">Bulk Method 1 - Transaction</h2>
 
     <p>
         The <code>api.updateRowData(transaction)</code> takes details of what data items to update

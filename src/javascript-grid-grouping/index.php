@@ -452,13 +452,13 @@ gridOptions.groupRowRendererParams: {
         want, then use the <i>footerValueGetter</i> option. The following shows two snippets for achieving
         the same, one using a function, one using an expression.
     </p>
-    <pre><code>// use a function to return a footer value
+    <pre><code><span class="codeComment">// use a function to return a footer value</span>
 cellRenderer: 'group',
 cellRendererParams: {
     footerValueGetter: function(params) { return 'Total (' + params.value + ')'},
 }}
 
-// use an expression to return a footer value. this gives the same result as above
+<span class="codeComment">// use an expression to return a footer value. this gives the same result as above</span>
 cellRenderer: 'group',
 cellRendererParams: {
     footerValueGetter: '"Total (" + x + ")"'
@@ -482,9 +482,12 @@ cellRendererParams: {
     <h2 id="keeping-group-state">Keeping Group State</h2>
 
     <p>
-        <note>This section only applies if you don't have <a href="../javascript-grid-data-update/#delta-row-data">delta
-        updates</a> active in your grid. If you are using delta updates
-        the state of the groups are kept automatically for you after every update.</note>
+        <note>
+            If using <a href="../javascript-grid-data-update/#transactions">transactions</a> or
+            <a href="../javascript-grid-data-update/#delta-row-data">delta updates</a>, then
+            you do not need to be concerned with keeping group state. When using transactions or delta updates,
+            the group state is not changed.
+        </note>
     </p>
 
     <p>
