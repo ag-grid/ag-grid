@@ -11,6 +11,16 @@ include '../documentation-main/documentation_header.php';
 
     <h1 id="events" class="first-h1">Grid Events</h1>
 
+    <note>
+        TypeScript users can take advantage of the events interfaces. You can work our the interface
+        name by putting 'Event' after the event name. For example, the cellClicked event uses the interface
+        CellClickedEvent.
+    </note>
+
+    <style>
+        font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    </style>
+
     <table id="ag-grid-events" class="table">
 
         <tr class="title-row">
@@ -20,7 +30,11 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>cellClicked</th>
-            <td>Cell is clicked.</td>
+            <td>
+                Cell is clicked.
+                <div class="event-properties">Properties: column, colDef, value, node, data, rowIndex, rowPinned, context, api, columnApi, event
+                </div>
+            </td>
         </tr>
         <tr>
             <th>cellDoubleClicked</th>
@@ -29,6 +43,10 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>cellFocused</th>
             <td>Cell is focused.</td>
+        </tr>
+        <tr>
+            <th>cellMouseOver, cellMouseOut</th>
+            <td>Mouse enters / leaves cell.</td>
         </tr>
         <tr>
             <th>rowClicked</th>
@@ -68,23 +86,14 @@ include '../documentation-main/documentation_header.php';
             <td>A cells value within a row has changed.</td>
         </tr>
         <tr>
-            <th>cellEditingStarted</th>
-            <td>Editing a cell has started.</td>
+            <th>cellEditingStarted, cellEditingStopped</th>
+            <td>Editing a cell has started / stopped.</td>
         </tr>
         <tr>
-            <th>cellEditingStopped</th>
-            <td>Editing a cell has stopped.</td>
-        </tr>
-        <tr>
-            <th>rowEditingStarted</th>
-            <td>Editing a row has started (when row editing is enabled). When row editing, this event will be fired
-                once, and <code>cellEditingStarted</code> will be fired for each cell being edited.
-            </td>
-        </tr>
-        <tr>
-            <th>rowEditingStopped</th>
-            <td>Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired
-                once, and <code>cellEditingStopped</code> will be fired for each cell being edited.
+            <th>rowEditingStarted, rowEditingStopped</th>
+            <td>Editing a row has started / stopped (when row editing is enabled). When row editing, these events
+                will be fired once and <code>cellEditingStarted / cellEditingStopped</code> will be fired for each
+                individual cell.
             </td>
         </tr>
         <tr class="title-row">
@@ -101,7 +110,13 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>filterChanged</th>
             <td>
-                Filter has changed, grid also listens for this and updates the model.<br/>
+                Filter has modified and applied.<br/>
+            </td>
+        </tr>
+        <tr>
+            <th>filterModified</th>
+            <td>
+                Filter was modified but not applied. Used when filters have 'Apply' buttons.<br/>
             </td>
         </tr>
 
@@ -110,16 +125,6 @@ include '../documentation-main/documentation_header.php';
             <td colspan="2">Columns</td>
         </tr>
 
-        <tr>
-            <th>columnEverythingChanged</th>
-            <td>Shotgun - gets called when either a) new columns are set or b) columnApi.setState() is used, so
-                everything has changed.
-            </td>
-        </tr>
-        <tr>
-            <th>rowGroupOpened</th>
-            <td>A row group was opened or closed.</td>
-        </tr>
         <tr>
             <th>columnVisible</th>
             <td>A column, or group of columns, was hidden / shown.</td>
@@ -133,6 +138,11 @@ include '../documentation-main/documentation_header.php';
             <td>A column was resized.</td>
         </tr>
         <tr>
+            <th>columnMoved</th>
+            <td>A column was moved. To find out when the column move is finished you can use the dragStopped event below.
+            </td>
+        </tr>
+        <tr>
             <th>columnRowGroupChanged</th>
             <td>A row group column was added or removed.</td>
         </tr>
@@ -141,13 +151,29 @@ include '../documentation-main/documentation_header.php';
             <td>A value column was added or removed.</td>
         </tr>
         <tr>
-            <th>columnMoved</th>
-            <td>A column was moved. To find out when the column move is finished you can use the dragStopped event below.
-            </td>
+            <th>columnPivotModeChanged</th>
+            <td>The pivot mode flag was changed</td>
+        </tr>
+        <tr>
+            <th>columnPivotChanged</th>
+            <td>A pivot column was added, removed or order changed.</td>
         </tr>
         <tr>
             <th>columnGroupOpened</th>
             <td>A column group was opened / closed.</td>
+        </tr>
+        <tr>
+            <th>newColumnsLoaded</th>
+            <td>User has set in new columns.</td>
+        </tr>
+        <tr>
+            <th>gridColumnsChanged</th>
+            <td>The list of grid columns has changed.</td>
+        </tr>
+        <tr>
+            <th>displayedColumnsChanged</th>
+            <td>The list of displayed columns has changed, can result from columns open / close, column move, pivot, group, etc.
+            </td>
         </tr>
         <tr>
             <th>virtualColumnsChanged</th>
@@ -156,36 +182,15 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>newColumnsLoaded</th>
-            <td>User has set in new columns.</td>
-        </tr>
-        <tr>
-            <th>columnPivotModeChanged</th>
-            <td>The pivot mode flag was changed</td>
-        </tr>
-        <tr>
-            <th>columnRowGroupChanged</th>
-            <td>A row group column was added, removed or order changed.</td>
-        </tr>
-        <tr>
-            <th>columnPivotChanged</th>
-            <td>A pivot column was added, removed or order changed.</td>
-        </tr>
-        <tr>
-            <th>gridColumnsChanged</th>
-            <td>The list of grid columns has changed.</td>
+            <th>columnEverythingChanged</th>
+            <td>Shotgun - gets called when either a) new columns are set or b) columnApi.setState() is used, so
+                everything has changed.
+            </td>
         </tr>
 
         <tr class="title-row">
             <!-- TITLE ROW -->
             <td colspan="2">Miscellaneous</td>
-        </tr>
-        <tr>
-            <th>paginationChanged</th>
-            <td>
-                The displayed page for pagination has changed. For example the data was filtered or sorted, or the user
-                has moved to a different page.
-            </td>
         </tr>
         <tr>
             <th>gridReady</th>
@@ -195,16 +200,27 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>gridSizeChanged</th>
-            <td>The grid had to lay out again because it changed size.</td>
-        </tr>
-        <tr>
             <th>modelUpdated</th>
             <td>Displayed rows have changed. Happens following sort, filter or tree expand / collapse events.</td>
         </tr>
         <tr>
-            <th>floatingRowDataChanged</th>
-            <td>The client has set new floating data into the grid</td>
+            <th>rowGroupOpened</th>
+            <td>A row group was opened or closed.</td>
+        </tr>
+        <tr>
+            <th>paginationChanged</th>
+            <td>
+                The displayed page for pagination has changed. For example the data was filtered or sorted, or the user
+                has moved to a different page.
+            </td>
+        </tr>
+        <tr>
+            <th>gridSizeChanged</th>
+            <td>The grid had to lay out again because it changed size.</td>
+        </tr>
+        <tr>
+            <th>pinnedRowDataChanged</th>
+            <td>The client has set new pinned row data into the grid</td>
         </tr>
         <tr>
             <th>virtualRowRemoved</th>
@@ -226,7 +242,13 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>rowDataChanged</th>
-            <td>The client has set new data into the grid</td>
+            <td>The client has set new data into the grid using <code>api.setRowData()</code> or changing
+            the <code>rowData</code> bound property.</td>
+        </tr>
+        <tr>
+            <th>rowDataUpdated</th>
+            <td>The client has updated data for the grid using <code>api.updateRowData(transaction)</code> or changing
+            the <code>rowData</code> bound property with <code>deltaRowDataMode=true</code>.</td>
         </tr>
         <tr>
             <th>componentStateChanged</th>
@@ -238,6 +260,7 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
     </table>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
