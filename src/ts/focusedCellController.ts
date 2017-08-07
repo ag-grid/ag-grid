@@ -3,11 +3,12 @@ import {EventService} from "./eventService";
 import {Column} from "./entities/column";
 import {CellFocusedEvent, Events} from "./events";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {ColumnController} from "./columnController/columnController";
+import {ColumnApi, ColumnController} from "./columnController/columnController";
 import {Utils as _} from "./utils";
 import {GridCell} from "./entities/gridCell";
 import {Constants} from "./constants";
 import {RowNode} from "./entities/rowNode";
+import {GridApi} from "./gridApi";
 
 @Bean('focusedCellController')
 export class FocusedCellController {
@@ -15,6 +16,8 @@ export class FocusedCellController {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private focusedCell: GridCell;
 
@@ -159,7 +162,9 @@ export class FocusedCellController {
             forceBrowserFocus: forceBrowserFocus,
             rowIndex: <number> null,
             column: <Column> null,
-            floating: <string> null
+            floating: <string> null,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
 
         if (this.focusedCell) {

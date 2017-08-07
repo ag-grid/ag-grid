@@ -5,7 +5,7 @@ import {SelectionController} from "../selectionController";
 import {ColDef} from "./colDef";
 import {Column} from "./column";
 import {ValueService} from "../valueService/valueService";
-import {ColumnController} from "../columnController/columnController";
+import {ColumnApi, ColumnController} from "../columnController/columnController";
 import {Autowired, Context} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {Constants} from "../constants";
@@ -15,6 +15,7 @@ import {RowNodeCache, RowNodeCacheParams} from "../rowModels/cache/rowNodeCache"
 import {RowNodeBlock} from "../rowModels/cache/rowNodeBlock";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
 import {ValueCache} from "../valueService/valueCache";
+import {GridApi} from "../gridApi";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -54,6 +55,8 @@ export class RowNode implements IEventEmitter {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('context') private context: Context;
     @Autowired('valueCache') private valueCache: ValueCache;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
@@ -535,7 +538,9 @@ export class RowNode implements IEventEmitter {
                 // this is the very end of the 'action node', so we are finished all the updates,
                 // include any parent / child changes that this method caused
                 let event: SelectionChangedEvent = {
-                    type: Events.EVENT_SELECTION_CHANGED
+                    type: Events.EVENT_SELECTION_CHANGED,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
                 };
                 this.mainEventService.dispatchEvent(event.type, event);
             }
@@ -574,7 +579,9 @@ export class RowNode implements IEventEmitter {
         }
 
         let event: SelectionChangedEvent = {
-            type: Events.EVENT_SELECTION_CHANGED
+            type: Events.EVENT_SELECTION_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         this.mainEventService.dispatchEvent(event.type, event);
 

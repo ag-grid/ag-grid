@@ -1,6 +1,6 @@
 import {GridOptions} from "../entities/gridOptions";
 import {GridApi} from "../gridApi";
-import {Events} from "../events";
+import {ComponentStateChangedEvent, Events} from "../events";
 import {Utils as _} from "../utils";
 import {ColumnApi} from "../columnController/columnController";
 
@@ -217,7 +217,17 @@ export class ComponentUtil {
             api.setGroupRemoveSingleChildren(ComponentUtil.toBoolean(changes.groupRemoveSingleChildren.currentValue));
         }
 
-        api.dispatchEvent(Events.EVENT_COMPONENT_STATE_CHANGED, changes);
+        // copy changes into an event for dispatch
+        let event: ComponentStateChangedEvent = {
+            type: Events.EVENT_COMPONENT_STATE_CHANGED,
+            api: gridOptions.api,
+            columnApi: gridOptions.columnApi
+        };
+        _.iterateObject(changes, (key: string, value: any) => {
+            (<any>event)[key] = value;
+        });
+
+        api.dispatchEvent(event.type, event);
     }
 
     public static toBoolean(value: any): boolean {

@@ -13,7 +13,7 @@ import {Constants} from "../constants";
 import {CellComp} from "./cellComp";
 import {Autowired, Bean, Context, Optional, PostConstruct, PreDestroy, Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
-import {ColumnController} from "../columnController/columnController";
+import {ColumnApi, ColumnController} from "../columnController/columnController";
 import {Logger, LoggerFactory} from "../logger";
 import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
@@ -23,7 +23,7 @@ import {NavigateToNextCellParams, TabToNextCellParams} from "../entities/gridOpt
 import {RowContainerComponent} from "./rowContainerComponent";
 import {BeanStub} from "../context/beanStub";
 import {PaginationProxy} from "../rowModels/paginationProxy";
-import {RefreshCellsParams} from "../gridApi";
+import {GridApi, RefreshCellsParams} from "../gridApi";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 
 @Bean('rowRenderer')
@@ -43,8 +43,11 @@ export class RowRenderer extends BeanStub {
     @Autowired('context') private context: Context;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
-    @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
+
+    @Optional('rangeController') private rangeController: IRangeController;
 
     private firstRenderedRow: number;
     private lastRenderedRow: number;
@@ -83,7 +86,18 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterModelUpdate();
     }
 
-    private onPageLoaded(refreshEvent: ModelUpdatedEvent = {type: Events.EVENT_MODEL_UPDATED, animate: false, keepRenderedRows: false, newData: false, newPage: false}): void {
+    private onPageLoaded(refreshEvent?: ModelUpdatedEvent): void {
+        if (_.missing(refreshEvent)) {
+            refreshEvent = {
+                type: Events.EVENT_MODEL_UPDATED,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                animate: false,
+                keepRenderedRows: false,
+                newData: false,
+                newPage: false
+            };
+        }
         this.onModelUpdated(refreshEvent);
     }
 
@@ -642,7 +656,9 @@ export class RowRenderer extends BeanStub {
             let event: ViewportChangedEvent = {
                 type: Events.EVENT_VIEWPORT_CHANGED,
                 firstRow: newFirst,
-                lastRow: newLast
+                lastRow: newLast,
+                api: this.gridApi,
+                columnApi: this.columnApi
             };
 
             this.eventService.dispatchEvent(event.type, event);

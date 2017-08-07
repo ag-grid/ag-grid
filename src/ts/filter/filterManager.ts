@@ -2,7 +2,7 @@ import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {PopupService} from "../widgets/popupService";
 import {ValueService} from "../valueService/valueService";
-import {ColumnController} from "../columnController/columnController";
+import {ColumnApi, ColumnController} from "../columnController/columnController";
 import {RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
 import {TextFilter} from "./textFilter";
@@ -14,6 +14,7 @@ import {Events, FilterChangedEvent, FilterModifiedEvent} from "../events";
 import {IFilter, IFilterParams, IDoesFilterPassParams, IFilterComp} from "../interfaces/iFilter";
 import {GetQuickFilterTextParams} from "../entities/colDef";
 import {DateFilter} from "./dateFilter";
+import {GridApi} from "../gridApi";
 
 @Bean('filterManager')
 export class FilterManager {
@@ -29,6 +30,8 @@ export class FilterManager {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('enterprise') private enterprise: boolean;
     @Autowired('context') private context: Context;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     public static QUICK_FILTER_SEPARATOR = '\n';
 
@@ -213,7 +216,11 @@ export class FilterManager {
             }
         });
 
-        let event: FilterChangedEvent = {type: Events.EVENT_FILTER_CHANGED};
+        let event: FilterChangedEvent = {
+            type: Events.EVENT_FILTER_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
         this.eventService.dispatchEvent(event.type, event);
     }
 
@@ -401,7 +408,11 @@ export class FilterManager {
     private createParams(filterWrapper: FilterWrapper): IFilterParams {
         let filterChangedCallback = this.onFilterChanged.bind(this);
 
-        let event: FilterModifiedEvent = {type: Events.EVENT_FILTER_MODIFIED};
+        let event: FilterModifiedEvent = {
+            type: Events.EVENT_FILTER_MODIFIED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
         let filterModifiedCallback = () => this.eventService.dispatchEvent(event.type, event);
 
         let doesRowPassOtherFilters = this.doesRowPassOtherFilters.bind(this, filterWrapper.filter);

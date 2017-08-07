@@ -31,6 +31,7 @@ import {ColumnAnimationService} from "../rendering/columnAnimationService";
 import {AutoGroupColService} from "./autoGroupColService";
 import {RowNode} from "../entities/rowNode";
 import {ValueCache} from "../valueService/valueCache";
+import {GridApi} from "../gridApi";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -198,6 +199,9 @@ export class ColumnController {
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
     @Optional('valueCache') private valueCache: ValueCache;
 
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
+
     // these are the columns provided by the client. this doesn't change, even if the
     // order or state of the columns and groups change. it will only change if the client
     // provides a new set of column definitions. otherwise this tree is used to build up
@@ -308,7 +312,11 @@ export class ColumnController {
             this.updateVirtualSets();
             let hashAfter = this.allDisplayedVirtualColumns.map( column => column.getId() ).join('#');
             if (hashBefore !== hashAfter) {
-                let event: VirtualColumnsChangedEvent = {type: Events.EVENT_VIRTUAL_COLUMNS_CHANGED};
+                let event: VirtualColumnsChangedEvent = {
+                    type: Events.EVENT_VIRTUAL_COLUMNS_CHANGED,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
                 this.eventService.dispatchEvent(event.type, event);
             }
         }
@@ -338,7 +346,9 @@ export class ColumnController {
         this.pivotMode = pivotMode;
         this.updateDisplayedColumns();
         let event: ColumnPivotModeChangedEvent = {
-            type: Events.EVENT_COLUMN_PIVOT_MODE_CHANGED
+            type: Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event.type, event);
     }
@@ -427,7 +437,9 @@ export class ColumnController {
                 type: Events.EVENT_COLUMN_RESIZED,
                 columns: columnsAutosized,
                 column: columnsAutosized.length === 1 ? columnsAutosized[0] : null,
-                finished: true
+                finished: true,
+                api: this.gridApi,
+                columnApi: this.columnApi
             };
             this.eventService.dispatchEvent(event.type, event);
         }
@@ -635,7 +647,9 @@ export class ColumnController {
         let event: ColumnEvent = {
             type: eventType,
             columns: masterList,
-            column: masterList.length === 1 ? masterList[0] : null
+            column: masterList.length === 1 ? masterList[0] : null,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
 
         this.eventService.dispatchEvent(event.type, event);
@@ -728,7 +742,9 @@ export class ColumnController {
         let event: ColumnEvent = {
             type: eventName,
             columns: masterList,
-            column: masterList.length === 1 ? masterList[0] : null
+            column: masterList.length === 1 ? masterList[0] : null,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
 
         this.eventService.dispatchEvent(event.type, event);
@@ -819,7 +835,9 @@ export class ColumnController {
                 type: Events.EVENT_COLUMN_RESIZED,
                 columns: [column],
                 column: column,
-                finished: finished
+                finished: finished,
+                api: this.gridApi,
+                columnApi: this.columnApi
             };
             this.eventService.dispatchEvent(event.type, event);
         }
@@ -830,7 +848,9 @@ export class ColumnController {
         let event: ColumnValueChangedEvent = {
             type: Events.EVENT_COLUMN_VALUE_CHANGED,
             columns: [column],
-            column: column
+            column: column,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event.type, event);
     }
@@ -842,7 +862,9 @@ export class ColumnController {
         let event: ColumnRowGroupChangedEvent = {
             type: Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
             columns: this.rowGroupColumns,
-            column: this.rowGroupColumns.length === 1 ? this.rowGroupColumns[0] : null
+            column: this.rowGroupColumns.length === 1 ? this.rowGroupColumns[0] : null,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event.type, event);
     }
@@ -870,7 +892,9 @@ export class ColumnController {
             type: Events.EVENT_COLUMN_MOVED,
             columns: columnsToMove,
             column: columnsToMove.length === 1 ? columnsToMove[0] : null,
-            toIndex: toIndex
+            toIndex: toIndex,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event.type, event);
 
@@ -961,7 +985,11 @@ export class ColumnController {
             this.rightWidth = newRightWidth;
             // when this fires, it is picked up by the gridPanel, which ends up in
             // gridPanel calling setWidthAndScrollPosition(), which in turn calls setVirtualViewportPosition()
-            let event: DisplayedColumnsWidthChangedEvent = {type: Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED};
+            let event: DisplayedColumnsWidthChangedEvent = {
+                type: Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
             this.eventService.dispatchEvent(event.type, event);
         }
     }
@@ -1040,7 +1068,9 @@ export class ColumnController {
                 type: Events.EVENT_COLUMN_VISIBLE,
                 visible: visible,
                 column: null,
-                columns: null
+                columns: null,
+                api: this.gridApi,
+                columnApi: this.columnApi
             };
             return event;
         });
@@ -1071,7 +1101,9 @@ export class ColumnController {
                 type: Events.EVENT_COLUMN_PINNED,
                 pinned: actualPinned,
                 column: null,
-                columns: null
+                columns: null,
+                api: this.gridApi,
+                columnApi: this.columnApi
             };
             return event;
         });
@@ -1271,7 +1303,11 @@ export class ColumnController {
 
         this.updateDisplayedColumns();
 
-        let event: ColumnEverythingChangedEvent = {type: Events.EVENT_COLUMN_EVERYTHING_CHANGED};
+        let event: ColumnEverythingChangedEvent = {
+            type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
         this.eventService.dispatchEvent(event.type, event);
 
         return success;
@@ -1560,10 +1596,18 @@ export class ColumnController {
         this.checkDisplayedVirtualColumns();
 
         this.ready = true;
-        let eventEverythingChanged: ColumnEverythingChangedEvent = {type: Events.EVENT_COLUMN_EVERYTHING_CHANGED};
+        let eventEverythingChanged: ColumnEverythingChangedEvent = {
+            type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
         this.eventService.dispatchEvent(eventEverythingChanged.type, eventEverythingChanged);
 
-        let newColumnsLoadedEvent: NewColumnsLoadedEvent = {type: Events.EVENT_NEW_COLUMNS_LOADED};
+        let newColumnsLoadedEvent: NewColumnsLoadedEvent = {
+            type: Events.EVENT_NEW_COLUMNS_LOADED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
         this.eventService.dispatchEvent(newColumnsLoadedEvent.type, newColumnsLoadedEvent);
     }
 
@@ -1636,7 +1680,9 @@ export class ColumnController {
         this.updateGroupsAndDisplayedColumns();
         let event: ColumnGroupOpenedEvent = {
             type: Events.EVENT_COLUMN_GROUP_OPENED,
-            columnGroup: groupToUse
+            columnGroup: groupToUse,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event.type, event);
 
@@ -1829,7 +1875,9 @@ export class ColumnController {
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
 
         let event: GridColumnsChangedEvent = {
-            type: Events.EVENT_GRID_COLUMNS_CHANGED
+            type: Events.EVENT_GRID_COLUMNS_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event.type, event);
     }
@@ -1862,7 +1910,11 @@ export class ColumnController {
         this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
 
-        let event: DisplayedColumnsChangedEvent = {type: Events.EVENT_DISPLAYED_COLUMNS_CHANGED};
+        let event: DisplayedColumnsChangedEvent = {
+            type: Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
         this.eventService.dispatchEvent(event.type, event);
     }
 
@@ -2108,7 +2160,9 @@ export class ColumnController {
                 type: Events.EVENT_COLUMN_RESIZED,
                 column: column,
                 columns: [column],
-                finished: true
+                finished: true,
+                api: this.gridApi,
+                columnApi: this.columnApi
             };
             this.eventService.dispatchEvent(event.type, event);
         });

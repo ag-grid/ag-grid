@@ -10,6 +10,8 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
 import {SelectionController} from "../selectionController";
+import {ColumnApi} from "../columnController/columnController";
+import {GridApi} from "../gridApi";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
@@ -63,6 +65,8 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private active: boolean;
 
@@ -99,7 +103,9 @@ export class PaginationProxy extends BeanStub implements IRowModel {
             animate: modelUpdatedEvent ? modelUpdatedEvent.animate : false,
             newData: modelUpdatedEvent ? modelUpdatedEvent.newData : false,
             newPage: modelUpdatedEvent ? modelUpdatedEvent.newPage : false,
-            keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false
+            keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(paginationChangedEvent.type, paginationChangedEvent);
     }
@@ -113,7 +119,9 @@ export class PaginationProxy extends BeanStub implements IRowModel {
             animate: false,
             keepRenderedRows: false,
             newData: false,
-            newPage: true
+            newPage: true,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         this.onModelUpdated(event);
     }

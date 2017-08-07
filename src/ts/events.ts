@@ -155,6 +155,8 @@ export interface ModelUpdatedEvent extends AgEvent {
 
 export interface AgEvent {
     type: string;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 
 export interface ColumnPivotModeChangedEvent extends AgEvent {}
@@ -269,8 +271,6 @@ export interface RowClickedEvent extends RowEvent {}
 export interface RowDoubleClickedEvent extends RowEvent {}
 
 export interface GridReadyEvent extends AgEvent {
-    api: GridApi;
-    columnApi: ColumnApi;
 }
 
 export interface GridSizeChangedEvent extends AgEvent {
@@ -335,3 +335,9 @@ export interface ColumnValueChangeRequestEvent extends ColumnRequestEvent {}
 export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
     aggFunc: any
 }
+
+// this event is 'odd one out' as it should have properties for all the properties
+// in gridOptions that can be bound by the framework. for example, the gridOptions
+// has 'rowData', so this property should have 'rowData' also, so that when the row
+// data changes via the framework bound property, this event has that attribute set.
+export interface ComponentStateChangedEvent extends AgEvent {}

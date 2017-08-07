@@ -1,6 +1,6 @@
 import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColumnController} from "../columnController/columnController";
+import {ColumnApi, ColumnController} from "../columnController/columnController";
 import {RowRenderer, RefreshViewParams} from "../rendering/rowRenderer";
 import {BorderLayout} from "../layout/borderLayout";
 import {Logger, LoggerFactory} from "../logger";
@@ -28,6 +28,7 @@ import {PaginationProxy} from "../rowModels/paginationProxy";
 import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
 import {AlignedGridsService} from "../alignedGridsService";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
+import {GridApi} from "../gridApi";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -144,6 +145,8 @@ export class GridPanel extends BeanStub {
     @Autowired('context') private context: Context;
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('dragService') private dragService: DragService;
@@ -1601,7 +1604,11 @@ export class GridPanel extends BeanStub {
         // in this page based on the height of the grid
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
-            let event: BodyHeightChangedEvent = {type: Events.EVENT_BODY_HEIGHT_CHANGED};
+            let event: BodyHeightChangedEvent = {
+                type: Events.EVENT_BODY_HEIGHT_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
             this.eventService.dispatchEvent(event.type, event);
         }
     }
@@ -1680,7 +1687,12 @@ export class GridPanel extends BeanStub {
     private onBodyHorizontalScroll(): void {
         let newLeftPosition = this.eBodyViewport.scrollLeft;
         if (newLeftPosition !== this.lastLeftPosition) {
-            let event: BodyScrollEvent = {type: Events.EVENT_BODY_SCROLL, direction: 'horizontal'};
+            let event: BodyScrollEvent = {
+                type: Events.EVENT_BODY_SCROLL,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                direction: 'horizontal'
+            };
             this.eventService.dispatchEvent(event.type, event);
             this.lastLeftPosition = newLeftPosition;
             this.horizontallyScrollHeaderCenterAndFloatingCenter();
@@ -1700,7 +1712,12 @@ export class GridPanel extends BeanStub {
     private onVerticalScroll(sourceElement: HTMLElement): void {
         let newTopPosition = sourceElement.scrollTop;
         if (newTopPosition !== this.lastTopPosition) {
-            let event: BodyScrollEvent = {type: Events.EVENT_BODY_SCROLL, direction: 'vertical'};
+            let event: BodyScrollEvent = {
+                type: Events.EVENT_BODY_SCROLL,
+                direction: 'vertical',
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
             this.eventService.dispatchEvent(event.type, event);
             this.lastTopPosition = newTopPosition;
 

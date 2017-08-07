@@ -1,7 +1,7 @@
 import {Utils as _} from "../../utils";
 import {Constants as constants, Constants} from "../../constants";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {ColumnController} from "../../columnController/columnController";
+import {ColumnApi, ColumnController} from "../../columnController/columnController";
 import {FilterManager} from "../../filter/filterManager";
 import {RowNode} from "../../entities/rowNode";
 import {EventService} from "../../eventService";
@@ -14,6 +14,7 @@ import {ChangedPath} from "./changedPath";
 import {ValueService} from "../../valueService/valueService";
 import {ValueCache} from "../../valueService/valueCache";
 import {RowBounds} from "../../interfaces/iRowModel";
+import {GridApi} from "../../gridApi";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes};
 
@@ -61,6 +62,8 @@ export class InMemoryRowModel {
     @Autowired('context') private context: Context;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('valueCache') private valueCache: ValueCache;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
@@ -220,10 +223,13 @@ export class InMemoryRowModel {
 
         let event: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
             newData: params.newData,
-            newPage: false};
+            newPage: false
+        };
         this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, event);
 
         if (this.$scope) {
@@ -559,7 +565,11 @@ export class InMemoryRowModel {
         // - clears selection
         // - updates filters
         // - shows 'no rows' overlay if needed
-        let rowDataChangedEvent: RowDataChangedEvent = {type: Events.EVENT_ROW_DATA_CHANGED};
+        let rowDataChangedEvent: RowDataChangedEvent = {
+            type: Events.EVENT_ROW_DATA_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
         this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED, rowDataChangedEvent);
 
         this.refreshModel({
@@ -582,7 +592,11 @@ export class InMemoryRowModel {
             keepEditingRows: true
         });
 
-        let event: RowDataUpdatedEvent = {type: Events.EVENT_ROW_DATA_UPDATED};
+        let event: RowDataUpdatedEvent = {
+            type: Events.EVENT_ROW_DATA_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
         this.eventService.dispatchEvent(event.type, event);
 
         return rowNodeTran;

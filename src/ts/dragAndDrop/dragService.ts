@@ -4,6 +4,8 @@ import {Utils as _} from "../utils";
 import {EventService} from "../eventService";
 import {DragStartedEvent, DragStoppedEvent, Events} from "../events";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {ColumnApi} from "../columnController/columnController";
+import {GridApi} from "../gridApi";
 
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
@@ -13,6 +15,8 @@ export class DragService {
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private currentDragParams: DragListenerParams;
     private dragging: boolean;
@@ -188,7 +192,9 @@ export class DragService {
                 // alert(`started`);
                 this.dragging = true;
                 let event: DragStartedEvent = {
-                    type: Events.EVENT_DRAG_STARTED
+                    type: Events.EVENT_DRAG_STARTED,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
                 };
                 this.eventService.dispatchEvent(event.type, event);
                 this.currentDragParams.onDragStart(startEvent);
@@ -251,7 +257,9 @@ export class DragService {
             this.dragging = false;
             this.currentDragParams.onDragStop(eventOrTouch);
             let event: DragStoppedEvent = {
-                type: Events.EVENT_DRAG_STOPPED
+                type: Events.EVENT_DRAG_STOPPED,
+                api: this.gridApi,
+                columnApi: this.columnApi
             };
             this.eventService.dispatchEvent(event.type, event);
         }

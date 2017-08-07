@@ -1,7 +1,7 @@
 
 import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {ColumnController} from "./columnController/columnController";
+import {ColumnApi, ColumnController} from "./columnController/columnController";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {FilterManager} from "./filter/filterManager";
 import {EventService} from "./eventService";
@@ -19,6 +19,7 @@ import {Component} from "./widgets/component";
 import {ICompFactory} from "./interfaces/iCompFactory";
 import {IFrameworkFactory} from "./interfaces/iFrameworkFactory";
 import {PaginationComp} from "./rowModels/pagination/paginationComp";
+import {GridApi} from "./gridApi";
 
 @Bean('gridCore')
 export class GridCore {
@@ -40,6 +41,9 @@ export class GridCore {
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('context') private context: Context;
+
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     @Optional('rowGroupCompFactory') private rowGroupCompFactory: ICompFactory;
     @Optional('pivotCompFactory') private pivotCompFactory: ICompFactory;
@@ -332,7 +336,9 @@ export class GridCore {
             let event: GridSizeChangedEvent = {
                 type: Events.EVENT_GRID_SIZE_CHANGED,
                 clientWidth: this.eRootPanel.getGui().clientWidth,
-                clientHeight: this.eRootPanel.getGui().clientHeight
+                clientHeight: this.eRootPanel.getGui().clientHeight,
+                api: this.gridApi,
+                columnApi: this.columnApi
             };
             this.eventService.dispatchEvent(event.type, event);
         }

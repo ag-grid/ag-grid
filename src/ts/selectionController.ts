@@ -12,6 +12,8 @@ import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {PostConstruct} from "./context/context";
 import {Constants} from "./constants";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
+import {ColumnApi} from "./columnController/columnController";
+import {GridApi} from "./gridApi";
 
 @Bean('selectionController')
 export class SelectionController {
@@ -19,6 +21,8 @@ export class SelectionController {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private selectedNodes: {[key: string]: RowNode};
     private logger: Logger;
@@ -260,7 +264,9 @@ export class SelectionController {
         }
 
         let event: SelectionChangedEvent = {
-            type: Events.EVENT_SELECTION_CHANGED
+            type: Events.EVENT_SELECTION_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
 
         this.eventService.dispatchEvent(event.type, event);
@@ -286,7 +292,9 @@ export class SelectionController {
         }
 
         let event: SelectionChangedEvent = {
-            type: Events.EVENT_SELECTION_CHANGED
+            type: Events.EVENT_SELECTION_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event.type, event);
     }

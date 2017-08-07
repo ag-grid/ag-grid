@@ -8,6 +8,8 @@ import {Events, PinnedRowDataChangedEvent} from "../events";
 import {PostConstruct} from "../context/context";
 import {Constants} from "../constants";
 import {Utils as _} from '../utils';
+import {ColumnApi} from "../columnController/columnController";
+import {GridApi} from "../gridApi";
 
 @Bean('pinnedRowModel')
 export class PinnedRowModel {
@@ -15,6 +17,8 @@ export class PinnedRowModel {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private pinnedTopRows: RowNode[];
     private pinnedBottomRows: RowNode[];
@@ -53,13 +57,21 @@ export class PinnedRowModel {
 
     public setPinnedTopRowData(rowData: any[]): void {
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
-        let event: PinnedRowDataChangedEvent = {type: Events.EVENT_PINNED_ROW_DATA_CHANGED};
+        let event: PinnedRowDataChangedEvent = {
+            type: Events.EVENT_PINNED_ROW_DATA_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
         this.eventService.dispatchEvent(event.type, event);
     }
 
     public setPinnedBottomRowData(rowData: any[]): void {
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
-        let event: PinnedRowDataChangedEvent = {type: Events.EVENT_PINNED_ROW_DATA_CHANGED};
+        let event: PinnedRowDataChangedEvent = {
+            type: Events.EVENT_PINNED_ROW_DATA_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
         this.eventService.dispatchEvent(event.type, event);
     }
 
