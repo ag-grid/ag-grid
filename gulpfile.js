@@ -4,7 +4,10 @@ const clean = require('gulp-clean');
 const uglify = require('gulp-uglify');
 const foreach = require('gulp-foreach');
 const rename = require("gulp-rename");
-const stylus = require('gulp-stylus');
+const sass = require('gulp-sass');
+const postcss = require('gulp-postcss');
+const autoprefixer = require('autoprefixer');
+const postcssScss = require('postcss-scss');
 const buffer = require('vinyl-buffer');
 const nib = require('nib');
 const gulpTypescript = require('gulp-typescript');
@@ -154,6 +157,7 @@ function webpackTask(minify, styles) {
         .pipe(gulp.dest('./dist/'));
 }
 
+/*
 function stylusTask() {
     // Uncompressed
     gulp.src(['src/styles/*.styl', '!src/styles/theme-common.styl'])
@@ -161,6 +165,15 @@ function stylusTask() {
             use: nib(),
             compress: false
         }))
+        .pipe(gulp.dest('dist/styles'));
+}
+*/
+
+function stylusTask() {
+    // Uncompressed
+    gulp.src(['src/styles/*.scss', '!src/styles/_theme-common.scss'])
+        .pipe(postcss([autoprefixer()], { syntax: postcssScss }))
+        .pipe(sass())
         .pipe(gulp.dest('dist/styles'));
 }
 
