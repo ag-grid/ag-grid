@@ -25,7 +25,7 @@ gulp.task('webpack-react', ['webpackReact','webpackEnterprise','webpackGrid'], l
 gulp.task('webpackReact', ['tscReact'], webpackReact);
 gulp.task('webpackAngular', ['tscAngular'], webpackAngular);
 gulp.task('webpackEnterprise', ['tscEnterprise'], webpackEnterprise);
-gulp.task('webpackGrid', ['stylusGrid','tscGrid'], webpackGrid);
+gulp.task('webpackGrid', ['scssGrid','tscGrid'], webpackGrid);
 
 gulp.task('tscGrid', tscGrid);
 gulp.task('tscEnterprise', ['tscGrid'], tscEnterprise);
@@ -34,7 +34,7 @@ gulp.task('tscAngular', ['tscEnterprise'], tscAngular);
 gulp.task('tscAngularExample', ['tscAngular'], tscAngularExample);
 gulp.task('tscReactExample', ['tscReact'], tscReactExample);
 
-gulp.task('stylusGrid', stylusGrid);
+gulp.task('scssGrid', scssGrid);
 
 gulp.task('liveReload', liveReloadTask);
 
@@ -151,7 +151,7 @@ function tscReactExample() {
     ]);
 }
 
-function stylusGrid() {
+function scssGrid() {
     // Uncompressed
     gulp.src(['../ag-grid/src/styles/*.scss', '!../ag-grid/src/styles/theme-common.scss'])
         .pipe(foreach(function(stream, file) {
