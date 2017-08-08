@@ -72,7 +72,7 @@ include '../documentation-main/documentation_header.php';
     </note>
 
     <p>
-        The following code snipped shows these three properties configures:
+        The following code snippet shows these three properties configures:
     </p>
 
     <pre>var gridOptions = {
