@@ -195,17 +195,21 @@
     menuItem(0, 'Row Pinning', 'Row Pinning', 'javascript-grid-row-pinning/');
     menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
     menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
+
+    menuItem(0, 'Value Handlers', 'Value Handlers', 'javascript-grid-value-handlers/');
+    menuItem(1, 'Getters and Formatters', 'Getters & Formatters', 'javascript-grid-value-getters/');
+    menuItem(1, 'Setters and Parsers', 'Setters and Parsers', 'javascript-grid-value-setters/');
+    menuItem(1, 'Cell Expressions', 'Expressions', 'javascript-grid-cell-expressions/');
+    menuItem(1, 'Value Cache', 'Value Cache', 'javascript-grid-value-cache/');
+    menuItem(1, 'Reference Data', 'Reference Data', 'javascript-grid-reference-data/');
     menuItem(0, 'Cell Rendering', 'Cell Rendering', 'javascript-grid-cell-rendering/');
     menuItem(0, 'Cell Editing', 'Cell Editing', 'javascript-grid-cell-editing/');
+
     menuItem(0, 'Keyboard Navigation', 'Keyboard Navigation', 'javascript-grid-keyboard-navigation/');
     menuItem(0, 'Touch', 'Touch Support', 'javascript-grid-touch/');
     menuItem(0, 'Animation', 'Animation', 'javascript-grid-animation/');
     menuItem(0, 'AccessingData', 'Accessing Data', 'javascript-grid-accessing-data/');
 
-    menuItem(0, 'Getters and Formatters', 'Getters & Formatters', 'javascript-grid-value-getters/');
-    menuItem(0, 'Setters and Parsers', 'Setters and Parsers', 'javascript-grid-value-setters/');
-    menuItem(0, 'Cell Expressions', 'Expressions', 'javascript-grid-cell-expressions/');
-    menuItem(0, 'Value Cache', 'Value Cache', 'javascript-grid-value-cache/');
     menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
     menuItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
     menuItem(0, 'DataUpdate', 'Updating Data', 'javascript-grid-data-update/');
