@@ -9,10 +9,14 @@ import {
     ICellRendererComp,
     SvgFactory,
     _,
-    Column
+    Column,
+    AgEvent
 } from "ag-grid/main";
 
 let svgFactory = SvgFactory.getInstance();
+
+export interface SelectedEvent extends AgEvent {
+}
 
 export class SetFilterListItem extends Component {
 
@@ -60,7 +64,10 @@ export class SetFilterListItem extends Component {
         let listener = () => {
             this.selected = !this.selected;
             this.updateCheckboxIcon();
-            return this.dispatchEvent(SetFilterListItem.EVENT_SELECTED);
+            let event: SelectedEvent = {
+                type: SetFilterListItem.EVENT_SELECTED
+            };
+            return this.dispatchEvent(event);
         };
         this.addDestroyableEventListener(this.eClickableArea, 'click', listener);
     }

@@ -19,10 +19,13 @@ import {
     DragSource,
     ColumnAggFuncChangeRequestEvent,
     ColumnApi,
-    GridApi
+    GridApi,
+    AgEvent
 } from "ag-grid/main";
 import {VirtualList} from "../../rendering/virtualList";
 import {AggFuncService} from "../../aggregation/aggFuncService";
+
+export interface ColumnRemoveEvent extends AgEvent {}
 
 export class ColumnComponent extends Component {
 
@@ -106,14 +109,16 @@ export class ColumnComponent extends Component {
 
         Utils.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
 
-        this.addDestroyableEventListener(this.btRemove, 'click', (event: MouseEvent)=> {
-            this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE);
-            event.stopPropagation();
+        this.addDestroyableEventListener(this.btRemove, 'click', (mouseEvent: MouseEvent)=> {
+            let agEvent: ColumnRemoveEvent = { type: ColumnComponent.EVENT_COLUMN_REMOVE };
+            this.dispatchEvent(agEvent);
+            mouseEvent.stopPropagation();
         });
 
         let touchListener = new TouchListener(this.btRemove);
         this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, ()=> {
-            this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE);
+            let agEvent: ColumnRemoveEvent = { type: ColumnComponent.EVENT_COLUMN_REMOVE };
+            this.dispatchEvent(agEvent);
         });
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     }
@@ -194,7 +199,7 @@ export class ColumnComponent extends Component {
                     api: this.gridApi,
                     columnApi: this.columnApi
                 };
-                this.eventService.dispatchEvent(event.type, event);
+                this.eventService.dispatchEvent(event);
             } else {
                 this.columnController.setColumnAggFunc(this.column, value);
             }

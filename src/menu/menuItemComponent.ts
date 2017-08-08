@@ -1,6 +1,18 @@
-import {GridOptionsWrapper, PostConstruct, SvgFactory, MenuItemDef, Utils as _, Component, Autowired} from "ag-grid";
+import {GridOptionsWrapper, PostConstruct, SvgFactory, MenuItemDef, Utils as _, Component, Autowired, AgEvent} from "ag-grid";
 
 let svgFactory = SvgFactory.getInstance();
+
+export interface MenuItemSelectedEvent extends AgEvent {
+    name: string;
+    disabled: boolean;
+    shortcut: string;
+    action: () => void;
+    checked: boolean;
+    icon: HTMLElement | string;
+    subMenu: (MenuItemDef | string)[];
+    cssClasses: string[];
+    tooltip: string;
+}
 
 export class MenuItemComponent extends Component {
 
@@ -77,7 +89,19 @@ export class MenuItemComponent extends Component {
     }
 
     private onOptionSelected(): void {
-        this.dispatchEvent(MenuItemComponent.EVENT_ITEM_SELECTED, this.params);
+        let event: MenuItemSelectedEvent = {
+            type: MenuItemComponent.EVENT_ITEM_SELECTED,
+            action: this.params.action,
+            checked: this.params.checked,
+            cssClasses: this.params.cssClasses,
+            disabled: this.params.disabled,
+            icon: this.params.icon,
+            name: this.params.name,
+            shortcut: this.params.shortcut,
+            subMenu: this.params.subMenu,
+            tooltip: this.params.tooltip
+        };
+        this.dispatchEvent(event);
         if (this.params.action) {
             this.params.action();
         }

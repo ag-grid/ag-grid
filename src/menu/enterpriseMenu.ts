@@ -15,6 +15,7 @@ import {
     TabbedLayout,
     EventService,
     TabbedItem,
+    AgEvent,
     PostConstruct
 } from "ag-grid";
 import {ColumnSelectPanel} from "../toolPanel/columnsSelect/columnSelectPanel";
@@ -23,6 +24,10 @@ import {MenuItemComponent} from "./menuItemComponent";
 import {MenuItemMapper} from "./menuItemMapper";
 
 let svgFactory = SvgFactory.getInstance();
+
+export interface TabSelectedEvent extends AgEvent {
+    key: string;
+}
 
 @Bean('menuFactory')
 export class EnterpriseMenuFactory implements IMenuFactory {
@@ -243,7 +248,11 @@ export class EnterpriseMenu {
             case this.tabItemGeneral: key = EnterpriseMenu.TAB_GENERAL; break;
         }
         if (key) {
-            this.localEventService.dispatchEvent(EnterpriseMenu.EVENT_TAB_SELECTED, {key: key});
+            let event: TabSelectedEvent = {
+                type: EnterpriseMenu.EVENT_TAB_SELECTED,
+                key: key
+            };
+            this.localEventService.dispatchEvent(event);
         }
     }
 

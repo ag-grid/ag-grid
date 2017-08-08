@@ -254,7 +254,7 @@ export class RangeController implements IRangeController {
             finished: finished,
             started: started
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     public onDragStop(): void {
