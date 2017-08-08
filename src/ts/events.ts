@@ -278,8 +278,6 @@ export interface RowEvent extends AgEvent {
     rowIndex: number;
     rowPinned: string;
     context: any;
-    api: GridApi;
-    columnApi: ColumnApi;
     event?: Event;
 }
 
