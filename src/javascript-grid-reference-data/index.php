@@ -54,9 +54,9 @@ var colourMappings = {
     </p>
 
     <p>
-        The main idea of this approach is to use a <code>valueFormatter</code> to convert the code (key) to a value which is
-        displayed in the cell. Then use a <code>valueParser</code> to convert the name back to a code (key) when saving it down
-        into the underlying data.
+        The main idea of this approach is to use a <code>valueFormatter</code> to convert the code (key) to a value which
+        is displayed in the cell. Then use a <code>valueParser</code> to convert the name back to a code (key) when saving
+        it down into the underlying data.
     </p>
 
 <pre>{
@@ -77,8 +77,8 @@ var colourMappings = {
 }</pre>
 
     <note>
-        When editing using Cell Editors it's important to ensure the underlying data is updated with the codes (keys) rather than
-        the values that are displayed in the cells.
+        When editing using Cell Editors it's important to ensure the underlying data is updated with the codes (keys) rather
+        than the values that are displayed in the cells.
     </note>
 
     <h2 id="reference-data-with-ref-data-prop">Using the 'refData' property</h2>
@@ -90,7 +90,8 @@ var colourMappings = {
     </p>
 
     <p>
-        All that is required with this approach is to specify the <code>refData</code> and the grid will take care of the rest, as shown below:
+        All that is required with this approach is to specify the <code>refData</code> and the grid will take care of the rest,
+        as shown below:
     </p>
 
     <pre>{
