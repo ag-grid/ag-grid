@@ -54,9 +54,9 @@ var colourMappings = {
     </p>
 
     <p>
-        The main idea of this approach is to use a <code>valueFormatter</code> to convert the code (key) to a value which is
-        displayed in the cell. Then use a <code>valueParser</code> to convert the name back to a code (key) when saving it down
-        into the underlying data.
+        The main idea of this approach is to use a <code>valueFormatter</code> to convert the code (key) to a value which
+        is displayed in the cell. Then use a <code>valueParser</code> to convert the name back to a code (key) when saving
+        it down into the underlying data.
     </p>
 
 <pre>{
@@ -77,11 +77,11 @@ var colourMappings = {
 }</pre>
 
     <note>
-        When editing using Cell Editors it's important to ensure the underlying data is updated with the codes (keys) rather than
-        the values that are displayed in the cells.
+        When editing using Cell Editors it's important to ensure the underlying data is updated with the codes (keys) rather
+        than the values that are displayed in the cells.
     </note>
 
-    <h2 id="example-value-getter">Using the 'refData' property</h2>
+    <h2 id="reference-data-with-ref-data-prop">Using the 'refData' property</h2>
 
     <p>
         Here we present the same grid example but this time using the <code>refData</code> ColDef property. This approach
@@ -90,7 +90,8 @@ var colourMappings = {
     </p>
 
     <p>
-        All that is required with this approach is to specify the <code>refData</code> and the grid will take care of the rest, as shown below:
+        All that is required with this approach is to specify the <code>refData</code> and the grid will take care of the rest,
+        as shown below:
     </p>
 
     <pre>{
@@ -110,7 +111,7 @@ var colourMappings = {
     </p>
 
 
-    <h2 id="reference-data-with-value-handlers">Example - Value Handlers</h2>
+    <h2 id="example-reference-data-with-value-handlers">Example - Value Handlers</h2>
 
     <p>
         The following example demonstrates how <i>Value Handlers</i> can be combined to work with reference data:
@@ -139,7 +140,7 @@ var colourMappings = {
 
     <show-example example="exampleRefDataWithValueHandlers"></show-example>
 
-    <h2 id="example-value-getter">Example - 'refData' Property</h2>
+    <h2 id="example-reference-data-with-ref-data-prop">Example - 'refData' Property</h2>
 
     <p>
         The following example demonstrates how the <code>refData</code> property simplifies working with reference data:
