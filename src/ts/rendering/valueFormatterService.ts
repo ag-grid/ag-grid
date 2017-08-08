@@ -46,6 +46,8 @@ export class ValueFormatterService {
             (<any>params).$scope = $scope;
 
             result = this.expressionService.evaluate(formatter, params);
+        } else if(colDef.refData) {
+            return colDef.refData[value];
         }
         return result;
     }
