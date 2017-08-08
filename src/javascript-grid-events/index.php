@@ -283,22 +283,28 @@ CellValueChangedEvent {
     │     <span class="event-attribute">api</span>: GridAPI, // see <a href="../javascript-grid-api/">Grid API</a>
     │     <span class="event-attribute">columnApi</span>: ColumnAPI // see <a href="../javascript-grid-column-api/">Column API</a>
     │   }</span>
-    ├── ColumnPivotModeChangedEvent <span class="event-properties">{}</span>
-    ├── VirtualColumnsChangedEvent <span class="event-properties">{}</span>
-    ├── ColumnEverythingChangedEvent <span class="event-properties">{}</span>
-    ├── NewColumnsLoadedEvent <span class="event-properties">{}</span>
-    ├── GridColumnsChangedEvent <span class="event-properties">{}</span>
-    ├── DisplayedColumnsChangedEvent <span class="event-properties">{}</span>
-    ├── RowDataChangedEvent <span class="event-properties">{}</span>
-    ├── RowDataUpdatedEvent <span class="event-properties">{}</span>
-    ├── PinnedRowDataChangedEvent <span class="event-properties">{}</span>
+    ├── GridReadyEvent <span class="event-properties">{}</span>
     ├── SelectionChangedEvent <span class="event-properties">{}</span>
     ├── FilterChangedEvent <span class="event-properties">{}</span>
     ├── FilterModifiedEvent <span class="event-properties">{}</span>
     ├── SortChangedEvent <span class="event-properties">{}</span>
-    ├── GridReadyEvent <span class="event-properties">{}</span>
+    ├── RowDataChangedEvent <span class="event-properties">{}</span>
+    ├── RowDataUpdatedEvent <span class="event-properties">{}</span>
+    ├── PinnedRowDataChangedEvent <span class="event-properties">{}</span>
+    ├── NewColumnsLoadedEvent <span class="event-properties">{}</span>
+    ├── GridColumnsChangedEvent <span class="event-properties">{}</span>
+    ├── VirtualColumnsChangedEvent <span class="event-properties">{}</span>
+    ├── ColumnPivotModeChangedEvent <span class="event-properties">{}</span>
+    ├── ColumnEverythingChangedEvent <span class="event-properties">{}</span>
+    ├── DisplayedColumnsChangedEvent <span class="event-properties">{}</span>
     ├── DragStartedEvent <span class="event-properties">{}</span>
     ├── DragStoppedEvent <span class="event-properties">{}</span>
+    ├── CellFocusedEvent <span class="event-properties">{
+    │       <span class="event-attribute">rowIndex</span>: number, // the row index of the focused cell
+    │       <span class="event-attribute">column</span>: Column, // the column of the focused cell
+    │       <span class="event-attribute">rowPinned</span>: string, // either 'top', 'bottom' or undefined/null (if not pinned)
+    │       <span class="event-attribute">forceBrowserFocus</span>: boolean // whether browser focus is also set (false when editing)
+    │     }</span>
     ├── GridSizeChangedEvent <span class="event-properties">{
     │       <span class="event-attribute">clientWidth</span>: number, // new width in pixels of the grid
     │       <span class="event-attribute">clientHeight</span>: number // new height in pixels of the grid
@@ -325,12 +331,6 @@ CellValueChangedEvent {
     │       <span class="event-attribute">keepRenderedRows</span>: boolean, // true if rows were kept (otherwise complete redraw)
     │       <span class="event-attribute">newData</span>: boolean, // true if data was new (ie user set new data)
     │       <span class="event-attribute">newPage</span>: boolean // true if user went to a new pagination page
-    │     }</span>
-    ├── CellFocusedEvent <span class="event-properties">{
-    │       <span class="event-attribute">rowIndex</span>: number, // the row index of the focused cell
-    │       <span class="event-attribute">column</span>: Column, // the column of the focused cell
-    │       <span class="event-attribute">rowPinned</span>: string, // either 'top', 'bottom' or undefined/null (if not pinned)
-    │       <span class="event-attribute">forceBrowserFocus</span>: boolean // whether browser focus is also set (false when editing)
     │     }</span>
     ├── ModelUpdatedEvent <span class="event-properties">{
     │       <span class="event-attribute">animate</span>: boolean, // true if rows were animated to new position
@@ -368,14 +368,14 @@ CellValueChangedEvent {
         │     <span class="event-attribute">context</span>: any, // bag of attributes, provided by user, see <a href="../javascript-grid-context/">Context</a>
         │     <span class="event-attribute">event?</span>: Event // if even was due to browser event (eg click), then this is browser event
         │   }</span>
-        ├── RowGroupOpenedEvent <span class="event-properties">{}</span>
-        ├── RowValueChangedEvent <span class="event-properties">{}</span>
         ├── RowSelectedEvent <span class="event-properties">{}</span>
-        ├── VirtualRowRemovedEvent <span class="event-properties">{}</span>
         ├── RowClickedEvent <span class="event-properties">{}</span>
         ├── RowDoubleClickedEvent <span class="event-properties">{}</span>
         ├── RowEditingStartedEvent <span class="event-properties">{}</span>
         ├── RowEditingStoppedEvent <span class="event-properties">{}</span>
+        ├── RowGroupOpenedEvent <span class="event-properties">{}</span>
+        ├── RowValueChangedEvent <span class="event-properties">{}</span>
+        ├── VirtualRowRemovedEvent <span class="event-properties">{}</span>
         └── CellEvent <span class="event-properties">{
             │   <span class="event-attribute">column</span>: Column, // the column for the cell in question
             │   <span class="event-attribute">colDef</span>: ColDef, // the column definition for the cell in question
