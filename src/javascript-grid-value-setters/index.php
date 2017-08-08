@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Use a <code>valueSetter</code> to set a value into you data after editing when the
+        Use a <code>valueSetter</code> to set a value into your data after editing when the
         normal <code>colDef.field</code> attribute will not suffice.
     </p>
     <p>
@@ -39,7 +39,7 @@ include '../documentation-main/documentation_header.php';
     </table>
 
     <p>
-        These can be a function or <a href="../javascript-grid-cell-expressions/">expression</a>.
+        These can be a function or an <a href="../javascript-grid-cell-expressions/">expression</a>.
         This page assumes functions. Once you understand this page, you can go to
         <a href="../javascript-grid-cell-expressions/">expression</a> to learn how to specify them as
         expressions.

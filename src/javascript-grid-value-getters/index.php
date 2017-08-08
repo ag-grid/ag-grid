@@ -24,7 +24,7 @@ var countryColDef = {
 }</pre>
 
     <p>
-        You should use <code>colDef.field</code> most of the time. However you may require to get/set the data
+        You should use <code>colDef.field</code> most of the time. However you may require to get / set the data
         another way, or you may wish to format (for display) or parse (after editing) the data if you do not
         display the data 'as is'. For these reasons, the grid provides the following additional methods:
     </p>
@@ -152,7 +152,7 @@ colDef.valueFormatter = function(params) {
     </p>
 
     <p>
-        The answer is: <code>valueFormatter</code>'s are for text formatting.
+        The answer is: <code>valueFormatter</code>'s are for text formatting / value transformations.
         <code>cellRenderer</code>'s are for when you want
         to include HTML markup and potentially functionality to the cell.
         So for example, if you want to put punctuation into a value, use a <code>valueFormatter</code>,
