@@ -283,6 +283,8 @@ export interface ColDef extends AbstractColDef {
     floatingFilterComponent?: {new(): IFloatingFilterComp<any, any, any>};
     floatingFilterComponentParams?:any;
     floatingFilterComponentFramework?:{new (): any};
+
+    refData?: {[key: string]: string};
 }
 
 export interface IsColumnFunc {
