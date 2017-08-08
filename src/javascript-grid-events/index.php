@@ -17,9 +17,9 @@ include '../documentation-main/documentation_header.php';
         CellClickedEvent.
     </note>
 
-    <style>
-        font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-    </style>
+    <note>
+        See the <a href="#properties-and-hierarchy">Event Properties & Hierarchy</a> below for what properties each event has.
+    </note>
 
     <table id="ag-grid-events" class="table">
 
@@ -32,13 +32,13 @@ include '../documentation-main/documentation_header.php';
             <th>cellClicked</th>
             <td>
                 Cell is clicked.
-                <div class="event-properties">Properties: column, colDef, value, node, data, rowIndex, rowPinned, context, api, columnApi, event
-                </div>
             </td>
         </tr>
         <tr>
             <th>cellDoubleClicked</th>
-            <td>Cell is double clicked.</td>
+            <td>
+                Cell is double clicked.
+            </td>
         </tr>
         <tr>
             <th>cellFocused</th>
@@ -261,6 +261,137 @@ include '../documentation-main/documentation_header.php';
         </tr>
     </table>
 
+    <h2 id="properties-and-hierarchy">Event Properties & Hierarchy</h2>
+
+    <p>
+        Below shows the event hierarchy and properties. All properties are inherited. For example the CellValueChangedEvent
+        has properties:
+    <pre><span class="event-properties">// all properties, including inherited, for CellValueChangedEvent</span>
+CellValueChangedEvent {
+    type, api, columnApi, <span class="event-properties">// -> properties from AgEvent</span>
+    node, data, rowIndex, rowPinned, context, event, <span class="event-properties">// -> properties from RowEvent</span>
+    column, colDef, value, <span class="event-properties">// -> properties from CellEvent</span>
+    oldValue, newValue <span class="event-properties">// -> properties from CellValueChangedEvent</span>
+}</pre>
+    </p>
+
+    <pre class="event-hierarchy"><span class="event-properties">//---------------------------------------------------------//</span>
+<span class="event-properties">// Event hierarchy, and properties, for all ag-Grid events //</span>
+<span class="event-properties">//---------------------------------------------------------//</span>
+└── AgEvent <span class="event-properties">{
+    │     <span class="event-attribute">type</span>: string, // the event type, eg 'sortChanged' or 'columnResized'
+    │     <span class="event-attribute">api</span>: GridAPI, // see <a href="../javascript-grid-api/">Grid API</a>
+    │     <span class="event-attribute">columnApi</span>: ColumnAPI // see <a href="../javascript-grid-column-api/">Column API</a>
+    │   }</span>
+    ├── ColumnPivotModeChangedEvent <span class="event-properties">{}</span>
+    ├── VirtualColumnsChangedEvent <span class="event-properties">{}</span>
+    ├── ColumnEverythingChangedEvent <span class="event-properties">{}</span>
+    ├── NewColumnsLoadedEvent <span class="event-properties">{}</span>
+    ├── GridColumnsChangedEvent <span class="event-properties">{}</span>
+    ├── DisplayedColumnsChangedEvent <span class="event-properties">{}</span>
+    ├── RowDataChangedEvent <span class="event-properties">{}</span>
+    ├── RowDataUpdatedEvent <span class="event-properties">{}</span>
+    ├── PinnedRowDataChangedEvent <span class="event-properties">{}</span>
+    ├── SelectionChangedEvent <span class="event-properties">{}</span>
+    ├── FilterChangedEvent <span class="event-properties">{}</span>
+    ├── FilterModifiedEvent <span class="event-properties">{}</span>
+    ├── SortChangedEvent <span class="event-properties">{}</span>
+    ├── GridReadyEvent <span class="event-properties">{}</span>
+    ├── DragStartedEvent <span class="event-properties">{}</span>
+    ├── DragStoppedEvent <span class="event-properties">{}</span>
+    ├── GridSizeChangedEvent <span class="event-properties">{
+    │       <span class="event-attribute">clientWidth</span>: number, // new width in pixels of the grid
+    │       <span class="event-attribute">clientHeight</span>: number // new height in pixels of the grid
+    │     }</span>
+    ├── ViewportChangedEvent <span class="event-properties">{
+    │       <span class="event-attribute">firstRow</span>: number, // the index of the first rendered row
+    │       <span class="event-attribute">lastRow</span>: number // the index of the last rendered row
+    │     }</span>
+    ├── RangeSelectionChangedEvent <span class="event-properties">{
+    │       <span class="event-attribute">started</span>: boolean, // true for first event in a sequence of dragging events
+    │       <span class="event-attribute">finished</span>: boolean // true for last event in sequence of dragging events
+    │     }</span>
+    ├── ColumnGroupOpenedEvent <span class="event-properties">{
+    │       <span class="event-attribute">columnGroup</span>: ColumnGroup // the column group that was opened
+    │     }</span>
+    ├── ItemsAddedEvent <span class="event-properties">{
+    │       <span class="event-attribute">items</span>: RowNode[] // list of RowNode items that was added
+    │     }</span>
+    ├── BodyScrollEvent <span class="event-properties">{
+    │       <span class="event-attribute">direction</span>: string // either 'horizontal' or 'vertical'
+    │     }</span>
+    ├── PaginationChangedEvent <span class="event-properties">{
+    │       <span class="event-attribute">animate</span>: boolean, // true if rows were animated to new position
+    │       <span class="event-attribute">keepRenderedRows</span>: boolean, // true if rows were kept (otherwise complete redraw)
+    │       <span class="event-attribute">newData</span>: boolean, // true if data was new (ie user set new data)
+    │       <span class="event-attribute">newPage</span>: boolean // true if user went to a new pagination page
+    │     }</span>
+    ├── CellFocusedEvent <span class="event-properties">{
+    │       <span class="event-attribute">rowIndex</span>: number, // the row index of the focused cell
+    │       <span class="event-attribute">column</span>: Column, // the column of the focused cell
+    │       <span class="event-attribute">rowPinned</span>: string, // either 'top', 'bottom' or undefined/null (if not pinned)
+    │       <span class="event-attribute">forceBrowserFocus</span>: boolean // whether browser focus is also set (false when editing)
+    │     }</span>
+    ├── ModelUpdatedEvent <span class="event-properties">{
+    │       <span class="event-attribute">animate</span>: boolean, // true if rows were animated to new position
+    │       <span class="event-attribute">keepRenderedRows</span>: boolean, // true if rows were kept (otherwise complete redraw)
+    │       <span class="event-attribute">newData</span>: boolean, // true if data was new (ie user set new data)
+    │       <span class="event-attribute">newPage</span>: boolean // true if user went to a new pagination page
+    │     }</span>
+    ├── ComponentStateChangedEvent <span class="event-properties">{
+    │       // one attribute for each changed property
+    │     }</span>
+    ├── ColumnEvent <span class="event-properties">{
+    │   │    <span class="event-attribute">column</span>: Column, // the impacted column, only set if action was on one column
+    │   │    <span class="event-attribute">columns</span>: Column[] // list of all impacted columns
+    │   │  }</span>
+    │   ├── ColumnPivotChangedEvent <span class="event-properties">{}</span> // a column was added / removed to pivot list
+    │   ├── ColumnRowGroupChangedEvent <span class="event-properties">{}</span> // a column was added / removed to row group list
+    │   ├── ColumnValueChangedEvent <span class="event-properties">{}</span> // a column was added / removed to values list
+    │   ├── ColumnMovedEvent <span class="event-properties">{
+    │   │        <span class="event-attribute">toIndex</span>: number // the position the column was moved to
+    │   │      }</span>
+    │   ├── ColumnResizedEvent <span class="event-properties">{
+    │   │        <span class="event-attribute">finished</span>: boolean // set to true for last event in a sequence of move events
+    │   │      }</span>
+    │   ├── ColumnVisibleEvent <span class="event-properties">{
+    │   │        <span class="event-attribute">visible</span>: boolean // true if column was set to visible, false if set to hide
+    │   │      }</span>
+    │   └── ColumnPinnedEvent <span class="event-properties">{
+    │            <span class="event-attribute">pinned</span>: string // either 'left', 'right', or undefined / null (it not pinned)
+    │          }</span>
+    └── RowEvent <span class="event-properties">{
+        │     <span class="event-attribute">node</span>: RowNode, // the RowNode for the row in question
+        │     <span class="event-attribute">data</span>: any, // the user provided data for the row in question
+        │     <span class="event-attribute">rowIndex</span>: number, // the visible row index for the row in question
+        │     <span class="event-attribute">rowPinned</span>: string, // either 'top', 'bottom' or undefined / null (if not pinned)
+        │     <span class="event-attribute">context</span>: any, // bag of attributes, provided by user, see <a href="../javascript-grid-context/">Context</a>
+        │     <span class="event-attribute">event?</span>: Event // if even was due to browser event (eg click), then this is browser event
+        │   }</span>
+        ├── RowGroupOpenedEvent <span class="event-properties">{}</span>
+        ├── RowValueChangedEvent <span class="event-properties">{}</span>
+        ├── RowSelectedEvent <span class="event-properties">{}</span>
+        ├── VirtualRowRemovedEvent <span class="event-properties">{}</span>
+        ├── RowClickedEvent <span class="event-properties">{}</span>
+        ├── RowDoubleClickedEvent <span class="event-properties">{}</span>
+        ├── RowEditingStartedEvent <span class="event-properties">{}</span>
+        ├── RowEditingStoppedEvent <span class="event-properties">{}</span>
+        └── CellEvent <span class="event-properties">{
+            │   <span class="event-attribute">column</span>: Column, // the column for the cell in question
+            │   <span class="event-attribute">colDef</span>: ColDef, // the column definition for the cell in question
+            │   <span class="event-attribute">value</span>: any // the value for the cell in question
+            │ }</span>
+            ├── CellClickedEvent <span class="event-properties">{}</span>
+            ├── CellDoubleClickedEvent <span class="event-properties">{}</span>
+            ├── CellMouseOverEvent <span class="event-properties">{}</span>
+            ├── CellMouseOutEvent <span class="event-properties">{}</span>
+            ├── CellContextMenuEvent <span class="event-properties">{}</span>
+            ├── CellEditingStartedEvent <span class="event-properties">{}</span>
+            ├── CellEditingStoppedEvent <span class="event-properties">{}</span>
+            └── CellValueChangedEvent <span class="event-properties">{
+                    <span class="event-attribute">oldValue</span>: any, // the old value before editing
+                    <span class="event-attribute">newValue</span>: any // the new value after editing
+                  }</span></pre>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

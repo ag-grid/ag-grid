@@ -1,4 +1,16 @@
 
+.event-hierarchy {
+    font-weight: bold;
+}
+.event-properties {
+    font-weight: normal;
+    color: darkgreen;
+}
+.event-attribute {
+    font-weight: bold;
+    color: darkorchid;
+}
+
 .feature-summary-item:nth-child(odd) {
     background-color: #f6f8fa;
 }
