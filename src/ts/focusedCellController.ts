@@ -174,6 +174,6 @@ export class FocusedCellController {
             event.rowPinned = this.focusedCell.floating;
         }
 
-        this.eventService.dispatchEvent(Events.EVENT_CELL_FOCUSED, event);
+        this.eventService.dispatchEvent(event);
     }
 }

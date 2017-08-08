@@ -45,7 +45,7 @@ export class ScrollVisibleService {
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
-            this.eventService.dispatchEvent(event.type, event);
+            this.eventService.dispatchEvent(event);
         }
 
     }

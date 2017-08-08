@@ -4,6 +4,7 @@ import {BeanStub} from "../../context/beanStub";
 import {RowNodeBlock} from "./rowNodeBlock";
 import {Logger} from "../../logger";
 import {RowNodeBlockLoader} from "./rowNodeBlockLoader";
+import {AgEvent} from "../../events";
 
 export interface RowNodeCacheParams {
     initialRowCount: number;
@@ -17,6 +18,10 @@ export interface RowNodeCacheParams {
     maxConcurrentRequests: number;
     rowNodeBlockLoader: RowNodeBlockLoader;
     dynamicRowHeight: boolean;
+}
+
+export interface CacheUpdatedEvent extends AgEvent {
+
 }
 
 export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCacheParams> extends BeanStub {
@@ -246,7 +251,10 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         if (this.isActive()) {
             // this results in both row models (infinite and enterprise) firing ModelUpdated,
             // however enterprise also updates the row indexes first
-            this.dispatchEvent(RowNodeCache.EVENT_CACHE_UPDATED);
+            let event: CacheUpdatedEvent = {
+                type: RowNodeCache.EVENT_CACHE_UPDATED
+            };
+            this.dispatchEvent(event);
         }
     }
 

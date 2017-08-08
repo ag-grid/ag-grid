@@ -661,7 +661,7 @@ export class RowRenderer extends BeanStub {
                 columnApi: this.columnApi
             };
 
-            this.eventService.dispatchEvent(event.type, event);
+            this.eventService.dispatchEvent(event);
         }
     }
 

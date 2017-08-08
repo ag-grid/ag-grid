@@ -107,7 +107,7 @@ export class PaginationProxy extends BeanStub implements IRowModel {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(paginationChangedEvent.type, paginationChangedEvent);
+        this.eventService.dispatchEvent(paginationChangedEvent);
     }
 
     public goToPage(page: number): void {

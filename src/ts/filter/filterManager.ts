@@ -221,7 +221,7 @@ export class FilterManager {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     public isQuickFilterPresent(): boolean {
@@ -413,7 +413,7 @@ export class FilterManager {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        let filterModifiedCallback = () => this.eventService.dispatchEvent(event.type, event);
+        let filterModifiedCallback = () => this.eventService.dispatchEvent(event);
 
         let doesRowPassOtherFilters = this.doesRowPassOtherFilters.bind(this, filterWrapper.filter);
 

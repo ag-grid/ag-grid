@@ -317,7 +317,7 @@ export class ColumnController {
                     api: this.gridApi,
                     columnApi: this.columnApi
                 };
-                this.eventService.dispatchEvent(event.type, event);
+                this.eventService.dispatchEvent(event);
             }
         }
     }
@@ -350,7 +350,7 @@ export class ColumnController {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column|string): Column {
@@ -441,7 +441,7 @@ export class ColumnController {
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
-            this.eventService.dispatchEvent(event.type, event);
+            this.eventService.dispatchEvent(event);
         }
     }
 
@@ -652,7 +652,7 @@ export class ColumnController {
             columnApi: this.columnApi
         };
 
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     public setRowGroupColumns(colKeys: (string|Column)[]): void {
@@ -747,7 +747,7 @@ export class ColumnController {
             columnApi: this.columnApi
         };
 
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     public setValueColumns(colKeys: (string|Column)[]): void {
@@ -839,7 +839,7 @@ export class ColumnController {
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
-            this.eventService.dispatchEvent(event.type, event);
+            this.eventService.dispatchEvent(event);
         }
     }
 
@@ -852,7 +852,7 @@ export class ColumnController {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void {
@@ -866,7 +866,7 @@ export class ColumnController {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     public moveColumns(columnsToMoveKeys: (string|Column)[], toIndex: number): void {
@@ -896,7 +896,7 @@ export class ColumnController {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
 
         this.columnAnimationService.finish();
     }
@@ -990,7 +990,7 @@ export class ColumnController {
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
-            this.eventService.dispatchEvent(event.type, event);
+            this.eventService.dispatchEvent(event);
         }
     }
 
@@ -1149,7 +1149,7 @@ export class ColumnController {
             event.columns = updatedColumns;
             event.column = updatedColumns.length === 1 ? updatedColumns[0] : null;
 
-            this.eventService.dispatchEvent(event.type, event);
+            this.eventService.dispatchEvent(event);
         }
     }
 
@@ -1308,7 +1308,7 @@ export class ColumnController {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
 
         return success;
     }
@@ -1601,14 +1601,14 @@ export class ColumnController {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(eventEverythingChanged.type, eventEverythingChanged);
+        this.eventService.dispatchEvent(eventEverythingChanged);
 
         let newColumnsLoadedEvent: NewColumnsLoadedEvent = {
             type: Events.EVENT_NEW_COLUMNS_LOADED,
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(newColumnsLoadedEvent.type, newColumnsLoadedEvent);
+        this.eventService.dispatchEvent(newColumnsLoadedEvent);
     }
 
     public isReady(): boolean {
@@ -1684,7 +1684,7 @@ export class ColumnController {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
 
         this.columnAnimationService.finish();
     }
@@ -1879,7 +1879,7 @@ export class ColumnController {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     // gets called after we copy down grid columns, to make sure any part of the gui
@@ -1915,7 +1915,7 @@ export class ColumnController {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     private updateDisplayedColumnsFromTrees(): void {
@@ -2164,7 +2164,7 @@ export class ColumnController {
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
-            this.eventService.dispatchEvent(event.type, event);
+            this.eventService.dispatchEvent(event);
         });
 
         function moveToNotSpread(column: Column) {

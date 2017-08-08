@@ -188,7 +188,6 @@ export {CsvExportParams, ExportParams} from "./dist/lib/exportParams"
 export {XmlElement} from "./dist/lib/xmlFactory"
 export {LoggerFactory} from "./dist/lib/logger";
 export {RowAccumulator, RowSpanningAccumulator} from "./dist/lib/gridSerializer"
-export {ModelUpdatedEvent} from "./dist/lib/events"
 
 // uncatalogued
 export {IRowModel, RowBounds} from "./dist/lib/interfaces/iRowModel"
@@ -240,5 +239,17 @@ export {IFrameworkFactory} from "./dist/lib/interfaces/iFrameworkFactory";
 export {SerializedNumberFilter} from "./dist/lib/filter/numberFilter";
 
 // events
-export {RangeSelectionChangedEvent, FlashCellsEvent, ColumnRowGroupChangeRequestEvent,
-    ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent} from "./dist/lib/events";
+export {AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, VirtualColumnsChangedEvent,
+    ColumnEverythingChangedEvent, NewColumnsLoadedEvent, GridColumnsChangedEvent, DisplayedColumnsChangedEvent,
+    RowDataChangedEvent, RowDataUpdatedEvent, PinnedRowDataChangedEvent, SelectionChangedEvent, FilterChangedEvent,
+    FilterModifiedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent,
+    DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent,
+    GridSizeChangedEvent, ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent,
+    BodyScrollEvent, FlashCellsEvent, PaginationChangedEvent, CellFocusedEvent, ColumnEvent, ColumnResizedEvent,
+    ColumnPivotChangedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnMovedEvent, ColumnVisibleEvent,
+    ColumnPinnedEvent, RowEvent, RowGroupOpenedEvent, RowValueChangedEvent, RowSelectedEvent, VirtualRowRemovedEvent,
+    RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, CellEvent, CellClickedEvent,
+    CellDoubleClickedEvent, CellMouseOverEvent, CellMouseOutEvent, CellContextMenuEvent, CellEditingStartedEvent,
+    CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent,
+    ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent}
+    from "./dist/lib/events";

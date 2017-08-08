@@ -111,7 +111,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
             columnApi: this.columnApi
         };
 
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,

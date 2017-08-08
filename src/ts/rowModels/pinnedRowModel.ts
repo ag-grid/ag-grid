@@ -62,7 +62,7 @@ export class PinnedRowModel {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     public setPinnedBottomRowData(rowData: any[]): void {
@@ -72,7 +72,7 @@ export class PinnedRowModel {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     private createNodesFromData(allData: any[], isTop: boolean): RowNode[] {

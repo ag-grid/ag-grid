@@ -154,7 +154,7 @@ export class ValueService {
             value: params.newValue
         };
 
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     private setValueUsingField(data: any, field: string, newValue: any, isFieldContainsDots: boolean): boolean {

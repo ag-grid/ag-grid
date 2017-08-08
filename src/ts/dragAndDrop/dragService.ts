@@ -196,7 +196,7 @@ export class DragService {
                     api: this.gridApi,
                     columnApi: this.columnApi
                 };
-                this.eventService.dispatchEvent(event.type, event);
+                this.eventService.dispatchEvent(event);
                 this.currentDragParams.onDragStart(startEvent);
                 this.setNoSelectToBody(true);
             }
@@ -261,7 +261,7 @@ export class DragService {
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
-            this.eventService.dispatchEvent(event.type, event);
+            this.eventService.dispatchEvent(event);
         }
 
         this.setNoSelectToBody(false);

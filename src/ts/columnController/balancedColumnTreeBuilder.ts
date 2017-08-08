@@ -73,6 +73,7 @@ export class BalancedColumnTreeBuilder {
                     let newColId = columnKeyCreator.getUniqueKey(null, null);
                     let colGroupDefMerged = this.createMergedColGroupDef(null);
                     let paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true);
+                    this.context.wireBean(paddedGroup);
                     paddedGroup.setChildren([newChild]);
                     newChild = paddedGroup;
                 }
@@ -125,6 +126,7 @@ export class BalancedColumnTreeBuilder {
 
         let groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
         let originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false);
+        this.context.wireBean(originalGroup);
         let children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, columnKeyCreator, primaryColumns);
 
         originalGroup.setChildren(children);

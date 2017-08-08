@@ -233,7 +233,7 @@ export class Grid {
             api: gridOptions.api,
             columnApi: gridOptions.columnApi
         };
-        eventService.dispatchEvent(readyEvent.type, readyEvent);
+        eventService.dispatchEvent(readyEvent);
     }
 
     private getRowModelClass(gridOptions: GridOptions): any {

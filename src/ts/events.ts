@@ -138,9 +138,10 @@ export class Events {
     public static EVENT_COLUMN_PIVOT_CHANGE_REQUEST = 'columnPivotChangeRequest';
     public static EVENT_COLUMN_VALUE_CHANGE_REQUEST = 'columnValueChangeRequest';
     public static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
+
 }
 
-export interface ModelUpdatedEvent extends AgEvent {
+export interface ModelUpdatedEvent extends AgGridEvent {
     /** If true, the grid will try and animate the rows to the new positions */
     animate: boolean;
     /** If true, the grid has new data loaded, eg user called setRowData(), otherwise
@@ -156,69 +157,72 @@ export interface ModelUpdatedEvent extends AgEvent {
 
 export interface AgEvent {
     type: string;
+}
+
+export interface AgGridEvent extends AgEvent {
     api: GridApi;
     columnApi: ColumnApi;
 }
 
-export interface ColumnPivotModeChangedEvent extends AgEvent {}
-export interface VirtualColumnsChangedEvent extends AgEvent {}
-export interface ColumnEverythingChangedEvent extends AgEvent {}
-export interface NewColumnsLoadedEvent extends AgEvent {}
-export interface GridColumnsChangedEvent extends AgEvent {}
-export interface DisplayedColumnsChangedEvent extends AgEvent {}
-export interface RowDataChangedEvent extends AgEvent {}
-export interface RowDataUpdatedEvent extends AgEvent {}
-export interface PinnedRowDataChangedEvent extends AgEvent {}
-export interface SelectionChangedEvent extends AgEvent {}
-export interface FilterChangedEvent extends AgEvent {}
-export interface FilterModifiedEvent extends AgEvent {}
-export interface SortChangedEvent extends AgEvent {}
-export interface GridReadyEvent extends AgEvent {}
-export interface DragStartedEvent extends AgEvent {}
-export interface DragStoppedEvent extends AgEvent {}
-export interface DisplayedColumnsWidthChangedEvent extends AgEvent {} // not documented
-export interface ColumnHoverChangedEvent extends AgEvent {} // not documented
-export interface BodyHeightChangedEvent extends AgEvent {} // not documented
+export interface ColumnPivotModeChangedEvent extends AgGridEvent {}
+export interface VirtualColumnsChangedEvent extends AgGridEvent {}
+export interface ColumnEverythingChangedEvent extends AgGridEvent {}
+export interface NewColumnsLoadedEvent extends AgGridEvent {}
+export interface GridColumnsChangedEvent extends AgGridEvent {}
+export interface DisplayedColumnsChangedEvent extends AgGridEvent {}
+export interface RowDataChangedEvent extends AgGridEvent {}
+export interface RowDataUpdatedEvent extends AgGridEvent {}
+export interface PinnedRowDataChangedEvent extends AgGridEvent {}
+export interface SelectionChangedEvent extends AgGridEvent {}
+export interface FilterChangedEvent extends AgGridEvent {}
+export interface FilterModifiedEvent extends AgGridEvent {}
+export interface SortChangedEvent extends AgGridEvent {}
+export interface GridReadyEvent extends AgGridEvent {}
+export interface DragStartedEvent extends AgGridEvent {}
+export interface DragStoppedEvent extends AgGridEvent {}
+export interface DisplayedColumnsWidthChangedEvent extends AgGridEvent {} // not documented
+export interface ColumnHoverChangedEvent extends AgGridEvent {} // not documented
+export interface BodyHeightChangedEvent extends AgGridEvent {} // not documented
 
 // this event is 'odd one out' as it should have properties for all the properties
 // in gridOptions that can be bound by the framework. for example, the gridOptions
 // has 'rowData', so this property should have 'rowData' also, so that when the row
 // data changes via the framework bound property, this event has that attribute set.
-export interface ComponentStateChangedEvent extends AgEvent {}
+export interface ComponentStateChangedEvent extends AgGridEvent {}
 
-export interface GridSizeChangedEvent extends AgEvent {
+export interface GridSizeChangedEvent extends AgGridEvent {
     clientWidth: number;
     clientHeight: number;
 }
 
-export interface ViewportChangedEvent extends AgEvent {
+export interface ViewportChangedEvent extends AgGridEvent {
     firstRow: number;
     lastRow: number;
 }
 
-export interface RangeSelectionChangedEvent extends AgEvent {
+export interface RangeSelectionChangedEvent extends AgGridEvent {
     finished: boolean;
     started: boolean;
 }
 
-export interface ColumnGroupOpenedEvent extends AgEvent {
+export interface ColumnGroupOpenedEvent extends AgGridEvent {
     columnGroup: ColumnGroup
 }
 
-export interface ItemsAddedEvent extends AgEvent {
+export interface ItemsAddedEvent extends AgGridEvent {
     items: RowNode[]
 }
 
-export interface BodyScrollEvent extends AgEvent {
+export interface BodyScrollEvent extends AgGridEvent {
     direction: string;
 }
 
 // not documented
-export interface FlashCellsEvent extends AgEvent {
+export interface FlashCellsEvent extends AgGridEvent {
     cells: any;
 }
 
-export interface PaginationChangedEvent extends AgEvent {
+export interface PaginationChangedEvent extends AgGridEvent {
     animate: boolean;
     keepRenderedRows: boolean;
     newData: boolean;
@@ -227,7 +231,7 @@ export interface PaginationChangedEvent extends AgEvent {
 
 // this does not extent CellEvent as the focus service doesn't keep a reference to
 // the rowNode.
-export interface CellFocusedEvent extends AgEvent {
+export interface CellFocusedEvent extends AgGridEvent {
     rowIndex: number;
     column: Column;
     rowPinned: string;
@@ -242,7 +246,7 @@ export interface CellFocusedEvent extends AgEvent {
 /**---------------*/
 /** COLUMN EVENTS */
 /**---------------*/
-export interface ColumnEvent extends AgEvent {
+export interface ColumnEvent extends AgGridEvent {
     column: Column;
     columns: Column[];
 }
@@ -272,7 +276,7 @@ export interface ColumnPinnedEvent extends ColumnEvent {
 /**------------*/
 /** ROW EVENTS */
 /**------------*/
-export interface RowEvent extends AgEvent {
+export interface RowEvent extends AgGridEvent {
     node: RowNode;
     data: any;
     rowIndex: number;
@@ -325,7 +329,7 @@ export interface CellValueChangedEvent extends CellEvent {
 
 // not documented, was put in for CS - more thought needed of how server side grouping / pivoting
 // is done and how these should be used before we fully document and share with the world.
-export interface ColumnRequestEvent extends AgEvent {
+export interface ColumnRequestEvent extends AgGridEvent {
     columns: Column[]
 }
 export interface ColumnRowGroupChangeRequestEvent extends ColumnRequestEvent {}
@@ -336,4 +340,4 @@ export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
 }
 
 // not documented, for internal use only
-export interface ScrollVisibilityChangedEvent extends AgEvent {}
+export interface ScrollVisibilityChangedEvent extends AgGridEvent {}

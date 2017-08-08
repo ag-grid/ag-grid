@@ -5,7 +5,7 @@ import {Autowired, Bean, Context, PostConstruct, PreDestroy} from "../../context
 import {EventService} from "../../eventService";
 import {SelectionController} from "../../selectionController";
 import {IRowModel, RowBounds} from "../../interfaces/iRowModel";
-import {Events} from "../../events";
+import {Events, ModelUpdatedEvent} from "../../events";
 import {SortController} from "../../sortController";
 import {FilterManager} from "../../filter/filterManager";
 import {Constants} from "../../constants";
@@ -15,6 +15,8 @@ import {BeanStub} from "../../context/beanStub";
 import {RowNodeCache} from "../cache/rowNodeCache";
 import {RowNodeBlockLoader} from "../cache/rowNodeBlockLoader";
 import {RowDataTransaction} from "../inMemory/inMemoryRowModel";
+import {GridApi} from "../../gridApi";
+import {ColumnApi} from "../../columnController/columnController";
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IRowModel {
@@ -25,6 +27,8 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
 
     private infiniteCache: InfiniteCache;
     private rowNodeBlockLoader: RowNodeBlockLoader;
@@ -141,7 +145,22 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
 
         this.resetCache();
 
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+        let event: ModelUpdatedEvent = this.createModelUpdatedEvent();
+        this.eventService.dispatchEvent(event);
+    }
+
+    private createModelUpdatedEvent(): ModelUpdatedEvent {
+        return {
+            type: Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            // not sure if these should all be false - noticed if after implementing,
+            // maybe they should be true?
+            newPage: false,
+            newData: false,
+            keepRenderedRows: false,
+            animate: false
+        };
     }
 
     private resetCache(): void {
@@ -217,7 +236,8 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     }
 
     private onCacheUpdated(): void {
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+        let event: ModelUpdatedEvent = this.createModelUpdatedEvent();
+        this.eventService.dispatchEvent(event);
     }
 
     public getRow(rowIndex: number): RowNode {

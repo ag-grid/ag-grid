@@ -230,7 +230,7 @@ export class InMemoryRowModel {
             newData: params.newData,
             newPage: false
         };
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, event);
+        this.eventService.dispatchEvent(event);
 
         if (this.$scope) {
             setTimeout( () => {
@@ -570,7 +570,7 @@ export class InMemoryRowModel {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED, rowDataChangedEvent);
+        this.eventService.dispatchEvent(rowDataChangedEvent);
 
         this.refreshModel({
             step: Constants.STEP_EVERYTHING,
@@ -597,7 +597,7 @@ export class InMemoryRowModel {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
 
         return rowNodeTran;
     }

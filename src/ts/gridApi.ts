@@ -42,6 +42,7 @@ import {ImmutableService} from "./rowModels/inMemory/immutableService";
 import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
 import {PinnedRowModel} from "./rowModels/pinnedRowModel";
+import {AgEvent} from "./events";
 
 
 export interface StartEditingCellParams {
@@ -688,8 +689,8 @@ export class GridApi {
         this.eventService.removeGlobalListener(listener);
     }
 
-    public dispatchEvent(eventType: string, event?: any): void {
-        this.eventService.dispatchEvent(eventType, event);
+    public dispatchEvent(event: AgEvent): void {
+        this.eventService.dispatchEvent(event);
     }
 
     public destroy(): void {

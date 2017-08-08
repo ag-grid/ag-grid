@@ -227,7 +227,7 @@ export class ComponentUtil {
             (<any>event)[key] = value;
         });
 
-        api.dispatchEvent(event.type, event);
+        api.dispatchEvent(event);
     }
 
     public static toBoolean(value: any): boolean {

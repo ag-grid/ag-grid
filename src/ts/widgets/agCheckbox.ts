@@ -5,8 +5,13 @@ import {Utils as _} from "../utils";
 import {PostConstruct, Autowired} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {SvgFactory} from "../svgFactory";
+import {AgEvent} from "../events";
 
 let svgFactory = SvgFactory.getInstance();
+
+export interface ChangeEvent extends AgEvent {
+    selected: boolean;
+}
 
 export class AgCheckbox extends Component {
 
@@ -102,7 +107,11 @@ export class AgCheckbox extends Component {
         let nextValue = this.getNextValue();
 
         if (this.passive) {
-            this.dispatchEvent(AgCheckbox.EVENT_CHANGED, {selected: nextValue});
+            let event: ChangeEvent = {
+                type: AgCheckbox.EVENT_CHANGED,
+                selected: nextValue
+            };
+            this.dispatchEvent(event);
         } else {
             this.setSelected(nextValue);
         }
@@ -121,7 +130,11 @@ export class AgCheckbox extends Component {
 
         this.updateIcons();
 
-        this.dispatchEvent(AgCheckbox.EVENT_CHANGED, {selected: this.selected});
+        let event: ChangeEvent = {
+            type: AgCheckbox.EVENT_CHANGED,
+            selected: this.selected
+        };
+        this.dispatchEvent(event);
     }
 
     private updateIcons(): void {

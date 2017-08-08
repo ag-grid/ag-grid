@@ -4,9 +4,17 @@ import {ColumnGroup} from "./columnGroup";
 import {Column} from "./column";
 import {EventService} from "../eventService";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
+import {Autowired} from "../context/context";
+import {ColumnApi} from "../columnController/columnController";
+import {GridApi} from "../gridApi";
+import {AgEvent} from "../events";
 
 export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmitter  {
+
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
+
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private localEventService = new EventService();
 
@@ -32,7 +40,10 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
 
     public setExpanded(expanded: boolean): void {
         this.expanded = expanded;
-        this.localEventService.dispatchEvent(OriginalColumnGroup.EVENT_EXPANDED_CHANGED);
+        let event: AgEvent = {
+            type: OriginalColumnGroup.EVENT_EXPANDED_CHANGED
+        };
+        this.localEventService.dispatchEvent(event);
     }
 
     public isExpandable(): boolean {

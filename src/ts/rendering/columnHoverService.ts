@@ -28,7 +28,7 @@ export class ColumnHoverService extends BeanStub {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     private onCellMouseOut(): void {
@@ -38,7 +38,7 @@ export class ColumnHoverService extends BeanStub {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     public isHovered(column:Column): boolean{

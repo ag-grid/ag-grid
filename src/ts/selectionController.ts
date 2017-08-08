@@ -269,7 +269,7 @@ export class SelectionController {
             columnApi: this.columnApi
         };
 
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     public selectAllRowNodes(justFiltered = false) {
@@ -296,7 +296,7 @@ export class SelectionController {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     // Deprecated method

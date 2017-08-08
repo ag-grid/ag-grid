@@ -143,7 +143,9 @@ export class DisplayedGroupCreator {
         let index = 0;
         while (currentChildren && currentChildren[0] && currentChildren[0] instanceof OriginalColumnGroup) {
             // putting in a deterministic fake id, in case the API in the future needs to reference the col
-            result.push(new OriginalColumnGroup(null, 'FAKE_PATH_' + index, true));
+            let fakePath = new OriginalColumnGroup(null, 'FAKE_PATH_' + index, true);
+            this.context.wireBean(fakePath);
+            result.push(fakePath);
             currentChildren = (<OriginalColumnGroup>currentChildren[0]).getChildren();
             index++;
         }

@@ -24,6 +24,8 @@ import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {BaseExportParams, ProcessCellForExportParams} from "./exportParams";
+import {AgEvent} from "./events";
+import {Column} from "./entities/column";
 
 let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -51,6 +53,11 @@ function oneOrGreater(value: any, defaultValue: number): number {
     }
 }
 
+export interface PropertyChangedEvent extends AgEvent {
+    currentValue: any;
+    previousValue: any;
+}
+
 @Bean('gridOptionsWrapper')
 export class GridOptionsWrapper {
 
@@ -65,11 +72,15 @@ export class GridOptionsWrapper {
 
     public static PROP_FLOATING_FILTERS_HEIGHT = 'floatingFiltersHeight';
 
+    public static EVENT_PROPERTY_CHANGED = 'propertyChangedEvent';
+
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('enterprise') private enterprise: boolean;
     @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
 
     private propertyEventService: EventService = new EventService();
 
@@ -360,7 +371,12 @@ export class GridOptionsWrapper {
 
         if (previousValue !== value) {
             gridOptionsNoType[key] = value;
-            this.propertyEventService.dispatchEvent(key, {currentValue: value, previousValue: previousValue});
+            let event: PropertyChangedEvent = {
+                type: GridOptionsWrapper.EVENT_PROPERTY_CHANGED,
+                currentValue: value,
+                previousValue: previousValue
+            };
+            this.propertyEventService.dispatchEvent(event);
         }
     }
 

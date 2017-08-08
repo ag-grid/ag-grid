@@ -2,6 +2,15 @@
 import {EventService} from "../eventService";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
 import {Utils as _} from "../utils";
+import {AgEvent} from "../events";
+
+export interface TapEvent extends AgEvent {
+    touchStart: Touch;
+}
+
+export interface LongTapEvent extends AgEvent {
+    touchStart: Touch;
+}
 
 export class TouchListener implements IEventEmitter {
 
@@ -75,7 +84,11 @@ export class TouchListener implements IEventEmitter {
 
             if (this.touching && touchesMatch && !this.moved) {
                 this.moved = true;
-                this.eventService.dispatchEvent(TouchListener.EVENT_LONG_TAP, this.touchStart);
+                let event: LongTapEvent = {
+                    type: TouchListener.EVENT_LONG_TAP,
+                    touchStart: this.touchStart
+                };
+                this.eventService.dispatchEvent(event);
             }
         }, 500);
     }
@@ -99,7 +112,11 @@ export class TouchListener implements IEventEmitter {
         if (!this.touching) { return; }
 
         if (!this.moved) {
-            this.eventService.dispatchEvent(TouchListener.EVENT_TAP, this.touchStart);
+            let event: TapEvent = {
+                type: TouchListener.EVENT_LONG_TAP,
+                touchStart: this.touchStart
+            };
+            this.eventService.dispatchEvent(event);
         }
 
         this.touching = false;

@@ -409,7 +409,7 @@ export class RowComp extends BeanStub {
         if (this.editingRow) {
             if (!cancel) {
                 let event: RowValueChangedEvent = this.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
-                this.mainEventService.dispatchEvent(event.type, event);
+                this.mainEventService.dispatchEvent(event);
             }
             this.setEditingRow(false);
         }
@@ -452,7 +452,7 @@ export class RowComp extends BeanStub {
             <RowEditingStartedEvent> this.createRowEvent(Events.EVENT_ROW_EDITING_STARTED)
             : <RowEditingStoppedEvent> this.createRowEvent(Events.EVENT_ROW_EDITING_STOPPED);
 
-        this.mainEventService.dispatchEvent(event.type, event);
+        this.mainEventService.dispatchEvent(event);
     }
 
     private angular1Compile(element: Element): void {
@@ -921,12 +921,12 @@ export class RowComp extends BeanStub {
             delayedDestroyFunctions.forEach( func => func() );
         }
 
-        if (this.renderedRowEventService) {
-            this.renderedRowEventService.dispatchEvent(RowComp.EVENT_ROW_REMOVED, {node: this.rowNode});
-        }
-
         let event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
-        this.mainEventService.dispatchEvent(event.type, event);
+
+        if (this.renderedRowEventService) {
+            this.renderedRowEventService.dispatchEvent(event);
+        }
+        this.mainEventService.dispatchEvent(event);
     }
 
     private destroyScope(): void {
@@ -1180,14 +1180,14 @@ export class RowComp extends BeanStub {
 
         let agEvent: RowDoubleClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_DOUBLE_CLICKED, mouseEvent);
 
-        this.mainEventService.dispatchEvent(Events.EVENT_ROW_DOUBLE_CLICKED, agEvent);
+        this.mainEventService.dispatchEvent(agEvent);
     }
 
     public onRowClick(mouseEvent: MouseEvent) {
 
         let agEvent: RowClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_CLICKED, mouseEvent);
 
-        this.mainEventService.dispatchEvent(Events.EVENT_ROW_CLICKED, agEvent);
+        this.mainEventService.dispatchEvent(agEvent);
 
         // ctrlKey for windows, metaKey for Apple
         let multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;

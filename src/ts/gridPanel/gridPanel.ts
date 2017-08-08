@@ -1609,7 +1609,7 @@ export class GridPanel extends BeanStub {
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
-            this.eventService.dispatchEvent(event.type, event);
+            this.eventService.dispatchEvent(event);
         }
     }
 
@@ -1693,7 +1693,7 @@ export class GridPanel extends BeanStub {
                 columnApi: this.columnApi,
                 direction: 'horizontal'
             };
-            this.eventService.dispatchEvent(event.type, event);
+            this.eventService.dispatchEvent(event);
             this.lastLeftPosition = newLeftPosition;
             this.horizontallyScrollHeaderCenterAndFloatingCenter();
             this.alignedGridsService.fireHorizontalScrollEvent(newLeftPosition);
@@ -1718,7 +1718,7 @@ export class GridPanel extends BeanStub {
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
-            this.eventService.dispatchEvent(event.type, event);
+            this.eventService.dispatchEvent(event);
             this.lastTopPosition = newTopPosition;
 
             this.fakeVerticalScroll(newTopPosition);

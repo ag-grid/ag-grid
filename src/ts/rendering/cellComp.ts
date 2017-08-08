@@ -708,7 +708,7 @@ export class CellComp extends Component {
         }
 
         let event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
 
         return true;
     }
@@ -810,7 +810,7 @@ export class CellComp extends Component {
         this.refreshCell({forceRefresh: true, suppressFlash: true});
 
         let event: CellEditingStoppedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED);
-        this.eventService.dispatchEvent(event.type, event);
+        this.eventService.dispatchEvent(event);
     }
 
     private createEvent(domEvent: Event, eventType: string): CellEvent {
@@ -862,12 +862,12 @@ export class CellComp extends Component {
 
     private onMouseOut(mouseEvent: MouseEvent): void {
         let cellMouseOutEvent: CellMouseOutEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OUT);
-        this.eventService.dispatchEvent(Events.EVENT_CELL_MOUSE_OUT, cellMouseOutEvent);
+        this.eventService.dispatchEvent(cellMouseOutEvent);
     }
 
     private onMouseOver(mouseEvent: MouseEvent): void {
         let cellMouseOverEvent: CellMouseOverEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OVER);
-        this.eventService.dispatchEvent(Events.EVENT_CELL_MOUSE_OVER, cellMouseOverEvent);
+        this.eventService.dispatchEvent(cellMouseOverEvent);
     }
 
     private onContextMenu(mouseEvent: MouseEvent): void {
@@ -884,7 +884,7 @@ export class CellComp extends Component {
 
         let colDef = this.column.getColDef();
         let cellContextMenuEvent: CellContextMenuEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CONTEXT_MENU);
-        this.eventService.dispatchEvent(Events.EVENT_CELL_CONTEXT_MENU, cellContextMenuEvent);
+        this.eventService.dispatchEvent(cellContextMenuEvent);
 
         if (colDef.onCellContextMenu) {
             colDef.onCellContextMenu(cellContextMenuEvent);
@@ -900,7 +900,7 @@ export class CellComp extends Component {
         let colDef = this.column.getColDef();
         // always dispatch event to eventService
         let cellDoubleClickedEvent: CellDoubleClickedEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_DOUBLE_CLICKED);
-        this.eventService.dispatchEvent(Events.EVENT_CELL_DOUBLE_CLICKED, cellDoubleClickedEvent);
+        this.eventService.dispatchEvent(cellDoubleClickedEvent);
 
         // check if colDef also wants to handle event
         if (typeof colDef.onCellDoubleClicked === 'function') {
@@ -937,7 +937,7 @@ export class CellComp extends Component {
 
     private onCellClicked(mouseEvent: MouseEvent): void {
         let cellClickedEvent: CellClickedEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CLICKED);
-        this.eventService.dispatchEvent(Events.EVENT_CELL_CLICKED, cellClickedEvent);
+        this.eventService.dispatchEvent(cellClickedEvent);
 
         let colDef = this.column.getColDef();
 

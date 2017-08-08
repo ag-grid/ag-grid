@@ -2,6 +2,11 @@ import {Utils as _} from "../utils";
 import {Context} from "../context/context";
 import {BeanStub} from "../context/beanStub";
 import {IComponent} from "../interfaces/iComponent";
+import {AgEvent} from "../events";
+
+export interface VisibleChangedEvent extends AgEvent {
+    visible: boolean;
+}
 
 export class Component extends BeanStub implements IComponent<any> {
 
@@ -197,7 +202,11 @@ export class Component extends BeanStub implements IComponent<any> {
         if (visible !== this.visible) {
             this.visible = visible;
             _.addOrRemoveCssClass(this.eGui, 'ag-hidden', !visible);
-            this.dispatchEvent(Component.EVENT_VISIBLE_CHANGED, {visible: this.visible});
+            let event: VisibleChangedEvent = {
+                type: Component.EVENT_VISIBLE_CHANGED,
+                visible: this.visible
+            };
+            this.dispatchEvent(event);
         }
     }
 
