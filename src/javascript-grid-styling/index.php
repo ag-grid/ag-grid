@@ -306,6 +306,103 @@ include '../documentation-main/documentation_header.php';
 &lt;/div>
 </pre>
 
+
+    <h2 id="customizing-sass-variables">Customizing the themes with Sass variables</h2>
+
+    <p>
+    After September 2017, the ag-Grid themes source files got converted to <a href="http://sass-lang.com">Sass</a>, using the scss syntax. 
+    If you already use Sass in your project, this means that you can change the looks of the theme you use
+    by overriding the theme variables value and referencing the Sass source files afterwards.</p> 
+
+<pre class="codeBlock">
+// styles.scss
+// This is an example of the application scss file; 
+// Popular framework project scaffolders like angular-cli support 
+// generating sass enabled projects. 
+// For example, the `ng new` command accepts `--style scss`.
+
+// override the font size of the entire grid 
+$ag-root-font-size: 10px;
+
+// import the Sass files from the ag-Grid npm package. //
+// The "~" path prefix below relies on Webpack's sass-loader -
+// https://github.com/webpack-contrib/sass-loader. 
+@import "~ag-grid/src/styles/ag-grid.scss";
+@import "~ag-grid/src/styles/theme-fresh.scss";
+</pre>
+
+<p>A runnable version of the example above is available in the <a href="https://github.com/ag-grid/ag-grid-seed/tree/master/typescript-webpack/src">ag-Grid seed Webpack/typescript project</a>. </p>
+
+<p>Following is a list of the most useful Sass variables, their default values for the fresh theme, and a short explanation of their purpose.</p>
+
+
+<style scoped>
+#sass-variables {
+    font-size: 11px;
+margin-bottom: 1em;
+}
+#sass-variables td, th {
+    padding: 3px 8px;
+    border-bottom: 1px solid #e5e5e5;
+    vertical-align: baseline;
+}
+
+#sass-variables td:first-child, td:nth-child(2){
+    font-family: monospace;
+}
+</style>
+<table width="100%" id="sass-variables">
+    <thead>
+        <tr>
+            <th>Variable Name</th>
+            <th>Value</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+<tbody>
+<colgroup>
+    <col style="width:25%;" />
+    <col style="width:25%;" />
+    <col style="width:50%;font-size: 11px;" />
+</colgroup>
+<tr><td>ag-root-font-family</td><td> "Helvetica Neue",Helvetica,Arial,sans-serif </td><td> The font family used for the entire grid</td></tr>
+<tr><td>ag-root-font-size</td><td> 14px </td><td> The default font size for the cells and headers</td></tr>
+<tr><td>ag-border-1</td><td> 1px solid grey </td><td>The border around the cells</td></tr>
+<tr><td>ag-background-1</td><td> #f6f6f6 </td><td>The default background color</td></tr>
+<tr><td>ag-foreground-1</td><td> #222 </td><td> The default text color</td></tr>
+<tr><td>ag-header-foreground-1</td><td> #000 </td><td>The default header text color</td></tr>
+<tr><td>ag-header-background-1</td><td> linear-gradient(white, lightgrey) </td><td>The background of the headers</td></tr>
+<tr><td>ag-separator-color</td><td> #d3d3d3 </td><td> The color of the separator lines used in the grid UI </td></tr>
+
+<tr><td>ag-cell-focused-border</td><td> 1px solid darkgrey </td><td>The border around the focused cell</td></tr>
+<tr><td>ag-cell-ltr-no-focus-border-right</td><td> 1px dotted grey </td><td> The border between the grid cells (LTR mode)</td></tr>
+<tr><td>ag-cell-rtl-no-focus-border-left</td><td> 1px dotted grey </td><td> The border between the grid cells (RTL mode) </td></tr>
+<tr><td>ag-cell-highlight-border</td><td> 1px solid darkgreen </td><td> The border of the highlighted cells </td></tr>
+
+<tr><td>ag-row-selected-background-color</td><td> powderblue </td><td> The background of the selected row </td></tr>
+<tr><td>ag-row-odd-background-color</td><td> #f6f6f6 </td><td>The odd colors of the rows </td></tr>
+<tr><td>ag-row-even-background-color</td><td> white </td><td>The even colors of the rows </td></tr>
+<tr><td>ag-row-floating-background-color</td><td> #f0f0f0 </td><td> The floating row background color </td></tr>
+<tr><td>ag-row-stub-background-color</td><td> #f0f0f0 </td><td> The stub row background color </td></tr>
+
+<tr><td>ag-value-change-delta-up-color</td><td> darkgreen </td><td> The color for the increase delta notification</td></tr>
+<tr><td>ag-value-change-delta-down-color</td><td> darkred </td><td> The color for the decrase delta notification </td></tr>
+<tr><td>ag-value-change-value-highlight-background-color</td><td> #cec </td><td> The background for the changed cell notification </td></tr>
+
+<tr><td>ag-button-background-1</td><td> linear-gradient(white, lightgrey) </td><td> The background of the buttons </td></tr>
+<tr><td>ag-button-foreground-1</td><td> #000 </td><td> The text color of the buttons </td></tr>
+<tr><td>ag-button-border-1</td><td> #808080 </td><td> The border of the buttons </td></tr>
+
+<tr><td>ag-select-background</td><td> white </td><td> The selection background </td></tr>
+<tr><td>ag-select-foreground</td><td> #222 </td><td> The selection color </td></tr>
+</tbody>
+</table>
+
+<p>You can examine the full, up-to-date list of the Sass variables and their usage in <a href="https://github.com/ag-grid/ag-grid/tree/master/src/styles">the source code of the themes</a>.
+The <code>_theme-common.scss</code> file contains the actual implementation, while the <code>theme-*.scss</code> contain the default variable values for each theme.
+</p>
+
 </div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
