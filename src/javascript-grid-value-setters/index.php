@@ -14,13 +14,13 @@ include '../documentation-main/documentation_header.php';
     <p>
         The section <a href="../javascript-grid-value-getters">Getters and Formatters</a>
         explained how to use <i>valueGetter</i> and <i>valueFormatter</i>
-        to get and format the value for displaying. This section explains their
-        equivalents <i>valueSetter</i> and <i>valueParser</i> that are used for saving
+        to get and format the value before displaying it. This section explains their
+        counterparts; <i>valueSetter</i> and <i>valueParser</i>, which are used for saving
         edited values.
     </p>
 
     <p>
-        Use a <code>valueSetter</code> to set a value into you data after editing when the
+        Use a <code>valueSetter</code> to set a value into your data after editing when the
         normal <code>colDef.field</code> attribute will not suffice.
     </p>
     <p>
@@ -39,7 +39,7 @@ include '../documentation-main/documentation_header.php';
     </table>
 
     <p>
-        These can be a function or <a href="../javascript-grid-cell-expressions/">expression</a>.
+        These can be a function or an <a href="../javascript-grid-cell-expressions/">expression</a>.
         This page assumes functions. Once you understand this page, you can go to
         <a href="../javascript-grid-cell-expressions/">expression</a> to learn how to specify them as
         expressions.
@@ -86,7 +86,7 @@ include '../documentation-main/documentation_header.php';
 
     <img src="valueSetterFlow.svg"/>
 
-    <h2>Value Setter</h2>
+    <h2 id="value-setter">Value Setter</h2>
 
     <p>
         A <code>valueSetter</code> is the inverse of a <code>valueGetter</code>, it allows you to put
@@ -123,9 +123,7 @@ colDef.valueSetter = function(params) {
         return false;
     }
 }</pre>
-
-
-    <h2>Value Parser</h2>
+    <h2 id="value-parser">Value Parser</h2>
 
     <p>
         A <code>valueParser</code> allows you to parse values after an edit (or after the user sets
@@ -152,7 +150,7 @@ interface ValueParserParams {
 <span class="codeComment">// example value parser, convert a string to a number</span>
 colDef.valueParser = function(params) {
     <span class="codeComment">// this is how to convert a string to a number using JavaScript</span>
-    return Number(params.value);
+    return Number(params.newValue);
 }</pre>
 
 </div>

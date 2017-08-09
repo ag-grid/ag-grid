@@ -320,9 +320,6 @@ CellValueChangedEvent {
     ├── ColumnGroupOpenedEvent <span class="event-properties">{
     │       <span class="event-attribute">columnGroup</span>: ColumnGroup // the column group that was opened
     │     }</span>
-    ├── ItemsAddedEvent <span class="event-properties">{
-    │       <span class="event-attribute">items</span>: RowNode[] // list of RowNode items that was added
-    │     }</span>
     ├── BodyScrollEvent <span class="event-properties">{
     │       <span class="event-attribute">direction</span>: string // either 'horizontal' or 'vertical'
     │     }</span>

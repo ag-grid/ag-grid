@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The grid displays values from your data. The easiest way to configure this is to set <code>colDef.field</code>.
-        The grid then pulls the gets and sets (after editing) the data to this location and does not formatting
+        The grid then pulls the gets and sets (after editing) the data to this location and does no formatting
         for the value.
     </p>
 
@@ -24,7 +24,7 @@ var countryColDef = {
 }</pre>
 
     <p>
-        You should use <code>colDef.field</code> most of the time. However you may require to get/set the data
+        You should use <code>colDef.field</code> most of the time. However you may require to get / set the data
         another way, or you may wish to format (for display) or parse (after editing) the data if you do not
         display the data 'as is'. For these reasons, the grid provides the following additional methods:
     </p>
@@ -75,7 +75,7 @@ var countryColDef = {
 
     <img src="valueGetterFlow.svg"/>
 
-    <h2>Value Getter</h2>
+    <h2 id="value-getter">Value Getter</h2>
 
     <p>
         A <code>valueGetter</code> allows you to pull values from your data instead of using the standard
@@ -111,10 +111,15 @@ colDef.valueGetter = function(params) {
         params.getValue() function.
     </note>
 
-    <h2>Value Formatter</h2>
+    <h2 id="value-formatter">Value Formatter</h2>
 
     <p>
-        A <code>valueFormatter</code> allows you to format the value for display purposes.
+        A <code>valueFormatter</code> allows you to format or transform the value for display purposes. The section on
+        <a href="../javascript-grid-reference-data">Reference Data</a> describes how to transform reference data using a
+        <code>valueFormatter</code> to display names rather than codes.
+    </p>
+
+    <p>
         The interface for <code>valueFormatter</code> is as follows:
     </p>
 
@@ -147,7 +152,7 @@ colDef.valueFormatter = function(params) {
     </p>
 
     <p>
-        The answer is: <code>valueFormatter</code>'s are for text formatting.
+        The answer is: <code>valueFormatter</code>'s are for text formatting / value transformations.
         <code>cellRenderer</code>'s are for when you want
         to include HTML markup and potentially functionality to the cell.
         So for example, if you want to put punctuation into a value, use a <code>valueFormatter</code>,
@@ -156,8 +161,6 @@ colDef.valueFormatter = function(params) {
         combination of both, in which case the result of the <code>valueFormatter</code> will be
         passed to the <code>cellRenderer</code>.
     </p>
-
-
 
     <h2>Header Value Getters</h2>
 
