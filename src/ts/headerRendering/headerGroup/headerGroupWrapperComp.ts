@@ -12,6 +12,7 @@ import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
 import {IHeaderGroupComp, IHeaderGroupParams} from "./headerGroupComp";
 import {GridApi} from "../../gridApi";
 import {ComponentRecipes} from "../../components/framework/componentRecipes";
+import {Beans} from "../../rendering/beans";
 
 export class HeaderGroupWrapperComp extends Component {
 
@@ -25,9 +26,10 @@ export class HeaderGroupWrapperComp extends Component {
     @Autowired('horizontalDragService') private dragService: HorizontalDragService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('context') private context: Context;
-    @Autowired('componentRecipes') private componentRecipes:ComponentRecipes;
-    @Autowired('gridApi') private gridApi:GridApi;
-    @Autowired('columnApi') private columnApi:ColumnApi;
+    @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('beans') private beans: Beans;
 
     private columnGroup: ColumnGroup;
     private dragSourceDropTarget: DropTarget;
@@ -64,7 +66,9 @@ export class HeaderGroupWrapperComp extends Component {
         this.setupWidth();
         this.addAttributes();
 
-        this.addFeature(this.context, new SetLeftFeature(this.columnGroup, this.getGui()));
+        let setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
+        setLeftFeature.init();
+        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     }
 
     private addAttributes(): void {

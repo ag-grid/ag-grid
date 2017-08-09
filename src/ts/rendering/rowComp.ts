@@ -2,29 +2,29 @@ import {Utils as _} from "../utils";
 import {CellComp} from "./cellComp";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColumnController} from "../columnController/columnController";
 import {RowRenderer} from "./rowRenderer";
 import {Column} from "../entities/column";
 import {
-    Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent,
+    Events,
+    RowClickedEvent,
+    RowDoubleClickedEvent,
+    RowEditingStartedEvent,
+    RowEditingStoppedEvent,
+    RowEvent,
     RowValueChangedEvent,
     VirtualRowRemovedEvent
 } from "../events";
 import {EventService} from "../eventService";
-import {Autowired, Context, PostConstruct} from "../context/context";
-import {FocusedCellController} from "../focusedCellController";
+import {Autowired, PostConstruct} from "../context/context";
 import {Constants} from "../constants";
-import {CellRendererService} from "./cellRendererService";
 import {CellRendererFactory} from "./cellRendererFactory";
 import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
-import {GridPanel} from "../gridPanel/gridPanel";
 import {BeanStub} from "../context/beanStub";
 import {RowContainerComponent} from "./rowContainerComponent";
-import {ColumnAnimationService} from "./columnAnimationService";
-import {PaginationProxy} from "../rowModels/paginationProxy";
 import {Component} from "../widgets/component";
 import {SvgFactory} from "../svgFactory";
 import {RefSelector} from "../widgets/componentAnnotations";
+import {Beans} from "./beans";
 
 let svgFactory = SvgFactory.getInstance();
 
@@ -69,22 +69,17 @@ export interface LastPlacedElements {
     eFullWidth: HTMLElement;
 }
 
-export class RowComp extends BeanStub {
+export interface IRowComp {
+
+}
+
+export class RowComp extends BeanStub implements IRowComp {
 
     public static EVENT_ROW_REMOVED = 'rowRemoved';
 
     public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
-    @Autowired('$compile') private $compile: any;
-    @Autowired('eventService') private mainEventService: EventService;
-    @Autowired('context') private context: Context;
-    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
-    @Autowired('cellRendererService') private cellRendererService: CellRendererService;
-    @Autowired('gridPanel') private gridPanel: GridPanel;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    private beans: Beans;
 
     private ePinnedLeftRow: HTMLElement;
     private ePinnedRightRow: HTMLElement;
@@ -157,7 +152,8 @@ export class RowComp extends BeanStub {
                 pinnedRightContainerComp: RowContainerComponent,
                 node: RowNode,
                 animateIn: boolean,
-                lastPlacedElements: LastPlacedElements) {
+                lastPlacedElements: LastPlacedElements,
+                beans: Beans) {
         super();
         this.parentScope = parentScope;
         this.rowRenderer = rowRenderer;
@@ -170,6 +166,8 @@ export class RowComp extends BeanStub {
         this.rowNode = node;
         this.animateIn = animateIn;
         this.lastPlacedElements = lastPlacedElements;
+
+        this.beans = beans;
     }
 
     private setupRowStub(animateInRowTop: boolean): void {
@@ -191,9 +189,9 @@ export class RowComp extends BeanStub {
             return;
         }
 
-        let isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
+        let isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
         let isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
-        let isGroupSpanningRow = this.rowNode.group && this.gridOptionsWrapper.isGroupUseEntireRow();
+        let isGroupSpanningRow = this.rowNode.group && this.beans.gridOptionsWrapper.isGroupUseEntireRow();
 
         if (isFullWidthCell) {
             this.setupFullWidthContainers(animateInRowTop);
@@ -220,10 +218,10 @@ export class RowComp extends BeanStub {
 
     private addDomData(eRowContainer: Element): void {
 
-        this.gridOptionsWrapper.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, this);
+        this.beans.gridOptionsWrapper.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, this);
 
         this.addDestroyFunc( ()=> {
-            this.gridOptionsWrapper.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, null) }
+            this.beans.gridOptionsWrapper.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, null) }
         );
     }
 
@@ -253,8 +251,8 @@ export class RowComp extends BeanStub {
 
     private setupFullWidthContainers(animateInRowTop: boolean): void {
         this.fullWidthRow = true;
-        this.fullWidthCellRenderer = this.gridOptionsWrapper.getFullWidthCellRenderer();
-        this.fullWidthCellRendererParams = this.gridOptionsWrapper.getFullWidthCellRendererParams();
+        this.fullWidthCellRenderer = this.beans.gridOptionsWrapper.getFullWidthCellRenderer();
+        this.fullWidthCellRendererParams = this.beans.gridOptionsWrapper.getFullWidthCellRendererParams();
         if (_.missing(this.fullWidthCellRenderer)) {
             console.warn(`ag-Grid: you need to provide a fullWidthCellRenderer if using isFullWidthCell()`);
         }
@@ -263,7 +261,7 @@ export class RowComp extends BeanStub {
     }
 
     private addMouseWheelListenerToFullWidthRow(): void {
-        let mouseWheelListener = this.gridPanel.genericMouseWheelListener.bind(this.gridPanel);
+        let mouseWheelListener = this.beans.gridPanel.genericMouseWheelListener.bind(this.beans.gridPanel);
         // IE9, Chrome, Safari, Opera
         this.addDestroyableEventListener(this.eFullWidthRow, 'mousewheel', mouseWheelListener);
         // Firefox
@@ -272,13 +270,13 @@ export class RowComp extends BeanStub {
 
     private setupFullWidthGroupContainers(animateInRowTop: boolean): void {
         this.fullWidthRow = true;
-        this.fullWidthCellRenderer = this.gridOptionsWrapper.getGroupRowRenderer();
-        this.fullWidthCellRendererParams = this.gridOptionsWrapper.getGroupRowRendererParams();
+        this.fullWidthCellRenderer = this.beans.gridOptionsWrapper.getGroupRowRenderer();
+        this.fullWidthCellRendererParams = this.beans.gridOptionsWrapper.getGroupRowRendererParams();
 
         if (!this.fullWidthCellRenderer) {
             this.fullWidthCellRenderer = CellRendererFactory.GROUP;
             this.fullWidthCellRendererParams = {
-                innerRenderer: this.gridOptionsWrapper.getGroupRowInnerRenderer()
+                innerRenderer: this.beans.gridOptionsWrapper.getGroupRowInnerRenderer()
             };
         }
 
@@ -286,7 +284,7 @@ export class RowComp extends BeanStub {
     }
 
     private createFullWidthRow(animateInRowTop: boolean): void {
-        let embedFullWidthRows = this.gridOptionsWrapper.isEmbedFullWidthRows();
+        let embedFullWidthRows = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
 
         let ensureDomOrder = _.exists(this.lastPlacedElements);
 
@@ -311,7 +309,7 @@ export class RowComp extends BeanStub {
             this.eFullWidthRow = this.createRowContainer(this.fullWidthContainerComp, animateInRowTop, previousFullWidth, ensureDomOrder);
 
             // and fake the mouse wheel for the fullWidth container
-            if (!this.gridOptionsWrapper.isForPrint()) {
+            if (!this.beans.gridOptionsWrapper.isForPrint()) {
                 this.addMouseWheelListenerToFullWidthRow();
             }
         }
@@ -328,16 +326,15 @@ export class RowComp extends BeanStub {
 
         this.eBodyRow = this.createRowContainer(this.bodyContainerComp, animateInRowTop, previousBody, ensureDomOrder);
 
-        if (!this.gridOptionsWrapper.isForPrint()) {
+        if (!this.beans.gridOptionsWrapper.isForPrint()) {
             this.ePinnedLeftRow = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop, previousLeft, ensureDomOrder);
             this.ePinnedRightRow = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop, previousRight, ensureDomOrder);
         }
     }
 
-    @PostConstruct
     public init(): void {
 
-        this.forPrint = this.gridOptionsWrapper.isForPrint();
+        this.forPrint = this.beans.gridOptionsWrapper.isForPrint();
 
         let animateInRowTop = this.animateIn && _.exists(this.rowNode.oldRowTop);
         
@@ -348,7 +345,7 @@ export class RowComp extends BeanStub {
         if (this.fullWidthRow) {
             this.refreshFullWidthComponent();
         } else {
-            this.refreshCellsIntoRow();
+            this.refreshCellsIntoRow(true);
         }
 
         this.addGridClasses();
@@ -369,18 +366,19 @@ export class RowComp extends BeanStub {
         this.addCellFocusedListener();
         this.addNodeDataChangedListener();
         this.addColumnListener();
+
         this.addHoverFunctionality();
 
-        this.gridOptionsWrapper.executeProcessRowPostCreateFunc({
+        this.beans.gridOptionsWrapper.executeProcessRowPostCreateFunc({
             eRow: this.eBodyRow,
             ePinnedLeftRow: this.ePinnedLeftRow,
             ePinnedRightRow: this.ePinnedRightRow,
             node: this.rowNode,
-            api: this.gridOptionsWrapper.getApi(),
+            api: this.beans.gridOptionsWrapper.getApi(),
             rowIndex: this.rowNode.rowIndex,
             addRenderedRowListener: this.addEventListener.bind(this),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            context: this.gridOptionsWrapper.getContext()
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            context: this.beans.gridOptionsWrapper.getContext()
         });
 
         this.initialised = true;
@@ -391,7 +389,7 @@ export class RowComp extends BeanStub {
     }
 
     public isEditing(): boolean {
-        if (this.gridOptionsWrapper.isFullRowEdit()) {
+        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
             // if doing row editing, then the local variable is the one that is used
             return this.editingRow;
         } else {
@@ -409,7 +407,7 @@ export class RowComp extends BeanStub {
         if (this.editingRow) {
             if (!cancel) {
                 let event: RowValueChangedEvent = this.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
-                this.mainEventService.dispatchEvent(event);
+                this.beans.eventService.dispatchEvent(event);
             }
             this.setEditingRow(false);
         }
@@ -422,9 +420,9 @@ export class RowComp extends BeanStub {
             data: this.rowNode.data,
             rowIndex: this.rowNode.rowIndex,
             rowPinned: this.rowNode.rowPinned,
-            context: this.gridOptionsWrapper.getContext(),
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            context: this.beans.gridOptionsWrapper.getContext(),
+            api: this.beans.gridOptionsWrapper.getApi(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             event: domEvent
         }
     }
@@ -452,12 +450,12 @@ export class RowComp extends BeanStub {
             <RowEditingStartedEvent> this.createRowEvent(Events.EVENT_ROW_EDITING_STARTED)
             : <RowEditingStoppedEvent> this.createRowEvent(Events.EVENT_ROW_EDITING_STOPPED);
 
-        this.mainEventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private angular1Compile(element: Element): void {
         if (this.scope) {
-            this.$compile(element)(this.scope);
+            this.beans.$compile(element)(this.scope);
         }
     }
 
@@ -466,18 +464,18 @@ export class RowComp extends BeanStub {
         let virtualListener = this.onVirtualColumnsChanged.bind(this);
         let gridColumnsChangedListener = this.onGridColumnsChanged.bind(this);
 
-        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
-        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
-        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_COLUMN_RESIZED, columnListener);
-        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_GRID_COLUMNS_CHANGED, gridColumnsChangedListener);
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_RESIZED, columnListener);
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, gridColumnsChangedListener);
     }
 
     private onDisplayedColumnsChanged(): void {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
         if (this.fullWidthRow) {
-            if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
-                let leftMismatch = this.fullWidthPinnedLeftLastTime !== this.columnController.isPinningLeft();
-                let rightMismatch = this.fullWidthPinnedRightLastTime !== this.columnController.isPinningRight();
+            if (this.beans.gridOptionsWrapper.isEmbedFullWidthRows()) {
+                let leftMismatch = this.fullWidthPinnedLeftLastTime !== this.beans.columnController.isPinningLeft();
+                let rightMismatch = this.fullWidthPinnedRightLastTime !== this.beans.columnController.isPinningRight();
                 // if either of the pinned panels has shown / hidden, then need to redraw the fullWidth bits when
                 // embedded, as what appears in each section depends on whether we are pinned or not
                 if (leftMismatch || rightMismatch) {
@@ -487,14 +485,14 @@ export class RowComp extends BeanStub {
                 // otherwise nothing, the floating fullWidth containers are not impacted by column changes
             }
         } else {
-            this.refreshCellsIntoRow();
+            this.refreshCellsIntoRow(false);
         }
     }
 
     private onVirtualColumnsChanged(): void {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
         if (!this.fullWidthRow) {
-            this.refreshCellsIntoRow();
+            this.refreshCellsIntoRow(false);
         }
     }
 
@@ -517,19 +515,19 @@ export class RowComp extends BeanStub {
     // method makes sure the right cells are present, and are in the right container. so when this gets called for
     // the first time, it sets up all the cells. but then over time the cells might appear / dissappear or move
     // container (ie into pinned)
-    private refreshCellsIntoRow() {
-        let centerCols = this.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
-        let leftColumns = this.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
-        let rightCols = this.columnController.getDisplayedRightColumnsForRow(this.rowNode);
+    private refreshCellsIntoRow(firstTime: boolean) {
+        let centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
+        let leftColumns = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
+        let rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
 
         let cellsToRemove = Object.keys(this.renderedCells);
 
-        let ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder() && !this.forPrint;
+        let ensureDomOrder = this.beans.gridOptionsWrapper.isEnsureDomOrder() && !this.forPrint;
         let lastPlacedCells: LastPlacedElements = ensureDomOrder ? {eLeft: null, eRight: null, eBody: null, eFullWidth: null} : null;
 
         let addColFunc = (column: Column) => {
             let renderedCell = this.getOrCreateCell(column);
-            this.ensureCellInCorrectContainer(renderedCell, lastPlacedCells);
+            this.ensureCellInCorrectContainer(renderedCell, lastPlacedCells, firstTime);
             _.removeFromArray(cellsToRemove, column.getColId());
         };
 
@@ -546,7 +544,7 @@ export class RowComp extends BeanStub {
     }
 
     private isCellEligibleToBeRemoved(indexStr: string): boolean {
-        let displayedColumns = this.columnController.getAllDisplayedColumns();
+        let displayedColumns = this.beans.columnController.getAllDisplayedColumns();
 
         let REMOVE_CELL : boolean = true;
         let KEEP_CELL : boolean = false;
@@ -559,7 +557,7 @@ export class RowComp extends BeanStub {
 
         // we want to try and keep editing and focused cells
         let editing = renderedCell.isEditing();
-        let focused = this.focusedCellController.isCellFocused(renderedCell.getGridCell());
+        let focused = this.beans.focusedCellController.isCellFocused(renderedCell.getGridCell());
 
         let mightWantToKeepCell = editing || focused;
 
@@ -591,12 +589,17 @@ export class RowComp extends BeanStub {
         }
     }
 
-    private ensureCellInCorrectContainer(cellComp: CellComp, lastPlacedCells: LastPlacedElements): void {
+    private ensureCellInCorrectContainer(cellComp: CellComp, lastPlacedCells: LastPlacedElements, firstTime: boolean): void {
         let eCell = cellComp.getGui();
         let column = cellComp.getColumn();
         let pinnedType = column.getPinned();
-
         let eContainer = this.getContainerForCell(pinnedType);
+
+        if (firstTime) {
+            eContainer.appendChild(eCell);
+            cellComp.setParentRow(eContainer);
+            return;
+        }
 
         let eCellBefore = this.getLastPlacedCell(lastPlacedCells, pinnedType);
 
@@ -611,15 +614,13 @@ export class RowComp extends BeanStub {
                 eOldContainer.removeChild(eCell);
             }
 
-            cellComp.setParentRow(eContainer);
-
-            eContainer.appendChild(eCell);
-
             if (forcingOrder) {
                 _.insertWithDomOrder(eContainer, eCell, eCellBefore);
             } else {
                 eContainer.appendChild(eCell);
             }
+
+            cellComp.setParentRow(eContainer);
         } else {
             // ensure it is in the right order
             if (forcingOrder) {
@@ -660,18 +661,18 @@ export class RowComp extends BeanStub {
         if (this.renderedCells[colId]) {
             return this.renderedCells[colId];
         } else {
-            let renderedCell = new CellComp(column, this.rowNode, this.scope, this);
-            this.context.wireBean(renderedCell);
-            this.renderedCells[colId] = renderedCell;
-            this.angular1Compile(renderedCell.getGui());
+            let cellComp = new CellComp(column, this.rowNode, this.scope, this, this.beans);
+            cellComp.init();
+            this.renderedCells[colId] = cellComp;
+            this.angular1Compile(cellComp.getGui());
 
             // if we are editing the row, then the cell needs to turn
             // into edit mode
             if (this.editingRow) {
-                renderedCell.startEditingIfEnabled();
+                cellComp.startEditingIfEnabled();
             }
 
-            return renderedCell;
+            return cellComp;
         }
     }
 
@@ -696,8 +697,8 @@ export class RowComp extends BeanStub {
         // because we are adding listeners to the row, we give the user the choice to not add
         // the hover class, as it slows things down, especially in IE, when you add listeners
         // to each row. we cannot do the trick of adding one listener to the GridPanel (like we
-        // do for other mouse events) as these events don't propogate
-        if (this.gridOptionsWrapper.isSuppressRowHoverClass()) { return; }
+        // do for other mouse events) as these events don't propagate
+        if (!this.beans.gridOptionsWrapper.isRowHoverClass()) { return; }
 
         let onGuiMouseEnter = this.rowNode.onMouseEnter.bind(this.rowNode);
         let onGuiMouseLeave = this.rowNode.onMouseLeave.bind(this.rowNode);
@@ -719,7 +720,7 @@ export class RowComp extends BeanStub {
     }
 
     private setRowFocusClasses(): void {
-        let rowFocused = this.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+        let rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
         if (rowFocused !== this.rowFocusedLastTime) {
             this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
             this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
@@ -732,8 +733,8 @@ export class RowComp extends BeanStub {
     }
 
     private addCellFocusedListener(): void {
-        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_CELL_FOCUSED, this.setRowFocusClasses.bind(this));
-        this.addDestroyableEventListener(this.mainEventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.setRowFocusClasses.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.setRowFocusClasses.bind(this));
         this.setRowFocusClasses();
     }
@@ -781,7 +782,7 @@ export class RowComp extends BeanStub {
 
     private onTopChanged(): void {
         // top is not used in forPrint, as the rows are just laid out naturally
-        let doNotSetRowTop = this.gridOptionsWrapper.isForPrint() || this.gridOptionsWrapper.isAutoHeight();
+        let doNotSetRowTop = this.beans.gridOptionsWrapper.isForPrint() || this.beans.gridOptionsWrapper.isAutoHeight();
         if (doNotSetRowTop) { return; }
 
         // console.log(`top changed for ${this.rowNode.id} = ${this.rowNode.rowTop}`);
@@ -797,7 +798,7 @@ export class RowComp extends BeanStub {
             if (this.rowNode.isRowPinned()) {
                 pixelsWithOffset = pixels;
             } else {
-                pixelsWithOffset = pixels - this.paginationProxy.getPixelOffset();
+                pixelsWithOffset = pixels - this.beans.paginationProxy.getPixelOffset();
             }
 
             let topPx = pixelsWithOffset + "px";
@@ -806,7 +807,7 @@ export class RowComp extends BeanStub {
     }
     
     private setupTop(animateInRowTop: boolean): void {
-        if (this.gridOptionsWrapper.isForPrint()) { return; }
+        if (this.beans.gridOptionsWrapper.isForPrint()) { return; }
 
         let topChangedListener = this.onTopChanged.bind(this);
 
@@ -857,8 +858,8 @@ export class RowComp extends BeanStub {
 
     // adds in row and row-id attributes to the row
     private addRowIds(): void {
-        if (typeof this.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
-            let businessKey = this.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.rowNode);
+        if (typeof this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
+            let businessKey = this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.rowNode);
             if (typeof businessKey === 'string' || typeof businessKey === 'number') {
                 this.eAllRowContainers.forEach( row => row.setAttribute('row-id', businessKey) );
             }
@@ -909,11 +910,11 @@ export class RowComp extends BeanStub {
             this.startRemoveAnimationFunctions.forEach( func => func() );
 
             this.delayedDestroyFunctions.push( ()=> {
-                this.forEachCellComp(renderedCell => renderedCell.destroy() );
+                this.forEachCellComp(renderedCell => renderedCell.destroy(false) );
             });
 
         } else {
-            this.forEachCellComp(renderedCell => renderedCell.destroy() );
+            this.forEachCellComp(renderedCell => renderedCell.destroy(false) );
 
             // we are not animating, so execute the second stage of removal now.
             // we call getAndClear, so that they are only called once
@@ -926,7 +927,7 @@ export class RowComp extends BeanStub {
         if (this.renderedRowEventService) {
             this.renderedRowEventService.dispatchEvent(event);
         }
-        this.mainEventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private destroyScope(): void {
@@ -947,30 +948,30 @@ export class RowComp extends BeanStub {
 
     private createFullWidthComponent(): void {
 
-        this.fullWidthPinnedLeftLastTime = this.columnController.isPinningLeft();
-        this.fullWidthPinnedRightLastTime = this.columnController.isPinningRight();
+        this.fullWidthPinnedLeftLastTime = this.beans.columnController.isPinningLeft();
+        this.fullWidthPinnedRightLastTime = this.beans.columnController.isPinningRight();
 
         if (this.eFullWidthRow) {
             let params = this.createFullWidthParams(this.eFullWidthRow, null);
-            this.fullWidthRowComponent = this.cellRendererService.useFullRowGroupRenderer(this.eFullWidthRow, params);
+            this.fullWidthRowComponent = this.beans.cellRendererService.useFullRowGroupRenderer(this.eFullWidthRow, params);
             this.angular1Compile(this.eFullWidthRow);
         }
 
         if (this.eFullWidthRowBody) {
             let params = this.createFullWidthParams(this.eFullWidthRowBody, null);
-            this.fullWidthRowComponentBody = this.cellRendererService.useFullRowGroupRenderer(this.eFullWidthRowBody, params);
+            this.fullWidthRowComponentBody = this.beans.cellRendererService.useFullRowGroupRenderer(this.eFullWidthRowBody, params);
             this.angular1Compile(this.eFullWidthRowBody);
         }
 
         if (this.eFullWidthRowLeft) {
             let params = this.createFullWidthParams(this.eFullWidthRowLeft, Column.PINNED_LEFT);
-            this.fullWidthRowComponentLeft = this.cellRendererService.useFullRowGroupRenderer(this.eFullWidthRowLeft, params);
+            this.fullWidthRowComponentLeft = this.beans.cellRendererService.useFullRowGroupRenderer(this.eFullWidthRowLeft, params);
             this.angular1Compile(this.eFullWidthRowLeft);
         }
 
         if (this.eFullWidthRowRight) {
             let params = this.createFullWidthParams(this.eFullWidthRowRight, Column.PINNED_RIGHT);
-            this.fullWidthRowComponentRight = this.cellRendererService.useFullRowGroupRenderer(this.eFullWidthRowRight, params);
+            this.fullWidthRowComponentRight = this.beans.cellRendererService.useFullRowGroupRenderer(this.eFullWidthRowRight, params);
             this.angular1Compile(this.eFullWidthRowRight);
         }
 
@@ -1022,9 +1023,9 @@ export class RowComp extends BeanStub {
             value: this.rowNode.key,
             $scope: this.scope,
             rowIndex: this.rowNode.rowIndex,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            context: this.gridOptionsWrapper.getContext(),
+            api: this.beans.gridOptionsWrapper.getApi(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            context: this.beans.gridOptionsWrapper.getContext(),
             eGridCell: eRow,
             eParentOfValue: eRow,
             pinned: pinned,
@@ -1043,11 +1044,11 @@ export class RowComp extends BeanStub {
     }
 
     private createChildScopeOrNull(data: any) {
-        if (this.gridOptionsWrapper.isAngularCompileRows()) {
+        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
             let newChildScope = this.parentScope.$new();
             newChildScope.data = data;
             newChildScope.rowNode = this.rowNode;
-            newChildScope.context = this.gridOptionsWrapper.getContext();
+            newChildScope.context = this.beans.gridOptionsWrapper.getContext();
             return newChildScope;
         } else {
             return null;
@@ -1055,7 +1056,7 @@ export class RowComp extends BeanStub {
     }
 
     private addStyleFromRowStyle(): void {
-        let rowStyle = this.gridOptionsWrapper.getRowStyle();
+        let rowStyle = this.beans.gridOptionsWrapper.getRowStyle();
         if (rowStyle) {
             if (typeof rowStyle === 'function') {
                 console.log('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
@@ -1066,13 +1067,13 @@ export class RowComp extends BeanStub {
     }
 
     private addStyleFromRowStyleFunc(): void {
-        let rowStyleFunc = this.gridOptionsWrapper.getRowStyleFunc();
+        let rowStyleFunc = this.beans.gridOptionsWrapper.getRowStyleFunc();
         if (rowStyleFunc) {
             let params = {
                 data: this.rowNode.data,
                 node: this.rowNode,
-                api: this.gridOptionsWrapper.getApi(),
-                context: this.gridOptionsWrapper.getContext(),
+                api: this.beans.gridOptionsWrapper.getApi(),
+                context: this.beans.gridOptionsWrapper.getContext(),
                 $scope: this.scope
             };
             let cssToUseFromFunc = rowStyleFunc(params);
@@ -1087,8 +1088,8 @@ export class RowComp extends BeanStub {
             data: this.rowNode.data,
             rowIndex: this.rowNode.rowIndex,
             $scope: this.scope,
-            context: this.gridOptionsWrapper.getContext(),
-            api: this.gridOptionsWrapper.getApi(),
+            context: this.beans.gridOptionsWrapper.getContext(),
+            api: this.beans.gridOptionsWrapper.getApi(),
             event: <any> null,
             eventSource: <any> null
         };
@@ -1152,7 +1153,7 @@ export class RowComp extends BeanStub {
     // moves the row closer to the viewport if it is far away, so the row slide in / out
     // at a speed the user can see.
     private roundRowTopToBounds(rowTop: number): number {
-        let range = this.gridPanel.getVerticalPixelRange();
+        let range = this.beans.gridPanel.getVerticalPixelRange();
         let minPixel = range.top - 100;
         let maxPixel = range.bottom + 100;
         if (rowTop < minPixel) {
@@ -1180,14 +1181,14 @@ export class RowComp extends BeanStub {
 
         let agEvent: RowDoubleClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_DOUBLE_CLICKED, mouseEvent);
 
-        this.mainEventService.dispatchEvent(agEvent);
+        this.beans.eventService.dispatchEvent(agEvent);
     }
 
     public onRowClick(mouseEvent: MouseEvent) {
 
         let agEvent: RowClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_CLICKED, mouseEvent);
 
-        this.mainEventService.dispatchEvent(agEvent);
+        this.beans.eventService.dispatchEvent(agEvent);
 
         // ctrlKey for windows, metaKey for Apple
         let multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
@@ -1206,18 +1207,18 @@ export class RowComp extends BeanStub {
         }
 
         // if no selection method enabled, do nothing
-        if (!this.gridOptionsWrapper.isRowSelection()) {
+        if (!this.beans.gridOptionsWrapper.isRowSelection()) {
             return;
         }
 
         // if click selection suppressed, do nothing
-        if (this.gridOptionsWrapper.isSuppressRowClickSelection()) {
+        if (this.beans.gridOptionsWrapper.isSuppressRowClickSelection()) {
             return;
         }
 
         if (this.rowNode.isSelected()) {
             if (multiSelectKeyPressed) {
-                if (this.gridOptionsWrapper.isRowDeselection()) {
+                if (this.beans.gridOptionsWrapper.isRowDeselection()) {
                     this.rowNode.setSelectedParams({newValue: false});
                 }
             } else {
@@ -1237,14 +1238,14 @@ export class RowComp extends BeanStub {
 
         let classes: string[] = [];
 
-        let gridOptionsRowClassFunc = this.gridOptionsWrapper.getRowClassFunc();
+        let gridOptionsRowClassFunc = this.beans.gridOptionsWrapper.getRowClassFunc();
         if (gridOptionsRowClassFunc) {
             let params = {
                 node: this.rowNode,
                 data: this.rowNode.data,
                 rowIndex: this.rowNode.rowIndex,
-                context: this.gridOptionsWrapper.getContext(),
-                api: this.gridOptionsWrapper.getApi()
+                context: this.beans.gridOptionsWrapper.getContext(),
+                api: this.beans.gridOptionsWrapper.getApi()
             };
             let classToUseFromFunc = gridOptionsRowClassFunc(params);
             if (classToUseFromFunc) {
@@ -1269,7 +1270,7 @@ export class RowComp extends BeanStub {
         classes.push('ag-row');
         classes.push('ag-row-no-focus');
 
-        if (this.gridOptionsWrapper.isAnimateRows()) {
+        if (this.beans.gridOptionsWrapper.isAnimateRows()) {
             classes.push('ag-row-animation');
         } else {
             classes.push('ag-row-no-animation');
@@ -1326,7 +1327,7 @@ export class RowComp extends BeanStub {
         let classes: string[] = [];
 
         // add in extra classes provided by the config
-        let gridOptionsRowClass = this.gridOptionsWrapper.getRowClass();
+        let gridOptionsRowClass = this.beans.gridOptionsWrapper.getRowClass();
         if (gridOptionsRowClass) {
             if (typeof gridOptionsRowClass === 'function') {
                 console.warn('ag-Grid: rowClass should not be a function, please use getRowClass instead');

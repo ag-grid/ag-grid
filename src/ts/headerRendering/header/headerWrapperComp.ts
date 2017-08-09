@@ -20,6 +20,7 @@ import {RefSelector} from "../../widgets/componentAnnotations";
 import {SelectAllFeature} from "./selectAllFeature";
 import {Events} from "../../events";
 import {ColumnHoverService} from "../../rendering/columnHoverService";
+import {Beans} from "../../rendering/beans";
 
 export class HeaderWrapperComp extends Component {
 
@@ -42,6 +43,7 @@ export class HeaderWrapperComp extends Component {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
+    @Autowired('beans') private beans: Beans;
 
     @RefSelector('eResize') private eResize: HTMLElement;
     @RefSelector('cbSelectAll') private cbSelectAll: AgCheckbox;
@@ -87,8 +89,11 @@ export class HeaderWrapperComp extends Component {
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
 
-        this.addFeature(this.context, new SetLeftFeature(this.column, this.getGui()));
         this.addFeature(this.context, new SelectAllFeature(this.cbSelectAll, this.column));
+
+        let setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
+        setLeftFeature.init();
+        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
 
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);

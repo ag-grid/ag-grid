@@ -1,68 +1,29 @@
 import {Utils as _} from "../utils";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ExpressionService} from "../valueService/expressionService";
-import {RowRenderer} from "./rowRenderer";
-import {TemplateService} from "../templateService";
-import {ColumnApi, ColumnController} from "../columnController/columnController";
-import {ValueService} from "../valueService/valueService";
-import {EventService} from "../eventService";
 import {Constants} from "../constants";
 import {
-    CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent,
+    CellClickedEvent,
+    CellContextMenuEvent,
+    CellDoubleClickedEvent,
+    CellEditingStartedEvent,
+    CellEditingStoppedEvent,
     CellEvent,
-    CellMouseOutEvent, CellMouseOverEvent,
+    CellMouseOutEvent,
+    CellMouseOverEvent,
     Events
 } from "../events";
 import {RowComp} from "./rowComp";
-import {Autowired, Context, Optional, PostConstruct} from "../context/context";
-import {GridApi} from "../gridApi";
-import {FocusedCellController} from "../focusedCellController";
-import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
-import {IRangeController} from "../interfaces/iRangeController";
 import {GridCell, GridCellDef} from "../entities/gridCell";
-import {FocusService} from "../misc/focusService";
 import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
-import {CellEditorFactory} from "./cellEditorFactory";
 import {Component} from "../widgets/component";
-import {PopupService} from "../widgets/popupService";
 import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
-import {CellRendererFactory} from "./cellRendererFactory";
-import {CellRendererService} from "./cellRendererService";
-import {ValueFormatterService} from "./valueFormatterService";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {SetLeftFeature} from "./features/setLeftFeature";
-import {StylingService} from "../styling/stylingService";
-import {ColumnHoverService} from "./columnHoverService";
-import {ColumnAnimationService} from "./columnAnimationService";
-import {BaseWithValueColDefParams, NewValueParams} from "../entities/colDef";
+import {NewValueParams} from "../entities/colDef";
+import {Beans} from "./beans";
 
 export class CellComp extends Component {
-
-    @Autowired('context') private context: Context;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('$compile') private $compile: any;
-    @Autowired('templateService') private templateService: TemplateService;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('eventService') private eventService: EventService;
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
-    @Optional('rangeController') private rangeController: IRangeController;
-    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
-    @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
-    @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
-    @Autowired('popupService') private popupService: PopupService;
-    @Autowired('cellRendererService') private cellRendererService: CellRendererService;
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('stylingService') private stylingService: StylingService;
-    @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
 
     public static DOM_DATA_KEY_CELL_COMP = 'cellComp';
 
@@ -103,8 +64,15 @@ export class CellComp extends Component {
     private colsSpanning: Column[];
     private setLeftFeature: SetLeftFeature;
 
-    constructor(column: Column, node: RowNode, scope: any, renderedRow: RowComp) {
-        super('<div role="gridcell"/>');
+    private beans: Beans;
+
+    constructor(column: Column, node: RowNode, scope: any, rowComp: RowComp, beans: Beans) {
+        // super('<div role="gridcell"/>');
+        super();
+
+        let eGui = document.createElement('div');
+        eGui.setAttribute('role', 'gridcell');
+        this.setGui(eGui);
 
         // because we reference eGridCell everywhere in this class,
         // we keep a local reference
@@ -114,7 +82,9 @@ export class CellComp extends Component {
 
         this.node = node;
         this.scope = scope;
-        this.rowComp = renderedRow;
+        this.rowComp = rowComp;
+
+        this.beans = beans;
     }
 
     private createGridCell(): void {
@@ -156,11 +126,17 @@ export class CellComp extends Component {
         }
     }
 
-    public destroy(): void {
+    // if the row is also getting destroyed, then we don't need to remove from dom,
+    // as the row will also get removed, so no need to take out the cells from the row
+    // if the row is going (removing is an expensive operation, so only need to remove
+    // the top part)
+    public destroy(removeFromDom = true): void {
         super.destroy();
 
         if (this.eParentRow) {
-            this.eParentRow.removeChild(this.getGui());
+            if (removeFromDom) {
+                this.eParentRow.removeChild(this.getGui());
+            }
             this.eParentRow = null;
         }
 
@@ -221,28 +197,28 @@ export class CellComp extends Component {
 
     private getValue(): any {
         let isOpenGroup = this.node.group && this.node.expanded && !this.node.footer;
-        if (isOpenGroup && this.gridOptionsWrapper.isGroupIncludeFooter()) {
+        if (isOpenGroup && this.beans.gridOptionsWrapper.isGroupIncludeFooter()) {
             // if doing grouping and footers, we don't want to include the agg value
             // in the header when the group is open
-            return this.valueService.getValue(this.column, this.node, true);
+            return this.beans.valueService.getValue(this.column, this.node, true);
         } else {
-            return this.valueService.getValue(this.column, this.node);
+            return this.beans.valueService.getValue(this.column, this.node);
         }
     }
 
     private addRangeSelectedListener(): void {
-        if (!this.rangeController) {
+        if (!this.beans.rangeController) {
             return;
         }
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this))
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this))
         this.onRangeSelectionChanged();
     }
 
     private onRangeSelectionChanged(): void {
-        let usingAgGridFree = !this.rangeController;
+        let usingAgGridFree = !this.beans.rangeController;
         if (usingAgGridFree) { return; }
 
-        let newRangeCount = this.rangeController.getCellRangeCount(this.gridCell);
+        let newRangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
         if (this.rangeCount !== newRangeCount) {
             _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected', newRangeCount!==0);
             _.addOrRemoveCssClass(this.eGridCell, 'ag-cell-range-selected-1', newRangeCount===1);
@@ -254,7 +230,7 @@ export class CellComp extends Component {
     }
 
     private addHighlightListener(): void {
-        if (!this.rangeController) {
+        if (!this.beans.rangeController) {
             return;
         }
 
@@ -265,9 +241,9 @@ export class CellComp extends Component {
                 this.animateCellWithHighlight();
             }
         };
-        this.eventService.addEventListener(Events.EVENT_FLASH_CELLS, clipboardListener);
+        this.beans.eventService.addEventListener(Events.EVENT_FLASH_CELLS, clipboardListener);
         this.addDestroyFunc( ()=> {
-            this.eventService.removeEventListener(Events.EVENT_FLASH_CELLS, clipboardListener);
+            this.beans.eventService.removeEventListener(Events.EVENT_FLASH_CELLS, clipboardListener);
         });
     }
 
@@ -304,15 +280,15 @@ export class CellComp extends Component {
     private addCellFocusedListener(): void {
         let cellFocusedListener = this.checkCellFocused.bind(this);
 
-        this.eventService.addEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
+        this.beans.eventService.addEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
         this.addDestroyFunc( ()=> {
-            this.eventService.removeEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
+            this.beans.eventService.removeEventListener(Events.EVENT_CELL_FOCUSED, cellFocusedListener);
         });
         cellFocusedListener();
     }
 
     private checkCellFocused(event?: any): void {
-        let cellFocused = this.focusedCellController.isCellFocused(this.gridCell);
+        let cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
 
         // see if we need to change the classes on this cell
         if (cellFocused !== this.cellFocused) {
@@ -328,7 +304,7 @@ export class CellComp extends Component {
         }
 
         // if another cell was focused, and we are editing, then stop editing
-        let fullRowEdit = this.gridOptionsWrapper.isFullRowEdit();
+        let fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
         if (!cellFocused && !fullRowEdit && this.editingCell) {
             this.stopRowOrCellEdit();
         }
@@ -357,7 +333,6 @@ export class CellComp extends Component {
         widthChangedListener();
     }
 
-    @PostConstruct
     public init(): void {
         this.value = this.getValue();
 
@@ -377,13 +352,14 @@ export class CellComp extends Component {
 
         this.addDomData();
 
-        this.setLeftFeature = new SetLeftFeature(this.column, this.eGridCell, this.colsSpanning);
-        this.addFeature(this.context, this.setLeftFeature);
+        this.setLeftFeature = new SetLeftFeature(this.column, this.eGridCell, this.beans, this.colsSpanning);
+        this.setLeftFeature.init();
+        this.addDestroyFunc(this.setLeftFeature.destroy.bind(this.setLeftFeature));
 
         // this.addSuppressShortcutKeyListenersWhileEditing();
 
         // only set tab index if cell selection is enabled
-        if (!this.gridOptionsWrapper.isSuppressCellSelection()) {
+        if (!this.beans.gridOptionsWrapper.isSuppressCellSelection()) {
             this.eGridCell.setAttribute("tabindex", "-1");
         }
 
@@ -401,12 +377,12 @@ export class CellComp extends Component {
         }
 
         // because we are col spanning, a reorder of the cols can change what cols we are spanning over
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.checkColSpan.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.checkColSpan.bind(this));
         // because we are spanning over multiple cols, we check for width any time any cols width changes.
         // this is expensive - really we should be explicitly checking only the cols we are spanning over
         // instead of every col, however it would be tricky code to track the cols we are spanning over, so
         // because hardly anyone will be using colSpan, am favoring this easier way for more maintainable code.
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.setWidthOnCell.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.setWidthOnCell.bind(this));
 
         this.checkColSpan();
     }
@@ -423,7 +399,7 @@ export class CellComp extends Component {
             let pinned = this.column.getPinned();
             for (let i = 0; i<colSpan; i++) {
                 colsSpanning.push(pointer);
-                pointer = this.columnController.getDisplayedColAfter(pointer);
+                pointer = this.beans.columnController.getDisplayedColAfter(pointer);
                 if (_.missing(pointer)) {
                     break;
                 }
@@ -448,19 +424,19 @@ export class CellComp extends Component {
     }
 
     private addColumnHoverListener(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
         this.onColumnHover();
     }
 
     private onColumnHover(): void {
-        let isHovered = this.columnHoverService.isHovered(this.column);
+        let isHovered = this.beans.columnHoverService.isHovered(this.column);
         _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered)
     }
 
     private addDomData(): void {
-        this.gridOptionsWrapper.setDomData(this.eGridCell, CellComp.DOM_DATA_KEY_CELL_COMP, this);
+        this.beans.gridOptionsWrapper.setDomData(this.eGridCell, CellComp.DOM_DATA_KEY_CELL_COMP, this);
         this.addDestroyFunc( ()=>
-            this.gridOptionsWrapper.setDomData(this.eGridCell, CellComp.DOM_DATA_KEY_CELL_COMP, null)
+            this.beans.gridOptionsWrapper.setDomData(this.eGridCell, CellComp.DOM_DATA_KEY_CELL_COMP, null)
         );
     }
 
@@ -500,7 +476,7 @@ export class CellComp extends Component {
             // we only focus cell again if this cell is still focused. it is possible
             // it is not focused if the user cancelled the edit by clicking on another
             // cell outside of this one
-            if (this.focusedCellController.isCellFocused(this.gridCell)) {
+            if (this.beans.focusedCellController.isCellFocused(this.gridCell)) {
                 this.focusCell(true);
             }
         }
@@ -511,8 +487,8 @@ export class CellComp extends Component {
     }
 
     private onTabKeyDown(event: KeyboardEvent): void {
-        if (this.gridOptionsWrapper.isSuppressTabbing()) { return; }
-        this.rowRenderer.onTabKeyDown(this, event);
+        if (this.beans.gridOptionsWrapper.isSuppressTabbing()) { return; }
+        this.beans.rowRenderer.onTabKeyDown(this, event);
     }
 
     private onBackspaceOrDeleteKeyPressed(key: number): void {
@@ -522,7 +498,7 @@ export class CellComp extends Component {
     }
 
     private onSpaceKeyPressed(event: KeyboardEvent): void {
-        if (!this.editingCell && this.gridOptionsWrapper.isRowSelection()) {
+        if (!this.editingCell && this.beans.gridOptionsWrapper.isRowSelection()) {
             let selected = this.node.isSelected();
             this.node.setSelected(!selected);
         }
@@ -534,7 +510,7 @@ export class CellComp extends Component {
         if (this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.node.rowPinned);
+        this.beans.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.node.rowPinned);
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     }
@@ -601,10 +577,10 @@ export class CellComp extends Component {
             column: this.column,
             rowIndex: this.gridCell.rowIndex,
             node: this.node,
-            api: this.gridOptionsWrapper.getApi(),
+            api: this.beans.gridOptionsWrapper.getApi(),
             cellStartedEdit: cellStartedEdit,
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            context: this.gridOptionsWrapper.getContext(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            context: this.beans.gridOptionsWrapper.getContext(),
             $scope: this.scope,
             onKeyDown: this.onKeyDown.bind(this),
             stopEditing: this.stopEditingAndFocus.bind(this),
@@ -629,20 +605,20 @@ export class CellComp extends Component {
             newValue: newValue,
             colDef: this.column.getColDef(),
             column: this.column,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            context: this.gridOptionsWrapper.getContext()
+            api: this.beans.gridOptionsWrapper.getApi(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            context: this.beans.gridOptionsWrapper.getContext()
         };
 
         let valueParser = this.column.getColDef().valueParser;
-        return _.exists(valueParser) ? this.expressionService.evaluate(valueParser, params) : newValue;
+        return _.exists(valueParser) ? this.beans.expressionService.evaluate(valueParser, params) : newValue;
     }
 
     private createCellEditor(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorComp {
 
         let params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
 
-        let cellEditor = this.cellEditorFactory.createCellEditor(this.column.getCellEditor(), params);
+        let cellEditor = this.beans.cellEditorFactory.createCellEditor(this.column.getCellEditor(), params);
 
         return cellEditor;
     }
@@ -656,7 +632,7 @@ export class CellComp extends Component {
 
     // called by rowRenderer when user navigates via tab key
     public startRowOrCellEdit(keyPress?: number, charPress?: string): void {
-        if (this.gridOptionsWrapper.isFullRowEdit()) {
+        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
             this.rowComp.startRowEditing(keyPress, charPress, this);
         } else {
             this.startEditingIfEnabled(keyPress, charPress, true);
@@ -708,7 +684,7 @@ export class CellComp extends Component {
         }
 
         let event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
 
         return true;
     }
@@ -717,15 +693,15 @@ export class CellComp extends Component {
         _.removeAllChildren(this.eGridCell);
         this.eGridCell.appendChild(this.cellEditor.getGui());
 
-        if (this.gridOptionsWrapper.isAngularCompileRows()) {
-            this.$compile(this.eGridCell)(this.scope);
+        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
+            this.beans.$compile(this.eGridCell)(this.scope);
         }
     }
 
     private addPopupCellEditor(): void {
         let ePopupGui = this.cellEditor.getGui();
 
-        this.hideEditorPopup = this.popupService.addAsModalPopup(
+        this.hideEditorPopup = this.beans.popupService.addAsModalPopup(
             ePopupGui,
             true,
             // callback for when popup disappears
@@ -734,7 +710,7 @@ export class CellComp extends Component {
             }
         );
 
-        this.popupService.positionPopupOverComponent({
+        this.beans.popupService.positionPopupOverComponent({
             column: this.column,
             rowNode: this.node,
             type: 'popupCellEditor',
@@ -743,18 +719,18 @@ export class CellComp extends Component {
             keepWithinBounds: true
         });
 
-        if (this.gridOptionsWrapper.isAngularCompileRows()) {
-            this.$compile(ePopupGui)(this.scope);
+        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
+            this.beans.$compile(ePopupGui)(this.scope);
         }
     }
 
     public focusCell(forceBrowserFocus = false): void {
-        this.focusedCellController.setFocusedCell(this.gridCell.rowIndex, this.column, this.node.rowPinned, forceBrowserFocus);
+        this.beans.focusedCellController.setFocusedCell(this.gridCell.rowIndex, this.column, this.node.rowPinned, forceBrowserFocus);
     }
 
     // pass in 'true' to cancel the editing.
     public stopRowOrCellEdit(cancel: boolean = false) {
-        if (this.gridOptionsWrapper.isFullRowEdit()) {
+        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
             this.rowComp.stopRowEditing(cancel);
         } else {
             this.stopEditing(cancel);
@@ -773,7 +749,7 @@ export class CellComp extends Component {
             let userWantsToCancel = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
             if (!userWantsToCancel) {
                 let newValue = this.cellEditor.getValue();
-                this.valueService.setValue(this.node, this.column, newValue);
+                this.beans.valueService.setValue(this.node, this.column, newValue);
                 this.value = this.getValue();
             }
         }
@@ -798,7 +774,7 @@ export class CellComp extends Component {
                 // if wrapper, then put the wrapper back
                 this.eGridCell.appendChild(this.eCellWrapper);
             } else {
-                this.cellRendererService.bindToHtml(this.cellRenderer, this.eGridCell);
+                this.beans.cellRendererService.bindToHtml(this.cellRenderer, this.eGridCell);
             }
         }
 
@@ -810,7 +786,7 @@ export class CellComp extends Component {
         this.refreshCell({forceRefresh: true, suppressFlash: true});
 
         let event: CellEditingStoppedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED);
-        this.eventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
     }
 
     private createEvent(domEvent: Event, eventType: string): CellEvent {
@@ -820,9 +796,9 @@ export class CellComp extends Component {
             value: this.value,
             column: this.column,
             colDef: this.column.getColDef(),
-            context: this.gridOptionsWrapper.getContext(),
-            api: this.gridApi,
-            columnApi: this.columnApi,
+            context: this.beans.gridOptionsWrapper.getContext(),
+            api: this.beans.gridApi,
+            columnApi: this.beans.columnApi,
             rowPinned: this.node.rowPinned,
             event: domEvent,
             type: eventType,
@@ -862,19 +838,19 @@ export class CellComp extends Component {
 
     private onMouseOut(mouseEvent: MouseEvent): void {
         let cellMouseOutEvent: CellMouseOutEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OUT);
-        this.eventService.dispatchEvent(cellMouseOutEvent);
+        this.beans.eventService.dispatchEvent(cellMouseOutEvent);
     }
 
     private onMouseOver(mouseEvent: MouseEvent): void {
         let cellMouseOverEvent: CellMouseOverEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OVER);
-        this.eventService.dispatchEvent(cellMouseOverEvent);
+        this.beans.eventService.dispatchEvent(cellMouseOverEvent);
     }
 
     private onContextMenu(mouseEvent: MouseEvent): void {
 
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
-        if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
+        if (!this.beans.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
             // then do the check
             if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
                 return;
@@ -884,14 +860,14 @@ export class CellComp extends Component {
 
         let colDef = this.column.getColDef();
         let cellContextMenuEvent: CellContextMenuEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CONTEXT_MENU);
-        this.eventService.dispatchEvent(cellContextMenuEvent);
+        this.beans.eventService.dispatchEvent(cellContextMenuEvent);
 
         if (colDef.onCellContextMenu) {
             colDef.onCellContextMenu(cellContextMenuEvent);
         }
 
-        if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
-            this.contextMenuFactory.showMenu(this.node, this.column, this.value, mouseEvent);
+        if (this.beans.contextMenuFactory && !this.beans.gridOptionsWrapper.isSuppressContextMenu()) {
+            this.beans.contextMenuFactory.showMenu(this.node, this.column, this.value, mouseEvent);
             mouseEvent.preventDefault();
         }
     }
@@ -900,15 +876,15 @@ export class CellComp extends Component {
         let colDef = this.column.getColDef();
         // always dispatch event to eventService
         let cellDoubleClickedEvent: CellDoubleClickedEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_DOUBLE_CLICKED);
-        this.eventService.dispatchEvent(cellDoubleClickedEvent);
+        this.beans.eventService.dispatchEvent(cellDoubleClickedEvent);
 
         // check if colDef also wants to handle event
         if (typeof colDef.onCellDoubleClicked === 'function') {
             colDef.onCellDoubleClicked(cellDoubleClickedEvent);
         }
 
-        let editOnDoubleClick = !this.gridOptionsWrapper.isSingleClickEdit()
-            && !this.gridOptionsWrapper.isSuppressClickEdit();
+        let editOnDoubleClick = !this.beans.gridOptionsWrapper.isSingleClickEdit()
+            && !this.beans.gridOptionsWrapper.isSuppressClickEdit();
         if (editOnDoubleClick) {
             this.startRowOrCellEdit();
         }
@@ -926,18 +902,18 @@ export class CellComp extends Component {
         // if it's a right click, then if the cell is already in range,
         // don't change the range, however if the cell is not in a range,
         // we set a new range
-        if (this.rangeController) {
+        if (this.beans.rangeController) {
             let thisCell = this.gridCell;
-            let cellAlreadyInRange = this.rangeController.isCellInAnyRange(thisCell);
+            let cellAlreadyInRange = this.beans.rangeController.isCellInAnyRange(thisCell);
             if (!cellAlreadyInRange) {
-                this.rangeController.setRangeToCell(thisCell);
+                this.beans.rangeController.setRangeToCell(thisCell);
             }
         }
     }
 
     private onCellClicked(mouseEvent: MouseEvent): void {
         let cellClickedEvent: CellClickedEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CLICKED);
-        this.eventService.dispatchEvent(cellClickedEvent);
+        this.beans.eventService.dispatchEvent(cellClickedEvent);
 
         let colDef = this.column.getColDef();
 
@@ -945,8 +921,8 @@ export class CellComp extends Component {
             colDef.onCellClicked(cellClickedEvent);
         }
 
-        let editOnSingleClick = this.gridOptionsWrapper.isSingleClickEdit()
-            && !this.gridOptionsWrapper.isSuppressClickEdit();
+        let editOnSingleClick = this.beans.gridOptionsWrapper.isSingleClickEdit()
+            && !this.beans.gridOptionsWrapper.isSuppressClickEdit();
         if (editOnSingleClick) {
             this.startRowOrCellEdit();
         }
@@ -996,8 +972,8 @@ export class CellComp extends Component {
                     colDef: colDef,
                     column: this.column,
                     $scope: this.scope,
-                    context: this.gridOptionsWrapper.getContext(),
-                    api: this.gridOptionsWrapper.getApi()
+                    context: this.beans.gridOptionsWrapper.getContext(),
+                    api: this.beans.gridOptionsWrapper.getApi()
               };
                 let cellStyleFunc = <Function>colDef.cellStyle;
                 cssToUse = cellStyleFunc(cellStyleParams);
@@ -1012,7 +988,7 @@ export class CellComp extends Component {
     }
 
     private addClassesFromColDef() {
-        this.stylingService.processStaticCellClasses(
+        this.beans.stylingService.processStaticCellClasses(
             this.column.getColDef(),
             {
                 value: this.value,
@@ -1021,8 +997,8 @@ export class CellComp extends Component {
                 colDef: this.column.getColDef(),
                 rowIndex: this.gridCell.rowIndex,
                 $scope: this.scope,
-                api: this.gridOptionsWrapper.getApi(),
-                context: this.gridOptionsWrapper.getContext()
+                api: this.beans.gridOptionsWrapper.getApi(),
+                context: this.beans.gridOptionsWrapper.getContext()
             },
             (className:string)=>{
                 _.addCssClass(this.eGridCell, className);
@@ -1037,7 +1013,7 @@ export class CellComp extends Component {
             this.eGridCell.appendChild(this.eCellWrapper);
 
             let cbSelectionComponent = new CheckboxSelectionComponent();
-            this.context.wireBean(cbSelectionComponent);
+            this.beans.context.wireBean(cbSelectionComponent);
 
             let visibleFunc = this.column.getColDef().checkboxSelection;
             visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
@@ -1158,7 +1134,7 @@ export class CellComp extends Component {
     }
 
     private flashCell(): void {
-        if (this.gridOptionsWrapper.isEnableCellChangeFlash() || this.column.getColDef().enableCellChangeFlash) {
+        if (this.beans.gridOptionsWrapper.isEnableCellChangeFlash() || this.column.getColDef().enableCellChangeFlash) {
             this.animateCell('data-changed');
         }
     }
@@ -1176,13 +1152,13 @@ export class CellComp extends Component {
         this.populateCell();
 
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
-        if (this.gridOptionsWrapper.isAngularCompileRows()) {
-            this.$compile(this.eGridCell)(this.scope);
+        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
+            this.beans.$compile(this.eGridCell)(this.scope);
         }
     }
 
     private addClassesFromRules(): void{
-        this.stylingService.processCellClassRules(
+        this.beans.stylingService.processCellClassRules(
             this.column.getColDef(),
             {
                 value: this.value,
@@ -1190,8 +1166,8 @@ export class CellComp extends Component {
                 node: this.node,
                 colDef: this.column.getColDef(),
                 rowIndex: this.gridCell.rowIndex,
-                api: this.gridOptionsWrapper.getApi(),
-                context: this.gridOptionsWrapper.getContext()
+                api: this.beans.gridOptionsWrapper.getApi(),
+                context: this.beans.gridOptionsWrapper.getContext()
             },
             (className:string)=>{
                 _.addCssClass(this.eGridCell, className);
@@ -1209,7 +1185,7 @@ export class CellComp extends Component {
         let cellRenderer = this.column.getCellRenderer();
         let floatingCellRenderer = this.column.getFloatingCellRenderer();
 
-        let valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, this.value);
+        let valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.node, this.scope, this.value);
 
         if (colDef.template) {
             // template is really only used for angular 1 - as people using ng1 are used to providing templates with
@@ -1219,7 +1195,7 @@ export class CellComp extends Component {
             // likewise for templateUrl - it's for ng1 really - when we move away from ng1, we can take these out.
             // niall was pro angular 1 when writing template and templateUrl, if writing from scratch now, would
             // not do these, but would follow a pattern that was friendly towards components, not templates.
-            let template = this.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
+            let template = this.beans.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
             if (template) {
                 this.eParentOfValue.innerHTML = template;
             }
@@ -1227,11 +1203,17 @@ export class CellComp extends Component {
         } else if (floatingCellRenderer && this.node.rowPinned) {
             // if floating, then give preference to floating cell renderer
             this.useCellRenderer(floatingCellRenderer, colDef.pinnedRowCellRendererParams, valueFormatted);
-        } else {
+        } else if (cellRenderer) {
             // if we insert undefined, then it displays as the string 'undefined', ugly!
             let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             let valueToRender = valueFormattedExits ? valueFormatted : this.value;
             this.useCellRenderer(cellRenderer, colDef.cellRendererParams, valueToRender);
+        } else {
+            let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
+            let valueToRender = valueFormattedExits ? valueFormatted : this.value;
+            if (valueToRender!==null && valueToRender!==undefined) {
+                this.eParentOfValue.innerText = valueToRender;
+            }
         }
         if (colDef.tooltipField) {
             let data = this.node.data;
@@ -1245,7 +1227,7 @@ export class CellComp extends Component {
     }
 
     private formatValue(value: any): any {
-        let valueFormatted = this.valueFormatterService.formatValue(this.column, this.node, this.scope, value);
+        let valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.node, this.scope, value);
         let valueFormattedExists = valueFormatted !== null && valueFormatted !== undefined;
         return valueFormattedExists ? valueFormatted : value;
     }
@@ -1256,7 +1238,7 @@ export class CellComp extends Component {
             value: this.value,
             valueFormatted: valueFormatted,
             getValue: this.getValue.bind(this),
-            setValue: (value: any) => { this.valueService.setValue(this.node, this.column, value) },
+            setValue: (value: any) => { this.beans.valueService.setValue(this.node, this.column, value) },
             formatValue: this.formatValue.bind(this),
             data: this.node.data,
             node: this.node,
@@ -1264,9 +1246,9 @@ export class CellComp extends Component {
             column: this.column,
             $scope: this.scope,
             rowIndex: this.gridCell.rowIndex,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            context: this.gridOptionsWrapper.getContext(),
+            api: this.beans.gridOptionsWrapper.getApi(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            context: this.beans.gridOptionsWrapper.getContext(),
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.eGridCell,
             eParentOfValue: this.eParentOfValue,
@@ -1294,7 +1276,7 @@ export class CellComp extends Component {
 
         let params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
 
-        this.cellRenderer = this.cellRendererService.useCellRenderer(this.column.getColDef(), this.eParentOfValue, params);
+        this.cellRenderer = this.beans.cellRendererService.useCellRenderer(this.column.getColDef(), this.eParentOfValue, params);
     }
 
     private addClasses() {

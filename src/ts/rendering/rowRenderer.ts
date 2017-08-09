@@ -25,6 +25,7 @@ import {BeanStub} from "../context/beanStub";
 import {PaginationProxy} from "../rowModels/paginationProxy";
 import {GridApi, RefreshCellsParams} from "../gridApi";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
+import {Beans} from "./beans";
 
 @Bean('rowRenderer')
 export class RowRenderer extends BeanStub {
@@ -46,7 +47,7 @@ export class RowRenderer extends BeanStub {
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-
+    @Autowired('beans') private beans: Beans;
     @Optional('rangeController') private rangeController: IRangeController;
 
     private firstRenderedRow: number;
@@ -158,8 +159,9 @@ export class RowRenderer extends BeanStub {
                     pinnedRightContainerComp,
                     node,
                     false,
-                    null);
-                this.context.wireBean(renderedRow);
+                    null,
+                    this.beans);
+                renderedRow.init();
                 renderedRows.push(renderedRow);
             })
         }
@@ -727,9 +729,10 @@ export class RowRenderer extends BeanStub {
         let rowComp = new RowComp(this.$scope,
             this, this.rowContainers.body, this.rowContainers.fullWidth,
             this.rowContainers.pinnedLeft, this.rowContainers.pinnedRight,
-            rowNode, animate, previousElements);
+            rowNode, animate, previousElements, this.beans);
 
-        this.context.wireBean(rowComp);
+        rowComp.init();
+
         return rowComp;
     }
 

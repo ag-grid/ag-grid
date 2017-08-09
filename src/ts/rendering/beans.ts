@@ -1,0 +1,55 @@
+
+import {Autowired, Bean, Context, Optional} from "../context/context";
+import {ColumnApi, ColumnController} from "../columnController/columnController";
+import {GridApi} from "../gridApi";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {ExpressionService} from "../valueService/expressionService";
+import {RowRenderer} from "./rowRenderer";
+import {TemplateService} from "../templateService";
+import {ValueService} from "../valueService/valueService";
+import {EventService} from "../eventService";
+import {ColumnAnimationService} from "./columnAnimationService";
+import {IRangeController} from "../interfaces/iRangeController";
+import {FocusedCellController} from "../focusedCellController";
+import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
+import {FocusService} from "../misc/focusService";
+import {CellEditorFactory} from "./cellEditorFactory";
+import {CellRendererFactory} from "./cellRendererFactory";
+import {PopupService} from "../widgets/popupService";
+import {CellRendererService} from "./cellRendererService";
+import {ValueFormatterService} from "./valueFormatterService";
+import {StylingService} from "../styling/stylingService";
+import {ColumnHoverService} from "./columnHoverService";
+import {GridPanel} from "../gridPanel/gridPanel";
+import {PaginationProxy} from "../rowModels/paginationProxy";
+
+@Bean('beans')
+export class Beans {
+
+    @Autowired('paginationProxy') public paginationProxy: PaginationProxy;
+    @Autowired('gridPanel') public gridPanel: GridPanel;
+    @Autowired('context') public context: Context;
+    @Autowired('columnApi') public columnApi: ColumnApi;
+    @Autowired('gridApi') public gridApi: GridApi;
+    @Autowired('gridOptionsWrapper') public gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('expressionService') public expressionService: ExpressionService;
+    @Autowired('rowRenderer') public rowRenderer: RowRenderer;
+    @Autowired('$compile') public $compile: any;
+    @Autowired('templateService') public templateService: TemplateService;
+    @Autowired('valueService') public valueService: ValueService;
+    @Autowired('eventService') public eventService: EventService;
+    @Autowired('columnController') public columnController: ColumnController;
+    @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
+    @Optional('rangeController') public rangeController: IRangeController;
+    @Autowired('focusedCellController') public focusedCellController: FocusedCellController;
+    @Optional('contextMenuFactory') public contextMenuFactory: IContextMenuFactory;
+    @Autowired('focusService') public focusService: FocusService;
+    @Autowired('cellEditorFactory') public cellEditorFactory: CellEditorFactory;
+    @Autowired('cellRendererFactory') public cellRendererFactory: CellRendererFactory;
+    @Autowired('popupService') public popupService: PopupService;
+    @Autowired('cellRendererService') public cellRendererService: CellRendererService;
+    @Autowired('valueFormatterService') public valueFormatterService: ValueFormatterService;
+    @Autowired('stylingService') public stylingService: StylingService;
+    @Autowired('columnHoverService') public columnHoverService: ColumnHoverService;
+
+}
