@@ -131,7 +131,7 @@ var gridOptions = {
     pivotTotals: true,
 //minColWidth: 50,
 //maxColWidth: 300,
-    rowBuffer: 0,
+//     rowBuffer: 0,
 //columnDefs: [],
 //singleClickEdit: true,
 // suppressClickEdit: true,
@@ -459,8 +459,7 @@ var defaultCols = [
         groupId: 'performance',
         children: [
             {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
-                filter: WinningsFilter, cellRenderer: 'currencyRenderer', cellStyle: currencyCssFunc,
-                filterParams: {cellRenderer: 'currencyRenderer'},
+                filter: WinningsFilter, valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
                 enableValue: true,
                 // colId: 'sf',
                 // valueGetter: '55',
@@ -495,7 +494,7 @@ var defaultCols = [
         editable: true, valueParser: numberParser, width: 150,
         // aggFunc: 'sum',
         enableValue: true,
-        cellRenderer: 'currencyRenderer', cellStyle: currencyCssFunc,
+        valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-asc"/>',
             sortDescending: '<i class="fa fa-sort-amount-desc"/>'
@@ -519,8 +518,7 @@ months.forEach(function (month) {
             'good-score': 'typeof x === "number" && x > 50000',
             'bad-score': 'typeof x === "number" && x < 10000'
         },
-        valueParser: numberParser, cellRenderer: 'currencyRenderer',
-        filterCellRenderer: 'currencyRenderer',
+        valueParser: numberParser, valueFormatter: currencyFormatter,
         filterParams:{
             clearButton: true
         },
@@ -982,6 +980,21 @@ function currencyRenderer(params) {
             return params.value;
         } else {
             return '&pound;' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+        }
+    }
+}
+
+function currencyFormatter(params) {
+    if (params.value === null || params.value === undefined) {
+        return null;
+    } else if (isNaN(params.value)) {
+        return 'NaN';
+    } else {
+        // if we are doing 'count', then we do not show pound sign
+        if (params.node.group && params.column.aggFunc === 'count') {
+            return params.value;
+        } else {
+            return '£' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
         }
     }
 }
