@@ -82,10 +82,10 @@ export interface ColDef extends AbstractColDef {
     headerTooltip?: string;
 
     /** Expression or function to get the cells value. */
-    valueGetter?: (params: ValueGetterParams) => any | string;
+    valueGetter?: ((params: ValueGetterParams) => any) | string;
 
     /** If not using a field, then this puts the value into the cell */
-    valueSetter?: (params: ValueSetterParams) => boolean | string;
+    valueSetter?: ((params: ValueSetterParams) => boolean) | string;
 
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field. */
