@@ -219,7 +219,7 @@ var gridOptions = {
         }
     },
     // suppressTabbing: true,
-    // suppressRowHoverClass: true,
+    rowHoverClass: true,
 // isScrollLag: function() { return true; },
 // suppressScrollLag: true,
 // floatingTopRowData: [{},{},{}],
