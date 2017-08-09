@@ -5,7 +5,7 @@ import {ExpressionService} from "../valueService/expressionService";
 import {TemplateService} from "../templateService";
 import {ValueService} from "../valueService/valueService";
 import {EventService} from "../eventService";
-import {LastPlacedElements, RowComp} from "./rowComp";
+import {IRowComp, LastPlacedElements, RowComp} from "./rowComp";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {Events, ModelUpdatedEvent, ViewportChangedEvent} from "../events";
@@ -26,6 +26,7 @@ import {PaginationProxy} from "../rowModels/paginationProxy";
 import {GridApi, RefreshCellsParams} from "../gridApi";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 import {Beans} from "./beans";
+import {SlickRowComp} from "./slickRowComp";
 
 @Bean('rowRenderer')
 export class RowRenderer extends BeanStub {
@@ -55,9 +56,9 @@ export class RowRenderer extends BeanStub {
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
-    private rowCompsByIndex: {[key: string]: RowComp} = {};
-    private floatingTopRowComps: RowComp[] = [];
-    private floatingBottomRowComps: RowComp[] = [];
+    private rowCompsByIndex: {[key: string]: IRowComp} = {};
+    private floatingTopRowComps: IRowComp[] = [];
+    private floatingBottomRowComps: IRowComp[] = [];
 
     private forPrint: boolean;
     private autoHeight: boolean;
@@ -136,7 +137,7 @@ export class RowRenderer extends BeanStub {
             this.rowContainers.floatingBottomFullWith);
     }
 
-    private refreshFloatingRows(renderedRows: RowComp[], rowNodes: RowNode[],
+    private refreshFloatingRows(renderedRows: IRowComp[], rowNodes: RowNode[],
                                 pinnedLeftContainerComp: RowContainerComponent, pinnedRightContainerComp: RowContainerComponent,
                                 bodyContainerComp: RowContainerComponent, fullWidthContainerComp: RowContainerComponent): void {
         renderedRows.forEach( (row: RowComp) => {
@@ -151,7 +152,7 @@ export class RowRenderer extends BeanStub {
 
         if (rowNodes) {
             rowNodes.forEach( (node: RowNode) => {
-                let renderedRow = new RowComp(this.$scope,
+                let rowComp = new RowComp(this.$scope,
                     this,
                     bodyContainerComp,
                     fullWidthContainerComp,
@@ -161,8 +162,8 @@ export class RowRenderer extends BeanStub {
                     false,
                     null,
                     this.beans);
-                renderedRow.init();
-                renderedRows.push(renderedRow);
+                rowComp.init();
+                renderedRows.push(rowComp);
             })
         }
     }
@@ -254,7 +255,8 @@ export class RowRenderer extends BeanStub {
         // position the rows (it uses normal flow), so we have to remove
         // all rows and insert them again from scratch
         let rowsUsingFlow = this.forPrint || this.autoHeight;
-        let recycleRows = rowsUsingFlow ? false : params.recycleRows;
+        let slickRender = this.gridOptionsWrapper.isSlickRender();
+        let recycleRows = rowsUsingFlow || slickRender ? false : params.recycleRows;
         let animate = rowsUsingFlow ? false : params.animate;
 
         let rowsToRecycle: {[key: string]: RowComp} = this.binRowComps(recycleRows);
@@ -336,8 +338,8 @@ export class RowRenderer extends BeanStub {
     }
 
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void {
-        let renderedRow = this.rowCompsByIndex[rowIndex];
-        renderedRow.addEventListener(eventName, callback);
+        let rowComp = this.rowCompsByIndex[rowIndex];
+        rowComp.addEventListener(eventName, callback);
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -541,7 +543,7 @@ export class RowRenderer extends BeanStub {
 
     private createOrUpdateRowComp(rowIndex: number, rowsToRecycle: {[key: string]: RowComp},
                                   animate: boolean, previousElements: LastPlacedElements,
-                                  ensureDomOrderForUpdate: boolean): RowComp {
+                                  ensureDomOrderForUpdate: boolean): IRowComp {
 
         let rowNode: RowNode;
 
@@ -675,7 +677,7 @@ export class RowRenderer extends BeanStub {
         return this.lastRenderedRow;
     }
 
-    private updatePreviousElements(previousElements: LastPlacedElements, rowComp: RowComp): void {
+    private updatePreviousElements(previousElements: LastPlacedElements, rowComp: IRowComp): void {
         if (_.missing(previousElements)) { return; }
 
         let body: HTMLElement = rowComp.getBodyRowElement();
@@ -704,7 +706,7 @@ export class RowRenderer extends BeanStub {
     // b) if focused, we want ot keep keyboard focus, so if user ctrl+c, it goes to clipboard,
     //    otherwise the user can range select and drag (with focus cell going out of the viewport)
     //    and then ctrl+c, nothing will happen if cell is removed from dom.
-    private keepRowBecauseEditing(rowComp: RowComp): boolean {
+    private keepRowBecauseEditing(rowComp: IRowComp): boolean {
 
         let REMOVE_ROW : boolean = false;
         let KEEP_ROW : boolean = true;
@@ -725,11 +727,18 @@ export class RowRenderer extends BeanStub {
         return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
     }
 
-    private createRowComp(rowNode: RowNode, animate: boolean, previousElements: LastPlacedElements): RowComp {
-        let rowComp = new RowComp(this.$scope,
-            this, this.rowContainers.body, this.rowContainers.fullWidth,
-            this.rowContainers.pinnedLeft, this.rowContainers.pinnedRight,
-            rowNode, animate, previousElements, this.beans);
+    private createRowComp(rowNode: RowNode, animate: boolean, previousElements: LastPlacedElements): IRowComp {
+
+        let rowComp: IRowComp;
+        if (this.gridOptionsWrapper.isSlickRender()) {
+            rowComp = new SlickRowComp(this.rowContainers.body, this.rowContainers.pinnedLeft,
+                this.rowContainers.pinnedRight, rowNode, this.beans);
+        } else {
+            rowComp = new RowComp(this.$scope,
+                    this, this.rowContainers.body, this.rowContainers.fullWidth,
+                    this.rowContainers.pinnedLeft, this.rowContainers.pinnedRight,
+                    rowNode, animate, previousElements, this.beans);
+        }
 
         rowComp.init();
 
@@ -819,7 +828,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private getComponentForCell(gridCell: GridCell): CellComp {
-        let rowComponent: RowComp;
+        let rowComponent: IRowComp;
         switch (gridCell.floating) {
             case Constants.PINNED_TOP:
                 rowComponent = this.floatingTopRowComps[gridCell.rowIndex];

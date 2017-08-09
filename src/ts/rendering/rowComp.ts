@@ -70,7 +70,18 @@ export interface LastPlacedElements {
 }
 
 export interface IRowComp {
-
+    addEventListener(eventType: string, listener: Function): void;
+    destroy(): void;
+    ensureInDomAfter(previousElement: LastPlacedElements): void;
+    getBodyRowElement(): HTMLElement;
+    getPinnedLeftRowElement(): HTMLElement;
+    getPinnedRightRowElement(): HTMLElement;
+    getFullWidthRowElement(): HTMLElement;
+    getRowNode(): RowNode;
+    getRenderedCellForColumn(column: Column): CellComp;
+    getAndClearNextVMTurnFunctions(): Function[];
+    isEditing(): boolean;
+    init(): void;
 }
 
 export class RowComp extends BeanStub implements IRowComp {
@@ -345,7 +356,7 @@ export class RowComp extends BeanStub implements IRowComp {
         if (this.fullWidthRow) {
             this.refreshFullWidthComponent();
         } else {
-            this.refreshCellsIntoRow(true);
+            this.refreshCellsIntoRow();
         }
 
         this.addGridClasses();
@@ -460,14 +471,11 @@ export class RowComp extends BeanStub implements IRowComp {
     }
 
     private addColumnListener(): void {
-        let columnListener = this.onDisplayedColumnsChanged.bind(this);
-        let virtualListener = this.onVirtualColumnsChanged.bind(this);
-        let gridColumnsChangedListener = this.onGridColumnsChanged.bind(this);
-
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, columnListener);
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, virtualListener);
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_RESIZED, columnListener);
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, gridColumnsChangedListener);
+        let eventService = this.beans.eventService;
+        this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addDestroyableEventListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
+        this.addDestroyableEventListener(eventService, Events.EVENT_COLUMN_RESIZED, this.onDisplayedColumnsChanged.bind(this));
+        this.addDestroyableEventListener(eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -485,14 +493,14 @@ export class RowComp extends BeanStub implements IRowComp {
                 // otherwise nothing, the floating fullWidth containers are not impacted by column changes
             }
         } else {
-            this.refreshCellsIntoRow(false);
+            this.refreshCellsIntoRow();
         }
     }
 
     private onVirtualColumnsChanged(): void {
         // if row is a group row that spans, then it's not impacted by column changes, with exception of pinning
         if (!this.fullWidthRow) {
-            this.refreshCellsIntoRow(false);
+            this.refreshCellsIntoRow();
         }
     }
 
@@ -515,9 +523,9 @@ export class RowComp extends BeanStub implements IRowComp {
     // method makes sure the right cells are present, and are in the right container. so when this gets called for
     // the first time, it sets up all the cells. but then over time the cells might appear / dissappear or move
     // container (ie into pinned)
-    private refreshCellsIntoRow(firstTime: boolean) {
+    private refreshCellsIntoRow() {
         let centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
-        let leftColumns = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
+        let leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
         let rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
 
         let cellsToRemove = Object.keys(this.renderedCells);
@@ -527,12 +535,12 @@ export class RowComp extends BeanStub implements IRowComp {
 
         let addColFunc = (column: Column) => {
             let renderedCell = this.getOrCreateCell(column);
-            this.ensureCellInCorrectContainer(renderedCell, lastPlacedCells, firstTime);
+            this.ensureCellInCorrectContainer(renderedCell, lastPlacedCells);
             _.removeFromArray(cellsToRemove, column.getColId());
         };
 
         centerCols.forEach(addColFunc);
-        leftColumns.forEach(addColFunc);
+        leftCols.forEach(addColFunc);
         rightCols.forEach(addColFunc);
 
         // we never remove editing cells, as this would cause the cells to loose their values while editing
@@ -589,17 +597,19 @@ export class RowComp extends BeanStub implements IRowComp {
         }
     }
 
-    private ensureCellInCorrectContainer(cellComp: CellComp, lastPlacedCells: LastPlacedElements, firstTime: boolean): void {
+    private ensureCellInCorrectContainer(cellComp: CellComp, lastPlacedCells: LastPlacedElements): void {
         let eCell = cellComp.getGui();
         let column = cellComp.getColumn();
         let pinnedType = column.getPinned();
         let eContainer = this.getContainerForCell(pinnedType);
 
-        if (firstTime) {
-            eContainer.appendChild(eCell);
-            cellComp.setParentRow(eContainer);
-            return;
-        }
+        // need to check the logic around this to see if there is in fact a performance gain.
+        // the reason for introducing it was to have a 'quick path' for the first time
+        // if (firstTime) {
+        //     eContainer.appendChild(eCell);
+        //     cellComp.setParentRow(eContainer);
+        //     return;
+        // }
 
         let eCellBefore = this.getLastPlacedCell(lastPlacedCells, pinnedType);
 
