@@ -69,7 +69,8 @@ import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
     </table>
 
     <h3>Referencing ag-Grid-Enterprise</h3>
-    <p>In your application, before instantiating the grid, you need to reference the included ag-grid-enterprise dependency:</p>
+    <p>In your application, before instantiating the grid, you need to reference the included ag-grid-enterprise
+        dependency:</p>
     <pre>
 import Vue from "vue";
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
@@ -439,9 +440,12 @@ this.columnDefs = [
 
 <h2 id="parent_child">Child to Parent Communication</h2>
 
-<p>There are a variety of ways to manage component communication in Angular (shared service, local variables etc), but you
-    often need a simple way to let a "parent" component know that something has happened on a "child" component. In this case
-    the simplest route is to use the <code>gridOptions.context</code> to hold a reference to the parent, which the child can then access.</p>
+<p>There are a variety of ways to manage component communication in Angular (shared service, local variables etc), but
+    you
+    often need a simple way to let a "parent" component know that something has happened on a "child" component. In this
+    case
+    the simplest route is to use the <code>gridOptions.context</code> to hold a reference to the parent, which the child
+    can then access.</p>
 
 <pre>
 <span class="codeComment">// in the parent component - the component that hosts ag-grid-angular and specifies which angular components to use in the grid</span>
@@ -463,14 +467,44 @@ this.params.context.componentParent
 <p>Note that although we've used <code>componentParent</code> as the property name here it can be anything - the main
     point is that you can use the <code>context</code> mechanism to share information between the components.</p>
 
-<p>The <span style="font-style: italic">"A Simple Example, using CellRenderers created from VueJS Components"</span> above illustrates this in the Child/Parent column:</p>
+<p>The <span style="font-style: italic">"A Simple Example, using CellRenderers created from VueJS Components"</span>
+    above illustrates this in the Child/Parent column:</p>
 <ul>
-    <li><a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/dynamic-component-example/DynamicComponentExample.vue" target="_blank" class="fa fa-external-link"> Parent & Child Component</a></li>
+    <li>
+        <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/dynamic-component-example/DynamicComponentExample.vue"
+           target="_blank" class="fa fa-external-link"> Parent & Child Component</a></li>
 </ul>
+
+<h3 id="router-link">Router Links in Grid Components</h3>
+<p>You can provide <code>Vue Router</code> links within the Grid, but you need to ensure that you provide a Router to the
+    Grid Component being created.</p>
+
+<pre>
+<span class="codeComment">// create a new VueRouter, or make the "root" Router available</span>
+import VueRouter from "vue-router";
+const router = new VueRouter();
+
+<span class="codeComment">// pass a valid Router object to the Vue grid components to be used within the grid</span>
+components: {
+    'ag-grid-vue': AgGridVue,
+    'link-component': {
+        router,
+        template: '<router-link to="/master-detail">Jump to Master/Detail</router-link>'
+    }
+},
+
+<span class="codeComment">// You can now use Vue Router links within you Vue Components within the Grid</span>
+{
+    headerName: "Link Example",
+    cellRendererFramework: 'link-component',
+    width: 200
+}
+</pre>
 
 <h3 id="building-bundling">Building & Bundling</h3>
 <p>There are many ways to build and/or bundle an VueJS Application. We provide fully working examples using a simplified
-    Webpack build as part of the <a href="https://github.com/ag-grid/ag-grid-vue-example">ag-grid-vue-example</a> on GitHub.</p>
+    Webpack build as part of the <a href="https://github.com/ag-grid/ag-grid-vue-example">ag-grid-vue-example</a> on
+    GitHub.</p>
 
 <h2 id="cell-rendering-cell-editing-using-vuej">Cell Rendering & Cell Editing using VueJS</h2>
 
