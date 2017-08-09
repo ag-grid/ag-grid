@@ -332,18 +332,18 @@ export class GridSerializer {
     }
 
     recursivelyAddHeaderGroups<T> (displayedGroups:ColumnGroupChild[], gridSerializingSession:GridSerializingSession<T>):void{
-        let directChildrenHeaderGroups:ColumnGroupChild[];
+        let directChildrenHeaderGroups:ColumnGroupChild[] = [];
         displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
             let columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
             if (!columnGroup.getChildren) return;
-            directChildrenHeaderGroups = columnGroup.getChildren();
+            directChildrenHeaderGroups = directChildrenHeaderGroups.concat(columnGroup.getChildren());
         });
 
         if (displayedGroups.length > 0 && displayedGroups[0] instanceof ColumnGroup) {
             this.doAddHeaderHeader(gridSerializingSession, displayedGroups);
         }
 
-        if (directChildrenHeaderGroups){
+        if (directChildrenHeaderGroups.length > 0){
             this.recursivelyAddHeaderGroups(directChildrenHeaderGroups, gridSerializingSession);
         }
     }
@@ -355,7 +355,8 @@ export class GridSerializer {
             let columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
             let colDef = columnGroup.getDefinition();
 
-            gridRowIterator.onColumn(colDef != null ? colDef.headerName : '', columnIndex++, columnGroup.getLeafColumns().length - 1);
+            gridRowIterator.onColumn(colDef != null && colDef.headerName != null ? colDef.headerName : '',
+                columnIndex++, columnGroup.getLeafColumns().length - 1);
         });
     }
 }
