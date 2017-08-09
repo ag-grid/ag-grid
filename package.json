@@ -3,6 +3,7 @@
   "version": "12.0.1",
   "description": "ag-Grid Enterprise Features",
   "main": "main.js",
+  "types": "main.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watchWebpack": "webpack --watch"
