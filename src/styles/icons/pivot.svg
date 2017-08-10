@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
+    <title>pivot</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="pivot">
+            <rect id="Rectangle-14" fill="#000000" x="1" y="1" width="2" height="1"></rect>
+            <rect id="Rectangle-14-Copy-4" fill-opacity="0.5" fill="#000000" x="1" y="3" width="2" height="1"></rect>
+            <rect id="Rectangle-14-Copy-5" fill-opacity="0.5" fill="#000000" x="1" y="5" width="2" height="1"></rect>
+            <rect id="Rectangle-14-Copy-6" fill-opacity="0.5" fill="#000000" x="1" y="7" width="2" height="1"></rect>
+            <rect id="Rectangle-14-Copy-7" fill-opacity="0.5" fill="#000000" x="1" y="9" width="2" height="1"></rect>
+            <rect id="Rectangle-14-Copy" fill="#000000" x="4" y="1" width="2" height="1"></rect>
+            <rect id="Rectangle-14-Copy-8" fill-opacity="0.25" fill="#000000" x="4" y="3" width="2" height="1"></rect>
+            <rect id="Rectangle-14-Copy-2" fill="#000000" x="7" y="1" width="2" height="1"></rect>
+            <rect id="Rectangle-14-Copy-3" fill="#000000" x="10" y="1" width="1" height="1"></rect>
+            <path d="M10.4713202,4.87132034 L10.4713202,3.87132034 L7.47132025,3.87132034 L7.47132025,6.87132034 L8.47132025,6.87132034 L8.47132025,4.87132034 L10.4713202,4.87132034 Z" id="Combined-Shape" fill="#000000" transform="translate(8.971320, 5.371320) rotate(45.000000) translate(-8.971320, -5.371320) "></path>
+            <path d="M7.37132034,7.49132023 L7.37132034,6.49132023 L4.37132034,6.49132023 L4.37132034,9.49132023 L5.37132034,9.49132023 L5.37132034,7.49132023 L7.37132034,7.49132023 Z" id="Combined-Shape-Copy" fill="#000000" transform="translate(5.871320, 7.991320) rotate(-45.000000) translate(-5.871320, -7.991320) "></path>
+            <polyline id="Path-8" stroke="#000000" points="9 4 9 8 5 8"></polyline>
+        </g>
+    </g>
+</svg>

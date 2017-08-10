@@ -28,7 +28,6 @@ const HTML_ESCAPES: { [id: string]: string } = {
 
 const reUnescapedHtml = /[&<>"']/g;
 
-
 export class Utils {
 
     // taken from:
@@ -798,6 +797,45 @@ export class Utils {
         return eResult;
     }
 
+    static iconNameClassMap: {[key: string]: string } = {
+        'columnMovePin': 'pin',
+        'columnMoveAdd': 'plus',
+        'columnMoveHide': 'eye-slash',
+        'columnMoveMove': 'arrows', 
+        'columnMoveLeft': 'left',
+        'columnMoveRight': 'right',
+        'columnMoveGroup': 'group',
+        'columnMoveValue': 'aggregation',
+        'columnMovePivot': 'pivot',
+        'dropNotAllowed': 'not-allowed',
+        'groupContracted': 'expanded',
+        'groupExpanded': 'contracted',
+        'checkboxChecked': 'checkbox-checked',
+        'checkboxUnchecked': 'checkbox-unchecked',
+        'checkboxIndeterminate': 'checkbox-indeterminate',
+        'checkboxCheckedReadOnly': 'checkbox-checked-readonly',
+        'checkboxUncheckedReadOnly': 'checkbox-unchecked-readonly',
+        'checkboxIndeterminateReadOnly': 'checkbox-indeterminate-readonly',
+        'groupLoading': 'loading',
+        'menu': 'menu',
+        'filter': 'filter',
+        'columns': 'columns',
+        'menuPin': 'pin',
+        'menuValue': 'aggregation',
+        'menuAddRowGroup': 'group',
+        'menuRemoveRowGroup': 'group',
+        'clipboardCopy': 'copy',
+        'clipboardCut': 'cut',
+        'clipboardPaste': 'paste',
+        'pivotPanel': 'pivot',
+        'rowGroupPanel': 'group', 
+        'valuePanel': 'aggregation', 
+        'columnGroupOpened': 'expanded',
+        'columnGroupClosed': 'contracted',
+        'columnSelectClosed': 'folder', 
+        'columnSelectOpen': 'folder-open' 
+    }
+
     static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
         let userProvidedIcon: Function | string;
         // check col for icon first
@@ -826,9 +864,16 @@ export class Utils {
                 throw 'iconRenderer should return back a string or a dom object';
             }
         } else {
+            //
             // otherwise we use the built in icon
             if (svgFactoryFunc) {
-                return svgFactoryFunc();
+                const span = document.createElement('span');
+                const cssClass = this.iconNameClassMap[iconName];
+                if (!cssClass) {
+                    throw new Error(`${iconName} did not find class`)
+                }
+                span.classList.add('ag-icon-' + cssClass);
+                return span;
             } else {
                 return null;
             }
