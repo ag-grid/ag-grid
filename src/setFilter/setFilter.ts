@@ -47,9 +47,9 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         this.debounceFilterChanged = _.debounce(changeFilter, debounceMs);
 
 
-        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.filterParams.column, svgFactory.createCheckboxCheckedIcon);
-        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column, svgFactory.createCheckboxUncheckedIcon);
-        this.eIndeterminateCheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column, svgFactory.createCheckboxIndeterminateIcon);
+        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.filterParams.column);
+        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column);
+        this.eIndeterminateCheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column);
 
     }
 

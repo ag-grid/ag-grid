@@ -51,7 +51,7 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_GROUP,
-            icon: Utils.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null, svgFactory.createGroupIcon),
+            icon: Utils.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });

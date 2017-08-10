@@ -53,8 +53,8 @@ export class SetFilterListItem extends Component {
 
     @PostConstruct
     private init(): void {
-        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column, svgFactory.createCheckboxCheckedIcon);
-        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column, svgFactory.createCheckboxUncheckedIcon);
+        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
+        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
         this.eCheckbox = this.queryForHtmlElement(".ag-filter-checkbox");
         this.eClickableArea = this.getGui();
 

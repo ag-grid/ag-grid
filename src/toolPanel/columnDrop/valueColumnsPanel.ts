@@ -51,7 +51,7 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_AGGREGATE,
-            icon: Utils.createIconNoSpan('valuePanel', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon),
+            icon: Utils.createIconNoSpan('valuePanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });
