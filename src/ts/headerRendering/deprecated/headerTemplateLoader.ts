@@ -1,10 +1,7 @@
 import {Utils as _} from "../../utils";
-import {SvgFactory} from "../../svgFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {Column} from "../../entities/column";
 import {Bean, Autowired} from "../../context/context";
-
-let svgFactory = SvgFactory.getInstance();
 
 @Bean('headerTemplateLoader')
 export class HeaderTemplateLoader {
@@ -70,17 +67,17 @@ export class HeaderTemplateLoader {
 
         let eTemplate = <HTMLElement> _.loadTemplate(HeaderTemplateLoader.HEADER_CELL_TEMPLATE);
 
-        this.addInIcon(eTemplate, 'sortAscending', '#agSortAsc', column, svgFactory.createArrowUpSvg);
-        this.addInIcon(eTemplate, 'sortDescending', '#agSortDesc', column, svgFactory.createArrowDownSvg);
-        this.addInIcon(eTemplate, 'sortUnSort', '#agNoSort', column, svgFactory.createArrowUpDownSvg);
-        this.addInIcon(eTemplate, 'menu', '#agMenu', column, svgFactory.createMenuSvg);
-        this.addInIcon(eTemplate, 'filter', '#agFilter', column, svgFactory.createFilterSvg);
+        this.addInIcon(eTemplate, 'sortAscending', '#agSortAsc', column);
+        this.addInIcon(eTemplate, 'sortDescending', '#agSortDesc', column);
+        this.addInIcon(eTemplate, 'sortUnSort', '#agNoSort', column);
+        this.addInIcon(eTemplate, 'menu', '#agMenu', column);
+        this.addInIcon(eTemplate, 'filter', '#agFilter', column);
 
         return eTemplate;
     }
 
-    private addInIcon(eTemplate: HTMLElement, iconName: string, cssSelector: string, column: Column, defaultIconFactory: () => HTMLElement): void {
-        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
+    private addInIcon(eTemplate: HTMLElement, iconName: string, cssSelector: string, column: Column): void {
+        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
         eTemplate.querySelector(cssSelector).appendChild(eIcon);
     }
 }

@@ -3,11 +3,8 @@ import {Qualifier, PostConstruct, Bean, Autowired, PreDestroy} from "../context/
 import {Column} from "../entities/column";
 import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {SvgFactory} from "../svgFactory";
 import {DragService, DragListenerParams} from "./dragService";
 import {ColumnController} from "../columnController/columnController";
-
-let svgFactory = SvgFactory.getInstance();
 
 export enum DragSourceType { ToolPanel, HeaderCell }
 

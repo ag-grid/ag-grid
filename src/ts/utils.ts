@@ -824,7 +824,11 @@ export class Utils {
         'columnGroupOpened': 'expanded',
         'columnGroupClosed': 'contracted',
         'columnSelectClosed': 'folder', 
-        'columnSelectOpen': 'folder-open' 
+        'columnSelectOpen': 'folder-open',
+        // from deprecated header, remove at some point
+        'sortAscending': 'asc',
+        'sortDescending': 'asc',
+        'sortUnSort': 'none'
     }
 
     /**

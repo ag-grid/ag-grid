@@ -1,7 +1,6 @@
 
 import {Component} from "../../widgets/component";
 import {IComponent} from "../../interfaces/iComponent";
-import {SvgFactory} from "../../svgFactory";
 import {Utils as _} from "../../utils";
 import {ColumnGroup} from "../../entities/columnGroup";
 import {ColumnApi, ColumnController} from "../../columnController/columnController";
@@ -13,8 +12,6 @@ import {TouchListener} from "../../widgets/touchListener";
 import {RefSelector, Listener} from "../../widgets/componentAnnotations";
 import {OriginalColumnGroup} from "../../entities/originalColumnGroup";
 import {GridApi} from "../../gridApi";
-
-let svgFactory = SvgFactory.getInstance();
 
 export interface IHeaderGroupParams {
     columnGroup: ColumnGroup;

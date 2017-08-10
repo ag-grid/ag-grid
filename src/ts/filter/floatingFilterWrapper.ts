@@ -8,7 +8,6 @@ import {Component} from "../widgets/component";
 import {RefSelector} from "../widgets/componentAnnotations";
 import {IComponent} from "../interfaces/iComponent";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {SvgFactory} from "../svgFactory";
 import {Beans} from "../rendering/beans";
 
 export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
@@ -22,8 +21,6 @@ export interface IFloatingFilterWrapper <M>{
 }
 
 export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P> { }
-
-let svgFactory = SvgFactory.getInstance();
 
 export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends Component implements IFloatingFilterWrapperComp<M, F, PC, P> {
 

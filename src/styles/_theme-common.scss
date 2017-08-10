@@ -542,7 +542,7 @@
 
 /* icons are used outside of the grid root (in the ghost) */
 
-$icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter folder-open folder group indeterminate left loading menu minus none not-allowed paste pin pivot plus right;
+$icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter folder-open folder group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right;
 @each $icon in $icons {
     .ag-icon-#{$icon} {
         display: inline-block;

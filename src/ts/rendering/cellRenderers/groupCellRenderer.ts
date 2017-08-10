@@ -1,4 +1,3 @@
-import {SvgFactory} from "../../svgFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {ExpressionService} from "../../valueService/expressionService";
 import {EventService} from "../../eventService";
@@ -14,8 +13,6 @@ import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import {RefSelector} from "../../widgets/componentAnnotations";
-
-let svgFactory = SvgFactory.getInstance();
 
 export interface GroupCellRendererParams extends ICellRendererParams{
     pinned:string,

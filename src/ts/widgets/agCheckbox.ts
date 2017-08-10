@@ -4,10 +4,7 @@ import {QuerySelector, Listener} from "./componentAnnotations";
 import {Utils as _} from "../utils";
 import {PostConstruct, Autowired} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {SvgFactory} from "../svgFactory";
 import {AgEvent} from "../events";
-
-let svgFactory = SvgFactory.getInstance();
 
 export interface ChangeEvent extends AgEvent {
     selected: boolean;
