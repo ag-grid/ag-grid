@@ -151,18 +151,53 @@ function tscReactExample() {
     ]);
 }
 
+const named = require('vinyl-named');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const filter = require('gulp-filter');
+
 function scssGrid() {
     // Uncompressed
-    gulp.src(['../ag-grid/src/styles/*.scss', '!../ag-grid/src/styles/theme-common.scss'])
+    return gulp.src(['../ag-grid/src/styles/*.scss', '!../ag-grid/src/styles/_theme-common.scss'])
         .pipe(foreach(function(stream, file) {
             var currentTheme = path.basename(file.path, '.scss');
             var themeName = currentTheme.replace('theme-','');
-            return stream
-                .pipe(postcss([ autoprefixer() ], { syntax: postcssScss }))
-                .pipe(sass())
-                .pipe(gulpIf(currentTheme !== 'ag-grid', replace('ag-common','ag-' + themeName)))
-                .pipe(gulp.dest('../ag-grid/dist/styles/'));
-        }));
+            return stream.pipe(gulpIf(currentTheme !== 'ag-grid', replace('ag-common','ag-' + themeName)))
+        }))
+        .pipe(named())
+        .pipe(webpackStream({
+            module: {
+                rules: [
+                    {
+                        test: /\.scss$/,
+                        use: ExtractTextPlugin.extract({
+                            fallback: 'style-loader',
+                            //resolve-url-loader may be chained before sass-loader if necessary
+                            use: [
+                                'css-loader', 
+                                'sass-loader',
+                                { loader: 'postcss-loader', options: { syntax: 'postcss-scss', plugins: [ autoprefixer() ] } },
+                            ]
+                        })
+                    }, 
+                    {
+                        test: /\.(svg)$/,
+                        use: [
+                            {
+                                loader: 'url-loader',
+                                options: {
+                                    limit: 8192
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            plugins: [
+                new ExtractTextPlugin('[name].css')
+            ]
+        }))
+        .pipe(filter("**/*.css"))
+        .pipe(gulp.dest('../ag-grid/dist/styles/'));
 }
 
 function liveReloadTask() {
@@ -245,7 +280,6 @@ function webpackAngular() {
 }
 
 function webpackReact() {
-
     var mainFile = '../ag-grid-react/main.js';
     var fileName = 'ag-grid-react.js';
 
