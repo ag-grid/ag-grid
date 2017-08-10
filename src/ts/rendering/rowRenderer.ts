@@ -536,6 +536,11 @@ export class RowRenderer extends BeanStub {
 
         _.executeNextVMTurn(nextVmTurnFunctions);
 
+        // this needed for slick rendering
+        _.iterateObject(this.rowContainers, (key: string, rowContainerComp: RowContainerComponent) => {
+            rowContainerComp.flushRowTemplates();
+        });
+
         this.destroyRowComps(rowsToRecycle, animate);
 
         this.checkAngularCompile();

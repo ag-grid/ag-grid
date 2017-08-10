@@ -23,8 +23,6 @@ export class SlickRowComp extends Component implements IRowComp {
     private eBodyRow: HTMLElement;
     private eAllRowContainers: HTMLElement[] = [];
 
-    private afterGuiAttachedFunctions: Function[] = [];
-
     private active = true;
 
     private slickCellComps: {[key: string]: SlickCellComp} = {};
@@ -34,10 +32,8 @@ export class SlickRowComp extends Component implements IRowComp {
                 pinnedRightContainerComp: RowContainerComponent,
                 rowNode: RowNode,
                 beans: Beans) {
-
         super();
         this.beans = beans;
-
         this.bodyContainerComp = bodyContainerComp;
         this.pinnedLeftContainerComp = pinnedLeftContainerComp;
         this.pinnedRightContainerComp = pinnedRightContainerComp;
@@ -49,28 +45,16 @@ export class SlickRowComp extends Component implements IRowComp {
     }
 
     public init(): void {
-        this.beans.gridOptionsWrapper.inAnimationFrame(this.setupRow.bind(this));
-    }
-
-    private setupRow(): void {
-        if (!this.active) { return; }
-
         let centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
         let leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
         let rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
 
-        this.eBodyRow = this.createRowContainer(this.bodyContainerComp, centerCols);
-        this.ePinnedRightRow = this.createRowContainer(this.pinnedRightContainerComp, leftCols);
-        this.ePinnedLeftRow = this.createRowContainer(this.pinnedLeftContainerComp, rightCols);
+        this.createRowContainer(this.bodyContainerComp, centerCols, eRow => this.eBodyRow = eRow);
+        this.createRowContainer(this.pinnedRightContainerComp, rightCols, eRow => this.ePinnedRightRow = eRow);
+        this.createRowContainer(this.pinnedLeftContainerComp, leftCols, eRow => this.ePinnedLeftRow = eRow);
 
         this.addListeners();
-
     }
-
-    // public afterGuiAttached(): void {
-    //     this.afterGuiAttachedFunctions.forEach( func => func() );
-    //     this.afterGuiAttachedFunctions.length = 0;
-    // }
 
     private addListeners(): void {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
@@ -280,9 +264,17 @@ export class SlickRowComp extends Component implements IRowComp {
         }
     }
 
-    private createRowContainer(rowContainerComp: RowContainerComponent, cols: Column[]): HTMLElement {
+    private createRowContainer(rowContainerComp: RowContainerComponent, cols: Column[], callback: (eRow: HTMLElement)=>void): void {
+        let res = this.createTemplate(cols);
+        rowContainerComp.appendRowTemplateAsync(res.rowTemplate, ()=> {
+            let eRow: HTMLElement = rowContainerComp.getRowElement(this.rowNode.id);
+            this.afterRowAttached(rowContainerComp, res.newCellComps, eRow);
+            callback(eRow);
+        });
+    }
 
-        let parts: string[] = [];
+    private createTemplate(cols: Column[]): {rowTemplate: string, newCellComps: SlickCellComp[]} {
+        let templateParts: string[] = [];
 
         let rowIsEven = this.rowNode.rowIndex % 2 === 0;
         let oddOrEvenClass = rowIsEven ? 'ag-row-odd' : 'ag-row-even';
@@ -291,28 +283,47 @@ export class SlickRowComp extends Component implements IRowComp {
         let setRowTop = !this.beans.gridOptionsWrapper.isForPrint() && !this.beans.gridOptionsWrapper.isAutoHeight();
         let rowTop = this.getRowTop();
 
-        parts.push(`<div `);
-        parts.push(  `role="row" `);
-        parts.push(  `class="ag-row ${oddOrEvenClass}" `);
-        parts.push(  `style=" `);
-        parts.push(    `height: ${rowHeight}px; `);
-        parts.push(setRowTop ? `top: ${rowTop}px; ` : ``);
-        parts.push(  `">`);
+        templateParts.push(`<div `);
+        templateParts.push(  `role="row" `);
+        templateParts.push(  `row="${this.rowNode.id}" `);
+        templateParts.push(  `class="ag-row ${oddOrEvenClass}" `);
+        templateParts.push(  `style=" `);
+        templateParts.push(    `height: ${rowHeight}px; `);
+        templateParts.push(setRowTop ? `top: ${rowTop}px; ` : ``);
+        templateParts.push(  `">`);
 
+        // add in the template for the cells
+        let cellRes = this.createCellTemplates(cols);
+        templateParts.push(cellRes.cellsTemplate);
+
+        templateParts.push(`</div>`);
+
+        let res = {
+            rowTemplate: templateParts.join(''),
+            newCellComps: cellRes.newCellComps
+        };
+
+        return res;
+    }
+
+    private createCellTemplates(cols: Column[]): {cellsTemplate: string, newCellComps: SlickCellComp[]} {
+        let templateParts: string[] = [];
         let newCellComps: SlickCellComp[] = [];
-
         cols.forEach( col => {
             let newCellComp = new SlickCellComp(this.beans, col, this.rowNode, this);
             let cellTemplate = newCellComp.getCreateTemplate();
-            parts.push(cellTemplate);
+            templateParts.push(cellTemplate);
             newCellComps.push(newCellComp);
             this.slickCellComps[col.getId()] = newCellComp;
         });
+        let res = {
+            cellsTemplate: templateParts.join(''),
+            newCellComps: newCellComps
+        };
+        return res;
+    }
 
-        parts.push(`</div>`);
-
-        let eRow = rowContainerComp.appendRowTemplate(parts.join(''));
-
+    private afterRowAttached(rowContainerComp: RowContainerComponent, newCellComps: SlickCellComp[], eRow: HTMLElement): void {
         newCellComps.forEach( cellComp => {
             cellComp.setParentRow(eRow);
             cellComp.afterAttached();
@@ -321,12 +332,10 @@ export class SlickRowComp extends Component implements IRowComp {
         this.addDomData(eRow);
 
         this.addDestroyFunc(()=> {
-            this.beans.gridOptionsWrapper.inAnimationFrame(rowContainerComp.removeRowElement.bind(rowContainerComp, eRow));
+            rowContainerComp.removeRowElement(eRow);
         });
 
         this.eAllRowContainers.push(eRow);
-
-        return eRow;
     }
 
     private getRowTop(): number {
