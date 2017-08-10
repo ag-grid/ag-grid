@@ -1,8 +1,6 @@
-import {ColumnController, SvgFactory, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column} from 'ag-grid';
+import {ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column} from 'ag-grid';
 import {ClipboardService} from "../clipboardService";
 import {AggFuncService} from "../aggregation/aggFuncService";
-
-let svgFactory = SvgFactory.getInstance();
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {

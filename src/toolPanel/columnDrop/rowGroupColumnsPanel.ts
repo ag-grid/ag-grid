@@ -1,5 +1,4 @@
 import {
-    SvgFactory,
     Autowired,
     ColumnController,
     EventService,
@@ -16,8 +15,6 @@ import {
     GridApi
 } from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
-
-let svgFactory = SvgFactory.getInstance();
 
 export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
 

@@ -1,6 +1,5 @@
 import {
     Utils,
-    SvgFactory,
     Bean,
     IMenuFactory,
     Autowired,
@@ -23,7 +22,6 @@ import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuItemMapper} from "./menuItemMapper";
 
-let svgFactory = SvgFactory.getInstance();
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;

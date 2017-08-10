@@ -7,13 +7,10 @@ import {
     PostConstruct,
     GridOptionsWrapper,
     ICellRendererComp,
-    SvgFactory,
     _,
     Column,
     AgEvent
 } from "ag-grid/main";
-
-let svgFactory = SvgFactory.getInstance();
 
 export interface SelectedEvent extends AgEvent {
 }

@@ -1,6 +1,4 @@
-import {GridOptionsWrapper, PostConstruct, SvgFactory, MenuItemDef, Utils as _, Component, Autowired, AgEvent} from "ag-grid";
-
-let svgFactory = SvgFactory.getInstance();
+import {GridOptionsWrapper, PostConstruct, MenuItemDef, Utils as _, Component, Autowired, AgEvent} from "ag-grid";
 
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;
@@ -67,10 +65,10 @@ export class MenuItemComponent extends Component {
         if (this.params.subMenu) {
             if (this.gridOptionsWrapper.isEnableRtl()) {
                 // for RTL, we show arrow going left
-                this.queryForHtmlElement('#ePopupPointer').appendChild(svgFactory.createSmallArrowLeftSvg());
+                this.queryForHtmlElement('#ePopupPointer').classList.add('ag-icon-small-left');
             } else {
                 // for normal, we show arrow going right
-                this.queryForHtmlElement('#ePopupPointer').appendChild(svgFactory.createSmallArrowRightSvg());
+                this.queryForHtmlElement('#ePopupPointer').classList.add('ag-icon-small-right');
             }
         } else {
             this.queryForHtmlElement('#ePopupPointer').innerHTML = '&nbsp;';

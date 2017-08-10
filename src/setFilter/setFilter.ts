@@ -5,14 +5,11 @@ import {
     IDoesFilterPassParams,
     ISetFilterParams,
     QuerySelector,
-    SvgFactory,
     Utils
 } from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
-
-let svgFactory = SvgFactory.getInstance();
 
 export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     private model: SetFilterModel;

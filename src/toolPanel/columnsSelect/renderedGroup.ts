@@ -2,7 +2,6 @@ import {
     CssClassApplier,
     Utils,
     DragSourceType,
-    SvgFactory,
     Autowired,
     Column,
     TouchListener,
@@ -20,8 +19,6 @@ import {
     EventService,
     AgCheckbox
 } from "ag-grid/main";
-
-let svgFactory = SvgFactory.getInstance();
 
 export class RenderedGroup extends Component {
 
