@@ -1,16 +1,14 @@
 
 import {Component} from "../widgets/component";
-import {IRowComp, LastPlacedElements} from "./rowComp";
+import {IRowComp, LastPlacedElements, RowComp} from "./rowComp";
 import {RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
 import {Beans} from "./beans";
 import {RowContainerComponent} from "./rowContainerComponent";
 import {_} from "../utils";
-import {Events} from "../events";
+import {Events, RowClickedEvent, RowDoubleClickedEvent, RowEvent} from "../events";
 import {SlickCellComp} from "./slickCellComp";
 import {CellComp} from "./cellComp";
-import {Constants} from "../constants";
-import {SetLeftFeature} from "./features/setLeftFeature";
 
 export class SlickRowComp extends Component implements IRowComp {
 
@@ -24,6 +22,8 @@ export class SlickRowComp extends Component implements IRowComp {
     private ePinnedRightRow: HTMLElement;
     private eBodyRow: HTMLElement;
     private eAllRowContainers: HTMLElement[] = [];
+
+    private afterGuiAttachedFunctions: Function[] = [];
 
     private active = true;
 
@@ -49,30 +49,32 @@ export class SlickRowComp extends Component implements IRowComp {
     }
 
     public init(): void {
-        requestAnimationFrame(this.setupRow.bind(this));
+        this.beans.gridOptionsWrapper.inAnimationFrame(this.setupRow.bind(this));
     }
 
     private setupRow(): void {
         if (!this.active) { return; }
 
-        this.eBodyRow = this.createRowContainer(this.bodyContainerComp);
-        this.ePinnedRightRow = this.createRowContainer(this.pinnedRightContainerComp);
-        this.ePinnedLeftRow = this.createRowContainer(this.pinnedLeftContainerComp);
+        let centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
+        let leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
+        let rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
 
-        let rowIsEven = this.rowNode.rowIndex % 2 === 0;
-        let oddOrEvenClass = rowIsEven ? 'ag-row-odd' : 'ag-row-even';
-        let allCssClasses = 'ag-row ' + oddOrEvenClass;
+        this.eBodyRow = this.createRowContainer(this.bodyContainerComp, centerCols);
+        this.ePinnedRightRow = this.createRowContainer(this.pinnedRightContainerComp, leftCols);
+        this.ePinnedLeftRow = this.createRowContainer(this.pinnedLeftContainerComp, rightCols);
 
-        this.eAllRowContainers.forEach( eRowContainer => _.addCssClass(eRowContainer, allCssClasses));
-        this.setupTop();
-        this.setHeight();
+        this.addListeners();
 
-        this.refreshCells();
-
-        this.addColumnListener();
     }
 
-    private addColumnListener(): void {
+    // public afterGuiAttached(): void {
+    //     this.afterGuiAttachedFunctions.forEach( func => func() );
+    //     this.afterGuiAttachedFunctions.length = 0;
+    // }
+
+    private addListeners(): void {
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
+
         let eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.refreshCells.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.refreshCells.bind(this));
@@ -80,37 +82,6 @@ export class SlickRowComp extends Component implements IRowComp {
 
         // fixme - for this we should be clearing out everything, should inherit this from super component
         this.addDestroyableEventListener(eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshCells.bind(this));
-    }
-
-    public getElementForCell(column: Column): HTMLElement {
-
-        let eFirstToTry: HTMLElement;
-
-        switch (column.getPinned()) {
-            case Column.PINNED_LEFT:
-                eFirstToTry = this.ePinnedLeftRow;
-                break;
-            case Column.PINNED_RIGHT:
-                eFirstToTry = this.ePinnedRightRow;
-                break;
-            default:
-                eFirstToTry = this.eBodyRow;
-                break;
-        }
-
-        let querySelector = `[colid="${column.getId()}"]`;
-        let result = <HTMLElement> eFirstToTry.querySelector(querySelector);
-
-        if (!result) {
-            this.eAllRowContainers.forEach( eContainer => {
-                let tryThisContainer = !result && eContainer !== eFirstToTry;
-                if (tryThisContainer) {
-                    result = <HTMLElement> eContainer.querySelector(querySelector);
-                }
-            });
-        }
-
-        return result;
     }
 
     private getContainerForCell(pinnedType: string): HTMLElement {
@@ -185,6 +156,7 @@ export class SlickRowComp extends Component implements IRowComp {
         if (!eContainer) { return; }
 
         let cellTemplates: string[] = [];
+        let newCellComps: SlickCellComp[] = [];
 
         cols.forEach( col => {
 
@@ -194,166 +166,193 @@ export class SlickRowComp extends Component implements IRowComp {
             if (oldCell) {
                 this.ensureCellInCorrectContainer(oldCell);
             } else {
-                this.createNewCell(col, eContainer, cellTemplates);
+                this.createNewCell(col, eContainer, cellTemplates, newCellComps);
             }
 
         });
 
         if (cellTemplates.length>0) {
-            if (eContainer.lastChild) {
-                // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
-                eContainer.insertAdjacentHTML('beforeend', cellTemplates.join(''));
-            } else {
-                eContainer.innerHTML = cellTemplates.join('');
-            }
+            _.appendHtml(eContainer, cellTemplates.join(''));
+            newCellComps.forEach( c => c.afterAttached() );
         }
     }
 
-    private createNewCell(col: Column, eContainer: HTMLElement, cellTemplates: string[]): void {
-        let cellTemplate = this.createTemplateForCell(col);
+    private addDomData(eRowContainer: Element): void {
+        let gow = this.beans.gridOptionsWrapper;
+        gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, this);
+        this.addDestroyFunc( ()=> {
+            gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, null) }
+        );
+    }
+
+    private createNewCell(col: Column, eContainer: HTMLElement, cellTemplates: string[], newCellComps: SlickCellComp[]): void {
+        let newCellComp = new SlickCellComp(this.beans, col, this.rowNode, this);
+        let cellTemplate = newCellComp.getCreateTemplate();
         cellTemplates.push(cellTemplate);
-        let slickCellComp = new SlickCellComp(this.beans, col, this.rowNode, this);
-        this.slickCellComps[col.getId()] = slickCellComp;
-        slickCellComp.setParentRow(eContainer);
+        newCellComps.push(newCellComp);
+        this.slickCellComps[col.getId()] = newCellComp;
+        newCellComp.setParentRow(eContainer);
     }
 
-    private createTemplateForCell(col: Column): string {
-        let template: string[] = [];
-
-        let width = col.getActualWidth();
-        let left = col.getLeft();
-        let value = this.getValue(col);
-        let valueFormatted = this.beans.valueFormatterService.formatValue(col, this.rowNode, null, value);
-        let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
-        let valueToRender = valueFormattedExits ? valueFormatted : value;
-
-        let cssClasses: string[] = ["ag-cell", "ag-cell-value", "ag-cell-no-focus", "ag-cell-not-inline-editing"];
-        _.pushAll(cssClasses, this.getClassesFromColDef(col, value));
-        _.pushAll(cssClasses, this.getClassesFromRules(col, value));
-
-        template.push(`<div`);
-        template.push(` role="gridcell"`);
-        template.push(` colid="${col.getId()}"`);
-        template.push(` class="${cssClasses.join(' ')}"`);
-        template.push(` style="width: ${width}px; left: ${left}px;" >`);
-        template.push(valueToRender);
-        template.push(`</div>`);
-
-        return template.join('');
-    }
-
-    private getClassesFromColDef(column: Column, value: any): string[] {
-
-        let res: string[] = [];
-
-        this.beans.stylingService.processStaticCellClasses(
-            column.getColDef(),
-            {
-                value: value,
-                data: this.rowNode.data,
-                node: this.rowNode,
-                colDef: column.getColDef(),
-                rowIndex: this.rowNode.rowIndex,
-                api: this.beans.gridOptionsWrapper.getApi(),
-                context: this.beans.gridOptionsWrapper.getContext()
-            },
-            (className:string)=>{
-                res.push(className);
-            }
-        );
-
-        return res;
-    }
-
-    private getClassesFromRules(column: Column, value: any): string[] {
-
-        let res: string[] = [];
-
-        this.beans.stylingService.processCellClassRules(
-            column.getColDef(),
-            {
-                value: value,
-                data: this.rowNode.data,
-                node: this.rowNode,
-                colDef: column.getColDef(),
-                rowIndex: this.rowNode.rowIndex,
-                api: this.beans.gridOptionsWrapper.getApi(),
-                context: this.beans.gridOptionsWrapper.getContext()
-            },
-            (className:string)=>{
-                res.push(className);
-            },
-            (className:string)=>{
-                // not catered for
-            }
-        );
-
-        return res;
-    }
-
-    private getValue(column: Column): any {
-        let isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer;
-        if (isOpenGroup && this.beans.gridOptionsWrapper.isGroupIncludeFooter()) {
-            // if doing grouping and footers, we don't want to include the agg value
-            // in the header when the group is open
-            return this.beans.valueService.getValue(column, this.rowNode, true);
-        } else {
-            return this.beans.valueService.getValue(column, this.rowNode);
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
+        switch (eventName) {
+            case 'dblclick': this.onRowDblClick(mouseEvent); break;
+            case 'click': this.onRowClick(mouseEvent); break;
         }
     }
 
-    private createRowContainer(rowContainerComp: RowContainerComponent): HTMLElement {
-        let eRow = document.createElement('div');
-        eRow.setAttribute('role', 'row');
+    private createRowEvent(type: string, domEvent?: Event): RowEvent {
+        return {
+            type: type,
+            node: this.rowNode,
+            data: this.rowNode.data,
+            rowIndex: this.rowNode.rowIndex,
+            rowPinned: this.rowNode.rowPinned,
+            context: this.beans.gridOptionsWrapper.getContext(),
+            api: this.beans.gridOptionsWrapper.getApi(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            event: domEvent
+        }
+    }
 
-        // this.addDomData(eRow);
+    private createRowEventWithSource(type: string, domEvent: Event): RowEvent {
+        let event = this.createRowEvent(type, domEvent);
+        // when first developing this, we included the rowComp in the event.
+        // this seems very weird. so when introducing the event types, i left the 'source'
+        // out of the type, and just include the source in the two places where this event
+        // was fired (rowClicked and rowDoubleClicked). it doesn't make sense for any
+        // users to be using this, as the rowComp isn't an object we expose, so would be
+        // very surprising if a user was using it.
+        (<any>event).source = this;
+        return event
+    }
 
-        rowContainerComp.appendRowElement(eRow, null, false);
+    private onRowDblClick(mouseEvent: MouseEvent): void {
 
-        this.addDestroyFunc(rowContainerComp.removeRowElement.bind(rowContainerComp, eRow));
+        let agEvent: RowDoubleClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_DOUBLE_CLICKED, mouseEvent);
+
+        this.beans.eventService.dispatchEvent(agEvent);
+    }
+
+    public onRowClick(mouseEvent: MouseEvent) {
+
+        let agEvent: RowClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_CLICKED, mouseEvent);
+
+        this.beans.eventService.dispatchEvent(agEvent);
+
+        // ctrlKey for windows, metaKey for Apple
+        let multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+
+        let shiftKeyPressed = mouseEvent.shiftKey;
+
+        // we do not allow selecting groups by clicking (as the click here expands the group)
+        // so return if it's a group row
+        if (this.rowNode.group) {
+            return;
+        }
+
+        // we also don't allow selection of pinned rows
+        if (this.rowNode.rowPinned) {
+            return;
+        }
+
+        // if no selection method enabled, do nothing
+        if (!this.beans.gridOptionsWrapper.isRowSelection()) {
+            return;
+        }
+
+        // if click selection suppressed, do nothing
+        if (this.beans.gridOptionsWrapper.isSuppressRowClickSelection()) {
+            return;
+        }
+
+        if (this.rowNode.isSelected()) {
+            if (multiSelectKeyPressed) {
+                if (this.beans.gridOptionsWrapper.isRowDeselection()) {
+                    this.rowNode.setSelectedParams({newValue: false});
+                }
+            } else {
+                // selected with no multi key, must make sure anything else is unselected
+                this.rowNode.setSelectedParams({newValue: true, clearSelection: true});
+            }
+        } else {
+            this.rowNode.setSelectedParams({newValue: true, clearSelection: !multiSelectKeyPressed, rangeSelect: shiftKeyPressed});
+        }
+    }
+
+    private createRowContainer(rowContainerComp: RowContainerComponent, cols: Column[]): HTMLElement {
+
+        let parts: string[] = [];
+
+        let rowIsEven = this.rowNode.rowIndex % 2 === 0;
+        let oddOrEvenClass = rowIsEven ? 'ag-row-odd' : 'ag-row-even';
+        let rowHeight = this.rowNode.rowHeight;
+
+        let setRowTop = !this.beans.gridOptionsWrapper.isForPrint() && !this.beans.gridOptionsWrapper.isAutoHeight();
+        let rowTop = this.getRowTop();
+
+        parts.push(`<div `);
+        parts.push(  `role="row" `);
+        parts.push(  `class="ag-row ${oddOrEvenClass}" `);
+        parts.push(  `style=" `);
+        parts.push(    `height: ${rowHeight}px; `);
+        parts.push(setRowTop ? `top: ${rowTop}px; ` : ``);
+        parts.push(  `">`);
+
+        let newCellComps: SlickCellComp[] = [];
+
+        cols.forEach( col => {
+            let newCellComp = new SlickCellComp(this.beans, col, this.rowNode, this);
+            let cellTemplate = newCellComp.getCreateTemplate();
+            parts.push(cellTemplate);
+            newCellComps.push(newCellComp);
+            this.slickCellComps[col.getId()] = newCellComp;
+        });
+
+        parts.push(`</div>`);
+
+        let eRow = rowContainerComp.appendRowTemplate(parts.join(''));
+
+        newCellComps.forEach( cellComp => {
+            cellComp.setParentRow(eRow);
+            cellComp.afterAttached();
+        });
+
+        this.addDomData(eRow);
+
+        this.addDestroyFunc(()=> {
+            this.beans.gridOptionsWrapper.inAnimationFrame(rowContainerComp.removeRowElement.bind(rowContainerComp, eRow));
+        });
 
         this.eAllRowContainers.push(eRow);
 
         return eRow;
     }
 
-    private setupTop(): void {
-        let doNotSetRowTop = this.beans.gridOptionsWrapper.isForPrint() || this.beans.gridOptionsWrapper.isAutoHeight();
-        if (doNotSetRowTop) { return; }
-        this.setRowTop(this.rowNode.rowTop);
-    }
+    private getRowTop(): number {
 
-    private setRowTop(pixels: number): void {
+        let pixels = this.rowNode.rowTop;
+
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
-        if (_.exists(pixels)) {
-
-            let pixelsWithOffset: number;
-            if (this.rowNode.isRowPinned()) {
-                pixelsWithOffset = pixels;
-            } else {
-                pixelsWithOffset = pixels - this.beans.paginationProxy.getPixelOffset();
-            }
-
-            let topPx = pixelsWithOffset + "px";
-            this.eAllRowContainers.forEach( row => row.style.top = topPx);
+        let pixelsWithOffset: number;
+        if (this.rowNode.isRowPinned()) {
+            pixelsWithOffset = pixels;
+        } else {
+            pixelsWithOffset = pixels - this.beans.paginationProxy.getPixelOffset();
         }
+
+        return pixelsWithOffset;
     }
 
-    private setHeight(): void {
-        let setHeightListener = () => {
-            // check for exists first - if the user is resetting the row height, then
-            // it will be null (or undefined) momentarily until the next time the flatten
-            // stage is called where the row will then update again with a new height
-            if (_.exists(this.rowNode.rowHeight)) {
-                let heightPx = this.rowNode.rowHeight + 'px';
-                this.eAllRowContainers.forEach( row => row.style.height = heightPx);
-            }
-        };
-
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, setHeightListener);
-
-        setHeightListener();
+    private onRowHeightChanged(): void {
+        // check for exists first - if the user is resetting the row height, then
+        // it will be null (or undefined) momentarily until the next time the flatten
+        // stage is called where the row will then update again with a new height
+        if (_.exists(this.rowNode.rowHeight)) {
+            let heightPx = this.rowNode.rowHeight + 'px';
+            this.eAllRowContainers.forEach( row => row.style.height = heightPx);
+        }
     }
 
     public addEventListener(eventType: string, listener: Function): void {

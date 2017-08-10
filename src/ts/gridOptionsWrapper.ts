@@ -231,6 +231,16 @@ export class GridOptionsWrapper {
     public isSuppressChangeDetection() { return isTrue(this.gridOptions.suppressChangeDetection); }
     public isSlickRender() { return false; }
 
+    public isSuppressAnimationFrame() { return isTrue(this.gridOptions.suppressAnimationFrame); }
+    public inAnimationFrame(callback: FrameRequestCallback): number {
+        if (this.gridOptions.suppressAnimationFrame) {
+            callback(0);
+            return -1;
+        } else {
+            return requestAnimationFrame(callback);
+        }
+    }
+
     public getQuickFilterText(): string { return this.gridOptions.quickFilterText; }
     public isCacheQuickFilter() { return isTrue(this.gridOptions.cacheQuickFilter); }
     public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }

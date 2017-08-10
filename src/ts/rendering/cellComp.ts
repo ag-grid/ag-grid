@@ -22,8 +22,18 @@ import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {SetLeftFeature} from "./features/setLeftFeature";
 import {NewValueParams} from "../entities/colDef";
 import {Beans} from "./beans";
+import {IComponent} from "../interfaces/iComponent";
 
-export class CellComp extends Component {
+export interface ICellComp {
+    // getGui(): HTMLElement;
+    getGridCell(): GridCell;
+    onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
+    isEditing(): boolean;
+    onKeyDown(event: KeyboardEvent): void;
+    onKeyPress(event: KeyboardEvent): void;
+}
+
+export class CellComp extends Component implements ICellComp {
 
     public static DOM_DATA_KEY_CELL_COMP = 'cellComp';
 

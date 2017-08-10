@@ -15,7 +15,7 @@ import {
     VirtualRowRemovedEvent
 } from "../events";
 import {EventService} from "../eventService";
-import {Autowired, PostConstruct} from "../context/context";
+import {Autowired} from "../context/context";
 import {Constants} from "../constants";
 import {CellRendererFactory} from "./cellRendererFactory";
 import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
@@ -82,6 +82,7 @@ export interface IRowComp {
     getAndClearNextVMTurnFunctions(): Function[];
     isEditing(): boolean;
     init(): void;
+    onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
 }
 
 export class RowComp extends BeanStub implements IRowComp {

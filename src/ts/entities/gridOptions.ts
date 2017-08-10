@@ -161,6 +161,7 @@ export interface GridOptions {
     localeText?: any;
     localeTextFunc?: Function;
     suppressScrollLag?: boolean;
+    suppressAnimationFrame?: boolean;
     /* a map of strings (cellRenderer keys) to cellRenderers (that can be ICellRenderer or ICellRendererFunc) */
     // cellRenderers?: {[key: string]: {new(): ICellRenderer} | ICellRendererFunc};
     /* a map of strings (cellEditor keys) to cellEditors */

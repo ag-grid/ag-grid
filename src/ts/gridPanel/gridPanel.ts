@@ -16,7 +16,7 @@ import {MouseEventService} from "./mouseEventService";
 import {IClipboardService} from "../interfaces/iClipboardService";
 import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
-import {RowComp} from "../rendering/rowComp";
+import {IRowComp, RowComp} from "../rendering/rowComp";
 import {SetScrollsVisibleParams, ScrollVisibleService} from "./scrollVisibleService";
 import {BeanStub} from "../context/beanStub";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
@@ -451,7 +451,7 @@ export class GridPanel extends BeanStub {
         this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener)
     }
 
-    private getRowForEvent(event: MouseEvent | KeyboardEvent): RowComp {
+    private getRowForEvent(event: MouseEvent | KeyboardEvent): IRowComp {
 
         let sourceElement = _.getTarget(event);
 
@@ -706,14 +706,14 @@ export class GridPanel extends BeanStub {
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        let renderedCell = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
-        if (renderedCell) {
-            renderedCell.onMouseEvent(eventName, mouseEvent);
+        let cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
+        if (cellComp) {
+            cellComp.onMouseEvent(eventName, mouseEvent);
         }
 
-        let renderedRow = this.getRowForEvent(mouseEvent);
-        if (renderedRow) {
-            renderedRow.onMouseEvent(eventName, mouseEvent);
+        let rowComp: IRowComp = this.getRowForEvent(mouseEvent);
+        if (rowComp) {
+            rowComp.onMouseEvent(eventName, mouseEvent);
         }
 
         this.preventDefaultOnContextMenu(mouseEvent);

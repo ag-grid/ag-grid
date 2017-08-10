@@ -23,6 +23,8 @@ export class RowContainerComponent {
     private childCount = 0;
     private visible: boolean;
 
+    private rowTemplatesToAdd: string[] = [];
+
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     constructor(params: RowContainerComponentParams) {
@@ -32,6 +34,11 @@ export class RowContainerComponent {
         this.hideWhenNoChildren = params.hideWhenNoChildren;
 
         this.checkVisibility();
+    }
+
+    public getRowElement(rowId: string): HTMLElement {
+        let res = <HTMLElement> this.eContainer.querySelector(`[row-id="${rowId}"]`);
+        return res;
     }
 
     public setHeight(height: number): void {
@@ -53,6 +60,43 @@ export class RowContainerComponent {
 
         this.childCount++;
         this.checkVisibility();
+    }
+
+    public flushRowTemplates_v2(): void {
+        if (this.rowTemplatesToAdd.length===0) { return; }
+
+        let htmlToAdd = this.rowTemplatesToAdd.join('');
+        _.appendHtml(this.eContainer, htmlToAdd);
+
+        this.rowTemplatesToAdd.length = 0;
+    }
+
+    public appendRowTemplate_v2(rowTemplate: string): void {
+
+        this.rowTemplatesToAdd.push(rowTemplate);
+
+        // it is important we put items in in order, so that when we open a row group,
+        // the new rows are inserted after the opened group, but before the rows below.
+        // that way, the rows below are over the new rows (as dom renders last in dom over
+        // items previous in dom), otherwise the child rows would cover the row below and
+        // that meant the user doesn't see the rows below slide away.
+        this.childCount++;
+        this.checkVisibility();
+    }
+
+    public appendRowTemplate(rowTemplate: string): HTMLElement {
+
+        _.appendHtml(this.eContainer, rowTemplate);
+
+        // it is important we put items in in order, so that when we open a row group,
+        // the new rows are inserted after the opened group, but before the rows below.
+        // that way, the rows below are over the new rows (as dom renders last in dom over
+        // items previous in dom), otherwise the child rows would cover the row below and
+        // that meant the user doesn't see the rows below slide away.
+        this.childCount++;
+        this.checkVisibility();
+
+        return <HTMLElement> this.eContainer.lastChild;
     }
 
     public ensureDomOrder(eRow: HTMLElement, eRowBefore: HTMLElement): void {

@@ -478,6 +478,15 @@ export class Utils {
         return <HTMLElement> tempDiv.firstChild;
     }
 
+    static appendHtml(eContainer: HTMLElement, htmlTemplate: string) {
+        if (eContainer.lastChild) {
+            // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
+            eContainer.insertAdjacentHTML('beforeend', htmlTemplate);
+        } else {
+            eContainer.innerHTML = htmlTemplate;
+        }
+    }
+
     static addOrRemoveCssClass(element: HTMLElement, className: string, addOrRemove: boolean) {
         if (addOrRemove) {
             this.addCssClass(element, className);

@@ -3,14 +3,14 @@ import {Autowired} from "../context/context";
 import {Utils as _} from '../utils';
 import {GridCell} from "../entities/gridCell";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {CellComp} from "../rendering/cellComp";
+import {CellComp, ICellComp} from "../rendering/cellComp";
 
 @Bean('mouseEventService')
 export class MouseEventService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    public getRenderedCellForEvent(event: MouseEvent | KeyboardEvent): CellComp {
+    public getRenderedCellForEvent(event: MouseEvent | KeyboardEvent): ICellComp {
 
         let sourceElement = _.getTarget(event);
 
@@ -26,8 +26,8 @@ export class MouseEventService {
     }
 
     public getGridCellForEvent(event: MouseEvent | KeyboardEvent): GridCell {
-        let renderedCell = this.getRenderedCellForEvent(event);
-        return renderedCell ? renderedCell.getGridCell() : null;
+        let cellComp = this.getRenderedCellForEvent(event);
+        return cellComp ? cellComp.getGridCell() : null;
     }
 
 }
