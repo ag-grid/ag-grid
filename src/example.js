@@ -222,6 +222,8 @@ var gridOptions = {
     rowHoverClass: true,
 // isScrollLag: function() { return true; },
 // suppressScrollLag: true,
+//     layoutInterval: -1,
+    // suppressAnimationFrame: true,
 // floatingTopRowData: [{},{},{}],
 // floatingBottomRowData: [{},{},{}],
 // callback when row clicked
@@ -994,7 +996,7 @@ function currencyFormatter(params) {
         if (params.node.group && params.column.aggFunc === 'count') {
             return params.value;
         } else {
-            return '£' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+            return '$' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
         }
     }
 }
