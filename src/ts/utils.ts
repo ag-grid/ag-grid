@@ -787,15 +787,6 @@ export class Utils {
     //     }
     // }
 
-    /**
-     * If icon provided, use this (either a string, or a function callback).
-     * if not, then use the second parameter, which is the svgFactory function
-     */
-    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
-        let eResult = document.createElement('span');
-        eResult.appendChild(this.createIconNoSpan(iconName, gridOptionsWrapper, column, svgFactoryFunc));
-        return eResult;
-    }
 
     static iconNameClassMap: {[key: string]: string } = {
         'columnMovePin': 'pin',
@@ -836,7 +827,22 @@ export class Utils {
         'columnSelectOpen': 'folder-open' 
     }
 
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
+    /**
+     * If icon provided, use this (either a string, or a function callback).
+     * if not, then use the second parameter, which is the svgFactory function
+     */
+    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc?: () => HTMLElement): HTMLElement {
+        const iconContents = this.createIconNoSpan(iconName, gridOptionsWrapper, column)
+        if (iconContents.classList.contains('ag-icon')) {
+            return iconContents;
+        } else {
+            let eResult = document.createElement('span');
+            eResult.appendChild(iconContents);
+            return eResult;
+        }
+    }
+
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc?: () => HTMLElement): HTMLElement {
         let userProvidedIcon: Function | string;
         // check col for icon first
         if (column && column.getColDef().icons) {
@@ -864,19 +870,13 @@ export class Utils {
                 throw 'iconRenderer should return back a string or a dom object';
             }
         } else {
-            //
-            // otherwise we use the built in icon
-            if (svgFactoryFunc) {
-                const span = document.createElement('span');
-                const cssClass = this.iconNameClassMap[iconName];
-                if (!cssClass) {
-                    throw new Error(`${iconName} did not find class`)
-                }
-                span.classList.add('ag-icon-' + cssClass);
-                return span;
-            } else {
-                return null;
+            const span = document.createElement('span');
+            const cssClass = this.iconNameClassMap[iconName];
+            if (!cssClass) {
+                throw new Error(`${iconName} did not find class`)
             }
+            span.classList.add('ag-icon', 'ag-icon-' + cssClass);
+            return span;
         }
     }
 

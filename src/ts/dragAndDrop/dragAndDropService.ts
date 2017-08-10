@@ -112,16 +112,16 @@ export class DragAndDropService {
 
     @PostConstruct
     private init(): void {
-        this.ePinnedIcon = _.createIcon('columnMovePin', this.gridOptionsWrapper, null, svgFactory.createPinIcon);
-        this.ePlusIcon = _.createIcon('columnMoveAdd', this.gridOptionsWrapper, null, svgFactory.createPlusIcon);
-        this.eHiddenIcon = _.createIcon('columnMoveHide', this.gridOptionsWrapper, null, svgFactory.createColumnHiddenIcon);
-        this.eMoveIcon = _.createIcon('columnMoveMove', this.gridOptionsWrapper, null, svgFactory.createMoveIcon);
-        this.eLeftIcon = _.createIcon('columnMoveLeft', this.gridOptionsWrapper, null, svgFactory.createLeftIcon);
-        this.eRightIcon = _.createIcon('columnMoveRight', this.gridOptionsWrapper, null, svgFactory.createRightIcon);
-        this.eGroupIcon = _.createIcon('columnMoveGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon);
-        this.eAggregateIcon = _.createIcon('columnMoveValue', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon);
-        this.ePivotIcon = _.createIcon('columnMovePivot', this.gridOptionsWrapper, null, svgFactory.createPivotIcon);
-        this.eDropNotAllowedIcon = _.createIcon('dropNotAllowed', this.gridOptionsWrapper, null, svgFactory.createDropNotAllowedIcon);
+        this.ePinnedIcon = _.createIcon('columnMovePin', this.gridOptionsWrapper, null);
+        this.ePlusIcon = _.createIcon('columnMoveAdd', this.gridOptionsWrapper, null);
+        this.eHiddenIcon = _.createIcon('columnMoveHide', this.gridOptionsWrapper, null);
+        this.eMoveIcon = _.createIcon('columnMoveMove', this.gridOptionsWrapper, null);
+        this.eLeftIcon = _.createIcon('columnMoveLeft', this.gridOptionsWrapper, null);
+        this.eRightIcon = _.createIcon('columnMoveRight', this.gridOptionsWrapper, null);
+        this.eGroupIcon = _.createIcon('columnMoveGroup', this.gridOptionsWrapper, null);
+        this.eAggregateIcon = _.createIcon('columnMoveValue', this.gridOptionsWrapper, null);
+        this.ePivotIcon = _.createIcon('columnMovePivot', this.gridOptionsWrapper, null);
+        this.eDropNotAllowedIcon = _.createIcon('dropNotAllowed', this.gridOptionsWrapper, null);
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {

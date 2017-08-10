@@ -46,7 +46,7 @@ class TempStubCell extends Component {
     }
 
     public init(params: ICellRendererParams): void {
-        let eLoadingIcon = _.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null, svgFactory.createGroupLoadingIcon);
+        let eLoadingIcon = _.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
         this.eLoadingIcon.appendChild(eLoadingIcon);
 
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
