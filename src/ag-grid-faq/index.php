@@ -51,6 +51,28 @@ include('../includes/faqHeader.php');
 <div class="row">
     <div class="col-md-12">
 
+    <h2>Getting Started</h2>
+
+        <div class="question">
+            <a data-toggle="collapse" href="javascript:void(0);" data-target="#answer_1">How does the license key work?</a>
+        </div>
+
+        <div class="answer collapse" id="answer_1">
+            <p>
+
+            </p>
+
+            <p>
+
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+
     <h2>License and Pricing</h2>
 
         <div class="question">
