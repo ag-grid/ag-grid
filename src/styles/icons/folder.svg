@@ -5,8 +5,8 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="folder" fill="#000000">
-            <polygon id="Path-3" points="2 3 1 4 1 9 2 10 9 10 10 9 10 5 9 4 6 4 5 3"></polygon>
+        <g id="folder" stroke="#000000">
+            <path d="M2.20710678,3.5 L1.5,4.20710678 L1.5,8.79289322 L2.20710678,9.5 L8.79289322,9.5 L9.5,8.79289322 L9.5,5.20710678 L8.79289322,4.5 L5.79289322,4.5 L4.79289322,3.5 L2.20710678,3.5 Z" id="Path-3"></path>
         </g>
     </g>
 </svg>
