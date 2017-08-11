@@ -21,6 +21,9 @@ export class SlickCellComp extends Component implements ICellComp {
     private eParentRow: HTMLElement;
     private active = true;
     private gridCell: GridCell;
+    private enterprise: boolean;
+    private rangeCount: number;
+
 
     //todo: this is not getting set yet
     private value: any;
@@ -33,6 +36,10 @@ export class SlickCellComp extends Component implements ICellComp {
         this.column = column;
         this.rowNode = rowNode;
         this.slickRowComp = slickRowComp;
+        // fixme - there should be a boolean in beans for enterprise
+        this.enterprise = !!beans.rangeController;
+
+        this.createGridCell();
     }
 
     public getCreateTemplate(): string {
@@ -49,6 +56,7 @@ export class SlickCellComp extends Component implements ICellComp {
         let cssClasses: string[] = ["ag-cell", "ag-cell-value", "ag-cell-no-focus", "ag-cell-not-inline-editing"];
         _.pushAll(cssClasses, this.getClassesFromColDef(col, value));
         _.pushAll(cssClasses, this.getClassesFromRules(col, value));
+        _.pushAll(cssClasses, this.getRangeClasses());
 
         template.push(`<div`);
         template.push(` role="gridcell"`);
@@ -286,10 +294,16 @@ export class SlickCellComp extends Component implements ICellComp {
         }
     }
 
+    private createGridCell(): void {
+        let gridCellDef = <GridCellDef> {
+            rowIndex: this.rowNode.rowIndex,
+            floating: this.rowNode.rowPinned,
+            column: this.column
+        };
+        this.gridCell = new GridCell(gridCellDef);
+    }
+
     public getGridCell(): GridCell {
-        if (!this.gridCell) {
-            this.gridCell = new GridCell({rowIndex: this.rowNode.rowIndex, floating: this.rowNode.rowPinned, column: this.column});
-        }
         return this.gridCell;
     }
 
@@ -332,6 +346,30 @@ export class SlickCellComp extends Component implements ICellComp {
         this.getGui().style.width = width + 'px';
     }
 
+    private getRangeClasses(): string[] {
+        let res: string[] = [];
+        this.rangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
+        if (this.rangeCount!==0) { res.push('ag-cell-range-selected'); }
+        if (this.rangeCount===1) { res.push('ag-cell-range-selected-1'); }
+        if (this.rangeCount===2) { res.push('ag-cell-range-selected-2'); }
+        if (this.rangeCount===3) { res.push('ag-cell-range-selected-3'); }
+        if (this.rangeCount>=4) { res.push('ag-cell-range-selected-4'); }
+        return res;
+    }
+
+    private onRangeSelectionChanged(): void {
+        let newRangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
+        let eGui = this.getGui();
+        if (this.rangeCount !== newRangeCount) {
+            _.addOrRemoveCssClass(eGui, 'ag-cell-range-selected', newRangeCount!==0);
+            _.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-1', newRangeCount===1);
+            _.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-2', newRangeCount===2);
+            _.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-3', newRangeCount===3);
+            _.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-4', newRangeCount>=4);
+            this.rangeCount = newRangeCount;
+        }
+    }
+
     public afterAttached(): void {
         let querySelector = `[colid="${this.column.getId()}"]`;
         let eGui = <HTMLElement> this.eParentRow.querySelector(querySelector);
@@ -341,6 +379,11 @@ export class SlickCellComp extends Component implements ICellComp {
         this.addDomData();
         this.addDestroyableEventListener(this.column, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this));
+
+        // range controller not present if using ag-Grid free
+        if (this.enterprise) {
+            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this))
+        }
     }
 
     private addDomData(): void {
