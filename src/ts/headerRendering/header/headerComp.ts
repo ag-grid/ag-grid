@@ -84,8 +84,8 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.eText.innerHTML = displayName;
     }
 
-    private addInIcon(iconName: string, eParent: HTMLElement, column: Column, defaultIconFactory: () => HTMLElement): void {
-        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
+    private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
+        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
         eParent.appendChild(eIcon);
     }
 
