@@ -5,6 +5,13 @@
  */
 // @import 'nib';
 //
+
+@mixin icon-background($icon) {
+    width: 12px;
+    height: 12px;
+    background: transparent url('./icons/#{$icon}.svg') top no-repeat;
+    background-size: 12px 12px;
+}
  
 .ag-#{$ag-style} {
     // copying bootstrap with line-height, sorts out alignment problems with images beside text
@@ -110,7 +117,7 @@
         padding: 2px;
     }
     .ag-rich-select-list {
-        border-top: 1px solid ag-separator-color;
+        border-top: 1px solid $ag-separator-color;
     }
     .ag-rich-select-row {
         padding: 2px;
@@ -139,6 +146,26 @@
         stroke: none;
         fill: $ag-header-foreground-1;
     }
+
+    .ag-filter-icon {
+        display: inline-block;
+        @include icon-background('filter');
+    }
+    .ag-sort-ascending-icon {
+        display: inline-block;
+        @include icon-background('asc');
+    }
+
+    .ag-sort-descending-icon {
+        display: inline-block;
+        @include icon-background('desc');
+    }
+
+    .ag-sort-none-icon {
+        display: inline-block;
+        @include icon-background('none');
+    }
+
     .ag-layout-for-print .ag-header-container {
         background: $ag-header-background-1;
         border-bottom: $ag-border-1;
@@ -185,16 +212,18 @@
     .ag-ltr .ag-header-group-text {
         margin-right: 2px;
     }
+
     .ag-header-cell-menu-button {
-        padding: 2px;
         margin-top: 4px;
         margin-left: 1px;
         margin-right: 1px;
         border: 1px solid transparent;
         border-radius: 3px;
         box-sizing: content-box; // When using bootstrap, box-sizing was set to 'border-box'
-        line-height: 0px; // normal line height, a space was appearing below the menu button
+        @include icon-background('menu');
+        padding: 1px;
     }
+
     .ag-ltr .ag-pinned-right-header {
         border-left: $ag-border-1;
     }
@@ -452,7 +481,7 @@
     }
 
     .ag-column-drop-icon {
-        margin: 3px;
+        margin: 6px 3px 0px 3px;
     }
     .ag-column-drop {
         background-color: $ag-background-1;
@@ -507,5 +536,24 @@
     }
     .ag-select-agg-func-item:hover {
         background-color: $ag-menu-option-active-color;
+    }
+
+}
+
+/* icons are used outside of the grid root (in the ghost) */
+
+$icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter folder-open folder group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right;
+@each $icon in $icons {
+    .ag-icon-#{$icon} {
+        display: inline-block;
+        @include icon-background('#{$icon}');
+    }
+}
+
+$checkboxes: checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked;
+
+@each $checkbox in $checkboxes {
+    .ag-icon-#{$checkbox} {
+        height: 11px;
     }
 }

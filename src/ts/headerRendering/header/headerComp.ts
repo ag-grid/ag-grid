@@ -7,7 +7,6 @@ import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {SortController} from "../../sortController";
 import {TouchListener} from "../../widgets/touchListener";
 import {IComponent} from "../../interfaces/iComponent";
-import {SvgFactory} from "../../svgFactory";
 import {EventService} from "../../eventService";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {Events} from "../../events";
@@ -34,8 +33,6 @@ export interface IHeader {
 export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
 
 }
-
-let svgFactory = SvgFactory.getInstance();
 
 export class HeaderComp extends Component implements IHeaderComp {
 
@@ -77,7 +74,6 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.params = params;
 
         this.setupTap();
-        this.setupIcons(params.column);
         this.setupMenu();
         this.setupSort();
         this.setupFilterIcon();
@@ -88,16 +84,8 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.eText.innerHTML = displayName;
     }
 
-    private setupIcons(column:Column): void {
-        this.addInIcon('sortAscending', this.eSortAsc, column, svgFactory.createArrowUpSvg);
-        this.addInIcon('sortDescending', this.eSortDesc, column, svgFactory.createArrowDownSvg);
-        this.addInIcon('sortUnSort', this.eSortNone, column, svgFactory.createArrowUpDownSvg);
-        this.addInIcon('menu', this.eMenu, column, svgFactory.createMenuSvg);
-        this.addInIcon('filter', this.eFilter, column, svgFactory.createFilterSvg);
-    }
-
-    private addInIcon(iconName: string, eParent: HTMLElement, column: Column, defaultIconFactory: () => HTMLElement): void {
-        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
+    private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
+        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
         eParent.appendChild(eIcon);
     }
 

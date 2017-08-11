@@ -28,7 +28,6 @@ const HTML_ESCAPES: { [id: string]: string } = {
 
 const reUnescapedHtml = /[&<>"']/g;
 
-
 export class Utils {
 
     // taken from:
@@ -788,17 +787,66 @@ export class Utils {
     //     }
     // }
 
-    /**
-     * If icon provided, use this (either a string, or a function callback).
-     * if not, then use the second parameter, which is the svgFactory function
-     */
-    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
-        let eResult = document.createElement('span');
-        eResult.appendChild(this.createIconNoSpan(iconName, gridOptionsWrapper, column, svgFactoryFunc));
-        return eResult;
+
+    static iconNameClassMap: {[key: string]: string } = {
+        'columnMovePin': 'pin',
+        'columnMoveAdd': 'plus',
+        'columnMoveHide': 'eye-slash',
+        'columnMoveMove': 'arrows', 
+        'columnMoveLeft': 'left',
+        'columnMoveRight': 'right',
+        'columnMoveGroup': 'group',
+        'columnMoveValue': 'aggregation',
+        'columnMovePivot': 'pivot',
+        'dropNotAllowed': 'not-allowed',
+        'groupContracted': 'expanded',
+        'groupExpanded': 'contracted',
+        'checkboxChecked': 'checkbox-checked',
+        'checkboxUnchecked': 'checkbox-unchecked',
+        'checkboxIndeterminate': 'checkbox-indeterminate',
+        'checkboxCheckedReadOnly': 'checkbox-checked-readonly',
+        'checkboxUncheckedReadOnly': 'checkbox-unchecked-readonly',
+        'checkboxIndeterminateReadOnly': 'checkbox-indeterminate-readonly',
+        'groupLoading': 'loading',
+        'menu': 'menu',
+        'filter': 'filter',
+        'columns': 'columns',
+        'menuPin': 'pin',
+        'menuValue': 'aggregation',
+        'menuAddRowGroup': 'group',
+        'menuRemoveRowGroup': 'group',
+        'clipboardCopy': 'copy',
+        'clipboardCut': 'cut',
+        'clipboardPaste': 'paste',
+        'pivotPanel': 'pivot',
+        'rowGroupPanel': 'group', 
+        'valuePanel': 'aggregation', 
+        'columnGroupOpened': 'expanded',
+        'columnGroupClosed': 'contracted',
+        'columnSelectClosed': 'folder', 
+        'columnSelectOpen': 'folder-open',
+        // from deprecated header, remove at some point
+        'sortAscending': 'asc',
+        'sortDescending': 'asc',
+        'sortUnSort': 'none'
     }
 
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
+    /**
+     * If icon provided, use this (either a string, or a function callback).
+     * if not, then use the default icon from the theme
+     */
+    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement {
+        const iconContents = this.createIconNoSpan(iconName, gridOptionsWrapper, column)
+        if (iconContents.classList.contains('ag-icon')) {
+            return iconContents;
+        } else {
+            let eResult = document.createElement('span');
+            eResult.appendChild(iconContents);
+            return eResult;
+        }
+    }
+
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement {
         let userProvidedIcon: Function | string;
         // check col for icon first
         if (column && column.getColDef().icons) {
@@ -826,12 +874,13 @@ export class Utils {
                 throw 'iconRenderer should return back a string or a dom object';
             }
         } else {
-            // otherwise we use the built in icon
-            if (svgFactoryFunc) {
-                return svgFactoryFunc();
-            } else {
-                return null;
+            const span = document.createElement('span');
+            const cssClass = this.iconNameClassMap[iconName];
+            if (!cssClass) {
+                throw new Error(`${iconName} did not find class`)
             }
+            span.classList.add('ag-icon', 'ag-icon-' + cssClass);
+            return span;
         }
     }
 

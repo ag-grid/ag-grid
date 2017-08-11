@@ -1,4 +1,3 @@
-import {SvgFactory} from "../../svgFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {ExpressionService} from "../../valueService/expressionService";
 import {EventService} from "../../eventService";
@@ -14,8 +13,6 @@ import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import {RefSelector} from "../../widgets/componentAnnotations";
-
-let svgFactory = SvgFactory.getInstance();
 
 export interface GroupCellRendererParams extends ICellRendererParams{
     pinned:string,
@@ -268,8 +265,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private addExpandAndContract(): void {
         let params = this.params;
         let eGroupCell: HTMLElement = params.eGridCell;
-        let eExpandedIcon = _.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null, svgFactory.createGroupContractedIcon);
-        let eContractedIcon = _.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedIcon);
+        let eExpandedIcon = _.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
+        let eContractedIcon = _.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
 

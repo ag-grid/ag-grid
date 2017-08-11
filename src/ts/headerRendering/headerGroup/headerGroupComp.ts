@@ -1,7 +1,6 @@
 
 import {Component} from "../../widgets/component";
 import {IComponent} from "../../interfaces/iComponent";
-import {SvgFactory} from "../../svgFactory";
 import {Utils as _} from "../../utils";
 import {ColumnGroup} from "../../entities/columnGroup";
 import {ColumnApi, ColumnController} from "../../columnController/columnController";
@@ -13,8 +12,6 @@ import {TouchListener} from "../../widgets/touchListener";
 import {RefSelector, Listener} from "../../widgets/componentAnnotations";
 import {OriginalColumnGroup} from "../../entities/originalColumnGroup";
 import {GridApi} from "../../gridApi";
-
-let svgFactory = SvgFactory.getInstance();
 
 export interface IHeaderGroupParams {
     columnGroup: ColumnGroup;
@@ -69,8 +66,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
     private setupExpandIcons(): void {
 
-        this.addInIcon('columnGroupOpened', 'agOpened', svgFactory.createGroupExpandedIcon);
-        this.addInIcon('columnGroupClosed', 'agClosed', svgFactory.createGroupContractedIcon);
+        this.addInIcon('columnGroupOpened', 'agOpened');
+        this.addInIcon('columnGroupClosed', 'agClosed');
 
         this.addTouchAndClickListeners(this.eCloseIcon);
         this.addTouchAndClickListeners(this.eOpenIcon);
@@ -104,8 +101,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         _.setVisible(this.eCloseIcon, false);
     }
 
-    private addInIcon(iconName: string, refName: string, defaultIconFactory: () => HTMLElement): void {
-        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, null, defaultIconFactory);
+    private addInIcon(iconName: string, refName: string): void {
+        let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, null);
         this.getRefElement(refName).appendChild(eIcon);
     }
 

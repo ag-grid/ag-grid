@@ -22,11 +22,8 @@ import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellR
 import {BeanStub} from "../context/beanStub";
 import {RowContainerComponent} from "./rowContainerComponent";
 import {Component} from "../widgets/component";
-import {SvgFactory} from "../svgFactory";
 import {RefSelector} from "../widgets/componentAnnotations";
 import {Beans} from "./beans";
-
-let svgFactory = SvgFactory.getInstance();
 
 class TempStubCell extends Component {
 
@@ -46,7 +43,7 @@ class TempStubCell extends Component {
     }
 
     public init(params: ICellRendererParams): void {
-        let eLoadingIcon = _.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null, svgFactory.createGroupLoadingIcon);
+        let eLoadingIcon = _.createIconNoSpan('groupLoading', this.gridOptionsWrapper, null);
         this.eLoadingIcon.appendChild(eLoadingIcon);
 
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
