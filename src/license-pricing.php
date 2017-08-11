@@ -38,7 +38,12 @@
     <!-- End Facebook Pixel Code -->
 
 
+
 </head>
+
+<script>
+fbq('track', 'ViewContent');
+</script>
 
 <body ng-app="index" class="big-text">
 
