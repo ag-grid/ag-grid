@@ -4,7 +4,6 @@ import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {SlickRowComp} from "./slickRowComp";
 import {_} from "../utils";
-import {SetLeftFeature} from "./features/setLeftFeature";
 import {CellComp, ICellComp} from "./cellComp";
 import {GridCell, GridCellDef} from "../entities/gridCell";
 import {
@@ -12,6 +11,9 @@ import {
     CellMouseOverEvent, Events
 } from "../events";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
+import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
+import {ICellEditorComp} from "./cellEditors/iCellEditor";
+import {IRowComp} from "./rowComp";
 
 export class SlickCellComp extends Component implements ICellComp {
 
@@ -21,27 +23,75 @@ export class SlickCellComp extends Component implements ICellComp {
     private beans: Beans;
     private column: Column;
     private rowNode: RowNode;
-    private slickRowComp: SlickRowComp;
     private eParentRow: HTMLElement;
     private active = true;
     private gridCell: GridCell;
     private rangeCount: number;
     private usingWrapper: boolean;
 
-    //todo: this is not getting set yet
+    // the cellRenderer class to use
+    private cellRendererKey: {new(): ICellRendererComp} | ICellRendererFunc | string;
+    private cellRendererParams: any;
+
+    // instance of the cellRenderer class
+    private cellRenderer: ICellRendererComp;
+    private cellEditor: ICellEditorComp;
+
+    private rowComp: SlickRowComp;
+
     private value: any;
+
     //todo: this is not getting set yet
     private scope: null;
 
-    constructor(beans: Beans, column: Column, rowNode: RowNode, slickRowComp: SlickRowComp) {
+    constructor(beans: Beans, column: Column, rowNode: RowNode, rowComp: SlickRowComp) {
         super();
         this.beans = beans;
         this.column = column;
         this.rowNode = rowNode;
-        this.slickRowComp = slickRowComp;
+        this.rowComp = rowComp;
 
+        this.value = this.getValue();
+        this.selectCellRenderer();
         this.createGridCell();
         this.setUsingWrapper();
+    }
+
+    public getInitialValueToRender(): string {
+        // if using a cellRenderer, then there is no initial value to render,
+        // todo: unless the result is a string
+        if (this.cellRendererKey) { return ''; }
+
+        let colDef = this.column.getColDef();
+        if (colDef.template) {
+            // template is really only used for angular 1 - as people using ng1 are used to providing templates with
+            // bindings in it. in ng2, people will hopefully want to provide components, not templates.
+            return colDef.template;
+        } else if (colDef.templateUrl) {
+            // likewise for templateUrl - it's for ng1 really - when we move away from ng1, we can take these out.
+            // niall was pro angular 1 when writing template and templateUrl, if writing from scratch now, would
+            // not do these, but would follow a pattern that was friendly towards components, not templates.
+            let template = this.beans.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
+            if (template) {
+                return template;
+            } else {
+                return '';
+            }
+        } else {
+            let valueFormatted = this.beans.valueFormatterService.formatValue(
+                this.column, this.rowNode, null, this.value);
+            let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
+            return valueFormattedExits ? valueFormatted : this.value;
+        }
+    }
+
+    // + stop editing {dontSkipRefresh: true}
+    // + event cellChanged {}
+    // + cellRenderer.params.refresh() {} -> method passes 'as is' to the cellRenderer, so params could be anything
+    // + rowComp: event dataChanged {animate: update, newData: !update}
+    // + rowComp: api refreshCells() {animate: true/false}
+    // + rowRenderer: api softRefreshView() {}
+    public refreshCell(params?: {suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean, volatile?: boolean}): void {
     }
 
     public getCreateTemplate(): string {
@@ -50,16 +100,13 @@ export class SlickCellComp extends Component implements ICellComp {
 
         let width = col.getActualWidth();
         let left = col.getLeft();
-        let value = this.getValue(col);
-        let valueFormatted = this.beans.valueFormatterService.formatValue(col, this.rowNode, null, value);
-        let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
-        let valueToRender = valueFormattedExits ? valueFormatted : value;
+
+        let valueToRender = this.getInitialValueToRender();
+        let tooltip = this.getToolTip();
 
         let cssClasses: string[] = ["ag-cell", "ag-cell-no-focus", "ag-cell-not-inline-editing"];
         let wrapperStart: string;
         let wrapperEnd: string;
-
-        // let cssWrapperClasses: string[] = [];
 
         if (this.usingWrapper) {
             wrapperStart = '<span ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value">';
@@ -68,14 +115,15 @@ export class SlickCellComp extends Component implements ICellComp {
             cssClasses.push('ag-cell-value');
         }
 
-        _.pushAll(cssClasses, this.getClassesFromColDef(col, value));
-        _.pushAll(cssClasses, this.getClassesFromRules(col, value));
+        _.pushAll(cssClasses, this.getClassesFromColDef());
+        _.pushAll(cssClasses, this.getClassesFromRules());
         _.pushAll(cssClasses, this.getRangeClasses());
 
         template.push(`<div`);
         template.push(` role="gridcell"`);
         template.push(` colid="${col.getId()}"`);
         template.push(` class="${cssClasses.join(' ')}"`);
+        template.push(  tooltip ? ` title="${tooltip}"` : ``);
         template.push(` style="width: ${width}px; left: ${left}px;" >`);
         template.push(wrapperStart);
         template.push(valueToRender);
@@ -85,17 +133,27 @@ export class SlickCellComp extends Component implements ICellComp {
         return template.join('');
     }
 
-    private getClassesFromColDef(column: Column, value: any): string[] {
+    private getToolTip(): string {
+        let colDef = this.column.getColDef();
+        let data = this.rowNode.data;
+        if (colDef.tooltipField && _.exists(data)) {
+            return _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
+        } else {
+            return null;
+        }
+    }
+
+    private getClassesFromColDef(): string[] {
 
         let res: string[] = [];
 
         this.beans.stylingService.processStaticCellClasses(
-            column.getColDef(),
+            this.column.getColDef(),
             {
-                value: value,
+                value: this.value,
                 data: this.rowNode.data,
                 node: this.rowNode,
-                colDef: column.getColDef(),
+                colDef: this.column.getColDef(),
                 rowIndex: this.rowNode.rowIndex,
                 api: this.beans.gridOptionsWrapper.getApi(),
                 context: this.beans.gridOptionsWrapper.getContext()
@@ -108,17 +166,17 @@ export class SlickCellComp extends Component implements ICellComp {
         return res;
     }
 
-    private getClassesFromRules(column: Column, value: any): string[] {
+    private getClassesFromRules(): string[] {
 
         let res: string[] = [];
 
         this.beans.stylingService.processCellClassRules(
-            column.getColDef(),
+            this.column.getColDef(),
             {
-                value: value,
+                value: this.value,
                 data: this.rowNode.data,
                 node: this.rowNode,
-                colDef: column.getColDef(),
+                colDef: this.column.getColDef(),
                 rowIndex: this.rowNode.rowIndex,
                 api: this.beans.gridOptionsWrapper.getApi(),
                 context: this.beans.gridOptionsWrapper.getContext()
@@ -150,63 +208,95 @@ export class SlickCellComp extends Component implements ICellComp {
         }
     }
 
+    private selectCellRenderer(): void {
+        // template gets preference, then cellRenderer, then do it ourselves
+        let colDef = this.column.getColDef();
 
-    /*    private putDataIntoCell() {
-            // template gets preference, then cellRenderer, then do it ourselves
-            let colDef = this.column.getColDef();
+        // templates are for ng1, ideally we wouldn't have these, they are ng1 support
+        // inside the core which is bad
+        if (colDef.template || colDef.templateUrl) { return; }
 
-            let cellRenderer = this.column.getCellRenderer();
-            let floatingCellRenderer = this.column.getFloatingCellRenderer();
+        let cellRenderer = this.column.getCellRenderer();
+        let floatingCellRenderer = this.column.getFloatingCellRenderer();
 
-            let valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
+        if (floatingCellRenderer && this.rowNode.rowPinned) {
+            this.cellRendererKey = floatingCellRenderer;
+            this.cellRendererParams = colDef.pinnedRowCellRendererParams;
+        } else if (cellRenderer) {
+            this.cellRendererKey = cellRenderer;
+            this.cellRendererParams = colDef.cellRendererParams;
+        }
+    }
 
-            if (colDef.template) {
-                // template is really only used for angular 1 - as people using ng1 are used to providing templates with
-                // bindings in it. in ng2, people will hopefully want to provide components, not templates.
-                this.eParentOfValue.innerHTML = colDef.template;
-            } else if (colDef.templateUrl) {
-                // likewise for templateUrl - it's for ng1 really - when we move away from ng1, we can take these out.
-                // niall was pro angular 1 when writing template and templateUrl, if writing from scratch now, would
-                // not do these, but would follow a pattern that was friendly towards components, not templates.
-                let template = this.beans.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
-                if (template) {
-                    this.eParentOfValue.innerHTML = template;
-                }
-                // use cell renderer if it exists
-            } else if (floatingCellRenderer && this.node.rowPinned) {
-                // if floating, then give preference to floating cell renderer
-                this.useCellRenderer(floatingCellRenderer, colDef.pinnedRowCellRendererParams, valueFormatted);
-            } else if (cellRenderer) {
-                // if we insert undefined, then it displays as the string 'undefined', ugly!
-                let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
-                let valueToRender = valueFormattedExits ? valueFormatted : this.value;
-                this.useCellRenderer(cellRenderer, colDef.cellRendererParams, valueToRender);
-            } else {
-                let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
-                let valueToRender = valueFormattedExits ? valueFormatted : this.value;
-                if (valueToRender!==null && valueToRender!==undefined) {
-                    this.eParentOfValue.innerText = valueToRender;
-                }
+    private useCellRenderer(): void {
+        let noCellRenderer = !this.cellRendererKey;
+        if (noCellRenderer) { return; }
+
+        let valueFormatted = this.beans.valueFormatterService.formatValue(
+            this.column, this.rowNode, null, this.value);
+        let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
+        let valueToRender = valueFormattedExits ? valueFormatted : this.value;
+
+        let params = this.createRendererAndRefreshParams(valueToRender, this.cellRendererParams);
+
+        this.cellRenderer = this.beans.cellRendererService.useCellRenderer(
+            this.column.getColDef(), this.eParentOfValue, params);
+    }
+
+    private createRendererAndRefreshParams(valueFormatted: string, cellRendererParams: {}): ICellRendererParams {
+
+        let params = <ICellRendererParams> {
+            value: this.value,
+            valueFormatted: valueFormatted,
+            getValue: this.getValue.bind(this),
+            setValue: (value: any) => { this.beans.valueService.setValue(this.rowNode, this.column, value) },
+            formatValue: this.formatValue.bind(this),
+            data: this.rowNode.data,
+            node: this.rowNode,
+            colDef: this.column.getColDef(),
+            column: this.column,
+            $scope: this.scope,
+            rowIndex: this.gridCell.rowIndex,
+            api: this.beans.gridOptionsWrapper.getApi(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            context: this.beans.gridOptionsWrapper.getContext(),
+            refreshCell: this.refreshCell.bind(this),
+            eGridCell: this.getGui(),
+            eParentOfValue: this.eParentOfValue,
+
+            // these bits are not documented anywhere, so we could drop them?
+            // it was in the olden days to allow user to register for when rendered
+            // row was removed (the row comp was removed), however now that the user
+            // can provide components for cells, the destroy method gets call when this
+            // happens so no longer need to fire event.
+            addRowCompListener: this.rowComp.addEventListener.bind(this.rowComp),
+            addRenderedRowListener: (eventType: string, listener: Function) => {
+                console.warn('ag-Grid: since ag-Grid .v11, params.addRenderedRowListener() is now params.addRowCompListener()');
+                this.rowComp.addEventListener(eventType, listener);
             }
-            if (colDef.tooltipField) {
-                let data = this.node.data;
-                if (_.exists(data)) {
-                    let tooltip = _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
-                    if (_.exists(tooltip)) {
-                        this.eParentOfValue.setAttribute('title', tooltip);
-                    }
-                }
-            }
-        }*/
+        };
 
-    private getValue(column: Column): any {
+        if (cellRendererParams) {
+            _.assign(params, cellRendererParams);
+        }
+
+        return params;
+    }
+
+    private formatValue(value: any): any {
+        let valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, value);
+        let valueFormattedExists = valueFormatted !== null && valueFormatted !== undefined;
+        return valueFormattedExists ? valueFormatted : value;
+    }
+
+    private getValue(): any {
         let isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer;
         if (isOpenGroup && this.beans.gridOptionsWrapper.isGroupIncludeFooter()) {
             // if doing grouping and footers, we don't want to include the agg value
             // in the header when the group is open
-            return this.beans.valueService.getValue(column, this.rowNode, true);
+            return this.beans.valueService.getValue(this.column, this.rowNode, true);
         } else {
-            return this.beans.valueService.getValue(column, this.rowNode);
+            return this.beans.valueService.getValue(this.column, this.rowNode);
         }
     }
 
@@ -400,15 +490,6 @@ export class SlickCellComp extends Component implements ICellComp {
         return this.column;
     }
 
-    // public getGui(): HTMLElement {
-    //     let res = super.getGui();
-    //     if (!res) {
-    //         res = this.slickRowComp.getElementForCell(this.column);
-    //         this.setGui(res);
-    //     }
-    //     return res;
-    // }
-
     public detach(): void {
         this.eParentRow.removeChild(this.getGui());
     }
@@ -461,6 +542,8 @@ export class SlickCellComp extends Component implements ICellComp {
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.addDomData();
         this.addSelectionCheckbox();
+        this.useCellRenderer();
+
         this.addDestroyableEventListener(this.column, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this));
 
