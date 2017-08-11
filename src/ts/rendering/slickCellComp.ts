@@ -11,8 +11,12 @@ import {
     CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEvent, CellMouseOutEvent,
     CellMouseOverEvent, Events
 } from "../events";
+import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 
 export class SlickCellComp extends Component implements ICellComp {
+
+    private eCellWrapper: HTMLElement;
+    private eParentOfValue: HTMLElement;
 
     private beans: Beans;
     private column: Column;
@@ -21,9 +25,8 @@ export class SlickCellComp extends Component implements ICellComp {
     private eParentRow: HTMLElement;
     private active = true;
     private gridCell: GridCell;
-    private enterprise: boolean;
     private rangeCount: number;
-
+    private usingWrapper: boolean;
 
     //todo: this is not getting set yet
     private value: any;
@@ -36,10 +39,9 @@ export class SlickCellComp extends Component implements ICellComp {
         this.column = column;
         this.rowNode = rowNode;
         this.slickRowComp = slickRowComp;
-        // fixme - there should be a boolean in beans for enterprise
-        this.enterprise = !!beans.rangeController;
 
         this.createGridCell();
+        this.setUsingWrapper();
     }
 
     public getCreateTemplate(): string {
@@ -53,7 +55,19 @@ export class SlickCellComp extends Component implements ICellComp {
         let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
         let valueToRender = valueFormattedExits ? valueFormatted : value;
 
-        let cssClasses: string[] = ["ag-cell", "ag-cell-value", "ag-cell-no-focus", "ag-cell-not-inline-editing"];
+        let cssClasses: string[] = ["ag-cell", "ag-cell-no-focus", "ag-cell-not-inline-editing"];
+        let wrapperStart: string;
+        let wrapperEnd: string;
+
+        // let cssWrapperClasses: string[] = [];
+
+        if (this.usingWrapper) {
+            wrapperStart = '<span ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value">';
+            wrapperEnd = '</span></span>';
+        } else {
+            cssClasses.push('ag-cell-value');
+        }
+
         _.pushAll(cssClasses, this.getClassesFromColDef(col, value));
         _.pushAll(cssClasses, this.getClassesFromRules(col, value));
         _.pushAll(cssClasses, this.getRangeClasses());
@@ -63,7 +77,9 @@ export class SlickCellComp extends Component implements ICellComp {
         template.push(` colid="${col.getId()}"`);
         template.push(` class="${cssClasses.join(' ')}"`);
         template.push(` style="width: ${width}px; left: ${left}px;" >`);
+        template.push(wrapperStart);
         template.push(valueToRender);
+        template.push(wrapperEnd);
         template.push(`</div>`);
 
         return template.join('');
@@ -117,6 +133,71 @@ export class SlickCellComp extends Component implements ICellComp {
 
         return res;
     }
+
+    public setUsingWrapper(): void {
+        // if boolean set, then just use it
+        let colDef = this.column.getColDef();
+
+        // never allow selection on pinned rows
+        if (this.rowNode.rowPinned) {
+            this.usingWrapper = false;
+        } else if (typeof colDef.checkboxSelection === 'boolean') {
+            this.usingWrapper = <boolean> colDef.checkboxSelection;
+        } else if (typeof colDef.checkboxSelection === 'function') {
+            this.usingWrapper = true;
+        } else {
+            this.usingWrapper = false;
+        }
+    }
+
+
+    /*    private putDataIntoCell() {
+            // template gets preference, then cellRenderer, then do it ourselves
+            let colDef = this.column.getColDef();
+
+            let cellRenderer = this.column.getCellRenderer();
+            let floatingCellRenderer = this.column.getFloatingCellRenderer();
+
+            let valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
+
+            if (colDef.template) {
+                // template is really only used for angular 1 - as people using ng1 are used to providing templates with
+                // bindings in it. in ng2, people will hopefully want to provide components, not templates.
+                this.eParentOfValue.innerHTML = colDef.template;
+            } else if (colDef.templateUrl) {
+                // likewise for templateUrl - it's for ng1 really - when we move away from ng1, we can take these out.
+                // niall was pro angular 1 when writing template and templateUrl, if writing from scratch now, would
+                // not do these, but would follow a pattern that was friendly towards components, not templates.
+                let template = this.beans.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
+                if (template) {
+                    this.eParentOfValue.innerHTML = template;
+                }
+                // use cell renderer if it exists
+            } else if (floatingCellRenderer && this.node.rowPinned) {
+                // if floating, then give preference to floating cell renderer
+                this.useCellRenderer(floatingCellRenderer, colDef.pinnedRowCellRendererParams, valueFormatted);
+            } else if (cellRenderer) {
+                // if we insert undefined, then it displays as the string 'undefined', ugly!
+                let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
+                let valueToRender = valueFormattedExits ? valueFormatted : this.value;
+                this.useCellRenderer(cellRenderer, colDef.cellRendererParams, valueToRender);
+            } else {
+                let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
+                let valueToRender = valueFormattedExits ? valueFormatted : this.value;
+                if (valueToRender!==null && valueToRender!==undefined) {
+                    this.eParentOfValue.innerText = valueToRender;
+                }
+            }
+            if (colDef.tooltipField) {
+                let data = this.node.data;
+                if (_.exists(data)) {
+                    let tooltip = _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
+                    if (_.exists(tooltip)) {
+                        this.eParentOfValue.setAttribute('title', tooltip);
+                    }
+                }
+            }
+        }*/
 
     private getValue(column: Column): any {
         let isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer;
@@ -348,6 +429,7 @@ export class SlickCellComp extends Component implements ICellComp {
 
     private getRangeClasses(): string[] {
         let res: string[] = [];
+        if (!this.beans.enterprise) { return res; }
         this.rangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
         if (this.rangeCount!==0) { res.push('ag-cell-range-selected'); }
         if (this.rangeCount===1) { res.push('ag-cell-range-selected-1'); }
@@ -375,14 +457,38 @@ export class SlickCellComp extends Component implements ICellComp {
         let eGui = <HTMLElement> this.eParentRow.querySelector(querySelector);
         this.setGui(eGui);
 
+
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.addDomData();
+        this.addSelectionCheckbox();
         this.addDestroyableEventListener(this.column, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this));
 
         // range controller not present if using ag-Grid free
-        if (this.enterprise) {
+        if (this.beans.enterprise && this.beans.gridOptionsWrapper.isEnableRangeSelection()) {
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this))
+        }
+    }
+
+    private addSelectionCheckbox(): void {
+        if (this.usingWrapper) {
+            this.eParentOfValue = this.getRefElement('eCellValue');
+            this.eCellWrapper = this.getRefElement('eCellWrapper');
+
+            let cbSelectionComponent = new CheckboxSelectionComponent();
+            this.beans.context.wireBean(cbSelectionComponent);
+
+            let visibleFunc = this.column.getColDef().checkboxSelection;
+            visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
+
+            cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});
+            this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
+
+            // put the checkbox in before the value
+            this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eParentOfValue);
+
+        } else {
+            this.eParentOfValue = this.getGui();
         }
     }
 

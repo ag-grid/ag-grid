@@ -51,5 +51,6 @@ export class Beans {
     @Autowired('valueFormatterService') public valueFormatterService: ValueFormatterService;
     @Autowired('stylingService') public stylingService: StylingService;
     @Autowired('columnHoverService') public columnHoverService: ColumnHoverService;
+    @Autowired('enterprise') public enterprise: boolean;
 
 }

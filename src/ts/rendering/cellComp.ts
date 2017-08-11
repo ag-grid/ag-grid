@@ -185,7 +185,7 @@ export class CellComp extends Component implements ICellComp {
         this.eParentRow = eParentRow;
     }
 
-    public setupCheckboxSelection(): void {
+    public setUsingWrapper(): void {
         // if boolean set, then just use it
         let colDef = this.column.getColDef();
 
@@ -350,7 +350,7 @@ export class CellComp extends Component implements ICellComp {
         this.createGridCell();
         this.addIndexChangeListener();
 
-        this.setupCheckboxSelection();
+        this.setUsingWrapper();
 
         this.setWidthOnCell();
         this.setPinnedClasses();

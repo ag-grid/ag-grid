@@ -25,6 +25,8 @@ export class SlickRowComp extends Component implements IRowComp {
 
     private active = true;
 
+    private fullWidthRow: boolean;
+
     private slickCellComps: {[key: string]: SlickCellComp} = {};
 
     constructor(bodyContainerComp: RowContainerComponent,
@@ -58,6 +60,7 @@ export class SlickRowComp extends Component implements IRowComp {
 
     private addListeners(): void {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
 
         let eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.refreshCells.bind(this));
@@ -273,20 +276,68 @@ export class SlickRowComp extends Component implements IRowComp {
         });
     }
 
+    private getInitialRowClasses(): string[] {
+        let classes: string[] = [];
+
+        classes.push('ag-row');
+        classes.push('ag-row-no-focus');
+
+        if (this.rowNode.rowIndex % 2 === 0) {
+            classes.push('ag-row-even');
+        } else {
+            classes.push('ag-row-odd');
+        }
+
+        if (this.beans.gridOptionsWrapper.isAnimateRows()) {
+            classes.push('ag-row-animation');
+        } else {
+            classes.push('ag-row-no-animation');
+        }
+
+        if (this.rowNode.isSelected()) {
+            classes.push('ag-row-selected');
+        }
+
+        if (this.rowNode.group) {
+            classes.push('ag-row-group');
+            // if a group, put the level of the group in
+            classes.push('ag-row-level-' + this.rowNode.level);
+
+            if (this.rowNode.footer) {
+                classes.push('ag-row-footer');
+            }
+        } else {
+            // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
+            if (this.rowNode.parent) {
+                classes.push('ag-row-level-' + (this.rowNode.parent.level + 1));
+            } else {
+                classes.push('ag-row-level-0');
+            }
+        }
+
+        if (this.rowNode.stub) {
+            classes.push('ag-row-stub');
+        }
+
+        if (this.fullWidthRow) {
+            classes.push('ag-full-width-row');
+        }
+
+        return classes;
+    }
+
     private createTemplate(cols: Column[]): {rowTemplate: string, newCellComps: SlickCellComp[]} {
         let templateParts: string[] = [];
 
-        let rowIsEven = this.rowNode.rowIndex % 2 === 0;
-        let oddOrEvenClass = rowIsEven ? 'ag-row-odd' : 'ag-row-even';
         let rowHeight = this.rowNode.rowHeight;
-
+        let rowClasses = this.getInitialRowClasses().join(' ');
         let setRowTop = !this.beans.gridOptionsWrapper.isForPrint() && !this.beans.gridOptionsWrapper.isAutoHeight();
         let rowTop = this.getRowTop();
 
         templateParts.push(`<div `);
         templateParts.push(  `role="row" `);
         templateParts.push(  `row="${this.rowNode.id}" `);
-        templateParts.push(  `class="ag-row ${oddOrEvenClass}" `);
+        templateParts.push(  `class="${rowClasses}" `);
         templateParts.push(  `style=" `);
         templateParts.push(    `height: ${rowHeight}px; `);
         templateParts.push(setRowTop ? `top: ${rowTop}px; ` : ``);
@@ -321,6 +372,11 @@ export class SlickRowComp extends Component implements IRowComp {
             newCellComps: newCellComps
         };
         return res;
+    }
+
+    private onRowSelected(): void {
+        let selected = this.rowNode.isSelected();
+        this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected) );
     }
 
     private afterRowAttached(rowContainerComp: RowContainerComponent, newCellComps: SlickCellComp[], eRow: HTMLElement): void {
