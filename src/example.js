@@ -200,7 +200,6 @@ var gridOptions = {
         //columnVisible: '<i class="fa fa-eye"/>',
         //columnHidden: '<i class="fa fa-eye-slash"/>',
         columnRemoveFromGroup: '<i class="fa fa-remove"/>',
-        filter: '<i class="fa fa-filter"/>',
         sortAscending: '<i class="fa fa-long-arrow-down"/>',
         sortDescending: '<i class="fa fa-long-arrow-up"/>',
         // groupExpanded: '<i class="fa fa-minus-square-o"/>',
@@ -962,7 +961,7 @@ function ratingRendererGeneral(value, forFilter) {
     var result = '<span>';
     for (var i = 0; i < 5; i++) {
         if (value > i) {
-            result += '<img src="images/goldStar.png"/>';
+            result += '<img src="images/star.svg" width=12 height=12 />';
         }
     }
     if (forFilter && value === 0) {
@@ -1020,10 +1019,10 @@ function booleanCellRenderer(params) {
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
         //this is the unicode for tick character
-        return "<span title='true'>&#10004;</span>";
+        return "<span title='true' class='ag-icon ag-icon-tick'></span>";
     } else if (valueCleaned === false) {
         //this is the unicode for cross character
-        return "<span title='false'>&#10006;</span>";
+        return "<span title='false' class='ag-icon ag-icon-cross'></span>";
     } else if (params.value !==null && params.value !== undefined) {
         return params.value.toString();
     } else {
@@ -1035,10 +1034,10 @@ function booleanFilterCellRenderer(params) {
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
         //this is the unicode for tick character
-        return "&#10004;";
+        return "<span title='true' class='ag-icon ag-icon-tick'></span>";
     } else if (valueCleaned === false) {
         //this is the unicode for cross character
-        return "&#10006;";
+        return "<span title='false' class='ag-icon ag-icon-cross'></span>";
     } else {
         return "(empty)";
     }
