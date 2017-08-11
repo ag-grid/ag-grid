@@ -6,7 +6,7 @@
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="expanded">
-            <rect id="Rectangle-16-Copy-2" stroke="#000000" x="1.5" y="1.5" width="9" height="9" rx="1"></rect>
+            <rect id="Rectangle-16-Copy-2" stroke-opacity="0.5" stroke="#000000" x="1.5" y="1.5" width="9" height="9" rx="1"></rect>
             <rect id="Rectangle-17" fill="#000000" x="5" y="3" width="2" height="6"></rect>
             <rect id="Rectangle-17-Copy" fill="#000000" transform="translate(6.000000, 6.000000) rotate(90.000000) translate(-6.000000, -6.000000) " x="5" y="3" width="2" height="6"></rect>
         </g>

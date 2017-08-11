@@ -12,6 +12,13 @@
     background: transparent url('./icons/#{$icon}.svg') top no-repeat;
     background-size: 12px 12px;
 }
+
+.ag-icon:not(.ag-faded) {
+    opacity: 0.8;
+}
+
+$cell-padding: 2px;
+$checkbox-horizontal-margin: 4px;
  
 .ag-#{$ag-style} {
     // copying bootstrap with line-height, sorts out alignment problems with images beside text
@@ -30,6 +37,7 @@
     .ag-cell-data-changed {
         background-color: $ag-value-change-value-highlight-background-color;
     }
+
     .ag-cell-data-changed-animation {
         background-color: transparent;
         transition: background-color 1s;
@@ -38,6 +46,9 @@
     //
     .ag-cell-not-inline-editing {
         padding: $ag-cell-padding;
+        /* compensate for the transparent borders; */
+        padding-left: $ag-cell-padding - 1;
+        padding-right: $ag-cell-padding - 1;
     }
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected-1:not(.ag-cell-focus) {
@@ -131,10 +142,17 @@
     .ag-large-textarea {}
     //
     // HEADER SECTION
-    .ag-header-select-all {
-        padding: $ag-header-select-padding;
-        line-height: 0;
+    .ag-header-select-all, .ag-header-cell-menu-button {
+        margin-top: 3px;
+        line-height: 1rem;
     }
+    .ag-header-select-all {
+        padding-right: $checkbox-horizontal-margin;
+    }
+    .ag-header-cell {
+        padding: 2px;
+    }
+
     .ag-header {
         color: $ag-header-foreground-1;
         background: $ag-header-background-1;
@@ -192,19 +210,11 @@
         border-bottom: $ag-border-1;
     }
     .ag-header-cell-label {
-        padding: 4px 2px 4px 2px;
     }
     .ag-header-cell-text {
-        padding-left: 2px;
     }
     .ag-header-group-cell-label {
-        padding: 4px;
-    }
-    .ag-ltr .ag-header-group-cell-label {
-        padding-left: 10px;
-    }
-    .ag-rtl .ag-header-group-cell-label {
-        padding-right: 10px;
+        padding: 2px;
     }
     .ag-rtl .ag-header-group-text {
         margin-left: 2px;
@@ -214,14 +224,7 @@
     }
 
     .ag-header-cell-menu-button {
-        margin-top: 4px;
-        margin-left: 1px;
-        margin-right: 1px;
-        border: 1px solid transparent;
-        border-radius: 3px;
-        box-sizing: content-box; // When using bootstrap, box-sizing was set to 'border-box'
         @include icon-background('menu');
-        padding: 1px;
     }
 
     .ag-ltr .ag-pinned-right-header {
@@ -231,7 +234,6 @@
         border-right: $ag-border-1;
     }
     .ag-header-cell-menu-button:hover {
-        border: $ag-border-1;
     }
     .ag-body {
         background-color: $ag-background-1;
@@ -408,10 +410,10 @@
         margin-left: 4px;
     }
     .ag-ltr .ag-selection-checkbox {
-        padding-right: 4px;
+        padding-right: $checkbox-horizontal-margin;
     }
     .ag-rtl .ag-selection-checkbox {
-        padding-left: 4px;
+        padding-left: $checkbox-horizontal-margin;
     }
     .ag-paging-panel {
         padding: 4px;
@@ -538,22 +540,32 @@
         background-color: $ag-menu-option-active-color;
     }
 
+    .ag-floating-filter-body {
+        margin-right: 20px;
+    }
+
+    .ag-floating-filter-button {
+        margin-top: -20px;
+        display: inline-block;
+        float: right;
+        button {
+            @include icon-background('filter');
+            height: 20px;
+            width: 20px;
+            background-position-y: 2px;
+            border: 0;
+            text-indent: 10000px;
+            overflow: hidden;
+        }
+    }
 }
 
 /* icons are used outside of the grid root (in the ghost) */
 
-$icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter folder-open folder group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right;
+$icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter folder-open folder group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right small-up small-down tick cross;
 @each $icon in $icons {
     .ag-icon-#{$icon} {
         display: inline-block;
         @include icon-background('#{$icon}');
-    }
-}
-
-$checkboxes: checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked;
-
-@each $checkbox in $checkboxes {
-    .ag-icon-#{$checkbox} {
-        height: 11px;
     }
 }
