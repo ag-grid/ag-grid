@@ -5,7 +5,7 @@ $ag-root-font-size: 14px !default;
 $ag-scrollbar-background: unset !default;
 $ag-scrollbar-thumb: unset !default;
 
-$ag-border-1: 1px solid grey !default;
+$ag-border-1: 1px solid darkgrey !default;
 
 $ag-border-color-1: #000 !default;
 $ag-border-color-2: #808080 !default;
@@ -14,17 +14,17 @@ $ag-background-1: #f6f6f6 !default;
 
 $ag-foreground-1: #222 !default;
 
-$ag-header-foreground-1: #000 !default;
+$ag-header-foreground-1: #333 !default;
 
 $ag-separator-color: #d3d3d3 !default;
 
 $ag-cell-focused-border: 1px solid darkgrey !default;
 $ag-cell-no-focus-border-top: 1px solid transparent !default;
 $ag-cell-no-focus-border-bottom: 1px solid transparent !default;
-$ag-cell-ltr-no-focus-border-right: 1px dotted grey !default;
+$ag-cell-ltr-no-focus-border-right: 1px dotted silver !default;
 $ag-cell-ltr-no-focus-border-left: 1px solid transparent !default;
 $ag-cell-rtl-no-focus-border-right: 1px solid transparent !default;
-$ag-cell-rtl-no-focus-border-left: 1px dotted grey !default;
+$ag-cell-rtl-no-focus-border-left: 1px dotted silver !default;
 
 $ag-cell-highlight-border: 1px solid darkgreen !default;
 

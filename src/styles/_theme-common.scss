@@ -48,7 +48,6 @@ $checkbox-horizontal-margin: 4px;
         padding: $ag-cell-padding;
         /* compensate for the transparent borders; */
         padding-left: $ag-cell-padding - 1;
-        padding-right: $ag-cell-padding - 1;
     }
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected-1:not(.ag-cell-focus) {
@@ -497,9 +496,10 @@ $checkbox-horizontal-margin: 4px;
         //.ag-column-drop-cell
         //    padding 2px
     }
+    $tool-panel-box-padding: 4px 4px 10px 4px;
     /* this is for the column drops that appear in the toolPanel */
     .ag-column-drop-vertical {
-        padding: 4px 4px 10px 4px;
+        padding: $tool-panel-box-padding;
         border-bottom: $ag-border-1;
         overflow: auto;
 
@@ -508,18 +508,19 @@ $checkbox-horizontal-margin: 4px;
         }
 
         .ag-column-drop-empty-message {
-            text-align: center;
             padding: 5px;
         }
     }
 
     .ag-pivot-mode {
         border-bottom: $ag-border-1;
-        padding: 4px;
+        padding: 2px 4px 3px 4px;
         background-color: $ag-background-1;
     }
     .ag-tool-panel {
         .ag-column-select-panel {
+            padding: $tool-panel-box-padding;
+            padding-left: 0; // compensate for eIndent
             border-bottom: $ag-border-1;
             overflow: auto;
         }
