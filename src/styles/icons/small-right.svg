@@ -6,7 +6,7 @@
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="small-right" fill="#000000">
-            <path d="M8.10355339,3.26040764 L2.6390873,3.26040764 L2.6390873,8.72487373 L8.10355339,3.26040764 Z" id="Combined-Shape" transform="translate(5.371320, 5.992641) scale(-1, 1) rotate(-45.000000) translate(-5.371320, -5.992641) "></path>
+            <polygon id="Path-16" points="5 2 9 6 5 10"></polygon>
         </g>
     </g>
 </svg>
