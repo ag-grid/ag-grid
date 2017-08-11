@@ -833,9 +833,9 @@ export class Utils {
 
     /**
      * If icon provided, use this (either a string, or a function callback).
-     * if not, then use the second parameter, which is the svgFactory function
+     * if not, then use the default icon from the theme
      */
-    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc?: () => HTMLElement): HTMLElement {
+    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement {
         const iconContents = this.createIconNoSpan(iconName, gridOptionsWrapper, column)
         if (iconContents.classList.contains('ag-icon')) {
             return iconContents;
@@ -846,7 +846,7 @@ export class Utils {
         }
     }
 
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc?: () => HTMLElement): HTMLElement {
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement {
         let userProvidedIcon: Function | string;
         // check col for icon first
         if (column && column.getColDef().icons) {

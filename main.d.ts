@@ -112,7 +112,6 @@ export { GridCore } from "./dist/lib/gridCore";
 export { Logger } from "./dist/lib/logger";
 export { SelectionController } from "./dist/lib/selectionController";
 export { SortController } from "./dist/lib/sortController";
-export { SvgFactory } from "./dist/lib/svgFactory";
 export { TemplateService } from "./dist/lib/templateService";
 export { Utils, NumberSequence, _ } from "./dist/lib/utils";
 export { ValueService } from "./dist/lib/valueService/valueService";
