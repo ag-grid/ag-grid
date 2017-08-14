@@ -255,8 +255,7 @@ export class RowRenderer extends BeanStub {
         // position the rows (it uses normal flow), so we have to remove
         // all rows and insert them again from scratch
         let rowsUsingFlow = this.forPrint || this.autoHeight;
-        let slickRender = this.gridOptionsWrapper.isSlickRender();
-        let recycleRows = rowsUsingFlow || slickRender ? false : params.recycleRows;
+        let recycleRows = rowsUsingFlow ? false : params.recycleRows;
         let animate = rowsUsingFlow ? false : params.animate;
 
         let rowsToRecycle: {[key: string]: RowComp} = this.binRowComps(recycleRows);
@@ -591,9 +590,9 @@ export class RowRenderer extends BeanStub {
         return rowComp;
     }
 
-    private destroyRowComps(rowCompsMap: {[key: string]: RowComp}, animate: boolean): void {
+    private destroyRowComps(rowCompsMap: {[key: string]: IRowComp}, animate: boolean): void {
         let delayedFuncs: Function[] = [];
-        _.iterateObject(rowCompsMap, (nodeId: string, rowComp: RowComp) => {
+        _.iterateObject(rowCompsMap, (nodeId: string, rowComp: IRowComp) => {
             // if row was used, then it's null
             if (!rowComp) { return; }
             rowComp.destroy(animate);
@@ -737,7 +736,7 @@ export class RowRenderer extends BeanStub {
         let rowComp: IRowComp;
         if (this.gridOptionsWrapper.isSlickRender()) {
             rowComp = new SlickRowComp(this.rowContainers.body, this.rowContainers.pinnedLeft,
-                this.rowContainers.pinnedRight, rowNode, this.beans);
+                this.rowContainers.pinnedRight, rowNode, this.beans, animate);
         } else {
             rowComp = new RowComp(this.$scope,
                     this, this.rowContainers.body, this.rowContainers.fullWidth,

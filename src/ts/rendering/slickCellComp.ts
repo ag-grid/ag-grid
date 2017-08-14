@@ -10,7 +10,7 @@ import {
     CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent,
     CellEvent,
     CellMouseOutEvent,
-    CellMouseOverEvent, Events
+    CellMouseOverEvent, Events, VirtualRowRemovedEvent
 } from "../events";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
@@ -886,16 +886,16 @@ export class SlickCellComp extends Component implements ICellComp {
     }
 
     private onF2KeyDown(): void {
-        // if (!this.editingCell) {
-        //     this.startRowOrCellEdit(Constants.KEY_F2);
-        // }
+        if (!this.editingCell) {
+            this.startRowOrCellEdit(Constants.KEY_F2);
+        }
     }
 
     private onEscapeKeyDown(): void {
-        // if (this.editingCell) {
-        //     this.stopRowOrCellEdit(true);
-        //     this.focusCell(true);
-        // }
+        if (this.editingCell) {
+            this.stopRowOrCellEdit(true);
+            this.focusCell(true);
+        }
     }
 
     public onKeyPress(event: KeyboardEvent): void {

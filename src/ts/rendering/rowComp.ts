@@ -84,6 +84,8 @@ export interface IRowComp {
     stopEditing(cancel?: boolean): void;
     startRowEditing(keyPress?: number, charPress?: string, sourceRenderedCell?: CellComp): void;
     stopRowEditing(cancel: boolean): void;
+    destroy(animate?: boolean): void;
+    getAndClearDelayedDestroyFunctions(): Function[];
 }
 
 export class RowComp extends BeanStub implements IRowComp {
