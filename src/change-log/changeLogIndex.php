@@ -16,6 +16,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Version NEXT</h2>
 
     <li>The event 'itemsAdded' didn't make sense any more since introducing transaction updates in v11. So now the grid fires rowDataUpdated instead.</li>
+    <li>Theme icons have been updated. The previous ones are available in the <code>src/styles/legacy</code> directory - you can <a href="https://www.ag-grid.com/javascript-grid-icons/">set them back through the API</a>.</li>
 
     <h2>Version 12.0.x</h2>
     <h3>Version 12.0.2 [26-JUL-2017]</h3>
