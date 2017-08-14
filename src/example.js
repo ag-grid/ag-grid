@@ -383,6 +383,7 @@ var defaultCols = [
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
                 cellRenderer: 'countryCellRenderer',
+                textCellRenderer: countryTextCellRenderer,
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
@@ -444,6 +445,7 @@ var defaultCols = [
                 enablePivot: true,
                 enableValue: true,
                 cellRenderer: 'booleanCellRenderer', cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                textCellRenderer: booleanCellRenderer,
                 floatCell: true,
                 filterParams: {
                     cellRenderer: booleanFilterCellRenderer,
@@ -484,6 +486,7 @@ var defaultCols = [
     },
     {
         headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: 'ratingRenderer',
+        textCellRenderer: ratingRenderer,
         floatCell: true,
         enableRowGroup: true,
         enablePivot: true,
@@ -967,6 +970,7 @@ function ratingRendererGeneral(value, forFilter) {
     if (forFilter && value === 0) {
         result += '(no stars)';
     }
+    result += '</span>';
     return result;
 }
 
@@ -1100,6 +1104,15 @@ CountryFloatingFilterComponent.prototype.onParentModelChanged = function(model) 
         this.eGui.innerHTML = '';
     }
 };
+
+function countryTextCellRenderer(params) {
+    if (params.value === "" || params.value === undefined || params.value === null) {
+        return '';
+    } else {
+        var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
+        return flag + ' ' + params.value;
+    }
+}
 
 function CountryCellRenderer() {
     this.eGui = document.createElement('span');
