@@ -30,6 +30,7 @@ export class SlickRowComp extends Component implements IRowComp {
 
     private fullWidthRow: boolean;
     private editingRow: boolean;
+    private rowFocused: boolean;
 
     private slickCellComps: {[key: string]: SlickCellComp} = {};
 
@@ -50,7 +51,13 @@ export class SlickRowComp extends Component implements IRowComp {
         return false;
     }
 
+    public stopRowEditing(cancel: boolean): void {
+        this.stopEditing(cancel);
+    }
+
     public init(): void {
+        this.rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+
         let centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
         let leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
         let rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
@@ -65,11 +72,14 @@ export class SlickRowComp extends Component implements IRowComp {
     private addListeners(): void {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.setRowFocusClasses.bind(this));
 
         let eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.refreshCells.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.refreshCells.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_COLUMN_RESIZED, this.refreshCells.bind(this));
+        this.addDestroyableEventListener(eventService, Events.EVENT_CELL_FOCUSED, this.setRowFocusClasses.bind(this));
+        this.addDestroyableEventListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
 
         // fixme - for this we should be clearing out everything, should inherit this from super component
         this.addDestroyableEventListener(eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshCells.bind(this));
@@ -272,10 +282,10 @@ export class SlickRowComp extends Component implements IRowComp {
     }
 
     private createRowContainer(rowContainerComp: RowContainerComponent, cols: Column[], callback: (eRow: HTMLElement)=>void): void {
-        let res = this.createTemplate(cols);
-        rowContainerComp.appendRowTemplateAsync(res.rowTemplate, ()=> {
+        let rowTemplate = this.createTemplate(cols);
+        rowContainerComp.appendRowTemplateAsync(rowTemplate.rowTemplate, ()=> {
             let eRow: HTMLElement = rowContainerComp.getRowElement(this.rowNode.id);
-            this.afterRowAttached(rowContainerComp, res.newCellComps, eRow);
+            this.afterRowAttached(rowContainerComp, rowTemplate.newCellComps, eRow);
             callback(eRow);
         });
     }
@@ -285,6 +295,7 @@ export class SlickRowComp extends Component implements IRowComp {
 
         classes.push('ag-row');
         classes.push('ag-row-no-focus');
+        classes.push(this.rowFocused ? 'ag-row-no-focus' : 'ag-row-focus');
 
         if (this.rowNode.rowIndex % 2 === 0) {
             classes.push('ag-row-even');
@@ -354,7 +365,7 @@ export class SlickRowComp extends Component implements IRowComp {
         this.beans.eventService.dispatchEvent(event);
     }
 
-    public startRowEditing(keyPress: number = null, charPress: string = null, sourceRenderedCell: CellComp = null): void {
+    public startRowEditing(keyPress: number = null, charPress: string = null, sourceRenderedCell: ICellComp = null): void {
         // don't do it if already editing
         if (this.editingRow) { return; }
 
@@ -473,6 +484,51 @@ export class SlickRowComp extends Component implements IRowComp {
 
     public addEventListener(eventType: string, listener: Function): void {
         console.warn('ag-Grid: adding events to rows not allowed for SlickRendering');
+    }
+
+    private setRowFocusClasses(): void {
+        let rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+        if (rowFocused !== this.rowFocused) {
+            this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
+            this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused) );
+            this.rowFocused = rowFocused;
+        }
+
+        if (!rowFocused && this.editingRow) {
+            this.stopEditing(false);
+        }
+    }
+
+    private onPaginationChanged(): void {
+        // it is possible this row is in the new page, but the page number has changed, which means
+        // it needs to reposition itself relative to the new page
+        this.onTopChanged();
+    }
+
+    private onTopChanged(): void {
+        // top is not used in forPrint, as the rows are just laid out naturally
+        let doNotSetRowTop = this.beans.gridOptionsWrapper.isForPrint() || this.beans.gridOptionsWrapper.isAutoHeight();
+        if (doNotSetRowTop) { return; }
+
+        // console.log(`top changed for ${this.rowNode.id} = ${this.rowNode.rowTop}`);
+        this.setRowTop(this.rowNode.rowTop);
+    }
+
+    private setRowTop(pixels: number): void {
+        // need to make sure rowTop is not null, as this can happen if the node was once
+        // visible (ie parent group was expanded) but is now not visible
+        if (_.exists(pixels)) {
+
+            let pixelsWithOffset: number;
+            if (this.rowNode.isRowPinned()) {
+                pixelsWithOffset = pixels;
+            } else {
+                pixelsWithOffset = pixels - this.beans.paginationProxy.getPixelOffset();
+            }
+
+            let topPx = pixelsWithOffset + "px";
+            this.eAllRowContainers.forEach( row => row.style.top = topPx);
+        }
     }
 
     public destroy(): void {

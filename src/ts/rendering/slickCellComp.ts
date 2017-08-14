@@ -623,8 +623,7 @@ export class SlickCellComp extends Component implements ICellComp {
     // called by rowRenderer when user navigates via tab key
     public startRowOrCellEdit(keyPress?: number, charPress?: string): void {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
-            // fixme
-            // this.rowComp.startRowEditing(keyPress, charPress, this);
+            this.rowComp.startRowEditing(keyPress, charPress, this);
         } else {
             this.startEditingIfEnabled(keyPress, charPress, true);
         }
@@ -1130,8 +1129,7 @@ export class SlickCellComp extends Component implements ICellComp {
     // pass in 'true' to cancel the editing.
     public stopRowOrCellEdit(cancel: boolean = false) {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
-            //fixme
-            // this.rowComp.stopRowEditing(cancel);
+            this.rowComp.stopRowEditing(cancel);
         } else {
             this.stopEditing(cancel);
         }
