@@ -59,7 +59,7 @@ export class SlickCellComp extends Component implements ICellComp {
         this.rowComp = rowComp;
 
         this.value = this.getValue();
-        // this.selectCellRenderer();
+        this.selectCellRenderer();
         this.createGridCell();
         this.setUsingWrapper();
     }
@@ -84,13 +84,13 @@ export class SlickCellComp extends Component implements ICellComp {
             } else {
                 return '';
             }
-        } else if (colDef.textCellRenderer) {
-            let valueFormatted = this.beans.valueFormatterService.formatValue(
-                this.column, this.rowNode, null, this.value);
-            let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
-            let valueToRender = valueFormattedExits ? valueFormatted : this.value;
-            let params = this.createRendererAndRefreshParams(valueToRender, this.cellRendererParams);
-            return colDef.textCellRenderer(params);
+        // } else if (colDef.textCellRenderer) {
+            // let valueFormatted = this.beans.valueFormatterService.formatValue(
+            //     this.column, this.rowNode, null, this.value);
+            // let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
+            // let valueToRender = valueFormattedExits ? valueFormatted : this.value;
+            // let params = this.createRendererAndRefreshParams(valueToRender, this.cellRendererParams);
+            // return colDef.textCellRenderer(params);
         } else {
             let valueFormatted = this.beans.valueFormatterService.formatValue(
                 this.column, this.rowNode, null, this.value);
@@ -137,6 +137,7 @@ export class SlickCellComp extends Component implements ICellComp {
         _.pushAll(cssClasses, this.getRangeClasses());
 
         template.push(`<div`);
+        template.push(` tabindex="-1"`);
         template.push(` role="gridcell"`);
         template.push(` colid="${col.getId()}"`);
         template.push(` class="${cssClasses.join(' ')}"`);
@@ -449,12 +450,12 @@ export class SlickCellComp extends Component implements ICellComp {
     }
 
     private onNavigationKeyPressed(event: KeyboardEvent, key: number): void {
-        // if (this.editingCell) {
-        //     this.stopRowOrCellEdit();
-        // }
-        // this.beans.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.node.rowPinned);
-        // // if we don't prevent default, the grid will scroll with the navigation keys
-        // event.preventDefault();
+        if (this.editingCell) {
+            this.stopRowOrCellEdit();
+        }
+        this.beans.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.rowNode.rowPinned);
+        // if we don't prevent default, the grid will scroll with the navigation keys
+        event.preventDefault();
     }
 
     private onTabKeyDown(event: KeyboardEvent): void {
@@ -641,17 +642,17 @@ export class SlickCellComp extends Component implements ICellComp {
             this.eParentOfValue = this.getRefElement('eCellValue');
             this.eCellWrapper = this.getRefElement('eCellWrapper');
 
-            // let cbSelectionComponent = new CheckboxSelectionComponent();
-            // this.beans.context.wireBean(cbSelectionComponent);
-            //
-            // let visibleFunc = this.column.getColDef().checkboxSelection;
-            // visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
-            //
-            // cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});
-            // this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
-            //
-            // // put the checkbox in before the value
-            // this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eParentOfValue);
+            let cbSelectionComponent = new CheckboxSelectionComponent();
+            this.beans.context.wireBean(cbSelectionComponent);
+
+            let visibleFunc = this.column.getColDef().checkboxSelection;
+            visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
+
+            cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});
+            this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
+
+            // put the checkbox in before the value
+            this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eParentOfValue);
 
         } else {
             this.eParentOfValue = this.getGui();
