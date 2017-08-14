@@ -6,7 +6,7 @@ IF YOU DON'T FILL OUT THE FOLLOWING INFORMATION WE MIGHT CLOSE YOUR ISSUE WITHOU
 ```
 [ ] bug report => search github for a similar issue or PR before submitting
 [ ] feature request
-[ ] support request => Please do not submit support request here, instead see https://github.com/ceolter/ag-grid-vue/blob/master/CONTRIBUTING.md#question
+[ ] support request => Please do not submit support request here, instead see https://github.com/ag-grid/ag-grid-vue/blob/master/CONTRIBUTING.md#question
 ```
 
 **Current behavior**

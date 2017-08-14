@@ -6,9 +6,9 @@
   "license": "MIT",
   "main": "main.js",
   "bugs": {
-    "url": "https://github.com/ceolter/ag-grid-vue/issues"
+    "url": "https://github.com/ag-grid/ag-grid-vue/issues"
   },
-  "homepage": "https://github.com/ceolter/ag-grid-vue#readme",
+  "homepage": "https://github.com/ag-grid/ag-grid-vue#readme",
   "scripts": {
     "build": "gulp"
   },
