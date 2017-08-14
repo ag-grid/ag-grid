@@ -7,13 +7,15 @@ import {_} from "../utils";
 import {CellComp, ICellComp} from "./cellComp";
 import {GridCell, GridCellDef} from "../entities/gridCell";
 import {
-    CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEvent, CellMouseOutEvent,
+    CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStoppedEvent, CellEvent,
+    CellMouseOutEvent,
     CellMouseOverEvent, Events
 } from "../events";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {ICellEditorComp} from "./cellEditors/iCellEditor";
 import {IRowComp} from "./rowComp";
+import {Constants} from "../constants";
 
 export class SlickCellComp extends Component implements ICellComp {
 
@@ -28,6 +30,11 @@ export class SlickCellComp extends Component implements ICellComp {
     private gridCell: GridCell;
     private rangeCount: number;
     private usingWrapper: boolean;
+
+    private cellFocused: boolean;
+    private editingCell: boolean;
+    private cellEditorInPopup: boolean;
+    private hideEditorPopup: Function;
 
     // the cellRenderer class to use
     private cellRendererKey: {new(): ICellRendererComp} | ICellRendererFunc | string;
@@ -107,6 +114,9 @@ export class SlickCellComp extends Component implements ICellComp {
         let cssClasses: string[] = ["ag-cell", "ag-cell-no-focus", "ag-cell-not-inline-editing"];
         let wrapperStart: string;
         let wrapperEnd: string;
+
+        this.cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
+        cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
 
         if (this.usingWrapper) {
             wrapperStart = '<span ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value">';
@@ -402,9 +412,75 @@ export class SlickCellComp extends Component implements ICellComp {
         return false;
     }
 
-    // todo
     public onKeyDown(event: KeyboardEvent): void {
-        console.log('onKeyDown not implemented yet in slick rendering');
+        let key = event.which || event.keyCode;
+
+        switch (key) {
+            case Constants.KEY_ENTER:
+                this.onEnterKeyDown();
+                break;
+            case Constants.KEY_F2:
+                this.onF2KeyDown();
+                break;
+            case Constants.KEY_ESCAPE:
+                this.onEscapeKeyDown();
+                break;
+            case Constants.KEY_TAB:
+                this.onTabKeyDown(event);
+                break;
+            case Constants.KEY_BACKSPACE:
+            case Constants.KEY_DELETE:
+                this.onBackspaceOrDeleteKeyPressed(key);
+                break;
+            case Constants.KEY_DOWN:
+            case Constants.KEY_UP:
+            case Constants.KEY_RIGHT:
+            case Constants.KEY_LEFT:
+                this.onNavigationKeyPressed(event, key);
+                break;
+        }
+    }
+
+    private onNavigationKeyPressed(event: KeyboardEvent, key: number): void {
+        // if (this.editingCell) {
+        //     this.stopRowOrCellEdit();
+        // }
+        // this.beans.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.node.rowPinned);
+        // // if we don't prevent default, the grid will scroll with the navigation keys
+        // event.preventDefault();
+    }
+
+    private onTabKeyDown(event: KeyboardEvent): void {
+        // if (this.beans.gridOptionsWrapper.isSuppressTabbing()) { return; }
+        // this.beans.rowRenderer.onTabKeyDown(this, event);
+    }
+
+    private onBackspaceOrDeleteKeyPressed(key: number): void {
+        // if (!this.editingCell) {
+        //     this.startRowOrCellEdit(key);
+        // }
+    }
+
+    private onEnterKeyDown(): void {
+        // if (this.editingCell) {
+        //     this.stopRowOrCellEdit();
+        //     this.focusCell(true);
+        // } else {
+        //     this.startRowOrCellEdit(Constants.KEY_ENTER);
+        // }
+    }
+
+    private onF2KeyDown(): void {
+        // if (!this.editingCell) {
+        //     this.startRowOrCellEdit(Constants.KEY_F2);
+        // }
+    }
+
+    private onEscapeKeyDown(): void {
+        // if (this.editingCell) {
+        //     this.stopRowOrCellEdit(true);
+        //     this.focusCell(true);
+        // }
     }
 
     // todo
@@ -546,6 +622,7 @@ export class SlickCellComp extends Component implements ICellComp {
 
         this.addDestroyableEventListener(this.column, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
 
         // range controller not present if using ag-Grid free
         if (this.beans.enterprise && this.beans.gridOptionsWrapper.isEnableRangeSelection()) {
@@ -558,17 +635,17 @@ export class SlickCellComp extends Component implements ICellComp {
             this.eParentOfValue = this.getRefElement('eCellValue');
             this.eCellWrapper = this.getRefElement('eCellWrapper');
 
-            let cbSelectionComponent = new CheckboxSelectionComponent();
-            this.beans.context.wireBean(cbSelectionComponent);
-
-            let visibleFunc = this.column.getColDef().checkboxSelection;
-            visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
-
-            cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});
-            this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
-
-            // put the checkbox in before the value
-            this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eParentOfValue);
+            // let cbSelectionComponent = new CheckboxSelectionComponent();
+            // this.beans.context.wireBean(cbSelectionComponent);
+            //
+            // let visibleFunc = this.column.getColDef().checkboxSelection;
+            // visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
+            //
+            // cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});
+            // this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
+            //
+            // // put the checkbox in before the value
+            // this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eParentOfValue);
 
         } else {
             this.eParentOfValue = this.getGui();
@@ -581,8 +658,92 @@ export class SlickCellComp extends Component implements ICellComp {
         this.addDestroyFunc( ()=>
             this.beans.gridOptionsWrapper.setDomData(eGui, CellComp.DOM_DATA_KEY_CELL_COMP, null)
         );
+    }
 
+    private onCellFocused(event?: any): void {
+        let cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
 
+        // see if we need to change the classes on this cell
+        if (cellFocused !== this.cellFocused) {
+            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
+            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-no-focus', !cellFocused);
+            this.cellFocused = cellFocused;
+        }
+
+        // if this cell was just focused, see if we need to force browser focus, his can
+        // happen if focus is programmatically set.
+        if (cellFocused && event && event.forceBrowserFocus) {
+            this.getGui().focus();
+        }
+
+        // if another cell was focused, and we are editing, then stop editing
+        let fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
+        if (!cellFocused && !fullRowEdit && this.editingCell) {
+            // fixme
+            // this.stopRowOrCellEdit();
+        }
+    }
+
+    // pass in 'true' to cancel the editing.
+    public stopRowOrCellEdit(cancel: boolean = false) {
+        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
+            //fixme
+            // this.rowComp.stopRowEditing(cancel);
+        } else {
+            this.stopEditing(cancel);
+        }
+    }
+
+    public stopEditing(cancel = false): void {
+        // if (!this.editingCell) {
+        //     return;
+        // }
+        //
+        // if (!cancel) {
+        //     // also have another option here to cancel after editing, so for example user could have a popup editor and
+        //     // it is closed by user clicking outside the editor. then the editor will close automatically (with false
+        //     // passed above) and we need to see if the editor wants to accept the new value.
+        //     let userWantsToCancel = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
+        //     if (!userWantsToCancel) {
+        //         let newValue = this.cellEditor.getValue();
+        //         this.beans.valueService.setValue(this.node, this.column, newValue);
+        //         this.value = this.getValue();
+        //     }
+        // }
+        //
+        // // it is important we set this after setValue() above, as otherwise the cell will flash
+        // // when editing stops. the 'refresh' method checks editing, and doesn't refresh editing cells.
+        // // thus it will skip the refresh on this cell until the end of this method where we call
+        // // refresh directly and we suppress the flash.
+        // this.editingCell = false;
+        //
+        // if (this.cellEditor.destroy) {
+        //     this.cellEditor.destroy();
+        // }
+        //
+        // if (this.cellEditorInPopup) {
+        //     this.hideEditorPopup();
+        //     this.hideEditorPopup = null;
+        // } else {
+        //     _.removeAllChildren(this.eGridCell);
+        //     // put the cell back the way it was before editing
+        //     if (this.usingWrapper) {
+        //         // if wrapper, then put the wrapper back
+        //         this.eGridCell.appendChild(this.eCellWrapper);
+        //     } else {
+        //         this.beans.cellRendererService.bindToHtml(this.cellRenderer, this.eGridCell);
+        //     }
+        // }
+        //
+        // this.setInlineEditingClass();
+        //
+        // // we suppress the flash, as it is not correct to flash the cell the user has finished editing,
+        // // the user doesn't need to flash as they were the one who did the edit, the flash is pointless
+        // // (as the flash is meant to draw the user to a change that they didn't manually do themselves).
+        // this.refreshCell({forceRefresh: true, suppressFlash: true});
+        //
+        // let event: CellEditingStoppedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED);
+        // this.beans.eventService.dispatchEvent(event);
     }
 
 }
