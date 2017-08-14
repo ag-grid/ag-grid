@@ -19,6 +19,7 @@
 
 $cell-padding: 2px;
 $checkbox-horizontal-margin: 4px;
+$tool-panel-box-padding: 4px 4px 10px 4px;
  
 .ag-#{$ag-style} {
     // copying bootstrap with line-height, sorts out alignment problems with images beside text
@@ -148,6 +149,11 @@ $checkbox-horizontal-margin: 4px;
     .ag-header-select-all {
         padding-right: $checkbox-horizontal-margin;
     }
+
+    .ag-filter-header-container > label {
+        margin-bottom: 0;
+    }
+
     .ag-header-cell {
         padding: 2px;
     }
@@ -393,20 +399,25 @@ $checkbox-horizontal-margin: 4px;
         margin: 2px;
     }
     .ag-filter-checkbox {
-        position: relative;
-        left: 2px;
+        margin-right: 4px;
+        margin-bottom: 0;
         display: inline-block;
-        margin-right: 5px;
     }
     .ag-filter-header-container {
+        padding: 2px 4px 2px 4px;
         border-bottom: 1px solid $ag-separator-color;
     }
     .ag-filter-apply-panel {
         border-top: 1px solid $ag-separator-color;
-        padding: 2px;
+        padding: 2px 0px 2px 4px;
     }
     .ag-filter-value {
-        margin-left: 4px;
+    }
+    .ag-virtual-list-container {
+        padding: $tool-panel-box-padding;
+    }
+    .ag-filter-header-container {
+        
     }
     .ag-ltr .ag-selection-checkbox {
         padding-right: $checkbox-horizontal-margin;
@@ -496,7 +507,6 @@ $checkbox-horizontal-margin: 4px;
         //.ag-column-drop-cell
         //    padding 2px
     }
-    $tool-panel-box-padding: 4px 4px 10px 4px;
     /* this is for the column drops that appear in the toolPanel */
     .ag-column-drop-vertical {
         padding: $tool-panel-box-padding;
