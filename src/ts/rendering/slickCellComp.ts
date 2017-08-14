@@ -59,7 +59,7 @@ export class SlickCellComp extends Component implements ICellComp {
         this.rowComp = rowComp;
 
         this.value = this.getValue();
-        this.selectCellRenderer();
+        // this.selectCellRenderer();
         this.createGridCell();
         this.setUsingWrapper();
     }
@@ -84,6 +84,13 @@ export class SlickCellComp extends Component implements ICellComp {
             } else {
                 return '';
             }
+        } else if (colDef.textCellRenderer) {
+            let valueFormatted = this.beans.valueFormatterService.formatValue(
+                this.column, this.rowNode, null, this.value);
+            let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
+            let valueToRender = valueFormattedExits ? valueFormatted : this.value;
+            let params = this.createRendererAndRefreshParams(valueToRender, this.cellRendererParams);
+            return colDef.textCellRenderer(params);
         } else {
             let valueFormatted = this.beans.valueFormatterService.formatValue(
                 this.column, this.rowNode, null, this.value);
@@ -613,7 +620,6 @@ export class SlickCellComp extends Component implements ICellComp {
         let querySelector = `[colid="${this.column.getId()}"]`;
         let eGui = <HTMLElement> this.eParentRow.querySelector(querySelector);
         this.setGui(eGui);
-
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.addDomData();
