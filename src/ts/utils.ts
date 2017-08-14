@@ -837,7 +837,7 @@ export class Utils {
      */
     static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement {
         const iconContents = this.createIconNoSpan(iconName, gridOptionsWrapper, column)
-        if (iconContents.classList.contains('ag-icon')) {
+        if (iconContents.className.indexOf('ag-icon') > -1) {
             return iconContents;
         } else {
             let eResult = document.createElement('span');
@@ -879,7 +879,7 @@ export class Utils {
             if (!cssClass) {
                 throw new Error(`${iconName} did not find class`)
             }
-            span.classList.add('ag-icon', 'ag-icon-' + cssClass);
+            span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
             return span;
         }
     }
