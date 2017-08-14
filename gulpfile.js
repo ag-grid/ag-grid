@@ -19,10 +19,14 @@ const pkg = require('./package.json');
 const tsd = require('gulp-tsd');
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const replace = require('gulp-replace');
 const del = require('del');
+var filter = require('gulp-filter');
 
 const jasmine = require('gulp-jasmine');
+
+var named = require('vinyl-named');
 
 const bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
@@ -44,18 +48,18 @@ gulp.task('release', ['webpack-all']);
 
 gulp.task('webpack-all', ['webpack','webpack-minify','webpack-noStyle','webpack-minify-noStyle'], tscTask);
 
-gulp.task('webpack-minify-noStyle', ['tsc','stylus'], webpackTask.bind(null, true, false));
-gulp.task('webpack-noStyle', ['tsc','stylus'], webpackTask.bind(null, false, false));
-gulp.task('webpack-minify', ['tsc','stylus'], webpackTask.bind(null, true, true));
-gulp.task('webpack', ['tsc','stylus'], webpackTask.bind(null, false, true));
+gulp.task('webpack-minify-noStyle', ['tsc','scss'], webpackTask.bind(null, true, false));
+gulp.task('webpack-noStyle', ['tsc','scss'], webpackTask.bind(null, false, false));
+gulp.task('webpack-minify', ['tsc','scss'], webpackTask.bind(null, true, true));
+gulp.task('webpack', ['tsc','scss'], webpackTask.bind(null, false, true));
 
-gulp.task('stylus-watch', ['stylus-no-clean'], stylusWatch);
-gulp.task('stylus-no-clean', stylusTask);
+gulp.task('scss-watch', ['scss-no-clean'], scssWatch);
+gulp.task('scss-no-clean', scssTask);
 
 gulp.task('tsc', ['tsc-src'], tscExportsTask);
 gulp.task('tsc-src', ['cleanDist'], tscTask);
 gulp.task('tsc-exports', ['cleanExports'], tscExportsTask);
-gulp.task('stylus', ['cleanDist'], stylusTask);
+gulp.task('scss', ['cleanDist'], scssTask);
 
 gulp.task('cleanDist', cleanDist);
 gulp.task('cleanExports', cleanExports);
@@ -69,8 +73,8 @@ gulp.task('publishForCI', () => {
 
 });
 
-function stylusWatch() {
-    gulp.watch('./src/styles/!**/!*', ['stylus-no-clean']);
+function scssWatch() {
+    gulp.watch('./src/styles/!**/!*', ['scss-no-clean']);
 }
 
 function cleanDist() {
@@ -157,23 +161,43 @@ function webpackTask(minify, styles) {
         .pipe(gulp.dest('./dist/'));
 }
 
-/*
-function stylusTask() {
+function scssTask() {
     // Uncompressed
-    gulp.src(['src/styles/*.styl', '!src/styles/theme-common.styl'])
-        .pipe(stylus({
-            use: nib(),
-            compress: false
+    return gulp.src(['src/styles/*.scss', '!src/styles/_theme-common.scss'])
+        .pipe(named())
+        .pipe(webpackStream({
+            module: {
+                rules: [
+                    {
+                        test: /\.scss$/,
+                        use: ExtractTextPlugin.extract({
+                            fallback: 'style-loader',
+                            //resolve-url-loader may be chained before sass-loader if necessary
+                            use: [
+                                'css-loader', 
+                                'sass-loader',
+                                { loader: 'postcss-loader', options: { syntax: 'postcss-scss', plugins: [ autoprefixer() ] } },
+                            ]
+                        })
+                    }, 
+                    {
+                        test: /\.(svg)$/,
+                        use: [
+                            {
+                                loader: 'url-loader',
+                                options: {
+                                    limit: 8192
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            plugins: [
+                new ExtractTextPlugin('[name].css')
+            ]
         }))
-        .pipe(gulp.dest('dist/styles'));
-}
-*/
-
-function stylusTask() {
-    // Uncompressed
-    gulp.src(['src/styles/*.scss', '!src/styles/_theme-common.scss'])
-        .pipe(postcss([autoprefixer()], { syntax: postcssScss }))
-        .pipe(sass())
-        .pipe(gulp.dest('dist/styles'));
+        .pipe(filter("**/*.css"))
+        .pipe(gulp.dest('dist/styles/'));
 }
 

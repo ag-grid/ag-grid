@@ -37,8 +37,10 @@
     "autoprefixer": "^7.1.2",
     "css-loader": "0.23.1",
     "del": "^3.0.0",
+    "extract-text-webpack-plugin": "^3.0.0",
     "gulp": "3.9.0",
     "gulp-clean": "0.3.1",
+    "gulp-filter": "^5.0.1",
     "gulp-foreach": "0.1.0",
     "gulp-header": "1.7.0",
     "gulp-jasmine": "2.2.1",
@@ -55,12 +57,16 @@
     "json-stable-stringify": "1.0.0",
     "merge2": "0.3.6",
     "nib": "^1.1.0",
+    "node-sass": "^4.5.3",
+    "postcss-loader": "^2.0.6",
     "postcss-scss": "^1.0.2",
+    "sass-loader": "^6.0.6",
     "style-loader": "0.13.0",
     "stylus": "0.53.0",
     "typescript": "2.4.1",
     "vinyl-buffer": "1.0.0",
-    "webpack": "2.2.1",
-    "webpack-stream": "3.1.0"
+    "vinyl-named": "^1.1.0",
+    "webpack": "3.5.1",
+    "webpack-stream": "4.0.0"
   }
 }
