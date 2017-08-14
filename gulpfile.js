@@ -1,18 +1,25 @@
+var path = require('path');
+
 var gulp = require('gulp');
+var replace = require('gulp-replace');
+var gulpIf = require('gulp-if');
+var filter = require('gulp-filter');
+var merge = require('merge2');
+var foreach = require('gulp-foreach');
+var liveReload = require('gulp-livereload');
+var named = require('vinyl-named');
+
 var gulpTypescript = require('gulp-typescript');
 var typescript = require('typescript');
-var merge = require('merge2');
+
 var webpack = require('webpack');
 var webpackStream = require('webpack-stream');
-var path = require('path');
-var foreach = require('gulp-foreach');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 var sass = require('gulp-sass');
 var postcss = require('gulp-postcss');
 var postcssScss = require('postcss-scss');
 var autoprefixer = require('autoprefixer');
-var liveReload = require('gulp-livereload');
-var replace = require('gulp-replace');
-var gulpIf = require('gulp-if');
 
 gulp.task('default', ['webpack'], watchTask);
 gulp.task('watch-angular', ['webpack-angular'], watchAngularTask);
@@ -150,10 +157,6 @@ function tscReactExample() {
             .pipe(gulp.dest('../ag-grid-react-example/dist'))
     ]);
 }
-
-const named = require('vinyl-named');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const filter = require('gulp-filter');
 
 function scssGrid() {
     // Uncompressed
