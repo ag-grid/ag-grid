@@ -10,7 +10,7 @@ import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {Events, ModelUpdatedEvent, ViewportChangedEvent} from "../events";
 import {Constants} from "../constants";
-import {CellComp} from "./cellComp";
+import {CellComp, ICellComp} from "./cellComp";
 import {Autowired, Bean, Context, Optional, PostConstruct, PreDestroy, Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
 import {ColumnApi, ColumnController} from "../columnController/columnController";
@@ -371,7 +371,7 @@ export class RowRenderer extends BeanStub {
             });
         }
 
-        let processRow = (rowComp: RowComp) => {
+        let processRow = (rowComp: IRowComp) => {
             let rowNode: RowNode = rowComp.getRowNode();
 
             let id = rowNode.id;
@@ -388,7 +388,7 @@ export class RowRenderer extends BeanStub {
                 }
             }
 
-            rowComp.forEachCellComp(cellComp => {
+            rowComp.forEachCellComp( cellComp => {
 
                 let colId: string = cellComp.getColumn().getId();
                 let excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
@@ -832,7 +832,7 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    private getComponentForCell(gridCell: GridCell): CellComp {
+    private getComponentForCell(gridCell: GridCell): ICellComp {
         let rowComponent: IRowComp;
         switch (gridCell.floating) {
             case Constants.PINNED_TOP:
@@ -850,11 +850,11 @@ export class RowRenderer extends BeanStub {
             return null;
         }
 
-        let cellComponent: CellComp = rowComponent.getRenderedCellForColumn(gridCell.column);
+        let cellComponent: ICellComp = rowComponent.getRenderedCellForColumn(gridCell.column);
         return cellComponent;
     }
 
-    public onTabKeyDown(previousRenderedCell: CellComp, keyboardEvent: KeyboardEvent): void {
+    public onTabKeyDown(previousRenderedCell: ICellComp, keyboardEvent: KeyboardEvent): void {
         let backwards = keyboardEvent.shiftKey;
         let success = this.moveToCellAfter(previousRenderedCell, backwards);
         if (success) {
@@ -875,7 +875,7 @@ export class RowRenderer extends BeanStub {
     }
 
     // returns true if moving to next cell was successful
-    private moveToCellAfter(previousRenderedCell: CellComp, backwards: boolean): boolean {
+    private moveToCellAfter(previousRenderedCell: ICellComp, backwards: boolean): boolean {
 
         let editing = previousRenderedCell.isEditing();
         let gridCell = previousRenderedCell.getGridCell();
@@ -905,13 +905,13 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    private moveEditToNextCell(previousRenderedCell: CellComp, nextRenderedCell: CellComp): void {
+    private moveEditToNextCell(previousRenderedCell: ICellComp, nextRenderedCell: ICellComp): void {
         previousRenderedCell.stopEditing();
         nextRenderedCell.startEditingIfEnabled(null, null, true);
         nextRenderedCell.focusCell(false);
     }
 
-    private moveEditToNextRow(previousRenderedCell: CellComp, nextRenderedCell: CellComp): void {
+    private moveEditToNextRow(previousRenderedCell: ICellComp, nextRenderedCell: ICellComp): void {
         let pGridCell = previousRenderedCell.getGridCell();
         let nGridCell = nextRenderedCell.getGridCell();
 
@@ -938,7 +938,7 @@ export class RowRenderer extends BeanStub {
 
     // called by the cell, when tab is pressed while editing.
     // @return: RenderedCell when navigation successful, otherwise null
-    private findNextCellToFocusOn(gridCell: GridCell, backwards: boolean, startEditing: boolean): CellComp {
+    private findNextCellToFocusOn(gridCell: GridCell, backwards: boolean, startEditing: boolean): ICellComp {
 
         let nextCell: GridCell = gridCell;
 

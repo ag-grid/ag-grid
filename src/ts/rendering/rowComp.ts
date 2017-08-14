@@ -1,5 +1,5 @@
 import {Utils as _} from "../utils";
-import {CellComp} from "./cellComp";
+import {CellComp, ICellComp} from "./cellComp";
 import {RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {RowRenderer} from "./rowRenderer";
@@ -75,11 +75,14 @@ export interface IRowComp {
     getPinnedRightRowElement(): HTMLElement;
     getFullWidthRowElement(): HTMLElement;
     getRowNode(): RowNode;
-    getRenderedCellForColumn(column: Column): CellComp;
+    getRenderedCellForColumn(column: Column): ICellComp;
     getAndClearNextVMTurnFunctions(): Function[];
     isEditing(): boolean;
     init(): void;
     onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
+    forEachCellComp(callback: (renderedCell: ICellComp)=>void): void;
+    stopEditing(cancel?: boolean): void;
+    startRowEditing(keyPress?: number, charPress?: string, sourceRenderedCell?: CellComp): void;
 }
 
 export class RowComp extends BeanStub implements IRowComp {
@@ -753,8 +756,8 @@ export class RowComp extends BeanStub implements IRowComp {
         this.onTopChanged();
     }
 
-    public forEachCellComp(callback: (renderedCell: CellComp)=>void): void {
-        _.iterateObject(this.renderedCells, (key: any, renderedCell: CellComp)=> {
+    public forEachCellComp(callback: (renderedCell: ICellComp)=>void): void {
+        _.iterateObject(this.renderedCells, (key: any, renderedCell: ICellComp)=> {
             if (renderedCell) {
                 callback(renderedCell);
             }
@@ -891,7 +894,7 @@ export class RowComp extends BeanStub implements IRowComp {
         this.renderedRowEventService.removeEventListener(eventType, listener);
     }
 
-    public getRenderedCellForColumn(column: Column): CellComp {
+    public getRenderedCellForColumn(column: Column): ICellComp {
         return this.renderedCells[column.getColId()];
     }
 

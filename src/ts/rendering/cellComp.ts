@@ -13,7 +13,7 @@ import {
     CellMouseOverEvent,
     Events
 } from "../events";
-import {RowComp} from "./rowComp";
+import {IRowComp, RowComp} from "./rowComp";
 import {GridCell, GridCellDef} from "../entities/gridCell";
 import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {Component} from "../widgets/component";
@@ -31,6 +31,18 @@ export interface ICellComp {
     isEditing(): boolean;
     onKeyDown(event: KeyboardEvent): void;
     onKeyPress(event: KeyboardEvent): void;
+    getColumn(): Column;
+    refreshCell(params?: {suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean, volatile?: boolean}): void;
+    stopEditing(cancel?: boolean): void;
+    destroy(removeFromDom?: boolean): void;
+    startEditingIfEnabled(keyPress?: number, charPress?: string, cellStartedEdit?: boolean): void;
+    setFocusOutOnEditor(): void;
+    getRenderedRow(): IRowComp;
+    startRowOrCellEdit(keyPress?: number, charPress?: string): void;
+    isCellEditable(): boolean;
+    isSuppressNavigable(): boolean;
+    setFocusInOnEditor(): void;
+    focusCell(force?: boolean): void;
 }
 
 export class CellComp extends Component implements ICellComp {
@@ -823,7 +835,7 @@ export class CellComp extends Component implements ICellComp {
         return event;
     }
 
-    public getRenderedRow(): RowComp {
+    public getRenderedRow(): IRowComp {
         return this.rowComp;
     }
 

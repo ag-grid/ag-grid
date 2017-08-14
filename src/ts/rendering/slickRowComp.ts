@@ -6,9 +6,12 @@ import {Column} from "../entities/column";
 import {Beans} from "./beans";
 import {RowContainerComponent} from "./rowContainerComponent";
 import {_} from "../utils";
-import {Events, RowClickedEvent, RowDoubleClickedEvent, RowEvent} from "../events";
+import {
+    Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent,
+    RowValueChangedEvent
+} from "../events";
 import {SlickCellComp} from "./slickCellComp";
-import {CellComp} from "./cellComp";
+import {CellComp, ICellComp} from "./cellComp";
 
 export class SlickRowComp extends Component implements IRowComp {
 
@@ -26,6 +29,7 @@ export class SlickRowComp extends Component implements IRowComp {
     private active = true;
 
     private fullWidthRow: boolean;
+    private editingRow: boolean;
 
     private slickCellComps: {[key: string]: SlickCellComp} = {};
 
@@ -326,6 +330,53 @@ export class SlickRowComp extends Component implements IRowComp {
         return classes;
     }
 
+    public stopEditing(cancel = false): void {
+        this.forEachCellComp(renderedCell => {
+            renderedCell.stopEditing(cancel);
+        });
+        if (this.editingRow) {
+            if (!cancel) {
+                let event: RowValueChangedEvent = this.createRowEvent(Events.EVENT_ROW_VALUE_CHANGED);
+                this.beans.eventService.dispatchEvent(event);
+            }
+            this.setEditingRow(false);
+        }
+    }
+
+    private setEditingRow(value: boolean): void {
+        this.editingRow = value;
+        this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-editing', value) );
+
+        let event: RowEvent = value ?
+            <RowEditingStartedEvent> this.createRowEvent(Events.EVENT_ROW_EDITING_STARTED)
+            : <RowEditingStoppedEvent> this.createRowEvent(Events.EVENT_ROW_EDITING_STOPPED);
+
+        this.beans.eventService.dispatchEvent(event);
+    }
+
+    public startRowEditing(keyPress: number = null, charPress: string = null, sourceRenderedCell: CellComp = null): void {
+        // don't do it if already editing
+        if (this.editingRow) { return; }
+
+        this.forEachCellComp(renderedCell => {
+            let cellStartedEdit = renderedCell === sourceRenderedCell;
+            if (cellStartedEdit) {
+                renderedCell.startEditingIfEnabled(keyPress, charPress, cellStartedEdit)
+            } else {
+                renderedCell.startEditingIfEnabled(null, null, cellStartedEdit)
+            }
+        });
+        this.setEditingRow(true);
+    }
+
+    public forEachCellComp(callback: (renderedCell: ICellComp)=>void): void {
+        _.iterateObject(this.slickCellComps, (key: any, cellComp: ICellComp)=> {
+            if (cellComp) {
+                callback(cellComp);
+            }
+        });
+    }
+
     private createTemplate(cols: Column[]): {rowTemplate: string, newCellComps: SlickCellComp[]} {
         let templateParts: string[] = [];
 
@@ -433,8 +484,8 @@ export class SlickRowComp extends Component implements IRowComp {
         return this.rowNode;
     }
 
-    public getRenderedCellForColumn(column: Column): CellComp {
-        return null;
+    public getRenderedCellForColumn(column: Column): ICellComp {
+        return this.slickCellComps[column.getColId()];
     }
 
     public ensureInDomAfter(previousElement: LastPlacedElements): void {}
