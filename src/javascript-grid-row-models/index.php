@@ -345,16 +345,16 @@ include '../documentation-main/documentation_header.php';
         <tr class="item-row">
             <td><a href="../javascript-grid-export/">CSV Export</a></td>
             <td><span class="green-tick">&#10004;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="green-tick">&#10004; (Data on screen)</span></td>
+            <td><span class="green-tick">&#10004; (Data on screen)</span></td>
+            <td><span class="green-tick">&#10004; (Data on screen)</span></td>
         </tr>
         <tr class="item-row">
             <td><a href="../javascript-grid-excel/">Excel Export</a></td>
             <td><span class="green-tick">&#10004;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="green-tick">&#10004; (Data on screen)</span></td>
+            <td><span class="green-tick">&#10004; (Data on screen)</span></td>
+            <td><span class="green-tick">&#10004; (Data on screen)</span></td>
         </tr>
         <tr class="item-row">
             <td><a href="../javascript-grid-clipboard/">Clipboard Copy & Paste</a></td>

@@ -15,10 +15,16 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version NEXT</h2>
 
-    <li>The event 'itemsAdded' didn't make sense any more since introducing transaction updates in v11. So now the grid fires rowDataUpdated instead.</li>
-    <li>Theme icons have been updated. The previous ones are available in the <code>src/styles/legacy</code> directory - you can <a href="https://www.ag-grid.com/javascript-grid-icons/">set them back through the API</a>.</li>
+    <h4>Enhancements</h4>
+    <ul>
+        <li>AG-579: Excel an CSV export now works in all row models. If exporting outside of the in memory row model
+            Only the data loaded for the currently displayed grid gets exported.</li>
+        <li>The event 'itemsAdded' didn't make sense any more since introducing transaction updates in v11. So now the grid fires rowDataUpdated instead.</li>
+        <li>Theme icons have been updated. The previous ones are available in the <code>src/styles/legacy</code> directory - you can <a href="https://www.ag-grid.com/javascript-grid-icons/">set them back through the API</a>.</li>
 
-    <li>The HTML attribute 'row' on the row div was showing the index. It was supposed to be the row. So now have two attributes instead, index and rowId, so there is no confusion.</li>
+        <li>The HTML attribute 'row' on the row div was showing the index. It was supposed to be the row. So now have two attributes instead, index and rowId, so there is no confusion.</li>
+    </ul>
+
 
     <h2>Version 12.0.x</h2>
     <h3>Version 12.0.2 [26-JUL-2017]</h3>
