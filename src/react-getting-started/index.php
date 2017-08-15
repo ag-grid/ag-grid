@@ -48,7 +48,7 @@ npm i
 npm start
 </pre>
 
-    <p>It will take a few seconds to bundle the applications, and with just those 3 commands you should now see the following application:</p>
+    <p>It will take a few seconds to bundle the application and with just those 3 commands you should now see the following application:</p>
 
     <img src="../images/react-seed.png" style="display: block;margin: auto;height: 200px;">
 
