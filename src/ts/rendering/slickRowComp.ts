@@ -533,22 +533,6 @@ export class SlickRowComp extends Component implements IRowComp {
         }
     }
 
-    private getRowTop(): number {
-
-        let pixels = this.rowNode.rowTop;
-
-        // need to make sure rowTop is not null, as this can happen if the node was once
-        // visible (ie parent group was expanded) but is now not visible
-        let pixelsWithOffset: number;
-        if (this.rowNode.isRowPinned()) {
-            pixelsWithOffset = pixels;
-        } else {
-            pixelsWithOffset = pixels - this.beans.paginationProxy.getPixelOffset();
-        }
-
-        return pixelsWithOffset;
-    }
-
     private onRowHeightChanged(): void {
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten

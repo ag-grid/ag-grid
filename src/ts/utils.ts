@@ -888,8 +888,9 @@ export class Utils {
         if (!styles) {
             return;
         }
-        Object.keys(styles).forEach(function (key) {
-            eElement.style[key] = styles[key];
+        Object.keys(styles).forEach((key) => {
+            let keyCamelCase = this.hyphenToCamelCase(key);
+            eElement.style[keyCamelCase] = styles[key];
         });
     }
 
@@ -1052,6 +1053,19 @@ export class Utils {
             });
         }
     }
+
+    // from https://gist.github.com/youssman/745578062609e8acac9f
+    static camelCaseToHyphen(str: string): string {
+        if (str === null || str === undefined) { return null; }
+        return str.replace(/([A-Z])/g, (g) => '-' + g[0].toLowerCase() );
+    }
+
+    // from https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
+    static hyphenToCamelCase(str: string): string {
+        if (str === null || str === undefined) { return null; }
+        return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase() );
+    }
+
 
     /**
      * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers

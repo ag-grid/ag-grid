@@ -209,18 +209,80 @@ export class SlickCellComp extends Component implements ICellComp {
         // populate
         this.putDataIntoCell();
         // style
-        // this.addStylesFromColDef();
-        // this.addClassesFromColDef();
+        this.postProcessStylesFromColDef();
+        this.postProcessClassesFromColDef();
         this.postProcessCellClassRules();
     }
 
-    private addStylesFromColDef() {
-        // todo
-        // remember - when adding styles to html, need to convert from camel case
+    private postProcessStylesFromColDef() {
+        let stylesToUse = this.processStylesFromColDef();
+        if (stylesToUse) {
+            _.addStylesToElement(this.getGui(), stylesToUse);
+        }
     }
 
-    private addClassesFromColDef() {
-        // todo
+    private preProcessStylesFromColDef(): string {
+        let stylesToUse = this.processStylesFromColDef();
+        let resParts: string[] = [];
+        if (stylesToUse) {
+            _.iterateObject(stylesToUse, (styleKey: string, styleValue: string) => {
+                let styleKeyDashed = _.camelCaseToHyphen(styleKey);
+                resParts.push(`${styleKeyDashed}: ${styleValue};`)
+            });
+        }
+        return resParts.join(' ');
+    }
+
+    private processStylesFromColDef(): any {
+        let colDef = this.column.getColDef();
+        if (colDef.cellStyle) {
+            let cssToUse: any;
+            if (typeof colDef.cellStyle === 'function') {
+                let cellStyleParams = {
+                    value: this.value,
+                    data: this.rowNode.data,
+                    node: this.rowNode,
+                    colDef: colDef,
+                    column: this.column,
+                    $scope: this.scope,
+                    context: this.beans.gridOptionsWrapper.getContext(),
+                    api: this.beans.gridOptionsWrapper.getApi()
+                };
+                let cellStyleFunc = <Function>colDef.cellStyle;
+                cssToUse = cellStyleFunc(cellStyleParams);
+            } else {
+                cssToUse = colDef.cellStyle;
+            }
+
+            return cssToUse;
+        }
+    }
+
+    private postProcessClassesFromColDef() {
+        this.processClassesFromColDef(className => _.addCssClass(this.getGui(), className) );
+    }
+
+    private preProcessClassesFromColDef(): string[] {
+        let res: string[] = [];
+        this.processClassesFromColDef(className => res.push(className) );
+        return res;
+    }
+
+    private processClassesFromColDef(onApplicableClass:(className:string)=>void): void {
+
+        this.beans.stylingService.processStaticCellClasses(
+            this.column.getColDef(),
+            {
+                value: this.value,
+                data: this.rowNode.data,
+                node: this.rowNode,
+                colDef: this.column.getColDef(),
+                rowIndex: this.rowNode.rowIndex,
+                api: this.beans.gridOptionsWrapper.getApi(),
+                context: this.beans.gridOptionsWrapper.getContext()
+            },
+            onApplicableClass
+        );
     }
 
     private putDataIntoCell() {
@@ -318,6 +380,8 @@ export class SlickCellComp extends Component implements ICellComp {
         let wrapperStart: string;
         let wrapperEnd: string;
 
+        let stylesFromColDef = this.preProcessStylesFromColDef();
+
         this.cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
         cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
 
@@ -328,7 +392,7 @@ export class SlickCellComp extends Component implements ICellComp {
             cssClasses.push('ag-cell-value');
         }
 
-        _.pushAll(cssClasses, this.getClassesFromColDef());
+        _.pushAll(cssClasses, this.preProcessClassesFromColDef());
         _.pushAll(cssClasses, this.preProcessCellClassRules());
         _.pushAll(cssClasses, this.getRangeClasses());
 
@@ -338,7 +402,7 @@ export class SlickCellComp extends Component implements ICellComp {
         template.push(` colid="${col.getId()}"`);
         template.push(` class="${cssClasses.join(' ')}"`);
         template.push(  tooltip ? ` title="${tooltip}"` : ``);
-        template.push(` style="width: ${width}px; left: ${left}px;" >`);
+        template.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef}" >`);
         template.push(wrapperStart);
         template.push(valueToRender);
         template.push(wrapperEnd);
@@ -357,29 +421,6 @@ export class SlickCellComp extends Component implements ICellComp {
         }
     }
 
-    private getClassesFromColDef(): string[] {
-
-        let res: string[] = [];
-
-        this.beans.stylingService.processStaticCellClasses(
-            this.column.getColDef(),
-            {
-                value: this.value,
-                data: this.rowNode.data,
-                node: this.rowNode,
-                colDef: this.column.getColDef(),
-                rowIndex: this.rowNode.rowIndex,
-                api: this.beans.gridOptionsWrapper.getApi(),
-                context: this.beans.gridOptionsWrapper.getContext()
-            },
-            (className:string)=>{
-                res.push(className);
-            }
-        );
-
-        return res;
-    }
-
     private processCellClassRules(onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void): void {
         this.beans.stylingService.processCellClassRules(
             this.column.getColDef(),
@@ -394,7 +435,7 @@ export class SlickCellComp extends Component implements ICellComp {
             }, onApplicableClass, onNotApplicableClass);
     }
 
-    private postProcessCellClassRules(): void{
+    private postProcessCellClassRules(): void {
         this.processCellClassRules(
             (className:string)=>{
                 _.addCssClass(this.getGui(), className);
