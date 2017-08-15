@@ -458,7 +458,8 @@ var defaultCols = [
         groupId: 'performance',
         children: [
             {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
-                filter: WinningsFilter, valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
+                filter: WinningsFilter, valueFormatter: currencyFormatter,
+                type: 'numericColumn',
                 enableValue: true,
                 // colId: 'sf',
                 // valueGetter: '55',
@@ -489,7 +490,7 @@ var defaultCols = [
         filterParams: {cellRenderer: ratingFilterRenderer}
     },
     {
-        headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
+        headerName: "Total Winnings", field: "totalWinnings", filter: 'number', type: 'numericColumn',
         editable: true, valueParser: numberParser, width: 150,
         // aggFunc: 'sum',
         enableValue: true,
@@ -509,7 +510,7 @@ defaultCols.push(monthGroup);
 months.forEach(function (month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
-        width: 100, filter: 'number', editable: true,
+        width: 100, filter: 'number', editable: true, type: 'numericColumn',
         enableValue: true,
         // aggFunc: 'sum',
         //hide: true,
@@ -520,8 +521,7 @@ months.forEach(function (month) {
         valueParser: numberParser, valueFormatter: currencyFormatter,
         filterParams:{
             clearButton: true
-        },
-        cellStyle: {"text-align": "right"}
+        }
     })
 });
 
@@ -941,9 +941,9 @@ WinningsFilter.prototype.setModel = function () {};
 
 function currencyCssFunc(params) {
     if (params.value !== null && params.value !== undefined && params.value < 0) {
-        return {"color": "red", "text-align": "right", "font-weight": "bold"};
+        return {"color": "red", "font-weight": "bold"};
     } else {
-        return {"text-align": "right"};
+        return {};
     }
 }
 

@@ -54,7 +54,24 @@ include '../documentation-main/documentation_header.php';
         <a href="../javascript-grid-grouping-headers/">Column Groups</a>.
     </p>
 
-    <h1 id="default-column-definitions">Default Column Types</h1>
+    <h1 id="built-in-column-definitions">Numeric Columns</h1>
+
+    <p>
+    The grid provides a handy shortcut for formatting numeric columns. 
+    Setting the column definition type to <code>numericColumn</code> aligns the column header and contents to the right, 
+    which makes the scanning of the data easier for the user.
+    </p>
+
+    <pre>
+    var gridOptions = {
+        columnDefs: [
+            { headerName: "Column A", field: "a" },
+            { headerName: "Column B", field: "b", type: "numericColumn" }
+        ]
+    }
+    </pre>
+
+    <h1 id="default-column-definitions">Custom Column Types</h1>
 
     <p>
         In addition to the above, the grid provides additional ways to
