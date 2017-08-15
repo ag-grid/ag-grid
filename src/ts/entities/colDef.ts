@@ -117,8 +117,6 @@ export interface ColDef extends AbstractColDef {
     cellRendererFramework?: any;
     cellRendererParams?: any;
 
-    textCellRenderer?: (params: ICellRendererParams)=>string;
-
     /** Cell editor */
     cellEditor?: {new(): ICellEditorComp} | string;
     cellEditorFramework?: any;

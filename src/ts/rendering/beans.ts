@@ -22,6 +22,7 @@ import {StylingService} from "../styling/stylingService";
 import {ColumnHoverService} from "./columnHoverService";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {PaginationProxy} from "../rowModels/paginationProxy";
+import {ComponentRecipes} from "../components/framework/componentRecipes";
 
 @Bean('beans')
 export class Beans {
@@ -52,5 +53,6 @@ export class Beans {
     @Autowired('stylingService') public stylingService: StylingService;
     @Autowired('columnHoverService') public columnHoverService: ColumnHoverService;
     @Autowired('enterprise') public enterprise: boolean;
+    @Autowired('componentRecipes') public componentRecipes: ComponentRecipes;
 
 }

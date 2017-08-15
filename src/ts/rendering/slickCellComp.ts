@@ -18,6 +18,7 @@ import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {IRowComp} from "./rowComp";
 import {Constants} from "../constants";
 import {NewValueParams} from "../entities/colDef";
+import {IAfterGuiAttachedParams} from "../interfaces/iComponent";
 
 export class SlickCellComp extends Component implements ICellComp {
 
@@ -43,6 +44,7 @@ export class SlickCellComp extends Component implements ICellComp {
 
     // instance of the cellRenderer class
     private cellRenderer: ICellRendererComp;
+    private cellRendererGui: HTMLElement | string;
     private cellEditor: ICellEditorComp;
 
     private rowComp: SlickRowComp;
@@ -60,15 +62,20 @@ export class SlickCellComp extends Component implements ICellComp {
         this.rowComp = rowComp;
 
         this.value = this.getValue();
-        this.selectCellRenderer();
         this.createGridCell();
         this.setUsingWrapper();
+        this.prepareCellRenderer();
     }
 
     public getInitialValueToRender(): string {
-        // if using a cellRenderer, then there is no initial value to render,
-        // todo: unless the result is a string
-        if (this.cellRendererKey) { return ''; }
+        // if using a cellRenderer, then render the html from the cell renderer if it exists
+        if (this.cellRenderer) {
+            if (typeof this.cellRendererGui === 'string') {
+                return <string> this.cellRendererGui;
+            } else {
+                return '';
+            }
+        }
 
         let colDef = this.column.getColDef();
         if (colDef.template) {
@@ -85,13 +92,6 @@ export class SlickCellComp extends Component implements ICellComp {
             } else {
                 return '';
             }
-        // } else if (colDef.textCellRenderer) {
-            // let valueFormatted = this.beans.valueFormatterService.formatValue(
-            //     this.column, this.rowNode, null, this.value);
-            // let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
-            // let valueToRender = valueFormattedExits ? valueFormatted : this.value;
-            // let params = this.createRendererAndRefreshParams(valueToRender, this.cellRendererParams);
-            // return colDef.textCellRenderer(params);
         } else {
             let valueFormatted = this.beans.valueFormatterService.formatValue(
                 this.column, this.rowNode, null, this.value);
@@ -152,7 +152,7 @@ export class SlickCellComp extends Component implements ICellComp {
         // the refresh can be unsuccessful if we are using a framework (eg ng2 or react) and the framework
         // wrapper has the refresh method, but the underlying component doesn't
         if (!cellRendererRefreshed) {
-            this.replaceCellContent();
+            this.replaceContentsAfterRefresh();
         }
 
         if (!suppressFlash) {
@@ -160,6 +160,8 @@ export class SlickCellComp extends Component implements ICellComp {
         }
 
         // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
+        this.postProcessStylesFromColDef();
+        this.postProcessClassesFromColDef();
         this.postProcessCellClassRules();
     }
 
@@ -187,7 +189,7 @@ export class SlickCellComp extends Component implements ICellComp {
         }, 500);
     }
 
-    private replaceCellContent(): void {
+    private replaceContentsAfterRefresh(): void {
         // otherwise we rip out the cell and replace it
         _.removeAllChildren(this.eParentOfValue);
 
@@ -196,22 +198,15 @@ export class SlickCellComp extends Component implements ICellComp {
             this.cellRenderer.destroy();
         }
         this.cellRenderer = null;
+        this.cellRendererGui = null;
 
-        this.populateCell();
+        // populate
+        this.postPutDataIntoCell();
 
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
         if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
             this.beans.$compile(this.getGui())(this.scope);
         }
-    }
-
-    private populateCell() {
-        // populate
-        this.putDataIntoCell();
-        // style
-        this.postProcessStylesFromColDef();
-        this.postProcessClassesFromColDef();
-        this.postProcessCellClassRules();
     }
 
     private postProcessStylesFromColDef() {
@@ -285,7 +280,7 @@ export class SlickCellComp extends Component implements ICellComp {
         );
     }
 
-    private putDataIntoCell() {
+    private postPutDataIntoCell() {
         // template gets preference, then cellRenderer, then do it ourselves
         let colDef = this.column.getColDef();
 
@@ -303,7 +298,7 @@ export class SlickCellComp extends Component implements ICellComp {
             }
             // use cell renderer if it exists
         } else if (this.cellRendererKey) {
-            this.useCellRenderer();
+            this.postUseCellRenderer();
         } else {
             let valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
             let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
@@ -332,7 +327,7 @@ export class SlickCellComp extends Component implements ICellComp {
         // note: should pass in params here instead of value?? so that client has formattedValue
         let valueFormatted = this.formatValue(this.value);
         let cellRendererParams = this.column.getColDef().cellRendererParams;
-        let params = this.createRendererAndRefreshParams(valueFormatted, cellRendererParams);
+        let params = this.createCellRendererParams(valueFormatted, cellRendererParams);
         let result: boolean | void = this.cellRenderer.refresh(params);
 
         if (result===false) {
@@ -479,7 +474,15 @@ export class SlickCellComp extends Component implements ICellComp {
         }
     }
 
-    private selectCellRenderer(): void {
+    private prepareCellRenderer(): void {
+        this.preChooseCellRenderer();
+
+        if (this.cellRendererKey) {
+            this.createCellRenderer();
+        }
+    }
+
+    private preChooseCellRenderer(): void {
         // template gets preference, then cellRenderer, then do it ourselves
         let colDef = this.column.getColDef();
 
@@ -499,22 +502,60 @@ export class SlickCellComp extends Component implements ICellComp {
         }
     }
 
-    private useCellRenderer(): void {
-        let noCellRenderer = !this.cellRendererKey;
-        if (noCellRenderer) { return; }
-
+    private createCellRenderer(): void {
         let valueFormatted = this.beans.valueFormatterService.formatValue(
             this.column, this.rowNode, null, this.value);
         let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
         let valueToRender = valueFormattedExits ? valueFormatted : this.value;
 
-        let params = this.createRendererAndRefreshParams(valueToRender, this.cellRendererParams);
+        let params = this.createCellRendererParams(valueToRender, this.cellRendererParams);
 
-        this.cellRenderer = this.beans.cellRendererService.useCellRenderer(
-            this.column.getColDef(), this.eParentOfValue, params);
+        this.cellRenderer = this.beans.componentRecipes.newCellRenderer(this.column.getColDef(), params);
+        this.cellRendererGui = this.cellRenderer.getGui();
     }
 
-    private createRendererAndRefreshParams(valueFormatted: string, cellRendererParams: {}): ICellRendererParams {
+    private postUseCellRenderer(): void {
+        let noCellRenderer = !this.cellRendererKey;
+        if (noCellRenderer) { return; }
+
+        this.createCellRenderer();
+
+        let gui = this.cellRendererGui;
+        if (gui != null) {
+            if (typeof gui == 'object'){
+                this.eParentOfValue.appendChild(gui);
+            } else {
+                this.eParentOfValue.textContent = gui;
+            }
+        }
+
+        this.callAfterGuiAttachedOnCellRenderer();
+    }
+
+    private useCellRendererAfterAttach(): void {
+        let noCellRenderer = !this.cellRendererKey;
+        if (noCellRenderer) { return; }
+
+        if (typeof this.cellRendererGui == 'object'){
+            this.eParentOfValue.appendChild(this.cellRendererGui);
+        }
+
+        this.callAfterGuiAttachedOnCellRenderer();
+    }
+
+    private callAfterGuiAttachedOnCellRenderer(): void {
+        if (this.cellRenderer.afterGuiAttached) {
+            let params = {
+                eGridCell: this.getGui(),
+                eParentOfValue: this.eParentOfValue,
+                eComponent: this.eParentOfValue.firstChild
+            };
+            // todo - need to create interfaces for after GUI attached, and
+            this.cellRenderer.afterGuiAttached(<IAfterGuiAttachedParams> params);
+        }
+    }
+
+    private createCellRendererParams(valueFormatted: string, cellRendererParams: {}): ICellRendererParams {
 
         let params = <ICellRendererParams> {
             value: this.value,
@@ -532,6 +573,8 @@ export class SlickCellComp extends Component implements ICellComp {
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext(),
             refreshCell: this.refreshCell.bind(this),
+
+            // todo danger - in the new world, these are not present :(
             eGridCell: this.getGui(),
             eParentOfValue: this.eParentOfValue,
 
@@ -1097,6 +1140,16 @@ export class SlickCellComp extends Component implements ICellComp {
         return res;
     }
 
+    private onRowIndexChanged(): void {
+        // when index changes, this influences items that need the index, so we update the
+        // grid cell so they are working off the new index.
+        this.createGridCell();
+        // when the index of the row changes, ie means the cell may have lost of gained focus
+        this.onCellFocused();
+        // check range selection
+        this.onRangeSelectionChanged();
+    }
+
     private onRangeSelectionChanged(): void {
         let newRangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
         let eGui = this.getGui();
@@ -1118,11 +1171,12 @@ export class SlickCellComp extends Component implements ICellComp {
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.addDomData();
         this.addSelectionCheckbox();
-        this.useCellRenderer();
+        this.useCellRendererAfterAttach();
 
         this.addDestroyableEventListener(this.column, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this));
         this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
 
         // range controller not present if using ag-Grid free
         if (this.beans.enterprise && this.beans.gridOptionsWrapper.isEnableRangeSelection()) {

@@ -70,10 +70,15 @@ export class SlickRowComp extends Component implements IRowComp {
         this.pinnedRightContainerComp = pinnedRightContainerComp;
         this.rowNode = rowNode;
         this.rowIsEven = this.rowNode.rowIndex % 2 === 0;
+        this.setAnimateFlags(animateIn);
+    }
 
+    private setAnimateFlags(animateIn: boolean): void {
         if (animateIn) {
-            let oldRowTopExists = _.exists(rowNode.oldRowTop);
+            let oldRowTopExists = _.exists(this.rowNode.oldRowTop);
+            // if the row had a previous position, we slide it in (animate row top)
             this.slideRowIn = oldRowTopExists;
+            // if the row had no previous position, we fade it in (animate opacity)
             this.fadeRowIn = !oldRowTopExists;
         } else {
             this.slideRowIn = false;

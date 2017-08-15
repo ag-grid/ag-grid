@@ -1,5 +1,5 @@
 export interface IAfterGuiAttachedParams {
-    hidePopup?: (event?: any)=> void
+    hidePopup?: (event?: any)=> void;
 }
 
 export interface IComponent<T> {
