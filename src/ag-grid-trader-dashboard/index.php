@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
 
     <?php include 'dashboard.html'; ?>
 
-    <show-complex-example example="dashboard.html"
+    <show-complex-example example=""
                           sourcesOnly="true"
                           sources="{
                             [

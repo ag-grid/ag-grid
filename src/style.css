@@ -18,11 +18,11 @@
 }
 
 .transition-width {
-    -webkit-transition: width 3s;
-    -moz-transition: width 3s;
-    -o-transition: width 3s;
-    -ms-transition: width 3s;
-    transition: width 3s;
+    -webkit-transition: width 3.5s;
+    -moz-transition: width 3.5s;
+    -o-transition: width 3.5s;
+    -ms-transition: width 3.5s;
+    transition: width 3.5s;
 }
 
 .framework-name {

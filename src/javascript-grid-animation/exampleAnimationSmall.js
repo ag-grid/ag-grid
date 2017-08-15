@@ -50,7 +50,7 @@
                 }
                 resetCountdown();
                 executeAfterXSeconds();
-            }, 3000);
+            }, 3500);
         }
 
         setTitleFormatted(null);
