@@ -101,7 +101,6 @@ var gridOptions = {
         ratingRenderer: ratingRenderer,
         booleanCellRenderer: booleanCellRenderer,
         countryCellRenderer: CountryCellRenderer,
-        languageCellRenderer: languageCellRenderer,
         personFloatingFilterComponent: PersonFloatingFilterComponent,
         countryFloatingFilterComponent: CountryFloatingFilterComponent
         // cellRenderer: function (params) {return params.node.group ? params.value : "HAHA: " + params.value},
@@ -358,7 +357,6 @@ var defaultCols = [
             },
             {
                 headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
-                cellRenderer: 'languageCellRenderer',
                 cellEditor: 'select',
                 enableRowGroup: true,
                 enablePivot: true,
@@ -383,7 +381,6 @@ var defaultCols = [
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
                 cellRenderer: 'countryCellRenderer',
-                textCellRenderer: countryTextCellRenderer,
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
@@ -445,7 +442,6 @@ var defaultCols = [
                 enablePivot: true,
                 enableValue: true,
                 cellRenderer: 'booleanCellRenderer', cellStyle: {"text-align": "center"}, comparator: booleanComparator,
-                textCellRenderer: booleanCellRenderer,
                 floatCell: true,
                 filterParams: {
                     cellRenderer: booleanFilterCellRenderer,
@@ -486,7 +482,6 @@ var defaultCols = [
     },
     {
         headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: 'ratingRenderer',
-        textCellRenderer: ratingRenderer,
         floatCell: true,
         enableRowGroup: true,
         enablePivot: true,
@@ -1057,17 +1052,6 @@ function booleanCleaner(value) {
     }
 }
 
-function languageCellRenderer(params) {
-    if (params.$scope) {
-        return "<span ng-click='clicked=true' ng-show='!clicked'>Click Me</span>" +
-            "<span ng-click='clicked=false' ng-show='clicked' ng-bind='data.language'></span>";
-    } else if (params.value !== null && params.value !== undefined) {
-        return params.value;
-    } else {
-        return null;
-    }
-}
-
 function CountryFloatingFilterComponent() {}
 
 CountryFloatingFilterComponent.prototype.init = function(params) {
@@ -1105,27 +1089,16 @@ CountryFloatingFilterComponent.prototype.onParentModelChanged = function(model) 
     }
 };
 
-function countryTextCellRenderer(params) {
-    if (params.value === "" || params.value === undefined || params.value === null) {
-        return '';
-    } else {
-        var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
-        return flag + ' ' + params.value;
-    }
-}
-
 function CountryCellRenderer() {
-    this.eGui = document.createElement('span');
-    this.eGui.style.cursor = 'default';
 }
 
 CountryCellRenderer.prototype.init = function (params) {
-//get flags from here: http://www.freeflagicons.com/
+    //get flags from here: http://www.freeflagicons.com/
     if (params.value === "" || params.value === undefined || params.value === null) {
-        this.eGui.innerHTML = '';
+        this.eGui = '';
     } else {
         var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
-        this.eGui.innerHTML = flag + ' ' + params.value;
+        this.eGui = flag + ' ' + params.value;
     }
 };
 
