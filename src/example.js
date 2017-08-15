@@ -131,7 +131,7 @@ var gridOptions = {
     pivotTotals: true,
 //minColWidth: 50,
 //maxColWidth: 300,
-//     rowBuffer: 0,
+    rowBuffer: 0,
 //columnDefs: [],
 //singleClickEdit: true,
 // suppressClickEdit: true,
