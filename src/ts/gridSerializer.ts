@@ -210,15 +210,6 @@ export class GridSerializer {
 
         let onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
 
-        // we can only export if it's a normal row model - unless we are exporting
-        // selected only, as this way we don't use the selected nodes rather than
-        // the row model to get the rows
-        if (!rowModelNormal && !onlySelected) {
-            console.log('ag-Grid: getDataAsCsv is only available for standard row model');
-            return '';
-        }
-
-        let inMemoryRowModel = <InMemoryRowModel> this.rowModel;
 
         let columnsToExport: Column[];
         if (_.existsAndNotEmpty(columnKeys)) {
@@ -260,7 +251,7 @@ export class GridSerializer {
         this.pinnedRowModel.forEachPinnedTopRow(processRow);
 
         if (isPivotMode) {
-            inMemoryRowModel.forEachPivotNode(processRow);
+            (<InMemoryRowModel>this.rowModel).forEachPivotNode(processRow);
         } else {
             // onlySelectedAllPages: user doing pagination and wants selected items from
             // other pages, so cannot use the standard row model as it won't have rows from
@@ -276,7 +267,11 @@ export class GridSerializer {
                 // here is everything else - including standard row model and selected. we don't use
                 // the selection model even when just using selected, so that the result is the order
                 // of the rows appearing on the screen.
-                inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
+                if (rowModelNormal){
+                    (<InMemoryRowModel>this.rowModel).forEachNodeAfterFilterAndSort(processRow);
+                } else {
+                    this.rowModel.forEachNode(processRow);
+                }
             }
         }
 
