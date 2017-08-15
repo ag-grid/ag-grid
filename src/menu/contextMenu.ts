@@ -39,11 +39,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
         let defaultMenuOptions: string[];
         if (Utils.exists(node)) {
             // if user clicks a cell
-            defaultMenuOptions = ['copy','copyWithHeaders','paste','separator','toolPanel'];
-            // only put in the export if normal row model, other row models confuse things with export.
-            if (this.rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
-                defaultMenuOptions.push('export');
-            }
+            defaultMenuOptions = ['copy','copyWithHeaders','paste','separator','toolPanel','export'];
         } else {
             // if user clicks outside of a cell (eg below the rows, or not rows present)
             defaultMenuOptions = ['toolPanel'];
