@@ -98,7 +98,7 @@ include '../documentation-main/documentation_header.php';
         The reader is encouraged to inspect the DOM (using your browsers developer tools) to dig deeper.
     </p>
 
-    <show-example example="example1"></show-example>
+    <show-example example="exampleStyling"></show-example>
 
     <h2 id="high-level-overview">High Level Overview</h2>
 
