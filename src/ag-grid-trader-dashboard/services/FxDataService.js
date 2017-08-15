@@ -47,12 +47,10 @@ FxDataService.prototype.kickOffPeriodicUpdates = function () {
     setInterval(function () {
         applyDeltasToFxData();
         updateFxDataSubscribers();
-    }, 1500);
 
-    setInterval(function () {
         calculateTopMovers();
         updateFxTopMoversSubscribers()
-    }, 2500);
+    }, 5000);
 };
 
 FxDataService.prototype.getCurrentFxData = function () {
@@ -148,7 +146,7 @@ const FX_DELTA_HEADERS = [
         field: 'last',
         headerName: 'Last',
         headerClass: 'align-right',
-        cellRenderer: 'animateShowChange',
+        // cellRenderer: 'animateShowChange',
         cellClass: 'align-right',
         width: 100
     },
@@ -156,7 +154,7 @@ const FX_DELTA_HEADERS = [
         field: 'net',
         headerName: 'Net',
         headerClass: 'align-right',
-        cellRenderer: 'animateShowChange',
+        // cellRenderer: 'animateShowChange',
         cellClass: 'align-right',
         width: 90
     },
@@ -173,7 +171,7 @@ const FX_DELTA_HEADERS = [
         headerName: symbol,
         width: 87,
         cellClass: 'align-right',
-        cellRenderer: 'animateShowChange',
+        // cellRenderer: 'animateShowChange',
         cellClassRules: {
             'fx-positive': 'x > 0.8',
             'fx-null': 'x === null',
