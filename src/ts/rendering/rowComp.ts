@@ -850,14 +850,14 @@ export class RowComp extends BeanStub implements IRowComp {
 
     private addRowIndexes(): void {
         let rowIndexListener = () => {
-            let rowStr = this.rowNode.rowIndex.toString();
+            let indexStr = this.rowNode.rowIndex.toString();
             if (this.rowNode.rowPinned===Constants.PINNED_BOTTOM) {
-                rowStr = 'fb-' + rowStr;
+                indexStr = 'fb-' + indexStr;
             } else if (this.rowNode.rowPinned===Constants.PINNED_TOP) {
-                rowStr = 'ft-' + rowStr;
+                indexStr = 'ft-' + indexStr;
             }
             this.eAllRowContainers.forEach( eRow => {
-                eRow.setAttribute('row', rowStr);
+                eRow.setAttribute('row', indexStr);
 
                 let rowIsEven = this.rowNode.rowIndex % 2 === 0;
                 _.addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);

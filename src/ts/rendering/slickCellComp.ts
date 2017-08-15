@@ -28,7 +28,6 @@ export class SlickCellComp extends Component implements ICellComp {
     private column: Column;
     private rowNode: RowNode;
     private eParentRow: HTMLElement;
-    private active = true;
     private gridCell: GridCell;
     private rangeCount: number;
     private usingWrapper: boolean;
@@ -1014,8 +1013,25 @@ export class SlickCellComp extends Component implements ICellComp {
         this.eParentRow.removeChild(this.getGui());
     }
 
-    public destroy(): void {
-        this.active = false;
+    // if the row is also getting destroyed, then we don't need to remove from dom,
+    // as the row will also get removed, so no need to take out the cells from the row
+    // if the row is going (removing is an expensive operation, so only need to remove
+    // the top part)
+    public destroy(removeFromDom = true): void {
+        super.destroy();
+
+        if (removeFromDom && this.eParentRow) {
+            this.eParentRow.removeChild(this.getGui());
+            this.eParentRow = null;
+        }
+
+        if (this.cellEditor && this.cellEditor.destroy) {
+            this.cellEditor.destroy();
+        }
+
+        if (this.cellRenderer && this.cellRenderer.destroy) {
+            this.cellRenderer.destroy();
+        }
     }
 
     private onLeftChanged(): void {

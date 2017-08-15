@@ -205,6 +205,16 @@ export class RowNode implements IEventEmitter {
         this.dispatchLocalEvent(event);
     }
 
+    public getRowIndexString(): string {
+        if (this.rowPinned===Constants.PINNED_TOP) {
+            return 't-' + this.rowIndex;
+        } else if (this.rowPinned===Constants.PINNED_BOTTOM) {
+            return 'b-' + this.rowIndex;
+        } else {
+            return this.rowIndex.toString();
+        }
+    }
+
     private createDaemonNode(): RowNode {
         let oldNode = new RowNode();
         this.context.wireBean(oldNode);

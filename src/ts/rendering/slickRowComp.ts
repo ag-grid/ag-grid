@@ -13,6 +13,7 @@ import {
 import {SlickCellComp} from "./slickCellComp";
 import {CellComp, ICellComp} from "./cellComp";
 import {EventService} from "../eventService";
+import {Constants} from "../constants";
 
 export class SlickRowComp extends Component implements IRowComp {
 
@@ -54,6 +55,8 @@ export class SlickRowComp extends Component implements IRowComp {
     private fadeRowIn: boolean;
     private slideRowIn: boolean;
 
+    private rowIsEven: boolean;
+
     constructor(bodyContainerComp: RowContainerComponent,
                 pinnedLeftContainerComp: RowContainerComponent,
                 pinnedRightContainerComp: RowContainerComponent,
@@ -66,6 +69,7 @@ export class SlickRowComp extends Component implements IRowComp {
         this.pinnedLeftContainerComp = pinnedLeftContainerComp;
         this.pinnedRightContainerComp = pinnedRightContainerComp;
         this.rowNode = rowNode;
+        this.rowIsEven = this.rowNode.rowIndex % 2 === 0;
 
         if (animateIn) {
             let oldRowTopExists = _.exists(rowNode.oldRowTop);
@@ -99,7 +103,9 @@ export class SlickRowComp extends Component implements IRowComp {
         this.addListeners();
 
         if (this.slideRowIn) {
-            this.nextVmTurnFunctions.push(this.onTopChanged.bind(this));
+            this.nextVmTurnFunctions.push( () => {
+                this.onTopChanged();
+            });
         }
         if (this.fadeRowIn) {
             this.nextVmTurnFunctions.push( () => {
@@ -111,13 +117,13 @@ export class SlickRowComp extends Component implements IRowComp {
     private addListeners(): void {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.setRowFocusClasses.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
 
         let eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.refreshCells.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.refreshCells.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_COLUMN_RESIZED, this.refreshCells.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_CELL_FOCUSED, this.setRowFocusClasses.bind(this));
+        this.addDestroyableEventListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
 
         // fixme - for this we should be clearing out everything, should inherit this from super component
@@ -341,7 +347,7 @@ export class SlickRowComp extends Component implements IRowComp {
             classes.push('ag-opacity-zero');
         }
 
-        if (this.rowNode.rowIndex % 2 === 0) {
+        if (this.rowIsEven) {
             classes.push('ag-row-even');
         } else {
             classes.push('ag-row-odd');
@@ -442,12 +448,10 @@ export class SlickRowComp extends Component implements IRowComp {
         // if sliding in, we take the old row top. otherwise we just set the current row top.
         let rowTop = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
 
-        // todo
-        // this.setupFadeIn(animate, slideRowIn);
-
         templateParts.push(`<div `);
         templateParts.push(  `role="row" `);
-        templateParts.push(  `row="${this.rowNode.id}" `);
+        templateParts.push(  `index="${this.rowNode.getRowIndexString()}" `);
+        templateParts.push(  `rowId="${this.rowNode.id}" `);
         templateParts.push(  `class="${rowClasses}" `);
         templateParts.push(  `style=" `);
         templateParts.push(    `height: ${rowHeight}px; `);
@@ -615,7 +619,11 @@ export class SlickRowComp extends Component implements IRowComp {
         return result;
     }
 
-    private setRowFocusClasses(): void {
+    private onCellFocusChanged(): void {
+        this.updateCellFocus();
+    }
+
+    private updateCellFocus(): void {
         let rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
         if (rowFocused !== this.rowFocused) {
             this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
@@ -623,6 +631,7 @@ export class SlickRowComp extends Component implements IRowComp {
             this.rowFocused = rowFocused;
         }
 
+        // if we are editing, then moving the focus out of a row will stop editing
         if (!rowFocused && this.editingRow) {
             this.stopEditing(false);
         }
@@ -673,6 +682,26 @@ export class SlickRowComp extends Component implements IRowComp {
 
     public getRenderedCellForColumn(column: Column): ICellComp {
         return this.slickCellComps[column.getColId()];
+    }
+
+    private onRowIndexChanged(): void {
+        this.onCellFocusChanged();
+        this.updateRowIndexes();
+    }
+
+    private updateRowIndexes(): void {
+        let rowIndexStr = this.rowNode.getRowIndexString();
+
+        this.eAllRowContainers.forEach( eRow => {
+            eRow.setAttribute('index', rowIndexStr);
+
+            let rowIsEven = this.rowNode.rowIndex % 2 === 0;
+            if (this.rowIsEven!==rowIsEven) {
+                this.rowIsEven = rowIsEven;
+                _.addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);
+                _.addOrRemoveCssClass(eRow, 'ag-row-odd', !rowIsEven);
+            }
+        });
     }
 
     public ensureInDomAfter(previousElement: LastPlacedElements): void {}

@@ -38,7 +38,7 @@ export class RowContainerComponent {
     }
 
     public getRowElement(rowId: string): HTMLElement {
-        let res = <HTMLElement> this.eContainer.querySelector(`[row="${rowId}"]`);
+        let res = <HTMLElement> this.eContainer.querySelector(`[rowId="${rowId}"]`);
         return res;
     }
 
