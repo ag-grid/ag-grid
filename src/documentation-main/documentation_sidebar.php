@@ -29,6 +29,20 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">16th August 2017</div>
+    <div style="float: left; margin-right: 10px;">
+        <a href="../weekly-update/20170816/">
+            <img src="../weekly-update/20170816/images/ngconf_sponsor_talk_200.png" style="width: 200px;"/>
+        </a>
+    </div>
+    <div style="padding-top: 5px; text-align: center;">
+        <a href="../weekly-update/20170816/">
+            ag-Grid Update
+        </a>
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header">3rd August 2017</div>
     <div style="float: left; margin-right: 10px;">
         <a href="../weekly-update/20170801/">
