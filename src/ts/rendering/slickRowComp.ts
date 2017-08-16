@@ -95,8 +95,6 @@ export class SlickRowComp extends Component implements IRowComp {
             this.slideRowIn = false;
             this.fadeRowIn = false;
         }
-        this.slideRowIn = false;
-        this.fadeRowIn = false;
     }
 
     public isEditing(): boolean {
@@ -598,21 +596,21 @@ export class SlickRowComp extends Component implements IRowComp {
         // this.destroyScope();
         // this.destroyFullWidthComponent();
 
-        // if (animate) {
+        if (animate) {
             this.removeFirstPassFuncs.forEach( func => func() );
 
             this.removeSecondPassFuncs.push( ()=> {
                 this.forEachCellComp(renderedCell => renderedCell.destroy(false) );
             });
 
-        // } else {
-        //     this.forEachCellComp(renderedCell => renderedCell.destroy(false) );
-        //
-        //     // we are not animating, so execute the second stage of removal now.
-        //     // we call getAndClear, so that they are only called once
-        //     let delayedDestroyFunctions = this.getAndClearDelayedDestroyFunctions();
-        //     delayedDestroyFunctions.forEach( func => func() );
-        // }
+        } else {
+            this.forEachCellComp(renderedCell => renderedCell.destroy(false) );
+
+            // we are not animating, so execute the second stage of removal now.
+            // we call getAndClear, so that they are only called once
+            let delayedDestroyFunctions = this.getAndClearDelayedDestroyFunctions();
+            delayedDestroyFunctions.forEach( func => func() );
+        }
 
         let event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
 
