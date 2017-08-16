@@ -53,7 +53,7 @@ export class CellRendererService {
             if (typeof gui == 'object'){
                 eTarget.appendChild(gui);
             } else {
-                eTarget.textContent = gui;
+                eTarget.innerHTML = gui;
             }
         }
 
