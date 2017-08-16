@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
+    <title>eye-slash</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="eye-slash">
+            <circle id="Combined-Shape" fill="#000000" cx="9" cy="8.5" r="2.5"></circle>
+            <path d="M3,8.5 C4.6,6.16666667 6.6,5 9,5 C11.4,5 13.4,6.16666667 15,8.5 C13.4,10.8333333 11.4,12 9,12 C6.6,12 4.6,10.8333333 3,8.5 Z" id="Path-6-Copy" stroke="#000000"></path>
+            <path d="M6,5 L12,12" id="Line-Copy" stroke="#FFFFFF" stroke-linecap="square"></path>
+            <path d="M7,5 L13,12" id="Line" stroke="#000000" stroke-linecap="square"></path>
+        </g>
+    </g>
+</svg>

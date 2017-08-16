@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
+    <title>copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="copy" fill-rule="nonzero" fill="#000000">
+            <g id="ic_content_copy_24px" transform="translate(3.000000, 2.000000)">
+                <path d="M8.84210526,0 L1.26315789,0 C0.568421053,0 0,0.572727273 0,1.27272727 L0,10.1818182 L1.26315789,10.1818182 L1.26315789,1.27272727 L8.84210526,1.27272727 L8.84210526,0 Z M10.7368421,2.54545455 L3.78947368,2.54545455 C3.09473684,2.54545455 2.52631579,3.11818182 2.52631579,3.81818182 L2.52631579,12.7272727 C2.52631579,13.4272727 3.09473684,14 3.78947368,14 L10.7368421,14 C11.4315789,14 12,13.4272727 12,12.7272727 L12,3.81818182 C12,3.11818182 11.4315789,2.54545455 10.7368421,2.54545455 Z M10.7368421,12.7272727 L3.78947368,12.7272727 L3.78947368,3.81818182 L10.7368421,3.81818182 L10.7368421,12.7272727 Z" id="Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

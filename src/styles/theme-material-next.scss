@@ -17,6 +17,7 @@ $secondary-font: "Roboto", sans-serif;
 $secondary-font-size: 12px;
 $secondary-weight: 700;
 $grid-size: 8px;
+$icon-size: 18px;
 
 $header-height: $grid-size * 7;
 $row-height: $grid-size * 6;
@@ -37,6 +38,20 @@ $transition-speed: 120ms;
     padding-right: $cell-horizontal-padding;
     @include centered-container($height);
 } 
+
+@mixin icon-background($icon) {
+    width: $icon-size;
+    height: $icon-size;
+    background: transparent url('./material-icons/#{$icon}.svg') center no-repeat;
+    background-size: $icon-size $icon-size;
+}
+
+@mixin card() {
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    padding: $grid-size;
+    background: $background-color;
+    border-radius: 2px;
+}
 
 .ag-material-next {
     font: $primary-weight $primary-font-size $primary-font;
@@ -69,6 +84,8 @@ $transition-speed: 120ms;
     }
 
     .ag-header-cell-label {
+        float: left;
+        width: calc(100% - #{$icon-size});
         & > span {
             float: left;
         }
@@ -118,12 +135,98 @@ $transition-speed: 120ms;
         &::after {
             border-right: 1px solid $border-color;
             display: block;
-            height: $header-height - $grid-size * 2;
-            margin-top: $grid-size;
+            height: $header-height - $grid-size * 4;
+            margin-top: $grid-size * 2;
             content: 'resize';
             overflow: hidden;
             text-indent: $grid-size;
             width: $grid-size;
         }
+    }
+
+////////////////////////////////////////
+// Icons 
+////////////////////////////////////////
+
+    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right small-up small-down tick cross;
+
+    @each $icon in $icons {
+        .ag-icon-#{$icon} {
+            display: inline-block;
+            @include icon-background('#{$icon}');
+        }
+    }
+
+    .ag-header-cell-menu-button {
+        @include icon-background('menu');
+        height: $header-height;
+    }
+
+////////////////////////////////////////
+// Context Menu 
+////////////////////////////////////////
+
+    .ag-menu {
+        @include card;
+        padding-left: 0;
+        padding-right: 0;
+        z-index: 5;
+
+        .ag-menu-option {
+            line-height: $grid-size * 4;
+            padding-left: $grid-size * 2;
+            padding-right: $grid-size * 2;
+
+            & > span {
+                vertical-align: middle;
+                display: table-cell;
+            }
+        }
+
+        .ag-menu-option-icon {
+            padding-left: $grid-size;
+            padding-right: $grid-size;
+        }
+
+        .ag-menu-option-shortcut {
+            padding-left: $grid-size * 2;
+        }
+
+        .ag-menu-separator {
+            border-bottom: 1px solid $border-color;
+            padding-bottom: $grid-size;
+            margin-bottom: $grid-size;
+            margin-left: -$grid-size;
+
+            & > span {
+                height: $grid-size * 2;
+            }
+        }
+
+        .ag-menu-separator + .ag-menu-option > span {
+            padding-top: $grid-size * 2;
+        }
+
+        .ag-menu-option-popup-pointer {
+            width:$icon-size + $grid-size * 2;
+        }
+    }
+
+////////////////////////////////////////
+// Context Menu 
+////////////////////////////////////////
+
+    &.ag-dnd-ghost {
+        @include card();
+        font: $secondary-weight $secondary-font-size $secondary-font;
+        color: $secondary;
+        border: none;
+        height: $grid-size * 4 !important;
+        z-index: 5;
+    }
+
+    .ag-icon-checkbox-checked {
+        background: $accent none;
+        mask: url("./material-icons/checkbox-checked.svg") no-repeat 50% 50%;
     }
 }

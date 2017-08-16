@@ -1,3 +1,10 @@
+// to satisfy server side compilation
+declare let global: any;
+global.HTMLElement = {};
+global.HTMLButtonElement = {};
+global.HTMLSelectElement = {};
+global.HTMLInputElement = {};
+
 // columnController
 export {BalancedColumnTreeBuilder} from "./dist/lib/columnController/balancedColumnTreeBuilder";
 export {ColumnController} from "./dist/lib/columnController/columnController";
@@ -236,6 +243,7 @@ export {BaseComponentWrapper} from "./dist/lib/components/framework/frameworkCom
 export {FrameworkComponentWrapper} from "./dist/lib/components/framework/frameworkComponentWrapper";
 export {IFrameworkFactory} from "./dist/lib/interfaces/iFrameworkFactory";
 export {SerializedNumberFilter} from "./dist/lib/filter/numberFilter";
+export {Environment} from "./dist/lib/environment";
 
 // events
 export {AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, VirtualColumnsChangedEvent,

@@ -23,6 +23,7 @@ export interface INumberFilterParams extends IScalarFilterParams{
 export interface ITextFilterParams extends IFilterParams{
     textCustomComparator?:TextComparator;
     debounceMs?: number;
+    caseSensitive?: boolean;
 }
 
 export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams, SerializedTextFilter> {
@@ -33,6 +34,9 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
     private comparator:TextComparator;
     private formatter:TextFormatter;
     static DEFAULT_FORMATTER:TextFormatter = (from:string)=>{
+        return from;
+    };
+    static DEFAULT_LOWERCASE_FORMATTER:TextFormatter = (from:string)=>{
         if (from == null) return null;
         return from.toString().toLowerCase();
     };
@@ -65,7 +69,10 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
 
     public customInit(): void {
         this.comparator = this.filterParams.textCustomComparator ? this.filterParams.textCustomComparator : TextFilter.DEFAULT_COMPARATOR;
-        this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : TextFilter.DEFAULT_FORMATTER;
+        this.formatter =
+            this.filterParams.textFormatter ? this.filterParams.textFormatter :
+            this.filterParams.caseSensitive == true ? TextFilter.DEFAULT_LOWERCASE_FORMATTER :
+            TextFilter.DEFAULT_FORMATTER;
         super.customInit();
     }
 
@@ -134,8 +141,12 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         }
 
         if (this.filterText !== filterText) {
-            let newLowerCase = filterText ? filterText.toLowerCase() : null;
-            let previousLowerCase = this.filterText ? this.filterText.toLowerCase() : null;
+            let newLowerCase =
+                filterText && this.filterParams.caseSensitive != true ? filterText.toLowerCase() :
+                filterText;
+            let previousLowerCase = this.filterText && this.filterParams.caseSensitive != true  ? this.filterText.toLowerCase() :
+                this.filterText;
+
             this.filterText = this.formatter(filterText);
             if (previousLowerCase !== newLowerCase) {
                 this.onFilterChanged();

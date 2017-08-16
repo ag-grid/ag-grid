@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
+    <title>checkbox-unchecked</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="checkbox-unchecked">
+            <g id="ic_check_box_outline_blank_24px">
+                <path d="M14.25,3.75 L14.25,14.25 L3.75,14.25 L3.75,3.75 L14.25,3.75 L14.25,3.75 Z M14.25,2.25 L3.75,2.25 C2.925,2.25 2.25,2.925 2.25,3.75 L2.25,14.25 C2.25,15.075 2.925,15.75 3.75,15.75 L14.25,15.75 C15.075,15.75 15.75,15.075 15.75,14.25 L15.75,3.75 C15.75,2.925 15.075,2.25 14.25,2.25 Z" id="Shape" fill="#000000" fill-rule="nonzero"></path>
+                <polygon id="Shape" points="0 0 18 0 18 18 0 18"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>
