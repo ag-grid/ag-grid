@@ -1,0 +1,129 @@
+// Colors
+$accent: #4285F4;
+$hint: rgba(black, .38);
+$disabled: rgba(black, .38);
+$icon: rgba(black, .38);
+$primary: rgba(black, .87);
+$secondary: rgba(black, .54);
+$hover: #EEEEEE;
+$background-color: #FFFFFF;
+$border-color: #E0E0E0;
+
+$primary-font-size: 13px;
+$primary-font: "Roboto", sans-serif;
+$primary-weight: 400;
+
+$secondary-font: "Roboto", sans-serif;
+$secondary-font-size: 12px;
+$secondary-weight: 700;
+$grid-size: 8px;
+
+$header-height: $grid-size * 7;
+$row-height: $grid-size * 6;
+$cell-horizontal-padding: $grid-size* 3;
+$transition-speed: 120ms;
+
+@mixin bottom-border() {
+    border-bottom: 1px solid $border-color;
+    box-sizing: border-box;
+}
+
+@mixin centered-container($height) {
+    line-height: $height;
+}
+
+@mixin grid-cell($height) {
+    padding-left: $cell-horizontal-padding;
+    padding-right: $cell-horizontal-padding;
+    @include centered-container($height);
+} 
+
+.ag-material-next {
+    font: $primary-weight $primary-font-size $primary-font;
+    color: $primary;
+    background-color: $background-color;
+
+////////////////////////////////////////
+// Basic layout
+////////////////////////////////////////
+    .ag-header {
+        font: $secondary-weight $secondary-font-size $secondary-font;
+        color: $secondary;
+    }
+
+    .ag-header-row {
+        @include bottom-border;
+    }
+
+    .ag-row {
+        @include bottom-border;
+        transition: background-color $transition-speed linear;
+    }
+
+    .ag-row-hover {
+        background-color: $hover;
+    }
+
+    .ag-numeric-cell {
+        text-align: right;
+    }
+
+    .ag-header-cell-label {
+        & > span {
+            float: left;
+        }
+        .ag-header-icon {
+            margin-top: 2px;
+        }
+    }
+
+    .ag-numeric-header {
+        .ag-header-cell-menu-button {
+            float: left;
+        }
+
+        .ag-header-cell-label {
+            float: right;
+            & > span {
+                float: right;
+            }
+        }
+    }
+
+    .ag-header-cell, .ag-header-group-cell {
+        @include grid-cell($header-height);
+    }
+
+    .ag-cell {
+        @include grid-cell($row-height - 2);
+        border: 1px solid transparent;
+    }
+
+////////////////////////////////////////
+// Navigation
+////////////////////////////////////////
+    .ag-cell:focus {
+        outline: initial;
+        border: 1px solid $accent;
+    }
+
+////////////////////////////////////////
+// Resizing
+////////////////////////////////////////
+    .ag-header-cell-resize {
+        width: $grid-size * 2;
+        position: absolute;
+        right:-$grid-size * 1;
+        z-index: 4;
+        &::after {
+            border-right: 1px solid $border-color;
+            display: block;
+            height: $header-height - $grid-size * 2;
+            margin-top: $grid-size;
+            content: 'resize';
+            overflow: hidden;
+            text-indent: $grid-size;
+            width: $grid-size;
+        }
+    }
+}

@@ -22,6 +22,37 @@ $checkbox-horizontal-margin: 4px;
 $tool-panel-box-padding: 4px 4px 10px 4px;
  
 .ag-#{$ag-style} {
+    .ag-numeric-cell {
+        text-align: right;
+    }
+
+    .ag-header-cell-label {
+        & > span {
+            float: left;
+        }
+        .ag-header-icon {
+            margin-top: 2px;
+        }
+    }
+
+    .ag-numeric-header {
+        .ag-header-cell-menu-button {
+            float: left;
+        }
+
+        .ag-header-cell-label {
+            float: right;
+            & > span {
+                float: right;
+            }
+        }
+    }
+
+    .ag-header-cell-resize {
+        position: absolute;
+        right: 0;
+    }
+
     // copying bootstrap with line-height, sorts out alignment problems with images beside text
     line-height: 1.4;
     font-family: $ag-root-font-family;

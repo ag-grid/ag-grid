@@ -250,12 +250,16 @@ export class Utils {
         }
     }
 
-    static assign(object: any, source: any): void {
-        if (this.exists(source)) {
-            this.iterateObject(source, function (key: string, value: any) {
-                object[key] = value;
-            });
-        }
+    static assign(object: any, ...sources: any[] ): any {
+        sources.forEach( source => {
+            if (this.exists(source)) {
+                this.iterateObject(source, function (key: string, value: any) {
+                    object[key] = value;
+                });
+            }
+        });
+
+        return object;
     }
 
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date {
