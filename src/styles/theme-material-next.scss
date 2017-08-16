@@ -224,4 +224,9 @@ $transition-speed: 120ms;
         height: $grid-size * 4 !important;
         z-index: 5;
     }
+
+    .ag-icon-checkbox-checked {
+        background: $accent none;
+        mask: url("./material-icons/checkbox-checked.svg") no-repeat 50% 50%;
+    }
 }
