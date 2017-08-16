@@ -27,6 +27,8 @@ include '../documentation-main/documentation_header.php';
         <li>The HTML attribute 'row' on the row div was showing the index. It was supposed to be the row. So now have two attributes instead, index and rowId, so there is no confusion.</li>
     </ul>
 
+    <h4>Breaking Change</h4>
+    <li>In cell renderer, the eGridDiv and eParentOfValue no longer exist in init(), instead they are in afterGuiAttached()</li>
 
     <h2>Version 12.0.x</h2>
     <h3>Version 12.0.2 [26-JUL-2017]</h3>
