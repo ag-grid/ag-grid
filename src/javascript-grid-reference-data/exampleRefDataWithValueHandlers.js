@@ -63,6 +63,10 @@ var gridOptions = {
         {
             headerName: "Interior Colour",
             field: "interiorColour",
+            cellEditor: 'text',
+            cellEditorParams: {
+                useFormatter: true
+            },
             filter: 'set',
             filterParams: {
                 values: extractValues(colourMappings),
@@ -81,7 +85,7 @@ var gridOptions = {
             field: "price",
             colId: "retailPrice",
             valueGetter: function (params) {
-                return params.data.price * 1.1; // price markup
+                return params.data.price;
             },
             valueFormatter: currencyFormatter,
             valueSetter: numberValueSetter
@@ -142,7 +146,7 @@ function numberValueSetter(params) {
 }
 
 function removeSpaces(str) {
-    return str.replace(/\s/g, '');
+    return str ? str.replace(/\s/g, '') : str;
 }
 
 // wait for the document to be loaded, otherwise

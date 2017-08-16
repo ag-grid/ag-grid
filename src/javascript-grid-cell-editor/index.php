@@ -171,6 +171,13 @@ MyCellEditor.prototype.isPopup = function() {
             the cell the use double clicked on, or pressed a key on etc).
         </td>
     </tr>
+    <tr>
+        <th>useFormatter</th>
+        <td>
+            This is useful when using reference data and you want to show display text rather than the underlying
+            code value. If true, the formatter provided on the ColDef will format the value prior to editing.
+        </td>
+    </tr>
 </table>
 
 <h3 id="complementing-cell-editor-params">Complementing cellEditor Params</h3>
