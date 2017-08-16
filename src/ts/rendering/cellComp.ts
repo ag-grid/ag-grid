@@ -591,7 +591,7 @@ export class CellComp extends Component implements ICellComp {
         }
     }
 
-    private createCellEditorParams(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorParams {
+    private createCellEditorParams(keyPress: number, charPress: string, cellStartedEdit: boolean, useFormatter: boolean): ICellEditorParams {
         let params: ICellEditorParams = {
             value: this.getValue(),
             keyPress: keyPress,
@@ -608,7 +608,8 @@ export class CellComp extends Component implements ICellComp {
             stopEditing: this.stopEditingAndFocus.bind(this),
             eGridCell: this.eGridCell,
             parseValue: this.parseValue.bind(this),
-            formatValue: this.formatValue.bind(this)
+            formatValue: this.formatValue.bind(this),
+            useFormatter: useFormatter,
         };
 
         let colDef = this.column.getColDef();
@@ -636,9 +637,9 @@ export class CellComp extends Component implements ICellComp {
         return _.exists(valueParser) ? this.beans.expressionService.evaluate(valueParser, params) : newValue;
     }
 
-    private createCellEditor(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorComp {
+    private createCellEditor(keyPress: number, charPress: string, cellStartedEdit: boolean, useFormatter: boolean): ICellEditorComp {
 
-        let params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
+        let params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit, useFormatter);
 
         let cellEditor = this.beans.cellEditorFactory.createCellEditor(this.column.getCellEditor(), params);
 
@@ -662,7 +663,7 @@ export class CellComp extends Component implements ICellComp {
     }
 
     // either called internally if single cell editing, or called by rowRenderer if row editing
-    public startEditingIfEnabled(keyPress: number = null, charPress: string = null, cellStartedEdit = false) {
+    public startEditingIfEnabled(keyPress: number = null, charPress: string = null, cellStartedEdit = false, useFormatter = false) {
 
         // don't do it if not editable
         if (!this.isCellEditable()) { return; }
@@ -670,7 +671,7 @@ export class CellComp extends Component implements ICellComp {
         // don't do it if already editing
         if (this.editingCell) { return; }
 
-        let cellEditor = this.createCellEditor(keyPress, charPress, cellStartedEdit);
+        let cellEditor = this.createCellEditor(keyPress, charPress, cellStartedEdit, useFormatter);
         if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
             if (cellEditor.destroy) {
                 cellEditor.destroy();
