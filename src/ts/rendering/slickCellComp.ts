@@ -536,7 +536,8 @@ export class SlickCellComp extends Component implements ICellComp {
         let noCellRenderer = !this.cellRendererKey;
         if (noCellRenderer) { return; }
 
-        if (typeof this.cellRendererGui == 'object'){
+        // need to check exists, as (typeof null === object)
+        if (_.exists(this.cellRendererGui) && typeof this.cellRendererGui == 'object'){
             this.eParentOfValue.appendChild(this.cellRendererGui);
         }
 
@@ -717,7 +718,7 @@ export class SlickCellComp extends Component implements ICellComp {
     }
 
     // either called internally if single cell editing, or called by rowRenderer if row editing
-    public startEditingIfEnabled(keyPress: number = null, charPress: string = null, cellStartedEdit = false) {
+    public startEditingIfEnabled(keyPress: number = null, charPress: string = null, cellStartedEdit = false, useFormatter = false) {
 
         // don't do it if not editable
         if (!this.isCellEditable()) { return; }
@@ -725,7 +726,7 @@ export class SlickCellComp extends Component implements ICellComp {
         // don't do it if already editing
         if (this.editingCell) { return; }
 
-        let cellEditor = this.createCellEditor(keyPress, charPress, cellStartedEdit);
+        let cellEditor = this.createCellEditor(keyPress, charPress, cellStartedEdit, useFormatter);
         if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
             if (cellEditor.destroy) {
                 cellEditor.destroy();
@@ -829,16 +830,16 @@ export class SlickCellComp extends Component implements ICellComp {
         _.addOrRemoveCssClass(this.getGui(), 'ag-cell-not-inline-editing', !editingInline);
     }
 
-    private createCellEditor(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorComp {
+    private createCellEditor(keyPress: number, charPress: string, cellStartedEdit: boolean, useFormatter: boolean): ICellEditorComp {
 
-        let params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
+        let params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit, useFormatter);
 
         let cellEditor = this.beans.cellEditorFactory.createCellEditor(this.column.getCellEditor(), params);
 
         return cellEditor;
     }
 
-    private createCellEditorParams(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorParams {
+    private createCellEditorParams(keyPress: number, charPress: string, cellStartedEdit: boolean, useFormatter: boolean): ICellEditorParams {
         let params: ICellEditorParams = {
             value: this.getValue(),
             keyPress: keyPress,
@@ -855,7 +856,8 @@ export class SlickCellComp extends Component implements ICellComp {
             stopEditing: this.stopEditingAndFocus.bind(this),
             eGridCell: this.getGui(),
             parseValue: this.parseValue.bind(this),
-            formatValue: this.formatValue.bind(this)
+            formatValue: this.formatValue.bind(this),
+            useFormatter: useFormatter
         };
 
         let colDef = this.column.getColDef();
@@ -1101,13 +1103,8 @@ export class SlickCellComp extends Component implements ICellComp {
     // as the row will also get removed, so no need to take out the cells from the row
     // if the row is going (removing is an expensive operation, so only need to remove
     // the top part)
-    public destroy(removeFromDom = true): void {
+    public destroy(): void {
         super.destroy();
-
-        if (removeFromDom && this.eParentRow) {
-            this.eParentRow.removeChild(this.getGui());
-            this.eParentRow = null;
-        }
 
         if (this.cellEditor && this.cellEditor.destroy) {
             this.cellEditor.destroy();

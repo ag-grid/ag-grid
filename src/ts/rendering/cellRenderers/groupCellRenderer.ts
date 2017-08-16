@@ -13,6 +13,7 @@ import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import {RefSelector} from "../../widgets/componentAnnotations";
+import {IAfterGuiAttachedParams} from "../../interfaces/iComponent";
 
 export interface GroupCellRendererParams extends ICellRendererParams{
     pinned:string,
@@ -53,7 +54,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private params: GroupCellRendererParams;
 
-
     // will be true if the node was pulled down
     private draggedFromHideOpenParents: boolean;
 
@@ -79,11 +79,20 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
 
         this.setupDragOpenParents();
-        this.setupComponents();
+
+        // hack to get renderer working with slick and non-slick
+        if (this.params.eGridCell) {
+            this.afterGuiAttached({});
+        }
     }
 
-    private setupComponents(): void {
-        this.addExpandAndContract();
+    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+
+        if (this.params.value==null) { return; }
+
+        // hack to get renderer working with slick and non-slick
+        let eGridCell = this.params.eGridCell ? this.params.eGridCell : (<any>params).eGridCell;
+        this.addExpandAndContract(eGridCell);
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.addPadding();
@@ -262,9 +271,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
-    private addExpandAndContract(): void {
+    private addExpandAndContract(eGroupCell: HTMLElement): void {
         let params = this.params;
-        let eGroupCell: HTMLElement = params.eGridCell;
         let eExpandedIcon = _.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
         let eContractedIcon = _.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
         this.eExpanded.appendChild(eExpandedIcon);

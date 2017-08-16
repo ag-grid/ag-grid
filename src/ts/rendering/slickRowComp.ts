@@ -1,19 +1,25 @@
-
 import {Component} from "../widgets/component";
 import {IRowComp, LastPlacedElements, RowComp} from "./rowComp";
 import {RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
 import {Beans} from "./beans";
 import {RowContainerComponent} from "./rowContainerComponent";
-import {_} from "../utils";
+import {_, NumberSequence} from "../utils";
 import {
-    Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent,
-    RowValueChangedEvent, VirtualRowRemovedEvent
+    Events,
+    RowClickedEvent,
+    RowDoubleClickedEvent,
+    RowEditingStartedEvent,
+    RowEditingStoppedEvent,
+    RowEvent,
+    RowValueChangedEvent,
+    VirtualRowRemovedEvent
 } from "../events";
 import {SlickCellComp} from "./slickCellComp";
-import {CellComp, ICellComp} from "./cellComp";
+import {ICellComp} from "./cellComp";
 import {EventService} from "../eventService";
-import {Constants} from "../constants";
+
+let compIdSequence = new NumberSequence();
 
 export class SlickRowComp extends Component implements IRowComp {
 
@@ -24,6 +30,11 @@ export class SlickRowComp extends Component implements IRowComp {
     private pinnedLeftContainerComp: RowContainerComponent;
     private pinnedRightContainerComp: RowContainerComponent;
     private rowNode: RowNode;
+
+    // unique id for this row component. this is used for getting a reference to the HTML dom.
+    // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
+    // around as we create a new rowComp instance for the same row node).
+    private compId = compIdSequence.next();
 
     private ePinnedLeftRow: HTMLElement;
     private ePinnedRightRow: HTMLElement;
@@ -41,21 +52,23 @@ export class SlickRowComp extends Component implements IRowComp {
     // for animations, there are bits we want done in the next VM turn, to all DOM to update first.
     // instead of each row doing a setTimeout(func,0), we put the functions here and the rowRenderer
     // executes them all in one timeout
-    private nextVmTurnFunctions: Function[] = [];
-
-    // for animations, these functions get called 400ms after the row is cleared, called by the rowRenderer
-    // so each row isn't setting up it's own timeout
-    private delayedDestroyFunctions: Function[] = [];
+    private createSecondPassFuncs: Function[] = [];
 
     // these get called before the row is destroyed - they set up the DOM for the remove animation (ie they
     // set the DOM up for the animation), then the delayedDestroyFunctions get called when the animation is
     // complete (ie removes from the dom).
-    private startRemoveAnimationFunctions: Function[] = [];
+    private removeFirstPassFuncs: Function[] = [];
+
+    // for animations, these functions get called 400ms after the row is cleared, called by the rowRenderer
+    // so each row isn't setting up it's own timeout
+    private removeSecondPassFuncs: Function[] = [];
 
     private fadeRowIn: boolean;
     private slideRowIn: boolean;
 
     private rowIsEven: boolean;
+
+    private paginationPage: number;
 
     constructor(bodyContainerComp: RowContainerComponent,
                 pinnedLeftContainerComp: RowContainerComponent,
@@ -70,6 +83,8 @@ export class SlickRowComp extends Component implements IRowComp {
         this.pinnedRightContainerComp = pinnedRightContainerComp;
         this.rowNode = rowNode;
         this.rowIsEven = this.rowNode.rowIndex % 2 === 0;
+        this.paginationPage = this.beans.paginationProxy.getCurrentPage();
+
         this.setAnimateFlags(animateIn);
     }
 
@@ -78,7 +93,7 @@ export class SlickRowComp extends Component implements IRowComp {
             let oldRowTopExists = _.exists(this.rowNode.oldRowTop);
             // if the row had a previous position, we slide it in (animate row top)
             this.slideRowIn = oldRowTopExists;
-            // if the row had no previous position, we fade it in (animate opacity)
+            // if the row had no previous position, we fade it in (animate
             this.fadeRowIn = !oldRowTopExists;
         } else {
             this.slideRowIn = false;
@@ -108,12 +123,12 @@ export class SlickRowComp extends Component implements IRowComp {
         this.addListeners();
 
         if (this.slideRowIn) {
-            this.nextVmTurnFunctions.push( () => {
+            this.createSecondPassFuncs.push( () => {
                 this.onTopChanged();
             });
         }
         if (this.fadeRowIn) {
-            this.nextVmTurnFunctions.push( () => {
+            this.createSecondPassFuncs.push( () => {
                 this.eAllRowContainers.forEach(eRow => _.removeCssClass(eRow, 'ag-opacity-zero'));
             });
         }
@@ -123,6 +138,7 @@ export class SlickRowComp extends Component implements IRowComp {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
 
         let eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.refreshCells.bind(this));
@@ -335,7 +351,7 @@ export class SlickRowComp extends Component implements IRowComp {
                                callback: (eRow: HTMLElement) => void): void {
         let rowTemplate = this.createTemplate(cols);
         rowContainerComp.appendRowTemplateAsync(rowTemplate.rowTemplate, ()=> {
-            let eRow: HTMLElement = rowContainerComp.getRowElement(this.rowNode.id);
+            let eRow: HTMLElement = rowContainerComp.getRowElement(this.compId);
             this.afterRowAttached(rowContainerComp, rowTemplate.newCellComps, eRow);
             callback(eRow);
         });
@@ -457,6 +473,7 @@ export class SlickRowComp extends Component implements IRowComp {
         templateParts.push(  `role="row" `);
         templateParts.push(  `index="${this.rowNode.getRowIndexString()}" `);
         templateParts.push(  `rowId="${this.rowNode.id}" `);
+        templateParts.push(  `compId="${this.compId}" `);
         templateParts.push(  `class="${rowClasses}" `);
         templateParts.push(  `style=" `);
         templateParts.push(    `height: ${rowHeight}px; `);
@@ -507,14 +524,20 @@ export class SlickRowComp extends Component implements IRowComp {
 
         this.addDomData(eRow);
 
-        this.delayedDestroyFunctions.push( ()=> {
+        this.removeSecondPassFuncs.push( ()=> {
+            // console.log(eRow);
             rowContainerComp.removeRowElement(eRow);
         });
-        this.startRemoveAnimationFunctions.push( ()=> {
-            _.addCssClass(eRow, 'ag-opacity-zero');
+        this.removeFirstPassFuncs.push( ()=> {
             if (_.exists(this.rowNode.rowTop)) {
+                // the row top is updated anyway, however we set it here again
+                // to something more reasonable for the animation - ie if the
+                // row top is 10000px away, the row will flash out, so this
+                // gives it a rounded value, so row animates out more slowly
                 let rowTop = this.roundRowTopToBounds(this.rowNode.rowTop);
                 this.setRowTop(rowTop);
+            } else {
+                _.addCssClass(eRow, 'ag-opacity-zero');
             }
         });
 
@@ -578,9 +601,9 @@ export class SlickRowComp extends Component implements IRowComp {
         // this.destroyFullWidthComponent();
 
         if (animate) {
-            this.startRemoveAnimationFunctions.forEach( func => func() );
+            this.removeFirstPassFuncs.forEach( func => func() );
 
-            this.delayedDestroyFunctions.push( ()=> {
+            this.removeSecondPassFuncs.push( ()=> {
                 this.forEachCellComp(renderedCell => renderedCell.destroy(false) );
             });
 
@@ -603,8 +626,8 @@ export class SlickRowComp extends Component implements IRowComp {
 
     // we clear so that the functions are never executed twice
     public getAndClearDelayedDestroyFunctions(): Function[] {
-        let result = this.delayedDestroyFunctions;
-        this.delayedDestroyFunctions = [];
+        let result = this.removeSecondPassFuncs;
+        this.removeSecondPassFuncs = [];
         return result;
     }
 
@@ -627,9 +650,13 @@ export class SlickRowComp extends Component implements IRowComp {
     }
 
     private onPaginationChanged(): void {
+        let currentPage = this.beans.paginationProxy.getCurrentPage();
         // it is possible this row is in the new page, but the page number has changed, which means
         // it needs to reposition itself relative to the new page
-        this.onTopChanged();
+        if (this.paginationPage!==currentPage) {
+            this.paginationPage = currentPage;
+            this.onTopChanged();
+        }
     }
 
     private onTopChanged(): void {
@@ -637,7 +664,6 @@ export class SlickRowComp extends Component implements IRowComp {
         let doNotSetRowTop = this.beans.gridOptionsWrapper.isForPrint() || this.beans.gridOptionsWrapper.isAutoHeight();
         if (doNotSetRowTop) { return; }
 
-        // console.log(`top changed for ${this.rowNode.id} = ${this.rowNode.rowTop}`);
         this.setRowTop(this.rowNode.rowTop);
     }
 
@@ -660,8 +686,8 @@ export class SlickRowComp extends Component implements IRowComp {
 
     // we clear so that the functions are never executed twice
     public getAndClearNextVMTurnFunctions(): Function[] {
-        let result = this.nextVmTurnFunctions;
-        this.nextVmTurnFunctions = [];
+        let result = this.createSecondPassFuncs;
+        this.createSecondPassFuncs = [];
         return result;
     }
 

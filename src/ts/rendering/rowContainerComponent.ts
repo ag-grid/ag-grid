@@ -37,8 +37,8 @@ export class RowContainerComponent {
         this.checkVisibility();
     }
 
-    public getRowElement(rowId: string): HTMLElement {
-        let res = <HTMLElement> this.eContainer.querySelector(`[rowId="${rowId}"]`);
+    public getRowElement(compId: number): HTMLElement {
+        let res = <HTMLElement> this.eContainer.querySelector(`[compId="${compId}"]`);
         return res;
     }
 

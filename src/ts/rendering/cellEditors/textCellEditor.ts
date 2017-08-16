@@ -36,7 +36,7 @@ export class TextCellEditor extends Component implements ICellEditorComp {
             } else if (params.charPress) {
                 startValue = params.charPress;
             } else {
-                startValue = params.formatValue(params.value);
+                startValue = this.getStartValue(params);
                 if (params.keyPress !== Constants.KEY_F2) {
                     this.highlightAllOnFocus = true;
                 }
@@ -44,7 +44,7 @@ export class TextCellEditor extends Component implements ICellEditorComp {
 
         } else {
             this.focusAfterAttached = false;
-            startValue = params.formatValue(params.value);
+            startValue = this.getStartValue(params);
         }
 
         if (_.exists(startValue)) {
@@ -98,5 +98,10 @@ export class TextCellEditor extends Component implements ICellEditorComp {
     public getValue(): any {
         let eInput = <HTMLInputElement> this.getGui();
         return this.params.parseValue(eInput.value);
+    }
+
+    private getStartValue(params: ICellEditorParams) {
+        let formatValue = params.useFormatter || params.column.getColDef().refData;
+        return formatValue ? params.formatValue(params.value) : params.value;
     }
 }
