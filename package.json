@@ -33,15 +33,13 @@
     "gulp-typescript": "3.1.x",
     "merge2": "1.0.x",
     "prop-types": "15.5.x",
-    "react": "^15.5.0",
-    "react-dom": "^15.5.0",
-    "react-dom-factories": "^1.0.0",
     "typescript": "2.3.x",
     "gulp-rename": "1.2.2"
   },
   "peerDependencies": {
-    "ag-grid": "12.0.0",
+    "ag-grid": "12.0.x",
     "react": "^15.5.0",
-    "react-dom": "^15.5.0"
+    "react-dom": "^15.5.0",
+    "react-dom-factories" : "^1.0.0"
   }
 }

@@ -5,9 +5,12 @@ import * as DOM from 'react-dom-factories';
 import {Component} from "react";
 import * as PropTypes from "prop-types";
 import * as AgGrid from "ag-grid";
+import {GridOptions} from "ag-grid";
 
-export class AgGridReact extends Component<any, any> {
+export interface AgGridReactProps extends GridOptions {
+}
 
+export class AgGridReact extends Component<AgGridReactProps, {}> {
     static propTypes: any;
 
     gridOptions: AgGrid.GridOptions;
@@ -99,7 +102,6 @@ export class AgGridReact extends Component<any, any> {
         this.api.destroy();
     }
 
-
     /*
      * deeper object comparison - taken from https://stackoverflow.com/questions/1068834/object-comparison-in-javascript
      */
@@ -109,7 +111,24 @@ export class AgGridReact extends Component<any, any> {
             : obj);
     }
 
+    // sigh, here for ie compatibility
+    copyObject(obj) {
+        if (!obj) {
+            return obj;
+        }
+        return [{}, obj].reduce(function (r, o) {
+            Object.keys(o).forEach(function (k) {
+                r[k] = o[k];
+            });
+            return r;
+        }, {});
+    }
+
     areEquivalent(a, b) {
+        return AgGridReact.areEquivalent(this.copyObject(a), this.copyObject(b))
+    }
+
+    static areEquivalent(a, b) {
         a = AgGridReact.unwrapStringOrNumber(a);
         b = AgGridReact.unwrapStringOrNumber(b);
         if (a === b) return true; //e.g. a and b both null
@@ -174,3 +193,4 @@ function addProperties(listOfProps: string[], propType: any) {
         AgGridReact[propKey] = propType;
     });
 }
+
