@@ -114,6 +114,7 @@ $transition-speed: 120ms;
         width: $grid-size * 2;
         position: absolute;
         right:-$grid-size * 1;
+        z-index: 4;
         &::after {
             border-right: 1px solid $border-color;
             display: block;
