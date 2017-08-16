@@ -50,7 +50,12 @@ export class SlickCellComp extends Component implements ICellComp {
     private cellRendererGui: HTMLElement | string;
     private cellEditor: ICellEditorComp;
 
+    private firstRightPinned: boolean;
+    private lastLeftPinned: boolean;
+
     private rowComp: SlickRowComp;
+
+    private rangeSelectionEnabled: boolean;
 
     private value: any;
 
@@ -64,8 +69,15 @@ export class SlickCellComp extends Component implements ICellComp {
         this.rowNode = rowNode;
         this.rowComp = rowComp;
 
-        this.value = this.getValue();
         this.createGridCellVo();
+
+        this.rangeSelectionEnabled = beans.enterprise && beans.gridOptionsWrapper.isEnableRangeSelection();
+        this.cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
+        this.rangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
+        this.firstRightPinned = this.column.isFirstRightPinned();
+        this.lastLeftPinned = this.column.isLastLeftPinned();
+
+        this.value = this.getValue();
         this.setUsingWrapper();
         this.prepareCellRenderer();
     }
@@ -84,11 +96,76 @@ export class SlickCellComp extends Component implements ICellComp {
         this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this));
         this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
+        this.addDestroyableEventListener(this.column, Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, this.onFirstRightPinnedChanged.bind(this));
+        this.addDestroyableEventListener(this.column, Column.EVENT_LAST_LEFT_PINNED_CHANGED, this.onLastLeftPinnedChanged.bind(this));
 
-        // range controller not present if using ag-Grid free
-        if (this.beans.enterprise && this.beans.gridOptionsWrapper.isEnableRangeSelection()) {
+        // if not doing enterprise, then range selection service would be missing
+        // so need to check before trying to use it
+        if (this.rangeSelectionEnabled) {
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this))
         }
+    }
+
+    public getCreateTemplate(): string {
+        let templateParts: string[] = [];
+        let col = this.column;
+
+        let width = col.getActualWidth();
+        let left = col.getLeft();
+
+        let valueToRender = this.getInitialValueToRender();
+        let tooltip = this.getToolTip();
+
+        let wrapperStartTemplate: string;
+        let wrapperEndTemplate: string;
+
+        let stylesFromColDef = this.preProcessStylesFromColDef();
+        let cssClasses = this.getInitialCssClasses();
+
+        if (this.usingWrapper) {
+            wrapperStartTemplate = '<span ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value">';
+            wrapperEndTemplate = '</span></span>';
+        }
+
+        // hey, this looks like React!!!
+        templateParts.push(`<div`);
+        templateParts.push(` tabindex="-1"`);
+        templateParts.push(` role="gridcell"`);
+        templateParts.push(` compId="${this.getCompId()}" `);
+        templateParts.push(` colid="${col.getId()}"`);
+        templateParts.push(` class="${cssClasses.join(' ')}"`);
+        templateParts.push(  tooltip ? ` title="${tooltip}"` : ``);
+        templateParts.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef}" >`);
+        templateParts.push(wrapperStartTemplate);
+        templateParts.push(valueToRender);
+        templateParts.push(wrapperEndTemplate);
+        templateParts.push(`</div>`);
+
+        return templateParts.join('');
+    }
+
+    private getInitialCssClasses(): string[] {
+        let cssClasses: string[] = ["ag-cell", "ag-cell-no-focus", "ag-cell-not-inline-editing"];
+
+        cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
+
+        if (this.firstRightPinned) {
+            cssClasses.push('ag-cell-first-right-pinned');
+        }
+        if (this.lastLeftPinned) {
+            cssClasses.push('ag-cell-last-left-pinned');
+        }
+
+        _.pushAll(cssClasses, this.preProcessClassesFromColDef());
+        _.pushAll(cssClasses, this.preProcessCellClassRules());
+        _.pushAll(cssClasses, this.getRangeClasses());
+
+        // if using the wrapper, this class goes on the wrapper instead
+        if (!this.usingWrapper) {
+            cssClasses.push('ag-cell-value');
+        }
+
+        return cssClasses;
     }
 
     public getInitialValueToRender(): string {
@@ -378,52 +455,6 @@ export class SlickCellComp extends Component implements ICellComp {
         }
     }
 
-    public getCreateTemplate(): string {
-        let template: string[] = [];
-        let col = this.column;
-
-        let width = col.getActualWidth();
-        let left = col.getLeft();
-
-        let valueToRender = this.getInitialValueToRender();
-        let tooltip = this.getToolTip();
-
-        let cssClasses: string[] = ["ag-cell", "ag-cell-no-focus", "ag-cell-not-inline-editing"];
-        let wrapperStart: string;
-        let wrapperEnd: string;
-
-        let stylesFromColDef = this.preProcessStylesFromColDef();
-
-        this.cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
-        cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
-
-        if (this.usingWrapper) {
-            wrapperStart = '<span ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value">';
-            wrapperEnd = '</span></span>';
-        } else {
-            cssClasses.push('ag-cell-value');
-        }
-
-        _.pushAll(cssClasses, this.preProcessClassesFromColDef());
-        _.pushAll(cssClasses, this.preProcessCellClassRules());
-        _.pushAll(cssClasses, this.getRangeClasses());
-
-        template.push(`<div`);
-        template.push(` tabindex="-1"`);
-        template.push(` role="gridcell"`);
-        template.push(` compId="${this.getCompId()}" `);
-        template.push(` colid="${col.getId()}"`);
-        template.push(` class="${cssClasses.join(' ')}"`);
-        template.push(  tooltip ? ` title="${tooltip}"` : ``);
-        template.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef}" >`);
-        template.push(wrapperStart);
-        template.push(valueToRender);
-        template.push(wrapperEnd);
-        template.push(`</div>`);
-
-        return template.join('');
-    }
-
     private getToolTip(): string {
         let colDef = this.column.getColDef();
         let data = this.rowNode.data;
@@ -498,7 +529,7 @@ export class SlickCellComp extends Component implements ICellComp {
         this.chooseCellRenderer();
 
         if (this.usingCellRenderer) {
-            this.createCellRenderer();
+            this.createCellRendererInstance();
         }
     }
 
@@ -529,7 +560,7 @@ export class SlickCellComp extends Component implements ICellComp {
         }
     }
 
-    private createCellRenderer(): void {
+    private createCellRendererInstance(): void {
         let valueToRender = this.formatValue(this.value);
         let params = this.createCellRendererParams(valueToRender, this.cellRendererParams);
 
@@ -544,7 +575,7 @@ export class SlickCellComp extends Component implements ICellComp {
     private attachCellRendererAfterRefresh(): void {
         if (!this.usingCellRenderer) { return; }
 
-        this.createCellRenderer();
+        this.createCellRendererInstance();
 
         let eCell = this.cellRendererGui;
         if (eCell != null) {
@@ -1161,7 +1192,6 @@ export class SlickCellComp extends Component implements ICellComp {
     private getRangeClasses(): string[] {
         let res: string[] = [];
         if (!this.beans.enterprise) { return res; }
-        this.rangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
         if (this.rangeCount!==0) { res.push('ag-cell-range-selected'); }
         if (this.rangeCount===1) { res.push('ag-cell-range-selected-1'); }
         if (this.rangeCount===2) { res.push('ag-cell-range-selected-2'); }
@@ -1174,13 +1204,14 @@ export class SlickCellComp extends Component implements ICellComp {
         // when index changes, this influences items that need the index, so we update the
         // grid cell so they are working off the new index.
         this.createGridCellVo();
-        // when the index of the row changes, ie means the cell may have lost of gained focus
+        // when the index of the row changes, ie means the cell may have lost or gained focus
         this.onCellFocused();
         // check range selection
         this.onRangeSelectionChanged();
     }
 
     private onRangeSelectionChanged(): void {
+        if (!this.beans.enterprise) { return; }
         let newRangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
         let eGui = this.getGui();
         if (this.rangeCount !== newRangeCount) {
@@ -1190,6 +1221,22 @@ export class SlickCellComp extends Component implements ICellComp {
             _.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-3', newRangeCount===3);
             _.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-4', newRangeCount>=4);
             this.rangeCount = newRangeCount;
+        }
+    }
+
+    private onFirstRightPinnedChanged(): void {
+        let firstRightPinned = this.column.isFirstRightPinned();
+        if (this.firstRightPinned !== firstRightPinned) {
+            this.firstRightPinned = firstRightPinned;
+            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-first-right-pinned', firstRightPinned);
+        }
+    }
+
+    private onLastLeftPinnedChanged(): void {
+        let lastLeftPinned = this.column.isLastLeftPinned();
+        if (this.lastLeftPinned !== lastLeftPinned) {
+            this.lastLeftPinned = lastLeftPinned;
+            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-last-left-pinned', lastLeftPinned);
         }
     }
 
