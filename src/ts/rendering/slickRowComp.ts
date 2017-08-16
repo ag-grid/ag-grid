@@ -19,8 +19,6 @@ import {SlickCellComp} from "./slickCellComp";
 import {ICellComp} from "./cellComp";
 import {EventService} from "../eventService";
 
-let compIdSequence = new NumberSequence();
-
 export class SlickRowComp extends Component implements IRowComp {
 
     private renderedRowEventService: EventService;
@@ -30,11 +28,6 @@ export class SlickRowComp extends Component implements IRowComp {
     private pinnedLeftContainerComp: RowContainerComponent;
     private pinnedRightContainerComp: RowContainerComponent;
     private rowNode: RowNode;
-
-    // unique id for this row component. this is used for getting a reference to the HTML dom.
-    // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
-    // around as we create a new rowComp instance for the same row node).
-    private compId = compIdSequence.next();
 
     private ePinnedLeftRow: HTMLElement;
     private ePinnedRightRow: HTMLElement;
@@ -351,7 +344,7 @@ export class SlickRowComp extends Component implements IRowComp {
                                callback: (eRow: HTMLElement) => void): void {
         let rowTemplate = this.createTemplate(cols);
         rowContainerComp.appendRowTemplateAsync(rowTemplate.rowTemplate, ()=> {
-            let eRow: HTMLElement = rowContainerComp.getRowElement(this.compId);
+            let eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
             this.afterRowAttached(rowContainerComp, rowTemplate.newCellComps, eRow);
             callback(eRow);
         });
@@ -468,17 +461,16 @@ export class SlickRowComp extends Component implements IRowComp {
 
         // if sliding in, we take the old row top. otherwise we just set the current row top.
         let rowTop = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
+        // if not setting row top, then below is empty string
+        let rowTopStr = setRowTop ? `top: ${rowTop}px; ` : ``;
 
-        templateParts.push(`<div `);
-        templateParts.push(  `role="row" `);
-        templateParts.push(  `index="${this.rowNode.getRowIndexString()}" `);
-        templateParts.push(  `rowId="${this.rowNode.id}" `);
-        templateParts.push(  `compId="${this.compId}" `);
-        templateParts.push(  `class="${rowClasses}" `);
-        templateParts.push(  `style=" `);
-        templateParts.push(    `height: ${rowHeight}px; `);
-        templateParts.push(setRowTop ? `top: ${rowTop}px; ` : ``);
-        templateParts.push(  `">`);
+        templateParts.push(`<div`);
+        templateParts.push(` role="row"`);
+        templateParts.push(` index="${this.rowNode.getRowIndexString()}"`);
+        templateParts.push(` rowId="${this.rowNode.id}"`);
+        templateParts.push(` compId="${this.getCompId()}"`);
+        templateParts.push(` class="${rowClasses}"`);
+        templateParts.push(` style="height: ${rowHeight}px; ${rowTopStr}">`);
 
         // add in the template for the cells
         let cellRes = this.createCellTemplates(cols);
