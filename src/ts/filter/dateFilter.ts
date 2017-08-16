@@ -103,7 +103,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         let cellAsDate = <Date> cellValue;
         if  (cellAsDate < filterDate) { return -1 }
         if  (cellAsDate > filterDate) { return 1 }
-        return 0;
+        return cellValue != null ? 0 : -1;
     }
 
     public serialize(): SerializedDateFilter {
