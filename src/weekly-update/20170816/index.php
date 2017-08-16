@@ -116,9 +116,13 @@ include('../../includes/mediaHeader.php');
         </div>
 
         <p>   
-            Niall has been working on performance improvements, especially for IE. He has
-            further augmented the documentation for properties and events. He has also been producing
-            typescript interfaces for the events, so that users can see what attributes they have.
+            Niall has been working on a new rendering engine to make the grid to render much faster.
+            Our initial experiments show a huge performance improvements, especially around IE. We also
+            got some footage of Niall
+            <a href="https://www.youtube.com/watch?v=SfEaqEoU0rw">
+                shamefully plugging ag-Grid at ng-Conf
+            </a>
+            !!
         <p>
 
         <p>   
