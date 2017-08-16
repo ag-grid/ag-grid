@@ -380,6 +380,37 @@ gridOptions = {
     <a href="../javascript-grid-pagination/">pagination</a> and
     <a href="../javascript-grid-virtual-paging/">infinite scrolling</a>.
 </p>
+
+<h3 id="nullFiltering">Filtering null values in Date and Number filters</h3>
+<p>
+    If your underlying data representation for a row contains <code>null</code> it won't be included in the filter results. If
+    you want to change this behaviour, you can configure the property <code>columnDef.filterParams.nullComparator</code>
+
+    The null comparator is an object used to tell if nulls should be included when filtering data, its interface it's like
+    this:
+<pre>export interface NullComparator{
+    equals?:boolean
+    lessThan?:boolean
+    greaterThan?:boolean
+}</pre>
+</p>
+
+
+<p>
+    If any of this properties is specified as true, the grid will include <code>null</code> values when doing the according filtering.
+</p>
+<p>
+In the following example you can filter by age or date and see how <code>null</code> values are included in the filter based
+on the combination of filter type and your <code>columnDef.filterParams.nullComparator</code>
+</p>
+
+<show-example example="exampleNullFiltering"></show-example>
+
+
+<p>
+    Note that <code>inRange</code> will never include <code>null</code>.
+</p>
 </div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
