@@ -17,6 +17,7 @@ $secondary-font: "Roboto", sans-serif;
 $secondary-font-size: 12px;
 $secondary-weight: 700;
 $grid-size: 8px;
+$icon-size: $grid-size * 2;
 
 $header-height: $grid-size * 7;
 $row-height: $grid-size * 6;
@@ -69,6 +70,8 @@ $transition-speed: 120ms;
     }
 
     .ag-header-cell-label {
+        float: left;
+        width: calc(100% - #{$icon-size});
         & > span {
             float: left;
         }
@@ -126,4 +129,27 @@ $transition-speed: 120ms;
             width: $grid-size;
         }
     }
+
+
+    @mixin icon-background($icon) {
+        width: $icon-size;
+        height: $icon-size;
+        background: transparent url('./material-icons/#{$icon}.svg') center no-repeat;
+        background-size: $icon-size $icon-size;
+    }
+
+    $icons: menu;
+
+    @each $icon in $icons {
+        .ag-icon-#{$icon} {
+            display: inline-block;
+            @include icon-background('#{$icon}');
+        }
+    }
+
+    .ag-header-cell-menu-button {
+        @include icon-background('menu');
+        height: $header-height;
+    }
 }
+
