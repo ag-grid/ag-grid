@@ -1,3 +1,10 @@
+// to satisfy server side compilation
+declare let global: any;
+global.HTMLElement = {};
+global.HTMLButtonElement = {};
+global.HTMLSelectElement = {};
+global.HTMLInputElement = {};
+
 // columnController
 export {BalancedColumnTreeBuilder} from "./dist/lib/columnController/balancedColumnTreeBuilder";
 export {ColumnController} from "./dist/lib/columnController/columnController";
