@@ -484,7 +484,7 @@ export class Utils {
     static appendHtml(eContainer: HTMLElement, htmlTemplate: string) {
         if (eContainer.lastChild) {
             // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
-            eContainer.insertAdjacentHTML('beforeend', htmlTemplate);
+            eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
         } else {
             eContainer.innerHTML = htmlTemplate;
         }
