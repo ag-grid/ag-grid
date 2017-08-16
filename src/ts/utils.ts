@@ -250,7 +250,7 @@ export class Utils {
         }
     }
 
-    static assign(object: any, ...sources: any[] ): void {
+    static assign(object: any, ...sources: any[] ): any {
         sources.forEach( source => {
             if (this.exists(source)) {
                 this.iterateObject(source, function (key: string, value: any) {
