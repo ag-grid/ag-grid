@@ -536,7 +536,8 @@ export class SlickCellComp extends Component implements ICellComp {
         let noCellRenderer = !this.cellRendererKey;
         if (noCellRenderer) { return; }
 
-        if (typeof this.cellRendererGui == 'object'){
+        // need to check exists, as (typeof null === object)
+        if (_.exists(this.cellRendererGui) && typeof this.cellRendererGui == 'object'){
             this.eParentOfValue.appendChild(this.cellRendererGui);
         }
 
