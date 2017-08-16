@@ -4,9 +4,12 @@
     <title>small-right</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
-    <g id="material" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="small-right" fill-rule="nonzero" fill="#000000">
-            <polygon id="Shape" transform="translate(9.375000, 9.000000) rotate(-90.000000) translate(-9.375000, -9.000000) " points="5.625 7.125 9.375 10.875 13.125 7.125"></polygon>
+    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="small-right">
+            <g id="ic_arrow_drop_down_18px" transform="translate(9.000000, 9.000000) scale(1, -1) rotate(-90.000000) translate(-9.000000, -9.000000) ">
+                <polygon id="Shape" fill="#000000" fill-rule="nonzero" points="5 8 9 12 13 8"></polygon>
+                <polygon id="Shape" points="0 0 18 0 18 18 0 18"></polygon>
+            </g>
         </g>
     </g>
 </svg>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
+    <title>pivot</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="pivot">
+            <polyline id="Path-8" stroke="#000000" points="12 10 13 9 14 10"></polyline>
+            <polyline id="Path-13" stroke="#000000" points="10 12 9 13 10 14"></polyline>
+            <g id="ic_grid_on_24px">
+                <polygon id="Shape" points="0 0 18 0 18 18 0 18"></polygon>
+                <path d="M15,1.5 L3,1.5 C2.175,1.5 1.5,2.175 1.5,3 L1.5,15 C1.5,15.825 2.175,16.5 3,16.5 L15,16.5 C15.825,16.5 16.5,15.825 16.5,15 L16.5,3 C16.5,2.175 15.825,1.5 15,1.5 Z M6,15 L3,15 L3,11.5 L6,11.5 L6,15 Z M6,11 L3,11 L3,7.5 L6,7.5 L6,11 Z M6,6 L3,6 L3,3 L6,3 L6,6 Z M10.5,6 L7.5,6 L7.5,3 L10.5,3 L10.5,6 Z M15,15 L7.5,15 L7.5,7.5 L15,7.5 L15,15 Z M15,6 L12,6 L12,3 L15,3 L15,6 Z" id="Shape" fill="#000000" fill-rule="nonzero"></path>
+            </g>
+        </g>
+    </g>
+</svg>

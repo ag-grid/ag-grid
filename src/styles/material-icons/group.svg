@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>small-down</title>
+    <title>group</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="small-down">
-            <g id="ic_arrow_drop_down_18px">
-                <polygon id="Shape" fill="#000000" fill-rule="nonzero" points="5 8 9 12 13 8"></polygon>
-                <polygon id="Shape" points="0 0 18 0 18 18 0 18"></polygon>
-            </g>
+        <g id="group" fill="#000000">
+            <rect id="Rectangle" x="3" y="2" width="12" height="3" rx="1"></rect>
+            <rect id="Rectangle-Copy-2" x="6" y="7" width="9" height="3" rx="1"></rect>
+            <rect id="Rectangle-Copy-3" x="9" y="12" width="6" height="3" rx="1"></rect>
         </g>
     </g>
 </svg>

@@ -17,7 +17,7 @@ $secondary-font: "Roboto", sans-serif;
 $secondary-font-size: 12px;
 $secondary-weight: 700;
 $grid-size: 8px;
-$icon-size: 14px;
+$icon-size: 18px;
 
 $header-height: $grid-size * 7;
 $row-height: $grid-size * 6;
@@ -135,8 +135,8 @@ $transition-speed: 120ms;
         &::after {
             border-right: 1px solid $border-color;
             display: block;
-            height: $header-height - $grid-size * 2;
-            margin-top: $grid-size;
+            height: $header-height - $grid-size * 4;
+            margin-top: $grid-size * 2;
             content: 'resize';
             overflow: hidden;
             text-indent: $grid-size;
@@ -148,7 +148,7 @@ $transition-speed: 120ms;
 // Icons 
 ////////////////////////////////////////
 
-    $icons: menu cut copy paste small-left small-right small-up small-down;
+    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right small-up small-down tick cross;
 
     @each $icon in $icons {
         .ag-icon-#{$icon} {
@@ -170,6 +170,7 @@ $transition-speed: 120ms;
         @include card;
         padding-left: 0;
         padding-right: 0;
+        z-index: 5;
 
         .ag-menu-option {
             line-height: $grid-size * 4;
@@ -187,6 +188,9 @@ $transition-speed: 120ms;
             padding-right: $grid-size;
         }
 
+        .ag-menu-option-shortcut {
+            padding-left: $grid-size * 2;
+        }
 
         .ag-menu-separator {
             border-bottom: 1px solid $border-color;
@@ -204,7 +208,20 @@ $transition-speed: 120ms;
         }
 
         .ag-menu-option-popup-pointer {
-            padding-right: $grid-size;
+            width:$icon-size + $grid-size * 2;
         }
+    }
+
+////////////////////////////////////////
+// Context Menu 
+////////////////////////////////////////
+
+    &.ag-dnd-ghost {
+        @include card();
+        font: $secondary-weight $secondary-font-size $secondary-font;
+        color: $secondary;
+        border: none;
+        height: $grid-size * 4 !important;
+        z-index: 5;
     }
 }

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
-    <title>small-down</title>
+    <title>tick</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="small-down">
-            <g id="ic_arrow_drop_down_18px">
-                <polygon id="Shape" fill="#000000" fill-rule="nonzero" points="5 8 9 12 13 8"></polygon>
+        <g id="tick">
+            <g id="ic_done_24px">
                 <polygon id="Shape" points="0 0 18 0 18 18 0 18"></polygon>
+                <polygon id="Shape" fill="#000000" fill-rule="nonzero" points="6.75 12.15 3.6 9 2.55 10.05 6.75 14.25 15.75 5.25 14.7 4.2"></polygon>
             </g>
         </g>
     </g>
