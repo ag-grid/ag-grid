@@ -1,0 +1,56 @@
+
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script src="http://0.0.0.0:9999/bundle.js"></script>
+</head>
+<body>
+    <div style="margin: 2em">
+    <div id="myGrid" class="ag-material-next"></div>
+    </div>
+
+    <script charset="utf-8">
+                // specify the columns
+        var columnDefs = [
+            { headerName: "A group", children: [
+            {headerName: "Make", field: "make", filter: "text"},
+            {headerName: "Model", field: "model"},
+            {headerName: "Price", field: "price", type: "numericColumn" },
+            ]},
+            { headerName: "B group", children: [
+                {headerName: "Model", field: "model"},
+                {headerName: "Price", field: "price", type: "numericColumn" },
+            ]}
+        ];
+
+        // specify the data
+        var rowData = [
+            {make: "Toyota", model: "Celica", price: 35000},
+            {make: "Ford", model: "Mondeo", price: 32000},
+            {make: "Porsche", model: "Boxter", price: 72000}
+        ];
+
+        // let the grid know which columns and what data to use
+        var gridOptions = {
+            columnDefs: columnDefs,
+            rowData: rowData,
+            headerHeight: 56,
+            rowHeight: 48,
+            enableColResize: true,
+            rowHoverClass: true,
+            enableFilter: true
+        };
+
+        // wait for the document to be loaded, otherwise
+        // ag-Grid will not find the div in the document.
+        document.addEventListener("DOMContentLoaded", function() {
+
+            // lookup the container we want the Grid to use
+            var eGridDiv = document.querySelector('#myGrid');
+
+            // create the grid passing in the div to use together with the columns & data we want to use
+            new agGrid.Grid(eGridDiv, gridOptions);
+        });
+    </script>
+</body>
+</html>

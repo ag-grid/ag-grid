@@ -1,9 +1,8 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150, filter: 'text', filterParams:{
         filterOptions:['contains', 'notContains'],
-        textFormatter: function(s){
-            if (s==null) return null;
-            var r=s.toLowerCase();
+        textFormatter: function(r){
+            if (r==null) return null;
             r = r.replace(new RegExp("[àáâãäå]", 'g'),"a");
             r = r.replace(new RegExp("æ", 'g'),"ae");
             r = r.replace(new RegExp("ç", 'g'),"c");
@@ -16,7 +15,8 @@ var columnDefs = [
             r = r.replace(new RegExp("[ýÿ]", 'g'),"y");
             return r;
         },
-        debounceMs:0
+        debounceMs:0,
+        caseSensitive:true
     }},
     {headerName: "Country", field: "country", width: 120, filterParams:{
         filterOptions:['contains'],

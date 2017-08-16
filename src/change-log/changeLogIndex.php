@@ -17,6 +17,8 @@ include '../documentation-main/documentation_header.php';
 
     <h4>Enhancements</h4>
     <ul>
+        <li>AG-634: <a href="../javascript-grid-filter-text">Text filter</a> has the parameter <code>caseSensitive</code>.
+        </li>
         <li>AG-685: Number and Date filter have an option to configure what to do when filtering <code>null</code> values.
             See: <a href="../javascript-grid-filtering#nullFiltering">Null filtering</a></li>
         <li>AG-579: Excel an CSV export now works in all row models. If exporting outside of the in memory row model
