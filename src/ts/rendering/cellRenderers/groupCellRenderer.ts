@@ -79,13 +79,20 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
 
         this.setupDragOpenParents();
+
+        // hack to get renderer working with slick and non-slick
+        if (this.params.eGridCell) {
+            this.afterGuiAttached({});
+        }
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
 
         if (this.params.value==null) { return; }
 
-        this.addExpandAndContract((<any>params).eGridCell);
+        // hack to get renderer working with slick and non-slick
+        let eGridCell = this.params.eGridCell ? this.params.eGridCell : (<any>params).eGridCell;
+        this.addExpandAndContract(eGridCell);
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.addPadding();
