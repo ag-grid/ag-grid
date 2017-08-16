@@ -17,7 +17,7 @@ $secondary-font: "Roboto", sans-serif;
 $secondary-font-size: 12px;
 $secondary-weight: 700;
 $grid-size: 8px;
-$icon-size: $grid-size * 2;
+$icon-size: 14px;
 
 $header-height: $grid-size * 7;
 $row-height: $grid-size * 6;
@@ -148,7 +148,7 @@ $transition-speed: 120ms;
 // Icons 
 ////////////////////////////////////////
 
-    $icons: menu;
+    $icons: menu cut copy paste small-left small-right small-up small-down;
 
     @each $icon in $icons {
         .ag-icon-#{$icon} {
@@ -168,5 +168,43 @@ $transition-speed: 120ms;
 
     .ag-menu {
         @include card;
+        padding-left: 0;
+        padding-right: 0;
+
+        .ag-menu-option {
+            line-height: $grid-size * 4;
+            padding-left: $grid-size * 2;
+            padding-right: $grid-size * 2;
+
+            & > span {
+                vertical-align: middle;
+                display: table-cell;
+            }
+        }
+
+        .ag-menu-option-icon {
+            padding-left: $grid-size;
+            padding-right: $grid-size;
+        }
+
+
+        .ag-menu-separator {
+            border-bottom: 1px solid $border-color;
+            padding-bottom: $grid-size;
+            margin-bottom: $grid-size;
+            margin-left: -$grid-size;
+
+            & > span {
+                height: $grid-size * 2;
+            }
+        }
+
+        .ag-menu-separator + .ag-menu-option > span {
+            padding-top: $grid-size * 2;
+        }
+
+        .ag-menu-option-popup-pointer {
+            padding-right: $grid-size;
+        }
     }
 }
