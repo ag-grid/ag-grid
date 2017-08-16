@@ -22,7 +22,6 @@ import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {SetLeftFeature} from "./features/setLeftFeature";
 import {NewValueParams} from "../entities/colDef";
 import {Beans} from "./beans";
-import {IComponent} from "../interfaces/iComponent";
 
 export interface ICellComp {
     // getGui(): HTMLElement;
@@ -591,7 +590,7 @@ export class CellComp extends Component implements ICellComp {
         }
     }
 
-    private createCellEditorParams(keyPress: number, charPress: string, cellStartedEdit: boolean, useFormatter: boolean): ICellEditorParams {
+    private createCellEditorParams(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorParams {
         let params: ICellEditorParams = {
             value: this.getValue(),
             keyPress: keyPress,
@@ -609,7 +608,6 @@ export class CellComp extends Component implements ICellComp {
             eGridCell: this.eGridCell,
             parseValue: this.parseValue.bind(this),
             formatValue: this.formatValue.bind(this),
-            useFormatter: useFormatter,
         };
 
         let colDef = this.column.getColDef();
@@ -637,9 +635,9 @@ export class CellComp extends Component implements ICellComp {
         return _.exists(valueParser) ? this.beans.expressionService.evaluate(valueParser, params) : newValue;
     }
 
-    private createCellEditor(keyPress: number, charPress: string, cellStartedEdit: boolean, useFormatter: boolean): ICellEditorComp {
+    private createCellEditor(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorComp {
 
-        let params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit, useFormatter);
+        let params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
 
         let cellEditor = this.beans.cellEditorFactory.createCellEditor(this.column.getCellEditor(), params);
 
@@ -671,7 +669,7 @@ export class CellComp extends Component implements ICellComp {
         // don't do it if already editing
         if (this.editingCell) { return; }
 
-        let cellEditor = this.createCellEditor(keyPress, charPress, cellStartedEdit, useFormatter);
+        let cellEditor = this.createCellEditor(keyPress, charPress, cellStartedEdit);
         if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
             if (cellEditor.destroy) {
                 cellEditor.destroy();

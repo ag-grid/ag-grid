@@ -32,7 +32,7 @@ export interface ICellEditor {
     focusOut?(): void;
 }
 
-export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorParams>{
+export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorParams> {
 
 }
 
@@ -50,8 +50,6 @@ export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorPara
  not need to call this as the grid is already listening for the events as they propagate. this is only required if
  you are preventing event propagation
  stopRowOrCellEdit: call this if you want to stop editing the cell (eg if you are doing your own edit and are happy with the selection)
- useFormatter: used when the cell value needs formatting prior to editing, such as when using reference data and you want
- to display text rather than code.
  */
 export interface ICellEditorParams {
     value: any;
@@ -70,5 +68,4 @@ export interface ICellEditorParams {
     eGridCell: HTMLElement;
     parseValue: (value: any) => any;
     formatValue: (value: any) => any;
-    useFormatter: boolean;
 }

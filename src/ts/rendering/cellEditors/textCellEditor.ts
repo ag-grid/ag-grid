@@ -3,6 +3,14 @@ import {Component} from "../../widgets/component";
 import {ICellEditorComp, ICellEditorParams} from "./iCellEditor";
 import {Utils as _} from '../../utils';
 
+/**
+ * useFormatter: used when the cell value needs formatting prior to editing, such as when using reference data and you
+ *               want to display text rather than code.
+*/
+export interface ITextCellEditorParams extends ICellEditorParams {
+    useFormatter: boolean;
+}
+
 export class TextCellEditor extends Component implements ICellEditorComp {
 
     private static TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
@@ -15,7 +23,7 @@ export class TextCellEditor extends Component implements ICellEditorComp {
         super(TextCellEditor.TEMPLATE);
     }
 
-    public init(params: ICellEditorParams): void {
+    public init(params: ITextCellEditorParams): void {
 
         this.params = params;
 
@@ -100,7 +108,7 @@ export class TextCellEditor extends Component implements ICellEditorComp {
         return this.params.parseValue(eInput.value);
     }
 
-    private getStartValue(params: ICellEditorParams) {
+    private getStartValue(params: ITextCellEditorParams) {
         let formatValue = params.useFormatter || params.column.getColDef().refData;
         return formatValue ? params.formatValue(params.value) : params.value;
     }
