@@ -279,11 +279,12 @@
 
     <?php
     menuItem(0, 'Styling', 'Overview', 'javascript-grid-styling/');
-    menuItem(0, 'Fresh Theme', 'Fresh Theme', 'javascript-grid-themes/fresh-theme.php');
-    menuItem(0, 'Blue Theme', 'Blue Theme', 'javascript-grid-themes/blue-theme.php');
-    menuItem(0, 'Dark Theme', 'Dark Theme', 'javascript-grid-themes/dark-theme.php');
-    menuItem(0, 'Material Theme', 'Material Theme', 'javascript-grid-themes/material-theme.php');
-    menuItem(0, 'Bootstrap Theme', 'Bootstrap Theme', 'javascript-grid-themes/bootstrap-theme.php');
+    menuItem(0, 'Material Next Theme (new)', 'Material Next (new)', 'javascript-grid-themes/material-next-theme.php');
+    menuItem(0, 'Fresh Theme', 'Fresh ', 'javascript-grid-themes/fresh-theme.php');
+    menuItem(0, 'Blue Theme', 'Blue ', 'javascript-grid-themes/blue-theme.php');
+    menuItem(0, 'Dark Theme', 'Dark ', 'javascript-grid-themes/dark-theme.php');
+    menuItem(0, 'Material Theme', 'Material ', 'javascript-grid-themes/material-theme.php');
+    menuItem(0, 'Bootstrap Theme', 'Bootstrap', 'javascript-grid-themes/bootstrap-theme.php');
     ?>
 
 </div>
