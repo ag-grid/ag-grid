@@ -1101,13 +1101,8 @@ export class SlickCellComp extends Component implements ICellComp {
     // as the row will also get removed, so no need to take out the cells from the row
     // if the row is going (removing is an expensive operation, so only need to remove
     // the top part)
-    public destroy(removeFromDom = true): void {
+    public destroy(): void {
         super.destroy();
-
-        if (removeFromDom && this.eParentRow) {
-            this.eParentRow.removeChild(this.getGui());
-            this.eParentRow = null;
-        }
 
         if (this.cellEditor && this.cellEditor.destroy) {
             this.cellEditor.destroy();
