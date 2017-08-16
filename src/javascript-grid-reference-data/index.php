@@ -81,6 +81,18 @@ var colourMappings = {
         than the values that are displayed in the cells.
     </note>
 
+
+    <p>
+      When using the <code>TextCellEditor</code> with reference data, you may want to display the formatted text rather
+      than the code. In this case you should also include the <code>useFormatter</code> property as follows:
+    </p>
+
+<pre>cellEditor: 'text',
+cellEditorParams: {
+   useFormatter: true
+}
+</pre>
+
     <h2 id="reference-data-with-ref-data-prop">Using the 'refData' property</h2>
 
     <p>
@@ -104,12 +116,10 @@ var colourMappings = {
     refData: carMappings <span class="codeComment">// just required to specify refData!</span>
 }</pre>
 
-
     <p>Like in the previous example using <i>Value Handlers</i>, where the underlying data contains codes, the grid will
        use the specified reference data to display the associated values in the cells and save down the codes (keys) in
        the data when editing.
     </p>
-
 
     <h2 id="example-reference-data-with-value-handlers">Example - Value Handlers</h2>
 
@@ -127,8 +137,9 @@ var colourMappings = {
             in the drop down list and selections are saved as 'colour' codes in the underlying data.
         </li>
         <li>
-            <b>'Interior Colour' Column:</b> uses a <i>Text Cell Editor</i>. Mapped names are displayed in the cells and
-            edited values are saved as 'colour' codes in the underlying data. (Note a valid name must be entered).
+            <b>'Interior Colour' Column:</b> uses a <i>Text Cell Editor</i> with <code>useFormatter=true</code>. Mapped
+            names are displayed in the cells and edited values are saved as 'colour' codes in the underlying data.
+            (Note a valid name must be entered).
         </li>
         <li>
             <b>Set Filters:</b> display a list of names rather than codes.

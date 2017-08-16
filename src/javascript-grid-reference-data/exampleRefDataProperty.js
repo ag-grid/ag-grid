@@ -65,7 +65,7 @@ var gridOptions = {
             field: "price",
             colId: "retailPrice",
             valueGetter: function (params) {
-                return params.data.price * 1.1; // price markup
+                return params.data.price;
             },
             valueFormatter: currencyFormatter,
             valueSetter: numberValueSetter
