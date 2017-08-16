@@ -39,6 +39,20 @@ $transition-speed: 120ms;
     @include centered-container($height);
 } 
 
+@mixin icon-background($icon) {
+    width: $icon-size;
+    height: $icon-size;
+    background: transparent url('./material-icons/#{$icon}.svg') center no-repeat;
+    background-size: $icon-size $icon-size;
+}
+
+@mixin card() {
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    padding: $grid-size;
+    background: $background-color;
+    border-radius: 2px;
+}
+
 .ag-material-next {
     font: $primary-weight $primary-font-size $primary-font;
     color: $primary;
@@ -130,13 +144,9 @@ $transition-speed: 120ms;
         }
     }
 
-
-    @mixin icon-background($icon) {
-        width: $icon-size;
-        height: $icon-size;
-        background: transparent url('./material-icons/#{$icon}.svg') center no-repeat;
-        background-size: $icon-size $icon-size;
-    }
+////////////////////////////////////////
+// Icons 
+////////////////////////////////////////
 
     $icons: menu;
 
@@ -151,5 +161,12 @@ $transition-speed: 120ms;
         @include icon-background('menu');
         height: $header-height;
     }
-}
 
+////////////////////////////////////////
+// Context Menu 
+////////////////////////////////////////
+
+    .ag-menu {
+        @include card;
+    }
+}
