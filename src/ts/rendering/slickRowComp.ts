@@ -68,6 +68,8 @@ export class SlickRowComp extends Component implements IRowComp {
 
     private rowIsEven: boolean;
 
+    private paginationPage: number;
+
     constructor(bodyContainerComp: RowContainerComponent,
                 pinnedLeftContainerComp: RowContainerComponent,
                 pinnedRightContainerComp: RowContainerComponent,
@@ -81,6 +83,8 @@ export class SlickRowComp extends Component implements IRowComp {
         this.pinnedRightContainerComp = pinnedRightContainerComp;
         this.rowNode = rowNode;
         this.rowIsEven = this.rowNode.rowIndex % 2 === 0;
+        this.paginationPage = this.beans.paginationProxy.getCurrentPage();
+
         this.setAnimateFlags(animateIn);
     }
 
@@ -646,9 +650,13 @@ export class SlickRowComp extends Component implements IRowComp {
     }
 
     private onPaginationChanged(): void {
+        let currentPage = this.beans.paginationProxy.getCurrentPage();
         // it is possible this row is in the new page, but the page number has changed, which means
         // it needs to reposition itself relative to the new page
-        this.onTopChanged();
+        if (this.paginationPage!==currentPage) {
+            this.paginationPage = currentPage;
+            this.onTopChanged();
+        }
     }
 
     private onTopChanged(): void {
