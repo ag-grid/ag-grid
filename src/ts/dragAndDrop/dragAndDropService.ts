@@ -5,6 +5,7 @@ import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {DragService, DragListenerParams} from "./dragService";
 import {ColumnController} from "../columnController/columnController";
+import {Environment} from "../environment";
 
 export enum DragSourceType { ToolPanel, HeaderCell }
 
@@ -61,6 +62,7 @@ export class DragAndDropService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
+    @Autowired('environment') private environment: Environment;
     @Autowired('columnController') private columnController: ColumnController;
 
     public static ICON_PINNED = 'pinned';
@@ -350,6 +352,7 @@ export class DragAndDropService {
 
     private createGhost(): void {
         this.eGhost = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
+        this.eGhost.classList.add(this.environment.getTheme());
         this.eGhostIcon = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-icon');
 
         this.setGhostIcon(null);

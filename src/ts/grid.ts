@@ -70,6 +70,7 @@ import {AgComponentUtils} from "./components/framework/agComponentUtils";
 import {ComponentMetadataProvider} from "./components/framework/componentMetadataProvider";
 import {NamedComponentResolver} from "./components/framework/namedComponentResolver";
 import {Beans} from "./rendering/beans";
+import {Environment} from "./environment";
 
 export interface GridParams {
     // used by Web Components
@@ -153,6 +154,7 @@ export class Grid {
         if (params && params.seedBeanInstances) {
             _.assign(seed, params.seedBeanInstances);
         }
+
         let contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
@@ -168,7 +170,7 @@ export class Grid {
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService, FilterService, RowNodeFactory,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
                 ColumnHoverService, ColumnAnimationService, SortService, AutoGroupColService, ImmutableService,
-                ChangeDetectionService, Beans],
+                ChangeDetectionService, Environment, Beans],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],
