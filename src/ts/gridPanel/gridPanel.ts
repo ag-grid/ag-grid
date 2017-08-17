@@ -1243,7 +1243,7 @@ export class GridPanel extends BeanStub {
 
             this.eAllCellContainers = [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
 
-            let containers = {
+            let containers: RowContainerComponents = {
                 body: new RowContainerComponent( {eContainer: this.eBodyContainer} ),
                 fullWidth: <RowContainerComponent> null,
                 pinnedLeft: <RowContainerComponent> null,

@@ -18,7 +18,8 @@ import {
 import {SlickCellComp} from "./slickCellComp";
 import {ICellComp} from "./cellComp";
 import {EventService} from "../eventService";
-import {ICellRendererComp} from "./cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
+import {IAfterGuiAttachedParams} from "../interfaces/iComponent";
 
 export class SlickRowComp extends Component implements IRowComp {
 
@@ -48,12 +49,13 @@ export class SlickRowComp extends Component implements IRowComp {
     private fullWidthRowComponentLeft: ICellRendererComp;
     private fullWidthRowComponentRight: ICellRendererComp;
 
-    private fullWidthPinnedLeftLastTime: boolean;
-    private fullWidthPinnedRightLastTime: boolean;
-
     private active = true;
 
     private fullWidthRow: boolean;
+    private fullWidthRowEmbedded: boolean;
+    private fullWidthCellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
+    private fullWidthCellRendererParams: any;
+
     private editingRow: boolean;
     private rowFocused: boolean;
 
@@ -82,6 +84,9 @@ export class SlickRowComp extends Component implements IRowComp {
 
     private scope: any;
 
+    // todo - review row dom order
+    private lastPlacedElements: LastPlacedElements;
+
     constructor(scope: any,
                 bodyContainerComp: RowContainerComponent,
                 pinnedLeftContainerComp: RowContainerComponent,
@@ -107,13 +112,7 @@ export class SlickRowComp extends Component implements IRowComp {
     public init(): void {
         this.rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
 
-        let centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
-        let leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
-        let rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
-
-        this.createRowContainer(this.bodyContainerComp, centerCols, eRow => this.eBodyRow = eRow);
-        this.createRowContainer(this.pinnedRightContainerComp, rightCols, eRow => this.ePinnedRightRow = eRow);
-        this.createRowContainer(this.pinnedLeftContainerComp, leftCols, eRow => this.ePinnedLeftRow = eRow);
+        this.setupRowContainers();
 
         this.addListeners();
 
@@ -127,6 +126,104 @@ export class SlickRowComp extends Component implements IRowComp {
                 this.eAllRowContainers.forEach(eRow => _.removeCssClass(eRow, 'ag-opacity-zero'));
             });
         }
+    }
+
+    private setupRowContainers(): void {
+
+        let isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
+        let isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
+        let isGroupSpanningRow = this.rowNode.group && this.beans.gridOptionsWrapper.isGroupUseEntireRow();
+
+        if (isFullWidthCell) {
+            this.setupFullWidthContainers();
+        } else if (isGroupSpanningRow) {
+            this.setupFullWidthGroupContainers();
+        } else {
+            this.setupNormalRowContainers();
+        }
+
+    }
+
+    private setupFullWidthContainers(): void {
+        this.fullWidthRow = true;
+        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
+        this.fullWidthCellRenderer = this.beans.gridOptionsWrapper.getFullWidthCellRenderer();
+        this.fullWidthCellRendererParams = this.beans.gridOptionsWrapper.getFullWidthCellRendererParams();
+
+        if (_.missing(this.fullWidthCellRenderer)) {
+            console.warn(`ag-Grid: you need to provide a fullWidthCellRenderer if using isFullWidthCell()`);
+        }
+
+        this.createFullWidthRows();
+    }
+
+    private setupFullWidthGroupContainers(): void {
+        this.fullWidthRow = true;
+        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
+        this.fullWidthCellRenderer = this.beans.gridOptionsWrapper.getFullWidthCellRenderer();
+        this.fullWidthCellRendererParams = this.beans.gridOptionsWrapper.getFullWidthCellRendererParams();
+
+        this.createFullWidthRows();
+    }
+
+    private setupNormalRowContainers(): void {
+        let centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
+        let leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
+        let rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
+
+        this.createRowContainer(this.bodyContainerComp, centerCols, eRow => this.eBodyRow = eRow);
+        this.createRowContainer(this.pinnedRightContainerComp, rightCols, eRow => this.ePinnedRightRow = eRow);
+        this.createRowContainer(this.pinnedLeftContainerComp, leftCols, eRow => this.ePinnedLeftRow = eRow);
+    }
+
+    private createFullWidthRows(): void {
+        let ensureDomOrder = _.exists(this.lastPlacedElements);
+
+        if (this.fullWidthRowEmbedded) {
+
+            // if embedding the full width, it gets added to the body, left and right
+            // let previousBody = ensureDomOrder ? this.lastPlacedElements.eBody : null;
+            // let previousLeft = ensureDomOrder ? this.lastPlacedElements.eLeft : null;
+            // let previousRight = ensureDomOrder ? this.lastPlacedElements.eRight : null;
+
+            this.createFullWidthRowContainer(this.bodyContainerComp, null, null,
+                (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
+                            this.eFullWidthRowBody = eRow;
+                            this.fullWidthRowComponentBody = cellRenderer;
+                        });
+            this.createFullWidthRowContainer(this.pinnedLeftContainerComp, Column.PINNED_LEFT, 'ag-cell-last-left-pinned',
+                (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
+                            this.eFullWidthRowLeft = eRow;
+                            this.fullWidthRowComponentLeft = cellRenderer;
+                        });
+            this.createFullWidthRowContainer(this.pinnedRightContainerComp, Column.PINNED_RIGHT, 'ag-cell-first-right-pinned',
+                (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
+                            this.eFullWidthRowRight = eRow;
+                            this.fullWidthRowComponentRight = cellRenderer;
+                        });
+
+        } else {
+
+            // otherwise we add to the fullWidth container as normal
+            // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
+            this.createFullWidthRowContainer(this.fullWidthContainerComp, null, null,
+                (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
+                    this.eFullWidthRow = eRow;
+                    this.fullWidthRowComponent = cellRenderer;
+                    // and fake the mouse wheel for the fullWidth container
+                    if (!this.beans.gridOptionsWrapper.isForPrint()) {
+                        this.addMouseWheelListenerToFullWidthRow();
+                    }
+                });
+        }
+    }
+
+    private addMouseWheelListenerToFullWidthRow(): void {
+        let mouseWheelListener = this.beans.gridPanel.genericMouseWheelListener.bind(this.beans.gridPanel);
+        // IE9, Chrome, Safari, Opera
+        this.addDestroyableEventListener(this.eFullWidthRow, 'mousewheel', mouseWheelListener);
+        // Firefox
+        this.addDestroyableEventListener(this.eFullWidthRow, 'DOMMouseScroll', mouseWheelListener);
     }
 
     private setAnimateFlags(animateIn: boolean): void {
@@ -150,6 +247,10 @@ export class SlickRowComp extends Component implements IRowComp {
         this.stopEditing(cancel);
     }
 
+    public isFullWidth(): boolean {
+        return this.fullWidthRow;
+    }
+
     private addListeners(): void {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
@@ -157,7 +258,7 @@ export class SlickRowComp extends Component implements IRowComp {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
 
         let eventService = this.beans.eventService;
-        this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.refreshCells.bind(this));
+        this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.refreshCells.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_COLUMN_RESIZED, this.refreshCells.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
@@ -165,6 +266,39 @@ export class SlickRowComp extends Component implements IRowComp {
 
         // fixme - for this we should be clearing out everything, should inherit this from super component
         this.addDestroyableEventListener(eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshCells.bind(this));
+    }
+
+    private onDisplayedColumnsChanged(): void {
+        if (!this.fullWidthRow) {
+            this.refreshCells();
+        }
+    }
+
+    private destroyFullWidthComponents(): void {
+        if (this.fullWidthRowComponent) {
+            if (this.fullWidthRowComponent.destroy) {
+                this.fullWidthRowComponent.destroy();
+            }
+            this.fullWidthRowComponent = null;
+        }
+        if (this.fullWidthRowComponentBody) {
+            if (this.fullWidthRowComponentBody.destroy) {
+                this.fullWidthRowComponentBody.destroy();
+            }
+            this.fullWidthRowComponent = null;
+        }
+        if (this.fullWidthRowComponentLeft) {
+            if (this.fullWidthRowComponentLeft.destroy) {
+                this.fullWidthRowComponentLeft.destroy();
+            }
+            this.fullWidthRowComponentLeft = null;
+        }
+        if (this.fullWidthRowComponentRight) {
+            if (this.fullWidthRowComponentRight.destroy) {
+                this.fullWidthRowComponentRight.destroy();
+            }
+            this.fullWidthRowComponent = null;
+        }
     }
 
     private getContainerForCell(pinnedType: string): HTMLElement {
@@ -365,16 +499,95 @@ export class SlickRowComp extends Component implements IRowComp {
 
     private createRowContainer(rowContainerComp: RowContainerComponent, cols: Column[],
                                callback: (eRow: HTMLElement) => void): void {
-        let rowTemplate = this.createTemplate(cols);
-        rowContainerComp.appendRowTemplateAsync(rowTemplate.rowTemplate, ()=> {
+        let cellTemplatesAndComps = this.createCells(cols);
+        let rowTemplate = this.createTemplate(cellTemplatesAndComps.template, null);
+        rowContainerComp.appendRowTemplateAsync(rowTemplate, ()=> {
             let eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
-            this.afterRowAttached(rowContainerComp, rowTemplate.newCellComps, eRow);
+            this.afterRowAttached(rowContainerComp, cellTemplatesAndComps.cellComps, eRow);
             callback(eRow);
         });
     }
 
-    private getInitialRowClasses(): string[] {
+    private createFullWidthRowContainer(rowContainerComp: RowContainerComponent, pinned: string, extraCssClass: string,
+                               callback: (eRow: HTMLElement, comp: ICellRendererComp) => void): void {
+
+        let params = this.createFullWidthParams(pinned);
+
+        let cellRenderer = this.beans.componentRecipes.newFullRowGroupRenderer (params);
+
+        let gui = cellRenderer.getGui();
+        let guiIsTemplate = typeof gui === 'string';
+        let cellTemplate = guiIsTemplate ? <string><any> gui : '';
+
+        let rowTemplate = this.createTemplate(cellTemplate, extraCssClass);
+        rowContainerComp.appendRowTemplateAsync(rowTemplate, ()=> {
+
+            let eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
+
+            let eCell: HTMLElement;
+            if (guiIsTemplate) {
+                eCell = <HTMLElement> eRow.firstChild;
+            } else {
+                eRow.appendChild(gui);
+                eCell = gui;
+            }
+
+            if (cellRenderer.afterGuiAttached) {
+                let params = {
+                    eGridCell: eRow,
+                    eParentOfValue: eRow,
+                    eComponent: eCell
+                };
+                cellRenderer.afterGuiAttached(<IAfterGuiAttachedParams> params);
+            }
+
+            this.afterRowAttached(rowContainerComp, [], eRow);
+            callback(eRow, cellRenderer);
+
+            this.angular1Compile(eRow);
+        });
+    }
+
+    private angular1Compile(element: Element): void {
+        if (this.scope) {
+            this.beans.$compile(element)(this.scope);
+        }
+    }
+
+    private createFullWidthParams(pinned: string): any {
+        let params = {
+            data: this.rowNode.data,
+            node: this.rowNode,
+            value: this.rowNode.key,
+            $scope: this.scope,
+            rowIndex: this.rowNode.rowIndex,
+            api: this.beans.gridOptionsWrapper.getApi(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            context: this.beans.gridOptionsWrapper.getContext(),
+            // these need to be taken out, as part of 'afterAttached' now
+            eGridCell: <HTMLElement> null,
+            eParentOfValue: <HTMLElement> null,
+            pinned: pinned,
+            addRenderedRowListener: this.addEventListener.bind(this),
+            colDef: {
+                cellRenderer: this.fullWidthCellRenderer,
+                cellRendererParams: this.fullWidthCellRendererParams
+            }
+        };
+
+        if (this.fullWidthCellRendererParams) {
+            _.assign(params, this.fullWidthCellRendererParams);
+        }
+
+        return params;
+    }
+
+    private getInitialRowClasses(extraCssClass: string): string[] {
         let classes: string[] = [];
+
+        if (_.exists(extraCssClass)) {
+            classes.push(extraCssClass);
+        }
 
         classes.push('ag-row');
         classes.push('ag-row-no-focus');
@@ -475,11 +688,11 @@ export class SlickRowComp extends Component implements IRowComp {
         });
     }
 
-    private createTemplate(cols: Column[]): {rowTemplate: string, newCellComps: SlickCellComp[]} {
+    private createTemplate(contents: string, extraCssClass: string): string {
         let templateParts: string[] = [];
 
         let rowHeight = this.rowNode.rowHeight;
-        let rowClasses = this.getInitialRowClasses().join(' ');
+        let rowClasses = this.getInitialRowClasses(extraCssClass).join(' ');
         let setRowTop = !this.beans.gridOptionsWrapper.isForPrint() && !this.beans.gridOptionsWrapper.isAutoHeight();
 
         // if sliding in, we take the old row top. otherwise we just set the current row top.
@@ -496,20 +709,14 @@ export class SlickRowComp extends Component implements IRowComp {
         templateParts.push(` style="height: ${rowHeight}px; ${rowTopStr}">`);
 
         // add in the template for the cells
-        let cellRes = this.createCellTemplates(cols);
-        templateParts.push(cellRes.cellsTemplate);
+        templateParts.push(contents);
 
         templateParts.push(`</div>`);
 
-        let res = {
-            rowTemplate: templateParts.join(''),
-            newCellComps: cellRes.newCellComps
-        };
-
-        return res;
+        return templateParts.join('');
     }
 
-    private createCellTemplates(cols: Column[]): {cellsTemplate: string, newCellComps: SlickCellComp[]} {
+    private createCells(cols: Column[]): {template: string, cellComps: SlickCellComp[]} {
         let templateParts: string[] = [];
         let newCellComps: SlickCellComp[] = [];
         cols.forEach( col => {
@@ -519,11 +726,11 @@ export class SlickRowComp extends Component implements IRowComp {
             newCellComps.push(newCellComp);
             this.slickCellComps[col.getId()] = newCellComp;
         });
-        let res = {
-            cellsTemplate: templateParts.join(''),
-            newCellComps: newCellComps
+        let templateAndComps = {
+            template: templateParts.join(''),
+            cellComps: newCellComps
         };
-        return res;
+        return templateAndComps;
     }
 
     private onRowSelected(): void {
@@ -616,14 +823,12 @@ export class SlickRowComp extends Component implements IRowComp {
         // this.destroyFullWidthComponent();
 
         if (animate) {
-            this.removeFirstPassFuncs.forEach( func => func() );
 
-            this.removeSecondPassFuncs.push( ()=> {
-                this.forEachCellComp(renderedCell => renderedCell.destroy(false) );
-            });
+            this.removeFirstPassFuncs.forEach( func => func() );
+            this.removeSecondPassFuncs.push(this.destroyContainingCells.bind(this));
 
         } else {
-            this.forEachCellComp(renderedCell => renderedCell.destroy(false) );
+            this.destroyContainingCells();
 
             // we are not animating, so execute the second stage of removal now.
             // we call getAndClear, so that they are only called once
@@ -637,6 +842,11 @@ export class SlickRowComp extends Component implements IRowComp {
             this.renderedRowEventService.dispatchEvent(event);
         }
         this.beans.eventService.dispatchEvent(event);
+    }
+
+    private destroyContainingCells(): void {
+        this.forEachCellComp(renderedCell => renderedCell.destroy(false) );
+        this.destroyFullWidthComponents();
     }
 
     // we clear so that the functions are never executed twice

@@ -65,6 +65,9 @@ export class RowRenderer extends BeanStub {
 
     private rowContainers: RowContainerComponents;
 
+    private pinningLeft: boolean;
+    private pinningRight: boolean;
+
     // we only allow one refresh at a time, otherwise the internal memory structure here
     // will get messed up. this can happen if the user has a cellRenderer, and inside the
     // renderer they call an API method that results in another pass of the refresh,
@@ -85,6 +88,8 @@ export class RowRenderer extends BeanStub {
         this.rowContainers = this.gridPanel.getRowContainers();
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+
         this.redrawAfterModelUpdate();
     }
 
@@ -189,7 +194,7 @@ export class RowRenderer extends BeanStub {
 
     // if the row nodes are not rendered, no index is returned
     private getRenderedIndexesForRowNodes(rowNodes: RowNode[]): string[] {
-        let result: any = [];
+        let result: string[] = [];
         if (_.missing(rowNodes)) { return result; }
         _.iterateObject(this.rowCompsByIndex, (index: string, renderedRow: RowComp)=> {
             let rowNode = renderedRow.getRowNode();
@@ -334,7 +339,7 @@ export class RowRenderer extends BeanStub {
         });
     }
 
-    private forEachRowComp(callback: (key: string, renderedCell: RowComp)=>void): void {
+    private forEachRowComp(callback: (key: string, rowComp: IRowComp)=>void): void {
         _.iterateObject(this.rowCompsByIndex, callback);
         _.iterateObject(this.floatingTopRowComps, callback);
         _.iterateObject(this.floatingBottomRowComps, callback);
@@ -547,6 +552,35 @@ export class RowRenderer extends BeanStub {
         this.destroyRowComps(rowsToRecycle, animate);
 
         this.checkAngularCompile();
+    }
+
+    private onDisplayedColumnsChanged(): void {
+        let pinningLeft = this.columnController.isPinningLeft();
+        let pinningRight = this.columnController.isPinningRight();
+        let atLeastOneChanged = this.pinningLeft!==pinningLeft || pinningRight!==this.pinningRight;
+        if (atLeastOneChanged) {
+            this.pinningLeft = pinningLeft;
+            this.pinningRight = pinningRight;
+            if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
+                this.redrawFullWidthEmbeddedRows();
+            }
+        }
+    }
+
+    // when embedding, what gets showed in each section depends on what is pinned. eg if embedding group expand / collapse,
+    // then it should go into the pinned left area if pinning left, or the center area if not pinning.
+    private redrawFullWidthEmbeddedRows(): void {
+        // if either of the pinned panels has shown / hidden, then need to redraw the fullWidth bits when
+        // embedded, as what appears in each section depends on whether we are pinned or not
+        let rowsToRemove: string[] = [];
+        this.forEachRowComp( (id: string, rowComp: IRowComp) => {
+            if (rowComp.isFullWidth()) {
+                let rowIndex = rowComp.getRowNode().rowIndex;
+                rowsToRemove.push(rowIndex.toString());
+            }
+        });
+        this.removeRowComps(rowsToRemove);
+        this.redrawAfterScroll();
     }
 
     private createOrUpdateRowComp(rowIndex: number, rowsToRecycle: {[key: string]: RowComp},

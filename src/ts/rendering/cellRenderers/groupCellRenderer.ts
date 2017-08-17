@@ -61,6 +61,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     // be the parent who's details we are actually showing if the data was pulled down.
     private displayedGroup: RowNode;
 
+    private embeddedRowMismatch: boolean;
+
     constructor() {
         super(GroupCellRenderer.TEMPLATE);
     }
@@ -69,8 +71,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         this.params = params;
 
-        let embeddedRowMismatch = this.embeddedRowMismatch();
-        if (embeddedRowMismatch) { return; }
+        this.setEmbeddedRowMismatch();
+        if (this.embeddedRowMismatch) { return; }
 
         //This allows for empty strings to appear as groups since
         //it will only return for null or undefined.
@@ -90,6 +92,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         if (this.params.value==null) { return; }
 
+        if (this.embeddedRowMismatch) { return; }
+
         // hack to get renderer working with slick and non-slick
         let eGridCell = this.params.eGridCell ? this.params.eGridCell : (<any>params).eGridCell;
         this.addExpandAndContract(eGridCell);
@@ -101,7 +105,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     // if we are doing embedded full width rows, we only show the renderer when
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
-    private embeddedRowMismatch(): boolean {
+    private setEmbeddedRowMismatch(): void {
         if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
 
             let pinnedLeftCell = this.params.pinned === Column.PINNED_LEFT;
@@ -110,19 +114,19 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
             if (this.gridOptionsWrapper.isEnableRtl()) {
                 if (this.columnController.isPinningLeft()) {
-                    return !pinnedRightCell;
+                    this.embeddedRowMismatch = !pinnedRightCell;
                 } else {
-                    return !bodyCell;
+                    this.embeddedRowMismatch = !bodyCell;
                 }
             } else {
                 if (this.columnController.isPinningLeft()) {
-                    return !pinnedLeftCell;
+                    this.embeddedRowMismatch = !pinnedLeftCell;
                 } else {
-                    return !bodyCell;
+                    this.embeddedRowMismatch = !bodyCell;
                 }
             }
         } else {
-            return false;
+            this.embeddedRowMismatch = false;
         }
     }
 

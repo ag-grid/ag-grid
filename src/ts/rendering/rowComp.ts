@@ -86,6 +86,7 @@ export interface IRowComp {
     stopRowEditing(cancel: boolean): void;
     destroy(animate?: boolean): void;
     getAndClearDelayedDestroyFunctions(): Function[];
+    isFullWidth(): boolean;
 }
 
 export class RowComp extends BeanStub implements IRowComp {
@@ -235,6 +236,10 @@ export class RowComp extends BeanStub implements IRowComp {
         });
 
         this.initialised = true;
+    }
+
+    public isFullWidth(): boolean {
+        return this.fullWidthRow;
     }
 
     private setupRowStub(animateInRowTop: boolean): void {
