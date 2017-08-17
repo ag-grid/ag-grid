@@ -110,6 +110,6 @@ export class NumericEditor extends BaseAureliaEditor {
 <!--        Using Aurelia Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.-->
 <!--    </p>-->
 
-<!--    <show-example example="../aurelia-example/#/editor/true"-->
-<!--                  jsfile="../aurelia-example/components/editor-example/editor-example.ts"-->
-<!--                  html="../aurelia-example/components/editor-example/editor-example.html"></show-example>-->
+<!--    <show-example example="../framework-examples/aurelia-example/#/editor/true"-->
+<!--                  jsfile="../framework-examples/aurelia-example/components/editor-example/editor-example.ts"-->
+<!--                  html="../framework-examples/aurelia-example/components/editor-example/editor-example.html"></show-example>-->

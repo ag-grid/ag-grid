@@ -14,10 +14,10 @@
     See example below on how to create a custom floating filter reusing the out of the box number filter with polymer
 </p>
 
-<show-complex-example example="../polymer-examples/src/floating-filter-components-grid/index.html"
+<show-complex-example example="../framework-examples/polymer-examples/src/floating-filter-components-grid/index.html"
                       sources="{
                             [
-                                { root: '/polymer-examples/src/floating-filter-components-grid/', files: 'index.html,floating-filter-components-example.html,sliding-floating-filter.html' }
+                                { root: '/framework-examples/polymer-examples/src/floating-filter-components-grid/', files: 'index.html,floating-filter-components-example.html,sliding-floating-filter.html' }
                             ]
                           }"
                       exampleHeight="525px">

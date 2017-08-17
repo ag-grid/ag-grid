@@ -218,9 +218,9 @@
 <!--    <p>-->
 <!--        The example below shows a rich configuration of ag-Grid-->
 <!--    </p>-->
-<!--    <show-example example="../aurelia-example/#/rich-grid/true"-->
-<!--                  jsfile="../aurelia-example/components/rich-grid-example/rich-grid-example.ts"-->
-<!--                  html="../aurelia-example/components/rich-grid-example/rich-grid-example.html"-->
+<!--    <show-example example="../framework-examples/aurelia-example/#/rich-grid/true"-->
+<!--                  jsfile="../framework-examples/aurelia-example/components/rich-grid-example/rich-grid-example.ts"-->
+<!--                  html="../framework-examples/aurelia-example/components/rich-grid-example/rich-grid-example.html"-->
 <!--                  exampleHeight="525px"></show-example>-->
 
 </div>

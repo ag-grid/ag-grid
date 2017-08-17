@@ -13,10 +13,10 @@ include '../documentation-main/documentation_header.php';
     <p>A simple Grid using React Components as Cell Renderers, with Child Components, Two-Way Binding and
         Parent to Child Components Events.</p>
 
-    <show-complex-example example="../react-examples/examples/?fromDocs&example=dynamic"
+    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=dynamic"
                           sources="{
                             [
-                                { root: '/react-examples/examples/src/dynamicComponentExample/', files: 'ChildMessageRenderer.jsx,CurrencyRenderer.jsx,ParamsRenderer.jsx,CubeRenderer.jsx,DynamicComponentsExample.jsx,SquareRenderer.jsx' }
+                                { root: '/framework-examples/react-examples/examples/src/dynamicComponentExample/', files: 'ChildMessageRenderer.jsx,CurrencyRenderer.jsx,ParamsRenderer.jsx,CubeRenderer.jsx,DynamicComponentsExample.jsx,SquareRenderer.jsx' }
                             ]
                           }"
                           exampleHeight="525px">
@@ -25,10 +25,10 @@ include '../documentation-main/documentation_header.php';
     <h2 id="rich-dynamic">Richer Dynamic Components</h2>
     <p>A Richer Example using React Components as Cell Renderers, with Dynamic Components included via Modules.</p>
 
-    <show-complex-example example="../react-examples/examples/?fromDocs&example=rich-dynamic"
+    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=rich-dynamic"
                           sources="{
                             [
-                                { root: '/react-examples/examples/src/richComponentExample/', files: 'ClickableRenderer.jsx,RatioRenderer.jsx,RichComponentsExample.jsx' }
+                                { root: '/framework-examples/react-examples/examples/src/richComponentExample/', files: 'ClickableRenderer.jsx,RatioRenderer.jsx,RichComponentsExample.jsx' }
                             ]
                           }"
                           exampleHeight="525px">

@@ -183,10 +183,10 @@ laterOnInYourApplicationSomewhere() {
     <p>
         Using Polymer Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>
-<show-complex-example example="../polymer-examples/src/filter-components-example/index.html"
+<show-complex-example example="../framework-examples/polymer-examples/src/filter-components-example/index.html"
                       sources="{
                             [
-                                { root: '/polymer-examples/src/filter-components-example/', files: 'index.html,filter-components-example.html,partial-match-filter.html' }
+                                { root: '/framework-examples/polymer-examples/src/filter-components-example/', files: 'index.html,filter-components-example.html,partial-match-filter.html' }
                             ]
                           }"
                       exampleHeight="525px">

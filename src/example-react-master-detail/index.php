@@ -12,10 +12,10 @@ include '../documentation-main/documentation_header.php';
     <h2>Master/Detail Components</h2>
     <p>A Master/Detail Example, with both the Master and the Detail elements being React Components.</p>
 
-    <show-complex-example example="../react-examples/examples/?fromDocs&example=master-detail"
+    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=master-detail"
                           sources="{
                             [
-                                { root: '/react-examples/examples/src/masterDetailExample/', files: 'MasterDetailExample.jsx,DetailPanelComponent.jsx,DetailPanelComponent.css' }
+                                { root: '/framework-examples/react-examples/examples/src/masterDetailExample/', files: 'MasterDetailExample.jsx,DetailPanelComponent.jsx,DetailPanelComponent.css' }
                             ]
                           }"
                           exampleHeight="525px">

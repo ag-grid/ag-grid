@@ -243,10 +243,10 @@ export default class extends Component {
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-    <show-complex-example example="../react-examples/examples/?fromDocs&example=rich-grid"
+    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=rich-grid"
                           sources="{
                             [
-                                { root: '/react-examples/examples/src/richGridExample/', files: 'ColDefFactory.jsx,NameCellEditor.jsx,RichGridExample.css,SkillsFilter.jsx,MyReactDateComponent.jsx,ProficiencyCellRenderer.jsx,RichGridExample.jsx,MyReactHeaderComponent.jsx,ProficiencyFilter.jsx,RowDataFactory.js,MyReactHeaderGroupComponent.jsx,RefData.js,SkillsCellRenderer.jsx' }
+                                { root: '/framework-examples/react-examples/examples/src/richGridExample/', files: 'ColDefFactory.jsx,NameCellEditor.jsx,RichGridExample.css,SkillsFilter.jsx,MyReactDateComponent.jsx,ProficiencyCellRenderer.jsx,RichGridExample.jsx,MyReactHeaderComponent.jsx,ProficiencyFilter.jsx,RowDataFactory.js,MyReactHeaderGroupComponent.jsx,RefData.js,SkillsCellRenderer.jsx' }
                             ]
                           }"
                           exampleHeight="525px">

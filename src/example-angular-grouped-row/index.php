@@ -12,11 +12,11 @@ include '../documentation-main/documentation_header.php';
     <h2>Group Row Inner Renderer</h2>
     <p>A Group Row Inner Renderer Example</p>
 
-    <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=group-row"
+    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=group-row"
                           sources="{
                             [
-                                { root: '/ng2-example/app/grouped-row-example/', files: 'group-row-renderer.component.ts,group-row-renderer.component.html,medal-renderer.component.ts' },
-                                { root: '/ng2-example/app/', files: 'app.module.ts' }
+                                { root: '/framework-examples/angular-examples/app/grouped-row-inner-renderer-example/', files: 'group-row-renderer.component.ts,group-row-renderer.component.html,medal-renderer.component.ts' },
+                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
                             ]
                           }"
                           plunker="https://embed.plnkr.co/hj7OIP/">

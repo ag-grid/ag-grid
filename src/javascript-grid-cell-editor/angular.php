@@ -152,11 +152,11 @@ colDef = {
     <p>
         Using Angular Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>
-    <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=editor-component"
+    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=editor-component"
                           sources="{
                             [
-                                { root: '/ng2-example/app/editor-component-example/', files: 'editor.component.ts,editor.component.html,mood-editor.component.ts,mood-renderer.component.ts,numeric-editor.component.ts' },
-                                { root: '/ng2-example/app/', files: 'app.module.ts' }
+                                { root: '/framework-examples/angular-examples/app/editor-component-example/', files: 'editor.component.ts,editor.component.html,mood-editor.component.ts,mood-renderer.component.ts,numeric-editor.component.ts' },
+                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
                             ]
                           }"
                           plunker="https://embed.plnkr.co/259RDD/">

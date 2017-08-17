@@ -12,10 +12,10 @@ include '../documentation-main/documentation_header.php';
     <h2>Pinned Row Renderer</h2>
     <p>A Pinned Row Renderer Example</p>
 
-    <show-complex-example example="../react-examples/examples/?fromDocs&example=floating-row"
+    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=floating-row"
                           sources="{
                             [
-                                { root: '/react-examples/examples/src/floatingRowExample/', files: 'FloatingRowComponentExample.jsx,StyledRenderer.jsx' }
+                                { root: '/framework-examples/react-examples/examples/src/floatingRowExample/', files: 'FloatingRowComponentExample.jsx,StyledRenderer.jsx' }
                             ]
                           }"
                           exampleHeight="525px">

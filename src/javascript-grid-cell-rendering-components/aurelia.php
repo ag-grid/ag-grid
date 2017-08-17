@@ -57,18 +57,18 @@
 <!--    of the "mood" field.-->
 <!--</p>-->
 <!---->
-<!--<show-example example="../aurelia-example/#/editor/true"-->
-<!--              jsfile="../aurelia-example/components/editor-example/editor-example.ts"-->
-<!--              html="../aurelia-example/components/editor-example/editor-example.html"></show-example>-->
+<!--<show-example example="../framework-examples/aurelia-example/#/editor/true"-->
+<!--              jsfile="../framework-examples/aurelia-example/components/editor-example/editor-example.ts"-->
+<!--              html="../framework-examples/aurelia-example/components/editor-example/editor-example.html"></show-example>-->
 <!---->
 <!--<h3 id="example-rendering-using-regular-cell-renderer-components">Example: Rendering using regular cellRenderer Components</h3>-->
 <!--<p>-->
 <!--    A Rich Grid leveraging regular Cell Renderer Components-->
 <!--</p>-->
 <!---->
-<!--<show-example example="../aurelia-example/#/richgrid-declarative/true"-->
-<!--          jsfile="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"-->
-<!--          html="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"-->
+<!--<show-example example="../framework-examples/aurelia-example/#/richgrid-declarative/true"-->
+<!--          jsfile="../framework-examples/aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"-->
+<!--          html="../framework-examples/aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"-->
 <!--          exampleHeight="525px"></show-example>-->
 <!---->
 <br/>

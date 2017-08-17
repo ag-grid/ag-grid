@@ -267,15 +267,15 @@ this.params.context.componentParent
     <p>
         The example below shows a rich configuration of ag-Grid.
     </p>
-    <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=rich-grid"
+    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=rich-grid"
                           sources="{
                             [
-                                { root: '/ng2-example/app/rich-grid-example/', files: 'rich-grid.component.ts,rich-grid.component.html,proficiency-renderer.css,rich-grid.css' },
-                                { root: '/ng2-example/app/header-group-component/', files: 'header-group.component.ts,header-group.component.html,header-group.component.css' },
-                                { root: '/ng2-example/app/header-component/', files: 'header.component.ts,header.component.html,header.component.css' },
-                                { root: '/ng2-example/app/filters/', files: 'skillFilter.ts,proficiencyFilter.ts' },
-                                { root: '/ng2-example/app/date-component/', files: 'date.component.ts,date.component.html,date.component.css' },
-                                { root: '/ng2-example/app/', files: 'app.module.ts' }
+                                { root: '/framework-examples/angular-examples/app/rich-grid-example/', files: 'rich-grid.component.ts,rich-grid.component.html,proficiency-renderer.css,rich-grid.css' },
+                                { root: '/framework-examples/angular-examples/app/header-group-component/', files: 'header-group.component.ts,header-group.component.html,header-group.component.css' },
+                                { root: '/framework-examples/angular-examples/app/header-component/', files: 'header.component.ts,header.component.html,header.component.css' },
+                                { root: '/framework-examples/angular-examples/app/filters/', files: 'skillFilter.ts,proficiencyFilter.ts' },
+                                { root: '/framework-examples/angular-examples/app/date-component/', files: 'date.component.ts,date.component.html,date.component.css' },
+                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
                             ]
                           }"
                           plunker="https://embed.plnkr.co/EINfsm/"
@@ -355,15 +355,15 @@ private getCountryFilterParams():any {
     <p>
         The example below shows the same rich grid as the example above, but with configuration done via Markup.
     </p>
-    <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=rich-grid-declarative"
+    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=rich-grid-declarative"
                           sources="{
                             [
-                                { root: '/ng2-example/app/rich-grid-declarative-example/', files: 'rich-grid-declarative.component.ts,rich-grid-declarative.component.html,proficiency-renderer.css,rich-grid.css' },
-                                { root: '/ng2-example/app/header-group-component/', files: 'header-group.component.ts,header-group.component.html,header-group.component.css' },
-                                { root: '/ng2-example/app/header-component/', files: 'header.component.ts,header.component.html,header.component.css' },
-                                { root: '/ng2-example/app/filters/', files: 'skillFilter.ts,proficiencyFilter.ts' },
-                                { root: '/ng2-example/app/date-component/', files: 'date.component.ts,date.component.html,date.component.css' },
-                                { root: '/ng2-example/app/', files: 'app.module.ts' }
+                                { root: '/framework-examples/angular-examples/app/rich-grid-declarative-example/', files: 'rich-grid-declarative.component.ts,rich-grid-declarative.component.html,proficiency-renderer.css,rich-grid.css' },
+                                { root: '/framework-examples/angular-examples/app/header-group-component/', files: 'header-group.component.ts,header-group.component.html,header-group.component.css' },
+                                { root: '/framework-examples/angular-examples/app/header-component/', files: 'header.component.ts,header.component.html,header.component.css' },
+                                { root: '/framework-examples/angular-examples/app/filters/', files: 'skillFilter.ts,proficiencyFilter.ts' },
+                                { root: '/framework-examples/angular-examples/app/date-component/', files: 'date.component.ts,date.component.html,date.component.css' },
+                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
                             ]
                           }"
                           plunker="https://embed.plnkr.co/1rHK9l/"

@@ -12,10 +12,10 @@ include '../documentation-main/documentation_header.php';
     <h2>Group Row Inner Renderer</h2>
     <p>A Group Row Inner Renderer Example</p>
 
-    <show-complex-example example="../polymer-examples/src/grouped-inner-row-components-example/index.html"
+    <show-complex-example example="../framework-examples/polymer-examples/src/grouped-inner-row-components-example/index.html"
                           sources="{
                             [
-                                { root: '/polymer-examples/src/grouped-inner-row-components-example/', files: 'index.html,grouped-inner-row-components-example.html,medal-renderer.html' }
+                                { root: '/framework-examples/polymer-examples/src/grouped-inner-row-components-example/', files: 'index.html,grouped-inner-row-components-example.html,medal-renderer.html' }
                             ]
                           }"
                           exampleHeight="525px">

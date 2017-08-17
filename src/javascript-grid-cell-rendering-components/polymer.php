@@ -111,10 +111,10 @@ the grid will know the framework to use is Polymer.
 <p>
     Using Polymer Components in the Cell Renderers
 </p>
-<show-complex-example example="../polymer-examples/src/dynamic-components-grid/index.html"
+<show-complex-example example="../framework-examples/polymer-examples/src/dynamic-components-grid/index.html"
                       sources="{
                             [
-                                { root: '/polymer-examples/src/dynamic-components-grid/', files: 'index.html,cube-cell-renderer.html,params-cell-renderer.html,currency-cell-renderer.html,parent-child-renderer.html,dynamic-components-example.html,square-cell-renderer.html' }
+                                { root: '/framework-examples/polymer-examples/src/dynamic-components-grid/', files: 'index.html,cube-cell-renderer.html,params-cell-renderer.html,currency-cell-renderer.html,parent-child-renderer.html,dynamic-components-example.html,square-cell-renderer.html' }
                             ]
                           }"
                       exampleHeight="525px">
@@ -142,10 +142,10 @@ the grid will know the framework to use is Polymer.
 <p>
     Using more complex Polymer Components in the Cell Renderers
 </p>
-<show-complex-example example="../polymer-examples/src/rich-dynamic-components-grid/index.html"
+<show-complex-example example="../framework-examples/polymer-examples/src/rich-dynamic-components-grid/index.html"
                       sources="{
                             [
-                                { root: '/polymer-examples/src/rich-dynamic-components-grid/', files: 'index.html,ratio-renderer.html,rich-dynamic-components-example.html' }
+                                { root: '/framework-examples/polymer-examples/src/rich-dynamic-components-grid/', files: 'index.html,ratio-renderer.html,rich-dynamic-components-example.html' }
                             ]
                           }"
                       exampleHeight="525px">
