@@ -152,17 +152,20 @@ export class RowRenderer extends BeanStub {
 
         if (rowNodes) {
             rowNodes.forEach( (node: RowNode) => {
-                let rowComp = new RowComp(this.$scope,
-                    this,
-                    bodyContainerComp,
-                    fullWidthContainerComp,
-                    pinnedLeftContainerComp,
-                    pinnedRightContainerComp,
-                    node,
-                    false,
-                    null,
-                    this.beans);
+
+                let rowComp: IRowComp;
+                if (this.gridOptionsWrapper.isSlickRender()) {
+                    rowComp = new SlickRowComp(this.$scope, bodyContainerComp,
+                        pinnedLeftContainerComp, pinnedRightContainerComp, node, this.beans, false);
+                } else {
+                    rowComp = new RowComp(this.$scope,
+                        this, bodyContainerComp, fullWidthContainerComp,
+                        pinnedLeftContainerComp, pinnedRightContainerComp,
+                        node, false, null, this.beans);
+                }
+
                 rowComp.init();
+
                 renderedRows.push(rowComp);
             })
         }

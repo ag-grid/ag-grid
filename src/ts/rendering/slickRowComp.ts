@@ -18,21 +18,39 @@ import {
 import {SlickCellComp} from "./slickCellComp";
 import {ICellComp} from "./cellComp";
 import {EventService} from "../eventService";
+import {ICellRendererComp} from "./cellRenderers/iCellRenderer";
 
 export class SlickRowComp extends Component implements IRowComp {
 
     private renderedRowEventService: EventService;
 
-    private beans: Beans;
-    private bodyContainerComp: RowContainerComponent;
-    private pinnedLeftContainerComp: RowContainerComponent;
-    private pinnedRightContainerComp: RowContainerComponent;
     private rowNode: RowNode;
+
+    private beans: Beans;
 
     private ePinnedLeftRow: HTMLElement;
     private ePinnedRightRow: HTMLElement;
     private eBodyRow: HTMLElement;
     private eAllRowContainers: HTMLElement[] = [];
+
+    private eFullWidthRow: HTMLElement;
+    private eFullWidthRowBody: HTMLElement;
+    private eFullWidthRowLeft: HTMLElement;
+    private eFullWidthRowRight: HTMLElement;
+
+    private bodyContainerComp: RowContainerComponent;
+    private pinnedLeftContainerComp: RowContainerComponent;
+    private pinnedRightContainerComp: RowContainerComponent;
+
+    private fullWidthRowComponent: ICellRendererComp;
+    private fullWidthRowComponentBody: ICellRendererComp;
+    private fullWidthRowComponentLeft: ICellRendererComp;
+    private fullWidthRowComponentRight: ICellRendererComp;
+
+    private fullWidthContainerComp: RowContainerComponent;
+
+    private fullWidthPinnedLeftLastTime: boolean;
+    private fullWidthPinnedRightLastTime: boolean;
 
     private active = true;
 
@@ -85,27 +103,6 @@ export class SlickRowComp extends Component implements IRowComp {
         this.setAnimateFlags(animateIn);
     }
 
-    private setAnimateFlags(animateIn: boolean): void {
-        if (animateIn) {
-            let oldRowTopExists = _.exists(this.rowNode.oldRowTop);
-            // if the row had a previous position, we slide it in (animate row top)
-            this.slideRowIn = oldRowTopExists;
-            // if the row had no previous position, we fade it in (animate
-            this.fadeRowIn = !oldRowTopExists;
-        } else {
-            this.slideRowIn = false;
-            this.fadeRowIn = false;
-        }
-    }
-
-    public isEditing(): boolean {
-        return false;
-    }
-
-    public stopRowEditing(cancel: boolean): void {
-        this.stopEditing(cancel);
-    }
-
     public init(): void {
         this.rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
 
@@ -129,6 +126,27 @@ export class SlickRowComp extends Component implements IRowComp {
                 this.eAllRowContainers.forEach(eRow => _.removeCssClass(eRow, 'ag-opacity-zero'));
             });
         }
+    }
+
+    private setAnimateFlags(animateIn: boolean): void {
+        if (animateIn) {
+            let oldRowTopExists = _.exists(this.rowNode.oldRowTop);
+            // if the row had a previous position, we slide it in (animate row top)
+            this.slideRowIn = oldRowTopExists;
+            // if the row had no previous position, we fade it in (animate
+            this.fadeRowIn = !oldRowTopExists;
+        } else {
+            this.slideRowIn = false;
+            this.fadeRowIn = false;
+        }
+    }
+
+    public isEditing(): boolean {
+        return false;
+    }
+
+    public stopRowEditing(cancel: boolean): void {
+        this.stopEditing(cancel);
     }
 
     private addListeners(): void {
