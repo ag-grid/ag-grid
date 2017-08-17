@@ -13,7 +13,7 @@
         <rect id="path-7" x="0" y="4" width="3" height="2"></rect>
         <rect id="path-8" x="7" y="4" width="3" height="2"></rect>
     </defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="loading">
             <g id="Rectangle-18">
                 <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-1"></use>

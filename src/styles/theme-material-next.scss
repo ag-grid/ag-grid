@@ -59,6 +59,27 @@ $transition-speed: 120ms;
     border-radius: 2px;
 }
 
+@mixin simple-material-textbox {
+    border: 0;
+    background: transparent;
+    font-size: inherit;
+    font-family: inherit;
+
+    box-sizing: border-box;
+    border-bottom: 1px solid $border-color;
+    padding-bottom: $grid-size;
+    color: $primary;
+
+    &:focus {
+        border-bottom: 2px solid $accent;
+        outline: none;
+    }
+
+    &::placeholder {
+        color: $disabled;
+    }
+}
+
 .ag-material-next {
     font: $primary-weight $primary-font-size $primary-font;
     color: $primary;
@@ -154,7 +175,7 @@ $transition-speed: 120ms;
 // Icons 
 ////////////////////////////////////////
 
-    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right small-up small-down tick cross;
+    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right small-up small-down tick cross tree-open tree-closed;
 
     @each $icon in $icons {
         .ag-icon-#{$icon} {
@@ -244,8 +265,18 @@ $transition-speed: 120ms;
         font: $secondary-weight $secondary-font-size $secondary-font;
         color: $secondary;
         border: none;
-        height: $grid-size * 4 !important;
+        height: $header-height !important;
+        line-height: $header-height;
         z-index: 5;
+        margin: 0;
+        padding: 0 $grid-size * 2;
+
+        span, div {
+            float: left;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
     }
 
 ////////////////////////////////////////
@@ -293,6 +324,151 @@ $transition-speed: 120ms;
 
             & > div:last-child > .ag-menu-option-popup-pointer {
                 background-position-y: 0;
+            }
+        }
+    }
+
+    // forced by the JS implementation
+    $virtual-item-height: 32px;
+
+////////////////////////////////////////
+// Value Set Filter
+////////////////////////////////////////
+    
+    .ag-filter {
+        & > div > div > div {
+        }
+
+        input[type=text] {
+            @include simple-material-textbox;
+            padding-left: $grid-size;
+        }
+
+        label {
+            display: block;
+            padding-left: $grid-size;
+        }
+
+        .ag-set-filter-list {
+            padding-top: $grid-size;
+        }
+
+        .ag-filter-header-container {
+            height: $virtual-item-height;
+            box-sizing: border-box;
+        }
+
+        .ag-filter-header-container:nth-child(2) {
+            border-bottom: 1px solid $border-color;
+        }
+
+        .ag-filter-checkbox {
+            float: left;
+            margin-right: $grid-size;
+            height: $virtual-item-height;
+            padding-top: $grid-size / 2;
+        }
+
+        .ag-filter-value {
+            height: $virtual-item-height;
+            float: left;
+            line-height: $grid-size * 3.5; // hate this
+        }
+    }
+
+////////////////////////////////////////
+// Column selector
+////////////////////////////////////////
+    .ag-column-select-panel {
+
+        .ag-column-select-column-group::not(::first-child) {
+            border-top: 1px solid $border-color;
+        } 
+
+        .ag-column-select-column-group, 
+        .ag-column-select-column {
+            height: $grid-size * 4;
+            line-height: $grid-size * 4;
+            margin-left: $grid-size;
+
+            span {
+                float: left;
+                height: 100%;
+            }
+
+            .ag-column-select-indent {
+                width: $grid-size * 2;
+            }
+
+            .ag-column-select-checkbox, .ag-column-group-icons {
+                margin-right: $grid-size;
+            }
+        } 
+        .ag-column-select-column {
+            // this is a very crude approximation, because we have one 10px hard-coded element in there.
+            margin-left: $icon-size + $grid-size * 3;
+        }
+    }
+
+////////////////////////////////////////
+// Tool panel
+////////////////////////////////////////
+
+    .ag-tool-panel {
+        border-right: 0;
+        background-color: #FAFAFA;
+
+        .ag-pivot-mode {
+            height: $header-height;
+            border-bottom: 1px solid $border-color;
+            box-sizing: border-box;
+            line-height: $header-height;
+
+            span {
+                float: left;
+                height: 100%;
+            }
+
+            .ag-pivot-mode-select {
+                margin-left: $grid-size;
+
+                .ag-checkbox-label {
+                    margin-left: $grid-size;
+                }
+            }
+        }
+
+        .ag-column-select-panel {
+            padding: $grid-size 0;
+        }
+
+        $group-height: $grid-size * 5;
+
+        .ag-column-drop {
+            border-top: 1px solid $border-color;
+            padding: $grid-size 0;
+            padding-bottom: $grid-size * 2;
+            clear: both;
+            .ag-icon {
+                float: left;
+                height: $group-height;
+                margin:0 $grid-size;
+            }
+
+            .ag-column-drop-title {
+                line-height: $group-height;
+                height: $group-height;
+                float: left;
+                clear: right;
+            }
+            
+            .ag-column-drop-empty-message {
+                clear: both;
+                font: $secondary-weight $secondary-font-size $secondary-font;
+                color: $disabled;
+                padding-left: $grid-size * 4;
+                padding-right: $grid-size;
+                line-height: $grid-size * 2;
             }
         }
     }

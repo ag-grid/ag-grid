@@ -6,7 +6,7 @@
     <defs>
         <rect id="path-1" x="0" y="0" width="12" height="12" rx="1"></rect>
     </defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="checkbox-indeterminate-readonly">
             <g id="Rectangle-16-Copy-2">
                 <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-1"></use>
