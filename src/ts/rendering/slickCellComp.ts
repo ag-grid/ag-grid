@@ -63,6 +63,7 @@ export class SlickCellComp extends Component implements ICellComp {
     private rangeSelectionEnabled: boolean;
 
     private value: any;
+    private colsSpanning: Column[];
 
     //todo: this is not getting set yet
     private scope: null;
@@ -85,6 +86,7 @@ export class SlickCellComp extends Component implements ICellComp {
         this.value = this.getValue();
         this.setUsingWrapper();
         this.prepareCellRenderer();
+        this.setupColSpan();
     }
 
     public afterAttached(): void {
@@ -99,10 +101,10 @@ export class SlickCellComp extends Component implements ICellComp {
 
         this.addDestroyableEventListener(this.column, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this));
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, this.onFirstRightPinnedChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_LAST_LEFT_PINNED_CHANGED, this.onLastLeftPinnedChanged.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
 
         // if not doing enterprise, then range selection service would be missing
         // so need to check before trying to use it
@@ -115,7 +117,7 @@ export class SlickCellComp extends Component implements ICellComp {
         let templateParts: string[] = [];
         let col = this.column;
 
-        let width = col.getActualWidth();
+        let width = this.getCellWidth();
         let left = col.getLeft();
 
         let valueToRender = this.getInitialValueToRender();
@@ -147,6 +149,78 @@ export class SlickCellComp extends Component implements ICellComp {
         templateParts.push(`</div>`);
 
         return templateParts.join('');
+    }
+
+    private getCellLeft(): number {
+        let mostLeftCol: Column;
+        if (this.beans.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
+            mostLeftCol = this.colsSpanning[this.colsSpanning.length-1];
+        } else {
+            mostLeftCol = this.column;
+        }
+        return mostLeftCol.getLeft();
+    }
+
+    private getCellWidth(): number {
+        if (this.colsSpanning) {
+            let result = 0;
+            this.colsSpanning.forEach( col => result += col.getActualWidth() );
+            return result;
+        } else {
+            return this.column.getActualWidth();
+        }
+    }
+
+    private setupColSpan(): void {
+        // if no col span is active, then we don't set it up, as it would be wasteful of CPU
+        if (_.missing(this.column.getColDef().colSpan)) {
+            return;
+        }
+
+        // because we are col spanning, a reorder of the cols can change what cols we are spanning over
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayColumnsChanged.bind(this));
+        // because we are spanning over multiple cols, we check for width any time any cols width changes.
+        // this is expensive - really we should be explicitly checking only the cols we are spanning over
+        // instead of every col, however it would be tricky code to track the cols we are spanning over, so
+        // because hardly anyone will be using colSpan, am favoring this easier way for more maintainable code.
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onWidthChanged.bind(this));
+
+        this.colsSpanning = this.getColSpanningList();
+    }
+
+    private getColSpanningList(): Column[] {
+        let colSpan = this.column.getColSpan(this.rowNode);
+        let colsSpanning: Column[] = [];
+
+        // if just one col, the col span is just the column we are in
+        if (colSpan===1) {
+            colsSpanning.push(this.column);
+        } else {
+            let pointer = this.column;
+            let pinned = this.column.getPinned();
+            for (let i = 0; i<colSpan; i++) {
+                colsSpanning.push(pointer);
+                pointer = this.beans.columnController.getDisplayedColAfter(pointer);
+                if (_.missing(pointer)) {
+                    break;
+                }
+                // we do not allow col spanning to span outside of pinned areas
+                if (pinned !== pointer.getPinned()) {
+                    break;
+                }
+            }
+        }
+
+        return colsSpanning;
+    }
+
+    private onDisplayColumnsChanged(): void {
+        let colsSpanning: Column[] = this.getColSpanningList();
+        if (!_.compareArrays(this.colsSpanning, colsSpanning)) {
+            this.colsSpanning = colsSpanning;
+            this.onWidthChanged();
+            this.onLeftChanged(); // left changes when doing RTL
+        }
     }
 
     private getInitialCssClasses(): string[] {
@@ -1184,12 +1258,12 @@ export class SlickCellComp extends Component implements ICellComp {
     }
 
     private onLeftChanged(): void {
-        let left = this.column.getLeft();
+        let left = this.getCellLeft();
         this.getGui().style.left = left + 'px';
     }
 
     private onWidthChanged(): void {
-        let width = this.column.getActualWidth();
+        let width = this.getCellWidth();
         this.getGui().style.width = width + 'px';
     }
 
