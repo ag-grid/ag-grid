@@ -118,7 +118,7 @@ include('../../includes/mediaHeader.php');
         <p>   
             Niall has been working on a new rendering engine to make the grid to render much faster.
             Our initial experiments show a huge performance improvements, especially around IE. We also
-            got some footage of Niall
+            have some footage of Niall
             <a href="https://www.youtube.com/watch?v=SfEaqEoU0rw">
                 shamefully plugging ag-Grid at ng-Conf
             </a>

@@ -12,10 +12,10 @@ include '../documentation-main/documentation_header.php';
     <h2>Group Row Inner Renderer</h2>
     <p>A Group Row Inner Renderer Example</p>
 
-    <show-complex-example example="../react-examples/examples/?fromDocs&example=group-row"
+    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=group-row"
                           sources="{
                             [
-                                { root: '/react-examples/examples/src/groupedRowInnerRendererExample/', files: 'GroupedRowInnerRendererComponentExample.jsx,MedalRenderer.jsx' }
+                                { root: '/framework-examples/react-examples/examples/src/groupedRowInnerRendererExample/', files: 'GroupedRowInnerRendererComponentExample.jsx,MedalRenderer.jsx' }
                             ]
                           }"
                           exampleHeight="525px">

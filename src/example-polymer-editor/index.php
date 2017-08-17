@@ -13,10 +13,10 @@ include '../documentation-main/documentation_header.php';
     <p>A Cell Editor example - one with a popup editor, and another with a numeric editor.</p>
     <p>Each component demonstrates different editor related features</p>
 
-    <show-complex-example example="../polymer-examples/src/editor-components-grid/index.html"
+    <show-complex-example example="../framework-examples/polymer-examples/src/editor-components-grid/index.html"
                           sources="{
                             [
-                                { root: '/polymer-examples/src/editor-components-grid/', files: 'index.html,editor-components-example.html,mood-renderer.html,numeric-editor.html,mood-editor.html' }
+                                { root: '/framework-examples/polymer-examples/src/editor-components-grid/', files: 'index.html,editor-components-example.html,mood-renderer.html,numeric-editor.html,mood-editor.html' }
                             ]
                           }"
                           exampleHeight="525px">

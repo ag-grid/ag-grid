@@ -229,10 +229,10 @@ npm start
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-    <show-complex-example example="../polymer-examples/src/rich-grid/index.html"
+    <show-complex-example example="../framework-examples/polymer-examples/src/rich-grid/index.html"
                           sources="{
                             [
-                                { root: '/polymer-examples/src/rich-grid/', files: 'index.html,simple-cell-renderer.html,proficiencyFilter.js,skillsFilter.js,rich-grid-example.css,static-data.js,rich-grid-example.html' }
+                                { root: '/framework-examples/polymer-examples/src/rich-grid/', files: 'index.html,simple-cell-renderer.html,proficiencyFilter.js,skillsFilter.js,rich-grid-example.css,static-data.js,rich-grid-example.html' }
                             ]
                           }"
                           exampleHeight="525px">

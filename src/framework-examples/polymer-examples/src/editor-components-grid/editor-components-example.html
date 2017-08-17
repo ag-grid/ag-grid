@@ -1,0 +1,77 @@
+<link rel="import" href="mood-renderer.html">
+<link rel="import" href="mood-editor.html">
+<link rel="import" href="numeric-editor.html">
+<dom-module id="editor-components-example">
+    <template>
+        <link rel="stylesheet" href="../../../../dist/ag-grid/styles/ag-grid.css">
+        <link rel="stylesheet" href="../../../../dist/ag-grid/styles/theme-fresh.css">
+
+        <div style="width: 800px;">
+            <h1>Editor Component Example</h1>
+            <ag-grid-polymer style="width: 100%; height: 350px; display: block;"
+                             class="ag-fresh"
+                             gridOptions="{{gridOptions}}"
+                             onGridReady="[[onGridReady]]"></ag-grid-polymer>
+        </div>
+    </template>
+
+    <script>
+        class EditorGridExample extends Polymer.Element {
+            static get is() {
+                return "editor-components-example";
+            }
+
+            constructor() {
+                super();
+
+                this.gridOptions = {
+                    context: {
+                        componentParent: this
+                    },
+                    rowData :this.createRowData(),
+                    columnDefs: this.createColumnDefs()
+                };
+            }
+
+            createColumnDefs() {
+                return [
+                    {headerName: "Name", field: "name", width: 300},
+                    {
+                        headerName: "Mood",
+                        field: "mood",
+                        cellRendererFramework: 'mood-renderer',
+                        cellEditorFramework: 'mood-editor',
+                        editable: true,
+                        width: 250
+                    },
+                    {
+                        headerName: "Numeric",
+                        field: "number",
+                        cellEditorFramework: 'numeric-editor',
+                        editable: true,
+                        width: 250
+                    }
+                ];
+            }
+
+            createRowData() {
+                return [
+                    {name: "Bob", mood: "Happy", number: 10},
+                    {name: "Harry", mood: "Sad", number: 3},
+                    {name: "Sally", mood: "Happy", number: 20},
+                    {name: "Mary", mood: "Sad", number: 5},
+                    {name: "John", mood: "Happy", number: 15},
+                    {name: "Jack", mood: "Happy", number: 25},
+                    {name: "Sue", mood: "Sad", number: 43},
+                    {name: "Sean", mood: "Sad", number: 1335},
+                    {name: "Niall", mood: "Happy", number: 2},
+                    {name: "Alberto", mood: "Happy", number: 123},
+                    {name: "Fred", mood: "Sad", number: 532},
+                    {name: "Jenny", mood: "Happy", number: 34},
+                    {name: "Larry", mood: "Happy", number: 13},
+                ];
+            }
+        }
+        customElements.define(EditorGridExample.is, EditorGridExample);
+    </script>
+</dom-module>

@@ -292,9 +292,9 @@ import "ag-grid-enterprise/main";
 <!--    <p>-->
 <!--        The example below shows a rich configuration of ag-Grid-->
 <!--    </p>-->
-<!--    <show-example example="../aurelia-example/#/rich-grid/true"-->
-<!--                  jsfile="../aurelia-example/components/rich-grid-example/rich-grid-example.ts"-->
-<!--                  html="../aurelia-example/components/rich-grid-example/rich-grid-example.html"-->
+<!--    <show-example example="../framework-examples/aurelia-example/#/rich-grid/true"-->
+<!--                  jsfile="../framework-examples/aurelia-example/components/rich-grid-example/rich-grid-example.ts"-->
+<!--                  html="../framework-examples/aurelia-example/components/rich-grid-example/rich-grid-example.html"-->
 <!--                  exampleHeight="525px"></show-example>-->
 
 </div>
@@ -369,9 +369,9 @@ private getCountryFilterParams():any {
 <!--<p>-->
 <!--    The example below shows the same rich grid as the example above, but with configuration done via Markup.-->
 <!--</p>-->
-<!--<show-example example="../aurelia-example/#/richgrid-declarative/true"-->
-<!--              jsfile="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"-->
-<!--              html="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"-->
+<!--<show-example example="../framework-examples/aurelia-example/#/richgrid-declarative/true"-->
+<!--              jsfile="../framework-examples/aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"-->
+<!--              html="../framework-examples/aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"-->
 <!--              exampleHeight="525px"></show-example>-->
 
 <h2 id="cell-rendering-cell-editing-using-aurelia">Cell Rendering & Cell Editing using Aurelia</h2>

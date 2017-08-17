@@ -171,6 +171,6 @@ export default {
     <p>
         Using VueJS Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>
-    <show-example url="../vue-examples/#/editor"
-                  jsfile="../vue-examples/src/editor-component-example/EditorComponentExample.vue"
+    <show-example url="../framework-examples/vue-examples/#/editor"
+                  jsfile="../framework-examples/vue-examples/src/editor-component-example/EditorComponentExample.vue"
                   exampleHeight="525px"></show-example>

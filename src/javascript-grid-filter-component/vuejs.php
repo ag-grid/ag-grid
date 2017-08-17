@@ -180,8 +180,8 @@ laterOnInYourApplicationSomewhere() {
     <p>
         Using VueJS Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>
-    <show-example url="../vue-examples/#/filter"
-                  jsfile="../vue-examples/src/filter-example/FilterExample.vue"
+    <show-example url="../framework-examples/vue-examples/#/filter"
+                  jsfile="../framework-examples/vue-examples/src/filter-example/FilterExample.vue"
                   exampleHeight="525px"></show-example>
 
 </div>

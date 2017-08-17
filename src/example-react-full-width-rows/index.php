@@ -12,10 +12,10 @@ include '../documentation-main/documentation_header.php';
     <h2>Full Width Renderer</h2>
     <p>A Full Width Renderer Example</p>
 
-    <show-complex-example example="../react-examples/examples/?fromDocs&example=full-width"
+    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=full-width"
                           sources="{
                             [
-                                { root: '/react-examples/examples/src/fullWidthExample/', files: 'FullWidthComponentExample.jsx,NameAndAgeRenderer.jsx' }
+                                { root: '/framework-examples/react-examples/examples/src/fullWidthExample/', files: 'FullWidthComponentExample.jsx,NameAndAgeRenderer.jsx' }
                             ]
                           }"
                           exampleHeight="525px">

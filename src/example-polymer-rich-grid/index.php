@@ -12,10 +12,10 @@ include '../documentation-main/documentation_header.php';
     <h2>Polymer Rich Grid Example</h2>
     <p>A feature rich Grid example, demonstrating many of ag-Grid's features, including a Polymer Component for the "name" column.</p>
 
-    <show-complex-example example="../polymer-examples/src/rich-grid/index.html"
+    <show-complex-example example="../framework-examples/polymer-examples/src/rich-grid/index.html"
                           sources="{
                             [
-                                { root: '/polymer-examples/src/rich-grid/', files: 'index.html,simple-cell-renderer.html,proficiencyFilter.js,skillsFilter.js,rich-grid-example.css,static-data.js,rich-grid-example.html' }
+                                { root: '/framework-examples/polymer-examples/src/rich-grid/', files: 'index.html,simple-cell-renderer.html,proficiencyFilter.js,skillsFilter.js,rich-grid-example.css,static-data.js,rich-grid-example.html' }
                             ]
                           }"
                           exampleHeight="525px">
