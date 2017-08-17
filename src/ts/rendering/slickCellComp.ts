@@ -92,33 +92,6 @@ export class SlickCellComp extends Component implements ICellComp {
         this.setupColSpan();
     }
 
-    public afterAttached(): void {
-        let querySelector = `[compId="${this.getCompId()}"]`;
-        let eGui = <HTMLElement> this.eParentRow.querySelector(querySelector);
-        this.setGui(eGui);
-
-        // all of these have dependencies on the eGui, so only do them after eGui is set
-        this.addDomData();
-        this.addSelectionCheckbox();
-        this.attachCellRendererAfterCreate();
-
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_FLASH_CELLS, this.onFlashCells.bind(this));
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onCellChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, this.onFirstRightPinnedChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_LAST_LEFT_PINNED_CHANGED, this.onLastLeftPinnedChanged.bind(this));
-
-        // if not doing enterprise, then range selection service would be missing
-        // so need to check before trying to use it
-        if (this.rangeSelectionEnabled) {
-            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this))
-        }
-    }
-
     public getCreateTemplate(): string {
         let templateParts: string[] = [];
         let col = this.column;
@@ -155,6 +128,33 @@ export class SlickCellComp extends Component implements ICellComp {
         templateParts.push(`</div>`);
 
         return templateParts.join('');
+    }
+
+    public afterAttached(): void {
+        let querySelector = `[compId="${this.getCompId()}"]`;
+        let eGui = <HTMLElement> this.eParentRow.querySelector(querySelector);
+        this.setGui(eGui);
+
+        // all of these have dependencies on the eGui, so only do them after eGui is set
+        this.addDomData();
+        this.addSelectionCheckbox();
+        this.attachCellRendererAfterCreate();
+
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_FLASH_CELLS, this.onFlashCells.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onCellChanged.bind(this));
+        this.addDestroyableEventListener(this.column, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
+        this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this));
+        this.addDestroyableEventListener(this.column, Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, this.onFirstRightPinnedChanged.bind(this));
+        this.addDestroyableEventListener(this.column, Column.EVENT_LAST_LEFT_PINNED_CHANGED, this.onLastLeftPinnedChanged.bind(this));
+
+        // if not doing enterprise, then range selection service would be missing
+        // so need to check before trying to use it
+        if (this.rangeSelectionEnabled) {
+            this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this))
+        }
     }
 
     private onColumnHover(): void {
