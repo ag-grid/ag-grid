@@ -1,9 +1,9 @@
 // to satisfy server side compilation
-// declare let global: any;
-// global.HTMLElement = {};
-// global.HTMLButtonElement = {};
-// global.HTMLSelectElement = {};
-// global.HTMLInputElement = {};
+declare let global: any;
+global.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
+global.HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? {} : HTMLButtonElement;
+global.HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? {} : HTMLSelectElement;
+global.HTMLInputElement = typeof HTMLInputElement === 'undefined' ? {} : HTMLInputElement;
 
 // columnController
 export {BalancedColumnTreeBuilder} from "./dist/lib/columnController/balancedColumnTreeBuilder";
