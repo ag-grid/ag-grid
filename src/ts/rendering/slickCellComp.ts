@@ -1,7 +1,7 @@
 import {Component} from "../widgets/component";
 import {Beans} from "./beans";
 import {Column} from "../entities/column";
-import {RowNode} from "../entities/rowNode";
+import {CellChangedEvent, RowNode} from "../entities/rowNode";
 import {SlickRowComp} from "./slickRowComp";
 import {_} from "../utils";
 import {CellComp, ICellComp} from "./cellComp";
@@ -14,7 +14,7 @@ import {
     CellEditingStoppedEvent,
     CellEvent,
     CellMouseOutEvent,
-    CellMouseOverEvent,
+    CellMouseOverEvent, CellValueChangedEvent,
     Events, FlashCellsEvent
 } from "../events";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
@@ -105,6 +105,7 @@ export class SlickCellComp extends Component implements ICellComp {
         this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
         this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_FLASH_CELLS, this.onFlashCells.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onCellChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, this.onFirstRightPinnedChanged.bind(this));
@@ -114,6 +115,13 @@ export class SlickCellComp extends Component implements ICellComp {
         // so need to check before trying to use it
         if (this.rangeSelectionEnabled) {
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this))
+        }
+    }
+
+    private onCellChanged(event: CellChangedEvent): void {
+        let eventImpactsThisCell = event.column === this.column;
+        if (eventImpactsThisCell) {
+            this.refreshCell({});
         }
     }
 

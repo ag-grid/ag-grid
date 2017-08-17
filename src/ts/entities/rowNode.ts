@@ -43,6 +43,11 @@ export interface DataChangedEvent extends RowNodeEvent {
     update: boolean;
 }
 
+export interface CellChangedEvent extends RowNodeEvent {
+    column: Column;
+    newValue: any;
+}
+
 export class RowNode implements IEventEmitter {
 
     public static EVENT_ROW_SELECTED = 'rowSelected';
@@ -407,8 +412,13 @@ export class RowNode implements IEventEmitter {
     }
 
     private dispatchCellChangedEvent(column: Column, newValue: any): void {
-        let event = {column: column, newValue: newValue};
-        this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_CELL_CHANGED));
+        let cellChangedEvent: CellChangedEvent = {
+            type: RowNode.EVENT_CELL_CHANGED,
+            node: this,
+            column: column,
+            newValue: newValue
+        };
+        this.dispatchLocalEvent(cellChangedEvent);
     }
 
     public resetQuickFilterAggregateText(): void {
