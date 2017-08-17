@@ -62,7 +62,7 @@ IE Performance Improvement - Improving CSS Themes - Addressing Framework Issues
             IE Performance Improvement - Improving CSS Themes - Addressing Framework Issues
         </div>
         <div class="weekly-news-sub-title">
-            Customer Experience Team, 3rd August, 2017
+            Customer Experience Team, 17th August, 2017
         </div>
     </a>
 
