@@ -219,7 +219,7 @@ var gridOptions = {
     // suppressTabbing: true,
     // rowHoverClass: true,
 // isScrollLag: function() { return true; },
-// suppressScrollLag: true,
+suppressScrollLag: true,
 //     layoutInterval: -1,
     // suppressAnimationFrame: true,
 // floatingTopRowData: [{},{},{}],
@@ -341,10 +341,10 @@ var defaultCols = [
                 // enablePivot: true,
                 filter: PersonFilter,
                 floatingFilterComponent: 'personFloatingFilterComponent',
-                checkboxSelection: function (params) {
-                    // we put checkbox on the name if we are not doing grouping
-                    return params.columnApi.getRowGroupColumns().length === 0;
-                },
+                // checkboxSelection: function (params) {
+                //     // we put checkbox on the name if we are not doing grouping
+                //     return params.columnApi.getRowGroupColumns().length === 0;
+                // },
                 headerCheckboxSelection: function (params) {
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
