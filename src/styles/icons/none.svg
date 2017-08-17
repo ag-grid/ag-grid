@@ -8,7 +8,7 @@
         <path d="M8.14644661,8.18198052 L8.14644661,6.47487373 L3.14644661,6.47487373 L3.14644661,11.4748737 L4.85355339,11.4748737 L4.85355339,8.18198052 L8.14644661,8.18198052 Z" id="path-2"></path>
         <path d="M8.5,2.91421356 L8.5,1.20710678 L3.5,1.20710678 L3.5,6.20710678 L5.20710678,6.20710678 L5.20710678,2.91421356 L8.5,2.91421356 Z" id="path-3"></path>
     </defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="none">
             <g id="Rectangle-8">
                 <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-1"></use>

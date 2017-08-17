@@ -830,8 +830,8 @@ export class Utils {
         'valuePanel': 'aggregation', 
         'columnGroupOpened': 'expanded',
         'columnGroupClosed': 'contracted',
-        'columnSelectClosed': 'small-right', 
-        'columnSelectOpen': 'small-down',
+        'columnSelectClosed': 'tree-closed', 
+        'columnSelectOpen': 'tree-open',
         // from deprecated header, remove at some point
         'sortAscending': 'asc',
         'sortDescending': 'asc',

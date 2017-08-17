@@ -7,7 +7,7 @@
         <rect id="path-1" x="5" y="3" width="2" height="9"></rect>
         <path d="M8.99264069,5.19974747 L8.99264069,3.49264069 L2.99264069,3.49264069 L2.99264069,9.49264069 L4.69974747,9.49264069 L4.69974747,5.19974747 L8.99264069,5.19974747 Z" id="path-2"></path>
     </defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="asc">
             <g id="Rectangle-8">
                 <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-1"></use>
