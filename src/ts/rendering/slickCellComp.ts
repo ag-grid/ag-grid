@@ -104,6 +104,7 @@ export class SlickCellComp extends Component implements ICellComp {
 
         this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
         this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_FLASH_CELLS, this.onFlashCells.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onCellChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
@@ -115,13 +116,6 @@ export class SlickCellComp extends Component implements ICellComp {
         // so need to check before trying to use it
         if (this.rangeSelectionEnabled) {
             this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this))
-        }
-    }
-
-    private onCellChanged(event: CellChangedEvent): void {
-        let eventImpactsThisCell = event.column === this.column;
-        if (eventImpactsThisCell) {
-            this.refreshCell({});
         }
     }
 
@@ -161,6 +155,18 @@ export class SlickCellComp extends Component implements ICellComp {
         templateParts.push(`</div>`);
 
         return templateParts.join('');
+    }
+
+    private onColumnHover(): void {
+        let isHovered = this.beans.columnHoverService.isHovered(this.column);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered)
+    }
+
+    private onCellChanged(event: CellChangedEvent): void {
+        let eventImpactsThisCell = event.column === this.column;
+        if (eventImpactsThisCell) {
+            this.refreshCell({});
+        }
     }
 
     private getCellLeft(): number {
@@ -253,6 +259,10 @@ export class SlickCellComp extends Component implements ICellComp {
         }
         if (this.lastLeftPinned) {
             cssClasses.push('ag-cell-last-left-pinned');
+        }
+
+        if (this.beans.columnHoverService.isHovered(this.column)) {
+            cssClasses.push('ag-column-hover');
         }
 
         _.pushAll(cssClasses, this.preProcessClassesFromColDef());
