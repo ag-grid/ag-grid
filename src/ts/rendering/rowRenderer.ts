@@ -735,7 +735,7 @@ export class RowRenderer extends BeanStub {
 
         let rowComp: IRowComp;
         if (this.gridOptionsWrapper.isSlickRender()) {
-            rowComp = new SlickRowComp(this.rowContainers.body, this.rowContainers.pinnedLeft,
+            rowComp = new SlickRowComp(this.$scope, this.rowContainers.body, this.rowContainers.pinnedLeft,
                 this.rowContainers.pinnedRight, rowNode, this.beans, animate);
         } else {
             rowComp = new RowComp(this.$scope,

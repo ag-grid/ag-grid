@@ -65,11 +65,11 @@ export class SlickCellComp extends Component implements ICellComp {
     private value: any;
     private colsSpanning: Column[];
 
-    //todo: this is not getting set yet
     private scope: null;
 
-    constructor(beans: Beans, column: Column, rowNode: RowNode, rowComp: SlickRowComp) {
+    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: SlickRowComp) {
         super();
+        this.scope = scope;
         this.beans = beans;
         this.column = column;
         this.rowNode = rowNode;
@@ -79,9 +79,12 @@ export class SlickCellComp extends Component implements ICellComp {
 
         this.rangeSelectionEnabled = beans.enterprise && beans.gridOptionsWrapper.isEnableRangeSelection();
         this.cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
-        this.rangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
         this.firstRightPinned = this.column.isFirstRightPinned();
         this.lastLeftPinned = this.column.isLastLeftPinned();
+
+        if (this.rangeSelectionEnabled) {
+            this.rangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
+        }
 
         this.value = this.getValue();
         this.setUsingWrapper();
@@ -453,6 +456,7 @@ export class SlickCellComp extends Component implements ICellComp {
                 node: this.rowNode,
                 colDef: this.column.getColDef(),
                 rowIndex: this.rowNode.rowIndex,
+                $scope: this.scope,
                 api: this.beans.gridOptionsWrapper.getApi(),
                 context: this.beans.gridOptionsWrapper.getContext()
             },
@@ -694,7 +698,7 @@ export class SlickCellComp extends Component implements ICellComp {
                 eParentOfValue: this.eParentOfValue,
                 eComponent: this.cellRendererGui
             };
-            // todo - need to create interfaces for after GUI attached for cell renderer, to add eGridCell and eParentOfValue
+            // todo - Alberto - need to create interfaces for after GUI attached for cell renderer, to add eGridCell and eParentOfValue
             this.cellRenderer.afterGuiAttached(<IAfterGuiAttachedParams> params);
         }
     }

@@ -63,13 +63,17 @@ export class SlickRowComp extends Component implements IRowComp {
 
     private paginationPage: number;
 
-    constructor(bodyContainerComp: RowContainerComponent,
+    private scope: any;
+
+    constructor(scope: any,
+                bodyContainerComp: RowContainerComponent,
                 pinnedLeftContainerComp: RowContainerComponent,
                 pinnedRightContainerComp: RowContainerComponent,
                 rowNode: RowNode,
                 beans: Beans,
                 animateIn: boolean) {
         super();
+        this.scope = scope;
         this.beans = beans;
         this.bodyContainerComp = bodyContainerComp;
         this.pinnedLeftContainerComp = pinnedLeftContainerComp;
@@ -246,7 +250,7 @@ export class SlickRowComp extends Component implements IRowComp {
     }
 
     private createNewCell(col: Column, eContainer: HTMLElement, cellTemplates: string[], newCellComps: SlickCellComp[]): void {
-        let newCellComp = new SlickCellComp(this.beans, col, this.rowNode, this);
+        let newCellComp = new SlickCellComp(this.scope, this.beans, col, this.rowNode, this);
         let cellTemplate = newCellComp.getCreateTemplate();
         cellTemplates.push(cellTemplate);
         newCellComps.push(newCellComp);
@@ -490,7 +494,7 @@ export class SlickRowComp extends Component implements IRowComp {
         let templateParts: string[] = [];
         let newCellComps: SlickCellComp[] = [];
         cols.forEach( col => {
-            let newCellComp = new SlickCellComp(this.beans, col, this.rowNode, this);
+            let newCellComp = new SlickCellComp(this.scope, this.beans, col, this.rowNode, this);
             let cellTemplate = newCellComp.getCreateTemplate();
             templateParts.push(cellTemplate);
             newCellComps.push(newCellComp);
