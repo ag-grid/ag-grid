@@ -7,11 +7,6 @@ const themeCLass = new RegExp(`ag-(${themes.join('|')})`);
 export class Environment {
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
-    @PostConstruct
-    public init(): void {
-        console.log(this.eGridDiv);
-    }
-
     public getTheme(): string {
         return this.eGridDiv.className.match(themeCLass)[0];
     }
