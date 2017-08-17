@@ -156,7 +156,8 @@ export class RowRenderer extends BeanStub {
                 let rowComp: IRowComp;
                 if (this.gridOptionsWrapper.isSlickRender()) {
                     rowComp = new SlickRowComp(this.$scope, bodyContainerComp,
-                        pinnedLeftContainerComp, pinnedRightContainerComp, node, this.beans, false);
+                        pinnedLeftContainerComp, pinnedRightContainerComp,
+                        fullWidthContainerComp, node, this.beans, false);
                 } else {
                     rowComp = new RowComp(this.$scope,
                         this, bodyContainerComp, fullWidthContainerComp,
@@ -738,8 +739,9 @@ export class RowRenderer extends BeanStub {
 
         let rowComp: IRowComp;
         if (this.gridOptionsWrapper.isSlickRender()) {
-            rowComp = new SlickRowComp(this.$scope, this.rowContainers.body, this.rowContainers.pinnedLeft,
-                this.rowContainers.pinnedRight, rowNode, this.beans, animate);
+            rowComp = new SlickRowComp(this.$scope, this.rowContainers.body,
+                this.rowContainers.pinnedLeft, this.rowContainers.pinnedRight,
+                this.rowContainers.fullWidth, rowNode, this.beans, animate);
         } else {
             rowComp = new RowComp(this.$scope,
                     this, this.rowContainers.body, this.rowContainers.fullWidth,

@@ -39,6 +39,7 @@ export class SlickRowComp extends Component implements IRowComp {
     private eFullWidthRowRight: HTMLElement;
 
     private bodyContainerComp: RowContainerComponent;
+    private fullWidthContainerComp: RowContainerComponent;
     private pinnedLeftContainerComp: RowContainerComponent;
     private pinnedRightContainerComp: RowContainerComponent;
 
@@ -46,8 +47,6 @@ export class SlickRowComp extends Component implements IRowComp {
     private fullWidthRowComponentBody: ICellRendererComp;
     private fullWidthRowComponentLeft: ICellRendererComp;
     private fullWidthRowComponentRight: ICellRendererComp;
-
-    private fullWidthContainerComp: RowContainerComponent;
 
     private fullWidthPinnedLeftLastTime: boolean;
     private fullWidthPinnedRightLastTime: boolean;
@@ -87,6 +86,7 @@ export class SlickRowComp extends Component implements IRowComp {
                 bodyContainerComp: RowContainerComponent,
                 pinnedLeftContainerComp: RowContainerComponent,
                 pinnedRightContainerComp: RowContainerComponent,
+                fullWidthContainerComp: RowContainerComponent,
                 rowNode: RowNode,
                 beans: Beans,
                 animateIn: boolean) {
@@ -96,6 +96,7 @@ export class SlickRowComp extends Component implements IRowComp {
         this.bodyContainerComp = bodyContainerComp;
         this.pinnedLeftContainerComp = pinnedLeftContainerComp;
         this.pinnedRightContainerComp = pinnedRightContainerComp;
+        this.fullWidthContainerComp = fullWidthContainerComp;
         this.rowNode = rowNode;
         this.rowIsEven = this.rowNode.rowIndex % 2 === 0;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();

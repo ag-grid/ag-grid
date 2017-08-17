@@ -185,6 +185,58 @@ export class RowComp extends BeanStub implements IRowComp {
         this.beans = beans;
     }
 
+    public init(): void {
+
+        this.forPrint = this.beans.gridOptionsWrapper.isForPrint();
+
+        let animateInRowTop = this.animateIn && _.exists(this.rowNode.oldRowTop);
+
+        this.setupRowContainers(animateInRowTop);
+
+        this.scope = this.createChildScopeOrNull(this.rowNode.data);
+
+        if (this.fullWidthRow) {
+            this.refreshFullWidthComponent();
+        } else {
+            this.refreshCellsIntoRow();
+        }
+
+        this.addGridClasses();
+        this.addExpandedAndContractedClasses();
+
+        this.addStyleFromRowStyle();
+        this.addStyleFromRowStyleFunc();
+
+        this.addClassesFromRowClass();
+        this.addClassesFromRowClassFunc();
+
+        this.addRowIndexes();
+        this.addRowIds();
+        this.setupTop(animateInRowTop);
+        this.setHeight();
+
+        this.addRowSelectedListener();
+        this.addCellFocusedListener();
+        this.addNodeDataChangedListener();
+        this.addColumnListener();
+
+        this.addHoverFunctionality();
+
+        this.beans.gridOptionsWrapper.executeProcessRowPostCreateFunc({
+            eRow: this.eBodyRow,
+            ePinnedLeftRow: this.ePinnedLeftRow,
+            ePinnedRightRow: this.ePinnedRightRow,
+            node: this.rowNode,
+            api: this.beans.gridOptionsWrapper.getApi(),
+            rowIndex: this.rowNode.rowIndex,
+            addRenderedRowListener: this.addEventListener.bind(this),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            context: this.beans.gridOptionsWrapper.getContext()
+        });
+
+        this.initialised = true;
+    }
+
     private setupRowStub(animateInRowTop: boolean): void {
         this.fullWidthRow = true;
         this.fullWidthCellRenderer = TempStubCell;
@@ -345,58 +397,6 @@ export class RowComp extends BeanStub implements IRowComp {
             this.ePinnedLeftRow = this.createRowContainer(this.pinnedLeftContainerComp, animateInRowTop, previousLeft, ensureDomOrder);
             this.ePinnedRightRow = this.createRowContainer(this.pinnedRightContainerComp, animateInRowTop, previousRight, ensureDomOrder);
         }
-    }
-
-    public init(): void {
-
-        this.forPrint = this.beans.gridOptionsWrapper.isForPrint();
-
-        let animateInRowTop = this.animateIn && _.exists(this.rowNode.oldRowTop);
-        
-        this.setupRowContainers(animateInRowTop);
-
-        this.scope = this.createChildScopeOrNull(this.rowNode.data);
-
-        if (this.fullWidthRow) {
-            this.refreshFullWidthComponent();
-        } else {
-            this.refreshCellsIntoRow();
-        }
-
-        this.addGridClasses();
-        this.addExpandedAndContractedClasses();
-
-        this.addStyleFromRowStyle();
-        this.addStyleFromRowStyleFunc();
-
-        this.addClassesFromRowClass();
-        this.addClassesFromRowClassFunc();
-
-        this.addRowIndexes();
-        this.addRowIds();
-        this.setupTop(animateInRowTop);
-        this.setHeight();
-
-        this.addRowSelectedListener();
-        this.addCellFocusedListener();
-        this.addNodeDataChangedListener();
-        this.addColumnListener();
-
-        this.addHoverFunctionality();
-
-        this.beans.gridOptionsWrapper.executeProcessRowPostCreateFunc({
-            eRow: this.eBodyRow,
-            ePinnedLeftRow: this.ePinnedLeftRow,
-            ePinnedRightRow: this.ePinnedRightRow,
-            node: this.rowNode,
-            api: this.beans.gridOptionsWrapper.getApi(),
-            rowIndex: this.rowNode.rowIndex,
-            addRenderedRowListener: this.addEventListener.bind(this),
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
-            context: this.beans.gridOptionsWrapper.getContext()
-        });
-
-        this.initialised = true;
     }
 
     public stopRowEditing(cancel: boolean): void {
