@@ -7,6 +7,7 @@ $primary: rgba(black, .87);
 $secondary: rgba(black, .54);
 $hover: #EEEEEE;
 $background-color: #FFFFFF;
+$panel-background: #EEEEEE;
 $border-color: #E0E0E0;
 
 $primary-font-size: 13px;
@@ -44,6 +45,11 @@ $transition-speed: 120ms;
     height: $icon-size;
     background: transparent url('./material-icons/#{$icon}.svg') center no-repeat;
     background-size: $icon-size $icon-size;
+}
+
+@mixin accent-icon($icon) {
+    background: $accent none;
+    mask: url("./material-icons/#{$icon}.svg") no-repeat 50% 50%;
 }
 
 @mixin card() {
@@ -162,15 +168,33 @@ $transition-speed: 120ms;
         height: $header-height;
     }
 
+    .ag-icon-checkbox-checked {
+        @include accent-icon('checkbox-checked');
+    }
+
+
 ////////////////////////////////////////
 // Context Menu 
 ////////////////////////////////////////
 
     .ag-menu {
         @include card;
-        padding-left: 0;
-        padding-right: 0;
+        padding: 0;
         z-index: 5;
+
+        .ag-menu-list {
+            & > div:first-child > span {
+                padding-top: $grid-size;
+            }
+
+            & > div:last-child > span {
+                padding-bottom: $grid-size;
+            }
+
+            & > div:last-child > .ag-menu-option-popup-pointer {
+                background-position-y: $grid-size;
+            }
+        }
 
         .ag-menu-option {
             line-height: $grid-size * 4;
@@ -192,19 +216,18 @@ $transition-speed: 120ms;
             padding-left: $grid-size * 2;
         }
 
+        $separator-size: $grid-size;
         .ag-menu-separator {
             border-bottom: 1px solid $border-color;
-            padding-bottom: $grid-size;
-            margin-bottom: $grid-size;
             margin-left: -$grid-size;
 
             & > span {
-                height: $grid-size * 2;
+                height: $separator-size;
             }
         }
 
         .ag-menu-separator + .ag-menu-option > span {
-            padding-top: $grid-size * 2;
+            padding-top: $separator-size;
         }
 
         .ag-menu-option-popup-pointer {
@@ -213,7 +236,7 @@ $transition-speed: 120ms;
     }
 
 ////////////////////////////////////////
-// Context Menu 
+// Column Reordering
 ////////////////////////////////////////
 
     &.ag-dnd-ghost {
@@ -225,8 +248,52 @@ $transition-speed: 120ms;
         z-index: 5;
     }
 
-    .ag-icon-checkbox-checked {
-        background: $accent none;
-        mask: url("./material-icons/checkbox-checked.svg") no-repeat 50% 50%;
+////////////////////////////////////////
+// Column Filter
+////////////////////////////////////////
+
+    .ag-tab-header {
+        background: $panel-background;
+        display: table;
+        width: 100%;
+        
+        .ag-tab {
+            display: table-cell;
+            height: $grid-size * 4;
+            vertical-align: middle;
+            text-align: center;
+            border-bottom: 2px solid transparent;
+
+            &.ag-tab-selected {
+                border-bottom: 2px solid $accent;
+
+                $icons: filter columns menu;
+
+                @each $icon in $icons {
+                    .ag-icon-#{$icon} {
+                        display: inline-block;
+                        @include accent-icon($icon);
+                    }
+                }
+            }
+        }
+    }
+
+    .ag-tab-body {
+        padding: $grid-size 0;
+
+        .ag-menu-list {
+            & > div:first-child > span {
+                padding-top: 0;
+            }
+
+            & > div:last-child > span {
+                padding-bottom: 0;
+            }
+
+            & > div:last-child > .ag-menu-option-popup-pointer {
+                background-position-y: 0;
+            }
+        }
     }
 }
