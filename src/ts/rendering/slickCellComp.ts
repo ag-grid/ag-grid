@@ -15,7 +15,7 @@ import {
     CellEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
-    Events
+    Events, FlashCellsEvent
 } from "../events";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
@@ -102,12 +102,13 @@ export class SlickCellComp extends Component implements ICellComp {
         this.addSelectionCheckbox();
         this.attachCellRendererAfterCreate();
 
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_FLASH_CELLS, this.onFlashCells.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, this.onFirstRightPinnedChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_LAST_LEFT_PINNED_CHANGED, this.onLastLeftPinnedChanged.bind(this));
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
 
         // if not doing enterprise, then range selection service would be missing
         // so need to check before trying to use it
@@ -171,6 +172,14 @@ export class SlickCellComp extends Component implements ICellComp {
             return result;
         } else {
             return this.column.getActualWidth();
+        }
+    }
+
+    private onFlashCells(event: FlashCellsEvent): void {
+        let cellId = this.gridCell.createId();
+        let shouldFlash = event.cells[cellId];
+        if (shouldFlash) {
+            this.animateCell('highlight');
         }
     }
 
