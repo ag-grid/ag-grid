@@ -13,6 +13,7 @@ $icon: rgba(black, $disabled-opacity);
 $hover: #EEEEEE;
 $selected: #F5F5F5;
 $background-color: #FFFFFF;
+$editor-background: #F5F5F5;
 $panel-background: #EEEEEE;
 $border-color: #E0E0E0;
 
@@ -607,13 +608,14 @@ $transition-speed: 120ms;
 
     .ag-cell-inline-editing {
         @include card;
-        padding: $grid-size $grid-size * 3;
-        height: calc(100% + 16px);
-        background: $panel-background;
+        height: $row-height + $grid-size * 3;
+        z-index: 2;
+        background: $editor-background;
+        position: relative;
+        padding: $grid-size * 3;
 
         input[type=text] {
             @include simple-material-textbox;
-            height: auto !important;
         } 
 
         select {
@@ -624,12 +626,44 @@ $transition-speed: 120ms;
 
     .ag-popup-editor {
         @include card;
-        padding: $grid-size * 3;
-        background: $background-color;
+        padding: 0;
+        background: $editor-background;
 
         .ag-large-textarea textarea {
+            padding: $grid-size * 3;
             @include simple-material-textbox;
             height: auto;
+        }
+    }
+////////////////////////////////////////
+// Rich Select
+////////////////////////////////////////
+    $rich-select-item-height: $row-height;
+    .ag-rich-select {
+        background: $editor-background;
+        background-image: url("./material-icons/tree-open.svg");
+        background-position-y: $grid-size * 2;
+        background-position-x: calc(100% - #{$grid-size});
+        background-repeat: no-repeat;
+        .ag-rich-select-list {
+            height: auto; // not sure why the structure had minimum height, does not look right
+        }
+
+        .ag-rich-select-value {
+            line-height: $row-height;
+            height: $row-height;
+            padding-left: $grid-size * 3;
+        }
+
+        .ag-virtual-list-item  {
+            cursor: default;
+            height: $rich-select-item-height;
+            line-height: $rich-select-item-height;
+            padding-left: $grid-size * 3;
+
+            &:hover {
+                background-color: $hover;
+            }
         }
     }
 }
