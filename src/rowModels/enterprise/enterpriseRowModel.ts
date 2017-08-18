@@ -116,7 +116,15 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         }
         this.updateRowIndexesAndBounds();
 
-        let modelUpdatedEvent = <ModelUpdatedEvent> { animate: true, keepRenderedRows: true };
+        let modelUpdatedEvent: ModelUpdatedEvent = {
+            type: Events.EVENT_MODEL_UPDATED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            newPage: false,
+            newData: false,
+            animate: true,
+            keepRenderedRows: true
+        };
 
         this.eventService.dispatchEvent(modelUpdatedEvent);
     }
