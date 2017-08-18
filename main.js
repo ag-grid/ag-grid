@@ -6,6 +6,10 @@
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+global.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
+global.HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? {} : HTMLButtonElement;
+global.HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? {} : HTMLSelectElement;
+global.HTMLInputElement = typeof HTMLInputElement === 'undefined' ? {} : HTMLInputElement;
 // columnController
 var balancedColumnTreeBuilder_1 = require("./dist/lib/columnController/balancedColumnTreeBuilder");
 exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
@@ -112,8 +116,6 @@ exports.TabbedLayout = tabbedLayout_1.TabbedLayout;
 var verticalStack_1 = require("./dist/lib/layout/verticalStack");
 exports.VerticalStack = verticalStack_1.VerticalStack;
 // misc
-var focusService_1 = require("./dist/lib/misc/focusService");
-exports.FocusService = focusService_1.FocusService;
 var simpleHttpRequest_1 = require("./dist/lib/misc/simpleHttpRequest");
 exports.simpleHttpRequest = simpleHttpRequest_1.simpleHttpRequest;
 var largeTextCellEditor_1 = require("./dist/lib/rendering/cellEditors/largeTextCellEditor");
@@ -250,3 +252,5 @@ var columnController_2 = require("./dist/lib/columnController/columnController")
 exports.ColumnApi = columnController_2.ColumnApi;
 var frameworkComponentWrapper_1 = require("./dist/lib/components/framework/frameworkComponentWrapper");
 exports.BaseComponentWrapper = frameworkComponentWrapper_1.BaseComponentWrapper;
+var environment_1 = require("./dist/lib/environment");
+exports.Environment = environment_1.Environment;

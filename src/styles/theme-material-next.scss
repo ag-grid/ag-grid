@@ -11,6 +11,7 @@ $hint: rgba(black, $disabled-opacity);
 $icon: rgba(black, $disabled-opacity);
 
 $hover: #EEEEEE;
+$selected: #F5F5F5;
 $background-color: #FFFFFF;
 $panel-background: #EEEEEE;
 $border-color: #E0E0E0;
@@ -585,6 +586,50 @@ $transition-speed: 120ms;
                     opacity: $disabled-opacity;
                 }
             }
+        }
+    }
+
+////////////////////////////////////////
+// Selection
+////////////////////////////////////////
+
+    .ag-row-selected {
+        background-color: $selected;
+    }
+
+    .ag-cell-range-selected {
+        background-color: $selected;
+    }
+
+////////////////////////////////////////
+// Editing
+////////////////////////////////////////
+
+    .ag-cell-inline-editing {
+        @include card;
+        padding: $grid-size $grid-size * 3;
+        height: calc(100% + 16px);
+        background: $panel-background;
+
+        input[type=text] {
+            @include simple-material-textbox;
+            height: auto !important;
+        } 
+
+        select {
+            margin-top: $grid-size;
+            height: auto;
+        }
+    }
+
+    .ag-popup-editor {
+        @include card;
+        padding: $grid-size * 3;
+        background: $background-color;
+
+        .ag-large-textarea textarea {
+            @include simple-material-textbox;
+            height: auto;
         }
     }
 }
