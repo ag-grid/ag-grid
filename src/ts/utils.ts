@@ -742,6 +742,27 @@ export class Utils {
         }
     }
 
+    static insertTemplateWithDomOrder(eContainer: HTMLElement,
+                                      htmlTemplate: string,
+                                      eChildBefore: HTMLElement): HTMLElement {
+        let res: HTMLElement;
+        if (eChildBefore) {
+            // if previous element exists, just slot in after the previous element
+            eChildBefore.insertAdjacentHTML('afterend', htmlTemplate);
+            res = <HTMLElement> eChildBefore.nextSibling;
+        } else {
+            if (eContainer.firstChild) {
+                // insert it at the first location
+                eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
+            } else {
+                // otherwise eContainer is empty, so just append it
+                eContainer.innerHTML = htmlTemplate;
+            }
+            res = <HTMLElement> eContainer.firstChild;
+        }
+        return res;
+    }
+
     static toStringOrNull(value: any): string {
         if (this.exists(value) && value.toString) {
             return value.toString();

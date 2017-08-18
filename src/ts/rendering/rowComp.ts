@@ -152,8 +152,6 @@ export class RowComp extends BeanStub implements IRowComp {
 
     private editingRow = false;
 
-    private initialised = false;
-
     private animateIn: boolean;
 
     private rowFocusedLastTime: boolean;
@@ -225,8 +223,6 @@ export class RowComp extends BeanStub implements IRowComp {
 
         this.addHoverFunctionality();
         this.executeProcessRowPostCreateFunc();
-
-        this.initialised = true;
     }
 
     public afterFlush(): void {

@@ -86,7 +86,6 @@ export class SlickRowComp extends Component implements IRowComp {
     private parentScope: any;
     private scope: any;
 
-    // todo - review row dom order
     private lastPlacedElements: LastPlacedElements;
 
     private initialised = false;
@@ -98,7 +97,8 @@ export class SlickRowComp extends Component implements IRowComp {
                 fullWidthContainerComp: RowContainerComponent,
                 rowNode: RowNode,
                 beans: Beans,
-                animateIn: boolean) {
+                animateIn: boolean,
+                lastPlacedElements: LastPlacedElements) {
         super();
         this.parentScope = parentScope;
         this.beans = beans;
@@ -109,6 +109,7 @@ export class SlickRowComp extends Component implements IRowComp {
         this.rowNode = rowNode;
         this.rowIsEven = this.rowNode.rowIndex % 2 === 0;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
+        this.lastPlacedElements = lastPlacedElements;
 
         this.setAnimateFlags(animateIn);
     }
@@ -213,7 +214,7 @@ export class SlickRowComp extends Component implements IRowComp {
                                callback: (eRow: HTMLElement) => void): void {
         let cellTemplatesAndComps = this.createCells(cols);
         let rowTemplate = this.createTemplate(cellTemplatesAndComps.template, null);
-        rowContainerComp.appendRowTemplateAsync(rowTemplate, ()=> {
+        rowContainerComp.appendRowTemplate(rowTemplate, ()=> {
             let eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
             this.afterRowAttached(rowContainerComp, cellTemplatesAndComps.cellComps, eRow);
             callback(eRow);
@@ -663,7 +664,7 @@ export class SlickRowComp extends Component implements IRowComp {
         let cellTemplate = guiIsTemplate ? <string><any> gui : '';
 
         let rowTemplate = this.createTemplate(cellTemplate, extraCssClass);
-        rowContainerComp.appendRowTemplateAsync(rowTemplate, ()=> {
+        rowContainerComp.appendRowTemplate(rowTemplate, ()=> {
 
             let eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
 
@@ -1184,7 +1185,27 @@ export class SlickRowComp extends Component implements IRowComp {
         });
     }
 
-    public ensureInDomAfter(previousElement: LastPlacedElements): void {}
+    public ensureInDomAfter(previousElement: LastPlacedElements): void {
+        let body = this.getBodyRowElement();
+        if (body) {
+            this.bodyContainerComp.ensureRowOrder(body);
+        }
+
+        let left = this.getPinnedLeftRowElement();
+        if (left) {
+            this.pinnedLeftContainerComp.ensureRowOrder(left);
+        }
+
+        let right = this.getPinnedRightRowElement();
+        if (right) {
+            this.pinnedRightContainerComp.ensureRowOrder(right);
+        }
+
+        let fullWidth = this.getFullWidthRowElement();
+        if (fullWidth) {
+            this.fullWidthContainerComp.ensureRowOrder(fullWidth);
+        }
+    }
 
     // returns the pinned left container, either the normal one, or the embedded full with one if exists
     public getPinnedLeftRowElement(): HTMLElement {

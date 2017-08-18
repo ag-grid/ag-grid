@@ -7,6 +7,7 @@ export interface RowContainerComponentParams {
     eContainer: HTMLElement;
     eViewport?: HTMLElement;
     hideWhenNoChildren?: boolean;
+    ensureDomOrder: boolean;
 }
 
 /**
@@ -26,13 +27,16 @@ export class RowContainerComponent {
     private rowTemplatesToAdd: string[] = [];
     private afterGuiAttachedCallbacks: Function[] = [];
 
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    private domOrder: boolean;
+    private lastPlacedElement: HTMLElement;
 
     constructor(params: RowContainerComponentParams) {
         this.eContainer = params.eContainer;
         this.eViewport = params.eViewport;
 
         this.hideWhenNoChildren = params.hideWhenNoChildren;
+
+        this.domOrder = params.ensureDomOrder;
 
         this.checkVisibility();
     }
@@ -56,15 +60,21 @@ export class RowContainerComponent {
     }
 
     public flushRowTemplates(): void {
-        if (this.rowTemplatesToAdd.length===0) { return; }
 
-        let htmlToAdd = this.rowTemplatesToAdd.join('');
-        _.appendHtml(this.eContainer, htmlToAdd);
+        // if doing dom order, then rowTemplates will be empty,
+        // or if now rows added since last time also empty.
+        if (this.rowTemplatesToAdd.length!==0) {
+            let htmlToAdd = this.rowTemplatesToAdd.join('');
+            _.appendHtml(this.eContainer, htmlToAdd);
+            this.rowTemplatesToAdd.length = 0;
+        }
 
-        this.rowTemplatesToAdd.length = 0;
-
+        // this only empty if no rows since last time, as when
+        // doing dom order, we still have callbacks to process
         this.afterGuiAttachedCallbacks.forEach( func => func() );
         this.afterGuiAttachedCallbacks.length = 0;
+
+        this.lastPlacedElement = null;
     }
 
     private afterRowAdded(): void {
@@ -77,18 +87,25 @@ export class RowContainerComponent {
         this.checkVisibility();
     }
 
-    public appendRowTemplateAsync(rowTemplate: string, callback: ()=>void ): void {
-        this.rowTemplatesToAdd.push(rowTemplate);
+    public appendRowTemplate(rowTemplate: string,
+                             callback: ()=>void) {
+
+        if (this.domOrder) {
+            this.lastPlacedElement = _.insertTemplateWithDomOrder(this.eContainer, rowTemplate, this.lastPlacedElement);
+        } else {
+            this.rowTemplatesToAdd.push(rowTemplate);
+        }
+
         this.afterGuiAttachedCallbacks.push(callback);
+
         this.afterRowAdded();
     }
 
-    public appendRowTemplate(rowTemplate: string): HTMLElement {
-
-        _.appendHtml(this.eContainer, rowTemplate);
-        this.afterRowAdded();
-
-        return <HTMLElement> this.eContainer.lastChild;
+    public ensureRowOrder(eRow: HTMLElement): void {
+        if (this.domOrder) {
+            _.ensureDomOrder(this.eContainer, eRow, this.lastPlacedElement);
+            this.lastPlacedElement = eRow;
+        }
     }
 
     public ensureDomOrder(eRow: HTMLElement, eRowBefore: HTMLElement): void {
