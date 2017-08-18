@@ -1,7 +1,7 @@
 import {GridOptions} from "./entities/gridOptions";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {SelectionController} from "./selectionController";
-import {ColumnController, ColumnApi} from "./columnController/columnController";
+import {ColumnApi, ColumnController} from "./columnController/columnController";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {HeaderRenderer} from "./headerRendering/headerRenderer";
 import {FilterManager} from "./filter/filterManager";
@@ -15,7 +15,7 @@ import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
 import {ExpressionService} from "./valueService/expressionService";
 import {TemplateService} from "./templateService";
 import {PopupService} from "./widgets/popupService";
-import {LoggerFactory, Logger} from "./logger";
+import {Logger, LoggerFactory} from "./logger";
 import {ColumnUtils} from "./columnController/columnUtils";
 import {AutoWidthCalculator} from "./rendering/autoWidthCalculator";
 import {HorizontalDragService} from "./headerRendering/horizontalDragService";
@@ -33,7 +33,6 @@ import {Utils as _} from "./utils";
 import {FilterStage} from "./rowModels/inMemory/filterStage";
 import {SortStage} from "./rowModels/inMemory/sortStage";
 import {FlattenStage} from "./rowModels/inMemory/flattenStage";
-import {FocusService} from "./misc/focusService";
 import {CellEditorFactory} from "./rendering/cellEditorFactory";
 import {Events, GridReadyEvent} from "./events";
 import {InfiniteRowModel} from "./rowModels/infinite/infiniteRowModel";
@@ -167,7 +166,7 @@ export class Grid {
                 GridPanel, PopupService, ValueCache, ValueService, AlignedGridsService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
-                CellNavigationService, FilterStage, SortStage, FlattenStage, FocusService, FilterService, RowNodeFactory,
+                CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService, RowNodeFactory,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
                 ColumnHoverService, ColumnAnimationService, SortService, AutoGroupColService, ImmutableService,
                 ChangeDetectionService, Environment, Beans],

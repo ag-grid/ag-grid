@@ -1302,7 +1302,7 @@ export class CellComp extends Component implements ICellComp {
 
     private addClasses() {
         _.addCssClass(this.eGridCell, 'ag-cell');
-        this.eGridCell.setAttribute("colId", this.column.getColId());
+        this.eGridCell.setAttribute("col-id", this.column.getColId());
 
         if (this.node.group && this.node.footer) {
             _.addCssClass(this.eGridCell, 'ag-footer-cell');

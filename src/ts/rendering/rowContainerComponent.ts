@@ -38,7 +38,7 @@ export class RowContainerComponent {
     }
 
     public getRowElement(compId: number): HTMLElement {
-        let res = <HTMLElement> this.eContainer.querySelector(`[compId="${compId}"]`);
+        let res = <HTMLElement> this.eContainer.querySelector(`[comp-id="${compId}"]`);
         return res;
     }
 

@@ -117,8 +117,8 @@ export class SlickCellComp extends Component implements ICellComp {
         templateParts.push(`<div`);
         templateParts.push(` tabindex="-1"`);
         templateParts.push(` role="gridcell"`);
-        templateParts.push(` compId="${this.getCompId()}" `);
-        templateParts.push(` colid="${col.getId()}"`);
+        templateParts.push(` comp-id="${this.getCompId()}" `);
+        templateParts.push(` col-id="${col.getId()}"`);
         templateParts.push(` class="${cssClasses.join(' ')}"`);
         templateParts.push(  tooltip ? ` title="${tooltip}"` : ``);
         templateParts.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef}" >`);
@@ -131,7 +131,7 @@ export class SlickCellComp extends Component implements ICellComp {
     }
 
     public afterAttached(): void {
-        let querySelector = `[compId="${this.getCompId()}"]`;
+        let querySelector = `[comp-id="${this.getCompId()}"]`;
         let eGui = <HTMLElement> this.eParentRow.querySelector(querySelector);
         this.setGui(eGui);
 

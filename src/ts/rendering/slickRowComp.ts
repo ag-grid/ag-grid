@@ -136,6 +136,7 @@ export class SlickRowComp extends Component implements IRowComp {
 
         let rowHeight = this.rowNode.rowHeight;
         let rowClasses = this.getInitialRowClasses(extraCssClass).join(' ');
+        let rowId = this.rowNode.id;
 
         let userRowStyles = this.processStylesFromGridOptions();
 
@@ -151,8 +152,8 @@ export class SlickRowComp extends Component implements IRowComp {
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
         templateParts.push(` index="${this.rowNode.getRowIndexString()}"`);
-        templateParts.push(` rowId="${this.rowNode.id}"`);
-        templateParts.push(` compId="${this.getCompId()}"`);
+        templateParts.push(rowId ? ` rowId="${rowId}"` : ``);
+        templateParts.push(` comp-id="${this.getCompId()}"`);
         templateParts.push(` class="${rowClasses}"`);
         templateParts.push(` style="height: ${rowHeight}px; ${rowTopStr} ${userRowStyles}">`);
 

@@ -98,7 +98,6 @@ export {VerticalStack} from "./dist/lib/layout/verticalStack";
 export {TabbedItem} from "./dist/lib/layout/tabbedLayout"
 
 // misc
-export {FocusService} from "./dist/lib/misc/focusService";
 export {simpleHttpRequest} from "./dist/lib/misc/simpleHttpRequest";
 
 // editing / cellEditors
