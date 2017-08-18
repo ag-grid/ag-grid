@@ -207,6 +207,7 @@ export class GridPanel extends BeanStub {
 
     private lastLeftPosition = -1;
     private lastTopPosition = -1;
+    private ticking = false;
 
     private bodyHeight: number;
 
@@ -1515,7 +1516,8 @@ export class GridPanel extends BeanStub {
             // (when following the scroll of a pinned section), so we need to set it
             // back when changing from one to the other
             if (bodyVScrollActive) {
-                this.eBodyContainer.style.top = '0px';
+                this.setFakeScroll(this.eBodyContainer, 0);
+                // this.eBodyContainer.style.top = '0px';
             } else {
                 this.eBodyViewport.scrollTop = 0;
             }
@@ -1714,18 +1716,28 @@ export class GridPanel extends BeanStub {
     private onVerticalScroll(sourceElement: HTMLElement): void {
         let newTopPosition = sourceElement.scrollTop;
         if (newTopPosition !== this.lastTopPosition) {
-            let event: BodyScrollEvent = {
-                type: Events.EVENT_BODY_SCROLL,
-                direction: 'vertical',
-                api: this.gridApi,
-                columnApi: this.columnApi
-            };
-            this.eventService.dispatchEvent(event);
-            this.lastTopPosition = newTopPosition;
 
-            this.fakeVerticalScroll(newTopPosition);
+            // if (!this.ticking) {
+            //     this.ticking = true;
+            //     requestAnimationFrame( () => {
 
-            this.rowRenderer.redrawAfterScroll();
+                    let event: BodyScrollEvent = {
+                        type: Events.EVENT_BODY_SCROLL,
+                        direction: 'vertical',
+                        api: this.gridApi,
+                        columnApi: this.columnApi
+                    };
+                    this.eventService.dispatchEvent(event);
+                    this.lastTopPosition = newTopPosition;
+
+                    this.fakeVerticalScroll(newTopPosition);
+
+                    this.rowRenderer.redrawAfterScroll();
+
+            //         this.ticking = false;
+            //     });
+            // }
+
         }
     }
 
@@ -1835,23 +1847,28 @@ export class GridPanel extends BeanStub {
             // if pinning left, then body scroll is faking
             let pinningLeft = this.columnController.isPinningLeft();
             if (pinningLeft) {
-                this.eBodyContainer.style.top = -position + 'px';
+                this.setFakeScroll(this.eBodyContainer, position);
             }
             // right is always faking
-            this.ePinnedRightColsContainer.style.top = -position + 'px';
+            this.setFakeScroll(this.ePinnedRightColsContainer, position);
         } else {
             // LTR
             // if pinning right, then body scroll is faking
             let pinningRight = this.columnController.isPinningRight();
             if (pinningRight) {
-                this.eBodyContainer.style.top = -position + 'px';
+                this.setFakeScroll(this.eBodyContainer, position);
             }
             // left is always faking
-            this.ePinnedLeftColsContainer.style.top = -position + 'px';
+            this.setFakeScroll(this.ePinnedLeftColsContainer, position);
         }
 
         // always scroll fullWidth container, as this is never responsible for a scroll
-        this.eFullWidthCellContainer.style.top = -position + 'px';
+        this.setFakeScroll(this.eFullWidthCellContainer, position);
+    }
+
+    private setFakeScroll(eContainer: HTMLElement, pixels: number): void {
+        eContainer.style.top = -pixels + 'px';
+        // eContainer.style.transform = `translateY(${-pixels}px)`;
     }
 
     public addScrollEventListener(listener: ()=>void): void {
