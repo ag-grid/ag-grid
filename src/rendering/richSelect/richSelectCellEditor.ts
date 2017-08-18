@@ -16,6 +16,7 @@ import {VirtualList} from "../virtualList";
 
 export interface IRichCellEditorParams extends ICellEditorParams {
     values: string[];
+    cellHeight: number,
     cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
 }
 
@@ -56,6 +57,10 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
 
         this.getGui().querySelector('.ag-rich-select-list').appendChild(this.virtualList.getGui());
+
+        if (Utils.exists(this.params.cellHeight)) {
+            this.virtualList.setRowHeight(this.params.cellHeight);
+        }
 
         this.renderSelectedValue();
 
