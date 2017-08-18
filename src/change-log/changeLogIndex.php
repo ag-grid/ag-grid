@@ -26,7 +26,17 @@ include '../documentation-main/documentation_header.php';
         <li>The event 'itemsAdded' didn't make sense any more since introducing transaction updates in v11. So now the grid fires rowDataUpdated instead.</li>
         <li>Theme icons have been updated. The previous ones are available in the <code>src/styles/legacy</code> directory - you can <a href="https://www.ag-grid.com/javascript-grid-icons/">set them back through the API</a>.</li>
 
-        <li>The HTML attribute 'row' on the row div was showing the index. It was supposed to be the row. So now have two attributes instead, index and rowId, so there is no confusion.</li>
+        <li>The HTML attribute 'row' on the row div was showing the index. It was supposed to be the row. Also row-id was
+            showing the business key. To avoid confusion, move everything to dash-case (not CamelCase), the following
+            are now the attributes:
+            <ul>
+                <li>row-id - matches the row node id.</li>
+                <li>row-index - matches the row index (0..n, or t0..tn for pinned top rows and b0..bn for pinned bottom rows).</li>
+                <li>row-business-key - matches the business key (if user implements callback getBusinessKey())</li>
+            </ul>
+            Similarly colId on the cell is now col-id. These fixes / breaking changes only impact your code if you were
+            using these in CSS selectors outside of the grid.
+        </li>
     </ul>
 
     <h4>Breaking Change</h4>
