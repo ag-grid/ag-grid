@@ -1,12 +1,15 @@
 // Colors
-$accent: #4285F4;
-$hint: rgba(black, .38);
-$disabled: rgba(black, .38);
-$icon: rgba(black, .38);
 $primary-opacity: .87;
-$primary: rgba(black, $primary-opacity);
 $secondary-opacity: .54;
+$disabled-opacity: .38;
+
+$accent: #4285F4;
+$primary: rgba(black, $primary-opacity);
 $secondary: rgba(black, $secondary-opacity);
+$disabled: rgba(black, $disabled-opacity);
+$hint: rgba(black, $disabled-opacity);
+$icon: rgba(black, $disabled-opacity);
+
 $hover: #EEEEEE;
 $background-color: #FFFFFF;
 $panel-background: #EEEEEE;
@@ -40,7 +43,7 @@ $transition-speed: 120ms;
     padding-left: $cell-horizontal-padding;
     padding-right: $cell-horizontal-padding;
     @include centered-container($height);
-} 
+}
 
 @mixin icon-background($icon) {
     width: $icon-size;
@@ -69,11 +72,13 @@ $transition-speed: 120ms;
 
     box-sizing: border-box;
     border-bottom: 1px solid $border-color;
+    height: $grid-size * 3;
     padding-bottom: $grid-size;
     color: $primary;
 
     &:focus {
         border-bottom: 2px solid $accent;
+        padding-bottom: $grid-size - 1;
         outline: none;
     }
 
@@ -83,6 +88,7 @@ $transition-speed: 120ms;
 }
 
 @mixin simple-material-flat-button {
+    -webkit-appearance: none;
     background: transparent;
     border: 0;
     color: $accent;
@@ -185,7 +191,7 @@ $transition-speed: 120ms;
     }
 
 ////////////////////////////////////////
-// Icons 
+// Icons
 ////////////////////////////////////////
 
     $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right small-up small-down tick cross tree-open tree-closed;
@@ -208,7 +214,7 @@ $transition-speed: 120ms;
 
 
 ////////////////////////////////////////
-// Context Menu 
+// Context Menu
 ////////////////////////////////////////
 
     .ag-menu {
@@ -300,7 +306,7 @@ $transition-speed: 120ms;
         background: $panel-background;
         display: table;
         width: 100%;
-        
+
         .ag-tab {
             display: table-cell;
             height: $grid-size * 4;
@@ -326,7 +332,7 @@ $transition-speed: 120ms;
     .ag-tab-body {
         padding: $grid-size 0;
 
-        // string filter type 
+        // string filter type
         .ag-filter-select {
             margin: $grid-size;
             width: calc(100% - #{$grid-size * 2});
@@ -353,7 +359,7 @@ $transition-speed: 120ms;
 ////////////////////////////////////////
 // Value Set Filter
 ////////////////////////////////////////
-    
+
     .ag-filter {
         & > div > div > div {
         }
@@ -397,6 +403,8 @@ $transition-speed: 120ms;
         .ag-filter-apply-panel {
             padding: $grid-size;
             padding-top: $grid-size * 2;
+            display: flex;
+            justify-content: flex-end;
 
             button {
                 @include simple-material-flat-button;
@@ -415,7 +423,7 @@ $transition-speed: 120ms;
 
         .ag-column-select-column-group::not(::first-child) {
             border-top: 1px solid $border-color;
-        } 
+        }
 
         .ag-column-select-column-group, 
         .ag-column-select-column {
@@ -537,5 +545,46 @@ $transition-speed: 120ms;
     .ag-numeric-header .ag-header-cell-label .ag-header-icon {
         margin-left: 0;
         margin-right: $grid-size;
+    }
+
+////////////////////////////////////////
+// Pagination
+////////////////////////////////////////
+    .ag-paging-panel {
+        border-top: 1px solid $border-color;
+        height: $header-height;
+        display: flex;
+        align-items: center;
+        padding: 0 $grid-size * 3;
+        justify-content: flex-end;
+        color: $secondary;
+
+        & > span {
+            margin-left: $grid-size * 4;
+        }
+
+        $buttonIcons: (
+            btFirst: first,
+            btPrevious: previous,
+            btLast: last,
+            btNext: next
+        );
+
+        @each $ref, $icon in $buttonIcons {
+            button[ref=#{$ref}] {
+                -webkit-appearance: none;
+                border: none;
+                padding: 0;
+
+                @include icon-background($icon);
+                opacity: $secondary-opacity;
+                text-indent: 100%;
+                overflow: hidden;
+
+                &[disabled] {
+                    opacity: $disabled-opacity;
+                }
+            }
+        }
     }
 }
