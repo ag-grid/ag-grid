@@ -11,6 +11,7 @@ $hint: rgba(black, $disabled-opacity);
 $icon: rgba(black, $disabled-opacity);
 
 $hover: #EEEEEE;
+$selected: #F5F5F5;
 $background-color: #FFFFFF;
 $panel-background: #EEEEEE;
 $border-color: #E0E0E0;
@@ -587,4 +588,17 @@ $transition-speed: 120ms;
             }
         }
     }
+
+////////////////////////////////////////
+// Selection
+////////////////////////////////////////
+
+    .ag-row-selected {
+        background-color: $selected;
+    }
+
+    .ag-cell-range-selected {
+        background-color: $selected;
+    }
+
 }
