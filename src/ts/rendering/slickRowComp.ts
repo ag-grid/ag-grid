@@ -1177,12 +1177,16 @@ export class SlickRowComp extends Component implements IRowComp {
     private updateRowIndexes(): void {
         let rowIndexStr = this.rowNode.getRowIndexString();
 
+        let rowIsEven = this.rowNode.rowIndex % 2 === 0;
+        let rowIsEvenChanged = this.rowIsEven !== rowIsEven;
+        if (rowIsEvenChanged) {
+            this.rowIsEven = rowIsEven;
+        }
+
         this.eAllRowContainers.forEach( eRow => {
             eRow.setAttribute('index', rowIndexStr);
 
-            let rowIsEven = this.rowNode.rowIndex % 2 === 0;
-            if (this.rowIsEven!==rowIsEven) {
-                this.rowIsEven = rowIsEven;
+            if (rowIsEvenChanged) {
                 _.addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);
                 _.addOrRemoveCssClass(eRow, 'ag-row-odd', !rowIsEven);
             }
