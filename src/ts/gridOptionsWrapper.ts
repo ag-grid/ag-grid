@@ -141,7 +141,7 @@ export class GridOptionsWrapper {
     }
 
     // returns the dom data, or undefined if not found
-    public getDomData(element: Element, key: string): any {
+    public getDomData(element: Node, key: string): any {
         let domData = (<any>element)[this.domDataKey];
         if (domData) {
             return domData[key];
@@ -365,6 +365,7 @@ export class GridOptionsWrapper {
     public getProcessSecondaryColDefFunc(): (colDef: ColDef)=>void { return this.gridOptions.processSecondaryColDef; }
     public getProcessSecondaryColGroupDefFunc(): (colGroupDef: ColGroupDef)=>void { return this.gridOptions.processSecondaryColGroupDef; }
     public getSendToClipboardFunc() { return this.gridOptions.sendToClipboard; }
+    public getProcessRowPostCreateFunc() { return this.gridOptions.processRowPostCreate; }
 
     public getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellForClipboard; }
     public getProcessCellFromClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellFromClipboard; }
@@ -398,12 +399,6 @@ export class GridOptionsWrapper {
 
     public removeEventListener(key: string, listener: Function): void {
         this.propertyEventService.removeEventListener(key, listener);
-    }
-
-    public executeProcessRowPostCreateFunc(params: ProcessRowParams): void {
-        if (this.gridOptions.processRowPostCreate) {
-            this.gridOptions.processRowPostCreate(params);
-        }
     }
 
     // properties
