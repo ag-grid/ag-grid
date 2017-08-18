@@ -2,32 +2,55 @@
 <html>
 <head>
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-    <script src="http://0.0.0.0:9999/bundle.js"></script>
+    <script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused49"></script>
 </head>
 <body>
     <div style="margin: 2em">
-    <div id="myGrid" class="ag-material-next"></div>
+    <div id="myGrid" class="ag-material-next" style="height: 400px"></div>
     </div>
 
     <script charset="utf-8">
                 // specify the columns
         var columnDefs = [
-            { headerName: "A group", children: [
-            {headerName: "Make", field: "make", filter: "text"},
-            {headerName: "Model", field: "model"},
-            {headerName: "Price", field: "price", type: "numericColumn" },
-            ]},
-            { headerName: "B group", children: [
-                {headerName: "Model", field: "model"},
-                {headerName: "Price", field: "price", type: "numericColumn" },
-            ]}
+            { 
+                headerName: "A group", 
+                children: [
+                    {headerName: "Make", field: "make", filter: "text", cellEditor: 'text', editable: true},
+                    {headerName: "Model", field: "model", filter: "set", editable: true, cellEditor: 'richSelect', cellEditorParams: { cellHeight: 48, values:  [ 'Mondeo', 'Celica', '(other)' ] }},
+                    {headerName: "Date", field: "done", filter: "date", editable: true, cellEditor: 'largeText' },
+                    {headerName: "Price", field: "price", type: "numericColumn", filter: "number", filterParams: { applyButton: true, clearButton: true } },
+                ]
+            },
+            { 
+                headerName: "B group", 
+                children: [
+                    {headerName: "Model", field: "model"},
+                    {headerName: "Price", field: "price", type: "numericColumn" },
+                ]
+            }
         ];
 
         // specify the data
         var rowData = [
-            {make: "Toyota", model: "Celica", price: 35000},
-            {make: "Ford", model: "Mondeo", price: 32000},
-            {make: "Porsche", model: "Boxter", price: 72000}
+            {make: "Toyota", model: "Celica", price: 35000, done: new Date()},
+            {make: "Ford", model: "Mondeo", price: 32000, done: new Date()},
+            {make: "Toyota", model: "Celica", price: 35000, done: new Date()},
+            {make: "Ford", model: "Mondeo", price: 32000, done: new Date()},
+            {make: "Toyota", model: "Celica", price: 35000, done: new Date()},
+            {make: "Ford", model: "Mondeo", price: 32000, done: new Date()},
+            {make: "Toyota", model: "Celica", price: 35000, done: new Date()},
+            {make: "Ford", model: "Mondeo", price: 32000, done: new Date()},
+            {make: "Toyota", model: "Celica", price: 35000, done: new Date()},
+            {make: "Ford", model: "Mondeo", price: 32000, done: new Date()},
+            {make: "Toyota", model: "Celica", price: 35000, done: new Date()},
+            {make: "Ford", model: "Mondeo", price: 32000, done: new Date()},
+            {make: "Toyota", model: "Celica", price: 35000, done: new Date()},
+            {make: "Ford", model: "Mondeo", price: 32000, done: new Date()},
+            {make: "Toyota", model: "Celica", price: 35000, done: new Date()},
+            {make: "Ford", model: "Mondeo", price: 32000, done: new Date()},
+            {make: "Toyota", model: "Celica", price: 35000, done: new Date()},
+            {make: "Ford", model: "Mondeo", price: 32000, done: new Date()},
+            {make: "Porsche", model: "Boxter", price: 72000, done: new Date()}
         ];
 
         // let the grid know which columns and what data to use
@@ -37,8 +60,16 @@
             headerHeight: 56,
             rowHeight: 48,
             enableColResize: true,
+            enableSorting: true,
+            pagination: true,
+            paginationPageSize: 5,
             rowHoverClass: true,
-            enableFilter: true
+            enableFilter: true,
+            enableRangeSelection: true,
+            localeText: {
+                clearFilter: 'clear', 
+                applyFilter: 'apply'
+            }
         };
 
         // wait for the document to be loaded, otherwise
