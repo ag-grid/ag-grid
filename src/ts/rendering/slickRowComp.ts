@@ -140,22 +140,17 @@ export class SlickRowComp extends Component implements IRowComp {
 
         let userRowStyles = this.processStylesFromGridOptions();
 
-        let rowTopStr = '';
-        let setRowTop = !this.beans.gridOptionsWrapper.isForPrint() && !this.beans.gridOptionsWrapper.isAutoHeight();
-        if (setRowTop) {
-            // if sliding in, we take the old row top. otherwise we just set the current row top.
-            let rowTop = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
-            // if not setting row top, then below is empty string
-            rowTopStr = `top: ${rowTop}px; `;
-        }
+        let businessKey = this.getRowBusinessKey();
+        let rowTopStyle = this.getInitialRowTopStyle();
 
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
-        templateParts.push(` index="${this.rowNode.getRowIndexString()}"`);
-        templateParts.push(rowId ? ` rowId="${rowId}"` : ``);
+        templateParts.push(` row-index="${this.rowNode.getRowIndexString()}"`);
+        templateParts.push(rowId ? ` row-id="${rowId}"` : ``);
+        templateParts.push(businessKey ? ` row-business-key="${businessKey}"` : ``);
         templateParts.push(` comp-id="${this.getCompId()}"`);
         templateParts.push(` class="${rowClasses}"`);
-        templateParts.push(` style="height: ${rowHeight}px; ${rowTopStr} ${userRowStyles}">`);
+        templateParts.push(` style="height: ${rowHeight}px; ${rowTopStyle} ${userRowStyles}">`);
 
         // add in the template for the cells
         templateParts.push(contents);
@@ -163,6 +158,25 @@ export class SlickRowComp extends Component implements IRowComp {
         templateParts.push(`</div>`);
 
         return templateParts.join('');
+    }
+
+    private getInitialRowTopStyle() {
+        let rowTopStyle = '';
+        let setRowTop = !this.beans.gridOptionsWrapper.isForPrint() && !this.beans.gridOptionsWrapper.isAutoHeight();
+        if (setRowTop) {
+            // if sliding in, we take the old row top. otherwise we just set the current row top.
+            let rowTop = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
+            // if not setting row top, then below is empty string
+            rowTopStyle = `top: ${rowTop}px; `;
+        }
+        return rowTopStyle;
+    }
+
+    private getRowBusinessKey(): string {
+        if (typeof this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc() === 'function') {
+            let businessKey = this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc()(this.rowNode);
+            return businessKey;
+        }
     }
 
     private createRowContainer(rowContainerComp: RowContainerComponent, cols: Column[],

@@ -81,6 +81,7 @@ export class FocusedCellController {
             if (cellComp) {
                 return cellComp.getGridCell();
             }
+            ePointer = ePointer.parentNode;
         }
 
         return null;
