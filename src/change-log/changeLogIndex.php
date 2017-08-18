@@ -27,6 +27,7 @@ include '../documentation-main/documentation_header.php';
         <li>Theme icons have been updated. The previous ones are available in the <code>src/styles/legacy</code> directory - you can <a href="https://www.ag-grid.com/javascript-grid-icons/">set them back through the API</a>.</li>
 
         <li>The HTML attribute 'row' on the row div was showing the index. It was supposed to be the row. So now have two attributes instead, index and rowId, so there is no confusion.</li>
+        <li>HTML attribute colId is now col-id</li>
     </ul>
 
     <h4>Breaking Change</h4>
