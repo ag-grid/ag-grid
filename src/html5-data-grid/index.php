@@ -3,7 +3,7 @@
 <head lang="en">
     <meta charset="UTF-8">
 
-    <title>About Us</title>
+    <title>HTML5 Data Grid</title>
     <meta name="description" content="A feature-rich data grid designed for HTML5 Enterprise Applications. Easily integrate with your framework to deliver all the grid features that you need.">
     <meta name="keywords" content="HTML5 Data Grid"/>
 
@@ -167,23 +167,14 @@
 
         <div class="col-md-12" style="padding-top: 40px;">
             <h2>
-                The Best JavaScript Data Grid in the Word
+                About ag-Grid
             </h2>
             <hr/>
             <p>
-                ag-Grid is a JavaScript datagrid designed for Enterprise Applications. It delivers a large feature set combined with Enterprise grade performance. We provide all the standard features of a datagrid as well as advanced features that no other product on the market offers. This means development time is significantly reduced for essential features.
+                ag-Grid is a JavaScript datagrid designed for Enterprise Applications. It delivers a large feature set combined with Enterprise grade performance. We provide all the standard features of a datagrid as well as advanced features that no other product on the market offers. This means development time is significantly reduced for essential features. These features are highly extensible and customisable with detailed documentation and examples to support developers.
             <p/>
-            <p>
-                These features are highly extensible and customisable with detailed documentation and examples to support developers. ag-Grid is framework agnostic, we support all the major JavaScript frameworks, eight in total. This provides flexibility within organisation to choose the appropriate framework for a project.
-            <p/>
-            <p>
-                Each license comes with Technical Support from our core development team who are all experienced Enterprise Application developers. In addition, the Customer Experience team are available to assist with any other queries.
-            </p>
-
         </div> 
-
     </div>
-
 </div>
 
 <div class="container">
@@ -192,9 +183,12 @@
 
         <div class="col-md-12" style="padding-top: 40px;">
             <h2>
-                'AG' Stands For AGnostic - Supporting All Major JavaScript Frameworks
+                Supporting All Major JavaScript Frameworks
             </h2>
             <hr/>
+            <p>
+            ag-Grid is framework agnostic, this provides flexibility within your organisation to choose the appropriate framework for a project.
+            </p>
 
         </div> 
 
@@ -254,7 +248,56 @@
 <div class="container">
     <div class="row">
 
-        <div class="col-md-12" style="padding-top: 40px;">
+        <div class="col-md-12" style="padding-top: 20px;">
+
+            <h2 id="tech_team">
+                Further Information
+            </h2>
+            <hr/>
+
+        </div> 
+
+    </div>
+
+    <div class="row" style="margin-top: 20px;">
+
+        <div class="col-md-4">
+            <div>
+                <img src='images/landing/documatation.jpg'/>
+            </div>
+            <h3>Documentation - In English</h3>
+
+            <p>
+                Our Documentation takes you through how to setup your HTML5 data grid in your chosen framework (e.g. Angular or React). You can then progress to building a simple grid to adding more complex features. We have a section on each of the features of the grid with examples.
+            </p>
+        </div>
+
+        <div class="col-md-4">
+            <div>
+                <img src='images/landing/documatation.jpg'/>
+            </div>
+            <h3>Examples and Demonstration</h3>
+            <p>
+                You can find more complete examples here. Also take a look at our Demonstration page to see it all in action together.
+            </p>
+        </div>
+
+        <div class="col-md-4">
+
+            <h3>Technical Support</h3>
+
+            <p>
+                Each ag-Grid Enterprise license comes with access to our Enterprise Support Forum. This is monitored by our core development based here in London. We respond to all queries within 24 hours during UK Business hours.
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-md-12" style="padding-top: 20px;">
 
             <h2 id="tech_team">
                 Getting Started
@@ -265,22 +308,22 @@
 
     </div>
 
-    <div class="row" style="margin-top: 50px;">
+    <div class="row" style="margin-top: 20px;">
 
         <div class="col-md-4">
 
-            <h3>Documentation</h3>
+            <h3>Documentation - In English</h3>
 
             <p>
-                Niall provides the technical vision for ag-Grid, juggling this with the usual CEO duties. 15 years of experience building Enterprise applications has given Niall unique insight into the challenges while equipping him with the technical skills to deliver the correct solutions. Niall focuses primarily on developing and maintaining the core of ag-Grid and is very much at the heartbeat of the company.
+                Our Documentation takes you through how to setup your HTML5 data grid in your chosen framework (e.g. Angular or React). You can then progress to building a simple grid to adding more complex features. We have a section on each of the features of the grid with examples.
             </p>
         </div>
 
         <div class="col-md-4">
 
-            <h3>Examples</h3>
+            <h3>Examples and Demonstration</h3>
             <p>
-                Sean was the first person that Niall asked to join the team. Sean ensures that we can keep the agnostic in ag-Grid... he is responsible for integrating with all of our supported frameworks. Many of customers will be familiar with Sean as he is very active in our user forums supporting the needs of our customers. He has also recently given a number of talks at conferences where his calm manner belies his years of experience.
+                You can find more complete examples here. Also take a look at our Demonstration page to see it all in action together.
             </p>
         </div>
 
@@ -289,7 +332,7 @@
             <h3>Technical Support</h3>
 
             <p>
-                Alberto joined the team in early 2017 and further broadens the Enterprise applications experience. With over 15 years across multiple industries, Alberto has been involved in all aspects of the software development lifecycle. He has joined Niall in enhancing and expanding the core features of the grid as well as contributing technical and industry knowledge. 
+                Each ag-Grid Enterprise license comes with access to our Enterprise Support Forum. This is monitored by our core development based here in London. We respond to all queries within 24 hours during UK Business hours.
             </p>
         </div>
 
@@ -299,7 +342,7 @@
 <div class="container">
     <div class="row">
 
-        <div class="col-md-12" style="padding-top: 40px;">
+        <div class="col-md-12" style="padding-top: 20px;">
 
             <h2 id="features">
                 Features
@@ -310,105 +353,89 @@
 
     </div>
 
-    <div class="row" style="margin-top: 50px;">
+    <div class="row" style="margin-top: 20px;">
 
         <div class="col-md-3">
             <ul>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
+                <li><a href="../javascript-grid-width-and-height/">Grid Size</a></li>
+                <li><a href="../javascript-grid-column-definitions//">Column Definitions</a></li>
+                <li><a href="../javascript-grid-grouping-headers/">Column Groups</a></li>
+                <li><a href="../javascript-grid-column-header/">Column Headers</a></li>
+                <li><a href="../javascript-grid-resizing/">Column Resizing</a></li>
+                <li><a href="../javascript-grid-filtering/">Column Filter</a></li>
+                <li><a href="../javascript-grid-filter-text/">Text Filter</a></li>
+                <li><a href="../javascript-grid-filter-number/">Number Filter</a></li>
+                <li><a href="../javascript-grid-filter-date/">Date Filter</a></li>
+                <li><a href="../javascript-grid-filter-set/">Set Filter</a></li>
+                <li><a href="../javascript-grid-filter-custom">Custom Filter</a></li>
+                <li><a href="../javascript-grid-filter-quick/">Quick Filter</a></li>
+                <li><a href="../javascript-grid-filter-external/">External Filter</a></li>
+                <li><a href="../javascript-grid-sorting/">Row Sorting</a></li>
+                <li><a href="../javascript-grid-selection/">Row Selection</a></li>
             </ul>
         </div>
 
         <div class="col-md-3">
             <ul>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
+                <li><a href="../javascript-grid-range-selection/">Range Selection</a></li>
+                <li><a href="../javascript-grid-column-spanning/">Column Spanning</a></li>
+                <li><a href="../javascript-grid-pinning/">Column Pinning</a></li>
+                <li><a href="../javascript-grid-row-pinning/">Row Pinning</a></li>
+                <li><a href="../javascript-grid-row-height/">Row Height</a></li>
+                <li><a href="../javascript-grid-cell-styling/">Cell Styling</a></li>
+                <li><a href="../javascript-grid-value-handlers/">Value Handlers</a></li>
+                <li><a href="../javascript-grid-value-getters/">Getters & Formatters</a></li>
+                <li><a href="../javascript-grid-value-setters/">Setters and Parsers</a></li>
+                <li><a href="../javascript-grid-cell-expressions/">Expressions</a></li>
+                <li><a href="../javascript-grid-value-cache/">Value Cache</a></li>
+                <li><a href="../javascript-grid-reference-data/">Reference Data</a></li>
+                <li><a href="../javascript-grid-cell-rendering/">Cell Rendering</a></li>
+                <li><a href="../javascript-grid-cell-editing/">Cell Editing</a></li>
+                <li><a href="../javascript-grid-keyboard-navigation/">Keyboard Navigation</a></li>
             </ul>
         </div>
 
         <div class="col-md-3">
             <ul>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
+                <li><a href="../javascript-grid-touch/">Touch Support</a></li>
+                <li><a href="../javascript-grid-animation/">Animation</a></li>
+                <li><a href="../javascript-grid-accessing-data/">Accessing Data</a></li>
+                <li><a href="../javascript-grid-pagination/">Pagination</a></li>
+                <li><a href="../javascript-grid-tree/">Tree Data</a></li>
+                <li><a href="../javascript-grid-data-update/">Updating Data</a></li>
+                <li><a href="../javascript-grid-refresh/">View Refresh</a></li>
+                <li><a href="../javascript-grid-change-detection/">Change Detection</a></li>
+                <li><a href="../javascript-grid-internationalisation/">Internationalisation</a></li>
+                <li><a href="../javascript-grid-accessibility/">Accessibility</a></li>
+                <li><a href="../javascript-grid-full-width-rows/">Full Width Rows</a></li>
+                <li><a href="../javascript-grid-master-detail/">Master Detail</a></li>
+                <li><a href="../javascript-grid-aligned-grids/">Aligned Grids</a></li>
+                <li><a href="../javascript-grid-export/">CSV Export</a></li>
+                <li><a href="../javascript-grid-excel/">Excel Export</a></li>
             </ul>
         </div>
 
         <div class="col-md-3">
             <ul>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
-                <li><a href="../javascript-grid-column-definitions/">Grid Size</a></li>
+                <li><a href="../javascript-grid-rtl/">RTL</a></li>
+                <li><a href="../javascript-grid-icons/">Custom Icons</a></li>
+                <li><a href="../javascript-grid-overlays/">Overlays</a></li>
+                <li><a href="../javascript-grid-for-print/">Layout For Print</a></li>
+                <li><a href="../javascript-grid-data-functions/">Data Functions</a></li>
+                <li><a href="../javascript-grid-grouping/">Grouping Rows</a></li>
+                <li><a href="../javascript-grid-aggregation/">Aggregation</a></li>
+                <li><a href="../javascript-grid-pivoting/">Pivoting</a></li>
+                <li><a href="../javascript-grid-tool-panel/">Tool Panel</a></li>
+                <li><a href="../javascript-grid-clipboard/">Clipboard</a></li>
+                <li><a href="../javascript-grid-column-menu/">Column Menu</a></li>
+                <li><a href="../javascript-grid-context-menu/">Context Menu</a></li>
+                <li><a href="../javascript-grid-status-bar/">Status Bar</a></li>
+                <li><a href="../javascript-grid-set-license/">License Key</a></li>
             </ul>
         </div>
-
     </div>
 </div>
 
-
-
-    <div class="row">
-
-        <div class="col-md-12" style="padding-top: 40px;">
-
-            <h2 id="contact">
-                ag-Grid in action: Trader Dashboard
-            </h2>
-            <hr/>
-            <?php include '../home/demo-4.php'; ?>
-        </div> 
-
-    </div>
    
 </div>
 
