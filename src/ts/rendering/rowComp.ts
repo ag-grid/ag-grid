@@ -24,6 +24,7 @@ import {RowContainerComponent} from "./rowContainerComponent";
 import {Component} from "../widgets/component";
 import {RefSelector} from "../widgets/componentAnnotations";
 import {Beans} from "./beans";
+import {ProcessRowParams} from "../entities/gridOptions";
 
 class TempStubCell extends Component {
 
@@ -67,6 +68,7 @@ export interface LastPlacedElements {
 }
 
 export interface IRowComp {
+    afterFlush(): void;
     addEventListener(eventType: string, listener: Function): void;
     destroy(): void;
     ensureInDomAfter(previousElement: LastPlacedElements): void;
@@ -222,20 +224,30 @@ export class RowComp extends BeanStub implements IRowComp {
         this.addColumnListener();
 
         this.addHoverFunctionality();
-
-        this.beans.gridOptionsWrapper.executeProcessRowPostCreateFunc({
-            eRow: this.eBodyRow,
-            ePinnedLeftRow: this.ePinnedLeftRow,
-            ePinnedRightRow: this.ePinnedRightRow,
-            node: this.rowNode,
-            api: this.beans.gridOptionsWrapper.getApi(),
-            rowIndex: this.rowNode.rowIndex,
-            addRenderedRowListener: this.addEventListener.bind(this),
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
-            context: this.beans.gridOptionsWrapper.getContext()
-        });
+        this.executeProcessRowPostCreateFunc();
 
         this.initialised = true;
+    }
+
+    public afterFlush(): void {
+    }
+
+    private executeProcessRowPostCreateFunc() {
+        let func = this.beans.gridOptionsWrapper.getProcessRowPostCreateFunc();
+        if (func) {
+            let params: ProcessRowParams = {
+                eRow: this.eBodyRow,
+                ePinnedLeftRow: this.ePinnedLeftRow,
+                ePinnedRightRow: this.ePinnedRightRow,
+                node: this.rowNode,
+                api: this.beans.gridOptionsWrapper.getApi(),
+                rowIndex: this.rowNode.rowIndex,
+                addRenderedRowListener: this.addEventListener.bind(this),
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+                context: this.beans.gridOptionsWrapper.getContext()
+            };
+            func(params);
+        }
     }
 
     public isFullWidth(): boolean {

@@ -20,6 +20,7 @@ import {ICellComp} from "./cellComp";
 import {EventService} from "../eventService";
 import {ICellRendererComp, ICellRendererFunc} from "./cellRenderers/iCellRenderer";
 import {IAfterGuiAttachedParams} from "../interfaces/iComponent";
+import {ProcessRowParams} from "../entities/gridOptions";
 
 export class SlickRowComp extends Component implements IRowComp {
 
@@ -88,6 +89,8 @@ export class SlickRowComp extends Component implements IRowComp {
     // todo - review row dom order
     private lastPlacedElements: LastPlacedElements;
 
+    private initialised = false;
+
     constructor(parentScope: any,
                 bodyContainerComp: RowContainerComponent,
                 pinnedLeftContainerComp: RowContainerComponent,
@@ -129,6 +132,8 @@ export class SlickRowComp extends Component implements IRowComp {
                 this.eAllRowContainers.forEach(eRow => _.removeCssClass(eRow, 'ag-opacity-zero'));
             });
         }
+
+        this.executeProcessRowPostCreateFunc();
     }
 
     private createTemplate(contents: string, extraCssClass: string): string {
@@ -158,6 +163,31 @@ export class SlickRowComp extends Component implements IRowComp {
         templateParts.push(`</div>`);
 
         return templateParts.join('');
+    }
+
+    public afterFlush(): void {
+        if (!this.initialised) {
+            this.initialised = true;
+            this.executeProcessRowPostCreateFunc();
+        }
+    }
+
+    private executeProcessRowPostCreateFunc(): void {
+        let func = this.beans.gridOptionsWrapper.getProcessRowPostCreateFunc();
+        if (func) {
+            let params: ProcessRowParams = {
+                eRow: this.eBodyRow,
+                ePinnedLeftRow: this.ePinnedLeftRow,
+                ePinnedRightRow: this.ePinnedRightRow,
+                node: this.rowNode,
+                api: this.beans.gridOptionsWrapper.getApi(),
+                rowIndex: this.rowNode.rowIndex,
+                addRenderedRowListener: this.addEventListener.bind(this),
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+                context: this.beans.gridOptionsWrapper.getContext()
+            };
+            func(params);
+        }
     }
 
     private getInitialRowTopStyle() {

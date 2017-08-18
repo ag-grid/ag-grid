@@ -142,14 +142,14 @@ export class RowRenderer extends BeanStub {
             this.rowContainers.floatingBottomFullWith);
     }
 
-    private refreshFloatingRows(renderedRows: IRowComp[], rowNodes: RowNode[],
+    private refreshFloatingRows(rowComps: IRowComp[], rowNodes: RowNode[],
                                 pinnedLeftContainerComp: RowContainerComponent, pinnedRightContainerComp: RowContainerComponent,
                                 bodyContainerComp: RowContainerComponent, fullWidthContainerComp: RowContainerComponent): void {
-        renderedRows.forEach( (row: RowComp) => {
+        rowComps.forEach( (row: RowComp) => {
             row.destroy();
         });
 
-        renderedRows.length = 0;
+        rowComps.length = 0;
 
         // if no cols, don't draw row - can we get rid of this???
         let columns = this.columnController.getAllDisplayedColumns();
@@ -172,9 +172,12 @@ export class RowRenderer extends BeanStub {
 
                 rowComp.init();
 
-                renderedRows.push(rowComp);
+                rowComps.push(rowComp);
             })
         }
+
+        this.flushContainers(rowComps);
+
     }
 
     private onPinnedRowDataChanged(): void {
@@ -535,23 +538,31 @@ export class RowRenderer extends BeanStub {
         // add in new rows
         let nextVmTurnFunctions: Function[] = [];
 
+        let rowComps: IRowComp[] = [];
         indexesToDraw.forEach( rowIndex => {
             let rowComp = this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, previousElements, ensureDomOrderForUpdate);
             if (_.exists(rowComp)) {
+                rowComps.push(rowComp);
                 _.pushAll(nextVmTurnFunctions, rowComp.getAndClearNextVMTurnFunctions());
             }
         });
 
         // this needed for slick rendering
-        _.iterateObject(this.rowContainers, (key: string, rowContainerComp: RowContainerComponent) => {
-            rowContainerComp.flushRowTemplates();
-        });
+        this.flushContainers(rowComps);
 
         _.executeNextVMTurn(nextVmTurnFunctions);
 
         this.destroyRowComps(rowsToRecycle, animate);
 
         this.checkAngularCompile();
+    }
+
+    private flushContainers(rowComps: IRowComp[]): void {
+        _.iterateObject(this.rowContainers, (key: string, rowContainerComp: RowContainerComponent) => {
+            rowContainerComp.flushRowTemplates();
+        });
+
+        rowComps.forEach( rowComp => rowComp.afterFlush());
     }
 
     private onDisplayedColumnsChanged(): void {
