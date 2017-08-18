@@ -26,7 +26,7 @@ import {RefSelector} from "../widgets/componentAnnotations";
 import {Beans} from "./beans";
 import {ProcessRowParams} from "../entities/gridOptions";
 
-class TempStubCell extends Component {
+export class TempStubCell extends Component {
 
     private static TEMPLATE =
         `<div class="ag-stub-cell">

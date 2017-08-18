@@ -1,5 +1,5 @@
 import {Component} from "../widgets/component";
-import {IRowComp, LastPlacedElements, RowComp} from "./rowComp";
+import {IRowComp, LastPlacedElements, RowComp, TempStubCell} from "./rowComp";
 import {DataChangedEvent, RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
 import {Beans} from "./beans";
@@ -233,13 +233,23 @@ export class SlickRowComp extends Component implements IRowComp {
         }
     }
 
+    private setupRowStub(): void {
+        this.fullWidthRow = true;
+        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
+        this.fullWidthCellRenderer = TempStubCell;
+
+        this.createFullWidthRows();
+    }
+
     private setupRowContainers(): void {
 
         let isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
         let isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
         let isGroupSpanningRow = this.rowNode.group && this.beans.gridOptionsWrapper.isGroupUseEntireRow();
 
-        if (isFullWidthCell) {
+        if (this.rowNode.stub) {
+            this.setupRowStub();
+        } else if (isFullWidthCell) {
             this.setupFullWidthContainers();
         } else if (isGroupSpanningRow) {
             this.setupFullWidthGroupContainers();
@@ -282,14 +292,8 @@ export class SlickRowComp extends Component implements IRowComp {
     }
 
     private createFullWidthRows(): void {
-        let ensureDomOrder = _.exists(this.lastPlacedElements);
 
         if (this.fullWidthRowEmbedded) {
-
-            // if embedding the full width, it gets added to the body, left and right
-            // let previousBody = ensureDomOrder ? this.lastPlacedElements.eBody : null;
-            // let previousLeft = ensureDomOrder ? this.lastPlacedElements.eLeft : null;
-            // let previousRight = ensureDomOrder ? this.lastPlacedElements.eRight : null;
 
             this.createFullWidthRowContainer(this.bodyContainerComp, null, null,
                 (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
