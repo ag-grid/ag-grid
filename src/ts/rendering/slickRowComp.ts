@@ -1,6 +1,6 @@
 import {Component} from "../widgets/component";
 import {IRowComp, LastPlacedElements, RowComp} from "./rowComp";
-import {RowNode} from "../entities/rowNode";
+import {DataChangedEvent, RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
 import {Beans} from "./beans";
 import {RowContainerComponent} from "./rowContainerComponent";
@@ -138,7 +138,7 @@ export class SlickRowComp extends Component implements IRowComp {
         let rowClasses = this.getInitialRowClasses(extraCssClass).join(' ');
         let rowId = this.rowNode.id;
 
-        let userRowStyles = this.processStylesFromGridOptions();
+        let userRowStyles = this.preProcessStylesFromGridOptions();
 
         let businessKey = this.getRowBusinessKey();
         let rowTopStyle = this.getInitialRowTopStyle();
@@ -331,16 +331,45 @@ export class SlickRowComp extends Component implements IRowComp {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
 
         let eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.refreshCells.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_COLUMN_RESIZED, this.refreshCells.bind(this));
+        this.addDestroyableEventListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
+        this.addDestroyableEventListener(eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
+        this.addDestroyableEventListener(eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+    }
 
-        // fixme - for this we should be clearing out everything, should inherit this from super component
-        this.addDestroyableEventListener(eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshCells.bind(this));
+    // when grid columns change, then all cells should be cleaned out,
+    // as the new columns could have same id as the previous columns and may conflict
+    private onGridColumnsChanged(): void {
+        let allRenderedCellIds = Object.keys(this.slickCellComps);
+        this.removeRenderedCells(allRenderedCellIds);
+    }
+
+    private onRowNodeDataChanged(event: DataChangedEvent): void {
+        // if this is an update, we want to refresh, as this will allow the user to put in a transition
+        // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
+        // we will want to completely replace the cells
+        this.forEachCellComp(cellComp =>
+            cellComp.refreshCell({
+                suppressFlash: !event.update,
+                newData: !event.update
+            })
+        );
+
+        // check for selected also, as this could be after lazy loading of the row data, in which case
+        // the id might of just gotten set inside the row and the row selected state may of changed
+        // as a result. this is what happens when selected rows are loaded in virtual pagination.
+        // - niall note - since moving to the stub component, this may no longer be true, as replacing
+        // the stub component now replaces the entire row
+        this.onRowSelected();
+
+        // as data has changed, then the style and class needs to be recomputed
+        this.postProcessStylesFromGridOptions();
+        this.postProcessClassesFromGridOptions();
     }
 
     private onExpandedChanged(): void {
@@ -389,6 +418,18 @@ export class SlickRowComp extends Component implements IRowComp {
             case Column.PINNED_LEFT: return this.ePinnedLeftRow;
             case Column.PINNED_RIGHT: return this.ePinnedRightRow;
             default: return this.eBodyRow;
+        }
+    }
+
+    private onVirtualColumnsChanged() {
+        if (!this.fullWidthRow) {
+            this.refreshCells();
+        }
+    }
+
+    private onColumnResized() {
+        if (!this.fullWidthRow) {
+            this.refreshCells();
         }
     }
 
@@ -766,6 +807,15 @@ export class SlickRowComp extends Component implements IRowComp {
         });
     }
 
+    private postProcessClassesFromGridOptions(): void {
+        let cssClasses = this.processClassesFromGridOptions();
+        if (cssClasses) {
+            cssClasses.forEach( (classStr: string) => {
+                this.eAllRowContainers.forEach( row => _.addCssClass(row, classStr));
+            });
+        }
+    }
+
     private processClassesFromGridOptions(): string[] {
         let res: string[] = [];
 
@@ -804,8 +854,17 @@ export class SlickRowComp extends Component implements IRowComp {
         return res;
     }
 
-    private processStylesFromGridOptions(): string {
-        let resParts: string[] = [];
+    private preProcessStylesFromGridOptions(): string {
+        let rowStyles = this.processStylesFromGridOptions();
+        return _.cssStyleObjectToMarkup(rowStyles);
+    }
+
+    private postProcessStylesFromGridOptions(): void {
+        let rowStyles = this.processStylesFromGridOptions();
+        this.eAllRowContainers.forEach( row => _.addStylesToElement(row, rowStyles));
+    }
+
+    private processStylesFromGridOptions(): any {
 
         // part 1 - rowStyle
         let rowStyle = this.beans.gridOptionsWrapper.getRowStyle();
@@ -815,11 +874,10 @@ export class SlickRowComp extends Component implements IRowComp {
             return;
         }
 
-        let rowStyleMarkup = _.cssStyleObjectToMarkup(rowStyle);
-        resParts.push(rowStyleMarkup);
 
         // part 1 - rowStyleFunc
         let rowStyleFunc = this.beans.gridOptionsWrapper.getRowStyleFunc();
+        let rowStyleFuncResult: any;
         if (rowStyleFunc) {
             let params = {
                 data: this.rowNode.data,
@@ -828,12 +886,10 @@ export class SlickRowComp extends Component implements IRowComp {
                 context: this.beans.gridOptionsWrapper.getContext(),
                 $scope: this.scope
             };
-            let rowStyleFuncResult = rowStyleFunc(params);
-            let rowStyleFuncResultMarkup = _.cssStyleObjectToMarkup(rowStyleFuncResult);
-            resParts.push(rowStyleFuncResultMarkup);
+            rowStyleFuncResult = rowStyleFunc(params);
         }
 
-        return resParts.join(' ');
+        return _.assign({}, rowStyle, rowStyleFuncResult);
     }
 
     private createCells(cols: Column[]): {template: string, cellComps: SlickCellComp[]} {
@@ -884,6 +940,36 @@ export class SlickRowComp extends Component implements IRowComp {
         });
 
         this.eAllRowContainers.push(eRow);
+
+        this.addHoverFunctionality(eRow);
+    }
+
+    private addHoverFunctionality(eRow: HTMLElement): void {
+        // because we are adding listeners to the row, we give the user the choice to not add
+        // the hover class, as it slows things down, especially in IE, when you add listeners
+        // to each row. we cannot do the trick of adding one listener to the GridPanel (like we
+        // do for other mouse events) as these events don't propagate
+        if (!this.beans.gridOptionsWrapper.isRowHoverClass()) { return; }
+
+        // because mouseenter and mouseleave do not propagate, we cannot listen on the gridPanel
+        // like we do for all the other mouse events.
+
+        // because of the pinning, we cannot simply add / remove the class based on the eRow. we
+        // have to check all eRow's (body & pinned). so the trick is if any of the rows gets a
+        // mouse hover, it sets such in the rowNode, and then all three reflect the change as
+        // all are listening for event on the row node.
+
+        // step 1 - add listener, to set flag on row node
+        this.addDestroyableEventListener(eRow, 'mouseenter', () => this.rowNode.onMouseEnter() );
+        this.addDestroyableEventListener(eRow, 'mouseleave', () => this.rowNode.onMouseLeave() );
+
+        // step 2 - listen for changes on row node (which any eRow can trigger)
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, ()=> {
+            _.addCssClass(eRow, 'ag-row-hover');
+        });
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, ()=> {
+            _.removeCssClass(eRow, 'ag-row-hover');
+        });
     }
 
     // for animation, we don't want to animate entry or exit to a very far away pixel,
@@ -985,10 +1071,6 @@ export class SlickRowComp extends Component implements IRowComp {
     }
 
     private onCellFocusChanged(): void {
-        this.updateCellFocus();
-    }
-
-    private updateCellFocus(): void {
         let rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
         if (rowFocused !== this.rowFocused) {
             this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused) );
