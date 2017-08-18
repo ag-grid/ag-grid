@@ -82,12 +82,13 @@ export class SlickRowComp extends Component implements IRowComp {
 
     private paginationPage: number;
 
+    private parentScope: any;
     private scope: any;
 
     // todo - review row dom order
     private lastPlacedElements: LastPlacedElements;
 
-    constructor(scope: any,
+    constructor(parentScope: any,
                 bodyContainerComp: RowContainerComponent,
                 pinnedLeftContainerComp: RowContainerComponent,
                 pinnedRightContainerComp: RowContainerComponent,
@@ -96,7 +97,7 @@ export class SlickRowComp extends Component implements IRowComp {
                 beans: Beans,
                 animateIn: boolean) {
         super();
-        this.scope = scope;
+        this.parentScope = parentScope;
         this.beans = beans;
         this.bodyContainerComp = bodyContainerComp;
         this.pinnedLeftContainerComp = pinnedLeftContainerComp;
@@ -112,6 +113,8 @@ export class SlickRowComp extends Component implements IRowComp {
     public init(): void {
         this.rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
 
+        this.scope = this.createChildScopeOrNull(this.rowNode.data);
+
         this.setupRowContainers();
 
         this.addListeners();
@@ -125,6 +128,29 @@ export class SlickRowComp extends Component implements IRowComp {
             this.createSecondPassFuncs.push( () => {
                 this.eAllRowContainers.forEach(eRow => _.removeCssClass(eRow, 'ag-opacity-zero'));
             });
+        }
+    }
+
+    private createRowContainer(rowContainerComp: RowContainerComponent, cols: Column[],
+                               callback: (eRow: HTMLElement) => void): void {
+        let cellTemplatesAndComps = this.createCells(cols);
+        let rowTemplate = this.createTemplate(cellTemplatesAndComps.template, null);
+        rowContainerComp.appendRowTemplateAsync(rowTemplate, ()=> {
+            let eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
+            this.afterRowAttached(rowContainerComp, cellTemplatesAndComps.cellComps, eRow);
+            callback(eRow);
+        });
+    }
+
+    private createChildScopeOrNull(data: any) {
+        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
+            let newChildScope = this.parentScope.$new();
+            newChildScope.data = data;
+            newChildScope.rowNode = this.rowNode;
+            newChildScope.context = this.beans.gridOptionsWrapper.getContext();
+            return newChildScope;
+        } else {
+            return null;
         }
     }
 
@@ -256,6 +282,7 @@ export class SlickRowComp extends Component implements IRowComp {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
 
         let eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
@@ -266,6 +293,14 @@ export class SlickRowComp extends Component implements IRowComp {
 
         // fixme - for this we should be clearing out everything, should inherit this from super component
         this.addDestroyableEventListener(eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshCells.bind(this));
+    }
+
+    private onExpandedChanged(): void {
+        if (this.rowNode.group && !this.rowNode.footer) {
+            let expanded = this.rowNode.expanded;
+            this.eAllRowContainers.forEach( row => _.addOrRemoveCssClass(row, 'ag-row-group-expanded', expanded));
+            this.eAllRowContainers.forEach( row => _.addOrRemoveCssClass(row, 'ag-row-group-contracted', !expanded));
+        }
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -497,17 +532,6 @@ export class SlickRowComp extends Component implements IRowComp {
         }
     }
 
-    private createRowContainer(rowContainerComp: RowContainerComponent, cols: Column[],
-                               callback: (eRow: HTMLElement) => void): void {
-        let cellTemplatesAndComps = this.createCells(cols);
-        let rowTemplate = this.createTemplate(cellTemplatesAndComps.template, null);
-        rowContainerComp.appendRowTemplateAsync(rowTemplate, ()=> {
-            let eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
-            this.afterRowAttached(rowContainerComp, cellTemplatesAndComps.cellComps, eRow);
-            callback(eRow);
-        });
-    }
-
     private createFullWidthRowContainer(rowContainerComp: RowContainerComponent, pinned: string, extraCssClass: string,
                                callback: (eRow: HTMLElement, comp: ICellRendererComp) => void): void {
 
@@ -636,6 +660,10 @@ export class SlickRowComp extends Component implements IRowComp {
 
         if (this.fullWidthRow) {
             classes.push('ag-full-width-row');
+        }
+
+        if (this.rowNode.group && !this.rowNode.footer) {
+            classes.push(this.rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
         }
 
         return classes;
@@ -810,8 +838,16 @@ export class SlickRowComp extends Component implements IRowComp {
         this.renderedRowEventService.removeEventListener(eventType, listener);
     }
 
+    private destroyScope(): void {
+        if (this.scope) {
+            this.scope.$destroy();
+            this.scope = null;
+        }
+    }
+
     public destroy(animate = false): void {
         super.destroy();
+        this.destroyScope();
 
         this.active = false;
 
@@ -945,9 +981,25 @@ export class SlickRowComp extends Component implements IRowComp {
     }
 
     public ensureInDomAfter(previousElement: LastPlacedElements): void {}
-    public getBodyRowElement(): HTMLElement { return null; }
-    public getPinnedLeftRowElement(): HTMLElement { return null; }
-    public getPinnedRightRowElement(): HTMLElement { return null; }
-    public getFullWidthRowElement(): HTMLElement { return null; }
+
+    // returns the pinned left container, either the normal one, or the embedded full with one if exists
+    public getPinnedLeftRowElement(): HTMLElement {
+        return this.ePinnedLeftRow ? this.ePinnedLeftRow : this.eFullWidthRowLeft;
+    }
+
+    // returns the pinned right container, either the normal one, or the embedded full with one if exists
+    public getPinnedRightRowElement(): HTMLElement {
+        return this.ePinnedRightRow ? this.ePinnedRightRow : this.eFullWidthRowRight;
+    }
+
+    // returns the body container, either the normal one, or the embedded full with one if exists
+    public getBodyRowElement(): HTMLElement {
+        return this.eBodyRow ? this.eBodyRow : this.eFullWidthRowBody;
+    }
+
+    // returns the full width container
+    public getFullWidthRowElement(): HTMLElement {
+        return this.eFullWidthRow;
+    }
 
 }
