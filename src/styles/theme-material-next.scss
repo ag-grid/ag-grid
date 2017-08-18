@@ -3,8 +3,10 @@ $accent: #4285F4;
 $hint: rgba(black, .38);
 $disabled: rgba(black, .38);
 $icon: rgba(black, .38);
-$primary: rgba(black, .87);
-$secondary: rgba(black, .54);
+$primary-opacity: .87;
+$primary: rgba(black, $primary-opacity);
+$secondary-opacity: .54;
+$secondary: rgba(black, $secondary-opacity);
 $hover: #EEEEEE;
 $background-color: #FFFFFF;
 $panel-background: #EEEEEE;
@@ -78,6 +80,17 @@ $transition-speed: 120ms;
     &::placeholder {
         color: $disabled;
     }
+}
+
+@mixin simple-material-flat-button {
+    background: transparent;
+    border: 0;
+    color: $accent;
+    text-transform: uppercase;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0;
+    margin: 0;
 }
 
 .ag-material-next {
@@ -313,6 +326,12 @@ $transition-speed: 120ms;
     .ag-tab-body {
         padding: $grid-size 0;
 
+        // string filter type 
+        .ag-filter-select {
+            margin: $grid-size;
+            width: calc(100% - #{$grid-size * 2});
+        }
+
         .ag-menu-list {
             & > div:first-child > span {
                 padding-top: 0;
@@ -339,7 +358,7 @@ $transition-speed: 120ms;
         & > div > div > div {
         }
 
-        input[type=text] {
+        input[type=text], input[type=date] {
             @include simple-material-textbox;
             padding-left: $grid-size;
         }
@@ -373,6 +392,19 @@ $transition-speed: 120ms;
             height: $virtual-item-height;
             float: left;
             line-height: $grid-size * 3.5; // hate this
+        }
+
+        .ag-filter-apply-panel {
+            padding: $grid-size;
+            padding-top: $grid-size * 2;
+
+            button {
+                @include simple-material-flat-button;
+            }
+
+            button + button {
+                margin-left: $grid-size * 2;
+            }
         }
     }
 
@@ -471,5 +503,39 @@ $transition-speed: 120ms;
                 line-height: $grid-size * 2;
             }
         }
+    }
+
+////////////////////////////////////////
+// Sorting
+////////////////////////////////////////
+    .ag-filter-icon {
+        @include icon-background('filter');
+    }
+    .ag-sort-ascending-icon {
+        @include icon-background('asc');
+    }
+
+    .ag-sort-descending-icon {
+        @include icon-background('desc');
+    }
+
+    .ag-sort-none-icon {
+        @include icon-background('none');
+    }
+
+    $header-icon-size: 14px;
+
+    .ag-header-cell-label .ag-header-icon {
+        margin: 0;
+        height: 100%;
+        background-size: $header-icon-size $header-icon-size;
+        background-position-y: $grid-size * 2.5;
+        margin-left: $grid-size;
+        opacity: $primary-opacity;
+    }
+
+    .ag-numeric-header .ag-header-cell-label .ag-header-icon {
+        margin-left: 0;
+        margin-right: $grid-size;
     }
 }
