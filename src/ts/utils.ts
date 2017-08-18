@@ -1073,6 +1073,18 @@ export class Utils {
         return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase() );
     }
 
+    // pas in an object eg: {color: 'black', top: '25px'} and it returns "color: black; top: 25px;" for html
+    static cssStyleObjectToMarkup(stylesToUse: any): string {
+        if (!stylesToUse) { return ''; }
+
+        let resParts: string[] = [];
+        this.iterateObject(stylesToUse, (styleKey: string, styleValue: string) => {
+            let styleKeyDashed = this.camelCaseToHyphen(styleKey);
+            resParts.push(`${styleKeyDashed}: ${styleValue};`)
+        });
+
+        return resParts.join(' ');
+    }
 
     /**
      * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers

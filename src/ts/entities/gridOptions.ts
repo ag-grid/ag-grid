@@ -197,7 +197,7 @@ export interface GridOptions {
     // changeable, but no immediate impact
     context?: any;
     rowStyle?: any;
-    rowClass?: any;
+    rowClass?: string | string[];
     groupDefaultExpanded?: number;
     slaveGrids?: GridOptions[]; // slaveGrids deprecated, replace with alignedGrids
     alignedGrids?: GridOptions[];
@@ -248,7 +248,7 @@ export interface GridOptions {
     isExternalFilterPresent?(): boolean;
     doesExternalFilterPass?(node: RowNode): boolean;
     getRowStyle?: Function;
-    getRowClass?: Function;
+    getRowClass?: (params: any) => (string | string[]);
     getRowHeight?: Function;
     sendToClipboard?: (params: any)=>void;
     navigateToNextCell?: (params: NavigateToNextCellParams)=>GridCellDef;

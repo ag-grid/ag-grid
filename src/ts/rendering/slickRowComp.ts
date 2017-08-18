@@ -131,6 +131,39 @@ export class SlickRowComp extends Component implements IRowComp {
         }
     }
 
+    private createTemplate(contents: string, extraCssClass: string): string {
+        let templateParts: string[] = [];
+
+        let rowHeight = this.rowNode.rowHeight;
+        let rowClasses = this.getInitialRowClasses(extraCssClass).join(' ');
+
+        let userRowStyles = this.processStylesFromGridOptions();
+
+        let rowTopStr = '';
+        let setRowTop = !this.beans.gridOptionsWrapper.isForPrint() && !this.beans.gridOptionsWrapper.isAutoHeight();
+        if (setRowTop) {
+            // if sliding in, we take the old row top. otherwise we just set the current row top.
+            let rowTop = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
+            // if not setting row top, then below is empty string
+            rowTopStr = `top: ${rowTop}px; `;
+        }
+
+        templateParts.push(`<div`);
+        templateParts.push(` role="row"`);
+        templateParts.push(` index="${this.rowNode.getRowIndexString()}"`);
+        templateParts.push(` rowId="${this.rowNode.id}"`);
+        templateParts.push(` compId="${this.getCompId()}"`);
+        templateParts.push(` class="${rowClasses}"`);
+        templateParts.push(` style="height: ${rowHeight}px; ${rowTopStr} ${userRowStyles}">`);
+
+        // add in the template for the cells
+        templateParts.push(contents);
+
+        templateParts.push(`</div>`);
+
+        return templateParts.join('');
+    }
+
     private createRowContainer(rowContainerComp: RowContainerComponent, cols: Column[],
                                callback: (eRow: HTMLElement) => void): void {
         let cellTemplatesAndComps = this.createCells(cols);
@@ -666,6 +699,8 @@ export class SlickRowComp extends Component implements IRowComp {
             classes.push(this.rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
         }
 
+        _.pushAll(classes, this.processClassesFromGridOptions());
+
         return classes;
     }
 
@@ -716,32 +751,74 @@ export class SlickRowComp extends Component implements IRowComp {
         });
     }
 
-    private createTemplate(contents: string, extraCssClass: string): string {
-        let templateParts: string[] = [];
+    private processClassesFromGridOptions(): string[] {
+        let res: string[] = [];
 
-        let rowHeight = this.rowNode.rowHeight;
-        let rowClasses = this.getInitialRowClasses(extraCssClass).join(' ');
-        let setRowTop = !this.beans.gridOptionsWrapper.isForPrint() && !this.beans.gridOptionsWrapper.isAutoHeight();
+        let process = (rowClass: string | string[]) => {
+            if (typeof rowClass === 'string') {
+                res.push(rowClass);
+            } else if (Array.isArray(rowClass)) {
+                rowClass.forEach( e => res.push(e) );
+            }
+        };
 
-        // if sliding in, we take the old row top. otherwise we just set the current row top.
-        let rowTop = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
-        // if not setting row top, then below is empty string
-        let rowTopStr = setRowTop ? `top: ${rowTop}px; ` : ``;
+        // part 1 - rowClass
+        let rowClass = this.beans.gridOptionsWrapper.getRowClass();
+        if (rowClass) {
+            if (typeof rowClass === 'function') {
+                console.warn('ag-Grid: rowClass should not be a function, please use getRowClass instead');
+                return;
+            }
+            process(rowClass);
+        }
 
-        templateParts.push(`<div`);
-        templateParts.push(` role="row"`);
-        templateParts.push(` index="${this.rowNode.getRowIndexString()}"`);
-        templateParts.push(` rowId="${this.rowNode.id}"`);
-        templateParts.push(` compId="${this.getCompId()}"`);
-        templateParts.push(` class="${rowClasses}"`);
-        templateParts.push(` style="height: ${rowHeight}px; ${rowTopStr}">`);
+        // part 2 - rowClassFunc
+        let rowClassFunc = this.beans.gridOptionsWrapper.getRowClassFunc();
+        if (rowClassFunc) {
+            let params = {
+                node: this.rowNode,
+                data: this.rowNode.data,
+                rowIndex: this.rowNode.rowIndex,
+                context: this.beans.gridOptionsWrapper.getContext(),
+                api: this.beans.gridOptionsWrapper.getApi()
+            };
+            let rowClassFuncResult = rowClassFunc(params);
+            process(rowClassFuncResult);
+        }
 
-        // add in the template for the cells
-        templateParts.push(contents);
+        return res;
+    }
 
-        templateParts.push(`</div>`);
+    private processStylesFromGridOptions(): string {
+        let resParts: string[] = [];
 
-        return templateParts.join('');
+        // part 1 - rowStyle
+        let rowStyle = this.beans.gridOptionsWrapper.getRowStyle();
+
+        if (rowStyle && typeof rowStyle === 'function') {
+            console.log('ag-Grid: rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
+            return;
+        }
+
+        let rowStyleMarkup = _.cssStyleObjectToMarkup(rowStyle);
+        resParts.push(rowStyleMarkup);
+
+        // part 1 - rowStyleFunc
+        let rowStyleFunc = this.beans.gridOptionsWrapper.getRowStyleFunc();
+        if (rowStyleFunc) {
+            let params = {
+                data: this.rowNode.data,
+                node: this.rowNode,
+                api: this.beans.gridOptionsWrapper.getApi(),
+                context: this.beans.gridOptionsWrapper.getContext(),
+                $scope: this.scope
+            };
+            let rowStyleFuncResult = rowStyleFunc(params);
+            let rowStyleFuncResultMarkup = _.cssStyleObjectToMarkup(rowStyleFuncResult);
+            resParts.push(rowStyleFuncResultMarkup);
+        }
+
+        return resParts.join(' ');
     }
 
     private createCells(cols: Column[]): {template: string, cellComps: SlickCellComp[]} {

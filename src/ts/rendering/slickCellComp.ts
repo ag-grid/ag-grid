@@ -428,14 +428,7 @@ export class SlickCellComp extends Component implements ICellComp {
 
     private preProcessStylesFromColDef(): string {
         let stylesToUse = this.processStylesFromColDef();
-        let resParts: string[] = [];
-        if (stylesToUse) {
-            _.iterateObject(stylesToUse, (styleKey: string, styleValue: string) => {
-                let styleKeyDashed = _.camelCaseToHyphen(styleKey);
-                resParts.push(`${styleKeyDashed}: ${styleValue};`)
-            });
-        }
-        return resParts.join(' ');
+        return _.cssStyleObjectToMarkup(stylesToUse);
     }
 
     private processStylesFromColDef(): any {
