@@ -39,7 +39,7 @@ export class MenuItemComponent extends Component {
     private init() {
 
         if (this.params.checked) {
-            this.queryForHtmlElement('#eIcon').innerHTML = '<span class="ag-icon ag-icon-tick"></span>';
+            this.queryForHtmlElement('#eIcon').innerHTML = '<span class="ag-icon ag-icon-executeFrame"></span>';
         } else if (this.params.icon) {
             if (_.isNodeOrElement(this.params.icon)) {
                 this.queryForHtmlElement('#eIcon').appendChild(<HTMLElement> this.params.icon);
