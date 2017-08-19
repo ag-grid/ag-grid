@@ -231,6 +231,7 @@ export class GridOptionsWrapper {
     public isSuppressTabbing() { return isTrue(this.gridOptions.suppressTabbing); }
     public isSuppressChangeDetection() { return isTrue(this.gridOptions.suppressChangeDetection); }
     public isSlickRender() { return false; }
+    public isThrottleScroll() { return isTrue(this.gridOptions.throttleScroll); }
 
     public isSuppressAnimationFrame() { return isTrue(this.gridOptions.suppressAnimationFrame); }
     public inAnimationFrame(callback: FrameRequestCallback): number {

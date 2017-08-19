@@ -29,6 +29,7 @@ import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
 import {AlignedGridsService} from "../alignedGridsService";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 import {GridApi} from "../gridApi";
+import {TaskQueue} from "../misc/taskQueue";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -143,6 +144,7 @@ export class GridPanel extends BeanStub {
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
+    @Autowired('taskQueue') private taskQueue: TaskQueue;
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -206,8 +208,9 @@ export class GridPanel extends BeanStub {
     private eAllCellContainers: HTMLElement[];
 
     private lastLeftPosition = -1;
-    private lastTopPosition = -1;
-    private ticking = false;
+    private scrollTop = -1;
+    private nextScrollTop = -1;
+    private verticalRedrawNeeded = false;
 
     private bodyHeight: number;
 
@@ -221,6 +224,8 @@ export class GridPanel extends BeanStub {
     // used to track if pinned panels are showing, so we can turn them off if not
     private pinningRight: boolean;
     private pinningLeft: boolean;
+
+    private throttleScroll: boolean;
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('GridPanel');
@@ -267,6 +272,8 @@ export class GridPanel extends BeanStub {
 
     @PostConstruct
     private init() {
+
+        this.throttleScroll = this.gridOptionsWrapper.isThrottleScroll();
 
         this.addEventListeners();
         this.addDragListeners();
@@ -1714,31 +1721,48 @@ export class GridPanel extends BeanStub {
     }
 
     private onVerticalScroll(sourceElement: HTMLElement): void {
-        let newTopPosition = sourceElement.scrollTop;
-        if (newTopPosition !== this.lastTopPosition) {
+        let scrollTop = sourceElement.scrollTop;
 
-            // if (!this.ticking) {
-            //     this.ticking = true;
-            //     requestAnimationFrame( () => {
-
-                    let event: BodyScrollEvent = {
-                        type: Events.EVENT_BODY_SCROLL,
-                        direction: 'vertical',
-                        api: this.gridApi,
-                        columnApi: this.columnApi
-                    };
-                    this.eventService.dispatchEvent(event);
-                    this.lastTopPosition = newTopPosition;
-
-                    this.fakeVerticalScroll(newTopPosition);
-
-                    this.rowRenderer.redrawAfterScroll();
-
-            //         this.ticking = false;
-            //     });
-            // }
-
+        if (this.throttleScroll) {
+            if (this.nextScrollTop !== scrollTop) {
+                this.nextScrollTop = scrollTop;
+                this.taskQueue.schedule();
+            }
+        } else {
+            if (scrollTop !== this.scrollTop) {
+                this.scrollTop = scrollTop;
+                this.fakeVerticalScroll(scrollTop);
+                this.redrawRowsAfterScroll();
+            }
         }
+    }
+
+    public executeFrame(): boolean {
+        if (this.scrollTop !== this.nextScrollTop) {
+            this.scrollTop = this.nextScrollTop;
+
+            this.fakeVerticalScroll(this.scrollTop);
+            this.verticalRedrawNeeded = true;
+
+            return true;
+        } else if (this.verticalRedrawNeeded) {
+            this.redrawRowsAfterScroll();
+            this.verticalRedrawNeeded = false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private redrawRowsAfterScroll(): void {
+        let event: BodyScrollEvent = {
+            type: Events.EVENT_BODY_SCROLL,
+            direction: 'vertical',
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
+        this.rowRenderer.redrawAfterScroll();
     }
 
     // if LTR, we hide body scroll if pinning right (as scroll is in right pinned),

@@ -254,6 +254,7 @@ export interface GridOptions {
     navigateToNextCell?: (params: NavigateToNextCellParams)=>GridCellDef;
     tabToNextCell?: (params: TabToNextCellParams)=>GridCellDef;
     getDocument?: ()=> Document;
+    throttleScroll?: boolean;
 
     fullWidthCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     fullWidthCellRendererFramework?: any;

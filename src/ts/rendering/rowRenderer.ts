@@ -162,7 +162,7 @@ export class RowRenderer extends BeanStub {
                 if (this.gridOptionsWrapper.isSlickRender()) {
                     rowComp = new SlickRowComp(this.$scope, bodyContainerComp,
                         pinnedLeftContainerComp, pinnedRightContainerComp,
-                        fullWidthContainerComp, node, this.beans, false, null);
+                        fullWidthContainerComp, node, this.beans, false, false, null);
                 } else {
                     rowComp = new RowComp(this.$scope,
                         this, bodyContainerComp, fullWidthContainerComp,
@@ -476,7 +476,7 @@ export class RowRenderer extends BeanStub {
     // 3) ensure index visible (which is a scroll)
     public redrawAfterScroll() {
         this.getLockOnRefresh();
-        this.redraw();
+        this.redraw(null, false, true);
         this.releaseLockOnRefresh();
     }
 
@@ -510,7 +510,7 @@ export class RowRenderer extends BeanStub {
         return indexesToDraw
     }
 
-    private redraw(rowsToRecycle?: {[key: string]: RowComp}, animate = false) {
+    private redraw(rowsToRecycle?: {[key: string]: RowComp}, animate = false, afterScroll = false) {
         this.workOutFirstAndLastRowsToRender();
 
         // the row can already exist and be in the following:
@@ -540,7 +540,7 @@ export class RowRenderer extends BeanStub {
 
         let rowComps: IRowComp[] = [];
         indexesToDraw.forEach( rowIndex => {
-            let rowComp = this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, previousElements, ensureDomOrderForUpdate);
+            let rowComp = this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, previousElements, ensureDomOrderForUpdate, afterScroll);
             if (_.exists(rowComp)) {
                 rowComps.push(rowComp);
                 _.pushAll(nextVmTurnFunctions, rowComp.getAndClearNextVMTurnFunctions());
@@ -596,7 +596,7 @@ export class RowRenderer extends BeanStub {
 
     private createOrUpdateRowComp(rowIndex: number, rowsToRecycle: {[key: string]: RowComp},
                                   animate: boolean, previousElements: LastPlacedElements,
-                                  ensureDomOrderForUpdate: boolean): IRowComp {
+                                  ensureDomOrderForUpdate: boolean, afterScroll: boolean): IRowComp {
 
         let rowNode: RowNode;
 
@@ -619,7 +619,7 @@ export class RowRenderer extends BeanStub {
                 rowNode = this.paginationProxy.getRow(rowIndex);
             }
             if (_.exists(rowNode)) {
-                rowComp = this.createRowComp(rowNode, animate, previousElements);
+                rowComp = this.createRowComp(rowNode, animate, previousElements, afterScroll);
             } else {
                 // this should never happen - if somehow we are trying to create
                 // a row for a rowNode that does not exist.
@@ -780,13 +780,15 @@ export class RowRenderer extends BeanStub {
         return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
     }
 
-    private createRowComp(rowNode: RowNode, animate: boolean, previousElements: LastPlacedElements): IRowComp {
+    private createRowComp(rowNode: RowNode, animate: boolean, previousElements: LastPlacedElements, afterScroll: boolean): IRowComp {
+
+        let throttleScroll = afterScroll && this.gridOptionsWrapper.isThrottleScroll();
 
         let rowComp: IRowComp;
         if (this.gridOptionsWrapper.isSlickRender()) {
             rowComp = new SlickRowComp(this.$scope, this.rowContainers.body,
                 this.rowContainers.pinnedLeft, this.rowContainers.pinnedRight,
-                this.rowContainers.fullWidth, rowNode, this.beans, animate, previousElements);
+                this.rowContainers.fullWidth, rowNode, this.beans, animate, throttleScroll, previousElements);
         } else {
             rowComp = new RowComp(this.$scope,
                     this, this.rowContainers.body, this.rowContainers.fullWidth,

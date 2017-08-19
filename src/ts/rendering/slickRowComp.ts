@@ -78,6 +78,7 @@ export class SlickRowComp extends Component implements IRowComp {
 
     private fadeRowIn: boolean;
     private slideRowIn: boolean;
+    private throttleScroll: boolean;
 
     private rowIsEven: boolean;
 
@@ -98,6 +99,7 @@ export class SlickRowComp extends Component implements IRowComp {
                 rowNode: RowNode,
                 beans: Beans,
                 animateIn: boolean,
+                throttleScroll: boolean,
                 lastPlacedElements: LastPlacedElements) {
         super();
         this.parentScope = parentScope;
@@ -110,6 +112,7 @@ export class SlickRowComp extends Component implements IRowComp {
         this.rowIsEven = this.rowNode.rowIndex % 2 === 0;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
         this.lastPlacedElements = lastPlacedElements;
+        this.throttleScroll = throttleScroll;
 
         this.setAnimateFlags(animateIn);
     }
@@ -137,7 +140,7 @@ export class SlickRowComp extends Component implements IRowComp {
         this.executeProcessRowPostCreateFunc();
     }
 
-    private createTemplate(contents: string, extraCssClass: string): string {
+    private createTemplate(contents: string, extraCssClass: string = null): string {
         let templateParts: string[] = [];
 
         let rowHeight = this.rowNode.rowHeight;
@@ -210,14 +213,37 @@ export class SlickRowComp extends Component implements IRowComp {
         }
     }
 
+    private lazyCreateCells(cols: Column[], eRow: HTMLElement): void {
+        if (this.active) {
+            let cellTemplatesAndComps = this.createCells(cols);
+            eRow.innerHTML = cellTemplatesAndComps.template;
+            this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
+        }
+    }
+
     private createRowContainer(rowContainerComp: RowContainerComponent, cols: Column[],
                                callback: (eRow: HTMLElement) => void): void {
-        let cellTemplatesAndComps = this.createCells(cols);
-        let rowTemplate = this.createTemplate(cellTemplatesAndComps.template, null);
+
+        let cellTemplatesAndComps: {template: string, cellComps: SlickCellComp[]};
+        if (this.throttleScroll) {
+            cellTemplatesAndComps = {cellComps: [], template: ''};
+        } else {
+            cellTemplatesAndComps = this.createCells(cols);
+        }
+
+        let rowTemplate = this.createTemplate(cellTemplatesAndComps.template);
         rowContainerComp.appendRowTemplate(rowTemplate, ()=> {
             let eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
-            this.afterRowAttached(rowContainerComp, cellTemplatesAndComps.cellComps, eRow);
+            this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow);
+
+            if (this.throttleScroll) {
+                // setTimeout(()=> {
+                    this.beans.taskQueue.addTask(this.lazyCreateCells.bind(this, cols, eRow));
+                // }, 500);
+            } else {
+                this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
+            }
         });
     }
 
@@ -528,8 +554,8 @@ export class SlickRowComp extends Component implements IRowComp {
         }
     }
 
-    private insertCellsIntoContainer(eContainer: HTMLElement, cols: Column[]): void {
-        if (!eContainer) { return; }
+    private insertCellsIntoContainer(eRow: HTMLElement, cols: Column[]): void {
+        if (!eRow) { return; }
 
         let cellTemplates: string[] = [];
         let newCellComps: SlickCellComp[] = [];
@@ -542,14 +568,14 @@ export class SlickRowComp extends Component implements IRowComp {
             if (oldCell) {
                 this.ensureCellInCorrectContainer(oldCell);
             } else {
-                this.createNewCell(col, eContainer, cellTemplates, newCellComps);
+                this.createNewCell(col, eRow, cellTemplates, newCellComps);
             }
 
         });
 
         if (cellTemplates.length>0) {
-            _.appendHtml(eContainer, cellTemplates.join(''));
-            newCellComps.forEach( c => c.afterAttached() );
+            _.appendHtml(eRow, cellTemplates.join(''));
+            this.callAfterRowAttachedOnCells(newCellComps, eRow);
         }
     }
 
@@ -689,7 +715,7 @@ export class SlickRowComp extends Component implements IRowComp {
                 cellRenderer.afterGuiAttached(<IAfterGuiAttachedParams> params);
             }
 
-            this.afterRowAttached(rowContainerComp, [], eRow);
+            this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow, cellRenderer);
 
             this.angular1Compile(eRow);
@@ -949,11 +975,14 @@ export class SlickRowComp extends Component implements IRowComp {
         this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected) );
     }
 
-    private afterRowAttached(rowContainerComp: RowContainerComponent, newCellComps: SlickCellComp[], eRow: HTMLElement): void {
+    private callAfterRowAttachedOnCells(newCellComps: SlickCellComp[], eRow: HTMLElement): void {
         newCellComps.forEach( cellComp => {
             cellComp.setParentRow(eRow);
             cellComp.afterAttached();
         });
+    }
+
+    private afterRowAttached(rowContainerComp: RowContainerComponent, eRow: HTMLElement): void {
 
         this.addDomData(eRow);
 
