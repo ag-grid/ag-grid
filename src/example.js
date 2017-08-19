@@ -219,8 +219,9 @@ var gridOptions = {
     // suppressTabbing: true,
     // rowHoverClass: true,
 // isScrollLag: function() { return true; },
-// suppressScrollLag: true,
-//     layoutInterval: -1,
+suppressScrollLag: true,
+    layoutInterval: -1,
+    // throttleScroll: true,
     // suppressAnimationFrame: true,
 // floatingTopRowData: [{},{},{}],
 // floatingBottomRowData: [{},{},{}],
@@ -341,10 +342,10 @@ var defaultCols = [
                 // enablePivot: true,
                 filter: PersonFilter,
                 floatingFilterComponent: 'personFloatingFilterComponent',
-                checkboxSelection: function (params) {
-                    // we put checkbox on the name if we are not doing grouping
-                    return params.columnApi.getRowGroupColumns().length === 0;
-                },
+                // checkboxSelection: function (params) {
+                //     // we put checkbox on the name if we are not doing grouping
+                //     return params.columnApi.getRowGroupColumns().length === 0;
+                // },
                 headerCheckboxSelection: function (params) {
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
@@ -1017,8 +1018,8 @@ function booleanCellRenderer(params) {
 
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
-        //this is the unicode for tick character
-        return "<span title='true' class='ag-icon ag-icon-tick'></span>";
+        //this is the unicode for executeFrame character
+        return "<span title='true' class='ag-icon ag-icon-executeFrame'></span>";
     } else if (valueCleaned === false) {
         //this is the unicode for cross character
         return "<span title='false' class='ag-icon ag-icon-cross'></span>";
@@ -1032,8 +1033,8 @@ function booleanCellRenderer(params) {
 function booleanFilterCellRenderer(params) {
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
-        //this is the unicode for tick character
-        return "<span title='true' class='ag-icon ag-icon-tick'></span>";
+        //this is the unicode for executeFrame character
+        return "<span title='true' class='ag-icon ag-icon-executeFrame'></span>";
     } else if (valueCleaned === false) {
         //this is the unicode for cross character
         return "<span title='false' class='ag-icon ag-icon-cross'></span>";
