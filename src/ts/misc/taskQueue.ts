@@ -38,29 +38,12 @@ export class TaskQueue {
             }
             duration = (new Date().getTime()) - frameStart;
         }
-        // while (duration < 60) {
-        //     if (gridPanelNeedsAFrame) {
-        //         gridPanelNeedsAFrame = this.gridPanel.executeFrame();
-        //     } else if (this.tasks.length>0) {
-        //         let task = this.tasks[this.tasks.length - 1];
-        //         this.tasks.length = this.tasks.length - 1;
-        //         task();
-        //     } else {
-        //         break;
-        //     }
-        //     duration = (new Date().getTime()) - frameStart;
-        // }
 
         if (gridPanelNeedsAFrame || !this.tasks.isEmpty()) {
             this.requestFrame();
         } else {
             this.ticking = false;
         }
-        // if (gridPanelNeedsAFrame || this.tasks.length>0) {
-        //     this.requestFrame();
-        // } else {
-        //     this.ticking = false;
-        // }
     }
 
     public schedule(): void {
