@@ -5,11 +5,8 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="checkbox-unchecked">
-            <g id="ic_check_box_outline_blank_24px">
-                <path d="M14.25,3.75 L14.25,14.25 L3.75,14.25 L3.75,3.75 L14.25,3.75 L14.25,3.75 Z M14.25,2.25 L3.75,2.25 C2.925,2.25 2.25,2.925 2.25,3.75 L2.25,14.25 C2.25,15.075 2.925,15.75 3.75,15.75 L14.25,15.75 C15.075,15.75 15.75,15.075 15.75,14.25 L15.75,3.75 C15.75,2.925 15.075,2.25 14.25,2.25 Z" id="Shape" fill="#000000" fill-rule="nonzero"></path>
-                <polygon id="Shape" points="0 0 18 0 18 18 0 18"></polygon>
-            </g>
+        <g id="checkbox-unchecked" fill-rule="nonzero" fill="#000000">
+            <path d="M4,2 L14,2 L14,2 C15.1045695,2 16,2.8954305 16,4 L16,14 L16,14 C16,15.1045695 15.1045695,16 14,16 L4,16 L4,16 C2.8954305,16 2,15.1045695 2,14 L2,4 L2,4 C2,2.8954305 2.8954305,2 4,2 L4,2 Z M14,4 L4,4 L4,14 L14,14 L14,4 Z" id="Shape"></path>
         </g>
     </g>
 </svg>

@@ -5,11 +5,8 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="cross">
-            <g id="ic_clear_24px">
-                <polygon id="Shape" fill="#000000" fill-rule="nonzero" points="14.25 4.8075 13.1925 3.75 9 7.9425 4.8075 3.75 3.75 4.8075 7.9425 9 3.75 13.1925 4.8075 14.25 9 10.0575 13.1925 14.25 14.25 13.1925 10.0575 9"></polygon>
-                <polygon id="Shape" points="0 0 18 0 18 18 0 18"></polygon>
-            </g>
+        <g id="cross" fill-rule="nonzero" fill="#000000">
+            <polygon id="Shape" points="14.25 4.8075 13.1925 3.75 9 7.9425 4.8075 3.75 3.75 4.8075 7.9425 9 3.75 13.1925 4.8075 14.25 9 10.0575 13.1925 14.25 14.25 13.1925 10.0575 9"></polygon>
         </g>
     </g>
 </svg>

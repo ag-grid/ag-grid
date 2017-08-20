@@ -5,11 +5,8 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="next">
-            <g id="ic_expand_more_18px" transform="translate(9.000000, 9.000000) rotate(-90.000000) translate(-9.000000, -9.000000) ">
-                <polygon id="Shape" fill="#000000" fill-rule="nonzero" points="12.44 6.44 9 9.88 5.56 6.44 4.5 7.5 9 12 13.5 7.5"></polygon>
-                <polygon id="Shape" points="0 0 18 0 18 18 0 18"></polygon>
-            </g>
+        <g id="next" fill-rule="nonzero" fill="#000000">
+            <polygon id="Shape" transform="translate(8.750000, 9.000000) scale(-1, 1) rotate(90.000000) translate(-8.750000, -9.000000) " points="12.25 6.25 8.75 9.75 5.25 6.25 4.25 7.25 8.75 11.75 13.25 7.25"></polygon>
         </g>
     </g>
 </svg>

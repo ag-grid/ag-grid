@@ -5,11 +5,8 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="small-down">
-            <g id="ic_arrow_drop_down_18px">
-                <polygon id="Shape" fill="#000000" fill-rule="nonzero" points="5 8 9 12 13 8"></polygon>
-                <polygon id="Shape" points="0 0 18 0 18 18 0 18"></polygon>
-            </g>
+        <g id="small-down" fill-rule="nonzero" fill="#000000">
+            <polygon id="Shape" points="5 8 9 12 13 8"></polygon>
         </g>
     </g>
 </svg>
