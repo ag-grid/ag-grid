@@ -7,6 +7,7 @@ const rename = require("gulp-rename");
 const sass = require('gulp-sass');
 const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
+const svgo = require('postcss-svgo');
 const postcssScss = require('postcss-scss');
 const buffer = require('vinyl-buffer');
 const nib = require('nib');
@@ -162,6 +163,22 @@ function webpackTask(minify, styles) {
 }
 
 function scssTask() {
+    const svgMinOptions = {
+        plugins: [
+            { cleanupAttrs: true },
+            { removeDoctype: true },
+            { removeComments: true },
+            { removeMetadata: true },
+            { removeTitle: true },
+            { removeDesc: true },
+            { removeEditorsNSData: true },
+            { removeUselessStrokeAndFill: true },
+            { cleanupIDs: true },
+            { collapseGroups: true },
+            { convertShapeToPath: true }
+        ]
+    };
+
     // Uncompressed
     return gulp.src(['src/styles/*.scss', '!src/styles/_theme-common.scss'])
         .pipe(named())
@@ -174,7 +191,7 @@ function scssTask() {
                             fallback: 'style-loader',
                             //resolve-url-loader may be chained before sass-loader if necessary
                             use: [
-                                'css-loader', 
+                                { loader: 'css-loader', options: { minimize: true } } ,
                                 'sass-loader',
                                 { loader: 'postcss-loader', options: { syntax: 'postcss-scss', plugins: [ autoprefixer() ] } },
                             ]
@@ -183,11 +200,17 @@ function scssTask() {
                     {
                         test: /\.(svg)$/,
                         use: [
+                            'cache-loader',
                             {
                                 loader: 'url-loader',
                                 options: {
                                     limit: 8192
                                 }
+                            },
+                            {   loader: 'image-webpack-loader', 
+                                options: {
+                                    svgo: svgMinOptions
+                                } 
                             }
                         ]
                     }
