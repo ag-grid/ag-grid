@@ -16,6 +16,7 @@ $background-color: #FFFFFF;
 $editor-background: #F5F5F5;
 $panel-background: #EEEEEE;
 $border-color: #E0E0E0;
+$chip-background: #E0E0E0;
 
 $primary-font-size: 13px;
 $primary-font: "Roboto", sans-serif;
@@ -52,6 +53,7 @@ $transition-speed: 120ms;
     height: $icon-size;
     background: transparent url('./material-icons/#{$icon}.svg') center no-repeat;
     background-size: $icon-size $icon-size;
+    opacity: primary-opacity;
 }
 
 @mixin accent-icon($icon) {
@@ -294,6 +296,7 @@ $transition-speed: 120ms;
         line-height: $header-height;
         z-index: 5;
         margin: 0;
+        transform: translatey($grid-size * 2);
         padding: 0 $grid-size * 2;
 
         span, div {
@@ -505,6 +508,7 @@ $transition-speed: 120ms;
                 line-height: $group-height;
                 height: $group-height;
                 float: left;
+                width: calc(100% - #{$icon-size + $grid-size * 2});
                 clear: right;
             }
             
@@ -694,6 +698,7 @@ $transition-speed: 120ms;
             @include hide-text;
         }
     }
+
 ////////////////////////////////////////
 // Expanding headers
 ////////////////////////////////////////
@@ -703,4 +708,113 @@ $transition-speed: 120ms;
             height: 100%;
         }
     }
+
+////////////////////////////////////////
+// Header checkbox selection
+////////////////////////////////////////
+    .ag-header-select-all {
+        margin-right: $grid-size * 3;
+        height: 100%;
+
+        span {
+            height: 100%;
+        }
+    }
+
+    .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {
+        width: calc(100% - #{$icon-size} - #{$grid-size * 3});
+        float: left;
+    }
+
+////////////////////////////////////////
+// Selection checkbox
+////////////////////////////////////////
+    .ag-selection-checkbox, .ag-group-expanded, .ag-group-contracted {
+        span {
+            float: left;
+            height: 100%;
+            margin-right: $grid-size * 3;
+        }
+    }
+
+    .ag-group-expanded {
+        .ag-icon-contracted {
+            @include icon-background('tree-open');
+            height: 100%;
+        }
+    }
+
+////////////////////////////////////////
+// Column drop
+////////////////////////////////////////
+    .ag-column-drop-horizontal {
+        height: $grid-size * 6;
+        line-height: $grid-size * 4;
+        background-color: $panel-background;
+        padding-left: $grid-size * 3;
+        span {
+            height: 100%;
+            float: left;
+        }
+
+        .ag-icon-group {
+            margin-right: $grid-size * 3;
+        }
+
+        .ag-right-arrow {
+            @include icon-background('right');
+        }
+        .ag-left-arrow {
+            @include icon-background('left');
+        }
+
+        .ag-left-arrow, .ag-right-arrow {
+            @include hide-text;
+            height: 100%;
+            margin: 0 $grid-size;
+            opacity: $secondary-opacity;
+        }
+
+        .ag-column-drop-empty-message {
+            height: 100%;
+            line-height: $grid-size * 6;
+            opacity: $secondary-opacity;
+        }
+
+    }
+
+    .ag-column-drop-cell {
+        box-sizing: border-box;
+        height: $grid-size * 4 !important;
+        margin-top: $grid-size;
+        padding: 0 $grid-size / 2;
+        background: $chip-background;
+        border-radius: $grid-size * 4;
+
+        .ag-column-drop-cell-text {
+            margin:0 $grid-size;
+            height: 100%;
+            line-height: $grid-size * 4;
+        }
+
+        .ag-column-drop-cell-button {
+            @include icon-background('cancel');
+            @include hide-text;
+            height: 100%;
+            opacity: $secondary-opacity;
+            margin: 0 $grid-size / 2;
+            &:hover {
+                opacity: $primary-opacity;
+            }
+        }
+    }
+
+    .ag-column-drop-vertical > .ag-column-drop-cell {
+        margin-top: 0;
+        margin-left: $grid-size;
+        margin-bottom: $grid-size;
+        float: left;
+    }
+
 }
+
