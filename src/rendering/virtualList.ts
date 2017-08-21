@@ -1,4 +1,4 @@
-import {Component, PostConstruct, Utils} from "ag-grid/main";
+import {Environment, Autowired, Component, PostConstruct, Utils} from "ag-grid/main";
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -22,6 +22,8 @@ export class VirtualList extends Component {
 
     private rowHeight = 20;
 
+    @Autowired('environment') private environment:  Environment;
+
     constructor() {
         super(null);
     }
@@ -33,6 +35,10 @@ export class VirtualList extends Component {
         this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
 
         this.addScrollListener();
+
+        if (this.environment.getTheme() == "ag-material-next") {
+            this.rowHeight = 32;
+        }
     }
 
     public ensureIndexVisible(index: number): void {
