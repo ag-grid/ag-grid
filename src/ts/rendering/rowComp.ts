@@ -108,7 +108,7 @@ export class RowComp extends Component {
     private editingRow: boolean;
     private rowFocused: boolean;
 
-    private slickCellComps: {[key: string]: CellComp} = {};
+    private cellComps: {[key: string]: CellComp} = {};
 
     // for animations, there are bits we want done in the next VM turn, to all DOM to update first.
     // instead of each row doing a setTimeout(func,0), we put the functions here and the rowRenderer
@@ -218,7 +218,7 @@ export class RowComp extends Component {
     }
 
     public getCellForCol(column: Column): HTMLElement {
-        let cellComp = this.slickCellComps[column.getColId()];
+        let cellComp = this.cellComps[column.getColId()];
         if (cellComp) {
             return cellComp.getGui();
         } else {
@@ -463,7 +463,7 @@ export class RowComp extends Component {
     // when grid columns change, then all cells should be cleaned out,
     // as the new columns could have same id as the previous columns and may conflict
     private onGridColumnsChanged(): void {
-        let allRenderedCellIds = Object.keys(this.slickCellComps);
+        let allRenderedCellIds = Object.keys(this.cellComps);
         this.removeRenderedCells(allRenderedCellIds);
     }
 
@@ -561,7 +561,7 @@ export class RowComp extends Component {
         this.insertCellsIntoContainer(this.ePinnedLeftRow, leftCols);
         this.insertCellsIntoContainer(this.ePinnedRightRow, rightCols);
 
-        let colIdsToRemove = Object.keys(this.slickCellComps);
+        let colIdsToRemove = Object.keys(this.cellComps);
         centerCols.forEach( (col: Column) => _.removeFromArray(colIdsToRemove, col.getId()));
         leftCols.forEach( (col: Column) => _.removeFromArray(colIdsToRemove, col.getId()));
         rightCols.forEach( (col: Column) => _.removeFromArray(colIdsToRemove, col.getId()));
@@ -576,13 +576,13 @@ export class RowComp extends Component {
 
     private removeRenderedCells(colIds: string[]): void {
         colIds.forEach( (key: string)=> {
-            let slickCellComp = this.slickCellComps[key];
+            let cellComp = this.cellComps[key];
             // could be old reference, ie removed cell
-            if (_.missing(slickCellComp)) { return; }
+            if (_.missing(cellComp)) { return; }
 
-            slickCellComp.detach();
-            slickCellComp.destroy();
-            this.slickCellComps[key] = null;
+            cellComp.detach();
+            cellComp.destroy();
+            this.cellComps[key] = null;
         });
     }
 
@@ -591,7 +591,7 @@ export class RowComp extends Component {
 
         let REMOVE_CELL : boolean = true;
         let KEEP_CELL : boolean = false;
-        let renderedCell = this.slickCellComps[indexStr];
+        let renderedCell = this.cellComps[indexStr];
 
         if (!renderedCell) { return REMOVE_CELL; }
 
@@ -613,14 +613,14 @@ export class RowComp extends Component {
         }
     }
 
-    private ensureCellInCorrectContainer(slickCellComp: CellComp): void {
-        let eCell = slickCellComp.getGui();
-        let column = slickCellComp.getColumn();
+    private ensureCellInCorrectContainer(cellComp: CellComp): void {
+        let eCell = cellComp.getGui();
+        let column = cellComp.getColumn();
         let pinnedType = column.getPinned();
         let eContainer = this.getContainerForCell(pinnedType);
 
         // if in wrong container, remove it
-        let eOldContainer = slickCellComp.getParentRow();
+        let eOldContainer = cellComp.getParentRow();
         let inWrongRow = eOldContainer !== eContainer;
         if (inWrongRow) {
             // take out from old row
@@ -629,7 +629,7 @@ export class RowComp extends Component {
             }
 
             eContainer.appendChild(eCell);
-            slickCellComp.setParentRow(eContainer);
+            cellComp.setParentRow(eContainer);
         }
     }
 
@@ -651,7 +651,7 @@ export class RowComp extends Component {
         cols.forEach( col => {
 
             let colId = col.getId();
-            let oldCell = this.slickCellComps[colId];
+            let oldCell = this.cellComps[colId];
 
             if (oldCell) {
                 this.ensureCellInCorrectContainer(oldCell);
@@ -680,7 +680,7 @@ export class RowComp extends Component {
         let cellTemplate = newCellComp.getCreateTemplate();
         cellTemplates.push(cellTemplate);
         newCellComps.push(newCellComp);
-        this.slickCellComps[col.getId()] = newCellComp;
+        this.cellComps[col.getId()] = newCellComp;
         newCellComp.setParentRow(eContainer);
     }
 
@@ -949,7 +949,7 @@ export class RowComp extends Component {
     }
 
     public forEachCellComp(callback: (renderedCell: CellComp)=>void): void {
-        _.iterateObject(this.slickCellComps, (key: any, cellComp: CellComp)=> {
+        _.iterateObject(this.cellComps, (key: any, cellComp: CellComp)=> {
             if (cellComp) {
                 callback(cellComp);
             }
@@ -1049,7 +1049,7 @@ export class RowComp extends Component {
             let cellTemplate = newCellComp.getCreateTemplate();
             templateParts.push(cellTemplate);
             newCellComps.push(newCellComp);
-            this.slickCellComps[col.getId()] = newCellComp;
+            this.cellComps[col.getId()] = newCellComp;
         });
         let templateAndComps = {
             template: templateParts.join(''),
@@ -1281,7 +1281,7 @@ export class RowComp extends Component {
     }
 
     public getRenderedCellForColumn(column: Column): CellComp {
-        return this.slickCellComps[column.getColId()];
+        return this.cellComps[column.getColId()];
     }
 
     private onRowIndexChanged(): void {
