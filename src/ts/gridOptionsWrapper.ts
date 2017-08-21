@@ -664,6 +664,8 @@ export class GridOptionsWrapper {
         return !isNaN(value) && typeof value === 'number';
     }
 
+    // Material data table has strict guidelines about whitespace, and these values are different than the ones 
+    // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
     private specialForMaterialNext(defaultValue: number, materialNextValue: number): number {
             if (this.environment.getTheme() == "ag-material-next") {
                 return materialNextValue;
