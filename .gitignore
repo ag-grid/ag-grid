@@ -21,3 +21,4 @@ dist/
 
 .sass-cache
 .DS_Store
+.cache-loader
