@@ -666,4 +666,30 @@ $transition-speed: 120ms;
             }
         }
     }
+
+////////////////////////////////////////
+// Floating filter
+////////////////////////////////////////
+    .ag-floating-filter-body {
+        float: left;
+        width: calc(100% - #{$grid-size} * 4);
+        margin-right: 0;
+        height: 100%;
+        padding-top: $grid-size * 2;
+
+        input {
+            @include simple-material-textbox;
+        }
+    }
+
+    .ag-floating-filter-button {
+        padding-top: $grid-size * 2.5;
+        float: right;
+        button {
+            @include simple-material-flat-button;
+            @include icon-background('filter');
+            text-indent: 1000px;
+            overflow: hidden;
+        }
+    }
 }

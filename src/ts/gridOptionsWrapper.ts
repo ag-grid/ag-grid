@@ -27,6 +27,7 @@ import {BaseExportParams, ProcessCellForExportParams} from "./exportParams";
 import {AgEvent} from "./events";
 import {Column} from "./entities/column";
 import { DefaultColumnTypes } from "./entities/defaultColumnTypes";
+import { Environment } from "./environment";
 
 let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -82,6 +83,7 @@ export class GridOptionsWrapper {
     @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('environment') private environment: Environment;
 
     private propertyEventService: EventService = new EventService();
 
@@ -396,7 +398,7 @@ export class GridOptionsWrapper {
         if (typeof this.gridOptions.headerHeight === 'number') {
             return this.gridOptions.headerHeight;
         } else {
-            return 25;
+            return this.specialForMaterialNext(25, 8 * 7);
         }
     }
 
@@ -404,7 +406,7 @@ export class GridOptionsWrapper {
         if (typeof this.gridOptions.floatingFiltersHeight === 'number') {
             return this.gridOptions.floatingFiltersHeight;
         } else {
-            return 25;
+            return this.specialForMaterialNext(25, 8 * 7);
         }
     }
 
@@ -626,12 +628,12 @@ export class GridOptionsWrapper {
     public getRowHeightAsNumber(): number {
         let rowHeight = this.gridOptions.rowHeight;
         if (_.missing(rowHeight)) {
-            return DEFAULT_ROW_HEIGHT;
+            return this.getDefaultRowHeight();
         } else if (this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
         } else {
             console.warn('ag-Grid row height must be a number if not using standard row model');
-            return DEFAULT_ROW_HEIGHT;
+            return this.getDefaultRowHeight();
         }
     }
 
@@ -650,7 +652,7 @@ export class GridOptionsWrapper {
         } else if (this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
         } else {
-            return DEFAULT_ROW_HEIGHT;
+            return this.getDefaultRowHeight();
         }
     }
 
@@ -660,5 +662,17 @@ export class GridOptionsWrapper {
 
     private isNumeric(value:any) {
         return !isNaN(value) && typeof value === 'number';
+    }
+
+    private specialForMaterialNext(defaultValue: number, materialNextValue: number): number {
+            if (this.environment.getTheme() == "ag-material-next") {
+                return materialNextValue;
+            } else {
+                return defaultValue;
+            }
+    }
+
+    private getDefaultRowHeight() {
+        return this.specialForMaterialNext(DEFAULT_ROW_HEIGHT, 8 * 6);
     }
 }
