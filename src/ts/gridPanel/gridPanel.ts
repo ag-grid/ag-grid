@@ -16,7 +16,6 @@ import {MouseEventService} from "./mouseEventService";
 import {IClipboardService} from "../interfaces/iClipboardService";
 import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
-import {IRowComp, RowComp} from "../rendering/rowComp";
 import {SetScrollsVisibleParams, ScrollVisibleService} from "./scrollVisibleService";
 import {BeanStub} from "../context/beanStub";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
@@ -30,7 +29,7 @@ import {AlignedGridsService} from "../alignedGridsService";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 import {GridApi} from "../gridApi";
 import {AnimationFrameService} from "../misc/animationFrameService";
-import {SlickRowComp} from "../rendering/slickRowComp";
+import {RowComp} from "../rendering/rowComp";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -460,13 +459,13 @@ export class GridPanel extends BeanStub {
         this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener)
     }
 
-    private getRowForEvent(event: MouseEvent | KeyboardEvent): IRowComp {
+    private getRowForEvent(event: MouseEvent | KeyboardEvent): RowComp {
 
         let sourceElement = _.getTarget(event);
 
         while (sourceElement) {
 
-            let renderedRow = this.gridOptionsWrapper.getDomData(sourceElement, SlickRowComp.DOM_DATA_KEY_RENDERED_ROW);
+            let renderedRow = this.gridOptionsWrapper.getDomData(sourceElement, RowComp.DOM_DATA_KEY_RENDERED_ROW);
             if (renderedRow) {
                 return renderedRow;
             }
@@ -720,7 +719,7 @@ export class GridPanel extends BeanStub {
             cellComp.onMouseEvent(eventName, mouseEvent);
         }
 
-        let rowComp: IRowComp = this.getRowForEvent(mouseEvent);
+        let rowComp: RowComp = this.getRowForEvent(mouseEvent);
         if (rowComp) {
             rowComp.onMouseEvent(eventName, mouseEvent);
         }

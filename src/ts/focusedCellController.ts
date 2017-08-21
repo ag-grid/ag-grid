@@ -6,11 +6,9 @@ import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {ColumnApi, ColumnController} from "./columnController/columnController";
 import {Utils as _} from "./utils";
 import {GridCell} from "./entities/gridCell";
-import {Constants} from "./constants";
 import {RowNode} from "./entities/rowNode";
 import {GridApi} from "./gridApi";
-import {CellComp, ICellComp} from "./rendering/cellComp";
-import {SlickCellComp} from "./rendering/slickCellComp";
+import {CellComp} from "./rendering/cellComp";
 
 @Bean('focusedCellController')
 export class FocusedCellController {
@@ -78,7 +76,7 @@ export class FocusedCellController {
 
         let ePointer = eBrowserCell;
         while (ePointer) {
-            let cellComp = <ICellComp> this.gridOptionsWrapper.getDomData(ePointer, SlickCellComp.DOM_DATA_KEY_CELL_COMP);
+            let cellComp = <CellComp> this.gridOptionsWrapper.getDomData(ePointer, CellComp.DOM_DATA_KEY_CELL_COMP);
             if (cellComp) {
                 return cellComp.getGridCell();
             }

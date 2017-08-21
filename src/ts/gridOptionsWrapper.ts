@@ -230,7 +230,6 @@ export class GridOptionsWrapper {
     public isRowHoverClass() { return isTrue(this.gridOptions.rowHoverClass); }
     public isSuppressTabbing() { return isTrue(this.gridOptions.suppressTabbing); }
     public isSuppressChangeDetection() { return isTrue(this.gridOptions.suppressChangeDetection); }
-    public isSlickRender() { return true; }
     public isSuppressAnimationFrame() { return isTrue(this.gridOptions.suppressAnimationFrame); }
 
     public getQuickFilterText(): string { return this.gridOptions.quickFilterText; }
