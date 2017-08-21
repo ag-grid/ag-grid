@@ -641,13 +641,6 @@ include '../documentation-main/documentation_header.php';
             <td>Allows <a href="../javascript-grid-context-menu">context menu</a> to show, even when ctrl key is held down.</td>
         </tr>
         <tr>
-            <th>suppressEnterprise</th>
-            <td>
-                Turn off enterprise features. This is used by ag-Grid testers, mentioned
-                here in case someone is looking at the code and wondering.
-            </td>
-        </tr>
-        <tr>
             <th>enableStatusBar</th>
             <td>
                 When true, the <a href="../javascript-grid-status-bar">status bar</a> appear at the bottom of the

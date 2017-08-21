@@ -123,14 +123,13 @@ var gridOptions = {
     floatingFilter:true,
 //debug: true,
 //     editType: 'fullRow',
-    suppressEnterprise: true,
 //     debug: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     pivotTotals: true,
 //minColWidth: 50,
 //maxColWidth: 300,
-    rowBuffer: 0,
+    rowBuffer: 10,
 //columnDefs: [],
 //singleClickEdit: true,
 // suppressClickEdit: true,
@@ -220,9 +219,8 @@ var gridOptions = {
     // rowHoverClass: true,
 // isScrollLag: function() { return true; },
 suppressScrollLag: true,
-    layoutInterval: -1,
-    // throttleScroll: true,
-    // suppressAnimationFrame: true,
+    // layoutInterval: -1,
+// suppressAnimationFrame: true,
 // floatingTopRowData: [{},{},{}],
 // floatingBottomRowData: [{},{},{}],
 // callback when row clicked
