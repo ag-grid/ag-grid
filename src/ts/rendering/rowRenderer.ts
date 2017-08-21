@@ -537,7 +537,6 @@ export class RowRenderer extends BeanStub {
             }
         });
 
-        // this needed for slick rendering
         this.flushContainers(rowComps);
 
         _.executeNextVMTurn(nextVmTurnFunctions);
