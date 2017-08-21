@@ -101,6 +101,10 @@ $transition-speed: 120ms;
     margin: 0;
 }
 
+@mixin hide-text {
+    text-indent: 100%;
+    overflow: hidden;
+}
 .ag-material-next {
     font: $primary-weight $primary-font-size $primary-font;
     color: $primary;
@@ -579,9 +583,8 @@ $transition-speed: 120ms;
                 padding: 0;
 
                 @include icon-background($icon);
+                @include hide-text;
                 opacity: $secondary-opacity;
-                text-indent: 100%;
-                overflow: hidden;
 
                 &[disabled] {
                     opacity: $disabled-opacity;
@@ -688,8 +691,7 @@ $transition-speed: 120ms;
         button {
             @include simple-material-flat-button;
             @include icon-background('filter');
-            text-indent: 1000px;
-            overflow: hidden;
+            @include hide-text;
         }
     }
 }
