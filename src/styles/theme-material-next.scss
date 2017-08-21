@@ -694,4 +694,13 @@ $transition-speed: 120ms;
             @include hide-text;
         }
     }
+////////////////////////////////////////
+// Expanding headers
+////////////////////////////////////////
+    .ag-header-group-cell-label {
+        span {
+            float: left;
+            height: 100%;
+        }
+    }
 }
