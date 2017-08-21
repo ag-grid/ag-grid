@@ -48,8 +48,7 @@ export class CellComp extends Component {
     // true if we are using a cell renderer
     private usingCellRenderer: boolean;
     // the cellRenderer class to use - this is decided once when the grid is initialised
-    private cellRendererKey: {new(): ICellRendererComp} | ICellRendererFunc | string;
-    private cellRendererParams: any;
+    private cellRendererType: string;
 
     // instance of the cellRenderer class
     private cellRenderer: ICellRendererComp;
@@ -532,8 +531,7 @@ export class CellComp extends Component {
         // if the cell renderer has a refresh method, we call this instead of doing a refresh
         // note: should pass in params here instead of value?? so that client has formattedValue
         let valueFormatted = this.formatValue(this.value);
-        let cellRendererParams = this.column.getColDef().cellRendererParams;
-        let params = this.createCellRendererParams(valueFormatted, cellRendererParams);
+        let params = this.createCellRendererParams(valueFormatted);
         let result: boolean | void = this.cellRenderer.refresh(params);
 
         // NOTE on undefined: previous version of the cellRenderer.refresh() interface
@@ -650,15 +648,13 @@ export class CellComp extends Component {
         }
 
         let cellRenderer = this.column.getCellRenderer();
-        let floatingCellRenderer = this.column.getFloatingCellRenderer();
+        let pinnedRowCellRenderer = this.column.getFloatingCellRenderer();
 
-        if (floatingCellRenderer && this.rowNode.rowPinned) {
-            this.cellRendererKey = floatingCellRenderer;
-            this.cellRendererParams = colDef.pinnedRowCellRendererParams;
+        if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
+            this.cellRendererType = 'pinnedRowCellRenderer';
             this.usingCellRenderer = true;
         } else if (cellRenderer) {
-            this.cellRendererKey = cellRenderer;
-            this.cellRendererParams = colDef.cellRendererParams;
+            this.cellRendererType = 'cellRenderer';
             this.usingCellRenderer = true;
         } else {
             this.usingCellRenderer = false;
@@ -667,12 +663,9 @@ export class CellComp extends Component {
 
     private createCellRendererInstance(): void {
         let valueToRender = this.formatValue(this.value);
-        let params = this.createCellRendererParams(valueToRender, this.cellRendererParams);
+        let params = this.createCellRendererParams(valueToRender);
 
-        // todo - ALBERTO - need a new method here that takes this.cellRenderer key and this.cellRendererParams,
-        // todo -   otherwise no way to use pinned cellRenderer vs normal cellRenderer. also in the future, we may allow
-        // todo -   the user to provide a difference cell renderer for different rows
-        this.cellRenderer = this.beans.componentRecipes.newCellRenderer(this.column.getColDef(), params);
+        this.cellRenderer = this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType);
         this.cellRendererGui = this.cellRenderer.getGui();
     }
 
@@ -725,7 +718,7 @@ export class CellComp extends Component {
         }
     }
 
-    private createCellRendererParams(valueFormatted: string, cellRendererParams: {}): ICellRendererParams {
+    private createCellRendererParams(valueFormatted: string): ICellRendererParams {
 
         let params = <ICellRendererParams> {
             value: this.value,
@@ -759,10 +752,6 @@ export class CellComp extends Component {
                 this.rowComp.addEventListener(eventType, listener);
             }
         };
-
-        if (cellRendererParams) {
-            _.assign(params, cellRendererParams);
-        }
 
         return params;
     }

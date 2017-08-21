@@ -10,7 +10,6 @@ import {AgGridComponentFunctionInput, AgGridRegisteredComponentInput} from "./co
 import {AgComponentUtils} from "./agComponentUtils";
 import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
 
-
 export type ComponentHolder = GridOptions | ColDef | ColGroupDef;
 
 export type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string;
@@ -58,41 +57,6 @@ export class ComponentResolver {
     @Optional ("frameworkComponentWrapper")
     private frameworkComponentWrapper: FrameworkComponentWrapper;
 
-
-    /**
-     * This method creates a component given everything needed to guess what sort of component needs to be instantiated
-     * It takes
-     *  @param holder: This is the context for which this component needs to be created, it can be gridOptions
-     *      (global) or columnDef mostly.
-     *  @param agGridParams: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
-     *      specified by the user in the configuration
-     *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
-     *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param componentNameOpt: The actual name of the component to instantiate, this is usually the same as propertyName, but in
-     *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
-     *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
-     *      component found, it throws an error, by default all components are MANDATORY
-     */
-    public createAgGridComponent<A extends IComponent<any>> (
-        holder:ComponentHolder,
-        agGridParams:any,
-        propertyName:string,
-        componentNameOpt?:string,
-        mandatory:boolean = true
-    ): A{
-        let componentName:string = componentNameOpt == null ? propertyName : componentNameOpt;
-
-        //Create the component instance
-        let component: A = <A>this.newAgGridComponent(holder, propertyName, componentName, mandatory);
-        if (!component) return null;
-
-        //Wire the component and call the init mehtod with the correct params
-        let finalParams = this.mergeParams(holder, propertyName, agGridParams);
-
-        this.context.wireBean(component);
-        component.init(finalParams);
-        return component;
-    }
 
     /**
      * This method returns the underlying representation of the component to be created. ie for Javascript the
@@ -213,7 +177,6 @@ export class ComponentResolver {
         return this.namedComponentResolver.resolve(propertyName, componentNameToUse);
     }
 
-
     /**
      * Useful to check what would be the resultant params for a given object
      *  @param holder: This is the context for which this component needs to be created, it can be gridOptions
@@ -238,6 +201,43 @@ export class ComponentResolver {
             finalParams.api = this.gridOptions.api;
         }
         return finalParams;
+    }
+
+
+    /**
+     * This method creates a component given everything needed to guess what sort of component needs to be instantiated
+     * It takes
+     *  @param holder: This is the context for which this component needs to be created, it can be gridOptions
+     *      (global) or columnDef mostly.
+     *  @param agGridParams: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
+     *      specified by the user in the configuration
+     *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
+     *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
+     *  @param componentNameOpt: The actual name of the component to instantiate, this is usually the same as propertyName, but in
+     *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
+     *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
+     *      component found, it throws an error, by default all components are MANDATORY
+     */
+    public createAgGridComponent<A extends IComponent<any>> (
+        holderOpt:ComponentHolder,
+        agGridParams:any,
+        propertyName:string,
+        componentNameOpt?:string,
+        mandatory:boolean = true
+    ): A{
+        let holder:ComponentHolder = holderOpt == null ? this.gridOptions : holderOpt;
+        let componentName:string = componentNameOpt == null ? propertyName : componentNameOpt;
+
+        //Create the component instance
+        let component: A = <A>this.newAgGridComponent(holder, propertyName, componentName, mandatory);
+        if (!component) return null;
+
+        //Wire the component and call the init mehtod with the correct params
+        let finalParams = this.mergeParams(holder, propertyName, agGridParams);
+
+        this.context.wireBean(component);
+        component.init(finalParams);
+        return component;
     }
 
     private newAgGridComponent<A extends IComponent<any> & B, B>

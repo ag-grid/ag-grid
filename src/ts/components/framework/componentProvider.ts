@@ -16,6 +16,7 @@ import {GroupCellRenderer} from "../../rendering/cellRenderers/groupCellRenderer
 import {AnimateShowChangeCellRenderer} from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
 import {AnimateSlideCellRenderer} from "../../rendering/cellRenderers/animateSlideCellRenderer";
 import {DefaultCellRenderer} from "./agComponentUtils";
+import {LoadingCellRenderer} from "../../rendering/rowComp";
 
 
 export enum RegisteredComponentSource {
@@ -75,7 +76,9 @@ export class ComponentProvider {
             innerRenderer: DefaultCellRenderer,
             animateShowChange: AnimateShowChangeCellRenderer,
             animateSlide: AnimateSlideCellRenderer,
-            group: GroupCellRenderer
+            group: GroupCellRenderer,
+            groupRowRenderer: GroupCellRenderer,
+            loadingCellRenderer: LoadingCellRenderer
         }
     }
 

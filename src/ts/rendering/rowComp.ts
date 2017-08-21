@@ -24,7 +24,7 @@ import {ProcessRowParams} from "../entities/gridOptions";
 import {IAfterGuiAttachedParams} from "../interfaces/iComponent";
 
 
-export class TempStubCell extends Component {
+export class LoadingCellRenderer extends Component {
 
     private static TEMPLATE =
         `<div class="ag-stub-cell">
@@ -38,7 +38,7 @@ export class TempStubCell extends Component {
     @RefSelector('eLoadingText') private eLoadingText: HTMLElement;
 
     constructor() {
-        super(TempStubCell.TEMPLATE);
+        super(LoadingCellRenderer.TEMPLATE);
     }
 
     public init(params: ICellRendererParams): void {
@@ -69,8 +69,11 @@ export interface LastPlacedElements {
 export class RowComp extends Component {
 
     public static EVENT_ROW_REMOVED = 'rowRemoved';
-
     public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
+
+    private static FULL_WIDTH_CELL_RENDERER = 'fullWidthCellRenderer';
+    private static GROUP_ROW_RENDERER = 'groupRowRenderer';
+    private static LOADING_CELL_RENDERER = 'loadingCellRenderer';
 
     private renderedRowEventService: EventService;
 
@@ -319,9 +322,9 @@ export class RowComp extends Component {
     private setupRowStub(): void {
         this.fullWidthRow = true;
         this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-        this.fullWidthCellRenderer = TempStubCell;
+        this.fullWidthCellRenderer = LoadingCellRenderer;
 
-        this.createFullWidthRows();
+        this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER);
     }
 
     private setupRowContainers(): void {
@@ -348,11 +351,7 @@ export class RowComp extends Component {
         this.fullWidthCellRenderer = this.beans.gridOptionsWrapper.getFullWidthCellRenderer();
         this.fullWidthCellRendererParams = this.beans.gridOptionsWrapper.getFullWidthCellRendererParams();
 
-        if (_.missing(this.fullWidthCellRenderer)) {
-            console.warn(`ag-Grid: you need to provide a fullWidthCellRenderer if using isFullWidthCell()`);
-        }
-
-        this.createFullWidthRows();
+        this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER);
     }
 
     private setupFullWidthGroupContainers(): void {
@@ -361,7 +360,7 @@ export class RowComp extends Component {
         this.fullWidthCellRenderer = this.beans.gridOptionsWrapper.getFullWidthCellRenderer();
         this.fullWidthCellRendererParams = this.beans.gridOptionsWrapper.getFullWidthCellRendererParams();
 
-        this.createFullWidthRows();
+        this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER);
     }
 
     private setupNormalRowContainers(): void {
@@ -374,21 +373,24 @@ export class RowComp extends Component {
         this.createRowContainer(this.pinnedLeftContainerComp, leftCols, eRow => this.ePinnedLeftRow = eRow);
     }
 
-    private createFullWidthRows(): void {
+    private createFullWidthRows(type: string): void {
 
         if (this.fullWidthRowEmbedded) {
 
-            this.createFullWidthRowContainer(this.bodyContainerComp, null, null,
+            this.createFullWidthRowContainer(this.bodyContainerComp, null,
+                null, type,
                 (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
                     this.eFullWidthRowBody = eRow;
                     this.fullWidthRowComponentBody = cellRenderer;
                 });
-            this.createFullWidthRowContainer(this.pinnedLeftContainerComp, Column.PINNED_LEFT, 'ag-cell-last-left-pinned',
+            this.createFullWidthRowContainer(this.pinnedLeftContainerComp, Column.PINNED_LEFT,
+                'ag-cell-last-left-pinned', type,
                 (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
                     this.eFullWidthRowLeft = eRow;
                     this.fullWidthRowComponentLeft = cellRenderer;
                 });
-            this.createFullWidthRowContainer(this.pinnedRightContainerComp, Column.PINNED_RIGHT, 'ag-cell-first-right-pinned',
+            this.createFullWidthRowContainer(this.pinnedRightContainerComp, Column.PINNED_RIGHT,
+                'ag-cell-first-right-pinned', type,
                 (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
                     this.eFullWidthRowRight = eRow;
                     this.fullWidthRowComponentRight = cellRenderer;
@@ -398,7 +400,8 @@ export class RowComp extends Component {
 
             // otherwise we add to the fullWidth container as normal
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
-            this.createFullWidthRowContainer(this.fullWidthContainerComp, null, null,
+            this.createFullWidthRowContainer(this.fullWidthContainerComp, null,
+                null, type,
                 (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
                     this.eFullWidthRow = eRow;
                     this.fullWidthRowComponent = cellRenderer;
@@ -770,12 +773,13 @@ export class RowComp extends Component {
         }
     }
 
-    private createFullWidthRowContainer(rowContainerComp: RowContainerComponent, pinned: string, extraCssClass: string,
+    private createFullWidthRowContainer(rowContainerComp: RowContainerComponent, pinned: string,
+                                        extraCssClass: string, cellRendererType: string,
                                         callback: (eRow: HTMLElement, comp: ICellRendererComp) => void): void {
 
         let params = this.createFullWidthParams(pinned);
 
-        let cellRenderer = this.beans.componentRecipes.newFullRowGroupRenderer (params);
+        let cellRenderer = this.beans.componentResolver.createAgGridComponent<ICellRendererComp>(null, params, cellRendererType);
 
         let gui = cellRenderer.getGui();
         let guiIsTemplate = typeof gui === 'string';
@@ -836,10 +840,6 @@ export class RowComp extends Component {
                 cellRendererParams: this.fullWidthCellRendererParams
             }
         };
-
-        if (this.fullWidthCellRendererParams) {
-            _.assign(params, this.fullWidthCellRendererParams);
-        }
 
         return params;
     }
