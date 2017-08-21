@@ -1,9 +1,11 @@
 // ag-grid-react v12.0.0
 /// <reference types="react" />
-import * as React from "react";
 import { Component } from "react";
 import * as AgGrid from "ag-grid";
-export declare class AgGridReact extends Component<any, any> {
+import { GridOptions } from "ag-grid";
+export interface AgGridReactProps extends GridOptions {
+}
+export declare class AgGridReact extends Component<AgGridReactProps, {}> {
     props: any;
     state: any;
     static propTypes: any;
@@ -12,12 +14,14 @@ export declare class AgGridReact extends Component<any, any> {
     columnApi: AgGrid.ColumnApi;
     protected eGridDiv: HTMLElement;
     constructor(props: any, state: any);
-    render(): React.DetailedReactHTMLElement<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
+    render(): any;
     createStyleForDiv(): any;
     componentDidMount(): void;
     shouldComponentUpdate(): boolean;
     componentWillReceiveProps(nextProps: any): void;
     componentWillUnmount(): void;
     static unwrapStringOrNumber(obj: any): any;
+    copyObject(obj: any): any;
     areEquivalent(a: any, b: any): boolean;
+    static areEquivalent(a: any, b: any): boolean;
 }
