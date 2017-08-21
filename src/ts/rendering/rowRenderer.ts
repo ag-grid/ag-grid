@@ -552,7 +552,11 @@ export class RowRenderer extends BeanStub {
 
         _.executeNextVMTurn(nextVmTurnFunctions);
 
-        this.destroyRowComps(rowsToRecycle, animate);
+        if (afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame()) {
+            this.beans.taskQueue.addP2Task(this.destroyRowComps.bind(this, rowsToRecycle, animate));
+        } else {
+            this.destroyRowComps(rowsToRecycle, animate);
+        }
 
         this.checkAngularCompile();
     }
@@ -782,7 +786,7 @@ export class RowRenderer extends BeanStub {
 
     private createRowComp(rowNode: RowNode, animate: boolean, previousElements: LastPlacedElements, afterScroll: boolean): IRowComp {
 
-        let throttleScroll = afterScroll && this.gridOptionsWrapper.isThrottleScroll();
+        let throttleScroll = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame();
 
         let rowComp: IRowComp;
         if (this.gridOptionsWrapper.isSlickRender()) {

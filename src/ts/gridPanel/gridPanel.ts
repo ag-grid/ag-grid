@@ -29,7 +29,7 @@ import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
 import {AlignedGridsService} from "../alignedGridsService";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 import {GridApi} from "../gridApi";
-import {TaskQueue} from "../misc/taskQueue";
+import {AnimationFrameService} from "../misc/animationFrameService";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -144,7 +144,7 @@ export class GridPanel extends BeanStub {
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
-    @Autowired('taskQueue') private taskQueue: TaskQueue;
+    @Autowired('animationFrameService') private taskQueue: AnimationFrameService;
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -273,7 +273,7 @@ export class GridPanel extends BeanStub {
     @PostConstruct
     private init() {
 
-        this.throttleScroll = this.gridOptionsWrapper.isThrottleScroll();
+        this.throttleScroll = !this.gridOptionsWrapper.isSuppressAnimationFrame();
 
         this.addEventListeners();
         this.addDragListeners();

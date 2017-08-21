@@ -70,7 +70,7 @@ import {ComponentMetadataProvider} from "./components/framework/componentMetadat
 import {NamedComponentResolver} from "./components/framework/namedComponentResolver";
 import {Beans} from "./rendering/beans";
 import {Environment} from "./environment";
-import {TaskQueue} from "./misc/taskQueue";
+import {AnimationFrameService} from "./misc/animationFrameService";
 
 export interface GridParams {
     // used by Web Components
@@ -170,7 +170,7 @@ export class Grid {
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService, RowNodeFactory,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
                 ColumnHoverService, ColumnAnimationService, SortService, AutoGroupColService, ImmutableService,
-                ChangeDetectionService, Environment, Beans, TaskQueue],
+                ChangeDetectionService, Environment, Beans, AnimationFrameService],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],

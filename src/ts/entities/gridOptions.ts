@@ -104,7 +104,6 @@ export interface GridOptions {
     pivotMode?: boolean;
     pivotTotals?: boolean;
     enableRangeSelection?: boolean;
-    suppressEnterprise?: boolean;
     // enterprise only
     rowGroupPanelShow?: string;
     pivotPanelShow?: string;
@@ -254,7 +253,6 @@ export interface GridOptions {
     navigateToNextCell?: (params: NavigateToNextCellParams)=>GridCellDef;
     tabToNextCell?: (params: TabToNextCellParams)=>GridCellDef;
     getDocument?: ()=> Document;
-    throttleScroll?: boolean;
 
     fullWidthCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     fullWidthCellRendererFramework?: any;

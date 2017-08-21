@@ -239,7 +239,7 @@ export class SlickRowComp extends Component implements IRowComp {
 
             if (this.throttleScroll) {
                 // setTimeout(()=> {
-                    this.beans.taskQueue.addTask(this.lazyCreateCells.bind(this, cols, eRow));
+                    this.beans.taskQueue.addP1Task(this.lazyCreateCells.bind(this, cols, eRow));
                 // }, 500);
             } else {
                 this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
@@ -1096,9 +1096,7 @@ export class SlickRowComp extends Component implements IRowComp {
         // why do we have this method? shouldn't everything below be added as a destroy func beside
         // the corresponding create logic?
 
-        // fixme
-        // this.destroyScope();
-        // this.destroyFullWidthComponent();
+        this.destroyFullWidthComponents();
 
         if (animate) {
 
