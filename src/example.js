@@ -221,8 +221,8 @@ var gridOptions = {
 suppressScrollLag: true,
     // layoutInterval: -1,
 // suppressAnimationFrame: true,
-// floatingTopRowData: [{},{},{}],
-// floatingBottomRowData: [{},{},{}],
+//     pinnedTopRowData: [{},{},{}],
+//     pinnedBottomRowData: [{},{},{}],
 // callback when row clicked
 //     stopEditingWhenGridLosesFocus: true,
     onRowClicked: function (params) {
