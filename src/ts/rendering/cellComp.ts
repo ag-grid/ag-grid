@@ -22,6 +22,7 @@ import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {SetLeftFeature} from "./features/setLeftFeature";
 import {NewValueParams} from "../entities/colDef";
 import {Beans} from "./beans";
+import {SlickCellComp} from "./slickCellComp";
 
 export interface ICellComp {
     // getGui(): HTMLElement;
@@ -45,8 +46,6 @@ export interface ICellComp {
 }
 
 export class CellComp extends Component implements ICellComp {
-
-    public static DOM_DATA_KEY_CELL_COMP = 'cellComp';
 
     private eGridCell: HTMLElement; // the outer cell
     private eSpanWithValue: HTMLElement; // inner cell
@@ -455,9 +454,9 @@ export class CellComp extends Component implements ICellComp {
     }
 
     private addDomData(): void {
-        this.beans.gridOptionsWrapper.setDomData(this.eGridCell, CellComp.DOM_DATA_KEY_CELL_COMP, this);
+        this.beans.gridOptionsWrapper.setDomData(this.eGridCell, SlickCellComp.DOM_DATA_KEY_CELL_COMP, this);
         this.addDestroyFunc( ()=>
-            this.beans.gridOptionsWrapper.setDomData(this.eGridCell, CellComp.DOM_DATA_KEY_CELL_COMP, null)
+            this.beans.gridOptionsWrapper.setDomData(this.eGridCell, SlickCellComp.DOM_DATA_KEY_CELL_COMP, null)
         );
     }
 

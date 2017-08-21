@@ -30,6 +30,7 @@ import {AlignedGridsService} from "../alignedGridsService";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 import {GridApi} from "../gridApi";
 import {AnimationFrameService} from "../misc/animationFrameService";
+import {SlickRowComp} from "../rendering/slickRowComp";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -465,7 +466,7 @@ export class GridPanel extends BeanStub {
 
         while (sourceElement) {
 
-            let renderedRow = this.gridOptionsWrapper.getDomData(sourceElement, RowComp.DOM_DATA_KEY_RENDERED_ROW);
+            let renderedRow = this.gridOptionsWrapper.getDomData(sourceElement, SlickRowComp.DOM_DATA_KEY_RENDERED_ROW);
             if (renderedRow) {
                 return renderedRow;
             }

@@ -25,6 +25,8 @@ import {Component} from "../widgets/component";
 import {RefSelector} from "../widgets/componentAnnotations";
 import {Beans} from "./beans";
 import {ProcessRowParams} from "../entities/gridOptions";
+import {SlickCellComp} from "./slickCellComp";
+import {SlickRowComp} from "./slickRowComp";
 
 export class TempStubCell extends Component {
 
@@ -92,10 +94,6 @@ export interface IRowComp {
 }
 
 export class RowComp extends BeanStub implements IRowComp {
-
-    public static EVENT_ROW_REMOVED = 'rowRemoved';
-
-    public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
 
     private beans: Beans;
 
@@ -298,10 +296,10 @@ export class RowComp extends BeanStub implements IRowComp {
 
     private addDomData(eRowContainer: Element): void {
 
-        this.beans.gridOptionsWrapper.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, this);
+        this.beans.gridOptionsWrapper.setDomData(eRowContainer, SlickRowComp.DOM_DATA_KEY_RENDERED_ROW, this);
 
         this.addDestroyFunc( ()=> {
-            this.beans.gridOptionsWrapper.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, null) }
+            this.beans.gridOptionsWrapper.setDomData(eRowContainer, SlickRowComp.DOM_DATA_KEY_RENDERED_ROW, null) }
         );
     }
 
@@ -895,8 +893,8 @@ export class RowComp extends BeanStub implements IRowComp {
 
     public addEventListener(eventType: string, listener: Function): void {
         if (eventType==='renderedRowRemoved') {
-            eventType = RowComp.EVENT_ROW_REMOVED;
-            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+            eventType = SlickRowComp.EVENT_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + SlickRowComp.EVENT_ROW_REMOVED);
         }
         if (!this.renderedRowEventService) { this.renderedRowEventService = new EventService(); }
         this.renderedRowEventService.addEventListener(eventType, listener);
@@ -904,8 +902,8 @@ export class RowComp extends BeanStub implements IRowComp {
 
     public removeEventListener(eventType: string, listener: Function): void {
         if (eventType==='renderedRowRemoved') {
-            eventType = RowComp.EVENT_ROW_REMOVED;
-            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+            eventType = SlickRowComp.EVENT_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + SlickRowComp.EVENT_ROW_REMOVED);
         }
         this.renderedRowEventService.removeEventListener(eventType, listener);
     }

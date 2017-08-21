@@ -24,6 +24,10 @@ import {ProcessRowParams} from "../entities/gridOptions";
 
 export class SlickRowComp extends Component implements IRowComp {
 
+    public static EVENT_ROW_REMOVED = 'rowRemoved';
+
+    public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
+
     private renderedRowEventService: EventService;
 
     private rowNode: RowNode;
@@ -530,8 +534,30 @@ export class SlickRowComp extends Component implements IRowComp {
     }
 
     private isCellEligibleToBeRemoved(indexStr: string): boolean {
-        // todo: this should reuse the logic form the other cellComp
-        return true;
+        let displayedColumns = this.beans.columnController.getAllDisplayedColumns();
+
+        let REMOVE_CELL : boolean = true;
+        let KEEP_CELL : boolean = false;
+        let renderedCell = this.slickCellComps[indexStr];
+
+        if (!renderedCell) { return REMOVE_CELL; }
+
+        // always remove the cell if it's in the wrong pinned location
+        if (this.isCellInWrongRow(renderedCell)) { return REMOVE_CELL; }
+
+        // we want to try and keep editing and focused cells
+        let editing = renderedCell.isEditing();
+        let focused = this.beans.focusedCellController.isCellFocused(renderedCell.getGridCell());
+
+        let mightWantToKeepCell = editing || focused;
+
+        if (mightWantToKeepCell) {
+            let column = renderedCell.getColumn();
+            let cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
+            return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
+        } else {
+            return REMOVE_CELL;
+        }
     }
 
     private ensureCellInCorrectContainer(slickCellComp: SlickCellComp): void {
@@ -552,6 +578,15 @@ export class SlickRowComp extends Component implements IRowComp {
             eContainer.appendChild(eCell);
             slickCellComp.setParentRow(eContainer);
         }
+    }
+
+    private isCellInWrongRow(cellComp: SlickCellComp): boolean {
+        let column = cellComp.getColumn();
+        let rowWeWant = this.getContainerForCell(column.getPinned());
+
+        // if in wrong container, remove it
+        let oldRow = cellComp.getParentRow();
+        return oldRow !== rowWeWant;
     }
 
     private insertCellsIntoContainer(eRow: HTMLElement, cols: Column[]): void {
@@ -581,9 +616,9 @@ export class SlickRowComp extends Component implements IRowComp {
 
     private addDomData(eRowContainer: Element): void {
         let gow = this.beans.gridOptionsWrapper;
-        gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, this);
+        gow.setDomData(eRowContainer, SlickRowComp.DOM_DATA_KEY_RENDERED_ROW, this);
         this.addDestroyFunc( ()=> {
-            gow.setDomData(eRowContainer, RowComp.DOM_DATA_KEY_RENDERED_ROW, null) }
+            gow.setDomData(eRowContainer, SlickRowComp.DOM_DATA_KEY_RENDERED_ROW, null) }
         );
     }
 
@@ -1065,8 +1100,8 @@ export class SlickRowComp extends Component implements IRowComp {
 
     public addEventListener(eventType: string, listener: Function): void {
         if (eventType==='renderedRowRemoved') {
-            eventType = RowComp.EVENT_ROW_REMOVED;
-            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+            eventType = SlickRowComp.EVENT_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + SlickRowComp.EVENT_ROW_REMOVED);
         }
         if (!this.renderedRowEventService) { this.renderedRowEventService = new EventService(); }
         this.renderedRowEventService.addEventListener(eventType, listener);
@@ -1074,8 +1109,8 @@ export class SlickRowComp extends Component implements IRowComp {
 
     public removeEventListener(eventType: string, listener: Function): void {
         if (eventType==='renderedRowRemoved') {
-            eventType = RowComp.EVENT_ROW_REMOVED;
-            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+            eventType = SlickRowComp.EVENT_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + SlickRowComp.EVENT_ROW_REMOVED);
         }
         this.renderedRowEventService.removeEventListener(eventType, listener);
     }

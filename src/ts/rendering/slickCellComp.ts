@@ -27,6 +27,8 @@ import {IAfterGuiAttachedParams} from "../interfaces/iComponent";
 
 export class SlickCellComp extends Component implements ICellComp {
 
+    public static DOM_DATA_KEY_CELL_COMP = 'cellComp';
+
     private eCellWrapper: HTMLElement;
     private eParentOfValue: HTMLElement;
 
@@ -1366,9 +1368,9 @@ export class SlickCellComp extends Component implements ICellComp {
 
     private addDomData(): void {
         let eGui = this.getGui();
-        this.beans.gridOptionsWrapper.setDomData(eGui, CellComp.DOM_DATA_KEY_CELL_COMP, this);
+        this.beans.gridOptionsWrapper.setDomData(eGui, SlickCellComp.DOM_DATA_KEY_CELL_COMP, this);
         this.addDestroyFunc( ()=>
-            this.beans.gridOptionsWrapper.setDomData(eGui, CellComp.DOM_DATA_KEY_CELL_COMP, null)
+            this.beans.gridOptionsWrapper.setDomData(eGui, SlickCellComp.DOM_DATA_KEY_CELL_COMP, null)
         );
     }
 

@@ -27,6 +27,7 @@ import {GridApi, RefreshCellsParams} from "../gridApi";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 import {Beans} from "./beans";
 import {SlickRowComp} from "./slickRowComp";
+import {SlickCellComp} from "./slickCellComp";
 
 @Bean('rowRenderer')
 export class RowRenderer extends BeanStub {
@@ -240,7 +241,7 @@ export class RowRenderer extends BeanStub {
         // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
         // the focus is lost from the text field. we do not want this.
         let activeElement = document.activeElement;
-        let domData = this.gridOptionsWrapper.getDomData(activeElement, CellComp.DOM_DATA_KEY_CELL_COMP);
+        let domData = this.gridOptionsWrapper.getDomData(activeElement, SlickCellComp.DOM_DATA_KEY_CELL_COMP);
         let elementIsNotACellDev = _.missing(domData);
         if (elementIsNotACellDev) {
             return null;
