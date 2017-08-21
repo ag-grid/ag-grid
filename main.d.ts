@@ -26,7 +26,7 @@ export { BaseFilter } from "./dist/lib/filter/baseFilter";
 export { DateFilter } from "./dist/lib/filter/dateFilter";
 export { FilterManager } from "./dist/lib/filter/filterManager";
 export { NumberFilter } from "./dist/lib/filter/numberFilter";
-export { TextFilter } from "./dist/lib/filter/textFilter";
+export { TextFilter, SerializedTextFilter } from "./dist/lib/filter/textFilter";
 export { IFloatingFilter, IFloatingFilterParams } from "./dist/lib/filter/floatingFilter";
 export { GridPanel } from "./dist/lib/gridPanel/gridPanel";
 export { ScrollVisibleService } from "./dist/lib/gridPanel/scrollVisibleService";
