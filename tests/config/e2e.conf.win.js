@@ -3,7 +3,7 @@ exports.config = {
 
     framework: 'jasmine',
 
-    chromeDriver: "../../node_modules/webdriver-manager/selenium/chromedriver_2.31",
+    chromeDriver: "../../node_modules/webdriver-manager/selenium/chromedriver_2.31.exe",
     seleniumServerJar: "../../node_modules/webdriver-manager/selenium/selenium-server-standalone-3.5.2.jar",
 
     specs: [

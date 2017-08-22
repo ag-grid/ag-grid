@@ -13,6 +13,11 @@ gulp.task('inline-into-php', ['uncss'], inlineIntoPhp);
 gulp.task('default', ['inline-into-php']);
 gulp.task('release', ['inline-into-php']);
 
+/* for ci */
+gulp.task('copy-ag-dependencies-to-dist', ['copy-ag-grid-to-dist', 'copy-ag-grid-enterprise-to-dist']);
+gulp.task('copy-ag-grid-to-dist', copyAgGridToDist);
+gulp.task('copy-ag-grid-enterprise-to-dist', copyAgGridEnterpriseToDist);
+
 function uncssTask() {
     return gulp.src('./dist/dist/bootstrap/css/bootstrap.css')
         .pipe(uncss({
@@ -50,6 +55,16 @@ function inlineIntoPhp() {
         // layout of the index.html features list (the diamond separated list)
         //.pipe(htmlmin({collapseWhitespace: true}))
         .pipe(gulp.dest('./dist'));
+}
+
+function copyAgGridToDist() {
+    return gulp.src(['./node_modules/ag-grid/dist/ag-grid.js'])
+        .pipe(gulp.dest('./src/dist/ag-grid/'));
+}
+
+function copyAgGridEnterpriseToDist() {
+    return gulp.src(['./node_modules/ag-grid-enterprise/dist/ag-grid-enterprise.js'])
+        .pipe(gulp.dest('./src/dist/ag-grid-enterprise/'));
 }
 
 /*

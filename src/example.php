@@ -108,6 +108,7 @@
                         <select onchange="onThemeChanged(this.value)" style="width: 90px; color: #333;"
                                 class="hide-when-small">
                             <option value="">-none-</option>
+                            <option value="ag-material-next">Material Next</option>
                             <option value="ag-fresh" selected>Fresh</option>
                             <option value="ag-dark">Dark</option>
                             <option value="ag-blue">Blue</option>

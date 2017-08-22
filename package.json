@@ -1,11 +1,12 @@
 {
   "name": "ag-grid-docs",
-  "version": "8.1.0",
+  "version": "12.0.2",
   "description": "Documentation for ag-Grid",
   "scripts": {
     "postinstall": "webdriver-manager update",
     "tsc": "tsc -p tests/config/tsconfig.json",
-    "test": "protractor tests/config/e2e.conf.js"
+    "test": "concurrently \"http-server -p 8085 -s\" \"protractor tests/config/e2e.conf.js\" --kill-others --success first",
+    "e2e-win": "concurrently \"http-server -p 8085 -s\" \"protractor tests/config/e2e.conf.win.js\" --kill-others --success first"
   },
   "repository": {
     "type": "git",
@@ -33,7 +34,7 @@
   "devDependencies": {
     "@types/jasmine": "2.5.x",
     "@types/selenium-webdriver": "3.0.x",
-    "ag-grid-testing": "^0.0.1",
+    "ag-grid-testing": "^0.0.2",
     "bootstrap": "3.3.6",
     "font-awesome": "4.5.0",
     "gulp": "3.9.0",
@@ -44,6 +45,8 @@
     "gulp-uncss": "1.0.6",
     "protractor": "5.1.x",
     "typescript": "2.2.x",
-    "webdriver-manager": "12.0.x"
+    "webdriver-manager": "12.0.x",
+    "concurrently":"3.5.0",
+    "http-server": "0.10.0"
   }
 }

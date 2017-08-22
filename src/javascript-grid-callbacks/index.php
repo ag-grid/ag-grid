@@ -43,14 +43,6 @@ include '../documentation-main/documentation_header.php';
             <td>Callback for grouping. See the section on <a href="../javascript-grid-grouping/#groupingCallbacks">row grouping</a> for detailed explanation.</td>
         </tr>
         <tr>
-            <th>isScrollLag()</th>
-            <td>By default, scrolling lag is enabled for Safari and Internet Explorer (to solve scrolling performance
-                issues in these browsers). To override when to use scroll lag either a) set suppressScrollLag to
-                true to turn off scroll lag feature or b) return true of false from the function
-                isScrollLag. This is a function, as it's expected your code will check the environment to decide
-                whether to use scroll lag or not.</td>
-        </tr>
-        <tr>
             <th>getBusinessKeyForNode(node)</th>
             <td>Return a business key for the node. If implemented, then each row in the dom will have an attribute
                 <i>row-id='abc'</i> where abc is what you return as the business key. This is useful for automated
