@@ -29,7 +29,6 @@ include '../documentation-main/documentation_header.php';
             See: <a href="../javascript-grid-filtering#nullFiltering">Null filtering</a></li>
         <li>AG-579: Excel an CSV export now works in all row models. If exporting outside of the in memory row model
             Only the data loaded for the currently displayed grid gets exported.</li>
-        <li>AG-696: Bugfix - column groups kept their expand/collapse icons even if the group is no longer expandable, due to the child columns been 'not visible', (ie so if you expand, no columns to show anyway, as the children are not visible)</li>
         <li>The event 'itemsAdded' didn't make sense any more since introducing transaction updates in v11. So now the grid fires rowDataUpdated instead.</li>
         <li>Theme icons have been updated. The previous ones are available in the <code>src/styles/legacy</code> directory - you can <a href="https://www.ag-grid.com/javascript-grid-icons/">set them back through the API</a>.</li>
 
