@@ -11,3 +11,4 @@ exports.config = {
         '../e2e/javascript-grid-tool-panel/toolPanelExample.spec.js'
     ]
 };
+s
