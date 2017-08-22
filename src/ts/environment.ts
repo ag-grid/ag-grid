@@ -8,6 +8,11 @@ export class Environment {
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     public getTheme(): string {
-        return this.eGridDiv.className.match(themeCLass)[0];
+        const themeMatch: RegExpMatchArray = this.eGridDiv.className.match(themeCLass);
+        if (themeMatch) {
+            return themeMatch[0];
+        } else {
+            return '';
+        }
     }
 }
