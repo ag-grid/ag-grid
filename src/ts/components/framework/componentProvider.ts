@@ -74,6 +74,7 @@ export class ComponentProvider {
             cellRenderer: DefaultCellRenderer,
             fullWidthCellRenderer: GroupCellRenderer,
             innerRenderer: DefaultCellRenderer,
+            groupRowInnerRenderer: DefaultCellRenderer,
             animateShowChange: AnimateShowChangeCellRenderer,
             animateSlide: AnimateSlideCellRenderer,
             group: GroupCellRenderer,

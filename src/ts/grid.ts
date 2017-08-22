@@ -158,6 +158,7 @@ export class Grid {
         let contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
+            //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils, ComponentMetadataProvider,
                 ComponentProvider, ComponentResolver, ComponentRecipes, NamedComponentResolver,
                 CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, PinnedRowModel, DragService,

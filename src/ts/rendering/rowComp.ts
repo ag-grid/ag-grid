@@ -21,7 +21,6 @@ import {Component} from "../widgets/component";
 import {RefSelector} from "../widgets/componentAnnotations";
 import {Beans} from "./beans";
 import {ProcessRowParams} from "../entities/gridOptions";
-import {IAfterGuiAttachedParams} from "../interfaces/iComponent";
 
 
 export class LoadingCellRenderer extends Component {
@@ -808,6 +807,7 @@ export class RowComp extends Component {
 
     private createFullWidthParams(pinned: string): any {
         let params = {
+            fullWidth: true,
             data: this.rowNode.data,
             node: this.rowNode,
             value: this.rowNode.key,

@@ -19,9 +19,9 @@ export interface GroupCellRendererParams extends ICellRendererParams{
     pinned:string,
     padding:number,
     suppressPadding:boolean,
-    innerRenderer:any,
     footerValueGetter:any,
     suppressCount:boolean,
+    fullWidth:boolean,
     checkbox:any,
     scope:any,
     actualValue:string
@@ -222,7 +222,12 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let valueFormatted = this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName);
 
         params.valueFormatted = valueFormatted;
-        this.cellRendererService.useInnerCellRenderer(this.params, columnToUse.getColDef(), this.eValue, params);
+        if (params.fullWidth == true){
+            this.cellRendererService.useFullWidthGroupRowInnerCellRenderer(this.eValue, params);
+        }else{
+            this.cellRendererService.useInnerCellRenderer(this.params, columnToUse.getColDef(), this.eValue, params);
+
+        }
     }
 
     private addChildCount(): void {

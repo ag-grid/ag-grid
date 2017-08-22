@@ -63,6 +63,11 @@ export class ComponentMetadataProvider {
                 mandatoryMethodList: [],
                 optionalMethodList: [],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+            },
+            groupRowInnerRenderer:{
+                mandatoryMethodList: [],
+                optionalMethodList: [],
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             }
         }
     }

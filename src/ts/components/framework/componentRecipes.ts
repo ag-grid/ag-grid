@@ -119,6 +119,10 @@ export class ComponentRecipes {
         );
     }
 
+    public newFullWidthGroupRowInnerCellRenderer (params:ICellRendererParams):ICellRendererComp{
+        return <ICellRendererComp>this.componentResolver.createAgGridComponent(this.gridOptions, params, "groupRowInnerRenderer");
+    }
+
     public newCellRenderer (target: ColDef, params:ICellRendererParams):ICellRendererComp{
         return <ICellRendererComp>this.componentResolver.createAgGridComponent(target, params, "cellRenderer");
     }

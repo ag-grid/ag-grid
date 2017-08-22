@@ -47,6 +47,14 @@ export class CellRendererService {
         return this.bindToHtml(rendererToUse, eTarget);
     }
 
+    public useFullWidthGroupRowInnerCellRenderer(
+        eTarget: HTMLElement,
+        params: any
+    ): ICellRendererComp {
+        let cellRenderer: ICellRendererComp = this.componentRecipes.newFullWidthGroupRowInnerCellRenderer (params);
+        return this.bindToHtml(cellRenderer, eTarget);
+    }
+
 
     public bindToHtml(cellRenderer: ICellRendererComp, eTarget: HTMLElement) {
         let gui: HTMLElement|string = cellRenderer.getGui();
