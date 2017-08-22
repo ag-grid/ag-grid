@@ -327,18 +327,18 @@ export class GridSerializer {
     }
 
     recursivelyAddHeaderGroups<T> (displayedGroups:ColumnGroupChild[], gridSerializingSession:GridSerializingSession<T>):void{
-        let directChildrenHeaderGroups:ColumnGroupChild[];
+        let directChildrenHeaderGroups:ColumnGroupChild[] = [];
         displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
             let columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
             if (!columnGroup.getChildren) return;
-            directChildrenHeaderGroups = columnGroup.getChildren();
+            columnGroup.getChildren().forEach(it=>directChildrenHeaderGroups.push(it));
         });
 
         if (displayedGroups.length > 0 && displayedGroups[0] instanceof ColumnGroup) {
             this.doAddHeaderHeader(gridSerializingSession, displayedGroups);
         }
 
-        if (directChildrenHeaderGroups){
+        if (directChildrenHeaderGroups && directChildrenHeaderGroups.length > 0){
             this.recursivelyAddHeaderGroups(directChildrenHeaderGroups, gridSerializingSession);
         }
     }
