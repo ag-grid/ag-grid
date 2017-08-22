@@ -126,7 +126,7 @@ include '../documentation-main/documentation_header.php';
         using top pixel location - which is needed for the animations to work.
     </p>
 
-    <h4>Full Width and Auto Height</h4>
+    <h3>Full Width and Auto Height</h3>
 
     <p>
         The <a href="../javascript-grid-full-width-rows/">fullWidth</a> feature, when used with autoHeight,
@@ -135,12 +135,18 @@ include '../documentation-main/documentation_header.php';
         pinning, the fullWidth row will be split into the pinned sections.
     </p>
 
-    <h4>Max Height with Auto Height</h4>
+    <h3>Max Height with Auto Height</h3>
 
     <p>
         It is not possible to specify a max height when using auto-height. It is also not possible to change
         the layout once the grid has initialised.
     </p>
+
+    <note>
+        Users ask on the forum, is it possible to set a max height when using auto-height? The answer is no.
+        If using auto-height, the grid is set up to work in a different way. It is not possible to switch.
+        If you do need to switch, you will need to change to a new instance of the grid.
+    </note>
 
     <h2>Max Rows in Grid</h2>
 
