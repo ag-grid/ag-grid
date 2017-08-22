@@ -4,9 +4,9 @@
     <title>checkbox-unchecked-readonly</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
-    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.5">
+    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" fill-opacity="0.5">
         <g id="checkbox-unchecked-readonly" fill-rule="nonzero" fill="#000000">
-            <path d="M4,2 L14,2 L14,2 C15.1045695,2 16,2.8954305 16,4 L16,14 L16,14 C16,15.1045695 15.1045695,16 14,16 L4,16 L4,16 C2.8954305,16 2,15.1045695 2,14 L2,4 L2,4 C2,2.8954305 2.8954305,2 4,2 L4,2 Z M14,4 L4,4 L4,14 L14,14 L14,4 Z" id="Shape"></path>
+            <path d="M16,2 L16,16 L2,16 L2,2 L16,2 L16,2 Z M16,0 L2,0 C0.9,0 0,0.9 0,2 L0,16 C0,17.1 0.9,18 2,18 L16,18 C17.1,18 18,17.1 18,16 L18,2 C18,0.9 17.1,0 16,0 Z" id="Shape"></path>
         </g>
     </g>
 </svg>

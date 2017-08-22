@@ -499,7 +499,7 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
     .ag-column-drop-cell {
         background: $ag-button-background-1;
         color: $ag-button-foreground-1;
-        border: $ag-button-border-1;
+        border: 1px solid $ag-button-border-1;
     }
     .ag-column-drop-cell-ghost {
         opacity: 0.5;
