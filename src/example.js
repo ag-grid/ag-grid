@@ -433,7 +433,7 @@ var defaultCols = [
                 }
             },
             {
-                headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 100,
+                headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 110,
                 // pinned: 'right',
                 // rowGroupIndex: 2,
                 // pivotIndex: 1,
@@ -1022,10 +1022,10 @@ function booleanCellRenderer(params) {
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
         //this is the unicode for executeFrame character
-        return "<span title='true' class='ag-icon ag-icon-executeFrame'></span>";
+        return "<span title='true' class='ag-icon ag-icon-tick' style='height: 100%'></span>";
     } else if (valueCleaned === false) {
         //this is the unicode for cross character
-        return "<span title='false' class='ag-icon ag-icon-cross'></span>";
+        return "<span title='false' class='ag-icon ag-icon-cross' style='height: 100%'></span>";
     } else if (params.value !==null && params.value !== undefined) {
         return params.value.toString();
     } else {
@@ -1037,10 +1037,10 @@ function booleanFilterCellRenderer(params) {
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
         //this is the unicode for executeFrame character
-        return "<span title='true' class='ag-icon ag-icon-executeFrame'></span>";
+        return "<span title='true' class='ag-icon ag-icon-tick' style='height: 100%'></span>";
     } else if (valueCleaned === false) {
         //this is the unicode for cross character
-        return "<span title='false' class='ag-icon ag-icon-cross'></span>";
+        return "<span title='false' class='ag-icon ag-icon-cross' style='height: 100%'></span>";
     } else {
         return "(empty)";
     }
