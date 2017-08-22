@@ -1,5 +1,5 @@
 
-import {Autowired, Bean, Context, Optional} from "../context/context";
+import {Autowired, Bean, Context, Optional, PostConstruct} from "../context/context";
 import {ColumnApi, ColumnController} from "../columnController/columnController";
 import {GridApi} from "../gridApi";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
@@ -56,4 +56,10 @@ export class Beans {
     @Autowired('componentResolver') public componentResolver: ComponentResolver;
     @Autowired('animationFrameService') public taskQueue: AnimationFrameService;
 
+    public forPrint: boolean;
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.forPrint = this.gridOptionsWrapper.isForPrint();
+    }
 }

@@ -1243,8 +1243,6 @@ export class GridPanel extends BeanStub {
 
     private findElements() {
 
-        let ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
-
         if (this.forPrint) {
             this.eHeaderContainer = this.queryHtmlElement('.ag-header-container');
             this.eBodyContainer = this.queryHtmlElement('.ag-body-container');
@@ -1254,17 +1252,17 @@ export class GridPanel extends BeanStub {
             this.eAllCellContainers = [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
 
             let containers: RowContainerComponents = {
-                body: new RowContainerComponent( {eContainer: this.eBodyContainer, ensureDomOrder: ensureDomOrder} ),
+                body: new RowContainerComponent( {eContainer: this.eBodyContainer} ),
                 fullWidth: <RowContainerComponent> null,
                 pinnedLeft: <RowContainerComponent> null,
                 pinnedRight: <RowContainerComponent> null,
 
-                floatingTop: new RowContainerComponent( {eContainer: this.eFloatingTopContainer, ensureDomOrder: ensureDomOrder} ),
+                floatingTop: new RowContainerComponent( {eContainer: this.eFloatingTopContainer} ),
                 floatingTopPinnedLeft: <RowContainerComponent> null,
                 floatingTopPinnedRight: <RowContainerComponent> null,
                 floatingTopFullWidth: <RowContainerComponent> null,
 
-                floatingBottom: new RowContainerComponent( {eContainer: this.eFloatingBottomContainer, ensureDomOrder: ensureDomOrder} ),
+                floatingBottom: new RowContainerComponent( {eContainer: this.eFloatingBottomContainer} ),
                 floatingBottomPinnedLeft: <RowContainerComponent> null,
                 floatingBottomPinnedRight: <RowContainerComponent> null,
                 floatingBottomFullWith: <RowContainerComponent> null
@@ -1315,20 +1313,20 @@ export class GridPanel extends BeanStub {
                 this.eFloatingTop, this.eFloatingBottom, this.eFullWidthCellContainer];
 
             this.rowContainerComponents = {
-                body: new RowContainerComponent({eContainer: this.eBodyContainer, eViewport: this.eBodyViewport, ensureDomOrder: ensureDomOrder}),
-                fullWidth: new RowContainerComponent({eContainer: this.eFullWidthCellContainer, hideWhenNoChildren: true, eViewport: this.eFullWidthCellViewport, ensureDomOrder: ensureDomOrder}),
-                pinnedLeft: new RowContainerComponent({eContainer: this.ePinnedLeftColsContainer, eViewport: this.ePinnedLeftColsViewport, ensureDomOrder: ensureDomOrder}),
-                pinnedRight: new RowContainerComponent({eContainer: this.ePinnedRightColsContainer, eViewport: this.ePinnedRightColsViewport, ensureDomOrder: ensureDomOrder}),
+                body: new RowContainerComponent({eContainer: this.eBodyContainer, eViewport: this.eBodyViewport}),
+                fullWidth: new RowContainerComponent({eContainer: this.eFullWidthCellContainer, hideWhenNoChildren: true, eViewport: this.eFullWidthCellViewport}),
+                pinnedLeft: new RowContainerComponent({eContainer: this.ePinnedLeftColsContainer, eViewport: this.ePinnedLeftColsViewport}),
+                pinnedRight: new RowContainerComponent({eContainer: this.ePinnedRightColsContainer, eViewport: this.ePinnedRightColsViewport}),
 
-                floatingTop: new RowContainerComponent({eContainer: this.eFloatingTopContainer, ensureDomOrder: ensureDomOrder}),
-                floatingTopPinnedLeft: new RowContainerComponent({eContainer: this.ePinnedLeftFloatingTop, ensureDomOrder: ensureDomOrder}),
-                floatingTopPinnedRight: new RowContainerComponent({eContainer: this.ePinnedRightFloatingTop, ensureDomOrder: ensureDomOrder}),
-                floatingTopFullWidth: new RowContainerComponent({eContainer: this.eFloatingTopFullWidthCellContainer, hideWhenNoChildren: true, ensureDomOrder: ensureDomOrder}),
+                floatingTop: new RowContainerComponent({eContainer: this.eFloatingTopContainer}),
+                floatingTopPinnedLeft: new RowContainerComponent({eContainer: this.ePinnedLeftFloatingTop}),
+                floatingTopPinnedRight: new RowContainerComponent({eContainer: this.ePinnedRightFloatingTop}),
+                floatingTopFullWidth: new RowContainerComponent({eContainer: this.eFloatingTopFullWidthCellContainer, hideWhenNoChildren: true}),
 
-                floatingBottom: new RowContainerComponent({eContainer: this.eFloatingBottomContainer, ensureDomOrder: ensureDomOrder}),
-                floatingBottomPinnedLeft: new RowContainerComponent({eContainer: this.ePinnedLeftFloatingBottom, ensureDomOrder: ensureDomOrder}),
-                floatingBottomPinnedRight: new RowContainerComponent({eContainer: this.ePinnedRightFloatingBottom, ensureDomOrder: ensureDomOrder}),
-                floatingBottomFullWith: new RowContainerComponent({eContainer: this.eFloatingBottomFullWidthCellContainer, hideWhenNoChildren: true, ensureDomOrder: ensureDomOrder}),
+                floatingBottom: new RowContainerComponent({eContainer: this.eFloatingBottomContainer}),
+                floatingBottomPinnedLeft: new RowContainerComponent({eContainer: this.ePinnedLeftFloatingBottom}),
+                floatingBottomPinnedRight: new RowContainerComponent({eContainer: this.ePinnedRightFloatingBottom}),
+                floatingBottomFullWith: new RowContainerComponent({eContainer: this.eFloatingBottomFullWidthCellContainer, hideWhenNoChildren: true}),
             };
 
             this.addMouseWheelEventListeners();

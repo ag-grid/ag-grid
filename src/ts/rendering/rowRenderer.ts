@@ -5,7 +5,7 @@ import {ExpressionService} from "../valueService/expressionService";
 import {TemplateService} from "../templateService";
 import {ValueService} from "../valueService/valueService";
 import {EventService} from "../eventService";
-import {LastPlacedElements, RowComp} from "./rowComp";
+import {RowComp} from "./rowComp";
 import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {Events, ModelUpdatedEvent, ViewportChangedEvent} from "../events";
@@ -159,7 +159,7 @@ export class RowRenderer extends BeanStub {
 
                 let rowComp = new RowComp(this.$scope, bodyContainerComp,
                         pinnedLeftContainerComp, pinnedRightContainerComp,
-                        fullWidthContainerComp, node, this.beans, false, false, null);
+                        fullWidthContainerComp, node, this.beans, false, false);
 
                 rowComp.init();
                 rowComps.push(rowComp);
@@ -514,23 +514,12 @@ export class RowRenderer extends BeanStub {
 
         this.removeRowCompsNotToDraw(indexesToDraw);
 
-        // we always ensure dom order for inserts, as this doesn't impact our animation. however our animation
-        // gets messed up when we rearrange the rows (for updates). so we only maintain order for updates
-        // when the user explicitly asks for it.
-        let ensureDomOrderForInsert = !this.forPrint;
-        let ensureDomOrderForUpdate = this.gridOptionsWrapper.isEnsureDomOrder() && !this.forPrint;
-        let ensureDomOrder = ensureDomOrderForInsert || ensureDomOrderForUpdate;
-
-        // this keeps track of the last inserted element in each container, so when rows are getting
-        // inserted or repositioned, they can be done relative to the previous DOM element
-        let previousElements: LastPlacedElements = ensureDomOrder ? {eBody: null, eLeft: null, eRight: null, eFullWidth: null} : null;
-
         // add in new rows
         let nextVmTurnFunctions: Function[] = [];
 
         let rowComps: RowComp[] = [];
         indexesToDraw.forEach( rowIndex => {
-            let rowComp = this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, previousElements, ensureDomOrderForUpdate, afterScroll);
+            let rowComp = this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, afterScroll);
             if (_.exists(rowComp)) {
                 rowComps.push(rowComp);
                 _.pushAll(nextVmTurnFunctions, rowComp.getAndClearNextVMTurnFunctions());
@@ -552,7 +541,9 @@ export class RowRenderer extends BeanStub {
 
     private flushContainers(rowComps: RowComp[]): void {
         _.iterateObject(this.rowContainers, (key: string, rowContainerComp: RowContainerComponent) => {
-            rowContainerComp.flushRowTemplates();
+            if (rowContainerComp) {
+                rowContainerComp.flushRowTemplates();
+            }
         });
 
         rowComps.forEach( rowComp => rowComp.afterFlush());
@@ -588,12 +579,11 @@ export class RowRenderer extends BeanStub {
     }
 
     private createOrUpdateRowComp(rowIndex: number, rowsToRecycle: {[key: string]: RowComp},
-                                  animate: boolean, previousElements: LastPlacedElements,
-                                  ensureDomOrderForUpdate: boolean, afterScroll: boolean): RowComp {
+                                  animate: boolean, afterScroll: boolean): RowComp {
 
         let rowNode: RowNode;
 
-        let rowComp = this.rowCompsByIndex[rowIndex];
+        let rowComp: RowComp = this.rowCompsByIndex[rowIndex];
 
         // if no row comp, see if we can get it from the previous rowComps
         if (!rowComp) {
@@ -612,7 +602,7 @@ export class RowRenderer extends BeanStub {
                 rowNode = this.paginationProxy.getRow(rowIndex);
             }
             if (_.exists(rowNode)) {
-                rowComp = this.createRowComp(rowNode, animate, previousElements, afterScroll);
+                rowComp = this.createRowComp(rowNode, animate, afterScroll);
             } else {
                 // this should never happen - if somehow we are trying to create
                 // a row for a rowNode that does not exist.
@@ -620,12 +610,8 @@ export class RowRenderer extends BeanStub {
             }
         } else {
             // ensure row comp is in right position in DOM
-            if (ensureDomOrderForUpdate) {
-                rowComp.ensureInDomAfter();
-            }
+            rowComp.ensureDomOrder();
         }
-
-        this.updatePreviousElements(previousElements, rowComp);
 
         this.rowCompsByIndex[rowIndex] = rowComp;
 
@@ -723,28 +709,6 @@ export class RowRenderer extends BeanStub {
         return this.lastRenderedRow;
     }
 
-    private updatePreviousElements(previousElements: LastPlacedElements, rowComp: RowComp): void {
-        if (_.missing(previousElements)) { return; }
-
-        let body: HTMLElement = rowComp.getBodyRowElement();
-        let left: HTMLElement = rowComp.getPinnedLeftRowElement();
-        let right: HTMLElement = rowComp.getPinnedRightRowElement();
-        let fullWidth: HTMLElement = rowComp.getFullWidthRowElement();
-
-        if (body) {
-            previousElements.eBody = body;
-        }
-        if (left) {
-            previousElements.eLeft = left;
-        }
-        if (right) {
-            previousElements.eRight = right;
-        }
-        if (fullWidth) {
-            previousElements.eFullWidth = fullWidth;
-        }
-    }
-
     // check that none of the rows to remove are editing or focused as:
     // a) if editing, we want to keep them, otherwise the user will loose the context of the edit,
     //    eg user starts editing, enters some text, then scrolls down and then up, next time row rendered
@@ -773,13 +737,13 @@ export class RowRenderer extends BeanStub {
         return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
     }
 
-    private createRowComp(rowNode: RowNode, animate: boolean, previousElements: LastPlacedElements, afterScroll: boolean): RowComp {
+    private createRowComp(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowComp {
 
         let throttleScroll = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame();
 
         let rowComp = new RowComp(this.$scope, this.rowContainers.body,
                 this.rowContainers.pinnedLeft, this.rowContainers.pinnedRight,
-                this.rowContainers.fullWidth, rowNode, this.beans, animate, throttleScroll, previousElements);
+                this.rowContainers.fullWidth, rowNode, this.beans, animate, throttleScroll);
 
         rowComp.init();
 

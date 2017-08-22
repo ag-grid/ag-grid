@@ -255,7 +255,10 @@ export class GridOptionsWrapper {
     public getApi(): GridApi { return this.gridOptions.api; }
     public getColumnApi(): ColumnApi { return this.gridOptions.columnApi; }
     public isDeltaRowDataMode() { return isTrue(this.gridOptions.deltaRowDataMode); }
-    public isEnsureDomOrder() { return isTrue(this.gridOptions.ensureDomOrder); }
+    public isEnsureDomOrder() {
+        return true;
+        // return isTrue(this.gridOptions.ensureDomOrder);
+    }
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
     public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }

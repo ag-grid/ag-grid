@@ -54,18 +54,6 @@ export class LoadingCellRenderer extends Component {
     }
 }
 
-// used when we want to ensure order in the DOM - for accessibility reasons.
-// when inserting element, we go from left to right, and this object keeps
-// track of the last inserted element, so the next element can be placed
-// beside it.
-// todo - this can be removed
-export interface LastPlacedElements {
-    eLeft: HTMLElement;
-    eRight: HTMLElement;
-    eBody: HTMLElement;
-    eFullWidth: HTMLElement;
-}
-
 export class RowComp extends Component {
 
     public static EVENT_ROW_REMOVED = 'rowRemoved';
@@ -138,8 +126,6 @@ export class RowComp extends Component {
     private parentScope: any;
     private scope: any;
 
-    private lastPlacedElements: LastPlacedElements;
-
     private initialised = false;
 
     constructor(parentScope: any,
@@ -150,8 +136,7 @@ export class RowComp extends Component {
                 rowNode: RowNode,
                 beans: Beans,
                 animateIn: boolean,
-                throttleScroll: boolean,
-                lastPlacedElements: LastPlacedElements) {
+                throttleScroll: boolean) {
         super();
         this.parentScope = parentScope;
         this.beans = beans;
@@ -162,7 +147,6 @@ export class RowComp extends Component {
         this.rowNode = rowNode;
         this.rowIsEven = this.rowNode.rowIndex % 2 === 0;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
-        this.lastPlacedElements = lastPlacedElements;
         this.throttleScroll = throttleScroll;
 
         this.setAnimateFlags(animateIn);
@@ -256,7 +240,7 @@ export class RowComp extends Component {
 
     private getInitialRowTopStyle() {
         let rowTopStyle = '';
-        let setRowTop = !this.beans.gridOptionsWrapper.isForPrint() && !this.beans.gridOptionsWrapper.isAutoHeight();
+        let setRowTop = !this.beans.forPrint && !this.beans.gridOptionsWrapper.isAutoHeight();
         if (setRowTop) {
             // if sliding in, we take the old row top. otherwise we just set the current row top.
             let rowTop = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
@@ -365,12 +349,14 @@ export class RowComp extends Component {
 
     private setupNormalRowContainers(): void {
         let centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
-        let leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
-        let rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
-
         this.createRowContainer(this.bodyContainerComp, centerCols, eRow => this.eBodyRow = eRow);
-        this.createRowContainer(this.pinnedRightContainerComp, rightCols, eRow => this.ePinnedRightRow = eRow);
-        this.createRowContainer(this.pinnedLeftContainerComp, leftCols, eRow => this.ePinnedLeftRow = eRow);
+
+        if (!this.beans.forPrint) {
+            let leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
+            let rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
+            this.createRowContainer(this.pinnedRightContainerComp, rightCols, eRow => this.ePinnedRightRow = eRow);
+            this.createRowContainer(this.pinnedLeftContainerComp, leftCols, eRow => this.ePinnedLeftRow = eRow);
+        }
     }
 
     private createFullWidthRows(type: string): void {
@@ -406,7 +392,7 @@ export class RowComp extends Component {
                     this.eFullWidthRow = eRow;
                     this.fullWidthRowComponent = cellRenderer;
                     // and fake the mouse wheel for the fullWidth container
-                    if (!this.beans.gridOptionsWrapper.isForPrint()) {
+                    if (!this.beans.forPrint) {
                         this.addMouseWheelListenerToFullWidthRow();
                     }
                 });
@@ -1246,7 +1232,7 @@ export class RowComp extends Component {
 
     private onTopChanged(): void {
         // top is not used in forPrint, as the rows are just laid out naturally
-        let doNotSetRowTop = this.beans.gridOptionsWrapper.isForPrint() || this.beans.gridOptionsWrapper.isAutoHeight();
+        let doNotSetRowTop = this.beans.forPrint || this.beans.gridOptionsWrapper.isAutoHeight();
         if (doNotSetRowTop) { return; }
 
         this.setRowTop(this.rowNode.rowTop);
@@ -1308,25 +1294,25 @@ export class RowComp extends Component {
         });
     }
 
-    public ensureInDomAfter(): void {
+    public ensureDomOrder(): void {
         let body = this.getBodyRowElement();
         if (body) {
-            this.bodyContainerComp.ensureRowOrder(body);
+            this.bodyContainerComp.ensureDomOrder(body);
         }
 
         let left = this.getPinnedLeftRowElement();
         if (left) {
-            this.pinnedLeftContainerComp.ensureRowOrder(left);
+            this.pinnedLeftContainerComp.ensureDomOrder(left);
         }
 
         let right = this.getPinnedRightRowElement();
         if (right) {
-            this.pinnedRightContainerComp.ensureRowOrder(right);
+            this.pinnedRightContainerComp.ensureDomOrder(right);
         }
 
         let fullWidth = this.getFullWidthRowElement();
         if (fullWidth) {
-            this.fullWidthContainerComp.ensureRowOrder(fullWidth);
+            this.fullWidthContainerComp.ensureDomOrder(fullWidth);
         }
     }
 
