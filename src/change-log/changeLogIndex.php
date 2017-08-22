@@ -15,6 +15,11 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version NEXT</h2>
 
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>AG-697: Fixed an issue where export group headers was not working correctly when more than 2 groups of headers</li>
+    </ul>
+
     <h4>Enhancements</h4>
     <ul>
         <li>AG-634: <a href="../javascript-grid-filter-text">Text filter</a> has the parameter <code>caseSensitive</code>.
