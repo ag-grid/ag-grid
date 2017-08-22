@@ -5,7 +5,7 @@ describe('best-javascript-data-grid/example-js.spec.js', function () {
     browser.ignoreSynchronization = true;
 
     beforeEach(() => {
-        browser.get(browser.baseUrl + "/best-javascript-data-grid/example-js.html");
+        browser.get(browser.baseUrl + "/javascript-getting-started/example-js.html");
     });
 
     it('should have expected column headers', () => {
