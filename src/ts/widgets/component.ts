@@ -1,7 +1,7 @@
 import {NumberSequence, Utils as _} from "../utils";
 import {Context} from "../context/context";
 import {BeanStub} from "../context/beanStub";
-import {IComponent} from "../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
 import {AgEvent} from "../events";
 
 let compIdSequence = new NumberSequence();
@@ -10,13 +10,13 @@ export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
 
-export class Component extends BeanStub implements IComponent<any> {
+export class Component extends BeanStub implements IComponent<any, IAfterGuiAttachedParams> {
 
     public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
 
     private eGui: HTMLElement;
 
-    private childComponents: IComponent<any>[] = [];
+    private childComponents: IComponent<any, IAfterGuiAttachedParams>[] = [];
 
     private annotatedEventListeners: any[] = [];
 
@@ -188,12 +188,12 @@ export class Component extends BeanStub implements IComponent<any> {
         return <HTMLInputElement> this.eGui.querySelector(cssSelector);
     }
 
-    public appendChild(newChild: Node | IComponent<any>): void {
+    public appendChild(newChild: Node | IComponent<any, IAfterGuiAttachedParams>): void {
         if (_.isNodeOrElement(newChild)) {
             this.eGui.appendChild(<Node>newChild);
         } else {
-            let childComponent = <IComponent<any>>newChild;
-            this.eGui.appendChild(childComponent.getGui());
+            let childComponent = <IComponent<any, IAfterGuiAttachedParams>>newChild;
+            this.eGui.appendChild(_.ensureElement(childComponent.getGui()));
             this.childComponents.push(childComponent);
         }
     }

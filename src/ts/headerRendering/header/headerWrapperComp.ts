@@ -9,7 +9,7 @@ import {HorizontalDragService} from "../horizontalDragService";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {CssClassApplier} from "../cssClassApplier";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
-import {IComponent} from "../../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
 import {IMenuFactory} from "../../interfaces/iMenuFactory";
 import {GridApi} from "../../gridApi";
 import {SortController} from "../../sortController";
@@ -82,7 +82,7 @@ export class HeaderWrapperComp extends Component {
         this.setupTooltip();
         this.setupResize();
         this.setupMenuClass();
-        this.setupMove(headerComp.getGui(), displayName);
+        this.setupMove(_.ensureElement(headerComp.getGui()), displayName);
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
 
@@ -121,7 +121,7 @@ export class HeaderWrapperComp extends Component {
         _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
     }
 
-    private appendHeaderComp(displayName: string, enableSorting: boolean, enableMenu: boolean): IComponent<any> {
+    private appendHeaderComp(displayName: string, enableSorting: boolean, enableMenu: boolean): IComponent<any, IAfterGuiAttachedParams> {
         let params = <IHeaderParams> {
             column: this.column,
             displayName: displayName,

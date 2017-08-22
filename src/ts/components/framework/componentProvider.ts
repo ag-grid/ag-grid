@@ -1,5 +1,5 @@
 import {Bean, PostConstruct} from "../../context/context";
-import {IComponent} from "../../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
 import {DefaultDateComponent} from "../../filter/dateFilter";
 import {HeaderComp} from "../../headerRendering/header/headerComp";
 import {HeaderGroupComp} from "../../headerRendering/headerGroup/headerGroupComp";
@@ -27,14 +27,14 @@ export enum RegisteredComponentSource {
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
-export interface RegisteredComponent<A extends IComponent<any> & B, B> {
+export interface RegisteredComponent<A extends IComponent<any, IAfterGuiAttachedParams> & B, B> {
     component: RegisteredComponentInput<A, B>,
     type:ComponentType,
     source:RegisteredComponentSource
 }
 
-export type RegisteredComponentInput<A extends IComponent<any> & B, B> = AgGridRegisteredComponentInput<A>| {new(): B};
-export type AgGridRegisteredComponentInput<A extends IComponent<any>> = AgGridComponentFunctionInput | {new(): A}
+export type RegisteredComponentInput<A extends IComponent<any, IAfterGuiAttachedParams> & B, B> = AgGridRegisteredComponentInput<A>| {new(): B};
+export type AgGridRegisteredComponentInput<A extends IComponent<any, IAfterGuiAttachedParams>> = AgGridComponentFunctionInput | {new(): A}
 export type AgGridComponentFunctionInput = (params:any)=>string | HTMLElement ;
 
 
@@ -82,7 +82,7 @@ export class ComponentProvider {
         }
     }
 
-    public registerComponent<A extends IComponent<any>> (name:string, component:AgGridRegisteredComponentInput<A>){
+    public registerComponent<A extends IComponent<any, IAfterGuiAttachedParams>> (name:string, component:AgGridRegisteredComponentInput<A>){
         if (this.frameworkComponents[name]){
             console.error(`Trying to register a component that you have already registered for frameworks: ${name}`);
             return;
@@ -95,7 +95,7 @@ export class ComponentProvider {
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    public registerFwComponent<A extends IComponent<any> & B, B> (name:string, component:{new(): IComponent<B>}){
+    public registerFwComponent<A extends IComponent<any, IAfterGuiAttachedParams> & B, B> (name:string, component:{new(): IComponent<B, IAfterGuiAttachedParams>}){
         if (this.jsComponents[name]){
             console.error(`Trying to register a component that you have already registered for plain javascript: ${name}`);
             return;
@@ -109,7 +109,7 @@ export class ComponentProvider {
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    public retrieve <A extends IComponent<any> & B, B> (name:string): RegisteredComponent<A, B>{
+    public retrieve <A extends IComponent<any, IAfterGuiAttachedParams> & B, B> (name:string): RegisteredComponent<A, B>{
         if (this.frameworkComponents[name]){
             return {
                 type: ComponentType.FRAMEWORK,

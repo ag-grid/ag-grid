@@ -1,7 +1,7 @@
 import {Autowired, Bean} from "../../context/context";
 import {IDateComp, IDateParams} from "../../rendering/dateComponent";
 import {GridOptions} from "../../entities/gridOptions";
-import {IComponent} from "../../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
 import {ColDef} from "../../entities/colDef";
 import {IHeaderGroupComp, IHeaderGroupParams} from "../../headerRendering/headerGroup/headerGroupComp";
 import {IHeaderComp, IHeaderParams} from "../../headerRendering/header/headerComp";
@@ -12,7 +12,7 @@ import {Column} from "../../entities/column";
 import {IFilterComp} from "../../interfaces/iFilter";
 import {FilterManager} from "../../filter/filterManager";
 import {ComponentResolver} from "./componentResolver";
-import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
 import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRenderer";
 
 
@@ -26,7 +26,7 @@ enum ComponentType {
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
-interface ComponentToUse<A extends IComponent<any> & B, B> {
+interface ComponentToUse<A extends IComponent<any, IAfterGuiAttachedParams> & B, B> {
     component:{new(): A}|{new(): B},
     type:ComponentType
 }
@@ -131,7 +131,7 @@ export class ComponentRecipes {
         return <ICellRendererComp>this.componentResolver.createAgGridComponent(this.gridOptionsWrapper, params, "fullWidthCellRenderer");
     }
 
-    private getFilterComponentPrototype<A extends IComponent<any> & B, B>
+    private getFilterComponentPrototype<A extends IComponent<any, IAfterGuiAttachedParams> & B, B>
     (colDef: ColDef): ComponentToUse<A, B> {
         return <ComponentToUse<A, B>>this.componentResolver.getComponentToUse(colDef, "filterComponent");
     }

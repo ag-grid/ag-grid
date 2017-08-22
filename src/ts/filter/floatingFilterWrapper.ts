@@ -6,7 +6,7 @@ import {SetLeftFeature} from "../rendering/features/setLeftFeature";
 import {IFloatingFilterParams, IFloatingFilterComp, FloatingFilterChange} from "./floatingFilter";
 import {Component} from "../widgets/component";
 import {RefSelector} from "../widgets/componentAnnotations";
-import {IComponent} from "../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Beans} from "../rendering/beans";
 
@@ -20,7 +20,7 @@ export interface IFloatingFilterWrapper <M>{
     onParentModelChanged(parentModel:M):void;
 }
 
-export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P> { }
+export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P, IAfterGuiAttachedParams> { }
 
 export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends Component implements IFloatingFilterWrapperComp<M, F, PC, P> {
 
@@ -83,20 +83,23 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
 
     enrichBody(body:HTMLElement):void{
         let floatingFilterBody:HTMLElement = <HTMLElement>body.querySelector('.ag-floating-filter-body');
+        let floatingFilterComp = _.ensureElement(this.floatingFilterComp.getGui());
         if (this.suppressFilterButton){
-            floatingFilterBody.appendChild(this.floatingFilterComp.getGui());
+            floatingFilterBody.appendChild(floatingFilterComp);
             _.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
             _.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body')
         } else {
             // let icon:HTMLElement = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column, svgFactory.createFilterSvg12);
-            floatingFilterBody.appendChild(this.floatingFilterComp.getGui());
+            floatingFilterBody.appendChild(floatingFilterComp);
             body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button" aria-hidden="true">
                     <button ref="eButtonShowMainFilter">...</button>            
             </div>`));
             // body.querySelector('button').appendChild(icon);
         }
         if (this.floatingFilterComp.afterGuiAttached){
-            this.floatingFilterComp.afterGuiAttached();
+            this.floatingFilterComp.afterGuiAttached({
+                eComponent: floatingFilterComp
+            });
         }
     }
 

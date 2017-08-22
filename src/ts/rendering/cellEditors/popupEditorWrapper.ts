@@ -2,6 +2,7 @@ import {Component} from "../../widgets/component";
 import {ICellEditorComp, ICellEditorParams} from "./iCellEditor";
 import {Autowired} from "../../context/context";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {_} from "../../utils";
 
 export class PopupEditorWrapper extends Component implements ICellEditorComp {
 
@@ -27,7 +28,7 @@ export class PopupEditorWrapper extends Component implements ICellEditorComp {
         // we call getGui() on child here (rather than in the constructor)
         // as we should wait for 'init' to be called on child first.
         if (!this.getGuiCalledOnChild) {
-            this.appendChild(this.cellEditor.getGui());
+            this.appendChild(_.assertHtmlElement(this.cellEditor.getGui()));
             this.getGuiCalledOnChild = true;
         }
         
@@ -59,7 +60,9 @@ export class PopupEditorWrapper extends Component implements ICellEditorComp {
 
     public afterGuiAttached(): void {
         if (this.cellEditor.afterGuiAttached) {
-            this.cellEditor.afterGuiAttached();
+            this.cellEditor.afterGuiAttached({
+                eComponent: _.assertHtmlElement(this.cellEditor.getGui())
+            });
         }
     }
 

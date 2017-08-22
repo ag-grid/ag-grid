@@ -1,4 +1,4 @@
-import {IComponent} from "../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
 export interface IDate {
     /** Returns the current date represented by this editor */
     getDate(): Date;
@@ -12,6 +12,6 @@ export interface IDateParams{
     onDateChanged:()=>void
 }
 
-export interface IDateComp extends IComponent<IDateParams>, IDate{
+export interface IDateComp extends IComponent<IDateParams, IAfterGuiAttachedParams>, IDate{
 
 }

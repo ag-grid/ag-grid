@@ -1,6 +1,6 @@
 
 import {Component} from "../../widgets/component";
-import {IComponent} from "../../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
 import {Utils as _} from "../../utils";
 import {ColumnGroup} from "../../entities/columnGroup";
 import {ColumnApi, ColumnController} from "../../columnController/columnController";
@@ -26,7 +26,7 @@ export interface IHeaderGroup {
 
 }
 
-export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> {
+export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams, IAfterGuiAttachedParams> {
 
 }
 

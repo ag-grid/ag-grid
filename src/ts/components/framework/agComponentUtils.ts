@@ -1,6 +1,6 @@
 import {Autowired, Bean} from "../../context/context";
 import {AgGridComponentFunctionInput, AgGridRegisteredComponentInput} from "./componentProvider";
-import {IComponent} from "../../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
 import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
 import {ComponentSource, ComponentType, ResolvedComponent} from "./componentResolver";
 import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
@@ -32,7 +32,7 @@ export class AgComponentUtils {
     @Autowired("componentMetadataProvider")
     private componentMetadataProvider:ComponentMetadataProvider;
 
-    public adaptFunction <A extends IComponent<any> & B, B>(
+    public adaptFunction <A extends IComponent<any, IAfterGuiAttachedParams> & B, B>(
         propertyName:string,
         hardcodedJsFunction: AgGridComponentFunctionInput,
         type:ComponentType,
@@ -56,7 +56,7 @@ export class AgComponentUtils {
         return null;
     }
 
-    public adaptCellRendererFunction (callback:AgGridComponentFunctionInput):{new(): IComponent<any>}{
+    public adaptCellRendererFunction (callback:AgGridComponentFunctionInput):{new(): IComponent<any, IAfterGuiAttachedParams>}{
         class Adapter implements ICellRendererComp{
             private params: ICellRendererParams;
 
@@ -81,7 +81,7 @@ export class AgComponentUtils {
     }
 
 
-    public doesImplementIComponent(candidate: AgGridRegisteredComponentInput<IComponent<any>>): boolean {
+    public doesImplementIComponent(candidate: AgGridRegisteredComponentInput<IComponent<any, IAfterGuiAttachedParams>>): boolean {
         if (!candidate) return false;
         return (<any>candidate).prototype && 'getGui' in (<any>candidate).prototype;
     }

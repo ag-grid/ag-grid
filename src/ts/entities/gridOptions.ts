@@ -33,7 +33,7 @@ import {
     ViewportChangedEvent,
     VirtualColumnsChangedEvent, VirtualRowRemovedEvent
 } from "../events";
-import {IComponent} from "../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
 import {AgGridRegisteredComponentInput} from "../components/framework/componentProvider";
 
 /****************************************************************
@@ -159,7 +159,6 @@ export interface GridOptions {
     // just set once
     localeText?: any;
     localeTextFunc?: Function;
-    suppressScrollLag?: boolean;
     suppressAnimationFrame?: boolean;
     /* a map of strings (cellRenderer keys) to cellRenderers (that can be ICellRenderer or ICellRendererFunc) */
     // cellRenderers?: {[key: string]: {new(): ICellRenderer} | ICellRendererFunc};
@@ -235,7 +234,7 @@ export interface GridOptions {
     // callbacks
     postProcessPopup?:(params: PostProcessPopupParams)=>void;
     frameworkComponents?:{[p:string]:{new(): any}}
-    components?:{[p:string]:AgGridRegisteredComponentInput<IComponent<any>>}
+    components?:{[p:string]:AgGridRegisteredComponentInput<IComponent<any, IAfterGuiAttachedParams>>}
     dateComponent?:{new(): IDateComp};
     dateComponentFramework?: any;
     groupRowRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
@@ -243,7 +242,6 @@ export interface GridOptions {
     groupRowRendererParams?: any;
     groupRowInnerRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     groupRowInnerRendererFramework?: any;
-    isScrollLag?(): boolean;
     isExternalFilterPresent?(): boolean;
     doesExternalFilterPass?(node: RowNode): boolean;
     getRowStyle?: Function;

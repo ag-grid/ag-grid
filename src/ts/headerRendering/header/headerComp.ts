@@ -6,7 +6,7 @@ import {IMenuFactory} from "../../interfaces/iMenuFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {SortController} from "../../sortController";
 import {TouchListener} from "../../widgets/touchListener";
-import {IComponent} from "../../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
 import {EventService} from "../../eventService";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {Events} from "../../events";
@@ -30,7 +30,7 @@ export interface IHeader {
 
 }
 
-export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
+export interface IHeaderComp extends IHeader, IComponent<IHeaderParams, IAfterGuiAttachedParams> {
 
 }
 

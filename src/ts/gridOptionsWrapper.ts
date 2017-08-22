@@ -257,10 +257,7 @@ export class GridOptionsWrapper {
     public getApi(): GridApi { return this.gridOptions.api; }
     public getColumnApi(): ColumnApi { return this.gridOptions.columnApi; }
     public isDeltaRowDataMode() { return isTrue(this.gridOptions.deltaRowDataMode); }
-    public isEnsureDomOrder() {
-        return true;
-        // return isTrue(this.gridOptions.ensureDomOrder);
-    }
+    public isEnsureDomOrder() { return isTrue(this.gridOptions.ensureDomOrder); }
     public isEnableColResize() { return isTrue(this.gridOptions.enableColResize); }
     public isSingleClickEdit() { return isTrue(this.gridOptions.singleClickEdit); }
     public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }
@@ -310,7 +307,6 @@ export class GridOptionsWrapper {
     public isEnableServerSideFilter() { return this.gridOptions.enableServerSideFilter; }
     public isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
 
-    public isSuppressScrollLag() { return isTrue(this.gridOptions.suppressScrollLag); }
     public isSuppressMovableColumns() { return isTrue(this.gridOptions.suppressMovableColumns); }
     public isAnimateRows() {
         // never allow animating if enforcing the row order
@@ -325,7 +321,6 @@ export class GridOptionsWrapper {
     public isRememberGroupStateWhenNewData(): boolean { return isTrue(this.gridOptions.rememberGroupStateWhenNewData); }
     public getIcons() { return this.gridOptions.icons; }
     public getAggFuncs(): {[key: string]: IAggFunc} { return this.gridOptions.aggFuncs; }
-    public getIsScrollLag() { return this.gridOptions.isScrollLag; }
     public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
     public getAlignedGrids(): GridOptions[] { return this.gridOptions.alignedGrids; }
     public getGroupRowRendererParams() { return this.gridOptions.groupRowRendererParams; }

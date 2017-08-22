@@ -2,7 +2,7 @@ import {Autowired, Bean, Context, Optional} from "../../context/context";
 import {GridOptions} from "../../entities/gridOptions";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {FrameworkComponentWrapper} from "./frameworkComponentWrapper";
-import {IComponent} from "../../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
 import {ColDef, ColGroupDef} from "../../entities/colDef";
 import {_} from "../../utils";
 import {NamedComponentResolver} from "./namedComponentResolver";
@@ -12,7 +12,7 @@ import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataP
 
 export type ComponentHolder = GridOptions | ColDef | ColGroupDef;
 
-export type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string;
+export type AgComponentPropertyInput<A extends IComponent<any, IAfterGuiAttachedParams>> = AgGridRegisteredComponentInput<A> | string;
 
 export enum ComponentType {
     AG_GRID, FRAMEWORK
@@ -26,7 +26,7 @@ export enum ComponentSource {
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
-export interface ResolvedComponent<A extends IComponent<any> & B, B> {
+export interface ResolvedComponent<A extends IComponent<any, IAfterGuiAttachedParams> & B, B> {
     component:{new(): A}|{new(): B},
     type:ComponentType,
     source:ComponentSource
@@ -76,7 +76,7 @@ export class ComponentResolver {
      *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
      */
-    public getComponentToUse<A extends IComponent<any> & B, B>
+    public getComponentToUse<A extends IComponent<any, IAfterGuiAttachedParams> & B, B>
     (
         holder:ComponentHolder,
         propertyName:string,
@@ -98,7 +98,7 @@ export class ComponentResolver {
         let HardcodedFwComponent : {new(): B} = null;
 
         if (holder != null){
-            let componentPropertyValue : AgComponentPropertyInput<IComponent<any>> = (<any>holder)[propertyName];
+            let componentPropertyValue : AgComponentPropertyInput<IComponent<any, IAfterGuiAttachedParams>> = (<any>holder)[propertyName];
             if (componentPropertyValue != null){
                 if (typeof componentPropertyValue === 'string'){
                     hardcodedNameComponent = componentPropertyValue;
@@ -218,7 +218,7 @@ export class ComponentResolver {
      *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
      */
-    public createAgGridComponent<A extends IComponent<any>> (
+    public createAgGridComponent<A extends IComponent<any, IAfterGuiAttachedParams>> (
         holderOpt:ComponentHolder,
         agGridParams:any,
         propertyName:string,
@@ -240,7 +240,7 @@ export class ComponentResolver {
         return component;
     }
 
-    private newAgGridComponent<A extends IComponent<any> & B, B>
+    private newAgGridComponent<A extends IComponent<any, IAfterGuiAttachedParams> & B, B>
     (
         holder:ComponentHolder,
         propertyName:string,

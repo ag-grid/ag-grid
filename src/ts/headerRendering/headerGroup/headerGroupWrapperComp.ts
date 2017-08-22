@@ -62,7 +62,7 @@ export class HeaderGroupWrapperComp extends Component {
 
         this.setupResize();
         this.addClasses();
-        this.setupMove(headerComponent.getGui(), displayName);
+        this.setupMove(_.ensureElement(headerComponent.getGui()), displayName);
         this.setupWidth();
         this.addAttributes();
 

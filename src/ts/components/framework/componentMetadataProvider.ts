@@ -1,12 +1,12 @@
 import {Autowired, Bean, PostConstruct} from "../../context/context";
-import {IComponent} from "../../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
 import {AgGridComponentFunctionInput} from "./componentProvider";
 import {AgComponentUtils} from "./agComponentUtils";
 
 export interface ComponentMetadata {
     mandatoryMethodList:string[],
     optionalMethodList:string[],
-    functionAdapter?:(callback:AgGridComponentFunctionInput)=>{new(): IComponent<any>}
+    functionAdapter?:(callback:AgGridComponentFunctionInput)=>{new(): IComponent<any, IAfterGuiAttachedParams>}
 }
 
 

@@ -84,7 +84,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         // hack to get renderer working with slick and non-slick
         if (this.params.eGridCell) {
-            this.afterGuiAttached({});
+            // this.afterGuiAttached({});
         }
     }
 

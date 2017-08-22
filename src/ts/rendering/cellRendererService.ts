@@ -4,6 +4,7 @@ import {ComponentRecipes} from "../components/framework/componentRecipes";
 import {ColDef} from "../entities/colDef";
 import {GroupCellRendererParams} from "./cellRenderers/groupCellRenderer";
 import {ComponentResolver, ComponentSource, ResolvedComponent} from "../components/framework/componentResolver";
+import {_} from "../utils";
 
 /** Class to use a cellRenderer. */
 @Bean('cellRendererService')
@@ -48,7 +49,7 @@ export class CellRendererService {
 
 
     public bindToHtml(cellRenderer: ICellRendererComp, eTarget: HTMLElement) {
-        let gui: HTMLElement = cellRenderer.getGui();
+        let gui: HTMLElement|string = cellRenderer.getGui();
         if (gui != null) {
             if (typeof gui == 'object'){
                 eTarget.appendChild(gui);
@@ -61,10 +62,5 @@ export class CellRendererService {
     }
 
 
-    public useFullRowGroupRenderer (eTarget: HTMLElement, params:any):ICellRendererComp{
-        let cellRenderer: ICellRendererComp = this.componentRecipes.newFullRowGroupRenderer (params);
-        eTarget.appendChild( cellRenderer.getGui());
-        return cellRenderer;
-    }
 
 }

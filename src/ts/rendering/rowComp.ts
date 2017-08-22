@@ -767,7 +767,7 @@ export class RowComp extends Component {
 
         let cellRenderer = this.beans.componentResolver.createAgGridComponent<ICellRendererComp>(null, params, cellRendererType);
 
-        let gui = cellRenderer.getGui();
+        let gui = _.assertHtmlElement(cellRenderer.getGui());
         let guiIsTemplate = typeof gui === 'string';
         let cellTemplate = guiIsTemplate ? <string><any> gui : '';
 
@@ -790,7 +790,7 @@ export class RowComp extends Component {
                     eParentOfValue: eRow,
                     eComponent: eCell
                 };
-                cellRenderer.afterGuiAttached(<IAfterGuiAttachedParams> params);
+                cellRenderer.afterGuiAttached(params);
             }
 
             this.afterRowAttached(rowContainerComp, eRow);

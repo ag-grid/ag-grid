@@ -6,7 +6,7 @@ import {Utils as _} from "../utils";
 import {PopupService} from "../widgets/popupService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {EventService} from "../eventService";
-import {IAfterGuiAttachedParams} from "../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IFilterAfterGuiAttachedParams} from "../interfaces/iComponent";
 
 @Bean('menuFactory')
 export class StandardMenuFactory implements IMenuFactory {
@@ -46,7 +46,7 @@ export class StandardMenuFactory implements IMenuFactory {
         _.addCssClass(eMenu, 'ag-menu');
         eMenu.appendChild(filterWrapper.gui);
 
-        let hidePopup: (event?: any)=>void;
+        let hidePopup: () => void;
 
         let bodyScrollListener = (event: any) => {
             // if h scroll, popup is no longer over the column
@@ -67,8 +67,9 @@ export class StandardMenuFactory implements IMenuFactory {
         positionCallback(eMenu);
 
         if (filterWrapper.filter.afterGuiAttached) {
-            let params: IAfterGuiAttachedParams = {
-                hidePopup: hidePopup
+            let params: IFilterAfterGuiAttachedParams = {
+                hidePopup: hidePopup,
+                eComponent: filterWrapper.gui
             };
             filterWrapper.filter.afterGuiAttached(params);
         }

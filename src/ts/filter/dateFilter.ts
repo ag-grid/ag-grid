@@ -2,7 +2,7 @@ import {IFilterParams, SerializedFilter} from "../interfaces/iFilter";
 import {Component} from "../widgets/component";
 import {IDateParams, IDateComp} from "../rendering/dateComponent";
 import {QuerySelector} from "../widgets/componentAnnotations";
-import {Utils} from "../utils";
+import {_, Utils} from "../utils";
 import {BaseFilter, Comparator, ScalarBaseFilter} from "./baseFilter";
 import {Autowired} from "../context/context";
 import {ComponentRecipes} from "../components/framework/componentRecipes";
@@ -70,16 +70,22 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         this.dateFromComponent = this.componentRecipes.newDateComponent(dateComponentParams);
 
 
-        this.eDateFromPanel.appendChild(this.dateFromComponent.getGui());
-        this.eDateToPanel.appendChild(this.dateToComponent.getGui());
+        let dateFromElement = _.ensureElement(this.dateFromComponent.getGui());
+        this.eDateFromPanel.appendChild(dateFromElement);
+        let dateToElement = _.ensureElement(this.dateToComponent.getGui());
+        this.eDateToPanel.appendChild(dateToElement);
 
 
         if (this.dateFromComponent.afterGuiAttached) {
-            this.dateFromComponent.afterGuiAttached();
+            this.dateFromComponent.afterGuiAttached({
+                eComponent: dateFromElement
+            });
         }
 
         if (this.dateToComponent.afterGuiAttached) {
-            this.dateToComponent.afterGuiAttached();
+            this.dateToComponent.afterGuiAttached({
+                eComponent: dateToElement
+            });
         }
     }
 

@@ -215,7 +215,6 @@ export class GridPanel extends BeanStub {
     private bodyHeight: number;
 
     // properties we use a lot, so keep reference
-    private useScrollLag: boolean;
     private enableRtl: boolean;
     private forPrint: boolean;
     private autoHeight: boolean;
@@ -233,7 +232,6 @@ export class GridPanel extends BeanStub {
         this.forPrint = this.gridOptionsWrapper.isForPrint();
         this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
-        this.useScrollLag = this.isUseScrollLag();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.loadTemplate();
         this.findElements();
@@ -1644,16 +1642,7 @@ export class GridPanel extends BeanStub {
             return;
         }
 
-        let wrapWithDebounce = (func: Function)=> {
-            if (this.useScrollLag) {
-                return this.debounce.bind(this, func);
-            } else {
-                return func;
-            }
-        };
-
-        let bodyScrollListener = wrapWithDebounce(this.onBodyScroll.bind(this));
-        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', bodyScrollListener);
+        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', this.onBodyScroll.bind(this));
 
         // below we add two things:
         // pinnedScrollListener -> when pinned panel with scrollbar gets scrolled, it updates body and other pinned
@@ -1664,14 +1653,12 @@ export class GridPanel extends BeanStub {
         let onPinnedRightVerticalScroll = this.onVerticalScroll.bind(this, this.ePinnedRightColsViewport);
 
         if (this.enableRtl) {
-            let pinnedScrollListener = wrapWithDebounce(onPinnedLeftVerticalScroll);
-            this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', pinnedScrollListener);
+            this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', onPinnedLeftVerticalScroll);
 
             let suppressRightScroll = () => this.ePinnedRightColsViewport.scrollTop = 0;
             this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', suppressRightScroll);
         } else {
-            let pinnedScrollListener = wrapWithDebounce(onPinnedRightVerticalScroll);
-            this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', pinnedScrollListener);
+            this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', onPinnedRightVerticalScroll);
 
             let suppressLeftScroll = () => this.ePinnedLeftColsViewport.scrollTop = 0;
             this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', suppressLeftScroll);
@@ -1800,42 +1787,6 @@ export class GridPanel extends BeanStub {
         let scrollPosition = this.getBodyViewportScrollLeft();
 
         this.columnController.setVirtualViewportPosition(scrollWidth, scrollPosition);
-    }
-
-    private isUseScrollLag(): boolean {
-        // if we are in IE or Safari, then we only redraw if there was no scroll event
-        // in the 50ms following this scroll event. without this, these browsers have
-        // a bad scrolling feel, where the redraws clog the scroll experience
-        // (makes the scroll clunky and sticky). this method is like throttling
-        // the scroll events.
-        // let the user override scroll lag option
-        if (this.gridOptionsWrapper.isSuppressScrollLag()) {
-            return false;
-        } else if (this.gridOptionsWrapper.getIsScrollLag()) {
-            return this.gridOptionsWrapper.getIsScrollLag()();
-        } else {
-            return _.isBrowserIE() || _.isBrowserSafari();
-        }
-    }
-
-    private debounce(callback: Function): void {
-        if (this.requestAnimationFrameExists && _.isBrowserSafari()) {
-            if (!this.scrollLagTicking) {
-                this.scrollLagTicking = true;
-                requestAnimationFrame( ()=> {
-                    callback();
-                    this.scrollLagTicking = false;
-                });
-            }
-        } else {
-            this.scrollLagCounter++;
-            let scrollLagCounterCopy = this.scrollLagCounter;
-            setTimeout( ()=> {
-                if (this.scrollLagCounter === scrollLagCounterCopy) {
-                    callback();
-                }
-            }, 50);
-        }
     }
 
     public getBodyViewportScrollLeft(): number {

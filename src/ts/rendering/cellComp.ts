@@ -21,7 +21,7 @@ import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellR
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {NewValueParams} from "../entities/colDef";
 import {Beans} from "./beans";
-import {IAfterGuiAttachedParams} from "../interfaces/iComponent";
+import {IAfterGuiAttachedParams, ICellRendererAfterGuiAttachedParams} from "../interfaces/iComponent";
 import {RowComp} from "./rowComp";
 
 
@@ -708,13 +708,12 @@ export class CellComp extends Component {
 
     private callAfterGuiAttachedOnCellRenderer(): void {
         if (this.cellRenderer.afterGuiAttached) {
-            let params = {
+            let params: ICellRendererAfterGuiAttachedParams = {
                 eGridCell: this.getGui(),
                 eParentOfValue: this.eParentOfValue,
-                eComponent: this.cellRendererGui
+                eComponent: <HTMLElement> this.cellRendererGui
             };
-            // todo - Alberto - need to create interfaces for after GUI attached for cell renderer, to add eGridCell and eParentOfValue
-            this.cellRenderer.afterGuiAttached(<IAfterGuiAttachedParams> params);
+            this.cellRenderer.afterGuiAttached(params);
         }
     }
 
@@ -916,7 +915,9 @@ export class CellComp extends Component {
         }
 
         if (cellEditor.afterGuiAttached) {
-            cellEditor.afterGuiAttached();
+            cellEditor.afterGuiAttached({
+                eComponent: _.assertHtmlElement(cellEditor.getGui())
+            });
         }
 
         let event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
@@ -927,7 +928,7 @@ export class CellComp extends Component {
 
     private addInCellEditor(): void {
         _.removeAllChildren(this.getGui());
-        this.getGui().appendChild(this.cellEditor.getGui());
+        this.getGui().appendChild(_.assertHtmlElement(this.cellEditor.getGui()));
 
         if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
             this.beans.$compile(this.getGui())(this.scope);
@@ -951,7 +952,7 @@ export class CellComp extends Component {
             rowNode: this.rowNode,
             type: 'popupCellEditor',
             eventSource: this.getGui(),
-            ePopup: ePopupGui,
+            ePopup: _.assertHtmlElement(ePopupGui),
             keepWithinBounds: true
         });
 
