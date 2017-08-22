@@ -37,6 +37,13 @@ include '../documentation-main/documentation_header.php';
             Similarly colId on the cell is now col-id. These fixes / breaking changes only impact your code if you were
             using these in CSS selectors outside of the grid.
         </li>
+        <li>
+            enableRowHover is now a property, instead of suppressRowHover, so it's off by default. This was for performance
+            reasons - most people had it turned on without realising and this slowed things down.
+        </li>
+        <li>
+            suppressScrollLag and isScrollLag no longer used. The new way of rendering doesn't need these.
+        </li>
     </ul>
 
     <h4>Breaking Change</h4>

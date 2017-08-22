@@ -340,10 +340,10 @@ var defaultCols = [
                 // enablePivot: true,
                 filter: PersonFilter,
                 floatingFilterComponent: 'personFloatingFilterComponent',
-                // checkboxSelection: function (params) {
-                //     // we put checkbox on the name if we are not doing grouping
-                //     return params.columnApi.getRowGroupColumns().length === 0;
-                // },
+                checkboxSelection: function (params) {
+                    // we put checkbox on the name if we are not doing grouping
+                    return params.columnApi.getRowGroupColumns().length === 0;
+                },
                 headerCheckboxSelection: function (params) {
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
