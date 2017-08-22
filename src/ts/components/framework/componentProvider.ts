@@ -79,7 +79,8 @@ export class ComponentProvider {
             animateSlide: AnimateSlideCellRenderer,
             group: GroupCellRenderer,
             groupRowRenderer: GroupCellRenderer,
-            loadingCellRenderer: LoadingCellRenderer
+            loadingCellRenderer: LoadingCellRenderer,
+            pinnedRowCellRenderer: DefaultCellRenderer
         }
     }
 

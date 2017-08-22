@@ -92,8 +92,6 @@ export class RowComp extends Component {
 
     private fullWidthRow: boolean;
     private fullWidthRowEmbedded: boolean;
-    private fullWidthCellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
-    private fullWidthCellRendererParams: any;
 
     private editingRow: boolean;
     private rowFocused: boolean;
@@ -305,8 +303,6 @@ export class RowComp extends Component {
     private setupRowStub(): void {
         this.fullWidthRow = true;
         this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-        this.fullWidthCellRenderer = LoadingCellRenderer;
-
         this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER);
     }
 
@@ -331,8 +327,6 @@ export class RowComp extends Component {
     private setupFullWidthContainers(): void {
         this.fullWidthRow = true;
         this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-        this.fullWidthCellRenderer = this.beans.gridOptionsWrapper.getFullWidthCellRenderer();
-        this.fullWidthCellRendererParams = this.beans.gridOptionsWrapper.getFullWidthCellRendererParams();
 
         this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER);
     }
@@ -340,8 +334,6 @@ export class RowComp extends Component {
     private setupFullWidthGroupContainers(): void {
         this.fullWidthRow = true;
         this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-        this.fullWidthCellRenderer = this.beans.gridOptionsWrapper.getFullWidthCellRenderer();
-        this.fullWidthCellRendererParams = this.beans.gridOptionsWrapper.getFullWidthCellRendererParams();
 
         this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER);
     }
@@ -820,11 +812,7 @@ export class RowComp extends Component {
             eGridCell: <HTMLElement> null,
             eParentOfValue: <HTMLElement> null,
             pinned: pinned,
-            addRenderedRowListener: this.addEventListener.bind(this),
-            colDef: {
-                cellRenderer: this.fullWidthCellRenderer,
-                cellRendererParams: this.fullWidthCellRendererParams
-            }
+            addRenderedRowListener: this.addEventListener.bind(this)
         };
 
         return params;

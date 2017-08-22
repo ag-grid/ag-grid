@@ -87,10 +87,6 @@ export class GridOptionsWrapper {
 
     private propertyEventService: EventService = new EventService();
 
-    private fullWidthCellRenderer : {new(): ICellRendererComp} | ICellRendererFunc | string;
-    private groupRowRenderer : {new(): ICellRendererComp} | ICellRendererFunc | string;
-    private groupRowInnerRenderer : {new(): ICellRendererComp} | ICellRendererFunc | string;
-
     private domDataKey = '__AG_'+Math.random().toString();
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
@@ -113,8 +109,6 @@ export class GridOptionsWrapper {
         let async = this.useAsyncEvents();
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
 
-        this.setupFrameworkComponents();
-
         if (this.isGroupSelectsChildren() && this.isSuppressParentsInRowNodes()) {
             console.warn('ag-Grid: groupSelectsChildren does not work wth suppressParentsInRowNodes, this selection method needs the part in rowNode to work');
         }
@@ -136,12 +130,6 @@ export class GridOptionsWrapper {
 
     }
 
-    private setupFrameworkComponents(): void {
-        this.fullWidthCellRenderer = this.frameworkFactory.gridOptionsFullWidthCellRenderer(this.gridOptions);
-        this.groupRowRenderer = this.frameworkFactory.gridOptionsGroupRowRenderer(this.gridOptions);
-        this.groupRowInnerRenderer = this.frameworkFactory.gridOptionsGroupRowInnerRenderer(this.gridOptions);
-    }
-
     // returns the dom data, or undefined if not found
     public getDomData(element: Node, key: string): any {
         let domData = (<any>element)[this.domDataKey];
@@ -160,12 +148,6 @@ export class GridOptionsWrapper {
         }
         domData[key] = value;
     }
-
-    // the cellRenderers come from the instances for this class, not from gridOptions, which allows
-    // the baseFrameworkFactory to replace with framework specific ones
-    public getFullWidthCellRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string { return this.fullWidthCellRenderer; }
-    public getGroupRowRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string { return this.groupRowRenderer; }
-    public getGroupRowInnerRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string { return this.groupRowInnerRenderer; }
 
     public isEnterprise() { return this.enterprise;}
     public isRowSelection() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; }

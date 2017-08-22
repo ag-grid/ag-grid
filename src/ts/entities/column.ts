@@ -1,24 +1,18 @@
 import {ColumnGroupChild} from "./columnGroupChild";
 import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
-import {
-    ColDef,
-    AbstractColDef,
-    IAggFunc,
-    IsColumnFunc,
-    IsColumnFuncParams, ColSpanParams
-} from "./colDef";
+import {AbstractColDef, ColDef, ColSpanParams, IAggFunc, IsColumnFunc, IsColumnFuncParams} from "./colDef";
 import {EventService} from "../eventService";
 import {Utils as _} from "../utils";
 import {Autowired, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnUtils} from "../columnController/columnUtils";
 import {RowNode} from "./rowNode";
-import {ICellRendererFunc, ICellRendererComp} from "../rendering/cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
 import {ICellEditorComp} from "../rendering/cellEditors/iCellEditor";
 import {IFilter} from "../interfaces/iFilter";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
-import {AgEvent, ColumnEvent} from "../events";
+import {ColumnEvent} from "../events";
 import {ColumnApi} from "../columnController/columnController";
 import {GridApi} from "../gridApi";
 
@@ -104,8 +98,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     private primary: boolean;
 
-    private cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
-    private floatingCellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
     private cellEditor: {new(): ICellEditorComp} | string;
     private filter: {new(): IFilter} | string;
 
@@ -131,8 +123,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     // this is done after constructor as it uses gridOptionsWrapper
     @PostConstruct
     public initialise(): void {
-        this.floatingCellRenderer = this.frameworkFactory.colDefFloatingCellRenderer(this.colDef);
-        this.cellRenderer = this.frameworkFactory.colDefCellRenderer(this.colDef);
         this.cellEditor = this.frameworkFactory.colDefCellEditor(this.colDef);
         this.filter = this.frameworkFactory.colDefFilter(this.colDef);
 
@@ -175,16 +165,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return showingAllGroups || showingThisGroup;
     }
 
-    public getCellRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string {
-        return this.cellRenderer;
-    }
-
     public getCellEditor(): {new(): ICellEditorComp} | string {
         return this.cellEditor;
-    }
-
-    public getFloatingCellRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string {
-        return this.floatingCellRenderer;
     }
 
     public getFilter(): {new(): IFilter} | string {
@@ -640,7 +622,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         let menuTabs: string[] = this.getColDef().menuTabs;
         if (menuTabs == null) {
             menuTabs = defaultValues;
-        };
+        }
         return menuTabs;
     }
 }
