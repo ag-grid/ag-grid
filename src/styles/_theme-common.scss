@@ -601,6 +601,18 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
             overflow: hidden;
         }
     }
+
+    .ag-rtl {
+        .ag-floating-filter-body {
+            margin-right: 0;
+            margin-left: 20px;
+            float: right;
+        }
+
+        .ag-floating-filter-button {
+            float: left;
+        }
+    }
 }
 
 /* icons are used outside of the grid root (in the ghost) */
