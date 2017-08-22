@@ -56,12 +56,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
         this.setupLabel();
         this.addGroupExpandIcon();
-
-        if (this.params.columnGroup.isExpandable()) {
-            this.setupExpandIcons();
-        } else {
-            this.removeExpandIcons();
-        }
+        this.setupExpandIcons();
     }
 
     private setupExpandIcons(): void {
@@ -72,9 +67,11 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         this.addTouchAndClickListeners(this.eCloseIcon);
         this.addTouchAndClickListeners(this.eOpenIcon);
 
-        this.updateIconVisibilty();
+        this.updateIconVisibility();
 
-        this.addDestroyableEventListener(this.params.columnGroup.getOriginalColumnGroup(), OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibilty.bind(this));
+        let originalColumnGroup = this.params.columnGroup.getOriginalColumnGroup();
+        this.addDestroyableEventListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
+        this.addDestroyableEventListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
     }
 
     private addTouchAndClickListeners(eElement: HTMLElement): void {
@@ -90,15 +87,16 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         this.addDestroyableEventListener(eElement, 'click', expandAction);
     }
 
-    private updateIconVisibilty(): void {
-        let expanded = this.params.columnGroup.isExpanded();
-        _.setVisible(this.eOpenIcon, !expanded);
-        _.setVisible(this.eCloseIcon, expanded);
-    }
-
-    private removeExpandIcons(): void {
-        _.setVisible(this.eOpenIcon, false);
-        _.setVisible(this.eCloseIcon, false);
+    private updateIconVisibility(): void {
+        let columnGroup = this.params.columnGroup;
+        if (columnGroup.isExpandable()) {
+            let expanded = this.params.columnGroup.isExpanded();
+            _.setVisible(this.eOpenIcon, !expanded);
+            _.setVisible(this.eCloseIcon, expanded);
+        } else {
+            _.setVisible(this.eOpenIcon, false);
+            _.setVisible(this.eCloseIcon, false);
+        }
     }
 
     private addInIcon(iconName: string, refName: string): void {

@@ -1579,6 +1579,10 @@ export class ColumnController {
         // could overlap with the old id's, so the cache would return old values for new columns.
         this.valueCache.expire();
 
+        // NOTE ==================
+        // we should be destroying the existing columns and groups if they exist, for example, the original column
+        // group adds a listener to the columns, it should be also removing the listeners
+
         this.autoGroupsNeedBuilding = true;
 
         let balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(columnDefs, true);

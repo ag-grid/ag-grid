@@ -43,7 +43,7 @@ export class BalancedColumnTreeBuilder {
 
         this.columnUtils.depthFirstOriginalTreeSearch(balancedTree, (child: OriginalColumnGroupChild)=> {
             if (child instanceof OriginalColumnGroup) {
-                (<OriginalColumnGroup>child).calculateExpandable();
+                (<OriginalColumnGroup>child).setupExpandable();
             }
         });
 
