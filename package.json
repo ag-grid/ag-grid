@@ -34,7 +34,7 @@
   "devDependencies": {
     "@types/jasmine": "2.5.x",
     "@types/selenium-webdriver": "3.0.x",
-    "ag-grid-testing": "^0.0.1",
+    "ag-grid-testing": "^0.0.2",
     "bootstrap": "3.3.6",
     "font-awesome": "4.5.0",
     "gulp": "3.9.0",
