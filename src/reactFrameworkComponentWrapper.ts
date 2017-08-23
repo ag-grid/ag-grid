@@ -1,10 +1,10 @@
-import {BaseComponentWrapper, Bean, FrameworkComponentWrapper, IComponent, WrapableInterface} from "ag-grid";
+import {BaseComponentWrapper, Bean, FrameworkComponentWrapper, IComponent, WrapableInterface, IAfterGuiAttachedParams} from "ag-grid";
 import {AgReactComponent} from "./agReactComponent";
 
 @Bean('frameworkComponentWrapper')
 export class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
     createWrapper(ReactComponent: { new (): any }): WrapableInterface {
-        class DynamicAgReactComponent extends AgReactComponent implements IComponent<any>, WrapableInterface {
+        class DynamicAgReactComponent extends AgReactComponent implements IComponent<any, IAfterGuiAttachedParams>, WrapableInterface {
 
             constructor() {
                 super(ReactComponent);
