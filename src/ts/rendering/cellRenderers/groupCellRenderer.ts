@@ -61,8 +61,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     // be the parent who's details we are actually showing if the data was pulled down.
     private displayedGroup: RowNode;
 
-    private embeddedRowMismatch: boolean;
-
     private cellIsBlank: boolean;
 
     constructor() {
