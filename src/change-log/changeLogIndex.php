@@ -50,6 +50,9 @@ include '../documentation-main/documentation_header.php';
         <li>
             suppressScrollLag and isScrollLag no longer used. The new way of rendering doesn't need these.
         </li>
+        <li>AG-664: Added support for Ref Data when using Value Handlers.
+            See the new section on <a href="../javascript-grid-reference-data">Reference Data</a>
+        </li>
         <li>AG-695: The 'type' property on a ColDef now supports an array of column type keys</li>
         <li>AG-679: Improved error handling when Column Types are not correctly configured</li>
     </ul>
