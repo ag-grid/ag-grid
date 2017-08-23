@@ -1,40 +1,68 @@
-// Colors
-$primary-opacity: .87;
-$secondary-opacity: .54;
-$disabled-opacity: .38;
+// Taken from the palette of angular material: https://github.com/angular/material2/blob/master/src/lib/core/theming/_palette.scss 
+$mat-grey-0: #FFFFFF;
+$mat-grey-100: #F5F5F5;
+$mat-grey-200: #EEEEEE;
+$mat-grey-300: #EEEEEE;
 
-$accent: #4285F4;
-$primary: rgba(black, $primary-opacity);
-$secondary: rgba(black, $secondary-opacity);
-$disabled: rgba(black, $disabled-opacity);
-$hint: rgba(black, $disabled-opacity);
-$icon: rgba(black, $disabled-opacity);
+// Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
+$mat-indigo-500: #3f51b5;
+$mat-pink-A200: #ff4081;
 
-$hover: #EEEEEE;
-$selected: #F5F5F5;
-$background-color: #FFFFFF;
-$editor-background: #F5F5F5;
-$panel-background: #EEEEEE;
-$border-color: #E0E0E0;
-$chip-background: #E0E0E0;
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// The variables below can be overriden to adjust the look up to the app color scheme
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-$primary-font-size: 13px;
-$primary-font: "Roboto", sans-serif;
-$primary-weight: 400;
+// sizing
+$ag-mat-grid-size: 8px !default;
+$ag-mat-icon-size: 18px !default;
 
-$secondary-font: "Roboto", sans-serif;
-$secondary-font-size: 12px;
-$secondary-weight: 700;
-$grid-size: 8px;
-$icon-size: 18px;
+$ag-mat-icons-path: './material-icons/' !default;
 
-$header-height: $grid-size * 7;
-$row-height: $grid-size * 6;
-$cell-horizontal-padding: $grid-size* 3;
-$transition-speed: 120ms;
+// opacity values used for black values, taken from material spec
+$ag-mat-foreground-opacity: .87 !default;
+$ag-mat-foreground-secondary-opacity: .54 !default;
+$ag-mat-foreground-disabled-opacity: .38 !default;
+
+$ag-mat-font: "Roboto", sans-serif !default;
+$ag-mat-font-size: 13px !default;
+$ag-mat-font-weight: 400 !default;
+
+$ag-mat-font-secondary: "Roboto", sans-serif !default;
+$ag-mat-font-secondary-size: 12px !default;
+$ag-mat-font-secondary-weight: 700 !default;
+
+// Theme colors 
+$ag-mat-primary: $mat-indigo-500 !default;
+$ag-mat-accent: $mat-pink-A200 !default;
+
+// the three black shades, used for the UI
+$ag-mat-foreground: rgba(black, $ag-mat-foreground-opacity) !default;
+$ag-mat-foreground-secondary: rgba(black, $ag-mat-foreground-secondary-opacity) !default;
+$ag-mat-foreground-disabled: rgba(black, $ag-mat-foreground-disabled-opacity) !default;
+
+// backgrounds
+$ag-mat-background: $mat-grey-0 !default;
+$ag-mat-background-editor: $mat-grey-100 !default;
+$ag-mat-panel-background: $mat-grey-200 !default;
+$ag-mat-chip-background: $mat-grey-300 !default;
+
+// interaction 
+$ag-mat-hover: $mat-grey-200 !default;
+$ag-mat-selected: $mat-grey-100 !default;
+
+$ag-mat-border-color: $mat-grey-300 !default;
+
+$ag-mat-header-height: $ag-mat-grid-size * 7 !default;
+$ag-mat-row-height: $ag-mat-grid-size * 6 !default;
+$ag-mat-transition-speed: 120ms !default;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// internal shortcuts
+$cell-horizontal-padding: $ag-mat-grid-size * 3;
 
 @mixin bottom-border() {
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $ag-mat-border-color;
     box-sizing: border-box;
 }
 
@@ -49,22 +77,27 @@ $transition-speed: 120ms;
 }
 
 @mixin icon-background($icon) {
-    width: $icon-size;
-    height: $icon-size;
-    background: transparent url('./material-icons/#{$icon}.svg') center no-repeat;
-    background-size: $icon-size $icon-size;
+    width: $ag-mat-icon-size;
+    height: $ag-mat-icon-size;
+    background: transparent url('#{$ag-mat-icons-path}#{$icon}.svg') center no-repeat;
+    background-size: $ag-mat-icon-size $ag-mat-icon-size;
     opacity: primary-opacity;
 }
 
+@mixin primary-icon($icon) {
+    background: $ag-mat-primary none;
+    mask: url("#{$ag-mat-icons-path}#{$icon}.svg") no-repeat 50% 50%;
+}
+
 @mixin accent-icon($icon) {
-    background: $accent none;
-    mask: url("./material-icons/#{$icon}.svg") no-repeat 50% 50%;
+    background: $ag-mat-accent none;
+    mask: url("#{$ag-mat-icons-path}#{$icon}.svg") no-repeat 50% 50%;
 }
 
 @mixin card() {
     box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-    padding: $grid-size;
-    background: $background-color;
+    padding: $ag-mat-grid-size;
+    background: $ag-mat-background;
     border-radius: 2px;
 }
 
@@ -75,19 +108,19 @@ $transition-speed: 120ms;
     font-family: inherit;
 
     box-sizing: border-box;
-    border-bottom: 1px solid $border-color;
-    height: $grid-size * 3;
-    padding-bottom: $grid-size;
-    color: $primary;
+    border-bottom: 1px solid $ag-mat-border-color;
+    height: $ag-mat-grid-size * 3;
+    padding-bottom: $ag-mat-grid-size;
+    color: $ag-mat-foreground;
 
     &:focus {
-        border-bottom: 2px solid $accent;
-        padding-bottom: $grid-size - 1;
+        border-bottom: 2px solid $ag-mat-primary;
+        padding-bottom: $ag-mat-grid-size - 1;
         outline: none;
     }
 
     &::placeholder {
-        color: $disabled;
+        color: $ag-mat-foreground-disabled;
     }
 }
 
@@ -95,7 +128,7 @@ $transition-speed: 120ms;
     -webkit-appearance: none;
     background: transparent;
     border: 0;
-    color: $accent;
+    color: $ag-mat-primary;
     text-transform: uppercase;
     font-family: inherit;
     font-size: inherit;
@@ -108,16 +141,16 @@ $transition-speed: 120ms;
     overflow: hidden;
 }
 .ag-material-next {
-    font: $primary-weight $primary-font-size $primary-font;
-    color: $primary;
-    background-color: $background-color;
+    font: $ag-mat-font-weight $ag-mat-font-size $ag-mat-font;
+    color: $ag-mat-foreground;
+    background-color: $ag-mat-background;
 
 ////////////////////////////////////////
 // Basic layout
 ////////////////////////////////////////
     .ag-header {
-        font: $secondary-weight $secondary-font-size $secondary-font;
-        color: $secondary;
+        font: $ag-mat-font-secondary-weight $ag-mat-font-secondary-size $ag-mat-font-secondary;
+        color: $ag-mat-foreground-secondary;
     }
 
     .ag-header-row {
@@ -126,11 +159,11 @@ $transition-speed: 120ms;
 
     .ag-row {
         @include bottom-border;
-        transition: background-color $transition-speed linear;
+        transition: background-color $ag-mat-transition-speed linear;
     }
 
     .ag-row-hover {
-        background-color: $hover;
+        background-color: $ag-mat-hover;
     }
 
     .ag-numeric-cell {
@@ -139,7 +172,7 @@ $transition-speed: 120ms;
 
     .ag-header-cell-label {
         float: left;
-        width: calc(100% - #{$icon-size});
+        width: calc(100% - #{$ag-mat-icon-size});
         & > span {
             float: left;
         }
@@ -162,11 +195,11 @@ $transition-speed: 120ms;
     }
 
     .ag-header-cell, .ag-header-group-cell {
-        @include grid-cell($header-height);
+        @include grid-cell($ag-mat-header-height);
     }
 
     .ag-cell {
-        @include grid-cell($row-height - 2);
+        @include grid-cell($ag-mat-row-height - 2);
         border: 1px solid transparent;
     }
 
@@ -175,26 +208,26 @@ $transition-speed: 120ms;
 ////////////////////////////////////////
     .ag-cell:focus {
         outline: initial;
-        border: 1px solid $accent;
+        border: 1px solid $ag-mat-primary;
     }
 
 ////////////////////////////////////////
 // Resizing
 ////////////////////////////////////////
     .ag-header-cell-resize {
-        width: $grid-size * 2;
+        width: $ag-mat-grid-size * 2;
         position: absolute;
-        right:-$grid-size * 1;
+        right:-$ag-mat-grid-size * 1;
         z-index: 4;
         &::after {
-            border-right: 1px solid $border-color;
+            border-right: 1px solid $ag-mat-border-color;
             display: block;
-            height: $header-height - $grid-size * 4;
-            margin-top: $grid-size * 2;
+            height: $ag-mat-header-height - $ag-mat-grid-size * 4;
+            margin-top: $ag-mat-grid-size * 2;
             content: 'resize';
             overflow: hidden;
-            text-indent: $grid-size;
-            width: $grid-size;
+            text-indent: $ag-mat-grid-size;
+            width: $ag-mat-grid-size;
         }
     }
 
@@ -213,7 +246,7 @@ $transition-speed: 120ms;
 
     .ag-header-cell-menu-button {
         @include icon-background('menu');
-        height: $header-height;
+        height: $ag-mat-header-height;
     }
 
     .ag-icon-checkbox-checked {
@@ -232,22 +265,22 @@ $transition-speed: 120ms;
 
         .ag-menu-list {
             & > div:first-child > span {
-                padding-top: $grid-size;
+                padding-top: $ag-mat-grid-size;
             }
 
             & > div:last-child > span {
-                padding-bottom: $grid-size;
+                padding-bottom: $ag-mat-grid-size;
             }
 
             & > div:last-child > .ag-menu-option-popup-pointer {
-                background-position-y: $grid-size;
+                background-position-y: $ag-mat-grid-size;
             }
         }
 
         .ag-menu-option {
-            line-height: $grid-size * 4;
-            padding-left: $grid-size * 2;
-            padding-right: $grid-size * 2;
+            line-height: $ag-mat-grid-size * 4;
+            padding-left: $ag-mat-grid-size * 2;
+            padding-right: $ag-mat-grid-size * 2;
 
             & > span {
                 vertical-align: middle;
@@ -256,22 +289,22 @@ $transition-speed: 120ms;
         }
 
         .ag-menu-option-icon {
-            padding-left: $grid-size;
-            padding-right: $grid-size;
+            padding-left: $ag-mat-grid-size;
+            padding-right: $ag-mat-grid-size;
 
             span {
-                height: $grid-size * 2;
+                height: $ag-mat-grid-size * 2;
             }
         }
 
         .ag-menu-option-shortcut {
-            padding-left: $grid-size * 2;
+            padding-left: $ag-mat-grid-size * 2;
         }
 
-        $separator-size: $grid-size;
+        $separator-size: $ag-mat-grid-size;
         .ag-menu-separator {
-            border-bottom: 1px solid $border-color;
-            margin-left: -$grid-size;
+            border-bottom: 1px solid $ag-mat-border-color;
+            margin-left: -$ag-mat-grid-size;
 
             & > span {
                 height: $separator-size;
@@ -283,7 +316,7 @@ $transition-speed: 120ms;
         }
 
         .ag-menu-option-popup-pointer {
-            width:$icon-size + $grid-size * 2;
+            width:$ag-mat-icon-size + $ag-mat-grid-size * 2;
         }
     }
 
@@ -293,15 +326,15 @@ $transition-speed: 120ms;
 
     &.ag-dnd-ghost {
         @include card();
-        font: $secondary-weight $secondary-font-size $secondary-font;
-        color: $secondary;
+        font: $ag-mat-font-secondary-weight $ag-mat-font-secondary-size $ag-mat-font-secondary;
+        color: $ag-mat-foreground-secondary;
         border: none;
-        height: $header-height !important;
-        line-height: $header-height;
+        height: $ag-mat-header-height !important;
+        line-height: $ag-mat-header-height;
         z-index: 5;
         margin: 0;
-        transform: translatey($grid-size * 2);
-        padding: 0 $grid-size * 2;
+        transform: translatey($ag-mat-grid-size * 2);
+        padding: 0 $ag-mat-grid-size * 2;
 
         span, div {
             float: left;
@@ -316,26 +349,26 @@ $transition-speed: 120ms;
 ////////////////////////////////////////
 
     .ag-tab-header {
-        background: $panel-background;
+        background: $ag-mat-panel-background;
         display: table;
         width: 100%;
 
         .ag-tab {
             display: table-cell;
-            height: $grid-size * 4;
+            height: $ag-mat-grid-size * 4;
             vertical-align: middle;
             text-align: center;
             border-bottom: 2px solid transparent;
 
             &.ag-tab-selected {
-                border-bottom: 2px solid $accent;
+                border-bottom: 2px solid $ag-mat-primary;
 
                 $icons: filter columns menu;
 
                 @each $icon in $icons {
                     .ag-icon-#{$icon} {
                         display: inline-block;
-                        @include accent-icon($icon);
+                        @include primary-icon($icon);
                     }
                 }
             }
@@ -343,12 +376,12 @@ $transition-speed: 120ms;
     }
 
     .ag-tab-body {
-        padding: $grid-size 0;
+        padding: $ag-mat-grid-size 0;
 
         // string filter type
         .ag-filter-select {
-            margin: $grid-size;
-            width: calc(100% - #{$grid-size * 2});
+            margin: $ag-mat-grid-size;
+            width: calc(100% - #{$ag-mat-grid-size * 2});
         }
 
         .ag-menu-list {
@@ -379,16 +412,16 @@ $transition-speed: 120ms;
 
         input[type=text], input[type=date] {
             @include simple-material-textbox;
-            padding-left: $grid-size;
+            padding-left: $ag-mat-grid-size;
         }
 
         label {
             display: block;
-            padding-left: $grid-size;
+            padding-left: $ag-mat-grid-size;
         }
 
         .ag-set-filter-list {
-            padding-top: $grid-size;
+            padding-top: $ag-mat-grid-size;
         }
 
         .ag-filter-header-container {
@@ -397,25 +430,25 @@ $transition-speed: 120ms;
         }
 
         .ag-filter-header-container:nth-child(2) {
-            border-bottom: 1px solid $border-color;
+            border-bottom: 1px solid $ag-mat-border-color;
         }
 
         .ag-filter-checkbox {
             float: left;
-            margin-right: $grid-size;
+            margin-right: $ag-mat-grid-size;
             height: $virtual-item-height;
-            padding-top: $grid-size / 2;
+            padding-top: $ag-mat-grid-size / 2;
         }
 
         .ag-filter-value {
             height: $virtual-item-height;
             float: left;
-            line-height: $grid-size * 3.5; // hate this
+            line-height: $ag-mat-grid-size * 3.5; // hate this
         }
 
         .ag-filter-apply-panel {
-            padding: $grid-size;
-            padding-top: $grid-size * 2;
+            padding: $ag-mat-grid-size;
+            padding-top: $ag-mat-grid-size * 2;
             display: flex;
             justify-content: flex-end;
 
@@ -424,7 +457,7 @@ $transition-speed: 120ms;
             }
 
             button + button {
-                margin-left: $grid-size * 2;
+                margin-left: $ag-mat-grid-size * 2;
             }
         }
     }
@@ -435,14 +468,14 @@ $transition-speed: 120ms;
     .ag-column-select-panel {
 
         .ag-column-select-column-group::not(::first-child) {
-            border-top: 1px solid $border-color;
+            border-top: 1px solid $ag-mat-border-color;
         }
 
         .ag-column-select-column-group, 
         .ag-column-select-column {
-            height: $grid-size * 4;
-            line-height: $grid-size * 4;
-            margin-left: $grid-size;
+            height: $ag-mat-grid-size * 4;
+            line-height: $ag-mat-grid-size * 4;
+            margin-left: $ag-mat-grid-size;
 
             span {
                 float: left;
@@ -450,16 +483,16 @@ $transition-speed: 120ms;
             }
 
             .ag-column-select-indent {
-                width: $grid-size * 2;
+                width: $ag-mat-grid-size * 2;
             }
 
             .ag-column-select-checkbox, .ag-column-group-icons {
-                margin-right: $grid-size;
+                margin-right: $ag-mat-grid-size;
             }
         } 
         .ag-column-select-column {
             // this is a very crude approximation, because we have one 10px hard-coded element in there.
-            margin-left: $icon-size + $grid-size * 3;
+            margin-left: $ag-mat-icon-size + $ag-mat-grid-size * 3;
         }
     }
 
@@ -472,10 +505,10 @@ $transition-speed: 120ms;
         background-color: #FAFAFA;
 
         .ag-pivot-mode {
-            height: $header-height;
-            border-bottom: 1px solid $border-color;
+            height: $ag-mat-header-height;
+            border-bottom: 1px solid $ag-mat-border-color;
             box-sizing: border-box;
-            line-height: $header-height;
+            line-height: $ag-mat-header-height;
 
             span {
                 float: left;
@@ -483,47 +516,47 @@ $transition-speed: 120ms;
             }
 
             .ag-pivot-mode-select {
-                margin-left: $grid-size;
+                margin-left: $ag-mat-grid-size;
 
                 .ag-checkbox-label {
-                    margin-left: $grid-size;
+                    margin-left: $ag-mat-grid-size;
                 }
             }
         }
 
         .ag-column-select-panel {
-            padding: $grid-size 0;
+            padding: $ag-mat-grid-size 0;
         }
 
-        $group-height: $grid-size * 5;
+        $group-height: $ag-mat-grid-size * 5;
 
         .ag-column-drop {
-            border-top: 1px solid $border-color;
-            padding: $grid-size 0;
-            padding-bottom: $grid-size * 2;
+            border-top: 1px solid $ag-mat-border-color;
+            padding: $ag-mat-grid-size 0;
+            padding-bottom: $ag-mat-grid-size * 2;
             clear: both;
 
             .ag-icon {
                 float: left;
                 height: $group-height;
-                margin:0 $grid-size;
+                margin:0 $ag-mat-grid-size;
             }
 
             .ag-column-drop-title {
                 line-height: $group-height;
                 height: $group-height;
                 float: left;
-                width: calc(100% - #{$icon-size + $grid-size * 2});
+                width: calc(100% - #{$ag-mat-icon-size + $ag-mat-grid-size * 2});
                 clear: right;
             }
             
             .ag-column-drop-empty-message {
                 clear: both;
-                font: $secondary-weight $secondary-font-size $secondary-font;
-                color: $disabled;
-                padding-left: $grid-size * 4;
-                padding-right: $grid-size;
-                line-height: $grid-size * 2;
+                font: $ag-mat-font-secondary-weight $ag-mat-font-secondary-size $ag-mat-font-secondary;
+                color: $ag-mat-foreground-disabled;
+                padding-left: $ag-mat-grid-size * 4;
+                padding-right: $ag-mat-grid-size;
+                line-height: $ag-mat-grid-size * 2;
             }
         }
     }
@@ -553,30 +586,30 @@ $transition-speed: 120ms;
         margin: 0;
         height: 100%;
         background-size: $header-icon-size $header-icon-size;
-        background-position-y: $grid-size * 2.5;
-        margin-left: $grid-size;
-        opacity: $primary-opacity;
+        background-position-y: $ag-mat-grid-size * 2.5;
+        margin-left: $ag-mat-grid-size;
+        opacity: $ag-mat-foreground-opacity;
     }
 
     .ag-numeric-header .ag-header-cell-label .ag-header-icon {
         margin-left: 0;
-        margin-right: $grid-size;
+        margin-right: $ag-mat-grid-size;
     }
 
 ////////////////////////////////////////
 // Pagination
 ////////////////////////////////////////
     .ag-paging-panel {
-        border-top: 1px solid $border-color;
-        height: $header-height;
+        border-top: 1px solid $ag-mat-border-color;
+        height: $ag-mat-header-height;
         display: flex;
         align-items: center;
-        padding: 0 $grid-size * 3;
+        padding: 0 $cell-horizontal-padding;
         justify-content: flex-end;
-        color: $secondary;
+        color: $ag-mat-foreground-secondary;
 
         & > span {
-            margin-left: $grid-size * 4;
+            margin-left: $ag-mat-grid-size * 4;
         }
 
         $buttonIcons: (
@@ -594,10 +627,10 @@ $transition-speed: 120ms;
 
                 @include icon-background($icon);
                 @include hide-text;
-                opacity: $secondary-opacity;
+                opacity: $ag-mat-foreground-secondary-opacity;
 
                 &[disabled] {
-                    opacity: $disabled-opacity;
+                    opacity: $ag-mat-foreground-disabled-opacity;
                 }
             }
         }
@@ -608,11 +641,11 @@ $transition-speed: 120ms;
 ////////////////////////////////////////
 
     .ag-row-selected {
-        background-color: $selected;
+        background-color: $ag-mat-selected;
     }
 
     .ag-cell-range-selected {
-        background-color: $selected;
+        background-color: $ag-mat-selected;
     }
 
 ////////////////////////////////////////
@@ -621,10 +654,10 @@ $transition-speed: 120ms;
 
     .ag-cell-inline-editing {
         @include card;
-        height: $row-height + $grid-size * 3;
+        height: $ag-mat-row-height + $ag-mat-grid-size * 3;
         z-index: 2;
-        background: $editor-background;
-        padding: $grid-size * 3;
+        background: $ag-mat-background-editor;
+        padding: $cell-horizontal-padding;
         line-height: normal;
 
         input[type=text] {
@@ -639,10 +672,10 @@ $transition-speed: 120ms;
     .ag-popup-editor {
         @include card;
         padding: 0;
-        background: $editor-background;
+        background: $ag-mat-background-editor;
 
         .ag-large-textarea textarea {
-            padding: $grid-size * 3;
+            padding: $cell-horizontal-padding;
             @include simple-material-textbox;
             height: auto;
         }
@@ -650,31 +683,31 @@ $transition-speed: 120ms;
 ////////////////////////////////////////
 // Rich Select
 ////////////////////////////////////////
-    $rich-select-item-height: $row-height;
+    $rich-select-item-height: $ag-mat-row-height;
     .ag-rich-select {
-        background: $editor-background;
-        background-image: url("./material-icons/tree-open.svg");
-        background-position-y: $grid-size * 2;
-        background-position-x: calc(100% - #{$grid-size});
+        background: $ag-mat-background-editor;
+        background-image: url("#{$ag-mat-icons-path}tree-open.svg");
+        background-position-y: $ag-mat-grid-size * 2;
+        background-position-x: calc(100% - #{$ag-mat-grid-size});
         background-repeat: no-repeat;
         .ag-rich-select-list {
             height: auto; // not sure why the structure had minimum height, does not look right
         }
 
         .ag-rich-select-value {
-            line-height: $row-height;
-            height: $row-height;
-            padding-left: $grid-size * 3;
+            line-height: $ag-mat-row-height;
+            height: $ag-mat-row-height;
+            padding-left: $cell-horizontal-padding;
         }
 
         .ag-virtual-list-item  {
             cursor: default;
             height: $rich-select-item-height;
             line-height: $rich-select-item-height;
-            padding-left: $grid-size * 3;
+            padding-left: $cell-horizontal-padding;
 
             &:hover {
-                background-color: $hover;
+                background-color: $ag-mat-hover;
             }
         }
     }
@@ -684,10 +717,10 @@ $transition-speed: 120ms;
 ////////////////////////////////////////
     .ag-floating-filter-body {
         float: left;
-        width: calc(100% - #{$grid-size} * 4);
+        width: calc(100% - #{$ag-mat-grid-size} * 4);
         margin-right: 0;
         height: 100%;
-        padding-top: $grid-size * 2;
+        padding-top: $ag-mat-grid-size * 2;
 
         input {
             @include simple-material-textbox;
@@ -695,7 +728,7 @@ $transition-speed: 120ms;
     }
 
     .ag-floating-filter-button {
-        padding-top: $grid-size * 2.5;
+        padding-top: $ag-mat-grid-size * 2.5;
         float: right;
         button {
             @include simple-material-flat-button;
@@ -718,7 +751,7 @@ $transition-speed: 120ms;
 // Header checkbox selection
 ////////////////////////////////////////
     .ag-header-select-all {
-        margin-right: $grid-size * 3;
+        margin-right: $cell-horizontal-padding;
         height: 100%;
 
         span {
@@ -727,7 +760,7 @@ $transition-speed: 120ms;
     }
 
     .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {
-        width: calc(100% - #{$icon-size} - #{$grid-size * 3});
+        width: calc(100% - #{$ag-mat-icon-size} - #{$cell-horizontal-padding});
         float: left;
     }
 
@@ -738,7 +771,7 @@ $transition-speed: 120ms;
         span {
             float: left;
             height: 100%;
-            margin-right: $grid-size * 3;
+            margin-right: $cell-horizontal-padding;
         }
     }
 
@@ -753,17 +786,17 @@ $transition-speed: 120ms;
 // Column drop
 ////////////////////////////////////////
     .ag-column-drop-horizontal {
-        height: $grid-size * 6;
-        line-height: $grid-size * 4;
-        background-color: $panel-background;
-        padding-left: $grid-size * 3;
+        height: $ag-mat-row-height;
+        line-height: $ag-mat-grid-size * 4;
+        background-color: $ag-mat-panel-background;
+        padding-left: $cell-horizontal-padding;
         span {
             height: 100%;
             float: left;
         }
 
         .ag-icon-group, .ag-icon-pivot {
-            margin-right: $grid-size * 3;
+            margin-right: $cell-horizontal-padding;
         }
 
         .ag-right-arrow {
@@ -776,48 +809,48 @@ $transition-speed: 120ms;
         .ag-left-arrow, .ag-right-arrow {
             @include hide-text;
             height: 100%;
-            margin: 0 $grid-size;
-            opacity: $secondary-opacity;
+            margin: 0 $ag-mat-grid-size;
+            opacity: $ag-mat-foreground-secondary-opacity;
         }
 
         .ag-column-drop-empty-message {
             height: 100%;
-            line-height: $grid-size * 6;
-            opacity: $secondary-opacity;
+            line-height: $ag-mat-row-height;
+            opacity: $ag-mat-foreground-secondary-opacity;
         }
 
     }
 
     .ag-column-drop-cell {
         box-sizing: border-box;
-        height: $grid-size * 4 !important;
-        margin-top: $grid-size;
-        padding: 0 $grid-size / 2;
-        background: $chip-background;
-        border-radius: $grid-size * 4;
+        height: $ag-mat-grid-size * 4 !important;
+        margin-top: $ag-mat-grid-size;
+        padding: 0 $ag-mat-grid-size / 2;
+        background: $ag-mat-chip-background;
+        border-radius: $ag-mat-grid-size * 4;
 
         .ag-column-drop-cell-text {
-            margin:0 $grid-size;
+            margin:0 $ag-mat-grid-size;
             height: 100%;
-            line-height: $grid-size * 4;
+            line-height: $ag-mat-grid-size * 4;
         }
 
         .ag-column-drop-cell-button {
             @include icon-background('cancel');
             @include hide-text;
             height: 100%;
-            opacity: $secondary-opacity;
-            margin: 0 $grid-size / 2;
+            opacity: $ag-mat-foreground-secondary-opacity;
+            margin: 0 $ag-mat-grid-size / 2;
             &:hover {
-                opacity: $primary-opacity;
+                opacity: $ag-mat-foreground-opacity;
             }
         }
     }
 
     .ag-column-drop-vertical > .ag-column-drop-cell {
         margin-top: 0;
-        margin-left: $grid-size;
-        margin-bottom: $grid-size;
+        margin-left: $ag-mat-grid-size;
+        margin-bottom: $ag-mat-grid-size;
         float: left;
     }
 
@@ -835,7 +868,7 @@ $transition-speed: 120ms;
         }
         .ag-header-cell-label {
             float: right;
-            width: calc(100% - #{$icon-size});
+            width: calc(100% - #{$ag-mat-icon-size});
             & > span {
                 float: right;
             }
@@ -865,10 +898,10 @@ $transition-speed: 120ms;
                 }
 
                 .ag-pivot-mode-select {
-                    margin-right: $grid-size;
+                    margin-right: $ag-mat-grid-size;
 
                     .ag-checkbox-label {
-                        margin-right: $grid-size;
+                        margin-right: $ag-mat-grid-size;
                     }
                 }
             }
@@ -885,15 +918,15 @@ $transition-speed: 120ms;
                 }
 
                 .ag-column-drop-empty-message {
-                    padding-right: $grid-size * 4;
-                    padding-left: $grid-size;
+                    padding-right: $ag-mat-grid-size * 4;
+                    padding-left: $ag-mat-grid-size;
                 }
             }
         }
 
         .ag-filter-checkbox {
             float: right;
-            margin-left: $grid-size;
+            margin-left: $ag-mat-grid-size;
         }
 
         .ag-filter-value {
@@ -904,18 +937,18 @@ $transition-speed: 120ms;
 
             .ag-column-select-column-group, 
             .ag-column-select-column {
-                margin-right: $grid-size;
+                margin-right: $ag-mat-grid-size;
                 span {
                     float: right;
                 }
 
                 .ag-column-select-checkbox, .ag-column-group-icons {
-                    margin-left: $grid-size;
+                    margin-left: $ag-mat-grid-size;
                 }
             } 
             .ag-column-select-column {
                 // this is a very crude approximation, because we have one 10px hard-coded element in there.
-                margin-right: $icon-size + $grid-size * 3;
+                margin-right: $ag-mat-icon-size + $cell-horizontal-padding;
                 margin-left: 0;
             }
         }
@@ -937,7 +970,7 @@ $transition-speed: 120ms;
         }
 
         .ag-header-select-all {
-            margin-left: $grid-size * 3;
+            margin-left: $cell-horizontal-padding;
             margin-right: 0;
         }
 
@@ -958,13 +991,13 @@ $transition-speed: 120ms;
         }
 
         .ag-column-drop-horizontal {
-            padding-right: $grid-size * 3;
+            padding-right: $cell-horizontal-padding;
             span {
                 float: right;
             }
 
             .ag-icon-group, .ag-icon-pivot {
-                margin-left: $grid-size * 3;
+                margin-left: $cell-horizontal-padding;
                 margin-right: 0;
             }
 
