@@ -261,8 +261,6 @@ export class MoveColumnController {
 
     private getNewIndexForColMovingRight(displayedColumns: Column[], allColumns: Column[], dragColumnOrGroup: Column | ColumnGroup, x: number): number[] {
 
-        console.log(`x = ${x}`);
-
         let dragColumn = <Column> dragColumnOrGroup;
 
         let usedX = dragColumn.getActualWidth();
