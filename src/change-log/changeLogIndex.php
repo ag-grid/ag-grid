@@ -50,6 +50,7 @@ include '../documentation-main/documentation_header.php';
         <li>
             suppressScrollLag and isScrollLag no longer used. The new way of rendering doesn't need these.
         </li>
+        <li>AG-695: The 'type' property on a ColDef now supports an array of column type keys</li>
     </ul>
 
     <h4>Breaking Change</h4>
