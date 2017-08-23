@@ -304,7 +304,7 @@ export class GridPanel extends BeanStub {
         this.setBodyAndHeaderHeights();
         this.disableBrowserDragging();
         this.addShortcutKeyListeners();
-        this.addMouseEvents();
+        this.addMouseListeners();
         this.addKeyboardEvents();
         this.addBodyViewportListener();
         this.addStopEditingWhenGridLosesFocus();
@@ -418,14 +418,13 @@ export class GridPanel extends BeanStub {
         });
     }
 
-    private addMouseEvents(): void {
+    private addMouseListeners(): void {
         let eventNames = ['click','mousedown','dblclick','contextmenu','mouseover','mouseout'];
         eventNames.forEach( eventName => {
             let listener = this.processMouseEvent.bind(this, eventName);
-            this.eAllCellContainers.forEach( container => {
-                container.addEventListener(eventName, listener);
-                this.addDestroyFunc( ()=> container.removeEventListener(eventName, listener) );
-            });
+            this.eAllCellContainers.forEach( container =>
+                this.addDestroyableEventListener(container, eventName, listener)
+            );
         });
     }
 

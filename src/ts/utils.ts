@@ -592,12 +592,15 @@ export class Utils {
     }
 
     static removeCssClass(element: HTMLElement, className: string) {
-        if (element.className && element.className.length > 0) {
-            let cssClasses = element.className.split(' ');
-            let index = cssClasses.indexOf(className);
-            if (index >= 0) {
-                cssClasses.splice(index, 1);
-                element.className = cssClasses.join(' ');
+        if (element.classList) {
+            element.classList.remove(className);
+        } else {
+            if (element.className && element.className.length > 0) {
+                let cssClasses = element.className.split(' ');
+                if (cssClasses.indexOf(className) < 0) {
+                    cssClasses.push(className);
+                    element.className = cssClasses.join(' ');
+                }
             }
         }
     }
