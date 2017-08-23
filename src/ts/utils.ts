@@ -591,6 +591,10 @@ export class Utils {
         return element && element.clientWidth ? element.clientWidth : 0;
     }
 
+    static sortNumberArray(numberArray: number[]): void {
+        numberArray.sort( (a: number, b: number) => a - b);
+    }
+
     static removeCssClass(element: HTMLElement, className: string) {
         if (element.classList) {
             element.classList.remove(className);

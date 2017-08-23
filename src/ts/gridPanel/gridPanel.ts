@@ -404,7 +404,7 @@ export class GridPanel extends BeanStub {
             this.eFloatingTop, this.eFloatingBottom];
 
         containers.forEach(container => {
-            let params = <DragListenerParams> {
+            let params: DragListenerParams = {
                 dragStartPixels: 0,
                 eElement: container,
                 onDragStart: this.rangeController.onDragStart.bind(this.rangeController),
