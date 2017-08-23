@@ -39,7 +39,7 @@ do
 
     case $module in
         ##If it depends on ag-grid ONLY
-        "ag-grid-enterprise"|"ag-grid-react"|"ag-grid-aurelia")
+        "ag-grid-enterprise"|"ag-grid-aurelia")
             echo =============================================================================================
             echo "ADDING AG-GRID DEPENDENCY TO:  $module"
             echo =============================================================================================
@@ -47,7 +47,7 @@ do
             sed -i .old -e 's/.*"ag-grid".*/    "ag-grid": "'$2'"/g' package.json
             ;;
         ##If it depends on ag-grid AND OTHERS. THIS CAN BE REFACTORED FOR SURE!
-        "ag-grid-angular"|"ag-grid-vue")
+        "ag-grid-angular"|"ag-grid-vue"|"ag-grid-react")
             echo =============================================================================================
             echo "ADDING AG-GRID DEPENDENCY TO:  $module"
             echo =============================================================================================
