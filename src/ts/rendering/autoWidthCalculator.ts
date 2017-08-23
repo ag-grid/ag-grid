@@ -92,12 +92,8 @@ export class AutoWidthCalculator {
     }
     
     private putRowCellsIntoDummyContainer(column: Column, eDummyContainer: HTMLElement): void {
-
-        let eOriginalCells = this.rowRenderer.getAllCellsForColumn(column);
-
-        eOriginalCells.forEach( (eCell: HTMLElement, index: number) => {
-            this.cloneItemIntoDummy(eCell, eDummyContainer);
-        });
+        let eCells = this.rowRenderer.getAllCellsForColumn(column);
+        eCells.forEach( eCell  => this.cloneItemIntoDummy(eCell, eDummyContainer) );
     }
 
     private cloneItemIntoDummy(eCell: HTMLElement, eDummyContainer: HTMLElement): void {
