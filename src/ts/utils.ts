@@ -597,8 +597,11 @@ export class Utils {
         } else {
             if (element.className && element.className.length > 0) {
                 let cssClasses = element.className.split(' ');
-                if (cssClasses.indexOf(className) < 0) {
-                    cssClasses.push(className);
+                if (cssClasses.indexOf(className) >= 0) {
+                    // remove all instances of the item, not just the first, in case it's in more than once
+                    while (cssClasses.indexOf(className) >= 0) {
+                        cssClasses.splice(cssClasses.indexOf(className), 1);
+                    }
                     element.className = cssClasses.join(' ');
                 }
             }

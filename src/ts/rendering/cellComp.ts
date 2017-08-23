@@ -251,7 +251,7 @@ export class CellComp extends Component {
     }
 
     private getInitialCssClasses(): string[] {
-        let cssClasses: string[] = ["ag-cell", "ag-cell-no-focus", "ag-cell-not-inline-editing"];
+        let cssClasses: string[] = ["ag-cell", "ag-cell-not-inline-editing"];
 
         cssClasses.push(this.cellFocused ? 'ag-cell-focus' : 'ag-cell-no-focus');
 
