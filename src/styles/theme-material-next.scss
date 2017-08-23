@@ -744,10 +744,23 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 
+    .ag-cell-label-container {
+        height: 100%;
+    }
+
+    .ag-header-cell-label {
+        height: 100%;
+        span {
+            height: 100%;
+        }
+    }
+
 ////////////////////////////////////////
 // Expanding headers
 ////////////////////////////////////////
     .ag-header-group-cell-label {
+        height: 100%;
+
         span {
             float: left;
             height: 100%;
@@ -979,16 +992,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         .ag-header-select-all {
             margin-left: $cell-horizontal-padding;
             margin-right: 0;
-        }
-
-        .ag-cell-label-container {
-            height: 100%;
-        }
-        .ag-header-cell-label {
-            height: 100%;
-            span {
-                height: 100%;
-            }
         }
 
         .ag-selection-checkbox, .ag-group-expanded, .ag-group-contracted {
