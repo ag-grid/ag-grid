@@ -399,6 +399,13 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 
+
+    // string filter type
+    .ag-filter-select {
+        margin: $ag-mat-grid-size;
+        width: calc(100% - #{$ag-mat-grid-size * 2});
+    }
+
     // forced by the JS implementation
     $virtual-item-height: 32px;
 
