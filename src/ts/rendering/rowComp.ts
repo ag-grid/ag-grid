@@ -240,9 +240,10 @@ export class RowComp extends Component {
         let setRowTop = !this.beans.forPrint && !this.beans.gridOptionsWrapper.isAutoHeight();
         if (setRowTop) {
             // if sliding in, we take the old row top. otherwise we just set the current row top.
-            let rowTop = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
+            let pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
+            let pixelsWithOffset = this.applyPixelOffset(pixels);
             // if not setting row top, then below is empty string
-            rowTopStyle = `top: ${rowTop}px; `;
+            rowTopStyle = `top: ${pixelsWithOffset}px; `;
         }
         return rowTopStyle;
     }
@@ -1224,18 +1225,19 @@ export class RowComp extends Component {
         this.setRowTop(this.rowNode.rowTop);
     }
 
+    private applyPixelOffset(pixels: number): number {
+        if (this.rowNode.isRowPinned()) {
+            return pixels;
+        } else {
+            return pixels - this.beans.paginationProxy.getPixelOffset();
+        }
+    }
+
     private setRowTop(pixels: number): void {
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
         if (_.exists(pixels)) {
-
-            let pixelsWithOffset: number;
-            if (this.rowNode.isRowPinned()) {
-                pixelsWithOffset = pixels;
-            } else {
-                pixelsWithOffset = pixels - this.beans.paginationProxy.getPixelOffset();
-            }
-
+            let pixelsWithOffset = this.applyPixelOffset(pixels);
             let topPx = pixelsWithOffset + "px";
             this.eAllRowContainers.forEach( row => row.style.top = topPx);
         }
