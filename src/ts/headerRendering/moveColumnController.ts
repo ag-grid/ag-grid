@@ -249,17 +249,19 @@ export class MoveColumnController {
         // column in any place of a hidden column, to try different combinations so that we don't break
         // married children. in other words, maybe the new index breaks a group, but only because some
         // columns are hidden, maybe we can reshuffle the hidden columns to find a place that works.
-        let col = allColumns[newIndex];
-        while (_.exists(col) && displayedColumns.indexOf(col)<0) {
+        let nextCol = allColumns[newIndex];
+        while (_.exists(nextCol) && this.isColumnHidden(displayedColumns, nextCol)) {
             validMoves.push(newIndex + 1);
             newIndex++;
-            col = allColumns[newIndex];
+            nextCol = allColumns[newIndex];
         }
 
         return validMoves;
     }
 
     private getNewIndexForColMovingRight(displayedColumns: Column[], allColumns: Column[], dragColumnOrGroup: Column | ColumnGroup, x: number): number[] {
+
+        console.log(`x = ${x}`);
 
         let dragColumn = <Column> dragColumnOrGroup;
 
@@ -296,14 +298,20 @@ export class MoveColumnController {
         // column in any place of a hidden column, to try different combinations so that we don't break
         // married children. in other words, maybe the new index breaks a group, but only because some
         // columns are hidden, maybe we can reshuffle the hidden columns to find a place that works.
-        let col = allColumns[newIndex];
-        while (_.exists(col) && displayedColumns.indexOf(col)<0) {
-            validMoves.push(newIndex + 1);
-            newIndex++;
-            col = allColumns[newIndex];
+        let nextIndex = newIndex + 1;
+        let nextCol = allColumns[nextIndex];
+        while (_.exists(nextCol) && this.isColumnHidden(displayedColumns, nextCol)) {
+            validMoves.push(nextIndex);
+            nextIndex++;
+            nextCol = allColumns[nextIndex];
         }
 
-        return [newIndex];
+        return validMoves;
+    }
+
+    // isHidden takes into account visible=false and group=closed, ie it is not displayed
+    private isColumnHidden(displayedColumns: Column[], col: Column) {
+        return displayedColumns.indexOf(col)<0
     }
 
     private ensureIntervalStarted(): void {
