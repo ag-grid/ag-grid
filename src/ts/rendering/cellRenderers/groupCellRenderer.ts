@@ -63,6 +63,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private embeddedRowMismatch: boolean;
 
+    private cellIsBlank: boolean;
+
     constructor() {
         super(GroupCellRenderer.TEMPLATE);
     }
@@ -71,28 +73,23 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         this.params = params;
 
-        this.setEmbeddedRowMismatch();
-        if (this.embeddedRowMismatch) { return; }
+        this.isEmbeddedRowMismatch();
 
+        let embeddedRowMismatch = this.isEmbeddedRowMismatch();
         //This allows for empty strings to appear as groups since
         //it will only return for null or undefined.
-        if (params.value==null) {
-            return;
-        }
+        let cellIsEmpty = params.value==null;
+
+        this.cellIsBlank = embeddedRowMismatch || cellIsEmpty;
+
+        if (this.cellIsBlank) { return; }
 
         this.setupDragOpenParents();
-
-        // hack to get renderer working with slick and non-slick
-        if (this.params.eGridCell) {
-            // this.afterGuiAttached({});
-        }
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
 
-        if (this.params.value==null) { return; }
-
-        if (this.embeddedRowMismatch) { return; }
+        if (this.cellIsBlank) { return; }
 
         // hack to get renderer working with slick and non-slick
         let eGridCell = this.params.eGridCell ? this.params.eGridCell : (<any>params).eGridCell;
@@ -105,7 +102,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     // if we are doing embedded full width rows, we only show the renderer when
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
-    private setEmbeddedRowMismatch(): void {
+    private isEmbeddedRowMismatch(): boolean {
         if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
 
             let pinnedLeftCell = this.params.pinned === Column.PINNED_LEFT;
@@ -114,19 +111,19 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
             if (this.gridOptionsWrapper.isEnableRtl()) {
                 if (this.columnController.isPinningLeft()) {
-                    this.embeddedRowMismatch = !pinnedRightCell;
+                    return !pinnedRightCell;
                 } else {
-                    this.embeddedRowMismatch = !bodyCell;
+                    return !bodyCell;
                 }
             } else {
                 if (this.columnController.isPinningLeft()) {
-                    this.embeddedRowMismatch = !pinnedLeftCell;
+                    return !pinnedLeftCell;
                 } else {
-                    this.embeddedRowMismatch = !bodyCell;
+                    return !bodyCell;
                 }
             }
         } else {
-            this.embeddedRowMismatch = false;
+            return false;
         }
     }
 
