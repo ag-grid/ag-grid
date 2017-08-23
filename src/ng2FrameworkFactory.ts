@@ -1,14 +1,5 @@
-import {NgZone, ViewContainerRef, Injectable} from "@angular/core";
-import {
-    ICellRendererComp,
-    ICellEditorComp,
-    BaseFrameworkFactory,
-    IFrameworkFactory,
-    ICellRendererFunc,
-    IFilterComp,
-    ColDef,
-    GridOptions
-} from "ag-grid/main";
+import {Injectable, NgZone, ViewContainerRef} from "@angular/core";
+import {BaseFrameworkFactory, ColDef, ICellEditorComp, IFilterComp, IFrameworkFactory} from "ag-grid/main";
 import {BaseComponentFactory} from "./baseComponentFactory";
 
 @Injectable()
@@ -19,8 +10,8 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
     constructor(private _componentFactory: BaseComponentFactory, private _ngZone: NgZone) {
     }
 
-    public colDefCellEditor(colDef: ColDef): {new(): ICellEditorComp} | string {
-        if(colDef.cellEditorFramework && colDef.cellEditorFramework.component) {
+    public colDefCellEditor(colDef: ColDef): { new(): ICellEditorComp } | string {
+        if (colDef.cellEditorFramework && colDef.cellEditorFramework.component) {
             console.warn("colDef.cellEditorFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
             colDef.cellEditorFramework = colDef.cellEditorFramework.component;
         }
@@ -33,8 +24,8 @@ export class Ng2FrameworkFactory implements IFrameworkFactory {
         }
     }
 
-    public colDefFilter(colDef: ColDef): {new (): IFilterComp;} | string {
-        if(colDef.filterFramework && colDef.filterFramework.component) {
+    public colDefFilter(colDef: ColDef): { new (): IFilterComp; } | string {
+        if (colDef.filterFramework && colDef.filterFramework.component) {
             console.warn("colDef.filterFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
             colDef.filterFramework = colDef.filterFramework.component;
         }
