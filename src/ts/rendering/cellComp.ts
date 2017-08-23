@@ -647,8 +647,8 @@ export class CellComp extends Component {
             return;
         }
 
-        let cellRenderer = this.column.getCellRenderer();
-        let pinnedRowCellRenderer = this.column.getFloatingCellRenderer();
+        let cellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'cellRenderer');
+        let pinnedRowCellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'pinnedRowCellRenderer');
 
         if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
             this.cellRendererType = 'pinnedRowCellRenderer';
