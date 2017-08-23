@@ -114,7 +114,7 @@ export class RowComp extends Component {
 
     private fadeRowIn: boolean;
     private slideRowIn: boolean;
-    private throttleScroll: boolean;
+    private useAnimationFrameForCreate: boolean;
 
     private rowIsEven: boolean;
 
@@ -133,7 +133,7 @@ export class RowComp extends Component {
                 rowNode: RowNode,
                 beans: Beans,
                 animateIn: boolean,
-                throttleScroll: boolean) {
+                useAnimationFrameForCreate: boolean) {
         super();
         this.parentScope = parentScope;
         this.beans = beans;
@@ -144,7 +144,7 @@ export class RowComp extends Component {
         this.rowNode = rowNode;
         this.rowIsEven = this.rowNode.rowIndex % 2 === 0;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
-        this.throttleScroll = throttleScroll;
+        this.useAnimationFrameForCreate = useAnimationFrameForCreate;
 
         this.setAnimateFlags(animateIn);
     }
@@ -266,7 +266,7 @@ export class RowComp extends Component {
                                callback: (eRow: HTMLElement) => void): void {
 
         let cellTemplatesAndComps: {template: string, cellComps: CellComp[]};
-        if (this.throttleScroll) {
+        if (this.useAnimationFrameForCreate) {
             cellTemplatesAndComps = {cellComps: [], template: ''};
         } else {
             cellTemplatesAndComps = this.createCells(cols);
@@ -278,10 +278,8 @@ export class RowComp extends Component {
             this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow);
 
-            if (this.throttleScroll) {
-                // setTimeout(()=> {
+            if (this.useAnimationFrameForCreate) {
                 this.beans.taskQueue.addP1Task(this.lazyCreateCells.bind(this, cols, eRow));
-                // }, 500);
             } else {
                 this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
             }

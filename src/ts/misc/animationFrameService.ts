@@ -8,8 +8,6 @@ export class AnimationFrameService {
 
     @Autowired('gridPanel') private gridPanel: GridPanel;
 
-    private aa: (func:()=>any)=>void;
-
     private p1Tasks = new LinkedList<()=>void>();
     private p2Tasks = new LinkedList<()=>void>();
     private ticking = false;

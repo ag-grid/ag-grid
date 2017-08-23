@@ -224,7 +224,7 @@ export class GridPanel extends BeanStub {
     private pinningRight: boolean;
     private pinningLeft: boolean;
 
-    private throttleScroll: boolean;
+    private useAnimationFrame: boolean;
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('GridPanel');
@@ -271,7 +271,7 @@ export class GridPanel extends BeanStub {
     @PostConstruct
     private init() {
 
-        this.throttleScroll = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+        this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
 
         this.addEventListeners();
         this.addDragListeners();
@@ -1708,7 +1708,7 @@ export class GridPanel extends BeanStub {
     private onVerticalScroll(sourceElement: HTMLElement): void {
         let scrollTop = sourceElement.scrollTop;
 
-        if (this.throttleScroll) {
+        if (this.useAnimationFrame) {
             if (this.nextScrollTop !== scrollTop) {
                 this.nextScrollTop = scrollTop;
                 this.taskQueue.schedule();

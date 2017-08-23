@@ -739,11 +739,11 @@ export class RowRenderer extends BeanStub {
 
     private createRowComp(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowComp {
 
-        let throttleScroll = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame();
+        let useAnimationFrameForCreate = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame();
 
         let rowComp = new RowComp(this.$scope, this.rowContainers.body,
                 this.rowContainers.pinnedLeft, this.rowContainers.pinnedRight,
-                this.rowContainers.fullWidth, rowNode, this.beans, animate, throttleScroll);
+                this.rowContainers.fullWidth, rowNode, this.beans, animate, useAnimationFrameForCreate);
 
         rowComp.init();
 
