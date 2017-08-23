@@ -518,13 +518,13 @@ export class RowComp extends Component {
         }
     }
 
-    private onVirtualColumnsChanged() {
+    private onVirtualColumnsChanged(): void {
         if (!this.fullWidthRow) {
             this.refreshCells();
         }
     }
 
-    private onColumnResized() {
+    private onColumnResized(): void {
         if (!this.fullWidthRow) {
             this.refreshCells();
         }
