@@ -326,6 +326,10 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public pinnedRowDataChanged: any = undefined;
     @Input() public alwaysShowStatusBar: any = undefined;
     @Input() public ensureDomOrder: any = undefined;
+    @Input() public components: any = undefined;
+    @Input() public frameworkComponents: any = undefined;
+    @Input() public rowHoverClass: any = undefined;
+    @Input() public suppressAnimationFrame: any = undefined;
 
 
     /**
