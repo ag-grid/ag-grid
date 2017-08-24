@@ -268,7 +268,10 @@ export class CellComp extends Component {
 
         _.pushAll(cssClasses, this.preProcessClassesFromColDef());
         _.pushAll(cssClasses, this.preProcessCellClassRules());
-        _.pushAll(cssClasses, this.getRangeClasses());
+
+        if (this.rangeSelectionEnabled) {
+            _.pushAll(cssClasses, this.getRangeClasses());
+        }
 
         // if using the wrapper, this class goes on the wrapper instead
         if (!this.usingWrapper) {
