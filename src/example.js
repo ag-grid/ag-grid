@@ -1061,7 +1061,7 @@ function CountryFloatingFilterComponent() {}
 CountryFloatingFilterComponent.prototype.init = function(params) {
     this.params = params;
     this.eGui = document.createElement('div');
-    this.eGui.style.borderTop = '1px solid lightgrey';
+    // this.eGui.style.borderBottom = '1px solid lightgrey';
 };
 
 CountryFloatingFilterComponent.prototype.getGui = function() {
