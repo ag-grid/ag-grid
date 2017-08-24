@@ -7,7 +7,7 @@ if [ "$#" -ne 2 ]
 fi
 
 
-build-dist.sh $1 $2 "ag-grid" "ag-grid-enterprise" "ag-grid-dev" "ag-grid-docs" "ag-grid-angular" "ag-grid-angular-example" "ag-grid-react" "ag-grid-react-example" "ag-grid-aurelia" "ag-grid-aurelia-example" "ag-grid-vue" "ag-grid-vue-example"
+build-dist.sh $1 $2 "ag-grid" "ag-grid-enterprise" "ag-grid-dev" "ag-grid-docs" "ag-grid-angular" "ag-grid-angular-example" "ag-grid-react" "ag-grid-react-example" "ag-grid-aurelia" "ag-grid-aurelia-example" "ag-grid-vue" "ag-grid-vue-example" "ag-grid-polymer" "ag-grid-polymer-example"
 if [ $? -ne 0 ]
 then
     echo "Stopping release-all-branch.sh"

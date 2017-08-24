@@ -6,4 +6,4 @@ if [ "$#" -ne 0 ]
     exit 1
 fi
 
-build-dist.sh ag-grid ag-grid-enterprise ag-grid-angular ag-grid-react ag-grid-aurelia ag-grid-vue
+build-dist.sh ag-grid ag-grid-enterprise ag-grid-angular ag-grid-react ag-grid-aurelia ag-grid-vue ag-grid-polymer

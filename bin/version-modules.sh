@@ -28,7 +28,7 @@ do
 done
 
 
-IFS=' ' read -ra ADDR2 <<< ""ag-grid-enterprise" "ag-grid-angular" "ag-grid-react" "ag-grid-aurelia" "ag-grid-vue""
+IFS=' ' read -ra ADDR2 <<< ""ag-grid-enterprise" "ag-grid-angular" "ag-grid-react" "ag-grid-aurelia" "ag-grid-vue" "ag-grid-polymer""
 for module in "${ADDR2[@]}"
 do
     cd $module
@@ -53,6 +53,15 @@ do
             echo =============================================================================================
             ## Replace peers version number
             sed -i .old -e 's/.*"ag-grid".*/    "ag-grid": "'$2'",/g' package.json
+            ;;
+        ##Polymer uses bower
+        "ag-grid-polymer")
+            echo =============================================================================================
+            echo "ADDING AG-GRID DEPENDENCY TO:  $module"
+            echo =============================================================================================
+            ## Replace peers version number
+            sed -i .old -e 's/.*"ag-grid".*/    "ag-grid": "'$2'"/g' bower.json
+            rm bower.json.old
             ;;
     esac
 

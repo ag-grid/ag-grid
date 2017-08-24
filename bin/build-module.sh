@@ -15,6 +15,9 @@ do
     cd "$module"
 
     case $module in
+        "ag-grid")
+            bower link
+            ;;
         "ag-grid-angular")
             npm install @angular/compiler @angular/compiler @angular/compiler-cli @angular/core rxjs zone.js core-js
             ;;
@@ -23,6 +26,10 @@ do
             ;;
         "ag-grid-vue")
             npm install vue
+            ;;
+        "ag-grid-polymer")
+            bower link ag-grid
+            bower install
             ;;
     esac
 
