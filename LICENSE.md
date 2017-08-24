@@ -1,4 +1,4 @@
-ag-Grid-Enterprise Software Licence Agreement Version 1.6
+ag-Grid-Enterprise Software Licence Agreement Version 1.7
 
 THIS DOCUMENT IS A LEGAL AGREEMENT (the “Agreement”) BETWEEN AG GRID LTD. (“We,” “Us”) AND YOU OR THE ORGANISATION ON WHOSE BEHALF YOU ARE ENTERING INTO THIS AGREEMENT (“You”) IN RELATION TO AG-GRID-ENTERPRISE SOFTWARE. RIGHTS GRANTED HEREIN APPLY ONLY TO SOFTWARE FOR WHICH YOU HAVE PAID THE APPLICABLE FEE (AS INVOICED BY US TO YOU).
 
@@ -34,11 +34,11 @@ For both SINGLE APPLICATION DEVELOPER LICENSE and MULTIPLE APPLICATION DEVELOPER
 
 Both SINGLE APPLICATION DEVELOPER LICENSE and MULTIPLE APPLICATION DEVELOPER LICENSE must be combined with one of OEM LICENSE and SAAS LICENSE if the built application is to be sold as a product or sold as part of a SAAS offering.
 
-C) OEM LICENSE: Subject to the payment of the required fee, and subject to Your compliance with the terms and conditions of this Agreement, We grant to You a non-exclusive, royalty-free, worldwide, perpetual, non-transferable and non-sub licensable licence for You to include the Software within your application to be provided together as part of Your product for You to market, reproduce and distribute ag-Grid-Enterprise and/or Modifications to End Users, Distributors and Resellers solely as integrated into Your Applications;
+C) OEM LICENSE: Subject to the payment of the required fee, and subject to Your compliance with the terms and conditions of this Agreement, We grant to You a non-exclusive, worldwide, perpetual, non-transferable and non-sub licensable licence for You to include the Software within your application to be provided together as part of Your product for You to market, reproduce and distribute ag-Grid-Enterprise and/or Modifications to End Users, Distributors and Resellers solely as integrated into Your Applications;
 
 OEM LICENSE must be combined with one of either SINGLE APPLICATION DEVELOPER LICENSE or MULTIPLE APPLICATION DEVELOPER LICENSE.
 
-D) SAAS LICENSE: Subject to the payment of the required fee, and subject to Your compliance with the terms and conditions of this Agreement, We grant to You a non-exclusive, royalty-free, worldwide, perpetual, non-transferable and non-sub licensable licence for You to include ag-Grid-Enterprise and/or Modifications within hosted environments solely as integrated into Your Applications.
+D) SAAS LICENSE: Subject to the payment of the required fee, and subject to Your compliance with the terms and conditions of this Agreement, We grant to You a non-exclusive, worldwide, perpetual, non-transferable and non-sub licensable licence for You to include ag-Grid-Enterprise and/or Modifications within hosted environments solely as integrated into Your Applications.
 
 SAAS LICENSE must be combined with one of either SINGLE APPLICATION DEVELOPER LICENSE or MULTIPLE APPLICATION DEVELOPER LICENSE.
 
