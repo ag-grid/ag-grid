@@ -159,7 +159,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 
     .ag-row {
         @include bottom-border;
-        transition: background-color $ag-mat-transition-speed linear;
     }
 
     .ag-row-hover {
@@ -264,6 +263,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         z-index: 5;
 
         .ag-menu-list {
+            width: 100%;
+            cursor: default;
             & > div:first-child > span {
                 padding-top: $ag-mat-grid-size;
             }
@@ -352,6 +353,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         background: $ag-mat-panel-background;
         display: table;
         width: 100%;
+        min-width: 220px;
 
         .ag-tab {
             display: table-cell;
@@ -813,6 +815,10 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         line-height: $ag-mat-grid-size * 4;
         background-color: $ag-mat-panel-background;
         padding-left: $cell-horizontal-padding;
+
+        // nasty fix for inline-block approach with half-width.
+        &.ag-width-half { margin-bottom: -3px; }
+
         span {
             height: 100%;
             float: left;
