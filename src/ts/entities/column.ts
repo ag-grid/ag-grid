@@ -242,8 +242,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             this.colDef.pinnedRowCellRendererParams = colDefAny.floatingRendererParams;
         }
         if (colDefAny.floatingValueFormatter) {
-            console.warn('ag-Grid: since v11, floatingValueFormatter is now ');
+            console.warn('ag-Grid: since v11, floatingValueFormatter is now pinnedRowValueFormatter');
             this.colDef.pinnedRowValueFormatter = colDefAny.floatingValueFormatter;
+        }
+        if (colDefAny.cellFormatter) {
+            console.warn('ag-Grid: since v12, cellFormatter is now valueFormatter');
+            if (_.missing(this.colDef.valueFormatter)) {
+                this.colDef.valueFormatter = colDefAny.cellFormatter;
+            }
         }
     }
     
