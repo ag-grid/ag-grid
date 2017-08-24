@@ -53,6 +53,11 @@ include '../documentation-main/documentation_header.php';
                 the column in the API for sorting, filtering etc.</td>
         </tr>
         <tr>
+            <th>type</th>
+            <td>A comma separated string or array of strings containing ColumnType keys which can be used as a template for
+                a column. This helps to reduce duplication of properties when you have a lot of common column properties.</td>
+        </tr>
+        <tr>
             <th>width, minWidth, maxWidth</th>
             <td>Initial width, min width and max width for the cell. Always stated in pixels (never percentage values).</td>
         </tr>

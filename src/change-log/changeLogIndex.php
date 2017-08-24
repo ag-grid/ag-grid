@@ -15,6 +15,13 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version NEXT</h2>
 
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>AG-697: Fixed an issue where export group headers was not working correctly when more than 2 groups of headers</li>
+        <li>AG-696: Fixed issue where column groups kept expand / collapse icons even when group is no longer expandable</li>
+        <li>AG-654: Fixed issue with pinning rows when pivoting</li>
+    </ul>
+
     <h4>Enhancements</h4>
     <ul>
         <li>AG-634: <a href="../javascript-grid-filter-text">Text filter</a> has the parameter <code>caseSensitive</code>.
@@ -37,6 +44,18 @@ include '../documentation-main/documentation_header.php';
             Similarly colId on the cell is now col-id. These fixes / breaking changes only impact your code if you were
             using these in CSS selectors outside of the grid.
         </li>
+        <li>
+            enableRowHover is now a property, instead of suppressRowHover, so it's off by default. This was for performance
+            reasons - most people had it turned on without realising and this slowed things down.
+        </li>
+        <li>
+            suppressScrollLag and isScrollLag no longer used. The new way of rendering doesn't need these.
+        </li>
+        <li>AG-664: Added support for Ref Data when using Value Handlers.
+            See the new section on <a href="../javascript-grid-reference-data">Reference Data</a>
+        </li>
+        <li>AG-695: The 'type' property on a ColDef now supports an array of column type keys</li>
+        <li>AG-679: Improved error handling when Column Types are not correctly configured</li>
     </ul>
 
     <h4>Breaking Change</h4>

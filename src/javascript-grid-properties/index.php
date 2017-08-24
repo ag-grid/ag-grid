@@ -338,17 +338,15 @@ include '../documentation-main/documentation_header.php';
             of rendering in the DOM which will slow things down.</td>
         </tr>
         <tr>
-            <th>suppressScrollLag</th>
-            <td>By default, scrolling lag is enabled for Safari and Internet Explorer (to solve scrolling performance
-                issues in these browsers). To override when to use scroll lag either a) set suppressScrollLag to
-                true to turn off scroll lag feature or b) return true of false from the function
-                isScrollLag. This is a function, as it's expected your code will check the environment to decide
-                whether to use scroll lag or not.</td>
-        </tr>
-        <tr>
             <th>suppressScrollOnNewData</th>
             <td>When true, the grid will not scroll to the top when new row data is provided. Use this
             if you don't want the default behaviour of scrolling to the top every time you load new data.</td>
+        </tr>
+        <tr>
+            <th>suppressAnimationFrame</th>
+            <td>When true, the grid will not use animation frames when drawing rows while scrolling. Use this
+            if the grid is working fast enough that you don't need animations frame and you don't want
+            the grid to flicker.</td>
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
@@ -639,13 +637,6 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>allowContextMenuWithControlKey</th>
             <td>Allows <a href="../javascript-grid-context-menu">context menu</a> to show, even when ctrl key is held down.</td>
-        </tr>
-        <tr>
-            <th>suppressEnterprise</th>
-            <td>
-                Turn off enterprise features. This is used by ag-Grid testers, mentioned
-                here in case someone is looking at the code and wondering.
-            </td>
         </tr>
         <tr>
             <th>enableStatusBar</th>

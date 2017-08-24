@@ -3,7 +3,7 @@
 var firstnames = ['Sophia','Emma','Olivia','Isabella','Mia','Ava','Lily','Zoe','Emily','Chloe','Layla','Madison','Madelyn','Abigail','Aubrey','Charlotte','Amelia','Ella','Kaylee','Avery','Aaliyah','Hailey','Hannah','Addison','Riley','Harper','Aria','Arianna','Mackenzie','Lila','Evelyn','Adalyn','Grace','Brooklyn','Ellie','Anna','Kaitlyn','Isabelle','Sophie','Scarlett','Natalie','Leah','Sarah','Nora','Mila','Elizabeth','Lillian','Kylie','Audrey','Lucy','Maya'];
 var lastnames = ['Smith','Jones','Williams','Taylor','Brown','Davies','Evans','Wilson','Thomas','Johnson'];
 
-var images = ['niall','sean','alberto','statue','horse'];
+var images = ['niall.png','sean.png','alberto.png','bas.jpg','dimple.jpg','john.jpg','petyo.png','rob.jpg'];
 
 // each call gets a unique id, nothing to do with the grid, just help make the sample
 // data more realistic
@@ -131,7 +131,7 @@ DetailPanelCellRenderer.prototype.getTemplate = function(params) {
     var template =
         '<div class="full-width-panel">' +
         '  <div class="full-width-details">' +
-        '    <div class="full-width-detail"><img width="120px" src="../images/'+parentRecord.image+'.png"/></div>' +
+        '    <div class="full-width-detail"><img width="120px" src="../images/team/'+parentRecord.image+'"/></div>' +
         '    <div class="full-width-detail"><b>Name: </b>'+parentRecord.name+'</div>' +
         '    <div class="full-width-detail"><b>Account: </b>'+parentRecord.account+'</div>' +
         '  </div>'+

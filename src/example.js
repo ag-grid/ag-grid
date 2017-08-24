@@ -123,14 +123,13 @@ var gridOptions = {
     floatingFilter:true,
 //debug: true,
 //     editType: 'fullRow',
-    suppressEnterprise: true,
 //     debug: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     pivotTotals: true,
 //minColWidth: 50,
 //maxColWidth: 300,
-    rowBuffer: 0,
+    rowBuffer: 10,
 //columnDefs: [],
 //singleClickEdit: true,
 // suppressClickEdit: true,
@@ -219,11 +218,11 @@ var gridOptions = {
     // suppressTabbing: true,
     // rowHoverClass: true,
 // isScrollLag: function() { return true; },
-// suppressScrollLag: true,
-//     layoutInterval: -1,
-    // suppressAnimationFrame: true,
-// floatingTopRowData: [{},{},{}],
-// floatingBottomRowData: [{},{},{}],
+suppressScrollLag: true,
+    // layoutInterval: -1,
+// suppressAnimationFrame: true,
+//     pinnedTopRowData: [{},{},{}],
+//     pinnedBottomRowData: [{},{},{}],
 // callback when row clicked
 //     stopEditingWhenGridLosesFocus: true,
     onRowClicked: function (params) {
@@ -434,7 +433,7 @@ var defaultCols = [
                 }
             },
             {
-                headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 100,
+                headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 110,
                 // pinned: 'right',
                 // rowGroupIndex: 2,
                 // pivotIndex: 1,
@@ -701,6 +700,10 @@ function onThemeChanged(newTheme) {
         gridOptions.rowHeight = 48;
         // gridOptions.icons.checkboxChecked = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AUZEBAL/ldO7gAAAEpJREFUKM9jZJjW8Z+BDMDEQCagrcb/meUM/zPL6WQjzCbG6Z10sBGXbRgasQUCLsCCzyZctmHYiEsRUX5E1ozPIKxOJcZmsqMDAKbtFz19uHD9AAAAAElFTkSuQmCC"/>';
         gridOptions.icons.checkboxChecked = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDoxMTQzMkY1NDIyMjhFNjExQkVGOEFCQUI5MzdBNjFEMSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoyMzBBQkU2ODI4MjQxMUU2QjlDRUZCNUFDREJGRTVDMCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoyMzBBQkU2NzI4MjQxMUU2QjlDRUZCNUFDREJGRTVDMCIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChXaW5kb3dzKSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE0NDMyRjU0MjIyOEU2MTFCRUY4QUJBQjkzN0E2MUQxIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjExNDMyRjU0MjIyOEU2MTFCRUY4QUJBQjkzN0E2MUQxIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+O+zv0gAAAQ1JREFUeNpilJvw35OBgWEuEEsyEAeeA3EyI1DjMxI0wTUzkaEJBCSZiFVpJcvAsDqEgUFVCMInSqOeOAPDLG8GBjNpBoZCCyI1KggwMCzwZ2DgZWdgOPWUgaF4F5pGDxWgqT4MDPzsSB7hYWBYHMDAIMzJwHDjDQND0mYGhu9/0DT6qTEwuCszMOyIZmAwkoTYALJJjp+B4cEHBoaEjQwMn38iDAVFx38wA4gzTBgYSiwhEi++MDDI8DEwvP3OwBC0CqIZGcBtBOmefoaBIXQNA8PvfxBNf4B03AZMTVgD5xwwXcQDFX/8wcAw+RQDw5VX2AMN7lRSARM07ZEKXoA0poAYJGh6CkrkAAEGAKNeQxaS7i+xAAAAAElFTkSuQmCC"/>';
+    } else if (newTheme == 'ag-material-next') {
+            gridOptions.rowHeight = undefined;
+            gridOptions.icons.checkboxChecked = undefined;
+            gridOptions.icons.checkboxIndeterminate = undefined;
     } else {
         gridOptions.rowHeight = 25;
         gridOptions.icons.checkboxChecked = undefined;
@@ -708,6 +711,7 @@ function onThemeChanged(newTheme) {
     }
     gridOptions.api.resetRowHeights();
     gridOptions.api.redrawRows();
+    gridOptions.api.refreshHeader();
 }
 
 var filterCount = 0;
@@ -1017,11 +1021,11 @@ function booleanCellRenderer(params) {
 
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
-        //this is the unicode for tick character
-        return "<span title='true' class='ag-icon ag-icon-tick'></span>";
+        //this is the unicode for executeFrame character
+        return "<span title='true' class='ag-icon ag-icon-tick' style='height: 100%'></span>";
     } else if (valueCleaned === false) {
         //this is the unicode for cross character
-        return "<span title='false' class='ag-icon ag-icon-cross'></span>";
+        return "<span title='false' class='ag-icon ag-icon-cross' style='height: 100%'></span>";
     } else if (params.value !==null && params.value !== undefined) {
         return params.value.toString();
     } else {
@@ -1032,11 +1036,11 @@ function booleanCellRenderer(params) {
 function booleanFilterCellRenderer(params) {
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
-        //this is the unicode for tick character
-        return "<span title='true' class='ag-icon ag-icon-tick'></span>";
+        //this is the unicode for executeFrame character
+        return "<span title='true' class='ag-icon ag-icon-tick' style='height: 100%'></span>";
     } else if (valueCleaned === false) {
         //this is the unicode for cross character
-        return "<span title='false' class='ag-icon ag-icon-cross'></span>";
+        return "<span title='false' class='ag-icon ag-icon-cross' style='height: 100%'></span>";
     } else {
         return "(empty)";
     }

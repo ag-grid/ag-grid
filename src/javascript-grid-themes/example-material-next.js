@@ -41,6 +41,9 @@ var lastNames = ["Beckham", "Black", "Braxton", "Brennan"];
 
 
 var gridOptions = {
+    rowGroupPanelShow: 'always',
+    pivotPanelShow: 'always', 
+    showToolPanel: true,
     groupSelectsChildren: true,
     groupDefaultExpanded: -1,
     autoGroupColumnDef:{
@@ -55,7 +58,7 @@ var gridOptions = {
             return params.colIndex === 0 && !isGrouping;
         }
     },
-    rowSelection: "multiple"
+    rowSelection: "single"
 };
 
 var defaultCols = [
