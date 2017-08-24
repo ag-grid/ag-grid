@@ -40,6 +40,7 @@ LETTERS_IN_ALPHABET.forEach( function(letter) {
 });
 
 var gridOptions = {
+    // embedFullWidthRows: true,
     columnDefs: columnDefs,
     rowData: mainRowData,
     pinnedTopRowData: pinnedTopRowData,

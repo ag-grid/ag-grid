@@ -13,10 +13,10 @@ include '../documentation-main/documentation_header.php';
     <p>A Cell Editor example - one with a popup editor, and another with a numeric editor.</p>
     <p>Each component demonstrates different editor related features</p>
 
-    <show-complex-example example="../react-examples/examples/?fromDocs&example=editor"
+    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=editor"
                           sources="{
                             [
-                                { root: '/react-examples/examples/src/editorComponentExample/', files: 'EditorComponentsExample.jsx,MoodRenderer.jsx,MoodEditor.jsx,NumericEditor.jsx' }
+                                { root: '/framework-examples/react-examples/examples/src/editorComponentExample/', files: 'EditorComponentsExample.jsx,MoodRenderer.jsx,MoodEditor.jsx,NumericEditor.jsx' }
                             ]
                           }"
                           exampleHeight="525px">

@@ -12,10 +12,10 @@ include '../documentation-main/documentation_header.php';
     <h2>Floating Row Renderer</h2>
     <p>A Floating Row Renderer Example</p>
 
-    <show-complex-example example="../polymer-examples/src/floating-row-components-example/index.html"
+    <show-complex-example example="../framework-examples/polymer-examples/src/floating-row-components-example/index.html"
                           sources="{
                             [
-                                { root: '/polymer-examples/src/floating-row-components-example/', files: 'index.html,floating-row-components-example.html,styled-renderer.html' }
+                                { root: '/framework-examples/polymer-examples/src/floating-row-components-example/', files: 'index.html,floating-row-components-example.html,styled-renderer.html' }
                             ]
                           }"
                           exampleHeight="525px">

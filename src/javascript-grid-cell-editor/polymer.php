@@ -17,7 +17,7 @@
 
     <p>
         For an example of Polymer cellEditing, see the
-        <a href="https://github.com/ceolter/ag-grid-polymer-example">ag-grid-polymer-example</a> on Github.
+        <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> on Github.
     </p>
 
     <h3><img src="../images/polymer-large.png" style="width: 20px;"/> Specifying a Polymer cellEditor</h3>
@@ -193,10 +193,10 @@ colDef = {
     <p>
         Using Polymer Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>
-    <show-complex-example example="../polymer-examples/src/editor-components-grid/index.html"
+    <show-complex-example example="../framework-examples/polymer-examples/src/editor-components-grid/index.html"
                           sources="{
                             [
-                                { root: '/polymer-examples/src/editor-components-grid/', files: 'index.html,editor-components-example.html,mood-renderer.html,numeric-editor.html,mood-editor.html' }
+                                { root: '/framework-examples/polymer-examples/src/editor-components-grid/', files: 'index.html,editor-components-example.html,mood-renderer.html,numeric-editor.html,mood-editor.html' }
                             ]
                           }"
                           exampleHeight="525px">

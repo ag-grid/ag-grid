@@ -12,11 +12,11 @@ include '../documentation-main/documentation_header.php';
     <h2>Master/Detail Components</h2>
     <p>A Master/Detail Example, with both the Master and the Detail elements being Angular Components.</p>
 
-    <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=master-detail"
+    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=master-detail"
                           sources="{
                             [
-                                { root: '/ng2-example/app/master-detail-example/', files: 'masterdetail-master.component.ts,masterdetail-master.component.html,detail-panel.component.ts,detail-panel.component.html,detail-panel.component.css' },
-                                { root: '/ng2-example/app/', files: 'app.module.ts' }
+                                { root: '/framework-examples/angular-examples/app/master-detail-example/', files: 'masterdetail-master.component.ts,masterdetail-master.component.html,detail-panel.component.ts,detail-panel.component.html,detail-panel.component.css' },
+                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
                             ]
                           }"
                           plunker="https://embed.plnkr.co/bpJgdo/">

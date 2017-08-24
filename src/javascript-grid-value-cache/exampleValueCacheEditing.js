@@ -93,6 +93,7 @@ var gridOptions = {
     enableColResize: true,
     enableRangeSelection: true,
     groupDefaultExpanded: 1,
+    valueCache:true,
     onCellValueChanged: function() {
         console.log('onCellValueChanged');
     }

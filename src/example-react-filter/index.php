@@ -12,10 +12,10 @@ include '../documentation-main/documentation_header.php';
     <h2>Filter Component</h2>
     <p>A Filter Example, with the Filter written as a React Component.</p>
 
-    <show-complex-example example="../react-examples/examples/?fromDocs&example=filter"
+    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=filter"
                           sources="{
                             [
-                                { root: '/react-examples/examples/src/filterComponentExample/', files: 'FilterComponentExample.jsx,PartialMatchFilter.jsx' }
+                                { root: '/framework-examples/react-examples/examples/src/filterComponentExample/', files: 'FilterComponentExample.jsx,PartialMatchFilter.jsx' }
                             ]
                           }"
                           exampleHeight="525px">

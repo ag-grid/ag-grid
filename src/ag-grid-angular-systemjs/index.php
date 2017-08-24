@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
     <h1 id="angular-building-with-systemjs">Angular - Building with SystemJS</h1>
 
     <p>We document the main steps required when using SystemJS and SystemJS-Builder below, but please refer to
-        <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>
+        <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>
 
     <h3>Initialise Project</h3>
 
@@ -47,7 +47,7 @@ npm i --save ag-grid-enterprise
 
     <p>Our application will be a very simple one, consisting of a single Module, a single Component and a bootstrap file, as well a few utility & configuration files.</p>
 
-    <note>You can either create the project by hand, or check it out from our Angular Seed Repo in <a href="https://github.com/ceolter/ag-grid-angular-seed">GitHub.</a></note>
+    <note>You can either create the project by hand, or check it out from our Angular Seed Repo in <a href="https://github.com/ag-grid/ag-grid-angular-seed">GitHub.</a></note>
 
     <p>The resulting project structure will look like this:</p>
 <pre>

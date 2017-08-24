@@ -57,6 +57,8 @@ include '../documentation-main/documentation_header.php';
     <li><b>debounceMs:</b> If specified, the filter will wait this amount of ms after the user stops entering any characters in the
         input box before is triggered. If not specified this value is 500ms, if the value specified is 0 the filter
         will be immediately triggered</li>
+    <li><b>caseSensitive</b> If true, the text filtering will be case sensitive, if not specified or false, the filtering
+    will be case insensitive</li>
     </ul>
 
 The parameters for the filter must be specified in the property filterParams inside the column definition
@@ -231,6 +233,7 @@ athleteFilterComponent.onFilterChanged()
         searching the string 'bjo'</i></li>
     <li>The athlete column has a debounce of 0ms <i>debounceMs:0</i> in the column filter menu. The floating filter
     has the default 500ms</li>
+    <li>The athlete column filter is case sensitive, note that it has the following flag: <code>caseSensitive:true</code></li>
     <li>The country column has only one filter option: <i>filterOptions=['contains']</i></li>
     <li>The country column has a <i>textCustomComparator</i> so that there are aliases that can be entered in the filter
     ie: if you filter using the text 'usa' it will match United States or 'holland' will match 'Netherlands'</li>

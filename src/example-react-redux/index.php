@@ -12,10 +12,10 @@ include '../documentation-main/documentation_header.php';
     <h2>Simple Redux Example</h2>
     <p>A simple example using Redux to manage the data to be displayed, making use of ag-Grids deltaRowDataMode to ensure only the changed rows are re-renderered.</p>
 
-    <show-complex-example example="../react-examples/examples/?fromDocs&example=simple-redux"
+    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=simple-redux"
                           sources="{
                             [
-                                { root: '/react-examples/examples/src/simpleReduxExample/', files: 'SimpleReduxExample.jsx,HeaderComponent.jsx,GridComponent.jsx,gridDataReducer.jsx,gridDataActions.jsx' }
+                                { root: '/framework-examples/react-examples/examples/src/simpleReduxExample/', files: 'SimpleReduxExample.jsx,HeaderComponent.jsx,GridComponent.jsx,gridDataReducer.jsx,gridDataActions.jsx' }
                             ]
                           }"
                           exampleHeight="525px">

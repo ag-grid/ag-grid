@@ -11,6 +11,16 @@ include '../documentation-main/documentation_header.php';
 
     <h1 id="events" class="first-h1">Grid Events</h1>
 
+    <note>
+        TypeScript users can take advantage of the events interfaces. You can work our the interface
+        name by putting 'Event' after the event name. For example, the cellClicked event uses the interface
+        CellClickedEvent.
+    </note>
+
+    <note>
+        See the <a href="#properties-and-hierarchy">Event Properties & Hierarchy</a> below for what properties each event has.
+    </note>
+
     <table id="ag-grid-events" class="table">
 
         <tr class="title-row">
@@ -20,15 +30,23 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>cellClicked</th>
-            <td>Cell is clicked.</td>
+            <td>
+                Cell is clicked.
+            </td>
         </tr>
         <tr>
             <th>cellDoubleClicked</th>
-            <td>Cell is double clicked.</td>
+            <td>
+                Cell is double clicked.
+            </td>
         </tr>
         <tr>
             <th>cellFocused</th>
             <td>Cell is focused.</td>
+        </tr>
+        <tr>
+            <th>cellMouseOver, cellMouseOut</th>
+            <td>Mouse enters / leaves cell.</td>
         </tr>
         <tr>
             <th>rowClicked</th>
@@ -68,32 +86,15 @@ include '../documentation-main/documentation_header.php';
             <td>A cells value within a row has changed.</td>
         </tr>
         <tr>
-            <th>rowEditingStarted</th>
-            <td>Editing a row has started (when row editing is enabled). When row editing, this event will be fired
-                once, and <code>cellEditingStarted</code> will be fired for each cell being edited.
+            <th>cellEditingStarted, cellEditingStopped</th>
+            <td>Editing a cell has started / stopped.</td>
+        </tr>
+        <tr>
+            <th>rowEditingStarted, rowEditingStopped</th>
+            <td>Editing a row has started / stopped (when row editing is enabled). When row editing, these events
+                will be fired once and <code>cellEditingStarted / cellEditingStopped</code> will be fired for each
+                individual cell.
             </td>
-        </tr>
-        <tr>
-            <th>rowEditingStopped</th>
-            <td>Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired
-                once, and <code>cellEditingStopped</code> will be fired for each cell being edited.
-            </td>
-        </tr>
-        <tr>
-            <th>cellEditingStarted</th>
-            <td>Editing a cell has started.</td>
-        </tr>
-        <tr>
-            <th>cellEditingStopped</th>
-            <td>Editing a cell has stopped.</td>
-        </tr>
-        <tr>
-            <th>itemsAdded</th>
-            <td>Client added a new row.</td>
-        </tr>
-        <tr>
-            <th>itemsRemoved</th>
-            <td>Client removed a row.</td>
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
@@ -109,7 +110,13 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>filterChanged</th>
             <td>
-                Filter has changed, grid also listens for this and updates the model.<br/>
+                Filter has modified and applied.<br/>
+            </td>
+        </tr>
+        <tr>
+            <th>filterModified</th>
+            <td>
+                Filter was modified but not applied. Used when filters have 'Apply' buttons.<br/>
             </td>
         </tr>
 
@@ -118,16 +125,6 @@ include '../documentation-main/documentation_header.php';
             <td colspan="2">Columns</td>
         </tr>
 
-        <tr>
-            <th>columnEverythingChanged</th>
-            <td>Shotgun - gets called when either a) new columns are set or b) columnApi.setState() is used, so
-                everything has changed.
-            </td>
-        </tr>
-        <tr>
-            <th>rowGroupOpened</th>
-            <td>A row group was opened or closed.</td>
-        </tr>
         <tr>
             <th>columnVisible</th>
             <td>A column, or group of columns, was hidden / shown.</td>
@@ -141,6 +138,11 @@ include '../documentation-main/documentation_header.php';
             <td>A column was resized.</td>
         </tr>
         <tr>
+            <th>columnMoved</th>
+            <td>A column was moved. To find out when the column move is finished you can use the dragStopped event below.
+            </td>
+        </tr>
+        <tr>
             <th>columnRowGroupChanged</th>
             <td>A row group column was added or removed.</td>
         </tr>
@@ -149,13 +151,29 @@ include '../documentation-main/documentation_header.php';
             <td>A value column was added or removed.</td>
         </tr>
         <tr>
-            <th>columnMoved</th>
-            <td>A column was moved. To find out when the column move is finished you can use the dragStopped event below.
-            </td>
+            <th>columnPivotModeChanged</th>
+            <td>The pivot mode flag was changed</td>
+        </tr>
+        <tr>
+            <th>columnPivotChanged</th>
+            <td>A pivot column was added, removed or order changed.</td>
         </tr>
         <tr>
             <th>columnGroupOpened</th>
             <td>A column group was opened / closed.</td>
+        </tr>
+        <tr>
+            <th>newColumnsLoaded</th>
+            <td>User has set in new columns.</td>
+        </tr>
+        <tr>
+            <th>gridColumnsChanged</th>
+            <td>The list of grid columns has changed.</td>
+        </tr>
+        <tr>
+            <th>displayedColumnsChanged</th>
+            <td>The list of displayed columns has changed, can result from columns open / close, column move, pivot, group, etc.
+            </td>
         </tr>
         <tr>
             <th>virtualColumnsChanged</th>
@@ -164,52 +182,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>newColumnsLoaded</th>
-            <td>User has set in new columns.</td>
-        </tr>
-        <tr>
-            <th>columnPivotModeChanged</th>
-            <td>The pivot mode flag was changed</td>
-        </tr>
-        <tr>
-            <th>columnRowGroupChanged</th>
-            <td>A row group column was added, removed or order changed.</td>
-        </tr>
-        <tr>
-            <th>columnPivotChanged</th>
-            <td>A pivot column was added, removed or order changed.</td>
-        </tr>
-        <tr>
-            <th>gridColumnsChanged</th>
-            <td>The list of grid columns has changed.</td>
-        </tr>
-        <tr>
-            <th>displayedColumnsChanged</th>
-            <td>The list of displayed columns has changed, can result from columns open / close, column move, pivot,
-                group, etc
-            </td>
-        </tr>
-
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Pagination</td>
-        </tr>
-        <tr>
-            <th>paginationReset</th>
-            <td>
-                Pagination service is reset.
-            </td>
-        </tr>
-        <tr>
-            <th>paginationPageLoaded</th>
-            <td>
-                Pagination page load is finished.
-            </td>
-        </tr>
-        <tr>
-            <th>paginationPageRequested</th>
-            <td>
-                Pagination page load is requested.
+            <th>columnEverythingChanged</th>
+            <td>Shotgun - gets called when either a) new columns are set or b) columnApi.setState() is used, so
+                everything has changed.
             </td>
         </tr>
 
@@ -225,16 +200,27 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>gridSizeChanged</th>
-            <td>The grid had to lay out again because it changed size.</td>
-        </tr>
-        <tr>
             <th>modelUpdated</th>
             <td>Displayed rows have changed. Happens following sort, filter or tree expand / collapse events.</td>
         </tr>
         <tr>
-            <th>floatingRowDataChanged</th>
-            <td>The client has set new floating data into the grid</td>
+            <th>rowGroupOpened</th>
+            <td>A row group was opened or closed.</td>
+        </tr>
+        <tr>
+            <th>paginationChanged</th>
+            <td>
+                The displayed page for pagination has changed. For example the data was filtered or sorted, or the user
+                has moved to a different page.
+            </td>
+        </tr>
+        <tr>
+            <th>gridSizeChanged</th>
+            <td>The grid had to lay out again because it changed size.</td>
+        </tr>
+        <tr>
+            <th>pinnedRowDataChanged</th>
+            <td>The client has set new pinned row data into the grid</td>
         </tr>
         <tr>
             <th>virtualRowRemoved</th>
@@ -256,7 +242,13 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>rowDataChanged</th>
-            <td>The client has set new data into the grid</td>
+            <td>The client has set new data into the grid using <code>api.setRowData()</code> or changing
+            the <code>rowData</code> bound property.</td>
+        </tr>
+        <tr>
+            <th>rowDataUpdated</th>
+            <td>The client has updated data for the grid using <code>api.updateRowData(transaction)</code> or changing
+            the <code>rowData</code> bound property with <code>deltaRowDataMode=true</code>.</td>
         </tr>
         <tr>
             <th>componentStateChanged</th>
@@ -268,6 +260,135 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
     </table>
+
+    <h2 id="properties-and-hierarchy">Event Properties & Hierarchy</h2>
+
+    <p>
+        Below shows the event hierarchy and properties. All properties are inherited. For example the CellValueChangedEvent
+        has properties:
+    <pre><span class="event-properties">// all properties, including inherited, for CellValueChangedEvent</span>
+CellValueChangedEvent {
+    type, api, columnApi, <span class="event-properties">// -> properties from AgEvent</span>
+    node, data, rowIndex, rowPinned, context, event, <span class="event-properties">// -> properties from RowEvent</span>
+    column, colDef, value, <span class="event-properties">// -> properties from CellEvent</span>
+    oldValue, newValue <span class="event-properties">// -> properties from CellValueChangedEvent</span>
+}</pre>
+    </p>
+
+    <pre class="event-hierarchy"><span class="event-properties">//---------------------------------------------------------//</span>
+<span class="event-properties">// Event hierarchy, and properties, for all ag-Grid events //</span>
+<span class="event-properties">//---------------------------------------------------------//</span>
+└── AgEvent <span class="event-properties">{
+    │     <span class="event-attribute">type</span>: string, // the event type, eg 'sortChanged' or 'columnResized'
+    │     <span class="event-attribute">api</span>: GridAPI, // see <a href="../javascript-grid-api/">Grid API</a>
+    │     <span class="event-attribute">columnApi</span>: ColumnAPI // see <a href="../javascript-grid-column-api/">Column API</a>
+    │   }</span>
+    ├── GridReadyEvent <span class="event-properties">{}</span>
+    ├── SelectionChangedEvent <span class="event-properties">{}</span>
+    ├── FilterChangedEvent <span class="event-properties">{}</span>
+    ├── FilterModifiedEvent <span class="event-properties">{}</span>
+    ├── SortChangedEvent <span class="event-properties">{}</span>
+    ├── RowDataChangedEvent <span class="event-properties">{}</span>
+    ├── RowDataUpdatedEvent <span class="event-properties">{}</span>
+    ├── PinnedRowDataChangedEvent <span class="event-properties">{}</span>
+    ├── NewColumnsLoadedEvent <span class="event-properties">{}</span>
+    ├── GridColumnsChangedEvent <span class="event-properties">{}</span>
+    ├── VirtualColumnsChangedEvent <span class="event-properties">{}</span>
+    ├── ColumnPivotModeChangedEvent <span class="event-properties">{}</span>
+    ├── ColumnEverythingChangedEvent <span class="event-properties">{}</span>
+    ├── DisplayedColumnsChangedEvent <span class="event-properties">{}</span>
+    ├── DragStartedEvent <span class="event-properties">{}</span>
+    ├── DragStoppedEvent <span class="event-properties">{}</span>
+    ├── CellFocusedEvent <span class="event-properties">{
+    │       <span class="event-attribute">rowIndex</span>: number, // the row index of the focused cell
+    │       <span class="event-attribute">column</span>: Column, // the column of the focused cell
+    │       <span class="event-attribute">rowPinned</span>: string, // either 'top', 'bottom' or undefined/null (if not pinned)
+    │       <span class="event-attribute">forceBrowserFocus</span>: boolean // whether browser focus is also set (false when editing)
+    │     }</span>
+    ├── GridSizeChangedEvent <span class="event-properties">{
+    │       <span class="event-attribute">clientWidth</span>: number, // new width in pixels of the grid
+    │       <span class="event-attribute">clientHeight</span>: number // new height in pixels of the grid
+    │     }</span>
+    ├── ViewportChangedEvent <span class="event-properties">{
+    │       <span class="event-attribute">firstRow</span>: number, // the index of the first rendered row
+    │       <span class="event-attribute">lastRow</span>: number // the index of the last rendered row
+    │     }</span>
+    ├── RangeSelectionChangedEvent <span class="event-properties">{
+    │       <span class="event-attribute">started</span>: boolean, // true for first event in a sequence of dragging events
+    │       <span class="event-attribute">finished</span>: boolean // true for last event in sequence of dragging events
+    │     }</span>
+    ├── ColumnGroupOpenedEvent <span class="event-properties">{
+    │       <span class="event-attribute">columnGroup</span>: ColumnGroup // the column group that was opened
+    │     }</span>
+    ├── BodyScrollEvent <span class="event-properties">{
+    │       <span class="event-attribute">direction</span>: string // either 'horizontal' or 'vertical'
+    │     }</span>
+    ├── PaginationChangedEvent <span class="event-properties">{
+    │       <span class="event-attribute">animate</span>: boolean, // true if rows were animated to new position
+    │       <span class="event-attribute">keepRenderedRows</span>: boolean, // true if rows were kept (otherwise complete redraw)
+    │       <span class="event-attribute">newData</span>: boolean, // true if data was new (ie user set new data)
+    │       <span class="event-attribute">newPage</span>: boolean // true if user went to a new pagination page
+    │     }</span>
+    ├── ModelUpdatedEvent <span class="event-properties">{
+    │       <span class="event-attribute">animate</span>: boolean, // true if rows were animated to new position
+    │       <span class="event-attribute">keepRenderedRows</span>: boolean, // true if rows were kept (otherwise complete redraw)
+    │       <span class="event-attribute">newData</span>: boolean, // true if data was new (ie user set new data)
+    │       <span class="event-attribute">newPage</span>: boolean // true if user went to a new pagination page
+    │     }</span>
+    ├── ComponentStateChangedEvent <span class="event-properties">{
+    │       // one attribute for each changed property
+    │     }</span>
+    ├── ColumnEvent <span class="event-properties">{
+    │   │    <span class="event-attribute">column</span>: Column, // the impacted column, only set if action was on one column
+    │   │    <span class="event-attribute">columns</span>: Column[] // list of all impacted columns
+    │   │  }</span>
+    │   ├── ColumnPivotChangedEvent <span class="event-properties">{}</span> // a column was added / removed to pivot list
+    │   ├── ColumnRowGroupChangedEvent <span class="event-properties">{}</span> // a column was added / removed to row group list
+    │   ├── ColumnValueChangedEvent <span class="event-properties">{}</span> // a column was added / removed to values list
+    │   ├── ColumnMovedEvent <span class="event-properties">{
+    │   │        <span class="event-attribute">toIndex</span>: number // the position the column was moved to
+    │   │      }</span>
+    │   ├── ColumnResizedEvent <span class="event-properties">{
+    │   │        <span class="event-attribute">finished</span>: boolean // set to true for last event in a sequence of move events
+    │   │      }</span>
+    │   ├── ColumnVisibleEvent <span class="event-properties">{
+    │   │        <span class="event-attribute">visible</span>: boolean // true if column was set to visible, false if set to hide
+    │   │      }</span>
+    │   └── ColumnPinnedEvent <span class="event-properties">{
+    │            <span class="event-attribute">pinned</span>: string // either 'left', 'right', or undefined / null (it not pinned)
+    │          }</span>
+    └── RowEvent <span class="event-properties">{
+        │     <span class="event-attribute">node</span>: RowNode, // the RowNode for the row in question
+        │     <span class="event-attribute">data</span>: any, // the user provided data for the row in question
+        │     <span class="event-attribute">rowIndex</span>: number, // the visible row index for the row in question
+        │     <span class="event-attribute">rowPinned</span>: string, // either 'top', 'bottom' or undefined / null (if not pinned)
+        │     <span class="event-attribute">context</span>: any, // bag of attributes, provided by user, see <a href="../javascript-grid-context/">Context</a>
+        │     <span class="event-attribute">event?</span>: Event // if even was due to browser event (eg click), then this is browser event
+        │   }</span>
+        ├── RowSelectedEvent <span class="event-properties">{}</span>
+        ├── RowClickedEvent <span class="event-properties">{}</span>
+        ├── RowDoubleClickedEvent <span class="event-properties">{}</span>
+        ├── RowEditingStartedEvent <span class="event-properties">{}</span>
+        ├── RowEditingStoppedEvent <span class="event-properties">{}</span>
+        ├── RowGroupOpenedEvent <span class="event-properties">{}</span>
+        ├── RowValueChangedEvent <span class="event-properties">{}</span>
+        ├── VirtualRowRemovedEvent <span class="event-properties">{}</span>
+        └── CellEvent <span class="event-properties">{
+            │   <span class="event-attribute">column</span>: Column, // the column for the cell in question
+            │   <span class="event-attribute">colDef</span>: ColDef, // the column definition for the cell in question
+            │   <span class="event-attribute">value</span>: any // the value for the cell in question
+            │ }</span>
+            ├── CellClickedEvent <span class="event-properties">{}</span>
+            ├── CellDoubleClickedEvent <span class="event-properties">{}</span>
+            ├── CellMouseOverEvent <span class="event-properties">{}</span>
+            ├── CellMouseOutEvent <span class="event-properties">{}</span>
+            ├── CellContextMenuEvent <span class="event-properties">{}</span>
+            ├── CellEditingStartedEvent <span class="event-properties">{}</span>
+            ├── CellEditingStoppedEvent <span class="event-properties">{}</span>
+            └── CellValueChangedEvent <span class="event-properties">{
+                    <span class="event-attribute">oldValue</span>: any, // the old value before editing
+                    <span class="event-attribute">newValue</span>: any // the new value after editing
+                  }</span></pre>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

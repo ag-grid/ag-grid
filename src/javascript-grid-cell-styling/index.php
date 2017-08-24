@@ -166,18 +166,42 @@ var colDef4 = {
     'rag-red': 'x >= 25'
 }</pre>
 
-    <p>Below shows both cssClassRules snippets above in a full working example.</p>
-
-    <show-example example="example1"></show-example>
-
-    <h4>Refresh of cellClassRules</h4>
+    <h4>Refresh of Styles</h4>
 
     <p>
-        If you refresh a cell, or a cell is updated due to editing, the cellClassRules
-        are applied again. If a rules executes a second time and returns true, where
-        previously it returned false, then the CSS class is removed.
+        If you refresh a cell, or a cell is updated due to editing, the cellStyle,
+        cellClass and cellClassRules are all applied again. This has the following
+        effect:
+        <ul>
+            <li><b>cellStyle</b>: All new styles are applied. If a new style is the
+            same as an old style, the new style overwrites the old style.</li>
+            <li><b>cellClass</b>: All new classes are applied. Old classes are not
+            removed so be aware that classes will accumulate. If you want to remove
+            old classes, then use cellClassRules.</li>
+            <li><b>cellClassRules</b>: Rules that return true will have the class
+            applied the second time. Rules tha return false will have the class removed
+            second time.</li>
+        </ul>
     </p>
 
+    <h2>Example Cell Styling</h2>
+
+    <p>Below shows both cssClassRules snippets above in a full working example. The exmaple
+    demonstrates the following:
+        <ul>
+            <li>Age uses <code>cellClassRules</code> with expressions (strings instead of functions).
+            Editing the cell will update the style.</li>
+            <li>Year uses <code>cellClassRules</code> with functions. Editing the cell will update the style.</li>
+            <li>Date and Sport use <code>cellClass</code>, Date sets explicitly, Sport sets
+            using a function. Because a function is used for Sport, it can select class based
+            on data value. Editing Sport will have undetermined results as the class values will accumulate.</li>
+            <li>Gold sets <code>cellStyle</code> implicitly. It is not dependent on the cell value.</li>
+            <li>Silver and Bronze set <code>cellStyle</code> using a function and depends on the value.
+            Editing will update the cellStyle.</li>
+        </ul>
+    </p>
+
+    <show-example example="exampleCellStyling"></show-example>
 
     <h1 id="rowStyling">Row Styling</h1>
 

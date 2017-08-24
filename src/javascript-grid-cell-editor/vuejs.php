@@ -18,7 +18,7 @@
 
     <p>
         For an example of VueJS cellEditing, see the
-        <a href="https://github.com/ceolter/ag-grid-vue-example">ag-grid-vue-example</a> on Github.
+        <a href="https://github.com/ag-grid/ag-grid-vue-example">ag-grid-vue-example</a> on Github.
     </p>
 
     <h3><img src="../images/vue_large.png" style="width: 20px;"/> Specifying a VueJS cellEditor</h3>
@@ -171,6 +171,6 @@ export default {
     <p>
         Using VueJS Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>
-    <show-example url="../vue-examples/#/editor"
-                  jsfile="../vue-examples/src/editor-component-example/EditorComponentExample.vue"
+    <show-example url="../framework-examples/vue-examples/#/editor"
+                  jsfile="../framework-examples/vue-examples/src/editor-component-example/EditorComponentExample.vue"
                   exampleHeight="525px"></show-example>

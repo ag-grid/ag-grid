@@ -17,7 +17,7 @@
 
     <p>
         For an example of React cellEditing, see the
-        <a href="https://github.com/ceolter/ag-grid-react-example">ag-grid-react-example</a> on Github.
+        <a href="https://github.com/ag-grid/ag-grid-react-example">ag-grid-react-example</a> on Github.
         In the example, the 'name' column uses a React cellEditor.</p>
     </p>
 
@@ -93,10 +93,10 @@ colDef = {
     <p>
         Using React Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>
-    <show-complex-example example="../react-examples/examples/?fromDocs&example=editor"
+    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=editor"
                           sources="{
                             [
-                                { root: '/react-examples/examples/src/editorComponentExample/', files: 'EditorComponentsExample.jsx,MoodRenderer.jsx,MoodEditor.jsx,NumericEditor.jsx' }
+                                { root: '/framework-examples/react-examples/examples/src/editorComponentExample/', files: 'EditorComponentsExample.jsx,MoodRenderer.jsx,MoodEditor.jsx,NumericEditor.jsx' }
                             ]
                           }"
                           exampleHeight="525px">

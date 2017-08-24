@@ -12,10 +12,10 @@ include '../documentation-main/documentation_header.php';
     <h2>Filter Component</h2>
     <p>A Filter Example, with the Filter written as a Polymer Component.</p>
 
-    <show-complex-example example="../polymer-examples/src/filter-components-example/index.html"
+    <show-complex-example example="../framework-examples/polymer-examples/src/filter-components-example/index.html"
                           sources="{
                             [
-                                { root: '/polymer-examples/src/filter-components-example/', files: 'index.html,filter-components-example.html,partial-match-filter.html' }
+                                { root: '/framework-examples/polymer-examples/src/filter-components-example/', files: 'index.html,filter-components-example.html,partial-match-filter.html' }
                             ]
                           }"
                           exampleHeight="525px">

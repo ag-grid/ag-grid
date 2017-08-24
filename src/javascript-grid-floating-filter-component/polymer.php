@@ -14,16 +14,16 @@
     See example below on how to create a custom floating filter reusing the out of the box number filter with polymer
 </p>
 
-<show-complex-example example="../polymer-examples/src/floating-filter-components-grid/index.html"
+<show-complex-example example="../framework-examples/polymer-examples/src/floating-filter-components-grid/index.html"
                       sources="{
                             [
-                                { root: '/polymer-examples/src/floating-filter-components-grid/', files: 'index.html,floating-filter-components-example.html,sliding-floating-filter.html' }
+                                { root: '/framework-examples/polymer-examples/src/floating-filter-components-grid/', files: 'index.html,floating-filter-components-example.html,sliding-floating-filter.html' }
                             ]
                           }"
                       exampleHeight="525px">
 </show-complex-example>
 
-<note>The full <a href="https://github.com/ceolter/ag-grid-polymer-example">ag-grid-polymer-example</a> repo shows many
+<note>The full <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> repo shows many
     more examples for rendering, including grouped rows, full width renderers
     and so on, as well as examples on using Polymer Components with both CellEditors and Filters
 </note>

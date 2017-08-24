@@ -16,7 +16,7 @@ ExchangeService.prototype.addSubscriber = function (subscriber, symbol) {
     this.subscribers[symbol].push(subscriber);
 
     if (!this.updateInterval) {
-        this.updateInterval = setInterval(this.applyDeltasToTickerData.bind(this), 500);
+        this.updateInterval = setInterval(this.applyDeltasToTickerData.bind(this), 3500);
     }
 };
 

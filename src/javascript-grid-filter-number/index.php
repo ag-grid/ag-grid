@@ -47,6 +47,8 @@ include '../documentation-main/documentation_header.php';
     <li><b>debounceMs:</b> If specified, the filter will wait this amount of ms after the user stops entering any characters in the
         input box before is triggered. If not specified this value is 500ms, if the value specified is 0 the filter
         will be immediately triggered</li>
+    <li><b>nullComparator:</b> If specified, it will be used to specify if null values should be included when filtering.
+    See: <a href="../javascript-grid-filtering#nullFiltering">Null filtering</a></li>
 </ul>
 
 The parameters for the filter must be specified in the property filterParams inside the column definition

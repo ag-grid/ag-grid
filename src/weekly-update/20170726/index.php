@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "ag-Grid Weekly Update 18th July 2017";
-$pageDescription = "ag-Grid Weekly Update 18th July 2017";
+$pageTitle = "ag-Grid Weekly Update 26th July 2017";
+$pageDescription = "ag-Grid Weekly Update 26th July 2017";
 $pageKeyboards = "ag-Grid Weekly Update";
 
 include('../../includes/mediaHeader.php');
@@ -102,7 +102,7 @@ include('../../includes/mediaHeader.php');
 
     <div class="row">
         <div class="col-md-12">
-            <h2>Version 12 released – New Documentation – React Fibre Support</h2>
+            <h2>Version 12 Released – New Documentation – React Fiber Support</h2>
         </div>
     </div>
 
@@ -115,13 +115,13 @@ include('../../includes/mediaHeader.php');
         <hr/>
 
         <p>
-            Last Friday we released v12 with Polymer Support, Column Spanning and Enterprise Row Height and other items.
+            Last Friday, we released v12 with Polymer Support, Column Spanning and Enterprise Row Height among other items.
         </p>
 
         <h4>Trying to Simplify</h4>
 
         <p>
-            We continue to try and simplify the documentation. In particular we want to make the documentation
+            We continue to try to simplify the documentation. In particular, we want to make the documentation
             easier to navigate and find what you are looking for. We are in the process of putting links into
             the reference section - so it will take you to the part of the documentation that explains the item.
         </p>
@@ -155,7 +155,7 @@ include('../../includes/mediaHeader.php');
 
         <h4>
             <img src="./images/week30.jpg" style="float: left; margin-right: 20px; margin-bottom: 20px;"/>
-            Robs Birthday</h4>
+            Rob's Birthday</h4>
 
         <p>
             It was also Rob’s birthday, so we bought him a figurine of his favourite boxer
@@ -207,7 +207,7 @@ include('../../includes/mediaHeader.php');
                 </td>
                 <td>
                     <a href="https://twitter.com/share" class="twitter-share-button"
-                       data-url="https://www.ag-grid.com/weekly-update/20170718/"
+                       data-url="https://www.ag-grid.com/weekly-update/20170726/"
                        data-text="ag-Grid Weekly Update #javascript #angularjs #react" data-via="ceolter"
                        data-size="large">Tweet</a>
                     <script>!function (d, s, id) {

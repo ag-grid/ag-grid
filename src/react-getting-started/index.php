@@ -38,8 +38,8 @@ include '../documentation-main/documentation_header.php';
 
     <pre>
 <span class="codeComment">// clone the ag-Grid React seed project</span>
-git clone https://github.com/ceolter/ag-grid-react-seed
-cd ag-grid-react-seed
+git clone https://github.com/ag-grid/ag-grid-react-seed
+cd ag-grid-react-seed/react
 
 <span class="codeComment">// install the project dependencies</span>
 npm i
@@ -48,7 +48,7 @@ npm i
 npm start
 </pre>
 
-    <p>With those 3 commands you should now see the following application:</p>
+    <p>It will take a few seconds to bundle the application and with just those 3 commands you should now see the following application:</p>
 
     <img src="../images/react-seed.png" style="display: block;margin: auto;height: 200px;">
 
@@ -243,10 +243,10 @@ export default class extends Component {
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-    <show-complex-example example="../react-examples/examples/?fromDocs&example=rich-grid"
+    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=rich-grid"
                           sources="{
                             [
-                                { root: '/react-examples/examples/src/richGridExample/', files: 'ColDefFactory.jsx,NameCellEditor.jsx,RichGridExample.css,SkillsFilter.jsx,MyReactDateComponent.jsx,ProficiencyCellRenderer.jsx,RichGridExample.jsx,MyReactHeaderComponent.jsx,ProficiencyFilter.jsx,RowDataFactory.js,MyReactHeaderGroupComponent.jsx,RefData.js,SkillsCellRenderer.jsx' }
+                                { root: '/framework-examples/react-examples/examples/src/richGridExample/', files: 'ColDefFactory.jsx,NameCellEditor.jsx,RichGridExample.css,SkillsFilter.jsx,MyReactDateComponent.jsx,ProficiencyCellRenderer.jsx,RichGridExample.jsx,MyReactHeaderComponent.jsx,ProficiencyFilter.jsx,RowDataFactory.js,MyReactHeaderGroupComponent.jsx,RefData.js,SkillsCellRenderer.jsx' }
                             ]
                           }"
                           exampleHeight="525px">

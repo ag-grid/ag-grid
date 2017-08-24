@@ -44,11 +44,7 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowData: createRowData(),
-    enableColResize: true,
-    // this bit is important - it gets the grid to refresh every time there is a change
-    onCellValueChanged: function () {
-        gridOptions.api.refreshVolatileCells();
-    }
+    enableColResize: true
 };
 
 function onUpdateSomeValues() {

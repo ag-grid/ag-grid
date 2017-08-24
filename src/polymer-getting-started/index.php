@@ -37,7 +37,7 @@ include '../documentation-main/documentation_header.php';
 
     <pre>
 <span class="codeComment">// clone the ag-Grid Polymer seed project</span>
-git clone https://github.com/ceolter/ag-grid-polymer-seed
+git clone https://github.com/ag-grid/ag-grid-polymer-seed
 cd ag-grid-polymer-seed
 
 <span class="codeComment">// install the project dependencies</span>
@@ -229,10 +229,10 @@ npm start
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-    <show-complex-example example="../polymer-examples/src/rich-grid/index.html"
+    <show-complex-example example="../framework-examples/polymer-examples/src/rich-grid/index.html"
                           sources="{
                             [
-                                { root: '/polymer-examples/src/rich-grid/', files: 'index.html,simple-cell-renderer.html,proficiencyFilter.js,skillsFilter.js,rich-grid-example.css,static-data.js,rich-grid-example.html' }
+                                { root: '/framework-examples/polymer-examples/src/rich-grid/', files: 'index.html,simple-cell-renderer.html,proficiencyFilter.js,skillsFilter.js,rich-grid-example.css,static-data.js,rich-grid-example.html' }
                             ]
                           }"
                           exampleHeight="525px">

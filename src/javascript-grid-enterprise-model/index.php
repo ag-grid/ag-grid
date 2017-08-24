@@ -224,8 +224,8 @@ export interface ColumnVO {
     It is not possible to put up a full end to end example of the Enterprise row model
     on the documentation website, as we cannot host servers on our website.
     Instead we have put a full end to end example
-    in Github at <a href="https://github.com/ceolter/ag-grid-enterprise-mysql-example/">
-    https://github.com/ceolter/ag-grid-enterprise-mysql-sample/</a>.
+    in Github at <a href="https://github.com/ag-grid/ag-grid-enterprise-mysql-example/">
+    https://github.com/ag-grid/ag-grid-enterprise-mysql-sample/</a>.
 </p>
 
 <p>

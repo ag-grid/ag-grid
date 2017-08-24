@@ -18,7 +18,7 @@
 
     <p>
         For an example on Aurelia filtering, see the
-        <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.</p>
+        <a href="https://github.com/ag-grid/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.</p>
     </p>
 
     <h3 id="specifying-a-filter-in-an-aurelia-project"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Filter in an Aurelia project</h3>
@@ -110,6 +110,6 @@ getPartialMatchFilter() {
 <!--    <p>-->
 <!--        Using a Filter Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.-->
 <!--    </p>-->
-<!--    <show-example example="../aurelia-example/#/filter/true"-->
-<!--                  jsfile="../aurelia-example/components/filter-example/filter-example.ts"-->
-<!--                  html="../aurelia-example/components/filter-example/filter-example.html"></show-example>-->
+<!--    <show-example example="../framework-examples/aurelia-example/#/filter/true"-->
+<!--                  jsfile="../framework-examples/aurelia-example/components/filter-example/filter-example.ts"-->
+<!--                  html="../framework-examples/aurelia-example/components/filter-example/filter-example.html"></show-example>-->

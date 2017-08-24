@@ -432,6 +432,15 @@ class TopMoversGrid extends Component {
     <p>As above, this call will result in ag-Grid believing that the rowData has changed each time the component renders as the filtering
         operation will return a new array each time. Again to alleviate this behaviour extract data that isn't likely to change and pre-process it only once.</p>
 
+    <h2>React & TypeScript</h2>
+
+    <p>We provide a seed project for both "plain" React as well as when using React with TypeScript.</p>
+
+    <pre>git clone https://github.com/ag-grid/ag-grid-react-seed</pre>
+
+    <p>Within this repo you'll find two projects: <code>react</code> and <code>react-typescript</code>. The latter provides
+    a working example of getting up and running with ag-Grid together with React & TypeScript.</p>
+
     <h2 id="next-steps">Next Steps...</h2>
 
     <p>

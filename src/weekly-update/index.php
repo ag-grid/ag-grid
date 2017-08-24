@@ -53,6 +53,48 @@ include('../includes/mediaHeader.php');
 
 </div>
 
+IE Performance Improvement - Improving CSS Themes - Addressing Framework Issues 
+
+<div class="weekly-news-section">
+
+    <a href="./20170816/">
+        <div class="weekly-news-title">
+            IE Performance Improvement - Improving CSS Themes - Addressing Framework Issues
+        </div>
+        <div class="weekly-news-sub-title">
+            Customer Experience Team, 17th August, 2017
+        </div>
+    </a>
+
+    <div style="clear: both;"></div>
+
+    <div class="weekly-news-paragraph">
+        This update sees a lot of work on performance particularly for IE as well as working on our themes. We have also been 
+        working on some framework related items reported.
+    </div>
+
+</div>
+
+<div class="weekly-news-section">
+
+    <a href="./20170801/">
+        <div class="weekly-news-title">
+            Welcome Petyo Ivanov
+        </div>
+        <div class="weekly-news-sub-title">
+            Customer Experience Team, 3rd August, 2017
+        </div>
+    </a>
+
+    <div style="clear: both;"></div>
+
+    <div class="weekly-news-paragraph">
+        We have another new person joining the team and we give an update on React Fiber, as well as the other goings on at Grid HQ.
+    </div>
+
+</div>
+
+
 <div class="weekly-news-section">
 
     <a href="./20170726/">

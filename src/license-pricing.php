@@ -21,7 +21,42 @@
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
 
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '512303249109564'); // Insert your pixel ID here.
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=512303249109564&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- DO NOT MODIFY -->
+    <!-- End Facebook Pixel Code -->
+
+
+
 </head>
+
+<script>
+fbq('track', 'ViewContent');
+</script>
+
+<script type="text/javascript">
+_linkedin_data_partner_id = "71830";
+</script><script type="text/javascript">
+(function(){var s = document.getElementsByTagName("script")[0];
+var b = document.createElement("script");
+b.type = "text/javascript";b.async = true;
+b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+s.parentNode.insertBefore(b, s);})();
+</script>
+<noscript>
+<img height="1" width="1" style="display:none;" alt="" src="https://dc.ads.linkedin.com/collect/?pid=71830&fmt=gif" />
+</noscript>
 
 <body ng-app="index" class="big-text">
 
@@ -159,7 +194,7 @@ include 'includes/headerRow.php'; ?>
                                 <span class="price-sub">per Developer</span>
                             </div>
                             <div class="extra">
-                                <p>Released under <a href="https://github.com/ceolter/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
+                                <p>Released under <a href="https://github.com/ag-grid/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
                             </div>
                             <ul>
                                 <li><span>Usage of ag-Grid Enterprise in a single Application</span></li>
@@ -179,7 +214,7 @@ include 'includes/headerRow.php'; ?>
                                 <span class="price-sub">per Developer</span>
                             </div>
                             <div class="extra">
-                                <p>Released under <a href="https://github.com/ceolter/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
+                                <p>Released under <a href="https://github.com/ag-grid/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
                             </div>
                             <ul>
                                 <li><span>Usage of ag-Grid Enterprise in multiple Applications</span></li>
@@ -198,7 +233,7 @@ include 'includes/headerRow.php'; ?>
                                 <span class="price-sub">price on asking</span>
                             </div>
                             <div class="extra">
-                                <p>Released under <a href="https://github.com/ceolter/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
+                                <p>Released under <a href="https://github.com/ag-grid/ag-grid-enterprise/blob/master/LICENSE.md">Commercial License</a></p>
                             </div>
                             <ul>
                                 <li><span>Usage of ag-Grid Enterprise in SaaS/OEM Applications</span></li>

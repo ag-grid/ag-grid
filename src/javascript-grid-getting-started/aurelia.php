@@ -15,12 +15,12 @@
 
     <p style="margin-top: 5px">
         If you are building an Aurelia application then you have the choice between A) using the plain JavaScript version
-        of ag-Grid or B) using the ag-Grid Aurelia Component from the <a href="https://github.com/ceolter/ag-grid-aurelia">
+        of ag-Grid or B) using the ag-Grid Aurelia Component from the <a href="https://github.com/ag-grid/ag-grid-aurelia">
             ag-grid-aurelia</a> project. If you use the ag-Grid Aurelia Component, then the grid's properties, events and API
         will all tie in with the Aurelia ecosystem - this will make your Aurelia coding easier.
     </p>
 
-    <note>Please use the github project <a href="https://github.com/ceolter/ag-grid-aurelia">ag-grid-aurelia</a>
+    <note>Please use the github project <a href="https://github.com/ag-grid/ag-grid-aurelia">ag-grid-aurelia</a>
         for feedback or issue reporting around ag-Grid's support for Aurelia.</note>
 
     <h2 id="ag-grid-aurelia-features">ag-Grid Aurelia Features</h2>
@@ -35,7 +35,7 @@
 
     <p>
         This page goes through the
-        <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a>
+        <a href="https://github.com/ag-grid/ag-grid-aurelia-example">ag-grid-aurelia-example</a>
         on Github.
     </p>
 
@@ -43,25 +43,25 @@
         feature set:
     <ul>
         <li>A feature rich grid example, demonstrating many of ag-Grid's features using Aurelia as a wrapper
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>An example using markup to create a grid
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-declarative-example/rich-grid-declarative-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-declarative-example/rich-grid-declarative-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/rich-grid-declarative-example/rich-grid-declarative-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/rich-grid-declarative-example/rich-grid-declarative-example.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Cell Editor Example - one with a popup editor, and another with a numeric editor. Each demonstrates different editor related features
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/editor-example/editor-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/editor-example/editor-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/editor-example/editor-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/editor-example/editor-example.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Pinned Row Renderer Example
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/floating-row-example/floating-row-example.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Full Width Renderer Example
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/full-width-example/full-width-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/full-width-example/full-width-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/full-width-example/full-width-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/full-width-example/full-width-example.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Group Row Inner Renderer Example
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/group-row-example/group-row-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/group-row-example/group-row-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/group-row-example/group-row-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/group-row-example/group-row-example.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
         <li>A Filter Example
-            <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/filter-example/filter-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/filter-example/filter-example.html" target="_blank" class="fa fa-external-link"> html</a>
+            <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/filter-example/filter-example.ts" target="_blank" class="fa fa-external-link"> TypeScript</a> <a href="https://github.com/ceolter/ag-grid-aurelia-example/blob/master/src/components/filter-example/filter-example.html" target="_blank" class="fa fa-external-link"> html</a>
         </li>
     </ul>
     </p>
@@ -218,9 +218,9 @@
 <!--    <p>-->
 <!--        The example below shows a rich configuration of ag-Grid-->
 <!--    </p>-->
-<!--    <show-example example="../aurelia-example/#/rich-grid/true"-->
-<!--                  jsfile="../aurelia-example/components/rich-grid-example/rich-grid-example.ts"-->
-<!--                  html="../aurelia-example/components/rich-grid-example/rich-grid-example.html"-->
+<!--    <show-example example="../framework-examples/aurelia-example/#/rich-grid/true"-->
+<!--                  jsfile="../framework-examples/aurelia-example/components/rich-grid-example/rich-grid-example.ts"-->
+<!--                  html="../framework-examples/aurelia-example/components/rich-grid-example/rich-grid-example.html"-->
 <!--                  exampleHeight="525px"></show-example>-->
 
 </div>

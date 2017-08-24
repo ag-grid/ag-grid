@@ -48,6 +48,7 @@ var gridOptions = {
     enableFilter: true,
     enableSorting: true,
 
+    throttleScroll: true,
     // these hide enterprise features, so they are not confusing
     // you if using ag-Grid standard
     suppressMenu: true

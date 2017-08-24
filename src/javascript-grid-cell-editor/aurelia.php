@@ -18,7 +18,7 @@
 
     <p>
         For an example of Aurelia cellEditing, see the
-        <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.
+        <a href="https://github.com/ag-grid/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.
     </p>
 
     <h3 id="specifying-a-aurelia-cell-editor"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia cellEditor</h3>
@@ -110,6 +110,6 @@ export class NumericEditor extends BaseAureliaEditor {
 <!--        Using Aurelia Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.-->
 <!--    </p>-->
 
-<!--    <show-example example="../aurelia-example/#/editor/true"-->
-<!--                  jsfile="../aurelia-example/components/editor-example/editor-example.ts"-->
-<!--                  html="../aurelia-example/components/editor-example/editor-example.html"></show-example>-->
+<!--    <show-example example="../framework-examples/aurelia-example/#/editor/true"-->
+<!--                  jsfile="../framework-examples/aurelia-example/components/editor-example/editor-example.ts"-->
+<!--                  html="../framework-examples/aurelia-example/components/editor-example/editor-example.html"></show-example>-->

@@ -83,6 +83,9 @@ var gridOptions = {
         expandAll: 'laOpen-em-up',
         collapseAll: 'laClose-em-up',
         toolPanel: 'laTool Panelo',
+        export: 'laExporto',
+        csvExport: 'la CSV Exportp',
+        excelExport: 'la Excel Exporto',
         // enterprise menu pinning
         pinLeft: 'laPin <<',
         pinRight: 'laPin >>',

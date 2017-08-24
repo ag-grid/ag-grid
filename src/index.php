@@ -53,7 +53,7 @@ include 'includes/navbar.php'; ?>
         <div class="container">
             <div class="row text-center">
                 <div class="col-md-4 info-item">
-                    Over <span class="info-item-big">700 Companies</span><br/>
+                    Over <span class="info-item-big">800 Companies</span><br/>
                     use <b>ag-Grid Enterprise</b>.
                 </div>
                 <div class="col-md-4 info-item">
@@ -62,7 +62,7 @@ include 'includes/navbar.php'; ?>
                     use <b>ag-Grid Enterprise</b>.
                 </div>
                 <div class="col-md-4 info-item">
-                    Over <span class="info-item-big">80,000 Downloads</span>
+                    Over <span class="info-item-big">100,000 Downloads</span>
                     per month.
                 </div>
             </div>
@@ -147,7 +147,7 @@ include 'includes/navbar.php'; ?>
 <?php $navKey = "home";
 include './includes/footer.php'; ?>
 
-<script src="dist/ag-grid-enterprise/ag-grid-enterprise.min.js"></script>
+<script src="dist/ag-grid-enterprise/ag-grid-enterprise.js"></script>
 
 <link inline href="example-file-browser/fileBrowser.css" rel="stylesheet">
 <link inline href="best-angularjs-data-grid/basic.css" rel="stylesheet">

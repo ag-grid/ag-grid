@@ -2,7 +2,7 @@ var columnDefs = [
     // this column uses min and max func
     {headerName: "minMax(age)", field: "age", width: 90, aggFunc: minAndMaxAggFunction},
     // here we use an average func and specify the function directly
-    {headerName: "avg(age)", field: "age", width: 90, aggFunc: avgAggFunction},
+    {headerName: "avg(age)", field: "age", width: 90, aggFunc: avgAggFunction, enableValue: true},
     // here we use a custom sum function that was registered with the grid,
     // which overrides the built in sum function
     {headerName: "sum(gold)", field: "gold", width: 100, aggFunc: 'sum', enableValue: true},

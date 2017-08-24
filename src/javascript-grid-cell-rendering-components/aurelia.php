@@ -18,7 +18,7 @@
 
 <p>
     For examples on Aurelia cellRendering, see the
-    <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-aurelia-example</a> on Github.</p>
+    <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-aurelia-example</a> on Github.</p>
 </p>
 
 <h3 id="specifying-a-aurelia-cell-renderer"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia cellRenderer</h3>
@@ -57,19 +57,19 @@
 <!--    of the "mood" field.-->
 <!--</p>-->
 <!---->
-<!--<show-example example="../aurelia-example/#/editor/true"-->
-<!--              jsfile="../aurelia-example/components/editor-example/editor-example.ts"-->
-<!--              html="../aurelia-example/components/editor-example/editor-example.html"></show-example>-->
+<!--<show-example example="../framework-examples/aurelia-example/#/editor/true"-->
+<!--              jsfile="../framework-examples/aurelia-example/components/editor-example/editor-example.ts"-->
+<!--              html="../framework-examples/aurelia-example/components/editor-example/editor-example.html"></show-example>-->
 <!---->
 <!--<h3 id="example-rendering-using-regular-cell-renderer-components">Example: Rendering using regular cellRenderer Components</h3>-->
 <!--<p>-->
 <!--    A Rich Grid leveraging regular Cell Renderer Components-->
 <!--</p>-->
 <!---->
-<!--<show-example example="../aurelia-example/#/richgrid-declarative/true"-->
-<!--          jsfile="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"-->
-<!--          html="../aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"-->
+<!--<show-example example="../framework-examples/aurelia-example/#/richgrid-declarative/true"-->
+<!--          jsfile="../framework-examples/aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"-->
+<!--          html="../framework-examples/aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"-->
 <!--          exampleHeight="525px"></show-example>-->
 <!---->
 <br/>
-<note>The full <a href="https://github.com/ceolter/ag-grid-aurelia-example">ag-grid-aurelia-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers and filters.</note>
+<note>The full <a href="https://github.com/ag-grid/ag-grid-aurelia-example">ag-grid-aurelia-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers and filters.</note>

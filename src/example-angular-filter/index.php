@@ -12,11 +12,11 @@ include '../documentation-main/documentation_header.php';
     <h2>Filter Component</h2>
     <p>A Filter Example, with the Filter written as a Angular Component.</p>
 
-    <show-complex-example example="../ng2-example/index.html?fromDocs=true&example=filter"
+    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=filter"
                           sources="{
                             [
-                                { root: '/ng2-example/app/filter-component-example/', files: 'filter.component.ts,filter.component.html,partial-match-filter.component.ts' },
-                                { root: '/ng2-example/app/', files: 'app.module.ts' }
+                                { root: '/framework-examples/angular-examples/app/filter-component-example/', files: 'filter.component.ts,filter.component.html,partial-match-filter.component.ts' },
+                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
                             ]
                           }"
                           plunker="https://embed.plnkr.co/ePKaio/"

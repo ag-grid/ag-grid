@@ -17,7 +17,7 @@
 
 <p>
     For examples on Polymer cellRendering, see the
-    <a href="https://github.com/ceolter/ag-grid-polymer-example">ag-grid-polymer-example</a> on Github.
+    <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> on Github.
     Polymer Renderers are used on all but the first Grid on this example page (the first grid uses plain JavaScript
     Renderers)</p>
 </p>
@@ -111,10 +111,10 @@ the grid will know the framework to use is Polymer.
 <p>
     Using Polymer Components in the Cell Renderers
 </p>
-<show-complex-example example="../polymer-examples/src/dynamic-components-grid/index.html"
+<show-complex-example example="../framework-examples/polymer-examples/src/dynamic-components-grid/index.html"
                       sources="{
                             [
-                                { root: '/polymer-examples/src/dynamic-components-grid/', files: 'index.html,cube-cell-renderer.html,params-cell-renderer.html,currency-cell-renderer.html,parent-child-renderer.html,dynamic-components-example.html,square-cell-renderer.html' }
+                                { root: '/framework-examples/polymer-examples/src/dynamic-components-grid/', files: 'index.html,cube-cell-renderer.html,params-cell-renderer.html,currency-cell-renderer.html,parent-child-renderer.html,dynamic-components-example.html,square-cell-renderer.html' }
                             ]
                           }"
                       exampleHeight="525px">
@@ -142,16 +142,16 @@ the grid will know the framework to use is Polymer.
 <p>
     Using more complex Polymer Components in the Cell Renderers
 </p>
-<show-complex-example example="../polymer-examples/src/rich-dynamic-components-grid/index.html"
+<show-complex-example example="../framework-examples/polymer-examples/src/rich-dynamic-components-grid/index.html"
                       sources="{
                             [
-                                { root: '/polymer-examples/src/rich-dynamic-components-grid/', files: 'index.html,ratio-renderer.html,rich-dynamic-components-example.html' }
+                                { root: '/framework-examples/polymer-examples/src/rich-dynamic-components-grid/', files: 'index.html,ratio-renderer.html,rich-dynamic-components-example.html' }
                             ]
                           }"
                       exampleHeight="525px">
 </show-complex-example>
 
-<note>The full <a href="https://github.com/ceolter/ag-grid-polymer-example">ag-grid-polymer-example</a> repo shows many
+<note>The full <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> repo shows many
     more examples for rendering, including grouped rows, full width renderers
     and so on, as well as examples on using Polymer Components with both CellEditors and Filters
 </note>

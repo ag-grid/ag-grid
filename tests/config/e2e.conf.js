@@ -1,13 +1,13 @@
 exports.config = {
-    baseUrl: 'http://localhost:8090',
+    baseUrl: 'http://localhost:8085/src',
 
     framework: 'jasmine',
 
-    chromeDriver: "../../node_modules/webdriver-manager/selenium/chromedriver_2.28",
-    seleniumServerJar: "../../node_modules/webdriver-manager/selenium/selenium-server-standalone-3.3.1.jar",
+    chromeDriver: "../../node_modules/webdriver-manager/selenium/chromedriver_2.31",
+    seleniumServerJar: "../../node_modules/webdriver-manager/selenium/selenium-server-standalone-3.5.2.jar",
 
     specs: [
-        '../e2e/best-javascript-data-grid/example-js.spec.js',
-        '../e2e/best-javascript-data-grid/html5grid.spec.js'
+        '../e2e/javascript-getting-started/example-js.spec.js',
+        '../e2e/javascript-grid-tool-panel/toolPanelExample.spec.js'
     ]
 };

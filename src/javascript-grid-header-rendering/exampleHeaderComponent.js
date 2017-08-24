@@ -18,9 +18,11 @@ var gridOptions = {
     enableSorting: true,
     enableColResize: true,
     suppressMenuHide: true,
+    components:{
+        headerComponent : MyHeaderComponent
+    },
     defaultColDef : {
         width: 100,
-        headerComponent : MyHeaderComponent,
         headerComponentParams : {
             menuIcon: 'fa-bars'
         }

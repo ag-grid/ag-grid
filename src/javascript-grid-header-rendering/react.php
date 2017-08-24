@@ -36,5 +36,5 @@
 
 <p>
     For a full working example of Header Components in React see
-    <a href="https://github.com/ceolter/ag-grid-react-example">React Example</a>.
+    <a href="https://github.com/ag-grid/ag-grid-react-example">React Example</a>.
 </p>

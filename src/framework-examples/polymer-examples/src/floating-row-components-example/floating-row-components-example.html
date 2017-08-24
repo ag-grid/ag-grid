@@ -1,0 +1,74 @@
+<link rel="import" href="styled-renderer.html">
+<dom-module id="floating-row-components-example">
+    <template>
+        <link rel="stylesheet" href="../../../../dist/ag-grid/styles/ag-grid.css">
+        <link rel="stylesheet" href="../../../../dist/ag-grid/styles/theme-fresh.css">
+
+        <div style="width: 800px;">
+            <h1>Pinned Row Component Example</h1>
+            <ag-grid-polymer style="width: 100%; height: 350px;"
+                             class="ag-fresh"
+                             gridOptions="{{gridOptions}}"></ag-grid-polymer>
+        </div>
+    </template>
+
+    <script>
+        class FloatingRowExample extends Polymer.Element {
+            static get is() {
+                return "floating-row-components-example";
+            }
+
+            constructor() {
+                super();
+
+                this.gridOptions = {
+                    rowData: this.createRowData(),
+                    columnDefs: this.createColumnDefs(),
+                    pinnedTopRowData: [
+                        {row: "Top Row", number: "Top Number"}
+                    ],
+                    pinnedBottomRowData: [
+                        {row: "Bottom Row", number: "Bottom Number"}
+                    ]
+                }
+            }
+
+            createColumnDefs() {
+                return [
+                    {
+                        headerName: "Row",
+                        field: "row",
+                        width: 400,
+                        pinnedRowCellRendererFramework: 'styled-renderer',
+                        pinnedRowCellRendererParams: {
+                            style: "font-weight: bold"
+                        }
+                    },
+                    {
+                        headerName: "Number",
+                        field: "number",
+                        width: 399,
+                        pinnedRowCellRendererFramework: 'styled-renderer',
+                        pinnedRowCellRendererParams: {
+                            style: "font-style: italic"
+                        }
+                    },
+                ];
+            }
+
+            createRowData() {
+                let rowData = [];
+
+                for (var i = 0; i < 15; i++) {
+                    rowData.push({
+                        row: "Row " + i,
+                        number: Math.round(Math.random() * 100)
+                    });
+                }
+
+                return rowData;
+            }
+        }
+        customElements.define(FloatingRowExample.is, FloatingRowExample);
+    </script>
+</dom-module>

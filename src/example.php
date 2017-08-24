@@ -56,7 +56,11 @@
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
 
+<?php if (isset($_ENV['GRID_SCRIPT_PATH'])) { ?>
+    <script src="<?php echo $_ENV['GRID_SCRIPT_PATH']  ?>"></script>
+<?php } else { ?>
     <script src="./dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused49"></script>
+<? } ?>
 
     <script src="example.js"></script>
 
@@ -104,6 +108,7 @@
                         <select onchange="onThemeChanged(this.value)" style="width: 90px; color: #333;"
                                 class="hide-when-small">
                             <option value="">-none-</option>
+                            <option value="ag-material-next">Material Next</option>
                             <option value="ag-fresh" selected>Fresh</option>
                             <option value="ag-dark">Dark</option>
                             <option value="ag-blue">Blue</option>

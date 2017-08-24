@@ -18,7 +18,7 @@
 
 <p>
     For examples on React cellRendering, see the
-    <a href="https://github.com/ceolter/ag-grid-react-example">ag-grid-react-example</a> on Github.
+    <a href="https://github.com/ag-grid/ag-grid-react-example">ag-grid-react-example</a> on Github.
     In the example, both 'Skills' and 'Proficiency' columns use React cellRenderers. The Country column
     uses a standard ag-Grid cellRenderer, to demonstrate both working side by side.</p>
 </p>
@@ -76,10 +76,10 @@ the grid will know the framework to use is React.
     Using React Components in the Cell Renderers
 </p>
 
-<show-complex-example example="../react-examples/examples/?fromDocs&example=dynamic"
+<show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=dynamic"
                       sources="{
                             [
-                                { root: '/react-examples/examples/src/dynamicComponentExample/', files: 'ChildMessageRenderer.jsx,CurrencyRenderer.jsx,ParamsRenderer.jsx,CubeRenderer.jsx,DynamicComponentsExample.jsx,SquareRenderer.jsx' }
+                                { root: '/framework-examples/react-examples/examples/src/dynamicComponentExample/', files: 'ChildMessageRenderer.jsx,CurrencyRenderer.jsx,ParamsRenderer.jsx,CubeRenderer.jsx,DynamicComponentsExample.jsx,SquareRenderer.jsx' }
                             ]
                           }"
                       exampleHeight="525px">
@@ -139,10 +139,10 @@ class NameCellRenderer extends React.Component {
     Using more complex React Components in the Cell Renderers
 </p>
 
-<show-complex-example example="../react-examples/examples/?fromDocs&example=rich-dynamic"
+<show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=rich-dynamic"
                       sources="{
                             [
-                                { root: '/react-examples/examples/src/richComponentExample/', files: 'ClickableRenderer.jsx,RatioRenderer.jsx,RichComponentsExample.jsx' }
+                                { root: '/framework-examples/react-examples/examples/src/richComponentExample/', files: 'ClickableRenderer.jsx,RatioRenderer.jsx,RichComponentsExample.jsx' }
                             ]
                           }"
                       exampleHeight="525px">

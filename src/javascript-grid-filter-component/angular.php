@@ -20,7 +20,7 @@
 
     <p>
         For an example on Angular filtering, see the
-        <a href="https://github.com/ceolter/ag-grid-angular-example">ag-grid-angular-example</a> on Github.</p>
+        <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on Github.</p>
     </p>
 
     <h3 id="specifying-a-angular-filter"><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular Filter</h3>
@@ -177,11 +177,11 @@ laterOnInYourApplicationSomewhere() {
     <p>
         Using Angular Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>
-<show-complex-example example="../ng2-example/index.html?fromDocs=true&example=filter"
+<show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=filter"
                       sources="{
                             [
-                                { root: '/ng2-example/app/filter-component-example/', files: 'filter.component.ts,filter.component.html,partial-match-filter.component.ts' },
-                                { root: '/ng2-example/app/', files: 'app.module.ts' }
+                                { root: '/framework-examples/angular-examples/app/filter-component-example/', files: 'filter.component.ts,filter.component.html,partial-match-filter.component.ts' },
+                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
                             ]
                           }"
                       plunker="https://embed.plnkr.co/ePKaio/"

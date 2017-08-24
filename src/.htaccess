@@ -2,11 +2,12 @@
 <IfModule mod_expires.c>
 ExpiresActive On
 ExpiresByType image/jpg "access 1 month"
+ExpiresByType image/svg "access 1 month"
 ExpiresByType image/jpeg "access 1 month"
 ExpiresByType image/gif "access 1 month"
 ExpiresByType image/png "access 1 month"
 ExpiresByType text/css "access 7 day"
-ExpiresByType text/html "access 1 hour"
+ExpiresByType text/html "access 1 second"
 ExpiresByType application/pdf "access 1 hour"
 ExpiresByType application/javascript "access 7 day"
 ExpiresByType image/x-icon "access 1 hour"
@@ -19,3 +20,18 @@ ExpiresDefault "access 1 hour"
 RewriteEngine On
 RewriteCond %{SERVER_PORT} 80
 RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
+
+# compress text, html, javascript, css, xml:
+AddOutputFilterByType DEFLATE text/plain
+AddOutputFilterByType DEFLATE text/html
+AddOutputFilterByType DEFLATE text/xml
+AddOutputFilterByType DEFLATE text/css
+AddOutputFilterByType DEFLATE application/xml
+AddOutputFilterByType DEFLATE application/xhtml+xml
+AddOutputFilterByType DEFLATE application/rss+xml
+AddOutputFilterByType DEFLATE application/javascript
+AddOutputFilterByType DEFLATE application/x-javascript
+AddOutputFilterByType DEFLATE application/json
+
+# RewriteCond %{THE_REQUEST} ^.*/index\.php
+# RewriteRule ^(.*)index.php$ /$1 [R=301,L]

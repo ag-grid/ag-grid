@@ -51,6 +51,8 @@ A date filter can take the following parameters:
         lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. If not specified the default type is {equals},
         if {equals} is not available because is removed using <i>filterOptions</i>, then the default
         is the first item in the filterOptions</li>
+    <li><b>nullComparator:</b> If specified, it will be used to specify if null values should be included when filtering.
+        See: <a href="../javascript-grid-filtering#nullFiltering">Null filtering</a></li>
 </ul>
 
 

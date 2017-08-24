@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
         either TypeScript or Webpack please refer to those sites for more in depth information around these tools.</p>
 
     <note>You can either create the project by hand, or check it out from our QuickStart/Seed Repo in <a
-                href="https://github.com/ceolter/ag-grid-seed">GitHub.</a></note>
+                href="https://github.com/ag-grid/ag-grid-seed">GitHub.</a></note>
 
     <h3>Initialise Project</h3>
 
