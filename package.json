@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ceolter/ag-grid-angular.git"
+    "url": "https://github.com/ag-grid/ag-grid-angular.git"
   },
   "keywords": [
     "grid",
@@ -31,7 +31,7 @@
   "author": "Niall Crosby <niall.crosby@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ceolter/ag-grid-angular/issues"
+    "url": "https://github.com/ag-grid/ag-grid-angular/issues"
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
@@ -44,7 +44,13 @@
     "rimraf": "2.5.x",
     "run-sequence": "1.2.x",
     "typescript": "2.1.x",
-    "gulp-rename": "1.2.2"
+    "gulp-rename": "1.2.2",
+    "@angular/compiler": ">=2.1.x",
+    "@angular/compiler-cli": ">=2.1.x",
+    "@angular/core": ">=2.1.x",
+    "rxjs": ">=5.0.0-beta.12",
+    "zone.js": ">=0.6.x",
+    "core-js": "^2.4.1"
   },
   "peerDependencies": {
     "ag-grid": "12.0.x",

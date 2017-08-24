@@ -104,6 +104,8 @@ export class AgGridColumn {
     @Input() public cellFormatter: (params: any) => string;
     @Input() public floatingCellFormatter: (params: any) => string;
     @Input() public aggFunc: string | IAggFunc;
+    @Input() public showRowGroup: boolean|string;
+    @Input() public rowGroup: boolean|string;
     @Input() public rowGroupIndex: number;
     @Input() public pivotIndex: number;
     @Input() public comparator: (valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number;
