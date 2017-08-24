@@ -52,6 +52,9 @@ do
         "ag-grid-angular-example/webpack")
             npm run build
             ;;
+        "ag-grid-polymer")
+            npm run build
+            ;;
     esac
 
     if [ $? -eq 0 ]
