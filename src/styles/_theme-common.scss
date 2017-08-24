@@ -9,7 +9,7 @@
 @mixin icon-background($icon) {
     width: 12px;
     height: 12px;
-    background: transparent url('./icons/#{$icon}.svg') top no-repeat;
+    background: transparent url('./icons/#{$icon}.svg') center no-repeat;
     background-size: 12px 12px;
 }
 
@@ -423,6 +423,7 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
     .ag-menu-option-popup-pointer {
         padding: $ag-menu-option-padding;
         vertical-align: middle;
+        display: table-cell;
     }
     .ag-menu-option-disabled {
         opacity: 0.5;
