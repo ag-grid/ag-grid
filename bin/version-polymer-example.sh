@@ -21,6 +21,7 @@ do
     ## Replace version number
     sed -i .old -e 's/.*"version".*/  "version": "'$4'",/g' bower.json
     sed -i .old -e 's/.*"ag-grid".*/    "ag-grid": "'$1'",/g' bower.json
+    sed -i .old -e 's/.*"ag-grid-polymer".*/    "ag-grid-polymer": "'$2'",/g' bower.json
     sed -i .old -e 's/.*"ag-grid-enterprise".*/    "ag-grid-enterprise": "'$2'",/g' bower.json
     sed -i .old -e 's/.*"ag-grid-aurelia".*/    "ag-grid-aurelia": "'$3'",/g' bower.json
     sed -i .old -e 's/.*"ag-grid-angular".*/    "ag-grid-angular": "'$3'",/g' bower.json
