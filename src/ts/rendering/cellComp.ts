@@ -268,10 +268,7 @@ export class CellComp extends Component {
 
         _.pushAll(cssClasses, this.preProcessClassesFromColDef());
         _.pushAll(cssClasses, this.preProcessCellClassRules());
-
-        if (this.rangeSelectionEnabled) {
-            _.pushAll(cssClasses, this.getRangeClasses());
-        }
+        _.pushAll(cssClasses, this.getRangeClasses());
 
         // if using the wrapper, this class goes on the wrapper instead
         if (!this.usingWrapper) {
@@ -1288,7 +1285,7 @@ export class CellComp extends Component {
 
     private getRangeClasses(): string[] {
         let res: string[] = [];
-        if (!this.beans.enterprise) { return res; }
+        if (!this.rangeSelectionEnabled) { return res; }
         if (this.rangeCount!==0) { res.push('ag-cell-range-selected'); }
         if (this.rangeCount===1) { res.push('ag-cell-range-selected-1'); }
         if (this.rangeCount===2) { res.push('ag-cell-range-selected-2'); }
