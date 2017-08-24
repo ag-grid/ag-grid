@@ -144,7 +144,7 @@ include '../documentation-main/documentation_header.php';
     <h3 id="suppressPaste">Suppress Paste</h3>
 
     <p>
-        The colDef has a property <a>suppressPaste</a> where you can specify to not allowing
+        The colDef has a property <code>suppressPaste</code> where you can specify to not allowing
         clipboard paste for a particular cell. This can be a boolean or a function (use a function
         to specify for a particular cell, or boolean for the whole column).
     </p>
