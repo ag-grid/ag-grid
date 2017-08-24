@@ -12,3 +12,4 @@ version-angular-example.sh $2 $2 $2 $1
 version-react-example.sh $2 $2 $2 $1
 version-vue-example.sh $2 $2 $2 $1
 version-aurelia-example.sh $2 $2 $2 $1
+version-polymer-example.sh $2 $2 $2 $1

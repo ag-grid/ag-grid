@@ -54,6 +54,14 @@ do
             ## Replace peers version number
             sed -i .old -e 's/.*"ag-grid".*/    "ag-grid": "'$2'",/g' package.json
             ;;
+        ##Polymer uses bower
+        "ag-grid-polymer")
+            echo =============================================================================================
+            echo "ADDING AG-GRID DEPENDENCY TO:  $module"
+            echo =============================================================================================
+            ## Replace peers version number
+            sed -i .old -e 's/.*"ag-grid".*/    "ag-grid": "'$2'"/g' bower.json
+            ;;
     esac
 
     rm package.json.old
