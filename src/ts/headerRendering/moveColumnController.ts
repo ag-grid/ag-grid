@@ -51,11 +51,17 @@ export class MoveColumnController {
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // we do dummy drag, so make sure column appears in the right location when first placed
         let columns = draggingEvent.dragSource.dragItem;
-        // let dragCameFromToolPanel = draggingEvent.dragSource.type===DragSourceType.ToolPanel;
-        // if (dragCameFromToolPanel) {
-        // the if statement doesn't work if drag leaves grid, then enters again
+        let dragCameFromToolPanel = draggingEvent.dragSource.type===DragSourceType.ToolPanel;
+        if (dragCameFromToolPanel) {
+            // the if statement doesn't work if drag leaves grid, then enters again
             this.columnController.setColumnsVisible(columns, true);
-        // }
+        } else {
+            // ensure that it's not all hidden cols (which happens if we drag outside of the grid body)
+            let allColumnsHidden = columns.every(col => !col.isVisible());
+            if (allColumnsHidden) {
+                this.columnController.setColumnsVisible(columns, true);
+            }
+        }
         this.columnController.setColumnsPinned(columns, this.pinned);
         this.onDragging(draggingEvent, true);
     }
