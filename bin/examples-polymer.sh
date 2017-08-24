@@ -27,7 +27,7 @@ do
     bower link
     cd ../ag-grid-polymer
     bower link
-    cd ag-grid-polymer-example
+    cd ../ag-grid-polymer-example
 
     bower link ag-grid
     bower link ag-grid-enterprise
