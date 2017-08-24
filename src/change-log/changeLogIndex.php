@@ -18,7 +18,8 @@ include '../documentation-main/documentation_header.php';
     <h4>Bug Fixes</h4>
     <ul>
         <li>AG-697: Fixed an issue where export group headers was not working correctly when more than 2 groups of headers</li>
-        <li>AG-696: Fixed issue where column groups kept expand/collapse icons even when group is no longer expandable</li>
+        <li>AG-696: Fixed issue where column groups kept expand / collapse icons even when group is no longer expandable</li>
+        <li>AG-654: Fixed issue with pinning rows when pivoting</li>
     </ul>
 
     <h4>Enhancements</h4>
