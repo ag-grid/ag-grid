@@ -265,17 +265,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         .ag-menu-list {
             width: 100%;
             cursor: default;
-            & > div:first-child > span {
-                padding-top: $ag-mat-grid-size;
-            }
-
-            & > div:last-child > span {
-                padding-bottom: $ag-mat-grid-size;
-            }
-
-            & > div:last-child > .ag-menu-option-popup-pointer {
-                background-position-y: $ag-mat-grid-size;
-            }
+            margin-top: $ag-mat-grid-size;
+            margin-bottom: $ag-mat-grid-size;
         }
 
         .ag-menu-option {
@@ -289,12 +280,18 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
             }
         }
 
+        .ag-menu-option-active {
+            background: $ag-mat-hover;
+        }
+
         .ag-menu-option-icon {
             padding-left: $ag-mat-grid-size;
             padding-right: $ag-mat-grid-size;
 
             span {
-                height: $ag-mat-grid-size * 2;
+                margin-top: $ag-mat-grid-size;
+                height: $ag-mat-icon-size;
+                line-height: 0;
             }
         }
 
@@ -304,16 +301,12 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 
         $separator-size: $ag-mat-grid-size;
         .ag-menu-separator {
-            border-bottom: 1px solid $ag-mat-border-color;
             margin-left: -$ag-mat-grid-size;
 
             & > span {
-                height: $separator-size;
+                height: $ag-mat-grid-size * 2;
+                background-image: url("data:image/svg+xml;utf8,<svg width='1' height='#{$ag-mat-grid-size * 2}' viewBox='0 0 1 #{$ag-mat-grid-size * 2}' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='#{$ag-mat-grid-size}' x2='1' y2='#{$ag-mat-grid-size}' stroke-width='1' stroke='#{$ag-mat-border-color}'/> </svg>");
             }
-        }
-
-        .ag-menu-separator + .ag-menu-option > span {
-            padding-top: $separator-size;
         }
 
         .ag-menu-option-popup-pointer {
@@ -380,6 +373,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     .ag-tab-body {
         padding: $ag-mat-grid-size 0;
 
+
         // string filter type
         .ag-filter-select {
             margin: $ag-mat-grid-size;
@@ -387,6 +381,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
 
         .ag-menu-list {
+            margin-top: 0;
+            margin-bottom: 0;
             & > div:first-child > span {
                 padding-top: 0;
             }
