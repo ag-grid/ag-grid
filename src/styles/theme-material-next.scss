@@ -533,12 +533,15 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 
         .ag-column-select-panel {
             padding: $ag-mat-grid-size 0;
+            padding-bottom: $ag-mat-grid-size - 1; // absorb the bottom border;
+            border-bottom: 1px solid $ag-mat-border-color;
         }
 
         $group-height: $ag-mat-grid-size * 5;
 
         .ag-column-drop {
-            border-top: 1px solid $ag-mat-border-color;
+            overflow: auto;
+            border-bottom: 1px solid $ag-mat-border-color;
             padding: $ag-mat-grid-size 0;
             padding-bottom: $ag-mat-grid-size * 2;
             clear: both;
