@@ -447,15 +447,6 @@ include '../documentation-main/documentation_header.php';
             <td>The style to give a particular row. See <a href="../javascript-grid-cell-styling/#rowStyling">Row Styling</a>.</td>
         </tr>
         <tr>
-            <th>suppressRowHoverClass</th>
-            <td>
-                Normally the grid adds CSS class <i>ag-row-hover</i> when mouse is hovering over a row. This requires
-                the grid to add hover listeners to each row which is expensive (only to be considered expensive if you
-                are having performance issues, such as running on old machine with IE). Set this property to true to
-                drop this feature in favour of a slight performance gain.
-            </td>
-        </tr>
-        <tr>
             <th>excelStyles</th>
             <td>The list of Excel styles to be used when <a href="../javascript-grid-excel/">exporting to Excel</a></td>
         </tr>
