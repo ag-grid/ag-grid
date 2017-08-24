@@ -1066,15 +1066,22 @@ export class RowComp extends Component {
 
         this.eAllRowContainers.push(eRow);
 
-        this.addHoverFunctionality(eRow);
+        // adding hover functionality adds listener to this row, so we
+        // do it lazily in an animation frame
+        if (this.useAnimationFrameForCreate) {
+            this.beans.taskQueue.addP1Task(this.addHoverFunctionality.bind(this, eRow));
+        } else {
+            this.addHoverFunctionality(eRow);
+        }
     }
 
     private addHoverFunctionality(eRow: HTMLElement): void {
-        // because we are adding listeners to the row, we give the user the choice to not add
-        // the hover class, as it slows things down, especially in IE, when you add listeners
-        // to each row. we cannot do the trick of adding one listener to the GridPanel (like we
-        // do for other mouse events) as these events don't propagate
-        if (!this.beans.gridOptionsWrapper.isRowHoverClass()) { return; }
+
+        // because we use animation frames to do this, it's possible the row no longer exists
+        // by the time we get to add it
+        if (!this.active) {
+            return;
+        }
 
         // because mouseenter and mouseleave do not propagate, we cannot listen on the gridPanel
         // like we do for all the other mouse events.
