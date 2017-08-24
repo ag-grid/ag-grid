@@ -211,7 +211,6 @@ export class GridOptionsWrapper {
     public getPinnedTopRowData(): any[] { return this.gridOptions.pinnedTopRowData; }
     public getPinnedBottomRowData(): any[] { return this.gridOptions.pinnedBottomRowData; }
     public isFunctionsPassive() { return isTrue(this.gridOptions.functionsPassive); }
-    public isRowHoverClass() { return isTrue(this.gridOptions.rowHoverClass); }
     public isSuppressTabbing() { return isTrue(this.gridOptions.suppressTabbing); }
     public isSuppressChangeDetection() { return isTrue(this.gridOptions.suppressChangeDetection); }
     public isSuppressAnimationFrame() { return isTrue(this.gridOptions.suppressAnimationFrame); }
