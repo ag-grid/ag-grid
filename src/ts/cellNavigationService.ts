@@ -98,13 +98,13 @@ export class CellNavigationService {
     private isLastRowInContainer(gridRow: GridRow): boolean {
         if (gridRow.isFloatingTop()) {
             let lastTopIndex = this.pinnedRowModel.getPinnedTopRowData().length - 1;
-            return lastTopIndex === gridRow.rowIndex;
+            return lastTopIndex <= gridRow.rowIndex;
         } else if (gridRow.isFloatingBottom()) {
             let lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowData().length - 1;
-            return lastBottomIndex === gridRow.rowIndex;
+            return lastBottomIndex <= gridRow.rowIndex;
         } else {
             let lastBodyIndex = this.rowModel.getPageLastRow();
-            return lastBodyIndex === gridRow.rowIndex;
+            return lastBodyIndex <= gridRow.rowIndex;
         }
     }
 

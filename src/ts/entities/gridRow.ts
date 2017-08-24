@@ -64,6 +64,6 @@ export class GridRow {
                 }
                 break;
         }
-        return this.rowIndex <= otherSelection.rowIndex;
+        return this.rowIndex < otherSelection.rowIndex;
     }
 }
