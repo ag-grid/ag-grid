@@ -7,6 +7,8 @@ $mat-grey-300: #E0E0E0;
 // Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
 $mat-indigo-500: #3f51b5;
 $mat-pink-A200: #ff4081;
+$mat-pink-50: #FCE4EC;
+$mat-indigo-50: #E8EAF6;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // The variables below can be overriden to adjust the look up to the app color scheme
@@ -45,6 +47,7 @@ $ag-mat-background: $mat-grey-0 !default;
 $ag-mat-background-editor: $mat-grey-100 !default;
 $ag-mat-panel-background: $mat-grey-200 !default;
 $ag-mat-chip-background: $mat-grey-300 !default;
+$ag-mat-range-selection-background: $mat-indigo-50 !default; // this should be pink, but indigo looks better
 
 // interaction 
 $ag-mat-hover: $mat-grey-200 !default;
@@ -81,17 +84,24 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     height: $ag-mat-icon-size;
     background: transparent url('#{$ag-mat-icons-path}#{$icon}.svg') center no-repeat;
     background-size: $ag-mat-icon-size $ag-mat-icon-size;
-    opacity: primary-opacity;
+    opacity: $ag-mat-foreground-opacity;
+}
+
+@mixin colorful-icon($color, $icon) {
+    background: $color none;
+    mask: url("#{$ag-mat-icons-path}#{$icon}.svg") no-repeat 50% 50%;
+
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        background: transparent url("#{$ag-mat-icons-path}#{$icon}.svg");
+    }
 }
 
 @mixin primary-icon($icon) {
-    background: $ag-mat-primary none;
-    mask: url("#{$ag-mat-icons-path}#{$icon}.svg") no-repeat 50% 50%;
+    @include colorful-icon($ag-mat-primary, $icon);
 }
 
 @mixin accent-icon($icon) {
-    background: $ag-mat-accent none;
-    mask: url("#{$ag-mat-icons-path}#{$icon}.svg") no-repeat 50% 50%;
+    @include colorful-icon($ag-mat-accent, $icon);
 }
 
 @mixin card() {
@@ -652,8 +662,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         background-color: $ag-mat-selected;
     }
 
-    .ag-cell-range-selected {
-        background-color: $ag-mat-selected;
+    .ag-cell-range-selected:not(.ag-cell-focus) {
+        background-color: $ag-mat-range-selection-background;
     }
 
 ////////////////////////////////////////
@@ -699,7 +709,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         background-position-x: calc(100% - #{$ag-mat-grid-size});
         background-repeat: no-repeat;
         .ag-rich-select-list {
-            height: auto; // not sure why the structure had minimum height, does not look right
+            height: 200px;
         }
 
         .ag-rich-select-value {
@@ -728,7 +738,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         width: calc(100% - #{$ag-mat-grid-size} * 4);
         margin-right: 0;
         height: 100%;
-        padding-top: $ag-mat-grid-size * 2;
 
         input {
             @include simple-material-textbox;
@@ -887,7 +896,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
             padding-left: $level * ($ag-mat-icon-size + $ag-mat-grid-size * 3) !important;
         }
     }
-    
 
 ////////////////////////////////////////
 // Right-To-Left
