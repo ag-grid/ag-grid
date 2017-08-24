@@ -17,3 +17,6 @@ src/ts/**/*.js
 ag-grid.iml
 
 
+.sass-cache
+.DS_Store
+.cache-loader

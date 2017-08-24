@@ -6,6 +6,9 @@ import {OriginalColumnGroup} from "./originalColumnGroup";
 import {EventService} from "../eventService";
 import {Autowired} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {AgEvent} from "../events";
+import {ColumnApi} from "../columnController/columnController";
+import {GridApi} from "../gridApi";
 
 export class ColumnGroup implements ColumnGroupChild {
 
@@ -21,6 +24,8 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     // all the children of this group, regardless of whether they are opened or closed
     private children:ColumnGroupChild[];
@@ -105,8 +110,14 @@ export class ColumnGroup implements ColumnGroupChild {
         this.oldLeft = left;
         if (this.left !== left) {
             this.left = left;
-            this.localEventService.dispatchEvent(ColumnGroup.EVENT_LEFT_CHANGED);
+            this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));
         }
+    }
+
+    private createAgEvent(type: string): AgEvent {
+        return {
+            type: type,
+        };
     }
 
     public addEventListener(eventType: string, listener: Function): void {
@@ -285,6 +296,6 @@ export class ColumnGroup implements ColumnGroupChild {
             });
         }
 
-        this.localEventService.dispatchEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED);
+        this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
     }
 }

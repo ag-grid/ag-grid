@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
+    <title>desc</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="5" y="2" width="2" height="9"></rect>
+        <path d="M8.99264069,6.09974756 L8.99264069,4.39264078 L2.99264069,4.39264078 L2.99264069,10.3926408 L4.69974747,10.3926408 L4.69974747,6.09974756 L8.99264069,6.09974756 Z" id="path-2"></path>
+    </defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="desc">
+            <g id="Rectangle-8">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-1"></use>
+                <rect stroke="#000000" stroke-width="1" x="5.5" y="2.5" width="1" height="8"></rect>
+            </g>
+            <g id="Combined-Shape" transform="translate(5.992641, 7.392641) rotate(-135.000000) translate(-5.992641, -7.392641) ">
+                <use fill="#D8D8D8" fill-rule="evenodd" xlink:href="#path-2"></use>
+                <path stroke="#000000" stroke-width="1" d="M8.49264069,5.59974756 L8.49264069,4.89264078 L3.49264069,4.89264078 L3.49264069,9.89264078 L4.19974747,9.89264078 L4.19974747,5.59974756 L4.69974747,5.59974756 L8.49264069,5.59974756 Z"></path>
+            </g>
+        </g>
+    </g>
+</svg>

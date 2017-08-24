@@ -2,8 +2,10 @@ import {Bean, PreDestroy, Autowired, PostConstruct, Optional} from "../context/c
 import {LoggerFactory, Logger} from "../logger";
 import {Utils as _} from "../utils";
 import {EventService} from "../eventService";
-import {Events} from "../events";
+import {DragStartedEvent, DragStoppedEvent, Events} from "../events";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {ColumnApi} from "../columnController/columnController";
+import {GridApi} from "../gridApi";
 
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
@@ -13,6 +15,8 @@ export class DragService {
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private currentDragParams: DragListenerParams;
     private dragging: boolean;
@@ -187,7 +191,12 @@ export class DragService {
             } else {
                 // alert(`started`);
                 this.dragging = true;
-                this.eventService.dispatchEvent(Events.EVENT_DRAG_STARTED);
+                let event: DragStartedEvent = {
+                    type: Events.EVENT_DRAG_STARTED,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+                this.eventService.dispatchEvent(event);
                 this.currentDragParams.onDragStart(startEvent);
                 this.setNoSelectToBody(true);
             }
@@ -247,7 +256,12 @@ export class DragService {
         if (this.dragging) {
             this.dragging = false;
             this.currentDragParams.onDragStop(eventOrTouch);
-            this.eventService.dispatchEvent(Events.EVENT_DRAG_STOPPED);
+            let event: DragStoppedEvent = {
+                type: Events.EVENT_DRAG_STOPPED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event);
         }
 
         this.setNoSelectToBody(false);

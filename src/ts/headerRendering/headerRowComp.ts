@@ -14,10 +14,10 @@ import {HeaderWrapperComp} from "./header/headerWrapperComp";
 import {HeaderGroupWrapperComp} from "./headerGroup/headerGroupWrapperComp";
 import {FilterManager} from "../filter/filterManager";
 import {BaseFilter} from "../filter/baseFilter";
-import {ComponentProvider} from "../componentProvider";
 import {IFloatingFilterWrapperComp} from "../filter/floatingFilterWrapper";
-import {IComponent} from "../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
 import {FloatingFilterChange, IFloatingFilterParams} from "../filter/floatingFilter";
+import {ComponentRecipes} from "../components/framework/componentRecipes";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -30,12 +30,12 @@ export class HeaderRowComp extends Component {
     @Autowired('context') private context: Context;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('componentProvider') private componentProvider: ComponentProvider;
+    @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
 
     private dept: number;
     private pinned: string;
 
-    private headerComps: {[key: string]: IComponent<any>} = {};
+    private headerComps: {[key: string]: IComponent<any, IAfterGuiAttachedParams>} = {};
 
     private eRoot: HTMLElement;
     private dropTarget: DropTarget;
@@ -51,7 +51,7 @@ export class HeaderRowComp extends Component {
         this.dropTarget = dropTarget;
     }
 
-    public forEachHeaderElement(callback: (comp: IComponent<any>)=>void): void {
+    public forEachHeaderElement(callback: (comp: IComponent<any, IAfterGuiAttachedParams>)=>void): void {
         Object.keys(this.headerComps).forEach( key => {
             let headerElement = this.headerComps[key];
             callback(headerElement);
@@ -67,7 +67,7 @@ export class HeaderRowComp extends Component {
     private removeAndDestroyChildComponents(idsToDestroy: string[]): void {
         idsToDestroy.forEach( id => {
             let child = this.headerComps[id];
-            this.getGui().removeChild(child.getGui());
+            this.getGui().removeChild(_.assertHtmlElement(child.getGui()));
             if (child.destroy){
                 child.destroy();
             }
@@ -179,23 +179,26 @@ export class HeaderRowComp extends Component {
 
             // if we already have this cell rendered, do nothing
             let colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
-            let headerComp: IComponent<any>;
+            let headerComp: IComponent<any, IAfterGuiAttachedParams>;
+            let eHeaderCompGui: HTMLElement;
             if (colAlreadyInDom) {
                 _.removeFromArray(currentChildIds, idOfChild);
                 headerComp = this.headerComps[idOfChild];
+                eHeaderCompGui = _.assertHtmlElement(headerComp.getGui());
                 if (ensureDomOrder) {
-                    _.ensureDomOrder(eParentContainer, headerComp.getGui(), eBefore);
+                    _.ensureDomOrder(eParentContainer, eHeaderCompGui, eBefore);
                 }
             } else {
                 headerComp = this.createHeaderComp(child);
                 this.headerComps[idOfChild] = headerComp;
+                eHeaderCompGui = _.assertHtmlElement(headerComp.getGui());
                 if (ensureDomOrder) {
-                    _.insertWithDomOrder(eParentContainer, headerComp.getGui(), eBefore);
+                    _.insertWithDomOrder(eParentContainer, eHeaderCompGui, eBefore);
                 } else {
-                    eParentContainer.appendChild(headerComp.getGui());
+                    eParentContainer.appendChild(eHeaderCompGui);
                 }
             }
-            eBefore = headerComp.getGui();
+            eBefore = eHeaderCompGui;
         });
 
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
@@ -218,8 +221,8 @@ export class HeaderRowComp extends Component {
 
     }
 
-    private createHeaderComp(columnGroupChild:ColumnGroupChild): IComponent<any> {
-        let result: IComponent<any>;
+    private createHeaderComp(columnGroupChild:ColumnGroupChild): IComponent<any, IAfterGuiAttachedParams> {
+        let result: IComponent<any, IAfterGuiAttachedParams>;
 
         switch (this.type) {
             case HeaderRowType.COLUMN :
@@ -246,7 +249,7 @@ export class HeaderRowComp extends Component {
     private createFloatingFilterWrapper(column: Column):IFloatingFilterWrapperComp<any, any, any, any> {
         let floatingFilterParams: IFloatingFilterParams<any, any> = this.createFloatingFilterParams(column);
 
-        let floatingFilterWrapper: IFloatingFilterWrapperComp<any, any, any, any> = this.componentProvider.newFloatingFilterWrapperComponent(
+        let floatingFilterWrapper: IFloatingFilterWrapperComp<any, any, any, any> = this.componentRecipes.newFloatingFilterWrapperComponent(
             column,
             <null>floatingFilterParams
         );

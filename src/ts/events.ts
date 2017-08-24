@@ -3,11 +3,13 @@ import {Column} from "./entities/column";
 import {ColDef} from "./entities/colDef";
 import {GridApi} from "./gridApi";
 import {ColumnApi} from "./columnController/columnController";
+import {ColumnGroup} from "./entities/columnGroup";
 
 export class Events {
 
     /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
     public static EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
+
     /** User has set in new columns. */
     public static EVENT_NEW_COLUMNS_LOADED = 'newColumnsLoaded';
 
@@ -53,7 +55,7 @@ export class Events {
     /** The client has set new data into the grid */
     public static EVENT_ROW_DATA_CHANGED = 'rowDataChanged';
 
-    /** The client has set new data into the grid */
+    /** The client has updated data for the grid */
     public static EVENT_ROW_DATA_UPDATED = 'rowDataUpdated';
 
     /** The client has set new floating data into the grid */
@@ -77,8 +79,6 @@ export class Events {
     public static EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
     public static EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
 
-    public static EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
-
     /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */
     public static EVENT_FILTER_CHANGED = 'filterChanged';
 
@@ -96,7 +96,7 @@ export class Events {
     /** Gets called once after the grid has finished initialising. */
     public static EVENT_GRID_READY = 'gridReady';
     /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
-     * changed, so always filling the space it was given.  */
+     * changed, so always filling the space it was given. */
     public static EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
     /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
     public static EVENT_VIEWPORT_CHANGED = 'viewportChanged';
@@ -111,28 +111,25 @@ export class Events {
     public static EVENT_CELL_EDITING_STARTED = 'cellEditingStarted';
     public static EVENT_CELL_EDITING_STOPPED = 'cellEditingStopped';
 
-    /** Client added a new row. */
-    public static EVENT_ITEMS_ADDED = 'itemsAdded';
-    /** Client removed a row. */
-    public static EVENT_ITEMS_REMOVED = 'itemsRemoved';
-
     /** Main body of grid has scrolled, either horizontally or vertically */
     public static EVENT_BODY_SCROLL = 'bodyScroll';
 
-    /** All items from here down are used internally by the grid, not intended for external use. */
-    public static EVENT_FLASH_CELLS = 'flashCells';
-
-    /** All the events from here down are experimental, should not be documented or used by ag-Grid customers */
-
+    /** The displayed page for pagination has changed. For example the data was filtered or sorted,
+     * or the user has moved to a different page. */
     public static EVENT_PAGINATION_CHANGED = 'paginationChanged';
 
-    public static EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
+    /** Only used by React, Angular 2+, Web Components, Aurelia and VueJS ag-Grid components
+     * (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
+     * to bound properties, this event fires after the grid has finished processing the change. */
+    public static EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
 
-    // not documented, as it's experimental, don't want people with dependencies on this
+    /** All items from here down are used internally by the grid, not intended for external use. */
+    // not documented, either experimental, or we just don't want users using an ddepending on them
+    public static EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
     public static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
     public static EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
-
-    public static EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
+    public static EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
+    public static EVENT_FLASH_CELLS = 'flashCells';
 
     // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
     // to design these better around server side functions and then release to general public when fully working with
@@ -142,10 +139,9 @@ export class Events {
     public static EVENT_COLUMN_VALUE_CHANGE_REQUEST = 'columnValueChangeRequest';
     public static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
 
-
 }
 
-export interface ModelUpdatedEvent {
+export interface ModelUpdatedEvent extends AgGridEvent {
     /** If true, the grid will try and animate the rows to the new positions */
     animate: boolean;
     /** If true, the grid has new data loaded, eg user called setRowData(), otherwise
@@ -159,16 +155,189 @@ export interface ModelUpdatedEvent {
     newPage: boolean;
 }
 
-export interface CellEvent {
-    node: RowNode;
-    data: any;
-    value: any;
-    rowIndex: number;
-    column: Column;
-    colDef: ColDef;
-    $scope: any;
-    context: any;
+export interface AgEvent {
+    type: string;
+}
+
+export interface AgGridEvent extends AgEvent {
     api: GridApi;
     columnApi: ColumnApi;
-    event: Event;
 }
+
+export interface ColumnPivotModeChangedEvent extends AgGridEvent {}
+export interface VirtualColumnsChangedEvent extends AgGridEvent {}
+export interface ColumnEverythingChangedEvent extends AgGridEvent {}
+export interface NewColumnsLoadedEvent extends AgGridEvent {}
+export interface GridColumnsChangedEvent extends AgGridEvent {}
+export interface DisplayedColumnsChangedEvent extends AgGridEvent {}
+export interface RowDataChangedEvent extends AgGridEvent {}
+export interface RowDataUpdatedEvent extends AgGridEvent {}
+export interface PinnedRowDataChangedEvent extends AgGridEvent {}
+export interface SelectionChangedEvent extends AgGridEvent {}
+export interface FilterChangedEvent extends AgGridEvent {}
+export interface FilterModifiedEvent extends AgGridEvent {}
+export interface SortChangedEvent extends AgGridEvent {}
+export interface GridReadyEvent extends AgGridEvent {}
+export interface DragStartedEvent extends AgGridEvent {}
+export interface DragStoppedEvent extends AgGridEvent {}
+export interface DisplayedColumnsWidthChangedEvent extends AgGridEvent {} // not documented
+export interface ColumnHoverChangedEvent extends AgGridEvent {} // not documented
+export interface BodyHeightChangedEvent extends AgGridEvent {} // not documented
+
+// this event is 'odd one out' as it should have properties for all the properties
+// in gridOptions that can be bound by the framework. for example, the gridOptions
+// has 'rowData', so this property should have 'rowData' also, so that when the row
+// data changes via the framework bound property, this event has that attribute set.
+export interface ComponentStateChangedEvent extends AgGridEvent {}
+
+export interface GridSizeChangedEvent extends AgGridEvent {
+    clientWidth: number;
+    clientHeight: number;
+}
+
+export interface ViewportChangedEvent extends AgGridEvent {
+    firstRow: number;
+    lastRow: number;
+}
+
+export interface RangeSelectionChangedEvent extends AgGridEvent {
+    finished: boolean;
+    started: boolean;
+}
+
+export interface ColumnGroupOpenedEvent extends AgGridEvent {
+    columnGroup: ColumnGroup
+}
+
+export interface ItemsAddedEvent extends AgGridEvent {
+    items: RowNode[]
+}
+
+export interface BodyScrollEvent extends AgGridEvent {
+    direction: string;
+}
+
+// not documented
+export interface FlashCellsEvent extends AgGridEvent {
+    cells: any;
+}
+
+export interface PaginationChangedEvent extends AgGridEvent {
+    animate: boolean;
+    keepRenderedRows: boolean;
+    newData: boolean;
+    newPage: boolean;
+}
+
+// this does not extent CellEvent as the focus service doesn't keep a reference to
+// the rowNode.
+export interface CellFocusedEvent extends AgGridEvent {
+    rowIndex: number;
+    column: Column;
+    rowPinned: string;
+    forceBrowserFocus: boolean;
+    // floating is for backwards compatibility, this is the same as rowPinned.
+    // this is because the focus service doesn't keep references to rowNodes
+    // as focused cell is identified by rowIndex - thus when the user re-orders
+    // or filters, the focused cell stays with the index, but the node can change.
+    floating: string;
+}
+
+/**---------------*/
+/** COLUMN EVENTS */
+/**---------------*/
+export interface ColumnEvent extends AgGridEvent {
+    column: Column;
+    columns: Column[];
+}
+
+export interface ColumnResizedEvent extends ColumnEvent {
+    finished: boolean;
+}
+
+export interface ColumnPivotChangedEvent extends ColumnEvent {}
+
+export interface ColumnRowGroupChangedEvent extends ColumnEvent {}
+
+export interface ColumnValueChangedEvent extends ColumnEvent {}
+
+export interface ColumnMovedEvent extends ColumnEvent {
+    toIndex: number;
+}
+
+export interface ColumnVisibleEvent extends ColumnEvent {
+    visible: boolean;
+}
+
+export interface ColumnPinnedEvent extends ColumnEvent {
+    pinned: string;
+}
+
+/**------------*/
+/** ROW EVENTS */
+/**------------*/
+export interface RowEvent extends AgGridEvent {
+    node: RowNode;
+    data: any;
+    rowIndex: number;
+    rowPinned: string;
+    context: any;
+    event?: Event;
+}
+
+export interface RowGroupOpenedEvent extends RowEvent {}
+
+export interface RowValueChangedEvent extends RowEvent {}
+
+export interface RowSelectedEvent extends RowEvent {}
+
+export interface VirtualRowRemovedEvent extends RowEvent {}
+
+export interface RowClickedEvent extends RowEvent {}
+
+export interface RowDoubleClickedEvent extends RowEvent {}
+
+export interface RowEditingStartedEvent extends RowEvent {}
+export interface RowEditingStoppedEvent extends RowEvent {}
+
+/**------------*/
+/** CELL EVENTS */
+/**------------*/
+export interface CellEvent extends RowEvent {
+    column: Column;
+    colDef: ColDef;
+    value: any;
+}
+
+export interface CellClickedEvent extends CellEvent {}
+
+export interface CellDoubleClickedEvent extends CellEvent {}
+
+export interface CellMouseOverEvent extends CellEvent {}
+
+export interface CellMouseOutEvent extends CellEvent {}
+
+export interface CellContextMenuEvent extends CellEvent {}
+
+export interface CellEditingStartedEvent extends CellEvent {}
+export interface CellEditingStoppedEvent extends CellEvent {}
+
+export interface CellValueChangedEvent extends CellEvent {
+    oldValue: any;
+    newValue: any;
+}
+
+// not documented, was put in for CS - more thought needed of how server side grouping / pivoting
+// is done and how these should be used before we fully document and share with the world.
+export interface ColumnRequestEvent extends AgGridEvent {
+    columns: Column[]
+}
+export interface ColumnRowGroupChangeRequestEvent extends ColumnRequestEvent {}
+export interface ColumnPivotChangeRequestEvent extends ColumnRequestEvent {}
+export interface ColumnValueChangeRequestEvent extends ColumnRequestEvent {}
+export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
+    aggFunc: any
+}
+
+// not documented, for internal use only
+export interface ScrollVisibilityChangedEvent extends AgGridEvent {}

@@ -1,12 +1,12 @@
 import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColumnController} from "../columnController/columnController";
+import {ColumnApi, ColumnController} from "../columnController/columnController";
 import {RowRenderer, RefreshViewParams} from "../rendering/rowRenderer";
 import {BorderLayout} from "../layout/borderLayout";
 import {Logger, LoggerFactory} from "../logger";
 import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy, Context} from "../context/context";
 import {EventService} from "../eventService";
-import {Events} from "../events";
+import {BodyHeightChangedEvent, BodyScrollEvent, Events} from "../events";
 import {DragService, DragListenerParams} from "../dragAndDrop/dragService";
 import {IRangeController} from "../interfaces/iRangeController";
 import {Constants, KeyboardBinding, KeyboardBindingGroup} from "../constants";
@@ -16,7 +16,6 @@ import {MouseEventService} from "./mouseEventService";
 import {IClipboardService} from "../interfaces/iClipboardService";
 import {FocusedCellController} from "../focusedCellController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
-import {RowComp} from "../rendering/rowComp";
 import {SetScrollsVisibleParams, ScrollVisibleService} from "./scrollVisibleService";
 import {BeanStub} from "../context/beanStub";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
@@ -28,6 +27,9 @@ import {PaginationProxy} from "../rowModels/paginationProxy";
 import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
 import {AlignedGridsService} from "../alignedGridsService";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
+import {GridApi} from "../gridApi";
+import {AnimationFrameService} from "../misc/animationFrameService";
+import {RowComp} from "../rendering/rowComp";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -142,8 +144,11 @@ export class GridPanel extends BeanStub {
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
+    @Autowired('animationFrameService') private taskQueue: AnimationFrameService;
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('dragService') private dragService: DragService;
@@ -203,12 +208,13 @@ export class GridPanel extends BeanStub {
     private eAllCellContainers: HTMLElement[];
 
     private lastLeftPosition = -1;
-    private lastTopPosition = -1;
+    private scrollTop = -1;
+    private nextScrollTop = -1;
+    private verticalRedrawNeeded = false;
 
     private bodyHeight: number;
 
     // properties we use a lot, so keep reference
-    private useScrollLag: boolean;
     private enableRtl: boolean;
     private forPrint: boolean;
     private autoHeight: boolean;
@@ -218,13 +224,14 @@ export class GridPanel extends BeanStub {
     private pinningRight: boolean;
     private pinningLeft: boolean;
 
+    private useAnimationFrame: boolean;
+
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('GridPanel');
         // makes code below more readable if we pull 'forPrint' out
         this.forPrint = this.gridOptionsWrapper.isForPrint();
         this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
-        this.useScrollLag = this.isUseScrollLag();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.loadTemplate();
         this.findElements();
@@ -264,6 +271,8 @@ export class GridPanel extends BeanStub {
     @PostConstruct
     private init() {
 
+        this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+
         this.addEventListeners();
         this.addDragListeners();
 
@@ -295,7 +304,7 @@ export class GridPanel extends BeanStub {
         this.setBodyAndHeaderHeights();
         this.disableBrowserDragging();
         this.addShortcutKeyListeners();
-        this.addMouseEvents();
+        this.addMouseListeners();
         this.addKeyboardEvents();
         this.addBodyViewportListener();
         this.addStopEditingWhenGridLosesFocus();
@@ -374,8 +383,6 @@ export class GridPanel extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_ITEMS_ADDED, this.onRowDataChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_ITEMS_REMOVED, this.onRowDataChanged.bind(this));
 
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
@@ -397,7 +404,7 @@ export class GridPanel extends BeanStub {
             this.eFloatingTop, this.eFloatingBottom];
 
         containers.forEach(container => {
-            let params = <DragListenerParams> {
+            let params: DragListenerParams = {
                 dragStartPixels: 0,
                 eElement: container,
                 onDragStart: this.rangeController.onDragStart.bind(this.rangeController),
@@ -411,14 +418,13 @@ export class GridPanel extends BeanStub {
         });
     }
 
-    private addMouseEvents(): void {
+    private addMouseListeners(): void {
         let eventNames = ['click','mousedown','dblclick','contextmenu','mouseover','mouseout'];
         eventNames.forEach( eventName => {
             let listener = this.processMouseEvent.bind(this, eventName);
-            this.eAllCellContainers.forEach( container => {
-                container.addEventListener(eventName, listener);
-                this.addDestroyFunc( ()=> container.removeEventListener(eventName, listener) );
-            });
+            this.eAllCellContainers.forEach( container =>
+                this.addDestroyableEventListener(container, eventName, listener)
+            );
         });
     }
 
@@ -705,14 +711,14 @@ export class GridPanel extends BeanStub {
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        let renderedCell = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
-        if (renderedCell) {
-            renderedCell.onMouseEvent(eventName, mouseEvent);
+        let cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
+        if (cellComp) {
+            cellComp.onMouseEvent(eventName, mouseEvent);
         }
 
-        let renderedRow = this.getRowForEvent(mouseEvent);
-        if (renderedRow) {
-            renderedRow.onMouseEvent(eventName, mouseEvent);
+        let rowComp: RowComp = this.getRowForEvent(mouseEvent);
+        if (rowComp) {
+            rowComp.onMouseEvent(eventName, mouseEvent);
         }
 
         this.preventDefaultOnContextMenu(mouseEvent);
@@ -1242,7 +1248,7 @@ export class GridPanel extends BeanStub {
 
             this.eAllCellContainers = [this.eBodyContainer, this.eFloatingTopContainer, this.eFloatingBottomContainer];
 
-            let containers = {
+            let containers: RowContainerComponents = {
                 body: new RowContainerComponent( {eContainer: this.eBodyContainer} ),
                 fullWidth: <RowContainerComponent> null,
                 pinnedLeft: <RowContainerComponent> null,
@@ -1396,7 +1402,7 @@ export class GridPanel extends BeanStub {
         }
 
         // allow the option to pass mouse wheel events to the browser
-        // https://github.com/ceolter/ag-grid/issues/800
+        // https://github.com/ag-grid/ag-grid/issues/800
         // in the future, this should be tied in with 'forPrint' option, or have an option 'no vertical scrolls'
         if (!this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel()) {
             // if we don't prevent default, then the whole browser will scroll also as well as the grid
@@ -1512,7 +1518,8 @@ export class GridPanel extends BeanStub {
             // (when following the scroll of a pinned section), so we need to set it
             // back when changing from one to the other
             if (bodyVScrollActive) {
-                this.eBodyContainer.style.top = '0px';
+                this.setFakeScroll(this.eBodyContainer, 0);
+                // this.eBodyContainer.style.top = '0px';
             } else {
                 this.eBodyViewport.scrollTop = 0;
             }
@@ -1603,7 +1610,12 @@ export class GridPanel extends BeanStub {
         // in this page based on the height of the grid
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
-            this.eventService.dispatchEvent(Events.EVENT_BODY_HEIGHT_CHANGED);
+            let event: BodyHeightChangedEvent = {
+                type: Events.EVENT_BODY_HEIGHT_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event);
         }
     }
 
@@ -1629,16 +1641,7 @@ export class GridPanel extends BeanStub {
             return;
         }
 
-        let wrapWithDebounce = (func: Function)=> {
-            if (this.useScrollLag) {
-                return this.debounce.bind(this, func);
-            } else {
-                return func;
-            }
-        };
-
-        let bodyScrollListener = wrapWithDebounce(this.onBodyScroll.bind(this));
-        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', bodyScrollListener);
+        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', this.onBodyScroll.bind(this));
 
         // below we add two things:
         // pinnedScrollListener -> when pinned panel with scrollbar gets scrolled, it updates body and other pinned
@@ -1649,14 +1652,12 @@ export class GridPanel extends BeanStub {
         let onPinnedRightVerticalScroll = this.onVerticalScroll.bind(this, this.ePinnedRightColsViewport);
 
         if (this.enableRtl) {
-            let pinnedScrollListener = wrapWithDebounce(onPinnedLeftVerticalScroll);
-            this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', pinnedScrollListener);
+            this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', onPinnedLeftVerticalScroll);
 
             let suppressRightScroll = () => this.ePinnedRightColsViewport.scrollTop = 0;
             this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', suppressRightScroll);
         } else {
-            let pinnedScrollListener = wrapWithDebounce(onPinnedRightVerticalScroll);
-            this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', pinnedScrollListener);
+            this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'scroll', onPinnedRightVerticalScroll);
 
             let suppressLeftScroll = () => this.ePinnedLeftColsViewport.scrollTop = 0;
             this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'scroll', suppressLeftScroll);
@@ -1681,7 +1682,13 @@ export class GridPanel extends BeanStub {
     private onBodyHorizontalScroll(): void {
         let newLeftPosition = this.eBodyViewport.scrollLeft;
         if (newLeftPosition !== this.lastLeftPosition) {
-            this.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL, {direction: 'horizontal'});
+            let event: BodyScrollEvent = {
+                type: Events.EVENT_BODY_SCROLL,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                direction: 'horizontal'
+            };
+            this.eventService.dispatchEvent(event);
             this.lastLeftPosition = newLeftPosition;
             this.horizontallyScrollHeaderCenterAndFloatingCenter();
             this.alignedGridsService.fireHorizontalScrollEvent(newLeftPosition);
@@ -1698,15 +1705,48 @@ export class GridPanel extends BeanStub {
     }
 
     private onVerticalScroll(sourceElement: HTMLElement): void {
-        let newTopPosition = sourceElement.scrollTop;
-        if (newTopPosition !== this.lastTopPosition) {
-            this.eventService.dispatchEvent(Events.EVENT_BODY_SCROLL, {direction: 'vertical'});
-            this.lastTopPosition = newTopPosition;
+        let scrollTop = sourceElement.scrollTop;
 
-            this.fakeVerticalScroll(newTopPosition);
-
-            this.rowRenderer.redrawAfterScroll();
+        if (this.useAnimationFrame) {
+            if (this.nextScrollTop !== scrollTop) {
+                this.nextScrollTop = scrollTop;
+                this.taskQueue.schedule();
+            }
+        } else {
+            if (scrollTop !== this.scrollTop) {
+                this.scrollTop = scrollTop;
+                this.fakeVerticalScroll(scrollTop);
+                this.redrawRowsAfterScroll();
+            }
         }
+    }
+
+    public executeFrame(): boolean {
+        if (this.scrollTop !== this.nextScrollTop) {
+            this.scrollTop = this.nextScrollTop;
+
+            this.fakeVerticalScroll(this.scrollTop);
+            this.verticalRedrawNeeded = true;
+
+            return true;
+        } else if (this.verticalRedrawNeeded) {
+            this.redrawRowsAfterScroll();
+            this.verticalRedrawNeeded = false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private redrawRowsAfterScroll(): void {
+        let event: BodyScrollEvent = {
+            type: Events.EVENT_BODY_SCROLL,
+            direction: 'vertical',
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
+        this.rowRenderer.redrawAfterScroll();
     }
 
     // if LTR, we hide body scroll if pinning right (as scroll is in right pinned),
@@ -1748,42 +1788,6 @@ export class GridPanel extends BeanStub {
         this.columnController.setVirtualViewportPosition(scrollWidth, scrollPosition);
     }
 
-    private isUseScrollLag(): boolean {
-        // if we are in IE or Safari, then we only redraw if there was no scroll event
-        // in the 50ms following this scroll event. without this, these browsers have
-        // a bad scrolling feel, where the redraws clog the scroll experience
-        // (makes the scroll clunky and sticky). this method is like throttling
-        // the scroll events.
-        // let the user override scroll lag option
-        if (this.gridOptionsWrapper.isSuppressScrollLag()) {
-            return false;
-        } else if (this.gridOptionsWrapper.getIsScrollLag()) {
-            return this.gridOptionsWrapper.getIsScrollLag()();
-        } else {
-            return _.isBrowserIE() || _.isBrowserSafari();
-        }
-    }
-
-    private debounce(callback: Function): void {
-        if (this.requestAnimationFrameExists && _.isBrowserSafari()) {
-            if (!this.scrollLagTicking) {
-                this.scrollLagTicking = true;
-                requestAnimationFrame( ()=> {
-                    callback();
-                    this.scrollLagTicking = false;
-                });
-            }
-        } else {
-            this.scrollLagCounter++;
-            let scrollLagCounterCopy = this.scrollLagCounter;
-            setTimeout( ()=> {
-                if (this.scrollLagCounter === scrollLagCounterCopy) {
-                    callback();
-                }
-            }, 50);
-        }
-    }
-
     public getBodyViewportScrollLeft(): number {
         if (this.forPrint) { return 0; }
 
@@ -1815,23 +1819,28 @@ export class GridPanel extends BeanStub {
             // if pinning left, then body scroll is faking
             let pinningLeft = this.columnController.isPinningLeft();
             if (pinningLeft) {
-                this.eBodyContainer.style.top = -position + 'px';
+                this.setFakeScroll(this.eBodyContainer, position);
             }
             // right is always faking
-            this.ePinnedRightColsContainer.style.top = -position + 'px';
+            this.setFakeScroll(this.ePinnedRightColsContainer, position);
         } else {
             // LTR
             // if pinning right, then body scroll is faking
             let pinningRight = this.columnController.isPinningRight();
             if (pinningRight) {
-                this.eBodyContainer.style.top = -position + 'px';
+                this.setFakeScroll(this.eBodyContainer, position);
             }
             // left is always faking
-            this.ePinnedLeftColsContainer.style.top = -position + 'px';
+            this.setFakeScroll(this.ePinnedLeftColsContainer, position);
         }
 
         // always scroll fullWidth container, as this is never responsible for a scroll
-        this.eFullWidthCellContainer.style.top = -position + 'px';
+        this.setFakeScroll(this.eFullWidthCellContainer, position);
+    }
+
+    private setFakeScroll(eContainer: HTMLElement, pixels: number): void {
+        eContainer.style.top = -pixels + 'px';
+        // eContainer.style.transform = `translateY(${-pixels}px)`;
     }
 
     public addScrollEventListener(listener: ()=>void): void {

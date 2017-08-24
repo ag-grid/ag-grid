@@ -6,7 +6,7 @@ import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {IEventEmitter} from "./interfaces/iEventEmitter";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {Events} from "./events";
+import {AgEvent, Events} from "./events";
 
 @Bean('eventService')
 export class EventService implements IEventEmitter {
@@ -101,18 +101,16 @@ export class EventService implements IEventEmitter {
 
     // why do we pass the type here? the type is in ColumnChangeEvent, so unless the
     // type is not in other types of events???
-    public dispatchEvent(eventType: string, event?: any): void {
-        if (!event) {
-            event = {};
-        }
+    public dispatchEvent(event: AgEvent): void {
         // console.log(`dispatching ${eventType}: ${event}`);
-        this.dispatchToListeners(eventType, event, true);
-        this.dispatchToListeners(eventType, event, false);
+        this.dispatchToListeners(event, true);
+        this.dispatchToListeners(event, false);
     }
 
-    private dispatchToListeners(eventType: string, event: any, async: boolean) {
+    private dispatchToListeners(event: AgEvent, async: boolean) {
 
         let globalListeners = async ? this.globalAsyncListeners : this.globalSyncListeners;
+        let eventType = event.type;
 
         // this allows the columnController to get events before anyone else
         let p1ListenerList = this.getListenerList(eventType + EventService.PRIORITY, async);

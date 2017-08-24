@@ -6,6 +6,10 @@
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+global.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
+global.HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? {} : HTMLButtonElement;
+global.HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? {} : HTMLSelectElement;
+global.HTMLInputElement = typeof HTMLInputElement === 'undefined' ? {} : HTMLInputElement;
 // columnController
 var balancedColumnTreeBuilder_1 = require("./dist/lib/columnController/balancedColumnTreeBuilder");
 exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;
@@ -112,8 +116,6 @@ exports.TabbedLayout = tabbedLayout_1.TabbedLayout;
 var verticalStack_1 = require("./dist/lib/layout/verticalStack");
 exports.VerticalStack = verticalStack_1.VerticalStack;
 // misc
-var focusService_1 = require("./dist/lib/misc/focusService");
-exports.FocusService = focusService_1.FocusService;
 var simpleHttpRequest_1 = require("./dist/lib/misc/simpleHttpRequest");
 exports.simpleHttpRequest = simpleHttpRequest_1.simpleHttpRequest;
 var largeTextCellEditor_1 = require("./dist/lib/rendering/cellEditors/largeTextCellEditor");
@@ -197,8 +199,6 @@ var baseFrameworkFactory_1 = require("./dist/lib/baseFrameworkFactory");
 exports.BaseFrameworkFactory = baseFrameworkFactory_1.BaseFrameworkFactory;
 var cellNavigationService_1 = require("./dist/lib/cellNavigationService");
 exports.CellNavigationService = cellNavigationService_1.CellNavigationService;
-var columnChangeEvent_1 = require("./dist/lib/columnChangeEvent");
-exports.ColumnChangeEvent = columnChangeEvent_1.ColumnChangeEvent;
 var alignedGridsService_1 = require("./dist/lib/alignedGridsService");
 exports.AlignedGridsService = alignedGridsService_1.AlignedGridsService;
 var constants_1 = require("./dist/lib/constants");
@@ -230,8 +230,6 @@ var selectionController_1 = require("./dist/lib/selectionController");
 exports.SelectionController = selectionController_1.SelectionController;
 var sortController_1 = require("./dist/lib/sortController");
 exports.SortController = sortController_1.SortController;
-var svgFactory_1 = require("./dist/lib/svgFactory");
-exports.SvgFactory = svgFactory_1.SvgFactory;
 var templateService_1 = require("./dist/lib/templateService");
 exports.TemplateService = templateService_1.TemplateService;
 var utils_1 = require("./dist/lib/utils");
@@ -252,5 +250,7 @@ var logger_2 = require("./dist/lib/logger");
 exports.LoggerFactory = logger_2.LoggerFactory;
 var columnController_2 = require("./dist/lib/columnController/columnController");
 exports.ColumnApi = columnController_2.ColumnApi;
-var baseComponentWrapper_1 = require("./dist/lib/baseComponentWrapper");
-exports.BaseComponentWrapper = baseComponentWrapper_1.BaseComponentWrapper;
+var frameworkComponentWrapper_1 = require("./dist/lib/components/framework/frameworkComponentWrapper");
+exports.BaseComponentWrapper = frameworkComponentWrapper_1.BaseComponentWrapper;
+var environment_1 = require("./dist/lib/environment");
+exports.Environment = environment_1.Environment;

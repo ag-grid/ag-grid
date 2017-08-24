@@ -3,18 +3,29 @@ import {Component} from "../../widgets/component";
 import {ICellEditorComp, ICellEditorParams} from "./iCellEditor";
 import {Utils as _} from '../../utils';
 
+/**
+ * useFormatter: used when the cell value needs formatting prior to editing, such as when using reference data and you
+ *               want to display text rather than code.
+*/
+export interface ITextCellEditorParams extends ICellEditorParams {
+    useFormatter: boolean;
+}
+
 export class TextCellEditor extends Component implements ICellEditorComp {
 
     private static TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
 
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
+    private params: ICellEditorParams;
 
     constructor() {
         super(TextCellEditor.TEMPLATE);
     }
 
-    public init(params: ICellEditorParams): void {
+    public init(params: ITextCellEditorParams): void {
+
+        this.params = params;
 
         let eInput = <HTMLInputElement> this.getGui();
         let startValue: string;
@@ -33,7 +44,7 @@ export class TextCellEditor extends Component implements ICellEditorComp {
             } else if (params.charPress) {
                 startValue = params.charPress;
             } else {
-                startValue = params.value;
+                startValue = this.getStartValue(params);
                 if (params.keyPress !== Constants.KEY_F2) {
                     this.highlightAllOnFocus = true;
                 }
@@ -41,7 +52,7 @@ export class TextCellEditor extends Component implements ICellEditorComp {
 
         } else {
             this.focusAfterAttached = false;
-            startValue = params.value;
+            startValue = this.getStartValue(params);
         }
 
         if (_.exists(startValue)) {
@@ -94,6 +105,11 @@ export class TextCellEditor extends Component implements ICellEditorComp {
 
     public getValue(): any {
         let eInput = <HTMLInputElement> this.getGui();
-        return eInput.value;
+        return this.params.parseValue(eInput.value);
+    }
+
+    private getStartValue(params: ITextCellEditorParams) {
+        let formatValue = params.useFormatter || params.column.getColDef().refData;
+        return formatValue ? params.formatValue(params.value) : params.value;
     }
 }

@@ -5,13 +5,15 @@ import {Qualifier} from "./context/context";
 import {Logger} from "./logger";
 import {LoggerFactory} from "./logger";
 import {EventService} from "./eventService";
-import {Events} from "./events";
+import {Events, SelectionChangedEvent} from "./events";
 import {Autowired} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {PostConstruct} from "./context/context";
 import {Constants} from "./constants";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
+import {ColumnApi} from "./columnController/columnController";
+import {GridApi} from "./gridApi";
 
 @Bean('selectionController')
 export class SelectionController {
@@ -19,6 +21,8 @@ export class SelectionController {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private selectedNodes: {[key: string]: RowNode};
     private logger: Logger;
@@ -259,7 +263,13 @@ export class SelectionController {
             this.updateGroupsFromChildrenSelections();
         }
 
-        this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
+        let event: SelectionChangedEvent = {
+            type: Events.EVENT_SELECTION_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     public selectAllRowNodes(justFiltered = false) {
@@ -281,7 +291,12 @@ export class SelectionController {
             this.updateGroupsFromChildrenSelections();
         }
 
-        this.eventService.dispatchEvent(Events.EVENT_SELECTION_CHANGED);
+        let event: SelectionChangedEvent = {
+            type: Events.EVENT_SELECTION_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     // Deprecated method

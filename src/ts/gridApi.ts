@@ -42,6 +42,7 @@ import {ImmutableService} from "./rowModels/inMemory/immutableService";
 import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
 import {PinnedRowModel} from "./rowModels/pinnedRowModel";
+import {AgEvent} from "./events";
 
 
 export interface StartEditingCellParams {
@@ -263,6 +264,47 @@ export class GridApi {
             this.rowRenderer.redrawRows(params.rowNodes);
         } else {
             this.rowRenderer.redrawAfterModelUpdate();
+        }
+    }
+
+    public timeFullRedraw(count = 1) {
+
+        let iterationCount = 0;
+        let totalProcessing = 0;
+        let totalReflow = 0;
+
+        let that = this;
+
+        doOneIteration();
+
+        function doOneIteration(): void {
+            let start = (new Date()).getTime();
+            that.rowRenderer.redrawAfterModelUpdate();
+            let endProcessing = (new Date()).getTime();
+            setTimeout( ()=> {
+                let endReflow = (new Date()).getTime();
+                let durationProcessing = endProcessing - start;
+                let durationReflow = endReflow - endProcessing;
+                console.log('duration:  processing = ' + durationProcessing + 'ms, reflow = ' + durationReflow + 'ms');
+
+                iterationCount++;
+                totalProcessing += durationProcessing;
+                totalReflow += durationReflow;
+
+                if (iterationCount < count) {
+                    // wait for 1s between tests
+                    setTimeout(doOneIteration, 1000);
+                } else {
+                    finish();
+                }
+
+            }, 0);
+        }
+
+        function finish(): void {
+            console.log('tests complete. iteration count = ' + iterationCount);
+            console.log('average processing = ' + (totalProcessing/iterationCount) + 'ms');
+            console.log('average reflow = ' + (totalReflow/iterationCount) + 'ms');
         }
     }
 
@@ -688,8 +730,8 @@ export class GridApi {
         this.eventService.removeGlobalListener(listener);
     }
 
-    public dispatchEvent(eventType: string, event?: any): void {
-        this.eventService.dispatchEvent(eventType, event);
+    public dispatchEvent(event: AgEvent): void {
+        this.eventService.dispatchEvent(event);
     }
 
     public destroy(): void {

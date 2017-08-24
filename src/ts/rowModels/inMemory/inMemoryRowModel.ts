@@ -1,11 +1,11 @@
 import {Utils as _} from "../../utils";
 import {Constants as constants, Constants} from "../../constants";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {ColumnController} from "../../columnController/columnController";
+import {ColumnApi, ColumnController} from "../../columnController/columnController";
 import {FilterManager} from "../../filter/filterManager";
 import {RowNode} from "../../entities/rowNode";
 import {EventService} from "../../eventService";
-import {Events, ModelUpdatedEvent} from "../../events";
+import {Events, ModelUpdatedEvent, RowDataChangedEvent, RowDataUpdatedEvent} from "../../events";
 import {Autowired, Bean, Context, Optional, PostConstruct} from "../../context/context";
 import {SelectionController} from "../../selectionController";
 import {IRowNodeStage} from "../../interfaces/iRowNodeStage";
@@ -14,6 +14,7 @@ import {ChangedPath} from "./changedPath";
 import {ValueService} from "../../valueService/valueService";
 import {ValueCache} from "../../valueService/valueCache";
 import {RowBounds} from "../../interfaces/iRowModel";
+import {GridApi} from "../../gridApi";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes};
 
@@ -61,6 +62,8 @@ export class InMemoryRowModel {
     @Autowired('context') private context: Context;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('valueCache') private valueCache: ValueCache;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
@@ -219,11 +222,15 @@ export class InMemoryRowModel {
         }
 
         let event: ModelUpdatedEvent = {
+            type: Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
             newData: params.newData,
-            newPage: false};
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, event);
+            newPage: false
+        };
+        this.eventService.dispatchEvent(event);
 
         if (this.$scope) {
             setTimeout( () => {
@@ -558,7 +565,12 @@ export class InMemoryRowModel {
         // - clears selection
         // - updates filters
         // - shows 'no rows' overlay if needed
-        this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED);
+        let rowDataChangedEvent: RowDataChangedEvent = {
+            type: Events.EVENT_ROW_DATA_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(rowDataChangedEvent);
 
         this.refreshModel({
             step: Constants.STEP_EVERYTHING,
@@ -580,22 +592,18 @@ export class InMemoryRowModel {
             keepEditingRows: true
         });
 
-        this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_UPDATED);
+        let event: RowDataUpdatedEvent = {
+            type: Events.EVENT_ROW_DATA_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
 
         return rowNodeTran;
     }
 
     private doRowsToDisplay() {
         this.rowsToDisplay = <RowNode[]> this.flattenStage.execute({rowNode: this.rootNode});
-    }
-
-    public insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void {
-        // remember group state, so we can expand groups that should be expanded
-        let groupState = this.getGroupState();
-        let newNodes = this.nodeManager.insertItemsAtIndex(index, items);
-        if (!skipRefresh) {
-            this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes, groupState);
-        }
     }
 
     public onRowHeightChanged(): void {
@@ -605,35 +613,6 @@ export class InMemoryRowModel {
     public resetRowHeights(): void {
         this.forEachNode( (rowNode: RowNode) => rowNode.setRowHeight(null) );
         this.onRowHeightChanged();
-    }
-
-    public removeItems(rowNodes: RowNode[], skipRefresh: boolean): void {
-        let groupState = this.getGroupState();
-        let removedNodes = this.nodeManager.removeItems(rowNodes);
-        if (!skipRefresh) {
-            this.refreshAndFireEvent(Events.EVENT_ITEMS_REMOVED, removedNodes, groupState);
-        }
-    }
-
-    public addItems(items: any[], skipRefresh: boolean): void {
-        let groupState = this.getGroupState();
-        let newNodes = this.nodeManager.addItems(items);
-
-        if (!skipRefresh) {
-            this.refreshAndFireEvent(Events.EVENT_ITEMS_ADDED, newNodes, groupState);
-        }
-
-        // if (newNodes) {
-        //     this.refreshModel({step: Constants.STEP_EVERYTHING, groupState: groupState, newRowNodes: newNodes});
-        //     this.eventService.dispatchEvent(Events.EVENT_ITEMS_ADDED, {rowNodes: newNodes})
-        // }
-    }
-
-    private refreshAndFireEvent(eventName: string, rowNodes: RowNode[], groupState: any): void {
-        if (rowNodes) {
-            this.refreshModel({step: Constants.STEP_EVERYTHING, groupState: groupState});
-            this.eventService.dispatchEvent(eventName, {rowNodes: rowNodes})
-        }
     }
 
 }

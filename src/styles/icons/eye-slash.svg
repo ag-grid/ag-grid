@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
+    <title>eye-slash</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="eye-slash">
+            <path d="M3.00137604,3.90825715 C3.00046086,3.9387261 3,3.96930923 3,4 C3,5.65685425 4.34314575,7 6,7 C7.65685425,7 9,5.65685425 9,4 C9,3.96930923 8.99953914,3.9387261 8.99862396,3.90825715 C8.1000001,3.30275238 7.10045878,3 6,3 C4.89954122,3 3.8999999,3.30275238 3.00137604,3.90825715 Z" id="Combined-Shape" fill="#000000"></path>
+            <path d="M4,4.5 C4.66666667,4.16666667 5.66666667,4 7,4" id="Path-7" stroke="#979797"></path>
+            <path d="M1,6 C2.33333333,4 4,3 6,3 C8,3 9.66666667,4 11,6 C9.66666667,8 8,9 6,9 C4,9 2.33333333,8 1,6 Z" id="Path-6-Copy" stroke="#000000"></path>
+            <path d="M4.0040697,2.83450921 L8.9959303,9.16549079" id="Line" stroke="#000000" stroke-linecap="square"></path>
+            <path d="M3.0040697,2.83450921 L7.9959303,9.16549079" id="Line-Copy" stroke="#FFFFFF" stroke-linecap="square"></path>
+        </g>
+    </g>
+</svg>

@@ -1,11 +1,12 @@
 import {Column} from "./entities/column";
 import {Autowired} from "./context/context";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {ColumnController} from "./columnController/columnController";
+import {ColumnApi, ColumnController} from "./columnController/columnController";
 import {EventService} from "./eventService";
-import {Events} from "./events";
+import {Events, SortChangedEvent} from "./events";
 import {Bean} from "./context/context";
 import {Utils as _} from './utils';
+import {GridApi} from "./gridApi";
 
 @Bean('sortController')
 export class SortController {
@@ -15,6 +16,8 @@ export class SortController {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     public progressSort(column: Column, multiSort: boolean): void {
         let nextDirection = this.getNextSortDirection(column);
@@ -54,7 +57,12 @@ export class SortController {
     }
 
     private dispatchSortChangedEvents(): void {
-        this.eventService.dispatchEvent(Events.EVENT_SORT_CHANGED);
+        let event: SortChangedEvent = {
+            type: Events.EVENT_SORT_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     private clearSortBarThisColumn(columnToSkip: Column): void {

@@ -3,7 +3,7 @@ import {LoggerFactory, Logger} from "../logger";
 import {ColumnController} from "../columnController/columnController";
 import {Column} from "../entities/column";
 import {Utils as _} from "../utils";
-import {DragAndDropService, DraggingEvent, HDirection} from "../dragAndDrop/dragAndDropService";
+import {DragAndDropService, DraggingEvent, DragSourceType, HDirection} from "../dragAndDrop/dragAndDropService";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {ColumnGroup} from "../entities/columnGroup";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
@@ -51,7 +51,11 @@ export class MoveColumnController {
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // we do dummy drag, so make sure column appears in the right location when first placed
         let columns = draggingEvent.dragSource.dragItem;
-        this.columnController.setColumnsVisible(columns, true);
+        // let dragCameFromToolPanel = draggingEvent.dragSource.type===DragSourceType.ToolPanel;
+        // if (dragCameFromToolPanel) {
+        // the if statement doesn't work if drag leaves grid, then enters again
+            this.columnController.setColumnsVisible(columns, true);
+        // }
         this.columnController.setColumnsPinned(columns, this.pinned);
         this.onDragging(draggingEvent, true);
     }
@@ -87,12 +91,13 @@ export class MoveColumnController {
         return x;
     }
 
-    private workOutNewIndex(displayedColumns: Column[], allColumns: Column[], dragColumn: Column, hDirection: HDirection, xAdjustedForScroll: number): number[] {
-        if (hDirection === HDirection.Left) {
-            return this.getNewIndexForColMovingLeft(displayedColumns, allColumns, dragColumn, xAdjustedForScroll);
-        } else {
-            return this.getNewIndexForColMovingRight(displayedColumns, allColumns, dragColumn, xAdjustedForScroll);
-        }
+    private workOutNewIndex_old(displayedColumns: Column[], movingColumns: Column[], allColumns: Column[], dragColumn: Column, hDirection: HDirection, xAdjustedForScroll: number): number[] {
+        // if (hDirection === HDirection.Left) {
+        //     return this.getNewIndexForColMovingLeft(displayedColumns, movingColumns, allColumns, xAdjustedForScroll);
+        // } else {
+        //     return this.getNewIndexForColMovingRight(displayedColumns, movingColumns, allColumns, xAdjustedForScroll);
+        // }
+        return null;
     }
 
     private checkCenterForScrolling(xAdjustedForScroll: number): void {
@@ -139,6 +144,7 @@ export class MoveColumnController {
         let hDirectionNormalised = this.normaliseDirection(draggingEvent.hDirection);
 
         let columnsToMove = draggingEvent.dragSource.dragItem;
+
         this.attemptMoveColumns(columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
     }
 
@@ -154,26 +160,32 @@ export class MoveColumnController {
         }
     }
 
+    // returns the index of the first column in the list ONLY if the cols are all beside
+    // each other. if the cols are not beside each other, then returns null
+    private calculateOldIndex(movingCols: Column[]): number {
+        let gridCols: Column[] = this.columnController.getAllGridColumns();
+        let indexes: number[] = [];
+        movingCols.forEach( col => indexes.push(gridCols.indexOf(col)));
+        _.sortNumberArray(indexes);
+        let firstIndex = indexes[0];
+        let lastIndex = indexes[indexes.length-1];
+        let spread = lastIndex - firstIndex;
+        let gapsExist = spread !== indexes.length - 1;
+        return gapsExist ? null : firstIndex;
+    }
+
     private attemptMoveColumns(allMovingColumns: Column[], hDirection: HDirection, xAdjusted: number, fromEnter: boolean): void {
-        let displayedColumns = this.columnController.getDisplayedColumns(this.pinned);
-        let gridColumns = this.columnController.getAllGridColumns();
 
         let draggingLeft = hDirection === HDirection.Left;
         let draggingRight = hDirection === HDirection.Right;
 
-        let dragColumn: Column;
-        let displayedMovingColumns = _.filter(allMovingColumns, column => displayedColumns.indexOf(column) >= 0 );
-        // if dragging left, we want to use the left most column, ie move the left most column to
-        // under the mouse pointer
-        if (draggingLeft) {
-            dragColumn = displayedMovingColumns[0];
-        // if dragging right, we want to keep the right most column under the mouse pointer
-        } else {
-            dragColumn = displayedMovingColumns[displayedMovingColumns.length-1];
-        }
+        let validMoves: number[] = this.calculateValidMoves(allMovingColumns, draggingRight, xAdjusted);
 
-        let validMoves: number[] = this.workOutNewIndex(displayedColumns, gridColumns, dragColumn, hDirection, xAdjusted);
-        let oldIndex = gridColumns.indexOf(dragColumn);
+        // if cols are not adjacent, then this returns null. when moving, we constrain the direction of the move
+        // (ie left or right) to the mouse direction. however
+        let oldIndex = this.calculateOldIndex(allMovingColumns);
+
+        // fromEnter = false;
 
         for (let i = 0; i<validMoves.length; i++) {
             let newIndex: number = validMoves[i];
@@ -188,18 +200,14 @@ export class MoveColumnController {
             // place the column to the RHS even if the mouse is moving left and the column is already on
             // the LHS. otherwise we stick to the rule described above.
 
-            // only allow left drag if this column is moving left
-            if (!fromEnter && draggingLeft && newIndex>=oldIndex) {
-                continue;
-            }
-            // only allow right drag if this column is moving right
-            if (!fromEnter && draggingRight && newIndex<=oldIndex) {
-                continue;
-            }
+            let constrainDirection = oldIndex!==null && !fromEnter;
+            if (constrainDirection) {
 
-            // if moving right, the new index is the index of the right most column, so adjust to first column
-            if (draggingRight) {
-                newIndex = newIndex - allMovingColumns.length + 1;
+                // only allow left drag if this column is moving left
+                if (draggingLeft && newIndex>=oldIndex) { continue; }
+
+                // only allow right drag if this column is moving right
+                if (draggingRight && newIndex<=oldIndex) { continue; }
             }
 
             if (!this.columnController.doesMovePassRules(allMovingColumns, newIndex)) {
@@ -212,98 +220,79 @@ export class MoveColumnController {
             return;
         }
     }
-    
-    private getNewIndexForColMovingLeft(displayedColumns: Column[], allColumns: Column[], dragColumn: Column, x: number): number[] {
 
-        let usedX = 0;
-        let leftColumn: Column = null;
+    private calculateValidMoves(movingCols: Column[], draggingRight: boolean, x: number): number[] {
 
-        for (let i = 0; i < displayedColumns.length; i++) {
+        // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
+        let allDisplayedCols = this.columnController.getDisplayedColumns(this.pinned);
+        // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
+        // so the result we return has to be and index location for this list
+        let allGridCols = this.columnController.getAllGridColumns();
 
-            let currentColumn = displayedColumns[i];
-            if (currentColumn === dragColumn) { continue; }
-            usedX += currentColumn.getActualWidth();
+        let colIsMovingFunc = (col: Column) => movingCols.indexOf(col) >= 0;
+        let colIsNotMovingFunc = (col: Column) => movingCols.indexOf(col) < 0;
 
-            if (usedX > x) {
-                break;
-            }
+        let movingDisplayedCols = allDisplayedCols.filter(colIsMovingFunc);
+        let otherDisplayedCols = allDisplayedCols.filter(colIsNotMovingFunc);
+        let otherGridCols = allGridCols.filter(colIsNotMovingFunc);
 
-            leftColumn = currentColumn;
+        // work out how many DISPLAYED columns fit before the 'x' position. this gives us the displayIndex.
+        // for example, if cols are a,b,c,d and we find a,b fit before 'x', then we want to place the moving
+        // col between b and c (so that it is under the mouse position).
+        let displayIndex = 0;
+        let availableWidth = x;
+
+        // if we are dragging right, then the columns will be to the left of the mouse, so we also want to
+        // include the width of the moving columns
+        if (draggingRight) {
+            let widthOfMovingDisplayedCols = 0;
+            movingDisplayedCols.forEach( col => widthOfMovingDisplayedCols += col.getActualWidth() );
+            availableWidth -= widthOfMovingDisplayedCols;
         }
 
-        let newIndex: number;
-        if (leftColumn) {
-            newIndex = allColumns.indexOf(leftColumn) + 1;
+        // now count how many of the displayed columns will fit to the left
+        for (let i = 0; i < otherDisplayedCols.length; i++) {
+            let col = otherDisplayedCols[i];
+            availableWidth -= col.getActualWidth();
+            if (availableWidth < 0) { break; }
+            displayIndex++;
+        }
 
-            let oldIndex = allColumns.indexOf(dragColumn);
-            if (oldIndex<newIndex) {
-                newIndex--;
-            }
+        // trial and error, if going right, we adjust by one, i didn't manage to quantify why, but it works
+        if (draggingRight) {
+            displayIndex++;
+        }
+
+        // the display index is with respect to all the showing columns, however when we move, it's with
+        // respect to all grid columns, so we need to translate from display index to grid index
+
+        let gridColIndex: number;
+        if (displayIndex > 0) {
+            let leftColumn = otherDisplayedCols[displayIndex-1];
+            gridColIndex = otherGridCols.indexOf(leftColumn) + 1;
         } else {
-            newIndex = 0;
+            gridColIndex = 0;
         }
 
-        let validMoves = [newIndex];
+        let validMoves = [gridColIndex];
 
         // add in all adjacent empty columns as other valid moves. this allows us to try putting the new
         // column in any place of a hidden column, to try different combinations so that we don't break
         // married children. in other words, maybe the new index breaks a group, but only because some
         // columns are hidden, maybe we can reshuffle the hidden columns to find a place that works.
-        let col = allColumns[newIndex];
-        while (_.exists(col) && displayedColumns.indexOf(col)<0) {
-            validMoves.push(newIndex + 1);
-            newIndex++;
-            col = allColumns[newIndex];
+        let nextCol = allGridCols[gridColIndex];
+        while (_.exists(nextCol) && this.isColumnHidden(allDisplayedCols, nextCol)) {
+            gridColIndex++;
+            validMoves.push(gridColIndex);
+            nextCol = allGridCols[gridColIndex];
         }
 
         return validMoves;
     }
 
-    private getNewIndexForColMovingRight(displayedColumns: Column[], allColumns: Column[], dragColumnOrGroup: Column | ColumnGroup, x: number): number[] {
-
-        let dragColumn = <Column> dragColumnOrGroup;
-
-        let usedX = dragColumn.getActualWidth();
-        let leftColumn: Column = null;
-
-        for (let i = 0; i < displayedColumns.length; i++) {
-
-            if (usedX > x) {
-                break;
-            }
-
-            let currentColumn = displayedColumns[i];
-            if (currentColumn === dragColumn) { continue; }
-            usedX += currentColumn.getActualWidth();
-
-            leftColumn = currentColumn;
-        }
-
-        let newIndex: number;
-        if (leftColumn) {
-            newIndex = allColumns.indexOf(leftColumn) + 1;
-            let oldIndex = allColumns.indexOf(dragColumn);
-            if (oldIndex<newIndex) {
-                newIndex--;
-            }
-        } else {
-            newIndex = 0;
-        }
-
-        let validMoves = [newIndex];
-
-        // add in all adjacent empty columns as other valid moves. this allows us to try putting the new
-        // column in any place of a hidden column, to try different combinations so that we don't break
-        // married children. in other words, maybe the new index breaks a group, but only because some
-        // columns are hidden, maybe we can reshuffle the hidden columns to find a place that works.
-        let col = allColumns[newIndex];
-        while (_.exists(col) && displayedColumns.indexOf(col)<0) {
-            validMoves.push(newIndex + 1);
-            newIndex++;
-            col = allColumns[newIndex];
-        }
-
-        return [newIndex];
+    // isHidden takes into account visible=false and group=closed, ie it is not displayed
+    private isColumnHidden(displayedColumns: Column[], col: Column) {
+        return displayedColumns.indexOf(col)<0
     }
 
     private ensureIntervalStarted(): void {

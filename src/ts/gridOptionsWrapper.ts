@@ -24,6 +24,10 @@ import {IDatasource} from "./rowModels/iDatasource";
 import {GridCellDef} from "./entities/gridCell";
 import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {BaseExportParams, ProcessCellForExportParams} from "./exportParams";
+import {AgEvent} from "./events";
+import {Column} from "./entities/column";
+import { DefaultColumnTypes } from "./entities/defaultColumnTypes";
+import { Environment } from "./environment";
 
 let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -51,6 +55,11 @@ function oneOrGreater(value: any, defaultValue: number): number {
     }
 }
 
+export interface PropertyChangedEvent extends AgEvent {
+    currentValue: any;
+    previousValue: any;
+}
+
 @Bean('gridOptionsWrapper')
 export class GridOptionsWrapper {
 
@@ -65,17 +74,18 @@ export class GridOptionsWrapper {
 
     public static PROP_FLOATING_FILTERS_HEIGHT = 'floatingFiltersHeight';
 
+    public static EVENT_PROPERTY_CHANGED = 'propertyChangedEvent';
+
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('enterprise') private enterprise: boolean;
     @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('environment') private environment: Environment;
 
     private propertyEventService: EventService = new EventService();
-
-    private fullWidthCellRenderer : {new(): ICellRendererComp} | ICellRendererFunc | string;
-    private groupRowRenderer : {new(): ICellRendererComp} | ICellRendererFunc | string;
-    private groupRowInnerRenderer : {new(): ICellRendererComp} | ICellRendererFunc | string;
 
     private domDataKey = '__AG_'+Math.random().toString();
 
@@ -99,8 +109,6 @@ export class GridOptionsWrapper {
         let async = this.useAsyncEvents();
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
 
-        this.setupFrameworkComponents();
-
         if (this.isGroupSelectsChildren() && this.isSuppressParentsInRowNodes()) {
             console.warn('ag-Grid: groupSelectsChildren does not work wth suppressParentsInRowNodes, this selection method needs the part in rowNode to work');
         }
@@ -122,14 +130,8 @@ export class GridOptionsWrapper {
 
     }
 
-    private setupFrameworkComponents(): void {
-        this.fullWidthCellRenderer = this.frameworkFactory.gridOptionsFullWidthCellRenderer(this.gridOptions);
-        this.groupRowRenderer = this.frameworkFactory.gridOptionsGroupRowRenderer(this.gridOptions);
-        this.groupRowInnerRenderer = this.frameworkFactory.gridOptionsGroupRowInnerRenderer(this.gridOptions);
-    }
-
     // returns the dom data, or undefined if not found
-    public getDomData(element: Element, key: string): any {
+    public getDomData(element: Node, key: string): any {
         let domData = (<any>element)[this.domDataKey];
         if (domData) {
             return domData[key];
@@ -146,12 +148,6 @@ export class GridOptionsWrapper {
         }
         domData[key] = value;
     }
-
-    // the cellRenderers come from the instances for this class, not from gridOptions, which allows
-    // the baseFrameworkFactory to replace with framework specific ones
-    public getFullWidthCellRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string { return this.fullWidthCellRenderer; }
-    public getGroupRowRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string { return this.groupRowRenderer; }
-    public getGroupRowInnerRenderer(): {new(): ICellRendererComp} | ICellRendererFunc | string { return this.groupRowInnerRenderer; }
 
     public isEnterprise() { return this.enterprise;}
     public isRowSelection() { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; }
@@ -215,9 +211,10 @@ export class GridOptionsWrapper {
     public getPinnedTopRowData(): any[] { return this.gridOptions.pinnedTopRowData; }
     public getPinnedBottomRowData(): any[] { return this.gridOptions.pinnedBottomRowData; }
     public isFunctionsPassive() { return isTrue(this.gridOptions.functionsPassive); }
-    public isSuppressRowHoverClass() { return isTrue(this.gridOptions.suppressRowHoverClass); }
+    public isRowHoverClass() { return isTrue(this.gridOptions.rowHoverClass); }
     public isSuppressTabbing() { return isTrue(this.gridOptions.suppressTabbing); }
     public isSuppressChangeDetection() { return isTrue(this.gridOptions.suppressChangeDetection); }
+    public isSuppressAnimationFrame() { return isTrue(this.gridOptions.suppressAnimationFrame); }
 
     public getQuickFilterText(): string { return this.gridOptions.quickFilterText; }
     public isCacheQuickFilter() { return isTrue(this.gridOptions.cacheQuickFilter); }
@@ -271,7 +268,7 @@ export class GridOptionsWrapper {
     public isAngularCompileHeaders() { return isTrue(this.gridOptions.angularCompileHeaders); }
     public isDebug() { return isTrue(this.gridOptions.debug); }
     public getColumnDefs() { return this.gridOptions.columnDefs; }
-    public getColumnTypes() { return this.gridOptions.columnTypes; }
+    public getColumnTypes(): {[key: string]: ColDef} { return _.assign({}, this.gridOptions.columnTypes, DefaultColumnTypes); }
     public getDatasource(): IDatasource { return this.gridOptions.datasource; }
     public getViewportDatasource(): IViewportDatasource { return this.gridOptions.viewportDatasource; }
     public getEnterpriseDatasource(): IEnterpriseDatasource { return this.gridOptions.enterpriseDatasource; }
@@ -292,7 +289,6 @@ export class GridOptionsWrapper {
     public isEnableServerSideFilter() { return this.gridOptions.enableServerSideFilter; }
     public isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
 
-    public isSuppressScrollLag() { return isTrue(this.gridOptions.suppressScrollLag); }
     public isSuppressMovableColumns() { return isTrue(this.gridOptions.suppressMovableColumns); }
     public isAnimateRows() {
         // never allow animating if enforcing the row order
@@ -307,7 +303,6 @@ export class GridOptionsWrapper {
     public isRememberGroupStateWhenNewData(): boolean { return isTrue(this.gridOptions.rememberGroupStateWhenNewData); }
     public getIcons() { return this.gridOptions.icons; }
     public getAggFuncs(): {[key: string]: IAggFunc} { return this.gridOptions.aggFuncs; }
-    public getIsScrollLag() { return this.gridOptions.isScrollLag; }
     public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
     public getAlignedGrids(): GridOptions[] { return this.gridOptions.alignedGrids; }
     public getGroupRowRendererParams() { return this.gridOptions.groupRowRendererParams; }
@@ -342,6 +337,7 @@ export class GridOptionsWrapper {
     public getProcessSecondaryColDefFunc(): (colDef: ColDef)=>void { return this.gridOptions.processSecondaryColDef; }
     public getProcessSecondaryColGroupDefFunc(): (colGroupDef: ColGroupDef)=>void { return this.gridOptions.processSecondaryColGroupDef; }
     public getSendToClipboardFunc() { return this.gridOptions.sendToClipboard; }
+    public getProcessRowPostCreateFunc() { return this.gridOptions.processRowPostCreate; }
 
     public getProcessCellForClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellForClipboard; }
     public getProcessCellFromClipboardFunc(): (params: ProcessCellForExportParams)=>any { return this.gridOptions.processCellFromClipboard; }
@@ -360,7 +356,12 @@ export class GridOptionsWrapper {
 
         if (previousValue !== value) {
             gridOptionsNoType[key] = value;
-            this.propertyEventService.dispatchEvent(key, {currentValue: value, previousValue: previousValue});
+            let event: PropertyChangedEvent = {
+                type: GridOptionsWrapper.EVENT_PROPERTY_CHANGED,
+                currentValue: value,
+                previousValue: previousValue
+            };
+            this.propertyEventService.dispatchEvent(event);
         }
     }
 
@@ -372,18 +373,12 @@ export class GridOptionsWrapper {
         this.propertyEventService.removeEventListener(key, listener);
     }
 
-    public executeProcessRowPostCreateFunc(params: ProcessRowParams): void {
-        if (this.gridOptions.processRowPostCreate) {
-            this.gridOptions.processRowPostCreate(params);
-        }
-    }
-
     // properties
     public getHeaderHeight(): number {
         if (typeof this.gridOptions.headerHeight === 'number') {
             return this.gridOptions.headerHeight;
         } else {
-            return 25;
+            return this.specialForMaterialNext(25, 8 * 7);
         }
     }
 
@@ -391,7 +386,7 @@ export class GridOptionsWrapper {
         if (typeof this.gridOptions.floatingFiltersHeight === 'number') {
             return this.gridOptions.floatingFiltersHeight;
         } else {
-            return 20;
+            return this.specialForMaterialNext(25, 8 * 7);
         }
     }
 
@@ -558,13 +553,13 @@ export class GridOptionsWrapper {
             console.warn('ag-grid: since version 10.1.x, use property domLayout="forPrint" instead of forPrint=true');
         }
         if (options.suppressMenuFilterPanel) {
-            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['filterMenuTab'] instead of suppressMenuFilterPanel=true`);
+            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['generalMenuTab','columnsMenuTab'] instead of suppressMenuFilterPanel=true`);
         }
         if (options.suppressMenuMainPanel) {
-            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['generalMenuTab'] instead of suppressMenuMainPanel=true`);
+            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['filterMenuTab','columnsMenuTab'] instead of suppressMenuMainPanel=true`);
         }
         if (options.suppressMenuColumnPanel) {
-            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['columnsMenuTab'] instead of suppressMenuColumnPanel=true`);
+            console.warn(`ag-grid: since version 11.0.x, use property colDef.menuTabs=['generalMenuTab','filterMenuTab'] instead of suppressMenuColumnPanel=true`);
         }
         if (options.suppressUseColIdForGroups) {
             console.warn(`ag-grid: since version 11.0.x, this is not in use anymore. You should be able to remove it from your definition`);
@@ -613,12 +608,12 @@ export class GridOptionsWrapper {
     public getRowHeightAsNumber(): number {
         let rowHeight = this.gridOptions.rowHeight;
         if (_.missing(rowHeight)) {
-            return DEFAULT_ROW_HEIGHT;
+            return this.getDefaultRowHeight();
         } else if (this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
         } else {
             console.warn('ag-Grid row height must be a number if not using standard row model');
-            return DEFAULT_ROW_HEIGHT;
+            return this.getDefaultRowHeight();
         }
     }
 
@@ -637,7 +632,7 @@ export class GridOptionsWrapper {
         } else if (this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
         } else {
-            return DEFAULT_ROW_HEIGHT;
+            return this.getDefaultRowHeight();
         }
     }
 
@@ -647,5 +642,19 @@ export class GridOptionsWrapper {
 
     private isNumeric(value:any) {
         return !isNaN(value) && typeof value === 'number';
+    }
+
+    // Material data table has strict guidelines about whitespace, and these values are different than the ones 
+    // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
+    private specialForMaterialNext(defaultValue: number, materialNextValue: number): number {
+            if (this.environment.getTheme() == "ag-material-next") {
+                return materialNextValue;
+            } else {
+                return defaultValue;
+            }
+    }
+
+    private getDefaultRowHeight() {
+        return this.specialForMaterialNext(DEFAULT_ROW_HEIGHT, 8 * 6);
     }
 }

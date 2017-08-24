@@ -26,8 +26,8 @@ export class MouseEventService {
     }
 
     public getGridCellForEvent(event: MouseEvent | KeyboardEvent): GridCell {
-        let renderedCell = this.getRenderedCellForEvent(event);
-        return renderedCell ? renderedCell.getGridCell() : null;
+        let cellComp = this.getRenderedCellForEvent(event);
+        return cellComp ? cellComp.getGridCell() : null;
     }
 
 }

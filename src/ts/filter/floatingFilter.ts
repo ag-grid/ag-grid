@@ -2,11 +2,11 @@ import {Autowired} from "../context/context";
 import {SerializedTextFilter} from "./textFilter";
 import {DateFilter, SerializedDateFilter} from "./dateFilter";
 import {SerializedNumberFilter} from "./numberFilter";
-import {IComponent} from "../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
 import {RefSelector} from "../widgets/componentAnnotations";
 import {_} from "../utils";
 import {IDateComp, IDateParams} from "../rendering/dateComponent";
-import {ComponentProvider} from "../componentProvider";
+import {ComponentRecipes} from "../components/framework/componentRecipes";
 import {Component} from "../widgets/component";
 import {Constants} from "../constants";
 import {Column} from "../entities/column";
@@ -26,7 +26,7 @@ export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IF
     onParentModelChanged(parentModel: M): void;
 }
 
-export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> extends IFloatingFilter<M, F, P>, IComponent<P> {
+export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> extends IFloatingFilter<M, F, P>, IComponent<P, IAfterGuiAttachedParams> {
 }
 
 export interface BaseFloatingFilterChange<M> extends FloatingFilterChange {
@@ -127,8 +127,8 @@ export class TextFloatingFilterComp extends InputTextFloatingFilterComp<Serializ
 }
 
 export class DateFloatingFilterComp extends Component implements IFloatingFilter <SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>, IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>> {
-    @Autowired('componentProvider')
-    private componentProvider: ComponentProvider;
+    @Autowired('componentRecipes')
+    private componentRecipes: ComponentRecipes;
     private dateComponent: IDateComp;
 
     onFloatingFilterChanged: (change: BaseFloatingFilterChange<SerializedDateFilter>) => void;
@@ -143,9 +143,9 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         let dateComponentParams: IDateParams = {
             onDateChanged: toDebounce
         };
-        this.dateComponent = this.componentProvider.newDateComponent(dateComponentParams);
+        this.dateComponent = this.componentRecipes.newDateComponent(dateComponentParams);
         let body: HTMLElement = _.loadTemplate(`<div></div>`);
-        body.appendChild(this.dateComponent.getGui());
+        body.appendChild(_.ensureElement(this.dateComponent.getGui()));
         this.setTemplateFromElement(body);
     }
 

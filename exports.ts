@@ -1,3 +1,10 @@
+// to satisfy server side compilation
+declare let global: any;
+global.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
+global.HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? {} : HTMLButtonElement;
+global.HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? {} : HTMLSelectElement;
+global.HTMLInputElement = typeof HTMLInputElement === 'undefined' ? {} : HTMLInputElement;
+
 // columnController
 export {BalancedColumnTreeBuilder} from "./dist/lib/columnController/balancedColumnTreeBuilder";
 export {ColumnController} from "./dist/lib/columnController/columnController";
@@ -63,7 +70,7 @@ export {BaseFilter} from "./dist/lib/filter/baseFilter";
 export {DateFilter} from "./dist/lib/filter/dateFilter";
 export {FilterManager} from "./dist/lib/filter/filterManager";
 export {NumberFilter} from "./dist/lib/filter/numberFilter";
-export {TextFilter} from "./dist/lib/filter/textFilter";
+export {TextFilter,SerializedTextFilter} from "./dist/lib/filter/textFilter";
 export {IFloatingFilter, IFloatingFilterParams} from "./dist/lib/filter/floatingFilter";
 
 // gridPanel
@@ -91,7 +98,6 @@ export {VerticalStack} from "./dist/lib/layout/verticalStack";
 export {TabbedItem} from "./dist/lib/layout/tabbedLayout"
 
 // misc
-export {FocusService} from "./dist/lib/misc/focusService";
 export {simpleHttpRequest} from "./dist/lib/misc/simpleHttpRequest";
 
 // editing / cellEditors
@@ -162,7 +168,6 @@ export {IRangeController} from "./dist/lib/interfaces/iRangeController"
 // root
 export {BaseFrameworkFactory} from "./dist/lib/baseFrameworkFactory";
 export {CellNavigationService} from "./dist/lib/cellNavigationService";
-export {ColumnChangeEvent} from "./dist/lib/columnChangeEvent";
 export {AlignedGridsService} from "./dist/lib/alignedGridsService";
 export {Constants} from "./dist/lib/constants";
 export {CsvCreator, BaseCreator} from "./dist/lib/csvCreator";
@@ -178,7 +183,6 @@ export {GridCore} from "./dist/lib/gridCore";
 export {Logger} from "./dist/lib/logger";
 export {SelectionController} from "./dist/lib/selectionController";
 export {SortController} from "./dist/lib/sortController";
-export {SvgFactory} from "./dist/lib/svgFactory";
 export {TemplateService} from "./dist/lib/templateService";
 export {Utils, NumberSequence, _} from "./dist/lib/utils";
 export {ValueService} from "./dist/lib/valueService/valueService";
@@ -189,7 +193,6 @@ export {CsvExportParams, ExportParams} from "./dist/lib/exportParams"
 export {XmlElement} from "./dist/lib/xmlFactory"
 export {LoggerFactory} from "./dist/lib/logger";
 export {RowAccumulator, RowSpanningAccumulator} from "./dist/lib/gridSerializer"
-export {ModelUpdatedEvent} from "./dist/lib/events"
 
 // uncatalogued
 export {IRowModel, RowBounds} from "./dist/lib/interfaces/iRowModel"
@@ -234,8 +237,25 @@ export {IsColumnFunc} from "./dist/lib/entities/colDef";
 export {ColumnApi} from "./dist/lib/columnController/columnController";
 export {IHeader} from "./dist/lib/headerRendering/header/headerComp";
 export {ICellRendererParams} from "./dist/lib/rendering/cellRenderers/iCellRenderer";
-export {WrapableInterface} from "./dist/lib/baseComponentWrapper";
-export {BaseComponentWrapper} from "./dist/lib/baseComponentWrapper";
-export {FrameworkComponentWrapper} from "./dist/lib/componentProvider";
+export {WrapableInterface} from "./dist/lib/components/framework/frameworkComponentWrapper";
+export {BaseComponentWrapper} from "./dist/lib/components/framework/frameworkComponentWrapper";
+export {FrameworkComponentWrapper} from "./dist/lib/components/framework/frameworkComponentWrapper";
 export {IFrameworkFactory} from "./dist/lib/interfaces/iFrameworkFactory";
 export {SerializedNumberFilter} from "./dist/lib/filter/numberFilter";
+export {Environment} from "./dist/lib/environment";
+
+// events
+export {AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, VirtualColumnsChangedEvent,
+    ColumnEverythingChangedEvent, NewColumnsLoadedEvent, GridColumnsChangedEvent, DisplayedColumnsChangedEvent,
+    RowDataChangedEvent, RowDataUpdatedEvent, PinnedRowDataChangedEvent, SelectionChangedEvent, FilterChangedEvent,
+    FilterModifiedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent,
+    DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent,
+    GridSizeChangedEvent, ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent,
+    BodyScrollEvent, FlashCellsEvent, PaginationChangedEvent, CellFocusedEvent, ColumnEvent, ColumnResizedEvent,
+    ColumnPivotChangedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnMovedEvent, ColumnVisibleEvent,
+    ColumnPinnedEvent, RowEvent, RowGroupOpenedEvent, RowValueChangedEvent, RowSelectedEvent, VirtualRowRemovedEvent,
+    RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, CellEvent, CellClickedEvent,
+    CellDoubleClickedEvent, CellMouseOverEvent, CellMouseOutEvent, CellContextMenuEvent, CellEditingStartedEvent,
+    CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent,
+    ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent}
+    from "./dist/lib/events";

@@ -1,0 +1,99 @@
+$ag-style: "material" !default;
+$ag-root-font-family: Roboto !default;
+$ag-root-font-size: 14px !default;
+
+$ag-scrollbar-background: inherit !default;
+$ag-scrollbar-thumb: inherit !default;
+
+$ag-border-1: none !default;
+
+$ag-border-color-1: #000 !default;
+$ag-border-color-2: #808080 !default;
+
+$ag-background-1: #fff !default;
+
+$ag-foreground-1: #666 !default;
+
+$ag-header-foreground-1: #666 !default;
+
+$ag-separator-color: #d3d3d3 !default;
+
+$ag-cell-focused-border: 1px solid lightgrey !default;
+$ag-cell-no-focus-border-top: 1px solid transparent !default;
+$ag-cell-no-focus-border-bottom: 1px solid lightgrey !default;
+$ag-cell-ltr-no-focus-border-right: 1px solid transparent !default;
+$ag-cell-ltr-no-focus-border-left: 1px solid transparent !default;
+$ag-cell-rtl-no-focus-border-right: 1px solid transparent !default;
+$ag-cell-rtl-no-focus-border-left: 1px solid transparent !default;
+
+$ag-cell-highlight-border: 1px solid darkgreen !default;
+
+$ag-cell-padding: 2px !default;
+
+$ag-row-selected-background-color: #F5F5F5 !default;
+$ag-row-selected-background-color: #F5F5F5 !default;
+$ag-row-odd-background-color: white !default;
+$ag-row-even-background-color: white !default;
+$ag-row-floating-background-color: #f0f0f0 !default;
+$ag-row-stub-background-color: #f0f0f0 !default;
+
+$ag-value-change-delta-up-color: darkgreen !default;
+$ag-value-change-delta-down-color: darkred !default;
+$ag-value-change-value-highlight-background-color: #cec !default;
+
+$ag-range-selected-color-1: rgba(120,120,120,0.4) !default;
+$ag-range-selected-color-2: rgba(80,80,80,0.4) !default;
+$ag-range-selected-color-3: rgba(40,40,40,0.4) !default;
+$ag-range-selected-color-4: rgba(0,0,0,0.4) !default;
+
+$ag-header-background-1: none !default;
+$ag-header-select-padding: 5px 0px 0px 15px !default;
+
+$ag-button-background-1: none !default;
+$ag-button-foreground-1: #000 !default;
+$ag-button-border-1: #808080 !default;
+
+$ag-header-font-weight: bold !default;
+
+$ag-tab-border: 1px solid transparent !default;
+$ag-tab-background: #f6f6f6 !default;
+$ag-tab-selected-background: #fff !default;
+$ag-tab-padding: 6px 16px 6px 16px !default;
+
+$ag-menu-option-active-color: #BDE2E5 !default;
+
+$ag-select-background: white !default;
+$ag-select-foreground: #222 !default;
+
+$ag-menu-option-padding: 10px 6px 10px 6px !default;
+$ag-menu-option-shortcut-padding: 10px 6px 10px 6px !default;
+
+@import "theme-common";
+
+.ag-material {
+    .ag-row-hover {
+        background-color: #eeeeee !important;
+    }
+
+    .ag-cell-not-inline-editing {
+        padding-top: 15px;
+    }
+
+    .ag-header-cell-menu-button:hover {
+        border: 1px solid grey;
+    }
+
+    .ag-header-cell-label {
+        text-align: left;
+    }
+
+    .ag-header {
+        border-bottom: 1px solid grey;
+    }
+
+    // we want checkbox to have more spacing to the right and left
+    .ag-selection-checkbox {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+}

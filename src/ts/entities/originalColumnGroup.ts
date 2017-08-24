@@ -4,9 +4,18 @@ import {ColumnGroup} from "./columnGroup";
 import {Column} from "./column";
 import {EventService} from "../eventService";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
+import {Autowired} from "../context/context";
+import {ColumnApi} from "../columnController/columnController";
+import {GridApi} from "../gridApi";
+import {AgEvent} from "../events";
 
 export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmitter  {
+
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
+    public static EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
+
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private localEventService = new EventService();
 
@@ -26,13 +35,25 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         this.padding = padding;
     }
 
+    public isVisible(): boolean {
+        // return true if at least one child is visible
+        if (this.children) {
+            return this.children.some(child => child.isVisible());
+        } else {
+            return false;
+        }
+    }
+
     public isPadding(): boolean {
         return this.padding;
     }
 
     public setExpanded(expanded: boolean): void {
         this.expanded = expanded;
-        this.localEventService.dispatchEvent(OriginalColumnGroup.EVENT_EXPANDED_CHANGED);
+        let event: AgEvent = {
+            type: OriginalColumnGroup.EVENT_EXPANDED_CHANGED
+        };
+        this.localEventService.dispatchEvent(event);
     }
 
     public isExpandable(): boolean {
@@ -93,7 +114,13 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     // need to check that this group has at least one col showing when both expanded and contracted.
     // if not, then we don't allow expanding and contracting on this group
 
-    public calculateExpandable() {
+    public setupExpandable() {
+        this.setExpandable();
+        // note - we should be removing this event listener
+        this.getLeafColumns().forEach( col => col.addEventListener(Column.EVENT_VISIBLE_CHANGED, this.onColumnVisibilityChanged.bind(this)));
+    }
+
+    public setExpandable() {
         // want to make sure the group doesn't disappear when it's open
         let atLeastOneShowingWhenOpen = false;
         // want to make sure the group doesn't disappear when it's closed
@@ -103,6 +130,9 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
 
         for (let i = 0, j = this.children.length; i < j; i++) {
             let abstractColumn = this.children[i];
+            if (!abstractColumn.isVisible()) {
+                continue;
+            }
             // if the abstractColumn is a grid generated group, there will be no colDef
             let headerGroupShow = abstractColumn.getColumnGroupShow();
             if (headerGroupShow === ColumnGroup.HEADER_GROUP_SHOW_OPEN) {
@@ -117,14 +147,26 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
             }
         }
 
-        this.expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
+        let expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
+
+        if (this.expandable !== expandable) {
+            this.expandable = expandable;
+            let event: AgEvent = {
+                type: OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED
+            };
+            this.localEventService.dispatchEvent(event);
+        }
     }
 
-    addEventListener(eventType: string, listener: Function): void {
+    private onColumnVisibilityChanged(): void {
+        this.setExpandable();
+    }
+
+    public addEventListener(eventType: string, listener: Function): void {
         this.localEventService.addEventListener(eventType, listener);
     }
 
-    removeEventListener(eventType: string, listener: Function): void {
+    public removeEventListener(eventType: string, listener: Function): void {
         this.localEventService.removeEventListener(eventType, listener);
     }
 }

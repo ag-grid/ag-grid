@@ -14,6 +14,7 @@ import {SortController} from "../../sortController";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
 import {TouchListener} from "../../widgets/touchListener";
 import {Component} from "../../widgets/component";
+import {Beans} from "../../rendering/beans";
 
 export class RenderedHeaderCell extends Component {
 
@@ -29,6 +30,7 @@ export class RenderedHeaderCell extends Component {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('$scope') private $scope: any;
+    @Autowired('beans') private beans: Beans;
 
     private eRoot: HTMLElement;
 
@@ -86,7 +88,10 @@ export class RenderedHeaderCell extends Component {
         this.setupText();
         this.setupWidth();
 
-        this.addFeature(this.context, new SetLeftFeature(this.column, eGui));
+        let setLeftFeature = new SetLeftFeature(this.column, eGui, this.beans);
+        setLeftFeature.init();
+        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+
     }
 
     private setupTooltip(): void {

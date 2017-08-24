@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
+    <title>copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="copy" stroke="#000000">
+            <rect id="Rectangle-16-Copy-2" x="4.5" y="4.5" width="5" height="5"></rect>
+            <path d="M7.5,2.5 L2.5,2.5 L2.5,7.5 L4.5,7.5 L4.5,9.5 L9.5,9.5 L9.5,4.5 L7.5,4.5 L7.5,2.5 Z" id="Rectangle-16-Copy"></path>
+        </g>
+    </g>
+</svg>

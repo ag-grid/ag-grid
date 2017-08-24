@@ -295,8 +295,15 @@ export abstract class ComparableBaseFilter<T, P extends IFilterParams, M> extend
     }
 }
 
+export interface NullComparator{
+    equals?:boolean
+    lessThan?:boolean
+    greaterThan?:boolean
+}
+
 export interface IScalarFilterParams extends IFilterParams{
     inRangeInclusive?:boolean
+    nullComparator?:NullComparator
 }
 
 /**
@@ -304,16 +311,69 @@ export interface IScalarFilterParams extends IFilterParams{
  * ComparableBaseFilter)
  */
 export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> extends ComparableBaseFilter<T, P, M>{
+    static readonly DEFAULT_NULL_COMPARATOR:NullComparator = {
+        equals: false,
+        lessThan: false,
+        greaterThan: false
+    };
+
     public abstract comparator(): Comparator<T>;
 
+
+    private nullComparator (type:string):Comparator<T>{
+        return (filterValue:T, gridValue:T):number => {
+            if (gridValue == null){
+                let nullValue = this.translateNull (type);
+                if (this.filter === BaseFilter.EQUALS){
+                    return nullValue? 0 : 1;
+                }
+
+                if (this.filter === BaseFilter.GREATER_THAN){
+                    return nullValue? 1 : -1;
+                }
+
+                if (this.filter === BaseFilter.GREATER_THAN_OR_EQUAL){
+                    return nullValue? 1 : -1;
+                }
+
+                if (this.filter === BaseFilter.LESS_THAN_OR_EQUAL){
+                    return nullValue? -1 : 1;
+                }
+
+                if (this.filter === BaseFilter.LESS_THAN){
+                    return nullValue? -1 : 1;
+                }
+
+                if (this.filter === BaseFilter.NOT_EQUAL){
+                    return nullValue? 1 : 0;
+                }
+            }
+
+            let actualComparator:Comparator<T> = this.comparator();
+            return actualComparator (filterValue, gridValue);
+        }
+    }
 
     public getDefaultType(): string {
         return BaseFilter.EQUALS;
     }
 
+    private translateNull(type:string): boolean {
+        let reducedType:string =
+            type.indexOf('greater') > -1 ? 'greaterThan':
+            type.indexOf('lessThan') > -1 ? 'lessThan':
+            'equals';
+
+        if (this.filterParams.nullComparator && (<any>this.filterParams.nullComparator)[reducedType]){
+            return (<any>this.filterParams.nullComparator)[reducedType];
+        };
+
+        return (<any>ScalarBaseFilter.DEFAULT_NULL_COMPARATOR)[reducedType]
+    }
+
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
         let value:any = this.filterParams.valueGetter(params.node);
-        let comparator: Comparator<T> = this.comparator();
+        let comparator: Comparator<T> = this.nullComparator (this.filter);
 
         let rawFilterValues : T[] | T= this.filterValues();
         let from : T= Array.isArray(rawFilterValues) ? rawFilterValues[0]: rawFilterValues;
@@ -330,11 +390,11 @@ export abstract class ScalarBaseFilter<T, P extends IScalarFilterParams, M> exte
         }
 
         if (this.filter === BaseFilter.GREATER_THAN_OR_EQUAL){
-            return compareResult >= 0 && (value!=null);
+            return compareResult >= 0;
         }
 
         if (this.filter === BaseFilter.LESS_THAN_OR_EQUAL){
-            return compareResult <= 0 && (value!=null);
+            return compareResult <= 0;
         }
 
         if (this.filter === BaseFilter.LESS_THAN){

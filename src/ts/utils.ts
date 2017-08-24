@@ -28,7 +28,6 @@ const HTML_ESCAPES: { [id: string]: string } = {
 
 const reUnescapedHtml = /[&<>"']/g;
 
-
 export class Utils {
 
     // taken from:
@@ -251,12 +250,16 @@ export class Utils {
         }
     }
 
-    static assign(object: any, source: any): void {
-        if (this.exists(source)) {
-            this.iterateObject(source, function (key: string, value: any) {
-                object[key] = value;
-            });
-        }
+    static assign(object: any, ...sources: any[] ): any {
+        sources.forEach( source => {
+            if (this.exists(source)) {
+                this.iterateObject(source, function (key: string, value: any) {
+                    object[key] = value;
+                });
+            }
+        });
+
+        return object;
     }
 
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date {
@@ -478,6 +481,37 @@ export class Utils {
         return <HTMLElement> tempDiv.firstChild;
     }
 
+    static assertHtmlElement(item: HTMLElement|string): HTMLElement {
+        if (typeof item === 'string') {
+            console.error(`ag-grid: Found a string template for a component type where only HTMLElements are allow. 
+            Please change the component to return back an HTMLElement from getGui(). Only some element types can return back strings.
+            The found template is ${item}`);
+            return null;
+        } else {
+            return <HTMLElement> item;
+        }
+    }
+
+    static ensureElement(item: HTMLElement|string): HTMLElement {
+        if (typeof item === 'string') {
+            return this.loadTemplate(item);
+        } else {
+            return <HTMLElement> item;
+        }
+    }
+
+    static appendHtml(eContainer: HTMLElement, htmlTemplate: string) {
+        if (eContainer.lastChild) {
+            // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
+            // we put the items at the start, so new items appear underneath old items,
+            // so when expanding/collapsing groups, the new rows don't go on top of the
+            // rows below that are moving our of the way
+            eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
+        } else {
+            eContainer.innerHTML = htmlTemplate;
+        }
+    }
+
     static addOrRemoveCssClass(element: HTMLElement, className: string, addOrRemove: boolean) {
         if (addOrRemove) {
             this.addCssClass(element, className);
@@ -557,13 +591,23 @@ export class Utils {
         return element && element.clientWidth ? element.clientWidth : 0;
     }
 
+    static sortNumberArray(numberArray: number[]): void {
+        numberArray.sort( (a: number, b: number) => a - b);
+    }
+
     static removeCssClass(element: HTMLElement, className: string) {
-        if (element.className && element.className.length > 0) {
-            let cssClasses = element.className.split(' ');
-            let index = cssClasses.indexOf(className);
-            if (index >= 0) {
-                cssClasses.splice(index, 1);
-                element.className = cssClasses.join(' ');
+        if (element.classList) {
+            element.classList.remove(className);
+        } else {
+            if (element.className && element.className.length > 0) {
+                let cssClasses = element.className.split(' ');
+                if (cssClasses.indexOf(className) >= 0) {
+                    // remove all instances of the item, not just the first, in case it's in more than once
+                    while (cssClasses.indexOf(className) >= 0) {
+                        cssClasses.splice(cssClasses.indexOf(className), 1);
+                    }
+                    element.className = cssClasses.join(' ');
+                }
             }
         }
     }
@@ -727,6 +771,27 @@ export class Utils {
         }
     }
 
+    static insertTemplateWithDomOrder(eContainer: HTMLElement,
+                                      htmlTemplate: string,
+                                      eChildBefore: HTMLElement): HTMLElement {
+        let res: HTMLElement;
+        if (eChildBefore) {
+            // if previous element exists, just slot in after the previous element
+            eChildBefore.insertAdjacentHTML('afterend', htmlTemplate);
+            res = <HTMLElement> eChildBefore.nextSibling;
+        } else {
+            if (eContainer.firstChild) {
+                // insert it at the first location
+                eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
+            } else {
+                // otherwise eContainer is empty, so just append it
+                eContainer.innerHTML = htmlTemplate;
+            }
+            res = <HTMLElement> eContainer.firstChild;
+        }
+        return res;
+    }
+
     static toStringOrNull(value: any): string {
         if (this.exists(value) && value.toString) {
             return value.toString();
@@ -779,17 +844,66 @@ export class Utils {
     //     }
     // }
 
-    /**
-     * If icon provided, use this (either a string, or a function callback).
-     * if not, then use the second parameter, which is the svgFactory function
-     */
-    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
-        let eResult = document.createElement('span');
-        eResult.appendChild(this.createIconNoSpan(iconName, gridOptionsWrapper, column, svgFactoryFunc));
-        return eResult;
+
+    static iconNameClassMap: {[key: string]: string } = {
+        'columnMovePin': 'pin',
+        'columnMoveAdd': 'plus',
+        'columnMoveHide': 'eye-slash',
+        'columnMoveMove': 'arrows', 
+        'columnMoveLeft': 'left',
+        'columnMoveRight': 'right',
+        'columnMoveGroup': 'group',
+        'columnMoveValue': 'aggregation',
+        'columnMovePivot': 'pivot',
+        'dropNotAllowed': 'not-allowed',
+        'groupContracted': 'expanded',
+        'groupExpanded': 'contracted',
+        'checkboxChecked': 'checkbox-checked',
+        'checkboxUnchecked': 'checkbox-unchecked',
+        'checkboxIndeterminate': 'checkbox-indeterminate',
+        'checkboxCheckedReadOnly': 'checkbox-checked-readonly',
+        'checkboxUncheckedReadOnly': 'checkbox-unchecked-readonly',
+        'checkboxIndeterminateReadOnly': 'checkbox-indeterminate-readonly',
+        'groupLoading': 'loading',
+        'menu': 'menu',
+        'filter': 'filter',
+        'columns': 'columns',
+        'menuPin': 'pin',
+        'menuValue': 'aggregation',
+        'menuAddRowGroup': 'group',
+        'menuRemoveRowGroup': 'group',
+        'clipboardCopy': 'copy',
+        'clipboardCut': 'cut',
+        'clipboardPaste': 'paste',
+        'pivotPanel': 'pivot',
+        'rowGroupPanel': 'group', 
+        'valuePanel': 'aggregation', 
+        'columnGroupOpened': 'expanded',
+        'columnGroupClosed': 'contracted',
+        'columnSelectClosed': 'tree-closed', 
+        'columnSelectOpen': 'tree-open',
+        // from deprecated header, remove at some point
+        'sortAscending': 'asc',
+        'sortDescending': 'asc',
+        'sortUnSort': 'none'
     }
 
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column, svgFactoryFunc: () => HTMLElement): HTMLElement {
+    /**
+     * If icon provided, use this (either a string, or a function callback).
+     * if not, then use the default icon from the theme
+     */
+    static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement {
+        const iconContents = this.createIconNoSpan(iconName, gridOptionsWrapper, column)
+        if (iconContents.className.indexOf('ag-icon') > -1) {
+            return iconContents;
+        } else {
+            let eResult = document.createElement('span');
+            eResult.appendChild(iconContents);
+            return eResult;
+        }
+    }
+
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column): HTMLElement {
         let userProvidedIcon: Function | string;
         // check col for icon first
         if (column && column.getColDef().icons) {
@@ -817,12 +931,13 @@ export class Utils {
                 throw 'iconRenderer should return back a string or a dom object';
             }
         } else {
-            // otherwise we use the built in icon
-            if (svgFactoryFunc) {
-                return svgFactoryFunc();
-            } else {
-                return null;
+            const span = document.createElement('span');
+            const cssClass = this.iconNameClassMap[iconName];
+            if (!cssClass) {
+                throw new Error(`${iconName} did not find class`)
             }
+            span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
+            return span;
         }
     }
 
@@ -830,8 +945,9 @@ export class Utils {
         if (!styles) {
             return;
         }
-        Object.keys(styles).forEach(function (key) {
-            eElement.style[key] = styles[key];
+        Object.keys(styles).forEach((key) => {
+            let keyCamelCase = this.hyphenToCamelCase(key);
+            eElement.style[keyCamelCase] = styles[key];
         });
     }
 
@@ -898,7 +1014,7 @@ export class Utils {
     static isBrowserSafari(): boolean {
         if (this.isSafari === undefined) {
             let anyWindow = <any> window;
-            // taken from https://github.com/ceolter/ag-grid/issues/550
+            // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
                 || (function (p) {
                     return p.toString() === "[object SafariRemoteNotification]";
@@ -993,6 +1109,31 @@ export class Utils {
                 }
             });
         }
+    }
+
+    // from https://gist.github.com/youssman/745578062609e8acac9f
+    static camelCaseToHyphen(str: string): string {
+        if (str === null || str === undefined) { return null; }
+        return str.replace(/([A-Z])/g, (g) => '-' + g[0].toLowerCase() );
+    }
+
+    // from https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
+    static hyphenToCamelCase(str: string): string {
+        if (str === null || str === undefined) { return null; }
+        return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase() );
+    }
+
+    // pas in an object eg: {color: 'black', top: '25px'} and it returns "color: black; top: 25px;" for html
+    static cssStyleObjectToMarkup(stylesToUse: any): string {
+        if (!stylesToUse) { return ''; }
+
+        let resParts: string[] = [];
+        this.iterateObject(stylesToUse, (styleKey: string, styleValue: string) => {
+            let styleKeyDashed = this.camelCaseToHyphen(styleKey);
+            resParts.push(`${styleKeyDashed}: ${styleValue};`)
+        });
+
+        return resParts.join(' ');
     }
 
     /**

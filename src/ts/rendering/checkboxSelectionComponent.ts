@@ -4,14 +4,11 @@ import {RowNode} from "../entities/rowNode";
 import {Utils as _} from '../utils';
 import {Autowired, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {SvgFactory} from "../svgFactory";
 import {Column} from "../entities/column";
 import {Events} from "../events";
 import {EventService} from "../eventService";
 import {GridApi} from "../gridApi";
 import {ColumnApi} from "../columnController/columnController";
-
-let svgFactory = SvgFactory.getInstance();
 
 export class CheckboxSelectionComponent extends Component {
 
@@ -34,9 +31,9 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private createAndAddIcons(): void {
-        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedIcon);
-        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedIcon);
-        this.eIndeterminateIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateIcon);
+        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null);
+        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null);
+        this.eIndeterminateIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null);
 
         let eGui = this.getGui();
         eGui.appendChild(this.eCheckedIcon);

@@ -1,4 +1,3 @@
-import {SvgFactory} from "../../svgFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {ExpressionService} from "../../valueService/expressionService";
 import {EventService} from "../../eventService";
@@ -14,16 +13,15 @@ import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import {RefSelector} from "../../widgets/componentAnnotations";
-
-let svgFactory = SvgFactory.getInstance();
+import {IAfterGuiAttachedParams} from "../../interfaces/iComponent";
 
 export interface GroupCellRendererParams extends ICellRendererParams{
     pinned:string,
     padding:number,
     suppressPadding:boolean,
-    innerRenderer:any,
     footerValueGetter:any,
     suppressCount:boolean,
+    fullWidth:boolean,
     checkbox:any,
     scope:any,
     actualValue:string
@@ -56,13 +54,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private params: GroupCellRendererParams;
 
-
     // will be true if the node was pulled down
     private draggedFromHideOpenParents: boolean;
 
     // this is normally the rowNode of this row, however when doing hideOpenParents, it will
     // be the parent who's details we are actually showing if the data was pulled down.
     private displayedGroup: RowNode;
+
+    private cellIsBlank: boolean;
 
     constructor() {
         super(GroupCellRenderer.TEMPLATE);
@@ -72,21 +71,27 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         this.params = params;
 
-        let embeddedRowMismatch = this.embeddedRowMismatch();
-        if (embeddedRowMismatch) { return; }
+        this.isEmbeddedRowMismatch();
 
+        let embeddedRowMismatch = this.isEmbeddedRowMismatch();
         //This allows for empty strings to appear as groups since
         //it will only return for null or undefined.
-        if (params.value==null) {
-            return;
-        }
+        let cellIsEmpty = params.value==null;
+
+        this.cellIsBlank = embeddedRowMismatch || cellIsEmpty;
+
+        if (this.cellIsBlank) { return; }
 
         this.setupDragOpenParents();
-        this.setupComponents();
     }
 
-    private setupComponents(): void {
-        this.addExpandAndContract();
+    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+
+        if (this.cellIsBlank) { return; }
+
+        // hack to get renderer working with slick and non-slick
+        let eGridCell = this.params.eGridCell ? this.params.eGridCell : (<any>params).eGridCell;
+        this.addExpandAndContract(eGridCell);
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.addPadding();
@@ -95,7 +100,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     // if we are doing embedded full width rows, we only show the renderer when
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
-    private embeddedRowMismatch(): boolean {
+    private isEmbeddedRowMismatch(): boolean {
         if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
 
             let pinnedLeftCell = this.params.pinned === Column.PINNED_LEFT;
@@ -170,9 +175,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private addValueElement(): void {
         let params = this.params;
         let rowNode = this.displayedGroup;
-        if (params.innerRenderer) {
-            this.createFromInnerRenderer();
-        } else if (rowNode.footer) {
+        if (rowNode.footer) {
             this.createFooterCell();
         } else if (rowNode.group) {
             this.createGroupCell();
@@ -180,15 +183,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         } else {
             this.createLeafCell();
         }
-    }
-
-    private createFromInnerRenderer(): void {
-        let innerComponent = this.cellRendererService.useCellRenderer(this.params.innerRenderer, this.eValue, this.params);
-        this.addDestroyFunc( ()=> {
-            if (innerComponent && innerComponent.destroy) {
-                innerComponent.destroy();
-            }
-        });
     }
 
     private createFooterCell(): void {
@@ -222,28 +216,12 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let groupName = this.params.value;
         let valueFormatted = this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName);
 
-        let groupedColCellRenderer = columnToUse.getCellRenderer();
+        params.valueFormatted = valueFormatted;
+        if (params.fullWidth == true){
+            this.cellRendererService.useFullWidthGroupRowInnerCellRenderer(this.eValue, params);
+        }else{
+            this.cellRendererService.useInnerCellRenderer(this.params, columnToUse.getColDef(), this.eValue, params);
 
-        // reuse the params but change the value
-        if (typeof groupedColCellRenderer === 'function') {
-            // reuse the params but change the value
-            params.value = groupName;
-            params.valueFormatted = valueFormatted;
-
-            let colDefOfGroupedCol = columnToUse.getColDef();
-            let groupedColCellRendererParams = colDefOfGroupedCol ? colDefOfGroupedCol.cellRendererParams : null;
-
-            // because we are talking about the different column to the original, any user provided params
-            // are for the wrong column, so need to copy them in again.
-            if (groupedColCellRendererParams) {
-                _.assign(params, groupedColCellRenderer);
-            }
-            this.cellRendererService.useCellRenderer(colDefOfGroupedCol.cellRenderer, this.eValue, params);
-        } else {
-            let valueToRender = _.exists(valueFormatted) ? valueFormatted : groupName;
-            if (_.exists(valueToRender) && valueToRender !== '') {
-                this.eValue.appendChild(document.createTextNode(valueToRender));
-            }
         }
     }
 
@@ -297,11 +275,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
-    private addExpandAndContract(): void {
+    private addExpandAndContract(eGroupCell: HTMLElement): void {
         let params = this.params;
-        let eGroupCell: HTMLElement = params.eGridCell;
-        let eExpandedIcon = _.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null, svgFactory.createGroupContractedIcon);
-        let eContractedIcon = _.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedIcon);
+        let eExpandedIcon = _.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
+        let eContractedIcon = _.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
 

@@ -2,7 +2,7 @@
 import {BeanStub} from "../context/beanStub";
 import {IRowModel, RowBounds} from "../interfaces/iRowModel";
 import {EventService} from "../eventService";
-import {Events, ModelUpdatedEvent} from "../events";
+import {Events, ModelUpdatedEvent, PaginationChangedEvent} from "../events";
 import {RowNode} from "../entities/rowNode";
 import {_} from "../utils";
 import {Bean, Autowired, PostConstruct} from "../context/context";
@@ -10,6 +10,8 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
 import {SelectionController} from "../selectionController";
+import {ColumnApi} from "../columnController/columnController";
+import {GridApi} from "../gridApi";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
@@ -63,6 +65,8 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private active: boolean;
 
@@ -92,16 +96,33 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         return this.rowModel.isLastRowFound();
     }
 
-    private onModelUpdated(refreshEvent?: ModelUpdatedEvent): void {
+    private onModelUpdated(modelUpdatedEvent?: ModelUpdatedEvent): void {
         this.setIndexesAndBounds();
-        this.eventService.dispatchEvent(Events.EVENT_PAGINATION_CHANGED, refreshEvent);
+        let paginationChangedEvent: PaginationChangedEvent = {
+            type: Events.EVENT_PAGINATION_CHANGED,
+            animate: modelUpdatedEvent ? modelUpdatedEvent.animate : false,
+            newData: modelUpdatedEvent ? modelUpdatedEvent.newData : false,
+            newPage: modelUpdatedEvent ? modelUpdatedEvent.newPage : false,
+            keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(paginationChangedEvent);
     }
 
     public goToPage(page: number): void {
         if (!this.active) { return; }
         if (this.currentPage === page) { return; }
         this.currentPage = page;
-        let event: ModelUpdatedEvent = { animate: false, keepRenderedRows: false, newData: false, newPage: true };
+        let event: ModelUpdatedEvent = {
+            type: Events.EVENT_MODEL_UPDATED,
+            animate: false,
+            keepRenderedRows: false,
+            newData: false,
+            newPage: true,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
         this.onModelUpdated(event);
     }
 

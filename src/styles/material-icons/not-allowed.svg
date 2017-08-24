@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.1 (44463) - http://www.bohemiancoding.com/sketch -->
+    <title>not-allowed</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Material-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="not-allowed" fill-rule="nonzero" fill="#000000">
+            <path d="M9,1.5 C4.86,1.5 1.5,4.86 1.5,9 C1.5,13.14 4.86,16.5 9,16.5 C13.14,16.5 16.5,13.14 16.5,9 C16.5,4.86 13.14,1.5 9,1.5 Z M3,9 C3,5.685 5.685,3 9,3 C10.3875,3 11.6625,3.4725 12.675,4.2675 L4.2675,12.675 C3.4725,11.6625 3,10.3875 3,9 Z M9,15 C7.6125,15 6.3375,14.5275 5.325,13.7325 L13.7325,5.325 C14.5275,6.3375 15,7.6125 15,9 C15,12.315 12.315,15 9,15 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

@@ -3,11 +3,9 @@ import {Qualifier, PostConstruct, Bean, Autowired, PreDestroy} from "../context/
 import {Column} from "../entities/column";
 import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {SvgFactory} from "../svgFactory";
 import {DragService, DragListenerParams} from "./dragService";
 import {ColumnController} from "../columnController/columnController";
-
-let svgFactory = SvgFactory.getInstance();
+import {Environment} from "../environment";
 
 export enum DragSourceType { ToolPanel, HeaderCell }
 
@@ -64,6 +62,7 @@ export class DragAndDropService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
+    @Autowired('environment') private environment: Environment;
     @Autowired('columnController') private columnController: ColumnController;
 
     public static ICON_PINNED = 'pinned';
@@ -112,16 +111,16 @@ export class DragAndDropService {
 
     @PostConstruct
     private init(): void {
-        this.ePinnedIcon = _.createIcon('columnMovePin', this.gridOptionsWrapper, null, svgFactory.createPinIcon);
-        this.ePlusIcon = _.createIcon('columnMoveAdd', this.gridOptionsWrapper, null, svgFactory.createPlusIcon);
-        this.eHiddenIcon = _.createIcon('columnMoveHide', this.gridOptionsWrapper, null, svgFactory.createColumnHiddenIcon);
-        this.eMoveIcon = _.createIcon('columnMoveMove', this.gridOptionsWrapper, null, svgFactory.createMoveIcon);
-        this.eLeftIcon = _.createIcon('columnMoveLeft', this.gridOptionsWrapper, null, svgFactory.createLeftIcon);
-        this.eRightIcon = _.createIcon('columnMoveRight', this.gridOptionsWrapper, null, svgFactory.createRightIcon);
-        this.eGroupIcon = _.createIcon('columnMoveGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon);
-        this.eAggregateIcon = _.createIcon('columnMoveValue', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon);
-        this.ePivotIcon = _.createIcon('columnMovePivot', this.gridOptionsWrapper, null, svgFactory.createPivotIcon);
-        this.eDropNotAllowedIcon = _.createIcon('dropNotAllowed', this.gridOptionsWrapper, null, svgFactory.createDropNotAllowedIcon);
+        this.ePinnedIcon = _.createIcon('columnMovePin', this.gridOptionsWrapper, null);
+        this.ePlusIcon = _.createIcon('columnMoveAdd', this.gridOptionsWrapper, null);
+        this.eHiddenIcon = _.createIcon('columnMoveHide', this.gridOptionsWrapper, null);
+        this.eMoveIcon = _.createIcon('columnMoveMove', this.gridOptionsWrapper, null);
+        this.eLeftIcon = _.createIcon('columnMoveLeft', this.gridOptionsWrapper, null);
+        this.eRightIcon = _.createIcon('columnMoveRight', this.gridOptionsWrapper, null);
+        this.eGroupIcon = _.createIcon('columnMoveGroup', this.gridOptionsWrapper, null);
+        this.eAggregateIcon = _.createIcon('columnMoveValue', this.gridOptionsWrapper, null);
+        this.ePivotIcon = _.createIcon('columnMovePivot', this.gridOptionsWrapper, null);
+        this.eDropNotAllowedIcon = _.createIcon('dropNotAllowed', this.gridOptionsWrapper, null);
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -353,6 +352,7 @@ export class DragAndDropService {
 
     private createGhost(): void {
         this.eGhost = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
+        this.eGhost.classList.add(this.environment.getTheme());
         this.eGhostIcon = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-icon');
 
         this.setGhostIcon(null);

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46 (44423) - http://www.bohemiancoding.com/sketch -->
+    <title>arrows</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon" transform="translate(-2.000000, -2.000000)" fill-rule="nonzero" fill="#000000">
+            <g id="arrows" transform="translate(2.000000, 2.000000)">
+                <polygon id="Shape" points="16 6 14.59 7.41 16.17 9 4 9 4 11 16.17 11 14.59 12.59 16 14 20 10"></polygon>
+                <polygon id="Shape" transform="translate(8.000000, 10.000000) scale(-1, 1) translate(-8.000000, -10.000000) " points="12 6 10.59 7.41 12.17 9 0 9 0 11 12.17 11 10.59 12.59 12 14 16 10"></polygon>
+                <polygon id="Shape" transform="translate(10.000000, 12.000000) scale(-1, 1) rotate(90.000000) translate(-10.000000, -12.000000) " points="14 8 12.59 9.41 14.17 11 2 11 2 13 14.17 13 12.59 14.59 14 16 18 12"></polygon>
+                <polygon id="Shape" transform="translate(10.000000, 8.000000) scale(-1, 1) rotate(-90.000000) translate(-10.000000, -8.000000) " points="14 4 12.59 5.41 14.17 7 2 7 2 9 14.17 9 12.59 10.59 14 12 18 8"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

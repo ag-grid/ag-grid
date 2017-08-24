@@ -2,11 +2,13 @@ import {Utils as _} from "../../utils";
 import {RowNode} from "../../entities/rowNode";
 import {Autowired, Context, PostConstruct, Qualifier} from "../../context/context";
 import {EventService} from "../../eventService";
-import {Events} from "../../events";
+import {Events, ItemsAddedEvent, RowDataUpdatedEvent} from "../../events";
 import {Logger, LoggerFactory} from "../../logger";
 import {IDatasource} from "../iDatasource";
 import {InfiniteBlock} from "./infiniteBlock";
 import {RowNodeCache, RowNodeCacheParams} from "../cache/rowNodeCache";
+import {GridApi} from "../../gridApi";
+import {ColumnApi} from "../../columnController/columnController";
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {
     datasource: IDatasource;
@@ -16,6 +18,8 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     constructor(params: InfiniteCacheParams) {
         super(params);
@@ -100,7 +104,14 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
         }
 
         this.onCacheUpdated();
-        this.eventService.dispatchEvent(Events.EVENT_ITEMS_ADDED, newNodes);
+
+        let event: RowDataUpdatedEvent = {
+            type: Events.EVENT_ROW_DATA_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,

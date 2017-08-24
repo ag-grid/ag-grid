@@ -1,18 +1,12 @@
 import {GridOptionsWrapper} from '../gridOptionsWrapper';
 import {Logger, LoggerFactory} from '../logger';
 import {ColumnUtils} from '../columnController/columnUtils';
-import {AbstractColDef} from "../entities/colDef";
+import {AbstractColDef, ColDef, ColGroupDef} from "../entities/colDef";
 import {ColumnKeyCreator} from "./columnKeyCreator";
 import {OriginalColumnGroupChild} from "../entities/originalColumnGroupChild";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
-import {ColGroupDef} from "../entities/colDef";
-import {ColDef} from "../entities/colDef";
 import {Column} from "../entities/column";
-import {Bean} from "../context/context";
-import {Qualifier} from "../context/context";
-import {Autowired} from "../context/context";
-import {Context} from "../context/context";
-import {ColumnGroupChild} from "../entities/columnGroupChild";
+import {Autowired, Bean, Context, Qualifier} from "../context/context";
 import {Utils as _} from "../utils";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
@@ -43,7 +37,7 @@ export class BalancedColumnTreeBuilder {
 
         this.columnUtils.depthFirstOriginalTreeSearch(balancedTree, (child: OriginalColumnGroupChild)=> {
             if (child instanceof OriginalColumnGroup) {
-                (<OriginalColumnGroup>child).calculateExpandable();
+                (<OriginalColumnGroup>child).setupExpandable();
             }
         });
 
@@ -73,6 +67,7 @@ export class BalancedColumnTreeBuilder {
                     let newColId = columnKeyCreator.getUniqueKey(null, null);
                     let colGroupDefMerged = this.createMergedColGroupDef(null);
                     let paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true);
+                    this.context.wireBean(paddedGroup);
                     paddedGroup.setChildren([newChild]);
                     newChild = paddedGroup;
                 }
@@ -125,6 +120,7 @@ export class BalancedColumnTreeBuilder {
 
         let groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
         let originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false);
+        this.context.wireBean(originalGroup);
         let children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, columnKeyCreator, primaryColumns);
 
         originalGroup.setChildren(children);
@@ -146,15 +142,7 @@ export class BalancedColumnTreeBuilder {
         _.assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
 
         if(colDef.type) {
-            let typeNames = colDef.type.split(',');
-            typeNames.forEach((t) => {
-                let typeColDef = this.gridOptionsWrapper.getColumnTypes()[t.trim()];
-                if(typeColDef) {
-                    _.assign(colDefMerged, typeColDef);
-                } else {
-                    console.warn("ag-grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
-                }
-            });
+            this.assignColumnTypes(colDef, colDefMerged);
         }
 
         _.assign(colDefMerged, colDef);
@@ -167,6 +155,33 @@ export class BalancedColumnTreeBuilder {
         this.context.wireBean(column);
 
         return column;
+    }
+
+    private assignColumnTypes(colDef: ColDef, colDefMerged: ColDef) {
+        let typeKeys: string[];
+
+        if (colDef.type instanceof Array) {
+            let invalidArray = colDef.type.some(a => typeof a !== 'string');
+            if (invalidArray) {
+                console.warn("ag-grid: if colDef.type is supplied an array it should be of type 'string[]'");
+            } else {
+                typeKeys = colDef.type;
+            }
+        } else if (typeof colDef.type === 'string') {
+            typeKeys = colDef.type.split(',');
+        } else {
+            console.warn("ag-grid: colDef.type should be of type 'string' | 'string[]'");
+            return;
+        }
+
+        typeKeys.forEach((t) => {
+            let typeColDef = this.gridOptionsWrapper.getColumnTypes()[t.trim()];
+            if (typeColDef) {
+                _.assign(colDefMerged, typeColDef);
+            } else {
+                console.warn("ag-grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
+            }
+        });
     }
 
     private checkForDeprecatedItems(colDef: AbstractColDef) {

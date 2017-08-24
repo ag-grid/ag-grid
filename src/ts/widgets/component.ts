@@ -1,25 +1,41 @@
-import {Utils as _} from "../utils";
+import {NumberSequence, Utils as _} from "../utils";
 import {Context} from "../context/context";
 import {BeanStub} from "../context/beanStub";
-import {IComponent} from "../interfaces/iComponent";
+import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
+import {AgEvent} from "../events";
 
-export class Component extends BeanStub implements IComponent<any> {
+let compIdSequence = new NumberSequence();
+
+export interface VisibleChangedEvent extends AgEvent {
+    visible: boolean;
+}
+
+export class Component extends BeanStub implements IComponent<any, IAfterGuiAttachedParams> {
 
     public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
 
     private eGui: HTMLElement;
 
-    private childComponents: IComponent<any>[] = [];
+    private childComponents: IComponent<any, IAfterGuiAttachedParams>[] = [];
 
     private annotatedEventListeners: any[] = [];
 
     private visible = true;
+
+    // unique id for this row component. this is used for getting a reference to the HTML dom.
+    // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
+    // around as we create a new rowComp instance for the same row node).
+    private compId = compIdSequence.next();
 
     constructor(template?: string) {
         super();
         if (template) {
             this.setTemplate(template);
         }
+    }
+
+    public getCompId(): number {
+        return this.compId;
     }
 
     public instantiate(context: Context): void {
@@ -172,12 +188,12 @@ export class Component extends BeanStub implements IComponent<any> {
         return <HTMLInputElement> this.eGui.querySelector(cssSelector);
     }
 
-    public appendChild(newChild: Node | IComponent<any>): void {
+    public appendChild(newChild: Node | IComponent<any, IAfterGuiAttachedParams>): void {
         if (_.isNodeOrElement(newChild)) {
             this.eGui.appendChild(<Node>newChild);
         } else {
-            let childComponent = <IComponent<any>>newChild;
-            this.eGui.appendChild(childComponent.getGui());
+            let childComponent = <IComponent<any, IAfterGuiAttachedParams>>newChild;
+            this.eGui.appendChild(_.ensureElement(childComponent.getGui()));
             this.childComponents.push(childComponent);
         }
     }
@@ -197,7 +213,11 @@ export class Component extends BeanStub implements IComponent<any> {
         if (visible !== this.visible) {
             this.visible = visible;
             _.addOrRemoveCssClass(this.eGui, 'ag-hidden', !visible);
-            this.dispatchEvent(Component.EVENT_VISIBLE_CHANGED, {visible: this.visible});
+            let event: VisibleChangedEvent = {
+                type: Component.EVENT_VISIBLE_CHANGED,
+                visible: this.visible
+            };
+            this.dispatchEvent(event);
         }
     }
 
