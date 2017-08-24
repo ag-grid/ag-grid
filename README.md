@@ -6,7 +6,7 @@ This project contains the Aurelia Component for use with ag-Grid.
 Usage
 ==============
 
-Please refer to www.ag-grid.com for full documentation on ag-Grid and Aurelia integration. Also take a look a the provided examples at https://github.com/ceolter/ag-grid-aurelia-example.
+Please refer to www.ag-grid.com for full documentation on ag-Grid and Aurelia integration. Also take a look a the provided examples at https://github.com/ag-grid/ag-grid-aurelia-example.
 
 Frameworks Supported
 ====================
