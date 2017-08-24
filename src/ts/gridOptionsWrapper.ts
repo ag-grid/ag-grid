@@ -377,7 +377,7 @@ export class GridOptionsWrapper {
         if (typeof this.gridOptions.headerHeight === 'number') {
             return this.gridOptions.headerHeight;
         } else {
-            return this.specialForMaterialNext(25, 8 * 7);
+            return this.specialForNewMaterial(25, 8 * 7);
         }
     }
 
@@ -385,7 +385,7 @@ export class GridOptionsWrapper {
         if (typeof this.gridOptions.floatingFiltersHeight === 'number') {
             return this.gridOptions.floatingFiltersHeight;
         } else {
-            return this.specialForMaterialNext(25, 8 * 7);
+            return this.specialForNewMaterial(25, 8 * 7);
         }
     }
 
@@ -645,15 +645,15 @@ export class GridOptionsWrapper {
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones 
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    private specialForMaterialNext(defaultValue: number, materialNextValue: number): number {
-            if (this.environment.getTheme() == "ag-material-next") {
-                return materialNextValue;
+    private specialForNewMaterial(defaultValue: number, materialValue: number): number {
+            if (this.environment.getTheme() == "ag-theme-material") {
+                return materialValue;
             } else {
                 return defaultValue;
             }
     }
 
     private getDefaultRowHeight() {
-        return this.specialForMaterialNext(DEFAULT_ROW_HEIGHT, 8 * 6);
+        return this.specialForNewMaterial(DEFAULT_ROW_HEIGHT, 8 * 6);
     }
 }

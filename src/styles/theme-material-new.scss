@@ -150,7 +150,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     text-indent: 100%;
     overflow: hidden;
 }
-.ag-material-next {
+
+.ag-theme-material {
     font: $ag-mat-font-weight $ag-mat-font-size $ag-mat-font;
     color: $ag-mat-foreground;
     background-color: $ag-mat-background;

@@ -9,5 +9,5 @@ require('./dist/styles/theme-blue.css');
 require('./dist/styles/theme-dark.css');
 require('./dist/styles/theme-fresh.css');
 require('./dist/styles/theme-material.css');
-require('./dist/styles/theme-material-next.css');
+require('./dist/styles/theme-material-new.css');
 require('./dist/styles/theme-bootstrap.css');
