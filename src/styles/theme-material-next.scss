@@ -790,16 +790,18 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 ////////////////////////////////////////
     .ag-selection-checkbox, .ag-group-expanded, .ag-group-contracted {
         span {
-            float: left;
-            height: 100%;
             margin-right: $cell-horizontal-padding;
         }
+    }
+
+    .ag-selection-checkbox span {
+        position: relative;
+        top: $ag-mat-grid-size / 2;
     }
 
     .ag-group-expanded {
         .ag-icon-contracted {
             @include icon-background('tree-open');
-            height: 100%;
         }
     }
 
@@ -879,6 +881,13 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         float: left;
     }
 
+
+    @for $level from 1 through 20 {
+        .ag-row-level-#{$level} > .ag-cell:first-child > span:first-child {
+            padding-left: $level * ($ag-mat-icon-size + $ag-mat-grid-size * 3) !important;
+        }
+    }
+    
 
 ////////////////////////////////////////
 // Right-To-Left
@@ -1042,6 +1051,5 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
                 height: 100%;
             }
         }
-
     }
 }
