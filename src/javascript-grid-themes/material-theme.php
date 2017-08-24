@@ -9,9 +9,38 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="material-theme">Material Theme</h2>
+    <h2 id="material-theme">Material Theme<sup class=new>new</sup></h2>
 
-    The Material Theme is one of the four themes supplied with ag-Grid.
+    <p>
+        The Material Next theme is available from <strong>version 13.0</strong> onwards. 
+        To comply with the <a href="https://material.io/guidelines/components/data-tables.html#">material design data table guidelines</a>, 
+        the theme uses different spacing and icon set compared to the other available themes. 
+    </p>
+
+    <p/>
+        To use the theme, add <code>ag-theme-material</code> CSS class to the DIV element on which the ag-Grid instance is instantiated.
+    <p/>
+
+    The following is an example of using the theme (using AngularJS 1.x):<br/>
+<pre>
+&lt;div ag-grid="gridOptions" class="ag-theme-material"&gt;&lt;/div&gt;
+</pre>
+
+    </p>
+
+    <div class="bigTitle" id="material-theme-example">Material Theme Example</div>
+
+    <p/>
+
+    <show-example example="example-theme-material"></show-example>
+</pre>
+
+</div>
+
+<div>
+    <h2 id="material-theme-legacy">Material Theme (legacy)</h2>
+
+    The Material Theme is one of the four original themes supplied with ag-Grid. It is deprecated in favor of the new material theme.
 
     <p/>
     <p/>

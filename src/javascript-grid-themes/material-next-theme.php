@@ -11,14 +11,22 @@ include '../documentation-main/documentation_header.php';
 
     <h2 id="material-theme">Material Next Theme</h2>
 
-    <p>The Material Next Theme is a new one.  Unlike the others, it is based on a different styling set, in order to conform more closely to the material design guidelines.,</p>
+    <p>
+        The Material Next theme is available from <strong>v13</strong> onwards. 
+        To comply with the <a href="https://material.io/guidelines/components/data-tables.html#">material design data table guidelines</a>, 
+        the theme uses different spacing and icon set compared to the other available themes.
+    </p>
 
     <p/>
+        To use the theme, add <code>ag-material-next</code> CSS class to the DIV element on which the ag-Grid instance is instantiated.
     <p/>
-    To use a theme, add the theme class name to the div element where the ag-Grid directive is attached.
-    <p/>
-    The following is an example of using the ag-material theme:<br/>
-    <pre>&lt;div ag-grid="gridOptions" class="ag-material">&lt;/div></pre>
+
+    The following is an example of using the ag-material-next theme (using AngularJS 1.x):<br/>
+
+<pre>
+&lt;div ag-grid="gridOptions" class="ag-material-next">&lt;/div>
+</pre>
+
     </p>
 
     <div class="bigTitle" id="material-theme-example">Material Next Theme Example</div>
