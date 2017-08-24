@@ -92,6 +92,10 @@ export class StatusBar extends Component {
                 let lastRow = startRowIsFirst ? endRow : startRow;
 
                 while (true) {
+
+                    let finishedAllRows = _.missing(currentRow) || lastRow.before(currentRow);
+                    if (finishedAllRows) { break; }
+
                     cellRange.columns.forEach( (column) => {
 
                         // we only want to include each cell once, in case a cell is in multiple ranges
@@ -136,10 +140,6 @@ export class StatusBar extends Component {
                         }
                         count++;
                     });
-
-                    if (currentRow.equals(lastRow)) {
-                        break;
-                    }
 
                     currentRow = this.cellNavigationService.getRowBelow(currentRow);
                 }
