@@ -15,30 +15,38 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Version 13.0.0</h2>
 
-    <h4>Bug Fixes</h4>
-    <ul>
-        <li>AG-697: Fixed an issue where export group headers was not working correctly when more than 2 groups of headers</li>
-        <li>AG-696: Fixed issue where column groups kept expand / collapse icons even when group is no longer expandable</li>
-        <li>AG-654: Fixed issue with pinning rows when pivoting</li>
-        <li>AG-615: Fixed issue when moving column groups with marry children</li>
-        <li>AG-380: Fixed an issue when using a framework like angular/react... cellRendererFramework in a column was not considered
-        when grouping by that column </li>
-        <li>AG-253: Support for innnerRendererFramework</li>
-        <li>AG-50: Support for cellRendererFramework inside filterParams</li>
-        <li>AG-688: Fixed compatibility issue with Internet Explorer 10</li>
-    </ul>
-
     <h4>Enhancements</h4>
     <ul>
-        <li>AG-634: <a href="../javascript-grid-filter-text">Text filter</a> has the parameter <code>caseSensitive</code>.
+        <li>
+            New rendering engine - now the grid works blazing fast, even on IE9 and IE10! Our tests show the grid
+            work 6 times faster. One better browsers (Chrome etc) you will notice the scrolling much smoother.
+        </li>
+        <li>
+            New material design theme (go to our <a href="../example.php">Main Demo</a> and select the material
+            theme). This is our first step towards modernising all our themes.
+        </li>
+        <li>New SVG icons for all the themes. This is in line with industry best practices.
+            The previous ones are available in the <code>src/styles/legacy</code> directory - you can <a href="https://www.ag-grid.com/javascript-grid-icons/">set them back through the API</a>.</li>
+        <li>AG-664: Added support for <a href="../javascript-grid-reference-data/">Reference Data</a> to manage
+            key / value pairs inside data.
+        </li>
+        <li>
+            <code>suppressScrollLag</code> and <code>isScrollLag</code> no longer used. The new rendering engine
+            doens't need them due to how it uses animation frames.
         </li>
         <li>AG-685: Number and Date filter have an option to configure what to do when filtering <code>null</code> values.
             See: <a href="../javascript-grid-filtering#nullFiltering">Null filtering</a></li>
         <li>AG-579: Excel an CSV export now works in all row models. If exporting outside of the in memory row model
             Only the data loaded for the currently displayed grid gets exported.</li>
         <li>The event 'itemsAdded' didn't make sense any more since introducing transaction updates in v11. So now the grid fires rowDataUpdated instead.</li>
-        <li>Theme icons have been updated. The previous ones are available in the <code>src/styles/legacy</code> directory - you can <a href="https://www.ag-grid.com/javascript-grid-icons/">set them back through the API</a>.</li>
+        <li>AG-695: The 'type' property on a ColDef now supports an array of column type keys</li>
+        <li>AG-634: <a href="../javascript-grid-filter-text">Text filter</a> has the parameter <code>caseSensitive</code>.
+        </li>
+        <li>AG-679: Improved error handling when Column Types are not correctly configured</li>
+    </ul>
 
+    <h4>Bug Fixes</h4>
+    <ul>
         <li>The HTML attribute 'row' on the row div was showing the index. It was supposed to be the row. Also row-id was
             showing the business key. To avoid confusion, move everything to dash-case (not CamelCase), the following
             are now the attributes:
@@ -50,22 +58,22 @@ include '../documentation-main/documentation_header.php';
             Similarly colId on the cell is now col-id. These fixes / breaking changes only impact your code if you were
             using these in CSS selectors outside of the grid.
         </li>
-        <li>
-            enableRowHover is now a property, instead of suppressRowHover, so it's off by default. This was for performance
-            reasons - most people had it turned on without realising and this slowed things down.
-        </li>
-        <li>
-            suppressScrollLag and isScrollLag no longer used. The new way of rendering doesn't need these.
-        </li>
-        <li>AG-664: Added support for Ref Data when using Value Handlers.
-            See the new section on <a href="../javascript-grid-reference-data">Reference Data</a>
-        </li>
-        <li>AG-695: The 'type' property on a ColDef now supports an array of column type keys</li>
-        <li>AG-679: Improved error handling when Column Types are not correctly configured</li>
+        <li>AG-697: Fixed an issue where export group headers was not working correctly when more than 2 groups of headers</li>
+        <li>AG-696: Fixed issue where column groups kept expand / collapse icons even when group is no longer expandable</li>
+        <li>AG-654: Fixed issue with pinning rows when pivoting</li>
+        <li>AG-615: Fixed issue when moving column groups with marry children</li>
+        <li>AG-380: Fixed an issue when using a framework like angular/react... cellRendererFramework in a column was not considered
+        when grouping by that column </li>
+        <li>AG-253: Support for innnerRendererFramework</li>
+        <li>AG-50: Support for cellRendererFramework inside filterParams</li>
+        <li>AG-688: Fixed compatibility issue with Internet Explorer 10</li>
     </ul>
 
     <h4>Breaking Change</h4>
-    <li>In cell renderer, the eGridDiv and eParentOfValue no longer exist in init(), instead they are in afterGuiAttached()</li>
+    <ul>
+        <li>In cell renderer, the eGridDiv and eParentOfValue no longer exist in init(), instead they are in afterGuiAttached().
+            We don't like breaking changes, however this was neccessay to allow the new rendering engine.</li>
+    </ul>
 
     <h2>Version 12.0.x</h2>
     <h3>Version 12.0.2 [26-JUL-2017]</h3>

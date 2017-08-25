@@ -29,6 +29,41 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">25th August 2017</div>
+    <div style="background-color: black; padding: 10px; position: relative;">
+        <span style="font-weight: bold; color: white; font-size: 25px; position: absolute; top: 70px; left: 110px;">
+            v13.0
+        </span>
+        <img src="../images/logo-dark-hacked.svg"
+             style="width: 100%;"/>
+    </div>
+    <br/>
+    <div>
+        Featuring:
+    </div>
+    <div>
+        <ul style="padding-left: 20px;">
+            <li>
+                Faster Rendering, 6 Times Faster on Internet Explorer!
+            </li>
+            <li>
+                SVG Icons for Themes
+            </li>
+            <li>
+                <a href="../javascript-grid-themes/material-theme.php">New Material Theme</a>
+            </li>
+            <li>
+                <a href="../javascript-grid-reference-data/">Reference Data</a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        See the <a href="../change-log/changeLogIndex.php">Change Log</a>
+        for full release details.
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header">17th August 2017</div>
     <div style="float: left; margin-right: 10px;">
         <a href="../weekly-update/20170816/">
