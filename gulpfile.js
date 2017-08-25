@@ -8,6 +8,7 @@ var clean = require('gulp-clean');
 var webpack = require('webpack');
 var webpackStream = require('webpack-stream');
 var path = require('path');
+const rename = require("gulp-rename");
 
 var headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
@@ -100,3 +101,10 @@ function webpackTask(minify, styles) {
         .pipe(header(bundleTemplate, {pkg: pkg}))
         .pipe(gulp.dest('./dist/'));
 }
+
+gulp.task('publishForCI', () => {
+    return gulp.src("./ag-grid-enterprise*.tgz")
+        .pipe(rename("ag-grid-enterprise.tgz"))
+        .pipe(gulp.dest("c:/ci/ag-grid-enterprise/"));
+
+});

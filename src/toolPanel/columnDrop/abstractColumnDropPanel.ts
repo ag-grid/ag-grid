@@ -407,7 +407,10 @@ export abstract class AbstractColumnDropPanel extends Component {
             let enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
             let charCode = enableRtl ?
                 AbstractColumnDropPanel.CHAR_LEFT_ARROW : AbstractColumnDropPanel.CHAR_RIGHT_ARROW;
+            let spanClass = enableRtl ? 'ag-left-arrow' : 'ag-right-arrow';
             let eArrow = document.createElement('span');
+
+            eArrow.className = spanClass;
             eArrow.innerHTML = charCode;
             this.getGui().appendChild(eArrow);
         }

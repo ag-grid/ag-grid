@@ -1,4 +1,4 @@
-import {Component, PostConstruct, Utils} from "ag-grid/main";
+import {Environment, Autowired, Component, PostConstruct, Utils} from "ag-grid/main";
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -22,6 +22,8 @@ export class VirtualList extends Component {
 
     private rowHeight = 20;
 
+    @Autowired('environment') private environment:  Environment;
+
     constructor() {
         super(null);
     }
@@ -33,6 +35,12 @@ export class VirtualList extends Component {
         this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
 
         this.addScrollListener();
+
+        // Material data table has strict guidelines about whitespace, and these values are different than the ones 
+        // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
+        if (this.environment.getTheme() == "ag-theme-material") {
+            this.rowHeight = 32;
+        }
     }
 
     public ensureIndexVisible(index: number): void {

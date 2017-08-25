@@ -9,7 +9,7 @@ Retention of Intellectual Property Rights for ag-Grid-Enterprise component
 1.DEFINITIONS
 
 “the Software” means the ag-Grid-Enterprise software as location the the repository
-https://github.com/ceolter/ag-grid-enterprise.
+https://github.com/ag-grid/ag-grid-enterprise.
 
 “Software Rights” means all intellectual property rights inherent in or relating to the Software,
 which include, but are not limited to, all copyright, patent rights, all rights in relation to registered
@@ -64,9 +64,9 @@ A minimal reproduce scenario using http://plnkr.co/ allows us to quickly confirm
 
 We will be insisting on a minimal reproduce scenario in order to save maintainers time and ultimately be able to fix more bugs. Interestingly, from our experience users often find coding problems themselves while preparing a minimal plunk. We understand that sometimes it might be hard to extract essentials bits of code from a larger code-base but we really need to isolate the problem before we can fix it.
 
-You can file new issues by filling out our [new issue form](https://github.com/ceolter/ag-grid-enterprise/issues/new).
+You can file new issues by filling out our [new issue form](https://github.com/ag-grid/ag-grid-enterprise/issues/new).
 
-[github]: https://github.com/ceolter/ag-grid-enterprise
+[github]: https://github.com/ag-grid/ag-grid-enterprise
 [jsfiddle]: http://jsfiddle.net
 [plunker]: http://plnkr.co/edit
 [runnable]: http://runnable.com

@@ -24,7 +24,10 @@ import {
     RowNodeBlockLoader,
     RowNodeCache,
     SortController,
-    RowBounds
+    RowBounds,
+    GridApi,
+    ColumnApi,
+    RowDataChangedEvent
 } from "ag-grid";
 import {EnterpriseCache, EnterpriseCacheParams} from "./enterpriseCache";
 
@@ -37,6 +40,8 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
 
     private rootNode: RowNode;
     private datasource: IEnterpriseDatasource;
@@ -111,9 +116,17 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         }
         this.updateRowIndexesAndBounds();
 
-        let modelUpdatedEvent = <ModelUpdatedEvent> { animate: true, keepRenderedRows: true };
+        let modelUpdatedEvent: ModelUpdatedEvent = {
+            type: Events.EVENT_MODEL_UPDATED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            newPage: false,
+            newData: false,
+            animate: true,
+            keepRenderedRows: true
+        };
 
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, modelUpdatedEvent);
+        this.eventService.dispatchEvent(modelUpdatedEvent);
     }
 
     private reset(): void {
@@ -132,12 +145,26 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
         }
 
         // this event: 1) clears selection 2) updates filters 3) shows/hides 'no rows' overlay
-        this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_CHANGED);
+        let rowDataChangedEvent: RowDataChangedEvent = {
+            type: Events.EVENT_ROW_DATA_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(rowDataChangedEvent);
 
         // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).
         // important to NOT pass in an event with keepRenderedRows or animate, as we want the renderer
         // to treat the rows as new rows, as it's all new data
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+        let modelUpdatedEvent: ModelUpdatedEvent = {
+            type: Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            animate: false,
+            keepRenderedRows: false,
+            newData: false,
+            newPage: false
+        };
+        this.eventService.dispatchEvent(modelUpdatedEvent);
     }
 
     private createNewRowNodeBlockLoader(): void {
@@ -236,8 +263,16 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
 
     private onCacheUpdated(): void {
         this.updateRowIndexesAndBounds();
-        let modelUpdatedEvent = <ModelUpdatedEvent> { animate: true, keepRenderedRows: true };
-        this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED, modelUpdatedEvent);
+        let modelUpdatedEvent: ModelUpdatedEvent = {
+            type: Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            animate: true,
+            keepRenderedRows: true,
+            newPage: false,
+            newData: false
+        };
+        this.eventService.dispatchEvent(modelUpdatedEvent);
     }
 
     public updateRowIndexesAndBounds(): void {

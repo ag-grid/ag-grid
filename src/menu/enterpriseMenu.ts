@@ -1,6 +1,5 @@
 import {
     Utils,
-    SvgFactory,
     Bean,
     IMenuFactory,
     Autowired,
@@ -15,6 +14,7 @@ import {
     TabbedLayout,
     EventService,
     TabbedItem,
+    AgEvent,
     PostConstruct
 } from "ag-grid";
 import {ColumnSelectPanel} from "../toolPanel/columnsSelect/columnSelectPanel";
@@ -22,7 +22,10 @@ import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuItemMapper} from "./menuItemMapper";
 
-let svgFactory = SvgFactory.getInstance();
+
+export interface TabSelectedEvent extends AgEvent {
+    key: string;
+}
 
 @Bean('menuFactory')
 export class EnterpriseMenuFactory implements IMenuFactory {
@@ -34,6 +37,8 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     private lastSelectedTab: string;
 
     public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent, defaultTab?:string): void {
+
+        console.log(`event = `, mouseEvent);
 
         this.showMenu(column, (menu: EnterpriseMenu)=> {
             this.popupService.positionPopupUnderMouseEvent({
@@ -197,10 +202,17 @@ export class EnterpriseMenu {
     }
 
     private isValidMenuTabItem (menuTabName:string):boolean{
-        let allItems:string[] = this.column.getMenuTabs (this.restrictTo ? this.restrictTo : EnterpriseMenu.TABS_DEFAULT);
-        let isValid:boolean = allItems.indexOf(menuTabName)> -1;
+        let isValid: boolean = true;
+        let itemsToConsider: string[] = EnterpriseMenu.TABS_DEFAULT;
 
-        if (!isValid) console.warn(`Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${allItems}]`);
+        if (this.restrictTo != null){
+            isValid = this.restrictTo.indexOf(menuTabName) > -1 ;
+            itemsToConsider = this.restrictTo;
+        }
+
+        isValid = isValid && EnterpriseMenu.TABS_DEFAULT.indexOf(menuTabName) > -1 ;
+
+        if (!isValid) console.warn(`Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${itemsToConsider}]`);
 
         return isValid;
     }
@@ -243,7 +255,11 @@ export class EnterpriseMenu {
             case this.tabItemGeneral: key = EnterpriseMenu.TAB_GENERAL; break;
         }
         if (key) {
-            this.localEventService.dispatchEvent(EnterpriseMenu.EVENT_TAB_SELECTED, {key: key});
+            let event: TabSelectedEvent = {
+                type: EnterpriseMenu.EVENT_TAB_SELECTED,
+                key: key
+            };
+            this.localEventService.dispatchEvent(event);
         }
     }
 
@@ -348,7 +364,7 @@ export class EnterpriseMenu {
         this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
-            title: Utils.createIconNoSpan('menu', this.gridOptionsWrapper, this.column, svgFactory.createMenuSvg),
+            title: Utils.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
             body: this.mainMenuList.getGui(),
             name: EnterpriseMenu.TAB_GENERAL
         };
@@ -370,7 +386,7 @@ export class EnterpriseMenu {
         }
 
         this.tabItemFilter = {
-            title: Utils.createIconNoSpan('filter', this.gridOptionsWrapper, this.column, svgFactory.createFilterSvg12),
+            title: Utils.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
             body: filterWrapper.gui,
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
@@ -390,7 +406,7 @@ export class EnterpriseMenu {
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
 
         this.tabItemColumns = {
-            title: Utils.createIconNoSpan('columns', this.gridOptionsWrapper, this.column, svgFactory.createColumnsSvg12),//createColumnsIcon(),
+            title: Utils.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),//createColumnsIcon(),
             body: eWrapperDiv,
             name: EnterpriseMenu.TAB_COLUMNS
         };

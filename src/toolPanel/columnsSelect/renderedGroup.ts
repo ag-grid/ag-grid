@@ -2,7 +2,6 @@ import {
     CssClassApplier,
     Utils,
     DragSourceType,
-    SvgFactory,
     Autowired,
     Column,
     TouchListener,
@@ -20,8 +19,6 @@ import {
     EventService,
     AgCheckbox
 } from "ag-grid/main";
-
-let svgFactory = SvgFactory.getInstance();
 
 export class RenderedGroup extends Component {
 
@@ -134,8 +131,8 @@ export class RenderedGroup extends Component {
         this.eGroupClosedIcon = this.queryForHtmlElement('#eGroupClosedIcon');
         this.eGroupOpenedIcon = this.queryForHtmlElement('#eGroupOpenedIcon');
 
-        this.eGroupClosedIcon.appendChild(Utils.createIcon('columnSelectClosed', this.gridOptionsWrapper, null, svgFactory.createFolderClosed));
-        this.eGroupOpenedIcon.appendChild(Utils.createIcon('columnSelectOpen', this.gridOptionsWrapper, null, svgFactory.createFolderOpen));
+        this.eGroupClosedIcon.appendChild(Utils.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
+        this.eGroupOpenedIcon.appendChild(Utils.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
 
         this.addDestroyableEventListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
