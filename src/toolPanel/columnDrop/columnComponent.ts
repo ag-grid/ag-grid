@@ -20,7 +20,8 @@ import {
     ColumnAggFuncChangeRequestEvent,
     ColumnApi,
     GridApi,
-    AgEvent
+    AgEvent,
+    TapEvent
 } from "ag-grid/main";
 import {VirtualList} from "../../rendering/virtualList";
 import {AggFuncService} from "../../aggregation/aggFuncService";
@@ -116,7 +117,7 @@ export class ColumnComponent extends Component {
         });
 
         let touchListener = new TouchListener(this.btRemove);
-        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, ()=> {
+        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, (event: TapEvent)=> {
             let agEvent: ColumnRemoveEvent = { type: ColumnComponent.EVENT_COLUMN_REMOVE };
             this.dispatchEvent(agEvent);
         });

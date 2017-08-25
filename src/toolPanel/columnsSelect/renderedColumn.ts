@@ -21,7 +21,8 @@ import {
     ColumnPivotChangeRequestEvent,
     ColumnValueChangeRequestEvent,
     ColumnApi,
-    GridApi
+    GridApi,
+    TapEvent
 } from "ag-grid/main";
 
 export class RenderedColumn extends Component {
