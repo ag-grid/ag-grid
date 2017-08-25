@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,6 +29,7 @@ var inMemoryNodeManager_1 = require("./inMemoryNodeManager");
 var changedPath_1 = require("./changedPath");
 var valueService_1 = require("../../valueService/valueService");
 var valueCache_1 = require("../../valueService/valueCache");
+var gridApi_1 = require("../../gridApi");
 var RecursionType;
 (function (RecursionType) {
     RecursionType[RecursionType["Normal"] = 0] = "Normal";
@@ -163,12 +164,15 @@ var InMemoryRowModel = (function () {
                 this.doRowsToDisplay();
         }
         var event = {
+            type: events_1.Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
             newData: params.newData,
             newPage: false
         };
-        this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED, event);
+        this.eventService.dispatchEvent(event);
         if (this.$scope) {
             setTimeout(function () {
                 _this.$scope.$apply();
@@ -460,7 +464,12 @@ var InMemoryRowModel = (function () {
         // - clears selection
         // - updates filters
         // - shows 'no rows' overlay if needed
-        this.eventService.dispatchEvent(events_1.Events.EVENT_ROW_DATA_CHANGED);
+        var rowDataChangedEvent = {
+            type: events_1.Events.EVENT_ROW_DATA_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(rowDataChangedEvent);
         this.refreshModel({
             step: constants_1.Constants.STEP_EVERYTHING,
             groupState: groupState,
@@ -477,19 +486,16 @@ var InMemoryRowModel = (function () {
             animate: true,
             keepEditingRows: true
         });
-        this.eventService.dispatchEvent(events_1.Events.EVENT_ROW_DATA_UPDATED);
+        var event = {
+            type: events_1.Events.EVENT_ROW_DATA_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
         return rowNodeTran;
     };
     InMemoryRowModel.prototype.doRowsToDisplay = function () {
         this.rowsToDisplay = this.flattenStage.execute({ rowNode: this.rootNode });
-    };
-    InMemoryRowModel.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {
-        // remember group state, so we can expand groups that should be expanded
-        var groupState = this.getGroupState();
-        var newNodes = this.nodeManager.insertItemsAtIndex(index, items);
-        if (!skipRefresh) {
-            this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_ADDED, newNodes, groupState);
-        }
     };
     InMemoryRowModel.prototype.onRowHeightChanged = function () {
         this.refreshModel({ step: constants_1.Constants.STEP_MAP, keepRenderedRows: true, keepEditingRows: true });
@@ -497,30 +503,6 @@ var InMemoryRowModel = (function () {
     InMemoryRowModel.prototype.resetRowHeights = function () {
         this.forEachNode(function (rowNode) { return rowNode.setRowHeight(null); });
         this.onRowHeightChanged();
-    };
-    InMemoryRowModel.prototype.removeItems = function (rowNodes, skipRefresh) {
-        var groupState = this.getGroupState();
-        var removedNodes = this.nodeManager.removeItems(rowNodes);
-        if (!skipRefresh) {
-            this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_REMOVED, removedNodes, groupState);
-        }
-    };
-    InMemoryRowModel.prototype.addItems = function (items, skipRefresh) {
-        var groupState = this.getGroupState();
-        var newNodes = this.nodeManager.addItems(items);
-        if (!skipRefresh) {
-            this.refreshAndFireEvent(events_1.Events.EVENT_ITEMS_ADDED, newNodes, groupState);
-        }
-        // if (newNodes) {
-        //     this.refreshModel({step: Constants.STEP_EVERYTHING, groupState: groupState, newRowNodes: newNodes});
-        //     this.eventService.dispatchEvent(Events.EVENT_ITEMS_ADDED, {rowNodes: newNodes})
-        // }
-    };
-    InMemoryRowModel.prototype.refreshAndFireEvent = function (eventName, rowNodes, groupState) {
-        if (rowNodes) {
-            this.refreshModel({ step: constants_1.Constants.STEP_EVERYTHING, groupState: groupState });
-            this.eventService.dispatchEvent(eventName, { rowNodes: rowNodes });
-        }
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
@@ -558,6 +540,14 @@ var InMemoryRowModel = (function () {
         context_1.Autowired('valueCache'),
         __metadata("design:type", valueCache_1.ValueCache)
     ], InMemoryRowModel.prototype, "valueCache", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], InMemoryRowModel.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], InMemoryRowModel.prototype, "gridApi", void 0);
     __decorate([
         context_1.Autowired('filterStage'),
         __metadata("design:type", Object)

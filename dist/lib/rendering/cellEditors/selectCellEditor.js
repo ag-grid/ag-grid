@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,6 +30,7 @@ var utils_1 = require("../../utils");
 var constants_1 = require("../../constants");
 var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
+var valueFormatterService_1 = require("../valueFormatterService");
 var SelectCellEditor = (function (_super) {
     __extends(SelectCellEditor, _super);
     function SelectCellEditor() {
@@ -47,7 +48,9 @@ var SelectCellEditor = (function (_super) {
         params.values.forEach(function (value) {
             var option = document.createElement('option');
             option.value = value;
-            option.text = value;
+            var valueFormatted = _this.valueFormatterService.formatValue(params.column, null, null, value);
+            var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
+            option.text = valueFormattedExits ? valueFormatted : value;
             if (params.value === value) {
                 option.selected = true;
             }
@@ -84,6 +87,10 @@ var SelectCellEditor = (function (_super) {
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], SelectCellEditor.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('valueFormatterService'),
+        __metadata("design:type", valueFormatterService_1.ValueFormatterService)
+    ], SelectCellEditor.prototype, "valueFormatterService", void 0);
     return SelectCellEditor;
 }(component_1.Component));
 exports.SelectCellEditor = SelectCellEditor;

@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
 import { ColGroupDef } from "./colDef";
 import { Column } from "./column";
@@ -14,6 +14,8 @@ export declare class ColumnGroup implements ColumnGroupChild {
     static EVENT_DISPLAYED_CHILDREN_CHANGED: string;
     static createUniqueId(groupId: string, instanceId: number): string;
     gridOptionsWrapper: GridOptionsWrapper;
+    private columnApi;
+    private gridApi;
     private children;
     private displayedChildren;
     private groupId;
@@ -33,6 +35,7 @@ export declare class ColumnGroup implements ColumnGroupChild {
     getLeft(): number;
     getOldLeft(): number;
     setLeft(left: number): void;
+    private createAgEvent(type);
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
     getGroupId(): string;

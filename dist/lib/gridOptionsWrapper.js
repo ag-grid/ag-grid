@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,6 +25,8 @@ var gridApi_1 = require("./gridApi");
 var context_1 = require("./context/context");
 var columnController_1 = require("./columnController/columnController");
 var utils_1 = require("./utils");
+var defaultColumnTypes_1 = require("./entities/defaultColumnTypes");
+var environment_1 = require("./environment");
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 var DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
@@ -70,7 +72,6 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.init = function () {
         var async = this.useAsyncEvents();
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
-        this.setupFrameworkComponents();
         if (this.isGroupSelectsChildren() && this.isSuppressParentsInRowNodes()) {
             console.warn('ag-Grid: groupSelectsChildren does not work wth suppressParentsInRowNodes, this selection method needs the part in rowNode to work');
         }
@@ -87,11 +88,6 @@ var GridOptionsWrapper = (function () {
         if (this.isGroupRemoveSingleChildren() && this.isGroupHideOpenParents()) {
             console.warn('ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don\'t ask us how to us these together on our support forum either you will get the same answer!');
         }
-    };
-    GridOptionsWrapper.prototype.setupFrameworkComponents = function () {
-        this.fullWidthCellRenderer = this.frameworkFactory.gridOptionsFullWidthCellRenderer(this.gridOptions);
-        this.groupRowRenderer = this.frameworkFactory.gridOptionsGroupRowRenderer(this.gridOptions);
-        this.groupRowInnerRenderer = this.frameworkFactory.gridOptionsGroupRowInnerRenderer(this.gridOptions);
     };
     // returns the dom data, or undefined if not found
     GridOptionsWrapper.prototype.getDomData = function (element, key) {
@@ -111,11 +107,6 @@ var GridOptionsWrapper = (function () {
         }
         domData[key] = value;
     };
-    // the cellRenderers come from the instances for this class, not from gridOptions, which allows
-    // the baseFrameworkFactory to replace with framework specific ones
-    GridOptionsWrapper.prototype.getFullWidthCellRenderer = function () { return this.fullWidthCellRenderer; };
-    GridOptionsWrapper.prototype.getGroupRowRenderer = function () { return this.groupRowRenderer; };
-    GridOptionsWrapper.prototype.getGroupRowInnerRenderer = function () { return this.groupRowInnerRenderer; };
     GridOptionsWrapper.prototype.isEnterprise = function () { return this.enterprise; };
     GridOptionsWrapper.prototype.isRowSelection = function () { return this.gridOptions.rowSelection === "single" || this.gridOptions.rowSelection === "multiple"; };
     GridOptionsWrapper.prototype.isRowDeselection = function () { return isTrue(this.gridOptions.rowDeselection); };
@@ -178,9 +169,9 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getPinnedTopRowData = function () { return this.gridOptions.pinnedTopRowData; };
     GridOptionsWrapper.prototype.getPinnedBottomRowData = function () { return this.gridOptions.pinnedBottomRowData; };
     GridOptionsWrapper.prototype.isFunctionsPassive = function () { return isTrue(this.gridOptions.functionsPassive); };
-    GridOptionsWrapper.prototype.isSuppressRowHoverClass = function () { return isTrue(this.gridOptions.suppressRowHoverClass); };
     GridOptionsWrapper.prototype.isSuppressTabbing = function () { return isTrue(this.gridOptions.suppressTabbing); };
     GridOptionsWrapper.prototype.isSuppressChangeDetection = function () { return isTrue(this.gridOptions.suppressChangeDetection); };
+    GridOptionsWrapper.prototype.isSuppressAnimationFrame = function () { return isTrue(this.gridOptions.suppressAnimationFrame); };
     GridOptionsWrapper.prototype.getQuickFilterText = function () { return this.gridOptions.quickFilterText; };
     GridOptionsWrapper.prototype.isCacheQuickFilter = function () { return isTrue(this.gridOptions.cacheQuickFilter); };
     GridOptionsWrapper.prototype.isUnSortIcon = function () { return isTrue(this.gridOptions.unSortIcon); };
@@ -229,7 +220,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isAngularCompileHeaders = function () { return isTrue(this.gridOptions.angularCompileHeaders); };
     GridOptionsWrapper.prototype.isDebug = function () { return isTrue(this.gridOptions.debug); };
     GridOptionsWrapper.prototype.getColumnDefs = function () { return this.gridOptions.columnDefs; };
-    GridOptionsWrapper.prototype.getColumnTypes = function () { return this.gridOptions.columnTypes; };
+    GridOptionsWrapper.prototype.getColumnTypes = function () { return utils_1.Utils.assign({}, this.gridOptions.columnTypes, defaultColumnTypes_1.DefaultColumnTypes); };
     GridOptionsWrapper.prototype.getDatasource = function () { return this.gridOptions.datasource; };
     GridOptionsWrapper.prototype.getViewportDatasource = function () { return this.gridOptions.viewportDatasource; };
     GridOptionsWrapper.prototype.getEnterpriseDatasource = function () { return this.gridOptions.enterpriseDatasource; };
@@ -248,7 +239,6 @@ var GridOptionsWrapper = (function () {
     // these are deprecated, should remove them when we take out server side pagination
     GridOptionsWrapper.prototype.isEnableServerSideFilter = function () { return this.gridOptions.enableServerSideFilter; };
     GridOptionsWrapper.prototype.isEnableServerSideSorting = function () { return isTrue(this.gridOptions.enableServerSideSorting); };
-    GridOptionsWrapper.prototype.isSuppressScrollLag = function () { return isTrue(this.gridOptions.suppressScrollLag); };
     GridOptionsWrapper.prototype.isSuppressMovableColumns = function () { return isTrue(this.gridOptions.suppressMovableColumns); };
     GridOptionsWrapper.prototype.isAnimateRows = function () {
         // never allow animating if enforcing the row order
@@ -265,7 +255,6 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isRememberGroupStateWhenNewData = function () { return isTrue(this.gridOptions.rememberGroupStateWhenNewData); };
     GridOptionsWrapper.prototype.getIcons = function () { return this.gridOptions.icons; };
     GridOptionsWrapper.prototype.getAggFuncs = function () { return this.gridOptions.aggFuncs; };
-    GridOptionsWrapper.prototype.getIsScrollLag = function () { return this.gridOptions.isScrollLag; };
     GridOptionsWrapper.prototype.getSortingOrder = function () { return this.gridOptions.sortingOrder; };
     GridOptionsWrapper.prototype.getAlignedGrids = function () { return this.gridOptions.alignedGrids; };
     GridOptionsWrapper.prototype.getGroupRowRendererParams = function () { return this.gridOptions.groupRowRendererParams; };
@@ -296,6 +285,7 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getProcessSecondaryColDefFunc = function () { return this.gridOptions.processSecondaryColDef; };
     GridOptionsWrapper.prototype.getProcessSecondaryColGroupDefFunc = function () { return this.gridOptions.processSecondaryColGroupDef; };
     GridOptionsWrapper.prototype.getSendToClipboardFunc = function () { return this.gridOptions.sendToClipboard; };
+    GridOptionsWrapper.prototype.getProcessRowPostCreateFunc = function () { return this.gridOptions.processRowPostCreate; };
     GridOptionsWrapper.prototype.getProcessCellForClipboardFunc = function () { return this.gridOptions.processCellForClipboard; };
     GridOptionsWrapper.prototype.getProcessCellFromClipboardFunc = function () { return this.gridOptions.processCellFromClipboard; };
     GridOptionsWrapper.prototype.getViewportRowModelPageSize = function () { return oneOrGreater(this.gridOptions.viewportRowModelPageSize, DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE); };
@@ -310,7 +300,12 @@ var GridOptionsWrapper = (function () {
         var previousValue = gridOptionsNoType[key];
         if (previousValue !== value) {
             gridOptionsNoType[key] = value;
-            this.propertyEventService.dispatchEvent(key, { currentValue: value, previousValue: previousValue });
+            var event_1 = {
+                type: key,
+                currentValue: value,
+                previousValue: previousValue
+            };
+            this.propertyEventService.dispatchEvent(event_1);
         }
     };
     GridOptionsWrapper.prototype.addEventListener = function (key, listener) {
@@ -319,18 +314,13 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.removeEventListener = function (key, listener) {
         this.propertyEventService.removeEventListener(key, listener);
     };
-    GridOptionsWrapper.prototype.executeProcessRowPostCreateFunc = function (params) {
-        if (this.gridOptions.processRowPostCreate) {
-            this.gridOptions.processRowPostCreate(params);
-        }
-    };
     // properties
     GridOptionsWrapper.prototype.getHeaderHeight = function () {
         if (typeof this.gridOptions.headerHeight === 'number') {
             return this.gridOptions.headerHeight;
         }
         else {
-            return 25;
+            return this.specialForNewMaterial(25, 8 * 7);
         }
     };
     GridOptionsWrapper.prototype.getFloatingFiltersHeight = function () {
@@ -338,7 +328,7 @@ var GridOptionsWrapper = (function () {
             return this.gridOptions.floatingFiltersHeight;
         }
         else {
-            return 20;
+            return this.specialForNewMaterial(25, 8 * 7);
         }
     };
     GridOptionsWrapper.prototype.getGroupHeaderHeight = function () {
@@ -502,13 +492,13 @@ var GridOptionsWrapper = (function () {
             console.warn('ag-grid: since version 10.1.x, use property domLayout="forPrint" instead of forPrint=true');
         }
         if (options.suppressMenuFilterPanel) {
-            console.warn("ag-grid: since version 11.0.x, use property colDef.menuTabs=['filterMenuTab'] instead of suppressMenuFilterPanel=true");
+            console.warn("ag-grid: since version 11.0.x, use property colDef.menuTabs=['generalMenuTab','columnsMenuTab'] instead of suppressMenuFilterPanel=true");
         }
         if (options.suppressMenuMainPanel) {
-            console.warn("ag-grid: since version 11.0.x, use property colDef.menuTabs=['generalMenuTab'] instead of suppressMenuMainPanel=true");
+            console.warn("ag-grid: since version 11.0.x, use property colDef.menuTabs=['filterMenuTab','columnsMenuTab'] instead of suppressMenuMainPanel=true");
         }
         if (options.suppressMenuColumnPanel) {
-            console.warn("ag-grid: since version 11.0.x, use property colDef.menuTabs=['columnsMenuTab'] instead of suppressMenuColumnPanel=true");
+            console.warn("ag-grid: since version 11.0.x, use property colDef.menuTabs=['generalMenuTab','filterMenuTab'] instead of suppressMenuColumnPanel=true");
         }
         if (options.suppressUseColIdForGroups) {
             console.warn("ag-grid: since version 11.0.x, this is not in use anymore. You should be able to remove it from your definition");
@@ -555,14 +545,14 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getRowHeightAsNumber = function () {
         var rowHeight = this.gridOptions.rowHeight;
         if (utils_1.Utils.missing(rowHeight)) {
-            return DEFAULT_ROW_HEIGHT;
+            return this.getDefaultRowHeight();
         }
         else if (this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
         }
         else {
             console.warn('ag-Grid row height must be a number if not using standard row model');
-            return DEFAULT_ROW_HEIGHT;
+            return this.getDefaultRowHeight();
         }
     };
     GridOptionsWrapper.prototype.getRowHeightForNode = function (rowNode) {
@@ -582,7 +572,7 @@ var GridOptionsWrapper = (function () {
             return this.gridOptions.rowHeight;
         }
         else {
-            return DEFAULT_ROW_HEIGHT;
+            return this.getDefaultRowHeight();
         }
     };
     GridOptionsWrapper.prototype.isDynamicRowHeight = function () {
@@ -590,6 +580,19 @@ var GridOptionsWrapper = (function () {
     };
     GridOptionsWrapper.prototype.isNumeric = function (value) {
         return !isNaN(value) && typeof value === 'number';
+    };
+    // Material data table has strict guidelines about whitespace, and these values are different than the ones 
+    // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
+    GridOptionsWrapper.prototype.specialForNewMaterial = function (defaultValue, materialValue) {
+        if (this.environment.getTheme() == "ag-theme-material") {
+            return materialValue;
+        }
+        else {
+            return defaultValue;
+        }
+    };
+    GridOptionsWrapper.prototype.getDefaultRowHeight = function () {
+        return this.specialForNewMaterial(DEFAULT_ROW_HEIGHT, 8 * 6);
     };
     GridOptionsWrapper.MIN_COL_WIDTH = 10;
     GridOptionsWrapper.PROP_HEADER_HEIGHT = 'headerHeight';
@@ -618,6 +621,18 @@ var GridOptionsWrapper = (function () {
         context_1.Autowired('frameworkFactory'),
         __metadata("design:type", Object)
     ], GridOptionsWrapper.prototype, "frameworkFactory", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], GridOptionsWrapper.prototype, "gridApi", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], GridOptionsWrapper.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('environment'),
+        __metadata("design:type", environment_1.Environment)
+    ], GridOptionsWrapper.prototype, "environment", void 0);
     __decorate([
         __param(0, context_1.Qualifier('gridApi')), __param(1, context_1.Qualifier('columnApi')),
         __metadata("design:type", Function),

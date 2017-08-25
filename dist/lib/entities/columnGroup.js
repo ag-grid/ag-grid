@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,6 +19,8 @@ var column_1 = require("./column");
 var eventService_1 = require("../eventService");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var columnController_1 = require("../columnController/columnController");
+var gridApi_1 = require("../gridApi");
 var ColumnGroup = (function () {
     function ColumnGroup(originalColumnGroup, groupId, instanceId) {
         // depends on the open/closed state of the group, only displaying columns are stored here
@@ -86,8 +88,13 @@ var ColumnGroup = (function () {
         this.oldLeft = left;
         if (this.left !== left) {
             this.left = left;
-            this.localEventService.dispatchEvent(ColumnGroup.EVENT_LEFT_CHANGED);
+            this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));
         }
+    };
+    ColumnGroup.prototype.createAgEvent = function (type) {
+        return {
+            type: type,
+        };
     };
     ColumnGroup.prototype.addEventListener = function (eventType, listener) {
         this.localEventService.addEventListener(eventType, listener);
@@ -243,7 +250,7 @@ var ColumnGroup = (function () {
                 }
             });
         }
-        this.localEventService.dispatchEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED);
+        this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
     };
     ColumnGroup.HEADER_GROUP_SHOW_OPEN = 'open';
     ColumnGroup.HEADER_GROUP_SHOW_CLOSED = 'closed';
@@ -253,6 +260,14 @@ var ColumnGroup = (function () {
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], ColumnGroup.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], ColumnGroup.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], ColumnGroup.prototype, "gridApi", void 0);
     return ColumnGroup;
 }());
 exports.ColumnGroup = ColumnGroup;

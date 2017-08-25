@@ -1,9 +1,9 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../widgets/component";
 import { DropTarget } from "../dragAndDrop/dragAndDropService";
-import { IComponent } from "../interfaces/iComponent";
+import { IAfterGuiAttachedParams, IComponent } from "../interfaces/iComponent";
 export declare enum HeaderRowType {
     COLUMN_GROUP = 0,
     COLUMN = 1,
@@ -15,7 +15,7 @@ export declare class HeaderRowComp extends Component {
     private context;
     private eventService;
     private filterManager;
-    private componentProvider;
+    private componentRecipes;
     private dept;
     private pinned;
     private headerComps;
@@ -23,7 +23,7 @@ export declare class HeaderRowComp extends Component {
     private dropTarget;
     private type;
     constructor(dept: number, type: HeaderRowType, pinned: string, eRoot: HTMLElement, dropTarget: DropTarget);
-    forEachHeaderElement(callback: (comp: IComponent<any>) => void): void;
+    forEachHeaderElement(callback: (comp: IComponent<any, IAfterGuiAttachedParams>) => void): void;
     destroy(): void;
     private removeAndDestroyChildComponents(idsToDestroy);
     private onRowHeightChanged();

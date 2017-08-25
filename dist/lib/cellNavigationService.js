@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -111,15 +111,15 @@ var CellNavigationService = (function () {
     CellNavigationService.prototype.isLastRowInContainer = function (gridRow) {
         if (gridRow.isFloatingTop()) {
             var lastTopIndex = this.pinnedRowModel.getPinnedTopRowData().length - 1;
-            return lastTopIndex === gridRow.rowIndex;
+            return lastTopIndex <= gridRow.rowIndex;
         }
         else if (gridRow.isFloatingBottom()) {
             var lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowData().length - 1;
-            return lastBottomIndex === gridRow.rowIndex;
+            return lastBottomIndex <= gridRow.rowIndex;
         }
         else {
             var lastBodyIndex = this.rowModel.getPageLastRow();
-            return lastBodyIndex === gridRow.rowIndex;
+            return lastBodyIndex <= gridRow.rowIndex;
         }
     };
     CellNavigationService.prototype.getRowAbove = function (lastRow) {

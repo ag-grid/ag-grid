@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,7 +48,9 @@ var cellNavigationService_1 = require("../cellNavigationService");
 var gridCell_1 = require("../entities/gridCell");
 var beanStub_1 = require("../context/beanStub");
 var paginationProxy_1 = require("../rowModels/paginationProxy");
+var gridApi_1 = require("../gridApi");
 var pinnedRowModel_1 = require("../rowModels/pinnedRowModel");
+var beans_1 = require("./beans");
 var RowRenderer = (function (_super) {
     __extends(RowRenderer, _super);
     function RowRenderer() {
@@ -74,10 +76,21 @@ var RowRenderer = (function (_super) {
         this.rowContainers = this.gridPanel.getRowContainers();
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.redrawAfterModelUpdate();
     };
     RowRenderer.prototype.onPageLoaded = function (refreshEvent) {
-        if (refreshEvent === void 0) { refreshEvent = { animate: false, keepRenderedRows: false, newData: false, newPage: false }; }
+        if (utils_1.Utils.missing(refreshEvent)) {
+            refreshEvent = {
+                type: events_1.Events.EVENT_MODEL_UPDATED,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                animate: false,
+                keepRenderedRows: false,
+                newData: false,
+                newPage: false
+            };
+        }
         this.onModelUpdated(refreshEvent);
     };
     RowRenderer.prototype.getAllCellsForColumn = function (column) {
@@ -85,8 +98,8 @@ var RowRenderer = (function (_super) {
         utils_1.Utils.iterateObject(this.rowCompsByIndex, callback);
         utils_1.Utils.iterateObject(this.floatingBottomRowComps, callback);
         utils_1.Utils.iterateObject(this.floatingTopRowComps, callback);
-        function callback(key, renderedRow) {
-            var eCell = renderedRow.getCellForCol(column);
+        function callback(key, rowComp) {
+            var eCell = rowComp.getCellForCol(column);
             if (eCell) {
                 eCells.push(eCell);
             }
@@ -97,12 +110,12 @@ var RowRenderer = (function (_super) {
         this.refreshFloatingRows(this.floatingTopRowComps, this.pinnedRowModel.getPinnedTopRowData(), this.rowContainers.floatingTopPinnedLeft, this.rowContainers.floatingTopPinnedRight, this.rowContainers.floatingTop, this.rowContainers.floatingTopFullWidth);
         this.refreshFloatingRows(this.floatingBottomRowComps, this.pinnedRowModel.getPinnedBottomRowData(), this.rowContainers.floatingBottomPinnedLeft, this.rowContainers.floatingBottomPinnedRight, this.rowContainers.floatingBottom, this.rowContainers.floatingBottomFullWith);
     };
-    RowRenderer.prototype.refreshFloatingRows = function (renderedRows, rowNodes, pinnedLeftContainerComp, pinnedRightContainerComp, bodyContainerComp, fullWidthContainerComp) {
+    RowRenderer.prototype.refreshFloatingRows = function (rowComps, rowNodes, pinnedLeftContainerComp, pinnedRightContainerComp, bodyContainerComp, fullWidthContainerComp) {
         var _this = this;
-        renderedRows.forEach(function (row) {
+        rowComps.forEach(function (row) {
             row.destroy();
         });
-        renderedRows.length = 0;
+        rowComps.length = 0;
         // if no cols, don't draw row - can we get rid of this???
         var columns = this.columnController.getAllDisplayedColumns();
         if (utils_1.Utils.missingOrEmpty(columns)) {
@@ -110,11 +123,12 @@ var RowRenderer = (function (_super) {
         }
         if (rowNodes) {
             rowNodes.forEach(function (node) {
-                var renderedRow = new rowComp_1.RowComp(_this.$scope, _this, bodyContainerComp, fullWidthContainerComp, pinnedLeftContainerComp, pinnedRightContainerComp, node, false, null);
-                _this.context.wireBean(renderedRow);
-                renderedRows.push(renderedRow);
+                var rowComp = new rowComp_1.RowComp(_this.$scope, bodyContainerComp, pinnedLeftContainerComp, pinnedRightContainerComp, fullWidthContainerComp, node, _this.beans, false, false);
+                rowComp.init();
+                rowComps.push(rowComp);
             });
         }
+        this.flushContainers(rowComps);
     };
     RowRenderer.prototype.onPinnedRowDataChanged = function () {
         this.redrawAfterModelUpdate();
@@ -260,8 +274,8 @@ var RowRenderer = (function (_super) {
         utils_1.Utils.iterateObject(this.floatingBottomRowComps, callback);
     };
     RowRenderer.prototype.addRenderedRowListener = function (eventName, rowIndex, callback) {
-        var renderedRow = this.rowCompsByIndex[rowIndex];
-        renderedRow.addEventListener(eventName, callback);
+        var rowComp = this.rowCompsByIndex[rowIndex];
+        rowComp.addEventListener(eventName, callback);
     };
     RowRenderer.prototype.refreshCells = function (params) {
         var _this = this;
@@ -383,7 +397,7 @@ var RowRenderer = (function (_super) {
     // 3) ensure index visible (which is a scroll)
     RowRenderer.prototype.redrawAfterScroll = function () {
         this.getLockOnRefresh();
-        this.redraw();
+        this.redraw(null, false, true);
         this.releaseLockOnRefresh();
     };
     RowRenderer.prototype.removeRowCompsNotToDraw = function (indexesToDraw) {
@@ -410,9 +424,10 @@ var RowRenderer = (function (_super) {
         indexesToDraw.sort(function (a, b) { return a - b; });
         return indexesToDraw;
     };
-    RowRenderer.prototype.redraw = function (rowsToRecycle, animate) {
+    RowRenderer.prototype.redraw = function (rowsToRecycle, animate, afterScroll) {
         var _this = this;
         if (animate === void 0) { animate = false; }
+        if (afterScroll === void 0) { afterScroll = false; }
         this.workOutFirstAndLastRowsToRender();
         // the row can already exist and be in the following:
         // rowsToRecycle -> if model change, then the index may be different, however row may
@@ -422,28 +437,62 @@ var RowRenderer = (function (_super) {
         // will end up going through each index and drawing only if the row doesn't already exist
         var indexesToDraw = this.calculateIndexesToDraw();
         this.removeRowCompsNotToDraw(indexesToDraw);
-        // we always ensure dom order for inserts, as this doesn't impact our animation. however our animation
-        // gets messed up when we rearrange the rows (for updates). so we only maintain order for updates
-        // when the user explicitly asks for it.
-        var ensureDomOrderForInsert = !this.forPrint;
-        var ensureDomOrderForUpdate = this.gridOptionsWrapper.isEnsureDomOrder() && !this.forPrint;
-        var ensureDomOrder = ensureDomOrderForInsert || ensureDomOrderForUpdate;
-        // this keeps track of the last inserted element in each container, so when rows are getting
-        // inserted or repositioned, they can be done relative to the previous DOM element
-        var previousElements = ensureDomOrder ? { eBody: null, eLeft: null, eRight: null, eFullWidth: null } : null;
         // add in new rows
         var nextVmTurnFunctions = [];
+        var rowComps = [];
         indexesToDraw.forEach(function (rowIndex) {
-            var rowComp = _this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, previousElements, ensureDomOrderForUpdate);
+            var rowComp = _this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, afterScroll);
             if (utils_1.Utils.exists(rowComp)) {
+                rowComps.push(rowComp);
                 utils_1.Utils.pushAll(nextVmTurnFunctions, rowComp.getAndClearNextVMTurnFunctions());
             }
         });
+        this.flushContainers(rowComps);
         utils_1.Utils.executeNextVMTurn(nextVmTurnFunctions);
-        this.destroyRowComps(rowsToRecycle, animate);
+        if (afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame()) {
+            this.beans.taskQueue.addP2Task(this.destroyRowComps.bind(this, rowsToRecycle, animate));
+        }
+        else {
+            this.destroyRowComps(rowsToRecycle, animate);
+        }
         this.checkAngularCompile();
     };
-    RowRenderer.prototype.createOrUpdateRowComp = function (rowIndex, rowsToRecycle, animate, previousElements, ensureDomOrderForUpdate) {
+    RowRenderer.prototype.flushContainers = function (rowComps) {
+        utils_1.Utils.iterateObject(this.rowContainers, function (key, rowContainerComp) {
+            if (rowContainerComp) {
+                rowContainerComp.flushRowTemplates();
+            }
+        });
+        rowComps.forEach(function (rowComp) { return rowComp.afterFlush(); });
+    };
+    RowRenderer.prototype.onDisplayedColumnsChanged = function () {
+        var pinningLeft = this.columnController.isPinningLeft();
+        var pinningRight = this.columnController.isPinningRight();
+        var atLeastOneChanged = this.pinningLeft !== pinningLeft || pinningRight !== this.pinningRight;
+        if (atLeastOneChanged) {
+            this.pinningLeft = pinningLeft;
+            this.pinningRight = pinningRight;
+            if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
+                this.redrawFullWidthEmbeddedRows();
+            }
+        }
+    };
+    // when embedding, what gets showed in each section depends on what is pinned. eg if embedding group expand / collapse,
+    // then it should go into the pinned left area if pinning left, or the center area if not pinning.
+    RowRenderer.prototype.redrawFullWidthEmbeddedRows = function () {
+        // if either of the pinned panels has shown / hidden, then need to redraw the fullWidth bits when
+        // embedded, as what appears in each section depends on whether we are pinned or not
+        var rowsToRemove = [];
+        this.forEachRowComp(function (id, rowComp) {
+            if (rowComp.isFullWidth()) {
+                var rowIndex = rowComp.getRowNode().rowIndex;
+                rowsToRemove.push(rowIndex.toString());
+            }
+        });
+        this.removeRowComps(rowsToRemove);
+        this.redrawAfterScroll();
+    };
+    RowRenderer.prototype.createOrUpdateRowComp = function (rowIndex, rowsToRecycle, animate, afterScroll) {
         var rowNode;
         var rowComp = this.rowCompsByIndex[rowIndex];
         // if no row comp, see if we can get it from the previous rowComps
@@ -461,7 +510,7 @@ var RowRenderer = (function (_super) {
                 rowNode = this.paginationProxy.getRow(rowIndex);
             }
             if (utils_1.Utils.exists(rowNode)) {
-                rowComp = this.createRowComp(rowNode, animate, previousElements);
+                rowComp = this.createRowComp(rowNode, animate, afterScroll);
             }
             else {
                 // this should never happen - if somehow we are trying to create
@@ -471,11 +520,8 @@ var RowRenderer = (function (_super) {
         }
         else {
             // ensure row comp is in right position in DOM
-            if (ensureDomOrderForUpdate) {
-                rowComp.ensureInDomAfter(previousElements);
-            }
+            rowComp.ensureDomOrder();
         }
-        this.updatePreviousElements(previousElements, rowComp);
         this.rowCompsByIndex[rowIndex] = rowComp;
         return rowComp;
     };
@@ -540,8 +586,14 @@ var RowRenderer = (function (_super) {
         if (firstDiffers || lastDiffers) {
             this.firstRenderedRow = newFirst;
             this.lastRenderedRow = newLast;
-            var event_1 = { firstRow: newFirst, lastRow: newLast };
-            this.eventService.dispatchEvent(events_1.Events.EVENT_VIEWPORT_CHANGED, event_1);
+            var event_1 = {
+                type: events_1.Events.EVENT_VIEWPORT_CHANGED,
+                firstRow: newFirst,
+                lastRow: newLast,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event_1);
         }
     };
     RowRenderer.prototype.getFirstVirtualRenderedRow = function () {
@@ -549,27 +601,6 @@ var RowRenderer = (function (_super) {
     };
     RowRenderer.prototype.getLastVirtualRenderedRow = function () {
         return this.lastRenderedRow;
-    };
-    RowRenderer.prototype.updatePreviousElements = function (previousElements, rowComp) {
-        if (utils_1.Utils.missing(previousElements)) {
-            return;
-        }
-        var body = rowComp.getBodyRowElement();
-        var left = rowComp.getPinnedLeftRowElement();
-        var right = rowComp.getPinnedRightRowElement();
-        var fullWidth = rowComp.getFullWidthRowElement();
-        if (body) {
-            previousElements.eBody = body;
-        }
-        if (left) {
-            previousElements.eLeft = left;
-        }
-        if (right) {
-            previousElements.eRight = right;
-        }
-        if (fullWidth) {
-            previousElements.eFullWidth = fullWidth;
-        }
     };
     // check that none of the rows to remove are editing or focused as:
     // a) if editing, we want to keep them, otherwise the user will loose the context of the edit,
@@ -595,9 +626,10 @@ var RowRenderer = (function (_super) {
         var rowNodePresent = this.paginationProxy.isRowPresent(rowNode);
         return rowNodePresent ? KEEP_ROW : REMOVE_ROW;
     };
-    RowRenderer.prototype.createRowComp = function (rowNode, animate, previousElements) {
-        var rowComp = new rowComp_1.RowComp(this.$scope, this, this.rowContainers.body, this.rowContainers.fullWidth, this.rowContainers.pinnedLeft, this.rowContainers.pinnedRight, rowNode, animate, previousElements);
-        this.context.wireBean(rowComp);
+    RowRenderer.prototype.createRowComp = function (rowNode, animate, afterScroll) {
+        var useAnimationFrameForCreate = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame();
+        var rowComp = new rowComp_1.RowComp(this.$scope, this.rowContainers.body, this.rowContainers.pinnedLeft, this.rowContainers.pinnedRight, this.rowContainers.fullWidth, rowNode, this.beans, animate, useAnimationFrameForCreate);
+        rowComp.init();
         return rowComp;
     };
     RowRenderer.prototype.getRenderedNodes = function () {
@@ -885,13 +917,25 @@ var RowRenderer = (function (_super) {
         __metadata("design:type", focusedCellController_1.FocusedCellController)
     ], RowRenderer.prototype, "focusedCellController", void 0);
     __decorate([
-        context_1.Optional('rangeController'),
-        __metadata("design:type", Object)
-    ], RowRenderer.prototype, "rangeController", void 0);
-    __decorate([
         context_1.Autowired('cellNavigationService'),
         __metadata("design:type", cellNavigationService_1.CellNavigationService)
     ], RowRenderer.prototype, "cellNavigationService", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], RowRenderer.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], RowRenderer.prototype, "gridApi", void 0);
+    __decorate([
+        context_1.Autowired('beans'),
+        __metadata("design:type", beans_1.Beans)
+    ], RowRenderer.prototype, "beans", void 0);
+    __decorate([
+        context_1.Optional('rangeController'),
+        __metadata("design:type", Object)
+    ], RowRenderer.prototype, "rangeController", void 0);
     __decorate([
         __param(0, context_1.Qualifier('loggerFactory')),
         __metadata("design:type", Function),

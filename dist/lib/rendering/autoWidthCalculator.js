@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -84,10 +84,8 @@ var AutoWidthCalculator = (function () {
     };
     AutoWidthCalculator.prototype.putRowCellsIntoDummyContainer = function (column, eDummyContainer) {
         var _this = this;
-        var eOriginalCells = this.rowRenderer.getAllCellsForColumn(column);
-        eOriginalCells.forEach(function (eCell, index) {
-            _this.cloneItemIntoDummy(eCell, eDummyContainer);
-        });
+        var eCells = this.rowRenderer.getAllCellsForColumn(column);
+        eCells.forEach(function (eCell) { return _this.cloneItemIntoDummy(eCell, eDummyContainer); });
     };
     AutoWidthCalculator.prototype.cloneItemIntoDummy = function (eCell, eDummyContainer) {
         // make a deep clone of the cell

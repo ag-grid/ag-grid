@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,6 +25,7 @@ var context_1 = require("../context/context");
 var constants_1 = require("../constants");
 var utils_1 = require("../utils");
 var valueCache_1 = require("../valueService/valueCache");
+var gridApi_1 = require("../gridApi");
 var RowNode = (function () {
     function RowNode() {
         /** Children mapped by the pivot columns */
@@ -35,8 +36,23 @@ var RowNode = (function () {
         var oldData = this.data;
         this.data = data;
         this.valueCache.onDataChanged();
-        var event = { oldData: oldData, newData: data, update: false };
-        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+        var event = this.createDataChangedEvent(data, oldData, false);
+        this.dispatchLocalEvent(event);
+    };
+    RowNode.prototype.createDataChangedEvent = function (newData, oldData, update) {
+        return {
+            type: RowNode.EVENT_DATA_CHANGED,
+            node: this,
+            oldData: oldData,
+            newData: newData,
+            update: update
+        };
+    };
+    RowNode.prototype.createLocalRowEvent = function (type) {
+        return {
+            type: type,
+            node: this
+        };
     };
     // similar to setRowData, however it is expected that the data is the same data item. this
     // is intended to be used with Redux type stores, where the whole data can be changed. we are
@@ -46,8 +62,19 @@ var RowNode = (function () {
     RowNode.prototype.updateData = function (data) {
         var oldData = this.data;
         this.data = data;
-        var event = { oldData: oldData, newData: data, update: true };
-        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+        var event = this.createDataChangedEvent(data, oldData, true);
+        this.dispatchLocalEvent(event);
+    };
+    RowNode.prototype.getRowIndexString = function () {
+        if (this.rowPinned === constants_1.Constants.PINNED_TOP) {
+            return 't-' + this.rowIndex;
+        }
+        else if (this.rowPinned === constants_1.Constants.PINNED_BOTTOM) {
+            return 'b-' + this.rowIndex;
+        }
+        else {
+            return this.rowIndex.toString();
+        }
     };
     RowNode.prototype.createDaemonNode = function () {
         var oldNode = new RowNode();
@@ -68,8 +95,8 @@ var RowNode = (function () {
         this.data = data;
         this.setId(id);
         this.selectionController.syncInRowNode(this, oldNode);
-        var event = { oldData: oldData, newData: data };
-        this.dispatchLocalEvent(RowNode.EVENT_DATA_CHANGED, event);
+        var event = this.createDataChangedEvent(data, oldData, false);
+        this.dispatchLocalEvent(event);
     };
     RowNode.prototype.setId = function (id) {
         // see if user is providing the id's
@@ -104,7 +131,7 @@ var RowNode = (function () {
         }
         this.firstChild = firstChild;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_FIRST_CHILD_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_FIRST_CHILD_CHANGED));
         }
     };
     RowNode.prototype.setLastChild = function (lastChild) {
@@ -113,7 +140,7 @@ var RowNode = (function () {
         }
         this.lastChild = lastChild;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_LAST_CHILD_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_LAST_CHILD_CHANGED));
         }
     };
     RowNode.prototype.setChildIndex = function (childIndex) {
@@ -122,7 +149,7 @@ var RowNode = (function () {
         }
         this.childIndex = childIndex;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_CHILD_INDEX_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_CHILD_INDEX_CHANGED));
         }
     };
     RowNode.prototype.setRowTop = function (rowTop) {
@@ -131,7 +158,7 @@ var RowNode = (function () {
         }
         this.rowTop = rowTop;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_TOP_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_TOP_CHANGED));
         }
     };
     RowNode.prototype.setAllChildrenCount = function (allChildrenCount) {
@@ -140,19 +167,19 @@ var RowNode = (function () {
         }
         this.allChildrenCount = allChildrenCount;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED));
         }
     };
     RowNode.prototype.setRowHeight = function (rowHeight) {
         this.rowHeight = rowHeight;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_HEIGHT_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HEIGHT_CHANGED));
         }
     };
     RowNode.prototype.setRowIndex = function (rowIndex) {
         this.rowIndex = rowIndex;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_ROW_INDEX_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_INDEX_CHANGED));
         }
     };
     RowNode.prototype.setUiLevel = function (uiLevel) {
@@ -161,7 +188,7 @@ var RowNode = (function () {
         }
         this.uiLevel = uiLevel;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_UI_LEVEL_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_UI_LEVEL_CHANGED));
         }
     };
     RowNode.prototype.setExpanded = function (expanded) {
@@ -170,14 +197,27 @@ var RowNode = (function () {
         }
         this.expanded = expanded;
         if (this.eventService) {
-            this.eventService.dispatchEvent(RowNode.EVENT_EXPANDED_CHANGED);
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
-        var event = { node: this };
-        this.mainEventService.dispatchEvent(events_1.Events.EVENT_ROW_GROUP_OPENED, event);
+        var event = this.createGlobalRowEvent(events_1.Events.EVENT_ROW_GROUP_OPENED);
+        this.mainEventService.dispatchEvent(event);
     };
-    RowNode.prototype.dispatchLocalEvent = function (eventName, event) {
+    RowNode.prototype.createGlobalRowEvent = function (type) {
+        var event = {
+            type: type,
+            node: this,
+            data: this.data,
+            rowIndex: this.rowIndex,
+            rowPinned: this.rowPinned,
+            context: this.gridOptionsWrapper.getContext(),
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
+        };
+        return event;
+    };
+    RowNode.prototype.dispatchLocalEvent = function (event) {
         if (this.eventService) {
-            this.eventService.dispatchEvent(eventName, event);
+            this.eventService.dispatchEvent(event);
         }
     };
     // we also allow editing the value via the editors. when it is done via
@@ -214,8 +254,13 @@ var RowNode = (function () {
         }
     };
     RowNode.prototype.dispatchCellChangedEvent = function (column, newValue) {
-        var event = { column: column, newValue: newValue };
-        this.dispatchLocalEvent(RowNode.EVENT_CELL_CHANGED, event);
+        var cellChangedEvent = {
+            type: RowNode.EVENT_CELL_CHANGED,
+            node: this,
+            column: column,
+            newValue: newValue
+        };
+        this.dispatchLocalEvent(cellChangedEvent);
     };
     RowNode.prototype.resetQuickFilterAggregateText = function () {
         this.quickFilterAggregateText = null;
@@ -365,7 +410,12 @@ var RowNode = (function () {
                 // fire events
                 // this is the very end of the 'action node', so we are finished all the updates,
                 // include any parent / child changes that this method caused
-                this.mainEventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
+                var event_1 = {
+                    type: events_1.Events.EVENT_SELECTION_CHANGED,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+                this.mainEventService.dispatchEvent(event_1);
             }
             // so if user next does shift-select, we know where to start the selection from
             if (newValue) {
@@ -394,7 +444,12 @@ var RowNode = (function () {
         if (groupsSelectChildren) {
             this.calculatedSelectedForAllGroupNodes();
         }
-        this.mainEventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
+        var event = {
+            type: events_1.Events.EVENT_SELECTION_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.mainEventService.dispatchEvent(event);
         return updatedCount;
     };
     RowNode.prototype.isParentOfNode = function (potentialParent) {
@@ -428,10 +483,10 @@ var RowNode = (function () {
         }
         this.selected = newValue;
         if (this.eventService) {
-            this.dispatchLocalEvent(RowNode.EVENT_ROW_SELECTED);
+            this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
         }
-        var event = { node: this };
-        this.mainEventService.dispatchEvent(events_1.Events.EVENT_ROW_SELECTED, event);
+        var event = this.createGlobalRowEvent(events_1.Events.EVENT_ROW_SELECTED);
+        this.mainEventService.dispatchEvent(event);
         return true;
     };
     RowNode.prototype.selectChildNodes = function (newValue, groupSelectsFiltered) {
@@ -459,10 +514,10 @@ var RowNode = (function () {
         this.eventService.removeEventListener(eventType, listener);
     };
     RowNode.prototype.onMouseEnter = function () {
-        this.dispatchLocalEvent(RowNode.EVENT_MOUSE_ENTER);
+        this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_MOUSE_ENTER));
     };
     RowNode.prototype.onMouseLeave = function () {
-        this.dispatchLocalEvent(RowNode.EVENT_MOUSE_LEAVE);
+        this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_MOUSE_LEAVE));
     };
     RowNode.prototype.getFirstChildOfFirstChild = function (rowGroupColumn) {
         var currentRowNode = this;
@@ -533,6 +588,14 @@ var RowNode = (function () {
         context_1.Autowired('valueCache'),
         __metadata("design:type", valueCache_1.ValueCache)
     ], RowNode.prototype, "valueCache", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], RowNode.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], RowNode.prototype, "gridApi", void 0);
     return RowNode;
 }());
 exports.RowNode = RowNode;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,13 +28,13 @@ var BeanStub = (function () {
             this.localEventService.removeEventListener(eventType, listener);
         }
     };
-    BeanStub.prototype.dispatchEventAsync = function (eventType, event) {
+    BeanStub.prototype.dispatchEventAsync = function (event) {
         var _this = this;
-        setTimeout(function () { return _this.dispatchEvent(eventType, event); }, 0);
+        setTimeout(function () { return _this.dispatchEvent(event); }, 0);
     };
-    BeanStub.prototype.dispatchEvent = function (eventType, event) {
+    BeanStub.prototype.dispatchEvent = function (event) {
         if (this.localEventService) {
-            this.localEventService.dispatchEvent(eventType, event);
+            this.localEventService.dispatchEvent(event);
         }
     };
     BeanStub.prototype.addDestroyableEventListener = function (eElement, event, listener) {

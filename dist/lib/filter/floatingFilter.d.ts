@@ -1,10 +1,10 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { SerializedTextFilter } from "./textFilter";
 import { SerializedDateFilter } from "./dateFilter";
 import { SerializedNumberFilter } from "./numberFilter";
-import { IComponent } from "../interfaces/iComponent";
+import { IAfterGuiAttachedParams, IComponent } from "../interfaces/iComponent";
 import { Component } from "../widgets/component";
 import { Column } from "../entities/column";
 export interface FloatingFilterChange {
@@ -19,7 +19,7 @@ export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
 export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
     onParentModelChanged(parentModel: M): void;
 }
-export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> extends IFloatingFilter<M, F, P>, IComponent<P> {
+export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> extends IFloatingFilter<M, F, P>, IComponent<P, IAfterGuiAttachedParams> {
 }
 export interface BaseFloatingFilterChange<M> extends FloatingFilterChange {
     model: M;
@@ -43,7 +43,7 @@ export declare class TextFloatingFilterComp extends InputTextFloatingFilterComp<
     asParentModel(): SerializedTextFilter;
 }
 export declare class DateFloatingFilterComp extends Component implements IFloatingFilter<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>, IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>> {
-    private componentProvider;
+    private componentRecipes;
     private dateComponent;
     onFloatingFilterChanged: (change: BaseFloatingFilterChange<SerializedDateFilter>) => void;
     currentParentModel: () => SerializedDateFilter;

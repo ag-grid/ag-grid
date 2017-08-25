@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,8 +30,6 @@ var componentAnnotations_1 = require("./componentAnnotations");
 var utils_1 = require("../utils");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var svgFactory_1 = require("../svgFactory");
-var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var AgCheckbox = (function (_super) {
     __extends(AgCheckbox, _super);
     function AgCheckbox() {
@@ -58,14 +56,14 @@ var AgCheckbox = (function (_super) {
         utils_1.Utils.removeAllChildren(this.eUnchecked);
         utils_1.Utils.removeAllChildren(this.eIndeterminate);
         if (this.readOnly) {
-            this.eChecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedReadOnlyIcon));
-            this.eUnchecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedReadOnlyIcon));
-            this.eIndeterminate.appendChild(utils_1.Utils.createIconNoSpan('checkboxIndeterminateReadOnly', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateReadOnlyIcon));
+            this.eChecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null));
+            this.eUnchecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null));
+            this.eIndeterminate.appendChild(utils_1.Utils.createIconNoSpan('checkboxIndeterminateReadOnly', this.gridOptionsWrapper, null));
         }
         else {
-            this.eChecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxCheckedIcon));
-            this.eUnchecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null, svgFactory.createCheckboxUncheckedIcon));
-            this.eIndeterminate.appendChild(utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null, svgFactory.createCheckboxIndeterminateIcon));
+            this.eChecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null));
+            this.eUnchecked.appendChild(utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null));
+            this.eIndeterminate.appendChild(utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null));
         }
     };
     AgCheckbox.prototype.onClick = function () {
@@ -97,7 +95,11 @@ var AgCheckbox = (function (_super) {
     AgCheckbox.prototype.toggle = function () {
         var nextValue = this.getNextValue();
         if (this.passive) {
-            this.dispatchEvent(AgCheckbox.EVENT_CHANGED, { selected: nextValue });
+            var event_1 = {
+                type: AgCheckbox.EVENT_CHANGED,
+                selected: nextValue
+            };
+            this.dispatchEvent(event_1);
         }
         else {
             this.setSelected(nextValue);
@@ -117,7 +119,11 @@ var AgCheckbox = (function (_super) {
             this.selected = undefined;
         }
         this.updateIcons();
-        this.dispatchEvent(AgCheckbox.EVENT_CHANGED, { selected: this.selected });
+        var event = {
+            type: AgCheckbox.EVENT_CHANGED,
+            selected: this.selected
+        };
+        this.dispatchEvent(event);
     };
     AgCheckbox.prototype.updateIcons = function () {
         utils_1.Utils.setVisible(this.eChecked, this.selected === true);

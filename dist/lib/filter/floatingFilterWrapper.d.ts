@@ -1,10 +1,10 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
 import { IFloatingFilterParams, IFloatingFilterComp, FloatingFilterChange } from "./floatingFilter";
 import { Component } from "../widgets/component";
-import { IComponent } from "../interfaces/iComponent";
+import { IAfterGuiAttachedParams, IComponent } from "../interfaces/iComponent";
 export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
     column: Column;
     floatingFilterComp: IFloatingFilterComp<M, F, P>;
@@ -13,10 +13,11 @@ export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange,
 export interface IFloatingFilterWrapper<M> {
     onParentModelChanged(parentModel: M): void;
 }
-export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P> {
+export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P, IAfterGuiAttachedParams> {
 }
 export declare abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends Component implements IFloatingFilterWrapperComp<M, F, PC, P> {
     private context;
+    private beans;
     column: Column;
     init(params: P): void;
     abstract onParentModelChanged(parentModel: M): void;

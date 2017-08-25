@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -66,7 +66,8 @@ var StandardMenuFactory = (function () {
         positionCallback(eMenu);
         if (filterWrapper.filter.afterGuiAttached) {
             var params = {
-                hidePopup: hidePopup
+                hidePopup: hidePopup,
+                eComponent: filterWrapper.gui
             };
             filterWrapper.filter.afterGuiAttached(params);
         }

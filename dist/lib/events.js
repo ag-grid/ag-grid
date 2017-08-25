@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,7 +41,7 @@ var Events = (function () {
     Events.EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
     /** The client has set new data into the grid */
     Events.EVENT_ROW_DATA_CHANGED = 'rowDataChanged';
-    /** The client has set new data into the grid */
+    /** The client has updated data for the grid */
     Events.EVENT_ROW_DATA_UPDATED = 'rowDataUpdated';
     /** The client has set new floating data into the grid */
     Events.EVENT_PINNED_ROW_DATA_CHANGED = 'pinnedRowDataChanged';
@@ -59,7 +59,6 @@ var Events = (function () {
     Events.EVENT_SELECTION_CHANGED = 'selectionChanged';
     Events.EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
     Events.EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
-    Events.EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
     /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */
     Events.EVENT_FILTER_CHANGED = 'filterChanged';
     /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
@@ -72,7 +71,7 @@ var Events = (function () {
     /** Gets called once after the grid has finished initialising. */
     Events.EVENT_GRID_READY = 'gridReady';
     /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
-     * changed, so always filling the space it was given.  */
+     * changed, so always filling the space it was given. */
     Events.EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
     /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
     Events.EVENT_VIEWPORT_CHANGED = 'viewportChanged';
@@ -84,21 +83,22 @@ var Events = (function () {
     Events.EVENT_ROW_EDITING_STOPPED = 'rowEditingStopped';
     Events.EVENT_CELL_EDITING_STARTED = 'cellEditingStarted';
     Events.EVENT_CELL_EDITING_STOPPED = 'cellEditingStopped';
-    /** Client added a new row. */
-    Events.EVENT_ITEMS_ADDED = 'itemsAdded';
-    /** Client removed a row. */
-    Events.EVENT_ITEMS_REMOVED = 'itemsRemoved';
     /** Main body of grid has scrolled, either horizontally or vertically */
     Events.EVENT_BODY_SCROLL = 'bodyScroll';
-    /** All items from here down are used internally by the grid, not intended for external use. */
-    Events.EVENT_FLASH_CELLS = 'flashCells';
-    /** All the events from here down are experimental, should not be documented or used by ag-Grid customers */
+    /** The displayed page for pagination has changed. For example the data was filtered or sorted,
+     * or the user has moved to a different page. */
     Events.EVENT_PAGINATION_CHANGED = 'paginationChanged';
+    /** Only used by React, Angular 2+, Web Components, Aurelia and VueJS ag-Grid components
+     * (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
+     * to bound properties, this event fires after the grid has finished processing the change. */
+    Events.EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
+    /** All items from here down are used internally by the grid, not intended for external use. */
+    // not documented, either experimental, or we just don't want users using an ddepending on them
     Events.EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
-    // not documented, as it's experimental, don't want people with dependencies on this
     Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
     Events.EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
-    Events.EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
+    Events.EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
+    Events.EVENT_FLASH_CELLS = 'flashCells';
     // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
     // to design these better around server side functions and then release to general public when fully working with
     // all the row models.

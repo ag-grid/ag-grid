@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -142,8 +142,13 @@ var RowNodeBlock = (function (_super) {
     };
     RowNodeBlock.prototype.pageLoadFailed = function () {
         this.state = RowNodeBlock.STATE_FAILED;
-        var event = { success: false, page: this };
-        this.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
+        var event = {
+            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
+            success: false,
+            page: this,
+            lastRow: null
+        };
+        this.dispatchEvent(event);
     };
     RowNodeBlock.prototype.populateWithRowData = function (rows) {
         var _this = this;
@@ -178,8 +183,13 @@ var RowNodeBlock = (function (_super) {
         }
         lastRow = utils_1.Utils.cleanNumber(lastRow);
         // check here if lastrow should be set
-        var event = { success: true, page: this, lastRow: lastRow };
-        this.dispatchEvent(RowNodeBlock.EVENT_LOAD_COMPLETE, event);
+        var event = {
+            type: RowNodeBlock.EVENT_LOAD_COMPLETE,
+            success: true,
+            page: this,
+            lastRow: lastRow
+        };
+        this.dispatchEvent(event);
     };
     RowNodeBlock.EVENT_LOAD_COMPLETE = 'loadComplete';
     RowNodeBlock.STATE_DIRTY = 'dirty';

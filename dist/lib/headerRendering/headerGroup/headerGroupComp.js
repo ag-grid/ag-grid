@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,7 +26,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../widgets/component");
-var svgFactory_1 = require("../../svgFactory");
 var utils_1 = require("../../utils");
 var columnController_1 = require("../../columnController/columnController");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
@@ -34,7 +33,6 @@ var context_1 = require("../../context/context");
 var touchListener_1 = require("../../widgets/touchListener");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var originalColumnGroup_1 = require("../../entities/originalColumnGroup");
-var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var HeaderGroupComp = (function (_super) {
     __extends(HeaderGroupComp, _super);
     function HeaderGroupComp() {
@@ -44,20 +42,17 @@ var HeaderGroupComp = (function (_super) {
         this.params = params;
         this.setupLabel();
         this.addGroupExpandIcon();
-        if (this.params.columnGroup.isExpandable()) {
-            this.setupExpandIcons();
-        }
-        else {
-            this.removeExpandIcons();
-        }
+        this.setupExpandIcons();
     };
     HeaderGroupComp.prototype.setupExpandIcons = function () {
-        this.addInIcon('columnGroupOpened', 'agOpened', svgFactory.createGroupExpandedIcon);
-        this.addInIcon('columnGroupClosed', 'agClosed', svgFactory.createGroupContractedIcon);
+        this.addInIcon('columnGroupOpened', 'agOpened');
+        this.addInIcon('columnGroupClosed', 'agClosed');
         this.addTouchAndClickListeners(this.eCloseIcon);
         this.addTouchAndClickListeners(this.eOpenIcon);
-        this.updateIconVisibilty();
-        this.addDestroyableEventListener(this.params.columnGroup.getOriginalColumnGroup(), originalColumnGroup_1.OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibilty.bind(this));
+        this.updateIconVisibility();
+        var originalColumnGroup = this.params.columnGroup.getOriginalColumnGroup();
+        this.addDestroyableEventListener(originalColumnGroup, originalColumnGroup_1.OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
+        this.addDestroyableEventListener(originalColumnGroup, originalColumnGroup_1.OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
     };
     HeaderGroupComp.prototype.addTouchAndClickListeners = function (eElement) {
         var _this = this;
@@ -70,17 +65,20 @@ var HeaderGroupComp = (function (_super) {
         this.addDestroyFunc(function () { return touchListener.destroy(); });
         this.addDestroyableEventListener(eElement, 'click', expandAction);
     };
-    HeaderGroupComp.prototype.updateIconVisibilty = function () {
-        var expanded = this.params.columnGroup.isExpanded();
-        utils_1.Utils.setVisible(this.eOpenIcon, !expanded);
-        utils_1.Utils.setVisible(this.eCloseIcon, expanded);
+    HeaderGroupComp.prototype.updateIconVisibility = function () {
+        var columnGroup = this.params.columnGroup;
+        if (columnGroup.isExpandable()) {
+            var expanded = this.params.columnGroup.isExpanded();
+            utils_1.Utils.setVisible(this.eOpenIcon, !expanded);
+            utils_1.Utils.setVisible(this.eCloseIcon, expanded);
+        }
+        else {
+            utils_1.Utils.setVisible(this.eOpenIcon, false);
+            utils_1.Utils.setVisible(this.eCloseIcon, false);
+        }
     };
-    HeaderGroupComp.prototype.removeExpandIcons = function () {
-        utils_1.Utils.setVisible(this.eOpenIcon, false);
-        utils_1.Utils.setVisible(this.eCloseIcon, false);
-    };
-    HeaderGroupComp.prototype.addInIcon = function (iconName, refName, defaultIconFactory) {
-        var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, null, defaultIconFactory);
+    HeaderGroupComp.prototype.addInIcon = function (iconName, refName) {
+        var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, null);
         this.getRefElement(refName).appendChild(eIcon);
     };
     HeaderGroupComp.prototype.addGroupExpandIcon = function () {

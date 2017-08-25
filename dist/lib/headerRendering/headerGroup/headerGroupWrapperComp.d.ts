@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
@@ -12,9 +12,10 @@ export declare class HeaderGroupWrapperComp extends Component {
     private dragService;
     private dragAndDropService;
     private context;
-    private componentProvider;
+    private componentRecipes;
     private gridApi;
     private columnApi;
+    private beans;
     private columnGroup;
     private dragSourceDropTarget;
     private pinned;

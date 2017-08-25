@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,6 +24,8 @@ var events_1 = require("../events");
 var context_3 = require("../context/context");
 var constants_1 = require("../constants");
 var utils_1 = require("../utils");
+var columnController_1 = require("../columnController/columnController");
+var gridApi_1 = require("../gridApi");
 var PinnedRowModel = (function () {
     function PinnedRowModel() {
     }
@@ -56,11 +58,21 @@ var PinnedRowModel = (function () {
     };
     PinnedRowModel.prototype.setPinnedTopRowData = function (rowData) {
         this.pinnedTopRows = this.createNodesFromData(rowData, true);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED);
+        var event = {
+            type: events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     };
     PinnedRowModel.prototype.setPinnedBottomRowData = function (rowData) {
         this.pinnedBottomRows = this.createNodesFromData(rowData, false);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED);
+        var event = {
+            type: events_1.Events.EVENT_PINNED_ROW_DATA_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     };
     PinnedRowModel.prototype.createNodesFromData = function (allData, isTop) {
         var _this = this;
@@ -138,6 +150,14 @@ var PinnedRowModel = (function () {
         context_2.Autowired('context'),
         __metadata("design:type", context_1.Context)
     ], PinnedRowModel.prototype, "context", void 0);
+    __decorate([
+        context_2.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], PinnedRowModel.prototype, "columnApi", void 0);
+    __decorate([
+        context_2.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], PinnedRowModel.prototype, "gridApi", void 0);
     __decorate([
         context_3.PostConstruct,
         __metadata("design:type", Function),

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,6 +34,8 @@ var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var gridPanel_1 = require("../gridPanel/gridPanel");
 var scrollVisibleService_1 = require("../gridPanel/scrollVisibleService");
 var selectionController_1 = require("../selectionController");
+var columnController_1 = require("../columnController/columnController");
+var gridApi_1 = require("../gridApi");
 var PaginationAutoPageSizeService = (function (_super) {
     __extends(PaginationAutoPageSizeService, _super);
     function PaginationAutoPageSizeService() {
@@ -114,9 +116,18 @@ var PaginationProxy = (function (_super) {
     PaginationProxy.prototype.isLastRowFound = function () {
         return this.rowModel.isLastRowFound();
     };
-    PaginationProxy.prototype.onModelUpdated = function (refreshEvent) {
+    PaginationProxy.prototype.onModelUpdated = function (modelUpdatedEvent) {
         this.setIndexesAndBounds();
-        this.eventService.dispatchEvent(events_1.Events.EVENT_PAGINATION_CHANGED, refreshEvent);
+        var paginationChangedEvent = {
+            type: events_1.Events.EVENT_PAGINATION_CHANGED,
+            animate: modelUpdatedEvent ? modelUpdatedEvent.animate : false,
+            newData: modelUpdatedEvent ? modelUpdatedEvent.newData : false,
+            newPage: modelUpdatedEvent ? modelUpdatedEvent.newPage : false,
+            keepRenderedRows: modelUpdatedEvent ? modelUpdatedEvent.keepRenderedRows : false,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(paginationChangedEvent);
     };
     PaginationProxy.prototype.goToPage = function (page) {
         if (!this.active) {
@@ -126,7 +137,15 @@ var PaginationProxy = (function (_super) {
             return;
         }
         this.currentPage = page;
-        var event = { animate: false, keepRenderedRows: false, newData: false, newPage: true };
+        var event = {
+            type: events_1.Events.EVENT_MODEL_UPDATED,
+            animate: false,
+            keepRenderedRows: false,
+            newData: false,
+            newPage: true,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
         this.onModelUpdated(event);
     };
     PaginationProxy.prototype.getPixelOffset = function () {
@@ -280,6 +299,14 @@ var PaginationProxy = (function (_super) {
         context_1.Autowired('selectionController'),
         __metadata("design:type", selectionController_1.SelectionController)
     ], PaginationProxy.prototype, "selectionController", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], PaginationProxy.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], PaginationProxy.prototype, "gridApi", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

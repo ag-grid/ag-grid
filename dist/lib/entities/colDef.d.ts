@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
 import { ICellEditorComp } from "../rendering/cellEditors/iCellEditor";
 import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
@@ -10,6 +10,7 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnController";
 import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp";
 import { IFloatingFilterComp } from "../filter/floatingFilter";
+import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
     /** The name to render in the column header */
@@ -59,8 +60,11 @@ export interface ColDef extends AbstractColDef {
     sortingOrder?: string[];
     /** The field of the row to get the cells data from */
     field?: string;
-    /** A comma separated list of ColumnTypes to use as a template for this ColDef */
-    type?: string;
+    /**
+     * A comma separated string or array of strings containing ColumnType keys which can be used as a template for a column.
+     * This helps to reduce duplication of properties when you have a lot of common column properties.
+     */
+    type?: string | string[];
     /** Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field 'visible' and mark it false to hide,
      *  however we want all default values to be false and we want columns to be visible by default. */
     hide?: boolean;
@@ -71,9 +75,9 @@ export interface ColDef extends AbstractColDef {
     /** Tooltip for the column header */
     headerTooltip?: string;
     /** Expression or function to get the cells value. */
-    valueGetter?: (params: ValueGetterParams) => any | string;
+    valueGetter?: ((params: ValueGetterParams) => any) | string;
     /** If not using a field, then this puts the value into the cell */
-    valueSetter?: (params: ValueSetterParams) => boolean | string;
+    valueSetter?: ((params: ValueSetterParams) => boolean) | string;
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field. */
     keyCreator?: Function;
@@ -199,11 +203,11 @@ export interface ColDef extends AbstractColDef {
     /** Callbacks for editing.See editing section for further details. */
     onCellValueChanged?: Function;
     /** Function callback, gets called when a cell is clicked. */
-    onCellClicked?: Function;
+    onCellClicked?: (event: CellClickedEvent) => void;
     /** Function callback, gets called when a cell is double clicked. */
-    onCellDoubleClicked?: Function;
+    onCellDoubleClicked?: (event: CellDoubleClickedEvent) => void;
     /** Function callback, gets called when a cell is right clicked. */
-    onCellContextMenu?: Function;
+    onCellContextMenu?: (event: CellContextMenuEvent) => void;
     /** Icons for this column. Leave blank to use default. */
     icons?: {
         [key: string]: string;
@@ -231,6 +235,9 @@ export interface ColDef extends AbstractColDef {
     floatingFilterComponentParams?: any;
     floatingFilterComponentFramework?: {
         new (): any;
+    };
+    refData?: {
+        [key: string]: string;
     };
 }
 export interface IsColumnFunc {

@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
 import { IFilterComp } from "../interfaces/iFilter";
 export declare class FilterManager {
@@ -15,7 +15,8 @@ export declare class FilterManager {
     private eventService;
     private enterprise;
     private context;
-    private componentProvider;
+    private columnApi;
+    private gridApi;
     static QUICK_FILTER_SEPARATOR: string;
     private allFilters;
     private quickFilter;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,12 +38,13 @@ var setLeftFeature_1 = require("../../rendering/features/setLeftFeature");
 var gridApi_1 = require("../../gridApi");
 var sortController_1 = require("../../sortController");
 var eventService_1 = require("../../eventService");
-var componentProvider_1 = require("../../componentProvider");
+var componentRecipes_1 = require("../../components/framework/componentRecipes");
 var agCheckbox_1 = require("../../widgets/agCheckbox");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var selectAllFeature_1 = require("./selectAllFeature");
 var events_1 = require("../../events");
 var columnHoverService_1 = require("../../rendering/columnHoverService");
+var beans_1 = require("../../rendering/beans");
 var HeaderWrapperComp = (function (_super) {
     __extends(HeaderWrapperComp, _super);
     function HeaderWrapperComp(column, eRoot, dragSourceDropTarget, pinned) {
@@ -68,13 +69,15 @@ var HeaderWrapperComp = (function (_super) {
         this.setupTooltip();
         this.setupResize();
         this.setupMenuClass();
-        this.setupMove(headerComp.getGui(), displayName);
+        this.setupMove(utils_1.Utils.ensureElement(headerComp.getGui()), displayName);
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
         this.addDestroyableEventListener(this.column, column_1.Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
-        this.addFeature(this.context, new setLeftFeature_1.SetLeftFeature(this.column, this.getGui()));
         this.addFeature(this.context, new selectAllFeature_1.SelectAllFeature(this.cbSelectAll, this.column));
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans);
+        setLeftFeature.init();
+        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
         this.addAttributes();
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     };
@@ -116,7 +119,7 @@ var HeaderWrapperComp = (function (_super) {
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
         };
-        var headerComp = this.componentProvider.newHeaderComponent(params);
+        var headerComp = this.componentRecipes.newHeaderComponent(params);
         this.appendChild(headerComp);
         return headerComp;
     };
@@ -277,13 +280,17 @@ var HeaderWrapperComp = (function (_super) {
         __metadata("design:type", eventService_1.EventService)
     ], HeaderWrapperComp.prototype, "eventService", void 0);
     __decorate([
-        context_1.Autowired('componentProvider'),
-        __metadata("design:type", componentProvider_1.ComponentProvider)
-    ], HeaderWrapperComp.prototype, "componentProvider", void 0);
+        context_1.Autowired('componentRecipes'),
+        __metadata("design:type", componentRecipes_1.ComponentRecipes)
+    ], HeaderWrapperComp.prototype, "componentRecipes", void 0);
     __decorate([
         context_1.Autowired('columnHoverService'),
         __metadata("design:type", columnHoverService_1.ColumnHoverService)
     ], HeaderWrapperComp.prototype, "columnHoverService", void 0);
+    __decorate([
+        context_1.Autowired('beans'),
+        __metadata("design:type", beans_1.Beans)
+    ], HeaderWrapperComp.prototype, "beans", void 0);
     __decorate([
         componentAnnotations_1.RefSelector('eResize'),
         __metadata("design:type", HTMLElement)

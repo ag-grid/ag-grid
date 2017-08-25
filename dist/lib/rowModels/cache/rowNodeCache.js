@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -213,7 +213,10 @@ var RowNodeCache = (function (_super) {
         if (this.isActive()) {
             // this results in both row models (infinite and enterprise) firing ModelUpdated,
             // however enterprise also updates the row indexes first
-            this.dispatchEvent(RowNodeCache.EVENT_CACHE_UPDATED);
+            var event_1 = {
+                type: RowNodeCache.EVENT_CACHE_UPDATED
+            };
+            this.dispatchEvent(event_1);
         }
     };
     RowNodeCache.prototype.purgeCache = function () {

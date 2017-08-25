@@ -1,12 +1,14 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "./entities/column";
 export declare class SortController {
     private static DEFAULT_SORTING_ORDER;
     private gridOptionsWrapper;
     private columnController;
     private eventService;
+    private columnApi;
+    private gridApi;
     progressSort(column: Column, multiSort: boolean): void;
     setSortForColumn(column: Column, sort: string, multiSort: boolean): void;
     onSortChanged(): void;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,9 +25,6 @@ var columnKeyCreator_1 = require("./columnKeyCreator");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var column_1 = require("../entities/column");
 var context_1 = require("../context/context");
-var context_2 = require("../context/context");
-var context_3 = require("../context/context");
-var context_4 = require("../context/context");
 var utils_1 = require("../utils");
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 var BalancedColumnTreeBuilder = (function () {
@@ -48,7 +45,7 @@ var BalancedColumnTreeBuilder = (function () {
         var balancedTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
         this.columnUtils.depthFirstOriginalTreeSearch(balancedTree, function (child) {
             if (child instanceof originalColumnGroup_1.OriginalColumnGroup) {
-                child.calculateExpandable();
+                child.setupExpandable();
             }
         });
         return {
@@ -74,6 +71,7 @@ var BalancedColumnTreeBuilder = (function () {
                     var newColId = columnKeyCreator.getUniqueKey(null, null);
                     var colGroupDefMerged = _this.createMergedColGroupDef(null);
                     var paddedGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, newColId, true);
+                    _this.context.wireBean(paddedGroup);
                     paddedGroup.setChildren([newChild]);
                     newChild = paddedGroup;
                 }
@@ -118,6 +116,7 @@ var BalancedColumnTreeBuilder = (function () {
         var colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         var groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
         var originalGroup = new originalColumnGroup_1.OriginalColumnGroup(colGroupDefMerged, groupId, false);
+        this.context.wireBean(originalGroup);
         var children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, columnKeyCreator, primaryColumns);
         originalGroup.setChildren(children);
         return originalGroup;
@@ -130,20 +129,10 @@ var BalancedColumnTreeBuilder = (function () {
         return colGroupDefMerged;
     };
     BalancedColumnTreeBuilder.prototype.createColumn = function (columnKeyCreator, primaryColumns, colDef) {
-        var _this = this;
         var colDefMerged = {};
         utils_1.Utils.assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
         if (colDef.type) {
-            var typeNames = colDef.type.split(',');
-            typeNames.forEach(function (t) {
-                var typeColDef = _this.gridOptionsWrapper.getColumnTypes()[t.trim()];
-                if (typeColDef) {
-                    utils_1.Utils.assign(colDefMerged, typeColDef);
-                }
-                else {
-                    console.warn("ag-grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
-                }
-            });
+            this.assignColumnTypes(colDef, colDefMerged);
         }
         utils_1.Utils.assign(colDefMerged, colDef);
         this.checkForDeprecatedItems(colDefMerged);
@@ -151,6 +140,35 @@ var BalancedColumnTreeBuilder = (function () {
         var column = new column_1.Column(colDefMerged, colId, primaryColumns);
         this.context.wireBean(column);
         return column;
+    };
+    BalancedColumnTreeBuilder.prototype.assignColumnTypes = function (colDef, colDefMerged) {
+        var _this = this;
+        var typeKeys;
+        if (colDef.type instanceof Array) {
+            var invalidArray = colDef.type.some(function (a) { return typeof a !== 'string'; });
+            if (invalidArray) {
+                console.warn("ag-grid: if colDef.type is supplied an array it should be of type 'string[]'");
+            }
+            else {
+                typeKeys = colDef.type;
+            }
+        }
+        else if (typeof colDef.type === 'string') {
+            typeKeys = colDef.type.split(',');
+        }
+        else {
+            console.warn("ag-grid: colDef.type should be of type 'string' | 'string[]'");
+            return;
+        }
+        typeKeys.forEach(function (t) {
+            var typeColDef = _this.gridOptionsWrapper.getColumnTypes()[t.trim()];
+            if (typeColDef) {
+                utils_1.Utils.assign(colDefMerged, typeColDef);
+            }
+            else {
+                console.warn("ag-grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
+            }
+        });
     };
     BalancedColumnTreeBuilder.prototype.checkForDeprecatedItems = function (colDef) {
         if (colDef) {
@@ -184,19 +202,19 @@ var BalancedColumnTreeBuilder = (function () {
         return abstractColDef.children !== undefined;
     };
     __decorate([
-        context_3.Autowired('gridOptionsWrapper'),
+        context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], BalancedColumnTreeBuilder.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_3.Autowired('columnUtils'),
+        context_1.Autowired('columnUtils'),
         __metadata("design:type", columnUtils_1.ColumnUtils)
     ], BalancedColumnTreeBuilder.prototype, "columnUtils", void 0);
     __decorate([
-        context_3.Autowired('context'),
-        __metadata("design:type", context_4.Context)
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
     ], BalancedColumnTreeBuilder.prototype, "context", void 0);
     __decorate([
-        __param(0, context_2.Qualifier('loggerFactory')),
+        __param(0, context_1.Qualifier('loggerFactory')),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [logger_1.LoggerFactory]),
         __metadata("design:returntype", void 0)

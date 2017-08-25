@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { LoggerFactory } from "./logger";
 export declare class GridCore {
     private gridOptions;
@@ -18,6 +18,8 @@ export declare class GridCore {
     private popupService;
     private focusedCellController;
     private context;
+    private columnApi;
+    private gridApi;
     private rowGroupCompFactory;
     private pivotCompFactory;
     private toolPanel;

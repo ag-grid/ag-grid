@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -193,6 +193,40 @@ var GridApi = (function () {
         }
         else {
             this.rowRenderer.redrawAfterModelUpdate();
+        }
+    };
+    GridApi.prototype.timeFullRedraw = function (count) {
+        if (count === void 0) { count = 1; }
+        var iterationCount = 0;
+        var totalProcessing = 0;
+        var totalReflow = 0;
+        var that = this;
+        doOneIteration();
+        function doOneIteration() {
+            var start = (new Date()).getTime();
+            that.rowRenderer.redrawAfterModelUpdate();
+            var endProcessing = (new Date()).getTime();
+            setTimeout(function () {
+                var endReflow = (new Date()).getTime();
+                var durationProcessing = endProcessing - start;
+                var durationReflow = endReflow - endProcessing;
+                console.log('duration:  processing = ' + durationProcessing + 'ms, reflow = ' + durationReflow + 'ms');
+                iterationCount++;
+                totalProcessing += durationProcessing;
+                totalReflow += durationReflow;
+                if (iterationCount < count) {
+                    // wait for 1s between tests
+                    setTimeout(doOneIteration, 1000);
+                }
+                else {
+                    finish();
+                }
+            }, 0);
+        }
+        function finish() {
+            console.log('tests complete. iteration count = ' + iterationCount);
+            console.log('average processing = ' + (totalProcessing / iterationCount) + 'ms');
+            console.log('average reflow = ' + (totalReflow / iterationCount) + 'ms');
         }
     };
     // *** deprecated
@@ -563,8 +597,8 @@ var GridApi = (function () {
     GridApi.prototype.removeGlobalListener = function (listener) {
         this.eventService.removeGlobalListener(listener);
     };
-    GridApi.prototype.dispatchEvent = function (eventType, event) {
-        this.eventService.dispatchEvent(eventType, event);
+    GridApi.prototype.dispatchEvent = function (event) {
+        this.eventService.dispatchEvent(event);
     };
     GridApi.prototype.destroy = function () {
         this.context.destroy();

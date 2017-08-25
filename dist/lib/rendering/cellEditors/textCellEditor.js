@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,6 +25,7 @@ var TextCellEditor = (function (_super) {
         return _super.call(this, TextCellEditor.TEMPLATE) || this;
     }
     TextCellEditor.prototype.init = function (params) {
+        this.params = params;
         var eInput = this.getGui();
         var startValue;
         // cellStartedEdit is only false if we are doing fullRow editing
@@ -39,7 +40,7 @@ var TextCellEditor = (function (_super) {
                 startValue = params.charPress;
             }
             else {
-                startValue = params.value;
+                startValue = this.getStartValue(params);
                 if (params.keyPress !== constants_1.Constants.KEY_F2) {
                     this.highlightAllOnFocus = true;
                 }
@@ -47,7 +48,7 @@ var TextCellEditor = (function (_super) {
         }
         else {
             this.focusAfterAttached = false;
-            startValue = params.value;
+            startValue = this.getStartValue(params);
         }
         if (utils_1.Utils.exists(startValue)) {
             eInput.value = startValue;
@@ -97,7 +98,11 @@ var TextCellEditor = (function (_super) {
     };
     TextCellEditor.prototype.getValue = function () {
         var eInput = this.getGui();
-        return eInput.value;
+        return this.params.parseValue(eInput.value);
+    };
+    TextCellEditor.prototype.getStartValue = function (params) {
+        var formatValue = params.useFormatter || params.column.getColDef().refData;
+        return formatValue ? params.formatValue(params.value) : params.value;
     };
     TextCellEditor.TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
     return TextCellEditor;

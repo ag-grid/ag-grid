@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,6 +21,8 @@ var utils_1 = require("../utils");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var columnController_1 = require("../columnController/columnController");
+var gridApi_1 = require("../gridApi");
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 var DragService = (function () {
@@ -73,7 +75,7 @@ var DragService = (function () {
         var reallyIncludeTouch = includeTouch && !suppressTouch;
         if (reallyIncludeTouch) {
             touchListener = this.onTouchStart.bind(this, params);
-            params.eElement.addEventListener('touchstart', touchListener, { passive: true });
+            params.eElement.addEventListener('touchstart', touchListener, { passive: false });
         }
         this.dragSources.push({
             dragSource: params,
@@ -157,7 +159,12 @@ var DragService = (function () {
             else {
                 // alert(`started`);
                 this.dragging = true;
-                this.eventService.dispatchEvent(events_1.Events.EVENT_DRAG_STARTED);
+                var event_1 = {
+                    type: events_1.Events.EVENT_DRAG_STARTED,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+                this.eventService.dispatchEvent(event_1);
                 this.currentDragParams.onDragStart(startEvent);
                 this.setNoSelectToBody(true);
             }
@@ -170,6 +177,10 @@ var DragService = (function () {
             return;
         }
         // this.___statusBar.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
+        // if we don't preview default, then the browser will try and do it's own touch stuff,
+        // like do 'back button' (chrome does this) or scroll the page (eg drag column could  be confused
+        // with scroll page in the app)
+        // touchEvent.preventDefault();
         this.onCommonMove(touch, this.touchStart);
     };
     // only gets called after a mouse down - as this is only added after mouseDown
@@ -205,7 +216,12 @@ var DragService = (function () {
         if (this.dragging) {
             this.dragging = false;
             this.currentDragParams.onDragStop(eventOrTouch);
-            this.eventService.dispatchEvent(events_1.Events.EVENT_DRAG_STOPPED);
+            var event_2 = {
+                type: events_1.Events.EVENT_DRAG_STOPPED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event_2);
         }
         this.setNoSelectToBody(false);
         this.mouseStartEvent = null;
@@ -228,6 +244,14 @@ var DragService = (function () {
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], DragService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], DragService.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], DragService.prototype, "gridApi", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

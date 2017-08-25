@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,6 +34,7 @@ var context_1 = require("./context/context");
 var focusedCellController_1 = require("./focusedCellController");
 var component_1 = require("./widgets/component");
 var paginationComp_1 = require("./rowModels/pagination/paginationComp");
+var gridApi_1 = require("./gridApi");
 var GridCore = (function () {
     function GridCore(loggerFactory) {
         this.destroyFunctions = [];
@@ -269,10 +270,13 @@ var GridCore = (function () {
         if (sizeChanged) {
             this.rowRenderer.redrawAfterScroll();
             var event_1 = {
+                type: events_1.Events.EVENT_GRID_SIZE_CHANGED,
                 clientWidth: this.eRootPanel.getGui().clientWidth,
-                clientHeight: this.eRootPanel.getGui().clientHeight
+                clientHeight: this.eRootPanel.getGui().clientHeight,
+                api: this.gridApi,
+                columnApi: this.columnApi
             };
-            this.eventService.dispatchEvent(events_1.Events.EVENT_GRID_SIZE_CHANGED, event_1);
+            this.eventService.dispatchEvent(event_1);
         }
     };
     __decorate([
@@ -335,6 +339,14 @@ var GridCore = (function () {
         context_1.Autowired('context'),
         __metadata("design:type", context_1.Context)
     ], GridCore.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], GridCore.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], GridCore.prototype, "gridApi", void 0);
     __decorate([
         context_1.Optional('rowGroupCompFactory'),
         __metadata("design:type", Object)

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40,6 +40,7 @@ var sortController_1 = require("../../sortController");
 var setLeftFeature_1 = require("../../rendering/features/setLeftFeature");
 var touchListener_1 = require("../../widgets/touchListener");
 var component_1 = require("../../widgets/component");
+var beans_1 = require("../../rendering/beans");
 var RenderedHeaderCell = (function (_super) {
     __extends(RenderedHeaderCell, _super);
     function RenderedHeaderCell(column, eRoot, dragSourceDropTarget, pinned) {
@@ -73,7 +74,9 @@ var RenderedHeaderCell = (function (_super) {
         this.setupFilterIcon();
         this.setupText();
         this.setupWidth();
-        this.addFeature(this.context, new setLeftFeature_1.SetLeftFeature(this.column, eGui));
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, eGui, this.beans);
+        setLeftFeature.init();
+        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     };
     RenderedHeaderCell.prototype.setupTooltip = function () {
         var colDef = this.column.getColDef();
@@ -210,11 +213,11 @@ var RenderedHeaderCell = (function (_super) {
             return;
         }
         var touchListener = new touchListener_1.TouchListener(this.getGui());
-        var tapListener = function () {
+        var tapListener = function (event) {
             _this.sortController.progressSort(_this.column, false);
         };
-        var longTapListener = function (touch) {
-            _this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(_this.column, touch);
+        var longTapListener = function (event) {
+            _this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(_this.column, event.touchStart);
         };
         this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, tapListener);
         this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_LONG_TAP, longTapListener);
@@ -393,6 +396,10 @@ var RenderedHeaderCell = (function (_super) {
         context_1.Autowired('$scope'),
         __metadata("design:type", Object)
     ], RenderedHeaderCell.prototype, "$scope", void 0);
+    __decorate([
+        context_1.Autowired('beans'),
+        __metadata("design:type", beans_1.Beans)
+    ], RenderedHeaderCell.prototype, "beans", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

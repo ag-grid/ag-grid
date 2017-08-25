@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,7 +37,7 @@ var utils_1 = require("../utils");
 var headerWrapperComp_1 = require("./header/headerWrapperComp");
 var headerGroupWrapperComp_1 = require("./headerGroup/headerGroupWrapperComp");
 var filterManager_1 = require("../filter/filterManager");
-var componentProvider_1 = require("../componentProvider");
+var componentRecipes_1 = require("../components/framework/componentRecipes");
 var HeaderRowType;
 (function (HeaderRowType) {
     HeaderRowType[HeaderRowType["COLUMN_GROUP"] = 0] = "COLUMN_GROUP";
@@ -72,7 +72,7 @@ var HeaderRowComp = (function (_super) {
         var _this = this;
         idsToDestroy.forEach(function (id) {
             var child = _this.headerComps[id];
-            _this.getGui().removeChild(child.getGui());
+            _this.getGui().removeChild(utils_1.Utils.assertHtmlElement(child.getGui()));
             if (child.destroy) {
                 child.destroy();
             }
@@ -165,24 +165,27 @@ var HeaderRowComp = (function (_super) {
             // if we already have this cell rendered, do nothing
             var colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
             var headerComp;
+            var eHeaderCompGui;
             if (colAlreadyInDom) {
                 utils_1.Utils.removeFromArray(currentChildIds, idOfChild);
                 headerComp = _this.headerComps[idOfChild];
+                eHeaderCompGui = utils_1.Utils.assertHtmlElement(headerComp.getGui());
                 if (ensureDomOrder) {
-                    utils_1.Utils.ensureDomOrder(eParentContainer, headerComp.getGui(), eBefore);
+                    utils_1.Utils.ensureDomOrder(eParentContainer, eHeaderCompGui, eBefore);
                 }
             }
             else {
                 headerComp = _this.createHeaderComp(child);
                 _this.headerComps[idOfChild] = headerComp;
+                eHeaderCompGui = utils_1.Utils.assertHtmlElement(headerComp.getGui());
                 if (ensureDomOrder) {
-                    utils_1.Utils.insertWithDomOrder(eParentContainer, headerComp.getGui(), eBefore);
+                    utils_1.Utils.insertWithDomOrder(eParentContainer, eHeaderCompGui, eBefore);
                 }
                 else {
-                    eParentContainer.appendChild(headerComp.getGui());
+                    eParentContainer.appendChild(eHeaderCompGui);
                 }
             }
-            eBefore = headerComp.getGui();
+            eBefore = eHeaderCompGui;
         });
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
         this.removeAndDestroyChildComponents(currentChildIds);
@@ -225,7 +228,7 @@ var HeaderRowComp = (function (_super) {
     HeaderRowComp.prototype.createFloatingFilterWrapper = function (column) {
         var _this = this;
         var floatingFilterParams = this.createFloatingFilterParams(column);
-        var floatingFilterWrapper = this.componentProvider.newFloatingFilterWrapperComponent(column, floatingFilterParams);
+        var floatingFilterWrapper = this.componentRecipes.newFloatingFilterWrapperComponent(column, floatingFilterParams);
         this.addDestroyableEventListener(column, column_1.Column.EVENT_FILTER_CHANGED, function () {
             var filterComponent = _this.filterManager.getFilterComponent(column);
             floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
@@ -296,9 +299,9 @@ var HeaderRowComp = (function (_super) {
         __metadata("design:type", filterManager_1.FilterManager)
     ], HeaderRowComp.prototype, "filterManager", void 0);
     __decorate([
-        context_1.Autowired('componentProvider'),
-        __metadata("design:type", componentProvider_1.ComponentProvider)
-    ], HeaderRowComp.prototype, "componentProvider", void 0);
+        context_1.Autowired('componentRecipes'),
+        __metadata("design:type", componentRecipes_1.ComponentRecipes)
+    ], HeaderRowComp.prototype, "componentRecipes", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

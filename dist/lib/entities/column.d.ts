@@ -1,11 +1,10 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
-import { ColDef, AbstractColDef, IAggFunc } from "./colDef";
+import { AbstractColDef, ColDef, IAggFunc } from "./colDef";
 import { RowNode } from "./rowNode";
-import { ICellRendererFunc, ICellRendererComp } from "../rendering/cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "../rendering/cellEditors/iCellEditor";
 import { IFilter } from "../interfaces/iFilter";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
@@ -30,6 +29,8 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private gridOptionsWrapper;
     private columnUtils;
     private frameworkFactory;
+    private columnApi;
+    private gridApi;
     private colDef;
     private colId;
     private actualWidth;
@@ -54,8 +55,6 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private pivotActive;
     private aggregationActive;
     private primary;
-    private cellRenderer;
-    private floatingCellRenderer;
     private cellEditor;
     private filter;
     private parent;
@@ -65,15 +64,9 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     initialise(): void;
     isEmptyGroup(): boolean;
     isRowGroupDisplayed(colId: string): boolean;
-    getCellRenderer(): {
-        new (): ICellRendererComp;
-    } | ICellRendererFunc | string;
     getCellEditor(): {
         new (): ICellEditorComp;
     } | string;
-    getFloatingCellRenderer(): {
-        new (): ICellRendererComp;
-    } | ICellRendererFunc | string;
     getFilter(): {
         new (): IFilter;
     } | string;
@@ -92,6 +85,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isResizable(): boolean;
     private isColumnFunc(rowNode, value);
     setMoving(moving: boolean): void;
+    private createColumnEvent(type);
     isMoving(): boolean;
     getSort(): string;
     setSort(sort: string): void;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -81,7 +81,7 @@ var ValueService = (function () {
         if (utils_1._.missing(data)) {
             rowNode.data = {};
         }
-        var _a = column.getColDef(), field = _a.field, newValueHandler = _a.newValueHandler, valueSetter = _a.valueSetter, valueParser = _a.valueParser;
+        var _a = column.getColDef(), field = _a.field, newValueHandler = _a.newValueHandler, valueSetter = _a.valueSetter;
         // need either a field or a newValueHandler for this to work
         if (utils_1._.missing(field) && utils_1._.missing(newValueHandler) && utils_1._.missing(valueSetter)) {
             // we don't tell user about newValueHandler, as that is deprecated
@@ -99,8 +99,7 @@ var ValueService = (function () {
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             context: this.gridOptionsWrapper.getContext()
         };
-        var parsedValue = utils_1._.exists(valueParser) ? this.expressionService.evaluate(valueParser, params) : newValue;
-        params.newValue = parsedValue;
+        params.newValue = newValue;
         var valueWasDifferent;
         if (utils_1._.exists(newValueHandler)) {
             valueWasDifferent = newValueHandler(params);
@@ -109,7 +108,7 @@ var ValueService = (function () {
             valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
         }
         else {
-            valueWasDifferent = this.setValueUsingField(data, field, parsedValue, column.isFieldContainsDots());
+            valueWasDifferent = this.setValueUsingField(data, field, newValue, column.isFieldContainsDots());
         }
         // in case user forgot to return something (possible if they are not using TypeScript
         // and just forgot, or using an old newValueHandler we didn't always expect a return
@@ -130,7 +129,23 @@ var ValueService = (function () {
         if (typeof column.getColDef().onCellValueChanged === 'function') {
             column.getColDef().onCellValueChanged(params);
         }
-        this.eventService.dispatchEvent(events_1.Events.EVENT_CELL_VALUE_CHANGED, params);
+        var event = {
+            type: events_1.Events.EVENT_CELL_VALUE_CHANGED,
+            event: null,
+            rowIndex: rowNode.rowIndex,
+            rowPinned: rowNode.rowPinned,
+            column: params.column,
+            api: params.api,
+            colDef: params.colDef,
+            columnApi: params.columnApi,
+            context: params.context,
+            data: rowNode.data,
+            node: rowNode,
+            oldValue: params.oldValue,
+            newValue: params.newValue,
+            value: params.newValue
+        };
+        this.eventService.dispatchEvent(event);
     };
     ValueService.prototype.setValueUsingField = function (data, field, newValue, isFieldContainsDots) {
         // if no '.', then it's not a deep value

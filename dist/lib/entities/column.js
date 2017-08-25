@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,6 +20,8 @@ var utils_1 = require("../utils");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var columnUtils_1 = require("../columnController/columnUtils");
+var columnController_1 = require("../columnController/columnController");
+var gridApi_1 = require("../gridApi");
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
 // This class implements both interfaces ColumnGroupChild and OriginalColumnGroupChild as the class can
@@ -50,8 +52,6 @@ var Column = (function () {
     };
     // this is done after constructor as it uses gridOptionsWrapper
     Column.prototype.initialise = function () {
-        this.floatingCellRenderer = this.frameworkFactory.colDefFloatingCellRenderer(this.colDef);
-        this.cellRenderer = this.frameworkFactory.colDefCellRenderer(this.colDef);
         this.cellEditor = this.frameworkFactory.colDefCellEditor(this.colDef);
         this.filter = this.frameworkFactory.colDefFilter(this.colDef);
         this.setPinned(this.colDef.pinned);
@@ -86,14 +86,8 @@ var Column = (function () {
         var showingThisGroup = this.colDef.showRowGroup === colId;
         return showingAllGroups || showingThisGroup;
     };
-    Column.prototype.getCellRenderer = function () {
-        return this.cellRenderer;
-    };
     Column.prototype.getCellEditor = function () {
         return this.cellEditor;
-    };
-    Column.prototype.getFloatingCellRenderer = function () {
-        return this.floatingCellRenderer;
     };
     Column.prototype.getFilter = function () {
         return this.filter;
@@ -157,8 +151,14 @@ var Column = (function () {
             this.colDef.pinnedRowCellRendererParams = colDefAny.floatingRendererParams;
         }
         if (colDefAny.floatingValueFormatter) {
-            console.warn('ag-Grid: since v11, floatingValueFormatter is now ');
+            console.warn('ag-Grid: since v11, floatingValueFormatter is now pinnedRowValueFormatter');
             this.colDef.pinnedRowValueFormatter = colDefAny.floatingValueFormatter;
+        }
+        if (colDefAny.cellFormatter) {
+            console.warn('ag-Grid: since v12, cellFormatter is now valueFormatter');
+            if (utils_1.Utils.missing(this.colDef.valueFormatter)) {
+                this.colDef.valueFormatter = colDefAny.cellFormatter;
+            }
         }
     };
     Column.prototype.addEventListener = function (eventType, listener) {
@@ -220,7 +220,16 @@ var Column = (function () {
     };
     Column.prototype.setMoving = function (moving) {
         this.moving = moving;
-        this.eventService.dispatchEvent(Column.EVENT_MOVING_CHANGED);
+        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MOVING_CHANGED));
+    };
+    Column.prototype.createColumnEvent = function (type) {
+        return {
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            type: type,
+            column: this,
+            columns: [this]
+        };
     };
     Column.prototype.isMoving = function () {
         return this.moving;
@@ -231,13 +240,13 @@ var Column = (function () {
     Column.prototype.setSort = function (sort) {
         if (this.sort !== sort) {
             this.sort = sort;
-            this.eventService.dispatchEvent(Column.EVENT_SORT_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_SORT_CHANGED));
         }
     };
     Column.prototype.setMenuVisible = function (visible) {
         if (this.menuVisible !== visible) {
             this.menuVisible = visible;
-            this.eventService.dispatchEvent(Column.EVENT_MENU_VISIBLE_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MENU_VISIBLE_CHANGED));
         }
     };
     Column.prototype.isMenuVisible = function () {
@@ -280,7 +289,7 @@ var Column = (function () {
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
-            this.eventService.dispatchEvent(Column.EVENT_LEFT_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_LEFT_CHANGED));
         }
     };
     Column.prototype.isFilterActive = function () {
@@ -289,9 +298,9 @@ var Column = (function () {
     Column.prototype.setFilterActive = function (active) {
         if (this.filterActive !== active) {
             this.filterActive = active;
-            this.eventService.dispatchEvent(Column.EVENT_FILTER_ACTIVE_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_ACTIVE_CHANGED));
         }
-        this.eventService.dispatchEvent(Column.EVENT_FILTER_CHANGED);
+        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_CHANGED));
     };
     Column.prototype.setPinned = function (pinned) {
         // pinning is not allowed when doing 'forPrint'
@@ -312,13 +321,13 @@ var Column = (function () {
     Column.prototype.setFirstRightPinned = function (firstRightPinned) {
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
-            this.eventService.dispatchEvent(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED));
         }
     };
     Column.prototype.setLastLeftPinned = function (lastLeftPinned) {
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
-            this.eventService.dispatchEvent(Column.EVENT_LAST_LEFT_PINNED_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_LAST_LEFT_PINNED_CHANGED));
         }
     };
     Column.prototype.isFirstRightPinned = function () {
@@ -343,7 +352,7 @@ var Column = (function () {
         var newValue = visible === true;
         if (this.visible !== newValue) {
             this.visible = newValue;
-            this.eventService.dispatchEvent(Column.EVENT_VISIBLE_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_VISIBLE_CHANGED));
         }
     };
     Column.prototype.isVisible = function () {
@@ -394,7 +403,7 @@ var Column = (function () {
     Column.prototype.setActualWidth = function (actualWidth) {
         if (this.actualWidth !== actualWidth) {
             this.actualWidth = actualWidth;
-            this.eventService.dispatchEvent(Column.EVENT_WIDTH_CHANGED);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_WIDTH_CHANGED));
         }
     };
     Column.prototype.isGreaterThanMax = function (width) {
@@ -417,7 +426,7 @@ var Column = (function () {
     Column.prototype.setRowGroupActive = function (rowGroup) {
         if (this.rowGroupActive !== rowGroup) {
             this.rowGroupActive = rowGroup;
-            this.eventService.dispatchEvent(Column.EVENT_ROW_GROUP_CHANGED, this);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_ROW_GROUP_CHANGED));
         }
     };
     Column.prototype.isRowGroupActive = function () {
@@ -426,7 +435,7 @@ var Column = (function () {
     Column.prototype.setPivotActive = function (pivot) {
         if (this.pivotActive !== pivot) {
             this.pivotActive = pivot;
-            this.eventService.dispatchEvent(Column.EVENT_PIVOT_CHANGED, this);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_PIVOT_CHANGED));
         }
     };
     Column.prototype.isPivotActive = function () {
@@ -441,7 +450,7 @@ var Column = (function () {
     Column.prototype.setValueActive = function (value) {
         if (this.aggregationActive !== value) {
             this.aggregationActive = value;
-            this.eventService.dispatchEvent(Column.EVENT_VALUE_CHANGED, this);
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_VALUE_CHANGED));
         }
     };
     Column.prototype.isValueActive = function () {
@@ -461,7 +470,6 @@ var Column = (function () {
         if (menuTabs == null) {
             menuTabs = defaultValues;
         }
-        ;
         return menuTabs;
     };
     // + renderedHeaderCell - for making header cell transparent when moving
@@ -504,6 +512,14 @@ var Column = (function () {
         context_1.Autowired('frameworkFactory'),
         __metadata("design:type", Object)
     ], Column.prototype, "frameworkFactory", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], Column.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], Column.prototype, "gridApi", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

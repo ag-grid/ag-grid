@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,8 +36,9 @@ var context_1 = require("../../context/context");
 var cssClassApplier_1 = require("../cssClassApplier");
 var dragAndDropService_1 = require("../../dragAndDrop/dragAndDropService");
 var setLeftFeature_1 = require("../../rendering/features/setLeftFeature");
-var componentProvider_1 = require("../../componentProvider");
 var gridApi_1 = require("../../gridApi");
+var componentRecipes_1 = require("../../components/framework/componentRecipes");
+var beans_1 = require("../../rendering/beans");
 var HeaderGroupWrapperComp = (function (_super) {
     __extends(HeaderGroupWrapperComp, _super);
     function HeaderGroupWrapperComp(columnGroup, eRoot, dragSourceDropTarget, pinned) {
@@ -56,10 +57,12 @@ var HeaderGroupWrapperComp = (function (_super) {
         var headerComponent = this.appendHeaderGroupComp(displayName);
         this.setupResize();
         this.addClasses();
-        this.setupMove(headerComponent.getGui(), displayName);
+        this.setupMove(utils_1.Utils.ensureElement(headerComponent.getGui()), displayName);
         this.setupWidth();
         this.addAttributes();
-        this.addFeature(this.context, new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getGui()));
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
+        setLeftFeature.init();
+        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     };
     HeaderGroupWrapperComp.prototype.addAttributes = function () {
         this.getGui().setAttribute("colId", this.columnGroup.getUniqueId());
@@ -76,7 +79,7 @@ var HeaderGroupWrapperComp = (function (_super) {
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
         };
-        var headerComp = this.componentProvider.newHeaderGroupComponent(params);
+        var headerComp = this.componentRecipes.newHeaderGroupComponent(params);
         this.appendChild(headerComp);
         return headerComp;
     };
@@ -305,9 +308,9 @@ var HeaderGroupWrapperComp = (function (_super) {
         __metadata("design:type", context_1.Context)
     ], HeaderGroupWrapperComp.prototype, "context", void 0);
     __decorate([
-        context_1.Autowired('componentProvider'),
-        __metadata("design:type", componentProvider_1.ComponentProvider)
-    ], HeaderGroupWrapperComp.prototype, "componentProvider", void 0);
+        context_1.Autowired('componentRecipes'),
+        __metadata("design:type", componentRecipes_1.ComponentRecipes)
+    ], HeaderGroupWrapperComp.prototype, "componentRecipes", void 0);
     __decorate([
         context_1.Autowired('gridApi'),
         __metadata("design:type", gridApi_1.GridApi)
@@ -316,6 +319,10 @@ var HeaderGroupWrapperComp = (function (_super) {
         context_1.Autowired('columnApi'),
         __metadata("design:type", columnController_1.ColumnApi)
     ], HeaderGroupWrapperComp.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('beans'),
+        __metadata("design:type", beans_1.Beans)
+    ], HeaderGroupWrapperComp.prototype, "beans", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

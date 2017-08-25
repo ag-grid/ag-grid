@@ -1,8 +1,8 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
-import { IComponent } from "../../interfaces/iComponent";
+import { IAfterGuiAttachedParams, IComponent } from "../../interfaces/iComponent";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { ColumnApi } from "../../columnController/columnController";
 import { GridApi } from "../../gridApi";
@@ -16,7 +16,7 @@ export interface IHeaderGroupParams {
 }
 export interface IHeaderGroup {
 }
-export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> {
+export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams, IAfterGuiAttachedParams> {
 }
 export declare class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private columnController;
@@ -29,9 +29,8 @@ export declare class HeaderGroupComp extends Component implements IHeaderGroupCo
     init(params: IHeaderGroupParams): void;
     private setupExpandIcons();
     private addTouchAndClickListeners(eElement);
-    private updateIconVisibilty();
-    private removeExpandIcons();
-    private addInIcon(iconName, refName, defaultIconFactory);
+    private updateIconVisibility();
+    private addInIcon(iconName, refName);
     private addGroupExpandIcon();
     private setupLabel();
 }
