@@ -74,7 +74,7 @@ The theme exposes the <code>$ag-mat-icons-path</code> variable to address that. 
 
 <h4>Replace the Entire Set</h4>
 <p>
-The easiest way to replace the entire icon set is to change the <code>$mat-icons-path</code> Scss variable to point to a directory with your set of icons.
+The easiest way to replace the entire icon set is to change the <code>$ag-mat-icons-path</code> Scss variable to point to a directory with your set of icons.
 The icons should be <strong>18x18px sized SVG</strong> files. You can check the <a href="https://github.com/ag-grid/ag-grid/tree/latest/src/styles/material-icons">full list in the GitHub repository</a>. 
 </p> 
 
