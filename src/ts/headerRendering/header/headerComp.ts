@@ -5,7 +5,7 @@ import {Autowired} from "../../context/context";
 import {IMenuFactory} from "../../interfaces/iMenuFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {SortController} from "../../sortController";
-import {TouchListener} from "../../widgets/touchListener";
+import {LongTapEvent, TouchListener} from "../../widgets/touchListener";
 import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
 import {EventService} from "../../eventService";
 import {RefSelector} from "../../widgets/componentAnnotations";
@@ -95,8 +95,8 @@ export class HeaderComp extends Component implements IHeaderComp {
         let touchListener = new TouchListener(this.getGui());
 
         if (this.params.enableMenu) {
-            let longTapListener = (touch: Touch)=> {
-                this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(this.params.column, touch);
+            let longTapListener = (event: LongTapEvent)=> {
+                this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
             };
             this.addDestroyableEventListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
         }

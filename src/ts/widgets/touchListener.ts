@@ -113,7 +113,7 @@ export class TouchListener implements IEventEmitter {
 
         if (!this.moved) {
             let event: TapEvent = {
-                type: TouchListener.EVENT_LONG_TAP,
+                type: TouchListener.EVENT_TAP,
                 touchStart: this.touchStart
             };
             this.eventService.dispatchEvent(event);

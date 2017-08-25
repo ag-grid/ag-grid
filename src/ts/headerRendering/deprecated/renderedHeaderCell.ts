@@ -12,7 +12,7 @@ import {CssClassApplier} from "../cssClassApplier";
 import {DragAndDropService, DropTarget, DragSource, DragSourceType} from "../../dragAndDrop/dragAndDropService";
 import {SortController} from "../../sortController";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
-import {TouchListener} from "../../widgets/touchListener";
+import {LongTapEvent, TapEvent, TouchListener} from "../../widgets/touchListener";
 import {Component} from "../../widgets/component";
 import {Beans} from "../../rendering/beans";
 
@@ -246,11 +246,11 @@ export class RenderedHeaderCell extends Component {
         if (this.gridOptionsWrapper.isSuppressTouch()) { return; }
 
         let touchListener = new TouchListener(this.getGui());
-        let tapListener = ()=> {
+        let tapListener = (event: TapEvent)=> {
             this.sortController.progressSort(this.column, false);
         };
-        let longTapListener = (touch: Touch)=> {
-            this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(this.column, touch);
+        let longTapListener = (event: LongTapEvent)=> {
+            this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(this.column, event.touchStart);
         };
 
         this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, tapListener);
