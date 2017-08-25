@@ -95,7 +95,10 @@ colDef.cellRenderer = function(params) {
 
 <pre>interface ICellRendererComp {
     <span class="codeComment">// Optional - Params for rendering. The same params that are passed to the cellRenderer function.</span>
-    init?(params: any): void;
+    init?(params: ICellRendererParams): void;
+
+    <span class="codeComment">// Optional - After GUI is attached to DOM, this gets called. Contains the DOM element.</span>
+    afterGuiAttached?(params: ICellRendererAfterGuiAttachedParams)
 
     <span class="codeComment">// Mandatory - Return the DOM element of your editor, this is what the grid puts into the DOM</span>
     getGui(): HTMLElement;
@@ -108,6 +111,31 @@ colDef.cellRenderer = function(params) {
     <span class="codeComment">// If you return false, the grid will remove the component from the DOM and create</span>
     <span class="codeComment">// a new component in it's place with the new values.</span>
     refresh(params: any): boolean;
+}</pre>
+
+<p>The interface for the cell renderer parameters is as follows:</p>
+<pre>interface ICellRendererParams {
+    value: any, <span class="codeComment">// value to be rendered</span>
+    valueFormatted: any, <span class="codeComment">// value to be rendered formatted</span>
+    getValue: ()=> any, <span class="codeComment">// convenience function to get most recent up to date value</span>
+    setValue: (value: any) => void, <span class="codeComment">// convenience to set the value </span>
+    formatValue: (value: any) => any, <span class="codeComment">// convenience to format a value using the columns formatter</span>
+    data: any, <span class="codeComment">// the rows data</span>
+    node: RowNode, <span class="codeComment">// row rows row node</span>
+    colDef: ColDef, <span class="codeComment">// the cells column definition</span>
+    column: Column, <span class="codeComment">// the cells column</span>
+    rowIndex: number, <span class="codeComment">// the current index of the row (this changes after filter and sort)</span>
+    api: GridApi, <span class="codeComment">// the grid API</span>
+    columnApi: ColumnApi, <span class="codeComment">// grid column API</span>
+    context: any, <span class="codeComment">// the grid's context</span>
+    refreshCell: ()=>void <span class="codeComment">// convenience function to refresh the cell</span>
+}</pre>
+
+<p>The interface for after GUI attached is as follows:</p>
+<pre>interface ICellRendererAfterGuiAttachedParams {
+    eComponent: HTMLElement, <span class="codeComment">// the DOM element for your cell renderer</span>
+    eGridCell: HTMLElement, <span class="codeComment">// the grid's cell DOM element</span>
+    eParentOfValue: HTMLElement <span class="codeComment">// the element the cell renderer is sitting directly inside</span>
 }</pre>
 
     <p>
