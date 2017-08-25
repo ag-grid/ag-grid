@@ -35,6 +35,73 @@ include '../documentation-main/documentation_header.php';
     <show-example example="example-theme-material"></show-example>
 </pre>
 
+    <h3>Including the Roboto Font</h3>
+
+    <p>The material design guidelines require the Roboto font to be used throughout the interface. The easiest way to include it in the document is by loading it from the Google CDN. 
+Put the following code in the HEAD element of your document: </p>
+
+<pre>&lt;link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"&gt;</pre>
+
+
+    <h3>Changing the Theme Primary / Secondary Colors through Scss</h3>
+
+    <p>
+    The material theme uses Scss internally, exposing several variables which control its appearance. 
+    The ones you are likely looking into changing are the primary and secondary color. The default ones are 
+    <a href="https://material.io/guidelines/style/color.html#color-color-palette">indigo-500 and pink-A200 from the Google color palette</a>, which match the default Angular Material theme.
+    </p>
+
+    <p>To change the application colors, set the variables values to your colors of choice, and include the Scss theme file after that.<p>
+
+<pre>
+// Set the colors to blue / amber
+$ag-mat-primary: #2196F3; // blue-500
+$ag-mat-accent: #FFD740; // amber-A200
+
+// Import the ag-Grid material-next theme
+@import '~ag-grid/src/styles/theme-material-next';
+</pre>
+
+<p>A full list of the variables that can be changed is present in the <a href="https://github.com/ag-grid/ag-grid/blob/latest/src/styles/theme-material-new.scss#L17-L59">theme source file</a>.</p>
+
+<p>
+The recommended way to process your project's Scss files is through webpack, since it provides various loaders that optimize and reduce the final size of the bundle. 
+A working example for Angular 2 based on angular-cli can be found in <a href="https://github.com/ag-grid/ag-grid-material/tree/master/angular-material">the ag-grid-material repository</a>.
+</p>
+
+<note>The ag grid icons path should be re-adjusted when importing the scss file. 
+This is a common problem, <a href="https://github.com/webpack-contrib/sass-loader#problems-with-url">described in the Sass(scss) loader project</a>. 
+The theme exposes the <code>$ag-mat-icons-path</code> variable to address that. The <a href="https://github.com/ag-grid/ag-grid-material/blob/master/angular-material/src/styles.scss#L22-L23">example linked above</a> showcases how to use it.</note>
+
+<h3>Change the Theme Icons</h3>
+
+<h4>Replace the Entire Set</h4>
+<p>
+The easiest way to replace the entire icon set is to change the <code>$mat-icons-path</code> Scss variable to point to a directory with your set of icons.
+The icons should be <strong>18x18px sized SVG</strong> files. You can check the <a href="https://github.com/ag-grid/ag-grid/tree/latest/src/styles/material-icons">full list in the GitHub repository</a>. 
+</p> 
+
+<h4>Change Individual Icons</h4>
+<p>You can also change individual icons by overriding the background images for the respective CSS selector. 
+The following code snippet overrides the pin icon used in the drag hint when reordering columns:<p>
+
+<pre>
+/* 
+ * The override should be placed after the import of the theme. 
+ * Alternatively, you can aso increase the selector's specifcity 
+ */
+.ag-theme-material .ag-icon-pin {
+    background-image: url('path/to/my-pin-icon.svg');
+}
+</pre>
+
+<h3>Integration with Other Material Component Libraries</h3>
+
+<p>
+You can customize the various UI bits of the grid by providing custom cell renderers or editor components. 
+A working example that integrates Angular Material's input, checkbox, select and datepicker can be found in the <a href="https://github.com/ag-grid/ag-grid-material/tree/master/angular-material">ag-grid-material GitHub repository</a>.
+</p> 
+
 </div>
 
 <div>
@@ -47,7 +114,7 @@ include '../documentation-main/documentation_header.php';
     To use a theme, add the theme class name to the div element where the ag-Grid directive is attached.
     <p/>
     The following is an example of using the ag-material theme:<br/>
-    <pre>&lt;div ag-grid="gridOptions" class="ag-material">&lt;/div></pre>
+    <pre>&lt;div ag-grid="gridOptions" class="ag-material"&gt;&lt;/div&gt;</pre>
 
     </p>
     Note that to use the Material theme you'll need to override the default rowHeight
