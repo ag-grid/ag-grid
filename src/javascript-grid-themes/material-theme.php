@@ -17,6 +17,7 @@ include '../documentation-main/documentation_header.php';
         the theme uses different spacing and icon set compared to the other themes. 
     </p>
 
+    <p> The example below shows the grid with a rich set of features enabled.</p>
     <show-example example="example-theme-material"></show-example>
 
 
@@ -24,7 +25,7 @@ include '../documentation-main/documentation_header.php';
         To use the theme, add <code>ag-theme-material</code> CSS class to the DIV element on which the ag-Grid instance is instantiated.
     <p/>
 
-    The following is an example of using the theme (using AngularJS 1.x):<br/>
+    <p>The following is an example of using the theme (using AngularJS 1.x):</p>
 
 <pre>
 &lt;div ag-grid="gridOptions" class="ag-theme-material"&gt;&lt;/div&gt;
@@ -50,7 +51,7 @@ Put the following code in the HEAD element of your document: </p>
     <p>To change the application colors, set the variables values to your colors of choice, and include the Scss theme file after that.<p>
 
 <pre>
-// Set the colors to blue / amber
+// Set the colors to blue and amber
 $ag-mat-primary: #2196F3; // blue-500
 $ag-mat-accent: #FFD740; // amber-A200
 
@@ -91,6 +92,8 @@ The following code snippet overrides the pin icon used in the drag hint when reo
 }
 </pre>
 
+<p>The icon classes follow the <code>.ag-icon-{icon-file-name}</code> convention.</p>
+
 <h3>Integrate with Other Material Component Libraries</h3>
 
 <p>
@@ -99,7 +102,7 @@ A working example that integrates Angular Material's input, checkbox, select and
 </p> 
 
 </div>
-
+<hr>
 <div>
     <h2 id="material-theme-legacy">Material Theme (legacy)</h2>
 
