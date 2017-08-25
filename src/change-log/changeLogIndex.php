@@ -25,6 +25,7 @@ include '../documentation-main/documentation_header.php';
         when grouping by that column </li>
         <li>AG-253: Support for innnerRendererFramework</li>
         <li>AG-50: Support for cellRendererFramework inside filterParams</li>
+        <li>AG-688: Fixed compatibility issue with Internet Explorer 10</li>
     </ul>
 
     <h4>Enhancements</h4>
