@@ -28,12 +28,12 @@ include '../documentation-main/documentation_header.php';
         </p>
 
         <p>
-            The old icons are available XXX
+            The old icons are available in the <code>src/styles/legacy</code> directory of the grid package.
         </p>
 
         <p>
-            If you are creating your own them and want to include the stock icons, this is easiest
-            done by using this file YYY
+            If you have created your own theme and want to include the stock icons, this is easiest
+            done by taking the contents of the <code>dist/styles/compiled-icons.css</code> file and add its contents to your CSS theme.
         </p>
 
     </note>
