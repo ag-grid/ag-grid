@@ -200,10 +200,17 @@ export class EnterpriseMenu {
     }
 
     private isValidMenuTabItem (menuTabName:string):boolean{
-        let allItems:string[] = this.column.getMenuTabs (this.restrictTo ? this.restrictTo : EnterpriseMenu.TABS_DEFAULT);
-        let isValid:boolean = allItems.indexOf(menuTabName)> -1;
+        let isValid: boolean = true;
+        let itemsToConsider: string[] = EnterpriseMenu.TABS_DEFAULT;
 
-        if (!isValid) console.warn(`Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${allItems}]`);
+        if (this.restrictTo != null){
+            isValid = this.restrictTo.indexOf(menuTabName) > -1 ;
+            itemsToConsider = this.restrictTo;
+        }
+
+        isValid = isValid && EnterpriseMenu.TABS_DEFAULT.indexOf(menuTabName) > -1 ;
+
+        if (!isValid) console.warn(`Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${itemsToConsider}]`);
 
         return isValid;
     }
