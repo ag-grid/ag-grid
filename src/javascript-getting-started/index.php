@@ -5,6 +5,57 @@ $pageDescription = "ag-Grid can be used as a data grid inside your plain JavaScr
 $pageKeyboards = "Javascript Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
+
+function getDirContents($dir, &$results = array(), $prefix = ""){
+    $files = scandir($dir);
+
+    foreach($files as $key => $value){
+        $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
+        
+        if(!is_dir($path)) {
+            $results[$prefix . $value] = file_get_contents($path);
+        } else if($value != "." && $value != "..") {
+            getDirContents($path, $results, $prefix.$value.DIRECTORY_SEPARATOR);
+        }
+    }
+
+    return $results;
+}
+
+function fileTabs($id, $files) {
+    $tabs = '<ul class="nav nav-tabs" role="tablist">';
+    $contents = '<div class="tab-content">';
+    $i = 0;
+
+    foreach($files as $filename => $content) {
+        $class ='';
+
+        if ($i == 0) {
+            $class =' class="active"';
+        } 
+        $id = "example-$id-file-$i";
+        $tabs .=     <<<TAB
+            <li role="presentation"$class><a href="#$id" role="tab" data-toggle="tab">$filename</a></li>
+TAB;
+
+        $tabClass =  $i == 0 ? ' active' : '';
+        $tabContents = htmlspecialchars($content);
+
+        $contents .= <<<CONTENT
+        <div role="tabpanel" class="tab-pane$tabClass" id="$id">
+            <pre><code>$tabContents</code></pre>
+        </div>
+CONTENT;
+
+        $i ++;
+    }
+
+    
+    $tabs .= '</ul>';
+    $contents .= '</div>';
+
+    return $tabs . $contents;
+}
 ?>
 
     <h1>
@@ -50,15 +101,8 @@ open index.html
 
     <p>With those 2 commands you should now see the following application:</p>
 
-    <show-complex-example example="example-js.html"
-                          sources="{
-                            [
-                                { root: './', files: 'example-js.html,example-js.js' }
-                            ]
-                          }"
-                          plunker="https://embed.plnkr.co/369YrrgCVrnPjD528OtT/"
-                          exampleheight="190px">
-    </show-complex-example>
+<?= fileTabs('hello-world', getDirContents('hello-world')) ?>
+
 
     <p>Great! A working Grid application in no time at all. Let's break down the application into it's main parts:</p>
 
