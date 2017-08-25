@@ -66,6 +66,7 @@ $ag-select-foreground: #ccc !default;
 
 $ag-menu-option-padding: 2px 4px 2px 4px !default;
 $ag-menu-option-shortcut-padding: 2px 2px 2px 2px !default;
+$ag-icons-filter: invert(100%);
 
 @import "theme-common";
 
@@ -92,11 +93,6 @@ $ag-menu-option-shortcut-padding: 2px 2px 2px 2px !default;
     }
 
     input {
-        background-color: $ag-select-background;
-        color: $ag-foreground-1;
-    }
-
-    .ag-floating-filter-button {
         background-color: $ag-select-background;
         color: $ag-foreground-1;
     }

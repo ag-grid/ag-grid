@@ -69,16 +69,20 @@ $ag-menu-option-shortcut-padding: 2px 2px 2px 2px !default;
 
 @import "theme-common";
 
-
 .ag-blue {
-    .ag-floating-filter-button {
-        background-color: $ag-select-background;
-        color: $ag-foreground-1;
-    }
     .ag-floating-filter-body {
         input {
             background-color: $ag-select-background;
             color: $ag-foreground-1;
+        }
+    }
+
+    .ag-floating-filter-button {
+        filter: invert(100%);
+    }
+    .ag-header {
+        .ag-icon-expanded, .ag-icon-contracted {
+            filter: invert(100%);
         }
     }
 }
