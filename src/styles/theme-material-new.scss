@@ -894,7 +894,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 
     @for $level from 1 through 20 {
         .ag-row-level-#{$level} > .ag-cell:first-child > span:first-child {
-            padding-left: $level * ($ag-mat-icon-size + $ag-mat-grid-size * 3) !important;
+            padding-left: $level * ($ag-mat-icon-size + $ag-mat-grid-size * 6) !important;
         }
     }
 
