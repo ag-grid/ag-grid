@@ -109,18 +109,18 @@
     var columnDefs = [
         {
             headerName: '#', width: 30, checkboxSelection: true, suppressSorting: true,
-            suppressMenu: true, pinned: true
+            suppressMenu: true
         },
         {
             headerName: 'Employee',
             children: [
                 {
                     headerName: "Name", field: "name",
-                    width: 150, pinned: true
+                    width: 150
                 },
                 {
                     headerName: "Country", field: "country", width: 150,
-                    cellRenderer: countryCellRenderer, pinned: true,
+                    cellRenderer: countryCellRenderer,
                     filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
                 },
             ]
@@ -156,7 +156,7 @@
         enableFilter: true,
         enableRangeSelection: true,
         suppressRowClickSelection: true,
-        rowHeight: 22,
+        // rowHeight: 22,
         animateRows: true,
         onModelUpdated: modelUpdated,
         debug: true
