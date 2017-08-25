@@ -107,14 +107,14 @@
     var IT_SKILLS_NAMES = ['Android', 'CSS', 'HTML 5', 'Mac', 'Windows'];
 
     var columnDefs = [
-        {headerName: '#', width: 30, checkboxSelection: true, suppressSorting: true,
+        {headerName: '#', width: 100, checkboxSelection: true, suppressSorting: true,
             suppressMenu: true, pinned: true},
         {
             headerName: 'Employee',
             children: [
                 {headerName: "Name", field: "name",
                     width: 150, pinned: true},
-                {headerName: "Country", field: "country", width: 150,
+                {headerName: "Country", field: "country", width: 180,
                     cellRenderer: countryCellRenderer, pinned: true,
                     filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}},
             ]
@@ -122,10 +122,10 @@
         {
             headerName: 'IT Skills',
             children: [
-                {headerName: "Skills", width: 125, suppressSorting: true,
+                {headerName: "Skills", width: 155, suppressSorting: true,
                     cellRenderer: skillsCellRenderer, filter: SkillFilter},
                 {headerName: "Proficiency", field: "proficiency", filter: 'number',
-                    width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
+                    width: 150, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
             ]
         },
         {

@@ -108,7 +108,7 @@
 
     var columnDefs = [
         {
-            headerName: '#', width: 30, checkboxSelection: true, suppressSorting: true,
+            headerName: '', width: 70, checkboxSelection: true, suppressSorting: true,
             suppressMenu: true
         },
         {
@@ -134,15 +134,15 @@
                 },
                 {
                     headerName: "Proficiency", field: "proficiency", filter: 'number',
-                    width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter
+                    width: 150, cellRenderer: percentCellRenderer, filter: ProficiencyFilter
                 },
             ]
         },
         {
             headerName: 'Contact',
             children: [
-                {headerName: "Mobile", field: "mobile", width: 150, filter: 'text'},
-                {headerName: "Land-line", field: "landline", width: 150, filter: 'text'},
+                {headerName: "Mobile", field: "mobile", width: 180, filter: 'text'},
+                {headerName: "Land-line", field: "landline", width: 180, filter: 'text'},
                 {headerName: "Address", field: "address", width: 500, filter: 'text'}
             ]
         }
