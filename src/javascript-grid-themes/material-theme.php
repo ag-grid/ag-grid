@@ -14,28 +14,24 @@ include '../documentation-main/documentation_header.php';
     <p>
         The Material Next theme is available from <strong>version 13.0</strong> onwards. 
         To comply with the <a href="https://material.io/guidelines/components/data-tables.html#">material design data table guidelines</a>, 
-        the theme uses different spacing and icon set compared to the other available themes. 
+        the theme uses different spacing and icon set compared to the other themes. 
     </p>
 
-    <p/>
+    <show-example example="example-theme-material"></show-example>
+
+
+    <p>
         To use the theme, add <code>ag-theme-material</code> CSS class to the DIV element on which the ag-Grid instance is instantiated.
     <p/>
 
     The following is an example of using the theme (using AngularJS 1.x):<br/>
+
 <pre>
 &lt;div ag-grid="gridOptions" class="ag-theme-material"&gt;&lt;/div&gt;
 </pre>
 
-    </p>
 
-    <div class="bigTitle" id="material-theme-example">Material Theme Example</div>
-
-    <p/>
-
-    <show-example example="example-theme-material"></show-example>
-</pre>
-
-    <h3>Including the Roboto Font</h3>
+    <h3>Include the Roboto Font</h3>
 
     <p>The material design guidelines require the Roboto font to be used throughout the interface. The easiest way to include it in the document is by loading it from the Google CDN. 
 Put the following code in the HEAD element of your document: </p>
@@ -43,12 +39,12 @@ Put the following code in the HEAD element of your document: </p>
 <pre>&lt;link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"&gt;</pre>
 
 
-    <h3>Changing the Theme Primary / Secondary Colors through Scss</h3>
+    <h3>Change the Theme Primary / Secondary Colors through Scss</h3>
 
     <p>
     The material theme uses Scss internally, exposing several variables which control its appearance. 
-    The ones you are likely looking into changing are the primary and secondary color. The default ones are 
-    <a href="https://material.io/guidelines/style/color.html#color-color-palette">indigo-500 and pink-A200 from the Google color palette</a>, which match the default Angular Material theme.
+    The ones you are likely looking into changing are the primary and secondary colors. The default ones are 
+    <a href="https://material.io/guidelines/style/color.html#color-color-palette">indigo-500 and pink-A200 from the Google color palette</a>, which match the indigo-pink Angular Material theme.
     </p>
 
     <p>To change the application colors, set the variables values to your colors of choice, and include the Scss theme file after that.<p>
@@ -62,7 +58,7 @@ $ag-mat-accent: #FFD740; // amber-A200
 @import '~ag-grid/src/styles/theme-material-next';
 </pre>
 
-<p>A full list of the variables that can be changed is present in the <a href="https://github.com/ag-grid/ag-grid/blob/latest/src/styles/theme-material-new.scss#L17-L59">theme source file</a>.</p>
+<p>You can examine the full list of the variables that can be changed in the <a href="https://github.com/ag-grid/ag-grid/blob/latest/src/styles/theme-material-new.scss#L17-L59">theme source file</a>.</p>
 
 <p>
 The recommended way to process your project's Scss files is through webpack, since it provides various loaders that optimize and reduce the final size of the bundle. 
@@ -71,7 +67,7 @@ A working example for Angular 2 based on angular-cli can be found in <a href="ht
 
 <note>The ag grid icons path should be re-adjusted when importing the scss file. 
 This is a common problem, <a href="https://github.com/webpack-contrib/sass-loader#problems-with-url">described in the Sass(scss) loader project</a>. 
-The theme exposes the <code>$ag-mat-icons-path</code> variable to address that. The <a href="https://github.com/ag-grid/ag-grid-material/blob/master/angular-material/src/styles.scss#L22-L23">example linked above</a> showcases how to use it.</note>
+The theme exposes the <code>$ag-mat-icons-path</code> variable to address that. The <a href="https://github.com/ag-grid/ag-grid-material/blob/master/angular-material/src/styles.scss#L22-L23">example from above</a> showcases how to override the variable.</note>
 
 <h3>Change the Theme Icons</h3>
 
@@ -95,7 +91,7 @@ The following code snippet overrides the pin icon used in the drag hint when reo
 }
 </pre>
 
-<h3>Integration with Other Material Component Libraries</h3>
+<h3>Integrate with Other Material Component Libraries</h3>
 
 <p>
 You can customize the various UI bits of the grid by providing custom cell renderers or editor components. 
