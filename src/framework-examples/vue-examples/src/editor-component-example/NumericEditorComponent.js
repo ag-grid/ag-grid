@@ -1,7 +1,7 @@
 import Vue from "vue";
 
 export default Vue.extend({
-    template: `<input :ref="'input'" @keydown="onKeyDown($event)" v-model="value"/> {{ value }}`,
+    template: `<input :ref="'input'" @keydown="onKeyDown($event)" v-model="value"/>`,
     data() {
         return {
             value: '',

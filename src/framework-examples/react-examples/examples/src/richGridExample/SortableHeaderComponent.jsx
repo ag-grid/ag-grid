@@ -7,7 +7,8 @@ export default class SortableHeaderComponent extends React.Component {
     constructor(props) {
         super(props);
 
-        this.props.column.addEventListener('sortChanged', this.onSortChanged.bind(this));
+        // this.sortChanged = this.onSortChanged.bind(this);
+        this.props.column.addEventListener('sortChanged', this.onSortChanged);
 
         //The state of this component contains the current sort state of this column
         //The possible values are: 'asc', 'desc' and ''
@@ -16,6 +17,9 @@ export default class SortableHeaderComponent extends React.Component {
         }
     }
 
+    componentWillUnmount() {
+        this.props.column.removeEventListener('sortChanged', this.onSortChanged);
+    }
 
     render() {
         let sortElements = [];
@@ -51,7 +55,7 @@ export default class SortableHeaderComponent extends React.Component {
         this.props.setSort(order, event.shiftKey);
     };
 
-    onSortChanged() {
+    onSortChanged = () => {
         if (this.props.column.isSortAscending()) {
             this.setState({
                 sorted: 'asc'

@@ -100,7 +100,7 @@
                     },
                     {headerName: 'Account', field: 'account'},
                     {headerName: 'Calls', field: 'totalCalls'},
-                    {headerName: 'Minutes', field: 'totalMinutes', cellFormatter: this.minuteCellFormatter}
+                    {headerName: 'Minutes', field: 'totalMinutes', valueFormatter: this.minuteCellFormatter}
                 ];
             },
             minuteCellFormatter(params) {

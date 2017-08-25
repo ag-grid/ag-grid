@@ -18,7 +18,19 @@ export default class MoodEditor extends Component {
     }
 
     componentDidMount() {
+        this.refs.container.addEventListener('keydown', this.checkAndToggleMoodIfLeftRight);
         this.focus();
+    }
+
+    componentWillUnmount() {
+        this.refs.container.removeEventListener('keydown', this.checkAndToggleMoodIfLeftRight);
+    }
+
+    checkAndToggleMoodIfLeftRight = (event) => {
+        if ([37, 39].indexOf(event.keyCode) > -1) { // left and right
+            this.toggleMood();
+            event.stopPropagation();
+        }
     }
 
     componentDidUpdate() {
@@ -75,12 +87,11 @@ export default class MoodEditor extends Component {
             background: "#e6e6e6",
             padding: 15,
             textAlign: "center",
-            display: "inline-block",
-            // outline: "none"
+            display: "inline-block"
         };
 
         let unselected = {
-            paddingLleft: 10,
+            paddingLeft: 10,
             paddingRight: 10,
             border: "1px solid transparent",
             padding: 4
@@ -93,12 +104,14 @@ export default class MoodEditor extends Component {
             padding: 4
         };
 
-        let happyStyle = this.state.value === 'Happy' ? selected : unselected;
-        let sadStyle = this.state.value !== 'Happy' ? selected : unselected;
+        let happyStyle = this.state.happy ? selected : unselected;
+        let sadStyle = !this.state.happy  ? selected : unselected;
 
         return (
             <div ref="container"
-                 style={mood}>
+                 style={mood}
+                 tabIndex={1} // important - without this the keypresses wont be caught
+            >
                 <img src="images/smiley.png" onClick={this.onHappyClick} style={happyStyle}/>
                 <img src="images/smiley-sad.png" onClick={this.onSadClick} style={sadStyle}/>
             </div>

@@ -14,7 +14,7 @@
     import PartialMatchFilterComponent from './PartialMatchFilterComponent'
 
     export default {
-        data () {
+        data() {
             return {
                 gridOptions: null,
                 text: null
@@ -59,6 +59,7 @@
         },
         beforeMount() {
             this.gridOptions = {};
+            this.gridOptions.enableFilter = true;
             this.gridOptions.rowData = this.createRowData();
             this.gridOptions.columnDefs = this.createColumnDefs();
         }

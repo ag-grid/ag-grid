@@ -9,46 +9,85 @@ import HeaderGroupComponent from './HeaderGroupComponent.jsx';
 export default class ColDefFactory {
 
     createColDefs() {
-
-        var columnDefs = [
-            {headerName: '#', width: 30, checkboxSelection: true, suppressSorting: true,
-                suppressMenu: true, pinned: true},
+        return [
+            {
+                headerName: '#',
+                width: 30,
+                checkboxSelection: true,
+                suppressSorting: true,
+                suppressMenu: true,
+                pinned: true,
+                icons: {
+                    checkboxChecked: '<i class="fa fa-arrow-left"/>',
+                    checkboxUnchecked: '<i class="fa fa-arrow-right"/>',
+                    checkboxIndeterminate: '<i class="fa fa-arrow-up"/>'
+                }
+            },
             {
                 headerName: 'Employee',
                 headerGroupComponentFramework: HeaderGroupComponent,
                 children: [
                     {
-                        headerName: "Name", field: "name", enableRowGroup: true, enablePivot: true,
-                        width: 150, pinned: true, editable: true,
+                        headerName: "Name",
+                        field: "name",
+                        enableRowGroup: true,
+                        enablePivot: true,
+                        width: 150,
+                        pinned: true,
+                        editable: true,
                         // use a React cellEditor
                         cellEditorFramework: NameCellEditor
                     }, {
-                        headerName: "Country", field: "country", width: 150, enableRowGroup: true, enablePivot: true,
+                        headerName: "Country",
+                        field: "country",
+                        width: 150,
+                        enableRowGroup: true,
+                        enablePivot: true,
                         // an example of using a non-React cell renderer
-                        cellRenderer: countryCellRenderer, pinned: true,
+                        cellRenderer: countryCellRenderer,
+                        pinned: true,
                         filterParams: {
-                            cellRenderer: countryCellRenderer, cellHeight: 20
-                        }, columnGroupShow: 'open'
+                            cellRenderer: countryCellRenderer,
+                            cellHeight: 20
+                        },
+                        columnGroupShow: 'open'
                     }, {
-                        headerName: "DOB", field: "dob", width: 110, enableRowGroup: true, enablePivot: true, filter:'date',
-                        pinned: true, cellRenderer: function(params) {
-                            return  pad(params.value.getDate(), 2) + '/' +
-                                    pad(params.value.getMonth() + 1, 2)+ '/' +
-                                    params.value.getFullYear();
-                        }, columnGroupShow: 'open'
+                        headerName: "DOB",
+                        field: "dob",
+                        width: 110,
+                        enableRowGroup: true,
+                        enablePivot: true,
+                        filter: 'date',
+                        pinned: true,
+                        cellRenderer: function (params) {
+                            return pad(params.value.getDate(), 2) + '/' +
+                                pad(params.value.getMonth() + 1, 2) + '/' +
+                                params.value.getFullYear();
+                        },
+                        columnGroupShow: 'open'
                     }
                 ]
             },
             {
                 headerName: 'IT Skills',
                 children: [
-                    {headerName: "Skills", width: 125, suppressSorting: true, field: 'skills', enableRowGroup: true, enablePivot: true,
+                    {
+                        headerName: "Skills",
+                        width: 125,
+                        suppressSorting: true,
+                        field: 'skills',
+                        enableRowGroup: true,
+                        enablePivot: true,
                         // supply a React component
                         cellRendererFramework: SkillsCellRenderer,
                         // supply a React component
                         filterFramework: SkillsFilter
                     },
-                    {headerName: "Proficiency", field: "proficiency", width: 135, enableValue: true,
+                    {
+                        headerName: "Proficiency",
+                        field: "proficiency",
+                        width: 135,
+                        enableValue: true,
                         // supply a React component
                         cellRendererFramework: ProficiencyCellRenderer,
                         // supply a React component
@@ -65,7 +104,6 @@ export default class ColDefFactory {
                 ]
             }
         ];
-        return columnDefs;
     }
 }
 
@@ -73,7 +111,7 @@ export default class ColDefFactory {
 // need to use React for it.
 function countryCellRenderer(params) {
     if (params.value) {
-        var flag = "<img border='0' width='15' height='10' " +
+        const flag = "<img border='0' width='15' height='10' " +
             "style='margin-bottom: 2px' src='http://flags.fmcdn.net/data/flags/mini/"
             + RefData.COUNTRY_CODES[params.value] + ".png'>";
         return flag + " " + params.value;

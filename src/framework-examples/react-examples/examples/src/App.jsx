@@ -6,13 +6,13 @@ import DynamicComponentsExample from "./dynamicComponentExample/DynamicComponent
 import RichGridExample from "./richGridExample/RichGridExample";
 import RichComponentsExample from "./richComponentExample/RichComponentsExample";
 import EditorComponentsExample from "./editorComponentExample/EditorComponentsExample";
-import FloatingRowComponentExample from "./floatingRowExample/FloatingRowComponentExample";
+import PinnedRowComponentExample from "./pinnedRowExample/PinnedRowComponentExample";
 import FullWidthComponentExample from "./fullWidthExample/FullWidthComponentExample";
 import GroupedRowInnerRendererComponentExample from "./groupedRowInnerRendererExample/GroupedRowInnerRendererComponentExample";
 import FilterComponentExample from "./filterComponentExample/FilterComponentExample";
 import MasterDetailExample from "./masterDetailExample/MasterDetailExample";
 import SimpleReduxExample from "./simpleReduxExample/SimpleReduxExample";
-import SimpleGridExample from "./floatingFilter/SimpleGridExample";
+import FloatingFilterGridExample from "./floatingFilter/FloatingFilterGridExample";
 
 class App extends Component {
     constructor(props) {
@@ -45,7 +45,7 @@ class App extends Component {
                     <li role="presentation" className={this.state.example === 'dynamic' ? 'active' : null} onClick={() => this.setExample("dynamic")}><a href="#">Dynamic React Component Example</a></li>
                     <li role="presentation" className={this.state.example === 'rich-dynamic' ? 'active' : null} onClick={() => this.setExample("rich-dynamic")}><a href="#">Dynamic React Components - Richer Example</a></li>
                     <li role="presentation" className={this.state.example === 'editor' ? 'active' : null} onClick={() => this.setExample("editor")}><a href="#">Cell Editor Component Example</a></li>
-                    <li role="presentation" className={this.state.example === 'floating-row' ? 'active' : null} onClick={() => this.setExample("floating-row")}><a href="#">Pinned Row Renderer Example</a></li>
+                    <li role="presentation" className={this.state.example === 'pinned-row' ? 'active' : null} onClick={() => this.setExample("pinned-row")}><a href="#">Pinned Row Renderer Example</a></li>
                     <li role="presentation" className={this.state.example === 'full-width' ? 'active' : null} onClick={() => this.setExample("full-width")}><a href="#">Full Width Renderer Example</a></li>
                     <li role="presentation" className={this.state.example === 'group-row' ? 'active' : null} onClick={() => this.setExample("group-row")}><a href="#">Grouped Row Inner Renderer Example</a></li>
                     <li role="presentation" className={this.state.example === 'filter' ? 'active' : null} onClick={() => this.setExample("filter")}><a href="#">Filters Component Example</a></li>
@@ -66,8 +66,8 @@ class App extends Component {
             case 'editor':
                 example = <EditorComponentsExample/>;
                 break;
-            case 'floating-row':
-                example = <FloatingRowComponentExample/>;
+            case 'pinned-row':
+                example = <PinnedRowComponentExample/>;
                 break;
             case 'full-width':
                 example = <FullWidthComponentExample/>;
@@ -85,7 +85,7 @@ class App extends Component {
                 example = <SimpleReduxExample/>;
                 break;
             case 'floating-filter':
-                example = <SimpleGridExample/>;
+                example = <FloatingFilterGridExample/>;
                 break;
             default:
                 example = <RichGridExample/>;

@@ -1,0 +1,15 @@
+<template>
+  <div style="width: 800px;">
+    <h1>Filter Example</h1>
+    <div style="width: 100%; height: 350px;">
+      <ag-grid-aurelia #agGrid style="width: 100%; height: 100%;" class="ag-fresh"
+                       grid-options.bind="gridOptions">
+        <ag-grid-column header-name="Row" field="row" width.bind="400">
+        </ag-grid-column>
+        <ag-grid-column header-name="Filter Component" field="name" width.bind="400" filter.bind="getPartialMatchFilter()">
+        </ag-grid-column>
+      </ag-grid-aurelia>
+    </div>
+  </div>
+  </div>
+</template>

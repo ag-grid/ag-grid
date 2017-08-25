@@ -76,10 +76,6 @@ export default class RichGridExample extends Component {
         this.columnApi = params.columnApi;
     }
 
-    selectAll() {
-        this.api.selectAll();
-    }
-
     deselectAll() {
         this.api.deselectAll();
     }
@@ -156,7 +152,8 @@ export default class RichGridExample extends Component {
                     <div style={{padding: 4}} className={'toolbar'}>
                         <span>
                             Grid API:
-                            <button onClick={this.selectAll.bind(this)}>Select All</button>
+                            {/* use ref to access the api in selectAll */}
+                            <button onClick={() => { this.refs.myGrid.api.selectAll() }}>Select All</button>
                             <button onClick={this.deselectAll.bind(this)}>Clear Selection</button>
                         </span>
                         <span style={{marginLeft: 20}}>
@@ -186,6 +183,7 @@ export default class RichGridExample extends Component {
             gridTemplate = (
                 <div style={{height: 400, width: 945}} className="ag-fresh">
                     <AgGridReact
+                        ref="myGrid"
                         // gridOptions is optional - it's possible to provide
                         // all values as React props
                         gridOptions={this.gridOptions}

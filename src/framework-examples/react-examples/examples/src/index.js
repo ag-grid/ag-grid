@@ -9,6 +9,10 @@ import "../node_modules/bootstrap/dist/css/bootstrap.css";
 
 import App from "./App";
 
+// only required when using enterprise features
+// import {LicenseManager} from "ag-grid-enterprise/main";
+// LicenseManager.setLicenseKey("<your license key>");
+
 document.addEventListener('DOMContentLoaded', () => {
     render(
         <App/>,

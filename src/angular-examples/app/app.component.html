@@ -1,0 +1,55 @@
+<!--
+ This page mostly contains layout and presentation code - it is not an important part
+ of understanding the examples provided
+-->
+<ul *ngIf="!fromDocs" class="nav nav-pills">
+    <li *ngFor="let example of examples" role="presentation" [class.active]="currentExample === example.key">
+        <a (click)="setCurrentExample(example.key)">{{example.title}}</a>
+    </li>
+</ul>
+
+<div *ngIf="currentExample=='rich-grid'">
+    <rich-grid></rich-grid>
+</div>
+<div *ngIf="currentExample=='rich-grid-declarative'">
+    <ag-rich-grid-declarative></ag-rich-grid-declarative>
+</div>
+<div *ngIf="currentExample=='from-component'">
+    <ag-from-component></ag-from-component>
+</div>
+<div *ngIf="currentExample=='from-rich-component'">
+    <ag-from-rich-component></ag-from-rich-component>
+</div>
+<div *ngIf="currentExample=='editor-component'">
+    <ag-editor-component></ag-editor-component>
+</div>
+<div *ngIf="currentExample=='pinned-row'">
+    <ag-pinned-row-renderer-component></ag-pinned-row-renderer-component>
+</div>
+<div *ngIf="currentExample=='full-width'">
+    <ag-full-width-renderer-component></ag-full-width-renderer-component>
+</div>
+<div *ngIf="currentExample=='group-row'">
+    <ag-group-row-renderer-component></ag-group-row-renderer-component>
+</div>
+<div *ngIf="currentExample=='simple-group-row'">
+    <ag-grouped-data-grid></ag-grouped-data-grid>
+</div>
+<div *ngIf="currentExample=='filter'">
+    <ag-filter-component></ag-filter-component>
+</div>
+<div *ngIf="currentExample=='master-detail'">
+    <ag-masterdetail-master></ag-masterdetail-master>
+</div>
+<div *ngIf="currentExample=='floating-filter'">
+    <ag-floating-filter-component></ag-floating-filter-component>
+</div>
+<div *ngIf="currentExample=='infinite-pagination'">
+    <ag-infinite-pagination-component></ag-infinite-pagination-component>
+</div>
+<div *ngIf="currentExample=='rxjs-by-row'">
+    <ag-rxjs-by-row-component></ag-rxjs-by-row-component>
+</div>
+<div *ngIf="currentExample=='rxjs-by-dataset'">
+    <ag-rxjs-by-dataset-component></ag-rxjs-by-dataset-component>
+</div>

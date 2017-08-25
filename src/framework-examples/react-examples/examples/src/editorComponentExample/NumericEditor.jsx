@@ -16,11 +16,16 @@ export default class MoodEditor extends Component {
     }
 
     componentDidMount() {
+        this.refs.input.addEventListener('keydown', this.onKeyDown);
         this.focus();
     }
 
     componentDidUpdate() {
         this.focus();
+    }
+
+    componentWillUnmount() {
+        this.refs.input.removeEventListener('keydown', this.onKeyDown);
     }
 
     focus() {
@@ -47,9 +52,18 @@ export default class MoodEditor extends Component {
     };
 
     onKeyDown(event) {
+        if(this.isLeftOrRight(event)) {
+            event.stopPropagation();
+            return;
+        }
+
         if (!this.isKeyPressedNumeric(event)) {
             if (event.preventDefault) event.preventDefault();
         }
+    }
+
+    isLeftOrRight(event) {
+        return [37, 39].indexOf(event.keyCode) > -1;
     }
 
     handleChange(event) {
@@ -75,7 +89,6 @@ export default class MoodEditor extends Component {
         return (
             <input ref="input"
                    value={this.state.value}
-                   onKeyDown={this.onKeyDown}
                    onChange={this.handleChange}
             />
         );
