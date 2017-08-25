@@ -7,6 +7,8 @@ $mat-grey-300: #E0E0E0;
 // Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
 $mat-indigo-500: #3f51b5;
 $mat-pink-A200: #ff4081;
+$mat-pink-50: #FCE4EC;
+$mat-indigo-50: #E8EAF6;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // The variables below can be overriden to adjust the look up to the app color scheme
@@ -45,6 +47,7 @@ $ag-mat-background: $mat-grey-0 !default;
 $ag-mat-background-editor: $mat-grey-100 !default;
 $ag-mat-panel-background: $mat-grey-200 !default;
 $ag-mat-chip-background: $mat-grey-300 !default;
+$ag-mat-range-selection-background: $mat-indigo-50 !default; // this should be pink, but indigo looks better
 
 // interaction 
 $ag-mat-hover: $mat-grey-200 !default;
@@ -81,17 +84,24 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     height: $ag-mat-icon-size;
     background: transparent url('#{$ag-mat-icons-path}#{$icon}.svg') center no-repeat;
     background-size: $ag-mat-icon-size $ag-mat-icon-size;
-    opacity: primary-opacity;
+    opacity: $ag-mat-foreground-opacity;
+}
+
+@mixin colorful-icon($color, $icon) {
+    background: $color none;
+    mask: url("#{$ag-mat-icons-path}#{$icon}.svg") no-repeat 50% 50%;
+
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        background: transparent url("#{$ag-mat-icons-path}#{$icon}.svg");
+    }
 }
 
 @mixin primary-icon($icon) {
-    background: $ag-mat-primary none;
-    mask: url("#{$ag-mat-icons-path}#{$icon}.svg") no-repeat 50% 50%;
+    @include colorful-icon($ag-mat-primary, $icon);
 }
 
 @mixin accent-icon($icon) {
-    background: $ag-mat-accent none;
-    mask: url("#{$ag-mat-icons-path}#{$icon}.svg") no-repeat 50% 50%;
+    @include colorful-icon($ag-mat-accent, $icon);
 }
 
 @mixin card() {
@@ -140,7 +150,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     text-indent: 100%;
     overflow: hidden;
 }
-.ag-material-next {
+
+.ag-theme-material {
     font: $ag-mat-font-weight $ag-mat-font-size $ag-mat-font;
     color: $ag-mat-foreground;
     background-color: $ag-mat-background;
@@ -159,7 +170,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 
     .ag-row {
         @include bottom-border;
-        transition: background-color $ag-mat-transition-speed linear;
     }
 
     .ag-row-hover {
@@ -264,17 +274,10 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         z-index: 5;
 
         .ag-menu-list {
-            & > div:first-child > span {
-                padding-top: $ag-mat-grid-size;
-            }
-
-            & > div:last-child > span {
-                padding-bottom: $ag-mat-grid-size;
-            }
-
-            & > div:last-child > .ag-menu-option-popup-pointer {
-                background-position-y: $ag-mat-grid-size;
-            }
+            width: 100%;
+            cursor: default;
+            margin-top: $ag-mat-grid-size;
+            margin-bottom: $ag-mat-grid-size;
         }
 
         .ag-menu-option {
@@ -288,12 +291,18 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
             }
         }
 
+        .ag-menu-option-active {
+            background: $ag-mat-hover;
+        }
+
         .ag-menu-option-icon {
             padding-left: $ag-mat-grid-size;
             padding-right: $ag-mat-grid-size;
 
             span {
-                height: $ag-mat-grid-size * 2;
+                margin-top: $ag-mat-grid-size;
+                height: $ag-mat-icon-size;
+                line-height: 0;
             }
         }
 
@@ -303,16 +312,12 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 
         $separator-size: $ag-mat-grid-size;
         .ag-menu-separator {
-            border-bottom: 1px solid $ag-mat-border-color;
             margin-left: -$ag-mat-grid-size;
 
             & > span {
-                height: $separator-size;
+                height: $ag-mat-grid-size * 2;
+                background-image: url("data:image/svg+xml;utf8,<svg width='1' height='#{$ag-mat-grid-size * 2}' viewBox='0 0 1 #{$ag-mat-grid-size * 2}' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='#{$ag-mat-grid-size}' x2='1' y2='#{$ag-mat-grid-size}' stroke-width='1' stroke='#{$ag-mat-border-color}'/> </svg>");
             }
-        }
-
-        .ag-menu-separator + .ag-menu-option > span {
-            padding-top: $separator-size;
         }
 
         .ag-menu-option-popup-pointer {
@@ -352,6 +357,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         background: $ag-mat-panel-background;
         display: table;
         width: 100%;
+        min-width: 220px;
 
         .ag-tab {
             display: table-cell;
@@ -378,6 +384,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     .ag-tab-body {
         padding: $ag-mat-grid-size 0;
 
+
         // string filter type
         .ag-filter-select {
             margin: $ag-mat-grid-size;
@@ -385,6 +392,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
 
         .ag-menu-list {
+            margin-top: 0;
+            margin-bottom: 0;
             & > div:first-child > span {
                 padding-top: 0;
             }
@@ -533,12 +542,15 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 
         .ag-column-select-panel {
             padding: $ag-mat-grid-size 0;
+            padding-bottom: $ag-mat-grid-size - 1; // absorb the bottom border;
+            border-bottom: 1px solid $ag-mat-border-color;
         }
 
         $group-height: $ag-mat-grid-size * 5;
 
         .ag-column-drop {
-            border-top: 1px solid $ag-mat-border-color;
+            overflow: auto;
+            border-bottom: 1px solid $ag-mat-border-color;
             padding: $ag-mat-grid-size 0;
             padding-bottom: $ag-mat-grid-size * 2;
             clear: both;
@@ -651,8 +663,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         background-color: $ag-mat-selected;
     }
 
-    .ag-cell-range-selected {
-        background-color: $ag-mat-selected;
+    .ag-cell-range-selected:not(.ag-cell-focus) {
+        background-color: $ag-mat-range-selection-background;
     }
 
 ////////////////////////////////////////
@@ -698,7 +710,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         background-position-x: calc(100% - #{$ag-mat-grid-size});
         background-repeat: no-repeat;
         .ag-rich-select-list {
-            height: auto; // not sure why the structure had minimum height, does not look right
+            height: 200px;
         }
 
         .ag-rich-select-value {
@@ -727,7 +739,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         width: calc(100% - #{$ag-mat-grid-size} * 4);
         margin-right: 0;
         height: 100%;
-        padding-top: $ag-mat-grid-size * 2;
 
         input {
             @include simple-material-textbox;
@@ -789,16 +800,18 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 ////////////////////////////////////////
     .ag-selection-checkbox, .ag-group-expanded, .ag-group-contracted {
         span {
-            float: left;
-            height: 100%;
             margin-right: $cell-horizontal-padding;
         }
+    }
+
+    .ag-selection-checkbox span {
+        position: relative;
+        top: $ag-mat-grid-size / 2;
     }
 
     .ag-group-expanded {
         .ag-icon-contracted {
             @include icon-background('tree-open');
-            height: 100%;
         }
     }
 
@@ -810,6 +823,10 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         line-height: $ag-mat-grid-size * 4;
         background-color: $ag-mat-panel-background;
         padding-left: $cell-horizontal-padding;
+
+        // nasty fix for inline-block approach with half-width.
+        &.ag-width-half { margin-bottom: -3px; }
+
         span {
             height: 100%;
             float: left;
@@ -874,6 +891,12 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         float: left;
     }
 
+
+    @for $level from 1 through 20 {
+        .ag-row-level-#{$level} > .ag-cell:first-child > span:first-child {
+            padding-left: $level * ($ag-mat-icon-size + $ag-mat-grid-size * 6) !important;
+        }
+    }
 
 ////////////////////////////////////////
 // Right-To-Left
@@ -1037,6 +1060,5 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
                 height: 100%;
             }
         }
-
     }
 }

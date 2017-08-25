@@ -1,6 +1,6 @@
 import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional, Context} from "./context/context";
 
-const themes = [ 'fresh', 'dark', 'blue', 'bootstrap', 'material-next', 'material'];
+const themes = [ 'fresh', 'dark', 'blue', 'bootstrap', 'material', 'theme-material'];
 const themeCLass = new RegExp(`ag-(${themes.join('|')})`);
 
 @Bean('environment')

@@ -64,10 +64,10 @@ export class AnimationFrameService {
         // check for the existence of requestAnimationFrame, and if
         // it's missing, then we polyfill it with setTimeout()
         let callback = this.executeFrame.bind(this);
-        if (requestAnimationFrame) {
-            requestAnimationFrame(callback);
-        } else if (webkitRequestAnimationFrame) {
-            webkitRequestAnimationFrame(callback);
+        if (window.requestAnimationFrame) {
+            window.requestAnimationFrame(callback);
+        } else if (window.webkitRequestAnimationFrame) {
+            window.webkitRequestAnimationFrame(callback);
         } else {
             setTimeout(callback, 0);
         }

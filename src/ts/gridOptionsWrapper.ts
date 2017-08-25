@@ -74,8 +74,6 @@ export class GridOptionsWrapper {
 
     public static PROP_FLOATING_FILTERS_HEIGHT = 'floatingFiltersHeight';
 
-    public static EVENT_PROPERTY_CHANGED = 'propertyChangedEvent';
-
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
@@ -211,7 +209,6 @@ export class GridOptionsWrapper {
     public getPinnedTopRowData(): any[] { return this.gridOptions.pinnedTopRowData; }
     public getPinnedBottomRowData(): any[] { return this.gridOptions.pinnedBottomRowData; }
     public isFunctionsPassive() { return isTrue(this.gridOptions.functionsPassive); }
-    public isRowHoverClass() { return isTrue(this.gridOptions.rowHoverClass); }
     public isSuppressTabbing() { return isTrue(this.gridOptions.suppressTabbing); }
     public isSuppressChangeDetection() { return isTrue(this.gridOptions.suppressChangeDetection); }
     public isSuppressAnimationFrame() { return isTrue(this.gridOptions.suppressAnimationFrame); }
@@ -357,7 +354,7 @@ export class GridOptionsWrapper {
         if (previousValue !== value) {
             gridOptionsNoType[key] = value;
             let event: PropertyChangedEvent = {
-                type: GridOptionsWrapper.EVENT_PROPERTY_CHANGED,
+                type: key,
                 currentValue: value,
                 previousValue: previousValue
             };
@@ -378,7 +375,7 @@ export class GridOptionsWrapper {
         if (typeof this.gridOptions.headerHeight === 'number') {
             return this.gridOptions.headerHeight;
         } else {
-            return this.specialForMaterialNext(25, 8 * 7);
+            return this.specialForNewMaterial(25, 8 * 7);
         }
     }
 
@@ -386,7 +383,7 @@ export class GridOptionsWrapper {
         if (typeof this.gridOptions.floatingFiltersHeight === 'number') {
             return this.gridOptions.floatingFiltersHeight;
         } else {
-            return this.specialForMaterialNext(25, 8 * 7);
+            return this.specialForNewMaterial(25, 8 * 7);
         }
     }
 
@@ -646,15 +643,15 @@ export class GridOptionsWrapper {
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones 
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    private specialForMaterialNext(defaultValue: number, materialNextValue: number): number {
-            if (this.environment.getTheme() == "ag-material-next") {
-                return materialNextValue;
+    private specialForNewMaterial(defaultValue: number, materialValue: number): number {
+            if (this.environment.getTheme() == "ag-theme-material") {
+                return materialValue;
             } else {
                 return defaultValue;
             }
     }
 
     private getDefaultRowHeight() {
-        return this.specialForMaterialNext(DEFAULT_ROW_HEIGHT, 8 * 6);
+        return this.specialForNewMaterial(DEFAULT_ROW_HEIGHT, 8 * 6);
     }
 }

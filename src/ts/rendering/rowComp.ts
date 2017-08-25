@@ -96,6 +96,8 @@ export class RowComp extends Component {
     private editingRow: boolean;
     private rowFocused: boolean;
 
+    private columnRefreshPending = false;
+
     private cellComps: {[key: string]: CellComp} = {};
 
     // for animations, there are bits we want done in the next VM turn, to all DOM to update first.
@@ -531,6 +533,18 @@ export class RowComp extends Component {
     }
 
     private refreshCells() {
+        if (this.beans.gridOptionsWrapper.isSuppressAnimationFrame()) {
+            this.refreshCellsInAnimationFrame();
+        } else {
+            if (this.columnRefreshPending) { return; }
+            this.beans.taskQueue.addP1Task(this.refreshCellsInAnimationFrame.bind(this));
+        }
+    }
+
+    private refreshCellsInAnimationFrame() {
+
+        if (!this.active) { return; }
+        this.columnRefreshPending = false;
 
         let centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
         let leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
@@ -1066,15 +1080,22 @@ export class RowComp extends Component {
 
         this.eAllRowContainers.push(eRow);
 
-        this.addHoverFunctionality(eRow);
+        // adding hover functionality adds listener to this row, so we
+        // do it lazily in an animation frame
+        if (this.useAnimationFrameForCreate) {
+            this.beans.taskQueue.addP1Task(this.addHoverFunctionality.bind(this, eRow));
+        } else {
+            this.addHoverFunctionality(eRow);
+        }
     }
 
     private addHoverFunctionality(eRow: HTMLElement): void {
-        // because we are adding listeners to the row, we give the user the choice to not add
-        // the hover class, as it slows things down, especially in IE, when you add listeners
-        // to each row. we cannot do the trick of adding one listener to the GridPanel (like we
-        // do for other mouse events) as these events don't propagate
-        if (!this.beans.gridOptionsWrapper.isRowHoverClass()) { return; }
+
+        // because we use animation frames to do this, it's possible the row no longer exists
+        // by the time we get to add it
+        if (!this.active) {
+            return;
+        }
 
         // because mouseenter and mouseleave do not propagate, we cannot listen on the gridPanel
         // like we do for all the other mouse events.

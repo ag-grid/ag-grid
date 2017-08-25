@@ -64,7 +64,9 @@ export class Component extends BeanStub implements IComponent<any, IAfterGuiAtta
     }
 
     private swapInComponentForQuerySelectors(newComponent: Component, childNode: Node): void {
-        let thisProto: any = (<any>this).__proto__;
+
+        let thisProto: any = Object.getPrototypeOf(this);
+
         let thisNoType = <any> this;
         while (thisProto != null) {
             let metaData = thisProto.__agComponentMetaData;
@@ -78,7 +80,7 @@ export class Component extends BeanStub implements IComponent<any, IAfterGuiAtta
                 });
             }
 
-            thisProto = thisProto.__proto__
+            thisProto = Object.getPrototypeOf(thisProto);
         }
     }
 
@@ -101,7 +103,8 @@ export class Component extends BeanStub implements IComponent<any, IAfterGuiAtta
         if (!this.eGui) {
             return;
         }
-        let thisProto: any = (<any>this).__proto__;
+
+        let thisProto: any = Object.getPrototypeOf(this);
 
         while (thisProto != null) {
             let metaData = thisProto.__agComponentMetaData;
@@ -124,7 +127,7 @@ export class Component extends BeanStub implements IComponent<any, IAfterGuiAtta
                 });
             }
 
-            thisProto = thisProto.__proto__
+            thisProto = Object.getPrototypeOf(thisProto);
         }
     }
 
@@ -134,7 +137,7 @@ export class Component extends BeanStub implements IComponent<any, IAfterGuiAtta
             return;
         }
 
-        let thisProto: any = (<any>this).__proto__;
+        let thisProto: any = Object.getPrototypeOf(this);
 
         while (thisProto != null) {
             let metaData = thisProto.__agComponentMetaData;
@@ -153,7 +156,7 @@ export class Component extends BeanStub implements IComponent<any, IAfterGuiAtta
                 });
             }
 
-            thisProto = thisProto.__proto__
+            thisProto = Object.getPrototypeOf(thisProto);
         }
     }
 

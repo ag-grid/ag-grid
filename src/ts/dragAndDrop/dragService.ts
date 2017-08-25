@@ -90,7 +90,7 @@ export class DragService {
 
         if (reallyIncludeTouch) {
             touchListener = this.onTouchStart.bind(this, params);
-            params.eElement.addEventListener('touchstart', touchListener, <any>{passive:true});
+            params.eElement.addEventListener('touchstart', touchListener, <any>{passive:false});
         }
 
         this.dragSources.push({
@@ -211,6 +211,11 @@ export class DragService {
         if (!touch) { return; }
 
         // this.___statusBar.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
+
+        // if we don't preview default, then the browser will try and do it's own touch stuff,
+        // like do 'back button' (chrome does this) or scroll the page (eg drag column could  be confused
+        // with scroll page in the app)
+        // touchEvent.preventDefault();
 
         this.onCommonMove(touch, this.touchStart);
     }

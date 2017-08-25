@@ -159,7 +159,7 @@ export {StylingService} from "./dist/lib/styling/stylingService";
 export {AgCheckbox} from "./dist/lib/widgets/agCheckbox";
 export {Component} from "./dist/lib/widgets/component";
 export {PopupService} from "./dist/lib/widgets/popupService";
-export {TouchListener} from "./dist/lib/widgets/touchListener";
+export {TouchListener, TapEvent, LongTapEvent} from "./dist/lib/widgets/touchListener";
 
 // range
 export {RangeSelection, AddRangeSelectionParams} from "./dist/lib/interfaces/iRangeController"

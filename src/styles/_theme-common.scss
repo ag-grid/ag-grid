@@ -3,14 +3,16 @@
 - loading overlay colors {
 - rich select colors {
  */
-// @import 'nib';
-//
+
+$ag-icons-path: './icons/' !default;
+$ag-icons-filter: 'initial' !default;
 
 @mixin icon-background($icon) {
     width: 12px;
     height: 12px;
-    background: transparent url('./icons/#{$icon}.svg') center no-repeat;
+    background: transparent url('#{$ag-icons-path}#{$icon}.svg') center no-repeat;
     background-size: 12px 12px;
+    filter: $ag-icons-filter;
 }
 
 .ag-icon:not(.ag-faded) {
@@ -188,6 +190,7 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
 
     .ag-header-cell {
         padding: 2px;
+        padding-top: 4px;
     }
 
     .ag-header {
@@ -252,6 +255,7 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
     }
     .ag-header-group-cell-label {
         padding: 2px;
+        padding-top: 4px;
     }
     .ag-rtl .ag-header-group-text {
         margin-left: 2px;
@@ -614,14 +618,14 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
             float: left;
         }
     }
-}
 
-/* icons are used outside of the grid root (in the ghost) */
-
-$icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter folder-open folder group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right small-up small-down tick cross tree-open tree-closed;
-@each $icon in $icons {
-    .ag-icon-#{$icon} {
-        display: inline-block;
-        @include icon-background('#{$icon}');
+    /* icons are used outside of the grid root (in the ghost) */
+    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter folder-open folder group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right small-up small-down tick cross tree-open tree-closed;
+    @each $icon in $icons {
+        .ag-icon-#{$icon} {
+            display: inline-block;
+            @include icon-background('#{$icon}');
+        }
     }
 }
+
