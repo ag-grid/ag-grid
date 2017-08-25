@@ -238,6 +238,9 @@ suppressScrollLag: true,
     onCellClicked: function (params) {
         // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
+    onColumnVisible: function(event) {
+        // console.log("Callback onColumnVisible:", event);
+    },
     onCellValueChanged: function (params) {
         console.log("Callback onCellValueChanged:", params);
     },
