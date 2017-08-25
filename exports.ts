@@ -90,6 +90,7 @@ export {HorizontalDragService} from "./dist/lib/headerRendering/horizontalDragSe
 export {MoveColumnController} from "./dist/lib/headerRendering/moveColumnController";
 export {RenderedHeaderCell} from "./dist/lib/headerRendering/deprecated/renderedHeaderCell";
 export {StandardMenuFactory} from "./dist/lib/headerRendering/standardMenu";
+export {HeaderComp} from "./dist/lib/headerRendering/header/headerComp";
 
 // layout
 export {BorderLayout} from "./dist/lib/layout/borderLayout";
