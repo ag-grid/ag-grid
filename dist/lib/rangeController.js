@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -185,7 +185,14 @@ var RangeController = (function () {
         this.dispatchChangedEvent(finished, started);
     };
     RangeController.prototype.dispatchChangedEvent = function (finished, started) {
-        this.eventService.dispatchEvent(main_1.Events.EVENT_RANGE_SELECTION_CHANGED, { finished: finished, started: started });
+        var event = {
+            type: main_1.Events.EVENT_RANGE_SELECTION_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            finished: finished,
+            started: started
+        };
+        this.eventService.dispatchEvent(event);
     };
     RangeController.prototype.onDragStop = function () {
         if (!this.dragging) {
@@ -276,6 +283,14 @@ var RangeController = (function () {
         main_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", main_1.GridOptionsWrapper)
     ], RangeController.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        main_1.Autowired('columnApi'),
+        __metadata("design:type", main_1.ColumnApi)
+    ], RangeController.prototype, "columnApi", void 0);
+    __decorate([
+        main_1.Autowired('gridApi'),
+        __metadata("design:type", main_1.GridApi)
+    ], RangeController.prototype, "gridApi", void 0);
     __decorate([
         main_1.PostConstruct,
         __metadata("design:type", Function),

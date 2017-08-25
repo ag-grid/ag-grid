@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -21,7 +21,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_1 = require("ag-grid");
-var svgFactory = ag_grid_1.SvgFactory.getInstance();
 var MenuItemComponent = (function (_super) {
     __extends(MenuItemComponent, _super);
     function MenuItemComponent(params) {
@@ -32,7 +31,7 @@ var MenuItemComponent = (function (_super) {
     MenuItemComponent.prototype.init = function () {
         var _this = this;
         if (this.params.checked) {
-            this.queryForHtmlElement('#eIcon').innerHTML = '&#10004;';
+            this.queryForHtmlElement('#eIcon').innerHTML = '<span class="ag-icon ag-icon-tick"></span>';
         }
         else if (this.params.icon) {
             if (ag_grid_1.Utils.isNodeOrElement(this.params.icon)) {
@@ -60,11 +59,11 @@ var MenuItemComponent = (function (_super) {
         if (this.params.subMenu) {
             if (this.gridOptionsWrapper.isEnableRtl()) {
                 // for RTL, we show arrow going left
-                this.queryForHtmlElement('#ePopupPointer').appendChild(svgFactory.createSmallArrowLeftSvg());
+                this.queryForHtmlElement('#ePopupPointer').classList.add('ag-icon-small-left');
             }
             else {
                 // for normal, we show arrow going right
-                this.queryForHtmlElement('#ePopupPointer').appendChild(svgFactory.createSmallArrowRightSvg());
+                this.queryForHtmlElement('#ePopupPointer').classList.add('ag-icon-small-right');
             }
         }
         else {
@@ -82,7 +81,19 @@ var MenuItemComponent = (function (_super) {
         }
     };
     MenuItemComponent.prototype.onOptionSelected = function () {
-        this.dispatchEvent(MenuItemComponent.EVENT_ITEM_SELECTED, this.params);
+        var event = {
+            type: MenuItemComponent.EVENT_ITEM_SELECTED,
+            action: this.params.action,
+            checked: this.params.checked,
+            cssClasses: this.params.cssClasses,
+            disabled: this.params.disabled,
+            icon: this.params.icon,
+            name: this.params.name,
+            shortcut: this.params.shortcut,
+            subMenu: this.params.subMenu,
+            tooltip: this.params.tooltip
+        };
+        this.dispatchEvent(event);
         if (this.params.action) {
             this.params.action();
         }

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -13,7 +13,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_1 = require("ag-grid");
 var clipboardService_1 = require("../clipboardService");
 var aggFuncService_1 = require("../aggregation/aggFuncService");
-var svgFactory = ag_grid_1.SvgFactory.getInstance();
 var MenuItemMapper = (function () {
     function MenuItemMapper() {
     }
@@ -45,7 +44,7 @@ var MenuItemMapper = (function () {
         switch (key) {
             case 'pinSubMenu': return {
                 name: localeTextFunc('pinColumn', 'Pin Column'),
-                icon: ag_grid_1.Utils.createIconNoSpan('menuPin', this.gridOptionsWrapper, null, svgFactory.createPinIcon),
+                icon: ag_grid_1.Utils.createIconNoSpan('menuPin', this.gridOptionsWrapper, null),
                 subMenu: ['pinLeft', 'pinRight', 'clearPinned']
             };
             case 'pinLeft': return {
@@ -65,7 +64,7 @@ var MenuItemMapper = (function () {
             };
             case 'valueAggSubMenu': return {
                 name: localeTextFunc('valueAggregation', 'Value Aggregation'),
-                icon: ag_grid_1.Utils.createIconNoSpan('menuValue', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon),
+                icon: ag_grid_1.Utils.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
                 subMenu: this.createAggregationSubMenu(column)
             };
             case 'autoSizeThis': return {
@@ -79,12 +78,12 @@ var MenuItemMapper = (function () {
             case 'rowGroup': return {
                 name: localeTextFunc('groupBy', 'Group by') + ' ' + column.getColDef().headerName,
                 action: function () { return _this.columnController.addRowGroupColumn(column); },
-                icon: ag_grid_1.Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon12)
+                icon: ag_grid_1.Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
             };
             case 'rowUnGroup': return {
                 name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + column.getColDef().headerName,
                 action: function () { return _this.columnController.removeRowGroupColumn(column); },
-                icon: ag_grid_1.Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon12)
+                icon: ag_grid_1.Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
             };
             case 'resetColumns': return {
                 name: localeTextFunc('resetColumns', 'Reset Columns'),
@@ -101,20 +100,20 @@ var MenuItemMapper = (function () {
             case 'copy': return {
                 name: localeTextFunc('copy', 'Copy'),
                 shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
-                icon: ag_grid_1.Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null, svgFactory.createCopyIcon),
+                icon: ag_grid_1.Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
                 action: function () { return _this.clipboardService.copyToClipboard(false); }
             };
             case 'copyWithHeaders': return {
                 name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                 // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                icon: ag_grid_1.Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null, svgFactory.createCopyIcon),
+                icon: ag_grid_1.Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
                 action: function () { return _this.clipboardService.copyToClipboard(true); }
             };
             case 'paste': return {
                 name: localeTextFunc('paste', 'Paste'),
                 shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
                 disabled: true,
-                icon: ag_grid_1.Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null, svgFactory.createPasteIcon),
+                icon: ag_grid_1.Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
                 action: function () { return _this.clipboardService.pasteFromClipboard(); }
             };
             case 'toolPanel': return {

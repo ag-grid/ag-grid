@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -64,7 +64,7 @@ var MenuList = (function (_super) {
                 _this.showChildMenu(menuItemDef, cMenuItem);
             }
             else {
-                _this.dispatchEvent(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, event);
+                _this.dispatchEvent(event);
             }
         });
         cMenuItem.addGuiEventListener('mouseenter', this.mouseEnterItem.bind(this, menuItemDef, cMenuItem));
@@ -121,7 +121,7 @@ var MenuList = (function (_super) {
         });
         this.subMenuParentDef = menuItemDef;
         var selectedListener = function (event) {
-            _this.dispatchEvent(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, event);
+            _this.dispatchEvent(event);
         };
         childMenu.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, selectedListener);
         this.removeChildFuncs.push(function () {

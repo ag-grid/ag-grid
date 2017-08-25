@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 import { ColumnVO, IEnterpriseCache, IEnterpriseDatasource, NumberSequence, RowNode, RowNodeCache, RowNodeCacheParams, RowBounds } from "ag-grid";
 import { EnterpriseBlock } from "./enterpriseBlock";
 export interface EnterpriseCacheParams extends RowNodeCacheParams {

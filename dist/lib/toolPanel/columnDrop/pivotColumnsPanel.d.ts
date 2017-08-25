@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 import { Column } from "ag-grid/main";
 import { AbstractColumnDropPanel } from "./abstractColumnDropPanel";
 export declare class PivotColumnsPanel extends AbstractColumnDropPanel {
@@ -8,6 +8,8 @@ export declare class PivotColumnsPanel extends AbstractColumnDropPanel {
     private context;
     private loggerFactory;
     private dragAndDropService;
+    private columnApi;
+    private gridApi;
     constructor(horizontal: boolean);
     private passBeansUp();
     private refresh();

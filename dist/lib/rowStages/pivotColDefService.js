@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -145,6 +145,9 @@ var PivotColDefService = (function () {
         }
         colDef.headerName = headerName;
         colDef.colId = 'pivot_' + columnIdSequence.next();
+        // pivot columns repeat over field, so it makes sense to use the unique id instead. For example if you want to
+        // assign values to pinned bottom rows using setPinnedBottomRowData the value service will use this colId.
+        colDef.field = colDef.colId;
         colDef.pivotKeys = pivotKeys;
         colDef.pivotValueColumn = valueColumn;
         return colDef;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -67,13 +67,15 @@ var ColumnComponent = (function (_super) {
     ColumnComponent.prototype.setupRemove = function () {
         var _this = this;
         main_1.Utils.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
-        this.addDestroyableEventListener(this.btRemove, 'click', function (event) {
-            _this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE);
-            event.stopPropagation();
+        this.addDestroyableEventListener(this.btRemove, 'click', function (mouseEvent) {
+            var agEvent = { type: ColumnComponent.EVENT_COLUMN_REMOVE };
+            _this.dispatchEvent(agEvent);
+            mouseEvent.stopPropagation();
         });
         var touchListener = new main_1.TouchListener(this.btRemove);
-        this.addDestroyableEventListener(touchListener, main_1.TouchListener.EVENT_TAP, function () {
-            _this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE);
+        this.addDestroyableEventListener(touchListener, main_1.TouchListener.EVENT_TAP, function (event) {
+            var agEvent = { type: ColumnComponent.EVENT_COLUMN_REMOVE };
+            _this.dispatchEvent(agEvent);
         });
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     };
@@ -130,10 +132,13 @@ var ColumnComponent = (function (_super) {
             hidePopup();
             if (_this.gridOptionsWrapper.isFunctionsPassive()) {
                 var event_1 = {
+                    type: main_1.Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
                     columns: [_this.column],
-                    aggFunc: value
+                    aggFunc: value,
+                    api: _this.gridApi,
+                    columnApi: _this.columnApi
                 };
-                _this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST, event_1);
+                _this.eventService.dispatchEvent(event_1);
             }
             else {
                 _this.columnController.setColumnAggFunc(_this.column, value);
@@ -176,6 +181,14 @@ var ColumnComponent = (function (_super) {
         main_1.Autowired('eventService'),
         __metadata("design:type", main_1.EventService)
     ], ColumnComponent.prototype, "eventService", void 0);
+    __decorate([
+        main_1.Autowired('columnApi'),
+        __metadata("design:type", main_1.ColumnApi)
+    ], ColumnComponent.prototype, "columnApi", void 0);
+    __decorate([
+        main_1.Autowired('gridApi'),
+        __metadata("design:type", main_1.GridApi)
+    ], ColumnComponent.prototype, "gridApi", void 0);
     __decorate([
         main_1.QuerySelector('.ag-column-drop-cell-text'),
         __metadata("design:type", HTMLElement)

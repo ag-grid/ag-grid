@@ -1,5 +1,8 @@
-// ag-grid-enterprise v12.0.2
-import { IMenuFactory, Column } from "ag-grid";
+// ag-grid-enterprise v13.0.0
+import { IMenuFactory, Column, AgEvent } from "ag-grid";
+export interface TabSelectedEvent extends AgEvent {
+    key: string;
+}
 export declare class EnterpriseMenuFactory implements IMenuFactory {
     private context;
     private popupService;

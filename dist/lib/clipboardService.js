@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -295,7 +295,13 @@ var ClipboardService = (function () {
     ClipboardService.prototype.dispatchFlashCells = function (cellsToFlash) {
         var _this = this;
         setTimeout(function () {
-            _this.eventService.dispatchEvent(main_1.Events.EVENT_FLASH_CELLS, { cells: cellsToFlash });
+            var event = {
+                type: main_1.Events.EVENT_FLASH_CELLS,
+                cells: cellsToFlash,
+                api: _this.gridApi,
+                columnApi: _this.columnApi
+            };
+            _this.eventService.dispatchEvent(event);
         }, 0);
     };
     ClipboardService.prototype.userProcessCell = function (rowNode, column, value, func, type) {
@@ -495,6 +501,14 @@ var ClipboardService = (function () {
         main_1.Autowired('gridCore'),
         __metadata("design:type", main_1.GridCore)
     ], ClipboardService.prototype, "gridCore", void 0);
+    __decorate([
+        main_1.Autowired('columnApi'),
+        __metadata("design:type", main_1.ColumnApi)
+    ], ClipboardService.prototype, "columnApi", void 0);
+    __decorate([
+        main_1.Autowired('gridApi'),
+        __metadata("design:type", main_1.GridApi)
+    ], ClipboardService.prototype, "gridApi", void 0);
     __decorate([
         main_1.PostConstruct,
         __metadata("design:type", Function),

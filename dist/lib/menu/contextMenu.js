@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -34,11 +34,7 @@ var ContextMenuFactory = (function () {
         var defaultMenuOptions;
         if (ag_grid_1.Utils.exists(node)) {
             // if user clicks a cell
-            defaultMenuOptions = ['copy', 'copyWithHeaders', 'paste', 'separator', 'toolPanel'];
-            // only put in the export if normal row model, other row models confuse things with export.
-            if (this.rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_IN_MEMORY) {
-                defaultMenuOptions.push('export');
-            }
+            defaultMenuOptions = ['copy', 'copyWithHeaders', 'paste', 'separator', 'toolPanel', 'export'];
         }
         else {
             // if user clicks outside of a cell (eg below the rows, or not rows present)

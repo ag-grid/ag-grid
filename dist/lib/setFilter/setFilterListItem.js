@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -21,21 +21,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
-var svgFactory = main_1.SvgFactory.getInstance();
 var SetFilterListItem = (function (_super) {
     __extends(SetFilterListItem, _super);
-    function SetFilterListItem(value, cellRenderer, column) {
+    function SetFilterListItem(value, column) {
         var _this = _super.call(this, SetFilterListItem.TEMPLATE) || this;
         _this.selected = true;
         _this.value = value;
-        _this.cellRenderer = cellRenderer;
         _this.column = column;
         return _this;
     }
     SetFilterListItem.prototype.init = function () {
         var _this = this;
-        this.eCheckedIcon = main_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column, svgFactory.createCheckboxCheckedIcon);
-        this.eUncheckedIcon = main_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column, svgFactory.createCheckboxUncheckedIcon);
+        this.eCheckedIcon = main_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
+        this.eUncheckedIcon = main_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
         this.eCheckbox = this.queryForHtmlElement(".ag-filter-checkbox");
         this.eClickableArea = this.getGui();
         this.updateCheckboxIcon();
@@ -43,7 +41,10 @@ var SetFilterListItem = (function (_super) {
         var listener = function () {
             _this.selected = !_this.selected;
             _this.updateCheckboxIcon();
-            return _this.dispatchEvent(SetFilterListItem.EVENT_SELECTED);
+            var event = {
+                type: SetFilterListItem.EVENT_SELECTED
+            };
+            return _this.dispatchEvent(event);
         };
         this.addDestroyableEventListener(this.eClickableArea, 'click', listener);
     };
@@ -69,19 +70,10 @@ var SetFilterListItem = (function (_super) {
     };
     SetFilterListItem.prototype.render = function () {
         var valueElement = this.queryForHtmlElement(".ag-filter-value");
-        // let valueElement = eFilterValue.querySelector(".ag-filter-value");
-        if (this.cellRenderer) {
-            var component = this.cellRendererService.useCellRenderer(this.cellRenderer, valueElement, { value: this.value });
-            if (component && component.destroy) {
-                this.addDestroyFunc(component.destroy.bind(component));
-            }
-        }
-        else {
-            // otherwise display as a string
-            var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            var blanksText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
-            var displayNameOfValue = this.value === null ? blanksText : this.value;
-            valueElement.innerHTML = displayNameOfValue;
+        var valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
+        var component = this.cellRendererService.useFilterCellRenderer(this.column.getColDef(), valueElement, { value: this.value, valueFormatted: valueFormatted });
+        if (component && component.destroy) {
+            this.addDestroyFunc(component.destroy.bind(component));
         }
     };
     SetFilterListItem.EVENT_SELECTED = 'selected';
@@ -97,6 +89,10 @@ var SetFilterListItem = (function (_super) {
         main_1.Autowired('cellRendererService'),
         __metadata("design:type", main_1.CellRendererService)
     ], SetFilterListItem.prototype, "cellRendererService", void 0);
+    __decorate([
+        main_1.Autowired('valueFormatterService'),
+        __metadata("design:type", main_1.ValueFormatterService)
+    ], SetFilterListItem.prototype, "valueFormatterService", void 0);
     __decorate([
         main_1.PostConstruct,
         __metadata("design:type", Function),

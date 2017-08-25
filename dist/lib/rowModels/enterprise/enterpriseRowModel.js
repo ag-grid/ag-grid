@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -82,8 +82,16 @@ var EnterpriseRowModel = (function (_super) {
             }
         }
         this.updateRowIndexesAndBounds();
-        var modelUpdatedEvent = { animate: true, keepRenderedRows: true };
-        this.eventService.dispatchEvent(ag_grid_1.Events.EVENT_MODEL_UPDATED, modelUpdatedEvent);
+        var modelUpdatedEvent = {
+            type: ag_grid_1.Events.EVENT_MODEL_UPDATED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            newPage: false,
+            newData: false,
+            animate: true,
+            keepRenderedRows: true
+        };
+        this.eventService.dispatchEvent(modelUpdatedEvent);
     };
     EnterpriseRowModel.prototype.reset = function () {
         this.rootNode = new ag_grid_1.RowNode();
@@ -97,11 +105,25 @@ var EnterpriseRowModel = (function (_super) {
             this.updateRowIndexesAndBounds();
         }
         // this event: 1) clears selection 2) updates filters 3) shows/hides 'no rows' overlay
-        this.eventService.dispatchEvent(ag_grid_1.Events.EVENT_ROW_DATA_CHANGED);
+        var rowDataChangedEvent = {
+            type: ag_grid_1.Events.EVENT_ROW_DATA_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(rowDataChangedEvent);
         // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).
         // important to NOT pass in an event with keepRenderedRows or animate, as we want the renderer
         // to treat the rows as new rows, as it's all new data
-        this.eventService.dispatchEvent(ag_grid_1.Events.EVENT_MODEL_UPDATED);
+        var modelUpdatedEvent = {
+            type: ag_grid_1.Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            animate: false,
+            keepRenderedRows: false,
+            newData: false,
+            newPage: false
+        };
+        this.eventService.dispatchEvent(modelUpdatedEvent);
     };
     EnterpriseRowModel.prototype.createNewRowNodeBlockLoader = function () {
         this.destroyRowNodeBlockLoader();
@@ -184,8 +206,16 @@ var EnterpriseRowModel = (function (_super) {
     };
     EnterpriseRowModel.prototype.onCacheUpdated = function () {
         this.updateRowIndexesAndBounds();
-        var modelUpdatedEvent = { animate: true, keepRenderedRows: true };
-        this.eventService.dispatchEvent(ag_grid_1.Events.EVENT_MODEL_UPDATED, modelUpdatedEvent);
+        var modelUpdatedEvent = {
+            type: ag_grid_1.Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            animate: true,
+            keepRenderedRows: true,
+            newPage: false,
+            newData: false
+        };
+        this.eventService.dispatchEvent(modelUpdatedEvent);
     };
     EnterpriseRowModel.prototype.updateRowIndexesAndBounds = function () {
         var cacheExists = ag_grid_1._.exists(this.rootNode) && ag_grid_1._.exists(this.rootNode.childrenCache);
@@ -328,6 +358,14 @@ var EnterpriseRowModel = (function (_super) {
         ag_grid_1.Autowired('sortController'),
         __metadata("design:type", ag_grid_1.SortController)
     ], EnterpriseRowModel.prototype, "sortController", void 0);
+    __decorate([
+        ag_grid_1.Autowired('gridApi'),
+        __metadata("design:type", ag_grid_1.GridApi)
+    ], EnterpriseRowModel.prototype, "gridApi", void 0);
+    __decorate([
+        ag_grid_1.Autowired('columnApi'),
+        __metadata("design:type", ag_grid_1.ColumnApi)
+    ], EnterpriseRowModel.prototype, "columnApi", void 0);
     __decorate([
         ag_grid_1.PostConstruct,
         __metadata("design:type", Function),

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -33,6 +33,11 @@ var VirtualList = (function (_super) {
         this.setTemplate(VirtualList.TEMPLATE);
         this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
         this.addScrollListener();
+        // Material data table has strict guidelines about whitespace, and these values are different than the ones 
+        // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
+        if (this.environment.getTheme() == "ag-theme-material") {
+            this.rowHeight = 32;
+        }
     };
     VirtualList.prototype.ensureIndexVisible = function (index) {
         var lastRow = this.model.getRowCount();
@@ -146,6 +151,10 @@ var VirtualList = (function (_super) {
         '<div class="ag-virtual-list-container">' +
         '</div>' +
         '</div>';
+    __decorate([
+        main_1.Autowired('environment'),
+        __metadata("design:type", main_1.Environment)
+    ], VirtualList.prototype, "environment", void 0);
     __decorate([
         main_1.PostConstruct,
         __metadata("design:type", Function),

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -21,7 +21,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
-var svgFactory = main_1.SvgFactory.getInstance();
 var RenderedGroup = (function (_super) {
     __extends(RenderedGroup, _super);
     function RenderedGroup(columnGroup, columnDept, expandedCallback, allowDragging) {
@@ -84,8 +83,8 @@ var RenderedGroup = (function (_super) {
     RenderedGroup.prototype.setupExpandContract = function () {
         this.eGroupClosedIcon = this.queryForHtmlElement('#eGroupClosedIcon');
         this.eGroupOpenedIcon = this.queryForHtmlElement('#eGroupOpenedIcon');
-        this.eGroupClosedIcon.appendChild(main_1.Utils.createIcon('columnSelectClosed', this.gridOptionsWrapper, null, svgFactory.createFolderClosed));
-        this.eGroupOpenedIcon.appendChild(main_1.Utils.createIcon('columnSelectOpen', this.gridOptionsWrapper, null, svgFactory.createFolderOpen));
+        this.eGroupClosedIcon.appendChild(main_1.Utils.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
+        this.eGroupOpenedIcon.appendChild(main_1.Utils.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
         this.addDestroyableEventListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         var eColumnGroupIcons = this.queryForHtmlElement('#eColumnGroupIcons');

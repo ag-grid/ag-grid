@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -196,7 +196,16 @@ var ViewportRowModel = (function () {
     ViewportRowModel.prototype.setRowCount = function (rowCount) {
         if (rowCount !== this.rowCount) {
             this.rowCount = rowCount;
-            this.eventService.dispatchEvent(main_1.Events.EVENT_MODEL_UPDATED);
+            var event_1 = {
+                type: main_1.Events.EVENT_MODEL_UPDATED,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                newData: false,
+                newPage: false,
+                keepRenderedRows: false,
+                animate: false
+            };
+            this.eventService.dispatchEvent(event_1);
         }
     };
     ViewportRowModel.prototype.isRowPresent = function (rowNode) {
@@ -219,6 +228,14 @@ var ViewportRowModel = (function () {
         main_1.Autowired('context'),
         __metadata("design:type", main_1.Context)
     ], ViewportRowModel.prototype, "context", void 0);
+    __decorate([
+        main_1.Autowired('gridApi'),
+        __metadata("design:type", main_1.GridApi)
+    ], ViewportRowModel.prototype, "gridApi", void 0);
+    __decorate([
+        main_1.Autowired('columnApi'),
+        __metadata("design:type", main_1.ColumnApi)
+    ], ViewportRowModel.prototype, "columnApi", void 0);
     __decorate([
         main_1.PostConstruct,
         __metadata("design:type", Function),
