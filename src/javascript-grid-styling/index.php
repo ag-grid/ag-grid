@@ -14,6 +14,60 @@ include '../documentation-main/documentation_header.php';
         Themes
     </h2>
 
+    <note>
+        <p>
+            We are currently upgrading the provided. If using an old theme, you have the
+            choice to move to a new theme. We will continue to keep the old themes for backwards
+            compatibility. The current status of the themes is as follows:
+            <style>
+                .theme-table td {
+                    border: 1px solid #aaa;
+                    padding-left: 10px;
+                    padding-right: 10px;
+                }
+                .theme-table th {
+                    border: 1px solid #aaa;
+                }
+            </style>
+            <table class="theme-table">
+                <tr>
+                    <th>Old Theme</th><th>New Theme</th><th>Preference</th>
+                </tr>
+                <tr>
+                    <td>ag-fresh</td><td>-</td><td>Use ag-fresh for now</td>
+                </tr>
+                <tr>
+                    <td>ag-dark</td><td>-</td><td>Use ag-dark for now.</td>
+                </tr>
+                <tr>
+                    <td>ag-blue</td><td>-</td><td>Use ag-blue for now.</td>
+                </tr>
+                <tr>
+                    <td>ag-material</td><td>ag-theme-material</td><td>Start using ag-theme-material</td>
+                </tr>
+            </table>
+        </p>
+        <p>
+            In other words, the only theme with a new alternative right now is ag-material.
+        </p>
+        <pre>&lt;!-- If using the material theme, your code was like this: -->
+&lt;ag-grid <b>class="ag-material"</b>>&lt;/ag-grid>
+
+&lt;!-- To use the new theme, change it to this: -->
+&lt;ag-grid <b>class="ag-theme-material"</b>>&lt;/ag-grid></pre>
+
+        <p>
+            Changing the themes is not an easy task. We have decided to do the material
+            theme first and plan to do the other themes in future releases.
+        </p>
+
+        <p>
+            If you are not using the provided themes, this will not impact you. The CSS classes
+            used inside ag-Grid remain the same.
+        </p>
+
+    </note>
+
     <p>
         ag-Grid is designed to have its look and feel derived from a theme.
     </p>
