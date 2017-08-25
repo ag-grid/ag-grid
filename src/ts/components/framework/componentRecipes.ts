@@ -14,6 +14,7 @@ import {FilterManager} from "../../filter/filterManager";
 import {ComponentResolver} from "./componentResolver";
 import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
 import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRenderer";
+import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
 
 
 
@@ -123,7 +124,7 @@ export class ComponentRecipes {
         return <ICellRendererComp>this.componentResolver.createAgGridComponent(this.gridOptions, params, "groupRowInnerRenderer");
     }
 
-    public newCellRenderer (target: ColDef, params:ICellRendererParams):ICellRendererComp{
+    public newCellRenderer (target: ColDef | ISetFilterParams, params:ICellRendererParams):ICellRendererComp{
         return <ICellRendererComp>this.componentResolver.createAgGridComponent(target, params, "cellRenderer");
     }
 
