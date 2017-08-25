@@ -1,4 +1,4 @@
-// ag-grid-react v12.0.0
+// ag-grid-react v13.0.0
 /// <reference types="react" />
 import { Component } from "react";
 import * as AgGrid from "ag-grid";

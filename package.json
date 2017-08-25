@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react",
-  "version": "12.0.0",
+  "version": "13.0.0",
   "description": "ag-Grid React Component",
   "main": "main.js",
   "typings": "./main.d.ts",
@@ -40,7 +40,7 @@
     "gulp-rename": "1.2.2"
   },
   "peerDependencies": {
-    "ag-grid": "12.0.x",
+    "ag-grid": "13.0.x",
     "react": "^15.5.0",
     "react-dom": "^15.5.0",
     "react-dom-factories" : "^1.0.0"
