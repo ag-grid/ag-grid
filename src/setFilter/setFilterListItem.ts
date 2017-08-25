@@ -35,15 +35,13 @@ export class SetFilterListItem extends Component {
 
     private value: any;
     private column: Column;
-    private cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
 
     private eCheckedIcon: HTMLElement;
     private eUncheckedIcon: HTMLElement;
 
-    constructor(value: any, cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string, column: Column) {
+    constructor(value: any, column: Column) {
         super(SetFilterListItem.TEMPLATE);
         this.value = value;
-        this.cellRenderer = cellRenderer;
         this.column = column;
 
     }
@@ -97,20 +95,13 @@ export class SetFilterListItem extends Component {
         let valueElement = this.queryForHtmlElement(".ag-filter-value");
 
         let valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
-        let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
-        let valueToRender = valueFormattedExits ? valueFormatted : this.value;
 
-        if (this.cellRenderer) {
-            let component = this.cellRendererService.useCellRenderer(this.column.getColDef(), valueElement, {value: this.value, valueFormatted: valueFormatted});
-            if (component && component.destroy) {
-                this.addDestroyFunc( component.destroy.bind(component) );
-            }
-        } else {
-            // otherwise display as a string
-            let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            let blanksText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
 
-            valueElement.innerHTML = valueToRender === null ? blanksText : valueToRender;
+        let component = this.cellRendererService.useFilterCellRenderer(
+            this.column.getColDef(),
+            valueElement, {value: this.value, valueFormatted: valueFormatted});
+        if (component && component.destroy) {
+            this.addDestroyFunc( component.destroy.bind(component) );
         }
     }
 }

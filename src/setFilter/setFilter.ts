@@ -100,9 +100,8 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     }
 
     private createSetListItem(value: any): Component {
-        let cellRenderer = this.filterParams.cellRenderer;
 
-        let listItem = new SetFilterListItem(value, cellRenderer, this.filterParams.column);
+        let listItem = new SetFilterListItem(value, this.filterParams.column);
         this.context.wireBean(listItem);
         listItem.setSelected(this.model.isValueSelected(value));
 
