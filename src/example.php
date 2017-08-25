@@ -112,7 +112,6 @@
                             <option value="ag-fresh" selected>Fresh</option>
                             <option value="ag-dark">Dark</option>
                             <option value="ag-blue">Blue</option>
-                            <option value="ag-material">Material (legacy)</option>
                             <option value="ag-bootstrap">Bootstrap</option>
                         </select>
 
