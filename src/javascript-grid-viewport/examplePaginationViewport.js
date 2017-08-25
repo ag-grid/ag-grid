@@ -4,7 +4,7 @@
         // this col shows the row index, doesn't use any data from the row
         {
             headerName: "#", width: 50, cellRenderer: function (params) {
-            return params.rowIndex;
+            return '' + params.rowIndex;
         }
         },
         {headerName: "Code", field: "code", width: 70},
