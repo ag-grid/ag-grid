@@ -276,11 +276,11 @@
         eDivPercentBar.className = 'div-percent-bar';
         eDivPercentBar.style.width = value + '%';
         if (value < 20) {
-            eDivPercentBar.style.backgroundColor = 'red';
+            eDivPercentBar.style.backgroundColor = '#f44336';
         } else if (value < 60) {
-            eDivPercentBar.style.backgroundColor = '#ff9900';
+            eDivPercentBar.style.backgroundColor = '#FF9100';
         } else {
-            eDivPercentBar.style.backgroundColor = '#00A000';
+            eDivPercentBar.style.backgroundColor = '#4CAF50';
         }
 
         var eValue = document.createElement('div');
