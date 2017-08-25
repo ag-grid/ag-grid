@@ -74,8 +74,6 @@ export class GridOptionsWrapper {
 
     public static PROP_FLOATING_FILTERS_HEIGHT = 'floatingFiltersHeight';
 
-    public static EVENT_PROPERTY_CHANGED = 'propertyChangedEvent';
-
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
@@ -356,7 +354,7 @@ export class GridOptionsWrapper {
         if (previousValue !== value) {
             gridOptionsNoType[key] = value;
             let event: PropertyChangedEvent = {
-                type: GridOptionsWrapper.EVENT_PROPERTY_CHANGED,
+                type: key,
                 currentValue: value,
                 previousValue: previousValue
             };
