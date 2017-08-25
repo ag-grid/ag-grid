@@ -96,16 +96,6 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
-    components:{
-        currencyRenderer: currencyRenderer,
-        ratingRenderer: ratingRenderer,
-        booleanCellRenderer: booleanCellRenderer,
-        countryCellRenderer: CountryCellRenderer,
-        personFloatingFilterComponent: PersonFloatingFilterComponent,
-        countryFloatingFilterComponent: CountryFloatingFilterComponent
-        // cellRenderer: function (params) {return params.node.group ? params.value : "HAHA: " + params.value},
-        // innerRenderer: function (params) {return "INNER: " + params.value}
-    },
     defaultColDef: {
         minWidth: 50
     },
@@ -342,7 +332,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 // enablePivot: true,
                 filter: PersonFilter,
-                floatingFilterComponent: 'personFloatingFilterComponent',
+                floatingFilterComponent: PersonFloatingFilterComponent,
                 checkboxSelection: function (params) {
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
@@ -382,14 +372,14 @@ var defaultCols = [
             },
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
-                cellRenderer: 'countryCellRenderer',
+                cellRenderer: CountryCellRenderer,
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
                 cellEditor: 'richSelect',
                 cellEditorParams: {
-                    cellRenderer: 'countryCellRenderer',
+                    cellRenderer: CountryCellRenderer,
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
                         "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
                         "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
@@ -397,13 +387,13 @@ var defaultCols = [
                 // pinned: 'left',
                 floatCell: true,
                 filterParams: {
-                    cellRenderer: 'countryCellRenderer',
+                    cellRenderer: CountryCellRenderer,
                     cellHeight: 20,
                     newRowsAction: 'keep',
                     selectAllOnMiniFilter: true,
                     clearButton: true
                 },
-                floatingFilterComponent: 'countryFloatingFilterComponent',
+                floatingFilterComponent: CountryFloatingFilterComponent,
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -443,7 +433,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 enablePivot: true,
                 enableValue: true,
-                cellRenderer: 'booleanCellRenderer', cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 floatCell: true,
                 filterParams: {
                     cellRenderer: booleanFilterCellRenderer,
@@ -484,7 +474,7 @@ var defaultCols = [
         ]
     },
     {
-        headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: 'ratingRenderer',
+        headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
         floatCell: true,
         enableRowGroup: true,
         enablePivot: true,
