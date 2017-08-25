@@ -17,6 +17,7 @@ var gridOptions = {
     groupSelectsChildren: true,
     groupSelectsFiltered: true,
     suppressAggFuncInHeader: true,
+    enableFilter:true,
     suppressRowClickSelection: true,
      autoGroupColumnDef: {headerName: "Athlete", field: "athlete", width: 200,
         cellRenderer: 'group',
