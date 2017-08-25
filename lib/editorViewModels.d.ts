@@ -1,4 +1,4 @@
-// ag-grid-aurelia v12.0.0
+// ag-grid-aurelia v13.0.0
 /**
  * Implements all the methods of ICellEditor except for Init
  */
