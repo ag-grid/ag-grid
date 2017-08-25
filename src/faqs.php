@@ -177,7 +177,7 @@
         </p>
         <p>
         <code>    
-            Sample_Company_Test_Application_4Devs1_SaaS_9_August_2018__MTUzNDU0NjgwMDAwMA==78efe9a087e34b37758aa781e145c2a2
+            Sample_Company_Test_Application_4Devs1_SaaS_9_August_2018__PLUzNDU0NwefwgKLQDQFW==879e4t4t4b3rgerg24g4g1ec2a2
         </code>
         </p>
         <p>
@@ -277,7 +277,7 @@
     </div>
 </div>
 
-<div class="container">
+<!-- <div class="container">
     <div class="row">
         <h2>
         Further Resources
@@ -307,7 +307,7 @@
             </ul>
         </div>
     </div>
-</div>
+</div> -->
 
 <?php include("includes/footer.php"); ?>
 

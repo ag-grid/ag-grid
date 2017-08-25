@@ -96,16 +96,6 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
-    components:{
-        currencyRenderer: currencyRenderer,
-        ratingRenderer: ratingRenderer,
-        booleanCellRenderer: booleanCellRenderer,
-        countryCellRenderer: CountryCellRenderer,
-        personFloatingFilterComponent: PersonFloatingFilterComponent,
-        countryFloatingFilterComponent: CountryFloatingFilterComponent
-        // cellRenderer: function (params) {return params.node.group ? params.value : "HAHA: " + params.value},
-        // innerRenderer: function (params) {return "INNER: " + params.value}
-    },
     defaultColDef: {
         minWidth: 50
     },
@@ -238,6 +228,9 @@ suppressScrollLag: true,
     onCellClicked: function (params) {
         // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
+    onColumnVisible: function(event) {
+        // console.log("Callback onColumnVisible:", event);
+    },
     onCellValueChanged: function (params) {
         console.log("Callback onCellValueChanged:", params);
     },
@@ -339,7 +332,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 // enablePivot: true,
                 filter: PersonFilter,
-                floatingFilterComponent: 'personFloatingFilterComponent',
+                floatingFilterComponent: PersonFloatingFilterComponent,
                 checkboxSelection: function (params) {
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
@@ -379,14 +372,14 @@ var defaultCols = [
             },
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
-                cellRenderer: 'countryCellRenderer',
+                cellRenderer: CountryCellRenderer,
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
                 cellEditor: 'richSelect',
                 cellEditorParams: {
-                    cellRenderer: 'countryCellRenderer',
+                    cellRenderer: CountryCellRenderer,
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
                         "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
                         "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
@@ -394,13 +387,13 @@ var defaultCols = [
                 // pinned: 'left',
                 floatCell: true,
                 filterParams: {
-                    cellRenderer: 'countryCellRenderer',
+                    cellRenderer: CountryCellRenderer,
                     cellHeight: 20,
                     newRowsAction: 'keep',
                     selectAllOnMiniFilter: true,
                     clearButton: true
                 },
-                floatingFilterComponent: 'countryFloatingFilterComponent',
+                floatingFilterComponent: CountryFloatingFilterComponent,
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -440,7 +433,7 @@ var defaultCols = [
                 enableRowGroup: true,
                 enablePivot: true,
                 enableValue: true,
-                cellRenderer: 'booleanCellRenderer', cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 floatCell: true,
                 filterParams: {
                     cellRenderer: booleanFilterCellRenderer,
@@ -481,7 +474,7 @@ var defaultCols = [
         ]
     },
     {
-        headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: 'ratingRenderer',
+        headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
         floatCell: true,
         enableRowGroup: true,
         enablePivot: true,
@@ -696,19 +689,6 @@ function rowSelected(event) {
 
 function onThemeChanged(newTheme) {
     gridDiv.className = newTheme;
-    if(newTheme === 'ag-material') {
-        gridOptions.rowHeight = 48;
-        // gridOptions.icons.checkboxChecked = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AUZEBAL/ldO7gAAAEpJREFUKM9jZJjW8Z+BDMDEQCagrcb/meUM/zPL6WQjzCbG6Z10sBGXbRgasQUCLsCCzyZctmHYiEsRUX5E1ozPIKxOJcZmsqMDAKbtFz19uHD9AAAAAElFTkSuQmCC"/>';
-        gridOptions.icons.checkboxChecked = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDoxMTQzMkY1NDIyMjhFNjExQkVGOEFCQUI5MzdBNjFEMSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoyMzBBQkU2ODI4MjQxMUU2QjlDRUZCNUFDREJGRTVDMCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoyMzBBQkU2NzI4MjQxMUU2QjlDRUZCNUFDREJGRTVDMCIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChXaW5kb3dzKSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjE0NDMyRjU0MjIyOEU2MTFCRUY4QUJBQjkzN0E2MUQxIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjExNDMyRjU0MjIyOEU2MTFCRUY4QUJBQjkzN0E2MUQxIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+O+zv0gAAAQ1JREFUeNpilJvw35OBgWEuEEsyEAeeA3EyI1DjMxI0wTUzkaEJBCSZiFVpJcvAsDqEgUFVCMInSqOeOAPDLG8GBjNpBoZCCyI1KggwMCzwZ2DgZWdgOPWUgaF4F5pGDxWgqT4MDPzsSB7hYWBYHMDAIMzJwHDjDQND0mYGhu9/0DT6qTEwuCszMOyIZmAwkoTYALJJjp+B4cEHBoaEjQwMn38iDAVFx38wA4gzTBgYSiwhEi++MDDI8DEwvP3OwBC0CqIZGcBtBOmefoaBIXQNA8PvfxBNf4B03AZMTVgD5xwwXcQDFX/8wcAw+RQDw5VX2AMN7lRSARM07ZEKXoA0poAYJGh6CkrkAAEGAKNeQxaS7i+xAAAAAElFTkSuQmCC"/>';
-    } else if (newTheme == 'ag-material-next') {
-            gridOptions.rowHeight = undefined;
-            gridOptions.icons.checkboxChecked = undefined;
-            gridOptions.icons.checkboxIndeterminate = undefined;
-    } else {
-        gridOptions.rowHeight = 25;
-        gridOptions.icons.checkboxChecked = undefined;
-        gridOptions.icons.checkboxIndeterminate = undefined;
-    }
     gridOptions.api.resetRowHeights();
     gridOptions.api.redrawRows();
     gridOptions.api.refreshHeader();
@@ -963,7 +943,7 @@ function ratingRendererGeneral(value, forFilter) {
     var result = '<span>';
     for (var i = 0; i < 5; i++) {
         if (value > i) {
-            result += '<img src="images/star.svg" width=12 height=12 />';
+            result += '<img src="images/star.svg" class="star" width=12 height=12 />';
         }
     }
     if (forFilter && value === 0) {
@@ -1021,11 +1001,9 @@ function booleanCellRenderer(params) {
 
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
-        //this is the unicode for executeFrame character
-        return "<span title='true' class='ag-icon ag-icon-tick' style='height: 100%'></span>";
+        return "<span title='true' class='ag-icon ag-icon-tick'></span>";
     } else if (valueCleaned === false) {
-        //this is the unicode for cross character
-        return "<span title='false' class='ag-icon ag-icon-cross' style='height: 100%'></span>";
+        return "<span title='false' class='ag-icon ag-icon-cross'></span>";
     } else if (params.value !==null && params.value !== undefined) {
         return params.value.toString();
     } else {
@@ -1036,11 +1014,9 @@ function booleanCellRenderer(params) {
 function booleanFilterCellRenderer(params) {
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
-        //this is the unicode for executeFrame character
-        return "<span title='true' class='ag-icon ag-icon-tick' style='height: 100%'></span>";
+        return "<span title='true' class='ag-icon ag-icon-tick'></span>";
     } else if (valueCleaned === false) {
-        //this is the unicode for cross character
-        return "<span title='false' class='ag-icon ag-icon-cross' style='height: 100%'></span>";
+        return "<span title='false' class='ag-icon ag-icon-cross'></span>";
     } else {
         return "(empty)";
     }
@@ -1061,7 +1037,7 @@ function CountryFloatingFilterComponent() {}
 CountryFloatingFilterComponent.prototype.init = function(params) {
     this.params = params;
     this.eGui = document.createElement('div');
-    this.eGui.style.borderTop = '1px solid lightgrey';
+    // this.eGui.style.borderBottom = '1px solid lightgrey';
 };
 
 CountryFloatingFilterComponent.prototype.getGui = function() {

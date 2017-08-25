@@ -50,6 +50,13 @@
         button[disabled] {
             opacity: 0.5;
         }
+
+        .ag-dark .star {
+            filter: invert(100%);
+            -webkit-filter: invert(100%);
+            -moz-filter: invert(100%);
+            -ms-filter: invert(100%);
+        }
     </style>
 
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -108,11 +115,10 @@
                         <select onchange="onThemeChanged(this.value)" style="width: 90px; color: #333;"
                                 class="hide-when-small">
                             <option value="">-none-</option>
-                            <option value="ag-material-next">Material Next</option>
+                            <option value="ag-theme-material">Material (new)</option>
                             <option value="ag-fresh" selected>Fresh</option>
                             <option value="ag-dark">Dark</option>
                             <option value="ag-blue">Blue</option>
-                            <option value="ag-material">Material</option>
                             <option value="ag-bootstrap">Bootstrap</option>
                         </select>
 

@@ -50,31 +50,25 @@ var gridOptions = {
         headerName: 'Name',
         field: 'name',
         width: 250,
-        editable: true
+        editable: true,
+        checkboxSelection: true
     },
     defaultColDef: {
-        checkboxSelection: function (params) {
-            var isGrouping = gridOptions.columnApi.getRowGroupColumns().length > 0;
-            return params.colIndex === 0 && !isGrouping;
-        }
+        checkboxSelection: isFirstColumn,
+        enableRowGroup: true,
+        enablePivot: true,
+        enableValue: true
     },
-    rowSelection: "single"
+    rowSelection: "multiple"
 };
 
 var defaultCols = [
     {
-        headerName: 'Name',
-        field: 'name',
-        width: 250,
-        rowGroup: true,
-        hide:true
+        headerName: 'Name', field: 'name', width: 250, rowGroup: true, hide: true
     },
     {
         headerName: "Game Name", field: "game.name", width: 267, editable: true, filter: 'set',
         tooltipField: 'gameName',
-        checkboxSelection: function (params) {
-            return params.columnApi.getRowGroupColumns().length === 0;
-        },
         cellClass: function () {
             return 'alphabet';
         }
@@ -98,6 +92,11 @@ var defaultCols = [
     }
 ];
 
+function isFirstColumn(params) {
+    var displayedColumns = params.columnApi.getAllDisplayedColumns();
+    var thisIsFirstColumn = displayedColumns[0] === params.column;
+    return thisIsFirstColumn;
+}
 
 function createData() {
 

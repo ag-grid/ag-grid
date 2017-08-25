@@ -1389,3 +1389,8 @@ h1, h2, h3, h4, h5 {
     margin-left: 75px;
 }
 
+sup.new {
+    background-color: red;
+    color: white;
+    padding: 0 2px;
+}
