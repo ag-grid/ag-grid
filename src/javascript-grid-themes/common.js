@@ -64,6 +64,7 @@ var gridOptions = {
 var defaultCols = [
     {
         field: 'name',
+        headerName: 'Name',
         rowGroup: true,
         hide: true
     },
