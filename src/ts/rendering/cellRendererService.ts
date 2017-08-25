@@ -4,7 +4,7 @@ import {ComponentRecipes} from "../components/framework/componentRecipes";
 import {ColDef} from "../entities/colDef";
 import {GroupCellRendererParams} from "./cellRenderers/groupCellRenderer";
 import {ComponentResolver, ComponentSource, ResolvedComponent} from "../components/framework/componentResolver";
-import {_} from "../utils";
+import {ISetFilterParams} from "../interfaces/iSetFilterParams";
 
 /** Class to use a cellRenderer. */
 @Bean('cellRendererService')
@@ -18,6 +18,25 @@ export class CellRendererService {
         params: any
     ): ICellRendererComp {
         let cellRenderer: ICellRendererComp = this.componentRecipes.newCellRenderer (target, params);
+        return this.bindToHtml(cellRenderer, eTarget);
+    }
+
+    public useFilterCellRenderer(
+        target:ColDef,
+        eTarget: HTMLElement,
+        params: any
+    ): ICellRendererComp {
+        let cellRenderer: ICellRendererComp;
+        let filterParamsRenderer:ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(
+            (<ISetFilterParams>target.filterParams),
+            "cellRenderer"
+        );
+
+        if (filterParamsRenderer.source != ComponentSource.DEFAULT) {
+            cellRenderer = this.componentRecipes.newCellRenderer((<ISetFilterParams>target.filterParams), params);
+        } else {
+            cellRenderer = this.componentRecipes.newCellRenderer (target, params);
+        }
         return this.bindToHtml(cellRenderer, eTarget);
     }
 
