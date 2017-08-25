@@ -101,6 +101,10 @@ $ag-icons-filter: invert(100%);
         input {
             background-color: $ag-select-background;
             color: $ag-foreground-1;
+
+            &[readonly] {
+                background: rgba($ag-select-background, 0.3);
+            }
         }
     }
 }
