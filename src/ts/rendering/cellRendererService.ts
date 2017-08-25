@@ -26,17 +26,7 @@ export class CellRendererService {
         eTarget: HTMLElement,
         params: any
     ): ICellRendererComp {
-        let cellRenderer: ICellRendererComp;
-        let filterParamsRenderer:ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(
-            (<ISetFilterParams>target.filterParams),
-            "cellRenderer"
-        );
-
-        if (filterParamsRenderer.source != ComponentSource.DEFAULT) {
-            cellRenderer = this.componentRecipes.newCellRenderer((<ISetFilterParams>target.filterParams), params);
-        } else {
-            cellRenderer = this.componentRecipes.newCellRenderer (target, params);
-        }
+        let cellRenderer: ICellRendererComp = this.componentRecipes.newCellRenderer((<ISetFilterParams>target.filterParams), params);
         return this.bindToHtml(cellRenderer, eTarget);
     }
 
