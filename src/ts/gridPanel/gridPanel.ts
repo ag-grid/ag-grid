@@ -165,10 +165,6 @@ export class GridPanel extends BeanStub {
     private layout: BorderLayout;
     private logger: Logger;
 
-    private requestAnimationFrameExists = typeof requestAnimationFrame === 'function';
-    private scrollLagCounter = 0;
-    private scrollLagTicking = false;
-
     private eBodyViewport: HTMLElement;
     private eRoot: HTMLElement;
     private eBody: HTMLElement;
@@ -207,7 +203,8 @@ export class GridPanel extends BeanStub {
 
     private eAllCellContainers: HTMLElement[];
 
-    private lastLeftPosition = -1;
+    private scrollLeft = -1;
+    private nextScrollLeft = -1;
     private scrollTop = -1;
     private nextScrollTop = -1;
     private verticalRedrawNeeded = false;
@@ -1680,20 +1677,31 @@ export class GridPanel extends BeanStub {
     }
 
     private onBodyHorizontalScroll(): void {
-        let newLeftPosition = this.eBodyViewport.scrollLeft;
-        if (newLeftPosition !== this.lastLeftPosition) {
-            let event: BodyScrollEvent = {
-                type: Events.EVENT_BODY_SCROLL,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                direction: 'horizontal'
-            };
-            this.eventService.dispatchEvent(event);
-            this.lastLeftPosition = newLeftPosition;
-            this.horizontallyScrollHeaderCenterAndFloatingCenter();
-            this.alignedGridsService.fireHorizontalScrollEvent(newLeftPosition);
-            this.setLeftAndRightBounds();
+
+        let scrollLeft = this.eBodyViewport.scrollLeft;
+
+        if (this.nextScrollLeft !== scrollLeft) {
+            this.nextScrollLeft = scrollLeft;
+            if (this.useAnimationFrame) {
+                this.taskQueue.schedule();
+            } else {
+                this.doHorizontalScroll();
+            }
         }
+    }
+
+    private doHorizontalScroll(): void {
+        this.scrollLeft = this.nextScrollLeft;
+        let event: BodyScrollEvent = {
+            type: Events.EVENT_BODY_SCROLL,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            direction: 'horizontal'
+        };
+        this.eventService.dispatchEvent(event);
+        this.horizontallyScrollHeaderCenterAndFloatingCenter();
+        this.setLeftAndRightBounds();
+        this.alignedGridsService.fireHorizontalScrollEvent(this.scrollLeft);
     }
 
     private onBodyVerticalScroll(): void {
@@ -1722,12 +1730,14 @@ export class GridPanel extends BeanStub {
     }
 
     public executeFrame(): boolean {
-        if (this.scrollTop !== this.nextScrollTop) {
+        if (this.scrollLeft !== this.nextScrollLeft) {
+            this.scrollLeft = this.nextScrollLeft;
+            this.doHorizontalScroll();
+            return true;
+        } else if (this.scrollTop !== this.nextScrollTop) {
             this.scrollTop = this.nextScrollTop;
-
             this.fakeVerticalScroll(this.scrollTop);
             this.verticalRedrawNeeded = true;
-
             return true;
         } else if (this.verticalRedrawNeeded) {
             this.redrawRowsAfterScroll();

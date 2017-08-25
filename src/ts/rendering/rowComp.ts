@@ -96,6 +96,8 @@ export class RowComp extends Component {
     private editingRow: boolean;
     private rowFocused: boolean;
 
+    private columnRefreshPending = false;
+
     private cellComps: {[key: string]: CellComp} = {};
 
     // for animations, there are bits we want done in the next VM turn, to all DOM to update first.
@@ -531,6 +533,18 @@ export class RowComp extends Component {
     }
 
     private refreshCells() {
+        if (this.beans.gridOptionsWrapper.isSuppressAnimationFrame()) {
+            this.refreshCellsInAnimationFrame();
+        } else {
+            if (this.columnRefreshPending) { return; }
+            this.beans.taskQueue.addP1Task(this.refreshCellsInAnimationFrame.bind(this));
+        }
+    }
+
+    private refreshCellsInAnimationFrame() {
+
+        if (!this.active) { return; }
+        this.columnRefreshPending = false;
 
         let centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
         let leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
