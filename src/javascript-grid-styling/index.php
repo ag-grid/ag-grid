@@ -14,6 +14,25 @@ include '../documentation-main/documentation_header.php';
         Themes
     </h2>
 
+    <p>
+        ag-Grid is designed to have its look and feel derived from a theme.
+    </p>
+
+    <p>
+        Out of the box, five themes are provided: ag-fresh, ag-blue, ag-dark, ag-material and ag-bootstrap.
+    </p>
+    <p>
+        To use a theme, add the theme class name to the div element where the ag-Grid directive is attached.
+    </p>
+    <p>
+        The following is an example of using the ag-fresh theme:<br/>
+        <pre>&lt;div ag-grid="gridOptions" class="ag-fresh">&lt;/div></pre>
+    </p>
+    <p>
+        The following is an example of using the ag-dark theme:<br/>
+        <pre>&lt;div ag-grid="gridOptions" class="ag-dark">&lt;/div></pre>
+    </p>
+
     <note>
         <p>
             We are currently upgrading the provided. If using an old theme, you have the
@@ -29,23 +48,23 @@ include '../documentation-main/documentation_header.php';
                     border: 1px solid #aaa;
                 }
             </style>
-            <table class="theme-table">
-                <tr>
-                    <th>Old Theme</th><th>New Theme</th><th>Preference</th>
-                </tr>
-                <tr>
-                    <td>ag-fresh</td><td>-</td><td>Use ag-fresh for now</td>
-                </tr>
-                <tr>
-                    <td>ag-dark</td><td>-</td><td>Use ag-dark for now.</td>
-                </tr>
-                <tr>
-                    <td>ag-blue</td><td>-</td><td>Use ag-blue for now.</td>
-                </tr>
-                <tr>
-                    <td>ag-material</td><td>ag-theme-material</td><td>Start using ag-theme-material</td>
-                </tr>
-            </table>
+        <table class="theme-table">
+            <tr>
+                <th>Old Theme</th><th>New Theme</th><th>Preference</th>
+            </tr>
+            <tr>
+                <td>ag-fresh</td><td>-</td><td>Use ag-fresh for now</td>
+            </tr>
+            <tr>
+                <td>ag-dark</td><td>-</td><td>Use ag-dark for now.</td>
+            </tr>
+            <tr>
+                <td>ag-blue</td><td>-</td><td>Use ag-blue for now.</td>
+            </tr>
+            <tr>
+                <td>ag-material</td><td>ag-theme-material</td><td>Start using ag-theme-material</td>
+            </tr>
+        </table>
         </p>
         <p>
             In other words, the only theme with a new alternative right now is ag-material.
@@ -67,25 +86,6 @@ include '../documentation-main/documentation_header.php';
         </p>
 
     </note>
-
-    <p>
-        ag-Grid is designed to have its look and feel derived from a theme.
-    </p>
-
-    <p>
-        Out of the box, five themes are provided: ag-fresh, ag-blue, ag-dark, ag-material and ag-bootstrap.
-    </p>
-    <p>
-        To use a theme, add the theme class name to the div element where the ag-Grid directive is attached.
-    </p>
-    <p>
-        The following is an example of using the ag-fresh theme:<br/>
-        <pre>&lt;div ag-grid="gridOptions" class="ag-fresh">&lt;/div></pre>
-    </p>
-    <p>
-        The following is an example of using the ag-dark theme:<br/>
-        <pre>&lt;div ag-grid="gridOptions" class="ag-dark">&lt;/div></pre>
-    </p>
 
     <h2>When to Create a Theme</h2>
 
