@@ -24,6 +24,7 @@ include '../documentation-main/documentation_header.php';
         <li>AG-380: Fixed an issue when using a framework like angular/react... cellRendererFramework in a column was not considered
         when grouping by that column </li>
         <li>AG-253: Support for innnerRendererFramework</li>
+        <li>AG-50: Support for cellRendererFramework inside filterParams</li>
     </ul>
 
     <h4>Enhancements</h4>
