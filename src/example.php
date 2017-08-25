@@ -50,6 +50,13 @@
         button[disabled] {
             opacity: 0.5;
         }
+
+        .ag-dark .star {
+            filter: invert(100%);
+            -webkit-filter: invert(100%);
+            -moz-filter: invert(100%);
+            -ms-filter: invert(100%);
+        }
     </style>
 
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
