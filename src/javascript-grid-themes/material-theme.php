@@ -103,8 +103,11 @@ A working example that integrates Angular Material's input, checkbox, select and
 
 </div>
 <hr>
-<div>
-    <h2 id="material-theme-legacy">Material Theme (legacy)</h2>
+
+
+<div style="border-left: 4px solid lightcoral; padding-left: 4px;">
+
+    <h2 id="material-theme-legacy">DEPRECATED - Old Material Theme (legacy)</h2>
 
     The Material Theme is one of the four original themes supplied with ag-Grid. It is deprecated in favor of the new material theme.
 
