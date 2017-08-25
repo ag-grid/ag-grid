@@ -71,8 +71,8 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         this.comparator = this.filterParams.textCustomComparator ? this.filterParams.textCustomComparator : TextFilter.DEFAULT_COMPARATOR;
         this.formatter =
             this.filterParams.textFormatter ? this.filterParams.textFormatter :
-            this.filterParams.caseSensitive == true ? TextFilter.DEFAULT_LOWERCASE_FORMATTER :
-            TextFilter.DEFAULT_FORMATTER;
+            this.filterParams.caseSensitive == true ? TextFilter.DEFAULT_FORMATTER :
+                TextFilter.DEFAULT_LOWERCASE_FORMATTER;
         super.customInit();
     }
 
