@@ -36,9 +36,9 @@ export class VirtualList extends Component {
 
         this.addScrollListener();
 
-        // Material data table has strict guidelines about whitespace, and these values are different than the ones 
+        // Material data table has strict guidelines about whitespace, and these values are different than the ones
         // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-        if (this.environment.getTheme() == "ag-theme-material") {
+        if (this.environment.getTheme() == "ag-material-next") {
             this.rowHeight = 32;
         }
     }

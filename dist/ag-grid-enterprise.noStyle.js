@@ -36216,9 +36216,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.setTemplate(VirtualList.TEMPLATE);
 	        this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
 	        this.addScrollListener();
-	        // Material data table has strict guidelines about whitespace, and these values are different than the ones 
+	        // Material data table has strict guidelines about whitespace, and these values are different than the ones
 	        // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-	        if (this.environment.getTheme() == "ag-theme-material") {
+	        if (this.environment.getTheme() == "ag-material-next") {
 	            this.rowHeight = 32;
 	        }
 	    };
@@ -36739,7 +36739,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    LicenseManager.setLicenseKey = function (licenseKey) {
 	        LicenseManager_1.licenseKey = licenseKey;
 	    };
-	    LicenseManager.RELEASE_INFORMATION = 'MTUwMDYzOTg4NDAwNA==';
+	    LicenseManager.RELEASE_INFORMATION = 'MTUwMzY3MjczNTk0OQ==';
 	    __decorate([
 	        main_1.Autowired('md5'),
 	        __metadata("design:type", md5_1.MD5)
