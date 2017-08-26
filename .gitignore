@@ -14,8 +14,6 @@ src/ts/**/*.js
 
 .idea/workspace.xml
 
-.cache-loader
-
 ag-grid.iml
 
 
