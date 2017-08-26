@@ -232,80 +232,6 @@ define('data/refData',["require", "exports"], function (require, exports) {
     exports.default = RefData;
 });
 
-define('dateComponent/dateComponent',["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var DateComponent = (function () {
-        function DateComponent() {
-            this.init = function (params) {
-                this.params = params;
-                this.eGui = document.createElement('div');
-                this.eGui.innerHTML = '' +
-                    '<div class="filter">' +
-                    '<span class="reset">x</span>' +
-                    '<input class="dd" placeholder="dd" maxLength="2"/>/' +
-                    '<input class="mm" placeholder="mm" maxLength="2"/>/' +
-                    '<input class="yyyy" placeholder="yyyy" maxLength="4"/>' +
-                    '</div>';
-                this.eReset = this.eGui.querySelector('.reset');
-                this.onResetDate = this.onResetDate.bind(this);
-                this.eReset.addEventListener('click', this.onResetDate);
-                this.eDD = this.eGui.querySelector('.dd');
-                this.eMM = this.eGui.querySelector('.mm');
-                this.eYYYY = this.eGui.querySelector('.yyyy');
-                this.onDateChanged = this.onDateChanged.bind(this);
-                this.eDD.addEventListener('change', this.onDateChanged);
-                this.eMM.addEventListener('change', this.onDateChanged);
-                this.eYYYY.addEventListener('change', this.onDateChanged);
-            };
-            this.getGui = function () {
-                return this.eGui;
-            };
-            this.onDateChanged = function (event) {
-                var targetClass = event.target.classList[0];
-                var targetValue = event.target.value;
-                this.date = this.parseDate(targetClass === 'dd' ? targetValue : this.eDD.value, targetClass === 'mm' ? targetValue : this.eMM.value, targetClass === 'yyyy' ? targetValue : this.eYYYY.value);
-                this.params.onDateChanged();
-            };
-            this.onResetDate = function () {
-                this.dd = '';
-                this.mm = '';
-                this.yyyy = '';
-                this.date = null;
-                this.params.onDateChanged();
-            };
-            this.getDate = function () {
-                return this.date;
-            };
-            this.setDate = function (date) {
-                this.dd = date.getDate() + '';
-                this.mm = (date.getMonth() + 1) + '';
-                this.yyyy = date.getFullYear() + '';
-                this.date = date;
-                this.params.onDateChanged();
-            };
-            this.parseDate = function (dd, mm, yyyy) {
-                if (dd.trim() === '' || mm.trim() === '' || yyyy.trim() === '') {
-                    return null;
-                }
-                var day = Number(dd);
-                var month = Number(mm);
-                var year = Number(yyyy);
-                var date = new Date(year, month - 1, day);
-                if (isNaN(date.getTime())) {
-                    return null;
-                }
-                if (date.getDate() != day || date.getMonth() + 1 != month || date.getFullYear() != year) {
-                    return null;
-                }
-                return date;
-            };
-        }
-        return DateComponent;
-    }());
-    exports.default = DateComponent;
-});
-
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -461,6 +387,80 @@ define('editors/numeric-editor',["require", "exports", "aurelia-framework", "ag-
         var NumericEditor_1;
     }(ag_grid_aurelia_1.BaseAureliaEditor));
     exports.NumericEditor = NumericEditor;
+});
+
+define('dateComponent/dateComponent',["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var DateComponent = (function () {
+        function DateComponent() {
+            this.init = function (params) {
+                this.params = params;
+                this.eGui = document.createElement('div');
+                this.eGui.innerHTML = '' +
+                    '<div class="filter">' +
+                    '<span class="reset">x</span>' +
+                    '<input class="dd" placeholder="dd" maxLength="2"/>/' +
+                    '<input class="mm" placeholder="mm" maxLength="2"/>/' +
+                    '<input class="yyyy" placeholder="yyyy" maxLength="4"/>' +
+                    '</div>';
+                this.eReset = this.eGui.querySelector('.reset');
+                this.onResetDate = this.onResetDate.bind(this);
+                this.eReset.addEventListener('click', this.onResetDate);
+                this.eDD = this.eGui.querySelector('.dd');
+                this.eMM = this.eGui.querySelector('.mm');
+                this.eYYYY = this.eGui.querySelector('.yyyy');
+                this.onDateChanged = this.onDateChanged.bind(this);
+                this.eDD.addEventListener('change', this.onDateChanged);
+                this.eMM.addEventListener('change', this.onDateChanged);
+                this.eYYYY.addEventListener('change', this.onDateChanged);
+            };
+            this.getGui = function () {
+                return this.eGui;
+            };
+            this.onDateChanged = function (event) {
+                var targetClass = event.target.classList[0];
+                var targetValue = event.target.value;
+                this.date = this.parseDate(targetClass === 'dd' ? targetValue : this.eDD.value, targetClass === 'mm' ? targetValue : this.eMM.value, targetClass === 'yyyy' ? targetValue : this.eYYYY.value);
+                this.params.onDateChanged();
+            };
+            this.onResetDate = function () {
+                this.dd = '';
+                this.mm = '';
+                this.yyyy = '';
+                this.date = null;
+                this.params.onDateChanged();
+            };
+            this.getDate = function () {
+                return this.date;
+            };
+            this.setDate = function (date) {
+                this.dd = date.getDate() + '';
+                this.mm = (date.getMonth() + 1) + '';
+                this.yyyy = date.getFullYear() + '';
+                this.date = date;
+                this.params.onDateChanged();
+            };
+            this.parseDate = function (dd, mm, yyyy) {
+                if (dd.trim() === '' || mm.trim() === '' || yyyy.trim() === '') {
+                    return null;
+                }
+                var day = Number(dd);
+                var month = Number(mm);
+                var year = Number(yyyy);
+                var date = new Date(year, month - 1, day);
+                if (isNaN(date.getTime())) {
+                    return null;
+                }
+                if (date.getDate() != day || date.getMonth() + 1 != month || date.getFullYear() != year) {
+                    return null;
+                }
+                return date;
+            };
+        }
+        return DateComponent;
+    }());
+    exports.default = DateComponent;
 });
 
 define('filters/partialMatch',["require", "exports"], function (require, exports) {
@@ -41882,10 +41882,10 @@ define('text!editors/numeric-editor.html', ['module'], function(module) { module
 define('text!headerComponent/headerGroup.css', ['module'], function(module) { module.exports = ".customHeaderLabel{\n    margin-left: 5px;\n    margin-top: 3px;\n    float: left;\n}\n\n.customExpandButton{\n    float:right;\n    margin-top: 5px;\n    margin-left: 3px;\n}\n\n.expanded {\n    animation-name: toExpanded;\n    animation-duration: 1s;\n    -ms-transform: rotate(180deg); /* IE 9 */\n    -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */\n    transform: rotate(180deg);\n}\n\n.collapsed {\n    color: cornflowerblue;\n    animation-name: toCollapsed;\n    animation-duration: 1s;\n    -ms-transform: rotate(0deg); /* IE 9 */\n    -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */\n    transform: rotate(0deg);\n}\n\n\n\n@keyframes  toExpanded{\n    from {\n        color: cornflowerblue;\n        -ms-transform: rotate(0deg); /* IE 9 */\n        -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */\n        transform: rotate(0deg);\n    }\n    to {\n        color: black;\n        -ms-transform: rotate(180deg); /* IE 9 */\n        -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */\n        transform: rotate(180deg);\n    }\n}\n\n@keyframes toCollapsed{\n    from {\n        color: black;\n        -ms-transform: rotate(180deg); /* IE 9 */\n        -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */\n        transform: rotate(180deg);\n    }\n    to {\n        color: cornflowerblue;\n        -ms-transform: rotate(0deg); /* IE 9 */\n        -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */\n        transform: rotate(0deg);\n    }\n}"; });
 define('text!components/editor-example/editor-example.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"../../editors/numeric-editor\"></require>\n  <require from=\"../../editors/mood-editor\"></require>\n  <div style=\"width: 800px;\">\n    <h1>Editor Example</h1>\n    <div style=\"width: 100%; height: 350px;\">\n    <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                     grid-options.bind=\"gridOptions\">\n\n      <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"300\"></ag-grid-column>\n      <ag-grid-column header-name=\"Mood\" field=\"mood\" width.bind=\"250\" editable.bind=\"true\">\n        <ag-cell-template>\n          <img width=\"20px\" if.bind=\"params.value === 'Happy'\" src=\"images/smiley.png\"/>\n          <img width=\"20px\" if.bind=\"params.value !== 'Happy'\" src=\"images/smiley-sad.png\"/>\n        </ag-cell-template>\n        <ag-editor-template>\n          <ag-mood-editor></ag-mood-editor>\n        </ag-editor-template>\n      </ag-grid-column>\n      <ag-grid-column header-name=\"Numeric\" field=\"number\" width.bind=\"249\" editable.bind=\"true\">\n        <ag-editor-template>\n          <ag-numeric-editor></ag-numeric-editor>\n        </ag-editor-template>\n      </ag-grid-column>\n    </ag-grid-aurelia>\n  </div>\n</template>\n"; });
 define('text!components/rich-grid-example/rich-grid-example.css', ['module'], function(module) { module.exports = ".filter {\n    margin: 2px\n}\n\n.dd {\n    width: 30px\n}\n\n.mm {\n    width: 30px\n}\n\n.yyyy {\n    width: 60px\n}\n\n.reset {\n    padding: 2px;\n    background-color: red;\n    border-radius: 3px;\n    font-size: 10px;\n    margin-right: 5px;\n    color: white\n}"; });
-define('text!components/filter-example/filter-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Filter Example</h1>\n    <div style=\"width: 100%; height: 350px;\">\n      <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                       grid-options.bind=\"gridOptions\">\n        <ag-grid-column header-name=\"Row\" field=\"row\" width.bind=\"400\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Filter Component\" field=\"name\" width.bind=\"400\" filter.bind=\"getPartialMatchFilter()\">\n        </ag-grid-column>\n      </ag-grid-aurelia>\n    </div>\n  </div>\n  </div>\n</template>\n"; });
 define('text!components/floating-row-example/floating-row-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Pinned Row Example</h1>\n      <div style=\"width: 100%; height: 350px;\">\n        <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                         grid-options.bind=\"gridOptions\">\n            <ag-grid-column header-name=\"Row\" field=\"row\" width.bind=\"400\">\n              <ag-cell-template>\n                <span style=\"font-weight: bold\">${params.value}</span>\n              </ag-cell-template>\n            </ag-grid-column>\n            <ag-grid-column header-name=\"Number\" field=\"number\" width.bind=\"399\">\n              <ag-cell-template>\n                <span style=\"font-style: italic\">${params.value}</span>\n              </ag-cell-template>\n            </ag-grid-column>\n        </ag-grid-aurelia>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
+define('text!components/filter-example/filter-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Filter Example</h1>\n    <div style=\"width: 100%; height: 350px;\">\n      <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                       grid-options.bind=\"gridOptions\">\n        <ag-grid-column header-name=\"Row\" field=\"row\" width.bind=\"400\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Filter Component\" field=\"name\" width.bind=\"400\" filter.bind=\"getPartialMatchFilter()\">\n        </ag-grid-column>\n      </ag-grid-aurelia>\n    </div>\n  </div>\n  </div>\n</template>\n"; });
 define('text!components/full-width-example/full-width-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Full Width Example</h1>\n      <div style=\"width: 100%; height: 350px;\">\n        <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                         grid-options.bind=\"gridOptions\">\n            <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"400\">\n            </ag-grid-column>\n            <ag-grid-column header-name=\"Age\" field=\"age\" width.bind=\"400\">\n            </ag-grid-column>\n        </ag-grid-aurelia>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
-define('text!components/group-row-example/group-row-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Group Row Example</h1>\n    <div style=\"width: 100%; height: 350px;\">\n      <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                       grid-options.bind=\"gridOptions\">\n        <ag-grid-column header-name=\"Country\" field=\"country\" width.bind=\"100\" row-group-index.bind=\"0\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"100\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Gold\" field=\"gold\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Silver\" field=\"silver\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Bronze\" field=\"bronze\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n      </ag-grid-aurelia>\n    </div>\n  </div>\n  </div>\n</template>\n"; });
 define('text!components/rich-grid-declarative-example/rich-grid-declarative-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Rich Grid with Declarative Markup</h1>\n    <div style=\"padding: 4px;\">\n      <div style=\"float: right;\">\n        <input keyup.delegate=\"onQuickFilterChanged($event)\" type=\"text\" id=\"quickFilterInput\"\n               placeholder=\"Type text to filter...\"/>\n        <button disabled.bind=\"!showGrid\" click.delegate=\"showGrid=false\">Destroy Grid</button>\n        <button disabled.bind=\"showGrid\" click.delegate=\"showGrid=true\">Create Grid</button>\n      </div>\n      <div>\n        <b>Employees Skills and Contact Details</b>\n        ${rowCount}\n      </div>\n    </div>\n    <div style=\"clear: both;\"></div>\n\n    <div if.bind=\"showGrid\">\n\n      <!-- Because we are using the Angular ID (ie #ag-grid marker), we have to have all the items that use\n           that marker inside the same ng-if as the grid -->\n\n      <div style=\"padding: 4px;\" class=\"toolbar\">\n            <span>\n                Grid API:\n                <button click.delegate=\"api.selectAll()\">Select All</button>\n                <button click.delegate=\"api.deselectAll()\">Clear Selection</button>\n            </span>\n        <span style=\"margin-left: 20px;\">\n                Column API:\n                <button click.delegate=\"columnApi.setColumnVisible('country', false)\">Hide Country Column</button>\n                <button click.delegate=\"columnApi.setColumnVisible('country', true)\">Show Country Column</button>\n            </span>\n      </div>\n      <div style=\"clear: both;\"></div>\n      <div style=\"padding: 4px;\" class=\"toolbar\">\n        <label>\n          <input type=\"checkbox\" change.delegate=\"showToolPanel=$event.target.checked\"/>\n          Show Tool Panel\n        </label>\n        <button click.delegate=\"createRowData()\">Refresh Data</button>\n      </div>\n      <div style=\"clear: both;\"></div>\n\n      <div style=\"width: 100%; height: 350px;\">\n        <ag-grid-aurelia #agGrid style=\"width: 100%; height: 350px;\" class=\"ag-fresh\"\n                         context.bind=\"$this\"\n                         grid-options.bind=\"gridOptions\"\n                         column-defs.bind=\"columnDefs\"\n                         show-tool-panel.bind=\"showToolPanel\"\n                         row-data.bind=\"rowData\"\n\n                         enable-col-resize\n                         enable-sorting\n                         enable-filter\n                         group-headers\n                         suppress-row-click-selection\n                         tool-panel-suppress-groups\n                         tool-panel-suppress-values\n                         row-height=\"22\"\n                         row-selection=\"multiple\"\n\n                         model-updated.call=\"onModelUpdated()\"\n                         cell-clicked.call=\"onCellClicked($event)\"\n                         cell-double-clicked.call=\"onCellDoubleClicked($event)\"\n                         cell-context-menu.call=\"onCellContextMenu($event)\"\n                         cell-value-changed.call=\"onCellValueChanged($event)\"\n                         cell-focused.call=\"onCellFocused($event)\"\n                         row-selected.call=\"onRowSelected($event)\"\n                         selection-changed.call=\"onSelectionChanged()\"\n                         before-filter-changed.call=\"onBeforeFilterChanged()\"\n                         after-filter-changed.call=\"onAfterFilterChanged()\"\n                         filter-modified.call=\"onFilterModified()\"\n                         before-sort-changed.call=\"onBeforeSortChanged()\"\n                         after-sort-changed.call=\"onAfterSortChanged()\"\n                         virtual-row-removed.call=\"onVirtualRowRemoved($event)\"\n                         row-clicked.call=\"onRowClicked($event)\"\n                         grid-ready.call=\"onReady($event)\"\n\n                         column-everything-changed.call=\"onColumnEvent($event)\"\n                         column-row-group-changed.call=\"onColumnEvent($event)\"\n                         column-value-changed.call=\"onColumnEvent($event)\"\n                         column-moved.call=\"onColumnEvent($event)\"\n                         column-visible.call=\"onColumnEvent($event)\"\n                         column-group-opened.call=\"onColumnEvent($event)\"\n                         column-resized.call=\"onColumnEvent($event)\"\n                         column-pinned-count-changed.call=\"onColumnEvent($event)\">\n          <ag-grid-column header-name=\"#\" width.bind=\"30\" checkbox-selection.bind=\"true\" suppress-sorting.bind=\"true\" suppress-menu.bind=\"true\" pinned.bind=\"true\"></ag-grid-column>\n          <ag-grid-column header-name=\"Employee\">\n            <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"150\" pinned.bind=\"true\"></ag-grid-column>\n            <ag-grid-column header-name=\"Country\" field=\"country\" width.bind=\"150\" cell-renderer.bind=\"countryCellRenderer\" pinned.bind=\"true\" filter-params.bind=\"getCountryFilterParams()\"></ag-grid-column>\n          </ag-grid-column>\n          <ag-grid-column header-name=\"IT Skills\">\n            <ag-grid-column header-name=\"Skills\" width.bind=\"125\" suppress-sorting.bind=\"true\" cell-renderer.bind=\"skillsCellRenderer\" filter.bind=\"getSkillFilter()\"></ag-grid-column>\n            <ag-grid-column header-name=\"Proficiency\" field=\"proficiency\" width.bind=\"120\"\n                            cell-renderer.bind=\"percentCellRenderer\" filter.bind=\"getProficiencyFilter()\"></ag-grid-column>\n          </ag-grid-column>\n          <ag-grid-column header-name=\"Contact\">\n            <ag-grid-column header-name=\"Mobile\" field=\"mobile\" width.bind=\"150\" filter=\"text\"></ag-grid-column>\n            <ag-grid-column header-name=\"Land-line\" field=\"landline\" width.bind=\"150\" filter=\"text\"></ag-grid-column>\n            <ag-grid-column header-name=\"Address\" field=\"address\" width.bind=\"500\" filter=\"text\"></ag-grid-column>\n          </ag-grid-column>\n        </ag-grid-aurelia>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
+define('text!components/group-row-example/group-row-example.html', ['module'], function(module) { module.exports = "<template>\n  <div style=\"width: 800px;\">\n    <h1>Group Row Example</h1>\n    <div style=\"width: 100%; height: 350px;\">\n      <ag-grid-aurelia #agGrid style=\"width: 100%; height: 100%;\" class=\"ag-fresh\"\n                       grid-options.bind=\"gridOptions\">\n        <ag-grid-column header-name=\"Country\" field=\"country\" width.bind=\"100\" row-group-index.bind=\"0\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Name\" field=\"name\" width.bind=\"100\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Gold\" field=\"gold\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Silver\" field=\"silver\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n        <ag-grid-column header-name=\"Bronze\" field=\"bronze\" width.bind=\"100\" agg-func=\"sum\">\n        </ag-grid-column>\n      </ag-grid-aurelia>\n    </div>\n  </div>\n  </div>\n</template>\n"; });
 define('text!components/rich-grid-example/rich-grid-example.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"./rich-grid-example.css\"></require>\n    <require from=\"../../headerComponent/headerGroup.css\"></require>\n    <require from=\"../../headerComponent/headerComponent.css\"></require>\n\n    <div style=\"width: 800px;\">\n        <h1>Rich Grid with Pure JavaScript</h1>\n        <div style=\"padding: 4px;\">\n            <div style=\"float: right;\">\n                <input keyup.delegate=\"onQuickFilterChanged($event)\" type=\"text\" id=\"quickFilterInput\"\n                       placeholder=\"Type text to filter...\"/>\n                <button disabled.bind=\"!showGrid\" click.delegate=\"showGrid=false\">Destroy Grid</button>\n                <button disabled.bind=\"showGrid\" click.delegate=\"showGrid=true\">Create Grid</button>\n            </div>\n            <div>\n                <b>Employees Skills and Contact Details</b>\n                ${rowCount}\n            </div>\n        </div>\n        <div style=\"clear: both;\"></div>\n\n        <div if.bind=\"showGrid\">\n\n            <!-- Because we are using the Angular ID (ie #ag-grid marker), we have to have all the items that use\n                 that marker inside the same ng-if as the grid -->\n\n            <div style=\"padding: 4px;\" class=\"toolbar\">\n            <span>\n                Grid API:\n                <button click.delegate=\"api.selectAll()\">Select All</button>\n                <button click.delegate=\"api.deselectAll()\">Clear Selection</button>\n            </span>\n                <span style=\"margin-left: 20px;\">\n                Column API:\n                <button click.delegate=\"columnApi.setColumnVisible('country', false)\">Hide Country Column</button>\n                <button click.delegate=\"columnApi.setColumnVisible('country', true)\">Show Country Column</button>\n            </span>\n            </div>\n            <div style=\"clear: both;\"></div>\n            <div style=\"padding: 4px;\" class=\"toolbar\">\n                <label>\n                    <input type=\"checkbox\" change.delegate=\"showToolPanel=$event.target.checked\"/>\n                    Show Tool Panel\n                </label>\n                <button click.delegate=\"createRowData()\">Refresh Data</button>\n            </div>\n            <div style=\"clear: both;\"></div>\n\n            <div style=\"width: 100%; height: 350px;\">\n                <ag-grid-aurelia #agGrid class=\"ag-fresh\"\n\n                                 grid-options.bind=\"gridOptions\"\n                                 column-defs.bind=\"columnDefs\"\n                                 show-tool-panel.bind=\"showToolPanel\"\n                                 row-data.bind=\"rowData\"\n\n                                 enable-col-resize\n                                 enable-sorting\n                                 enable-filter\n                                 group-headers\n                                 suppress-row-click-selection\n                                 tool-panel-suppress-groups\n                                 tool-panel-suppress-values\n                                 row-height.bind=\"22\"\n                                 row-selection=\"multiple\"\n\n                                 model-updated.call=\"onModelUpdated()\"\n                                 cell-clicked.call=\"onCellClicked($event)\"\n                                 cell-double-clicked.call=\"onCellDoubleClicked($event)\"\n                                 cell-context-menu.call=\"onCellContextMenu($event)\"\n                                 cell-value-changed.call=\"onCellValueChanged($event)\"\n                                 cell-focused.call=\"onCellFocused($event)\"\n                                 row-selected.call=\"onRowSelected($event)\"\n                                 selection-changed.call=\"onSelectionChanged()\"\n                                 before-filter-changed.call=\"onBeforeFilterChanged()\"\n                                 after-filter-changed.call=\"onAfterFilterChanged()\"\n                                 filter-modified.call=\"onFilterModified()\"\n                                 before-sort-changed.call=\"onBeforeSortChanged()\"\n                                 after-sort-changed.call=\"onAfterSortChanged()\"\n                                 virtual-row-removed.call=\"onVirtualRowRemoved($event)\"\n                                 row-clicked.call=\"onRowClicked($event)\"\n                                 ready.call=\"onReady($event)\"\n\n                                 column-everything-changed.call=\"onColumnEvent($event)\"\n                                 column-row-group-changed.call=\"onColumnEvent($event)\"\n                                 column-value-changed.call=\"onColumnEvent($event)\"\n                                 column-moved.call=\"onColumnEvent($event)\"\n                                 column-visible.call=\"onColumnEvent($event)\"\n                                 column-group-opened.call=\"onColumnEvent($event)\"\n                                 column-resized.call=\"onColumnEvent($event)\"\n                                 column-pinned-count-changed.call=\"onColumnEvent($event)\">\n                </ag-grid-aurelia>\n            </div>\n        </div>\n\n    </div>\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map
