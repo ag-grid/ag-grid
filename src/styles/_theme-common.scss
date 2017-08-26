@@ -56,6 +56,12 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         right: 0;
     }
 
+    .ag-rtl .ag-header-cell-resize {
+        position: absolute;
+        left: 0;
+        right: auto;
+    }
+
     // copying bootstrap with line-height, sorts out alignment problems with images beside text
     line-height: 1.4;
     font-family: $ag-root-font-family;
@@ -590,6 +596,7 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
 
     .ag-floating-filter-body {
         margin-right: 20px;
+        width: calc(100% - 20px);
     }
 
     .ag-floating-filter-button {

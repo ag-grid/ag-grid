@@ -48,6 +48,7 @@ $ag-mat-background-editor: $mat-grey-100 !default;
 $ag-mat-panel-background: $mat-grey-200 !default;
 $ag-mat-chip-background: $mat-grey-300 !default;
 $ag-mat-range-selection-background: $mat-indigo-50 !default; // this should be pink, but indigo looks better
+$ag-mat-range-selection-highlight: $mat-pink-50 !default; 
 
 // interaction 
 $ag-mat-hover: $mat-grey-200 !default;
@@ -219,6 +220,13 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     .ag-cell:focus {
         outline: initial;
         border: 1px solid $ag-mat-primary;
+    }
+
+    .ag-cell-highlight {
+        background-color: $ag-mat-range-selection-highlight !important;
+    }
+    .ag-cell-highlight-animation {
+        transition: background-color 1s;
     }
 
 ////////////////////////////////////////
