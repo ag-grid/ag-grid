@@ -90,10 +90,19 @@ include '../documentation-main/documentation_header.php';
     <p>
         The example below demonstrates the tool panel. Note the following:
         <ul>
-            <li><i>suppressRowGroup</i> and <i>suppressAggregation</i> are used so that the 'number of wins'
-                columns cannot be grouped and the other columns cannot be aggregated (as doing
-                either of these just wouldn't make sense).</li>
-            <li>The gold, silver and bronze columns have style applied using <i>toolPanelClass</i></li>
+            <li>
+                Columns <i>country, year, date and sport</i> all have <code>enableRowGroup=true</code>
+                and <code>enablePivot: true</code>. This means you can drag the columns to the group
+                and pivot sections, but you cannot drag them to the values sections.
+            </li>
+            <li>
+                The <i>gold, silver and bronze</i> all have <code>enableValue=true</code>. This means
+                you can drag the columns to the values section, but you cannot drag them to the group
+                or pivot sections.
+            </li>
+            <li>
+                The <i>gold, silver and bronze</i> columns have style applied using <i>toolPanelClass</i>
+            </li>
             <li>The country column uses a headerValueGetter to give the column a slightly different
             name when dependent on where it appears using the <i>location</i> parameter.</li>
         </ul>

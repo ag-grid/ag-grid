@@ -9,11 +9,34 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-<h2 id="icons">Icons</h2>
+<h1 class="first-h1" id="icons">Icons</h1>
 
-<p>
+    <p>
     By default, ag-Grid comes with a set of SVG icons. You can provide your own icons for the grid to use.
 </p>
+
+    <note>
+        <p>
+            In v13 of ag-Grid we changed how icons are set in the grid. Previous to v13 the icons were
+            image files that you could override via the 'icons' grid options. v13 uses SVG and CSS for
+            the icons which is in line with industry best practices.
+        </p>
+
+        <p>
+            For backwards compatibility you can still provide icons using the 'icons' grid option.
+            If you want to use the old icons, you can set them this way.
+        </p>
+
+        <p>
+            The old icons are available in the <code>src/styles/legacy</code> directory of the grid package.
+        </p>
+
+        <p>
+            If you have created your own theme and want to include the stock icons, this is easiest
+            done by taking the contents of the <code>dist/styles/compiled-icons.css</code> file and add its contents to your CSS theme.
+        </p>
+
+    </note>
 
 <h3>Change Individual Icons (CSS)</h3>
 

@@ -231,12 +231,6 @@
                 </div>
             </div>
             <div class="HomeSection-framework">
-                <a href="/best-aurelia-data-grid/"><img src="../images/aurelia_large.png" alt="Aurelia Datagrid" title="Aurelia" width="75%"/></a>
-                <div class="framework-name">
-                    <a href="/best-aurelia-data-grid/">Aurelia</a>
-                </div>
-            </div>
-            <div class="HomeSection-framework">
                 <a href="/best-web-component-data-grid/"><img src="../images/webComponents_large.png" width="100" alt="Web Components Datagrid" title="Web Components" width="75%"/></a>
                 <div class="framework-name">
                     <a href="/best-web-component-data-grid/">Web Components</a>
@@ -355,14 +349,24 @@
 
     <div class="row" style="margin-top: 20px;">
 
-        <div class="col-md-3">
+        <div class="col-md-6">
+        <h3>Grid Configuration</h3>
             <ul>
                 <li><a href="../javascript-grid-width-and-height/">Grid Size</a></li>
+            </ul>
+        <h3>Columns</h3>
+            <ul>
                 <li><a href="../javascript-grid-column-definitions//">Column Definitions</a></li>
                 <li><a href="../javascript-grid-grouping-headers/">Column Groups</a></li>
                 <li><a href="../javascript-grid-column-header/">Column Headers</a></li>
                 <li><a href="../javascript-grid-resizing/">Column Resizing</a></li>
                 <li><a href="../javascript-grid-filtering/">Column Filter</a></li>
+                <li><a href="../javascript-grid-column-spanning/">Column Spanning</a></li>
+                <li><a href="../javascript-grid-pinning/">Column Pinning</a></li>
+                <li><a href="../javascript-grid-column-menu/">Column Menu</a></li>
+            </ul>
+        <h3>Filtering</h3>
+            <ul>
                 <li><a href="../javascript-grid-filter-text/">Text Filter</a></li>
                 <li><a href="../javascript-grid-filter-number/">Number Filter</a></li>
                 <li><a href="../javascript-grid-filter-date/">Date Filter</a></li>
@@ -370,18 +374,15 @@
                 <li><a href="../javascript-grid-filter-custom">Custom Filter</a></li>
                 <li><a href="../javascript-grid-filter-quick/">Quick Filter</a></li>
                 <li><a href="../javascript-grid-filter-external/">External Filter</a></li>
+            </ul>
+        <h3>Rows</h3>
+            <ul>
                 <li><a href="../javascript-grid-sorting/">Row Sorting</a></li>
                 <li><a href="../javascript-grid-selection/">Row Selection</a></li>
-            </ul>
-        </div>
-
-        <div class="col-md-3">
-            <ul>
-                <li><a href="../javascript-grid-range-selection/">Range Selection</a></li>
-                <li><a href="../javascript-grid-column-spanning/">Column Spanning</a></li>
-                <li><a href="../javascript-grid-pinning/">Column Pinning</a></li>
                 <li><a href="../javascript-grid-row-pinning/">Row Pinning</a></li>
                 <li><a href="../javascript-grid-row-height/">Row Height</a></li>
+
+
                 <li><a href="../javascript-grid-cell-styling/">Cell Styling</a></li>
                 <li><a href="../javascript-grid-value-handlers/">Value Handlers</a></li>
                 <li><a href="../javascript-grid-value-getters/">Getters & Formatters</a></li>
@@ -393,9 +394,20 @@
                 <li><a href="../javascript-grid-cell-editing/">Cell Editing</a></li>
                 <li><a href="../javascript-grid-keyboard-navigation/">Keyboard Navigation</a></li>
             </ul>
+        <h3>Functionality</h3>
+            <ul>
+                <li><a href="../javascript-grid-range-selection/">Range Selection</a></li>
+                <li><a href="../javascript-grid-keyboard-navigation/">Keyboard Navigation</a></li>
+                <li><a href="../javascript-grid-touch/">Touch Support</a></li>
+                <li><a href="../javascript-grid-animation/">Animation</a></li>
+                <li><a href="../javascript-grid-tool-panel/">Tool Panel</a></li>
+                <li><a href="../javascript-grid-clipboard/">Clipboard</a></li>
+                <li><a href="../javascript-grid-context-menu/">Context Menu</a></li>
+                <li><a href="../javascript-grid-status-bar/">Status Bar</a></li>
+                <li><a href="../javascript-grid-set-license/">License Key</a></li>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-6">
             <ul>
                 <li><a href="../javascript-grid-touch/">Touch Support</a></li>
                 <li><a href="../javascript-grid-animation/">Animation</a></li>
@@ -405,32 +417,34 @@
                 <li><a href="../javascript-grid-data-update/">Updating Data</a></li>
                 <li><a href="../javascript-grid-refresh/">View Refresh</a></li>
                 <li><a href="../javascript-grid-change-detection/">Change Detection</a></li>
-                <li><a href="../javascript-grid-internationalisation/">Internationalisation</a></li>
-                <li><a href="../javascript-grid-accessibility/">Accessibility</a></li>
+
                 <li><a href="../javascript-grid-full-width-rows/">Full Width Rows</a></li>
                 <li><a href="../javascript-grid-master-detail/">Master Detail</a></li>
                 <li><a href="../javascript-grid-aligned-grids/">Aligned Grids</a></li>
+            </ul>
+        <h3>Exporting and Printing</h3>
+            <ul>
                 <li><a href="../javascript-grid-export/">CSV Export</a></li>
                 <li><a href="../javascript-grid-excel/">Excel Export</a></li>
+                <li><a href="../javascript-grid-for-print/">Layout For Print</a></li>
             </ul>
-        </div>
-
-        <div class="col-md-3">
             <ul>
-                <li><a href="../javascript-grid-rtl/">RTL</a></li>
                 <li><a href="../javascript-grid-icons/">Custom Icons</a></li>
                 <li><a href="../javascript-grid-overlays/">Overlays</a></li>
                 <li><a href="../javascript-grid-for-print/">Layout For Print</a></li>
                 <li><a href="../javascript-grid-data-functions/">Data Functions</a></li>
+            </ul>
+        <h3>Advanced Functionality</h3>
+            <ul>
                 <li><a href="../javascript-grid-grouping/">Grouping Rows</a></li>
                 <li><a href="../javascript-grid-aggregation/">Aggregation</a></li>
-                <li><a href="../javascript-grid-pivoting/">Pivoting</a></li>
-                <li><a href="../javascript-grid-tool-panel/">Tool Panel</a></li>
-                <li><a href="../javascript-grid-clipboard/">Clipboard</a></li>
-                <li><a href="../javascript-grid-column-menu/">Column Menu</a></li>
-                <li><a href="../javascript-grid-context-menu/">Context Menu</a></li>
-                <li><a href="../javascript-grid-status-bar/">Status Bar</a></li>
-                <li><a href="../javascript-grid-set-license/">License Key</a></li>
+                <li><a href="../javascript-grid-pivoting/">Pivoting</a></li>                
+            </ul>
+        <h3>Accessibility & Internationalisation</h3>
+            <ul>
+                <li><a href="../javascript-grid-internationalisation/">Internationalisation</a></li>
+                <li><a href="../javascript-grid-accessibility/">Accessibility</a></li>
+                <li><a href="../javascript-grid-rtl/">RTL Support</a></li>
             </ul>
         </div>
     </div>

@@ -108,19 +108,19 @@
 
     var columnDefs = [
         {
-            headerName: '#', width: 30, checkboxSelection: true, suppressSorting: true,
-            suppressMenu: true, pinned: true
+            headerName: '', width: 70, checkboxSelection: true, suppressSorting: true,
+            suppressMenu: true
         },
         {
             headerName: 'Employee',
             children: [
                 {
                     headerName: "Name", field: "name",
-                    width: 150, pinned: true
+                    width: 150
                 },
                 {
                     headerName: "Country", field: "country", width: 150,
-                    cellRenderer: countryCellRenderer, pinned: true,
+                    cellRenderer: countryCellRenderer,
                     filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
                 },
             ]
@@ -134,15 +134,15 @@
                 },
                 {
                     headerName: "Proficiency", field: "proficiency", filter: 'number',
-                    width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter
+                    width: 150, cellRenderer: percentCellRenderer, filter: ProficiencyFilter
                 },
             ]
         },
         {
             headerName: 'Contact',
             children: [
-                {headerName: "Mobile", field: "mobile", width: 150, filter: 'text'},
-                {headerName: "Land-line", field: "landline", width: 150, filter: 'text'},
+                {headerName: "Mobile", field: "mobile", width: 180, filter: 'text'},
+                {headerName: "Land-line", field: "landline", width: 180, filter: 'text'},
                 {headerName: "Address", field: "address", width: 500, filter: 'text'}
             ]
         }
@@ -156,7 +156,7 @@
         enableFilter: true,
         enableRangeSelection: true,
         suppressRowClickSelection: true,
-        rowHeight: 22,
+        // rowHeight: 22,
         animateRows: true,
         onModelUpdated: modelUpdated,
         debug: true
@@ -276,11 +276,11 @@
         eDivPercentBar.className = 'div-percent-bar';
         eDivPercentBar.style.width = value + '%';
         if (value < 20) {
-            eDivPercentBar.style.backgroundColor = 'red';
+            eDivPercentBar.style.backgroundColor = '#f44336';
         } else if (value < 60) {
-            eDivPercentBar.style.backgroundColor = '#ff9900';
+            eDivPercentBar.style.backgroundColor = '#FF9100';
         } else {
-            eDivPercentBar.style.backgroundColor = '#00A000';
+            eDivPercentBar.style.backgroundColor = '#4CAF50';
         }
 
         var eValue = document.createElement('div');
