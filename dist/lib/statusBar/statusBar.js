@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -76,6 +76,10 @@ var StatusBar = (function (_super) {
                 var currentRow = startRowIsFirst ? startRow : endRow;
                 var lastRow = startRowIsFirst ? endRow : startRow;
                 while (true) {
+                    var finishedAllRows = main_1._.missing(currentRow) || lastRow.before(currentRow);
+                    if (finishedAllRows) {
+                        break;
+                    }
                     cellRange.columns.forEach(function (column) {
                         // we only want to include each cell once, in case a cell is in multiple ranges
                         var cellId = currentRow.getGridCell(column).createId();
@@ -111,9 +115,6 @@ var StatusBar = (function (_super) {
                         }
                         count++;
                     });
-                    if (currentRow.equals(lastRow)) {
-                        break;
-                    }
                     currentRow = _this.cellNavigationService.getRowBelow(currentRow);
                 }
             });

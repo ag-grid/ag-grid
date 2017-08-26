@@ -1,8 +1,6 @@
-import {ColumnController, SvgFactory, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column} from 'ag-grid';
+import {ColumnController, MenuItemDef, Autowired, Utils, Bean, GridOptionsWrapper, GridApi, Column} from 'ag-grid';
 import {ClipboardService} from "../clipboardService";
 import {AggFuncService} from "../aggregation/aggFuncService";
-
-let svgFactory = SvgFactory.getInstance();
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
@@ -43,7 +41,7 @@ export class MenuItemMapper {
         switch (key) {
             case 'pinSubMenu': return {
                 name: localeTextFunc('pinColumn', 'Pin Column'),
-                icon: Utils.createIconNoSpan('menuPin', this.gridOptionsWrapper, null, svgFactory.createPinIcon),
+                icon: Utils.createIconNoSpan('menuPin', this.gridOptionsWrapper, null),
                 subMenu: ['pinLeft','pinRight','clearPinned']
             };
             case 'pinLeft': return {
@@ -63,7 +61,7 @@ export class MenuItemMapper {
             };
             case 'valueAggSubMenu': return {
                 name: localeTextFunc('valueAggregation', 'Value Aggregation'),
-                icon: Utils.createIconNoSpan('menuValue', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon),
+                icon: Utils.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
                 subMenu: this.createAggregationSubMenu(column)
             };
             case 'autoSizeThis': return {
@@ -77,12 +75,12 @@ export class MenuItemMapper {
             case 'rowGroup': return {
                 name: localeTextFunc('groupBy', 'Group by') + ' ' + column.getColDef().headerName,
                 action: ()=> this.columnController.addRowGroupColumn(column),
-                icon: Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon12)
+                icon: Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
             };
             case 'rowUnGroup': return {
                 name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + column.getColDef().headerName,
                 action: ()=> this.columnController.removeRowGroupColumn(column),
-                icon: Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null, svgFactory.createGroupIcon12)
+                icon: Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
             };
             case 'resetColumns': return {
                 name: localeTextFunc('resetColumns', 'Reset Columns'),
@@ -99,20 +97,20 @@ export class MenuItemMapper {
             case 'copy': return {
                 name: localeTextFunc('copy','Copy'),
                 shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null, svgFactory.createCopyIcon),
+                icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
                 action: ()=> this.clipboardService.copyToClipboard(false)
             };
             case 'copyWithHeaders': return {
                 name: localeTextFunc('copyWithHeaders','Copy with Headers'),
                 // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null, svgFactory.createCopyIcon),
+                icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
                 action: ()=> this.clipboardService.copyToClipboard(true)
             };
             case 'paste': return {
                 name: localeTextFunc('paste','Paste'),
                 shortcut: localeTextFunc('ctrlV','Ctrl+V'),
                 disabled: true,
-                icon: Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null, svgFactory.createPasteIcon),
+                icon: Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
                 action: ()=> this.clipboardService.pasteFromClipboard()
             };
             case 'toolPanel': return {

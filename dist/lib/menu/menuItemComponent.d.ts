@@ -1,5 +1,16 @@
-// ag-grid-enterprise v12.0.2
-import { MenuItemDef, Component } from "ag-grid";
+// ag-grid-enterprise v13.0.0
+import { MenuItemDef, Component, AgEvent } from "ag-grid";
+export interface MenuItemSelectedEvent extends AgEvent {
+    name: string;
+    disabled: boolean;
+    shortcut: string;
+    action: () => void;
+    checked: boolean;
+    icon: HTMLElement | string;
+    subMenu: (MenuItemDef | string)[];
+    cssClasses: string[];
+    tooltip: string;
+}
 export declare class MenuItemComponent extends Component {
     private gridOptionsWrapper;
     private static TEMPLATE;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 import { ICompFactory, Component } from "ag-grid/main";
 export declare class PivotCompFactory implements ICompFactory {
     private context;

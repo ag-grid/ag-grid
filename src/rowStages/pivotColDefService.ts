@@ -176,7 +176,12 @@ export class PivotColDefService {
         }
 
         colDef.headerName = headerName;
+
         colDef.colId = 'pivot_' + columnIdSequence.next();
+
+        // pivot columns repeat over field, so it makes sense to use the unique id instead. For example if you want to
+        // assign values to pinned bottom rows using setPinnedBottomRowData the value service will use this colId.
+        colDef.field = colDef.colId;
 
         colDef.pivotKeys = pivotKeys;
         colDef.pivotValueColumn = valueColumn;

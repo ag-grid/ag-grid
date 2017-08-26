@@ -2,16 +2,18 @@ import {
     Component,
     ICellRendererFunc,
     CellRendererService,
+    ValueFormatterService,
     Autowired,
     PostConstruct,
     GridOptionsWrapper,
     ICellRendererComp,
-    SvgFactory,
     _,
-    Column
+    Column,
+    AgEvent
 } from "ag-grid/main";
 
-let svgFactory = SvgFactory.getInstance();
+export interface SelectedEvent extends AgEvent {
+}
 
 export class SetFilterListItem extends Component {
 
@@ -19,6 +21,7 @@ export class SetFilterListItem extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('cellRendererService') private cellRendererService: CellRendererService;
+    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
     private static TEMPLATE =
         '<label class="ag-set-filter-item">'+
@@ -32,33 +35,34 @@ export class SetFilterListItem extends Component {
 
     private value: any;
     private column: Column;
-    private cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
 
     private eCheckedIcon: HTMLElement;
     private eUncheckedIcon: HTMLElement;
 
-    constructor(value: any, cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string, column: Column) {
+    constructor(value: any, column: Column) {
         super(SetFilterListItem.TEMPLATE);
         this.value = value;
-        this.cellRenderer = cellRenderer;
         this.column = column;
+
     }
 
     @PostConstruct
     private init(): void {
-        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column, svgFactory.createCheckboxCheckedIcon);
-        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column, svgFactory.createCheckboxUncheckedIcon);
+        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
+        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
         this.eCheckbox = this.queryForHtmlElement(".ag-filter-checkbox");
         this.eClickableArea = this.getGui();
 
         this.updateCheckboxIcon();
         this.render();
 
-
         let listener = () => {
             this.selected = !this.selected;
             this.updateCheckboxIcon();
-            return this.dispatchEvent(SetFilterListItem.EVENT_SELECTED);
+            let event: SelectedEvent = {
+                type: SetFilterListItem.EVENT_SELECTED
+            };
+            return this.dispatchEvent(event);
         };
         this.addDestroyableEventListener(this.eClickableArea, 'click', listener);
     }
@@ -90,20 +94,14 @@ export class SetFilterListItem extends Component {
 
         let valueElement = this.queryForHtmlElement(".ag-filter-value");
 
-        // let valueElement = eFilterValue.querySelector(".ag-filter-value");
-        if (this.cellRenderer) {
-            let component = this.cellRendererService.useCellRenderer(this.cellRenderer, valueElement, {value: this.value});
-            if (component && component.destroy) {
-                this.addDestroyFunc( component.destroy.bind(component) );
-            }
-        } else {
-            // otherwise display as a string
-            let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            let blanksText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
-            let displayNameOfValue = this.value === null ? blanksText : this.value;
-            valueElement.innerHTML = displayNameOfValue;
+        let valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
+
+
+        let component = this.cellRendererService.useFilterCellRenderer(
+            this.column.getColDef(),
+            valueElement, {value: this.value, valueFormatted: valueFormatted});
+        if (component && component.destroy) {
+            this.addDestroyFunc( component.destroy.bind(component) );
         }
-
     }
-
 }

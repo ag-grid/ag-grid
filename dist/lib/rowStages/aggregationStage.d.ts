@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 import { IRowNodeStage, StageExecuteParams } from "ag-grid/main";
 export declare class AggregationStage implements IRowNodeStage {
     private gridOptionsWrapper;

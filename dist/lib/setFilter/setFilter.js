@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -24,7 +24,6 @@ var main_1 = require("ag-grid/main");
 var setFilterModel_1 = require("./setFilterModel");
 var setFilterListItem_1 = require("./setFilterListItem");
 var virtualList_1 = require("../rendering/virtualList");
-var svgFactory = main_1.SvgFactory.getInstance();
 var SetFilter = (function (_super) {
     __extends(SetFilter, _super);
     function SetFilter() {
@@ -39,9 +38,9 @@ var SetFilter = (function (_super) {
         };
         var debounceMs = this.filterParams && this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 0;
         this.debounceFilterChanged = main_1._.debounce(changeFilter, debounceMs);
-        this.eCheckedIcon = main_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.filterParams.column, svgFactory.createCheckboxCheckedIcon);
-        this.eUncheckedIcon = main_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column, svgFactory.createCheckboxUncheckedIcon);
-        this.eIndeterminateCheckedIcon = main_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column, svgFactory.createCheckboxIndeterminateIcon);
+        this.eCheckedIcon = main_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.filterParams.column);
+        this.eUncheckedIcon = main_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column);
+        this.eIndeterminateCheckedIcon = main_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column);
     };
     SetFilter.prototype.updateCheckboxIcon = function () {
         if (this.eSelectAll.children) {
@@ -85,8 +84,7 @@ var SetFilter = (function (_super) {
     };
     SetFilter.prototype.createSetListItem = function (value) {
         var _this = this;
-        var cellRenderer = this.filterParams.cellRenderer;
-        var listItem = new setFilterListItem_1.SetFilterListItem(value, cellRenderer, this.filterParams.column);
+        var listItem = new setFilterListItem_1.SetFilterListItem(value, this.filterParams.column);
         this.context.wireBean(listItem);
         listItem.setSelected(this.model.isValueSelected(value));
         listItem.addEventListener(setFilterListItem_1.SetFilterListItem.EVENT_SELECTED, function () {

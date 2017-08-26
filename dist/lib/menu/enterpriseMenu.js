@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -15,12 +15,12 @@ var columnSelectPanel_1 = require("../toolPanel/columnsSelect/columnSelectPanel"
 var menuList_1 = require("./menuList");
 var menuItemComponent_1 = require("./menuItemComponent");
 var menuItemMapper_1 = require("./menuItemMapper");
-var svgFactory = ag_grid_1.SvgFactory.getInstance();
 var EnterpriseMenuFactory = (function () {
     function EnterpriseMenuFactory() {
     }
     EnterpriseMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent, defaultTab) {
         var _this = this;
+        console.log("event = ", mouseEvent);
         this.showMenu(column, function (menu) {
             _this.popupService.positionPopupUnderMouseEvent({
                 column: column,
@@ -144,10 +144,15 @@ var EnterpriseMenu = (function () {
         });
     };
     EnterpriseMenu.prototype.isValidMenuTabItem = function (menuTabName) {
-        var allItems = this.column.getMenuTabs(this.restrictTo ? this.restrictTo : EnterpriseMenu.TABS_DEFAULT);
-        var isValid = allItems.indexOf(menuTabName) > -1;
+        var isValid = true;
+        var itemsToConsider = EnterpriseMenu.TABS_DEFAULT;
+        if (this.restrictTo != null) {
+            isValid = this.restrictTo.indexOf(menuTabName) > -1;
+            itemsToConsider = this.restrictTo;
+        }
+        isValid = isValid && EnterpriseMenu.TABS_DEFAULT.indexOf(menuTabName) > -1;
         if (!isValid)
-            console.warn("Trying to render an invalid menu item '" + menuTabName + "'. Check that your 'menuTabs' contains one of [" + allItems + "]");
+            console.warn("Trying to render an invalid menu item '" + menuTabName + "'. Check that your 'menuTabs' contains one of [" + itemsToConsider + "]");
         return isValid;
     };
     EnterpriseMenu.prototype.isNotSuppressed = function (menuTabName) {
@@ -188,7 +193,11 @@ var EnterpriseMenu = (function () {
                 break;
         }
         if (key) {
-            this.localEventService.dispatchEvent(EnterpriseMenu.EVENT_TAB_SELECTED, { key: key });
+            var event_1 = {
+                type: EnterpriseMenu.EVENT_TAB_SELECTED,
+                key: key
+            };
+            this.localEventService.dispatchEvent(event_1);
         }
     };
     EnterpriseMenu.prototype.destroy = function () {
@@ -273,7 +282,7 @@ var EnterpriseMenu = (function () {
         this.mainMenuList.addMenuItems(menuItemsMapped);
         this.mainMenuList.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
         this.tabItemGeneral = {
-            title: ag_grid_1.Utils.createIconNoSpan('menu', this.gridOptionsWrapper, this.column, svgFactory.createMenuSvg),
+            title: ag_grid_1.Utils.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
             body: this.mainMenuList.getGui(),
             name: EnterpriseMenu.TAB_GENERAL
         };
@@ -289,7 +298,7 @@ var EnterpriseMenu = (function () {
             afterFilterAttachedCallback = filterWrapper.filter.afterGuiAttached.bind(filterWrapper.filter);
         }
         this.tabItemFilter = {
-            title: ag_grid_1.Utils.createIconNoSpan('filter', this.gridOptionsWrapper, this.column, svgFactory.createFilterSvg12),
+            title: ag_grid_1.Utils.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
             body: filterWrapper.gui,
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
@@ -303,7 +312,7 @@ var EnterpriseMenu = (function () {
         this.context.wireBean(this.columnSelectPanel);
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
         this.tabItemColumns = {
-            title: ag_grid_1.Utils.createIconNoSpan('columns', this.gridOptionsWrapper, this.column, svgFactory.createColumnsSvg12),
+            title: ag_grid_1.Utils.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),
             body: eWrapperDiv,
             name: EnterpriseMenu.TAB_COLUMNS
         };

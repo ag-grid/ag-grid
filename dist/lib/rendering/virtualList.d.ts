@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 import { Component } from "ag-grid/main";
 export interface VirtualListModel {
     getRowCount(): number;
@@ -11,6 +11,7 @@ export declare class VirtualList extends Component {
     private rowsInBodyContainer;
     private componentCreator;
     private rowHeight;
+    private environment;
     constructor();
     private init();
     ensureIndexVisible(index: number): void;

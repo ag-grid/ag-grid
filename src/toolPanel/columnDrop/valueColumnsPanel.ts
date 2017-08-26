@@ -1,6 +1,5 @@
 import {
     Utils,
-    SvgFactory,
     Autowired,
     ColumnController,
     EventService,
@@ -10,11 +9,12 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     Events,
-    Column
+    Column,
+    ColumnValueChangeRequestEvent,
+    ColumnApi,
+    GridApi
 } from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
-
-let svgFactory = SvgFactory.getInstance();
 
 export class ValuesColumnPanel extends AbstractColumnDropPanel {
 
@@ -25,6 +25,8 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
     @Autowired('context') private context: Context;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     constructor(horizontal: boolean) {
         super(horizontal, true, 'values');
@@ -46,7 +48,7 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_AGGREGATE,
-            icon: Utils.createIconNoSpan('valuePanel', this.gridOptionsWrapper, null, svgFactory.createAggregationIcon),
+            icon: Utils.createIconNoSpan('valuePanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });
@@ -71,8 +73,13 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
 
     protected updateColumns(columns: Column[]): void {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST, {columns: columns} );
-            // this.eventService.dispatchEvent(Events.EVENT_ROW_DATA_UPDATED, {columns: columns} );
+            let event: ColumnValueChangeRequestEvent = {
+                type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
+                columns: columns,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event);
         } else {
             this.columnController.setValueColumns(columns);
         }

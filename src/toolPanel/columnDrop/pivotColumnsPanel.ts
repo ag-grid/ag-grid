@@ -1,6 +1,5 @@
 import {
     Utils,
-    SvgFactory,
     Autowired,
     ColumnController,
     EventService,
@@ -11,11 +10,12 @@ import {
     PostConstruct,
     Events,
     Column,
-    Bean
+    Bean,
+    ColumnPivotChangeRequestEvent,
+    ColumnApi,
+    GridApi
 } from "ag-grid/main";
 import {AbstractColumnDropPanel} from "./abstractColumnDropPanel";
-
-let svgFactory = SvgFactory.getInstance();
 
 @Bean("pivotColumnsPanel")
 export class PivotColumnsPanel extends AbstractColumnDropPanel {
@@ -27,6 +27,8 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
     @Autowired('context') private context: Context;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     constructor(horizontal: boolean) {
         super(horizontal, false, 'pivot');
@@ -48,7 +50,7 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
 
         super.init({
             dragAndDropIcon: DragAndDropService.ICON_GROUP,
-            icon: Utils.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null, svgFactory.createPivotIcon),
+            icon: Utils.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });
@@ -103,7 +105,13 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
 
     protected updateColumns(columns: Column[]): void {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST, {columns: columns} );
+            let event: ColumnPivotChangeRequestEvent = {
+                type: Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
+                columns: columns,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event);
         } else {
             this.columnController.setPivotColumns(columns);
         }

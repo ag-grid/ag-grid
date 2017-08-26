@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -22,7 +22,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var abstractColumnDropPanel_1 = require("./abstractColumnDropPanel");
-var svgFactory = main_1.SvgFactory.getInstance();
 var PivotColumnsPanel = (function (_super) {
     __extends(PivotColumnsPanel, _super);
     function PivotColumnsPanel(horizontal) {
@@ -41,7 +40,7 @@ var PivotColumnsPanel = (function (_super) {
         var title = localeTextFunc('pivots', 'Column Labels');
         _super.prototype.init.call(this, {
             dragAndDropIcon: main_1.DragAndDropService.ICON_GROUP,
-            icon: main_1.Utils.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null, svgFactory.createPivotIcon),
+            icon: main_1.Utils.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });
@@ -92,7 +91,13 @@ var PivotColumnsPanel = (function (_super) {
     };
     PivotColumnsPanel.prototype.updateColumns = function (columns) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
-            this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST, { columns: columns });
+            var event_1 = {
+                type: main_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
+                columns: columns,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event_1);
         }
         else {
             this.columnController.setPivotColumns(columns);
@@ -128,6 +133,14 @@ var PivotColumnsPanel = (function (_super) {
         main_1.Autowired('dragAndDropService'),
         __metadata("design:type", main_1.DragAndDropService)
     ], PivotColumnsPanel.prototype, "dragAndDropService", void 0);
+    __decorate([
+        main_1.Autowired('columnApi'),
+        __metadata("design:type", main_1.ColumnApi)
+    ], PivotColumnsPanel.prototype, "columnApi", void 0);
+    __decorate([
+        main_1.Autowired('gridApi'),
+        __metadata("design:type", main_1.GridApi)
+    ], PivotColumnsPanel.prototype, "gridApi", void 0);
     __decorate([
         main_1.PostConstruct,
         __metadata("design:type", Function),

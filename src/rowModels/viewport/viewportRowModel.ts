@@ -13,7 +13,10 @@ import {
     Utils,
     SelectionController,
     IViewportDatasource,
-    RowBounds
+    RowBounds,
+    GridApi,
+    ColumnApi,
+    ModelUpdatedEvent
 } from "ag-grid/main";
 
 @Bean('rowModel')
@@ -23,6 +26,8 @@ export class ViewportRowModel implements IRowModel {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('context') private context: Context;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
 
     // rowRenderer tells us these
     private firstRow = -1;
@@ -242,7 +247,16 @@ export class ViewportRowModel implements IRowModel {
     public setRowCount(rowCount: number): void {
         if (rowCount !== this.rowCount) {
             this.rowCount = rowCount;
-            this.eventService.dispatchEvent(Events.EVENT_MODEL_UPDATED);
+            let event: ModelUpdatedEvent = {
+                type: Events.EVENT_MODEL_UPDATED,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                newData: false,
+                newPage: false,
+                keepRenderedRows: false,
+                animate: false
+            };
+            this.eventService.dispatchEvent(event);
         }
     }
 

@@ -1,5 +1,5 @@
 import {Utils as _, PopupService, MenuItemDef, Component, Autowired, Context} from "ag-grid";
-import {MenuItemComponent} from "./menuItemComponent";
+import {MenuItemComponent, MenuItemSelectedEvent} from "./menuItemComponent";
 
 export class MenuList extends Component {
 
@@ -57,11 +57,11 @@ export class MenuList extends Component {
 
         this.addDestroyFunc( ()=> cMenuItem.destroy() );
 
-        cMenuItem.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, (event: any) => {
+        cMenuItem.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, (event: MenuItemSelectedEvent) => {
             if (menuItemDef.subMenu) {
                 this.showChildMenu(menuItemDef, cMenuItem);
             } else {
-                this.dispatchEvent(MenuItemComponent.EVENT_ITEM_SELECTED, event)
+                this.dispatchEvent(event)
             }
         });
 
@@ -134,8 +134,8 @@ export class MenuList extends Component {
 
         this.subMenuParentDef = menuItemDef;
 
-        let selectedListener = (event: any)=> {
-            this.dispatchEvent(MenuItemComponent.EVENT_ITEM_SELECTED, event)
+        let selectedListener = (event: MenuItemSelectedEvent)=> {
+            this.dispatchEvent(event)
         };
         childMenu.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, selectedListener);
 

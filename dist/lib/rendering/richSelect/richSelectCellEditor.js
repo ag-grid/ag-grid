@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -37,6 +37,9 @@ var RichSelectCellEditor = (function (_super) {
         this.context.wireBean(this.virtualList);
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
         this.getGui().querySelector('.ag-rich-select-list').appendChild(this.virtualList.getGui());
+        if (main_1.Utils.exists(this.params.cellHeight)) {
+            this.virtualList.setRowHeight(this.params.cellHeight);
+        }
         this.renderSelectedValue();
         if (main_1.Utils.missing(params.values)) {
             console.log('ag-Grid: richSelectCellEditor requires values for it to work');
@@ -78,15 +81,16 @@ var RichSelectCellEditor = (function (_super) {
     };
     RichSelectCellEditor.prototype.renderSelectedValue = function () {
         var eValue = this.getGui().querySelector('.ag-rich-select-value');
+        var valueFormatted = this.params.formatValue(this.selectedValue);
         if (this.cellRenderer) {
-            var result_1 = this.cellRendererService.useCellRenderer(this.cellRenderer, eValue, { value: this.selectedValue });
+            var result_1 = this.cellRendererService.useCellRenderer(this.params.column.getColDef(), eValue, { value: this.selectedValue, valueFormatted: valueFormatted });
             if (result_1 && result_1.destroy) {
                 this.addDestroyFunc(function () { return result_1.destroy(); });
             }
         }
         else {
             if (main_1.Utils.exists(this.selectedValue)) {
-                eValue.innerHTML = this.selectedValue.toString();
+                eValue.innerHTML = valueFormatted;
             }
             else {
                 eValue.innerHTML = '';
@@ -102,13 +106,13 @@ var RichSelectCellEditor = (function (_super) {
             this.selectedValue = value;
             this.virtualList.ensureIndexVisible(index);
             this.virtualList.refresh();
-            // this.renderSelectedValue();
         }
     };
     RichSelectCellEditor.prototype.createRowComponent = function (value) {
-        var row = new richSelectRow_1.RichSelectRow(this.cellRenderer);
+        var valueFormatted = this.params.formatValue(value);
+        var row = new richSelectRow_1.RichSelectRow(this.params.column.getColDef());
         this.context.wireBean(row);
-        row.setState(value, value === this.selectedValue);
+        row.setState(value, valueFormatted, value === this.selectedValue);
         return row;
     };
     RichSelectCellEditor.prototype.onMouseMove = function (mouseEvent) {

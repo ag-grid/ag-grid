@@ -16,10 +16,17 @@ import {
     PostConstruct,
     QuerySelector,
     Column,
-    DragSource
+    DragSource,
+    ColumnAggFuncChangeRequestEvent,
+    ColumnApi,
+    GridApi,
+    AgEvent,
+    TapEvent
 } from "ag-grid/main";
 import {VirtualList} from "../../rendering/virtualList";
 import {AggFuncService} from "../../aggregation/aggFuncService";
+
+export interface ColumnRemoveEvent extends AgEvent {}
 
 export class ColumnComponent extends Component {
 
@@ -39,6 +46,8 @@ export class ColumnComponent extends Component {
     @Autowired('aggFuncService') aggFuncService: AggFuncService;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') eventService: EventService;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     @QuerySelector('.ag-column-drop-cell-text') private eText: HTMLElement;
     @QuerySelector('.ag-column-drop-cell-button') private btRemove: HTMLElement;
@@ -101,14 +110,16 @@ export class ColumnComponent extends Component {
 
         Utils.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
 
-        this.addDestroyableEventListener(this.btRemove, 'click', (event: MouseEvent)=> {
-            this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE);
-            event.stopPropagation();
+        this.addDestroyableEventListener(this.btRemove, 'click', (mouseEvent: MouseEvent)=> {
+            let agEvent: ColumnRemoveEvent = { type: ColumnComponent.EVENT_COLUMN_REMOVE };
+            this.dispatchEvent(agEvent);
+            mouseEvent.stopPropagation();
         });
 
         let touchListener = new TouchListener(this.btRemove);
-        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, ()=> {
-            this.dispatchEvent(ColumnComponent.EVENT_COLUMN_REMOVE);
+        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, (event: TapEvent)=> {
+            let agEvent: ColumnRemoveEvent = { type: ColumnComponent.EVENT_COLUMN_REMOVE };
+            this.dispatchEvent(agEvent);
         });
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     }
@@ -182,11 +193,14 @@ export class ColumnComponent extends Component {
         let itemSelected = ()=> {
             hidePopup();
             if (this.gridOptionsWrapper.isFunctionsPassive()) {
-                let event = {
+                let event: ColumnAggFuncChangeRequestEvent = {
+                    type: Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
                     columns: [this.column],
-                    aggFunc: value
+                    aggFunc: value,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
                 };
-                this.eventService.dispatchEvent(Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST, event);
+                this.eventService.dispatchEvent(event);
             } else {
                 this.columnController.setColumnAggFunc(this.column, value);
             }

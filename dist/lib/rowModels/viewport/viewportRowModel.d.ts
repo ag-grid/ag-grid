@@ -1,10 +1,12 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 import { IRowModel, RowNode, IViewportDatasource, RowBounds } from "ag-grid/main";
 export declare class ViewportRowModel implements IRowModel {
     private gridOptionsWrapper;
     private eventService;
     private selectionController;
     private context;
+    private gridApi;
+    private columnApi;
     private firstRow;
     private lastRow;
     private rowCount;

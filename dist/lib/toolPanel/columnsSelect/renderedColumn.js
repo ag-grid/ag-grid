@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -93,7 +93,13 @@ var RenderedColumn = (function (_super) {
             if (functionPassive) {
                 var copyOfPivotColumns = this.columnController.getPivotColumns().slice();
                 copyOfPivotColumns.push(column);
-                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST, { columns: copyOfPivotColumns });
+                var event_1 = {
+                    type: main_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
+                    columns: copyOfPivotColumns,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+                this.eventService.dispatchEvent(event_1);
             }
             else {
                 columnController.removePivotColumn(column);
@@ -104,7 +110,13 @@ var RenderedColumn = (function (_super) {
             if (functionPassive) {
                 var copyOfValueColumns = this.columnController.getValueColumns().slice();
                 copyOfValueColumns.push(column);
-                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST, { columns: copyOfValueColumns });
+                var event_2 = {
+                    type: main_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
+                    columns: copyOfValueColumns,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+                this.eventService.dispatchEvent(event_2);
             }
             else {
                 columnController.removeValueColumn(column);
@@ -115,7 +127,13 @@ var RenderedColumn = (function (_super) {
             if (functionPassive) {
                 var copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
                 copyOfRowGroupColumns.push(column);
-                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST, { columns: copyOfRowGroupColumns });
+                var event_3 = {
+                    type: main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
+                    columns: copyOfRowGroupColumns,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+                this.eventService.dispatchEvent(event_3);
             }
             else {
                 columnController.removeRowGroupColumn(column);
@@ -133,7 +151,13 @@ var RenderedColumn = (function (_super) {
             if (functionPassive) {
                 var copyOfValueColumns = this.columnController.getValueColumns().slice();
                 main_1.Utils.removeFromArray(copyOfValueColumns, column);
-                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST, { columns: copyOfValueColumns });
+                var event_4 = {
+                    type: main_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
+                    api: this.gridApi,
+                    columnApi: this.columnApi,
+                    columns: copyOfValueColumns
+                };
+                this.eventService.dispatchEvent(event_4);
             }
             else {
                 this.columnController.addValueColumn(column);
@@ -143,7 +167,13 @@ var RenderedColumn = (function (_super) {
             if (functionPassive) {
                 var copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
                 main_1.Utils.removeFromArray(copyOfRowGroupColumns, column);
-                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST, { columns: copyOfRowGroupColumns });
+                var event_5 = {
+                    type: main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
+                    api: this.gridApi,
+                    columnApi: this.columnApi,
+                    columns: copyOfRowGroupColumns
+                };
+                this.eventService.dispatchEvent(event_5);
             }
             else {
                 this.columnController.addRowGroupColumn(column);
@@ -153,7 +183,13 @@ var RenderedColumn = (function (_super) {
             if (functionPassive) {
                 var copyOfPivotColumns = this.columnController.getPivotColumns().slice();
                 main_1.Utils.removeFromArray(copyOfPivotColumns, column);
-                this.eventService.dispatchEvent(main_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST, { columns: copyOfPivotColumns });
+                var event_6 = {
+                    type: main_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
+                    api: this.gridApi,
+                    columnApi: this.columnApi,
+                    columns: copyOfPivotColumns
+                };
+                this.eventService.dispatchEvent(event_6);
             }
             else {
                 this.columnController.addPivotColumn(column);
@@ -221,6 +257,14 @@ var RenderedColumn = (function (_super) {
         main_1.Autowired('context'),
         __metadata("design:type", main_1.Context)
     ], RenderedColumn.prototype, "context", void 0);
+    __decorate([
+        main_1.Autowired('columnApi'),
+        __metadata("design:type", main_1.ColumnApi)
+    ], RenderedColumn.prototype, "columnApi", void 0);
+    __decorate([
+        main_1.Autowired('gridApi'),
+        __metadata("design:type", main_1.GridApi)
+    ], RenderedColumn.prototype, "gridApi", void 0);
     __decorate([
         main_1.QuerySelector('.ag-column-select-label'),
         __metadata("design:type", HTMLElement)

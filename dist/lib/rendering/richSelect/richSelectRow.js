@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -23,36 +23,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var RichSelectRow = (function (_super) {
     __extends(RichSelectRow, _super);
-    function RichSelectRow(cellRenderer) {
+    function RichSelectRow(columnDef) {
         var _this = _super.call(this, '<div class="ag-rich-select-row"></div>') || this;
-        _this.cellRenderer = cellRenderer;
+        _this.columnDef = columnDef;
         return _this;
     }
-    RichSelectRow.prototype.setState = function (value, selected) {
-        if (main_1.Utils.exists(this.cellRenderer)) {
-            this.populateWithRenderer(value);
-        }
-        else {
-            this.populateWithoutRenderer(value);
+    RichSelectRow.prototype.setState = function (value, valueFormatted, selected) {
+        if (!this.populateWithRenderer(value, valueFormatted)) {
+            this.populateWithoutRenderer(value, valueFormatted);
         }
         main_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
     };
-    RichSelectRow.prototype.populateWithoutRenderer = function (value) {
-        if (main_1.Utils.exists(value) && value !== '') {
+    RichSelectRow.prototype.populateWithoutRenderer = function (value, valueFormatted) {
+        var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
+        var valueToRender = valueFormattedExits ? valueFormatted : value;
+        if (main_1.Utils.exists(valueToRender) && valueToRender !== '') {
             // not using innerHTML to prevent injection of HTML
             // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
-            this.getGui().textContent = value.toString();
+            this.getGui().textContent = valueToRender.toString();
         }
         else {
             // putting in blank, so if missing, at least the user can click on it
             this.getGui().innerHTML = '&nbsp;';
         }
     };
-    RichSelectRow.prototype.populateWithRenderer = function (value) {
-        var childComponent = this.cellRendererService.useCellRenderer(this.cellRenderer, this.getGui(), { value: value });
+    RichSelectRow.prototype.populateWithRenderer = function (value, valueFormatted) {
+        var childComponent = this.cellRendererService.useCellRenderer(this.columnDef, this.getGui(), { value: value, valueFormatted: valueFormatted });
         if (childComponent && childComponent.destroy) {
             this.addDestroyFunc(childComponent.destroy.bind(childComponent));
         }
+        return childComponent;
     };
     __decorate([
         main_1.Autowired('cellRendererService'),

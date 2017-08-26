@@ -5,14 +5,11 @@ import {
     IDoesFilterPassParams,
     ISetFilterParams,
     QuerySelector,
-    SvgFactory,
     Utils
 } from "ag-grid/main";
 import {SetFilterModel} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
-
-let svgFactory = SvgFactory.getInstance();
 
 export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     private model: SetFilterModel;
@@ -47,9 +44,9 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         this.debounceFilterChanged = _.debounce(changeFilter, debounceMs);
 
 
-        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.filterParams.column, svgFactory.createCheckboxCheckedIcon);
-        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column, svgFactory.createCheckboxUncheckedIcon);
-        this.eIndeterminateCheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column, svgFactory.createCheckboxIndeterminateIcon);
+        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.filterParams.column);
+        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column);
+        this.eIndeterminateCheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column);
 
     }
 
@@ -103,9 +100,8 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     }
 
     private createSetListItem(value: any): Component {
-        let cellRenderer = this.filterParams.cellRenderer;
 
-        let listItem = new SetFilterListItem(value, cellRenderer, this.filterParams.column);
+        let listItem = new SetFilterListItem(value, this.filterParams.column);
         this.context.wireBean(listItem);
         listItem.setSelected(this.model.isValueSelected(value));
 

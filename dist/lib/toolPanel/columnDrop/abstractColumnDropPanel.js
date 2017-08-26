@@ -1,4 +1,4 @@
-// ag-grid-enterprise v12.0.2
+// ag-grid-enterprise v13.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -314,7 +314,9 @@ var AbstractColumnDropPanel = (function (_super) {
             var enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
             var charCode = enableRtl ?
                 AbstractColumnDropPanel.CHAR_LEFT_ARROW : AbstractColumnDropPanel.CHAR_RIGHT_ARROW;
+            var spanClass = enableRtl ? 'ag-left-arrow' : 'ag-right-arrow';
             var eArrow = document.createElement('span');
+            eArrow.className = spanClass;
             eArrow.innerHTML = charCode;
             this.getGui().appendChild(eArrow);
         }
