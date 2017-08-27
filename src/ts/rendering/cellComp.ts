@@ -140,6 +140,7 @@ export class CellComp extends Component {
         this.addDomData();
         this.addSelectionCheckbox();
         this.attachCellRendererAfterCreate();
+        this.angular1Compile();
 
         this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
         this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_FLASH_CELLS, this.onFlashCells.bind(this));
@@ -412,11 +413,16 @@ export class CellComp extends Component {
         this.cellRendererGui = null;
 
         // populate
-        this.postPutDataIntoCell();
+        this.putDataIntoCellAfterRefresh();
 
+        this.angular1Compile();
+    }
+
+    private angular1Compile(): void {
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
         if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
-            this.beans.$compile(this.getGui())(this.scope);
+            let eGui = this.getGui();
+            this.beans.$compile(eGui)(this.scope);
         }
     }
 
@@ -485,7 +491,7 @@ export class CellComp extends Component {
         );
     }
 
-    private postPutDataIntoCell() {
+    private putDataIntoCellAfterRefresh() {
         // template gets preference, then cellRenderer, then do it ourselves
         let colDef = this.column.getColDef();
 
@@ -669,7 +675,6 @@ export class CellComp extends Component {
         this.cellRendererGui = this.cellRenderer.getGui();
     }
 
-    // gets called after row is created, so it's up to use to attach in the html if it's a string
     private attachCellRendererAfterRefresh(): void {
         if (!this.usingCellRenderer) { return; }
 
@@ -930,9 +935,7 @@ export class CellComp extends Component {
         _.removeAllChildren(this.getGui());
         this.getGui().appendChild(_.assertHtmlElement(this.cellEditor.getGui()));
 
-        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
-            this.beans.$compile(this.getGui())(this.scope);
-        }
+        this.angular1Compile();
     }
 
     private addPopupCellEditor(): void {
@@ -956,9 +959,7 @@ export class CellComp extends Component {
             keepWithinBounds: true
         });
 
-        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
-            this.beans.$compile(ePopupGui)(this.scope);
-        }
+        this.angular1Compile();
     }
 
     private onPopupEditorClosed(): void {
