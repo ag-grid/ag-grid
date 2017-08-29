@@ -107,6 +107,10 @@ $ag-icons-filter: invert(100%);
             }
         }
     }
+
+    .ag-icon {
+        filter: invert(100%);
+    }
 }
 
 //stick in an override
