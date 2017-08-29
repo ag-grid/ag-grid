@@ -262,12 +262,11 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 
-    .ag-header-cell-menu-button {
-        @include icon-background('menu');
+    .ag-header-cell-menu-button .ag-icon-menu {
         height: $ag-mat-header-height;
     }
 
-    .ag-icon-checkbox-checked {
+    .ag-icon-checkbox-checked:empty {
         @include accent-icon('checkbox-checked');
     }
 
@@ -591,19 +590,19 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 ////////////////////////////////////////
 // Sorting
 ////////////////////////////////////////
-    .ag-filter-icon {
+    .ag-filter-icon:empty {
         @include icon-background('filter');
     }
 
-    .ag-sort-ascending-icon {
+    .ag-sort-ascending-icon:empty {
         @include icon-background('asc');
     }
 
-    .ag-sort-descending-icon {
+    .ag-sort-descending-icon:empty {
         @include icon-background('desc');
     }
 
-    .ag-sort-none-icon {
+    .ag-sort-none-icon:empty {
         @include icon-background('none');
     }
 
@@ -818,7 +817,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     }
 
     .ag-group-expanded {
-        .ag-icon-contracted {
+        .ag-icon-contracted:empty {
             @include icon-background('tree-open');
         }
     }
