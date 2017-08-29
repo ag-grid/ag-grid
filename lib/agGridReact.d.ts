@@ -4,6 +4,7 @@ import { Component } from "react";
 import * as AgGrid from "ag-grid";
 import { GridOptions } from "ag-grid";
 export interface AgGridReactProps extends GridOptions {
+    gridOptions?: GridOptions;
 }
 export declare class AgGridReact extends Component<AgGridReactProps, {}> {
     props: any;
