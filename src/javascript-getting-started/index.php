@@ -6,8 +6,17 @@ $pageKeyboards = "Javascript Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 
+function moveIndexFirst($a, $b) {
+    if ($a == "index.html") {
+        return -1;
+    } else {
+        return strcmp($a, $b);
+    }
+
+}
 function getDirContents($dir, &$results = array(), $prefix = ""){
     $files = scandir($dir);
+    usort($files, 'moveIndexFirst');
 
     foreach($files as $key => $value){
         $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
@@ -23,7 +32,7 @@ function getDirContents($dir, &$results = array(), $prefix = ""){
 }
 
 function fileTabs($id, $files) {
-    $tabs = '<ul class="nav nav-tabs" role="tablist">';
+    $tabs = '<ul class="nav nav-tabs" role="tablist" id="example-'. $id .'">';
     $contents = '<div class="tab-content">';
     $i = 0;
 
@@ -53,6 +62,7 @@ CONTENT;
     
     $tabs .= '</ul>';
     $contents .= '</div>';
+    $contents .= "<script>$('#example-$id').tab()</script>";
 
     return $tabs . $contents;
 }
@@ -100,8 +110,27 @@ open index.html
 </pre>
 
     <p>With those 2 commands you should now see the following application:</p>
+<ul class="nav nav-tabs" id="wrap">
+</ul>
 
-<?= fileTabs('hello-world', getDirContents('hello-world')) ?>
+<div>
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist" id="test-nested-tab">
+    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
+    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="home">...</div>
+    <div role="tabpanel" class="tab-pane" id="profile"> <?= fileTabs('hello-world', getDirContents('hello-world')) ?> </div>
+  </div>
+
+</div>
+
+<script>$("#test-nested-tab").tab()</script>
+
 
 
     <p>Great! A working Grid application in no time at all. Let's break down the application into it's main parts:</p>

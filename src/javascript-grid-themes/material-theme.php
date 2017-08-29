@@ -59,7 +59,7 @@ $ag-mat-accent: #FFD740; // amber-A200
 @import '~ag-grid/src/styles/theme-material-next';
 </pre>
 
-<p>You can examine the full list of the variables that can be changed in the <a href="https://github.com/ag-grid/ag-grid/blob/latest/src/styles/theme-material-new.scss#L17-L59">theme source file</a>.</p>
+<p>You can examine the full list of the variables that can be changed in the <a href="https://github.com/ag-grid/ag-grid/blob/latest/src/styles/ag-theme-material.scss#L17-L59">theme source file</a>.</p>
 
 <p>
 The recommended way to process your project's Scss files is through webpack, since it provides various loaders that optimize and reduce the final size of the bundle. 

@@ -154,6 +154,8 @@ function isFrameworkWebComponents()
 
     <!-- Bootstrap -->
     <link inline rel="stylesheet" href="../dist/bootstrap/css/bootstrap.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="../dist/bootstrap/js/bootstrap.min.js"></script>
 
     <link inline rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../documentation-main/documentation.css">

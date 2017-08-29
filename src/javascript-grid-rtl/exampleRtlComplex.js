@@ -225,11 +225,7 @@ var defaultCols = [
                 },
                 pinned: 'right',
                 headerTooltip: "Example tooltip for Language",
-                filterParams: {newRowsAction: 'keep'},
-                icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-                }
+                filterParams: {newRowsAction: 'keep'}
             },
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
@@ -251,10 +247,6 @@ var defaultCols = [
                     cellRenderer: CountryCellRenderer,
                     cellHeight: 20,
                     newRowsAction: 'keep'
-                },
-                icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
                 }
             }
         ]
