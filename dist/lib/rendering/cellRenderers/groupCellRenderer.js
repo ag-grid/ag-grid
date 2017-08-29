@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.0
+ * @version v13.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61,8 +61,7 @@ var GroupCellRenderer = (function (_super) {
         if (this.cellIsBlank) {
             return;
         }
-        // hack to get renderer working with slick and non-slick
-        var eGridCell = this.params.eGridCell ? this.params.eGridCell : params.eGridCell;
+        var eGridCell = params.eGridCell;
         this.addExpandAndContract(eGridCell);
         this.addCheckboxIfNeeded();
         this.addValueElement();
@@ -145,9 +144,11 @@ var GroupCellRenderer = (function (_super) {
         if (rowNode.footer) {
             this.createFooterCell();
         }
-        else if (rowNode.group) {
+        else if (rowNode.group || utils_1.Utils.get(params.colDef, 'cellRendererParams.innerRenderer', null)) {
             this.createGroupCell();
-            this.addChildCount();
+            if (rowNode.group) {
+                this.addChildCount();
+            }
         }
         else {
             this.createLeafCell();
@@ -187,7 +188,7 @@ var GroupCellRenderer = (function (_super) {
             this.cellRendererService.useFullWidthGroupRowInnerCellRenderer(this.eValue, params);
         }
         else {
-            this.cellRendererService.useInnerCellRenderer(this.params, columnToUse.getColDef(), this.eValue, params);
+            this.cellRendererService.useInnerCellRenderer(this.params.colDef.cellRendererParams, columnToUse.getColDef(), this.eValue, params);
         }
     };
     GroupCellRenderer.prototype.addChildCount = function () {

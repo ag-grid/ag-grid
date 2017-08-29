@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.0.0
+// Type definitions for ag-grid v13.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgGridComponentFunctionInput, AgGridRegisteredComponentInput } from "./componentProvider";
@@ -9,7 +9,7 @@ export declare class DefaultCellRenderer implements ICellRendererComp {
     private params;
     init?(params: ICellRendererParams): void;
     refresh(params: any): boolean;
-    getGui(): HTMLElement;
+    getGui(): HTMLElement | string;
 }
 export declare class AgComponentUtils {
     private componentMetadataProvider;

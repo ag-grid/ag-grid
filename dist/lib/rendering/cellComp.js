@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.0
+ * @version v13.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -85,6 +85,7 @@ var CellComp = (function (_super) {
         this.addDomData();
         this.addSelectionCheckbox();
         this.attachCellRendererAfterCreate();
+        this.angular1Compile();
         this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
         this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_FLASH_CELLS, this.onFlashCells.bind(this));
         this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
@@ -327,10 +328,14 @@ var CellComp = (function (_super) {
         this.cellRenderer = null;
         this.cellRendererGui = null;
         // populate
-        this.postPutDataIntoCell();
+        this.putDataIntoCellAfterRefresh();
+        this.angular1Compile();
+    };
+    CellComp.prototype.angular1Compile = function () {
         // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
         if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
-            this.beans.$compile(this.getGui())(this.scope);
+            var eGui = this.getGui();
+            this.beans.$compile(eGui)(this.scope);
         }
     };
     CellComp.prototype.postProcessStylesFromColDef = function () {
@@ -388,7 +393,7 @@ var CellComp = (function (_super) {
             context: this.beans.gridOptionsWrapper.getContext()
         }, onApplicableClass);
     };
-    CellComp.prototype.postPutDataIntoCell = function () {
+    CellComp.prototype.putDataIntoCellAfterRefresh = function () {
         // template gets preference, then cellRenderer, then do it ourselves
         var colDef = this.column.getColDef();
         if (colDef.template) {
@@ -548,22 +553,21 @@ var CellComp = (function (_super) {
         var params = this.createCellRendererParams(valueToRender);
         this.cellRenderer = this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType);
         this.cellRendererGui = this.cellRenderer.getGui();
+        if (this.cellRendererGui === null || this.cellRendererGui === undefined) {
+            console.warn('ag-Grid: cellRenderer should return back a string or a DOM object, but got ' + this.cellRendererGui);
+        }
     };
-    // gets called after row is created, so it's up to use to attach in the html if it's a string
     CellComp.prototype.attachCellRendererAfterRefresh = function () {
         if (!this.usingCellRenderer) {
             return;
         }
         this.createCellRendererInstance();
-        var eCell = this.cellRendererGui;
-        if (eCell != null) {
-            if (typeof eCell == 'object') {
-                this.eParentOfValue.appendChild(eCell);
-            }
-            else {
-                this.eParentOfValue.innerHTML = eCell;
-                this.cellRendererGui = this.eParentOfValue.firstChild;
-            }
+        if (typeof this.cellRendererGui === 'string') {
+            this.eParentOfValue.innerHTML = this.cellRendererGui;
+            this.cellRendererGui = this.eParentOfValue.firstChild;
+        }
+        else {
+            this.eParentOfValue.appendChild(this.cellRendererGui);
         }
         this.callAfterGuiAttachedOnCellRenderer();
     };
@@ -573,15 +577,14 @@ var CellComp = (function (_super) {
         if (!this.usingCellRenderer) {
             return;
         }
-        // need to check exists, as (typeof null === object)
-        if (utils_1._.exists(this.cellRendererGui) && typeof this.cellRendererGui === 'object') {
-            // if cell renderer returned back an HTML object, then we append it to the dom now
-            this.eParentOfValue.appendChild(this.cellRendererGui);
-        }
-        else {
+        if (typeof this.cellRendererGui === 'string') {
             // if cell renderer returned back a string, then it was in the row template when it
             // got created, so we look it up (and replace the reference to the string we had)
             this.cellRendererGui = this.eParentOfValue.firstChild;
+        }
+        else {
+            // if cell renderer returned back an HTML object, then we append it to the dom now
+            this.eParentOfValue.appendChild(this.cellRendererGui);
         }
         this.callAfterGuiAttachedOnCellRenderer();
     };
@@ -793,9 +796,7 @@ var CellComp = (function (_super) {
     CellComp.prototype.addInCellEditor = function () {
         utils_1._.removeAllChildren(this.getGui());
         this.getGui().appendChild(utils_1._.assertHtmlElement(this.cellEditor.getGui()));
-        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
-            this.beans.$compile(this.getGui())(this.scope);
-        }
+        this.angular1Compile();
     };
     CellComp.prototype.addPopupCellEditor = function () {
         var _this = this;
@@ -813,9 +814,7 @@ var CellComp = (function (_super) {
             ePopup: utils_1._.assertHtmlElement(ePopupGui),
             keepWithinBounds: true
         });
-        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
-            this.beans.$compile(ePopupGui)(this.scope);
-        }
+        this.angular1Compile();
     };
     CellComp.prototype.onPopupEditorClosed = function () {
         // we only call stopEditing if we are editing, as

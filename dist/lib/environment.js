@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.0
+ * @version v13.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,12 +22,20 @@ var Environment = (function () {
     function Environment() {
     }
     Environment.prototype.getTheme = function () {
-        var themeMatch = this.eGridDiv.className.match(themeCLass);
+        var themeMatch;
+        var element = this.eGridDiv;
+        while (element != document.documentElement && themeMatch == null) {
+            themeMatch = element.className.match(themeCLass);
+            element = element.parentElement;
+            if (element == null) {
+                break;
+            }
+        }
         if (themeMatch) {
             return themeMatch[0];
         }
         else {
-            return '';
+            return 'ag-fresh';
         }
     };
     __decorate([

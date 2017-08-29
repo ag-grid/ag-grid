@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.0.0
+// Type definitions for ag-grid v13.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -58,13 +58,14 @@ export declare class CellComp extends Component {
     private flashCell();
     private animateCell(cssName);
     private replaceContentsAfterRefresh();
+    private angular1Compile();
     private postProcessStylesFromColDef();
     private preProcessStylesFromColDef();
     private processStylesFromColDef();
     private postProcessClassesFromColDef();
     private preProcessClassesFromColDef();
     private processClassesFromColDef(onApplicableClass);
-    private postPutDataIntoCell();
+    private putDataIntoCellAfterRefresh();
     attemptCellRendererRefresh(): boolean;
     isVolatile(): boolean;
     private valuesAreEqual(val1, val2);
