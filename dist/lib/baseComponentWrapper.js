@@ -1,0 +1,41 @@
+/**
+ * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v12.0.2
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var BaseComponentWrapper = (function () {
+    function BaseComponentWrapper() {
+    }
+    BaseComponentWrapper.prototype.wrap = function (OriginalConstructor, mandatoryMethodList, optionalMethodList) {
+        var _this = this;
+        var wrapper = this.createWrapper(OriginalConstructor);
+        mandatoryMethodList.forEach((function (methodName) {
+            _this.createMethod(wrapper, methodName, true);
+        }));
+        if (optionalMethodList) {
+            optionalMethodList.forEach((function (methodName) {
+                _this.createMethod(wrapper, methodName, false);
+            }));
+        }
+        return wrapper;
+    };
+    BaseComponentWrapper.prototype.createMethod = function (wrapper, methodName, mandatory) {
+        wrapper.addMethod(methodName, this.createMethodProxy(wrapper, methodName, mandatory));
+    };
+    BaseComponentWrapper.prototype.createMethodProxy = function (wrapper, methodName, mandatory) {
+        return function () {
+            if (wrapper.hasMethod(methodName)) {
+                return wrapper.callMethod(methodName, arguments);
+            }
+            if (mandatory) {
+                console.warn('ag-Grid: Framework component is missing the method ' + methodName + '()');
+            }
+            return null;
+        };
+    };
+    return BaseComponentWrapper;
+}());
+exports.BaseComponentWrapper = BaseComponentWrapper;
