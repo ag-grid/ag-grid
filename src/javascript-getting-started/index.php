@@ -32,7 +32,7 @@ function getDirContents($dir, &$results = array(), $prefix = ""){
 }
 
 function fileTabs($id, $files) {
-    $tabs = '<ul class="nav nav-tabs" role="tablist" id="example-'. $id .'">';
+    $tabs = '<ul class="nav nav-tabs source" role="tablist" id="example-'. $id .'">';
     $contents = '<div class="tab-content">';
     $i = 0;
 
@@ -110,21 +110,113 @@ open index.html
 </pre>
 
     <p>With those 2 commands you should now see the following application:</p>
-<ul class="nav nav-tabs" id="wrap">
-</ul>
-
 <div>
 
+<style>
+
+    .nav-tabs a {
+        color: #0288D1;
+    }
+
+    .nav-tabs.main {
+        display: flex; 
+        justify-content: flex-end;
+        background: #FAFAFA;
+        padding-top: 1em;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+    }
+
+    .nav-tabs.main .fa {
+        color: #BDBDBD;
+        width: 2rem;
+    }
+
+    .nav-tabs.main > li > a.external-tab {
+        background: transparent;
+        border: 0;
+    }
+
+
+    .nav-tabs.main > li > a {
+        font-size: .9em;
+    }   
+
+    .nav-tabs.main > li > a:hover {
+        color: #03A9F4;
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    .nav-tabs.main > li > a.external-tab:hover {
+        color: #039BE5;
+        background: transparent;
+        border: 0;
+    }
+
+    .nav-tabs.main .title {
+        flex: 1;
+        font-size: 1.8rem;
+        padding-top: 0.6rem;
+        text-indent: 1.3rem;
+        color: #313131;
+    }
+
+    .nav-tabs.source {
+        margin-top: .5em;
+        margin-bottom: 1em;
+    }
+
+    .nav-tabs.source > li > a {
+        border: 0;
+        font-size: .8em;
+        border-bottom: 1px solid transparent;
+    }
+
+    .nav-tabs.source > li > a:hover {
+        border: 0;
+        background: transparent;
+        color: #039BE5;
+    }
+
+    .nav-tabs.source > li.active > a,
+    .nav-tabs.source > li.active > a:hover {
+        border: 0;
+        background: transparent;
+        color: inherit;
+        border-bottom: 1px solid #0288D1;
+    }
+</style>
   <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist" id="test-nested-tab">
-    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
-    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
+  <ul class="nav nav-tabs main" role="tablist" id="test-nested-tab">
+    <li class="title">
+        Basic Grid Example
+    </li>
+
+    <li role="presentation" class="active">
+        <a href="#home" aria-controls="home" role="tab" data-toggle="tab">
+            <i class="fa fa-play" aria-hidden="true"></i> Result
+        </a>
+    </li>
+
+    <li role="presentation">
+        <a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">
+            <i class="fa fa-code" aria-hidden="true"></i> Code
+        </a>
+    </li>
+
+    <li role="presentation">
+        <a href="#profile" class="external-tab" aria-controls="profile" role="tab" data-toggle="tab">
+        <i class="fa fa-external-link" aria-hidden="true"></i> Open in Plunker
+        </a>
+    </li>
+
   </ul>
+
 
   <!-- Tab panes -->
   <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="home">...</div>
-    <div role="tabpanel" class="tab-pane" id="profile"> <?= fileTabs('hello-world', getDirContents('hello-world')) ?> </div>
+    <div role="tabpanel" class="tab-pane active" id="home"> <?= fileTabs('hello-world', getDirContents('hello-world')) ?> </div>
+    <div role="tabpanel" class="tab-pane" id="profile"></div>
   </div>
 
 </div>
