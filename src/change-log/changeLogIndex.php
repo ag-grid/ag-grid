@@ -13,7 +13,32 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h2>Version 13.0.0</h2>
+    <h2>Version 13.0.x</h2>
+    <h3>Version 13.0.1 [29-AUG-2017]</h3>
+
+    <h4>Bug Fixes</h4>
+    <ul>
+
+        <!-- Niall Bits -->
+        <li>AG-711: blank cells with no defined cell renderer were causing error</li>
+        <li>AG-709: column header attribute was colId instead of col-id</li>
+        <li>AG-706: rows were not rendering sometimes when cellRenderer was not returning back true 'object' or string</li>
+        <li>AG-705: angular 1 cells were not getting compiled</li>
+
+        <!-- Petyo Bits -->
+        <li>AG-710: Fixed an issues where drag and drop did not work as expected in ag-grid-react</li>
+        <li>AG-712: Fixed an issue with headers no longer displaying ellipsis (&hellip;) when too narrow.</li>
+        <li>AG-708: The themes are shipped without minifictation for easier debugging.</li>
+        <li>AG-707: Fixed an issue introduced with new SVG icons - some of the icons passed through the <code>gridOptions</code> stopped working</li>
+
+        <!-- Alberto Bits -->
+        <li>AG-714: Fixed an issue a column with a <code>cellRenderer='group'</code> and with an innerRenderer was not
+            using the innerRenderer when displayed as a leaf cell</li>
+    </ul>
+
+    </ul>
+
+    <h3>Version 13.0.0 [25-AUG-2017]</h3>
 
     <h4>Enhancements</h4>
     <ul>
@@ -32,7 +57,7 @@ include '../documentation-main/documentation_header.php';
         </li>
         <li>
             <code>suppressScrollLag</code> and <code>isScrollLag</code> no longer used. The new rendering engine
-            doens't need them due to how it uses animation frames.
+            doesn't need them due to how it uses animation frames.
         </li>
         <li>AG-685: Number and Date filter have an option to configure what to do when filtering <code>null</code> values.
             See: <a href="../javascript-grid-filtering#nullFiltering">Null filtering</a></li>
