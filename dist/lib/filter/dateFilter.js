@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,7 +30,7 @@ var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var utils_1 = require("../utils");
 var baseFilter_1 = require("./baseFilter");
 var context_1 = require("../context/context");
-var componentProvider_1 = require("../componentProvider");
+var componentRecipes_1 = require("../components/framework/componentRecipes");
 var DateFilter = (function (_super) {
     __extends(DateFilter, _super);
     function DateFilter() {
@@ -54,15 +54,21 @@ var DateFilter = (function (_super) {
         var dateComponentParams = {
             onDateChanged: this.onDateChanged.bind(this)
         };
-        this.dateToComponent = this.componentProvider.newDateComponent(dateComponentParams);
-        this.dateFromComponent = this.componentProvider.newDateComponent(dateComponentParams);
-        this.eDateFromPanel.appendChild(this.dateFromComponent.getGui());
-        this.eDateToPanel.appendChild(this.dateToComponent.getGui());
+        this.dateToComponent = this.componentRecipes.newDateComponent(dateComponentParams);
+        this.dateFromComponent = this.componentRecipes.newDateComponent(dateComponentParams);
+        var dateFromElement = utils_1._.ensureElement(this.dateFromComponent.getGui());
+        this.eDateFromPanel.appendChild(dateFromElement);
+        var dateToElement = utils_1._.ensureElement(this.dateToComponent.getGui());
+        this.eDateToPanel.appendChild(dateToElement);
         if (this.dateFromComponent.afterGuiAttached) {
-            this.dateFromComponent.afterGuiAttached();
+            this.dateFromComponent.afterGuiAttached({
+                eComponent: dateFromElement
+            });
         }
         if (this.dateToComponent.afterGuiAttached) {
-            this.dateToComponent.afterGuiAttached();
+            this.dateToComponent.afterGuiAttached({
+                eComponent: dateToElement
+            });
         }
     };
     DateFilter.prototype.onDateChanged = function () {
@@ -86,7 +92,7 @@ var DateFilter = (function (_super) {
         if (cellAsDate > filterDate) {
             return 1;
         }
-        return 0;
+        return cellValue != null ? 0 : -1;
     };
     DateFilter.prototype.serialize = function () {
         return {
@@ -140,9 +146,9 @@ var DateFilter = (function (_super) {
         return new Date(from.getFullYear(), from.getMonth(), from.getDate());
     };
     __decorate([
-        context_1.Autowired('componentProvider'),
-        __metadata("design:type", componentProvider_1.ComponentProvider)
-    ], DateFilter.prototype, "componentProvider", void 0);
+        context_1.Autowired('componentRecipes'),
+        __metadata("design:type", componentRecipes_1.ComponentRecipes)
+    ], DateFilter.prototype, "componentRecipes", void 0);
     __decorate([
         componentAnnotations_1.QuerySelector('#filterDateFromPanel'),
         __metadata("design:type", HTMLElement)

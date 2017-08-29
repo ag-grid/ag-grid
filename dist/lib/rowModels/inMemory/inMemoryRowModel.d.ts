@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
 import { ChangedPath } from "./changedPath";
 import { RowBounds } from "../../interfaces/iRowModel";
@@ -34,6 +34,8 @@ export declare class InMemoryRowModel {
     private context;
     private valueService;
     private valueCache;
+    private columnApi;
+    private gridApi;
     private filterStage;
     private sortStage;
     private flattenStage;
@@ -89,10 +91,6 @@ export declare class InMemoryRowModel {
     setRowData(rowData: any[]): void;
     updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction;
     private doRowsToDisplay();
-    insertItemsAtIndex(index: number, items: any[], skipRefresh: boolean): void;
     onRowHeightChanged(): void;
     resetRowHeights(): void;
-    removeItems(rowNodes: RowNode[], skipRefresh: boolean): void;
-    addItems(items: any[], skipRefresh: boolean): void;
-    private refreshAndFireEvent(eventName, rowNodes, groupState);
 }

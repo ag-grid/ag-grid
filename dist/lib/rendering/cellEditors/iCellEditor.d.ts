@@ -1,11 +1,11 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnController";
-import { IComponent } from "../../interfaces/iComponent";
+import { IAfterGuiAttachedParams, IComponent } from "../../interfaces/iComponent";
 export interface ICellEditor {
     /** Return the final value - called by the grid once after editing is complete */
     getValue(): any;
@@ -27,7 +27,7 @@ export interface ICellEditor {
     /** If doing full line edit, then gets called when focus is leaving the editor */
     focusOut?(): void;
 }
-export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorParams> {
+export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorParams, IAfterGuiAttachedParams> {
 }
 /** Gets called once after editor is created. Params contains teh following:
  value: current value of the cell
@@ -59,4 +59,6 @@ export interface ICellEditorParams {
     onKeyDown: (event: KeyboardEvent) => void;
     stopEditing: () => void;
     eGridCell: HTMLElement;
+    parseValue: (value: any) => any;
+    formatValue: (value: any) => any;
 }

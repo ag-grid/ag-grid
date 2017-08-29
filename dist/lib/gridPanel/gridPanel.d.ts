@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BorderLayout } from "../layout/borderLayout";
 import { LoggerFactory } from "../logger";
 import { KeyboardBinding, KeyboardBindingGroup } from "../constants";
@@ -28,7 +28,10 @@ export declare class GridPanel extends BeanStub {
     private pinnedRowModel;
     private eventService;
     private context;
+    private taskQueue;
     private paginationProxy;
+    private columnApi;
+    private gridApi;
     private rangeController;
     private dragService;
     private selectionController;
@@ -42,9 +45,6 @@ export declare class GridPanel extends BeanStub {
     private frameworkFactory;
     private layout;
     private logger;
-    private requestAnimationFrameExists;
-    private scrollLagCounter;
-    private scrollLagTicking;
     private eBodyViewport;
     private eRoot;
     private eBody;
@@ -76,16 +76,19 @@ export declare class GridPanel extends BeanStub {
     private eFloatingBottomViewport;
     private eFloatingBottomFullWidthCellContainer;
     private eAllCellContainers;
-    private lastLeftPosition;
-    private lastTopPosition;
+    private scrollLeft;
+    private nextScrollLeft;
+    private scrollTop;
+    private nextScrollTop;
+    private verticalRedrawNeeded;
     private bodyHeight;
-    private useScrollLag;
     private enableRtl;
     private forPrint;
     private autoHeight;
     private scrollWidth;
     private pinningRight;
     private pinningLeft;
+    private useAnimationFrame;
     agWire(loggerFactory: LoggerFactory): void;
     getVerticalPixelRange(): any;
     destroy(): void;
@@ -98,7 +101,7 @@ export declare class GridPanel extends BeanStub {
     private disableBrowserDragging();
     private addEventListeners();
     private addDragListeners();
-    private addMouseEvents();
+    private addMouseListeners();
     private addKeyboardEvents();
     private addBodyViewportListener();
     private getRowForEvent(event);
@@ -169,17 +172,19 @@ export declare class GridPanel extends BeanStub {
     private addScrollListener();
     private onBodyScroll();
     private onBodyHorizontalScroll();
+    private doHorizontalScroll();
     private onBodyVerticalScroll();
     private onVerticalScroll(sourceElement);
+    executeFrame(): boolean;
+    private redrawRowsAfterScroll();
     private isBodyVerticalScrollActive();
     private addIEPinFix(onPinnedRightScroll, onPinnedLeftScroll);
     private setLeftAndRightBounds();
-    private isUseScrollLag();
-    private debounce(callback);
     getBodyViewportScrollLeft(): number;
     setBodyViewportScrollLeft(value: number): void;
     horizontallyScrollHeaderCenterAndFloatingCenter(): void;
     private fakeVerticalScroll(position);
+    private setFakeScroll(eContainer, pixels);
     addScrollEventListener(listener: () => void): void;
     removeScrollEventListener(listener: () => void): void;
 }

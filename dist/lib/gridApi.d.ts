@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
@@ -15,6 +15,7 @@ import { IDatasource } from "./rowModels/iDatasource";
 import { IEnterpriseDatasource } from "./interfaces/iEnterpriseDatasource";
 import { RowDataTransaction, RowNodeTransaction } from "./rowModels/inMemory/inMemoryRowModel";
 import { AlignedGridsService } from "./alignedGridsService";
+import { AgEvent } from "./events";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column;
@@ -89,6 +90,7 @@ export declare class GridApi {
     getVerticalPixelRange(): any;
     refreshCells(params?: RefreshCellsParams): void;
     redrawRows(params?: RedrawRowsParams): void;
+    timeFullRedraw(count?: number): void;
     refreshView(): void;
     refreshRows(rowNodes: RowNode[]): void;
     rowDataChanged(rows: any): void;
@@ -170,7 +172,7 @@ export declare class GridApi {
     addGlobalListener(listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
     removeGlobalListener(listener: Function): void;
-    dispatchEvent(eventType: string, event?: any): void;
+    dispatchEvent(event: AgEvent): void;
     destroy(): void;
     resetQuickFilter(): void;
     getRangeSelections(): RangeSelection[];

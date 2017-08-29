@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -134,7 +134,9 @@ var DisplayedGroupCreator = (function () {
         var index = 0;
         while (currentChildren && currentChildren[0] && currentChildren[0] instanceof originalColumnGroup_1.OriginalColumnGroup) {
             // putting in a deterministic fake id, in case the API in the future needs to reference the col
-            result.push(new originalColumnGroup_1.OriginalColumnGroup(null, 'FAKE_PATH_' + index, true));
+            var fakePath = new originalColumnGroup_1.OriginalColumnGroup(null, 'FAKE_PATH_' + index, true);
+            this.context.wireBean(fakePath);
+            result.push(fakePath);
             currentChildren = currentChildren[0].getChildren();
             index++;
         }

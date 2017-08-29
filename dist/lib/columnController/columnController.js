@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,7 +30,6 @@ var eventService_1 = require("../eventService");
 var columnUtils_1 = require("./columnUtils");
 var logger_1 = require("../logger");
 var events_1 = require("../events");
-var columnChangeEvent_1 = require("../columnChangeEvent");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var groupInstanceIdCreator_1 = require("./groupInstanceIdCreator");
 var context_1 = require("../context/context");
@@ -38,6 +37,7 @@ var gridPanel_1 = require("../gridPanel/gridPanel");
 var columnAnimationService_1 = require("../rendering/columnAnimationService");
 var autoGroupColService_1 = require("./autoGroupColService");
 var valueCache_1 = require("../valueService/valueCache");
+var gridApi_1 = require("../gridApi");
 var ColumnApi = (function () {
     function ColumnApi() {
     }
@@ -238,7 +238,12 @@ var ColumnController = (function () {
             this.updateVirtualSets();
             var hashAfter = this.allDisplayedVirtualColumns.map(function (column) { return column.getId(); }).join('#');
             if (hashBefore !== hashAfter) {
-                this.eventService.dispatchEvent(events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED);
+                var event_1 = {
+                    type: events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                };
+                this.eventService.dispatchEvent(event_1);
             }
         }
     };
@@ -265,8 +270,12 @@ var ColumnController = (function () {
         }
         this.pivotMode = pivotMode;
         this.updateDisplayedColumns();
-        var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, event);
+        var event = {
+            type: events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     };
     ColumnController.prototype.getSecondaryPivotColumn = function (pivotKeys, valueColKey) {
         if (!this.secondaryColumnsPresent) {
@@ -337,11 +346,15 @@ var ColumnController = (function () {
             });
         }
         if (columnsAutosized.length > 0) {
-            var event_1 = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withFinished(true).withColumns(columnsAutosized);
-            if (columnsAutosized.length === 1) {
-                event_1.withColumn(columnsAutosized[0]);
-            }
-            this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_RESIZED, event_1);
+            var event_2 = {
+                type: events_1.Events.EVENT_COLUMN_RESIZED,
+                columns: columnsAutosized,
+                column: columnsAutosized.length === 1 ? columnsAutosized[0] : null,
+                finished: true,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event_2);
         }
     };
     ColumnController.prototype.autoSizeColumn = function (key) {
@@ -513,8 +526,14 @@ var ColumnController = (function () {
             return;
         }
         this.updateDisplayedColumns();
-        var event = new columnChangeEvent_1.ColumnChangeEvent(eventType).withColumns(masterList);
-        this.eventService.dispatchEvent(event.getType(), event);
+        var event = {
+            type: eventType,
+            columns: masterList,
+            column: masterList.length === 1 ? masterList[0] : null,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     };
     ColumnController.prototype.setRowGroupColumns = function (colKeys) {
         this.autoGroupsNeedBuilding = true;
@@ -574,9 +593,14 @@ var ColumnController = (function () {
             columnCallback(added, column);
         });
         this.updateDisplayedColumns();
-        var event = new columnChangeEvent_1.ColumnChangeEvent(eventName)
-            .withColumns(masterList);
-        this.eventService.dispatchEvent(event.getType(), event);
+        var event = {
+            type: eventName,
+            columns: masterList,
+            column: masterList.length === 1 ? masterList[0] : null,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     };
     ColumnController.prototype.setValueColumns = function (colKeys) {
         this.setPrimaryColumnList(colKeys, this.valueColumns, events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.setValueActive.bind(this));
@@ -641,21 +665,40 @@ var ColumnController = (function () {
         // eg 1 pixel at a time, then each change will fire change events
         // in all the columns in the group, but only one with get the pixel.
         if (finished || widthChanged) {
-            var event_2 = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(finished);
-            this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_RESIZED, event_2);
+            var event_3 = {
+                type: events_1.Events.EVENT_COLUMN_RESIZED,
+                columns: [column],
+                column: column,
+                finished: finished,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event_3);
         }
     };
     ColumnController.prototype.setColumnAggFunc = function (column, aggFunc) {
         column.setAggFunc(aggFunc);
-        var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_VALUE_CHANGED).withColumn(column);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_VALUE_CHANGED, event);
+        var event = {
+            type: events_1.Events.EVENT_COLUMN_VALUE_CHANGED,
+            columns: [column],
+            column: column,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     };
     ColumnController.prototype.moveRowGroupColumn = function (fromIndex, toIndex) {
         var column = this.rowGroupColumns[fromIndex];
         this.rowGroupColumns.splice(fromIndex, 1);
         this.rowGroupColumns.splice(toIndex, 0, column);
-        var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, event);
+        var event = {
+            type: events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+            columns: this.rowGroupColumns,
+            column: this.rowGroupColumns.length === 1 ? this.rowGroupColumns[0] : null,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     };
     ColumnController.prototype.moveColumns = function (columnsToMoveKeys, toIndex) {
         this.columnAnimationService.start();
@@ -672,13 +715,15 @@ var ColumnController = (function () {
         }
         utils_1.Utils.moveInArray(this.gridColumns, columnsToMove, toIndex);
         this.updateDisplayedColumns();
-        var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_MOVED)
-            .withToIndex(toIndex)
-            .withColumns(columnsToMove);
-        if (columnsToMove.length === 1) {
-            event.withColumn(columnsToMove[0]);
-        }
-        this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_MOVED, event);
+        var event = {
+            type: events_1.Events.EVENT_COLUMN_MOVED,
+            columns: columnsToMove,
+            column: columnsToMove.length === 1 ? columnsToMove[0] : null,
+            toIndex: toIndex,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
         this.columnAnimationService.finish();
     };
     ColumnController.prototype.doesMovePassRules = function (columnsToMove, toIndex) {
@@ -749,7 +794,12 @@ var ColumnController = (function () {
             this.rightWidth = newRightWidth;
             // when this fires, it is picked up by the gridPanel, which ends up in
             // gridPanel calling setWidthAndScrollPosition(), which in turn calls setVirtualViewportPosition()
-            this.eventService.dispatchEvent(events_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED);
+            var event_4 = {
+                type: events_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event_4);
         }
     };
     // + rowController
@@ -806,12 +856,21 @@ var ColumnController = (function () {
         this.setColumnsVisible([key], visible);
     };
     ColumnController.prototype.setColumnsVisible = function (keys, visible) {
+        var _this = this;
         this.columnAnimationService.start();
         this.actionOnGridColumns(keys, function (column) {
             column.setVisible(visible);
             return true;
         }, function () {
-            return new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_VISIBLE).withVisible(visible);
+            var event = {
+                type: events_1.Events.EVENT_COLUMN_VISIBLE,
+                visible: visible,
+                column: null,
+                columns: null,
+                api: _this.gridApi,
+                columnApi: _this.columnApi
+            };
+            return event;
         });
         this.columnAnimationService.finish();
     };
@@ -819,6 +878,7 @@ var ColumnController = (function () {
         this.setColumnsPinned([key], pinned);
     };
     ColumnController.prototype.setColumnsPinned = function (keys, pinned) {
+        var _this = this;
         this.columnAnimationService.start();
         var actualPinned;
         if (pinned === true || pinned === column_1.Column.PINNED_LEFT) {
@@ -834,7 +894,15 @@ var ColumnController = (function () {
             column.setPinned(actualPinned);
             return true;
         }, function () {
-            return new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_PINNED).withPinned(actualPinned);
+            var event = {
+                type: events_1.Events.EVENT_COLUMN_PINNED,
+                pinned: actualPinned,
+                column: null,
+                columns: null,
+                api: _this.gridApi,
+                columnApi: _this.columnApi
+            };
+            return event;
         });
         this.columnAnimationService.finish();
     };
@@ -871,12 +939,10 @@ var ColumnController = (function () {
         }
         this.updateDisplayedColumns();
         if (utils_1.Utils.exists(createEvent)) {
-            var event_3 = createEvent();
-            event_3.withColumns(updatedColumns);
-            if (updatedColumns.length === 1) {
-                event_3.withColumn(updatedColumns[0]);
-            }
-            this.eventService.dispatchEvent(event_3.getType(), event_3);
+            var event_5 = createEvent();
+            event_5.columns = updatedColumns;
+            event_5.column = updatedColumns.length === 1 ? updatedColumns[0] : null;
+            this.eventService.dispatchEvent(event_5);
         }
     };
     ColumnController.prototype.getDisplayedColBefore = function (col) {
@@ -1009,8 +1075,12 @@ var ColumnController = (function () {
             return indexA - indexB;
         });
         this.updateDisplayedColumns();
-        var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, event);
+        var event = {
+            type: events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
         return success;
     };
     ColumnController.prototype.sortColumnListUsingIndexes = function (indexes, colA, colB) {
@@ -1263,6 +1333,9 @@ var ColumnController = (function () {
         // always invalidate cache on changing columns, as the column id's for the new columns
         // could overlap with the old id's, so the cache would return old values for new columns.
         this.valueCache.expire();
+        // NOTE ==================
+        // we should be destroying the existing columns and groups if they exist, for example, the original column
+        // group adds a listener to the columns, it should be also removing the listeners
         this.autoGroupsNeedBuilding = true;
         var balancedTreeResult = this.balancedColumnTreeBuilder.createBalancedColumnGroups(columnDefs, true);
         this.primaryBalancedTree = balancedTreeResult.balancedTree;
@@ -1275,9 +1348,18 @@ var ColumnController = (function () {
         this.updateDisplayedColumns();
         this.checkDisplayedVirtualColumns();
         this.ready = true;
-        var everythingChangedEvent = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, everythingChangedEvent);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_NEW_COLUMNS_LOADED);
+        var eventEverythingChanged = {
+            type: events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(eventEverythingChanged);
+        var newColumnsLoadedEvent = {
+            type: events_1.Events.EVENT_NEW_COLUMNS_LOADED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(newColumnsLoadedEvent);
     };
     ColumnController.prototype.isReady = function () {
         return this.ready;
@@ -1347,8 +1429,13 @@ var ColumnController = (function () {
         this.logger.log('columnGroupOpened(' + groupToUse.getGroupId() + ',' + newValue + ')');
         groupToUse.setExpanded(newValue);
         this.updateGroupsAndDisplayedColumns();
-        var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_GROUP_OPENED).withColumnGroup(groupToUse);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_GROUP_OPENED, event);
+        var event = {
+            type: events_1.Events.EVENT_COLUMN_GROUP_OPENED,
+            columnGroup: groupToUse,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
         this.columnAnimationService.finish();
     };
     // used by updateModel
@@ -1512,8 +1599,12 @@ var ColumnController = (function () {
         }
         this.clearDisplayedColumns();
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
-        var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_GRID_COLUMNS_CHANGED);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_GRID_COLUMNS_CHANGED, event);
+        var event = {
+            type: events_1.Events.EVENT_GRID_COLUMNS_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     };
     // gets called after we copy down grid columns, to make sure any part of the gui
     // that tries to draw, eg the header, it will get empty lists of columns rather
@@ -1539,8 +1630,12 @@ var ColumnController = (function () {
         this.updateVirtualSets();
         this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
-        var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED);
-        this.eventService.dispatchEvent(events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, event);
+        var event = {
+            type: events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     };
     ColumnController.prototype.updateDisplayedColumnsFromTrees = function () {
         this.addToDisplayedColumns(this.displayedLeftColumnTree, this.displayedLeftColumns);
@@ -1759,8 +1854,15 @@ var ColumnController = (function () {
         this.setLeftValues();
         this.updateBodyWidths();
         colsToFireEventFor.forEach(function (column) {
-            var event = new columnChangeEvent_1.ColumnChangeEvent(events_1.Events.EVENT_COLUMN_RESIZED).withColumn(column).withFinished(true);
-            _this.eventService.dispatchEvent(events_1.Events.EVENT_COLUMN_RESIZED, event);
+            var event = {
+                type: events_1.Events.EVENT_COLUMN_RESIZED,
+                column: column,
+                columns: [column],
+                finished: true,
+                api: _this.gridApi,
+                columnApi: _this.columnApi
+            };
+            _this.eventService.dispatchEvent(event);
         });
         function moveToNotSpread(column) {
             utils_1.Utils.removeFromArray(colsToSpread, column);
@@ -1886,6 +1988,14 @@ var ColumnController = (function () {
         context_1.Optional('valueCache'),
         __metadata("design:type", valueCache_1.ValueCache)
     ], ColumnController.prototype, "valueCache", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", ColumnApi)
+    ], ColumnController.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], ColumnController.prototype, "gridApi", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

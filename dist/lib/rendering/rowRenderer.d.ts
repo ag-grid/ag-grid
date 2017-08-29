@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { CellComp } from "./cellComp";
@@ -23,8 +23,11 @@ export declare class RowRenderer extends BeanStub {
     private context;
     private loggerFactory;
     private focusedCellController;
-    private rangeController;
     private cellNavigationService;
+    private columnApi;
+    private gridApi;
+    private beans;
+    private rangeController;
     private firstRenderedRow;
     private lastRenderedRow;
     private rowCompsByIndex;
@@ -33,6 +36,8 @@ export declare class RowRenderer extends BeanStub {
     private forPrint;
     private autoHeight;
     private rowContainers;
+    private pinningLeft;
+    private pinningRight;
     private refreshInProgress;
     private logger;
     agWire(loggerFactory: LoggerFactory): void;
@@ -40,7 +45,7 @@ export declare class RowRenderer extends BeanStub {
     private onPageLoaded(refreshEvent?);
     getAllCellsForColumn(column: Column): HTMLElement[];
     refreshFloatingRowComps(): void;
-    private refreshFloatingRows(renderedRows, rowNodes, pinnedLeftContainerComp, pinnedRightContainerComp, bodyContainerComp, fullWidthContainerComp);
+    private refreshFloatingRows(rowComps, rowNodes, pinnedLeftContainerComp, pinnedRightContainerComp, bodyContainerComp, fullWidthContainerComp);
     private onPinnedRowDataChanged();
     private onModelUpdated(refreshEvent);
     private getRenderedIndexesForRowNodes(rowNodes);
@@ -63,16 +68,18 @@ export declare class RowRenderer extends BeanStub {
     redrawAfterScroll(): void;
     private removeRowCompsNotToDraw(indexesToDraw);
     private calculateIndexesToDraw();
-    private redraw(rowsToRecycle?, animate?);
-    private createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, previousElements, ensureDomOrderForUpdate);
+    private redraw(rowsToRecycle?, animate?, afterScroll?);
+    private flushContainers(rowComps);
+    private onDisplayedColumnsChanged();
+    private redrawFullWidthEmbeddedRows();
+    private createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, afterScroll);
     private destroyRowComps(rowCompsMap, animate);
     private checkAngularCompile();
     private workOutFirstAndLastRowsToRender();
     getFirstVirtualRenderedRow(): number;
     getLastVirtualRenderedRow(): number;
-    private updatePreviousElements(previousElements, rowComp);
     private keepRowBecauseEditing(rowComp);
-    private createRowComp(rowNode, animate, previousElements);
+    private createRowComp(rowNode, animate, afterScroll);
     getRenderedNodes(): RowNode[];
     navigateToNextCell(event: KeyboardEvent, key: number, rowIndex: number, column: Column, floating: string): void;
     startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void;

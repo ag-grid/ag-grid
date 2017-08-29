@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,13 +30,13 @@ var context_3 = require("./context/context");
 var context_4 = require("./context/context");
 var AlignedGridsService = (function () {
     function AlignedGridsService() {
-        // flag to mark if we are consuming. to avoid cyclic events (ie slave firing back to master
+        // flag to mark if we are consuming. to avoid cyclic events (ie other grid firing back to master
         // while processing a master event) we mark this if consuming an event, and if we are, then
         // we don't fire back any events.
         this.consuming = false;
     }
     AlignedGridsService.prototype.setBeans = function (loggerFactory) {
-        this.logger = loggerFactory.create('MasterSlaveService');
+        this.logger = loggerFactory.create('AlignedGridsService');
     };
     AlignedGridsService.prototype.init = function () {
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
@@ -52,7 +52,7 @@ var AlignedGridsService = (function () {
         if (this.consuming) {
             return;
         }
-        // iterate through the slave grids, and pass each slave service to the callback
+        // iterate through the aligned grids, and pass each aligned grid service to the callback
         var otherGrids = this.gridOptionsWrapper.getAlignedGrids();
         if (otherGrids) {
             otherGrids.forEach(function (otherGridOptions) {
@@ -71,13 +71,13 @@ var AlignedGridsService = (function () {
         this.consuming = false;
     };
     AlignedGridsService.prototype.fireColumnEvent = function (event) {
-        this.fireEvent(function (slaveService) {
-            slaveService.onColumnEvent(event);
+        this.fireEvent(function (alignedGridsService) {
+            alignedGridsService.onColumnEvent(event);
         });
     };
     AlignedGridsService.prototype.fireHorizontalScrollEvent = function (horizontalScroll) {
-        this.fireEvent(function (slaveService) {
-            slaveService.onScrollEvent(horizontalScroll);
+        this.fireEvent(function (alignedGridsService) {
+            alignedGridsService.onScrollEvent(horizontalScroll);
         });
     };
     AlignedGridsService.prototype.onScrollEvent = function (horizontalScroll) {
@@ -88,89 +88,109 @@ var AlignedGridsService = (function () {
     };
     AlignedGridsService.prototype.getMasterColumns = function (event) {
         var result = [];
-        if (event.getColumn()) {
-            result.push(event.getColumn());
-        }
-        if (event.getColumns()) {
-            event.getColumns().forEach(function (column) {
+        if (event.columns) {
+            event.columns.forEach(function (column) {
                 result.push(column);
             });
+        }
+        else if (event.column) {
+            result.push(event.column);
         }
         return result;
     };
     AlignedGridsService.prototype.getColumnIds = function (event) {
         var result = [];
-        if (event.getColumn()) {
-            result.push(event.getColumn().getColId());
-        }
-        else if (event.getColumns()) {
-            event.getColumns().forEach(function (column) {
+        if (event.columns) {
+            event.columns.forEach(function (column) {
                 result.push(column.getColId());
             });
+        }
+        else if (event.columns) {
+            result.push(event.column.getColId());
         }
         return result;
     };
     AlignedGridsService.prototype.onColumnEvent = function (event) {
         var _this = this;
         this.onEvent(function () {
-            // the column in the event is from the master grid. need to
-            // look up the equivalent from this (slave) grid
-            var masterColumn = event.getColumn();
-            var slaveColumn;
-            if (masterColumn) {
-                slaveColumn = _this.columnController.getPrimaryColumn(masterColumn.getColId());
-            }
-            // if event was with respect to a master column, that is not present in this
-            // grid, then we ignore the event
-            if (masterColumn && !slaveColumn) {
-                return;
-            }
-            // likewise for column group
-            var masterColumnGroup = event.getColumnGroup();
-            var slaveColumnGroup;
-            if (masterColumnGroup) {
-                var colId = masterColumnGroup.getGroupId();
-                var instanceId = masterColumnGroup.getInstanceId();
-                slaveColumnGroup = _this.columnController.getColumnGroup(colId, instanceId);
-            }
-            if (masterColumnGroup && !slaveColumnGroup) {
-                return;
-            }
-            // in time, all the methods below should use the column ids, it's a more generic way
-            // of handling columns, and also allows for single or multi column events
-            var columnIds = _this.getColumnIds(event);
-            var masterColumns = _this.getMasterColumns(event);
-            switch (event.getType()) {
-                case events_1.Events.EVENT_COLUMN_PIVOT_CHANGED:
-                    // we cannot support pivoting with master / slave as the columns will be out of sync as the
-                    // grids will have columns created based on the row data of the grid.
-                    console.warn('ag-Grid: pivoting is not supported with Master / Slave grids. ' +
-                        'You can only use one of these features at a time in a grid.');
-                    break;
+            switch (event.type) {
                 case events_1.Events.EVENT_COLUMN_MOVED:
-                    _this.logger.log('onColumnEvent-> processing ' + event + ' toIndex = ' + event.getToIndex());
-                    _this.columnController.moveColumns(columnIds, event.getToIndex());
-                    break;
                 case events_1.Events.EVENT_COLUMN_VISIBLE:
-                    _this.logger.log('onColumnEvent-> processing ' + event + ' visible = ' + event.isVisible());
-                    _this.columnController.setColumnsVisible(columnIds, event.isVisible());
-                    break;
                 case events_1.Events.EVENT_COLUMN_PINNED:
-                    _this.logger.log('onColumnEvent-> processing ' + event + ' pinned = ' + event.getPinned());
-                    _this.columnController.setColumnsPinned(columnIds, event.getPinned());
+                case events_1.Events.EVENT_COLUMN_RESIZED:
+                    var colEvent = event;
+                    _this.processColumnEvent(colEvent);
                     break;
                 case events_1.Events.EVENT_COLUMN_GROUP_OPENED:
-                    _this.logger.log('onColumnEvent-> processing ' + event + ' expanded = ' + masterColumnGroup.isExpanded());
-                    _this.columnController.setColumnGroupOpened(slaveColumnGroup, masterColumnGroup.isExpanded());
+                    var groupOpenedEvent = event;
+                    _this.processGroupOpenedEvent(groupOpenedEvent);
                     break;
-                case events_1.Events.EVENT_COLUMN_RESIZED:
-                    masterColumns.forEach(function (masterColumn) {
-                        _this.logger.log('onColumnEvent-> processing ' + event + ' actualWidth = ' + masterColumn.getActualWidth());
-                        _this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), event.isFinished());
-                    });
+                case events_1.Events.EVENT_COLUMN_PIVOT_CHANGED:
+                    // we cannot support pivoting with aligned grids as the columns will be out of sync as the
+                    // grids will have columns created based on the row data of the grid.
+                    console.warn('ag-Grid: pivoting is not supported with aligned grids. ' +
+                        'You can only use one of these features at a time in a grid.');
                     break;
             }
         });
+    };
+    AlignedGridsService.prototype.processGroupOpenedEvent = function (groupOpenedEvent) {
+        // likewise for column group
+        var masterColumnGroup = groupOpenedEvent.columnGroup;
+        var otherColumnGroup;
+        if (masterColumnGroup) {
+            var colId = masterColumnGroup.getGroupId();
+            var instanceId = masterColumnGroup.getInstanceId();
+            otherColumnGroup = this.columnController.getColumnGroup(colId, instanceId);
+        }
+        if (masterColumnGroup && !otherColumnGroup) {
+            return;
+        }
+        this.logger.log('onColumnEvent-> processing ' + event + ' expanded = ' + masterColumnGroup.isExpanded());
+        this.columnController.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded());
+    };
+    AlignedGridsService.prototype.processColumnEvent = function (colEvent) {
+        var _this = this;
+        // the column in the event is from the master grid. need to
+        // look up the equivalent from this (other) grid
+        var masterColumn = colEvent.column;
+        var otherColumn;
+        if (masterColumn) {
+            otherColumn = this.columnController.getPrimaryColumn(masterColumn.getColId());
+        }
+        // if event was with respect to a master column, that is not present in this
+        // grid, then we ignore the event
+        if (masterColumn && !otherColumn) {
+            return;
+        }
+        // in time, all the methods below should use the column ids, it's a more generic way
+        // of handling columns, and also allows for single or multi column events
+        var columnIds = this.getColumnIds(colEvent);
+        var masterColumns = this.getMasterColumns(colEvent);
+        switch (colEvent.type) {
+            case events_1.Events.EVENT_COLUMN_MOVED:
+                var movedEvent = colEvent;
+                this.logger.log('onColumnEvent-> processing ' + event + ' toIndex = ' + movedEvent.toIndex);
+                this.columnController.moveColumns(columnIds, movedEvent.toIndex);
+                break;
+            case events_1.Events.EVENT_COLUMN_VISIBLE:
+                var visibleEvent = colEvent;
+                this.logger.log('onColumnEvent-> processing ' + event + ' visible = ' + visibleEvent.visible);
+                this.columnController.setColumnsVisible(columnIds, visibleEvent.visible);
+                break;
+            case events_1.Events.EVENT_COLUMN_PINNED:
+                var pinnedEvent = colEvent;
+                this.logger.log('onColumnEvent-> processing ' + event + ' pinned = ' + pinnedEvent.pinned);
+                this.columnController.setColumnsPinned(columnIds, pinnedEvent.pinned);
+                break;
+            case events_1.Events.EVENT_COLUMN_RESIZED:
+                var resizedEvent_1 = colEvent;
+                masterColumns.forEach(function (masterColumn) {
+                    _this.logger.log('onColumnEvent-> processing ' + event + ' actualWidth = ' + masterColumn.getActualWidth());
+                    _this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), resizedEvent_1.finished);
+                });
+                break;
+        }
     };
     __decorate([
         context_3.Autowired('gridOptionsWrapper'),

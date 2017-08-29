@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,6 +20,7 @@ var utils_1 = require("../utils");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var columnController_1 = require("../columnController/columnController");
+var gridApi_1 = require("../gridApi");
 var ScrollVisibleService = (function () {
     function ScrollVisibleService() {
     }
@@ -33,7 +34,12 @@ var ScrollVisibleService = (function () {
             this.hBody = params.hBody;
             this.vPinnedLeft = params.vPinnedLeft;
             this.vPinnedRight = params.vPinnedRight;
-            this.eventService.dispatchEvent(events_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED);
+            var event_1 = {
+                type: events_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event_1);
         }
     };
     ScrollVisibleService.prototype.isVBodyShowing = function () {
@@ -76,6 +82,14 @@ var ScrollVisibleService = (function () {
         context_1.Autowired('columnController'),
         __metadata("design:type", columnController_1.ColumnController)
     ], ScrollVisibleService.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], ScrollVisibleService.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], ScrollVisibleService.prototype, "gridApi", void 0);
     ScrollVisibleService = __decorate([
         context_1.Bean('scrollVisibleService')
     ], ScrollVisibleService);

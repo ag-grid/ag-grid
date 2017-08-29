@@ -1,12 +1,13 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { NumberSequence } from "../../utils";
 import { RowNode } from "../../entities/rowNode";
 import { BeanStub } from "../../context/beanStub";
 import { RowNodeBlock } from "./rowNodeBlock";
 import { Logger } from "../../logger";
 import { RowNodeBlockLoader } from "./rowNodeBlockLoader";
+import { AgEvent } from "../../events";
 export interface RowNodeCacheParams {
     initialRowCount: number;
     blockSize: number;
@@ -19,6 +20,8 @@ export interface RowNodeCacheParams {
     maxConcurrentRequests: number;
     rowNodeBlockLoader: RowNodeBlockLoader;
     dynamicRowHeight: boolean;
+}
+export interface CacheUpdatedEvent extends AgEvent {
 }
 export declare abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCacheParams> extends BeanStub {
     static EVENT_CACHE_UPDATED: string;

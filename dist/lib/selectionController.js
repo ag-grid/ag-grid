@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,6 +28,8 @@ var context_3 = require("./context/context");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var context_4 = require("./context/context");
 var constants_1 = require("./constants");
+var columnController_1 = require("./columnController/columnController");
+var gridApi_1 = require("./gridApi");
 var SelectionController = (function () {
     function SelectionController() {
     }
@@ -236,7 +238,12 @@ var SelectionController = (function () {
         if (rowModelInMemory && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
         }
-        this.eventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
+        var event = {
+            type: events_1.Events.EVENT_SELECTION_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     };
     SelectionController.prototype.selectAllRowNodes = function (justFiltered) {
         if (justFiltered === void 0) { justFiltered = false; }
@@ -255,7 +262,12 @@ var SelectionController = (function () {
         if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();
         }
-        this.eventService.dispatchEvent(events_1.Events.EVENT_SELECTION_CHANGED);
+        var event = {
+            type: events_1.Events.EVENT_SELECTION_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     };
     // Deprecated method
     SelectionController.prototype.selectNode = function (rowNode, tryMulti) {
@@ -287,6 +299,14 @@ var SelectionController = (function () {
         context_3.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], SelectionController.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_3.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], SelectionController.prototype, "columnApi", void 0);
+    __decorate([
+        context_3.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], SelectionController.prototype, "gridApi", void 0);
     __decorate([
         __param(0, context_2.Qualifier('loggerFactory')),
         __metadata("design:type", Function),

@@ -1,12 +1,19 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export interface IAfterGuiAttachedParams {
-    hidePopup?: (event?: any) => void;
+    eComponent: HTMLElement;
 }
-export interface IComponent<T> {
+export interface IFilterAfterGuiAttachedParams extends IAfterGuiAttachedParams {
+    hidePopup: () => void;
+}
+export interface ICellRendererAfterGuiAttachedParams extends IAfterGuiAttachedParams {
+    eParentOfValue: HTMLElement;
+    eGridCell: HTMLElement;
+}
+export interface IComponent<T, Z extends IAfterGuiAttachedParams> {
     /** Return the DOM element of your editor, this is what the grid puts into the DOM */
-    getGui(): HTMLElement;
+    getGui(): HTMLElement | string;
     /** Gets called once by grid after editing is finished - if your editor needs to do any cleanup, do it here */
     destroy?(): void;
     /** A hook to perform any necessary operation just after the gui for this component has been renderer
@@ -17,7 +24,7 @@ export interface IComponent<T> {
      element. The params has one callback method 'hidePopup', which you can call at any later
      point to hide the popup - good if you have an 'Apply' button and you want to hide the popup
      after it is pressed. */
-    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
+    afterGuiAttached?(params: Z): void;
     /** The init(params) method is called on the filter once. See below for details on the parameters. */
     init?(params: T): void;
 }

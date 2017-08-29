@@ -1,6 +1,6 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IFilterParams, IDoesFilterPassParams, SerializedFilter } from "../interfaces/iFilter";
 import { ComparableBaseFilter, IScalarFilterParams } from "./baseFilter";
 export interface SerializedTextFilter extends SerializedFilter {
@@ -19,6 +19,7 @@ export interface INumberFilterParams extends IScalarFilterParams {
 export interface ITextFilterParams extends IFilterParams {
     textCustomComparator?: TextComparator;
     debounceMs?: number;
+    caseSensitive?: boolean;
 }
 export declare class TextFilter extends ComparableBaseFilter<string, ITextFilterParams, SerializedTextFilter> {
     private eFilterTextField;
@@ -26,6 +27,7 @@ export declare class TextFilter extends ComparableBaseFilter<string, ITextFilter
     private comparator;
     private formatter;
     static DEFAULT_FORMATTER: TextFormatter;
+    static DEFAULT_LOWERCASE_FORMATTER: TextFormatter;
     static DEFAULT_COMPARATOR: TextComparator;
     getDefaultType(): string;
     customInit(): void;

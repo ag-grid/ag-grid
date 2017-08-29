@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -82,6 +82,14 @@ var AutoGroupColService = (function () {
                 headerName: rowGroupColDef.headerName,
                 headerValueGetter: rowGroupColDef.headerValueGetter
             });
+            if (rowGroupColDef.cellRenderer) {
+                utils_1._.assign(defaultAutoColDef, {
+                    cellRendererParams: {
+                        innerRenderer: rowGroupColDef.cellRenderer,
+                        innerRendererParams: rowGroupColDef.cellRendererParams
+                    }
+                });
+            }
             defaultAutoColDef.showRowGroup = rowGroupCol.getColId();
         }
         else {

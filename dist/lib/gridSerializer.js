@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -121,14 +121,6 @@ var GridSerializer = (function () {
         var isPivotMode = this.columnController.isPivotMode();
         var rowModelNormal = this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_IN_MEMORY;
         var onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
-        // we can only export if it's a normal row model - unless we are exporting
-        // selected only, as this way we don't use the selected nodes rather than
-        // the row model to get the rows
-        if (!rowModelNormal && !onlySelected) {
-            console.log('ag-Grid: getDataAsCsv is only available for standard row model');
-            return '';
-        }
-        var inMemoryRowModel = this.rowModel;
         var columnsToExport;
         if (utils_1.Utils.existsAndNotEmpty(columnKeys)) {
             columnsToExport = this.columnController.getGridColumns(columnKeys);
@@ -160,7 +152,7 @@ var GridSerializer = (function () {
         }
         this.pinnedRowModel.forEachPinnedTopRow(processRow);
         if (isPivotMode) {
-            inMemoryRowModel.forEachPivotNode(processRow);
+            this.rowModel.forEachPivotNode(processRow);
         }
         else {
             // onlySelectedAllPages: user doing pagination and wants selected items from
@@ -178,7 +170,12 @@ var GridSerializer = (function () {
                 // here is everything else - including standard row model and selected. we don't use
                 // the selection model even when just using selected, so that the result is the order
                 // of the rows appearing on the screen.
-                inMemoryRowModel.forEachNodeAfterFilterAndSort(processRow);
+                if (rowModelNormal) {
+                    this.rowModel.forEachNodeAfterFilterAndSort(processRow);
+                }
+                else {
+                    this.rowModel.forEachNode(processRow);
+                }
             }
         }
         this.pinnedRowModel.forEachPinnedBottomRow(processRow);
@@ -222,17 +219,17 @@ var GridSerializer = (function () {
         return gridSerializingSession.parse();
     };
     GridSerializer.prototype.recursivelyAddHeaderGroups = function (displayedGroups, gridSerializingSession) {
-        var directChildrenHeaderGroups;
+        var directChildrenHeaderGroups = [];
         displayedGroups.forEach(function (columnGroupChild) {
             var columnGroup = columnGroupChild;
             if (!columnGroup.getChildren)
                 return;
-            directChildrenHeaderGroups = columnGroup.getChildren();
+            columnGroup.getChildren().forEach(function (it) { return directChildrenHeaderGroups.push(it); });
         });
         if (displayedGroups.length > 0 && displayedGroups[0] instanceof columnGroup_1.ColumnGroup) {
             this.doAddHeaderHeader(gridSerializingSession, displayedGroups);
         }
-        if (directChildrenHeaderGroups) {
+        if (directChildrenHeaderGroups && directChildrenHeaderGroups.length > 0) {
             this.recursivelyAddHeaderGroups(directChildrenHeaderGroups, gridSerializingSession);
         }
     };

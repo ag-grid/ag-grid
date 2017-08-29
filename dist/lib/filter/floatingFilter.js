@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,7 +29,7 @@ var context_1 = require("../context/context");
 var dateFilter_1 = require("./dateFilter");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var utils_1 = require("../utils");
-var componentProvider_1 = require("../componentProvider");
+var componentRecipes_1 = require("../components/framework/componentRecipes");
 var component_1 = require("../widgets/component");
 var constants_1 = require("../constants");
 var InputTextFloatingFilterComp = (function (_super) {
@@ -137,9 +137,9 @@ var DateFloatingFilterComp = (function (_super) {
         var dateComponentParams = {
             onDateChanged: toDebounce
         };
-        this.dateComponent = this.componentProvider.newDateComponent(dateComponentParams);
+        this.dateComponent = this.componentRecipes.newDateComponent(dateComponentParams);
         var body = utils_1._.loadTemplate("<div></div>");
-        body.appendChild(this.dateComponent.getGui());
+        body.appendChild(utils_1._.ensureElement(this.dateComponent.getGui()));
         this.setTemplateFromElement(body);
     };
     DateFloatingFilterComp.prototype.onDateChanged = function () {
@@ -185,9 +185,9 @@ var DateFloatingFilterComp = (function (_super) {
         this.dateComponent.setDate(utils_1._.parseYyyyMmDdToDate(parentModel.dateFrom, '-'));
     };
     __decorate([
-        context_1.Autowired('componentProvider'),
-        __metadata("design:type", componentProvider_1.ComponentProvider)
-    ], DateFloatingFilterComp.prototype, "componentProvider", void 0);
+        context_1.Autowired('componentRecipes'),
+        __metadata("design:type", componentRecipes_1.ComponentRecipes)
+    ], DateFloatingFilterComp.prototype, "componentRecipes", void 0);
     return DateFloatingFilterComp;
 }(component_1.Component));
 exports.DateFloatingFilterComp = DateFloatingFilterComp;

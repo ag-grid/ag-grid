@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,7 @@ var ValueFormatterService = (function () {
         var formatter;
         var colDef = column.getColDef();
         // if floating, give preference to the floating formatter
-        if (rowNode.rowPinned) {
+        if (rowNode && rowNode.rowPinned) {
             formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
         }
         else {
@@ -36,7 +36,7 @@ var ValueFormatterService = (function () {
             var params = {
                 value: value,
                 node: rowNode,
-                data: rowNode.data,
+                data: rowNode ? rowNode.data : null,
                 colDef: column.getColDef(),
                 column: column,
                 api: this.gridOptionsWrapper.getApi(),
@@ -50,6 +50,9 @@ var ValueFormatterService = (function () {
             // in the future, when we stop supporting angular 1, we can take this out.
             params.$scope = $scope;
             result = this.expressionService.evaluate(formatter, params);
+        }
+        else if (colDef.refData) {
+            return colDef.refData[value];
         }
         return result;
     };

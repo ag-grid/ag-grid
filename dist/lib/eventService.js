@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -105,17 +105,15 @@ var EventService = (function () {
     };
     // why do we pass the type here? the type is in ColumnChangeEvent, so unless the
     // type is not in other types of events???
-    EventService.prototype.dispatchEvent = function (eventType, event) {
-        if (!event) {
-            event = {};
-        }
+    EventService.prototype.dispatchEvent = function (event) {
         // console.log(`dispatching ${eventType}: ${event}`);
-        this.dispatchToListeners(eventType, event, true);
-        this.dispatchToListeners(eventType, event, false);
+        this.dispatchToListeners(event, true);
+        this.dispatchToListeners(event, false);
     };
-    EventService.prototype.dispatchToListeners = function (eventType, event, async) {
+    EventService.prototype.dispatchToListeners = function (event, async) {
         var _this = this;
         var globalListeners = async ? this.globalAsyncListeners : this.globalSyncListeners;
+        var eventType = event.type;
         // this allows the columnController to get events before anyone else
         var p1ListenerList = this.getListenerList(eventType + EventService_1.PRIORITY, async);
         p1ListenerList.forEach(function (listener) {

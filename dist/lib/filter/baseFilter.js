@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -266,12 +266,50 @@ var ScalarBaseFilter = (function (_super) {
     function ScalarBaseFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ScalarBaseFilter.prototype.nullComparator = function (type) {
+        var _this = this;
+        return function (filterValue, gridValue) {
+            if (gridValue == null) {
+                var nullValue = _this.translateNull(type);
+                if (_this.filter === BaseFilter.EQUALS) {
+                    return nullValue ? 0 : 1;
+                }
+                if (_this.filter === BaseFilter.GREATER_THAN) {
+                    return nullValue ? 1 : -1;
+                }
+                if (_this.filter === BaseFilter.GREATER_THAN_OR_EQUAL) {
+                    return nullValue ? 1 : -1;
+                }
+                if (_this.filter === BaseFilter.LESS_THAN_OR_EQUAL) {
+                    return nullValue ? -1 : 1;
+                }
+                if (_this.filter === BaseFilter.LESS_THAN) {
+                    return nullValue ? -1 : 1;
+                }
+                if (_this.filter === BaseFilter.NOT_EQUAL) {
+                    return nullValue ? 1 : 0;
+                }
+            }
+            var actualComparator = _this.comparator();
+            return actualComparator(filterValue, gridValue);
+        };
+    };
     ScalarBaseFilter.prototype.getDefaultType = function () {
         return BaseFilter.EQUALS;
     };
+    ScalarBaseFilter.prototype.translateNull = function (type) {
+        var reducedType = type.indexOf('greater') > -1 ? 'greaterThan' :
+            type.indexOf('lessThan') > -1 ? 'lessThan' :
+                'equals';
+        if (this.filterParams.nullComparator && this.filterParams.nullComparator[reducedType]) {
+            return this.filterParams.nullComparator[reducedType];
+        }
+        ;
+        return ScalarBaseFilter.DEFAULT_NULL_COMPARATOR[reducedType];
+    };
     ScalarBaseFilter.prototype.doesFilterPass = function (params) {
         var value = this.filterParams.valueGetter(params.node);
-        var comparator = this.comparator();
+        var comparator = this.nullComparator(this.filter);
         var rawFilterValues = this.filterValues();
         var from = Array.isArray(rawFilterValues) ? rawFilterValues[0] : rawFilterValues;
         if (from == null)
@@ -284,10 +322,10 @@ var ScalarBaseFilter = (function (_super) {
             return compareResult > 0;
         }
         if (this.filter === BaseFilter.GREATER_THAN_OR_EQUAL) {
-            return compareResult >= 0 && (value != null);
+            return compareResult >= 0;
         }
         if (this.filter === BaseFilter.LESS_THAN_OR_EQUAL) {
-            return compareResult <= 0 && (value != null);
+            return compareResult <= 0;
         }
         if (this.filter === BaseFilter.LESS_THAN) {
             return compareResult < 0;
@@ -306,6 +344,11 @@ var ScalarBaseFilter = (function (_super) {
             }
         }
         throw new Error('Unexpected type of date filter!: ' + this.filter);
+    };
+    ScalarBaseFilter.DEFAULT_NULL_COMPARATOR = {
+        equals: false,
+        lessThan: false,
+        greaterThan: false
     };
     return ScalarBaseFilter;
 }(ComparableBaseFilter));

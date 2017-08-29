@@ -1,11 +1,13 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
 export declare class PinnedRowModel {
     private gridOptionsWrapper;
     private eventService;
     private context;
+    private columnApi;
+    private gridApi;
     private pinnedTopRows;
     private pinnedBottomRows;
     init(): void;

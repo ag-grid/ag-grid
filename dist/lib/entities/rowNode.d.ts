@@ -1,6 +1,7 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { AgEvent } from "../events";
 import { Column } from "./column";
 import { RowNodeCache, RowNodeCacheParams } from "../rowModels/cache/rowNodeCache";
 import { RowNodeBlock } from "../rowModels/cache/rowNodeBlock";
@@ -11,6 +12,18 @@ export interface SetSelectedParams {
     tailingNodeInSequence?: boolean;
     rangeSelect?: boolean;
     groupSelectsFiltered?: boolean;
+}
+export interface RowNodeEvent extends AgEvent {
+    node: RowNode;
+}
+export interface DataChangedEvent extends RowNodeEvent {
+    oldData: any;
+    newData: any;
+    update: boolean;
+}
+export interface CellChangedEvent extends RowNodeEvent {
+    column: Column;
+    newValue: any;
 }
 export declare class RowNode implements IEventEmitter {
     static EVENT_ROW_SELECTED: string;
@@ -35,6 +48,8 @@ export declare class RowNode implements IEventEmitter {
     private rowModel;
     private context;
     private valueCache;
+    private columnApi;
+    private gridApi;
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
     id: string;
@@ -125,7 +140,10 @@ export declare class RowNode implements IEventEmitter {
     private selected;
     private eventService;
     setData(data: any): void;
+    private createDataChangedEvent(newData, oldData, update);
+    private createLocalRowEvent(type);
     updateData(data: any): void;
+    getRowIndexString(): string;
     private createDaemonNode();
     setDataAndId(data: any, id: string): void;
     setId(id: string): void;
@@ -140,7 +158,8 @@ export declare class RowNode implements IEventEmitter {
     setRowIndex(rowIndex: number): void;
     setUiLevel(uiLevel: number): void;
     setExpanded(expanded: boolean): void;
-    private dispatchLocalEvent(eventName, event?);
+    private createGlobalRowEvent(type);
+    private dispatchLocalEvent(event);
     setDataValue(colKey: string | Column, newValue: any): void;
     setGroupValue(colKey: string | Column, newValue: any): void;
     setAggData(newAggData: any): void;

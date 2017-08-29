@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,8 +32,7 @@ var setLeftFeature_1 = require("../rendering/features/setLeftFeature");
 var component_1 = require("../widgets/component");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var svgFactory_1 = require("../svgFactory");
-var svgFactory = svgFactory_1.SvgFactory.getInstance();
+var beans_1 = require("../rendering/beans");
 var BaseFilterWrapperComp = (function (_super) {
     __extends(BaseFilterWrapperComp, _super);
     function BaseFilterWrapperComp() {
@@ -45,7 +44,9 @@ var BaseFilterWrapperComp = (function (_super) {
         this.enrichBody(base);
         this.setTemplateFromElement(base);
         this.setupWidth();
-        this.addFeature(this.context, new setLeftFeature_1.SetLeftFeature(this.column, this.getGui()));
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans);
+        setLeftFeature.init();
+        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     };
     BaseFilterWrapperComp.prototype.setupWidth = function () {
         this.addDestroyableEventListener(this.column, column_1.Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
@@ -58,6 +59,10 @@ var BaseFilterWrapperComp = (function (_super) {
         context_1.Autowired('context'),
         __metadata("design:type", context_1.Context)
     ], BaseFilterWrapperComp.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('beans'),
+        __metadata("design:type", beans_1.Beans)
+    ], BaseFilterWrapperComp.prototype, "beans", void 0);
     return BaseFilterWrapperComp;
 }(component_1.Component));
 exports.BaseFilterWrapperComp = BaseFilterWrapperComp;
@@ -76,19 +81,22 @@ var FloatingFilterWrapperComp = (function (_super) {
     };
     FloatingFilterWrapperComp.prototype.enrichBody = function (body) {
         var floatingFilterBody = body.querySelector('.ag-floating-filter-body');
+        var floatingFilterComp = utils_1._.ensureElement(this.floatingFilterComp.getGui());
         if (this.suppressFilterButton) {
-            floatingFilterBody.appendChild(this.floatingFilterComp.getGui());
+            floatingFilterBody.appendChild(floatingFilterComp);
             utils_1._.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
             utils_1._.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body');
         }
         else {
             // let icon:HTMLElement = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column, svgFactory.createFilterSvg12);
-            floatingFilterBody.appendChild(this.floatingFilterComp.getGui());
+            floatingFilterBody.appendChild(floatingFilterComp);
             body.appendChild(utils_1._.loadTemplate("<div class=\"ag-floating-filter-button\" aria-hidden=\"true\">\n                    <button ref=\"eButtonShowMainFilter\">...</button>            \n            </div>"));
             // body.querySelector('button').appendChild(icon);
         }
         if (this.floatingFilterComp.afterGuiAttached) {
-            this.floatingFilterComp.afterGuiAttached();
+            this.floatingFilterComp.afterGuiAttached({
+                eComponent: floatingFilterComp
+            });
         }
     };
     FloatingFilterWrapperComp.prototype.onParentModelChanged = function (parentModel) {

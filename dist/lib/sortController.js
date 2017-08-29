@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,6 +23,7 @@ var eventService_1 = require("./eventService");
 var events_1 = require("./events");
 var context_2 = require("./context/context");
 var utils_1 = require("./utils");
+var gridApi_1 = require("./gridApi");
 var SortController = (function () {
     function SortController() {
     }
@@ -59,7 +60,12 @@ var SortController = (function () {
         this.dispatchSortChangedEvents();
     };
     SortController.prototype.dispatchSortChangedEvents = function () {
-        this.eventService.dispatchEvent(events_1.Events.EVENT_SORT_CHANGED);
+        var event = {
+            type: events_1.Events.EVENT_SORT_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     };
     SortController.prototype.clearSortBarThisColumn = function (columnToSkip) {
         this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach(function (columnToClear) {
@@ -180,6 +186,14 @@ var SortController = (function () {
         context_1.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)
     ], SortController.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], SortController.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], SortController.prototype, "gridApi", void 0);
     SortController = SortController_1 = __decorate([
         context_2.Bean('sortController')
     ], SortController);

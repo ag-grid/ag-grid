@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var svgFactory_1 = require("../../svgFactory");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var expressionService_1 = require("../../valueService/expressionService");
 var eventService_1 = require("../../eventService");
@@ -40,7 +39,6 @@ var checkboxSelectionComponent_1 = require("../checkboxSelectionComponent");
 var columnController_1 = require("../../columnController/columnController");
 var column_1 = require("../../entities/column");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
-var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var GroupCellRenderer = (function (_super) {
     __extends(GroupCellRenderer, _super);
     function GroupCellRenderer() {
@@ -48,20 +46,24 @@ var GroupCellRenderer = (function (_super) {
     }
     GroupCellRenderer.prototype.init = function (params) {
         this.params = params;
-        var embeddedRowMismatch = this.embeddedRowMismatch();
-        if (embeddedRowMismatch) {
-            return;
-        }
+        this.isEmbeddedRowMismatch();
+        var embeddedRowMismatch = this.isEmbeddedRowMismatch();
         //This allows for empty strings to appear as groups since
         //it will only return for null or undefined.
-        if (params.value == null) {
+        var cellIsEmpty = params.value == null;
+        this.cellIsBlank = embeddedRowMismatch || cellIsEmpty;
+        if (this.cellIsBlank) {
             return;
         }
         this.setupDragOpenParents();
-        this.setupComponents();
     };
-    GroupCellRenderer.prototype.setupComponents = function () {
-        this.addExpandAndContract();
+    GroupCellRenderer.prototype.afterGuiAttached = function (params) {
+        if (this.cellIsBlank) {
+            return;
+        }
+        // hack to get renderer working with slick and non-slick
+        var eGridCell = this.params.eGridCell ? this.params.eGridCell : params.eGridCell;
+        this.addExpandAndContract(eGridCell);
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.addPadding();
@@ -69,7 +71,7 @@ var GroupCellRenderer = (function (_super) {
     // if we are doing embedded full width rows, we only show the renderer when
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
-    GroupCellRenderer.prototype.embeddedRowMismatch = function () {
+    GroupCellRenderer.prototype.isEmbeddedRowMismatch = function () {
         if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
             var pinnedLeftCell = this.params.pinned === column_1.Column.PINNED_LEFT;
             var pinnedRightCell = this.params.pinned === column_1.Column.PINNED_RIGHT;
@@ -140,10 +142,7 @@ var GroupCellRenderer = (function (_super) {
     GroupCellRenderer.prototype.addValueElement = function () {
         var params = this.params;
         var rowNode = this.displayedGroup;
-        if (params.innerRenderer) {
-            this.createFromInnerRenderer();
-        }
-        else if (rowNode.footer) {
+        if (rowNode.footer) {
             this.createFooterCell();
         }
         else if (rowNode.group) {
@@ -153,14 +152,6 @@ var GroupCellRenderer = (function (_super) {
         else {
             this.createLeafCell();
         }
-    };
-    GroupCellRenderer.prototype.createFromInnerRenderer = function () {
-        var innerComponent = this.cellRendererService.useCellRenderer(this.params.innerRenderer, this.eValue, this.params);
-        this.addDestroyFunc(function () {
-            if (innerComponent && innerComponent.destroy) {
-                innerComponent.destroy();
-            }
-        });
     };
     GroupCellRenderer.prototype.createFooterCell = function () {
         var footerValue;
@@ -191,26 +182,12 @@ var GroupCellRenderer = (function (_super) {
         var columnToUse = rowGroupColumn ? rowGroupColumn : params.column;
         var groupName = this.params.value;
         var valueFormatted = this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName);
-        var groupedColCellRenderer = columnToUse.getCellRenderer();
-        // reuse the params but change the value
-        if (typeof groupedColCellRenderer === 'function') {
-            // reuse the params but change the value
-            params.value = groupName;
-            params.valueFormatted = valueFormatted;
-            var colDefOfGroupedCol = columnToUse.getColDef();
-            var groupedColCellRendererParams = colDefOfGroupedCol ? colDefOfGroupedCol.cellRendererParams : null;
-            // because we are talking about the different column to the original, any user provided params
-            // are for the wrong column, so need to copy them in again.
-            if (groupedColCellRendererParams) {
-                utils_1.Utils.assign(params, groupedColCellRenderer);
-            }
-            this.cellRendererService.useCellRenderer(colDefOfGroupedCol.cellRenderer, this.eValue, params);
+        params.valueFormatted = valueFormatted;
+        if (params.fullWidth == true) {
+            this.cellRendererService.useFullWidthGroupRowInnerCellRenderer(this.eValue, params);
         }
         else {
-            var valueToRender = utils_1.Utils.exists(valueFormatted) ? valueFormatted : groupName;
-            if (utils_1.Utils.exists(valueToRender) && valueToRender !== '') {
-                this.eValue.appendChild(document.createTextNode(valueToRender));
-            }
+            this.cellRendererService.useInnerCellRenderer(this.params, columnToUse.getColDef(), this.eValue, params);
         }
     };
     GroupCellRenderer.prototype.addChildCount = function () {
@@ -255,11 +232,10 @@ var GroupCellRenderer = (function (_super) {
             this.addDestroyFunc(function () { return cbSelectionComponent_1.destroy(); });
         }
     };
-    GroupCellRenderer.prototype.addExpandAndContract = function () {
+    GroupCellRenderer.prototype.addExpandAndContract = function (eGroupCell) {
         var params = this.params;
-        var eGroupCell = params.eGridCell;
-        var eExpandedIcon = utils_1.Utils.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null, svgFactory.createGroupContractedIcon);
-        var eContractedIcon = utils_1.Utils.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null, svgFactory.createGroupExpandedIcon);
+        var eExpandedIcon = utils_1.Utils.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
+        var eContractedIcon = utils_1.Utils.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
         var expandOrContractListener = this.onExpandOrContract.bind(this);

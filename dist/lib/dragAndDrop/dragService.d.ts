@@ -1,12 +1,14 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 export declare class DragService {
     private loggerFactory;
     private eventService;
     private gridOptionsWrapper;
+    private columnApi;
+    private gridApi;
     private currentDragParams;
     private dragging;
     private mouseEventLastTime;

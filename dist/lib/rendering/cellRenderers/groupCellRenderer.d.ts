@@ -1,15 +1,16 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
 import { ICellRenderer, ICellRendererParams } from "./iCellRenderer";
+import { IAfterGuiAttachedParams } from "../../interfaces/iComponent";
 export interface GroupCellRendererParams extends ICellRendererParams {
     pinned: string;
     padding: number;
     suppressPadding: boolean;
-    innerRenderer: any;
     footerValueGetter: any;
     suppressCount: boolean;
+    fullWidth: boolean;
     checkbox: any;
     scope: any;
     actualValue: string;
@@ -31,14 +32,14 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     private params;
     private draggedFromHideOpenParents;
     private displayedGroup;
+    private cellIsBlank;
     constructor();
     init(params: GroupCellRendererParams): void;
-    private setupComponents();
-    private embeddedRowMismatch();
+    afterGuiAttached(params: IAfterGuiAttachedParams): void;
+    private isEmbeddedRowMismatch();
     private setPadding();
     private addPadding();
     private addValueElement();
-    private createFromInnerRenderer();
     private createFooterCell();
     private createGroupCell();
     private addChildCount();
@@ -46,7 +47,7 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     private createLeafCell();
     private isUserWantsSelected();
     private addCheckboxIfNeeded();
-    private addExpandAndContract();
+    private addExpandAndContract(eGroupCell);
     private onKeyDown(event);
     private setupDragOpenParents();
     onExpandOrContract(): void;

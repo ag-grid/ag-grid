@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,6 +18,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../utils");
 var beanStub_1 = require("../context/beanStub");
+var compIdSequence = new utils_1.NumberSequence();
 var Component = (function (_super) {
     __extends(Component, _super);
     function Component(template) {
@@ -25,11 +26,18 @@ var Component = (function (_super) {
         _this.childComponents = [];
         _this.annotatedEventListeners = [];
         _this.visible = true;
+        // unique id for this row component. this is used for getting a reference to the HTML dom.
+        // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
+        // around as we create a new rowComp instance for the same row node).
+        _this.compId = compIdSequence.next();
         if (template) {
             _this.setTemplate(template);
         }
         return _this;
     }
+    Component.prototype.getCompId = function () {
+        return this.compId;
+    };
     Component.prototype.instantiate = function (context) {
         this.instantiateRecurse(this.getGui(), context);
     };
@@ -54,7 +62,7 @@ var Component = (function (_super) {
         this.swapInComponentForQuerySelectors(newComponent, childNode);
     };
     Component.prototype.swapInComponentForQuerySelectors = function (newComponent, childNode) {
-        var thisProto = this.__proto__;
+        var thisProto = Object.getPrototypeOf(this);
         var thisNoType = this;
         while (thisProto != null) {
             var metaData = thisProto.__agComponentMetaData;
@@ -66,7 +74,7 @@ var Component = (function (_super) {
                     }
                 });
             }
-            thisProto = thisProto.__proto__;
+            thisProto = Object.getPrototypeOf(thisProto);
         }
     };
     Component.prototype.setTemplate = function (template) {
@@ -86,7 +94,7 @@ var Component = (function (_super) {
         if (!this.eGui) {
             return;
         }
-        var thisProto = this.__proto__;
+        var thisProto = Object.getPrototypeOf(this);
         var _loop_1 = function () {
             var metaData = thisProto.__agComponentMetaData;
             var currentProtoName = (thisProto.constructor).name;
@@ -108,7 +116,7 @@ var Component = (function (_super) {
                     }
                 });
             }
-            thisProto = thisProto.__proto__;
+            thisProto = Object.getPrototypeOf(thisProto);
         };
         var this_1 = this;
         while (thisProto != null) {
@@ -121,7 +129,7 @@ var Component = (function (_super) {
         if (!this.eGui) {
             return;
         }
-        var thisProto = this.__proto__;
+        var thisProto = Object.getPrototypeOf(this);
         while (thisProto != null) {
             var metaData = thisProto.__agComponentMetaData;
             var currentProtoName = (thisProto.constructor).name;
@@ -135,7 +143,7 @@ var Component = (function (_super) {
                     _this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener: listener });
                 });
             }
-            thisProto = thisProto.__proto__;
+            thisProto = Object.getPrototypeOf(thisProto);
         }
     };
     Component.prototype.removeAnnotatedEventListeners = function () {
@@ -171,7 +179,7 @@ var Component = (function (_super) {
         }
         else {
             var childComponent = newChild;
-            this.eGui.appendChild(childComponent.getGui());
+            this.eGui.appendChild(utils_1.Utils.ensureElement(childComponent.getGui()));
             this.childComponents.push(childComponent);
         }
     };
@@ -188,7 +196,11 @@ var Component = (function (_super) {
         if (visible !== this.visible) {
             this.visible = visible;
             utils_1.Utils.addOrRemoveCssClass(this.eGui, 'ag-hidden', !visible);
-            this.dispatchEvent(Component.EVENT_VISIBLE_CHANGED, { visible: this.visible });
+            var event_1 = {
+                type: Component.EVENT_VISIBLE_CHANGED,
+                visible: this.visible
+            };
+            this.dispatchEvent(event_1);
         }
     };
     Component.prototype.addOrRemoveCssClass = function (className, addOrRemove) {

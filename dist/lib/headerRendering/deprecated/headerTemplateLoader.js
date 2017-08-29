@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,10 +16,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../../utils");
-var svgFactory_1 = require("../../svgFactory");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var context_1 = require("../../context/context");
-var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var HeaderTemplateLoader = (function () {
     function HeaderTemplateLoader() {
     }
@@ -65,15 +63,15 @@ var HeaderTemplateLoader = (function () {
     };
     HeaderTemplateLoader.prototype.createDefaultHeaderElement = function (column) {
         var eTemplate = utils_1.Utils.loadTemplate(HeaderTemplateLoader_1.HEADER_CELL_TEMPLATE);
-        this.addInIcon(eTemplate, 'sortAscending', '#agSortAsc', column, svgFactory.createArrowUpSvg);
-        this.addInIcon(eTemplate, 'sortDescending', '#agSortDesc', column, svgFactory.createArrowDownSvg);
-        this.addInIcon(eTemplate, 'sortUnSort', '#agNoSort', column, svgFactory.createArrowUpDownSvg);
-        this.addInIcon(eTemplate, 'menu', '#agMenu', column, svgFactory.createMenuSvg);
-        this.addInIcon(eTemplate, 'filter', '#agFilter', column, svgFactory.createFilterSvg);
+        this.addInIcon(eTemplate, 'sortAscending', '#agSortAsc', column);
+        this.addInIcon(eTemplate, 'sortDescending', '#agSortDesc', column);
+        this.addInIcon(eTemplate, 'sortUnSort', '#agNoSort', column);
+        this.addInIcon(eTemplate, 'menu', '#agMenu', column);
+        this.addInIcon(eTemplate, 'filter', '#agFilter', column);
         return eTemplate;
     };
-    HeaderTemplateLoader.prototype.addInIcon = function (eTemplate, iconName, cssSelector, column, defaultIconFactory) {
-        var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
+    HeaderTemplateLoader.prototype.addInIcon = function (eTemplate, iconName, cssSelector, column) {
+        var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
         eTemplate.querySelector(cssSelector).appendChild(eIcon);
     };
     HeaderTemplateLoader.HEADER_CELL_TEMPLATE = '<div class="ag-header-cell">' +

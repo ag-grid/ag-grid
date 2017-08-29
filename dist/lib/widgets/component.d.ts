@@ -1,16 +1,22 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { IComponent } from "../interfaces/iComponent";
-export declare class Component extends BeanStub implements IComponent<any> {
+import { IAfterGuiAttachedParams, IComponent } from "../interfaces/iComponent";
+import { AgEvent } from "../events";
+export interface VisibleChangedEvent extends AgEvent {
+    visible: boolean;
+}
+export declare class Component extends BeanStub implements IComponent<any, IAfterGuiAttachedParams> {
     static EVENT_VISIBLE_CHANGED: string;
     private eGui;
     private childComponents;
     private annotatedEventListeners;
     private visible;
+    private compId;
     constructor(template?: string);
+    getCompId(): number;
     instantiate(context: Context): void;
     private instantiateRecurse(parentNode, context);
     private swapComponentForNode(newComponent, parentNode, childNode);
@@ -25,7 +31,7 @@ export declare class Component extends BeanStub implements IComponent<any> {
     protected setGui(eGui: HTMLElement): void;
     protected queryForHtmlElement(cssSelector: string): HTMLElement;
     protected queryForHtmlInputElement(cssSelector: string): HTMLInputElement;
-    appendChild(newChild: Node | IComponent<any>): void;
+    appendChild(newChild: Node | IComponent<any, IAfterGuiAttachedParams>): void;
     addFeature(context: Context, feature: BeanStub): void;
     isVisible(): boolean;
     setVisible(visible: boolean): void;

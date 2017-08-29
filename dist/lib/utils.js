@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -218,12 +218,20 @@ var Utils = (function () {
             });
         }
     };
-    Utils.assign = function (object, source) {
-        if (this.exists(source)) {
-            this.iterateObject(source, function (key, value) {
-                object[key] = value;
-            });
+    Utils.assign = function (object) {
+        var _this = this;
+        var sources = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            sources[_i - 1] = arguments[_i];
         }
+        sources.forEach(function (source) {
+            if (_this.exists(source)) {
+                _this.iterateObject(source, function (key, value) {
+                    object[key] = value;
+                });
+            }
+        });
+        return object;
     };
     Utils.parseYyyyMmDdToDate = function (yyyyMmDd, separator) {
         try {
@@ -422,6 +430,35 @@ var Utils = (function () {
         tempDiv.innerHTML = template;
         return tempDiv.firstChild;
     };
+    Utils.assertHtmlElement = function (item) {
+        if (typeof item === 'string') {
+            console.error("ag-grid: Found a string template for a component type where only HTMLElements are allow. \n            Please change the component to return back an HTMLElement from getGui(). Only some element types can return back strings.\n            The found template is " + item);
+            return null;
+        }
+        else {
+            return item;
+        }
+    };
+    Utils.ensureElement = function (item) {
+        if (typeof item === 'string') {
+            return this.loadTemplate(item);
+        }
+        else {
+            return item;
+        }
+    };
+    Utils.appendHtml = function (eContainer, htmlTemplate) {
+        if (eContainer.lastChild) {
+            // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
+            // we put the items at the start, so new items appear underneath old items,
+            // so when expanding/collapsing groups, the new rows don't go on top of the
+            // rows below that are moving our of the way
+            eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
+        }
+        else {
+            eContainer.innerHTML = htmlTemplate;
+        }
+    };
     Utils.addOrRemoveCssClass = function (element, className, addOrRemove) {
         if (addOrRemove) {
             this.addCssClass(element, className);
@@ -502,13 +539,23 @@ var Utils = (function () {
     Utils.offsetWidth = function (element) {
         return element && element.clientWidth ? element.clientWidth : 0;
     };
+    Utils.sortNumberArray = function (numberArray) {
+        numberArray.sort(function (a, b) { return a - b; });
+    };
     Utils.removeCssClass = function (element, className) {
-        if (element.className && element.className.length > 0) {
-            var cssClasses = element.className.split(' ');
-            var index = cssClasses.indexOf(className);
-            if (index >= 0) {
-                cssClasses.splice(index, 1);
-                element.className = cssClasses.join(' ');
+        if (element.classList) {
+            element.classList.remove(className);
+        }
+        else {
+            if (element.className && element.className.length > 0) {
+                var cssClasses = element.className.split(' ');
+                if (cssClasses.indexOf(className) >= 0) {
+                    // remove all instances of the item, not just the first, in case it's in more than once
+                    while (cssClasses.indexOf(className) >= 0) {
+                        cssClasses.splice(cssClasses.indexOf(className), 1);
+                    }
+                    element.className = cssClasses.join(' ');
+                }
             }
         }
     };
@@ -665,6 +712,26 @@ var Utils = (function () {
             }
         }
     };
+    Utils.insertTemplateWithDomOrder = function (eContainer, htmlTemplate, eChildBefore) {
+        var res;
+        if (eChildBefore) {
+            // if previous element exists, just slot in after the previous element
+            eChildBefore.insertAdjacentHTML('afterend', htmlTemplate);
+            res = eChildBefore.nextSibling;
+        }
+        else {
+            if (eContainer.firstChild) {
+                // insert it at the first location
+                eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
+            }
+            else {
+                // otherwise eContainer is empty, so just append it
+                eContainer.innerHTML = htmlTemplate;
+            }
+            res = eContainer.firstChild;
+        }
+        return res;
+    };
     Utils.toStringOrNull = function (value) {
         if (this.exists(value) && value.toString) {
             return value.toString();
@@ -705,23 +772,22 @@ var Utils = (function () {
             parent.appendChild(documentFragment);
         }
     };
-    // static prepend(parent: HTMLElement, child: HTMLElement): void {
-    //     if (this.exists(parent.firstChild)) {
-    //         parent.insertBefore(child, parent.firstChild);
-    //     } else {
-    //         parent.appendChild(child);
-    //     }
-    // }
     /**
      * If icon provided, use this (either a string, or a function callback).
-     * if not, then use the second parameter, which is the svgFactory function
+     * if not, then use the default icon from the theme
      */
-    Utils.createIcon = function (iconName, gridOptionsWrapper, column, svgFactoryFunc) {
-        var eResult = document.createElement('span');
-        eResult.appendChild(this.createIconNoSpan(iconName, gridOptionsWrapper, column, svgFactoryFunc));
-        return eResult;
+    Utils.createIcon = function (iconName, gridOptionsWrapper, column) {
+        var iconContents = this.createIconNoSpan(iconName, gridOptionsWrapper, column);
+        if (iconContents.className.indexOf('ag-icon') > -1) {
+            return iconContents;
+        }
+        else {
+            var eResult = document.createElement('span');
+            eResult.appendChild(iconContents);
+            return eResult;
+        }
     };
-    Utils.createIconNoSpan = function (iconName, gridOptionsWrapper, column, svgFactoryFunc) {
+    Utils.createIconNoSpan = function (iconName, gridOptionsWrapper, column) {
         var userProvidedIcon;
         // check col for icon first
         if (column && column.getColDef().icons) {
@@ -754,21 +820,23 @@ var Utils = (function () {
             }
         }
         else {
-            // otherwise we use the built in icon
-            if (svgFactoryFunc) {
-                return svgFactoryFunc();
+            var span = document.createElement('span');
+            var cssClass = this.iconNameClassMap[iconName];
+            if (!cssClass) {
+                throw new Error(iconName + " did not find class");
             }
-            else {
-                return null;
-            }
+            span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
+            return span;
         }
     };
     Utils.addStylesToElement = function (eElement, styles) {
+        var _this = this;
         if (!styles) {
             return;
         }
         Object.keys(styles).forEach(function (key) {
-            eElement.style[key] = styles[key];
+            var keyCamelCase = _this.hyphenToCamelCase(key);
+            eElement.style[keyCamelCase] = styles[key];
         });
     };
     Utils.isHorizontalScrollShowing = function (element) {
@@ -820,7 +888,7 @@ var Utils = (function () {
     Utils.isBrowserSafari = function () {
         if (this.isSafari === undefined) {
             var anyWindow = window;
-            // taken from https://github.com/ceolter/ag-grid/issues/550
+            // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
                 || (function (p) {
                     return p.toString() === "[object SafariRemoteNotification]";
@@ -900,6 +968,33 @@ var Utils = (function () {
                 }
             });
         }
+    };
+    // from https://gist.github.com/youssman/745578062609e8acac9f
+    Utils.camelCaseToHyphen = function (str) {
+        if (str === null || str === undefined) {
+            return null;
+        }
+        return str.replace(/([A-Z])/g, function (g) { return '-' + g[0].toLowerCase(); });
+    };
+    // from https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
+    Utils.hyphenToCamelCase = function (str) {
+        if (str === null || str === undefined) {
+            return null;
+        }
+        return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+    };
+    // pas in an object eg: {color: 'black', top: '25px'} and it returns "color: black; top: 25px;" for html
+    Utils.cssStyleObjectToMarkup = function (stylesToUse) {
+        var _this = this;
+        if (!stylesToUse) {
+            return '';
+        }
+        var resParts = [];
+        this.iterateObject(stylesToUse, function (styleKey, styleValue) {
+            var styleKeyDashed = _this.camelCaseToHyphen(styleKey);
+            resParts.push(styleKeyDashed + ": " + styleValue + ";");
+        });
+        return resParts.join(' ');
     };
     /**
      * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
@@ -1162,6 +1257,55 @@ var Utils = (function () {
         eElement.addEventListener(event, listener, (Utils.passiveEvents.indexOf(event) > -1 ? { passive: true } : null));
     };
     Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
+    // static prepend(parent: HTMLElement, child: HTMLElement): void {
+    //     if (this.exists(parent.firstChild)) {
+    //         parent.insertBefore(child, parent.firstChild);
+    //     } else {
+    //         parent.appendChild(child);
+    //     }
+    // }
+    Utils.iconNameClassMap = {
+        'columnMovePin': 'pin',
+        'columnMoveAdd': 'plus',
+        'columnMoveHide': 'eye-slash',
+        'columnMoveMove': 'arrows',
+        'columnMoveLeft': 'left',
+        'columnMoveRight': 'right',
+        'columnMoveGroup': 'group',
+        'columnMoveValue': 'aggregation',
+        'columnMovePivot': 'pivot',
+        'dropNotAllowed': 'not-allowed',
+        'groupContracted': 'expanded',
+        'groupExpanded': 'contracted',
+        'checkboxChecked': 'checkbox-checked',
+        'checkboxUnchecked': 'checkbox-unchecked',
+        'checkboxIndeterminate': 'checkbox-indeterminate',
+        'checkboxCheckedReadOnly': 'checkbox-checked-readonly',
+        'checkboxUncheckedReadOnly': 'checkbox-unchecked-readonly',
+        'checkboxIndeterminateReadOnly': 'checkbox-indeterminate-readonly',
+        'groupLoading': 'loading',
+        'menu': 'menu',
+        'filter': 'filter',
+        'columns': 'columns',
+        'menuPin': 'pin',
+        'menuValue': 'aggregation',
+        'menuAddRowGroup': 'group',
+        'menuRemoveRowGroup': 'group',
+        'clipboardCopy': 'copy',
+        'clipboardCut': 'cut',
+        'clipboardPaste': 'paste',
+        'pivotPanel': 'pivot',
+        'rowGroupPanel': 'group',
+        'valuePanel': 'aggregation',
+        'columnGroupOpened': 'expanded',
+        'columnGroupClosed': 'contracted',
+        'columnSelectClosed': 'tree-closed',
+        'columnSelectOpen': 'tree-open',
+        // from deprecated header, remove at some point
+        'sortAscending': 'asc',
+        'sortDescending': 'asc',
+        'sortUnSort': 'none'
+    };
     Utils.passiveEvents = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
     return Utils;
 }());

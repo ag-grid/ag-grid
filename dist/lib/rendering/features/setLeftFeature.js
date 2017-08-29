@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,29 +15,18 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../../utils");
 var column_1 = require("../../entities/column");
 var beanStub_1 = require("../../context/beanStub");
-var context_1 = require("../../context/context");
-var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
-var columnAnimationService_1 = require("../columnAnimationService");
 var SetLeftFeature = (function (_super) {
     __extends(SetLeftFeature, _super);
-    function SetLeftFeature(columnOrGroup, eCell, colsSpanning) {
+    function SetLeftFeature(columnOrGroup, eCell, beans, colsSpanning) {
         var _this = _super.call(this) || this;
         _this.columnOrGroup = columnOrGroup;
         _this.eCell = eCell;
         _this.colsSpanning = colsSpanning;
+        _this.beans = beans;
         return _this;
     }
     SetLeftFeature.prototype.setColsSpanning = function (colsSpanning) {
@@ -45,7 +34,7 @@ var SetLeftFeature = (function (_super) {
         this.onLeftChanged();
     };
     SetLeftFeature.prototype.getColumnOrGroup = function () {
-        if (this.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
+        if (this.beans.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
             return this.colsSpanning[this.colsSpanning.length - 1];
         }
         else {
@@ -57,9 +46,9 @@ var SetLeftFeature = (function (_super) {
         this.setLeftFirstTime();
     };
     SetLeftFeature.prototype.setLeftFirstTime = function () {
-        var suppressMoveAnimation = this.gridOptionsWrapper.isSuppressColumnMoveAnimation();
+        var suppressMoveAnimation = this.beans.gridOptionsWrapper.isSuppressColumnMoveAnimation();
         var oldLeftExists = utils_1.Utils.exists(this.columnOrGroup.getOldLeft());
-        var animateColumnMove = this.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
+        var animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
             this.animateInLeft();
         }
@@ -78,7 +67,7 @@ var SetLeftFeature = (function (_super) {
         // position. eg if user changes column position twice, then setLeft() below executes twice in next
         // VM turn, but only one (the correct one) should get applied.
         this.actualLeft = left;
-        this.columnAnimationService.executeNextVMTurn(function () {
+        this.beans.columnAnimationService.executeNextVMTurn(function () {
             // test this left value is the latest one to be applied, and if not, do nothing
             if (_this.actualLeft === left) {
                 _this.setLeft(left);
@@ -97,20 +86,6 @@ var SetLeftFeature = (function (_super) {
             this.eCell.style.left = value + 'px';
         }
     };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-    ], SetLeftFeature.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('columnAnimationService'),
-        __metadata("design:type", columnAnimationService_1.ColumnAnimationService)
-    ], SetLeftFeature.prototype, "columnAnimationService", void 0);
-    __decorate([
-        context_1.PostConstruct,
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
-        __metadata("design:returntype", void 0)
-    ], SetLeftFeature.prototype, "init", null);
     return SetLeftFeature;
 }(beanStub_1.BeanStub));
 exports.SetLeftFeature = SetLeftFeature;

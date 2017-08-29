@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,7 +38,10 @@ var TextFilter = (function (_super) {
     };
     TextFilter.prototype.customInit = function () {
         this.comparator = this.filterParams.textCustomComparator ? this.filterParams.textCustomComparator : TextFilter.DEFAULT_COMPARATOR;
-        this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : TextFilter.DEFAULT_FORMATTER;
+        this.formatter =
+            this.filterParams.textFormatter ? this.filterParams.textFormatter :
+                this.filterParams.caseSensitive == true ? TextFilter.DEFAULT_FORMATTER :
+                    TextFilter.DEFAULT_LOWERCASE_FORMATTER;
         _super.prototype.customInit.call(this);
     };
     TextFilter.prototype.modelFromFloatingFilter = function (from) {
@@ -96,8 +99,10 @@ var TextFilter = (function (_super) {
             filterText = null;
         }
         if (this.filterText !== filterText) {
-            var newLowerCase = filterText ? filterText.toLowerCase() : null;
-            var previousLowerCase = this.filterText ? this.filterText.toLowerCase() : null;
+            var newLowerCase = filterText && this.filterParams.caseSensitive != true ? filterText.toLowerCase() :
+                filterText;
+            var previousLowerCase = this.filterText && this.filterParams.caseSensitive != true ? this.filterText.toLowerCase() :
+                this.filterText;
             this.filterText = this.formatter(filterText);
             if (previousLowerCase !== newLowerCase) {
                 this.onFilterChanged();
@@ -137,6 +142,9 @@ var TextFilter = (function (_super) {
         this.setFilterType(filterType);
     };
     TextFilter.DEFAULT_FORMATTER = function (from) {
+        return from;
+    };
+    TextFilter.DEFAULT_LOWERCASE_FORMATTER = function (from) {
         if (from == null)
             return null;
         return from.toString().toLowerCase();

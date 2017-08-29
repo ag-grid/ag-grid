@@ -1,9 +1,10 @@
-// Type definitions for ag-grid v12.0.2
+// Type definitions for ag-grid v13.0.0
 // Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ceolter/>
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { LoggerFactory } from "./logger";
 import { IEventEmitter } from "./interfaces/iEventEmitter";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { AgEvent } from "./events";
 export declare class EventService implements IEventEmitter {
     private allSyncListeners;
     private allAsyncListeners;
@@ -21,8 +22,8 @@ export declare class EventService implements IEventEmitter {
     addGlobalListener(listener: Function, async?: boolean): void;
     removeEventListener(eventType: string, listener: Function, async?: boolean): void;
     removeGlobalListener(listener: Function): void;
-    dispatchEvent(eventType: string, event?: any): void;
-    private dispatchToListeners(eventType, event, async);
+    dispatchEvent(event: AgEvent): void;
+    private dispatchToListeners(event, async);
     private dispatchAsync(func);
     private flushAsyncQueue();
 }

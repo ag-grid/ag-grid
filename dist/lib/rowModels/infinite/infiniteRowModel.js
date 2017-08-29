@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,6 +38,8 @@ var infiniteCache_1 = require("./infiniteCache");
 var beanStub_1 = require("../../context/beanStub");
 var rowNodeCache_1 = require("../cache/rowNodeCache");
 var rowNodeBlockLoader_1 = require("../cache/rowNodeBlockLoader");
+var gridApi_1 = require("../../gridApi");
+var columnController_1 = require("../../columnController/columnController");
 var InfiniteRowModel = (function (_super) {
     __extends(InfiniteRowModel, _super);
     function InfiniteRowModel() {
@@ -129,7 +131,21 @@ var InfiniteRowModel = (function (_super) {
             this.selectionController.reset();
         }
         this.resetCache();
-        this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED);
+        var event = this.createModelUpdatedEvent();
+        this.eventService.dispatchEvent(event);
+    };
+    InfiniteRowModel.prototype.createModelUpdatedEvent = function () {
+        return {
+            type: events_1.Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            // not sure if these should all be false - noticed if after implementing,
+            // maybe they should be true?
+            newPage: false,
+            newData: false,
+            keepRenderedRows: false,
+            animate: false
+        };
     };
     InfiniteRowModel.prototype.resetCache = function () {
         // if not first time creating a cache, need to destroy the old one
@@ -192,7 +208,8 @@ var InfiniteRowModel = (function (_super) {
         }
     };
     InfiniteRowModel.prototype.onCacheUpdated = function () {
-        this.eventService.dispatchEvent(events_1.Events.EVENT_MODEL_UPDATED);
+        var event = this.createModelUpdatedEvent();
+        this.eventService.dispatchEvent(event);
     };
     InfiniteRowModel.prototype.getRow = function (rowIndex) {
         return this.infiniteCache ? this.infiniteCache.getRow(rowIndex) : null;
@@ -305,6 +322,14 @@ var InfiniteRowModel = (function (_super) {
         context_1.Autowired('context'),
         __metadata("design:type", context_1.Context)
     ], InfiniteRowModel.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], InfiniteRowModel.prototype, "gridApi", void 0);
+    __decorate([
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], InfiniteRowModel.prototype, "columnApi", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

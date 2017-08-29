@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,11 +32,9 @@ var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var sortController_1 = require("../../sortController");
 var touchListener_1 = require("../../widgets/touchListener");
-var svgFactory_1 = require("../../svgFactory");
 var eventService_1 = require("../../eventService");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var events_1 = require("../../events");
-var svgFactory = svgFactory_1.SvgFactory.getInstance();
 var HeaderComp = (function (_super) {
     __extends(HeaderComp, _super);
     function HeaderComp() {
@@ -45,7 +43,6 @@ var HeaderComp = (function (_super) {
     HeaderComp.prototype.init = function (params) {
         this.params = params;
         this.setupTap();
-        this.setupIcons(params.column);
         this.setupMenu();
         this.setupSort();
         this.setupFilterIcon();
@@ -54,15 +51,8 @@ var HeaderComp = (function (_super) {
     HeaderComp.prototype.setupText = function (displayName) {
         this.eText.innerHTML = displayName;
     };
-    HeaderComp.prototype.setupIcons = function (column) {
-        this.addInIcon('sortAscending', this.eSortAsc, column, svgFactory.createArrowUpSvg);
-        this.addInIcon('sortDescending', this.eSortDesc, column, svgFactory.createArrowDownSvg);
-        this.addInIcon('sortUnSort', this.eSortNone, column, svgFactory.createArrowUpDownSvg);
-        this.addInIcon('menu', this.eMenu, column, svgFactory.createMenuSvg);
-        this.addInIcon('filter', this.eFilter, column, svgFactory.createFilterSvg);
-    };
-    HeaderComp.prototype.addInIcon = function (iconName, eParent, column, defaultIconFactory) {
-        var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, column, defaultIconFactory);
+    HeaderComp.prototype.addInIcon = function (iconName, eParent, column) {
+        var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
         eParent.appendChild(eIcon);
     };
     HeaderComp.prototype.setupTap = function () {
@@ -72,8 +62,8 @@ var HeaderComp = (function (_super) {
         }
         var touchListener = new touchListener_1.TouchListener(this.getGui());
         if (this.params.enableMenu) {
-            var longTapListener = function (touch) {
-                _this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(_this.params.column, touch);
+            var longTapListener = function (event) {
+                _this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(_this.params.column, event.touchStart);
             };
             this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_LONG_TAP, longTapListener);
         }
@@ -185,12 +175,12 @@ var HeaderComp = (function (_super) {
     HeaderComp.TEMPLATE = '<div class="ag-cell-label-container" role="presentation">' +
         '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>' +
         '  <div ref="eLabel" class="ag-header-cell-label" role="presentation">' +
+        '    <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>' +
+        '    <span ref="eFilter" class="ag-header-icon ag-filter-icon" aria-hidden="true"></span>' +
         '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order" aria-hidden="true"></span>' +
         '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon" aria-hidden="true"></span>' +
         '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon" aria-hidden="true"></span>' +
         '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon" aria-hidden="true"></span>' +
-        '    <span ref="eFilter" class="ag-header-icon ag-filter-icon" aria-hidden="true"></span>' +
-        '    <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>' +
         '  </div>' +
         '</div>';
     __decorate([

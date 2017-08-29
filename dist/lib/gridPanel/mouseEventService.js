@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,8 +35,8 @@ var MouseEventService = (function () {
         return null;
     };
     MouseEventService.prototype.getGridCellForEvent = function (event) {
-        var renderedCell = this.getRenderedCellForEvent(event);
-        return renderedCell ? renderedCell.getGridCell() : null;
+        var cellComp = this.getRenderedCellForEvent(event);
+        return cellComp ? cellComp.getGridCell() : null;
     };
     __decorate([
         context_2.Autowired('gridOptionsWrapper'),

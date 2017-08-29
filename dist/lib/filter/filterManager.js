@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v12.0.2
+ * @version v13.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,7 +26,7 @@ var context_1 = require("../context/context");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var dateFilter_1 = require("./dateFilter");
-var componentProvider_1 = require("../componentProvider");
+var gridApi_1 = require("../gridApi");
 var FilterManager = (function () {
     function FilterManager() {
         this.allFilters = {};
@@ -183,7 +183,12 @@ var FilterManager = (function () {
                 filterWrapper.filter.onAnyFilterChanged();
             }
         });
-        this.eventService.dispatchEvent(events_1.Events.EVENT_FILTER_CHANGED);
+        var event = {
+            type: events_1.Events.EVENT_FILTER_CHANGED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        this.eventService.dispatchEvent(event);
     };
     FilterManager.prototype.isQuickFilterPresent = function () {
         return this.quickFilter !== null;
@@ -352,7 +357,12 @@ var FilterManager = (function () {
     FilterManager.prototype.createParams = function (filterWrapper) {
         var _this = this;
         var filterChangedCallback = this.onFilterChanged.bind(this);
-        var filterModifiedCallback = function () { return _this.eventService.dispatchEvent(events_1.Events.EVENT_FILTER_MODIFIED); };
+        var event = {
+            type: events_1.Events.EVENT_FILTER_MODIFIED,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
+        var filterModifiedCallback = function () { return _this.eventService.dispatchEvent(event); };
         var doesRowPassOtherFilters = this.doesRowPassOtherFilters.bind(this, filterWrapper.filter);
         var colDef = filterWrapper.column.getColDef();
         var params = {
@@ -504,9 +514,13 @@ var FilterManager = (function () {
         __metadata("design:type", context_1.Context)
     ], FilterManager.prototype, "context", void 0);
     __decorate([
-        context_1.Autowired('componentProvider'),
-        __metadata("design:type", componentProvider_1.ComponentProvider)
-    ], FilterManager.prototype, "componentProvider", void 0);
+        context_1.Autowired('columnApi'),
+        __metadata("design:type", columnController_1.ColumnApi)
+    ], FilterManager.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], FilterManager.prototype, "gridApi", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),
