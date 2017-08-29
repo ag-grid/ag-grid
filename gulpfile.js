@@ -191,7 +191,7 @@ function scssTask() {
                             fallback: 'style-loader',
                             //resolve-url-loader may be chained before sass-loader if necessary
                             use: [
-                                { loader: 'css-loader', options: { minimize: true } } ,
+                                { loader: 'css-loader', options: { minimize: false } } ,
                                 'sass-loader',
                                 { loader: 'postcss-loader', options: { syntax: 'postcss-scss', plugins: [ autoprefixer() ] } },
                             ]
