@@ -19,7 +19,12 @@ export class CellRendererService {
         params: any
     ): ICellRendererComp {
         let cellRenderer: ICellRendererComp = this.componentRecipes.newCellRenderer (target, params);
-        return this.bindToHtml(cellRenderer, eTarget);
+        if (cellRenderer != null) {
+            this.bindToHtml(cellRenderer, eTarget);
+        } else {
+            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+        }
+        return cellRenderer;
     }
 
     public useFilterCellRenderer(
@@ -28,7 +33,12 @@ export class CellRendererService {
         params: any
     ): ICellRendererComp {
         let cellRenderer: ICellRendererComp = this.componentRecipes.newCellRenderer((<ISetFilterParams>target.filterParams), params);
-        return this.bindToHtml(cellRenderer, eTarget);
+        if (cellRenderer != null) {
+            this.bindToHtml(cellRenderer, eTarget);
+        } else {
+            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+        }
+        return cellRenderer;
     }
 
     public useInnerCellRenderer(
@@ -72,7 +82,12 @@ export class CellRendererService {
         params: any
     ): ICellRendererComp {
         let cellRenderer: ICellRendererComp = this.componentRecipes.newFullWidthGroupRowInnerCellRenderer (params);
-        return this.bindToHtml(cellRenderer, eTarget);
+        if (cellRenderer != null) {
+            this.bindToHtml(cellRenderer, eTarget);
+        } else {
+            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+        }
+        return cellRenderer;
     }
 
 

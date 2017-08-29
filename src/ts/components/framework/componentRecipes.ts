@@ -121,7 +121,7 @@ export class ComponentRecipes {
     }
 
     public newFullWidthGroupRowInnerCellRenderer (params:ICellRendererParams):ICellRendererComp{
-        return <ICellRendererComp>this.componentResolver.createAgGridComponent(this.gridOptions, params, "groupRowInnerRenderer");
+        return <ICellRendererComp>this.componentResolver.createAgGridComponent(this.gridOptions, params, "groupRowInnerRenderer", "groupRowInnerRenderer", false);
     }
 
     public newCellRenderer (target: ColDef | ISetFilterParams, params:ICellRendererParams):ICellRendererComp{
