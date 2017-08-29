@@ -71,16 +71,16 @@ export class ComponentProvider {
             emptyFloatingFilterWrapperComponent: EmptyFloatingFilterWrapperComp,
 
             //renderers
-            cellRenderer: DefaultCellRenderer,
-            fullWidthCellRenderer: GroupCellRenderer,
-            innerRenderer: DefaultCellRenderer,
-            groupRowInnerRenderer: DefaultCellRenderer,
+            cellRenderer: null,
+            fullWidthCellRenderer: null,
+            innerRenderer: null,
+            groupRowInnerRenderer: null,
             animateShowChange: AnimateShowChangeCellRenderer,
             animateSlide: AnimateSlideCellRenderer,
             group: GroupCellRenderer,
             groupRowRenderer: GroupCellRenderer,
             loadingCellRenderer: LoadingCellRenderer,
-            pinnedRowCellRenderer: DefaultCellRenderer
+            pinnedRowCellRenderer: null
         }
     }
 
