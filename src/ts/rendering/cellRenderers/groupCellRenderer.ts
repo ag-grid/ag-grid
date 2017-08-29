@@ -13,7 +13,7 @@ import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import {RefSelector} from "../../widgets/componentAnnotations";
-import {IAfterGuiAttachedParams} from "../../interfaces/iComponent";
+import {ICellRendererAfterGuiAttachedParams} from "../../interfaces/iComponent";
 
 export interface GroupCellRendererParams extends ICellRendererParams{
     pinned:string,
@@ -85,12 +85,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.setupDragOpenParents();
     }
 
-    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+    public afterGuiAttached(params: ICellRendererAfterGuiAttachedParams): void {
 
         if (this.cellIsBlank) { return; }
 
-        // hack to get renderer working with slick and non-slick
-        let eGridCell = this.params.eGridCell ? this.params.eGridCell : (<any>params).eGridCell;
+        let eGridCell = params.eGridCell;
         this.addExpandAndContract(eGridCell);
         this.addCheckboxIfNeeded();
         this.addValueElement();
