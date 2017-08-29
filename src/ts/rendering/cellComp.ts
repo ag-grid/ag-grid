@@ -673,6 +673,10 @@ export class CellComp extends Component {
 
         this.cellRenderer = this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType);
         this.cellRendererGui = this.cellRenderer.getGui();
+
+        if (this.cellRendererGui===null || this.cellRendererGui===undefined) {
+            console.warn('ag-Grid: cellRenderer should return back a string or a DOM object, but got ' + this.cellRendererGui);
+        }
     }
 
     private attachCellRendererAfterRefresh(): void {
@@ -680,14 +684,11 @@ export class CellComp extends Component {
 
         this.createCellRendererInstance();
 
-        let eCell = this.cellRendererGui;
-        if (eCell != null) {
-            if (typeof eCell == 'object') {
-                this.eParentOfValue.appendChild(eCell);
-            } else {
-                this.eParentOfValue.innerHTML = eCell;
-                this.cellRendererGui = <HTMLElement> this.eParentOfValue.firstChild;
-            }
+        if (typeof this.cellRendererGui === 'string') {
+            this.eParentOfValue.innerHTML = this.cellRendererGui;
+            this.cellRendererGui = <HTMLElement> this.eParentOfValue.firstChild;
+        } else {
+            this.eParentOfValue.appendChild(this.cellRendererGui);
         }
 
         this.callAfterGuiAttachedOnCellRenderer();
@@ -698,14 +699,13 @@ export class CellComp extends Component {
     private attachCellRendererAfterCreate(): void {
         if (!this.usingCellRenderer) { return; }
 
-        // need to check exists, as (typeof null === object)
-        if (_.exists(this.cellRendererGui) && typeof this.cellRendererGui === 'object') {
-            // if cell renderer returned back an HTML object, then we append it to the dom now
-            this.eParentOfValue.appendChild(this.cellRendererGui);
-        } else {
+        if (typeof this.cellRendererGui === 'string') {
             // if cell renderer returned back a string, then it was in the row template when it
             // got created, so we look it up (and replace the reference to the string we had)
             this.cellRendererGui = <HTMLElement> this.eParentOfValue.firstChild;
+        } else {
+            // if cell renderer returned back an HTML object, then we append it to the dom now
+            this.eParentOfValue.appendChild(this.cellRendererGui);
         }
 
         this.callAfterGuiAttachedOnCellRenderer();
