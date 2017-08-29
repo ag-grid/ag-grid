@@ -5,6 +5,7 @@ import {ColDef} from "../entities/colDef";
 import {GroupCellRendererParams} from "./cellRenderers/groupCellRenderer";
 import {ComponentResolver, ComponentSource, ResolvedComponent} from "../components/framework/componentResolver";
 import {ISetFilterParams} from "../interfaces/iSetFilterParams";
+import {_} from "../utils";
 
 /** Class to use a cellRenderer. */
 @Bean('cellRendererService')
@@ -39,14 +40,20 @@ export class CellRendererService {
         let rendererToUse:ICellRendererComp = null;
         let componentToUse:ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(target, "innerRenderer");
 
-        if (componentToUse.component != null && componentToUse.source != ComponentSource.DEFAULT){
+        if (componentToUse && componentToUse.component != null && componentToUse.source != ComponentSource.DEFAULT){
+            //THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
             rendererToUse = this.componentRecipes.newInnerCellRenderer(target, params);
         } else {
             let otherRenderer: ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(originalColumn, "cellRenderer");
             if (otherRenderer.source != ComponentSource.DEFAULT){
                 //Only if the original column is using an specific renderer, it it is a using a DEFAULT one
                 //ignore it
+                //THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, WE REUSE ITS RENDERER
                 rendererToUse = this.componentRecipes.newCellRenderer(originalColumn, params);
+            } else if (otherRenderer.source == ComponentSource.DEFAULT && (_.get(originalColumn, 'cellRendererParams.innerRenderer', null))) {
+                //EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
+                //AND HAS A INNER CELL RENDERER
+                rendererToUse = this.componentRecipes.newInnerCellRenderer(originalColumn.cellRendererParams, params);
             } else {
                 //This forces the retrieval of the default plain cellRenderer that just renders the values.
                 rendererToUse = this.componentRecipes.newCellRenderer({}, params);

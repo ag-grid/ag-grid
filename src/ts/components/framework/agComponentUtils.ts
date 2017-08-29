@@ -19,10 +19,10 @@ export class DefaultCellRenderer implements ICellRendererComp{
         return false;
     }
 
-    getGui(): HTMLElement {
+    getGui(): HTMLElement|string {
         let valueToUse = this.params.valueFormatted != null ? this.params.valueFormatted : this.params.value;
-        if (valueToUse == null) return _.loadTemplate('');
-        return _.loadTemplate(valueToUse);
+        if (valueToUse == null) return '';
+        return '<span>' + valueToUse + '</span>';
     }
 
 }
@@ -64,8 +64,9 @@ export class AgComponentUtils {
                 return false;
             }
 
-            getGui(): HTMLElement {
+            getGui(): HTMLElement|string {
                 let callbackResult: string | HTMLElement = callback(this.params);
+                if (callbackResult == null) return '';
                 if (typeof callbackResult != 'string') return callbackResult;
 
                 return _.loadTemplate('<span>' + callbackResult + '</span>');

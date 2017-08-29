@@ -71,10 +71,10 @@ export class ComponentProvider {
             emptyFloatingFilterWrapperComponent: EmptyFloatingFilterWrapperComp,
 
             //renderers
-            cellRenderer: null,
-            fullWidthCellRenderer: null,
+            cellRenderer: DefaultCellRenderer,
+            fullWidthCellRenderer: DefaultCellRenderer,
             innerRenderer: null,
-            groupRowInnerRenderer: null,
+            groupRowInnerRenderer: DefaultCellRenderer,
             animateShowChange: AnimateShowChangeCellRenderer,
             animateSlide: AnimateSlideCellRenderer,
             group: GroupCellRenderer,

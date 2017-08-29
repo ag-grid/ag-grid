@@ -177,9 +177,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let rowNode = this.displayedGroup;
         if (rowNode.footer) {
             this.createFooterCell();
-        } else if (rowNode.group) {
+        } else if (rowNode.group || _.get(params.colDef, 'cellRendererParams.innerRenderer', null)) {
             this.createGroupCell();
-            this.addChildCount();
+            if (rowNode.group){
+                this.addChildCount();
+            }
         } else {
             this.createLeafCell();
         }
@@ -220,7 +222,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         if (params.fullWidth == true){
             this.cellRendererService.useFullWidthGroupRowInnerCellRenderer(this.eValue, params);
         }else{
-            this.cellRendererService.useInnerCellRenderer(this.params, columnToUse.getColDef(), this.eValue, params);
+            this.cellRendererService.useInnerCellRenderer(this.params.colDef.cellRendererParams, columnToUse.getColDef(), this.eValue, params);
 
         }
     }
