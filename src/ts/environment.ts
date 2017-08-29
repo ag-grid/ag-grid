@@ -8,11 +8,18 @@ export class Environment {
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     public getTheme(): string {
-        const themeMatch: RegExpMatchArray = this.eGridDiv.className.match(themeCLass);
+        let themeMatch:RegExpMatchArray;
+        let element:HTMLElement = this.eGridDiv;
+
+        while (element != document.documentElement && themeMatch == null) {
+            themeMatch = this.eGridDiv.className.match(themeCLass);
+            element = element.parentElement;
+        }
+
         if (themeMatch) {
             return themeMatch[0];
         } else {
-            return '';
+            return 'ag-fresh';
         }
     }
 }
