@@ -13,7 +13,17 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h2>Version 13.0.0</h2>
+    <h2>Version 13.0.x</h2>
+    <h3>Version 13.0.1 [29-AUG-2017]</h3>
+
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>AG-714: Fixed an issue a column with a <code>cellRenderer='group'</code> and with an innerRenderer was not
+        using the innerRenderer when displayed as a leaf cell</li>
+    </ul>
+
+
+    <h3>Version 13.0.0 [25-AUG-2017]</h3>
 
     <h4>Enhancements</h4>
     <ul>
