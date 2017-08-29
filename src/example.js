@@ -427,7 +427,7 @@ var defaultCols = [
                 }
             },
             {
-                headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 110,
+                headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 150,
                 // pinned: 'right',
                 // rowGroupIndex: 2,
                 // pivotIndex: 1,
@@ -450,7 +450,7 @@ var defaultCols = [
         headerName: 'Performance',
         groupId: 'performance',
         children: [
-            {headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
+            {headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
                 filter: WinningsFilter, valueFormatter: currencyFormatter,
                 type: 'numericColumn',
                 enableValue: true,
@@ -475,7 +475,7 @@ var defaultCols = [
         ]
     },
     {
-        headerName: "Rating", field: "rating", width: 100, editable: true, cellRenderer: ratingRenderer,
+        headerName: "Rating", field: "rating", width: 120, editable: true, cellRenderer: ratingRenderer,
         floatCell: true,
         enableRowGroup: true,
         enablePivot: true,
@@ -484,7 +484,7 @@ var defaultCols = [
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'number', type: 'numericColumn',
-        editable: true, valueParser: numberParser, width: 150,
+        editable: true, valueParser: numberParser, width: 170,
         // aggFunc: 'sum',
         enableValue: true,
         valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
@@ -503,7 +503,7 @@ defaultCols.push(monthGroup);
 months.forEach(function (month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
-        width: 100, filter: 'number', editable: true, type: 'numericColumn',
+        width: 110, filter: 'number', editable: true, type: 'numericColumn',
         enableValue: true,
         // aggFunc: 'sum',
         //hide: true,
