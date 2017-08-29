@@ -19,6 +19,7 @@ export interface GroupCellRendererParams extends ICellRendererParams{
     pinned:string,
     padding:number,
     suppressPadding:boolean,
+    innerRenderer:any,
     footerValueGetter:any,
     suppressCount:boolean,
     fullWidth:boolean,
@@ -180,6 +181,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         } else if (rowNode.group) {
             this.createGroupCell();
             this.addChildCount();
+        } else if (this.params.innerRenderer) {
+            this.createGroupCell();
         } else {
             this.createLeafCell();
         }
