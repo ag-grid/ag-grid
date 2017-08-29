@@ -182,6 +182,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     }
 
     .ag-header-cell-label {
+        display: flex;
         float: left;
         width: calc(100% - #{$ag-mat-icon-size});
         & > span {
@@ -190,9 +191,19 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         .ag-header-icon {
             margin-top: 2px;
         }
+
+        .ag-header-cell-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; 
+        }
     }
 
     .ag-numeric-header {
+        .ag-header-cell-label {
+            flex-direction: row-reverse;
+        }
+
         .ag-header-cell-menu-button {
             float: left;
         }

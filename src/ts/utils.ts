@@ -884,7 +884,7 @@ export class Utils {
         'columnSelectOpen': 'tree-open',
         // from deprecated header, remove at some point
         'sortAscending': 'asc',
-        'sortDescending': 'asc',
+        'sortDescending': 'desc',
         'sortUnSort': 'none'
     }
 
