@@ -74,6 +74,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.params = params;
 
         this.setupTap();
+        this.setupIcons(params.column);
         this.setupMenu();
         this.setupSort();
         this.setupFilterIcon();
@@ -82,6 +83,14 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private setupText(displayName: string): void {
         this.eText.innerHTML = displayName;
+    }
+
+    private setupIcons(column:Column): void {
+        this.addInIcon('sortAscending', this.eSortAsc, column);
+        this.addInIcon('sortDescending', this.eSortDesc, column);
+        this.addInIcon('sortUnSort', this.eSortNone, column);
+        this.addInIcon('menu', this.eMenu, column);
+        this.addInIcon('filter', this.eFilter, column);
     }
 
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
