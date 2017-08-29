@@ -635,14 +635,5 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
             float: left;
         }
     }
-
-    /* icons are used outside of the grid root (in the ghost) */
-    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter folder-open folder group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right small-up small-down tick cross tree-open tree-closed;
-    @each $icon in $icons {
-        .ag-icon-#{$icon} {
-            display: inline-block;
-            @include icon-background('#{$icon}');
-        }
-    }
 }
 
