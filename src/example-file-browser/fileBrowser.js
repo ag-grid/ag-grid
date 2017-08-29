@@ -128,7 +128,8 @@
         {headerName: "Name", field: "name", width: 250,
             cellRenderer: 'group',
             cellRendererParams: {
-                innerRenderer: innerCellRenderer
+                innerRenderer: innerCellRenderer,
+                suppressCount: true
             }
         },
         {headerName: "Size", field: "size", width: 70, cellStyle: sizeCellStyle},
