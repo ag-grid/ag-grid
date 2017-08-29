@@ -20,7 +20,10 @@ include '../documentation-main/documentation_header.php';
     <ul>
 
         <!-- Niall Bits -->
-        <li>AG-xxx: description</li>
+        <li>AG-711: blank cells with no defined cell renderer were causing error</li>
+        <li>AG-709: column header attribute was colId instead of col-id</li>
+        <li>AG-706: rows were not rendering sometimes when cellRenderer was not returning back true 'object' or string</li>
+        <li>AG-705: angular 1 cells were not getting compiled</li>
 
         <!-- Petyo Bits -->
         <li>AG-xxx: description</li>
