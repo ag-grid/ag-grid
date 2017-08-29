@@ -24643,7 +24643,7 @@
 
 
 	// module
-	exports.push([module.id, "ag-grid-angular,ag-grid-ng2{display:inline-block}ag-grid,ag-grid-aurelia,ag-grid-polymer{display:block}.ag-rtl{direction:rtl}.ag-ltr{direction:ltr}.ag-select-agg-func-popup{position:absolute}.ag-body-no-select{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.ag-root{position:relative;box-sizing:border-box;overflow:hidden}.ag-layout-normal .ag-root{height:100%}.ag-font-style{cursor:default;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.ag-layout-for-print{white-space:nowrap;display:inline-block}.ag-layout-normal{height:100%}.ag-popup-backdrop{position:fixed;left:0;top:0;width:100%;height:100%}.ag-header{white-space:nowrap;box-sizing:border-box;overflow:hidden;width:100%}.ag-layout-normal .ag-header{position:absolute;top:0;left:0}.ag-pinned-left-header{float:left}.ag-pinned-left-header,.ag-pinned-right-header{box-sizing:border-box;display:inline-block;overflow:hidden;height:100%}.ag-pinned-right-header{float:right}.ag-header-viewport{box-sizing:border-box;overflow:hidden;height:100%}.ag-layout-normal .ag-header-row{position:absolute}.ag-layout-normal .ag-header-container{box-sizing:border-box;position:relative;white-space:nowrap;height:100%}.ag-layout-auto-height .ag-header-row{position:absolute}.ag-layout-auto-height .ag-header-container{box-sizing:border-box;position:relative;white-space:nowrap;height:100%}.ag-layout-for-print .ag-header-container{white-space:nowrap}.ag-header-overlay{display:block;position:absolute}.ag-header-cell{vertical-align:bottom;height:100%}.ag-floating-filter,.ag-header-cell{box-sizing:border-box;display:inline-block;position:absolute}.ag-floating-filter-body{margin-right:25px;height:20px}.ag-floating-filter-full-body{width:100%;height:20px}.ag-floating-filter-input{width:100%}.ag-floating-filter-input:-moz-read-only{background-color:#eee}.ag-floating-filter-input:read-only{background-color:#eee}.ag-dnd-ghost,.ag-floating-filter-menu{position:absolute;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.ag-dnd-ghost{font-size:14px;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;background:#e5e5e5;border:1px solid #000;cursor:move;box-sizing:border-box;overflow:hidden;text-overflow:ellipsis;padding:3px;line-height:1.4}.ag-dnd-ghost-icon{float:left;padding:2px}.ag-dnd-ghost-icon,.ag-dnd-ghost-label{display:inline-block}.ag-header-group-cell{height:100%;display:inline-block;box-sizing:border-box;position:absolute}.ag-header-cell-label,.ag-header-group-cell,.ag-header-group-cell-label{text-overflow:ellipsis;overflow:hidden}.ag-header-cell-resize{height:100%;width:4px;cursor:col-resize}.ag-ltr .ag-header-cell-resize{float:right}.ag-ltr .ag-pinned-right-header .ag-header-cell-resize,.ag-rtl .ag-header-cell-resize{float:left}.ag-rtl .ag-pinned-left-header .ag-header-cell-resize{float:right}.ag-ltr .ag-header-select-all{float:left}.ag-rtl .ag-header-select-all{float:right}.ag-header-expand-icon{padding-left:4px}.ag-header-cell-menu-button{float:right}.ag-overlay-panel{display:table;width:100%;height:100%;pointer-events:none}.ag-overlay-wrapper{display:table-cell;vertical-align:middle;text-align:center}.ag-bl-overlay{pointer-events:none;position:absolute;height:100%;width:100%;top:0;left:0}.ag-bl-full-height{height:100%;overflow:auto;position:relative}.ag-bl-west{float:left}.ag-bl-full-height-west{height:100%}.ag-bl-east{float:right}.ag-bl-full-height-center,.ag-bl-full-height-east{height:100%}.ag-bl-normal{height:100%;position:relative}.ag-bl-normal-center-row{height:100%;overflow:hidden}.ag-bl-normal-west{height:100%;float:left}.ag-bl-normal-east{height:100%;float:right}.ag-bl-normal-center{height:100%}.ag-bl-dont-fill{position:relative}.ag-body{width:100%;box-sizing:border-box}.ag-layout-normal .ag-body{height:100%;position:absolute}.ag-floating-top{width:100%;white-space:nowrap;box-sizing:border-box;overflow:hidden}.ag-layout-normal .ag-floating-top{position:absolute;left:0}.ag-pinned-left-floating-top{float:left;box-sizing:border-box;display:inline-block;overflow:hidden;position:relative}.ag-layout-normal .ag-pinned-left-floating-top{height:100%}.ag-pinned-right-floating-top{float:right;box-sizing:border-box;display:inline-block;overflow:hidden;position:relative}.ag-layout-normal .ag-pinned-right-floating-top{height:100%}.ag-floating-top-viewport{box-sizing:border-box;overflow:hidden}.ag-layout-normal .ag-floating-top-viewport{height:100%}.ag-floating-top-container{box-sizing:border-box;position:relative;white-space:nowrap}.ag-floating-bottom{width:100%;white-space:nowrap;box-sizing:border-box;overflow:hidden}.ag-layout-normal .ag-floating-bottom{position:absolute;left:0}.ag-pinned-left-floating-bottom{float:left;box-sizing:border-box;display:inline-block;overflow:hidden;position:relative}.ag-layout-normal .ag-pinned-left-floating-bottom{height:100%}.ag-pinned-right-floating-bottom{float:right;box-sizing:border-box;display:inline-block;overflow:hidden;position:relative}.ag-layout-normal .ag-pinned-right-floating-bottom{height:100%}.ag-floating-bottom-viewport{box-sizing:border-box;overflow:hidden}.ag-layout-normal .ag-floating-bottom-viewport{height:100%}.ag-floating-bottom-container{box-sizing:border-box;position:relative;white-space:nowrap}.ag-pinned-left-cols-viewport{float:left}.ag-pinned-left-cols-container{display:inline-block;position:relative}.ag-pinned-right-cols-viewport{float:right}.ag-ltr .ag-pinned-right-cols-viewport{overflow-x:hidden;overflow-y:auto}.ag-ltr .ag-pinned-left-cols-viewport,.ag-rtl .ag-pinned-right-cols-viewport{overflow:hidden}.ag-rtl .ag-pinned-left-cols-viewport{overflow-x:hidden;overflow-y:auto}.ag-pinned-right-cols-container{display:inline-block;position:relative}.ag-layout-normal .ag-body-viewport-wrapper{height:100%}.ag-body-viewport{overflow-x:auto;overflow-y:auto}.ag-layout-normal .ag-body-viewport{height:100%}.ag-full-width-viewport{height:100%;width:100%;position:absolute;top:0;left:0;display:inline;pointer-events:none;box-sizing:border-box;overflow:hidden}.ag-full-width-container{overflow:hidden;position:relative;width:100%}.ag-floating-bottom-full-width-container,.ag-floating-top-full-width-container{height:100%;width:100%;position:absolute;top:0;left:0;pointer-events:none;overflow:hidden;display:inline}.ag-full-width-row{pointer-events:all;overflow:hidden}.ag-layout-auto-height .ag-body-container,.ag-layout-normal .ag-body-container{position:relative;display:inline-block}.ag-row-animation{transition:top .4s,height .4s,background-color .1s,opacity .2s}.ag-row-no-animation{transition:background-color .1s}.ag-row{box-sizing:border-box}.ag-layout-normal .ag-row{white-space:nowrap;position:absolute;width:100%}.ag-layout-auto-height .ag-row{white-space:nowrap;position:relative;width:100%}.ag-layout-for-print .ag-row{position:relative}.ag-column-moving .ag-cell,.ag-column-moving .ag-header-cell{transition:left .2s}.ag-column-moving .ag-header-group-cell{transition:left .2s,width .2s}.ag-column-drop{width:100%;box-sizing:border-box}.ag-column-drop-vertical .ag-column-drop-cell,.ag-column-drop-vertical .ag-column-drop-empty-message{display:block}.ag-column-drop-vertical .ag-column-drop-cell-button{line-height:16px}.ag-ltr .ag-column-drop-vertical .ag-column-drop-cell-button{float:right}.ag-rtl .ag-column-drop-vertical .ag-column-drop-cell-button{float:left}.ag-column-drop-horizontal{white-space:nowrap}.ag-cell,.ag-column-drop-horizontal .ag-column-drop-cell,.ag-column-drop-horizontal .ag-column-drop-empty-message{display:inline-block}.ag-cell{white-space:nowrap;height:100%;box-sizing:border-box;text-overflow:ellipsis;overflow:hidden;position:absolute}.ag-value-slide-out{opacity:1;margin-right:5px;transition:opacity 3s,margin-right 3s;transition-timing-function:linear}.ag-value-slide-out-end{opacity:0;margin-right:10px}.ag-opacity-zero{opacity:0}.ag-cell-edit-input{width:100%;height:100%}.ag-footer-cell-entire-row,.ag-group-cell-entire-row{width:100%;display:inline-block;white-space:nowrap;height:100%;box-sizing:border-box;text-overflow:ellipsis;overflow:hidden}.ag-large .ag-root{font-size:20px}.ag-menu,.ag-popup-editor{position:absolute;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.ag-menu-column-select-wrapper{width:200px;height:300px;overflow:auto}.ag-menu-list{display:table;border-collapse:collapse}.ag-menu-option{display:table-row}.ag-menu-option-icon,.ag-menu-option-popup-pointer,.ag-menu-option-shortcut,.ag-menu-option-text{display:table-cell}.ag-menu-separator{display:table-row}.ag-menu-separator-cell{display:table-cell}.ag-virtual-list-viewport{overflow-x:auto;height:100%;width:100%}.ag-virtual-list-container{position:relative;overflow:hidden}.ag-rich-select{outline:none}.ag-rich-select-row{white-space:nowrap}.ag-rich-select-list,.ag-set-filter-list{width:200px;height:200px}.ag-set-filter-item{text-overflow:ellipsis;overflow:hidden;white-space:nowrap}.ag-virtual-list-item{position:absolute;width:100%}.ag-filter-filter{width:100%}.ag-floating-filter-body input,.ag-floating-filter-full-body input{width:100%;margin:0;height:19px}.ag-filter-select{width:110px;margin:4px 4px 0}.ag-list-selection,.ag-tool-panel{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default}.ag-tool-panel{width:200px;box-sizing:border-box;overflow:auto}.ag-layout-normal .ag-tool-panel{height:100%}.ag-column-select-indent{display:inline-block}.ag-column-select-column{white-space:nowrap}.ag-ltr .ag-column-select-column{margin-left:16px}.ag-rtl .ag-column-select-column{margin-right:16px}.ag-column-select-column-group{white-space:nowrap}.ag-hidden{display:none!important}.ag-visibility-hidden{visibility:hidden!important}.ag-faded{opacity:.3}.ag-width-half{width:50%;display:inline-block}.ag-shake-left-to-right{-webkit-animation-name:ag-shake-left-to-right;animation-name:ag-shake-left-to-right;-webkit-animation-duration:.2s;animation-duration:.2s;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite;-webkit-animation-direction:alternate;animation-direction:alternate}@-webkit-keyframes ag-shake-left-to-right{0%{padding-left:6px;padding-right:2px}to{padding-left:2px;padding-right:6px}}@keyframes ag-shake-left-to-right{0%{padding-left:6px;padding-right:2px}to{padding-left:2px;padding-right:6px}}", ""]);
+	exports.push([module.id, "ag-grid-angular {\n  display: inline-block; }\n\nag-grid-ng2 {\n  display: inline-block; }\n\nag-grid {\n  display: block; }\n\nag-grid-polymer {\n  display: block; }\n\nag-grid-aurelia {\n  display: block; }\n\n.ag-rtl {\n  direction: rtl; }\n\n.ag-ltr {\n  direction: ltr; }\n\n.ag-select-agg-func-popup {\n  position: absolute; }\n\n.ag-body-no-select {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-root {\n  /* set to relative, so absolute popups appear relative to this */\n  position: relative;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  /* was getting some 'should be there' scrolls, this sorts it out */\n  overflow: hidden; }\n\n.ag-layout-normal .ag-root {\n  height: 100%; }\n\n.ag-font-style {\n  cursor: default;\n  /* disable user mouse selection */\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-layout-for-print {\n  white-space: nowrap;\n  display: inline-block; }\n\n.ag-layout-normal {\n  height: 100%; }\n\n.ag-popup-backdrop {\n  position: fixed;\n  left: 0px;\n  top: 0px;\n  width: 100%;\n  height: 100%; }\n\n.ag-header {\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  width: 100%; }\n\n.ag-layout-normal .ag-header {\n  position: absolute;\n  top: 0px;\n  left: 0px; }\n\n.ag-pinned-left-header {\n  float: left;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%; }\n\n.ag-pinned-right-header {\n  float: right;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%; }\n\n.ag-header-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  height: 100%; }\n\n.ag-layout-normal .ag-header-row {\n  position: absolute; }\n\n.ag-layout-normal .ag-header-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n  height: 100%; }\n\n.ag-layout-auto-height .ag-header-row {\n  position: absolute; }\n\n.ag-layout-auto-height .ag-header-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n  height: 100%; }\n\n.ag-layout-for-print .ag-header-container {\n  white-space: nowrap; }\n\n.ag-header-overlay {\n  display: block;\n  position: absolute; }\n\n.ag-header-cell {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  vertical-align: bottom;\n  display: inline-block;\n  height: 100%;\n  position: absolute; }\n\n.ag-floating-filter {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: absolute;\n  display: inline-block; }\n\n.ag-floating-filter-body {\n  margin-right: 25px;\n  height: 20px; }\n\n.ag-floating-filter-full-body {\n  width: 100%;\n  height: 20px; }\n\n.ag-floating-filter-input {\n  width: 100%; }\n\n.ag-floating-filter-input:-moz-read-only {\n  background-color: #eeeeee; }\n\n.ag-floating-filter-input:read-only {\n  background-color: #eeeeee; }\n\n.ag-floating-filter-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-dnd-ghost {\n  font-size: 14px;\n  font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\n  position: absolute;\n  background: #e5e5e5;\n  border: 1px solid black;\n  cursor: move;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  padding: 3px;\n  line-height: 1.4; }\n\n.ag-dnd-ghost-icon {\n  display: inline-block;\n  float: left;\n  padding: 2px; }\n\n.ag-dnd-ghost-label {\n  display: inline-block; }\n\n.ag-header-group-cell {\n  height: 100%;\n  display: inline-block;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  position: absolute; }\n\n.ag-header-group-cell-label {\n  text-overflow: ellipsis;\n  overflow: hidden; }\n\n.ag-header-cell-label {\n  text-overflow: ellipsis;\n  overflow: hidden; }\n\n.ag-header-cell-resize {\n  height: 100%;\n  width: 4px;\n  cursor: col-resize; }\n\n.ag-ltr .ag-header-cell-resize {\n  float: right; }\n\n.ag-ltr .ag-pinned-right-header .ag-header-cell-resize {\n  float: left; }\n\n.ag-rtl .ag-header-cell-resize {\n  float: left; }\n\n.ag-rtl .ag-pinned-left-header .ag-header-cell-resize {\n  float: right; }\n\n.ag-ltr .ag-header-select-all {\n  float: left; }\n\n.ag-rtl .ag-header-select-all {\n  float: right; }\n\n.ag-header-expand-icon {\n  padding-left: 4px; }\n\n.ag-header-cell-menu-button {\n  float: right; }\n\n.ag-overlay-panel {\n  display: table;\n  width: 100%;\n  height: 100%;\n  pointer-events: none; }\n\n.ag-overlay-wrapper {\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center; }\n\n.ag-bl-overlay {\n  pointer-events: none;\n  position: absolute;\n  height: 100%;\n  width: 100%;\n  top: 0px;\n  left: 0px; }\n\n.ag-bl-full-height {\n  height: 100%;\n  overflow: auto;\n  position: relative; }\n\n.ag-bl-west {\n  float: left; }\n\n.ag-bl-full-height-west {\n  height: 100%; }\n\n.ag-bl-east {\n  float: right; }\n\n.ag-bl-full-height-east {\n  height: 100%; }\n\n.ag-bl-full-height-center {\n  height: 100%; }\n\n.ag-bl-normal {\n  height: 100%;\n  position: relative; }\n\n.ag-bl-normal-center-row {\n  height: 100%;\n  overflow: hidden; }\n\n.ag-bl-normal-west {\n  height: 100%;\n  float: left; }\n\n.ag-bl-normal-east {\n  height: 100%;\n  float: right; }\n\n.ag-bl-normal-center {\n  height: 100%; }\n\n.ag-bl-dont-fill {\n  position: relative; }\n\n.ag-body {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box; }\n\n.ag-layout-normal .ag-body {\n  height: 100%;\n  position: absolute; }\n\n.ag-floating-top {\n  width: 100%;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-top {\n  position: absolute;\n  left: 0px; }\n\n.ag-pinned-left-floating-top {\n  float: left;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-left-floating-top {\n  height: 100%; }\n\n.ag-pinned-right-floating-top {\n  float: right;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-right-floating-top {\n  height: 100%; }\n\n.ag-floating-top-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-top-viewport {\n  height: 100%; }\n\n.ag-floating-top-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-floating-bottom {\n  width: 100%;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-bottom {\n  position: absolute;\n  left: 0px; }\n\n.ag-pinned-left-floating-bottom {\n  float: left;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-left-floating-bottom {\n  height: 100%; }\n\n.ag-pinned-right-floating-bottom {\n  float: right;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-right-floating-bottom {\n  height: 100%; }\n\n.ag-floating-bottom-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-bottom-viewport {\n  height: 100%; }\n\n.ag-floating-bottom-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-pinned-left-cols-viewport {\n  float: left; }\n\n.ag-pinned-left-cols-container {\n  display: inline-block;\n  position: relative; }\n\n.ag-pinned-right-cols-viewport {\n  float: right; }\n\n.ag-ltr .ag-pinned-right-cols-viewport {\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-ltr .ag-pinned-left-cols-viewport {\n  overflow: hidden; }\n\n.ag-rtl .ag-pinned-right-cols-viewport {\n  overflow: hidden; }\n\n.ag-rtl .ag-pinned-left-cols-viewport {\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-pinned-right-cols-container {\n  display: inline-block;\n  position: relative; }\n\n.ag-layout-normal .ag-body-viewport-wrapper {\n  height: 100%; }\n\n.ag-body-viewport {\n  overflow-x: auto;\n  overflow-y: auto; }\n\n.ag-layout-normal .ag-body-viewport {\n  height: 100%; }\n\n.ag-full-width-viewport {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  display: inline;\n  pointer-events: none;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-full-width-container {\n  overflow: hidden;\n  position: relative;\n  width: 100%; }\n\n.ag-floating-bottom-full-width-container {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  pointer-events: none;\n  overflow: hidden;\n  display: inline; }\n\n.ag-floating-top-full-width-container {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  pointer-events: none;\n  overflow: hidden;\n  display: inline; }\n\n.ag-full-width-row {\n  pointer-events: all;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-body-container {\n  position: relative;\n  display: inline-block; }\n\n.ag-layout-auto-height .ag-body-container {\n  position: relative;\n  display: inline-block; }\n\n.ag-row-animation {\n  -webkit-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s; }\n\n.ag-row-no-animation {\n  -webkit-transition: background-color 0.1s;\n  transition: background-color 0.1s; }\n\n.ag-row {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box; }\n\n.ag-layout-normal .ag-row {\n  white-space: nowrap;\n  position: absolute;\n  width: 100%; }\n\n.ag-layout-auto-height .ag-row {\n  white-space: nowrap;\n  position: relative;\n  width: 100%; }\n\n.ag-layout-for-print .ag-row {\n  position: relative; }\n\n.ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  transition: left 0.2s; }\n\n.ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  transition: left 0.2s; }\n\n.ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s, width 0.2s;\n  transition: left 0.2s, width 0.2s; }\n\n.ag-column-drop {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box; }\n\n.ag-column-drop-vertical .ag-column-drop-cell {\n  display: block; }\n\n.ag-column-drop-vertical .ag-column-drop-empty-message {\n  display: block; }\n\n.ag-column-drop-vertical .ag-column-drop-cell-button {\n  line-height: 16px; }\n\n.ag-ltr .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: right; }\n\n.ag-rtl .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: left; }\n\n.ag-column-drop-horizontal {\n  white-space: nowrap; }\n  .ag-column-drop-horizontal .ag-column-drop-cell {\n    display: inline-block; }\n  .ag-column-drop-horizontal .ag-column-drop-empty-message {\n    display: inline-block; }\n\n.ag-cell {\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  position: absolute; }\n\n.ag-value-slide-out {\n  opacity: 1.0;\n  margin-right: 5px;\n  -webkit-transition: opacity 3s, margin-right 3s;\n  transition: opacity 3s, margin-right 3s;\n  -webkit-transition-timing-function: linear;\n  transition-timing-function: linear; }\n\n.ag-value-slide-out-end {\n  opacity: 0.0;\n  margin-right: 10px; }\n\n.ag-opacity-zero {\n  opacity: 0.0; }\n\n.ag-cell-edit-input {\n  width: 100%;\n  height: 100%; }\n\n.ag-group-cell-entire-row {\n  width: 100%;\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  text-overflow: ellipsis;\n  overflow: hidden; }\n\n.ag-footer-cell-entire-row {\n  width: 100%;\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  text-overflow: ellipsis;\n  overflow: hidden; }\n\n.ag-large .ag-root {\n  font-size: 20px; }\n\n.ag-popup-editor {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-menu-column-select-wrapper {\n  width: 200px;\n  height: 300px;\n  overflow: auto; }\n\n.ag-menu-list {\n  display: table;\n  border-collapse: collapse; }\n\n.ag-menu-option {\n  display: table-row; }\n\n.ag-menu-option-text {\n  display: table-cell; }\n\n.ag-menu-option-shortcut {\n  display: table-cell; }\n\n.ag-menu-option-icon {\n  display: table-cell; }\n\n.ag-menu-option-popup-pointer {\n  display: table-cell; }\n\n.ag-menu-separator {\n  display: table-row; }\n\n.ag-menu-separator-cell {\n  display: table-cell; }\n\n.ag-virtual-list-viewport {\n  overflow-x: auto;\n  height: 100%;\n  width: 100%; }\n\n.ag-virtual-list-container {\n  position: relative;\n  overflow: hidden; }\n\n.ag-rich-select {\n  outline: none; }\n\n.ag-rich-select-row {\n  white-space: nowrap; }\n\n.ag-rich-select-list {\n  width: 200px;\n  height: 200px; }\n\n.ag-set-filter-list {\n  width: 200px;\n  height: 200px; }\n\n.ag-set-filter-item {\n  text-overflow: ellipsis;\n  overflow: hidden;\n  white-space: nowrap; }\n\n.ag-virtual-list-item {\n  position: absolute;\n  width: 100%; }\n\n.ag-filter-filter {\n  width: 100%; }\n\n.ag-floating-filter-body input {\n  width: 100%;\n  margin: 0;\n  height: 19px; }\n\n.ag-floating-filter-full-body input {\n  width: 100%;\n  margin: 0;\n  height: 19px; }\n\n.ag-filter-select {\n  width: 110px;\n  margin: 4px 4px 0px 4px; }\n\n.ag-list-selection {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default; }\n\n.ag-tool-panel {\n  width: 200px;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: auto; }\n\n.ag-layout-normal .ag-tool-panel {\n  height: 100%; }\n\n.ag-column-select-indent {\n  display: inline-block; }\n\n.ag-column-select-column {\n  white-space: nowrap; }\n\n.ag-ltr .ag-column-select-column {\n  margin-left: 16px; }\n\n.ag-rtl .ag-column-select-column {\n  margin-right: 16px; }\n\n.ag-column-select-column-group {\n  white-space: nowrap; }\n\n.ag-hidden {\n  display: none !important; }\n\n.ag-visibility-hidden {\n  visibility: hidden !important; }\n\n.ag-faded {\n  opacity: 0.3; }\n\n.ag-width-half {\n  width: 50%;\n  display: inline-block; }\n\n.ag-shake-left-to-right {\n  -webkit-animation-name: ag-shake-left-to-right;\n  animation-name: ag-shake-left-to-right;\n  -webkit-animation-duration: 0.2s;\n  animation-duration: 0.2s;\n  -webkit-animation-iteration-count: infinite;\n  animation-iteration-count: infinite;\n  -webkit-animation-direction: alternate;\n  animation-direction: alternate; }\n\n@-webkit-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px; }\n  to {\n    padding-left: 2px;\n    padding-right: 6px; } }\n\n@keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px; }\n  to {\n    padding-left: 2px;\n    padding-right: 6px; } }\n\n/* icons are used outside of the grid root (in the ghost) */\n.ag-icon-aggregation {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOS41IDIuNWgtNmwyIDMuNS0yIDMuNWg2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZT0iIzAwMCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-arrows {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgNmwtMS40MSAxLjQxTDE2LjE3IDlINHYyaDEyLjE3bC0xLjU4IDEuNTlMMTYgMTRsNC00eiIvPjxwYXRoIGQ9Ik00IDZsMS40MSAxLjQxTDMuODMgOUgxNnYySDMuODNsMS41OCAxLjU5TDQgMTRsLTQtNHoiLz48cGF0aCBkPSJNNiAxNmwxLjQxLTEuNDFMOSAxNi4xN1Y0aDJ2MTIuMTdsMS41OS0xLjU4TDE0IDE2bC00IDR6Ii8+PHBhdGggZD0iTTE0IDRsLTEuNDEgMS40MUwxMSAzLjgzVjE2SDlWMy44M0w3LjQxIDUuNDEgNiA0bDQtNHoiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-asc {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-checked-readonly {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik05IDNMNiA4LjVsLTIuNS0yIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-checked {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik05IDNMNiA4LjVsLTIuNS0yIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-indeterminate-readonly {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNCA1aDR2Mkg0eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-indeterminate {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNCA1aDR2Mkg0eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-unchecked-readonly {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-unchecked {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-column {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDR2Mkgxem0wIDNoNHY3SDF6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-columns {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDR2Mkgxem02IDBoNHYySDd6TTEgNWg0djJIMXptNiAwaDR2Mkg3ek0xIDloNHYySDF6bTYgMGg0djJIN3oiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-contracted {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHN0cm9rZS1vcGFjaXR5PSIuNSIgc3Ryb2tlPSIjMDAwIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjkiIGhlaWdodD0iOSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNOSA1djJIM1Y1eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-copy {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTQuNSA0LjVoNXY1aC01eiIvPjxwYXRoIGQ9Ik03LjUgMi41aC01djVoMnYyaDV2LTVoLTJ2LTJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-cut {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTMgMy4xMmMuNjY3LjA3OCAzIDEuNzQ1IDcgNS0uMzI2LjIwNC0uNjU5LjIwNC0xIDAtLjM0MS0uMjA2LTEuNjc0LTEuMjA2LTQtMyAwIC42NjYtLjY2Ny42NjYtMiAwLTItMS0xLTIuMTIgMC0yeiIvPjxwYXRoIGQ9Ik0zIDguMjY0Yy42NjctLjA4IDMtMS43NDYgNy01LS4zMjYtLjIwNS0uNjU5LS4yMDUtMSAwLS4zNDEuMjA0LTEuNjc0IDEuMjA0LTQgMyAwLS42NjctLjY2Ny0uNjY3LTIgMC0yIDEtMSAyLjExOSAwIDJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-desc {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-expanded {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHN0cm9rZS1vcGFjaXR5PSIuNSIgc3Ryb2tlPSIjMDAwIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjkiIGhlaWdodD0iOSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNSAzaDJ2Nkg1eiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik05IDV2MkgzVjV6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-eye-slash {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjAwMSAzLjkwOEwzIDRhMyAzIDAgMSAwIDUuOTk5LS4wOTJBNS4yNDggNS4yNDggMCAwIDAgNiAzYy0xLjEgMC0yLjEuMzAzLTIuOTk5LjkwOHoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA0LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMiAzLTMgNS0zczMuNjY3IDEgNSAzQzkuNjY3IDggOCA5IDYgOVMyLjMzMyA4IDEgNnoiIHN0cm9rZT0iIzAwMCIvPjxwYXRoIGQ9Ik00LjAwNCAyLjgzNWw0Ljk5MiA2LjMzIiBzdHJva2U9IiMwMDAiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48cGF0aCBkPSJNMy4wMDQgMi44MzVsNC45OTIgNi4zMyIgc3Ryb2tlPSIjRkZGIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-eye {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjAwMSAzLjkwOEwzIDRhMyAzIDAgMSAwIDUuOTk5LS4wOTJBNS4yNDggNS4yNDggMCAwIDAgNiAzYy0xLjEgMC0yLjEuMzAzLTIuOTk5LjkwOHoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA0LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMiAzLTMgNS0zczMuNjY3IDEgNSAzQzkuNjY3IDggOCA5IDYgOVMyLjMzMyA4IDEgNnoiIHN0cm9rZT0iIzAwMCIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-filter {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-folder-open {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEuMzMzIDIuNUwuNSAzLjV2Ni4yMTRsMSAuNzg2aDhsMS0xdi01bC0xLTFoLTNsLTEtMXoiLz48cGF0aCBkPSJNMi41IDEwLjVMMiA5bDEtMyAyLjUtLjVoNmwtMSA1eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-folder {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEuMzMzIDIuNUwuNSAzLjV2Ni4yMTRsMSAuNzg2aDhsMS0xdi01bC0xLTFoLTNsLTEtMXoiLz48cGF0aCBkPSJNNy41IDMuNWwtMiAyaC01Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-group {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNSAxLjVoM3YyaC0zem0wIDRoM3YyaC0zem0wIDRoM3YyaC0zeiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0yIDNoMXY4SDJ6bTEgM2g0djFIM3ptMi00aDN2MUg1eiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0yIDEwaDV2MUgyeiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTEuNSAxLjVoM3YyaC0zeiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-indeterminate {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjA1NiA0LjU4MWEzLjAwMSAzLjAwMSAwIDAgMCA1Ljg4OCAwQzguMDU5IDQuMTk0IDcuMDc4IDQgNiA0Yy0xLjA3OCAwLTIuMDYuMTk0LTIuOTQ0LjU4MXoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA1LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMS4zMzMgMy0yIDUtMnMzLjY2Ny42NjcgNSAyQzkuNjY3IDcuMzMzIDggOCA2IDhzLTMuNjY3LS42NjctNS0yeiIgc3Ryb2tlPSIjMDAwIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-left {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01LjUgMS41aDJ2OWgtMnoiLz48cGF0aCBkPSJNNy45OTMgNC43VjIuOTkzaC02djZIMy43VjQuN2g0LjI5M3oiIGlkPSJiIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJyb3RhdGUoOTAgNi41IDYpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNiAyaDF2OEg2eiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtNDUgNC45OTMgNS45OTMpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNy40OTMgNC4ydi0uNzA3aC01djVIMy4yVjQuMmg0LjI5M3oiLz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-loading {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDFoMnYzSDV6Ii8+PHBhdGggaWQ9ImIiIGQ9Ik01IDhoMnYzSDV6Ii8+PHBhdGggaWQ9ImMiIGQ9Ik0xIDVoM3YySDF6Ii8+PHBhdGggaWQ9ImQiIGQ9Ik04IDVoM3YySDh6Ii8+PHBhdGggaWQ9ImUiIGQ9Ik00IDBoMnYzSDR6Ii8+PHBhdGggaWQ9ImYiIGQ9Ik00IDdoMnYzSDR6Ii8+PHBhdGggaWQ9ImciIGQ9Ik0wIDRoM3YySDB6Ii8+PHBhdGggaWQ9ImgiIGQ9Ik03IDRoM3YySDd6Ii8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTUuNSAxLjVoMXYyaC0xeiIvPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik01LjUgOC41aDF2MmgtMXoiLz48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNjIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNMS41IDUuNWgydjFoLTJ6Ii8+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTguNSA1LjVoMnYxaC0yeiIvPjxnIG9wYWNpdHk9Ii43MTQiPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNS41aDF2MmgtMXoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNC4yOTMgNi43MDcpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNmIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNC41IDcuNWgxdjJoLTF6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZyIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTS41IDQuNWgydjFoLTJ6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjaCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTcuNSA0LjVoMnYxaC0yeiIvPjwvZz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-menu {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-minus {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDh2MkgyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-none {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-not-allowed {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGNpcmNsZSBjeD0iNiIgY3k9IjYiIHI9IjQiLz48cGF0aCBkPSJNOC41IDMuNUwzLjQwMSA4LjU5OSIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-paste {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTIuNSAyLjVoN3Y3aC03eiIvPjxwYXRoIGQ9Ik02LjUgMS41aC0xdjJoLTF2MWgzdi0xaC0xdi0yeiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-pin {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0zIDJoNnYxSDh2NGwyIDFIN2wtMSAzLTEtM0gybDItMVYzSDN6Ii8+PHBhdGggZmlsbC1vcGFjaXR5PSIuNSIgZmlsbD0iI0ZGRiIgZD0iTTUgM2gxdjRINXoiLz48cGF0aCBmaWxsLW9wYWNpdHk9Ii4yOCIgZmlsbD0iI0ZGRiIgZD0iTTQgM2gxdjNINHoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-pivot {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHJlY3QgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSI5IiBoZWlnaHQ9IjkiIHJ4PSIxIi8+PHBhdGggZD0iTTEwLjUgMy41aC05bTItMnY5IiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PHBhdGggZD0iTTcuNSA2LjVsMS0xIDEgMW0tMyAxbC0xIDEgMSAxIi8+PHBhdGggZD0iTTguNSA1LjV2M2gtMyIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-plus {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik01IDJoMnY4SDV6Ii8+PHBhdGggZD0iTTIgNWg4djJIMnoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-right {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik00LjUgMS41aDJ2OWgtMnoiLz48cGF0aCBkPSJNOS45OTMgNC43VjIuOTkzaC02djZINS43VjQuN2g0LjI5M3oiIGlkPSJiIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJyb3RhdGUoOTAgNS41IDYpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNSAyaDF2OEg1eiIvPjwvZz48ZyB0cmFuc2Zvcm09InNjYWxlKC0xIDEpIHJvdGF0ZSgtNDUgMCAyMi44NzQpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNOS40OTMgNC4ydi0uNzA3aC01djVINS4yVjQuMmg0LjI5M3oiLz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-small-left {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMyA2bDQtNHY4eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-small-right {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAybDQgNC00IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-small-up {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA3bDQtNCA0IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-small-down {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDhMNiA5eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-tick {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMS41IDUuNWwzIDMgNi02IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZT0iIzAwMCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-cross {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiAxMGw4LThtMCA4TDIgMiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-tree-open {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDhMNiA5eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-tree-closed {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAybDQgNC00IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n", ""]);
 
 	// exports
 
@@ -24991,7 +24991,7 @@
 
 
 	// module
-	exports.push([module.id, ".ag-icon:not(.ag-faded){opacity:.8}.ag-fresh{line-height:1.4;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;color:#222}.ag-fresh .ag-numeric-cell{text-align:right}.ag-fresh .ag-header-cell-label>span{float:left}.ag-fresh .ag-header-cell-label .ag-header-icon{margin-top:2px}.ag-fresh .ag-numeric-header .ag-header-cell-menu-button{float:left}.ag-fresh .ag-numeric-header .ag-header-cell-label{width:calc(100% - 12px);float:right}.ag-fresh .ag-numeric-header .ag-header-cell-label>span{float:right}.ag-fresh .ag-header-cell-resize{position:absolute;right:0}.ag-fresh .ag-rtl .ag-header-cell-resize{position:absolute;left:0;right:auto}.ag-fresh img{vertical-align:middle;border:0}.ag-fresh .ag-root{border:1px solid #a9a9a9}.ag-fresh .ag-cell-data-changed{background-color:#cec}.ag-fresh .ag-cell-data-changed-animation{background-color:transparent;transition:background-color 1s}.ag-fresh .ag-cell-not-inline-editing{padding:2px;padding-left:1px}.ag-fresh .ag-cell-range-selected-1:not(.ag-cell-focus){background-color:hsla(0,0%,47%,.4)}.ag-fresh .ag-cell-range-selected-2:not(.ag-cell-focus){background-color:rgba(80,80,80,.4)}.ag-fresh .ag-cell-range-selected-3:not(.ag-cell-focus){background-color:rgba(40,40,40,.4)}.ag-fresh .ag-cell-range-selected-4:not(.ag-cell-focus){background-color:rgba(0,0,0,.4)}.ag-fresh .ag-cell-focus{border:1px solid #a9a9a9}.ag-fresh .ag-cell-no-focus{border-top:1px solid transparent;border-bottom:1px solid transparent}.ag-fresh .ag-ltr .ag-cell-no-focus{border-right:1px dotted silver;border-left:1px solid transparent}.ag-fresh .ag-rtl .ag-cell-no-focus{border-right:1px solid transparent;border-left:1px dotted silver}.ag-fresh .ag-ltr .ag-cell-first-right-pinned,.ag-fresh .ag-rtl .ag-cell-first-right-pinned{border-left:1px solid #a9a9a9}.ag-fresh .ag-ltr .ag-cell-last-left-pinned,.ag-fresh .ag-rtl .ag-cell-last-left-pinned{border-right:1px solid #a9a9a9}.ag-fresh .ag-cell-highlight{border:1px solid #006400}.ag-fresh .ag-cell-highlight-animation{transition:border 1s}.ag-fresh .ag-value-change-delta{padding-right:2px}.ag-fresh .ag-value-change-delta-up{color:#006400}.ag-fresh .ag-value-change-delta-down{color:darkred}.ag-fresh .ag-value-change-value{background-color:transparent;border-radius:1px;padding-left:1px;padding-right:1px;transition:background-color 1s}.ag-fresh .ag-value-change-value-highlight{background-color:#cec;transition:background-color .1s}.ag-fresh .ag-rich-select{font-size:14px;border:1px solid #a9a9a9;background-color:#fff}.ag-fresh .ag-rich-select-value{padding:2px}.ag-fresh .ag-rich-select-list{border-top:1px solid #d3d3d3}.ag-fresh .ag-rich-select-row{padding:2px}.ag-fresh .ag-rich-select-row-selected{background-color:#bde2e5}.ag-fresh .ag-large-text{border:1px solid #a9a9a9}.ag-fresh .ag-header-cell-menu-button,.ag-fresh .ag-header-select-all{margin-top:3px;line-height:1rem}.ag-fresh .ag-header-select-all{padding-right:4px}.ag-fresh .ag-filter-header-container>label{margin-bottom:0}.ag-fresh .ag-header-cell{padding:2px;padding-top:4px}.ag-fresh .ag-header{color:#333;background:linear-gradient(#fff,#d3d3d3);border-bottom:1px solid #a9a9a9;font-weight:400}.ag-fresh .ag-header-icon{color:#333;stroke:none;fill:#333}.ag-fresh .ag-filter-icon{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-filter-icon,.ag-fresh .ag-sort-ascending-icon{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-sort-ascending-icon{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-sort-descending-icon{display:inline-block;width:12px;height:12px;background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px;filter:\"initial\"}.ag-fresh .ag-sort-none-icon{display:inline-block;width:12px;height:12px;background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px;filter:\"initial\"}.ag-fresh .ag-layout-for-print .ag-header-container{background:linear-gradient(#fff,#d3d3d3);border-bottom:1px solid #a9a9a9}.ag-fresh .ag-ltr .ag-header-cell{border-right:1px solid #a9a9a9}.ag-fresh .ag-rtl .ag-header-cell{border-left:1px solid #a9a9a9}.ag-fresh .ag-header-cell-moving .ag-header-cell-label{opacity:.5}.ag-fresh .ag-header-cell-moving{background-color:#bebebe}.ag-fresh .ag-ltr .ag-header-group-cell{border-right:1px solid #a9a9a9}.ag-fresh .ag-rtl .ag-header-group-cell{border-left:1px solid #a9a9a9}.ag-fresh .ag-header-group-cell-with-group{border-bottom:1px solid #a9a9a9}.ag-fresh .ag-header-group-cell-label{padding:2px;padding-top:4px}.ag-fresh .ag-rtl .ag-header-group-text{margin-left:2px}.ag-fresh .ag-ltr .ag-header-group-text{margin-right:2px}.ag-fresh .ag-header-cell-menu-button{width:12px;height:12px;background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px;filter:\"initial\"}.ag-fresh .ag-ltr .ag-pinned-right-header{border-left:1px solid #a9a9a9}.ag-fresh .ag-rtl .ag-pinned-left-header{border-right:1px solid #a9a9a9}.ag-fresh .ag-body,.ag-fresh .ag-row-odd{background-color:#f6f6f6}.ag-fresh .ag-row-even{background-color:#fff}.ag-fresh .ag-row-selected{background-color:#b0e0e6}.ag-fresh .ag-row-stub{background-color:#f0f0f0}.ag-fresh .ag-stub-cell{padding:2px 2px 2px 10px}.ag-fresh .ag-floating-bottom,.ag-fresh .ag-floating-bottom .ag-row,.ag-fresh .ag-floating-top,.ag-fresh .ag-floating-top .ag-row{background-color:#f0f0f0}.ag-fresh .ag-overlay-loading-wrapper{background-color:hsla(0,0%,100%,.5)}.ag-fresh .ag-overlay-loading-center{color:#000}.ag-fresh .ag-overlay-loading-center,.ag-fresh .ag-overlay-no-rows-center{background-color:#fff;border:1px solid #a9a9a9;border-radius:10px;padding:10px}.ag-fresh .ag-footer-cell-entire-row,.ag-fresh .ag-group-cell-entire-row{background-color:#f6f6f6;padding:2px}.ag-fresh .ag-group-cell{font-style:italic}.ag-fresh .ag-ltr .ag-group-expanded{padding-right:4px}.ag-fresh .ag-rtl .ag-group-expanded{padding-left:4px}.ag-fresh .ag-ltr .ag-group-contracted{padding-right:4px}.ag-fresh .ag-rtl .ag-group-contracted{padding-left:4px}.ag-fresh .ag-ltr .ag-group-loading{padding-right:4px}.ag-fresh .ag-rtl .ag-group-loading{padding-left:4px}.ag-fresh .ag-ltr .ag-group-value{padding-right:2px}.ag-fresh .ag-rtl .ag-group-value{padding-left:2px}.ag-fresh .ag-ltr .ag-group-checkbox{padding-right:2px}.ag-fresh .ag-rtl .ag-group-checkbox{padding-left:2px}.ag-fresh .ag-group-child-count{display:inline-block}.ag-fresh .ag-footer-cell{font-style:italic}.ag-fresh .ag-menu{border:1px solid gray;background-color:#f6f6f6;cursor:default;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px}.ag-fresh .ag-menu .ag-tab-header{background-color:#e6e6e6}.ag-fresh .ag-menu .ag-tab{padding:6px 8px;margin:2px 2px 0;display:inline-block;border-right:1px solid transparent;border-left:1px solid transparent;border-top:1px solid transparent;border-top-right-radius:2px;border-top-left-radius:2px}.ag-fresh .ag-menu .ag-tab-selected{background-color:#f6f6f6;border-right:1px solid #d3d3d3;border-left:1px solid #d3d3d3;border-top:1px solid #d3d3d3}.ag-fresh .ag-menu-separator{border-top:1px solid #d3d3d3}.ag-fresh .ag-menu-option-active{background-color:#bde2e5}.ag-fresh .ag-menu-option-icon,.ag-fresh .ag-menu-option-text{padding:2px 4px;vertical-align:middle}.ag-fresh .ag-menu-option-shortcut{padding:2px;vertical-align:middle}.ag-fresh .ag-menu-option-popup-pointer{padding:2px 4px;vertical-align:middle;display:table-cell}.ag-fresh .ag-menu-option-disabled{opacity:.5}.ag-fresh .ag-menu-column-select-wrapper{margin:2px}.ag-fresh .ag-filter-checkbox{margin-right:4px;margin-bottom:0;display:inline-block}.ag-fresh .ag-filter-header-container{padding:2px 4px;border-bottom:1px solid #d3d3d3}.ag-fresh .ag-filter-apply-panel{border-top:1px solid #d3d3d3;padding:2px 0 2px 4px}.ag-fresh .ag-virtual-list-container{padding:4px 4px 10px}.ag-fresh .ag-ltr .ag-selection-checkbox{padding-right:4px}.ag-fresh .ag-rtl .ag-selection-checkbox{padding-left:4px}.ag-fresh .ag-paging-panel{padding:4px}.ag-fresh .ag-paging-button{margin-left:4px;margin-right:4px}.ag-fresh .ag-paging-row-summary-panel{display:inline-block;width:300px}.ag-fresh .ag-tool-panel{background-color:#f6f6f6;border-bottom:1px solid #a9a9a9;border-top:1px solid #a9a9a9;color:#222}.ag-fresh .ltr .ag-tool-panel{border-right:1px solid #a9a9a9}.ag-fresh .ag-status-bar,.ag-fresh .rtl .ag-tool-panel{border-left:1px solid #a9a9a9}.ag-fresh .ag-status-bar{color:#222;background-color:#f6f6f6;font-size:14px;height:22px;border-bottom:1px solid #a9a9a9;border-right:1px solid #a9a9a9;padding:2px}.ag-fresh .ag-status-bar-aggregations{float:right}.ag-fresh .ag-status-bar-item{padding-left:10px}.ag-fresh .ag-column-drop-cell{background:linear-gradient(#fff,#d3d3d3);color:#000;border:1px solid gray}.ag-fresh .ag-column-drop-cell-ghost{opacity:.5}.ag-fresh .ag-column-drop-cell-text{padding-left:2px;padding-right:2px}.ag-fresh .ag-column-drop-cell-button{border:1px solid transparent;padding-left:2px;padding-right:2px;border-radius:3px}.ag-fresh .ag-column-drop-cell-button:hover{border:1px solid #a9a9a9}.ag-fresh .ag-column-drop-empty-message{padding-left:2px;padding-right:2px;color:grey}.ag-fresh .ag-column-drop-icon{margin:6px 3px 0}.ag-fresh .ag-column-drop{background-color:#f6f6f6}.ag-fresh .ag-column-drop-horizontal{padding:2px;border-top:1px solid #a9a9a9;border-left:1px solid #a9a9a9;border-right:1px solid #a9a9a9}.ag-fresh .ag-column-drop-vertical{padding:4px 4px 10px;border-bottom:1px solid #a9a9a9;overflow:auto}.ag-fresh .ag-column-drop-vertical .ag-column-drop-cell{margin-top:2px}.ag-fresh .ag-column-drop-vertical .ag-column-drop-empty-message{padding:5px}.ag-fresh .ag-pivot-mode{border-bottom:1px solid #a9a9a9;padding:2px 4px 3px;background-color:#f6f6f6}.ag-fresh .ag-tool-panel .ag-column-select-panel{padding:4px 4px 10px;padding-left:0;border-bottom:1px solid #a9a9a9;overflow:auto}.ag-fresh .ag-select-agg-func-popup{cursor:default;position:absolute;font-size:14px;background-color:#fff;border:1px solid #a9a9a9}.ag-fresh .ag-select-agg-func-item{padding-left:2px;padding-right:2px}.ag-fresh .ag-select-agg-func-item:hover{background-color:#bde2e5}.ag-fresh .ag-floating-filter-body{margin-right:20px;width:calc(100% - 20px)}.ag-fresh .ag-floating-filter-button{margin-top:-20px;display:inline-block;float:right}.ag-fresh .ag-floating-filter-button button{width:12px;height:12px;background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px;filter:\"initial\";height:20px;width:20px;background-position-y:2px;border:0;text-indent:10000px;overflow:hidden}.ag-fresh .ag-rtl .ag-floating-filter-body{margin-right:0;margin-left:20px;float:right}.ag-fresh .ag-rtl .ag-floating-filter-button{float:left}.ag-fresh .ag-icon-aggregation{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOS41IDIuNWgtNmwyIDMuNS0yIDMuNWg2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZT0iIzAwMCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-aggregation,.ag-fresh .ag-icon-arrows{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-arrows{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgNmwtMS40MSAxLjQxTDE2LjE3IDlINHYyaDEyLjE3bC0xLjU4IDEuNTlMMTYgMTRsNC00eiIvPjxwYXRoIGQ9Ik00IDZsMS40MSAxLjQxTDMuODMgOUgxNnYySDMuODNsMS41OCAxLjU5TDQgMTRsLTQtNHoiLz48cGF0aCBkPSJNNiAxNmwxLjQxLTEuNDFMOSAxNi4xN1Y0aDJ2MTIuMTdsMS41OS0xLjU4TDE0IDE2bC00IDR6Ii8+PHBhdGggZD0iTTE0IDRsLTEuNDEgMS40MUwxMSAzLjgzVjE2SDlWMy44M0w3LjQxIDUuNDEgNiA0bDQtNHoiLz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-asc{display:inline-block;width:12px;height:12px;background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) 50% no-repeat;background-size:12px 12px;filter:\"initial\"}.ag-fresh .ag-icon-checkbox-checked-readonly{display:inline-block;width:12px;height:12px;background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik05IDNMNiA4LjVsLTIuNS0yIi8+PC9nPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px;filter:\"initial\"}.ag-fresh .ag-icon-checkbox-checked{display:inline-block;width:12px;height:12px;background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik05IDNMNiA4LjVsLTIuNS0yIi8+PC9nPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px;filter:\"initial\"}.ag-fresh .ag-icon-checkbox-indeterminate-readonly{display:inline-block;width:12px;height:12px;background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNCA1aDR2Mkg0eiIvPjwvZz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px;filter:\"initial\"}.ag-fresh .ag-icon-checkbox-indeterminate{display:inline-block;width:12px;height:12px;background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNCA1aDR2Mkg0eiIvPjwvZz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px;filter:\"initial\"}.ag-fresh .ag-icon-checkbox-unchecked-readonly{display:inline-block;width:12px;height:12px;background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48L2c+PC9zdmc+) 50% no-repeat;background-size:12px 12px;filter:\"initial\"}.ag-fresh .ag-icon-checkbox-unchecked{display:inline-block;width:12px;height:12px;background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48L2c+PC9zdmc+) 50% no-repeat;background-size:12px 12px;filter:\"initial\"}.ag-fresh .ag-icon-column{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDR2Mkgxem0wIDNoNHY3SDF6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-column,.ag-fresh .ag-icon-columns{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-columns{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDR2Mkgxem02IDBoNHYySDd6TTEgNWg0djJIMXptNiAwaDR2Mkg3ek0xIDloNHYySDF6bTYgMGg0djJIN3oiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-contracted{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHN0cm9rZS1vcGFjaXR5PSIuNSIgc3Ryb2tlPSIjMDAwIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjkiIGhlaWdodD0iOSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNOSA1djJIM1Y1eiIvPjwvZz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-contracted,.ag-fresh .ag-icon-copy{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-copy{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTQuNSA0LjVoNXY1aC01eiIvPjxwYXRoIGQ9Ik03LjUgMi41aC01djVoMnYyaDV2LTVoLTJ2LTJ6Ii8+PC9nPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-cut{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTMgMy4xMmMuNjY3LjA3OCAzIDEuNzQ1IDcgNS0uMzI2LjIwNC0uNjU5LjIwNC0xIDAtLjM0MS0uMjA2LTEuNjc0LTEuMjA2LTQtMyAwIC42NjYtLjY2Ny42NjYtMiAwLTItMS0xLTIuMTIgMC0yeiIvPjxwYXRoIGQ9Ik0zIDguMjY0Yy42NjctLjA4IDMtMS43NDYgNy01LS4zMjYtLjIwNS0uNjU5LS4yMDUtMSAwLS4zNDEuMjA0LTEuNjc0IDEuMjA0LTQgMyAwLS42NjctLjY2Ny0uNjY3LTIgMC0yIDEtMSAyLjExOSAwIDJ6Ii8+PC9nPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-cut,.ag-fresh .ag-icon-desc{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-desc{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-expanded{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHN0cm9rZS1vcGFjaXR5PSIuNSIgc3Ryb2tlPSIjMDAwIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjkiIGhlaWdodD0iOSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNSAzaDJ2Nkg1eiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik05IDV2MkgzVjV6Ii8+PC9nPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-expanded,.ag-fresh .ag-icon-eye-slash{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-eye-slash{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjAwMSAzLjkwOEwzIDRhMyAzIDAgMSAwIDUuOTk5LS4wOTJBNS4yNDggNS4yNDggMCAwIDAgNiAzYy0xLjEgMC0yLjEuMzAzLTIuOTk5LjkwOHoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA0LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMiAzLTMgNS0zczMuNjY3IDEgNSAzQzkuNjY3IDggOCA5IDYgOVMyLjMzMyA4IDEgNnoiIHN0cm9rZT0iIzAwMCIvPjxwYXRoIGQ9Ik00LjAwNCAyLjgzNWw0Ljk5MiA2LjMzIiBzdHJva2U9IiMwMDAiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48cGF0aCBkPSJNMy4wMDQgMi44MzVsNC45OTIgNi4zMyIgc3Ryb2tlPSIjRkZGIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PC9nPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-eye{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjAwMSAzLjkwOEwzIDRhMyAzIDAgMSAwIDUuOTk5LS4wOTJBNS4yNDggNS4yNDggMCAwIDAgNiAzYy0xLjEgMC0yLjEuMzAzLTIuOTk5LjkwOHoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA0LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMiAzLTMgNS0zczMuNjY3IDEgNSAzQzkuNjY3IDggOCA5IDYgOVMyLjMzMyA4IDEgNnoiIHN0cm9rZT0iIzAwMCIvPjwvZz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-eye,.ag-fresh .ag-icon-filter{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-filter{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-folder-open{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEuMzMzIDIuNUwuNSAzLjV2Ni4yMTRsMSAuNzg2aDhsMS0xdi01bC0xLTFoLTNsLTEtMXoiLz48cGF0aCBkPSJNMi41IDEwLjVMMiA5bDEtMyAyLjUtLjVoNmwtMSA1eiIvPjwvZz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-folder,.ag-fresh .ag-icon-folder-open{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-folder{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEuMzMzIDIuNUwuNSAzLjV2Ni4yMTRsMSAuNzg2aDhsMS0xdi01bC0xLTFoLTNsLTEtMXoiLz48cGF0aCBkPSJNNy41IDMuNWwtMiAyaC01Ii8+PC9nPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-group{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNSAxLjVoM3YyaC0zem0wIDRoM3YyaC0zem0wIDRoM3YyaC0zeiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0yIDNoMXY4SDJ6bTEgM2g0djFIM3ptMi00aDN2MUg1eiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0yIDEwaDV2MUgyeiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTEuNSAxLjVoM3YyaC0zeiIvPjwvZz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-group,.ag-fresh .ag-icon-indeterminate{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-indeterminate{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjA1NiA0LjU4MWEzLjAwMSAzLjAwMSAwIDAgMCA1Ljg4OCAwQzguMDU5IDQuMTk0IDcuMDc4IDQgNiA0Yy0xLjA3OCAwLTIuMDYuMTk0LTIuOTQ0LjU4MXoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA1LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMS4zMzMgMy0yIDUtMnMzLjY2Ny42NjcgNSAyQzkuNjY3IDcuMzMzIDggOCA2IDhzLTMuNjY3LS42NjctNS0yeiIgc3Ryb2tlPSIjMDAwIi8+PC9nPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-left{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01LjUgMS41aDJ2OWgtMnoiLz48cGF0aCBkPSJNNy45OTMgNC43VjIuOTkzaC02djZIMy43VjQuN2g0LjI5M3oiIGlkPSJiIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJyb3RhdGUoOTAgNi41IDYpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNiAyaDF2OEg2eiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtNDUgNC45OTMgNS45OTMpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNy40OTMgNC4ydi0uNzA3aC01djVIMy4yVjQuMmg0LjI5M3oiLz48L2c+PC9nPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-left,.ag-fresh .ag-icon-loading{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-loading{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDFoMnYzSDV6Ii8+PHBhdGggaWQ9ImIiIGQ9Ik01IDhoMnYzSDV6Ii8+PHBhdGggaWQ9ImMiIGQ9Ik0xIDVoM3YySDF6Ii8+PHBhdGggaWQ9ImQiIGQ9Ik04IDVoM3YySDh6Ii8+PHBhdGggaWQ9ImUiIGQ9Ik00IDBoMnYzSDR6Ii8+PHBhdGggaWQ9ImYiIGQ9Ik00IDdoMnYzSDR6Ii8+PHBhdGggaWQ9ImciIGQ9Ik0wIDRoM3YySDB6Ii8+PHBhdGggaWQ9ImgiIGQ9Ik03IDRoM3YySDd6Ii8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTUuNSAxLjVoMXYyaC0xeiIvPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik01LjUgOC41aDF2MmgtMXoiLz48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNjIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNMS41IDUuNWgydjFoLTJ6Ii8+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTguNSA1LjVoMnYxaC0yeiIvPjxnIG9wYWNpdHk9Ii43MTQiPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNS41aDF2MmgtMXoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNC4yOTMgNi43MDcpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNmIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNC41IDcuNWgxdjJoLTF6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZyIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTS41IDQuNWgydjFoLTJ6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjaCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTcuNSA0LjVoMnYxaC0yeiIvPjwvZz48L2c+PC9nPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-menu{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-menu,.ag-fresh .ag-icon-minus{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-minus{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDh2MkgyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-none{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-none,.ag-fresh .ag-icon-not-allowed{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-not-allowed{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGNpcmNsZSBjeD0iNiIgY3k9IjYiIHI9IjQiLz48cGF0aCBkPSJNOC41IDMuNUwzLjQwMSA4LjU5OSIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjwvZz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-paste{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTIuNSAyLjVoN3Y3aC03eiIvPjxwYXRoIGQ9Ik02LjUgMS41aC0xdjJoLTF2MWgzdi0xaC0xdi0yeiIvPjwvZz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-paste,.ag-fresh .ag-icon-pin{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-pin{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0zIDJoNnYxSDh2NGwyIDFIN2wtMSAzLTEtM0gybDItMVYzSDN6Ii8+PHBhdGggZmlsbC1vcGFjaXR5PSIuNSIgZmlsbD0iI0ZGRiIgZD0iTTUgM2gxdjRINXoiLz48cGF0aCBmaWxsLW9wYWNpdHk9Ii4yOCIgZmlsbD0iI0ZGRiIgZD0iTTQgM2gxdjNINHoiLz48L2c+PC9zdmc+) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-pivot{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHJlY3QgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSI5IiBoZWlnaHQ9IjkiIHJ4PSIxIi8+PHBhdGggZD0iTTEwLjUgMy41aC05bTItMnY5IiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PHBhdGggZD0iTTcuNSA2LjVsMS0xIDEgMW0tMyAxbC0xIDEgMSAxIi8+PHBhdGggZD0iTTguNSA1LjV2M2gtMyIvPjwvZz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-pivot,.ag-fresh .ag-icon-plus{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-plus{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik01IDJoMnY4SDV6Ii8+PHBhdGggZD0iTTIgNWg4djJIMnoiLz48L2c+PC9zdmc+) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-right{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik00LjUgMS41aDJ2OWgtMnoiLz48cGF0aCBkPSJNOS45OTMgNC43VjIuOTkzaC02djZINS43VjQuN2g0LjI5M3oiIGlkPSJiIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJyb3RhdGUoOTAgNS41IDYpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNSAyaDF2OEg1eiIvPjwvZz48ZyB0cmFuc2Zvcm09InNjYWxlKC0xIDEpIHJvdGF0ZSgtNDUgMCAyMi44NzQpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNOS40OTMgNC4ydi0uNzA3aC01djVINS4yVjQuMmg0LjI5M3oiLz48L2c+PC9nPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-right,.ag-fresh .ag-icon-small-left{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-small-left{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMyA2bDQtNHY4eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-small-right{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAybDQgNC00IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-small-right,.ag-fresh .ag-icon-small-up{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-small-up{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA3bDQtNCA0IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-small-down{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDhMNiA5eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-small-down,.ag-fresh .ag-icon-tick{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-tick{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMS41IDUuNWwzIDMgNi02IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZT0iIzAwMCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-cross{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiAxMGw4LThtMCA4TDIgMiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-cross,.ag-fresh .ag-icon-tree-open{display:inline-block;width:12px;height:12px;filter:\"initial\"}.ag-fresh .ag-icon-tree-open{background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDhMNiA5eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) 50% no-repeat;background-size:12px 12px}.ag-fresh .ag-icon-tree-closed{display:inline-block;width:12px;height:12px;background:transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAybDQgNC00IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) 50% no-repeat;background-size:12px 12px;filter:\"initial\"}", ""]);
+	exports.push([module.id, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-fresh {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #222;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-fresh .ag-numeric-cell {\n    text-align: right; }\n  .ag-fresh .ag-header-cell-label {\n    display: flex; }\n    .ag-fresh .ag-header-cell-label > span {\n      float: left; }\n    .ag-fresh .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-fresh .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-fresh .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-fresh .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-fresh .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-fresh img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-fresh .ag-root {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-fresh .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-fresh .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-fresh .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-fresh .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-fresh .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-fresh .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-fresh .ag-cell-focus {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid transparent; }\n  .ag-fresh .ag-ltr .ag-cell-no-focus {\n    border-right: 1px dotted silver;\n    border-left: 1px solid transparent; }\n  .ag-fresh .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px dotted silver; }\n  .ag-fresh .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-fresh .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-fresh .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-fresh .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-fresh .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-fresh .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-fresh .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-fresh .ag-rich-select {\n    font-size: 14px;\n    border: 1px solid darkgrey;\n    background-color: white; }\n  .ag-fresh .ag-rich-select-value {\n    padding: 2px; }\n  .ag-fresh .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-rich-select-row {\n    padding: 2px; }\n  .ag-fresh .ag-rich-select-row-selected {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-large-text {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-header-select-all, .ag-fresh .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-fresh .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-fresh .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-fresh .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-fresh .ag-header {\n    color: #333;\n    background: linear-gradient(white, lightgrey);\n    border-bottom: 1px solid darkgrey;\n    font-weight: normal; }\n  .ag-fresh .ag-header-icon {\n    color: #333;\n    stroke: none;\n    fill: #333; }\n  .ag-fresh .ag-filter-icon {\n    display: inline-block; }\n  .ag-fresh .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-layout-for-print .ag-header-container {\n    background: linear-gradient(white, lightgrey);\n    border-bottom: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-header-cell {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-header-cell {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-fresh .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-fresh .ag-ltr .ag-header-group-cell {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-header-group-cell {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-header-group-cell-with-group {\n    border-bottom: 1px solid darkgrey; }\n  .ag-fresh .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-fresh .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-fresh .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-fresh .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-ltr .ag-pinned-right-header {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-pinned-left-header {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-body {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-row-odd {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-row-even {\n    background-color: white; }\n  .ag-fresh .ag-row-selected {\n    background-color: powderblue; }\n  .ag-fresh .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-fresh .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-fresh .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: 1px solid darkgrey;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-fresh .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: 1px solid darkgrey;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-fresh .ag-group-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-fresh .ag-footer-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-fresh .ag-group-cell {\n    font-style: italic; }\n  .ag-fresh .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-fresh .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-fresh .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-fresh .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-fresh .ag-group-child-count {\n    display: inline-block; }\n  .ag-fresh .ag-footer-cell {\n    font-style: italic; }\n  .ag-fresh .ag-menu {\n    border: 1px solid #808080;\n    background-color: #f6f6f6;\n    cursor: default;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-size: 14px; }\n    .ag-fresh .ag-menu .ag-tab-header {\n      background-color: #e6e6e6; }\n    .ag-fresh .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-fresh .ag-menu .ag-tab-selected {\n      background-color: #f6f6f6;\n      border-right: 1px solid #d3d3d3;\n      border-left: 1px solid #d3d3d3;\n      border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-menu-option-active {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-fresh .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-fresh .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-fresh .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-fresh .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-fresh .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-fresh .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-fresh .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-fresh .ag-paging-panel {\n    padding: 4px; }\n  .ag-fresh .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-fresh .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-fresh .ag-tool-panel {\n    background-color: #f6f6f6;\n    border-bottom: 1px solid darkgrey;\n    border-top: 1px solid darkgrey;\n    color: #222; }\n  .ag-fresh .ltr .ag-tool-panel {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .rtl .ag-tool-panel {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-status-bar {\n    color: #222;\n    background-color: #f6f6f6;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: 1px solid darkgrey;\n    border-left: 1px solid darkgrey;\n    border-right: 1px solid darkgrey;\n    padding: 2px; }\n  .ag-fresh .ag-status-bar-aggregations {\n    float: right; }\n  .ag-fresh .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-fresh .ag-column-drop-cell {\n    background: linear-gradient(white, lightgrey);\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-fresh .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-fresh .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-fresh .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-fresh .ag-column-drop-cell-button:hover {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-fresh .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-fresh .ag-column-drop {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: 1px solid darkgrey;\n    border-left: 1px solid darkgrey;\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: 1px solid darkgrey;\n    overflow: auto; }\n    .ag-fresh .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-fresh .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-fresh .ag-pivot-mode {\n    border-bottom: 1px solid darkgrey;\n    padding: 2px 4px 3px 4px;\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: 1px solid darkgrey;\n    overflow: auto; }\n  .ag-fresh .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-fresh .ag-select-agg-func-item:hover {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-fresh .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-fresh .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: \"initial\";\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-fresh .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-fresh .ag-rtl .ag-floating-filter-button {\n    float: left; }\n", ""]);
 
 	// exports
 
@@ -30348,7 +30348,7 @@
 /* 373 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v13.0.0
+	// ag-grid-react v13.0.1
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -30540,7 +30540,7 @@
 /* 374 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v13.0.0
+	// ag-grid-react v13.0.1
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var ag_grid_1 = __webpack_require__(375);
@@ -30622,7 +30622,7 @@
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -30885,7 +30885,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31118,7 +31118,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31784,7 +31784,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31985,7 +31985,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -32054,7 +32054,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -32410,7 +32410,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -33713,7 +33713,7 @@
 	        'columnSelectOpen': 'tree-open',
 	        // from deprecated header, remove at some point
 	        'sortAscending': 'asc',
-	        'sortDescending': 'asc',
+	        'sortDescending': 'desc',
 	        'sortUnSort': 'none'
 	    };
 	    Utils.passiveEvents = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
@@ -33750,7 +33750,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -33874,7 +33874,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -34122,7 +34122,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -34239,7 +34239,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -35236,7 +35236,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -35453,7 +35453,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -35743,7 +35743,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -37765,7 +37765,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -38044,7 +38044,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -38581,7 +38581,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -38739,7 +38739,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -38909,7 +38909,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -39011,7 +39011,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -39208,7 +39208,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -39346,7 +39346,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -40314,7 +40314,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -42021,7 +42021,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -42303,7 +42303,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -42581,7 +42581,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -42914,7 +42914,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -42970,7 +42970,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -43055,6 +43055,7 @@
 	        this.addDomData();
 	        this.addSelectionCheckbox();
 	        this.attachCellRendererAfterCreate();
+	        this.angular1Compile();
 	        this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
 	        this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_FLASH_CELLS, this.onFlashCells.bind(this));
 	        this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
@@ -43297,10 +43298,14 @@
 	        this.cellRenderer = null;
 	        this.cellRendererGui = null;
 	        // populate
-	        this.postPutDataIntoCell();
+	        this.putDataIntoCellAfterRefresh();
+	        this.angular1Compile();
+	    };
+	    CellComp.prototype.angular1Compile = function () {
 	        // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
 	        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
-	            this.beans.$compile(this.getGui())(this.scope);
+	            var eGui = this.getGui();
+	            this.beans.$compile(eGui)(this.scope);
 	        }
 	    };
 	    CellComp.prototype.postProcessStylesFromColDef = function () {
@@ -43358,7 +43363,7 @@
 	            context: this.beans.gridOptionsWrapper.getContext()
 	        }, onApplicableClass);
 	    };
-	    CellComp.prototype.postPutDataIntoCell = function () {
+	    CellComp.prototype.putDataIntoCellAfterRefresh = function () {
 	        // template gets preference, then cellRenderer, then do it ourselves
 	        var colDef = this.column.getColDef();
 	        if (colDef.template) {
@@ -43518,22 +43523,21 @@
 	        var params = this.createCellRendererParams(valueToRender);
 	        this.cellRenderer = this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType);
 	        this.cellRendererGui = this.cellRenderer.getGui();
+	        if (this.cellRendererGui === null || this.cellRendererGui === undefined) {
+	            console.warn('ag-Grid: cellRenderer should return back a string or a DOM object, but got ' + this.cellRendererGui);
+	        }
 	    };
-	    // gets called after row is created, so it's up to use to attach in the html if it's a string
 	    CellComp.prototype.attachCellRendererAfterRefresh = function () {
 	        if (!this.usingCellRenderer) {
 	            return;
 	        }
 	        this.createCellRendererInstance();
-	        var eCell = this.cellRendererGui;
-	        if (eCell != null) {
-	            if (typeof eCell == 'object') {
-	                this.eParentOfValue.appendChild(eCell);
-	            }
-	            else {
-	                this.eParentOfValue.innerHTML = eCell;
-	                this.cellRendererGui = this.eParentOfValue.firstChild;
-	            }
+	        if (typeof this.cellRendererGui === 'string') {
+	            this.eParentOfValue.innerHTML = this.cellRendererGui;
+	            this.cellRendererGui = this.eParentOfValue.firstChild;
+	        }
+	        else {
+	            this.eParentOfValue.appendChild(this.cellRendererGui);
 	        }
 	        this.callAfterGuiAttachedOnCellRenderer();
 	    };
@@ -43543,15 +43547,14 @@
 	        if (!this.usingCellRenderer) {
 	            return;
 	        }
-	        // need to check exists, as (typeof null === object)
-	        if (utils_1._.exists(this.cellRendererGui) && typeof this.cellRendererGui === 'object') {
-	            // if cell renderer returned back an HTML object, then we append it to the dom now
-	            this.eParentOfValue.appendChild(this.cellRendererGui);
-	        }
-	        else {
+	        if (typeof this.cellRendererGui === 'string') {
 	            // if cell renderer returned back a string, then it was in the row template when it
 	            // got created, so we look it up (and replace the reference to the string we had)
 	            this.cellRendererGui = this.eParentOfValue.firstChild;
+	        }
+	        else {
+	            // if cell renderer returned back an HTML object, then we append it to the dom now
+	            this.eParentOfValue.appendChild(this.cellRendererGui);
 	        }
 	        this.callAfterGuiAttachedOnCellRenderer();
 	    };
@@ -43763,9 +43766,7 @@
 	    CellComp.prototype.addInCellEditor = function () {
 	        utils_1._.removeAllChildren(this.getGui());
 	        this.getGui().appendChild(utils_1._.assertHtmlElement(this.cellEditor.getGui()));
-	        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
-	            this.beans.$compile(this.getGui())(this.scope);
-	        }
+	        this.angular1Compile();
 	    };
 	    CellComp.prototype.addPopupCellEditor = function () {
 	        var _this = this;
@@ -43783,9 +43784,7 @@
 	            ePopup: utils_1._.assertHtmlElement(ePopupGui),
 	            keepWithinBounds: true
 	        });
-	        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
-	            this.beans.$compile(ePopupGui)(this.scope);
-	        }
+	        this.angular1Compile();
 	    };
 	    CellComp.prototype.onPopupEditorClosed = function () {
 	        // we only call stopEditing if we are editing, as
@@ -44249,7 +44248,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -44856,7 +44855,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45096,7 +45095,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45174,7 +45173,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45215,7 +45214,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45292,7 +45291,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45539,7 +45538,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45612,7 +45611,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45746,7 +45745,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -45915,7 +45914,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46019,7 +46018,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46134,7 +46133,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46461,7 +46460,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46574,7 +46573,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46808,7 +46807,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -46986,7 +46985,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -47085,7 +47084,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -47138,7 +47137,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -48294,7 +48293,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -48363,7 +48362,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -48455,7 +48454,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -48846,7 +48845,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49394,7 +49393,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49675,7 +49674,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -49860,7 +49859,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50221,7 +50220,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50386,7 +50385,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50576,7 +50575,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50654,10 +50653,10 @@
 	        return this.componentResolver.createAgGridComponent(colDef, floatingFilterWrapperComponentParams, "floatingFilterWrapperComponent");
 	    };
 	    ComponentRecipes.prototype.newFullWidthGroupRowInnerCellRenderer = function (params) {
-	        return this.componentResolver.createAgGridComponent(this.gridOptions, params, "groupRowInnerRenderer");
+	        return this.componentResolver.createAgGridComponent(this.gridOptions, params, "groupRowInnerRenderer", "groupRowInnerRenderer", false);
 	    };
 	    ComponentRecipes.prototype.newCellRenderer = function (target, params) {
-	        return this.componentResolver.createAgGridComponent(target, params, "cellRenderer");
+	        return this.componentResolver.createAgGridComponent(target, params, "cellRenderer", "cellRenderer", false);
 	    };
 	    ComponentRecipes.prototype.newInnerCellRenderer = function (target, params) {
 	        return this.componentResolver.createAgGridComponent(target, params, "innerRenderer");
@@ -50705,7 +50704,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -50949,7 +50948,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -51017,7 +51016,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -51042,7 +51041,6 @@
 	var groupCellRenderer_1 = __webpack_require__(453);
 	var animateShowChangeCellRenderer_1 = __webpack_require__(452);
 	var animateSlideCellRenderer_1 = __webpack_require__(451);
-	var agComponentUtils_1 = __webpack_require__(457);
 	var rowComp_1 = __webpack_require__(420);
 	var RegisteredComponentSource;
 	(function (RegisteredComponentSource) {
@@ -51075,16 +51073,16 @@
 	            floatingFilterWrapperComponent: floatingFilterWrapper_1.FloatingFilterWrapperComp,
 	            emptyFloatingFilterWrapperComponent: floatingFilterWrapper_1.EmptyFloatingFilterWrapperComp,
 	            //renderers
-	            cellRenderer: agComponentUtils_1.DefaultCellRenderer,
-	            fullWidthCellRenderer: groupCellRenderer_1.GroupCellRenderer,
-	            innerRenderer: agComponentUtils_1.DefaultCellRenderer,
-	            groupRowInnerRenderer: agComponentUtils_1.DefaultCellRenderer,
+	            cellRenderer: null,
+	            fullWidthCellRenderer: null,
+	            innerRenderer: null,
+	            groupRowInnerRenderer: null,
 	            animateShowChange: animateShowChangeCellRenderer_1.AnimateShowChangeCellRenderer,
 	            animateSlide: animateSlideCellRenderer_1.AnimateSlideCellRenderer,
 	            group: groupCellRenderer_1.GroupCellRenderer,
 	            groupRowRenderer: groupCellRenderer_1.GroupCellRenderer,
 	            loadingCellRenderer: rowComp_1.LoadingCellRenderer,
-	            pinnedRowCellRenderer: agComponentUtils_1.DefaultCellRenderer
+	            pinnedRowCellRenderer: null
 	        };
 	    };
 	    ComponentProvider.prototype.registerComponent = function (name, component) {
@@ -51158,7 +51156,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -51201,6 +51199,7 @@
 	    HeaderComp.prototype.init = function (params) {
 	        this.params = params;
 	        this.setupTap();
+	        this.setupIcons(params.column);
 	        this.setupMenu();
 	        this.setupSort();
 	        this.setupFilterIcon();
@@ -51208,6 +51207,13 @@
 	    };
 	    HeaderComp.prototype.setupText = function (displayName) {
 	        this.eText.innerHTML = displayName;
+	    };
+	    HeaderComp.prototype.setupIcons = function (column) {
+	        this.addInIcon('sortAscending', this.eSortAsc, column);
+	        this.addInIcon('sortDescending', this.eSortDesc, column);
+	        this.addInIcon('sortUnSort', this.eSortNone, column);
+	        this.addInIcon('menu', this.eMenu, column);
+	        this.addInIcon('filter', this.eFilter, column);
 	    };
 	    HeaderComp.prototype.addInIcon = function (iconName, eParent, column) {
 	        var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
@@ -51400,7 +51406,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -51609,7 +51615,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -51716,7 +51722,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -51846,7 +51852,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52147,7 +52153,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52287,7 +52293,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52384,7 +52390,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52555,7 +52561,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52670,7 +52676,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52782,7 +52788,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -52898,7 +52904,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53000,7 +53006,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53078,7 +53084,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53114,7 +53120,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53150,7 +53156,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53224,7 +53230,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53311,7 +53317,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53407,7 +53413,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53516,7 +53522,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53577,8 +53583,7 @@
 	        if (this.cellIsBlank) {
 	            return;
 	        }
-	        // hack to get renderer working with slick and non-slick
-	        var eGridCell = this.params.eGridCell ? this.params.eGridCell : params.eGridCell;
+	        var eGridCell = params.eGridCell;
 	        this.addExpandAndContract(eGridCell);
 	        this.addCheckboxIfNeeded();
 	        this.addValueElement();
@@ -53661,9 +53666,11 @@
 	        if (rowNode.footer) {
 	            this.createFooterCell();
 	        }
-	        else if (rowNode.group) {
+	        else if (rowNode.group || utils_1.Utils.get(params.colDef, 'cellRendererParams.innerRenderer', null)) {
 	            this.createGroupCell();
-	            this.addChildCount();
+	            if (rowNode.group) {
+	                this.addChildCount();
+	            }
 	        }
 	        else {
 	            this.createLeafCell();
@@ -53703,7 +53710,7 @@
 	            this.cellRendererService.useFullWidthGroupRowInnerCellRenderer(this.eValue, params);
 	        }
 	        else {
-	            this.cellRendererService.useInnerCellRenderer(this.params, columnToUse.getColDef(), this.eValue, params);
+	            this.cellRendererService.useInnerCellRenderer(this.params.colDef.cellRendererParams, columnToUse.getColDef(), this.eValue, params);
 	        }
 	    };
 	    GroupCellRenderer.prototype.addChildCount = function () {
@@ -53905,7 +53912,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -53923,41 +53930,73 @@
 	var context_1 = __webpack_require__(380);
 	var componentRecipes_1 = __webpack_require__(430);
 	var componentResolver_1 = __webpack_require__(431);
+	var utils_1 = __webpack_require__(381);
 	/** Class to use a cellRenderer. */
 	var CellRendererService = (function () {
 	    function CellRendererService() {
 	    }
 	    CellRendererService.prototype.useCellRenderer = function (target, eTarget, params) {
 	        var cellRenderer = this.componentRecipes.newCellRenderer(target, params);
-	        return this.bindToHtml(cellRenderer, eTarget);
+	        if (cellRenderer != null) {
+	            this.bindToHtml(cellRenderer, eTarget);
+	        }
+	        else {
+	            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+	        }
+	        return cellRenderer;
 	    };
 	    CellRendererService.prototype.useFilterCellRenderer = function (target, eTarget, params) {
 	        var cellRenderer = this.componentRecipes.newCellRenderer(target.filterParams, params);
-	        return this.bindToHtml(cellRenderer, eTarget);
+	        if (cellRenderer != null) {
+	            this.bindToHtml(cellRenderer, eTarget);
+	        }
+	        else {
+	            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+	        }
+	        return cellRenderer;
 	    };
 	    CellRendererService.prototype.useInnerCellRenderer = function (target, originalColumn, eTarget, params) {
 	        var rendererToUse = null;
 	        var componentToUse = this.componentResolver.getComponentToUse(target, "innerRenderer");
-	        if (componentToUse.component != null && componentToUse.source != componentResolver_1.ComponentSource.DEFAULT) {
+	        if (componentToUse && componentToUse.component != null && componentToUse.source != componentResolver_1.ComponentSource.DEFAULT) {
+	            //THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
 	            rendererToUse = this.componentRecipes.newInnerCellRenderer(target, params);
 	        }
 	        else {
 	            var otherRenderer = this.componentResolver.getComponentToUse(originalColumn, "cellRenderer");
-	            if (otherRenderer.source != componentResolver_1.ComponentSource.DEFAULT) {
+	            if (otherRenderer && otherRenderer.source != componentResolver_1.ComponentSource.DEFAULT) {
 	                //Only if the original column is using an specific renderer, it it is a using a DEFAULT one
 	                //ignore it
+	                //THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, WE REUSE ITS RENDERER
 	                rendererToUse = this.componentRecipes.newCellRenderer(originalColumn, params);
+	            }
+	            else if (otherRenderer && otherRenderer.source == componentResolver_1.ComponentSource.DEFAULT && (utils_1._.get(originalColumn, 'cellRendererParams.innerRenderer', null))) {
+	                //EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
+	                //AND HAS A INNER CELL RENDERER
+	                rendererToUse = this.componentRecipes.newInnerCellRenderer(originalColumn.cellRendererParams, params);
 	            }
 	            else {
 	                //This forces the retrieval of the default plain cellRenderer that just renders the values.
 	                rendererToUse = this.componentRecipes.newCellRenderer({}, params);
 	            }
 	        }
-	        return this.bindToHtml(rendererToUse, eTarget);
+	        if (rendererToUse != null) {
+	            this.bindToHtml(rendererToUse, eTarget);
+	        }
+	        else {
+	            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+	        }
+	        return rendererToUse;
 	    };
 	    CellRendererService.prototype.useFullWidthGroupRowInnerCellRenderer = function (eTarget, params) {
 	        var cellRenderer = this.componentRecipes.newFullWidthGroupRowInnerCellRenderer(params);
-	        return this.bindToHtml(cellRenderer, eTarget);
+	        if (cellRenderer != null) {
+	            this.bindToHtml(cellRenderer, eTarget);
+	        }
+	        else {
+	            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+	        }
+	        return cellRenderer;
 	    };
 	    CellRendererService.prototype.bindToHtml = function (cellRenderer, eTarget) {
 	        var gui = cellRenderer.getGui();
@@ -53993,7 +54032,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54079,7 +54118,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54172,7 +54211,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54189,7 +54228,6 @@
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var context_1 = __webpack_require__(380);
 	var componentMetadataProvider_1 = __webpack_require__(458);
-	var utils_1 = __webpack_require__(381);
 	var DefaultCellRenderer = (function () {
 	    function DefaultCellRenderer() {
 	    }
@@ -54204,8 +54242,8 @@
 	    DefaultCellRenderer.prototype.getGui = function () {
 	        var valueToUse = this.params.valueFormatted != null ? this.params.valueFormatted : this.params.value;
 	        if (valueToUse == null)
-	            return utils_1._.loadTemplate('');
-	        return utils_1._.loadTemplate(valueToUse);
+	            return '';
+	        return '<span>' + valueToUse + '</span>';
 	    };
 	    return DefaultCellRenderer;
 	}());
@@ -54240,9 +54278,11 @@
 	            };
 	            Adapter.prototype.getGui = function () {
 	                var callbackResult = callback(this.params);
+	                if (callbackResult == null)
+	                    return '';
 	                if (typeof callbackResult != 'string')
 	                    return callbackResult;
-	                return utils_1._.loadTemplate('<span>' + callbackResult + '</span>');
+	                return callbackResult;
 	            };
 	            Adapter.prototype.init = function (params) {
 	                this.params = params;
@@ -54274,7 +54314,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54374,7 +54414,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54584,7 +54624,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54831,7 +54871,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -54971,7 +55011,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55142,7 +55182,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55520,7 +55560,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55542,12 +55582,20 @@
 	    function Environment() {
 	    }
 	    Environment.prototype.getTheme = function () {
-	        var themeMatch = this.eGridDiv.className.match(themeCLass);
+	        var themeMatch;
+	        var element = this.eGridDiv;
+	        while (element != document.documentElement && themeMatch == null) {
+	            themeMatch = element.className.match(themeCLass);
+	            element = element.parentElement;
+	            if (element == null) {
+	                break;
+	            }
+	        }
 	        if (themeMatch) {
 	            return themeMatch[0];
 	        }
 	        else {
-	            return '';
+	            return 'ag-fresh';
 	        }
 	    };
 	    __decorate([
@@ -55568,7 +55616,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -55887,7 +55935,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56304,7 +56352,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56408,7 +56456,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56523,7 +56571,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56587,7 +56635,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -56787,7 +56835,7 @@
 	        this.onColumnMovingChanged();
 	    };
 	    HeaderWrapperComp.prototype.addAttributes = function () {
-	        this.getGui().setAttribute("colId", this.column.getColId());
+	        this.getGui().setAttribute("col-id", this.column.getColId());
 	    };
 	    HeaderWrapperComp.prototype.setupWidth = function () {
 	        this.addDestroyableEventListener(this.column, column_1.Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
@@ -56903,7 +56951,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -57083,7 +57131,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -57303,7 +57351,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -57368,7 +57416,7 @@
 	        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
 	    };
 	    HeaderGroupWrapperComp.prototype.addAttributes = function () {
-	        this.getGui().setAttribute("colId", this.columnGroup.getUniqueId());
+	        this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
 	    };
 	    HeaderGroupWrapperComp.prototype.appendHeaderGroupComp = function (displayName) {
 	        var _this = this;
@@ -57643,7 +57691,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -57764,7 +57812,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58103,7 +58151,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58210,7 +58258,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58255,7 +58303,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58377,7 +58425,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58427,7 +58475,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58530,7 +58578,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58550,7 +58598,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58604,7 +58652,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58651,7 +58699,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58886,7 +58934,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -58993,7 +59041,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -59045,7 +59093,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -59134,7 +59182,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -59186,7 +59234,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -59348,7 +59396,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -59532,7 +59580,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -59888,7 +59936,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -60070,7 +60118,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -60204,7 +60252,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -60411,7 +60459,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -60680,7 +60728,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -60791,7 +60839,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -61383,7 +61431,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -61663,7 +61711,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -61722,7 +61770,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -61770,7 +61818,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -61844,7 +61892,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -61905,7 +61953,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -62005,7 +62053,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -62127,7 +62175,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -62232,7 +62280,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -62278,7 +62326,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -62320,7 +62368,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -62356,7 +62404,7 @@
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.0
+	 * @version v13.0.1
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -62401,7 +62449,7 @@
 /* 510 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v13.0.0
+	// ag-grid-react v13.0.1
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -62442,7 +62490,7 @@
 /* 511 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v13.0.0
+	// ag-grid-react v13.0.1
 	"use strict";
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var React = __webpack_require__(1);
@@ -62485,7 +62533,7 @@
 /* 512 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v13.0.0
+	// ag-grid-react v13.0.1
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -62571,7 +62619,7 @@
 /* 513 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v13.0.0
+	// ag-grid-react v13.0.1
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
@@ -62658,7 +62706,7 @@
 /* 514 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// ag-grid-react v13.0.0
+	// ag-grid-react v13.0.1
 	"use strict";
 	var __extends = (this && this.__extends) || (function () {
 	    var extendStatics = Object.setPrototypeOf ||
