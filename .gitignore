@@ -4,6 +4,8 @@ node_modules/
 
 !src/framework-examples/angular-examples/dist
 !src/framework-examples/vue-examples/dist
+!src/framework-examples/react-examples/examples/dist
+!src/framework-examples/react-examples/trader/dist
 !src/framework-examples/react-examples/dist
 
 .DS_Store
