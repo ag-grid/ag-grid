@@ -69,7 +69,7 @@ export class AgComponentUtils {
                 if (callbackResult == null) return '';
                 if (typeof callbackResult != 'string') return callbackResult;
 
-                return _.loadTemplate('<span>' + callbackResult + '</span>');
+                return callbackResult;
             }
 
 
