@@ -224,7 +224,6 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
 
     .ag-filter-icon {
         display: inline-block;
-        @include icon-background('filter');
     }
     .ag-sort-ascending-icon:empty {
         display: inline-block;

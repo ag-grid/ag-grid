@@ -12,7 +12,7 @@ export class Environment {
         let element:HTMLElement = this.eGridDiv;
 
         while (element != document.documentElement && themeMatch == null) {
-            themeMatch = this.eGridDiv.className.match(themeCLass);
+            themeMatch = element.className.match(themeCLass);
             element = element.parentElement;
         }
 
