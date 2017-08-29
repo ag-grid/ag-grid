@@ -215,17 +215,17 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         display: inline-block;
         @include icon-background('filter');
     }
-    .ag-sort-ascending-icon {
+    .ag-sort-ascending-icon:empty {
         display: inline-block;
         @include icon-background('asc');
     }
 
-    .ag-sort-descending-icon {
+    .ag-sort-descending-icon:empty {
         display: inline-block;
         @include icon-background('desc');
     }
 
-    .ag-sort-none-icon {
+    .ag-sort-none-icon:empty {
         display: inline-block;
         @include icon-background('none');
     }
@@ -270,7 +270,7 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         margin-right: 2px;
     }
 
-    .ag-header-cell-menu-button {
+    .ag-header-cell-menu-button:empty {
         @include icon-background('menu');
     }
 
