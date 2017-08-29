@@ -1,3 +1,4 @@
+// ag-grid-enterprise v13.0.1
 import { IRangeController, RangeSelection, GridCell, AddRangeSelectionParams } from "ag-grid/main";
 export declare class RangeController implements IRangeController {
     private loggerFactory;
