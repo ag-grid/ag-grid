@@ -1,4 +1,3 @@
-// ag-grid-enterprise v13.0.0
 export declare class MD5 {
     private ieCompatibility;
     private init();

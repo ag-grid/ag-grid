@@ -1,4 +1,3 @@
-// ag-grid-enterprise v13.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");

@@ -1,4 +1,3 @@
-// ag-grid-enterprise v13.0.0
 import { IMenuFactory, Column, AgEvent } from "ag-grid";
 export interface TabSelectedEvent extends AgEvent {
     key: string;

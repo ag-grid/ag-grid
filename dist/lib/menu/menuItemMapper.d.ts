@@ -1,4 +1,3 @@
-// ag-grid-enterprise v13.0.0
 import { MenuItemDef, Column } from 'ag-grid';
 export declare class MenuItemMapper {
     private gridOptionsWrapper;

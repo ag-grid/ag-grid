@@ -1,4 +1,3 @@
-// ag-grid-enterprise v13.0.0
 import { ExcelStyle, ExcelWorksheet } from 'ag-grid/main';
 /**
  * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx

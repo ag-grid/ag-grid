@@ -94,14 +94,12 @@ export class SetFilterListItem extends Component {
 
         let valueElement = this.queryForHtmlElement(".ag-filter-value");
 
-        let valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
+         let valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
 
+            let component = this.cellRendererService.useFilterCellRenderer(this.column.getColDef(), valueElement, {value: this.value, valueFormatted: valueFormatted});
+            if (component && component.destroy) {
+                this.addDestroyFunc( component.destroy.bind(component) );
 
-        let component = this.cellRendererService.useFilterCellRenderer(
-            this.column.getColDef(),
-            valueElement, {value: this.value, valueFormatted: valueFormatted});
-        if (component && component.destroy) {
-            this.addDestroyFunc( component.destroy.bind(component) );
         }
     }
 }
