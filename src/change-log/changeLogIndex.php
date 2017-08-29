@@ -13,6 +13,23 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+
+    <h2>Version 13.0.1</h2>
+
+    <h2>Bug Fixes</h2>
+
+    <ul>
+        <!-- Niall Bits -->
+        <li>AG-xxx: description</li>
+
+        <!-- Petyo Bits -->
+        <li>AG-xxx: description</li>
+
+        <!-- Alberto Bits -->
+        <li>AG-xxx: description</li>
+
+    </ul>
+
     <h2>Version 13.0.0</h2>
 
     <h4>Enhancements</h4>
