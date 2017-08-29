@@ -14,6 +14,9 @@ export class Environment {
         while (element != document.documentElement && themeMatch == null) {
             themeMatch = element.className.match(themeCLass);
             element = element.parentElement;
+            if (element == null) {
+                break;
+            }
         }
 
         if (themeMatch) {
