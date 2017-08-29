@@ -59,8 +59,12 @@ export class CellRendererService {
                 rendererToUse = this.componentRecipes.newCellRenderer({}, params);
             }
         }
-
-        return this.bindToHtml(rendererToUse, eTarget);
+        if (rendererToUse != null) {
+            this.bindToHtml(rendererToUse, eTarget);
+        } else {
+            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+        }
+        return rendererToUse;
     }
 
     public useFullWidthGroupRowInnerCellRenderer(
