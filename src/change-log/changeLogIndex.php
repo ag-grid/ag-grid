@@ -18,10 +18,18 @@ include '../documentation-main/documentation_header.php';
 
     <h4>Bug Fixes</h4>
     <ul>
-        <li>AG-714: Fixed an issue a column with a <code>cellRenderer='group'</code> and with an innerRenderer was not
-        using the innerRenderer when displayed as a leaf cell</li>
-    </ul>
 
+        <!-- Niall Bits -->
+        <li>AG-xxx: description</li>
+
+        <!-- Petyo Bits -->
+        <li>AG-xxx: description</li>
+
+        <!-- Alberto Bits -->
+        <li>AG-714: Fixed an issue a column with a <code>cellRenderer='group'</code> and with an innerRenderer was not
+            using the innerRenderer when displayed as a leaf cell</li>
+
+    </ul>
 
     <h3>Version 13.0.0 [25-AUG-2017]</h3>
 
