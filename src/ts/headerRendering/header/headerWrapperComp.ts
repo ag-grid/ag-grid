@@ -233,7 +233,7 @@ export class HeaderWrapperComp extends Component {
     }
 
     private addAttributes(): void {
-        this.getGui().setAttribute("colId", this.column.getColId());
+        this.getGui().setAttribute("col-id", this.column.getColId());
     }
 
     private setupWidth(): void {

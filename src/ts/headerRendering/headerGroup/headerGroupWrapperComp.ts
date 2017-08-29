@@ -72,7 +72,7 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     private addAttributes(): void {
-        this.getGui().setAttribute("colId", this.columnGroup.getUniqueId());
+        this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
     }
 
     private appendHeaderGroupComp(displayName: string): IHeaderGroupComp {
