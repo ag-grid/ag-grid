@@ -45,12 +45,12 @@ export class CellRendererService {
             rendererToUse = this.componentRecipes.newInnerCellRenderer(target, params);
         } else {
             let otherRenderer: ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(originalColumn, "cellRenderer");
-            if (otherRenderer.source != ComponentSource.DEFAULT){
+            if (otherRenderer && otherRenderer.source != ComponentSource.DEFAULT){
                 //Only if the original column is using an specific renderer, it it is a using a DEFAULT one
                 //ignore it
                 //THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, WE REUSE ITS RENDERER
                 rendererToUse = this.componentRecipes.newCellRenderer(originalColumn, params);
-            } else if (otherRenderer.source == ComponentSource.DEFAULT && (_.get(originalColumn, 'cellRendererParams.innerRenderer', null))) {
+            } else if (otherRenderer && otherRenderer.source == ComponentSource.DEFAULT && (_.get(originalColumn, 'cellRendererParams.innerRenderer', null))) {
                 //EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
                 //AND HAS A INNER CELL RENDERER
                 rendererToUse = this.componentRecipes.newInnerCellRenderer(originalColumn.cellRendererParams, params);

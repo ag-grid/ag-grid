@@ -125,7 +125,7 @@ export class ComponentRecipes {
     }
 
     public newCellRenderer (target: ColDef | ISetFilterParams, params:ICellRendererParams):ICellRendererComp{
-        return <ICellRendererComp>this.componentResolver.createAgGridComponent(target, params, "cellRenderer");
+        return <ICellRendererComp>this.componentResolver.createAgGridComponent(target, params, "cellRenderer", "cellRenderer", false);
     }
 
     public newInnerCellRenderer (target: GroupCellRendererParams, params:ICellRendererParams):ICellRendererComp{
