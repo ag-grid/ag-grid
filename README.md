@@ -3,6 +3,8 @@ ag-Grid Aurelia Component
 
 This project contains the Aurelia Component for use with ag-Grid.
 
+## Note: v13.0.2 will be the last version of ag-Grid to support Aurelia 
+
 Usage
 ==============
 
