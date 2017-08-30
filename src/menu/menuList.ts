@@ -53,7 +53,7 @@ export class MenuList extends Component {
     public addItem(menuItemDef: MenuItemDef): void {
         let cMenuItem = new MenuItemComponent(menuItemDef);
         this.context.wireBean(cMenuItem);
-        this.getGui().appendChild(cMenuItem.getGui());
+        this.getHtmlElement().appendChild(cMenuItem.getHtmlElement());
 
         this.addDestroyFunc( ()=> cMenuItem.destroy() );
 
@@ -82,7 +82,7 @@ export class MenuList extends Component {
 
         this.activeMenuItemParams = menuItemParams;
         this.activeMenuItem = menuItem;
-        _.addCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
+        _.addCssClass(this.activeMenuItem.getHtmlElement(), 'ag-menu-option-active');
 
         if (menuItemParams.subMenu) {
             this.addHoverForChildPopup(menuItemParams, menuItem);
@@ -91,7 +91,7 @@ export class MenuList extends Component {
 
     private removeActiveItem(): void {
         if (this.activeMenuItem) {
-            _.removeCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
+            _.removeCssClass(this.activeMenuItem.getHtmlElement(), 'ag-menu-option-active');
             this.activeMenuItem = null;
             this.activeMenuItemParams = null;
         }
@@ -109,7 +109,7 @@ export class MenuList extends Component {
     }
 
     public addSeparator(): void {
-        this.getGui().appendChild(_.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
+        this.getHtmlElement().appendChild(_.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
     }
 
     private showChildMenu(menuItemDef: MenuItemDef, menuItemComp: MenuItemComponent): void {
@@ -120,7 +120,7 @@ export class MenuList extends Component {
         childMenu.addMenuItems(menuItemDef.subMenu);
 
         let ePopup = _.loadTemplate('<div class="ag-menu"></div>');
-        ePopup.appendChild(childMenu.getGui());
+        ePopup.appendChild(childMenu.getHtmlElement());
 
         let hidePopupFunc = this.popupService.addAsModalPopup(
             ePopup,

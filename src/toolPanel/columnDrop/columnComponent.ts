@@ -98,7 +98,7 @@ export class ColumnComponent extends Component {
         this.setupRemove();
 
         if (this.ghost) {
-            Utils.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
+            Utils.addCssClass(this.getHtmlElement(), 'ag-column-drop-cell-ghost');
         }
 
         if (this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
@@ -160,9 +160,9 @@ export class ColumnComponent extends Component {
         let ePopup = Utils.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
-        ePopup.appendChild(virtualList.getGui());
+        ePopup.appendChild(virtualList.getHtmlElement());
         ePopup.style.height = '100px';
-        ePopup.style.width = this.getGui().clientWidth + 'px';
+        ePopup.style.width = this.getHtmlElement().clientWidth + 'px';
 
         let popupHiddenFunc = () => {
             virtualList.destroy();
@@ -179,7 +179,7 @@ export class ColumnComponent extends Component {
 
         this.popupService.positionPopupUnderComponent({
             type: 'aggFuncSelect',
-            eventSource: this.getGui(),
+            eventSource: this.getHtmlElement(),
             ePopup: ePopup,
             keepWithinBounds: true,
             column: this.column
@@ -217,7 +217,7 @@ class AggItemComp extends Component {
 
     constructor(itemSelected: ()=>void, value: string) {
         super('<div class="ag-select-agg-func-item"/>');
-        this.getGui().innerText = value;
+        this.getHtmlElement().innerText = value;
         this.value = value;
         this.addGuiEventListener('click', itemSelected);
     }

@@ -92,11 +92,11 @@ export class RenderedColumn extends Component {
         this.addDestroyableEventListener(this.eText, 'click', this.onClick.bind(this));
 
         this.addTap();
-        CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+        CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getHtmlElement(), this.gridOptionsWrapper, this.column, null);
     }
 
     private addTap(): void {
-        let touchListener = new TouchListener(this.getGui());
+        let touchListener = new TouchListener(this.getHtmlElement());
         this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, this.onClick.bind(this));
         this.addDestroyFunc( touchListener.destroy.bind(touchListener) );
     }
@@ -237,7 +237,7 @@ export class RenderedColumn extends Component {
     private addDragSource(): void {
         let dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
-            eElement: this.getGui(),
+            eElement: this.getHtmlElement(),
             dragItemName: this.displayName,
             dragItem: [this.column]
         };

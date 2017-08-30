@@ -16,7 +16,8 @@ import {
     MenuItemDef,
     GridApi,
     IRowModel,
-    Constants
+    IComponent,
+    IAfterGuiAttachedParams
 } from "ag-grid";
 import {ClipboardService} from "../clipboardService";
 import {MenuItemComponent} from "./menuItemComponent";
@@ -71,7 +72,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
         let menu = new ContextMenu(menuItems);
         this.context.wireBean(menu);
 
-        let eMenuGui =  menu.getGui();
+        let eMenuGui =  menu.getHtmlElement();
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
@@ -89,12 +90,19 @@ export class ContextMenuFactory implements IContextMenuFactory {
             ePopup: eMenuGui
         });
 
-        menu.afterGuiAttached(hidePopup);
+        menu.afterGuiAttached({
+            eComponent: eMenuGui,
+            hidePopupCallback: hidePopup
+        });
     }
 
 }
 
-class ContextMenu extends Component {
+export interface IContextMenuAfterGuiAttachedParams extends IAfterGuiAttachedParams {
+    hidePopupCallback: (event?: any)=>void;
+}
+
+class ContextMenu extends Component implements IComponent<any, IContextMenuAfterGuiAttachedParams>{
 
     @Autowired('context') private context: Context;
     @Autowired('clipboardService') private clipboardService: ClipboardService;
@@ -125,8 +133,9 @@ class ContextMenu extends Component {
         menuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.destroy.bind(this));
     }
 
-    public afterGuiAttached(hidePopup: (event?: any)=>void): void {
-        this.addDestroyFunc(hidePopup);
+    public afterGuiAttached(params: IContextMenuAfterGuiAttachedParams): void {
+
+        this.addDestroyFunc(params.hidePopupCallback);
 
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));

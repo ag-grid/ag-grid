@@ -54,8 +54,8 @@ export class VirtualList extends Component {
         let rowTopPixel = index * this.rowHeight;
         let rowBottomPixel = rowTopPixel + this.rowHeight;
 
-        let viewportTopPixel = this.getGui().scrollTop;
-        let viewportHeight = this.getGui().offsetHeight;
+        let viewportTopPixel = this.getHtmlElement().scrollTop;
+        let viewportHeight = this.getHtmlElement().offsetHeight;
         let viewportBottomPixel = viewportTopPixel + viewportHeight;
 
         let viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
@@ -63,11 +63,11 @@ export class VirtualList extends Component {
 
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
-            this.getGui().scrollTop = rowTopPixel;
+            this.getHtmlElement().scrollTop = rowTopPixel;
         } else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             let newScrollPosition = rowBottomPixel - viewportHeight;
-            this.getGui().scrollTop = newScrollPosition;
+            this.getHtmlElement().scrollTop = newScrollPosition;
         }
     }
     
@@ -80,7 +80,7 @@ export class VirtualList extends Component {
     }
     
     public getScrollTop(): number {
-        return this.getGui().scrollTop;
+        return this.getHtmlElement().scrollTop;
     }
     
     public setRowHeight(rowHeight: number): void {
@@ -103,8 +103,8 @@ export class VirtualList extends Component {
     }
 
     private drawVirtualRows() {
-        let topPixel = this.getGui().scrollTop;
-        let bottomPixel = topPixel + this.getGui().offsetHeight;
+        let topPixel = this.getHtmlElement().scrollTop;
+        let bottomPixel = topPixel + this.getHtmlElement().offsetHeight;
 
         let firstRow = Math.floor(topPixel / this.rowHeight);
         let lastRow = Math.floor(bottomPixel / this.rowHeight);
@@ -154,7 +154,7 @@ export class VirtualList extends Component {
         eDiv.style.top = (this.rowHeight * rowIndex) + "px";
 
         let rowComponent = this.componentCreator(value);
-        eDiv.appendChild(rowComponent.getGui());
+        eDiv.appendChild(rowComponent.getHtmlElement());
 
         this.eListContainer.appendChild(eDiv);
         this.rowsInBodyContainer[rowIndex] = {

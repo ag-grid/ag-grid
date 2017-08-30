@@ -70,7 +70,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     public initialiseFilterBodyUi(): void {
         this.virtualList = new VirtualList();
         this.context.wireBean(this.virtualList);
-        this.getGui().querySelector('#richList').appendChild(this.virtualList.getGui());
+        this.getHtmlElement().querySelector('#richList').appendChild(this.virtualList.getHtmlElement());
         if (Utils.exists(this.filterParams.cellHeight)) {
             this.virtualList.setRowHeight(this.filterParams.cellHeight);
         }
@@ -79,7 +79,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
         this.model = new SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting);
         this.virtualList.setModel(new ModelWrapper(this.model));
-        _.setVisible(<HTMLElement>this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
+        _.setVisible(<HTMLElement>this.getHtmlElement().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
 
         this.eMiniFilter.value = this.model.getMiniFilter();
         this.addDestroyableEventListener(this.eMiniFilter, 'input', () => this.onMiniFilterChanged());

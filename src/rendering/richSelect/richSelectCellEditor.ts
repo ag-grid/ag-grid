@@ -56,7 +56,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
 
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
 
-        this.getGui().querySelector('.ag-rich-select-list').appendChild(this.virtualList.getGui());
+        this.getHtmlElement().querySelector('.ag-rich-select-list').appendChild(this.virtualList.getHtmlElement());
 
         if (Utils.exists(this.params.cellHeight)) {
             this.virtualList.setRowHeight(this.params.cellHeight);
@@ -77,8 +77,8 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
 
-        this.addDestroyableEventListener(this.virtualList.getGui(), 'click', this.onClick.bind(this));
-        this.addDestroyableEventListener(this.virtualList.getGui(), 'mousemove', this.onMouseMove.bind(this));
+        this.addDestroyableEventListener(this.virtualList.getHtmlElement(), 'click', this.onClick.bind(this));
+        this.addDestroyableEventListener(this.virtualList.getHtmlElement(), 'mousemove', this.onMouseMove.bind(this));
     }
 
     private onKeyDown(event: KeyboardEvent): void {
@@ -113,7 +113,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     }
 
     private renderSelectedValue(): void {
-        let eValue = <HTMLElement> this.getGui().querySelector('.ag-rich-select-value');
+        let eValue = <HTMLElement> this.getHtmlElement().querySelector('.ag-rich-select-value');
 
         let valueFormatted = this.params.formatValue(this.selectedValue);
 
@@ -154,7 +154,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     }
 
     private onMouseMove(mouseEvent: MouseEvent): void {
-        let rect = this.virtualList.getGui().getBoundingClientRect();
+        let rect = this.virtualList.getHtmlElement().getBoundingClientRect();
         let scrollTop = this.virtualList.getScrollTop();
         let mouseY = mouseEvent.clientY - rect.top + scrollTop;
 
@@ -189,7 +189,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         this.virtualList.refresh();
 
         if (this.focusAfterAttached) {
-            this.getGui().focus();
+            this.getHtmlElement().focus();
         }
     }
 

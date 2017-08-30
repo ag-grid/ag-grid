@@ -54,7 +54,7 @@ export class ColumnSelectPanel extends Component {
     }
 
     private destroyAllRenderedElements(): void {
-        Utils.removeAllChildren(this.getGui());
+        Utils.removeAllChildren(this.getHtmlElement());
         if (this.renderedItems) {
             Utils.iterateObject(this.renderedItems, (key: string, renderedItem: Component) => renderedItem.destroy() );
         }
@@ -70,7 +70,7 @@ export class ColumnSelectPanel extends Component {
         if (!columnGroup.isPadding()) {
             let renderedGroup = new RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
             this.context.wireBean(renderedGroup);
-            this.appendChild(renderedGroup.getGui());
+            this.appendChild(renderedGroup.getHtmlElement());
             // we want to indent on the gui for the children
             newDept = dept + 1;
 
@@ -88,7 +88,7 @@ export class ColumnSelectPanel extends Component {
 
         let renderedColumn = new RenderedColumn(column, dept, this.allowDragging);
         this.context.wireBean(renderedColumn);
-        this.appendChild(renderedColumn.getGui());
+        this.appendChild(renderedColumn.getHtmlElement());
 
         this.renderedItems[column.getId()] = renderedColumn;
     }
