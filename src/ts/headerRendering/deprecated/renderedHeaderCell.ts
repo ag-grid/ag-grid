@@ -65,7 +65,7 @@ export class RenderedHeaderCell extends Component {
     @PostConstruct
     public init(): void {
         let eGui = this.headerTemplateLoader.createHeaderElement(this.column);
-        this.setGui(eGui);
+        this.setHtmlElementNoHydrate(eGui);
 
         this.createScope();
         this.addAttributes();

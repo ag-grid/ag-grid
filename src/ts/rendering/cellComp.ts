@@ -134,7 +134,7 @@ export class CellComp extends Component {
     public afterAttached(): void {
         let querySelector = `[comp-id="${this.getCompId()}"]`;
         let eGui = <HTMLElement> this.eParentRow.querySelector(querySelector);
-        this.setGui(eGui);
+        this.setHtmlElementNoHydrate(eGui);
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.addDomData();

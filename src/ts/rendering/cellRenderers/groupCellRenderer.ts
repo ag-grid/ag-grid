@@ -64,30 +64,28 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private cellIsBlank: boolean;
 
     constructor() {
-        super(GroupCellRenderer.TEMPLATE);
+        super();
+        this.setTemplateNoHydrate(GroupCellRenderer.TEMPLATE);
     }
 
     public init(params: GroupCellRendererParams): void {
 
         this.params = params;
 
-        this.isEmbeddedRowMismatch();
-
         let embeddedRowMismatch = this.isEmbeddedRowMismatch();
-        //This allows for empty strings to appear as groups since
-        //it will only return for null or undefined.
+        // This allows for empty strings to appear as groups since
+        // it will only return for null or undefined.
         let cellIsEmpty = params.value==null;
 
         this.cellIsBlank = embeddedRowMismatch || cellIsEmpty;
+    }
+
+    public afterGuiAttached(params: ICellRendererAfterGuiAttachedParams): void {
+        super.afterGuiAttached(params);
 
         if (this.cellIsBlank) { return; }
 
         this.setupDragOpenParents();
-    }
-
-    public afterGuiAttached(params: ICellRendererAfterGuiAttachedParams): void {
-
-        if (this.cellIsBlank) { return; }
 
         let eGridCell = params.eGridCell;
         this.addExpandAndContract(eGridCell);

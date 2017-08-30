@@ -14,11 +14,13 @@ export class Component extends BeanStub implements IComponent<any, IAfterGuiAtta
 
     public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
 
-    private eGui: HTMLElement | string;
+    private template: string;
 
     private eHtmlElement: HTMLElement;
 
     private childComponents: IComponent<any, IAfterGuiAttachedParams>[] = [];
+
+    private hydrated = false;
 
     private annotatedEventListeners: any[] = [];
 
@@ -36,8 +38,14 @@ export class Component extends BeanStub implements IComponent<any, IAfterGuiAtta
         }
     }
 
+    public setTemplateNoHydrate(template: string): void {
+        this.template = template;
+    }
+
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
-        this.eHtmlElement = params.eComponent;
+        if (!this.eHtmlElement && params.eComponent) {
+            this.setHtmlElement(params.eComponent);
+        }
     }
 
     public getCompId(): number {
@@ -94,27 +102,33 @@ export class Component extends BeanStub implements IComponent<any, IAfterGuiAtta
     }
 
     public setTemplate(template: string): void {
+        this.template = template;
         let eGui = _.loadTemplate(<string>template);
-        this.setTemplateFromElement(eGui);
+        this.setHtmlElement(eGui);
     }
 
-    public setTemplateFromElement(element: HTMLElement): void {
-        this.eGui = element;
-        (<any>this.eGui).__agComponent = this;
+    public setHtmlElement(element: HTMLElement): void {
+        this.eHtmlElement = element;
+        (<any>this.eHtmlElement).__agComponent = this;
+        this.hydrate();
+    }
+
+    private hydrate(): void {
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();
+        this.hydrated = true;
     }
 
     public attributesSet(): void {
     }
 
     private wireQuerySelectors(): void {
-        if (!this.eGui) {
+        let element = this.getHtmlElement();
+        if (!element) {
             return;
         }
 
         let thisProto: any = Object.getPrototypeOf(this);
-        let element = this.getHtmlElement();
 
         while (thisProto != null) {
             let metaData = thisProto.__agComponentMetaData;
@@ -143,12 +157,13 @@ export class Component extends BeanStub implements IComponent<any, IAfterGuiAtta
 
     private addAnnotatedEventListeners(): void {
         this.removeAnnotatedEventListeners();
-        if (!this.eGui) {
+        let element = this.getHtmlElement();
+
+        if (!element) {
             return;
         }
 
         let thisProto: any = Object.getPrototypeOf(this);
-        let element = this.getHtmlElement();
 
         while (thisProto != null) {
             let metaData = thisProto.__agComponentMetaData;
@@ -175,10 +190,10 @@ export class Component extends BeanStub implements IComponent<any, IAfterGuiAtta
         if (!this.annotatedEventListeners) {
             return;
         }
-        if (!this.eGui) {
+        let element = this.getHtmlElement();
+        if (!element) {
             return;
         }
-        let element = this.getHtmlElement();
         this.annotatedEventListeners.forEach((eventListener: any) => {
             element.removeEventListener(eventListener.eventName, eventListener.listener);
         });
@@ -186,24 +201,25 @@ export class Component extends BeanStub implements IComponent<any, IAfterGuiAtta
     }
 
     public getGui(): HTMLElement | string {
-        return this.eGui;
+        if (this.eHtmlElement) {
+            return this.eHtmlElement;
+        } else {
+            return this.template;
+        }
     }
 
     public getHtmlElement(): HTMLElement {
         if (this.eHtmlElement) {
             return this.eHtmlElement;
-        } else if (typeof this.eGui === 'object') {
-            return <HTMLElement> this.eGui;
         } else {
-            console.warn('getElement() called on component before gui was attached');
+            console.warn('getHtmlElement() called on component before gui was attached');
             return null;
         }
     }
 
-    // this method is for older code, that wants to provide the gui element,
-    // it is not intended for this to be in ag-Stack
-    protected setGui(eGui: HTMLElement | string): void {
-        this.eGui = eGui;
+    // used by Cell Comp (and old header code), design is a bit poor, overlap with afterGuiAttached???
+    protected setHtmlElementNoHydrate(eHtmlElement: HTMLElement): void {
+        this.eHtmlElement = eHtmlElement;
     }
 
     protected queryForHtmlElement(cssSelector: string): HTMLElement {
@@ -261,7 +277,9 @@ export class Component extends BeanStub implements IComponent<any, IAfterGuiAtta
         this.childComponents.forEach(childComponent => childComponent.destroy());
         this.childComponents.length = 0;
 
-        this.removeAnnotatedEventListeners();
+        if (this.hydrated) {
+            this.removeAnnotatedEventListeners();
+        }
     }
 
     public addGuiEventListener(event: string, listener: (event: any) => void): void {
